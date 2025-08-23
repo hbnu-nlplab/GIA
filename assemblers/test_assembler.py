@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
 import os
 import sys
@@ -290,7 +290,52 @@ class TestAssembler:
         # Stage 2: LLM 미사용, 원문 유지
         return [pattern]
 
-    def assemble(self, facts: Dict[str, Any], dsl: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
+    # 시나리오 변환 적용 유틸리티
+    def apply_scenario(
+        self,
+        tests: Any,
+        scenario_conditions: Optional[Dict[str, Any]] = None,
+    ) -> Any:
+        """주어진 테스트들에 시나리오 조건을 적용하여 정답을 변형한다.
+
+        scenario_conditions 구조 예시::
+
+            {
+                "overrides": {"metric_id": new_value, ...}
+            }
+
+        현재는 단순히 metric 기준으로 정답 값을 치환한다.
+        """
+
+        if not scenario_conditions:
+            return tests
+
+        overrides = scenario_conditions.get("overrides") if isinstance(scenario_conditions, dict) else None
+        if not overrides:
+            return tests
+
+        def _apply_one(t: Dict[str, Any]):
+            metric = (t.get("intent") or {}).get("metric") or t.get("id")
+            if metric in overrides:
+                exp = t.get("expected_answer") or {}
+                exp["value"] = overrides[metric]
+                t["expected_answer"] = exp
+
+        if isinstance(tests, dict):
+            for arr in tests.values():
+                for t in arr:
+                    _apply_one(t)
+        elif isinstance(tests, list):
+            for t in tests:
+                _apply_one(t)
+        return tests
+
+    def assemble(
+        self,
+        facts: Dict[str, Any],
+        dsl: List[Dict[str, Any]],
+        scenario_conditions: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, List[Dict[str, Any]]]:
         # 1) 패턴 다양화
         dsl_expanded: List[Dict[str, Any]] = []
         for item in dsl:
@@ -303,6 +348,9 @@ class TestAssembler:
         # 2) 빌드(정답 계산)
         builder = BuilderCore(facts.get("devices") or facts)
         by_cat = builder.expand_from_dsl(dsl_expanded)
+
+        # 2-1) 시나리오 조건에 따른 정답 변형
+        by_cat = self.apply_scenario(by_cat, scenario_conditions)
 
         # 3) 태그/린트
         for cat, arr in by_cat.items():
