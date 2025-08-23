@@ -1,6 +1,12 @@
 from __future__ import annotations
 from typing import Dict, Any, List
 from dataclasses import dataclass
+import os
+import sys
+
+# Allow running this script directly (e.g. `python assemblers/test_assembler.py`)
+# by ensuring the project root is on the module search path.
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 from utils.builder_core import BuilderCore
 
