@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
 import json
 from pathlib import Path
@@ -359,6 +359,7 @@ def fix_coverage_budget(dsl: List[Dict[str,Any]], budget: Dict[str,int]) -> List
 class RuleBasedGeneratorConfig:
     policies_path: str
     min_per_cat: int = 4
+    scenario_type: str = "normal"  # normal, failure, expansion
 
 class RuleBasedGenerator:
     def __init__(self, cfg: RuleBasedGeneratorConfig):
@@ -367,8 +368,20 @@ class RuleBasedGenerator:
         self.defaults = self._bundle.get("defaults", {})
         self.policies = self._bundle.get("policies", [])
 
-    def compile(self, capabilities: Dict[str, Any], categories: List[str]) -> List[Dict[str, Any]]:
+    def compile(
+        self,
+        capabilities: Dict[str, Any],
+        categories: List[str],
+        scenario_type: Optional[str] = None,
+    ) -> List[Dict[str, Any]]:
+        """정책 기반 DSL 생성"""
+
         dsl: List[Dict[str, Any]] = []
+        scen = (scenario_type or self.cfg.scenario_type or "normal").lower()
+        label_map = {"normal": "정상", "failure": "장애", "expansion": "확장"}
+        scen_label = label_map.get(scen, scen)
+        prefix = f"[{scen_label}] " if scen_label else ""
+
         for pol in self.policies:
             cat = pol["category"]
             if cat not in categories:
@@ -406,7 +419,8 @@ class RuleBasedGenerator:
                                     "aggregation": agg,
                                     "placeholders": placeholders
                                 },
-                                "pattern": patt,
+                                "pattern": f"{prefix}{patt}".strip(),
+                                "scenario": scen_label,
                                 "level": int(lvl),
                                 "goal": goal,
                                 "policy_hints": {
