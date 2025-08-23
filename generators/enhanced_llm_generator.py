@@ -29,11 +29,19 @@ class PersonaType(Enum):
     TROUBLESHOOTER = "troubleshooter"
 
 
+class ScenarioType(Enum):
+    """질문이 다루는 시나리오의 종류"""
+    NORMAL = "normal"       # 정상 운영
+    FAILURE = "failure"     # 장애 상황
+    EXPANSION = "expansion" # 확장/변경
+
+
 @dataclass
 class QuestionTemplate:
     complexity: QuestionComplexity
     persona: PersonaType
     scenario: str
+    scenario_type: ScenarioType
     prompt_template: str
     expected_metrics: List[str]
     answer_type: str  # "short" or "long"
@@ -46,11 +54,12 @@ class EnhancedLLMQuestionGenerator:
     def _initialize_templates(self) -> List[QuestionTemplate]:
         """복합성과 페르소나를 고려한 질문 템플릿 초기화"""
         return [
-            # 분석적 추론 - 네트워크 엔지니어
+            # 분석적 추론 - 네트워크 엔지니어 (정상 시나리오)
             QuestionTemplate(
                 complexity=QuestionComplexity.ANALYTICAL,
                 persona=PersonaType.NETWORK_ENGINEER,
                 scenario="BGP 경로 수렴 분석",
+                scenario_type=ScenarioType.NORMAL,
                 prompt_template="""
 네트워크 엔지니어 관점에서, 주어진 BGP 설정을 분석하여 다음과 같은 복합적 질문을 생성하세요:
 
@@ -72,6 +81,7 @@ class EnhancedLLMQuestionGenerator:
                 complexity=QuestionComplexity.DIAGNOSTIC,
                 persona=PersonaType.SECURITY_AUDITOR,
                 scenario="보안 취약점 진단",
+                scenario_type=ScenarioType.NORMAL,
                 prompt_template="""
 보안 감사자 관점에서, 네트워크 보안 설정을 종합적으로 분석하는 질문을 생성하세요:
 
@@ -93,6 +103,7 @@ class EnhancedLLMQuestionGenerator:
                 complexity=QuestionComplexity.SYNTHETIC,
                 persona=PersonaType.NOC_OPERATOR,
                 scenario="서비스 영향도 분석",
+                scenario_type=ScenarioType.NORMAL,
                 prompt_template="""
 NOC 운영자 관점에서, 서비스 가용성과 관련된 복합적 상황 분석 질문을 생성하세요:
 
@@ -114,6 +125,7 @@ NOC 운영자 관점에서, 서비스 가용성과 관련된 복합적 상황 �
                 complexity=QuestionComplexity.SCENARIO,
                 persona=PersonaType.TROUBLESHOOTER,
                 scenario="장애 상황 대응",
+                scenario_type=ScenarioType.FAILURE,
                 prompt_template="""
 네트워크 트러블슈터 관점에서, 실제 장애 상황을 가정한 문제 해결 질문을 생성하세요:
 
@@ -130,6 +142,28 @@ NOC 운영자 관점에서, 서비스 가용성과 관련된 복합적 상황 �
 각 질문은 실제 장애 대응 경험이 반영되어야 함
 """,
                 expected_metrics=["vrf_rd_map", "ospf_area0_if_count", "neighbor_list_ebgp"],
+                answer_type="long"
+            ),
+
+            # 확장 시나리오 - 네트워크 아키텍트
+            QuestionTemplate(
+                complexity=QuestionComplexity.ANALYTICAL,
+                persona=PersonaType.ARCHITECT,
+                scenario="네트워크 확장 계획",
+                scenario_type=ScenarioType.EXPANSION,
+                prompt_template="""
+네트워크 아키텍트 관점에서, 새로운 데이터센터 추가와 같은 네트워크 확장 시 고려해야 할 사항을 분석하는 질문을 생성하세요:
+
+1. **용량 계획**: 확장에 따른 BGP/OSPF 재구성 필요성
+2. **서비스 영향도**: 기존 L2/L3VPN 서비스에 미치는 영향
+3. **보안 검토**: 확장 구간의 보안 정책 수립 필요성
+
+질문 특성:
+- 장기적인 확장 관점
+- 인프라 재설계 요소 포함
+- 비즈니스 연속성 고려
+""",
+                expected_metrics=["bgp_neighbor_count", "vrf_count", "ssh_missing_count"],
                 answer_type="long"
             )
         ]
@@ -321,6 +355,7 @@ NOC 운영자 관점에서, 서비스 가용성과 관련된 복합적 상황 �
                         "complexity": template.complexity.value,
                         "persona": template.persona.value,
                         "scenario": template.scenario,
+                        "scenario_type": template.scenario_type.value,
                         "answer_type": template.answer_type,
                         "reasoning_requirement": q_data.get("reasoning_requirement", ""),
                         "expected_analysis_depth": q_data.get("expected_analysis_depth", "detailed"),

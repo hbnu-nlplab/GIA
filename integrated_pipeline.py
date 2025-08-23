@@ -203,6 +203,7 @@ class NetworkConfigDatasetGenerator:
                     category="basic",
                     level=test.get('level', 1),
                     complexity="basic",
+                    scenario=test.get('scenario'),
                     source_files=test.get('source_files', []),
                     metadata={
                         "origin": "rule_based",

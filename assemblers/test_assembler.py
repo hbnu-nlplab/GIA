@@ -100,6 +100,13 @@ def strip_unwanted_fields(by_cat: dict) -> dict:
         cleaned = []
         for t in arr:
             if isinstance(t, dict):
+                q, scn = _strip_scenario_prefix(t.get("question"))
+                t["question"] = q
+                if scn:
+                    t["scenario"] = scn
+                    exp = t.get("expected_answer")
+                    if isinstance(exp, dict):
+                        exp["scenario"] = scn
                 t.pop("alternates", None)
                 _auto_tag_difficulty_and_type_rule_based(t)
             cleaned.append(t)
