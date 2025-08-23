@@ -1,6 +1,6 @@
 [
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-17693",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-37102",
     "question": "sample10 장비의 eBGP 피어 목록은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "192.168.4.11",
@@ -29,7 +29,7 @@
       "has_numbers": true,
       "has_technical_terms": false,
       "evaluation": {
-        "question_id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-17693",
+        "question_id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-37102",
         "answer_type": "short",
         "predicted_answer": "192.168.4.11",
         "ground_truth": "192.168.4.11",
@@ -47,7 +47,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-21433",
+    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-51412",
     "question": "SSH가 활성화된 장비 목록은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "answer": "CE1, CE2, sample10, sample7, sample8, sample9",
@@ -76,7 +76,7 @@
       "has_numbers": false,
       "has_technical_terms": false,
       "evaluation": {
-        "question_id": "BASIC_DSL-SSH_ENABLED_DEVICES-21433",
+        "question_id": "BASIC_DSL-SSH_ENABLED_DEVICES-51412",
         "answer_type": "short",
         "predicted_answer": "CE1, CE2, sample10, sample7, sample8, sample9",
         "ground_truth": "CE1, CE2, sample10, sample7, sample8, sample9",
@@ -94,7 +94,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-7086",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-23059",
     "question": "sample7 장비의 iBGP 피어 목록은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "2.2.2.2, 3.3.3.3, 4.4.4.4",
@@ -123,7 +123,7 @@
       "has_numbers": true,
       "has_technical_terms": false,
       "evaluation": {
-        "question_id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-7086",
+        "question_id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-23059",
         "answer_type": "short",
         "predicted_answer": "2.2.2.2, 3.3.3.3, 4.4.4.4",
         "ground_truth": "2.2.2.2, 3.3.3.3, 4.4.4.4",
@@ -142,9 +142,9 @@
   },
   {
     "id": "ENHANCED_ENHANCED-DIAGNOSTIC-002",
-    "question": "SSH 설정이 최신 보안 가이드를 따르고 있는지 평가하기 위해 어떤 절차를 거쳐야 할까요?",
+    "question": "모든 네트워크 장비의 SSH 설정이 최신 보안 프로토콜 가이드를 따르고 있는지 확인하고, 설정이 일관되지 않거나 미흡한 항목을 식별하여 개선 권고를 제시하라.",
     "context": "보안 설정 현황:\nCE1: SSH ON, AAA OFF\nCE2: SSH ON, AAA OFF\nsample10: SSH ON, AAA ON\nsample7: SSH ON, AAA ON\nsample8: SSH ON, AAA ON",
-    "answer": "{\n  \"question\": \"SSH 설정이 최신 보안 가이드를 따르고 있는지 평가하기 위해 어떤 절차를 거쳐야 할까요?\",\n  \"plan\": [\n    \"모든 장비에서 SSH 설정을 추출합니다.\",\n    \"SSH 설정이 최신 보안 가이드라인(예: 강력한 암호화 알고리즘, 비밀번호 인증 비활성화, 키 기반 인증 사용 등)을 충족하는지 분석합니다.\",\n    \"각 장비의 SSH 설정을 사내 보안 규정 및 외부 규제 요구사항과 비교합니다.\",\n    \"보안 가이드라인에 맞지 않는 설정을 식별하고, 그에 대한 구체적인 개선 조치를 제안합니다.\",\n    \"모든 장비가 최신 보안 기준을 충족하도록 조정할 수 있도록 권고안을 문서화합니다.\"\n  ],\n  \"evidence\": {}\n}",
+    "answer": "모든 네트워크 장비의 SSH 설정을 수집하여 최신 보안 프로토콜 가이드와 비교한 결과, 설정의 불일치 항목이 발견되었습니다. 특히, 일부 장비에서 SSH 버전이 구형이거나, 강력한 암호화 알고리즘이 적용되지 않은 사례가 확인되었습니다. 이에 따라, 모든 장비에서 SSH 버전을 최신으로 업데이트하고, 강력한 암호화 및 인증 방식을 적용할 것을 권장합니다. 또한, 불필요한 포트 접근을 차단하고, 정기적인 보안 점검을 통해 설정의 일관성을 유지할 필요가 있습니다.",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "diagnostic",
@@ -155,50 +155,71 @@
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
-        "모든 장비에서 SSH 설정을 추출합니다.",
-        "SSH 설정이 최신 보안 가이드라인(예: 강력한 암호화 알고리즘, 비밀번호 인증 비활성화, 키 기반 인증 사용 등)을 충족하는지 분석합니다.",
-        "각 장비의 SSH 설정을 사내 보안 규정 및 외부 규제 요구사항과 비교합니다.",
-        "보안 가이드라인에 맞지 않는 설정을 식별하고, 그에 대한 구체적인 개선 조치를 제안합니다.",
-        "모든 장비가 최신 보안 기준을 충족하도록 조정할 수 있도록 권고안을 문서화합니다."
+        {
+          "step": "각 장비의 SSH 설정을 수집하여 분석한다.",
+          "required_metric": "SSH_configuration",
+          "metric_params": {
+            "device_count": 6
+          }
+        },
+        {
+          "step": "최신 보안 프로토콜 가이드와 수집된 SSH 설정을 비교하여 불일치 항목을 식별한다.",
+          "required_metric": "protocol_compliance_check",
+          "metric_params": {
+            "protocol_type": "SSH"
+          }
+        },
+        {
+          "step": "설정이 일관되지 않거나 미흡한 항목에 대한 개선 권고를 작성한다.",
+          "required_metric": "improvement_recommendation",
+          "metric_params": {
+            "discrepancies": "identified"
+          }
+        }
       ],
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed",
-      "question_length": 50,
-      "answer_length": 382,
+      "evidence": {
+        "step_각 장비의 SSH 설정을 수집하여 분석한다._SSH_configuration": null,
+        "step_설정이 일관되지 않거나 미흡한 항목에 대한 개선 권고를 작성한다._improvement_recommendation": null,
+        "step_최신 보안 프로토콜 가이드와 수집된 SSH 설정을 비교하여 불일치 항목을 식별한다._protocol_compliance_check": null
+      },
+      "question_length": 88,
+      "answer_length": 258,
       "has_numbers": false,
       "has_technical_terms": true,
       "evaluation": {
         "question_id": "ENHANCED_ENHANCED-DIAGNOSTIC-002",
         "answer_type": "long",
-        "predicted_answer": "{\n  \"question\": \"SSH 설정이 최신 보안 가이드를 따르고 있는지 평가하기 위해 어떤 절차를 거쳐야 할까요?\",\n  \"plan\": [\n    \"모든 장비에서 SSH 설정을 추출합니다.\",\n    \"SSH 설정이 최신 보안 가이드라인(yes: 강력한 암호화 알고리즘, 비밀번호 인증 비활성화, 키 기반 인증 사용 등)을 충족하는지 분석합니다.\",\n    \"각 장비의 SSH 설정을 사내 보안 규정 및 외부 규제 요구사항과 비교합니다.\",\n    \"보안 가이드라인에 맞지 않는 설정을 식별하고, 그에 대한 구체적인 개선 조치를 제안합니다.\",\n    \"모든 장비가 최신 보안 기준을 충족하도록 조정할 수 있도록 권고안을 문서화합니다.\"\n  ],\n  \"evidence\": {}\n}",
-        "ground_truth": "{\n  \"question\": \"SSH 설정이 최신 보안 가이드를 따르고 있는지 평가하기 위해 어떤 절차를 거쳐야 할까요?\",\n  \"plan\": [\n    \"모든 장비에서 SSH 설정을 추출합니다.\",\n    \"SSH 설정이 최신 보안 가이드라인(예: 강력한 암호화 알고리즘, 비밀번호 인증 비활성화, 키 기반 인증 사용 등)을 충족하는지 분석합니다.\",\n    \"각 장비의 SSH 설정을 사내 보안 규정 및 외부 규제 요구사항과 비교합니다.\",\n    \"보안 가이드라인에 맞지 않는 설정을 식별하고, 그에 대한 구체적인 개선 조치를 제안합니다.\",\n    \"모든 장비가 최신 보안 기준을 충족하도록 조정할 수 있도록 권고안을 문서화합니다.\"\n  ],\n  \"evidence\": {}\n}",
+        "predicted_answer": "모든 네트워크 장비의 SSH 설정을 수집하여 최신 보안 프로토콜 가이드와 비교한 결과, 설정의 불일치 항목이 발견되었습니다. 특히, 일부 장비에서 SSH 버전이 구형이거나, 강력한 암호화 알고리즘이 적용되지 않은 사례가 확인되었습니다. 이에 따라, 모든 장비에서 SSH 버전을 최신으로 업데이트하고, 강력한 암호화 및 인증 방식을 적용할 것을 권장합니다. 또한, 불필요한 포트 접근을 차단하고, 정기적인 보안 점검을 통해 설정의 일관성을 유지할 필요가 있습니다.",
+        "ground_truth": "모든 네트워크 장비의 SSH 설정을 수집하여 최신 보안 프로토콜 가이드와 비교한 결과, 설정의 불일치 항목이 발견되었습니다. 특히, 일부 장비에서 SSH 버전이 구형이거나, 강력한 암호화 알고리즘이 적용되지 않은 사례가 확인되었습니다. 이에 따라, 모든 장비에서 SSH 버전을 최신으로 업데이트하고, 강력한 암호화 및 인증 방식을 적용할 것을 권장합니다. 또한, 불필요한 포트 접근을 차단하고, 정기적인 보안 점검을 통해 설정의 일관성을 유지할 필요가 있습니다.",
         "exact_match": 1.0,
         "f1_score": 1.0,
         "token_accuracy": null,
         "normalized_accuracy": null,
         "bert_score": null,
-        "bleu_score": 0.9651391201669045,
+        "bleu_score": 1.0,
         "rouge_scores": {
           "rouge-1": {
-            "precision": 0.9864864864864865,
-            "recall": 0.9864864864864865,
-            "f": 0.9864864864864865
+            "precision": 1.0,
+            "recall": 1.0,
+            "f": 1.0
           },
           "rouge-2": {
-            "precision": 0.9726027397260274,
-            "recall": 0.9726027397260274,
-            "f": 0.9726027397260274
+            "precision": 1.0,
+            "recall": 1.0,
+            "f": 1.0
           },
           "rouge-l": {
-            "precision": 0.9864864864864865,
-            "recall": 0.9864864864864865,
-            "f": 0.9864864864864865
+            "precision": 1.0,
+            "recall": 1.0,
+            "f": 1.0
           }
         },
-        "structural_accuracy": 0.8333333333333333,
-        "overall_score": 0.6972972972972973
+        "structural_accuracy": null,
+        "overall_score": 0.7
       },
-      "overall_score": 0.6972972972972973
+      "overall_score": 0.7
     }
   }
 ]

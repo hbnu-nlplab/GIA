@@ -1,36 +1,57 @@
 [
   {
-    "id": "ENHANCED_ENHANCED-SYNTHETIC-001",
-    "question": "L2VPN과 L3VPN 서비스에서 발생한 장애가 비즈니스에 미치는 영향을 최소화하기 위해, 어떤 장비와 AS 그룹을 우선적으로 복구해야 하는가?",
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-002",
+    "question": "새로운 데이터센터 추가가 기존 L2/L3VPN 서비스에 미치는 영향을 최소화하기 위해 어떤 조치를 고려해야 할까?",
     "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
-    "answer": "{\n  \"question\": \"L2VPN과 L3VPN 서비스에서 발생한 장애가 비즈니스에 미치는 영향을 최소화하기 위해, 어떤 장비와 AS 그룹을 우선적으로 복구해야 하는가?\",\n  \"plan\": [\n    \"장비 및 AS 그룹과 관련된 L2VPN 및 L3VPN 장애 상황을 파악한다.\",\n    \"각 서비스의 장애가 비즈니스에 미치는 영향을 평가한다.\",\n    \"장비와 AS 그룹의 중요도를 분석하여, 장애 발생 시 비즈니스에 큰 영향을 미치는 장비와 AS 그룹을 식별한다.\",\n    \"비즈니스 영향도가 큰 장비와 AS 그룹을 기반으로 우선순위 복구 계획을 수립한다.\",\n    \"복구 계획이 네트워크 안정성에 미치는 영향을 검토하고 조정한다.\"\n  ],\n  \"evidence\": {}\n}",
+    "answer": "새로운 데이터센터 추가가 기존 L2/L3VPN 서비스에 미치는 영향을 최소화하기 위해서는 우선 현재의 L2/L3VPN 구성과 문제점을 파악하고, VPN 서비스의 트래픽 경로를 최적화할 필요가 있습니다. 또한, 새로운 데이터센터와 기존 네트워크 간의 연결망의 대역폭과 안정성을 평가하여 필요한 장비 수를 확인해야 합니다. 마지막으로, 서비스 중단을 최소화하기 위해 단계별 구현 계획을 수립하고 비즈니스 연속성 전략을 마련하는 것이 중요합니다.",
     "answer_type": "long",
     "category": "advanced",
-    "complexity": "synthetic",
-    "level": 4,
-    "persona": "noc_operator",
-    "scenario": "서비스 영향도 분석",
+    "complexity": "analytical",
+    "level": 3,
+    "persona": "network_architect",
+    "scenario": "네트워크 확장 계획",
     "source_files": null,
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
-        "장비 및 AS 그룹과 관련된 L2VPN 및 L3VPN 장애 상황을 파악한다.",
-        "각 서비스의 장애가 비즈니스에 미치는 영향을 평가한다.",
-        "장비와 AS 그룹의 중요도를 분석하여, 장애 발생 시 비즈니스에 큰 영향을 미치는 장비와 AS 그룹을 식별한다.",
-        "비즈니스 영향도가 큰 장비와 AS 그룹을 기반으로 우선순위 복구 계획을 수립한다.",
-        "복구 계획이 네트워크 안정성에 미치는 영향을 검토하고 조정한다."
+        {
+          "step": "현재 L2/L3VPN 구성 및 문제점 파악",
+          "required_metric": "l2vpn_issues",
+          "metric_params": null
+        },
+        {
+          "step": "VPN 서비스 트래픽 경로 최적화 필요성 검토",
+          "required_metric": "서비스 트래픽 패턴",
+          "metric_params": null
+        },
+        {
+          "step": "새로운 데이터센터와 기존 네트워크 간 연결망의 대역폭 및 안정성 평가",
+          "required_metric": "장비 수",
+          "metric_params": null
+        },
+        {
+          "step": "서비스 중단 최소화를 위한 단계별 구현 계획 수립",
+          "required_metric": "비즈니스 연속성 전략",
+          "metric_params": null
+        }
       ],
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed",
-      "question_length": 80,
-      "answer_length": 388,
+      "evidence": {
+        "step_VPN 서비스 트래픽 경로 최적화 필요성 검토_서비스 트래픽 패턴": null,
+        "step_새로운 데이터센터와 기존 네트워크 간 연결망의 대역폭 및 안정성 평가_장비 수": null,
+        "step_서비스 중단 최소화를 위한 단계별 구현 계획 수립_비즈니스 연속성 전략": null,
+        "step_현재 L2/L3VPN 구성 및 문제점 파악_l2vpn_issues": null
+      },
+      "question_length": 63,
+      "answer_length": 246,
       "has_numbers": true,
       "has_technical_terms": false,
       "evaluation": {
-        "question_id": "ENHANCED_ENHANCED-SYNTHETIC-001",
+        "question_id": "ENHANCED_ENHANCED-ANALYTICAL-002",
         "answer_type": "long",
-        "predicted_answer": "{\n  \"question\": \"L2VPN과 L3VPN 서비스에서 발생한 장애가 비즈니스에 미치는 영향을 최소화하기 위해, 어떤 장비와 AS 그룹을 우선적으로 복구해야 하는가?\",\n  \"plan\": [\n    \"장비 및 AS 그룹과 관련된 L2VPN 및 L3VPN 장애 상황을 파악한다.\",\n    \"각 서비스의 장애가 비즈니스에 미치는 영향을 평가한다.\",\n    \"장비와 AS 그룹의 중요도를 분석하여, 장애 발생 시 비즈니스에 큰 영향을 미치는 장비와 AS 그룹을 식별한다.\",\n    \"비즈니스 영향도가 큰 장비와 AS 그룹을 기반으로 우선순위 복구 계획을 수립한다.\",\n    \"복구 계획이 네트워크 안정성에 미치는 영향을 검토하고 조정한다.\"\n  ],\n  \"evidence\": {}\n}",
-        "ground_truth": "{\n  \"question\": \"L2VPN과 L3VPN 서비스에서 발생한 장애가 비즈니스에 미치는 영향을 최소화하기 위해, 어떤 장비와 AS 그룹을 우선적으로 복구해야 하는가?\",\n  \"plan\": [\n    \"장비 및 AS 그룹과 관련된 L2VPN 및 L3VPN 장애 상황을 파악한다.\",\n    \"각 서비스의 장애가 비즈니스에 미치는 영향을 평가한다.\",\n    \"장비와 AS 그룹의 중요도를 분석하여, 장애 발생 시 비즈니스에 큰 영향을 미치는 장비와 AS 그룹을 식별한다.\",\n    \"비즈니스 영향도가 큰 장비와 AS 그룹을 기반으로 우선순위 복구 계획을 수립한다.\",\n    \"복구 계획이 네트워크 안정성에 미치는 영향을 검토하고 조정한다.\"\n  ],\n  \"evidence\": {}\n}",
+        "predicted_answer": "새로운 데이터센터 추가가 기존 L2/L3VPN 서비스에 미치는 영향을 최소화하기 위해서는 우선 현재의 L2/L3VPN 구성과 문제점을 파악하고, VPN 서비스의 트래픽 경로를 최적화할 필요가 있습니다. 또한, 새로운 데이터센터와 기존 네트워크 간의 연결망의 대역폭과 안정성을 평가하여 필요한 장비 수를 확인해야 합니다. 마지막으로, 서비스 중단을 최소화하기 위해 단계별 구현 계획을 수립하고 비즈니스 연속성 전략을 마련하는 것이 중요합니다.",
+        "ground_truth": "새로운 데이터센터 추가가 기존 L2/L3VPN 서비스에 미치는 영향을 최소화하기 위해서는 우선 현재의 L2/L3VPN 구성과 문제점을 파악하고, VPN 서비스의 트래픽 경로를 최적화할 필요가 있습니다. 또한, 새로운 데이터센터와 기존 네트워크 간의 연결망의 대역폭과 안정성을 평가하여 필요한 장비 수를 확인해야 합니다. 마지막으로, 서비스 중단을 최소화하기 위해 단계별 구현 계획을 수립하고 비즈니스 연속성 전략을 마련하는 것이 중요합니다.",
         "exact_match": 1.0,
         "f1_score": 1.0,
         "token_accuracy": null,
@@ -54,61 +75,96 @@
             "f": 1.0
           }
         },
-        "structural_accuracy": 1.0,
+        "structural_accuracy": null,
         "overall_score": 0.7
       },
       "overall_score": 0.7
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-63664",
-    "question": "sample9 장비의 iBGP 피어 목록은?",
-    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
-    "answer": "1.1.1.1, 2.2.2.2, 4.4.4.4",
-    "answer_type": "short",
-    "category": "basic",
-    "complexity": "basic",
-    "level": 1,
-    "persona": null,
-    "scenario": "정상",
-    "source_files": [
-      "sample9.xml"
-    ],
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-001",
+    "question": "데이터센터 확장 시 BGP와 OSPF 재구성의 필요성을 결정하기 위해 어떤 요소를 분석해야 할까?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "answer": "데이터센터 확장 시 BGP와 OSPF 재구성의 필요성을 결정하기 위해서는 현재 BGP 및 OSPF 구성 상태를 검토하고, BGP 피어 추가로 인한 라우터 자원 사용률을 평가하며, OSPF 영역 재분할의 필요성을 검토하고, 확장에 따른 네트워크 지연 시간 및 성능 영향을 분석해야 합니다. 이러한 요소들은 각각의 네트워크 구성 요소가 확장에 적합한지, 자원 소모가 적절한지, 그리고 네트워크의 복잡도가 증가하지 않도록 하는 데 중요한 역할을 합니다.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "analytical",
+    "level": 3,
+    "persona": "network_architect",
+    "scenario": "네트워크 확장 계획",
+    "source_files": null,
     "metadata": {
-      "origin": "rule_based",
-      "intent": {},
-      "evidence_hint": {
-        "scope": {
-          "type": "DEVICE",
-          "host": "sample9"
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "step": "현재 BGP 및 OSPF 구성 상태 검토",
+          "required_metric": "bgp_missing_pairs",
+          "metric_params": null
         },
-        "metric": "neighbor_list_ibgp"
+        {
+          "step": "BGP 피어의 추가로 인한 라우터 자원 사용률 평가",
+          "required_metric": "장비 수",
+          "metric_params": null
+        },
+        {
+          "step": "OSPF 영역 재분할의 필요성 검토",
+          "required_metric": "AS 그룹",
+          "metric_params": null
+        },
+        {
+          "step": "확장에 따른 네트워크 지연 시간 및 성능 영향 분석",
+          "required_metric": "네트워크 복잡도",
+          "metric_params": null
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_BGP 피어의 추가로 인한 라우터 자원 사용률 평가_장비 수": null,
+        "step_OSPF 영역 재분할의 필요성 검토_AS 그룹": null,
+        "step_현재 BGP 및 OSPF 구성 상태 검토_bgp_missing_pairs": null,
+        "step_확장에 따른 네트워크 지연 시간 및 성능 영향 분석_네트워크 복잡도": null
       },
-      "topic": "BGP_Consistency",
-      "question_length": 24,
-      "answer_length": 25,
-      "has_numbers": true,
-      "has_technical_terms": false,
+      "question_length": 54,
+      "answer_length": 250,
+      "has_numbers": false,
+      "has_technical_terms": true,
       "evaluation": {
-        "question_id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-63664",
-        "answer_type": "short",
-        "predicted_answer": "1.1.1.1, 2.2.2.2, 4.4.4.4",
-        "ground_truth": "1.1.1.1, 2.2.2.2, 4.4.4.4",
+        "question_id": "ENHANCED_ENHANCED-ANALYTICAL-001",
+        "answer_type": "long",
+        "predicted_answer": "데이터센터 확장 시 BGP와 OSPF 재구성의 필요성을 결정하기 위해서는 현재 BGP 및 OSPF 구성 상태를 검토하고, BGP 피어 추가로 인한 라우터 자원 사용률을 평가하며, OSPF 영역 재분할의 필요성을 검토하고, 확장에 따른 네트워크 지연 시간 및 성능 영향을 분석해야 합니다. 이러한 요소들은 각각의 네트워크 구성 요소가 확장에 적합한지, 자원 소모가 적절한지, 그리고 네트워크의 복잡도가 증가하지 않도록 하는 데 중요한 역할을 합니다.",
+        "ground_truth": "데이터센터 확장 시 BGP와 OSPF 재구성의 필요성을 결정하기 위해서는 현재 BGP 및 OSPF 구성 상태를 검토하고, BGP 피어 추가로 인한 라우터 자원 사용률을 평가하며, OSPF 영역 재분할의 필요성을 검토하고, 확장에 따른 네트워크 지연 시간 및 성능 영향을 분석해야 합니다. 이러한 요소들은 각각의 네트워크 구성 요소가 확장에 적합한지, 자원 소모가 적절한지, 그리고 네트워크의 복잡도가 증가하지 않도록 하는 데 중요한 역할을 합니다.",
         "exact_match": 1.0,
         "f1_score": 1.0,
-        "token_accuracy": 1.0,
-        "normalized_accuracy": 1.0,
+        "token_accuracy": null,
+        "normalized_accuracy": null,
         "bert_score": null,
-        "bleu_score": null,
-        "rouge_scores": null,
+        "bleu_score": 1.0,
+        "rouge_scores": {
+          "rouge-1": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f": 1.0
+          },
+          "rouge-2": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f": 1.0
+          },
+          "rouge-l": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f": 1.0
+          }
+        },
         "structural_accuracy": null,
-        "overall_score": 1.0
+        "overall_score": 0.7
       },
-      "overall_score": 1.0
+      "overall_score": 0.7
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-17693",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-37102",
     "question": "sample10 장비의 iBGP 피어 목록은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "1.1.1.1, 2.2.2.2, 3.3.3.3",
@@ -137,7 +193,7 @@
       "has_numbers": true,
       "has_technical_terms": false,
       "evaluation": {
-        "question_id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-17693",
+        "question_id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-37102",
         "answer_type": "short",
         "predicted_answer": "1.1.1.1, 2.2.2.2, 3.3.3.3",
         "ground_truth": "1.1.1.1, 2.2.2.2, 3.3.3.3",
@@ -155,71 +211,57 @@
     }
   },
   {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-001",
-    "question": "iBGP 풀메시 구성에서 누락된 세 개의 연결이 BGP 경로 수렴성에 어떤 영향을 미칠 수 있으며, 이를 해결하기 위한 방안은 무엇인가?",
-    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "answer": "{\n  \"question\": \"iBGP 풀메시 구성에서 누락된 세 개의 연결이 BGP 경로 수렴성에 어떤 영향을 미칠 수 있으며, 이를 해결하기 위한 방안은 무엇인가?\",\n  \"plan\": [\n    \"iBGP 풀메시 구성에서 누락된 연결을 식별하고, 이는 경로 수렴에 어떤 지연을 초래할 수 있는지 분석합니다.\",\n    \"경로 수렴성이 저하될 경우, 라우터 간의 업데이트 전파가 지연될 수 있으며 이는 네트워크 전체의 응답성에 영향을 미칠 수 있습니다.\",\n    \"누락된 연결이 발생한 이유를 조사합니다. 예를 들어, 설정 오류 또는 잘못된 네트워크 설계로 인한 것인지 확인합니다.\",\n    \"이상의 원인을 제거하기 위한 해결책을 제안합니다. 필요 시 추가적인 iBGP 피어링 설정을 통해 풀메시 구성을 완성합니다.\",\n    \"제안된 해결책이 실제 네트워크에서 경로 수렴성을 개선하는지 테스트 및 검증합니다.\"\n  ],\n  \"evidence\": {}\n}",
-    "answer_type": "long",
-    "category": "advanced",
-    "complexity": "analytical",
-    "level": 3,
-    "persona": "network_engineer",
-    "scenario": "BGP 경로 수렴 분석",
-    "source_files": null,
+    "id": "BASIC_DSL-IBGP_FULLMESH_OK-31756",
+    "question": "AS 65003 도메인의 iBGP 풀메시 구성이 완전한가",
+    "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
+    "answer": "예",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "ce2.xml"
+    ],
     "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        "iBGP 풀메시 구성에서 누락된 연결을 식별하고, 이는 경로 수렴에 어떤 지연을 초래할 수 있는지 분석합니다.",
-        "경로 수렴성이 저하될 경우, 라우터 간의 업데이트 전파가 지연될 수 있으며 이는 네트워크 전체의 응답성에 영향을 미칠 수 있습니다.",
-        "누락된 연결이 발생한 이유를 조사합니다. 예를 들어, 설정 오류 또는 잘못된 네트워크 설계로 인한 것인지 확인합니다.",
-        "이상의 원인을 제거하기 위한 해결책을 제안합니다. 필요 시 추가적인 iBGP 피어링 설정을 통해 풀메시 구성을 완성합니다.",
-        "제안된 해결책이 실제 네트워크에서 경로 수렴성을 개선하는지 테스트 및 검증합니다."
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "question_length": 76,
-      "answer_length": 482,
-      "has_numbers": false,
-      "has_technical_terms": true,
-      "evaluation": {
-        "question_id": "ENHANCED_ENHANCED-ANALYTICAL-001",
-        "answer_type": "long",
-        "predicted_answer": "{\n  \"question\": \"장기적인 네트워크 확장을 고려할 때, 새로운 데이터센터 추가로 인한 BGP 및 OSPF 재구성이 네트워크의 용량 및 안정성에 미치는 영향을 분석하라.\",\n  \"plan\": [\n    \"현재 네트워크의 BGP/OSPF 구성 상태를 검토한다.\",\n    \"새로운 데이터센터에서 요구되는 트래픽 및 라우팅 경로를 yes측한다.\",\n    \"BGP 및 OSPF의 최적 라우팅 경로 및 정책을 재설계하여 네트워크 용량을 확장한다.\",\n    \"재설계된 라우팅 경로가 네트워크 안정성에 미치는 영향을 시뮬레이션하거나 파일럿 테스트를 수행한다.\",\n    \"확장된 용량이 장기적인 네트워크 수요를 충족할 수 있는지 평가한다.\"\n  ],\n  \"evidence\": {}\n}",
-        "ground_truth": "{\n  \"question\": \"장기적인 네트워크 확장을 고려할 때, 새로운 데이터센터 추가로 인한 BGP 및 OSPF 재구성이 네트워크의 용량 및 안정성에 미치는 영향을 분석하라.\",\n  \"plan\": [\n    \"현재 네트워크의 BGP/OSPF 구성 상태를 검토한다.\",\n    \"새로운 데이터센터에서 요구되는 트래픽 및 라우팅 경로를 예측한다.\",\n    \"BGP 및 OSPF의 최적 라우팅 경로 및 정책을 재설계하여 네트워크 용량을 확장한다.\",\n    \"재설계된 라우팅 경로가 네트워크 안정성에 미치는 영향을 시뮬레이션하거나 파일럿 테스트를 수행한다.\",\n    \"확장된 용량이 장기적인 네트워크 수요를 충족할 수 있는지 평가한다.\"\n  ],\n  \"evidence\": {}\n}",
-        "exact_match": 1.0,
-        "f1_score": 1.0,
-        "token_accuracy": null,
-        "normalized_accuracy": null,
-        "bert_score": null,
-        "bleu_score": 0.9625248317849852,
-        "rouge_scores": {
-          "rouge-1": {
-            "precision": 0.9855072463768116,
-            "recall": 0.9855072463768116,
-            "f": 0.9855072463768116
-          },
-          "rouge-2": {
-            "precision": 0.9705882352941176,
-            "recall": 0.9705882352941176,
-            "f": 0.9705882352941176
-          },
-          "rouge-l": {
-            "precision": 0.9855072463768116,
-            "recall": 0.9855072463768116,
-            "f": 0.9855072463768116
-          }
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "AS",
+          "asn": "65003"
         },
-        "structural_accuracy": 0.8333333333333333,
-        "overall_score": 0.6971014492753623
+        "metric": "ibgp_fullmesh_ok"
       },
-      "overall_score": 0.6971014492753623
+      "topic": "BGP_Consistency",
+      "question_length": 31,
+      "answer_length": 1,
+      "has_numbers": true,
+      "has_technical_terms": false,
+      "evaluation": {
+        "question_id": "BASIC_DSL-IBGP_FULLMESH_OK-31756",
+        "answer_type": "short",
+        "predicted_answer": "아니오",
+        "ground_truth": "예",
+        "exact_match": 0.0,
+        "f1_score": 0.0,
+        "token_accuracy": 0.0,
+        "normalized_accuracy": 0.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "overall_score": 0.0
+      },
+      "overall_score": 0.0
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-7086",
-    "question": "sample7 장비의 eBGP 피어 목록은?",
-    "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
-    "answer": "192.168.1.11",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-46260",
+    "question": "sample9 장비의 iBGP 피어 목록은?",
+    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "answer": "1.1.1.1, 2.2.2.2, 4.4.4.4",
     "answer_type": "short",
     "category": "basic",
     "complexity": "basic",
@@ -227,7 +269,7 @@
     "persona": null,
     "scenario": "정상",
     "source_files": [
-      "sample7.xml"
+      "sample9.xml"
     ],
     "metadata": {
       "origin": "rule_based",
@@ -235,20 +277,20 @@
       "evidence_hint": {
         "scope": {
           "type": "DEVICE",
-          "host": "sample7"
+          "host": "sample9"
         },
-        "metric": "neighbor_list_ebgp"
+        "metric": "neighbor_list_ibgp"
       },
       "topic": "BGP_Consistency",
       "question_length": 24,
-      "answer_length": 12,
+      "answer_length": 25,
       "has_numbers": true,
       "has_technical_terms": false,
       "evaluation": {
-        "question_id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-7086",
+        "question_id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-46260",
         "answer_type": "short",
-        "predicted_answer": "192.168.1.11",
-        "ground_truth": "192.168.1.11",
+        "predicted_answer": "1.1.1.1, 2.2.2.2, 4.4.4.4",
+        "ground_truth": "1.1.1.1, 2.2.2.2, 4.4.4.4",
         "exact_match": 1.0,
         "f1_score": 1.0,
         "token_accuracy": 1.0,
@@ -263,7 +305,139 @@
     }
   },
   {
-    "id": "BASIC_DSL-IBGP_FULLMESH_OK-50843",
+    "id": "BASIC_DSL-IBGP_FULLMESH_OK-47932",
+    "question": "AS 65001 도메인의 iBGP 풀메시 구성이 완전한가",
+    "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
+    "answer": "예",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "ce1.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "AS",
+          "asn": "65001"
+        },
+        "metric": "ibgp_fullmesh_ok"
+      },
+      "topic": "BGP_Consistency",
+      "question_length": 31,
+      "answer_length": 1,
+      "has_numbers": true,
+      "has_technical_terms": false,
+      "evaluation": {
+        "question_id": "BASIC_DSL-IBGP_FULLMESH_OK-47932",
+        "answer_type": "short",
+        "predicted_answer": "아니오",
+        "ground_truth": "예",
+        "exact_match": 0.0,
+        "f1_score": 0.0,
+        "token_accuracy": 0.0,
+        "normalized_accuracy": 0.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "overall_score": 0.0
+      },
+      "overall_score": 0.0
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-001",
+    "question": "네트워크 장비에서 발견된 BGP 페어링 누락과 L2VPN 이슈가 보안 정책 준수성에 미치는 영향을 평가하십시오.",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "answer": "BGP 페어링 누락과 L2VPN 이슈는 네트워크의 안정성과 보안 정책 준수성에 중대한 영향을 미칠 수 있습니다. BGP 페어링이 누락되면 AS 간의 경로 정보 교환이 원활하지 않아 네트워크의 연결성이 저하되고, 이는 서비스 중단으로 이어질 수 있습니다. L2VPN 이슈 또한 네트워크 경로의 불안정성을 초래하여 서비스 중단 위험을 증가시킵니다. 그러나 현재 SSH 설정에서 누락된 항목은 없으므로 보안 정책의 일관성은 유지되고 있습니다. 이러한 문제들은 비즈니스 운영에 심각한 영향을 미칠 수 있으며, 따라서 우선적으로 해결해야 할 사항으로 평가됩니다.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "diagnostic",
+    "level": 3,
+    "persona": "security_auditor",
+    "scenario": "보안 취약점 진단",
+    "source_files": null,
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "step": "장비 및 AS 그룹 목록을 검토하여 BGP 페어링 누락의 구체적인 위치와 영향을 파악한다.",
+          "required_metric": "bgp_missing_pairs",
+          "metric_params": {
+            "AS_groups": [
+              "65001",
+              "65003",
+              "65000"
+            ]
+          }
+        },
+        {
+          "step": "L2VPN 이슈가 발생한 장비와 해당 장비의 네트워크 경로를 분석하여 서비스 중단 위험성을 평가한다.",
+          "required_metric": "l2vpn_issues"
+        },
+        {
+          "step": "SSH 설정의 일관성과 표준 준수 여부를 확인하여 보안 정책의 전반적인 준수성을 평가한다.",
+          "required_metric": "ssh_missing_count"
+        },
+        {
+          "step": "발견된 문제점들이 비즈니스 운영에 미치는 영향을 평가하여 우선순위를 결정한다.",
+          "required_metric": "business_impact_assessment"
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_L2VPN 이슈가 발생한 장비와 해당 장비의 네트워크 경로를 분석하여 서비스 중단 위험성을 평가한다._l2vpn_issues": null,
+        "step_SSH 설정의 일관성과 표준 준수 여부를 확인하여 보안 정책의 전반적인 준수성을 평가한다._ssh_missing_count": 0,
+        "step_발견된 문제점들이 비즈니스 운영에 미치는 영향을 평가하여 우선순위를 결정한다._business_impact_assessment": null,
+        "step_장비 및 AS 그룹 목록을 검토하여 BGP 페어링 누락의 구체적인 위치와 영향을 파악한다._bgp_missing_pairs": null
+      },
+      "question_length": 62,
+      "answer_length": 309,
+      "has_numbers": true,
+      "has_technical_terms": true,
+      "evaluation": {
+        "question_id": "ENHANCED_ENHANCED-DIAGNOSTIC-001",
+        "answer_type": "long",
+        "predicted_answer": "현재 네트워크 장비의 AAA 설정이 사내 접근 제어 정책을 충족하는지 확인하기 위해 각 장비의 AAA 설정을 수집하고 분석해야 합니다. 이후, 수집된 설정을 사내 정책과 비교하여 불일치 항목을 식별해야 합니다. 발견된 불일치 항목에 대해서는 개선 권고를 작성하여 일관된 패스워드 정책과 접근 제어를 보장할 수 있도록 해야 합니다. 현재 제공된 증거로는 AAA 설정 분석 및 불일치 항목 식별이 이루어지지 않았으므로, 추가적인 데이터 수집과 분석이 필요합니다.",
+        "ground_truth": "현재 네트워크 장비의 AAA 설정이 사내 접근 제어 정책을 충족하는지 확인하기 위해 각 장비의 AAA 설정을 수집하고 분석해야 합니다. 이후, 수집된 설정을 사내 정책과 비교하여 불일치 항목을 식별해야 합니다. 발견된 불일치 항목에 대해서는 개선 권고를 작성하여 일관된 패스워드 정책과 접근 제어를 보장할 수 있도록 해야 합니다. 현재 제공된 증거로는 AAA 설정 분석 및 불일치 항목 식별이 이루어지지 않았으므로, 추가적인 데이터 수집과 분석이 필요합니다.",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": null,
+        "normalized_accuracy": null,
+        "bert_score": null,
+        "bleu_score": 1.0,
+        "rouge_scores": {
+          "rouge-1": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f": 1.0
+          },
+          "rouge-2": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f": 1.0
+          },
+          "rouge-l": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f": 1.0
+          }
+        },
+        "structural_accuracy": null,
+        "overall_score": 0.7
+      },
+      "overall_score": 0.7
+    }
+  },
+  {
+    "id": "BASIC_DSL-IBGP_FULLMESH_OK-28855",
     "question": "AS 65000 도메인의 iBGP 풀메시 구성이 완전한가",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "예",
@@ -295,7 +469,7 @@
       "has_numbers": true,
       "has_technical_terms": false,
       "evaluation": {
-        "question_id": "BASIC_DSL-IBGP_FULLMESH_OK-50843",
+        "question_id": "BASIC_DSL-IBGP_FULLMESH_OK-28855",
         "answer_type": "short",
         "predicted_answer": "아니오",
         "ground_truth": "예",
@@ -313,129 +487,103 @@
     }
   },
   {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-001",
-    "question": "장기적인 네트워크 확장을 고려할 때, 새로운 데이터센터 추가로 인한 BGP 및 OSPF 재구성이 네트워크의 용량 및 안정성에 미치는 영향을 분석하라.",
-    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "answer": "{\n  \"question\": \"장기적인 네트워크 확장을 고려할 때, 새로운 데이터센터 추가로 인한 BGP 및 OSPF 재구성이 네트워크의 용량 및 안정성에 미치는 영향을 분석하라.\",\n  \"plan\": [\n    \"현재 네트워크의 BGP/OSPF 구성 상태를 검토한다.\",\n    \"새로운 데이터센터에서 요구되는 트래픽 및 라우팅 경로를 예측한다.\",\n    \"BGP 및 OSPF의 최적 라우팅 경로 및 정책을 재설계하여 네트워크 용량을 확장한다.\",\n    \"재설계된 라우팅 경로가 네트워크 안정성에 미치는 영향을 시뮬레이션하거나 파일럿 테스트를 수행한다.\",\n    \"확장된 용량이 장기적인 네트워크 수요를 충족할 수 있는지 평가한다.\"\n  ],\n  \"evidence\": {}\n}",
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-002",
+    "question": "네트워크 운영 관점에서 L2VPN/L3VPN 서비스의 잠재적 위험 요소를 식별하고 예방적 모니터링 방안을 설계하는 방법은 무엇인가?",
+    "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
+    "answer": "네트워크 운영 관점에서 L2VPN/L3VPN 서비스의 잠재적 위험 요소를 식별하기 위해서는 먼저 현재 네트워크의 이상징후를 분석해야 합니다. 예를 들어, BGP 누락 쌍이나 L2VPN 문제와 같은 이상징후를 발견하여 잠재적 위험 요소를 파악합니다. 이후 이러한 위험 요소가 서비스에 미치는 영향을 평가하기 위해 서비스 영향도 매트릭스를 활용하여 L2VPN과 L3VPN 서비스의 장비 수를 고려합니다. 마지막으로, 예방적 모니터링 방안을 설계하고 구현하기 위해 BGP, OSPF, L2VPN, L3VPN과 같은 기술을 사용하여 지속적으로 네트워크 상태를 모니터링하고 이상징후를 조기에 발견할 수 있는 시스템을 구축합니다.",
     "answer_type": "long",
     "category": "advanced",
-    "complexity": "analytical",
-    "level": 3,
-    "persona": "network_architect",
-    "scenario": "네트워크 확장 계획",
+    "complexity": "synthetic",
+    "level": 4,
+    "persona": "noc_operator",
+    "scenario": "서비스 영향도 분석",
     "source_files": null,
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
-        "현재 네트워크의 BGP/OSPF 구성 상태를 검토한다.",
-        "새로운 데이터센터에서 요구되는 트래픽 및 라우팅 경로를 예측한다.",
-        "BGP 및 OSPF의 최적 라우팅 경로 및 정책을 재설계하여 네트워크 용량을 확장한다.",
-        "재설계된 라우팅 경로가 네트워크 안정성에 미치는 영향을 시뮬레이션하거나 파일럿 테스트를 수행한다.",
-        "확장된 용량이 장기적인 네트워크 수요를 충족할 수 있는지 평가한다."
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "question_length": 83,
-      "answer_length": 382,
-      "has_numbers": false,
-      "has_technical_terms": true,
-      "evaluation": {
-        "question_id": "ENHANCED_ENHANCED-ANALYTICAL-001",
-        "answer_type": "long",
-        "predicted_answer": "{\n  \"question\": \"장기적인 네트워크 확장을 고려할 때, 새로운 데이터센터 추가로 인한 BGP 및 OSPF 재구성이 네트워크의 용량 및 안정성에 미치는 영향을 분석하라.\",\n  \"plan\": [\n    \"현재 네트워크의 BGP/OSPF 구성 상태를 검토한다.\",\n    \"새로운 데이터센터에서 요구되는 트래픽 및 라우팅 경로를 yes측한다.\",\n    \"BGP 및 OSPF의 최적 라우팅 경로 및 정책을 재설계하여 네트워크 용량을 확장한다.\",\n    \"재설계된 라우팅 경로가 네트워크 안정성에 미치는 영향을 시뮬레이션하거나 파일럿 테스트를 수행한다.\",\n    \"확장된 용량이 장기적인 네트워크 수요를 충족할 수 있는지 평가한다.\"\n  ],\n  \"evidence\": {}\n}",
-        "ground_truth": "{\n  \"question\": \"장기적인 네트워크 확장을 고려할 때, 새로운 데이터센터 추가로 인한 BGP 및 OSPF 재구성이 네트워크의 용량 및 안정성에 미치는 영향을 분석하라.\",\n  \"plan\": [\n    \"현재 네트워크의 BGP/OSPF 구성 상태를 검토한다.\",\n    \"새로운 데이터센터에서 요구되는 트래픽 및 라우팅 경로를 예측한다.\",\n    \"BGP 및 OSPF의 최적 라우팅 경로 및 정책을 재설계하여 네트워크 용량을 확장한다.\",\n    \"재설계된 라우팅 경로가 네트워크 안정성에 미치는 영향을 시뮬레이션하거나 파일럿 테스트를 수행한다.\",\n    \"확장된 용량이 장기적인 네트워크 수요를 충족할 수 있는지 평가한다.\"\n  ],\n  \"evidence\": {}\n}",
-        "exact_match": 1.0,
-        "f1_score": 1.0,
-        "token_accuracy": null,
-        "normalized_accuracy": null,
-        "bert_score": null,
-        "bleu_score": 0.9625248317849852,
-        "rouge_scores": {
-          "rouge-1": {
-            "precision": 0.9855072463768116,
-            "recall": 0.9855072463768116,
-            "f": 0.9855072463768116
-          },
-          "rouge-2": {
-            "precision": 0.9705882352941176,
-            "recall": 0.9705882352941176,
-            "f": 0.9705882352941176
-          },
-          "rouge-l": {
-            "precision": 0.9855072463768116,
-            "recall": 0.9855072463768116,
-            "f": 0.9855072463768116
+        {
+          "step": "현재 네트워크의 이상징후를 분석하여 잠재적 위험 요소를 식별한다.",
+          "required_metric": "예방적 모니터링",
+          "metric_params": {
+            "발견된 이상징후": {
+              "bgp_missing_pairs": 3,
+              "ssh_missing_count": 0,
+              "vrf_without_rt": 0,
+              "l2vpn_issues": 2
+            }
           }
         },
-        "structural_accuracy": 0.8333333333333333,
-        "overall_score": 0.6971014492753623
-      },
-      "overall_score": 0.6971014492753623
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-002",
-    "question": "발견된 보안 문제 중 BGP 페어링 누락과 L2VPN 이슈가 네트워크 전반에 미치는 보안 위험을 평가하고, 이 문제들이 규정 준수에 미치는 영향을 설명하십시오.",
-    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "answer": "{\n  \"question\": \"발견된 보안 문제 중 BGP 페어링 누락과 L2VPN 이슈가 네트워크 전반에 미치는 보안 위험을 평가하고, 이 문제들이 규정 준수에 미치는 영향을 설명하십시오.\",\n  \"plan\": [\n    \"1. BGP 페어링 누락으로 인해 발생할 수 있는 네트워크 경로 오류 및 서비스 중단 가능성을 평가합니다.\",\n    \"2. L2VPN 이슈가 데이터 전송 보안에 미치는 영향을 분석합니다.\",\n    \"3. 이러한 이슈들이 네트워크의 보안 표준 및 규제 요구사항을 위반하는지 검토합니다.\",\n    \"4. 문제의 심각성과 이에 따른 비즈니스 영향도를 평가하여 우선순위를 매깁니다.\",\n    \"5. 규정 준수를 보장하기 위한 개선 방안 및 권장 사항을 제시합니다.\"\n  ],\n  \"evidence\": {}\n}",
-    "answer_type": "long",
-    "category": "advanced",
-    "complexity": "diagnostic",
-    "level": 3,
-    "persona": "security_auditor",
-    "scenario": "보안 취약점 진단",
-    "source_files": null,
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        "1. BGP 페어링 누락으로 인해 발생할 수 있는 네트워크 경로 오류 및 서비스 중단 가능성을 평가합니다.",
-        "2. L2VPN 이슈가 데이터 전송 보안에 미치는 영향을 분석합니다.",
-        "3. 이러한 이슈들이 네트워크의 보안 표준 및 규제 요구사항을 위반하는지 검토합니다.",
-        "4. 문제의 심각성과 이에 따른 비즈니스 영향도를 평가하여 우선순위를 매깁니다.",
-        "5. 규정 준수를 보장하기 위한 개선 방안 및 권장 사항을 제시합니다."
+        {
+          "step": "위험 요소가 서비스에 미치는 영향을 평가한다.",
+          "required_metric": "서비스 영향도 매트릭스",
+          "metric_params": {
+            "서비스 유형": [
+              "L2VPN",
+              "L3VPN"
+            ],
+            "장비 수": 6
+          }
+        },
+        {
+          "step": "예방적 모니터링 방안을 설계하고 구현한다.",
+          "required_metric": "예방적 모니터링",
+          "metric_params": {
+            "사용 기술": [
+              "bgp",
+              "ospf",
+              "l2vpn",
+              "l3vpn"
+            ]
+          }
+        }
       ],
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed",
-      "question_length": 89,
-      "answer_length": 410,
+      "evidence": {
+        "step_예방적 모니터링 방안을 설계하고 구현한다._예방적 모니터링": null,
+        "step_위험 요소가 서비스에 미치는 영향을 평가한다._서비스 영향도 매트릭스": null,
+        "step_현재 네트워크의 이상징후를 분석하여 잠재적 위험 요소를 식별한다._예방적 모니터링": null
+      },
+      "question_length": 73,
+      "answer_length": 346,
       "has_numbers": true,
       "has_technical_terms": true,
       "evaluation": {
-        "question_id": "ENHANCED_ENHANCED-DIAGNOSTIC-002",
+        "question_id": "ENHANCED_ENHANCED-SYNTHETIC-002",
         "answer_type": "long",
-        "predicted_answer": "{\n  \"question\": \"SSH 설정이 최신 보안 가이드를 따르고 있는지 평가하기 위해 어떤 절차를 거쳐야 할까요?\",\n  \"plan\": [\n    \"모든 장비에서 SSH 설정을 추출합니다.\",\n    \"SSH 설정이 최신 보안 가이드라인(yes: 강력한 암호화 알고리즘, 비밀번호 인증 비활성화, 키 기반 인증 사용 등)을 충족하는지 분석합니다.\",\n    \"각 장비의 SSH 설정을 사내 보안 규정 및 외부 규제 요구사항과 비교합니다.\",\n    \"보안 가이드라인에 맞지 않는 설정을 식별하고, 그에 대한 구체적인 개선 조치를 제안합니다.\",\n    \"모든 장비가 최신 보안 기준을 충족하도록 조정할 수 있도록 권고안을 문서화합니다.\"\n  ],\n  \"evidence\": {}\n}",
-        "ground_truth": "{\n  \"question\": \"SSH 설정이 최신 보안 가이드를 따르고 있는지 평가하기 위해 어떤 절차를 거쳐야 할까요?\",\n  \"plan\": [\n    \"모든 장비에서 SSH 설정을 추출합니다.\",\n    \"SSH 설정이 최신 보안 가이드라인(예: 강력한 암호화 알고리즘, 비밀번호 인증 비활성화, 키 기반 인증 사용 등)을 충족하는지 분석합니다.\",\n    \"각 장비의 SSH 설정을 사내 보안 규정 및 외부 규제 요구사항과 비교합니다.\",\n    \"보안 가이드라인에 맞지 않는 설정을 식별하고, 그에 대한 구체적인 개선 조치를 제안합니다.\",\n    \"모든 장비가 최신 보안 기준을 충족하도록 조정할 수 있도록 권고안을 문서화합니다.\"\n  ],\n  \"evidence\": {}\n}",
+        "predicted_answer": "네트워크 운영 관점에서 L2VPN/L3VPN 서비스의 잠재적 위험 요소를 식별하기 위해서는 먼저 현재 네트워크의 이상징후를 분석해야 합니다. yes를 들어, BGP 누락 쌍이나 L2VPN 문제와 같은 이상징후를 발견하여 잠재적 위험 요소를 파악합니다. 이후 이러한 위험 요소가 서비스에 미치는 영향을 평가하기 위해 서비스 영향도 매트릭스를 활용하여 L2VPN과 L3VPN 서비스의 장비 수를 고려합니다. 마지막으로, yes방적 모니터링 방안을 설계하고 구현하기 위해 BGP, OSPF, L2VPN, L3VPN과 같은 기술을 사용하여 지속적으로 네트워크 상태를 모니터링하고 이상징후를 조기에 발견할 수 있는 시스템을 구축합니다.",
+        "ground_truth": "네트워크 운영 관점에서 L2VPN/L3VPN 서비스의 잠재적 위험 요소를 식별하기 위해서는 먼저 현재 네트워크의 이상징후를 분석해야 합니다. 예를 들어, BGP 누락 쌍이나 L2VPN 문제와 같은 이상징후를 발견하여 잠재적 위험 요소를 파악합니다. 이후 이러한 위험 요소가 서비스에 미치는 영향을 평가하기 위해 서비스 영향도 매트릭스를 활용하여 L2VPN과 L3VPN 서비스의 장비 수를 고려합니다. 마지막으로, 예방적 모니터링 방안을 설계하고 구현하기 위해 BGP, OSPF, L2VPN, L3VPN과 같은 기술을 사용하여 지속적으로 네트워크 상태를 모니터링하고 이상징후를 조기에 발견할 수 있는 시스템을 구축합니다.",
         "exact_match": 1.0,
         "f1_score": 1.0,
         "token_accuracy": null,
         "normalized_accuracy": null,
         "bert_score": null,
-        "bleu_score": 0.9651391201669045,
+        "bleu_score": 0.9299940324325051,
         "rouge_scores": {
           "rouge-1": {
-            "precision": 0.9864864864864865,
-            "recall": 0.9864864864864865,
-            "f": 0.9864864864864865
+            "precision": 0.972972972972973,
+            "recall": 0.972972972972973,
+            "f": 0.972972972972973
           },
           "rouge-2": {
-            "precision": 0.9726027397260274,
-            "recall": 0.9726027397260274,
-            "f": 0.9726027397260274
+            "precision": 0.9452054794520548,
+            "recall": 0.9452054794520548,
+            "f": 0.9452054794520548
           },
           "rouge-l": {
-            "precision": 0.9864864864864865,
-            "recall": 0.9864864864864865,
-            "f": 0.9864864864864865
+            "precision": 0.972972972972973,
+            "recall": 0.972972972972973,
+            "f": 0.972972972972973
           }
         },
-        "structural_accuracy": 0.8333333333333333,
-        "overall_score": 0.6972972972972973
+        "structural_accuracy": null,
+        "overall_score": 0.6945945945945946
       },
-      "overall_score": 0.6972972972972973
+      "overall_score": 0.6945945945945946
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-21433",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-51412",
     "question": "CE1 장비의 eBGP 피어 목록은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "answer": "192.168.1.10",
@@ -464,7 +612,7 @@
       "has_numbers": true,
       "has_technical_terms": false,
       "evaluation": {
-        "question_id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-21433",
+        "question_id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-51412",
         "answer_type": "short",
         "predicted_answer": "192.168.1.10",
         "ground_truth": "192.168.1.10",
@@ -482,165 +630,10 @@
     }
   },
   {
-    "id": "BASIC_DSL-IBGP_FULLMESH_OK-60669",
-    "question": "AS 65001 도메인의 iBGP 풀메시 구성이 완전한가",
-    "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
-    "answer": "예",
-    "answer_type": "short",
-    "category": "basic",
-    "complexity": "basic",
-    "level": 2,
-    "persona": null,
-    "scenario": "정상",
-    "source_files": [
-      "ce1.xml"
-    ],
-    "metadata": {
-      "origin": "rule_based",
-      "intent": {},
-      "evidence_hint": {
-        "scope": {
-          "type": "AS",
-          "asn": "65001"
-        },
-        "metric": "ibgp_fullmesh_ok"
-      },
-      "topic": "BGP_Consistency",
-      "question_length": 31,
-      "answer_length": 1,
-      "has_numbers": true,
-      "has_technical_terms": false,
-      "evaluation": {
-        "question_id": "BASIC_DSL-IBGP_FULLMESH_OK-60669",
-        "answer_type": "short",
-        "predicted_answer": "아니오",
-        "ground_truth": "예",
-        "exact_match": 0.0,
-        "f1_score": 0.0,
-        "token_accuracy": 0.0,
-        "normalized_accuracy": 0.0,
-        "bert_score": null,
-        "bleu_score": null,
-        "rouge_scores": null,
-        "structural_accuracy": null,
-        "overall_score": 0.0
-      },
-      "overall_score": 0.0
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-001",
-    "question": "현재 네트워크 설정에서 SSH 및 AAA 설정의 일관성과 보안 표준을 얼마나 잘 준수하고 있는지 평가하십시오. 이는 비즈니스에 어떤 영향을 미칠 수 있으며, 개선이 필요한 부분은 무엇인지 설명하십시오.",
-    "context": "보안 설정 현황:\nCE1: SSH ON, AAA OFF\nCE2: SSH ON, AAA OFF\nsample10: SSH ON, AAA ON\nsample7: SSH ON, AAA ON\nsample8: SSH ON, AAA ON",
-    "answer": "{\n  \"question\": \"현재 네트워크 설정에서 SSH 및 AAA 설정의 일관성과 보안 표준을 얼마나 잘 준수하고 있는지 평가하십시오. 이는 비즈니스에 어떤 영향을 미칠 수 있으며, 개선이 필요한 부분은 무엇인지 설명하십시오.\",\n  \"plan\": [\n    \"1. 각 장비의 SSH 설정을 검토하여 모든 장비에 SSH가 올바르게 설정되어 있는지 확인합니다.\",\n    \"2. AAA 설정이 모든 장비에서 일관되게 적용되고 있는지 확인합니다.\",\n    \"3. SSH 및 AAA 설정이 산업 표준 및 보안 프레임워크(예: NIST, ISO 27001)에 부합하는지 평가합니다.\",\n    \"4. 표준을 충족하지 못하는 설정이 비즈니스 운영에 어떤 위험을 초래할 수 있는지 분석합니다.\",\n    \"5. 발견된 문제를 기반으로 개선 권고사항을 도출하고, 구현 가능한 계획을 제안합니다.\"\n  ],\n  \"evidence\": {}\n}",
-    "answer_type": "long",
-    "category": "advanced",
-    "complexity": "diagnostic",
-    "level": 3,
-    "persona": "security_auditor",
-    "scenario": "보안 취약점 진단",
-    "source_files": null,
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        "1. 각 장비의 SSH 설정을 검토하여 모든 장비에 SSH가 올바르게 설정되어 있는지 확인합니다.",
-        "2. AAA 설정이 모든 장비에서 일관되게 적용되고 있는지 확인합니다.",
-        "3. SSH 및 AAA 설정이 산업 표준 및 보안 프레임워크(예: NIST, ISO 27001)에 부합하는지 평가합니다.",
-        "4. 표준을 충족하지 못하는 설정이 비즈니스 운영에 어떤 위험을 초래할 수 있는지 분석합니다.",
-        "5. 발견된 문제를 기반으로 개선 권고사항을 도출하고, 구현 가능한 계획을 제안합니다."
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "question_length": 112,
-      "answer_length": 466,
-      "has_numbers": false,
-      "has_technical_terms": true,
-      "evaluation": {
-        "question_id": "ENHANCED_ENHANCED-DIAGNOSTIC-001",
-        "answer_type": "long",
-        "predicted_answer": "{\n  \"question\": \"현재 네트워크 설정에서 SSH 및 AAA 설정의 일관성과 보안 표준을 얼마나 잘 준수하고 있는지 평가하십시오. 이는 비즈니스에 어떤 영향을 미칠 수 있으며, 개선이 필요한 부분은 무엇인지 설명하십시오.\",\n  \"plan\": [\n    \"1. 각 장비의 SSH 설정을 검토하여 모든 장비에 SSH가 올바르게 설정되어 있는지 확인합니다.\",\n    \"2. AAA 설정이 모든 장비에서 일관되게 적용되고 있는지 확인합니다.\",\n    \"3. SSH 및 AAA 설정이 산업 표준 및 보안 프레임워크(yes: NIST, ISO 27001)에 부합하는지 평가합니다.\",\n    \"4. 표준을 충족하지 못하는 설정이 비즈니스 운영에 어떤 위험을 초래할 수 있는지 분석합니다.\",\n    \"5. 발견된 문제를 기반으로 개선 권고사항을 도출하고, 구현 가능한 계획을 제안합니다.\"\n  ],\n  \"evidence\": {}\n}",
-        "ground_truth": "{\n  \"question\": \"현재 네트워크 설정에서 SSH 및 AAA 설정의 일관성과 보안 표준을 얼마나 잘 준수하고 있는지 평가하십시오. 이는 비즈니스에 어떤 영향을 미칠 수 있으며, 개선이 필요한 부분은 무엇인지 설명하십시오.\",\n  \"plan\": [\n    \"1. 각 장비의 SSH 설정을 검토하여 모든 장비에 SSH가 올바르게 설정되어 있는지 확인합니다.\",\n    \"2. AAA 설정이 모든 장비에서 일관되게 적용되고 있는지 확인합니다.\",\n    \"3. SSH 및 AAA 설정이 산업 표준 및 보안 프레임워크(예: NIST, ISO 27001)에 부합하는지 평가합니다.\",\n    \"4. 표준을 충족하지 못하는 설정이 비즈니스 운영에 어떤 위험을 초래할 수 있는지 분석합니다.\",\n    \"5. 발견된 문제를 기반으로 개선 권고사항을 도출하고, 구현 가능한 계획을 제안합니다.\"\n  ],\n  \"evidence\": {}\n}",
-        "exact_match": 1.0,
-        "f1_score": 1.0,
-        "token_accuracy": null,
-        "normalized_accuracy": null,
-        "bert_score": null,
-        "bleu_score": 0.9718216827736128,
-        "rouge_scores": {
-          "rouge-1": {
-            "precision": 0.989010989010989,
-            "recall": 0.989010989010989,
-            "f": 0.989010989010989
-          },
-          "rouge-2": {
-            "precision": 0.9777777777777777,
-            "recall": 0.9777777777777777,
-            "f": 0.9777777777777777
-          },
-          "rouge-l": {
-            "precision": 0.989010989010989,
-            "recall": 0.989010989010989,
-            "f": 0.989010989010989
-          }
-        },
-        "structural_accuracy": 0.8333333333333333,
-        "overall_score": 0.6978021978021978
-      },
-      "overall_score": 0.6978021978021978
-    }
-  },
-  {
-    "id": "BASIC_DSL-IBGP_FULLMESH_OK-39342",
-    "question": "AS 65003 도메인의 iBGP 풀메시 구성이 완전한가",
-    "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
-    "answer": "예",
-    "answer_type": "short",
-    "category": "basic",
-    "complexity": "basic",
-    "level": 2,
-    "persona": null,
-    "scenario": "정상",
-    "source_files": [
-      "ce2.xml"
-    ],
-    "metadata": {
-      "origin": "rule_based",
-      "intent": {},
-      "evidence_hint": {
-        "scope": {
-          "type": "AS",
-          "asn": "65003"
-        },
-        "metric": "ibgp_fullmesh_ok"
-      },
-      "topic": "BGP_Consistency",
-      "question_length": 31,
-      "answer_length": 1,
-      "has_numbers": true,
-      "has_technical_terms": false,
-      "evaluation": {
-        "question_id": "BASIC_DSL-IBGP_FULLMESH_OK-39342",
-        "answer_type": "short",
-        "predicted_answer": "아니오",
-        "ground_truth": "예",
-        "exact_match": 0.0,
-        "f1_score": 0.0,
-        "token_accuracy": 0.0,
-        "normalized_accuracy": 0.0,
-        "bert_score": null,
-        "bleu_score": null,
-        "rouge_scores": null,
-        "structural_accuracy": null,
-        "overall_score": 0.0
-      },
-      "overall_score": 0.0
-    }
-  },
-  {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-4216",
-    "question": "sample8 장비의 eBGP 피어 목록은?",
-    "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
-    "answer": "192.168.2.11",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-23059",
+    "question": "sample7 장비의 eBGP 피어 목록은?",
+    "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "answer": "192.168.1.11",
     "answer_type": "short",
     "category": "basic",
     "complexity": "basic",
@@ -648,7 +641,7 @@
     "persona": null,
     "scenario": "정상",
     "source_files": [
-      "sample8.xml"
+      "sample7.xml"
     ],
     "metadata": {
       "origin": "rule_based",
@@ -656,7 +649,7 @@
       "evidence_hint": {
         "scope": {
           "type": "DEVICE",
-          "host": "sample8"
+          "host": "sample7"
         },
         "metric": "neighbor_list_ebgp"
       },
@@ -666,10 +659,10 @@
       "has_numbers": true,
       "has_technical_terms": false,
       "evaluation": {
-        "question_id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-4216",
+        "question_id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-23059",
         "answer_type": "short",
-        "predicted_answer": "192.168.2.11",
-        "ground_truth": "192.168.2.11",
+        "predicted_answer": "192.168.1.11",
+        "ground_truth": "192.168.1.11",
         "exact_match": 1.0,
         "f1_score": 1.0,
         "token_accuracy": 1.0,
@@ -684,7 +677,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SSH_MISSING_COUNT-28183",
+    "id": "BASIC_DSL-SSH_MISSING_COUNT-11037",
     "question": "SSH가 비활성화(또는 설정 없음)인 장비 수는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1\n장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1\n장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "0",
@@ -717,7 +710,7 @@
       "has_numbers": false,
       "has_technical_terms": false,
       "evaluation": {
-        "question_id": "BASIC_DSL-SSH_MISSING_COUNT-28183",
+        "question_id": "BASIC_DSL-SSH_MISSING_COUNT-11037",
         "answer_type": "short",
         "predicted_answer": "0",
         "ground_truth": "0",
@@ -735,7 +728,89 @@
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-63664",
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-001",
+    "question": "현재 네트워크 장비의 AAA 설정은 사내 접근 제어 정책을 충족하고 있는가? 특히, 장비의 패스워드 정책이 모든 네트워크 장비에서 일관되게 적용되고 있는지 확인하고, 발견된 모든 AAA 설정의 불일치 항목을 식별하여 개선 권고를 제시하라.",
+    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+    "answer": "현재 네트워크 장비의 AAA 설정이 사내 접근 제어 정책을 충족하는지 확인하기 위해 각 장비의 AAA 설정을 수집하고 분석해야 합니다. 이후, 수집된 설정을 사내 정책과 비교하여 불일치 항목을 식별해야 합니다. 발견된 불일치 항목에 대해서는 개선 권고를 작성하여 일관된 패스워드 정책과 접근 제어를 보장할 수 있도록 해야 합니다. 현재 제공된 증거로는 AAA 설정 분석 및 불일치 항목 식별이 이루어지지 않았으므로, 추가적인 데이터 수집과 분석이 필요합니다.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "diagnostic",
+    "level": 3,
+    "persona": "compliance_officer",
+    "scenario": "정책 준수 점검",
+    "source_files": null,
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "step": "각 장비의 AAA 설정을 수집하여 분석한다.",
+          "required_metric": "AAA_configuration",
+          "metric_params": {
+            "device_count": 6
+          }
+        },
+        {
+          "step": "사내 접근 제어 정책과 수집된 AAA 설정을 비교하여 불일치 항목을 식별한다.",
+          "required_metric": "policy_compliance_check",
+          "metric_params": {
+            "policy_type": "AAA"
+          }
+        },
+        {
+          "step": "불일치 항목에 대한 개선 권고를 작성한다.",
+          "required_metric": "improvement_recommendation",
+          "metric_params": {
+            "discrepancies": "identified"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_각 장비의 AAA 설정을 수집하여 분석한다._AAA_configuration": null,
+        "step_불일치 항목에 대한 개선 권고를 작성한다._improvement_recommendation": null,
+        "step_사내 접근 제어 정책과 수집된 AAA 설정을 비교하여 불일치 항목을 식별한다._policy_compliance_check": null
+      },
+      "question_length": 133,
+      "answer_length": 256,
+      "has_numbers": false,
+      "has_technical_terms": true,
+      "evaluation": {
+        "question_id": "ENHANCED_ENHANCED-DIAGNOSTIC-001",
+        "answer_type": "long",
+        "predicted_answer": "현재 네트워크 장비의 AAA 설정이 사내 접근 제어 정책을 충족하는지 확인하기 위해 각 장비의 AAA 설정을 수집하고 분석해야 합니다. 이후, 수집된 설정을 사내 정책과 비교하여 불일치 항목을 식별해야 합니다. 발견된 불일치 항목에 대해서는 개선 권고를 작성하여 일관된 패스워드 정책과 접근 제어를 보장할 수 있도록 해야 합니다. 현재 제공된 증거로는 AAA 설정 분석 및 불일치 항목 식별이 이루어지지 않았으므로, 추가적인 데이터 수집과 분석이 필요합니다.",
+        "ground_truth": "현재 네트워크 장비의 AAA 설정이 사내 접근 제어 정책을 충족하는지 확인하기 위해 각 장비의 AAA 설정을 수집하고 분석해야 합니다. 이후, 수집된 설정을 사내 정책과 비교하여 불일치 항목을 식별해야 합니다. 발견된 불일치 항목에 대해서는 개선 권고를 작성하여 일관된 패스워드 정책과 접근 제어를 보장할 수 있도록 해야 합니다. 현재 제공된 증거로는 AAA 설정 분석 및 불일치 항목 식별이 이루어지지 않았으므로, 추가적인 데이터 수집과 분석이 필요합니다.",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": null,
+        "normalized_accuracy": null,
+        "bert_score": null,
+        "bleu_score": 1.0,
+        "rouge_scores": {
+          "rouge-1": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f": 1.0
+          },
+          "rouge-2": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f": 1.0
+          },
+          "rouge-l": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f": 1.0
+          }
+        },
+        "structural_accuracy": null,
+        "overall_score": 0.7
+      },
+      "overall_score": 0.7
+    }
+  },
+  {
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-46260",
     "question": "sample9 장비의 eBGP 피어 목록은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "192.168.3.11",
@@ -764,7 +839,7 @@
       "has_numbers": true,
       "has_technical_terms": false,
       "evaluation": {
-        "question_id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-63664",
+        "question_id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-46260",
         "answer_type": "short",
         "predicted_answer": "192.168.3.11",
         "ground_truth": "192.168.3.11",
@@ -779,6 +854,146 @@
         "overall_score": 1.0
       },
       "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-3153",
+    "question": "sample8 장비의 eBGP 피어 목록은?",
+    "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "answer": "192.168.2.11",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample8.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample8"
+        },
+        "metric": "neighbor_list_ebgp"
+      },
+      "topic": "BGP_Consistency",
+      "question_length": 24,
+      "answer_length": 12,
+      "has_numbers": true,
+      "has_technical_terms": false,
+      "evaluation": {
+        "question_id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-3153",
+        "answer_type": "short",
+        "predicted_answer": "192.168.2.11",
+        "ground_truth": "192.168.2.11",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-001",
+    "question": "L2VPN 및 L3VPN 서비스 장애가 발생했을 때, 서비스 영향도를 평가하고 우선순위 복구 계획을 수립하는 방법은 무엇인가?",
+    "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
+    "answer": "L2VPN 및 L3VPN 서비스 장애 발생 시, 먼저 장애의 파급 범위를 평가하여 서비스 영향도 매트릭스를 작성합니다. 이를 통해 영향을 받는 장비 수와 서비스 유형을 분석합니다. 다음으로, 장애로 인해 영향을 받는 고객의 비즈니스 중요도를 평가하여 비즈니스 영향도를 파악합니다. 마지막으로, 동시에 발생한 문제들을 목록화하고, 각 문제의 심각도에 따라 우선순위 복구 계획을 수립하여 신속하게 복구 작업을 진행합니다.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "synthetic",
+    "level": 4,
+    "persona": "noc_operator",
+    "scenario": "서비스 영향도 분석",
+    "source_files": null,
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "step": "장애의 파급 범위를 평가한다.",
+          "required_metric": "서비스 영향도 매트릭스",
+          "metric_params": {
+            "서비스 유형": [
+              "L2VPN",
+              "L3VPN"
+            ],
+            "장비 수": 6
+          }
+        },
+        {
+          "step": "장애로 인해 영향을 받는 고객의 비즈니스 중요도를 평가한다.",
+          "required_metric": "비즈니스 영향도",
+          "metric_params": {
+            "AS 그룹": [
+              "65001",
+              "65003",
+              "65000"
+            ]
+          }
+        },
+        {
+          "step": "동시에 발생한 문제들을 목록화하고, 우선순위 복구 계획을 수립한다.",
+          "required_metric": "우선순위 복구 계획",
+          "metric_params": {
+            "발견된 이상징후": {
+              "bgp_missing_pairs": 3,
+              "l2vpn_issues": 2
+            }
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_동시에 발생한 문제들을 목록화하고, 우선순위 복구 계획을 수립한다._우선순위 복구 계획": null,
+        "step_장애로 인해 영향을 받는 고객의 비즈니스 중요도를 평가한다._비즈니스 영향도": null,
+        "step_장애의 파급 범위를 평가한다._서비스 영향도 매트릭스": null
+      },
+      "question_length": 70,
+      "answer_length": 233,
+      "has_numbers": true,
+      "has_technical_terms": true,
+      "evaluation": {
+        "question_id": "ENHANCED_ENHANCED-SYNTHETIC-001",
+        "answer_type": "long",
+        "predicted_answer": "L2VPN 및 L3VPN 서비스 장애 발생 시, 먼저 장애의 파급 범위를 평가하여 서비스 영향도 매트릭스를 작성합니다. 이를 통해 영향을 받는 장비 수와 서비스 유형을 분석합니다. 다음으로, 장애로 인해 영향을 받는 고객의 비즈니스 중요도를 평가하여 비즈니스 영향도를 파악합니다. 마지막으로, 동시에 발생한 문제들을 목록화하고, 각 문제의 심각도에 따라 우선순위 복구 계획을 수립하여 신속하게 복구 작업을 진행합니다.",
+        "ground_truth": "L2VPN 및 L3VPN 서비스 장애 발생 시, 먼저 장애의 파급 범위를 평가하여 서비스 영향도 매트릭스를 작성합니다. 이를 통해 영향을 받는 장비 수와 서비스 유형을 분석합니다. 다음으로, 장애로 인해 영향을 받는 고객의 비즈니스 중요도를 평가하여 비즈니스 영향도를 파악합니다. 마지막으로, 동시에 발생한 문제들을 목록화하고, 각 문제의 심각도에 따라 우선순위 복구 계획을 수립하여 신속하게 복구 작업을 진행합니다.",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": null,
+        "normalized_accuracy": null,
+        "bert_score": null,
+        "bleu_score": 1.0,
+        "rouge_scores": {
+          "rouge-1": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f": 1.0
+          },
+          "rouge-2": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f": 1.0
+          },
+          "rouge-l": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f": 1.0
+          }
+        },
+        "structural_accuracy": null,
+        "overall_score": 0.7
+      },
+      "overall_score": 0.7
     }
   }
 ]

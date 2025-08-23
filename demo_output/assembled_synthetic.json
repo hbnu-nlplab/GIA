@@ -1,9 +1,9 @@
 [
   {
     "id": "ENHANCED_ENHANCED-SYNTHETIC-001",
-    "question": "L2VPN과 L3VPN 서비스에서 발생한 장애가 비즈니스에 미치는 영향을 최소화하기 위해, 어떤 장비와 AS 그룹을 우선적으로 복구해야 하는가?",
+    "question": "L2VPN 및 L3VPN 서비스 장애가 발생했을 때, 서비스 영향도를 평가하고 우선순위 복구 계획을 수립하는 방법은 무엇인가?",
     "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
-    "answer": "{\n  \"question\": \"L2VPN과 L3VPN 서비스에서 발생한 장애가 비즈니스에 미치는 영향을 최소화하기 위해, 어떤 장비와 AS 그룹을 우선적으로 복구해야 하는가?\",\n  \"plan\": [\n    \"장비 및 AS 그룹과 관련된 L2VPN 및 L3VPN 장애 상황을 파악한다.\",\n    \"각 서비스의 장애가 비즈니스에 미치는 영향을 평가한다.\",\n    \"장비와 AS 그룹의 중요도를 분석하여, 장애 발생 시 비즈니스에 큰 영향을 미치는 장비와 AS 그룹을 식별한다.\",\n    \"비즈니스 영향도가 큰 장비와 AS 그룹을 기반으로 우선순위 복구 계획을 수립한다.\",\n    \"복구 계획이 네트워크 안정성에 미치는 영향을 검토하고 조정한다.\"\n  ],\n  \"evidence\": {}\n}",
+    "answer": "L2VPN 및 L3VPN 서비스 장애 발생 시, 먼저 장애의 파급 범위를 평가하여 서비스 영향도 매트릭스를 작성합니다. 이를 통해 영향을 받는 장비 수와 서비스 유형을 분석합니다. 다음으로, 장애로 인해 영향을 받는 고객의 비즈니스 중요도를 평가하여 비즈니스 영향도를 파악합니다. 마지막으로, 동시에 발생한 문제들을 목록화하고, 각 문제의 심각도에 따라 우선순위 복구 계획을 수립하여 신속하게 복구 작업을 진행합니다.",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "synthetic",
@@ -14,21 +14,53 @@
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
-        "장비 및 AS 그룹과 관련된 L2VPN 및 L3VPN 장애 상황을 파악한다.",
-        "각 서비스의 장애가 비즈니스에 미치는 영향을 평가한다.",
-        "장비와 AS 그룹의 중요도를 분석하여, 장애 발생 시 비즈니스에 큰 영향을 미치는 장비와 AS 그룹을 식별한다.",
-        "비즈니스 영향도가 큰 장비와 AS 그룹을 기반으로 우선순위 복구 계획을 수립한다.",
-        "복구 계획이 네트워크 안정성에 미치는 영향을 검토하고 조정한다."
+        {
+          "step": "장애의 파급 범위를 평가한다.",
+          "required_metric": "서비스 영향도 매트릭스",
+          "metric_params": {
+            "서비스 유형": [
+              "L2VPN",
+              "L3VPN"
+            ],
+            "장비 수": 6
+          }
+        },
+        {
+          "step": "장애로 인해 영향을 받는 고객의 비즈니스 중요도를 평가한다.",
+          "required_metric": "비즈니스 영향도",
+          "metric_params": {
+            "AS 그룹": [
+              "65001",
+              "65003",
+              "65000"
+            ]
+          }
+        },
+        {
+          "step": "동시에 발생한 문제들을 목록화하고, 우선순위 복구 계획을 수립한다.",
+          "required_metric": "우선순위 복구 계획",
+          "metric_params": {
+            "발견된 이상징후": {
+              "bgp_missing_pairs": 3,
+              "l2vpn_issues": 2
+            }
+          }
+        }
       ],
       "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed"
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_동시에 발생한 문제들을 목록화하고, 우선순위 복구 계획을 수립한다._우선순위 복구 계획": null,
+        "step_장애로 인해 영향을 받는 고객의 비즈니스 중요도를 평가한다._비즈니스 영향도": null,
+        "step_장애의 파급 범위를 평가한다._서비스 영향도 매트릭스": null
+      }
     }
   },
   {
     "id": "ENHANCED_ENHANCED-SYNTHETIC-002",
-    "question": "현재 발견된 네트워크 이상 징후를 기반으로, 잠재적인 서비스 위험 요소를 식별하고 예방적 모니터링 전략을 어떻게 구성할 것인가?",
-    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
-    "answer": "{\n  \"question\": \"현재 발견된 네트워크 이상 징후를 기반으로, 잠재적인 서비스 위험 요소를 식별하고 예방적 모니터링 전략을 어떻게 구성할 것인가?\",\n  \"plan\": [\n    \"bgp_missing_pairs, l2vpn_issues와 같은 발견된 이상 징후의 세부 사항을 분석한다.\",\n    \"이상 징후가 발생할 수 있는 원인과 서비스 장애로 이어질 수 있는 시나리오를 파악한다.\",\n    \"비즈니스에 직접적인 영향을 미칠 가능성이 높은 위험 요소를 우선적으로 식별한다.\",\n    \"효율적인 예방적 모니터링 체계를 구축하기 위해 필요한 모니터링 지표와 경보 시스템을 정립한다.\",\n    \"모니터링 전략을 테스트하고, 필요시 조정하여 실효성을 확보한다.\"\n  ],\n  \"evidence\": {}\n}",
+    "question": "네트워크 운영 관점에서 L2VPN/L3VPN 서비스의 잠재적 위험 요소를 식별하고 예방적 모니터링 방안을 설계하는 방법은 무엇인가?",
+    "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
+    "answer": "네트워크 운영 관점에서 L2VPN/L3VPN 서비스의 잠재적 위험 요소를 식별하기 위해서는 먼저 현재 네트워크의 이상징후를 분석해야 합니다. 예를 들어, BGP 누락 쌍이나 L2VPN 문제와 같은 이상징후를 발견하여 잠재적 위험 요소를 파악합니다. 이후 이러한 위험 요소가 서비스에 미치는 영향을 평가하기 위해 서비스 영향도 매트릭스를 활용하여 L2VPN과 L3VPN 서비스의 장비 수를 고려합니다. 마지막으로, 예방적 모니터링 방안을 설계하고 구현하기 위해 BGP, OSPF, L2VPN, L3VPN과 같은 기술을 사용하여 지속적으로 네트워크 상태를 모니터링하고 이상징후를 조기에 발견할 수 있는 시스템을 구축합니다.",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "synthetic",
@@ -39,14 +71,49 @@
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
-        "bgp_missing_pairs, l2vpn_issues와 같은 발견된 이상 징후의 세부 사항을 분석한다.",
-        "이상 징후가 발생할 수 있는 원인과 서비스 장애로 이어질 수 있는 시나리오를 파악한다.",
-        "비즈니스에 직접적인 영향을 미칠 가능성이 높은 위험 요소를 우선적으로 식별한다.",
-        "효율적인 예방적 모니터링 체계를 구축하기 위해 필요한 모니터링 지표와 경보 시스템을 정립한다.",
-        "모니터링 전략을 테스트하고, 필요시 조정하여 실효성을 확보한다."
+        {
+          "step": "현재 네트워크의 이상징후를 분석하여 잠재적 위험 요소를 식별한다.",
+          "required_metric": "예방적 모니터링",
+          "metric_params": {
+            "발견된 이상징후": {
+              "bgp_missing_pairs": 3,
+              "ssh_missing_count": 0,
+              "vrf_without_rt": 0,
+              "l2vpn_issues": 2
+            }
+          }
+        },
+        {
+          "step": "위험 요소가 서비스에 미치는 영향을 평가한다.",
+          "required_metric": "서비스 영향도 매트릭스",
+          "metric_params": {
+            "서비스 유형": [
+              "L2VPN",
+              "L3VPN"
+            ],
+            "장비 수": 6
+          }
+        },
+        {
+          "step": "예방적 모니터링 방안을 설계하고 구현한다.",
+          "required_metric": "예방적 모니터링",
+          "metric_params": {
+            "사용 기술": [
+              "bgp",
+              "ospf",
+              "l2vpn",
+              "l3vpn"
+            ]
+          }
+        }
       ],
       "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed"
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_예방적 모니터링 방안을 설계하고 구현한다._예방적 모니터링": null,
+        "step_위험 요소가 서비스에 미치는 영향을 평가한다._서비스 영향도 매트릭스": null,
+        "step_현재 네트워크의 이상징후를 분석하여 잠재적 위험 요소를 식별한다._예방적 모니터링": null
+      }
     }
   }
 ]

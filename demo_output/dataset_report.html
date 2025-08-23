@@ -1,0 +1,985 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIA-Re 데이터셋 보고서</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f7fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .section {
+            background: white;
+            margin-bottom: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        
+        .section-header {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .section-header h2 {
+            color: #495057;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-content {
+            padding: 25px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .pipeline-steps {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .pipeline-step {
+            flex: 1;
+            min-width: 200px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .pipeline-step.success {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+        
+        .pipeline-step.error {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+        
+        .pipeline-step::after {
+            content: '→';
+            position: absolute;
+            right: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            color: #6c757d;
+        }
+        
+        .pipeline-step:last-child::after {
+            display: none;
+        }
+        
+        .chart-container {
+            width: 100%;
+            height: 400px;
+            margin: 20px 0;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #dee2e6;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 15px 25px;
+            background: #f8f9fa;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            background: white;
+            border-bottom-color: #667eea;
+            color: #667eea;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .question-card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .question-card:hover {
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .question-text {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .answer-text {
+            background: #e8f5e8;
+            border: 1px solid #c3e6c3;
+            border-radius: 5px;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            color: #155724;
+            margin-bottom: 10px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        .question-meta {
+            font-size: 0.85rem;
+            color: #6c757d;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .meta-tag {
+            background: #e9ecef;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+        
+        .file-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .file-table th,
+        .file-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .file-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .file-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            transition: width 0.3s ease;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-warning { background: #fff3cd; color: #856404; }
+        .badge-info { background: #d1ecf1; color: #0c5460; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+        
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #6c757d;
+            border-top: 1px solid #dee2e6;
+            margin-top: 50px;
+        }
+        
+        .explanation-box {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .explanation-title {
+            font-weight: 600;
+            color: #1565c0;
+            margin-bottom: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+            
+            .pipeline-steps {
+                flex-direction: column;
+            }
+            
+            .pipeline-step::after {
+                display: none;
+            }
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <div class="header">
+            <h1>🎯 GIA-Re 데이터셋 보고서</h1>
+            <p>네트워크 설정 질문-답변 데이터셋 종합 분석</p>
+            <p>생성일시: 2025년 08월 23일 16:51:38</p>
+        </div>
+        
+        
+        <div class="section">
+            <div class="section-header">
+                <h2>📊 데이터셋 개요</h2>
+            </div>
+            <div class="section-content">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">총 질문 수</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">2</div>
+                        <div class="stat-label">카테고리 수</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">네트워크 장비</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">100.0%</div>
+                        <div class="stat-label">파이프라인 성공률</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">0.76</div>
+                        <div class="stat-label">평균 품질 점수</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">0.4MB</div>
+                        <div class="stat-label">총 데이터 크기</div>
+                    </div>
+                </div>
+                
+                <div class="explanation-box">
+                    <div class="explanation-title">📈 주요 지표 설명</div>
+                    <ul style="margin-left: 20px;">
+                        <li><strong>총 질문 수:</strong> 생성된 모든 질문-답변 쌍의 총 개수</li>
+                        <li><strong>카테고리 수:</strong> BGP, 보안, VRF 등 다양한 네트워크 영역</li>
+                        <li><strong>네트워크 장비:</strong> 분석된 라우터/스위치 개수</li>
+                        <li><strong>파이프라인 성공률:</strong> 6단계 생성 과정의 성공률</li>
+                        <li><strong>평균 품질 점수:</strong> BLEU, F1 등 다중 메트릭 기반 점수</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        
+        <div class="section">
+            <div class="section-header">
+                <h2>🔧 파이프라인 실행 결과</h2>
+            </div>
+            <div class="section-content">
+                <div class="pipeline-steps">
+                    
+            <div class="pipeline-step success">
+                <div style="font-size: 1.5rem; margin-bottom: 10px;">📄</div>
+                <div style="font-weight: 600; margin-bottom: 5px;">XML 파싱</div>
+                <div style="font-size: 0.9rem; color: #6c757d;">
+                    네트워크 설정 파일 분석
+                </div>
+            </div>
+            
+            <div class="pipeline-step success">
+                <div style="font-size: 1.5rem; margin-bottom: 10px;">📝</div>
+                <div style="font-weight: 600; margin-bottom: 5px;">기초 질문 생성</div>
+                <div style="font-size: 0.9rem; color: #6c757d;">
+                    규칙 기반 질문 생성
+                </div>
+            </div>
+            
+            <div class="pipeline-step success">
+                <div style="font-size: 1.5rem; margin-bottom: 10px;">🤖</div>
+                <div style="font-weight: 600; margin-bottom: 5px;">심화 질문 생성</div>
+                <div style="font-size: 0.9rem; color: #6c757d;">
+                    LLM 기반 질문 생성
+                </div>
+            </div>
+            
+            <div class="pipeline-step success">
+                <div style="font-size: 1.5rem; margin-bottom: 10px;">🔧</div>
+                <div style="font-weight: 600; margin-bottom: 5px;">데이터 통합</div>
+                <div style="font-size: 0.9rem; color: #6c757d;">
+                    질문 통합 및 중복 제거
+                </div>
+            </div>
+            
+            <div class="pipeline-step success">
+                <div style="font-size: 1.5rem; margin-bottom: 10px;">✅</div>
+                <div style="font-weight: 600; margin-bottom: 5px;">품질 검증</div>
+                <div style="font-size: 0.9rem; color: #6c757d;">
+                    품질 필터링
+                </div>
+            </div>
+            
+            <div class="pipeline-step success">
+                <div style="font-size: 1.5rem; margin-bottom: 10px;">📊</div>
+                <div style="font-weight: 600; margin-bottom: 5px;">평가</div>
+                <div style="font-size: 0.9rem; color: #6c757d;">
+                    다면적 성능 평가
+                </div>
+            </div>
+            
+                </div>
+                
+                <div class="explanation-box">
+                    <div class="explanation-title">📈 생성 통계</div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                        <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: #28a745;">0</div>
+                            <div style="font-size: 0.9rem; color: #6c757d;">기초 질문 생성</div>
+                        </div>
+                        <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: #007bff;">0</div>
+                            <div style="font-size: 0.9rem; color: #6c757d;">심화 질문 생성</div>
+                        </div>
+                        <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: #6f42c1;">0</div>
+                            <div style="font-size: 0.9rem; color: #6c757d;">최종 데이터셋</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+        <div class="section">
+            <div class="section-header">
+                <h2>📚 데이터셋 구성</h2>
+            </div>
+            <div class="section-content">
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('split')">Train/Val/Test 분할</button>
+                    <button class="tab" onclick="switchTab('categories')">카테고리별 분포</button>
+                    <button class="tab" onclick="switchTab('complexity')">복잡도 분포</button>
+                </div>
+                
+                <div id="split" class="tab-content active">
+                    <div class="chart-container">
+                        <canvas id="splitChart"></canvas>
+                    </div>
+                    <div class="explanation-box">
+                        <div class="explanation-title">📊 데이터 분할 상세</div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 10px;">
+                            <div>
+                                <strong>Train (16개):</strong>
+                                <p style="font-size: 0.9rem; color: #6c757d; margin-top: 5px;">
+                                    모델 학습에 사용되는 주 데이터셋으로, 전체의 70%를 차지합니다.
+                                </p>
+                            </div>
+                            <div>
+                                <strong>Validation (3개):</strong>
+                                <p style="font-size: 0.9rem; color: #6c757d; margin-top: 5px;">
+                                    하이퍼파라미터 튜닝과 모델 선택에 사용되는 검증 데이터셋입니다.
+                                </p>
+                            </div>
+                            <div>
+                                <strong>Test (4개):</strong>
+                                <p style="font-size: 0.9rem; color: #6c757d; margin-top: 5px;">
+                                    최종 성능 평가에 사용되는 테스트 데이터셋입니다.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="categories" class="tab-content">
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                    <div class="explanation-box">
+                        <div class="explanation-title">🏷️ 카테고리 설명</div>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>BGP_Consistency:</strong> Border Gateway Protocol 라우팅 설정의 일관성과 정확성을 검증하는 질문들</li>
+                            <li><strong>Security_Policy:</strong> SSH 접근, AAA 인증, 방화벽 등 네트워크 보안 정책 관련 질문들</li>
+                            <li><strong>VRF_Consistency:</strong> Virtual Routing and Forwarding 설정의 올바른 구성을 확인하는 질문들</li>
+                            <li><strong>Interface_Config:</strong> 네트워크 인터페이스 설정과 연결 상태를 점검하는 질문들</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div id="complexity" class="tab-content">
+                    <div class="chart-container">
+                        <canvas id="complexityChart"></canvas>
+                    </div>
+                    <div class="explanation-box">
+                        <div class="explanation-title">🎯 복잡도 레벨 설명</div>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>BASIC:</strong> 직관적이고 단순한 확인 질문 (예: "SSH가 활성화된 장비는?")</li>
+                            <li><strong>ANALYTICAL:</strong> 단일 메트릭 기반 분석이 필요한 질문 (예: "BGP 피어 수는?")</li>
+                            <li><strong>SYNTHETIC:</strong> 다중 요소를 종합적으로 판단해야 하는 질문 (예: "네트워크 전체 보안 상태 평가")</li>
+                            <li><strong>DIAGNOSTIC:</strong> 문제 진단과 해결책 제시가 필요한 질문 (예: "BGP 연결 실패 원인 분석")</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+        <div class="section">
+            <div class="section-header">
+                <h2>🎯 품질 분석</h2>
+            </div>
+            <div class="section-content">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">0.870</div>
+                        <div class="stat-label">정확도 (Exact Match)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">0.870</div>
+                        <div class="stat-label">F1 Score</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">0.991</div>
+                        <div class="stat-label">BLEU Score</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">0.765</div>
+                        <div class="stat-label">종합 점수</div>
+                    </div>
+                </div>
+                
+                <div class="explanation-box">
+                    <div class="explanation-title">📏 평가 메트릭 상세 설명</div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 15px;">
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                            <h5 style="color: #007bff; margin-bottom: 8px;">🎯 Exact Match</h5>
+                            <p style="font-size: 0.9rem;">생성된 답변이 정답과 문자 그대로 완전히 일치하는 비율을 측정합니다.</p>
+                        </div>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                            <h5 style="color: #28a745; margin-bottom: 8px;">📊 F1 Score</h5>
+                            <p style="font-size: 0.9rem;">정밀도(Precision)와 재현율(Recall)의 조화평균으로, 답변의 전반적 품질을 나타냅니다.</p>
+                        </div>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                            <h5 style="color: #6f42c1; margin-bottom: 8px;">📝 BLEU Score</h5>
+                            <p style="font-size: 0.9rem;">n-gram 기반으로 생성된 텍스트와 참조 텍스트 간의 유사도를 측정합니다.</p>
+                        </div>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                            <h5 style="color: #dc3545; margin-bottom: 8px;">⭐ 종합 점수</h5>
+                            <p style="font-size: 0.9rem;">모든 개별 메트릭들의 가중평균으로 계산된 최종 품질 점수입니다.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <h4>📈 답변 유형별 성능</h4>
+                    <div style="display: flex; gap: 20px; margin-top: 15px;">
+                        <div style="flex: 1; background: #e8f5e8; padding: 15px; border-radius: 8px;">
+                            <strong>Short Answer 정확도:</strong> 0.800
+                            <p style="font-size: 0.9rem; margin-top: 5px;">간단한 팩트 기반 질문의 정확도</p>
+                        </div>
+                        <div style="flex: 1; background: #fff3cd; padding: 15px; border-radius: 8px;">
+                            <strong>Long Answer 품질:</strong> 1.000
+                            <p style="font-size: 0.9rem; margin-top: 5px;">복잡한 설명형 답변의 품질 점수</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+        <div class="section">
+            <div class="section-header">
+                <h2>📝 질문 샘플</h2>
+            </div>
+            <div class="section-content">
+                <div class="explanation-box">
+                    <div class="explanation-title">📋 샘플 설명</div>
+                    <p>실제 네트워크 설정 데이터를 기반으로 생성된 질문-답변 쌍들의 대표적인 예시입니다. 
+                    각 질문은 실무에서 활용할 수 있는 네트워크 지식을 평가하도록 설계되었습니다.</p>
+                </div>
+                
+            <div class="question-card">
+                <div class="question-text">❓ SSH가 활성화된 장비 목록은?</div>
+                <div class="answer-text">💡 CE1, CE2, sample10, sample7, sample8, sample9</div>
+                <div class="question-meta">
+                    <span class="meta-tag">ID: BASIC_DSL-SSH_ENABLED_DEVICES-51412</span>
+                    <span class="badge badge-info">SHORT</span>
+                    <span class="meta-tag">카테고리: basic</span>
+                    <span class="meta-tag">복잡도: basic</span>
+                </div>
+            </div>
+            
+            <div class="question-card">
+                <div class="question-text">❓ SSH가 활성화된 장비 목록은?</div>
+                <div class="answer-text">💡 CE1, CE2, sample10, sample7, sample8, sample9</div>
+                <div class="question-meta">
+                    <span class="meta-tag">ID: BASIC_DSL-SSH_ENABLED_DEVICES-51661</span>
+                    <span class="badge badge-info">SHORT</span>
+                    <span class="meta-tag">카테고리: basic</span>
+                    <span class="meta-tag">복잡도: basic</span>
+                </div>
+            </div>
+            
+            <div class="question-card">
+                <div class="question-text">❓ SSH가 활성화된 장비 목록은?</div>
+                <div class="answer-text">💡 CE1, CE2, sample10, sample7, sample8, sample9</div>
+                <div class="question-meta">
+                    <span class="meta-tag">ID: BASIC_DSL-SSH_ENABLED_DEVICES-37102</span>
+                    <span class="badge badge-info">SHORT</span>
+                    <span class="meta-tag">카테고리: basic</span>
+                    <span class="meta-tag">복잡도: basic</span>
+                </div>
+            </div>
+            
+            <div class="question-card">
+                <div class="question-text">❓ iBGP 풀메시 구성에서 누락된 연결이 네트워크 경로 수렴에 미치는 영향을 어떻게 평가할 수 있을까요?</div>
+                <div class="answer-text">💡 iBGP 풀메시 구성에서 누락된 연결이 네트워크 경로 수렴에 미치는 영향을 평가하기 위해, 먼저 누락된 연결을 확인하고, 해당 라우터들 간의 경로 수렴 시간을 측정해야 합니다. 이후, 측정된 경로 수렴 시간을 바탕으로 네트워크 성능에 미치는 영향을 분석할 수 있습니다. 이 과정에서 누락된 연결이 경로 수렴 시간을 지연시킬 수 있으며, 이는 전체 네트워크의 ...</div>
+                <div class="question-meta">
+                    <span class="meta-tag">ID: ENHANCED_ENHANCED-ANALYTICAL-001</span>
+                    <span class="badge badge-warning">LONG</span>
+                    <span class="meta-tag">카테고리: advanced</span>
+                    <span class="meta-tag">복잡도: analytical</span>
+                </div>
+            </div>
+            
+            <div class="question-card">
+                <div class="question-text">❓ 특정 BGP 피어의 장애가 발생할 경우 전체 네트워크에 미치는 파급 효과를 어떻게 분석할 수 있을까요?</div>
+                <div class="answer-text">💡 특정 BGP 피어의 장애가 발생할 경우, 먼저 해당 피어의 상태를 확인하여 장애 발생 여부를 식별합니다. 이후 장애가 발생한 피어에서 다른 피어로의 경로 변화 분석을 통해 어떤 경로가 영향을 받았는지 파악합니다. 마지막으로, 이러한 경로 변화가 전체 네트워크의 성능 및 안정성에 미치는 영향을 평가하여, 장애가 네트워크에 미친 파급 효과를 분석할 수 있습니다...</div>
+                <div class="question-meta">
+                    <span class="meta-tag">ID: ENHANCED_ENHANCED-ANALYTICAL-002</span>
+                    <span class="badge badge-warning">LONG</span>
+                    <span class="meta-tag">카테고리: advanced</span>
+                    <span class="meta-tag">복잡도: analytical</span>
+                </div>
+            </div>
+            
+            <div class="question-card">
+                <div class="question-text">❓ 네트워크 장비에서 발견된 BGP 페어링 누락과 L2VPN 이슈가 보안 정책 준수성에 미치는 영향을 평가하십시오.</div>
+                <div class="answer-text">💡 BGP 페어링 누락과 L2VPN 이슈는 네트워크의 안정성과 보안 정책 준수성에 중대한 영향을 미칠 수 있습니다. BGP 페어링이 누락되면 AS 간의 경로 정보 교환이 원활하지 않아 네트워크의 연결성이 저하되고, 이는 서비스 중단으로 이어질 수 있습니다. L2VPN 이슈 또한 네트워크 경로의 불안정성을 초래하여 서비스 중단 위험을 증가시킵니다. 그러나 현재 ...</div>
+                <div class="question-meta">
+                    <span class="meta-tag">ID: ENHANCED_ENHANCED-DIAGNOSTIC-001</span>
+                    <span class="badge badge-warning">LONG</span>
+                    <span class="meta-tag">카테고리: advanced</span>
+                    <span class="meta-tag">복잡도: diagnostic</span>
+                </div>
+            </div>
+            
+            <div class="question-card">
+                <div class="question-text">❓ 새로운 데이터센터 추가가 기존 L2/L3VPN 서비스에 미치는 영향을 최소화하기 위해 어떤 조치를 고려해야 할까?</div>
+                <div class="answer-text">💡 새로운 데이터센터 추가가 기존 L2/L3VPN 서비스에 미치는 영향을 최소화하기 위해서는 우선 현재의 L2/L3VPN 구성과 문제점을 파악하고, VPN 서비스의 트래픽 경로를 최적화할 필요가 있습니다. 또한, 새로운 데이터센터와 기존 네트워크 간의 연결망의 대역폭과 안정성을 평가하여 필요한 장비 수를 확인해야 합니다. 마지막으로, 서비스 중단을 최소화하기 ...</div>
+                <div class="question-meta">
+                    <span class="meta-tag">ID: ENHANCED_ENHANCED-ANALYTICAL-002</span>
+                    <span class="badge badge-warning">LONG</span>
+                    <span class="meta-tag">카테고리: advanced</span>
+                    <span class="meta-tag">복잡도: analytical</span>
+                </div>
+            </div>
+            
+            <div class="question-card">
+                <div class="question-text">❓ 데이터센터 확장 시 BGP와 OSPF 재구성의 필요성을 결정하기 위해 어떤 요소를 분석해야 할까?</div>
+                <div class="answer-text">💡 데이터센터 확장 시 BGP와 OSPF 재구성의 필요성을 결정하기 위해서는 현재 BGP 및 OSPF 구성 상태를 검토하고, BGP 피어 추가로 인한 라우터 자원 사용률을 평가하며, OSPF 영역 재분할의 필요성을 검토하고, 확장에 따른 네트워크 지연 시간 및 성능 영향을 분석해야 합니다. 이러한 요소들은 각각의 네트워크 구성 요소가 확장에 적합한지, 자원 소...</div>
+                <div class="question-meta">
+                    <span class="meta-tag">ID: ENHANCED_ENHANCED-ANALYTICAL-001</span>
+                    <span class="badge badge-warning">LONG</span>
+                    <span class="meta-tag">카테고리: advanced</span>
+                    <span class="meta-tag">복잡도: analytical</span>
+                </div>
+            </div>
+            
+                
+            </div>
+        </div>
+        
+        
+        <div class="section">
+            <div class="section-header">
+                <h2>📂 출력 파일 목록</h2>
+            </div>
+            <div class="section-content">
+                <div class="explanation-box">
+                    <div class="explanation-title">📁 파일 구조 안내</div>
+                    <p>데이터셋 생성 과정에서 생성된 모든 파일들의 목록과 각각의 용도입니다. 
+                    각 파일은 특정 목적에 맞게 설계되었으며, 연구나 개발 목적에 따라 적절한 파일을 선택하여 사용할 수 있습니다.</p>
+                </div>
+                
+                <table class="file-table">
+                    <thead>
+                        <tr>
+                            <th>📋 파일명</th>
+                            <th>📝 설명 및 용도</th>
+                            <th>📏 크기</th>
+                            <th>🕒 수정일시</th>
+                            <th>📍 경로</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+            <tr>
+                <td><strong>network_config_qa_dataset.json</strong></td>
+                <td>📋 최종 통합 데이터셋 + 상세한 평가 결과</td>
+                <td style='color: #007bff;'>0.12 MB</td>
+                <td>2025-08-23 15:29:16</td>
+                <td><code>network_config_qa_dataset.json</code></td>
+            </tr>
+            
+            <tr>
+                <td><strong>train.json</strong></td>
+                <td>🎓 모델 학습용 데이터 (전체의 약 70%)</td>
+                <td style='color: #6c757d;'>0.04 MB</td>
+                <td>2025-08-23 15:29:16</td>
+                <td><code>train.json</code></td>
+            </tr>
+            
+            <tr>
+                <td><strong>validated_dataset.json</strong></td>
+                <td>✅ 품질 검증을 통과한 검증된 질문-답변 쌍들</td>
+                <td style='color: #6c757d;'>0.04 MB</td>
+                <td>2025-08-23 15:29:16</td>
+                <td><code>validated_dataset.json</code></td>
+            </tr>
+            
+            <tr>
+                <td><strong>basic_dataset.json</strong></td>
+                <td>📝 규칙 기반으로 생성된 기초 질문들 (정확한 메트릭 기반)</td>
+                <td style='color: #6c757d;'>0.03 MB</td>
+                <td>2025-08-23 15:28:12</td>
+                <td><code>basic_dataset.json</code></td>
+            </tr>
+            
+            <tr>
+                <td><strong>metadata.json</strong></td>
+                <td>🔧 데이터셋 생성 과정의 모든 설정과 통계 정보를 포함한 메타데이터</td>
+                <td style='color: #6c757d;'>0.03 MB</td>
+                <td>2025-08-23 15:29:16</td>
+                <td><code>metadata.json</code></td>
+            </tr>
+            
+            <tr>
+                <td><strong>enhanced_dataset.json</strong></td>
+                <td>🤖 LLM으로 생성된 심화 질문들 (복잡한 추론 포함)</td>
+                <td style='color: #6c757d;'>0.03 MB</td>
+                <td>2025-08-23 15:29:16</td>
+                <td><code>enhanced_dataset.json</code></td>
+            </tr>
+            
+            <tr>
+                <td><strong>parsed_facts.json</strong></td>
+                <td>🌐 XML 파일에서 추출한 구조화된 네트워크 설정 데이터</td>
+                <td style='color: #6c757d;'>0.02 MB</td>
+                <td>2025-08-23 15:28:12</td>
+                <td><code>parsed_facts.json</code></td>
+            </tr>
+            
+            <tr>
+                <td><strong>assembled_basic.json</strong></td>
+                <td>🔧 기본 복잡도 질문들만 모아놓은 어셈블리</td>
+                <td style='color: #6c757d;'>0.01 MB</td>
+                <td>2025-08-23 15:29:16</td>
+                <td><code>assembled_basic.json</code></td>
+            </tr>
+            
+            <tr>
+                <td><strong>assembled_diagnostic.json</strong></td>
+                <td>🩺 진단형 질문들의 어셈블리</td>
+                <td style='color: #6c757d;'>0.01 MB</td>
+                <td>2025-08-23 15:29:16</td>
+                <td><code>assembled_diagnostic.json</code></td>
+            </tr>
+            
+            <tr>
+                <td><strong>assembled_analytical.json</strong></td>
+                <td>🔍 분석적 사고가 필요한 질문들의 어셈블리</td>
+                <td style='color: #6c757d;'>0.01 MB</td>
+                <td>2025-08-23 15:29:16</td>
+                <td><code>assembled_analytical.json</code></td>
+            </tr>
+            
+            <tr>
+                <td><strong>test.json</strong></td>
+                <td>📊 최종 성능 평가용 테스트 데이터 (약 15%)</td>
+                <td style='color: #6c757d;'>0.01 MB</td>
+                <td>2025-08-23 15:29:16</td>
+                <td><code>test.json</code></td>
+            </tr>
+            
+            <tr>
+                <td><strong>validation.json</strong></td>
+                <td>🔍 하이퍼파라미터 튜닝 및 모델 검증용 데이터 (약 15%)</td>
+                <td style='color: #6c757d;'>0.01 MB</td>
+                <td>2025-08-23 15:29:16</td>
+                <td><code>validation.json</code></td>
+            </tr>
+            
+            <tr>
+                <td><strong>assembled_synthetic.json</strong></td>
+                <td>🔄 종합적 판단이 필요한 질문들의 어셈블리</td>
+                <td style='color: #6c757d;'>0.01 MB</td>
+                <td>2025-08-23 15:29:16</td>
+                <td><code>assembled_synthetic.json</code></td>
+            </tr>
+            
+            <tr>
+                <td><strong>all_cases.json</strong></td>
+                <td>🎭 다양한 네트워크 시나리오별 확장 케이스 (장애, 확장 등)</td>
+                <td style='color: #6c757d;'>0.00 MB</td>
+                <td>2025-08-23 15:29:16</td>
+                <td><code>cases\all_cases.json</code></td>
+            </tr>
+            
+                    </tbody>
+                </table>
+                
+                <div style="margin-top: 20px;">
+                    <h4>🎯 파일 사용 가이드</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 15px;">
+                        <div style="background: #e8f5e8; padding: 15px; border-radius: 8px;">
+                            <strong>🎓 모델 학습용:</strong>
+                            <p style="font-size: 0.9rem; margin-top: 5px;">train.json, validation.json, test.json 사용</p>
+                        </div>
+                        <div style="background: #fff3cd; padding: 15px; border-radius: 8px;">
+                            <strong>📚 연구 분석용:</strong>
+                            <p style="font-size: 0.9rem; margin-top: 5px;">network_config_qa_dataset.json + metadata.json 사용</p>
+                        </div>
+                        <div style="background: #d1ecf1; padding: 15px; border-radius: 8px;">
+                            <strong>🔧 커스텀 개발용:</strong>
+                            <p style="font-size: 0.9rem; margin-top: 5px;">basic_dataset.json + enhanced_dataset.json 사용</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+        <div class="footer">
+            <p>🎯 <strong>GIA-Re: 네트워크 설정 질문-답변 데이터셋 생성 시스템</strong></p>
+            <p>인공지능 기반 네트워크 교육 및 평가를 위한 고품질 데이터셋</p>
+            <p style="margin-top: 10px; font-size: 0.9rem; color: #aaa;">
+                Generated by DatasetReportGenerator | 
+                <a href="https://github.com/YUjinEDU/GIA-Re" style="color: #667eea;">GitHub Repository</a>
+            </p>
+        </div>
+        
+    </div>
+    
+    <script>
+        
+        // 탭 전환 함수
+        function switchTab(tabName) {
+            // 모든 탭과 콘텐츠 비활성화
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // 선택된 탭과 콘텐츠 활성화
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+        
+        // 차트 생성
+        window.addEventListener('load', function() {
+            // Train/Val/Test 분할 차트
+            const splitCtx = document.getElementById('splitChart').getContext('2d');
+            new Chart(splitCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Train', 'Validation', 'Test'],
+                    datasets: [{
+                        data: [16, 3, 4],
+                        backgroundColor: ['#74b9ff', '#a29bfe', '#fd79a8'],
+                        borderWidth: 3,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // 카테고리 분포 차트
+            const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+            new Chart(categoryCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['advanced', 'basic'],
+                    datasets: [{
+                        label: '질문 수',
+                        data: [18, 53],
+                        backgroundColor: '#74b9ff',
+                        borderColor: '#0984e3',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+            
+            // 복잡도 분포 차트
+            const complexityCtx = document.getElementById('complexityChart').getContext('2d');
+            new Chart(complexityCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['analytical', 'basic', 'diagnostic', 'synthetic'],
+                    datasets: [{
+                        data: [6, 53, 8, 4],
+                        backgroundColor: ['#00b894', '#fdcb6e', '#e17055', '#a29bfe'],
+                        borderWidth: 3,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+        
+    </script>
+</body>
+</html>
+        

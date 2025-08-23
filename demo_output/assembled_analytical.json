@@ -1,9 +1,9 @@
 [
   {
     "id": "ENHANCED_ENHANCED-ANALYTICAL-001",
-    "question": "iBGP 풀메시 구성에서 누락된 세 개의 연결이 BGP 경로 수렴성에 어떤 영향을 미칠 수 있으며, 이를 해결하기 위한 방안은 무엇인가?",
+    "question": "iBGP 풀메시 구성에서 누락된 연결이 네트워크 경로 수렴에 미치는 영향을 어떻게 평가할 수 있을까요?",
     "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "answer": "{\n  \"question\": \"iBGP 풀메시 구성에서 누락된 세 개의 연결이 BGP 경로 수렴성에 어떤 영향을 미칠 수 있으며, 이를 해결하기 위한 방안은 무엇인가?\",\n  \"plan\": [\n    \"iBGP 풀메시 구성에서 누락된 연결을 식별하고, 이는 경로 수렴에 어떤 지연을 초래할 수 있는지 분석합니다.\",\n    \"경로 수렴성이 저하될 경우, 라우터 간의 업데이트 전파가 지연될 수 있으며 이는 네트워크 전체의 응답성에 영향을 미칠 수 있습니다.\",\n    \"누락된 연결이 발생한 이유를 조사합니다. 예를 들어, 설정 오류 또는 잘못된 네트워크 설계로 인한 것인지 확인합니다.\",\n    \"이상의 원인을 제거하기 위한 해결책을 제안합니다. 필요 시 추가적인 iBGP 피어링 설정을 통해 풀메시 구성을 완성합니다.\",\n    \"제안된 해결책이 실제 네트워크에서 경로 수렴성을 개선하는지 테스트 및 검증합니다.\"\n  ],\n  \"evidence\": {}\n}",
+    "answer": "iBGP 풀메시 구성에서 누락된 연결이 네트워크 경로 수렴에 미치는 영향을 평가하기 위해, 먼저 누락된 연결을 확인하고, 해당 라우터들 간의 경로 수렴 시간을 측정해야 합니다. 이후, 측정된 경로 수렴 시간을 바탕으로 네트워크 성능에 미치는 영향을 분석할 수 있습니다. 이 과정에서 누락된 연결이 경로 수렴 시간을 지연시킬 수 있으며, 이는 전체 네트워크의 성능 저하로 이어질 수 있습니다.",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "analytical",
@@ -14,21 +14,43 @@
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
-        "iBGP 풀메시 구성에서 누락된 연결을 식별하고, 이는 경로 수렴에 어떤 지연을 초래할 수 있는지 분석합니다.",
-        "경로 수렴성이 저하될 경우, 라우터 간의 업데이트 전파가 지연될 수 있으며 이는 네트워크 전체의 응답성에 영향을 미칠 수 있습니다.",
-        "누락된 연결이 발생한 이유를 조사합니다. 예를 들어, 설정 오류 또는 잘못된 네트워크 설계로 인한 것인지 확인합니다.",
-        "이상의 원인을 제거하기 위한 해결책을 제안합니다. 필요 시 추가적인 iBGP 피어링 설정을 통해 풀메시 구성을 완성합니다.",
-        "제안된 해결책이 실제 네트워크에서 경로 수렴성을 개선하는지 테스트 및 검증합니다."
+        {
+          "step": 1,
+          "description": "iBGP 풀메시 누락된 연결 확인",
+          "required_metric": "bgp_missing_pairs",
+          "metric_params": null
+        },
+        {
+          "step": 2,
+          "description": "누락된 연결이 있는 라우터들 간의 경로 수렴 시간 측정",
+          "required_metric": "route_convergence_time",
+          "metric_params": {
+            "routers": "list_of_routers_with_missing_pairs"
+          }
+        },
+        {
+          "step": 3,
+          "description": "경로 수렴 시간에 기반한 네트워크 성능 영향 평가",
+          "required_metric": "network_performance",
+          "metric_params": {
+            "convergence_time": "measured_times"
+          }
+        }
       ],
       "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed"
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_1_bgp_missing_pairs": null,
+        "step_2_route_convergence_time": null,
+        "step_3_network_performance": null
+      }
     }
   },
   {
     "id": "ENHANCED_ENHANCED-ANALYTICAL-002",
-    "question": "특정 AS 그룹 내에서 피어 장애가 발생할 경우, 이로 인해 다른 AS 그룹 및 전체 네트워크에 미치는 파급효과는 어떻게 분석할 수 있으며, 이를 완화하기 위한 방법은 무엇인가?",
-    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
-    "answer": "{\n  \"question\": \"특정 AS 그룹 내에서 피어 장애가 발생할 경우, 이로 인해 다른 AS 그룹 및 전체 네트워크에 미치는 파급효과는 어떻게 분석할 수 있으며, 이를 완화하기 위한 방법은 무엇인가?\",\n  \"plan\": [\n    \"특정 AS 그룹 내에서 장애가 발생할 수 있는 피어 및 해당 피어링의 중요성을 평가합니다.\",\n    \"해당 피어 장애가 발생할 경우 네트워크 내 다른 AS 그룹에 전파될 수 있는 지연 및 경로 변화 파급효과를 시뮬레이션합니다.\",\n    \"피어 장애 시의 경로 재설정 과정에서 발생할 수 있는 라우팅 루프 또는 네트워크 단절 가능성을 분석합니다.\",\n    \"필요한 경우, 대체 경로 설정 및 BGP 정책 조정을 통해 장애 발생 시의 영향을 최소화할 수 있는 방안을 마련합니다.\",\n    \"제안된 방안이 실제로 네트워크 안정성을 어떻게 향상시키는지에 대한 테스트 및 검증을 수행합니다.\"\n  ],\n  \"evidence\": {}\n}",
+    "question": "특정 BGP 피어의 장애가 발생할 경우 전체 네트워크에 미치는 파급 효과를 어떻게 분석할 수 있을까요?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "answer": "특정 BGP 피어의 장애가 발생할 경우, 먼저 해당 피어의 상태를 확인하여 장애 발생 여부를 식별합니다. 이후 장애가 발생한 피어에서 다른 피어로의 경로 변화 분석을 통해 어떤 경로가 영향을 받았는지 파악합니다. 마지막으로, 이러한 경로 변화가 전체 네트워크의 성능 및 안정성에 미치는 영향을 평가하여, 장애가 네트워크에 미친 파급 효과를 분석할 수 있습니다. 이 과정에서 필요한 메트릭을 수집하고 분석하는 것이 중요합니다.",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "analytical",
@@ -39,21 +61,45 @@
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
-        "특정 AS 그룹 내에서 장애가 발생할 수 있는 피어 및 해당 피어링의 중요성을 평가합니다.",
-        "해당 피어 장애가 발생할 경우 네트워크 내 다른 AS 그룹에 전파될 수 있는 지연 및 경로 변화 파급효과를 시뮬레이션합니다.",
-        "피어 장애 시의 경로 재설정 과정에서 발생할 수 있는 라우팅 루프 또는 네트워크 단절 가능성을 분석합니다.",
-        "필요한 경우, 대체 경로 설정 및 BGP 정책 조정을 통해 장애 발생 시의 영향을 최소화할 수 있는 방안을 마련합니다.",
-        "제안된 방안이 실제로 네트워크 안정성을 어떻게 향상시키는지에 대한 테스트 및 검증을 수행합니다."
+        {
+          "step": 1,
+          "description": "장애 발생 피어 식별",
+          "required_metric": "peer_status",
+          "metric_params": {
+            "peer_id": "specific_peer_id"
+          }
+        },
+        {
+          "step": 2,
+          "description": "장애가 발생한 피어에서 다른 피어로의 경로 변화 분석",
+          "required_metric": "path_change_analysis",
+          "metric_params": {
+            "affected_peer": "specific_peer_id"
+          }
+        },
+        {
+          "step": 3,
+          "description": "경로 변화가 네트워크 성능 및 안정성에 미치는 영향 평가",
+          "required_metric": "network_stability",
+          "metric_params": {
+            "path_changes": "observed_changes"
+          }
+        }
       ],
       "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed"
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_1_peer_status": null,
+        "step_2_path_change_analysis": null,
+        "step_3_network_stability": null
+      }
     }
   },
   {
     "id": "ENHANCED_ENHANCED-ANALYTICAL-001",
-    "question": "장기적인 네트워크 확장을 고려할 때, 새로운 데이터센터 추가로 인한 BGP 및 OSPF 재구성이 네트워크의 용량 및 안정성에 미치는 영향을 분석하라.",
+    "question": "데이터센터 확장 시 BGP와 OSPF 재구성의 필요성을 결정하기 위해 어떤 요소를 분석해야 할까?",
     "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "answer": "{\n  \"question\": \"장기적인 네트워크 확장을 고려할 때, 새로운 데이터센터 추가로 인한 BGP 및 OSPF 재구성이 네트워크의 용량 및 안정성에 미치는 영향을 분석하라.\",\n  \"plan\": [\n    \"현재 네트워크의 BGP/OSPF 구성 상태를 검토한다.\",\n    \"새로운 데이터센터에서 요구되는 트래픽 및 라우팅 경로를 예측한다.\",\n    \"BGP 및 OSPF의 최적 라우팅 경로 및 정책을 재설계하여 네트워크 용량을 확장한다.\",\n    \"재설계된 라우팅 경로가 네트워크 안정성에 미치는 영향을 시뮬레이션하거나 파일럿 테스트를 수행한다.\",\n    \"확장된 용량이 장기적인 네트워크 수요를 충족할 수 있는지 평가한다.\"\n  ],\n  \"evidence\": {}\n}",
+    "answer": "데이터센터 확장 시 BGP와 OSPF 재구성의 필요성을 결정하기 위해서는 현재 BGP 및 OSPF 구성 상태를 검토하고, BGP 피어 추가로 인한 라우터 자원 사용률을 평가하며, OSPF 영역 재분할의 필요성을 검토하고, 확장에 따른 네트워크 지연 시간 및 성능 영향을 분석해야 합니다. 이러한 요소들은 각각의 네트워크 구성 요소가 확장에 적합한지, 자원 소모가 적절한지, 그리고 네트워크의 복잡도가 증가하지 않도록 하는 데 중요한 역할을 합니다.",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "analytical",
@@ -64,21 +110,42 @@
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
-        "현재 네트워크의 BGP/OSPF 구성 상태를 검토한다.",
-        "새로운 데이터센터에서 요구되는 트래픽 및 라우팅 경로를 예측한다.",
-        "BGP 및 OSPF의 최적 라우팅 경로 및 정책을 재설계하여 네트워크 용량을 확장한다.",
-        "재설계된 라우팅 경로가 네트워크 안정성에 미치는 영향을 시뮬레이션하거나 파일럿 테스트를 수행한다.",
-        "확장된 용량이 장기적인 네트워크 수요를 충족할 수 있는지 평가한다."
+        {
+          "step": "현재 BGP 및 OSPF 구성 상태 검토",
+          "required_metric": "bgp_missing_pairs",
+          "metric_params": null
+        },
+        {
+          "step": "BGP 피어의 추가로 인한 라우터 자원 사용률 평가",
+          "required_metric": "장비 수",
+          "metric_params": null
+        },
+        {
+          "step": "OSPF 영역 재분할의 필요성 검토",
+          "required_metric": "AS 그룹",
+          "metric_params": null
+        },
+        {
+          "step": "확장에 따른 네트워크 지연 시간 및 성능 영향 분석",
+          "required_metric": "네트워크 복잡도",
+          "metric_params": null
+        }
       ],
       "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed"
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_BGP 피어의 추가로 인한 라우터 자원 사용률 평가_장비 수": null,
+        "step_OSPF 영역 재분할의 필요성 검토_AS 그룹": null,
+        "step_현재 BGP 및 OSPF 구성 상태 검토_bgp_missing_pairs": null,
+        "step_확장에 따른 네트워크 지연 시간 및 성능 영향 분석_네트워크 복잡도": null
+      }
     }
   },
   {
     "id": "ENHANCED_ENHANCED-ANALYTICAL-002",
-    "question": "새로운 데이터센터 추가 시 기존 L2/L3VPN 서비스가 중단 없이 운영될 수 있도록 하는 방법을 분석하라.",
+    "question": "새로운 데이터센터 추가가 기존 L2/L3VPN 서비스에 미치는 영향을 최소화하기 위해 어떤 조치를 고려해야 할까?",
     "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
-    "answer": "{\n  \"question\": \"새로운 데이터센터 추가 시 기존 L2/L3VPN 서비스가 중단 없이 운영될 수 있도록 하는 방법을 분석하라.\",\n  \"plan\": [\n    \"현재 L2/L3VPN 구성과 서비스 흐름을 분석한다.\",\n    \"새로운 데이터센터가 추가될 경우, L2/L3VPN 서비스에 미치는 잠재적 영향을 식별한다.\",\n    \"서비스 중단을 최소화하기 위한 VPN 경로 최적화 및 리소스 할당 방안을 설계한다.\",\n    \"테스트 환경에서 설계안을 검증하고, 문제 발생 시 대체 경로 또는 백업 계획을 마련한다.\",\n    \"서비스가 안정적으로 운영될 수 있도록 모니터링 시스템을 강화하고, 자동화된 경고 시스템을 구축한다.\"\n  ],\n  \"evidence\": {}\n}",
+    "answer": "새로운 데이터센터 추가가 기존 L2/L3VPN 서비스에 미치는 영향을 최소화하기 위해서는 우선 현재의 L2/L3VPN 구성과 문제점을 파악하고, VPN 서비스의 트래픽 경로를 최적화할 필요가 있습니다. 또한, 새로운 데이터센터와 기존 네트워크 간의 연결망의 대역폭과 안정성을 평가하여 필요한 장비 수를 확인해야 합니다. 마지막으로, 서비스 중단을 최소화하기 위해 단계별 구현 계획을 수립하고 비즈니스 연속성 전략을 마련하는 것이 중요합니다.",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "analytical",
@@ -89,14 +156,35 @@
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
-        "현재 L2/L3VPN 구성과 서비스 흐름을 분석한다.",
-        "새로운 데이터센터가 추가될 경우, L2/L3VPN 서비스에 미치는 잠재적 영향을 식별한다.",
-        "서비스 중단을 최소화하기 위한 VPN 경로 최적화 및 리소스 할당 방안을 설계한다.",
-        "테스트 환경에서 설계안을 검증하고, 문제 발생 시 대체 경로 또는 백업 계획을 마련한다.",
-        "서비스가 안정적으로 운영될 수 있도록 모니터링 시스템을 강화하고, 자동화된 경고 시스템을 구축한다."
+        {
+          "step": "현재 L2/L3VPN 구성 및 문제점 파악",
+          "required_metric": "l2vpn_issues",
+          "metric_params": null
+        },
+        {
+          "step": "VPN 서비스 트래픽 경로 최적화 필요성 검토",
+          "required_metric": "서비스 트래픽 패턴",
+          "metric_params": null
+        },
+        {
+          "step": "새로운 데이터센터와 기존 네트워크 간 연결망의 대역폭 및 안정성 평가",
+          "required_metric": "장비 수",
+          "metric_params": null
+        },
+        {
+          "step": "서비스 중단 최소화를 위한 단계별 구현 계획 수립",
+          "required_metric": "비즈니스 연속성 전략",
+          "metric_params": null
+        }
       ],
       "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed"
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_VPN 서비스 트래픽 경로 최적화 필요성 검토_서비스 트래픽 패턴": null,
+        "step_새로운 데이터센터와 기존 네트워크 간 연결망의 대역폭 및 안정성 평가_장비 수": null,
+        "step_서비스 중단 최소화를 위한 단계별 구현 계획 수립_비즈니스 연속성 전략": null,
+        "step_현재 L2/L3VPN 구성 및 문제점 파악_l2vpn_issues": null
+      }
     }
   }
 ]
