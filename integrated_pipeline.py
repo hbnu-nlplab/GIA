@@ -46,6 +46,10 @@ class PipelineConfig:
     target_categories: List[str]
     basic_questions_per_category: int = 4
     enhanced_questions_per_category: int = 3
+
+    # 시나리오 설정
+    scenario_type: str = "normal"  # normal, failure, expansion
+    scenario_overrides: Optional[Dict[str, Any]] = None
     
     # 복잡도 및 페르소나 설정
     target_complexities: List[QuestionComplexity] = None
@@ -103,7 +107,8 @@ class NetworkConfigDatasetGenerator:
         self.rule_generator = RuleBasedGenerator(
             RuleBasedGeneratorConfig(
                 policies_path=config.policies_path,
-                min_per_cat=config.basic_questions_per_category
+                min_per_cat=config.basic_questions_per_category,
+                scenario_type=config.scenario_type,
             )
         )
         # self.llm_explorer = LLMExplorer()
@@ -183,11 +188,16 @@ class NetworkConfigDatasetGenerator:
         # Rule-based 생성
         dsl_items = self.rule_generator.compile(
             capabilities=network_facts,
-            categories=self.config.target_categories
+            categories=self.config.target_categories,
+            scenario_type=self.config.scenario_type,
         )
         
         # 어셈블리를 통한 답변 계산
-        assembled_tests = self.assembler.assemble(network_facts, dsl_items)
+        assembled_tests = self.assembler.assemble(
+            network_facts,
+            dsl_items,
+            scenario_conditions=self.config.scenario_overrides,
+        )
         
         # DatasetSample로 변환
         basic_samples = []
@@ -272,6 +282,11 @@ class NetworkConfigDatasetGenerator:
         
         # 검증 및 답변 계산
         validated_items = self.inspector.validate_llm(network_facts, translated_items)
+
+        # 시나리오 조건에 따른 정답 변형
+        validated_items = self.assembler.apply_scenario(
+            validated_items, self.config.scenario_overrides
+        )
         
         # DatasetSample로 변환
         enhanced_samples = []
