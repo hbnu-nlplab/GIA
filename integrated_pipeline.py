@@ -414,22 +414,27 @@ class NetworkConfigDatasetGenerator:
     def _execute_stage_evaluation(self, samples: List[DatasetSample]) -> Dict[str, Any]:
         """6단계: 평가 메트릭 계산 (자가 평가)"""
         self.logger.info("6단계: 평가 메트릭 계산")
-        
-        # 샘플 데이터로 평가 시뮬레이션
-        # 실제로는 LLM이 답변한 결과와 비교하겠지만, 여기서는 데이터셋 품질 평가
-        
-        evaluation_data = []
-        for sample in samples[:10]:  # 샘플로 10개만
-            # 모의 LLM 답변 생성 (실제로는 외부 LLM 호출)
+
+        predictions = []
+        for sample in samples:
             mock_prediction = self._generate_mock_prediction(sample)
-            
-            eval_result = self.evaluator.evaluate_single(
-                predicted=mock_prediction,
-                ground_truth=sample.answer,
-                question_id=sample.id,
-                answer_type=sample.answer_type
-            )
-            evaluation_data.append(asdict(eval_result))
+            predictions.append({
+                "predicted": mock_prediction,
+                "ground_truth": sample.answer,
+                "question_id": sample.id,
+                "answer_type": sample.answer_type,
+            })
+
+        eval_output = self.evaluator.evaluate_dataset(predictions)
+        evaluation_data = eval_output.get("individual_results", [])
+
+        # 평가 결과를 각 샘플에 병합
+        eval_map = {e["question_id"]: e for e in evaluation_data}
+        for sample in samples:
+            if sample.id in eval_map:
+                sample.metadata = sample.metadata or {}
+                sample.metadata["evaluation"] = eval_map[sample.id]
+                sample.metadata["overall_score"] = eval_map[sample.id]["overall_score"]
 
         # 복잡도별 통계 계산
         complexity_breakdown: Dict[str, Dict[str, int]] = {}
@@ -441,7 +446,8 @@ class NetworkConfigDatasetGenerator:
             }
 
         # 배치 통계 계산
-        batch_stats = {
+        batch_stats = eval_output.get("overall_statistics", {})
+        batch_stats.update({
             "sample_evaluation_count": len(evaluation_data),
             "total_dataset_size": len(samples),
             "category_distribution": self._calculate_category_distribution(samples),
@@ -451,17 +457,17 @@ class NetworkConfigDatasetGenerator:
                 "short": len([s for s in samples if s.answer_type == "short"]),
                 "long": len([s for s in samples if s.answer_type == "long"]),
             },
-        }
-        
+        })
+
         self.stage_results[PipelineStage.EVALUATION] = {
             "evaluation_data": evaluation_data,
             "batch_statistics": batch_stats,
-            "success": True
+            "success": True,
         }
-        
+
         return {
             "sample_evaluations": evaluation_data,
-            "dataset_statistics": batch_stats
+            "dataset_statistics": batch_stats,
         }
     
     def _compose_final_dataset(
