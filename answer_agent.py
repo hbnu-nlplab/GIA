@@ -85,6 +85,64 @@ class AnswerAgent:
         return self._synthesize_answer(question, plan_text)
 
     def _synthesize_answer(self, question: str, plan: Union[List[Dict[str, Any]], str]) -> str:
+        """Return a concise final answer based on collected evidence.
+
+        LLM을 계산기로 활용하여 증거에서 최종 정답 값만 도출한다. 실패 시
+        증거 요약 JSON을 반환한다.
+        """
+        schema = {
+            "title": "AnswerSynthesis",
+            "type": "object",
+            "properties": {
+                "final_answer": {"type": ["string", "number", "array"]}
+            },
+            "required": ["final_answer"],
+            "additionalProperties": False,
+        }
+
+        system_prompt = (
+            "당신은 데이터를 분석하여 최종 결론을 도출하는 정확한 계산기입니다. "
+            "주어진 질문과 데이터를 바탕으로, 다른 설명 없이 오직 최종 정답 값만을 "
+            "계산하여 반환하세요."
+        )
+
+        evidence_text = json.dumps(self.evidence, ensure_ascii=False, indent=2)
+        user_prompt = (
+            f"[질문]\n{question}\n\n[수집된 데이터]\n{evidence_text}\n\n"
+            "위 데이터를 근거로 질문에 대한 최종 정답을 계산하세요.\n\n"
+            "[응답 형식 규칙]\n"
+            "- 리스트: [\"A\", \"B\"]\n"
+            "- 숫자: 4\n"
+            "- 문자열: \"192.168.1.1\"\n"
+            "- 추가 설명 금지"
+        )
+
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ]
+
+        try:
+            data = _call_llm_json(
+                messages,
+                schema,
+                temperature=0.0,
+                model="gpt-4o-mini",
+                max_output_tokens=300,
+                use_responses_api=False,
+            )
+            ans = data.get("final_answer") if isinstance(data, dict) else None
+            if ans is not None:
+                if isinstance(ans, (list, dict)):
+                    return json.dumps(ans, ensure_ascii=False)
+                return str(ans).strip()
+        except Exception:
+            pass
+
+        summary = {
+            "question": question,
+            "plan": plan,
+            "evidence": self.evidence,
         """수집된 증거를 바탕으로 최종 답변 생성 - 핵심 구현!"""
         
         # Evidence가 비어있으면 기본 답변
