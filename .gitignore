@@ -10,3 +10,7 @@ CMD.txt
 *.tmp
 # Ignore all files with the .bak extension
 *.bak   
+
+# Python artifacts
+__pycache__/
+*.pyc
