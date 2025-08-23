@@ -282,6 +282,7 @@ class NetworkConfigDatasetGenerator:
                     "reasoning_plan": reasoning_plan,
                     "reasoning_requirement": eq.get("reasoning_requirement", ""),
                     "expected_analysis_depth": eq.get("expected_analysis_depth", "detailed"),
+                    "evidence": answer_agent.evidence,
                 },
             )
             sample.context = self._create_enhanced_context(network_facts, sample)

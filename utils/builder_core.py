@@ -159,10 +159,18 @@ class BuilderCore:
         pre["ssh_missing"] = set([ (d.get("system",{}).get("hostname") or d.get("file")) for d in self.devices if not self._ssh_on(d)])
         return pre
 
-    def calculate_metric(self, metric: str) -> Any:
-        """주어진 메트릭을 계산하여 값을 반환합니다."""
+    def calculate_metric(self, metric: str, params: Dict[str, Any] | None = None) -> Any:
+        """주어진 메트릭을 계산하여 값을 반환합니다.
+
+        Parameters
+        ----------
+        metric: str
+            계산할 메트릭 이름
+        params: Dict[str, Any] | None
+            메트릭 계산에 필요한 추가 파라미터. 예) {"asn": "65000"}
+        """
         pre = self._precompute()
-        _atype, value = self._answer_for_metric(metric, {}, pre)
+        _atype, value = self._answer_for_metric(metric, params or {}, pre)
         return value
 
     # GIA-Re/utils/builder_core.py 에 새로운 함수 추가

@@ -326,6 +326,12 @@ NOC 운영자 관점에서, 서비스 가용성과 관련된 복합적 상황 �
                                         "step": {"type": "integer"},
                                         "description": {"type": "string"},
                                         "required_metric": {"type": "string"},
+                                        "metric_params": {
+                                            "type": "object",
+                                            "description": "calculate_metric 호출 시 전달할 파라미터",
+                                            "properties": {},
+                                            "additionalProperties": True
+                                        },
                                         "synthesis": {
                                             "type": "string",
                                             "enum": ["fetch", "compare", "summarize"]
@@ -372,7 +378,7 @@ NOC 운영자 관점에서, 서비스 가용성과 관련된 복합적 상황 �
 2. 실무 경험과 전문 지식 요구
 3. 단순한 팩트 조회를 넘어선 추론
 4. {template.answer_type} 형태의 상세한 답변 필요성
-5. **reasoning_plan**: 정답 도출을 위한 단계별 절차
+5. **reasoning_plan**: 각 단계에 required_metric과 metric_params(필요 시)를 명시
 
 **엄격한 규칙: 모든 응답은 반드시 한국어로만 작성해주십시오.**
 """

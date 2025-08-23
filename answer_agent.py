@@ -2,6 +2,7 @@ from typing import Dict, Any, List, Union
 import json
 
 from utils.builder_core import BuilderCore
+from utils.llm_adapter import _call_llm_json
 
 class AnswerAgent:
     """Reasoning plan executor that synthesizes a descriptive answer."""
@@ -31,8 +32,9 @@ class AnswerAgent:
                 metric = step.get("required_metric")
                 if not metric:
                     continue
+                params = step.get("metric_params") or {}
                 try:
-                    result = self.builder.calculate_metric(metric)
+                    result = self.builder.calculate_metric(metric, params)
                 except Exception as e:
                     result = f"error: {e}"
                 self.evidence[f"step_{step.get('step')}_{metric}"] = result
@@ -85,9 +87,50 @@ class AnswerAgent:
     def _synthesize_answer(self, question: str, plan: Union[List[Dict[str, Any]], str]) -> str:
         """Combine evidence into a narrative answer.
 
-        현재 구현은 간단히 증거 데이터를 JSON 문자열로 반환합니다.
-        추후 LLM을 이용해 자연스러운 서술형 답변을 생성할 수 있습니다.
+        LLM을 호출하여 증거를 기반으로 한 자연스러운 답변을 생성하고,
+        실패 시에는 증거 요약 JSON을 반환한다.
         """
+        # First try to synthesize a natural language answer using LLM
+        schema = {
+            "title": "AnswerSynthesis",
+            "type": "object",
+            "properties": {
+                "final_answer": {"type": "string"}
+            },
+            "required": ["final_answer"],
+            "additionalProperties": False
+        }
+
+        system_prompt = (
+            "당신은 네트워크 분석 전문가입니다. 제공된 증거를 바탕으로 질문에 대해 "
+            "한국어로 명확하고 간결하게 답변하세요."
+        )
+
+        evidence_text = json.dumps(self.evidence, ensure_ascii=False, indent=2)
+        plan_text = plan if isinstance(plan, str) else json.dumps(plan, ensure_ascii=False)
+
+        user_prompt = f"질문: {question}\n추론 단계: {plan_text}\n증거: {evidence_text}\n최종 답변을 한 문단으로 작성하세요."
+
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ]
+
+        try:
+            data = _call_llm_json(
+                messages,
+                schema,
+                temperature=0.2,
+                model="gpt-4o-mini",
+                max_output_tokens=600,
+                use_responses_api=False,
+            )
+            if isinstance(data, dict) and data.get("final_answer"):
+                return data["final_answer"].strip()
+        except Exception:
+            # If LLM call fails, fall back to returning structured summary
+            pass
+
         summary = {
             "question": question,
             "plan": plan,
