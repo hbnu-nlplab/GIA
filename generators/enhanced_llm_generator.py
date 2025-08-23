@@ -188,7 +188,32 @@ NOC 운영자 관점에서, 서비스 가용성과 관련된 복합적 상황 �
 """,
                 expected_metrics=["password_policy_present_bool", "aaa_present_bool", "logging_buffered_severity_text"],
                 answer_type="long"
-            )
+            ),
+
+            # 명확한 정답을 요구하는 분석형 - 트러블슈터
+            QuestionTemplate(
+                complexity=QuestionComplexity.ANALYTICAL,
+                persona=PersonaType.TROUBLESHOOTER,
+                scenario="규정 위반 장비 식별",
+                scenario_type=ScenarioType.NORMAL,
+                prompt_template="""
+네트워크 감사관의 관점에서, 주어진 여러 네트워크 데이터를 종합적으로 분석해야만 답할 수 있는 질문을 생성하세요.
+**가장 중요한 규칙**: 질문의 최종 답변은 반드시 **'장비 이름 리스트(list)', '개수(number)', 'IP 주소(string)'** 등 명확하고 단일한 값으로 귀결되어야 합니다.
+
+**[생성하면 안 되는 질문 형태 (How/Why)]**
+- "네트워크 보안을 어떻게 강화할 수 있을까요?" (정답이 주관적임)
+- "BGP 설정이 왜 중요한가요?" (설명형)
+
+**[생성해야 하는 질문 형태 (What/Which/How many)]**
+- "보안 정책(SSH 활성화, AAA 비활성화)을 위반하는 장비의 이름은 무엇인가?" (정답: 리스트)
+- "AS 65000에 속하지만 iBGP 피어 수가 3개 미만인 장비는 총 몇 개인가?" (정답: 숫자)
+- "VRF 'exam-l3vpn'에 연결된 eBGP 피어의 IP 주소는 무엇인가?" (정답: 문자열)
+
+주어진 네트워크 현황을 바탕으로, 위 **[생성해야 하는 질문 형태]**와 같이 **추론 과정은 복잡하지만 정답은 명확한 질문**과 그 질문을 풀기 위한 **실행 가능한 reasoning_plan**을 함께 생성해주세요.
+""",
+                expected_metrics=["ssh_present_bool", "aaa_present_bool", "bgp_neighbor_count"],
+                answer_type="short",
+            ),
         ]
     
     def generate_enhanced_questions(
@@ -326,6 +351,12 @@ NOC 운영자 관점에서, 서비스 가용성과 관련된 복합적 상황 �
                                         "step": {"type": "integer"},
                                         "description": {"type": "string"},
                                         "required_metric": {"type": "string"},
+                                        "metric_params": {
+                                            "type": "object",
+                                            "description": "calculate_metric 호출 시 전달할 파라미터",
+                                            "properties": {},
+                                            "additionalProperties": True
+                                        },
                                         "synthesis": {
                                             "type": "string",
                                             "enum": ["fetch", "compare", "summarize"]
@@ -372,7 +403,7 @@ NOC 운영자 관점에서, 서비스 가용성과 관련된 복합적 상황 �
 2. 실무 경험과 전문 지식 요구
 3. 단순한 팩트 조회를 넘어선 추론
 4. {template.answer_type} 형태의 상세한 답변 필요성
-5. **reasoning_plan**: 정답 도출을 위한 단계별 절차
+5. **reasoning_plan**: 각 단계에 required_metric과 metric_params(필요 시)를 명시
 
 **엄격한 규칙: 모든 응답은 반드시 한국어로만 작성해주십시오.**
 """

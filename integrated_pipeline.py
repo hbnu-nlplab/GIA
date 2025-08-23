@@ -271,7 +271,7 @@ class NetworkConfigDatasetGenerator:
                 question=question_text,
                 context="",
                 answer=final_answer,
-                answer_type="long",
+                answer_type=eq.get("answer_type", "long"),
                 category=eq.get("category", "Enhanced_Analysis"),
                 complexity=eq.get("complexity", "analytical"),
                 level=eq.get("level", 3),
@@ -282,6 +282,7 @@ class NetworkConfigDatasetGenerator:
                     "reasoning_plan": reasoning_plan,
                     "reasoning_requirement": eq.get("reasoning_requirement", ""),
                     "expected_analysis_depth": eq.get("expected_analysis_depth", "detailed"),
+                    "evidence": answer_agent.evidence,
                 },
             )
             sample.context = self._create_enhanced_context(network_facts, sample)

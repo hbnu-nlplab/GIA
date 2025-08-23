@@ -2,6 +2,7 @@ from typing import Dict, Any, List, Union
 import json
 
 from utils.builder_core import BuilderCore
+from utils.llm_adapter import _call_llm_json
 
 class AnswerAgent:
     """Reasoning plan executor that synthesizes a descriptive answer."""
@@ -31,8 +32,9 @@ class AnswerAgent:
                 metric = step.get("required_metric")
                 if not metric:
                     continue
+                params = step.get("metric_params") or {}
                 try:
-                    result = self.builder.calculate_metric(metric)
+                    result = self.builder.calculate_metric(metric, params)
                 except Exception as e:
                     result = f"error: {e}"
                 self.evidence[f"step_{step.get('step')}_{metric}"] = result
@@ -83,11 +85,60 @@ class AnswerAgent:
         return self._synthesize_answer(question, plan_text)
 
     def _synthesize_answer(self, question: str, plan: Union[List[Dict[str, Any]], str]) -> str:
-        """Combine evidence into a narrative answer.
+        """Return a concise final answer based on collected evidence.
 
-        현재 구현은 간단히 증거 데이터를 JSON 문자열로 반환합니다.
-        추후 LLM을 이용해 자연스러운 서술형 답변을 생성할 수 있습니다.
+        LLM을 계산기로 활용하여 증거에서 최종 정답 값만 도출한다. 실패 시
+        증거 요약 JSON을 반환한다.
         """
+        schema = {
+            "title": "AnswerSynthesis",
+            "type": "object",
+            "properties": {
+                "final_answer": {"type": ["string", "number", "array"]}
+            },
+            "required": ["final_answer"],
+            "additionalProperties": False,
+        }
+
+        system_prompt = (
+            "당신은 데이터를 분석하여 최종 결론을 도출하는 정확한 계산기입니다. "
+            "주어진 질문과 데이터를 바탕으로, 다른 설명 없이 오직 최종 정답 값만을 "
+            "계산하여 반환하세요."
+        )
+
+        evidence_text = json.dumps(self.evidence, ensure_ascii=False, indent=2)
+        user_prompt = (
+            f"[질문]\n{question}\n\n[수집된 데이터]\n{evidence_text}\n\n"
+            "위 데이터를 근거로 질문에 대한 최종 정답을 계산하세요.\n\n"
+            "[응답 형식 규칙]\n"
+            "- 리스트: [\"A\", \"B\"]\n"
+            "- 숫자: 4\n"
+            "- 문자열: \"192.168.1.1\"\n"
+            "- 추가 설명 금지"
+        )
+
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ]
+
+        try:
+            data = _call_llm_json(
+                messages,
+                schema,
+                temperature=0.0,
+                model="gpt-4o-mini",
+                max_output_tokens=300,
+                use_responses_api=False,
+            )
+            ans = data.get("final_answer") if isinstance(data, dict) else None
+            if ans is not None:
+                if isinstance(ans, (list, dict)):
+                    return json.dumps(ans, ensure_ascii=False)
+                return str(ans).strip()
+        except Exception:
+            pass
+
         summary = {
             "question": question,
             "plan": plan,
