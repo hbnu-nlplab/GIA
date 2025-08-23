@@ -5,7 +5,7 @@
     "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
     "answer": "CE1",
     "answer_type": "long",
-    "category": "Enhanced_Analysis",
+    "category": "advanced",
     "complexity": "diagnostic",
     "persona": "security_auditor",
     "scenario": "보안 취약점 진단",
@@ -32,6 +32,7 @@
         "cited_values": {}
       },
       "level": 3,
+      "answer_difficulty": 3,
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed"
     }
@@ -42,7 +43,7 @@
     "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
     "answer": "CE1",
     "answer_type": "long",
-    "category": "Enhanced_Analysis",
+    "category": "advanced",
     "complexity": "diagnostic",
     "persona": "security_auditor",
     "scenario": "보안 취약점 진단",
@@ -69,6 +70,7 @@
         "cited_values": {}
       },
       "level": 3,
+      "answer_difficulty": 3,
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed"
     }

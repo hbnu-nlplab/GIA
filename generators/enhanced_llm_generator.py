@@ -326,8 +326,11 @@ NOC 운영자 관점에서, 서비스 가용성과 관련된 복합적 상황 �
                         "expected_analysis_depth": q_data.get("expected_analysis_depth", "detailed"),
                         "metrics_involved": q_data.get("metrics_involved", template.expected_metrics),
                         "test_id": f"ENHANCED-{template.complexity.value.upper()}-{idx+1:03d}",
-                        "category": "Enhanced_Analysis",
-                        "level": 4 if template.complexity in [QuestionComplexity.SYNTHETIC, QuestionComplexity.SCENARIO] else 3
+                        # 심화 파이프라인 구분을 위해 카테고리와 난이도 정보를 추가한다
+                        "category": "advanced",
+                        "level": 4 if template.complexity in [QuestionComplexity.SYNTHETIC, QuestionComplexity.SCENARIO] else 3,
+                        # level과 동일한 값을 가지는 answer_difficulty 필드를 명시적으로 포함한다
+                        "answer_difficulty": 4 if template.complexity in [QuestionComplexity.SYNTHETIC, QuestionComplexity.SCENARIO] else 3
                     }
                     questions.append(question_obj)
             
