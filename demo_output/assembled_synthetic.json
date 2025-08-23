@@ -1,9 +1,9 @@
 [
   {
     "id": "ENHANCED_ENHANCED-SYNTHETIC-001",
-    "question": "L2VPN과 L3VPN 서비스에서 발생한 장애가 비즈니스에 미치는 영향을 최소화하기 위해, 어떤 장비와 AS 그룹을 우선적으로 복구해야 하는가?",
+    "question": "L2VPN과 L3VPN 서비스가 동시에 장애가 발생했을 때, 비즈니스에 미치는 영향을 고려하여 어떤 순서로 복구를 진행해야 하는가?",
     "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
-    "answer": "{\n  \"question\": \"L2VPN과 L3VPN 서비스에서 발생한 장애가 비즈니스에 미치는 영향을 최소화하기 위해, 어떤 장비와 AS 그룹을 우선적으로 복구해야 하는가?\",\n  \"plan\": [\n    \"장비 및 AS 그룹과 관련된 L2VPN 및 L3VPN 장애 상황을 파악한다.\",\n    \"각 서비스의 장애가 비즈니스에 미치는 영향을 평가한다.\",\n    \"장비와 AS 그룹의 중요도를 분석하여, 장애 발생 시 비즈니스에 큰 영향을 미치는 장비와 AS 그룹을 식별한다.\",\n    \"비즈니스 영향도가 큰 장비와 AS 그룹을 기반으로 우선순위 복구 계획을 수립한다.\",\n    \"복구 계획이 네트워크 안정성에 미치는 영향을 검토하고 조정한다.\"\n  ],\n  \"evidence\": {}\n}",
+    "answer": "L2VPN과 L3VPN 서비스가 동시에 장애가 발생했을 때, 비즈니스에 미치는 영향을 최소화하기 위해 복구를 진행하는 순서는 다음과 같습니다.\n\n### 1단계: L2VPN 상태 확인\n- **증거**: `l2vpn_unidir_count` 값이 0으로 나타났습니다. 이는 L2VPN에 장애가 없음을 의미합니다.\n- **결론**: L2VPN 서비스는 정상 상태이므로, 이 단계에서 추가적인 조치는 필요하지 않습니다.\n\n### 2단계: L3VPN BGP 풀메시 상태 확인\n- **증거**: `ibgp_fullmesh_ok` 상태가 ✅로 나타났습니다. 이는 L3VPN 관련 AS에서 BGP 풀메시가 정상임을 나타냅니다.\n- **결론**: L3VPN 서비스도 정상 상태이므로, 이 단계에서도 추가적인 조치는 필요하지 않습니다.\n\n### 3단계: L3VPN 장애 영향 평가\n- **증거**: `bgp_peer_count` 값이 None으로 나타났습니다. 이는 BGP 피어링이 설정되지 않았거나, 피어링 상태를 확인할 수 없음을 의미합니다.\n- **결론**: L3VPN의 장애가 발생했을 가능성이 높으며, 이는 비즈니스에 심각한 영향을 미칠 수 있습니다. L3VPN은 일반적으로 인터넷 연결 및 외부 네트워크와의 통신을 담당하므로, 이 서비스의 장애는 고객 서비스 및 데이터 전송에 직접적인 영향을 미칠 수 있습니다.\n\n### 복구 순서 및 조치\n1. **L2VPN 상태 확인**: 정상 상태이므로 무시.\n2. **L3VPN BGP 풀메시 상태 확인**: 정상 상태이므로 무시.\n3. **BGP 피어링 상태 점검**: `bgp_peer_count`가 None인 상태에서, BGP 피어링 설정을 점검하고 필요한 경우 재설정합니다. 이 과정에서 네트워크 장비의 로그를 확인하여 피어링 실패 원인을 파악해야 합니다.\n\n### 원인 및 해결책\n- **원인**: BGP 피어링이 설정되지 않았거나, 네트워크 장비 간의 연결 문제로 인해 피어링이 실패했을 수 있습니다.\n- **해결책**: \n  - BGP 설정을 점검하고, 피어 IP 주소 및 ASN 설정이 올바른지 확인합니다.\n  - 네트워크 장비 간의 물리적 연결 상태를 점검하고, 필요한 경우 재부팅하거나 재설정을 수행합니다.\n  - BGP 세션을 수동으로 재시작하여 피어링을 복구합니다.\n\n### 결론\nL2VPN은 정상 상태이므로 우선적으로 L3VPN의 BGP 피어링 문제를 해결해야 합니다. L3VPN의 복구가 완료되면, 비즈니스 운영에 미치는 영향을 최소화할 수 있습니다. 현재 제공된 증거로는 L3VPN의 장애 원인을 명확히 파악하기 어려우므로, 추가적인 로그 분석이 필요합니다.",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "synthetic",
@@ -14,21 +14,44 @@
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
-        "장비 및 AS 그룹과 관련된 L2VPN 및 L3VPN 장애 상황을 파악한다.",
-        "각 서비스의 장애가 비즈니스에 미치는 영향을 평가한다.",
-        "장비와 AS 그룹의 중요도를 분석하여, 장애 발생 시 비즈니스에 큰 영향을 미치는 장비와 AS 그룹을 식별한다.",
-        "비즈니스 영향도가 큰 장비와 AS 그룹을 기반으로 우선순위 복구 계획을 수립한다.",
-        "복구 계획이 네트워크 안정성에 미치는 영향을 검토하고 조정한다."
+        {
+          "step": 1,
+          "description": "L2VPN 장애 수 파악",
+          "required_metric": "l2vpn_unidir_count",
+          "metric_params": {},
+          "synthesis": "fetch"
+        },
+        {
+          "step": 2,
+          "description": "L3VPN 관련 AS에서의 BGP 풀메시 상태 확인",
+          "required_metric": "ibgp_fullmesh_ok",
+          "metric_params": {
+            "asn": "65003"
+          },
+          "synthesis": "fetch"
+        },
+        {
+          "step": 3,
+          "description": "L2VPN과 L3VPN 장애 영향을 종합하여 비즈니스에 미치는 영향도 평가",
+          "required_metric": "bgp_peer_count",
+          "metric_params": {},
+          "synthesis": "summarize"
+        }
       ],
       "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed"
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_1_l2vpn_unidir_count": 0,
+        "step_2_ibgp_fullmesh_ok": true,
+        "step_3_bgp_peer_count": null
+      }
     }
   },
   {
     "id": "ENHANCED_ENHANCED-SYNTHETIC-002",
-    "question": "현재 발견된 네트워크 이상 징후를 기반으로, 잠재적인 서비스 위험 요소를 식별하고 예방적 모니터링 전략을 어떻게 구성할 것인가?",
+    "question": "AS 65001의 L2VPN 서비스 장애가 발생했을 때, 예방적 모니터링을 통해 잠재적인 서비스 위험 요소를 어떻게 식별할 수 있는가?",
     "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
-    "answer": "{\n  \"question\": \"현재 발견된 네트워크 이상 징후를 기반으로, 잠재적인 서비스 위험 요소를 식별하고 예방적 모니터링 전략을 어떻게 구성할 것인가?\",\n  \"plan\": [\n    \"bgp_missing_pairs, l2vpn_issues와 같은 발견된 이상 징후의 세부 사항을 분석한다.\",\n    \"이상 징후가 발생할 수 있는 원인과 서비스 장애로 이어질 수 있는 시나리오를 파악한다.\",\n    \"비즈니스에 직접적인 영향을 미칠 가능성이 높은 위험 요소를 우선적으로 식별한다.\",\n    \"효율적인 예방적 모니터링 체계를 구축하기 위해 필요한 모니터링 지표와 경보 시스템을 정립한다.\",\n    \"모니터링 전략을 테스트하고, 필요시 조정하여 실효성을 확보한다.\"\n  ],\n  \"evidence\": {}\n}",
+    "answer": "AS 65001의 L2VPN 서비스 장애를 예방하기 위한 모니터링 과정에서 수집된 증거를 분석한 결과, 현재까지의 상태는 다음과 같습니다:\n\n1. **L2VPN 장애 수**: `l2vpn_unidir_count`가 0으로 나타나, 현재 L2VPN 서비스에 장애가 없음을 확인했습니다. 이는 서비스가 정상적으로 운영되고 있음을 의미합니다.\n\n2. **iBGP 풀메시 상태**: `ibgp_fullmesh_ok`가 정상 상태(✅)로 확인되었습니다. 이는 AS 65001 내의 모든 라우터가 서로 완전한 iBGP 연결을 유지하고 있음을 나타내며, 이는 L2VPN 서비스의 안정성에 기여합니다.\n\n3. **OSPF 영역 수**: `ospf_area_count`가 None으로 나타났습니다. 이는 OSPF 설정이 없거나 비정상적인 상태일 수 있으며, 이는 잠재적인 위험 요소로 작용할 수 있습니다. OSPF가 제대로 설정되지 않으면 라우팅 정보의 전파에 문제가 발생할 수 있습니다.\n\n4. **VRF 설정 상태**: `vrf_without_rt_count`가 0으로 나타나, 현재 VRF 설정에 문제가 없음을 확인했습니다. 이는 각 VRF가 적절한 Route Target(RT)와 함께 설정되어 있어, L2VPN 서비스가 정상적으로 작동할 수 있는 기반을 마련하고 있습니다.\n\n### 잠재적 서비스 위험 요소 식별 및 해결책\n\n- **OSPF 설정 부재**: OSPF 영역 수가 None인 점은 주목할 필요가 있습니다. OSPF가 설정되지 않으면, 네트워크 내에서의 라우팅 정보 전파가 원활하지 않을 수 있으며, 이는 L2VPN 서비스에 영향을 미칠 수 있습니다. 따라서, OSPF 설정을 검토하고 필요한 경우 적절한 OSPF 영역을 구성하여 라우팅의 안정성을 확보해야 합니다.\n\n- **정기적인 모니터링**: L2VPN 서비스의 지속적인 모니터링을 통해 `l2vpn_unidir_count`, `ibgp_fullmesh_ok`, `ospf_area_count`, `vrf_without_rt_count`와 같은 지표를 정기적으로 확인하는 것이 중요합니다. 이를 통해 잠재적인 문제를 조기에 발견하고 대응할 수 있습니다.\n\n결론적으로, 현재 AS 65001의 L2VPN 서비스는 정상적으로 운영되고 있으나, OSPF 설정 부재는 잠재적인 위험 요소로 작용할 수 있으므로, 이를 해결하기 위한 조치를 취하는 것이 필요합니다.",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "synthetic",
@@ -39,14 +62,49 @@
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
-        "bgp_missing_pairs, l2vpn_issues와 같은 발견된 이상 징후의 세부 사항을 분석한다.",
-        "이상 징후가 발생할 수 있는 원인과 서비스 장애로 이어질 수 있는 시나리오를 파악한다.",
-        "비즈니스에 직접적인 영향을 미칠 가능성이 높은 위험 요소를 우선적으로 식별한다.",
-        "효율적인 예방적 모니터링 체계를 구축하기 위해 필요한 모니터링 지표와 경보 시스템을 정립한다.",
-        "모니터링 전략을 테스트하고, 필요시 조정하여 실효성을 확보한다."
+        {
+          "step": 1,
+          "description": "AS 65001에서 L2VPN 장애 수 파악",
+          "required_metric": "l2vpn_unidir_count",
+          "metric_params": {
+            "asn": "65001"
+          },
+          "synthesis": "fetch"
+        },
+        {
+          "step": 2,
+          "description": "AS 65001의 iBGP 풀메시 상태 확인",
+          "required_metric": "ibgp_fullmesh_ok",
+          "metric_params": {
+            "asn": "65001"
+          },
+          "synthesis": "fetch"
+        },
+        {
+          "step": 3,
+          "description": "잠재적 위험 요소를 파악하기 위해 AS 65001의 OSPF 영역 수집",
+          "required_metric": "ospf_area_count",
+          "metric_params": {
+            "asn": "65001"
+          },
+          "synthesis": "fetch"
+        },
+        {
+          "step": 4,
+          "description": "L2VPN 장애와 iBGP, OSPF 설정을 종합하여 잠재적 위험 요소 평가",
+          "required_metric": "vrf_without_rt_count",
+          "metric_params": {},
+          "synthesis": "summarize"
+        }
       ],
       "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed"
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_1_l2vpn_unidir_count": 0,
+        "step_2_ibgp_fullmesh_ok": true,
+        "step_3_ospf_area_count": null,
+        "step_4_vrf_without_rt_count": 0
+      }
     }
   }
 ]

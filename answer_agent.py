@@ -143,5 +143,210 @@ class AnswerAgent:
             "question": question,
             "plan": plan,
             "evidence": self.evidence,
+        """수집된 증거를 바탕으로 최종 답변 생성 - 핵심 구현!"""
+        
+        # Evidence가 비어있으면 기본 답변
+        if not self.evidence:
+            return self._generate_template_answer(question, "수집된 증거가 없습니다.")
+        
+        # 증거 요약 생성
+        evidence_summary = self._format_evidence()
+        
+        # LLM에게 최종 답변 생성 요청 - 강화된 프롬프트
+        synthesis_prompt = f"""당신은 네트워크 설정 전문가입니다. 수집된 증거를 바탕으로 질문에 대한 정확하고 구체적인 답변을 생성하세요.
+
+질문: {question}
+
+수집된 증거:
+{evidence_summary}
+
+실행된 계획:
+{json.dumps(plan, indent=2, ensure_ascii=False) if isinstance(plan, list) else plan}
+
+요구사항:
+1. 증거에 기반한 구체적이고 정확한 답변 작성
+2. 수치나 장비명 등 구체적 데이터 포함
+3. 문제가 발견되면 원인과 해결책 제시
+4. 전문적이면서도 이해하기 쉬운 서술형 답변
+5. 증거가 부족하면 명시적으로 언급
+
+답변:"""
+        
+        # Schema 정의 - 간단하게 수정
+        schema = {
+            "type": "object",
+            "properties": {
+                "final_answer": {
+                    "type": "string"
+                }
+            },
+            "required": ["final_answer"],
+            "additionalProperties": False
         }
-        return json.dumps(summary, ensure_ascii=False, indent=2)
+
+        messages = [
+            {"role": "system", "content": "당신은 네트워크 설정 분석 전문가입니다. 제공된 증거를 정확히 분석하여 신뢰할 수 있는 답변을 생성하세요."},
+            {"role": "user", "content": synthesis_prompt}
+        ]
+
+        try:
+            # 직접 OpenAI API 호출로 단순화
+            import openai
+            
+            response = openai.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=messages,
+                temperature=0.1,
+                max_tokens=800
+            )
+            
+            final_answer = response.choices[0].message.content.strip()
+            
+            # 답변이 있으면 반환
+            if final_answer and len(final_answer) > 20:  # 최소 길이 체크
+                print(f"✅ LLM 답변 생성 성공 (길이: {len(final_answer)}자)")
+                return final_answer
+            else:
+                print(f"⚠️ LLM 답변이 너무 짧음: {len(final_answer)}자")
+                
+        except Exception as e:
+            print(f"🚨 OpenAI API 호출 실패: {e}")
+            
+            # OpenAI 직접 호출 실패 시 기존 방식 시도
+            try:
+                data = _call_llm_json(
+                    messages,
+                    schema,
+                    temperature=0.1,
+                    model="gpt-4o-mini",
+                    max_output_tokens=800,
+                    use_responses_api=False,
+                )
+                
+                if isinstance(data, dict) and data.get("final_answer"):
+                    final_answer = data["final_answer"].strip()
+                    print(f"✅ JSON LLM 답변 생성 성공 (길이: {len(final_answer)}자)")
+                    return final_answer
+                    
+            except Exception as e2:
+                print(f"🚨 JSON LLM도 실패: {e2}")
+                # 최후의 수단: 간단한 프롬프트로 재시도
+                return self._simple_llm_call(question, evidence_summary)
+
+        # 모든 시도 실패 시 기본 답변
+        return self._generate_template_answer(question, evidence_summary)
+
+    def _format_evidence(self) -> str:
+        """Evidence를 읽기 쉬운 형태로 포맷팅"""
+        if not self.evidence:
+            return "수집된 증거가 없습니다."
+        
+        formatted = []
+        for key, value in self.evidence.items():
+            # step_1_bgp_peer_count -> "1단계: BGP 피어 수"
+            if key.startswith('step_'):
+                parts = key.split('_')
+                if len(parts) >= 3:
+                    step_num = parts[1]
+                    metric_name = '_'.join(parts[2:])
+                    formatted.append(f"• {step_num}단계 ({metric_name}): {self._format_value(value)}")
+                else:
+                    formatted.append(f"• {key}: {self._format_value(value)}")
+            else:
+                # 메트릭 이름을 한국어로 변환
+                korean_name = self._translate_metric_name(key)
+                formatted.append(f"• {korean_name}: {self._format_value(value)}")
+        
+        return '\n'.join(formatted)
+
+    def _translate_metric_name(self, metric_name: str) -> str:
+        """메트릭 이름을 한국어로 번역"""
+        translations = {
+            'ssh_enabled_devices': 'SSH 활성화된 장비',
+            'ssh_missing_count': 'SSH 미설정 장비 수',
+            'ssh_all_enabled_bool': 'SSH 전체 활성화 여부',
+            'ibgp_missing_pairs_count': 'iBGP 누락 페어 수',
+            'ibgp_fullmesh_ok': 'iBGP 풀메시 정상 여부',
+            'bgp_inconsistent_as_count': 'BGP AS 불일치 수',
+            'aaa_enabled_devices': 'AAA 활성화된 장비',
+            'vrf_without_rt_count': 'RT 미설정 VRF 수',
+            'l2vpn_unidir_count': '단방향 L2VPN 수',
+            'bgp_peer_count': 'BGP 피어 수',
+            'interface_count': '인터페이스 수',
+            'ospf_area_count': 'OSPF 영역 수'
+        }
+        return translations.get(metric_name, metric_name)
+
+    def _format_value(self, value) -> str:
+        """값을 읽기 쉬운 형태로 포맷팅"""
+        if isinstance(value, bool):
+            return "✅ 정상" if value else "❌ 문제"
+        elif isinstance(value, (int, float)) and value == 0:
+            return "0 (문제없음)"
+        elif isinstance(value, list):
+            if len(value) == 0:
+                return "없음"
+            elif len(value) <= 3:
+                return f"{', '.join(map(str, value))}"
+            else:
+                return f"{', '.join(map(str, value[:3]))}... (총 {len(value)}개)"
+        elif isinstance(value, str) and value.startswith("error:"):
+            return f"⚠️ {value}"
+        else:
+            return str(value)
+
+    def _generate_template_answer(self, question: str, evidence_summary: str) -> str:
+        """LLM 실패 시 템플릿 기반 답변 생성"""
+        if "증거가 없습니다" in evidence_summary:
+            return f"""
+질문 "{question}"에 대한 분석을 시도했지만, 관련 증거를 수집할 수 없었습니다.
+
+이는 다음과 같은 원인일 수 있습니다:
+• 네트워크 설정 데이터에서 관련 정보를 찾을 수 없음
+• 질문과 관련된 메트릭이 아직 구현되지 않음
+• 데이터 파싱 과정에서 오류 발생
+
+더 구체적인 분석을 위해서는 네트워크 설정 파일과 질문의 적합성을 확인해 주세요.
+"""
+        
+        return f"""
+질문 "{question}"에 대한 분석 결과:
+
+수집된 증거:
+{evidence_summary}
+
+위 증거를 바탕으로 네트워크의 현재 상태를 파악할 수 있습니다. 
+구체적인 수치와 설정 상태를 통해 해당 질문에 대한 답변을 도출할 수 있으며,
+문제가 발견된 경우 적절한 해결책을 고려해야 합니다.
+
+💡 더 정확한 분석을 위해서는 LLM 기반 답변 생성 기능을 활용하시기 바랍니다.
+"""
+
+    def _simple_llm_call(self, question: str, evidence_summary: str) -> str:
+        """간단한 프롬프트로 LLM 호출 - 최후의 수단"""
+        try:
+            import openai
+            
+            simple_prompt = f"""네트워크 전문가로서 다음 질문에 답하세요.
+
+질문: {question}
+
+증거:
+{evidence_summary}
+
+위 증거를 바탕으로 질문에 대해 전문적이고 구체적인 답변을 한국어로 작성하세요. 증거의 수치와 상태를 언급하며 실무적인 관점에서 설명해주세요."""
+
+            response = openai.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": simple_prompt}],
+                temperature=0.1,
+                max_tokens=600
+            )
+            
+            answer = response.choices[0].message.content.strip()
+            print(f"✅ 간단한 LLM 호출 성공 (길이: {len(answer)}자)")
+            return answer
+            
+        except Exception as e:
+            print(f"🚨 간단한 LLM 호출도 실패: {e}")
+            return self._generate_template_answer(question, evidence_summary)
