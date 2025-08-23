@@ -1,7 +1,7 @@
 CMD.md
 CMD.txt
 # Ignore all files with the .md extension
-*.md
+
 # Ignore all files with the .txt extension
 *.txt
 # Ignore all files with the .log extension
