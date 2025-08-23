@@ -365,46 +365,44 @@ class NetworkDatasetDemo:
                 {
                     "question": "BGP 피어 장애 상황에서 라우팅 수렴 시간은?",
                     "answer": "약 180초 (기본 BGP 타이머 기준)",
-                    "answer_type": "short",
                     "simulation": simulation_conditions
                 },
                 {
                     "question": "BGP 피어 장애가 고객 서비스에 미치는 영향을 분석하시오.",
                     "answer": "Router1-Router2 간 iBGP 세션 중단으로 인해 해당 경로를 사용하는 CUSTOMER_A 서비스에 3분간 중단이 발생할 수 있습니다. 대체 경로로 Router3을 통한 우회가 가능하나 대역폭이 제한적입니다.",
-                    "answer_type": "long",
                     "simulation": simulation_conditions
                 }
             ]
-        
+
         elif case_name == "interface_failure":
             samples = [
                 {
                     "question": "인터페이스 장애로 영향받는 서비스 수는?",
                     "answer": "2개 서비스",
-                    "answer_type": "short",
                     "simulation": simulation_conditions
                 }
             ]
-        
+
         elif case_name == "partial_ssh_failure":
             samples = [
                 {
                     "question": "SSH 접근 불가 장비에서 설정 변경 방법은?",
                     "answer": "콘솔 포트를 통한 직접 접근 또는 대역외 관리 네트워크(OOBM)를 활용해야 합니다.",
-                    "answer_type": "long",
                     "simulation": simulation_conditions
                 }
             ]
-        
+
         else:
             # 기본 케이스
             samples = [
                 {
                     "question": "네트워크 상태가 정상인가?",
-                    "answer": "예",
-                    "answer_type": "short"
+                    "answer": "예"
                 }
             ]
+
+        for s in samples:
+            s["answer_type"] = "short" if len(s["answer"].split()) <= 20 else "long"
         
         return {
             "case_name": case_name,
