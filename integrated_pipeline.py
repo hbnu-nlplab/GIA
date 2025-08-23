@@ -83,6 +83,7 @@ class DatasetSample:
     answer: str
     answer_type: str  # "short" or "long"
     category: str
+    level: int = 1
     complexity: str
     persona: Optional[str] = None
     scenario: Optional[str] = None
@@ -198,14 +199,15 @@ class NetworkConfigDatasetGenerator:
                     context=self._create_context(network_facts, test.get('source_files', [])),
                     answer=self._format_answer(test.get('expected_answer', {})),
                     answer_type="short",  # Rule-based는 주로 short answer
-                    category=category,
+                    category="basic",
+                    level=test.get('level', 1),
                     complexity="basic",
                     source_files=test.get('source_files', []),
                     metadata={
                         "origin": "rule_based",
                         "intent": test.get('intent', {}),
                         "evidence_hint": test.get('evidence_hint', {}),
-                        "level": test.get('level', 1)
+                        "topic": category
                     }
                 )
                 basic_samples.append(sample)
@@ -282,6 +284,7 @@ class NetworkConfigDatasetGenerator:
                 answer=self._format_answer(test.get('expected_answer', {})),
                 answer_type=orig_question.get('answer_type', 'long'),
                 category=orig_question.get('category', 'Enhanced_Analysis'),
+                level=orig_question.get('level', test.get('level', 3)),
                 complexity=orig_question.get('complexity', 'analytical'),
                 persona=orig_question.get('persona'),
                 scenario=orig_question.get('scenario'),
@@ -289,7 +292,6 @@ class NetworkConfigDatasetGenerator:
                     "origin": "enhanced_llm",
                     "intent": test.get('intent', {}),
                     "hypothesis": test.get('hypothesis', {}),
-                    "level": test.get('level', 3),
                     "reasoning_requirement": orig_question.get('reasoning_requirement', ''),
                     "expected_analysis_depth": orig_question.get('expected_analysis_depth', 'detailed')
                 }
