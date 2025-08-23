@@ -490,7 +490,7 @@ class ComprehensiveEvaluator:
         batch_result['individual_results'] = processed
         batch_result['overall_statistics']['average_overall_score'] = avg_score
 
-        return batch_result
+        return self._to_serializable(batch_result)
     
     def _detect_answer_type(self, predicted: str, ground_truth: str) -> AnswerType:
         """답변 타입 자동 감지"""
@@ -585,7 +585,7 @@ class ComprehensiveEvaluator:
         gt_set = set(str(item) for item in gt)
         
         return len(pred_set & gt_set) / len(gt_set)
-    
+
     def _calculate_batch_statistics(self, results: List[EvaluationResult]) -> Dict[str, float]:
         """배치 통계 계산"""
         if not results:
@@ -635,3 +635,15 @@ class ComprehensiveEvaluator:
             'f1_score': np.mean([r.f1_score for r in filtered]),
             'overall_score': np.mean([r.overall_score() for r in filtered])
         }
+
+    def _to_serializable(self, obj: Any) -> Any:
+        """JSON 직렬화를 위한 기본 타입 변환"""
+        if isinstance(obj, np.generic):
+            return obj.item()
+        if isinstance(obj, Enum):
+            return obj.value
+        if isinstance(obj, dict):
+            return {k: self._to_serializable(v) for k, v in obj.items()}
+        if isinstance(obj, list):
+            return [self._to_serializable(v) for v in obj]
+        return obj
