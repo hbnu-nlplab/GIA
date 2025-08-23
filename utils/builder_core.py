@@ -159,9 +159,13 @@ class BuilderCore:
         pre["ssh_missing"] = set([ (d.get("system",{}).get("hostname") or d.get("file")) for d in self.devices if not self._ssh_on(d)])
         return pre
 
+    def calculate_metric(self, metric: str) -> Any:
+        """주어진 메트릭을 계산하여 값을 반환합니다."""
+        pre = self._precompute()
+        _atype, value = self._answer_for_metric(metric, {}, pre)
+        return value
 
     # GIA-Re/utils/builder_core.py 에 새로운 함수 추가
-
     def _answer_for_composite_intent(self, intent: Dict[str, Any], pre: Dict[str, Any]) -> tuple[str, Any]:
         """복합/추론 intent를 처리하여 최종 답변을 계산합니다."""
         intent_type = intent.get("type")

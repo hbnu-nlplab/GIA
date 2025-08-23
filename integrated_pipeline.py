@@ -17,8 +17,8 @@ from parsers.universal_parser import UniversalParser
 from generators.rule_based_generator import RuleBasedGenerator, RuleBasedGeneratorConfig
 # from generators.llm_explorer import LLMExplorer
 from assemblers.test_assembler import TestAssembler, AssembleOptions
-from inspectors.intent_inspector import IntentInspector
 from utils.builder_core import BuilderCore
+from answer_agent import AnswerAgent
 
 # 새로운 향상된 모듈들 (위에서 생성한 것들)
 from generators.enhanced_llm_generator import EnhancedLLMQuestionGenerator, QuestionComplexity, PersonaType
@@ -116,7 +116,6 @@ class NetworkConfigDatasetGenerator:
         self.assembler = TestAssembler(
             AssembleOptions(base_xml_dir=config.xml_data_dir)
         )
-        self.inspector = IntentInspector()
         self.evaluator = ComprehensiveEvaluator()
         
         # 진행 상황 추적
@@ -237,103 +236,61 @@ class NetworkConfigDatasetGenerator:
         
         return basic_samples
     
-    def _execute_stage_enhanced_generation(self, network_facts: Dict[str, Any]) -> List[DatasetSample]:
-        """3단계: 심화 질문 생성 (Enhanced LLM)"""
-        self.logger.info("3단계: 심화 질문 생성 (Enhanced LLM)")
-        
-        # Enhanced LLM 질문 생성
-        enhanced_questions = self.enhanced_generator.generate_enhanced_questions(
-            network_facts=network_facts,
-            target_complexities=self.config.target_complexities,
-            questions_per_template=self.config.enhanced_questions_per_category
+    
+def _execute_stage_enhanced_generation(self, network_facts: Dict[str, Any]) -> List[DatasetSample]:
+    """3단계: 심화 질문 생성 및 AnswerAgent를 통한 정답 계산"""
+    self.logger.info("3단계: 심화 질문 생성 (Enhanced LLM) 및 정답 생성 (AnswerAgent)")
+
+    enhanced_questions = self.enhanced_generator.generate_enhanced_questions(
+        network_facts=network_facts,
+        target_complexities=self.config.target_complexities,
+        questions_per_template=self.config.enhanced_questions_per_category,
+    )
+
+    answer_agent = AnswerAgent(network_facts)
+    enhanced_samples: List[DatasetSample] = []
+
+    for eq in enhanced_questions:
+        question_text = eq.get("question")
+        reasoning_plan = eq.get("reasoning_plan")
+        if not question_text or not reasoning_plan:
+            continue
+
+        final_answer = answer_agent.execute_plan(question_text, reasoning_plan)
+        sample = DatasetSample(
+            id=f"ENHANCED_{eq.get('test_id', 'ENH')}",
+            question=question_text,
+            context="",
+            answer=final_answer,
+            answer_type="long",
+            category=eq.get("category", "Enhanced_Analysis"),
+            level=eq.get("level", 3),
+            complexity=eq.get("complexity", "analytical"),
+            persona=eq.get("persona"),
+            scenario=eq.get("scenario"),
+            metadata={
+                "origin": "enhanced_llm_with_agent",
+                "reasoning_plan": reasoning_plan,
+                "reasoning_requirement": eq.get("reasoning_requirement", ""),
+                "expected_analysis_depth": eq.get("expected_analysis_depth", "detailed"),
+            },
         )
-        
-        # Intent 파싱 및 답변 계산을 위해 LLMExplorer 활용
-        llm_items = []
-        for eq in enhanced_questions:
-            # Enhanced question을 LLM Explorer 형태로 변환
-            hypothesis = {
-                "question": eq["question"],
-                "hypothesis_type": eq.get("complexity", "analytical"),
-                "intent_hint": {
-                    "metric": eq.get("metrics_involved", [""])[0] if eq.get("metrics_involved") else "",
-                    "scope": {}
-                },
-                "expected_condition": "",
-                "reasoning_steps": eq.get("reasoning_requirement", ""),
-                "cited_values": {}
-            }
-            llm_items.append({"hypothesis": hypothesis})
-        
-        # Intent 변환 및 답변 계산
-        translated_items = []
-        for item in llm_items:
-            try:
-                # 간단한 intent 변환 (실제로는 LLMExplorer의 로직 사용)
-                translated = {
-                    "origin": "enhanced_llm",
-                    "hypothesis": item["hypothesis"],
-                    "intent": self._create_fallback_intent(item["hypothesis"])
-                }
-                translated_items.append(translated)
-            except Exception as e:
-                self.logger.warning(f"Enhanced question intent 변환 실패: {e}")
-                continue
-        
-        # 검증 및 답변 계산
-        validated_items = self.inspector.validate_llm(network_facts, translated_items)
+        sample.context = self._create_enhanced_context(network_facts, sample)
+        enhanced_samples.append(sample)
 
-        # 시나리오 조건에 따른 정답 변형
-        validated_items = self.assembler.apply_scenario(
-            validated_items, self.config.scenario_overrides
-        )
-        
-        # DatasetSample로 변환
-        enhanced_samples = []
-        for idx, test in enumerate(validated_items):
-            # Enhanced question 정보 복구
-            orig_question = enhanced_questions[min(idx, len(enhanced_questions)-1)]
+    self.logger.info(f"심화 질문 및 정답 생성 완료: {len(enhanced_samples)}개")
 
-            formatted_answer = self._format_answer(test.get('expected_answer', {}))
-            sample = DatasetSample(
-                id=f"ENHANCED_{test.get('test_id', f'ENH_{idx}')}",
-                question=test.get('question', ''),
-                context=self._create_context(network_facts, []),
-                answer=formatted_answer,
-                answer_type=self._determine_answer_type(formatted_answer),
-                category=orig_question.get('category', 'Enhanced_Analysis'),
-                level=orig_question.get('level', test.get('level', 3)),
+    self.stage_results[PipelineStage.ENHANCED_GENERATION] = {
+        "question_count": len(enhanced_samples),
+        "complexities": list(set(s.complexity for s in enhanced_samples)),
+        "personas": list(set(s.persona for s in enhanced_samples if s.persona)),
+        "success": True,
+    }
 
-                complexity=orig_question.get('complexity', 'analytical'),
-                persona=orig_question.get('persona'),
-                scenario=orig_question.get('scenario'),
-                metadata={
-                    "origin": "enhanced_llm",
-                    "intent": test.get('intent', {}),
-                    "hypothesis": test.get('hypothesis', {}),
-                    # 생성 단계에서 설정된 레벨/난이도 정보를 그대로 사용한다
-                    "level": orig_question.get('level', 3),
-                    "answer_difficulty": orig_question.get('answer_difficulty', orig_question.get('level', 3)),
+    if self.config.save_intermediate:
+        self._save_intermediate("enhanced_dataset.json", [asdict(s) for s in enhanced_samples])
 
-                    "reasoning_requirement": orig_question.get('reasoning_requirement', ''),
-                    "expected_analysis_depth": orig_question.get('expected_analysis_depth', 'detailed')
-                }
-            )
-            enhanced_samples.append(sample)
-        
-        self.logger.info(f"심화 질문 생성 완료: {len(enhanced_samples)}개")
-        
-        self.stage_results[PipelineStage.ENHANCED_GENERATION] = {
-            "question_count": len(enhanced_samples),
-            "complexities": list(set(s.complexity for s in enhanced_samples)),
-            "personas": list(set(s.persona for s in enhanced_samples if s.persona)),
-            "success": True
-        }
-        
-        if self.config.save_intermediate:
-            self._save_intermediate("enhanced_dataset.json", [asdict(s) for s in enhanced_samples])
-        
-        return enhanced_samples
+    return enhanced_samples
     
     def _execute_stage_assembly(
         self, 
@@ -630,15 +587,6 @@ class NetworkConfigDatasetGenerator:
             return "예" if value else "아니오"
         
         return str(value)
-    
-    def _create_fallback_intent(self, hypothesis: Dict[str, Any]) -> Dict[str, Any]:
-        """Enhanced question용 fallback intent 생성"""
-        return {
-            "metric": "system_hostname_text",  # 기본 메트릭
-            "scope": {"type": "GLOBAL"},
-            "aggregation": "text",
-            "placeholders": []
-        }
     
     def _validate_sample_quality(self, sample: DatasetSample) -> bool:
         """샘플 품질 검증"""

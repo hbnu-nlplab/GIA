@@ -316,9 +316,27 @@ NOC 운영자 관점에서, 서비스 가용성과 관련된 복합적 상황 �
                             "expected_analysis_depth": {"type": "string", "enum": ["surface", "detailed", "comprehensive"]},
                             "metrics_involved": {"type": "array", "items": {"type": "string"}},
                             "scenario_context": {"type": "string"},
-                            "answer_structure": {"type": "string"}
+                            "answer_structure": {"type": "string"},
+                            "reasoning_plan": {
+                                "type": "array",
+                                "description": "정답을 도출하기 위한 단계별 계획",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "step": {"type": "integer"},
+                                        "description": {"type": "string"},
+                                        "required_metric": {"type": "string"},
+                                        "synthesis": {
+                                            "type": "string",
+                                            "enum": ["fetch", "compare", "summarize"]
+                                        }
+                                    },
+                                    "required": ["step", "description", "required_metric", "synthesis"],
+                                    "additionalProperties": False
+                                }
+                            }
                         },
-                        "required": ["question", "reasoning_requirement", "expected_analysis_depth"],
+                        "required": ["question", "reasoning_requirement", "expected_analysis_depth", "reasoning_plan"],
                         "additionalProperties": False
                     },
                     "maxItems": count
@@ -327,20 +345,20 @@ NOC 운영자 관점에서, 서비스 가용성과 관련된 복합적 상황 �
             "required": ["questions"],
             "additionalProperties": False
         }
-        
+
         system_prompt = f"""
 당신은 {template.persona.value} 역할의 네트워크 전문가입니다.
 복잡도: {template.complexity.value}
 시나리오: {template.scenario}
 
-주어진 네트워크 현황을 바탕으로 {template.answer_type} 답변이 필요한 전문적 질문을 생성하세요.
+주어진 네트워크 현황을 바탕으로, 복합적인 질문과 해당 질문을 해결하기 위한 단계별 **추론 계획(reasoning_plan)**을 함께 작성하세요.
 **규칙: 모든 질문과 설명은 반드시 한국어로 작성해야 합니다.**
 """
-        
+
         user_prompt = f"""
 {template.prompt_template}
 
-네트워크 현황:
+네트워크 현황 요약:
 - 장비 수: {context['device_count']}
 - AS 그룹: {list(context['as_groups'].keys())}
 - 발견된 이상징후: {context['anomalies']}
@@ -354,6 +372,7 @@ NOC 운영자 관점에서, 서비스 가용성과 관련된 복합적 상황 �
 2. 실무 경험과 전문 지식 요구
 3. 단순한 팩트 조회를 넘어선 추론
 4. {template.answer_type} 형태의 상세한 답변 필요성
+5. **reasoning_plan**: 정답 도출을 위한 단계별 절차
 
 **엄격한 규칙: 모든 응답은 반드시 한국어로만 작성해주십시오.**
 """
@@ -383,6 +402,7 @@ NOC 운영자 관점에서, 서비스 가용성과 관련된 복합적 상황 �
                         "reasoning_requirement": q_data.get("reasoning_requirement", ""),
                         "expected_analysis_depth": q_data.get("expected_analysis_depth", "detailed"),
                         "metrics_involved": q_data.get("metrics_involved", template.expected_metrics),
+                        "reasoning_plan": q_data.get("reasoning_plan", []),
                         "test_id": f"ENHANCED-{template.complexity.value.upper()}-{idx+1:03d}",
                         # 심화 파이프라인 구분을 위해 카테고리와 난이도 정보를 추가한다
                         "category": "advanced",
