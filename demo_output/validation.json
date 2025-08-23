@@ -1,9 +1,9 @@
 [
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-3153",
-    "question": "sample8 장비의 iBGP 피어 목록은?",
-    "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
-    "answer": "1.1.1.1, 3.3.3.3, 4.4.4.4",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-44787",
+    "question": "sample10 장비의 iBGP 피어 목록은?",
+    "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "answer": "1.1.1.1, 2.2.2.2, 3.3.3.3",
     "answer_type": "short",
     "category": "basic",
     "complexity": "basic",
@@ -11,7 +11,7 @@
     "persona": null,
     "scenario": "정상",
     "source_files": [
-      "sample8.xml"
+      "sample10.xml"
     ],
     "metadata": {
       "origin": "rule_based",
@@ -19,20 +19,20 @@
       "evidence_hint": {
         "scope": {
           "type": "DEVICE",
-          "host": "sample8"
+          "host": "sample10"
         },
         "metric": "neighbor_list_ibgp"
       },
       "topic": "BGP_Consistency",
-      "question_length": 24,
+      "question_length": 25,
       "answer_length": 25,
       "has_numbers": true,
       "has_technical_terms": false,
       "evaluation": {
-        "question_id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-3153",
+        "question_id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-44787",
         "answer_type": "short",
-        "predicted_answer": "1.1.1.1, 3.3.3.3, 4.4.4.4",
-        "ground_truth": "1.1.1.1, 3.3.3.3, 4.4.4.4",
+        "predicted_answer": "1.1.1.1, 2.2.2.2, 3.3.3.3",
+        "ground_truth": "1.1.1.1, 2.2.2.2, 3.3.3.3",
         "exact_match": 1.0,
         "f1_score": 1.0,
         "token_accuracy": 1.0,
@@ -47,86 +47,93 @@
     }
   },
   {
-    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-002",
-    "question": "발견된 보안 문제 중에서 가장 시급하게 해결해야 할 취약점은 무엇이며, 그에 따른 개선 권고사항은 무엇인지 제시하십시오.",
-    "context": "보안 설정 현황:\nCE1: SSH ON, AAA OFF\nCE2: SSH ON, AAA OFF\nsample10: SSH ON, AAA ON\nsample7: SSH ON, AAA ON\nsample8: SSH ON, AAA ON",
-    "answer": "발견된 보안 문제 중 가장 시급하게 해결해야 할 취약점은 BGP(Border Gateway Protocol) 관련 문제입니다. 이 문제는 네트워크의 경로 선택에 심각한 영향을 미칠 수 있으며, 발생 빈도가 높아 공격자가 이를 악용할 가능성이 큽니다. 개선 권고사항으로는 BGP 세션의 인증을 강화하고, 경로 필터링을 적용하여 불법적인 경로 광고를 차단하는 것이 필요합니다. 또한, L2VPN 문제도 중요하지만, 상대적으로 발생 빈도가 낮아 BGP 문제 해결 후에 다루는 것이 바람직합니다. 장기적으로는 보안 정책 준수를 강화하고, 정기적인 보안 점검 및 교육을 통해 지속적인 개선을 도모해야 합니다.",
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-002",
+    "question": "AS 65003에서 특정 피어 장애 시 전체 네트워크에 미치는 파급효과를 평가하라.",
+    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+    "answer": "AS 65003에서 특정 피어 장애 시 전체 네트워크에 미치는 파급효과를 평가한 결과는 다음과 같습니다.\n\n1. **BGP 피어 수 확인 (bgp_peer_count)**: 현재 AS 65003의 BGP 피어 수에 대한 정보가 \"None\"으로 나타났습니다. 이는 AS 65003가 현재 BGP 피어를 설정하지 않았거나, 피어 정보가 수집되지 않았음을 의미합니다. 따라서, 특정 피어 장애가 발생할 경우, 피어가 없기 때문에 직접적인 파급효과는 존재하지 않습니다.\n\n2. **iBGP 쌍 누락 확인 (ibgp_missing_pairs_count)**: 이 단계에서 확인된 결과는 \"0\"으로, 이는 AS 65003 내에서 iBGP 쌍이 모두 정상적으로 설정되어 있음을 나타냅니다. 즉, 내부 BGP 피어 간의 연결이 원활하게 이루어지고 있어, 특정 피어의 장애가 발생하더라도 다른 피어들이 정상적으로 작동할 가능성이 높습니다.\n\n3. **L2VPN 단방향 연결 확인 (l2vpn_unidir_count)**: 이 단계에서도 \"0\"으로 나타났습니다. 이는 L2VPN 연결이 양방향으로 정상적으로 작동하고 있음을 의미합니다. 따라서, 특정 피어의 장애가 발생하더라도 L2VPN 서비스에 대한 영향은 없을 것으로 보입니다.\n\n### 종합 평가:\n현재 AS 65003의 네트워크 설정을 기반으로 할 때, 특정 피어의 장애가 발생하더라도 전체 네트워크에 미치는 파급효과는 미미할 것으로 판단됩니다. BGP 피어가 설정되지 않았거나 정보가 수집되지 않았기 때문에, 피어 장애로 인한 직접적인 영향은 없으며, 내부 BGP 쌍과 L2VPN 연결이 정상적으로 작동하고 있어 네트워크의 안정성이 유지될 것으로 예상됩니다.\n\n### 결론:\n현재 수집된 증거에 따르면, AS 65003의 네트워크는 특정 피어 장애에 대해 강한 내성을 가지고 있으며, 추가적인 문제가 발견되지 않았습니다. 그러나 BGP 피어 수에 대한 정보가 부족하므로, 향후 피어 설정을 검토하고, 피어 장애 시의 대응 계획을 마련하는 것이 좋습니다.",
     "answer_type": "long",
     "category": "advanced",
-    "complexity": "diagnostic",
+    "complexity": "analytical",
     "level": 3,
-    "persona": "security_auditor",
-    "scenario": "보안 취약점 진단",
+    "persona": "network_engineer",
+    "scenario": "BGP 경로 수렴 분석",
     "source_files": null,
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
         {
-          "step": "발견된 각 보안 문제의 심각성과 발생 빈도를 분석하여 위험도를 평가한다.",
-          "required_metric": "risk_assessment",
+          "step": 1,
+          "description": "AS 65003의 BGP 피어 수 확인",
+          "required_metric": "bgp_peer_count",
           "metric_params": {
-            "issues": [
-              "bgp_missing_pairs",
-              "l2vpn_issues"
-            ]
-          }
+            "asn": "65003"
+          },
+          "synthesis": "fetch"
         },
         {
-          "step": "위험도가 높은 문제를 해결하기 위한 우선순위와 그에 따른 개선 권고사항을 도출한다.",
-          "required_metric": "mitigation_priority"
+          "step": 2,
+          "description": "AS 65003에서 장애가 발생할 가능성이 있는 피어 식별",
+          "required_metric": "ibgp_missing_pairs_count",
+          "metric_params": {
+            "asn": "65003"
+          },
+          "synthesis": "fetch"
         },
         {
-          "step": "보안 정책 위반 사항이 규정 준수에 미치는 영향을 분석하여 장기적인 개선 방안을 제시한다.",
-          "required_metric": "compliance_impact_analysis"
+          "step": 3,
+          "description": "장애 시 네트워크에 미치는 파급효과 요약",
+          "required_metric": "l2vpn_unidir_count",
+          "metric_params": {},
+          "synthesis": "summarize"
         }
       ],
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed",
       "evidence": {
-        "step_발견된 각 보안 문제의 심각성과 발생 빈도를 분석하여 위험도를 평가한다._risk_assessment": null,
-        "step_보안 정책 위반 사항이 규정 준수에 미치는 영향을 분석하여 장기적인 개선 방안을 제시한다._compliance_impact_analysis": null,
-        "step_위험도가 높은 문제를 해결하기 위한 우선순위와 그에 따른 개선 권고사항을 도출한다._mitigation_priority": null
+        "step_1_bgp_peer_count": null,
+        "step_2_ibgp_missing_pairs_count": 0,
+        "step_3_l2vpn_unidir_count": 0
       },
-      "question_length": 67,
-      "answer_length": 335,
-      "has_numbers": false,
+      "question_length": 46,
+      "answer_length": 1004,
+      "has_numbers": true,
       "has_technical_terms": false,
       "evaluation": {
-        "question_id": "ENHANCED_ENHANCED-DIAGNOSTIC-002",
+        "question_id": "ENHANCED_ENHANCED-ANALYTICAL-002",
         "answer_type": "long",
-        "predicted_answer": "모든 네트워크 장비의 SSH 설정을 수집하여 최신 보안 프로토콜 가이드와 비교한 결과, 설정의 불일치 항목이 발견되었습니다. 특히, 일부 장비에서 SSH 버전이 구형이거나, 강력한 암호화 알고리즘이 적용되지 않은 사례가 확인되었습니다. 이에 따라, 모든 장비에서 SSH 버전을 최신으로 업데이트하고, 강력한 암호화 및 인증 방식을 적용할 것을 권장합니다. 또한, 불필요한 포트 접근을 차단하고, 정기적인 보안 점검을 통해 설정의 일관성을 유지할 필요가 있습니다.",
-        "ground_truth": "모든 네트워크 장비의 SSH 설정을 수집하여 최신 보안 프로토콜 가이드와 비교한 결과, 설정의 불일치 항목이 발견되었습니다. 특히, 일부 장비에서 SSH 버전이 구형이거나, 강력한 암호화 알고리즘이 적용되지 않은 사례가 확인되었습니다. 이에 따라, 모든 장비에서 SSH 버전을 최신으로 업데이트하고, 강력한 암호화 및 인증 방식을 적용할 것을 권장합니다. 또한, 불필요한 포트 접근을 차단하고, 정기적인 보안 점검을 통해 설정의 일관성을 유지할 필요가 있습니다.",
-        "exact_match": 1.0,
-        "f1_score": 1.0,
+        "predicted_answer": "네트워크 확장이 기존 L2/L3VPN 서비스에 미치는 영향을 최소화하기 위해서는 다음과 같은 조치를 취해야 합니다.\n\n1. **현재 L2VPN 상태 점검**: 수집된 증거에 따르면, L2VPN에서 발생하고 있는 문제는 없으며, `l2vpn_unidir_count`가 0으로 나타났습니다. 이는 현재 L2VPN 서비스가 정상적으로 운영되고 있음을 의미합니다. 따라서, 네트워크 확장 시 L2VPN의 설정을 변경하거나 추가할 때, 기존의 설정을 유지하고 새로운 연결을 추가하는 방식으로 접근해야 합니다.\n\n2. **VRF 설정 검토**: `vrf_without_rt_count`가 0인 것은 VRF 설정에서 Route Target(RT) 요소가 누락되지 않았음을 나타냅니다. 이는 VRF 간의 경로 전파가 원활하게 이루어질 수 있음을 의미합니다. 네트워크 확장 시 새로운 VRF를 추가할 경우, 반드시 RT 설정을 포함하여 기존 VRF와의 경로 전파가 원활하도록 해야 합니다.\n\n3. **BGP 설정 확인**: `bgp_inconsistent_as_count`가 None으로 나타난 것은 BGP 설정에 일관성이 있음을 보여줍니다. 이는 L3VPN 서비스가 안정적으로 운영되고 있다는 것을 의미합니다. 네트워크 확장 시 BGP 설정을 변경할 경우, AS 번호의 일관성을 유지하고, 새로운 경로가 기존 경로와 충돌하지 않도록 주의해야 합니다.\n\n4. **L2/L3VPN 서비스 안정성 보장**: `l2vpn_issues`가 없다는 것은 현재 L2/L3VPN 서비스에 문제가 None을 나타냅니다. 따라서, 네트워크 확장 시에는 기존 서비스에 영향을 미치지 않도록, 새로운 장비나 링크를 추가할 때 기존의 트래픽 흐름을 고려하여 설계해야 합니다. 또한, 확장 후에는 서비스의 성능을 모니터링하여 yes상치 못한 문제가 발생하지 않도록 지속적으로 점검해야 합니다.\n\n결론적으로, 네트워크 확장을 계획할 때는 기존 L2/L3VPN 서비스의 안정성을 유지하기 위해 현재의 설정을 철저히 검토하고, 새로운 요소를 추가할 때는 기존의 구조와 일관성을 유지하는 것이 중요합니다. 추가적인 문제가 발견되지 않았으므로, 현재의 설정을 기반으로 신중하게 확장 계획을 수립하는 것이 바람직합니다.",
+        "ground_truth": "네트워크 확장이 기존 L2/L3VPN 서비스에 미치는 영향을 최소화하기 위해서는 다음과 같은 조치를 취해야 합니다.\n\n1. **현재 L2VPN 상태 점검**: 수집된 증거에 따르면, L2VPN에서 발생하고 있는 문제는 없으며, `l2vpn_unidir_count`가 0으로 나타났습니다. 이는 현재 L2VPN 서비스가 정상적으로 운영되고 있음을 의미합니다. 따라서, 네트워크 확장 시 L2VPN의 설정을 변경하거나 추가할 때, 기존의 설정을 유지하고 새로운 연결을 추가하는 방식으로 접근해야 합니다.\n\n2. **VRF 설정 검토**: `vrf_without_rt_count`가 0인 것은 VRF 설정에서 Route Target(RT) 요소가 누락되지 않았음을 나타냅니다. 이는 VRF 간의 경로 전파가 원활하게 이루어질 수 있음을 의미합니다. 네트워크 확장 시 새로운 VRF를 추가할 경우, 반드시 RT 설정을 포함하여 기존 VRF와의 경로 전파가 원활하도록 해야 합니다.\n\n3. **BGP 설정 확인**: `bgp_inconsistent_as_count`가 None으로 나타난 것은 BGP 설정에 일관성이 있음을 보여줍니다. 이는 L3VPN 서비스가 안정적으로 운영되고 있다는 것을 의미합니다. 네트워크 확장 시 BGP 설정을 변경할 경우, AS 번호의 일관성을 유지하고, 새로운 경로가 기존 경로와 충돌하지 않도록 주의해야 합니다.\n\n4. **L2/L3VPN 서비스 안정성 보장**: `l2vpn_issues`가 없다는 것은 현재 L2/L3VPN 서비스에 문제가 없음을 나타냅니다. 따라서, 네트워크 확장 시에는 기존 서비스에 영향을 미치지 않도록, 새로운 장비나 링크를 추가할 때 기존의 트래픽 흐름을 고려하여 설계해야 합니다. 또한, 확장 후에는 서비스의 성능을 모니터링하여 예상치 못한 문제가 발생하지 않도록 지속적으로 점검해야 합니다.\n\n결론적으로, 네트워크 확장을 계획할 때는 기존 L2/L3VPN 서비스의 안정성을 유지하기 위해 현재의 설정을 철저히 검토하고, 새로운 요소를 추가할 때는 기존의 구조와 일관성을 유지하는 것이 중요합니다. 추가적인 문제가 발견되지 않았으므로, 현재의 설정을 기반으로 신중하게 확장 계획을 수립하는 것이 바람직합니다.",
+        "exact_match": 0.0,
+        "f1_score": 0.9957264957264957,
         "token_accuracy": null,
         "normalized_accuracy": null,
         "bert_score": null,
-        "bleu_score": 1.0,
+        "bleu_score": 0.9775256664257702,
         "rouge_scores": {
           "rouge-1": {
-            "precision": 1.0,
-            "recall": 1.0,
-            "f": 1.0
+            "precision": 0.9911111111111112,
+            "recall": 0.9911111111111112,
+            "f": 0.9911111111111112
           },
           "rouge-2": {
-            "precision": 1.0,
-            "recall": 1.0,
-            "f": 1.0
+            "precision": 0.9821428571428571,
+            "recall": 0.9821428571428571,
+            "f": 0.9821428571428571
           },
           "rouge-l": {
-            "precision": 1.0,
-            "recall": 1.0,
-            "f": 1.0
+            "precision": 0.9911111111111112,
+            "recall": 0.9911111111111112,
+            "f": 0.9911111111111112
           }
         },
         "structural_accuracy": null,
-        "overall_score": 0.7
+        "overall_score": 0.49694017094017096
       },
-      "overall_score": 0.7
+      "overall_score": 0.49694017094017096
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-51661",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-48141",
     "question": "CE2 장비의 eBGP 피어 목록은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "answer": "192.168.3.10",
@@ -155,7 +162,7 @@
       "has_numbers": true,
       "has_technical_terms": false,
       "evaluation": {
-        "question_id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-51661",
+        "question_id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-48141",
         "answer_type": "short",
         "predicted_answer": "192.168.3.10",
         "ground_truth": "192.168.3.10",

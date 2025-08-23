@@ -373,12 +373,52 @@ NOC 운영자 관점에서, 서비스 가용성과 관련된 복합적 상황 �
 
 생성할 질문 수: {count}
 
+**중요: reasoning_plan 작성 가이드라인**
+
+사용 가능한 메트릭들:
+- ssh_enabled_devices, ssh_missing_count, ssh_all_enabled_bool
+- ibgp_missing_pairs_count, ibgp_fullmesh_ok, bgp_inconsistent_as_count  
+- aaa_enabled_devices, vrf_without_rt_count, l2vpn_unidir_count
+- bgp_peer_count, interface_count, ospf_area_count
+
+각 reasoning_plan 단계는 반드시 다음을 포함해야 합니다:
+1. **step**: 단계 번호 (1, 2, 3...)
+2. **description**: "AS 65001의 iBGP 풀메시 상태 확인" (구체적 작업)
+3. **required_metric**: "ibgp_fullmesh_ok" (실제 메트릭 이름)
+4. **metric_params**: {{"asn": "65001"}} (필요한 파라미터)
+5. **synthesis**: "fetch" (수집), "compare" (비교), "summarize" (요약)
+
+예시 reasoning_plan:
+[
+  {{
+    "step": 1,
+    "description": "SSH 보안 설정이 누락된 장비들을 식별",
+    "required_metric": "ssh_missing_count",
+    "metric_params": {{}},
+    "synthesis": "fetch"
+  }},
+  {{
+    "step": 2,
+    "description": "AAA 인증이 활성화된 장비 목록 확인",
+    "required_metric": "aaa_enabled_devices", 
+    "metric_params": {{}},
+    "synthesis": "fetch"
+  }},
+  {{
+    "step": 3,
+    "description": "SSH와 AAA 설정을 종합하여 보안 상태 평가",
+    "required_metric": "ssh_all_enabled_bool",
+    "metric_params": {{}},
+    "synthesis": "summarize"
+  }}
+]
+
 각 질문은 다음을 포함해야 합니다:
 1. 복합적 분석이 필요한 내용
 2. 실무 경험과 전문 지식 요구
 3. 단순한 팩트 조회를 넘어선 추론
 4. {template.answer_type} 형태의 상세한 답변 필요성
-5. **reasoning_plan**: 각 단계에 required_metric과 metric_params(필요 시)를 명시
+5. **실행 가능한 reasoning_plan**: 각 단계가 실제 메트릭으로 구현되어야 함
 
 **엄격한 규칙: 모든 응답은 반드시 한국어로만 작성해주십시오.**
 """
