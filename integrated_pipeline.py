@@ -283,8 +283,6 @@ class NetworkConfigDatasetGenerator:
                 context=self._create_context(network_facts, []),
                 answer=self._format_answer(test.get('expected_answer', {})),
                 answer_type=orig_question.get('answer_type', 'long'),
-                category=orig_question.get('category', 'advanced'),
-
                 category=orig_question.get('category', 'Enhanced_Analysis'),
                 level=orig_question.get('level', test.get('level', 3)),
 
@@ -350,17 +348,31 @@ class NetworkConfigDatasetGenerator:
         for sample in balanced_samples:
             if not sample.context or sample.context.strip() == "":
                 sample.context = self._create_enhanced_context(network_facts, sample)
-        
-        self.logger.info(f"통합 완료: {len(balanced_samples)}개 (중복 제거: {len(all_samples) - len(balanced_samples)}개)")
-        
+
+        # 복잡도별 그룹화 저장
+        samples_by_complexity: Dict[str, List[DatasetSample]] = {}
+        for sample in balanced_samples:
+            samples_by_complexity.setdefault(sample.complexity, []).append(sample)
+        self.samples_by_complexity = samples_by_complexity
+
+        # 필요 시 복잡도별 중간 결과 저장
+        if self.config.save_intermediate:
+            for comp, items in samples_by_complexity.items():
+                self._save_intermediate(f"assembled_{comp}.json", [asdict(s) for s in items])
+
+        self.logger.info(
+            f"통합 완료: {len(balanced_samples)}개 (중복 제거: {len(all_samples) - len(balanced_samples)}개)"
+        )
+
         self.stage_results[PipelineStage.ASSEMBLY] = {
             "total_samples": len(balanced_samples),
             "basic_count": len(basic_samples),
             "enhanced_count": len(enhanced_samples),
             "deduplicated_count": len(all_samples) - len(balanced_samples),
-            "success": True
+            "complexity_counts": {k: len(v) for k, v in samples_by_complexity.items()},
+            "success": True,
         }
-        
+
         return balanced_samples
     
     def _execute_stage_validation(self, samples: List[DatasetSample]) -> List[DatasetSample]:
@@ -418,17 +430,27 @@ class NetworkConfigDatasetGenerator:
                 answer_type=sample.answer_type
             )
             evaluation_data.append(asdict(eval_result))
-        
+
+        # 복잡도별 통계 계산
+        complexity_breakdown: Dict[str, Dict[str, int]] = {}
+        for comp, comp_samples in getattr(self, "samples_by_complexity", {}).items():
+            complexity_breakdown[comp] = {
+                "total": len(comp_samples),
+                "short": len([s for s in comp_samples if s.answer_type == "short"]),
+                "long": len([s for s in comp_samples if s.answer_type == "long"]),
+            }
+
         # 배치 통계 계산
         batch_stats = {
             "sample_evaluation_count": len(evaluation_data),
             "total_dataset_size": len(samples),
             "category_distribution": self._calculate_category_distribution(samples),
             "complexity_distribution": self._calculate_complexity_distribution(samples),
+            "complexity_breakdown": complexity_breakdown,
             "answer_type_distribution": {
                 "short": len([s for s in samples if s.answer_type == "short"]),
-                "long": len([s for s in samples if s.answer_type == "long"])
-            }
+                "long": len([s for s in samples if s.answer_type == "long"]),
+            },
         }
         
         self.stage_results[PipelineStage.EVALUATION] = {
@@ -479,7 +501,8 @@ class NetworkConfigDatasetGenerator:
                 "total_samples": len(samples),
                 "categories": list(set(s.category for s in samples)),
                 "complexities": list(set(s.complexity for s in samples)),
-                "answer_types": ["short", "long"]
+                "complexity_counts": {k: len(v) for k, v in getattr(self, "samples_by_complexity", {}).items()},
+                "answer_types": ["short", "long"],
             },
             "train": [asdict(s) for s in train_samples],
             "validation": [asdict(s) for s in val_samples],
