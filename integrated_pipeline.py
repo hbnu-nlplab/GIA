@@ -193,12 +193,13 @@ class NetworkConfigDatasetGenerator:
         basic_samples = []
         for category, tests in assembled_tests.items():
             for test in tests:
+                formatted_answer = self._format_answer(test.get('expected_answer', {}))
                 sample = DatasetSample(
                     id=f"BASIC_{test.get('test_id', f'{category}_{len(basic_samples)}')}",
                     question=test.get('question', ''),
                     context=self._create_context(network_facts, test.get('source_files', [])),
-                    answer=self._format_answer(test.get('expected_answer', {})),
-                    answer_type="short",  # Rule-based는 주로 short answer
+                    answer=formatted_answer,
+                    answer_type=self._determine_answer_type(formatted_answer),
                     category="basic",
                     level=test.get('level', 1),
                     complexity="basic",
@@ -276,13 +277,14 @@ class NetworkConfigDatasetGenerator:
         for idx, test in enumerate(validated_items):
             # Enhanced question 정보 복구
             orig_question = enhanced_questions[min(idx, len(enhanced_questions)-1)]
-            
+
+            formatted_answer = self._format_answer(test.get('expected_answer', {}))
             sample = DatasetSample(
                 id=f"ENHANCED_{test.get('test_id', f'ENH_{idx}')}",
                 question=test.get('question', ''),
                 context=self._create_context(network_facts, []),
-                answer=self._format_answer(test.get('expected_answer', {})),
-                answer_type=orig_question.get('answer_type', 'long'),
+                answer=formatted_answer,
+                answer_type=self._determine_answer_type(formatted_answer),
                 category=orig_question.get('category', 'Enhanced_Analysis'),
                 level=orig_question.get('level', test.get('level', 3)),
 
@@ -639,15 +641,15 @@ class NetworkConfigDatasetGenerator:
             return False
         
         return True
-    
+
+    def _determine_answer_type(self, answer: str) -> str:
+        """단어 수 기반 answer type 결정"""
+        tokens = str(answer).split()
+        return "short" if len(tokens) <= self.config.short_answer_threshold else "long"
+
     def _reclassify_answer_type(self, sample: DatasetSample) -> str:
         """답변 타입 재분류"""
-        # 토큰 수 기반
-        answer_tokens = sample.answer.split()
-        if len(answer_tokens) <= self.config.short_answer_threshold:
-            return "short"
-        else:
-            return "long"
+        return self._determine_answer_type(sample.answer)
     
     def _enrich_sample_metadata(self, sample: DatasetSample) -> DatasetSample:
         """샘플 메타데이터 보강"""
