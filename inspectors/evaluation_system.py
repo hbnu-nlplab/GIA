@@ -6,7 +6,7 @@ Short/Long Answer 구분 평가
 
 from __future__ import annotations
 from typing import Dict, Any, List, Optional, Union, Tuple
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from enum import Enum
 import re
 import json
@@ -448,7 +448,7 @@ class ComprehensiveEvaluator:
         return result
     
     def evaluate_batch(
-        self, 
+        self,
         predictions: List[Dict[str, Any]]
     ) -> Dict[str, Any]:
         """배치 평가 및 통계 계산"""
@@ -472,6 +472,25 @@ class ComprehensiveEvaluator:
             'short_answer_stats': self._filter_stats(results, AnswerType.SHORT),
             'long_answer_stats': self._filter_stats(results, AnswerType.LONG)
         }
+
+    def evaluate_dataset(
+        self,
+        predictions: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        """데이터셋 전체 평가"""
+        batch_result = self.evaluate_batch(predictions)
+
+        processed: List[Dict[str, Any]] = []
+        for res in batch_result['individual_results']:
+            res_dict = asdict(res)
+            res_dict['overall_score'] = res.overall_score()
+            processed.append(res_dict)
+
+        avg_score = float(np.mean([r['overall_score'] for r in processed])) if processed else 0.0
+        batch_result['individual_results'] = processed
+        batch_result['overall_statistics']['average_overall_score'] = avg_score
+
+        return batch_result
     
     def _detect_answer_type(self, predicted: str, ground_truth: str) -> AnswerType:
         """답변 타입 자동 감지"""
