@@ -27,6 +27,7 @@ class PersonaType(Enum):
     NOC_OPERATOR = "noc_operator"
     ARCHITECT = "network_architect"
     TROUBLESHOOTER = "troubleshooter"
+    COMPLIANCE_OFFICER = "compliance_officer"
 
 
 class ScenarioType(Enum):
@@ -164,6 +165,28 @@ NOC 운영자 관점에서, 서비스 가용성과 관련된 복합적 상황 �
 - 비즈니스 연속성 고려
 """,
                 expected_metrics=["bgp_neighbor_count", "vrf_count", "ssh_missing_count"],
+                answer_type="long"
+            ),
+
+            # 규정 준수 - 컴플라이언스 담당자
+            QuestionTemplate(
+                complexity=QuestionComplexity.DIAGNOSTIC,
+                persona=PersonaType.COMPLIANCE_OFFICER,
+                scenario="정책 준수 점검",
+                scenario_type=ScenarioType.NORMAL,
+                prompt_template="""
+컴플라이언스 담당자 관점에서, 네트워크 장비 설정이 사내 표준 및 규제 요구사항을 충족하는지 평가하는 질문을 생성하세요:
+
+1. **접근 제어 정책**: AAA 및 패스워드 정책의 일관성 여부
+2. **로그 보존 요건**: 로컬 로그 버퍼의 심각도 설정이 감사 기준을 충족하는가
+3. **보안 프로토콜 준수**: SSH 설정이 최신 보안 가이드를 따르고 있는가
+
+질문 특성:
+- 정책/규정 준수 여부 검토
+- 감사 대비 문서화 가능성 고려
+- 미준수 항목에 대한 개선 권고 포함
+""",
+                expected_metrics=["password_policy_present_bool", "aaa_present_bool", "logging_buffered_severity_text"],
                 answer_type="long"
             )
         ]
