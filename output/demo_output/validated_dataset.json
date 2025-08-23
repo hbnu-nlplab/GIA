@@ -1,15 +1,14 @@
 [
   {
-    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-21433",
+    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-31176",
     "question": "SSH가 활성화된 장비 목록은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "answer": "CE1, CE2, sample10, sample7, sample8, sample9",
     "answer_type": "short",
-    "category": "basic",
+    "category": "Security_Policy",
     "complexity": "basic",
-    "level": 1,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "ce1.xml"
     ],
@@ -23,155 +22,23 @@
         },
         "metric": "ssh_enabled_devices"
       },
-      "topic": "Security_Policy"
+      "level": 1,
+      "question_length": 17,
+      "answer_length": 45,
+      "has_numbers": false,
+      "has_technical_terms": false
     }
   },
   {
-    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-44361",
-    "question": "SSH가 활성화된 장비 목록은?",
-    "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
-    "answer": "CE1, CE2, sample10, sample7, sample8, sample9",
-    "answer_type": "short",
-    "category": "basic",
-    "complexity": "basic",
-    "level": 1,
-    "persona": null,
-    "scenario": "정상",
-    "source_files": [
-      "ce2.xml"
-    ],
-    "metadata": {
-      "origin": "rule_based",
-      "intent": {},
-      "evidence_hint": {
-        "scope": {
-          "type": "DEVICE",
-          "host": "CE2"
-        },
-        "metric": "ssh_enabled_devices"
-      },
-      "topic": "Security_Policy"
-    }
-  },
-  {
-    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-17693",
-    "question": "SSH가 활성화된 장비 목록은?",
-    "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
-    "answer": "CE1, CE2, sample10, sample7, sample8, sample9",
-    "answer_type": "short",
-    "category": "basic",
-    "complexity": "basic",
-    "level": 1,
-    "persona": null,
-    "scenario": "정상",
-    "source_files": [
-      "sample10.xml"
-    ],
-    "metadata": {
-      "origin": "rule_based",
-      "intent": {},
-      "evidence_hint": {
-        "scope": {
-          "type": "DEVICE",
-          "host": "sample10"
-        },
-        "metric": "ssh_enabled_devices"
-      },
-      "topic": "Security_Policy"
-    }
-  },
-  {
-    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-7086",
-    "question": "SSH가 활성화된 장비 목록은?",
-    "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
-    "answer": "CE1, CE2, sample10, sample7, sample8, sample9",
-    "answer_type": "short",
-    "category": "basic",
-    "complexity": "basic",
-    "level": 1,
-    "persona": null,
-    "scenario": "정상",
-    "source_files": [
-      "sample7.xml"
-    ],
-    "metadata": {
-      "origin": "rule_based",
-      "intent": {},
-      "evidence_hint": {
-        "scope": {
-          "type": "DEVICE",
-          "host": "sample7"
-        },
-        "metric": "ssh_enabled_devices"
-      },
-      "topic": "Security_Policy"
-    }
-  },
-  {
-    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-4216",
-    "question": "SSH가 활성화된 장비 목록은?",
-    "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
-    "answer": "CE1, CE2, sample10, sample7, sample8, sample9",
-    "answer_type": "short",
-    "category": "basic",
-    "complexity": "basic",
-    "level": 1,
-    "persona": null,
-    "scenario": "정상",
-    "source_files": [
-      "sample8.xml"
-    ],
-    "metadata": {
-      "origin": "rule_based",
-      "intent": {},
-      "evidence_hint": {
-        "scope": {
-          "type": "DEVICE",
-          "host": "sample8"
-        },
-        "metric": "ssh_enabled_devices"
-      },
-      "topic": "Security_Policy"
-    }
-  },
-  {
-    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-63664",
-    "question": "SSH가 활성화된 장비 목록은?",
-    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
-    "answer": "CE1, CE2, sample10, sample7, sample8, sample9",
-    "answer_type": "short",
-    "category": "basic",
-    "complexity": "basic",
-    "level": 1,
-    "persona": null,
-    "scenario": "정상",
-    "source_files": [
-      "sample9.xml"
-    ],
-    "metadata": {
-      "origin": "rule_based",
-      "intent": {},
-      "evidence_hint": {
-        "scope": {
-          "type": "DEVICE",
-          "host": "sample9"
-        },
-        "metric": "ssh_enabled_devices"
-      },
-      "topic": "Security_Policy"
-    }
-  },
-  {
-    "id": "BASIC_DSL-SSH_MISSING_COUNT-28183",
+    "id": "BASIC_DSL-SSH_MISSING_COUNT-19646",
     "question": "SSH가 비활성화(또는 설정 없음)인 장비 수는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1\n장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1\n장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "0",
     "answer_type": "short",
-    "category": "basic",
+    "category": "Security_Policy",
     "complexity": "basic",
-    "level": 2,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "ce1.xml",
       "ce2.xml",
@@ -189,20 +56,23 @@
         },
         "metric": "ssh_missing_count"
       },
-      "topic": "Security_Policy"
+      "level": 2,
+      "question_length": 27,
+      "answer_length": 1,
+      "has_numbers": false,
+      "has_technical_terms": false
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-17693",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-50804",
     "question": "sample10 장비의 iBGP 피어 목록은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "1.1.1.1, 2.2.2.2, 3.3.3.3",
     "answer_type": "short",
-    "category": "basic",
+    "category": "BGP_Consistency",
     "complexity": "basic",
-    "level": 1,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "sample10.xml"
     ],
@@ -216,20 +86,23 @@
         },
         "metric": "neighbor_list_ibgp"
       },
-      "topic": "BGP_Consistency"
+      "level": 1,
+      "question_length": 25,
+      "answer_length": 25,
+      "has_numbers": true,
+      "has_technical_terms": false
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-7086",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-18907",
     "question": "sample7 장비의 iBGP 피어 목록은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "2.2.2.2, 3.3.3.3, 4.4.4.4",
     "answer_type": "short",
-    "category": "basic",
+    "category": "BGP_Consistency",
     "complexity": "basic",
-    "level": 1,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "sample7.xml"
     ],
@@ -243,20 +116,23 @@
         },
         "metric": "neighbor_list_ibgp"
       },
-      "topic": "BGP_Consistency"
+      "level": 1,
+      "question_length": 24,
+      "answer_length": 25,
+      "has_numbers": true,
+      "has_technical_terms": false
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-4216",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-50957",
     "question": "sample8 장비의 iBGP 피어 목록은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "1.1.1.1, 3.3.3.3, 4.4.4.4",
     "answer_type": "short",
-    "category": "basic",
+    "category": "BGP_Consistency",
     "complexity": "basic",
-    "level": 1,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "sample8.xml"
     ],
@@ -270,20 +146,23 @@
         },
         "metric": "neighbor_list_ibgp"
       },
-      "topic": "BGP_Consistency"
+      "level": 1,
+      "question_length": 24,
+      "answer_length": 25,
+      "has_numbers": true,
+      "has_technical_terms": false
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-63664",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-24087",
     "question": "sample9 장비의 iBGP 피어 목록은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "1.1.1.1, 2.2.2.2, 4.4.4.4",
     "answer_type": "short",
-    "category": "basic",
+    "category": "BGP_Consistency",
     "complexity": "basic",
-    "level": 1,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "sample9.xml"
     ],
@@ -297,20 +176,23 @@
         },
         "metric": "neighbor_list_ibgp"
       },
-      "topic": "BGP_Consistency"
+      "level": 1,
+      "question_length": 24,
+      "answer_length": 25,
+      "has_numbers": true,
+      "has_technical_terms": false
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-21433",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-31176",
     "question": "CE1 장비의 eBGP 피어 목록은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "answer": "192.168.1.10",
     "answer_type": "short",
-    "category": "basic",
+    "category": "BGP_Consistency",
     "complexity": "basic",
-    "level": 1,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "ce1.xml"
     ],
@@ -324,20 +206,23 @@
         },
         "metric": "neighbor_list_ebgp"
       },
-      "topic": "BGP_Consistency"
+      "level": 1,
+      "question_length": 20,
+      "answer_length": 12,
+      "has_numbers": true,
+      "has_technical_terms": false
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-44361",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-38093",
     "question": "CE2 장비의 eBGP 피어 목록은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "answer": "192.168.3.10",
     "answer_type": "short",
-    "category": "basic",
+    "category": "BGP_Consistency",
     "complexity": "basic",
-    "level": 1,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "ce2.xml"
     ],
@@ -351,20 +236,23 @@
         },
         "metric": "neighbor_list_ebgp"
       },
-      "topic": "BGP_Consistency"
+      "level": 1,
+      "question_length": 20,
+      "answer_length": 12,
+      "has_numbers": true,
+      "has_technical_terms": false
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-17693",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-50804",
     "question": "sample10 장비의 eBGP 피어 목록은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "192.168.4.11",
     "answer_type": "short",
-    "category": "basic",
+    "category": "BGP_Consistency",
     "complexity": "basic",
-    "level": 1,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "sample10.xml"
     ],
@@ -378,20 +266,23 @@
         },
         "metric": "neighbor_list_ebgp"
       },
-      "topic": "BGP_Consistency"
+      "level": 1,
+      "question_length": 25,
+      "answer_length": 12,
+      "has_numbers": true,
+      "has_technical_terms": false
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-7086",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-18907",
     "question": "sample7 장비의 eBGP 피어 목록은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "192.168.1.11",
     "answer_type": "short",
-    "category": "basic",
+    "category": "BGP_Consistency",
     "complexity": "basic",
-    "level": 1,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "sample7.xml"
     ],
@@ -405,20 +296,23 @@
         },
         "metric": "neighbor_list_ebgp"
       },
-      "topic": "BGP_Consistency"
+      "level": 1,
+      "question_length": 24,
+      "answer_length": 12,
+      "has_numbers": true,
+      "has_technical_terms": false
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-4216",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-50957",
     "question": "sample8 장비의 eBGP 피어 목록은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "192.168.2.11",
     "answer_type": "short",
-    "category": "basic",
+    "category": "BGP_Consistency",
     "complexity": "basic",
-    "level": 1,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "sample8.xml"
     ],
@@ -432,20 +326,23 @@
         },
         "metric": "neighbor_list_ebgp"
       },
-      "topic": "BGP_Consistency"
+      "level": 1,
+      "question_length": 24,
+      "answer_length": 12,
+      "has_numbers": true,
+      "has_technical_terms": false
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-63664",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-24087",
     "question": "sample9 장비의 eBGP 피어 목록은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "192.168.3.11",
     "answer_type": "short",
-    "category": "basic",
+    "category": "BGP_Consistency",
     "complexity": "basic",
-    "level": 1,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "sample9.xml"
     ],
@@ -459,20 +356,23 @@
         },
         "metric": "neighbor_list_ebgp"
       },
-      "topic": "BGP_Consistency"
+      "level": 1,
+      "question_length": 24,
+      "answer_length": 12,
+      "has_numbers": true,
+      "has_technical_terms": false
     }
   },
   {
-    "id": "BASIC_DSL-IBGP_FULLMESH_OK-50843",
+    "id": "BASIC_DSL-IBGP_FULLMESH_OK-21966",
     "question": "AS 65000 도메인의 iBGP 풀메시 구성이 완전한가",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "예",
     "answer_type": "short",
-    "category": "basic",
+    "category": "BGP_Consistency",
     "complexity": "basic",
-    "level": 2,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "sample10.xml",
       "sample7.xml",
@@ -489,20 +389,23 @@
         },
         "metric": "ibgp_fullmesh_ok"
       },
-      "topic": "BGP_Consistency"
+      "level": 2,
+      "question_length": 31,
+      "answer_length": 1,
+      "has_numbers": true,
+      "has_technical_terms": false
     }
   },
   {
-    "id": "BASIC_DSL-IBGP_FULLMESH_OK-60669",
+    "id": "BASIC_DSL-IBGP_FULLMESH_OK-22687",
     "question": "AS 65001 도메인의 iBGP 풀메시 구성이 완전한가",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "answer": "예",
     "answer_type": "short",
-    "category": "basic",
+    "category": "BGP_Consistency",
     "complexity": "basic",
-    "level": 2,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "ce1.xml"
     ],
@@ -516,20 +419,23 @@
         },
         "metric": "ibgp_fullmesh_ok"
       },
-      "topic": "BGP_Consistency"
+      "level": 2,
+      "question_length": 31,
+      "answer_length": 1,
+      "has_numbers": true,
+      "has_technical_terms": false
     }
   },
   {
-    "id": "BASIC_DSL-IBGP_FULLMESH_OK-39342",
+    "id": "BASIC_DSL-IBGP_FULLMESH_OK-13496",
     "question": "AS 65003 도메인의 iBGP 풀메시 구성이 완전한가",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "answer": "예",
     "answer_type": "short",
-    "category": "basic",
+    "category": "BGP_Consistency",
     "complexity": "basic",
-    "level": 2,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "ce2.xml"
     ],
@@ -543,20 +449,23 @@
         },
         "metric": "ibgp_fullmesh_ok"
       },
-      "topic": "BGP_Consistency"
+      "level": 2,
+      "question_length": 31,
+      "answer_length": 1,
+      "has_numbers": true,
+      "has_technical_terms": false
     }
   },
   {
-    "id": "BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-50843",
+    "id": "BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-21966",
     "question": "AS 65000 iBGP 풀메시에서 누락된 링크 개수는?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "0",
     "answer_type": "short",
-    "category": "basic",
+    "category": "BGP_Consistency",
     "complexity": "basic",
-    "level": 2,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "sample10.xml",
       "sample7.xml",
@@ -573,20 +482,23 @@
         },
         "metric": "ibgp_missing_pairs_count"
       },
-      "topic": "BGP_Consistency"
+      "level": 2,
+      "question_length": 31,
+      "answer_length": 1,
+      "has_numbers": true,
+      "has_technical_terms": false
     }
   },
   {
-    "id": "BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-60669",
+    "id": "BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-22687",
     "question": "AS 65001 iBGP 풀메시에서 누락된 링크 개수는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "answer": "0",
     "answer_type": "short",
-    "category": "basic",
+    "category": "BGP_Consistency",
     "complexity": "basic",
-    "level": 2,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "ce1.xml"
     ],
@@ -600,47 +512,23 @@
         },
         "metric": "ibgp_missing_pairs_count"
       },
-      "topic": "BGP_Consistency"
+      "level": 2,
+      "question_length": 31,
+      "answer_length": 1,
+      "has_numbers": true,
+      "has_technical_terms": false
     }
   },
   {
-    "id": "BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-39342",
-    "question": "AS 65003 iBGP 풀메시에서 누락된 링크 개수는?",
-    "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
-    "answer": "0",
-    "answer_type": "short",
-    "category": "basic",
-    "complexity": "basic",
-    "level": 2,
-    "persona": null,
-    "scenario": "정상",
-    "source_files": [
-      "ce2.xml"
-    ],
-    "metadata": {
-      "origin": "rule_based",
-      "intent": {},
-      "evidence_hint": {
-        "scope": {
-          "type": "AS",
-          "asn": "65003"
-        },
-        "metric": "ibgp_missing_pairs_count"
-      },
-      "topic": "BGP_Consistency"
-    }
-  },
-  {
-    "id": "BASIC_DSL-VRF_WITHOUT_RT_COUNT-28183",
+    "id": "BASIC_DSL-VRF_WITHOUT_RT_COUNT-19646",
     "question": "route-target이 없는 VRF (장비/VRF) 개수는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1\n장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1\n장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "0",
     "answer_type": "short",
-    "category": "basic",
+    "category": "VRF_Consistency",
     "complexity": "basic",
-    "level": 2,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "ce1.xml",
       "ce2.xml",
@@ -658,20 +546,23 @@
         },
         "metric": "vrf_without_rt_count"
       },
-      "topic": "VRF_Consistency"
+      "level": 2,
+      "question_length": 34,
+      "answer_length": 1,
+      "has_numbers": false,
+      "has_technical_terms": true
     }
   },
   {
-    "id": "BASIC_DSL-VRF_RD_MAP-54561",
+    "id": "BASIC_DSL-VRF_RD_MAP-40465",
     "question": "VRF exam-l3vpn 의 장비별 RD 매핑은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "exam-l3vpn: 65000:1000",
     "answer_type": "short",
-    "category": "basic",
+    "category": "VRF_Consistency",
     "complexity": "basic",
-    "level": 2,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "sample10.xml"
     ],
@@ -686,104 +577,23 @@
         },
         "metric": "vrf_rd_map"
       },
-      "topic": "VRF_Consistency"
+      "level": 2,
+      "question_length": 28,
+      "answer_length": 22,
+      "has_numbers": true,
+      "has_technical_terms": true
     }
   },
   {
-    "id": "BASIC_DSL-VRF_RD_MAP-59055",
-    "question": "VRF exam-l3vpn 의 장비별 RD 매핑은?",
-    "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
-    "answer": "exam-l3vpn: 65000:1000",
-    "answer_type": "short",
-    "category": "basic",
-    "complexity": "basic",
-    "level": 2,
-    "persona": null,
-    "scenario": "정상",
-    "source_files": [
-      "sample7.xml"
-    ],
-    "metadata": {
-      "origin": "rule_based",
-      "intent": {},
-      "evidence_hint": {
-        "scope": {
-          "type": "DEVICE_VRF",
-          "host": "sample7",
-          "vrf": "exam-l3vpn"
-        },
-        "metric": "vrf_rd_map"
-      },
-      "topic": "VRF_Consistency"
-    }
-  },
-  {
-    "id": "BASIC_DSL-VRF_RD_MAP-63688",
-    "question": "VRF exam-l3vpn 의 장비별 RD 매핑은?",
-    "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
-    "answer": "exam-l3vpn: 65000:1000",
-    "answer_type": "short",
-    "category": "basic",
-    "complexity": "basic",
-    "level": 2,
-    "persona": null,
-    "scenario": "정상",
-    "source_files": [
-      "sample8.xml"
-    ],
-    "metadata": {
-      "origin": "rule_based",
-      "intent": {},
-      "evidence_hint": {
-        "scope": {
-          "type": "DEVICE_VRF",
-          "host": "sample8",
-          "vrf": "exam-l3vpn"
-        },
-        "metric": "vrf_rd_map"
-      },
-      "topic": "VRF_Consistency"
-    }
-  },
-  {
-    "id": "BASIC_DSL-VRF_RD_MAP-7609",
-    "question": "VRF exam-l3vpn 의 장비별 RD 매핑은?",
-    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
-    "answer": "exam-l3vpn: 65000:1000",
-    "answer_type": "short",
-    "category": "basic",
-    "complexity": "basic",
-    "level": 2,
-    "persona": null,
-    "scenario": "정상",
-    "source_files": [
-      "sample9.xml"
-    ],
-    "metadata": {
-      "origin": "rule_based",
-      "intent": {},
-      "evidence_hint": {
-        "scope": {
-          "type": "DEVICE_VRF",
-          "host": "sample9",
-          "vrf": "exam-l3vpn"
-        },
-        "metric": "vrf_rd_map"
-      },
-      "topic": "VRF_Consistency"
-    }
-  },
-  {
-    "id": "BASIC_DSL-VRF_RT_LIST_PER_DEVICE-54561",
+    "id": "BASIC_DSL-VRF_RT_LIST_PER_DEVICE-40465",
     "question": "sample10 의 VRF exam-l3vpn route-target 목록은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "65000:1000",
     "answer_type": "short",
-    "category": "basic",
+    "category": "VRF_Consistency",
     "complexity": "basic",
-    "level": 1,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "sample10.xml"
     ],
@@ -798,20 +608,23 @@
         },
         "metric": "vrf_rt_list_per_device"
       },
-      "topic": "VRF_Consistency"
+      "level": 1,
+      "question_length": 43,
+      "answer_length": 10,
+      "has_numbers": true,
+      "has_technical_terms": true
     }
   },
   {
-    "id": "BASIC_DSL-VRF_RT_LIST_PER_DEVICE-59055",
+    "id": "BASIC_DSL-VRF_RT_LIST_PER_DEVICE-41470",
     "question": "sample7 의 VRF exam-l3vpn route-target 목록은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "65000:1000",
     "answer_type": "short",
-    "category": "basic",
+    "category": "VRF_Consistency",
     "complexity": "basic",
-    "level": 1,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "sample7.xml"
     ],
@@ -826,20 +639,23 @@
         },
         "metric": "vrf_rt_list_per_device"
       },
-      "topic": "VRF_Consistency"
+      "level": 1,
+      "question_length": 42,
+      "answer_length": 10,
+      "has_numbers": true,
+      "has_technical_terms": true
     }
   },
   {
-    "id": "BASIC_DSL-VRF_RT_LIST_PER_DEVICE-63688",
+    "id": "BASIC_DSL-VRF_RT_LIST_PER_DEVICE-22087",
     "question": "sample8 의 VRF exam-l3vpn route-target 목록은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "65000:1000",
     "answer_type": "short",
-    "category": "basic",
+    "category": "VRF_Consistency",
     "complexity": "basic",
-    "level": 1,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "sample8.xml"
     ],
@@ -854,20 +670,23 @@
         },
         "metric": "vrf_rt_list_per_device"
       },
-      "topic": "VRF_Consistency"
+      "level": 1,
+      "question_length": 42,
+      "answer_length": 10,
+      "has_numbers": true,
+      "has_technical_terms": true
     }
   },
   {
-    "id": "BASIC_DSL-VRF_RT_LIST_PER_DEVICE-7609",
+    "id": "BASIC_DSL-VRF_RT_LIST_PER_DEVICE-45005",
     "question": "sample9 의 VRF exam-l3vpn route-target 목록은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "65000:1000",
     "answer_type": "short",
-    "category": "basic",
+    "category": "VRF_Consistency",
     "complexity": "basic",
-    "level": 1,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "sample9.xml"
     ],
@@ -882,20 +701,23 @@
         },
         "metric": "vrf_rt_list_per_device"
       },
-      "topic": "VRF_Consistency"
+      "level": 1,
+      "question_length": 42,
+      "answer_length": 10,
+      "has_numbers": true,
+      "has_technical_terms": true
     }
   },
   {
-    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-4626",
+    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-8619",
     "question": "CE1의 VRF exam-l3vpn에 바인딩된 인터페이스 수는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "answer": "0",
     "answer_type": "short",
-    "category": "basic",
+    "category": "VRF_Consistency",
     "complexity": "basic",
-    "level": 2,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "ce1.xml"
     ],
@@ -910,20 +732,23 @@
         },
         "metric": "vrf_interface_bind_count"
       },
-      "topic": "VRF_Consistency"
+      "level": 2,
+      "question_length": 35,
+      "answer_length": 1,
+      "has_numbers": true,
+      "has_technical_terms": true
     }
   },
   {
-    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-36087",
+    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-56061",
     "question": "CE2의 VRF exam-l3vpn에 바인딩된 인터페이스 수는?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "answer": "0",
     "answer_type": "short",
-    "category": "basic",
+    "category": "VRF_Consistency",
     "complexity": "basic",
-    "level": 2,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "ce2.xml"
     ],
@@ -938,20 +763,23 @@
         },
         "metric": "vrf_interface_bind_count"
       },
-      "topic": "VRF_Consistency"
+      "level": 2,
+      "question_length": 35,
+      "answer_length": 1,
+      "has_numbers": true,
+      "has_technical_terms": true
     }
   },
   {
-    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-54561",
+    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-40465",
     "question": "sample10의 VRF exam-l3vpn에 바인딩된 인터페이스 수는?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "0",
     "answer_type": "short",
-    "category": "basic",
+    "category": "VRF_Consistency",
     "complexity": "basic",
-    "level": 2,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "sample10.xml"
     ],
@@ -966,20 +794,23 @@
         },
         "metric": "vrf_interface_bind_count"
       },
-      "topic": "VRF_Consistency"
+      "level": 2,
+      "question_length": 40,
+      "answer_length": 1,
+      "has_numbers": true,
+      "has_technical_terms": true
     }
   },
   {
-    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-59055",
+    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-41470",
     "question": "sample7의 VRF exam-l3vpn에 바인딩된 인터페이스 수는?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "0",
     "answer_type": "short",
-    "category": "basic",
+    "category": "VRF_Consistency",
     "complexity": "basic",
-    "level": 2,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "sample7.xml"
     ],
@@ -994,20 +825,23 @@
         },
         "metric": "vrf_interface_bind_count"
       },
-      "topic": "VRF_Consistency"
+      "level": 2,
+      "question_length": 39,
+      "answer_length": 1,
+      "has_numbers": true,
+      "has_technical_terms": true
     }
   },
   {
-    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-63688",
+    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-22087",
     "question": "sample8의 VRF exam-l3vpn에 바인딩된 인터페이스 수는?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "0",
     "answer_type": "short",
-    "category": "basic",
+    "category": "VRF_Consistency",
     "complexity": "basic",
-    "level": 2,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "sample8.xml"
     ],
@@ -1022,20 +856,23 @@
         },
         "metric": "vrf_interface_bind_count"
       },
-      "topic": "VRF_Consistency"
+      "level": 2,
+      "question_length": 39,
+      "answer_length": 1,
+      "has_numbers": true,
+      "has_technical_terms": true
     }
   },
   {
-    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-7609",
+    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-45005",
     "question": "sample9의 VRF exam-l3vpn에 바인딩된 인터페이스 수는?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "0",
     "answer_type": "short",
-    "category": "basic",
+    "category": "VRF_Consistency",
     "complexity": "basic",
-    "level": 2,
     "persona": null,
-    "scenario": "정상",
+    "scenario": null,
     "source_files": [
       "sample9.xml"
     ],
@@ -1050,7 +887,11 @@
         },
         "metric": "vrf_interface_bind_count"
       },
-      "topic": "VRF_Consistency"
+      "level": 2,
+      "question_length": 39,
+      "answer_length": 1,
+      "has_numbers": true,
+      "has_technical_terms": true
     }
   }
 ]

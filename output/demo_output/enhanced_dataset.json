@@ -1,0 +1,76 @@
+[
+  {
+    "id": "ENHANCED_LLM-001",
+    "question": "네트워크 보안 설정에서 SSH 및 AAA 설정의 일관성과 표준 준수를 보장하기 위해 현재 설정을 어떻게 평가할 수 있습니까? 특히 AS 그룹 '65001', '65003', '65000' 내에서 SSH 설정이 표준을 준수하고 있는지, 그리고 AAA 설정이 모든 장비에 일관되게 적용되고 있는지를 확인하기 위한 방법은 무엇입니까?",
+    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+    "answer": "CE1",
+    "answer_type": "long",
+    "category": "Enhanced_Analysis",
+    "complexity": "diagnostic",
+    "persona": "security_auditor",
+    "scenario": "보안 취약점 진단",
+    "source_files": null,
+    "metadata": {
+      "origin": "enhanced_llm",
+      "intent": {
+        "metric": "system_hostname_text",
+        "scope": {
+          "type": "GLOBAL"
+        },
+        "aggregation": "text",
+        "placeholders": []
+      },
+      "hypothesis": {
+        "question": "네트워크 보안 설정에서 SSH 및 AAA 설정의 일관성과 표준 준수를 보장하기 위해 현재 설정을 어떻게 평가할 수 있습니까? 특히 AS 그룹 '65001', '65003', '65000' 내에서 SSH 설정이 표준을 준수하고 있는지, 그리고 AAA 설정이 모든 장비에 일관되게 적용되고 있는지를 확인하기 위한 방법은 무엇입니까?",
+        "hypothesis_type": "diagnostic",
+        "intent_hint": {
+          "metric": "ssh_missing_count",
+          "scope": {}
+        },
+        "expected_condition": "",
+        "reasoning_steps": "",
+        "cited_values": {}
+      },
+      "level": 3,
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed"
+    }
+  },
+  {
+    "id": "ENHANCED_LLM-002",
+    "question": "발견된 보안 이상 징후 중에서 'bgp_missing_pairs', 'l2vpn_issues'가 네트워크에 미치는 보안 위험도를 어떻게 평가할 수 있으며, 이러한 취약점이 비즈니스 운영에 미칠 수 있는 영향을 고려하여 우선적으로 해결해야 할 사항은 무엇입니까?",
+    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+    "answer": "CE1",
+    "answer_type": "long",
+    "category": "Enhanced_Analysis",
+    "complexity": "diagnostic",
+    "persona": "security_auditor",
+    "scenario": "보안 취약점 진단",
+    "source_files": null,
+    "metadata": {
+      "origin": "enhanced_llm",
+      "intent": {
+        "metric": "system_hostname_text",
+        "scope": {
+          "type": "GLOBAL"
+        },
+        "aggregation": "text",
+        "placeholders": []
+      },
+      "hypothesis": {
+        "question": "발견된 보안 이상 징후 중에서 'bgp_missing_pairs', 'l2vpn_issues'가 네트워크에 미치는 보안 위험도를 어떻게 평가할 수 있으며, 이러한 취약점이 비즈니스 운영에 미칠 수 있는 영향을 고려하여 우선적으로 해결해야 할 사항은 무엇입니까?",
+        "hypothesis_type": "diagnostic",
+        "intent_hint": {
+          "metric": "ssh_missing_count",
+          "scope": {}
+        },
+        "expected_condition": "",
+        "reasoning_steps": "",
+        "cited_values": {}
+      },
+      "level": 3,
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed"
+    }
+  }
+]

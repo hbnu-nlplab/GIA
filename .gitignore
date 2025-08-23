@@ -1,0 +1,12 @@
+CMD.md
+CMD.txt
+# Ignore all files with the .md extension
+*.md
+# Ignore all files with the .txt extension
+*.txt
+# Ignore all files with the .log extension
+*.log
+# Ignore all files with the .tmp extension
+*.tmp
+# Ignore all files with the .bak extension
+*.bak   

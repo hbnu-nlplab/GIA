@@ -11,43 +11,14 @@ from pathlib import Path
 import logging
 
 # 기존 시스템 import (문제 해결 필요)
-# from _code.llm_explorer import LLMExplorer
+from generators.llm_explorer import LLMExplorer
 from generators.rule_based_generator import RuleBasedGenerator, RuleBasedGeneratorConfig
-# from _code.question_reviewer import heuristic_filter, llm_reviewer
-# from utils.llm_adapter import generate_hypothesis_llm, parse_intent_llm
+from inspectors.question_reviewer import heuristic_filter, llm_reviewer
+from utils.llm_adapter import generate_hypothesis_llm, parse_intent_llm
 
 # 새로운 시스템 import
-from generators.enhanced_llm_generator import EnhancedLLMQuestionGenerator, QuestionComplexity
-
-# 임시 구현: 누락된 함수들
-def generate_hypothesis_llm(context, policies, **kwargs):
-    """임시 구현: 가설 생성"""
-    return []
-
-def parse_intent_llm(question, metrics, **kwargs):
-    """임시 구현: 의도 파싱"""
-    return {"metric": "", "scope": {}}
-
-def heuristic_filter(questions):
-    """임시 구현: 휴리스틱 필터"""
-    return questions
-
-def llm_reviewer(questions):
-    """임시 구현: LLM 리뷰어"""
-    return questions
-
-class LLMExplorer:
-    """임시 구현: LLM Explorer 기본 클래스"""
-    
-    def __init__(self):
-        pass
-    
-    @classmethod
-    def from_llm(cls, *args, **kwargs):
-        return cls()
-    
-    def explore(self, *args, **kwargs):
-        return []
+from enhanced_llm_generator import EnhancedLLMQuestionGenerator, QuestionComplexity
+from evaluation_system import ComprehensiveEvaluator, AnswerType
 
 
 class LegacySystemFixer:

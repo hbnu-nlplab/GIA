@@ -1,0 +1,52 @@
+[
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-001",
+    "question": "L2VPN과 L3VPN 서비스에서 발생한 장애가 비즈니스에 미치는 영향을 최소화하기 위해, 어떤 장비와 AS 그룹을 우선적으로 복구해야 하는가?",
+    "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
+    "answer": "{\n  \"question\": \"L2VPN과 L3VPN 서비스에서 발생한 장애가 비즈니스에 미치는 영향을 최소화하기 위해, 어떤 장비와 AS 그룹을 우선적으로 복구해야 하는가?\",\n  \"plan\": [\n    \"장비 및 AS 그룹과 관련된 L2VPN 및 L3VPN 장애 상황을 파악한다.\",\n    \"각 서비스의 장애가 비즈니스에 미치는 영향을 평가한다.\",\n    \"장비와 AS 그룹의 중요도를 분석하여, 장애 발생 시 비즈니스에 큰 영향을 미치는 장비와 AS 그룹을 식별한다.\",\n    \"비즈니스 영향도가 큰 장비와 AS 그룹을 기반으로 우선순위 복구 계획을 수립한다.\",\n    \"복구 계획이 네트워크 안정성에 미치는 영향을 검토하고 조정한다.\"\n  ],\n  \"evidence\": {}\n}",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "synthetic",
+    "level": 4,
+    "persona": "noc_operator",
+    "scenario": "서비스 영향도 분석",
+    "source_files": null,
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        "장비 및 AS 그룹과 관련된 L2VPN 및 L3VPN 장애 상황을 파악한다.",
+        "각 서비스의 장애가 비즈니스에 미치는 영향을 평가한다.",
+        "장비와 AS 그룹의 중요도를 분석하여, 장애 발생 시 비즈니스에 큰 영향을 미치는 장비와 AS 그룹을 식별한다.",
+        "비즈니스 영향도가 큰 장비와 AS 그룹을 기반으로 우선순위 복구 계획을 수립한다.",
+        "복구 계획이 네트워크 안정성에 미치는 영향을 검토하고 조정한다."
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed"
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-002",
+    "question": "현재 발견된 네트워크 이상 징후를 기반으로, 잠재적인 서비스 위험 요소를 식별하고 예방적 모니터링 전략을 어떻게 구성할 것인가?",
+    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+    "answer": "{\n  \"question\": \"현재 발견된 네트워크 이상 징후를 기반으로, 잠재적인 서비스 위험 요소를 식별하고 예방적 모니터링 전략을 어떻게 구성할 것인가?\",\n  \"plan\": [\n    \"bgp_missing_pairs, l2vpn_issues와 같은 발견된 이상 징후의 세부 사항을 분석한다.\",\n    \"이상 징후가 발생할 수 있는 원인과 서비스 장애로 이어질 수 있는 시나리오를 파악한다.\",\n    \"비즈니스에 직접적인 영향을 미칠 가능성이 높은 위험 요소를 우선적으로 식별한다.\",\n    \"효율적인 예방적 모니터링 체계를 구축하기 위해 필요한 모니터링 지표와 경보 시스템을 정립한다.\",\n    \"모니터링 전략을 테스트하고, 필요시 조정하여 실효성을 확보한다.\"\n  ],\n  \"evidence\": {}\n}",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "synthetic",
+    "level": 4,
+    "persona": "noc_operator",
+    "scenario": "서비스 영향도 분석",
+    "source_files": null,
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        "bgp_missing_pairs, l2vpn_issues와 같은 발견된 이상 징후의 세부 사항을 분석한다.",
+        "이상 징후가 발생할 수 있는 원인과 서비스 장애로 이어질 수 있는 시나리오를 파악한다.",
+        "비즈니스에 직접적인 영향을 미칠 가능성이 높은 위험 요소를 우선적으로 식별한다.",
+        "효율적인 예방적 모니터링 체계를 구축하기 위해 필요한 모니터링 지표와 경보 시스템을 정립한다.",
+        "모니터링 전략을 테스트하고, 필요시 조정하여 실효성을 확보한다."
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed"
+    }
+  }
+]
