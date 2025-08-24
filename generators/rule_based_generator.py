@@ -44,6 +44,15 @@ ALLOWED_METRICS = {
         "vty_first_last_text","vty_login_mode_text","vty_password_secret_text","vty_transport_input_text",
         "system_users_detail_map","interface_mop_xenabled_bool"
     ],
+    "Security_Compliance": [
+        "ssh_acl_applied_check"
+    ],
+    "Routing_Policy_Inspection": [
+        "bgp_advertised_prefixes_list"
+    ],
+    "QoS_Verification": [
+        "qos_policer_applied_interfaces_list"
+    ],
 }
 
 def default_patterns(metric: str) -> str:
@@ -104,7 +113,10 @@ def default_patterns(metric: str) -> str:
         "vty_password_secret_text": "{host} 장비의 VTY password secret 값은?",
         "vty_transport_input_text": "{host} 장비에서 VTY의 transport input은?",
         "system_users_detail_map": "{host} 장비의 사용자 상세(UID/GID/HOME 등)는?",
-        "interface_mop_xenabled_bool": "{host} 장비에서 {if} 인터페이스의 MOP xenabled 설정은?"
+        "interface_mop_xenabled_bool": "{host} 장비에서 {if} 인터페이스의 MOP xenabled 설정은?",
+        "ssh_acl_applied_check": "{host} 장비에 SSH 접속 ACL이 적용되어 있는가?",
+        "bgp_advertised_prefixes_list": "{host} 장비가 BGP를 통해 외부로 광고하는 prefix 목록은?",
+        "qos_policer_applied_interfaces_list": "{host} 장비에서 QoS Policer가 적용된 인터페이스 목록은?"
     }
     return table.get(metric, f"{metric} 측정값은?")
 
@@ -244,7 +256,10 @@ METRIC_AGG = {
     "vty_password_secret_text":"text",
     "vty_transport_input_text":"text",
     "system_users_detail_map":"map",
-    "interface_mop_xenabled_bool":"boolean"
+    "interface_mop_xenabled_bool":"boolean",
+    "ssh_acl_applied_check":"boolean",
+    "bgp_advertised_prefixes_list":"set",
+    "qos_policer_applied_interfaces_list":"set"
 }
 
 CANDIDATES = {
@@ -313,7 +328,7 @@ def _mk(metric: str, agg: str, cat: str) -> Dict[str, Any]:
                   "system_hostname_text","system_mgmt_address_text","system_version_text","ios_config_register_text",
                   "logging_buffered_severity_text","http_server_enabled_bool","ip_forward_protocol_nd_bool","ip_cef_enabled_bool",
                   "vty_first_last_text","vty_login_mode_text","vty_password_secret_text","vty_transport_input_text",
-                  "system_users_detail_map"):
+                  "system_users_detail_map","ssh_acl_applied_check","bgp_advertised_prefixes_list","qos_policer_applied_interfaces_list"):
         scope={"type":"DEVICE","host":"{host}"}; placeholders=["host"]
     if metric == "interface_mop_xenabled_bool":
         scope={"type":"DEVICE_IF","host":"{host}","if":"{if}"}; placeholders=["host","if"]
