@@ -19,6 +19,7 @@ from generators.rule_based_generator import RuleBasedGenerator, RuleBasedGenerat
 from assemblers.test_assembler import TestAssembler, AssembleOptions
 from utils.builder_core import BuilderCore
 from answer_agent import AnswerAgent
+from command_agent import CommandAgent
 
 # 새로운 향상된 모듈들 (위에서 생성한 것들)
 from generators.enhanced_llm_generator import EnhancedLLMQuestionGenerator, QuestionComplexity, PersonaType
@@ -215,6 +216,9 @@ class NetworkConfigDatasetGenerator:
             categories=self.config.target_categories,
             scenario_type=self.config.scenario_type,
         )
+
+        command_items = [d for d in dsl_items if d.get("category") == "Command_Generation"]
+        dsl_items = [d for d in dsl_items if d.get("category") != "Command_Generation"]
         
         # 어셈블리를 통한 답변 계산
         assembled_tests = self.assembler.assemble(
@@ -222,6 +226,8 @@ class NetworkConfigDatasetGenerator:
             dsl_items,
             scenario_conditions=self.config.scenario_overrides,
         )
+
+        command_agent = CommandAgent(network_facts)
         
         # DatasetSample로 변환
         basic_samples = []
@@ -247,6 +253,36 @@ class NetworkConfigDatasetGenerator:
                     }
                 )
                 basic_samples.append(sample)
+
+        for idx, item in enumerate(command_items):
+            intent = item.get('intent', {})
+            metric = intent.get('metric', '')
+            params = intent.get('params', {})
+            if metric.startswith('cmd_'):
+                metric_name = metric[4:]
+            else:
+                metric_name = metric
+            command = command_agent.generate(metric_name, params)
+            formatted_answer = self._format_answer({"value": command})
+            sample = DatasetSample(
+                id=f"BASIC_CMD_{idx}",
+                question=item.get('question', ''),
+                context=self._create_context(network_facts, []),
+                answer=formatted_answer,
+                answer_type=self._determine_answer_type(formatted_answer),
+                category="basic",
+                level=item.get('level', 1),
+                complexity="basic",
+                scenario=item.get('scenario'),
+                source_files=[],
+                metadata={
+                    "origin": "rule_based",
+                    "intent": {"command": metric_name, "params": params},
+                    "evidence_hint": {},
+                    "topic": "Command_Generation",
+                },
+            )
+            basic_samples.append(sample)
         
         self.logger.info(f"기초 질문 생성 완료: {len(basic_samples)}개")
         
@@ -272,6 +308,7 @@ class NetworkConfigDatasetGenerator:
         )
 
         answer_agent = AnswerAgent(network_facts)
+        command_agent = CommandAgent(network_facts)
         enhanced_samples: List[DatasetSample] = []
 
         for eq in enhanced_questions:
@@ -290,28 +327,56 @@ class NetworkConfigDatasetGenerator:
             if not question_text or not reasoning_plan:
                 continue
 
-            result = answer_agent.execute_plan(question_text, reasoning_plan)
-            final_answer = result.get("answer")
-            sample = DatasetSample(
-                id=f"ENHANCED_{eq.get('test_id', 'ENH')}",
-                question=question_text,
-                context="",
-                answer=final_answer,
-                answer_type=eq.get("answer_type", "long"),
-                category=eq.get("category", "Enhanced_Analysis"),
-                complexity=eq.get("complexity", "analytical"),
-                level=eq.get("level", 3),
-                persona=eq.get("persona"),
-                scenario=eq.get("scenario"),
-                source_files=result.get("source_files"),
-                metadata={
-                    "origin": "enhanced_llm_with_agent",
-                    "reasoning_plan": reasoning_plan,
-                    "reasoning_requirement": eq.get("reasoning_requirement", ""),
-                    "expected_analysis_depth": eq.get("expected_analysis_depth", "detailed"),
-                    "evidence": answer_agent.evidence,
-                },
-            )
+            if all(step.get("intent") for step in reasoning_plan):
+                commands = []
+                for step in reasoning_plan:
+                    intent = step.get("intent")
+                    params = step.get("params", {})
+                    commands.append(command_agent.generate(intent, params))
+                final_answer = "\n".join(commands)
+                sample = DatasetSample(
+                    id=f"ENHANCED_{eq.get('test_id', 'ENH')}",
+                    question=question_text,
+                    context="",
+                    answer=final_answer,
+                    answer_type=eq.get("answer_type", "long"),
+                    category=eq.get("category", "Enhanced_Analysis"),
+                    complexity=eq.get("complexity", "analytical"),
+                    level=eq.get("level", 3),
+                    persona=eq.get("persona"),
+                    scenario=eq.get("scenario"),
+                    source_files=None,
+                    metadata={
+                        "origin": "enhanced_llm_with_agent",
+                        "reasoning_plan": reasoning_plan,
+                        "reasoning_requirement": eq.get("reasoning_requirement", ""),
+                        "expected_analysis_depth": eq.get("expected_analysis_depth", "detailed"),
+                        "evidence": {},
+                    },
+                )
+            else:
+                result = answer_agent.execute_plan(question_text, reasoning_plan)
+                final_answer = result.get("answer")
+                sample = DatasetSample(
+                    id=f"ENHANCED_{eq.get('test_id', 'ENH')}",
+                    question=question_text,
+                    context="",
+                    answer=final_answer,
+                    answer_type=eq.get("answer_type", "long"),
+                    category=eq.get("category", "Enhanced_Analysis"),
+                    complexity=eq.get("complexity", "analytical"),
+                    level=eq.get("level", 3),
+                    persona=eq.get("persona"),
+                    scenario=eq.get("scenario"),
+                    source_files=result.get("source_files"),
+                    metadata={
+                        "origin": "enhanced_llm_with_agent",
+                        "reasoning_plan": reasoning_plan,
+                        "reasoning_requirement": eq.get("reasoning_requirement", ""),
+                        "expected_analysis_depth": eq.get("expected_analysis_depth", "detailed"),
+                        "evidence": answer_agent.evidence,
+                    },
+                )
             sample.context = self._create_enhanced_context(network_facts, sample)
             enhanced_samples.append(sample)
 
