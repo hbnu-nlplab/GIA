@@ -1,4 +1,4 @@
-from typing import Dict, Any, List, Union
+from typing import Dict, Any, List, Union, Set
 import json
 
 from utils.builder_core import BuilderCore
@@ -11,18 +11,22 @@ class AnswerAgent:
         self.network_facts = network_facts
         self.builder = BuilderCore(network_facts.get("devices", []))
         self.evidence: Dict[str, Any] = {}
+        self.referenced_files: Set[str] = set()
 
-    def execute_plan(self, question: str, plan: Union[List[Dict[str, Any]], str]) -> str:
-        """Execute reasoning steps and return synthesized answer."""
+    def execute_plan(self, question: str, plan: Union[List[Dict[str, Any]], str]) -> Dict[str, Any]:
+        """Execute reasoning steps and return synthesized answer and source files."""
         self.evidence = {}
+        self.referenced_files = set()
 
         # Handle string-based plans
         if isinstance(plan, str):
-            return self._synthesize_text_answer(question, plan)
+            answer = self._synthesize_text_answer(question, plan)
+            return {"answer": answer, "source_files": sorted(self.referenced_files)}
 
         # Handle None or empty plans
         if not plan:
-            return self._synthesize_text_answer(question, "No reasoning plan provided")
+            answer = self._synthesize_text_answer(question, "No reasoning plan provided")
+            return {"answer": answer, "source_files": sorted(self.referenced_files)}
 
         # Handle list-based plans (original behavior)
         if isinstance(plan, list):
@@ -34,15 +38,19 @@ class AnswerAgent:
                     continue
                 params = step.get("metric_params") or {}
                 try:
-                    result = self.builder.calculate_metric(metric, params)
+                    result, files = self.builder.calculate_metric(metric, params)
                 except Exception as e:
                     result = f"error: {e}"
+                    files = []
                 self.evidence[f"step_{step.get('step')}_{metric}"] = result
+                self.referenced_files.update(files)
 
-            return self._synthesize_answer(question, plan)
-        
+            answer = self._synthesize_answer(question, plan)
+            return {"answer": answer, "source_files": sorted(self.referenced_files)}
+
         # Handle other types as text
-        return self._synthesize_text_answer(question, str(plan))
+        answer = self._synthesize_text_answer(question, str(plan))
+        return {"answer": answer, "source_files": sorted(self.referenced_files)}
 
     def _synthesize_text_answer(self, question: str, plan_text: str) -> str:
         """Handle text-based reasoning plans."""
@@ -77,8 +85,9 @@ class AnswerAgent:
         # Calculate relevant metrics
         for metric in relevant_metrics:
             try:
-                result = self.builder.calculate_metric(metric)
+                result, files = self.builder.calculate_metric(metric)
                 self.evidence[metric] = result
+                self.referenced_files.update(files)
             except Exception as e:
                 self.evidence[metric] = f"error: {e}"
         
@@ -143,8 +152,9 @@ class AnswerAgent:
             "question": question,
             "plan": plan,
             "evidence": self.evidence,
-        """수집된 증거를 바탕으로 최종 답변 생성 - 핵심 구현!"""
-        
+        }
+
+        # 수집된 증거를 바탕으로 최종 답변 생성 - 핵심 구현!
         # Evidence가 비어있으면 기본 답변
         if not self.evidence:
             return self._generate_template_answer(question, "수집된 증거가 없습니다.")

@@ -159,8 +159,8 @@ class BuilderCore:
         pre["ssh_missing"] = set([ (d.get("system",{}).get("hostname") or d.get("file")) for d in self.devices if not self._ssh_on(d)])
         return pre
 
-    def calculate_metric(self, metric: str, params: Dict[str, Any] | None = None) -> Any:
-        """주어진 메트릭을 계산하여 값을 반환합니다.
+    def calculate_metric(self, metric: str, params: Dict[str, Any] | None = None) -> tuple[Any, List[str]]:
+        """주어진 메트릭을 계산하여 값과 관련 소스 파일 목록을 반환합니다.
 
         Parameters
         ----------
@@ -171,7 +171,39 @@ class BuilderCore:
         """
         pre = self._precompute()
         _atype, value = self._answer_for_metric(metric, params or {}, pre)
-        return value
+        files = self._infer_source_files(params or {}, value)
+        return value, sorted(files)
+
+    def _infer_source_files(self, params: Dict[str, Any], value: Any) -> Set[str]:
+        """메트릭 계산에 사용된 설정 파일 목록을 추론합니다."""
+        files: Set[str] = set()
+
+        # 1) 파라미터에 host가 명시된 경우 해당 장비 파일 추가
+        host = params.get("host") if isinstance(params, dict) else None
+        if host:
+            dev = self.host_index.get(host)
+            if dev and dev.get("file"):
+                files.add(dev.get("file"))
+
+        # 2) 결과 값이 호스트명의 리스트/집합인 경우 해당 장비 파일 추가
+        hostnames: Set[str] = set()
+        if isinstance(value, (list, set, tuple)):
+            hostnames.update(str(v) for v in value)
+        elif isinstance(value, dict):
+            hostnames.update(str(v) for v in value.keys())
+
+        for hn in hostnames:
+            dev = self.host_index.get(hn)
+            if dev and dev.get("file"):
+                files.add(dev.get("file"))
+
+        # 3) 아무 것도 없으면 전체 장비 파일 반환 (보수적)
+        if not files:
+            for d in self.devices:
+                if d.get("file"):
+                    files.add(d.get("file"))
+
+        return files
 
     # GIA-Re/utils/builder_core.py 에 새로운 함수 추가
     def _answer_for_composite_intent(self, intent: Dict[str, Any], pre: Dict[str, Any]) -> tuple[str, Any]:

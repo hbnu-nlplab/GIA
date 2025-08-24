@@ -63,9 +63,10 @@ def test_evidence_collection():
     
     # 계획 실행 및 답변 생성
     result = agent.execute_plan(test_question, test_plan)
-    
+
     print(f"\n🎯 **최종 답변:**")
-    print(result)
+    print(result.get("answer"))
+    print(f"\n📂 **참고 파일:** {result.get('source_files')}")
     print(f"\n📊 **수집된 증거:**")
     print(json.dumps(agent.evidence, indent=2, ensure_ascii=False))
     
@@ -81,9 +82,10 @@ def test_evidence_collection():
     print(f"계획: {test_plan2}")
     
     result2 = agent.execute_plan(test_question2, test_plan2)
-    
+
     print(f"\n🎯 **최종 답변:**")
-    print(result2)
+    print(result2.get("answer"))
+    print(f"\n📂 **참고 파일:** {result2.get('source_files')}")
     print(f"\n📊 **수집된 증거:**")
     print(json.dumps(agent.evidence, indent=2, ensure_ascii=False))
     
@@ -121,9 +123,10 @@ def test_evidence_collection():
     print("계획:", json.dumps(test_plan3, indent=2, ensure_ascii=False))
     
     result3 = agent.execute_plan(test_question3, test_plan3)
-    
+
     print(f"\n🎯 **최종 답변:**")
-    print(result3)
+    print(result3.get("answer"))
+    print(f"\n📂 **참고 파일:** {result3.get('source_files')}")
     print(f"\n📊 **수집된 증거:**")
     print(json.dumps(agent.evidence, indent=2, ensure_ascii=False))
 
