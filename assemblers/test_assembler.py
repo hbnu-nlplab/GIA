@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import Dict, Any, List, Optional
+import json
 from dataclasses import dataclass
 import os
 import sys
@@ -347,7 +348,7 @@ class TestAssembler:
 
         # 2) 빌드(정답 계산)
         builder = BuilderCore(facts.get("devices") or facts)
-        by_cat = builder.expand_from_dsl(dsl_expanded)
+        by_cat = self._expand_from_dsl(builder, dsl_expanded)
 
         # 2-1) 시나리오 조건에 따른 정답 변형
         by_cat = self.apply_scenario(by_cat, scenario_conditions)
@@ -362,3 +363,29 @@ class TestAssembler:
         # 4) 증거
         enriched = {cat: self._retr.enrich(arr, self.options.base_xml_dir) for cat, arr in by_cat.items()}
         return enriched
+
+    def _expand_from_dsl(self, builder: BuilderCore, dsl_expanded: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
+        """Expand DSL and wrap answers into evaluation-friendly JSON."""
+        by_cat = builder.expand_from_dsl(dsl_expanded)
+        for cat, arr in by_cat.items():
+            for t in arr:
+                original = (t.get("expected_answer") or {}).get("value")
+                metric_name = ((t.get("evidence_hint") or {}).get("metric"))
+                if isinstance(original, list):
+                    new_answer = {
+                        "eval_targets": {
+                            "exact_match": ", ".join(map(str, original)),
+                            "f1_score": original,
+                        },
+                        "explanation": f"The list of devices for {metric_name} is {original}.",
+                    }
+                else:
+                    new_answer = {
+                        "eval_targets": {
+                            "exact_match": original,
+                            "f1_score": [],
+                        },
+                        "explanation": f"The value for {metric_name} is {original}.",
+                    }
+                t["expected_answer"] = {"value": json.dumps(new_answer, ensure_ascii=False)}
+        return by_cat

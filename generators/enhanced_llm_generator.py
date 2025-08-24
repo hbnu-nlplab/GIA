@@ -190,6 +190,29 @@ NOC 운영자 관점에서, 서비스 가용성과 관련된 복합적 상황 �
                 answer_type="long"
             ),
 
+            # What-if 시나리오 - NOC 운영자
+            QuestionTemplate(
+                complexity=QuestionComplexity.SCENARIO,
+                persona=PersonaType.NOC_OPERATOR,
+                scenario="링크 장애 시나리오 분석",
+                scenario_type=ScenarioType.FAILURE,
+                prompt_template="""
+NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했다고 가정한 'What-if' 시나리오 질문을 생성하세요.
+질문의 답변은 반드시 **'대체 경로' 또는 '영향받는 서비스 이름'**과 같이 명확한 단일 값이어야 합니다.
+
+**[네트워크 토폴로지 정보]**
+- 주요 장비: CE1, CE2, sample7, sample8, sample9, sample10
+
+**[질문 생성 예시]**
+- "sample7과 sample8을 연결하는 링크가 다운될 경우, sample7에서 sample10으로 가는 트래픽의 새로운 경로는 무엇인가?"
+
+위 예시처럼 구체적인 장애 상황을 가정하고 그 결과(명확한 정답)를 묻는 질문과, 그 답을 찾기 위한 `reasoning_plan`을 생성해주세요.
+`reasoning_plan`에는 반드시 'find_alternative_path'와 같은 시뮬레이션 메트릭과 해당 메트릭에 필요한 파라미터(down_link 등)를 포함해야 합니다.
+""",
+                expected_metrics=["find_alternative_path"],
+                answer_type="short"
+            ),
+
             # 명확한 정답을 요구하는 분석형 - 트러블슈터
             QuestionTemplate(
                 complexity=QuestionComplexity.ANALYTICAL,

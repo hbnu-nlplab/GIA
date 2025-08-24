@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Dict, Any, List, Set, Tuple, Union
 import json
+from collections import defaultdict, deque
 
 class BuilderCore:
     """
@@ -154,6 +155,71 @@ class BuilderCore:
         pre["l2vpn_unidir"] = unidir
         pre["l2vpn_mismatch"] = mismatch
 
+        # Security: SSH ACL 적용 여부
+        ssh_acl_map: Dict[str, bool] = {}
+        for d in self.devices:
+            host = self._hostname(d)
+            vty = ((d.get("line") or {}).get("vty") or {})
+            acl = vty.get("access_class") or vty.get("access_class_in") or vty.get("access_class_out")
+            ssh_acl_map[host] = bool(acl)
+        pre["ssh_acl_applied_map"] = ssh_acl_map
+
+        # BGP: 광고하는 prefix 목록
+        bgp_adv_map: Dict[str, List[str]] = {}
+        for d in self.devices:
+            host = self._hostname(d)
+            adv: Set[str] = set()
+            bgp = self._bgp(d)
+            for net in (bgp.get("networks") or []):
+                if isinstance(net, dict):
+                    p = net.get("prefix") or net.get("network")
+                    if p:
+                        adv.add(str(p))
+                elif isinstance(net, str):
+                    adv.add(net)
+            for vrf in self._bgp_vrfs(d):
+                for net in (vrf.get("networks") or []):
+                    if isinstance(net, dict):
+                        p = net.get("prefix") or net.get("network")
+                    else:
+                        p = net
+                    if p:
+                        adv.add(str(p))
+            redist = bgp.get("redistribute") or {}
+            if isinstance(redist, dict):
+                for rproto, rconf in redist.items():
+                    if isinstance(rconf, dict):
+                        for p in rconf.get("prefixes", []) or []:
+                            if p:
+                                adv.add(str(p))
+            bgp_adv_map[host] = sorted(adv)
+        pre["bgp_advertised_prefixes_map"] = bgp_adv_map
+
+        # QoS: policer가 적용된 인터페이스 목록
+        qos_policer_map: Dict[str, List[str]] = {}
+        for d in self.devices:
+            host = self._hostname(d)
+            policer_policies: Set[str] = set()
+            for pm in (d.get("qos") or {}).get("policy_maps", []) or []:
+                if not isinstance(pm, dict):
+                    continue
+                pm_name = pm.get("name")
+                for cls in pm.get("classes", []) or []:
+                    if isinstance(cls, dict) and (cls.get("police") or cls.get("policer")):
+                        if pm_name:
+                            policer_policies.add(pm_name)
+                        break
+            applied: List[str] = []
+            for iface in d.get("interfaces") or []:
+                sp = iface.get("service_policy") or {}
+                inp = sp.get("input"); outp = sp.get("output")
+                if (inp in policer_policies) or (outp in policer_policies):
+                    nm = iface.get("name") or iface.get("id")
+                    if nm:
+                        applied.append(nm)
+            qos_policer_map[host] = sorted(applied)
+        pre["qos_policer_applied_interfaces_map"] = qos_policer_map
+
         # Security
         pre["ssh_enabled"] = set([ (d.get("system",{}).get("hostname") or d.get("file")) for d in self.devices if self._ssh_on(d)])
         pre["ssh_missing"] = set([ (d.get("system",{}).get("hostname") or d.get("file")) for d in self.devices if not self._ssh_on(d)])
@@ -204,6 +270,67 @@ class BuilderCore:
                     files.add(d.get("file"))
 
         return files
+
+    def find_alternative_path(self, down_link: tuple[str, str]) -> List[str]:
+        """주어진 링크가 끊겼을 때 두 장비 간의 대체 경로를 탐색한다.
+
+        Parameters
+        ----------
+        down_link: tuple[str, str]
+            장애가 발생한 링크의 양 끝단 장비명 (src, dst)
+
+        Returns
+        -------
+        list[str]
+            src에서 dst까지의 새로운 최단 경로에 포함된 장비 이름 리스트.
+            경로가 없으면 빈 리스트를 반환한다.
+        """
+
+        if not down_link or len(down_link) != 2:
+            return []
+        src, dst = down_link
+
+        # 1) 그래프 구성
+        graph: Dict[str, Set[str]] = defaultdict(set)
+        for d in self.devices:
+            host = self._hostname(d)
+            graph.setdefault(host, set())
+
+            for nb in self._bgp_neighbors(d):
+                peer = nb.get("id") or nb.get("ip")
+                peer_host = self.host_index.get(peer) or self.loop_ip_index.get(peer)
+                if peer_host:
+                    graph[host].add(peer_host)
+                    graph.setdefault(peer_host, set()).add(host)
+
+            for iface in d.get("interfaces") or []:
+                peer = iface.get("peer") or iface.get("neighbor")
+                peer_host = self.host_index.get(peer) or self.loop_ip_index.get(peer)
+                if peer_host:
+                    graph[host].add(peer_host)
+                    graph.setdefault(peer_host, set()).add(host)
+
+        # 2) 장애 링크 제거
+        a, b = src, dst
+        if a in graph:
+            graph[a].discard(b)
+        if b in graph:
+            graph[b].discard(a)
+
+        # 3) 최단 경로 탐색 (BFS)
+        if src not in graph or dst not in graph:
+            return []
+        q = deque([(src, [src])])
+        visited = {src}
+        while q:
+            node, path = q.popleft()
+            if node == dst:
+                return path
+            for nxt in graph.get(node, []):
+                if nxt not in visited:
+                    visited.add(nxt)
+                    q.append((nxt, path + [nxt]))
+        return []
 
     # GIA-Re/utils/builder_core.py 에 새로운 함수 추가
     def _answer_for_composite_intent(self, intent: Dict[str, Any], pre: Dict[str, Any]) -> tuple[str, Any]:
@@ -767,10 +894,25 @@ class BuilderCore:
         elif metric == "ssh_missing_devices":
             return "set", sorted(list(pre["ssh_missing"]))
         elif metric == "ssh_missing_count":
-            return "numeric", len(pre["ssh_missing"]) 
+            return "numeric", len(pre["ssh_missing"])
         elif metric == "ssh_all_enabled_bool":
             return "boolean", (len(pre["ssh_missing"]) == 0)
-        
+        elif metric == "ssh_acl_applied_check":
+            host = scope.get("host")
+            return "boolean", bool(pre.get("ssh_acl_applied_map", {}).get(host))
+        elif metric == "bgp_advertised_prefixes_list":
+            host = scope.get("host")
+            return "set", list(pre.get("bgp_advertised_prefixes_map", {}).get(host, []))
+        elif metric == "qos_policer_applied_interfaces_list":
+            host = scope.get("host")
+            return "set", list(pre.get("qos_policer_applied_interfaces_map", {}).get(host, []))
+        elif metric == "find_alternative_path":
+            dl = scope.get("down_link") or scope.get("link")
+            if isinstance(dl, (list, tuple)) and len(dl) == 2:
+                path = self.find_alternative_path((dl[0], dl[1]))
+                return "list", path
+            return "list", []
+
         return "text", None
 
     # ---------- DSL → 테스트 인스턴스 확장 ----------
@@ -942,6 +1084,10 @@ SUPPORTED_METRICS: List[str] = [
     "ssh_missing_devices",
     "ssh_missing_count",
     "ssh_all_enabled_bool",
+    "ssh_acl_applied_check",
+    "bgp_advertised_prefixes_list",
+    "qos_policer_applied_interfaces_list",
+    "find_alternative_path",
 ]
 
 
