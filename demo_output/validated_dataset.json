@@ -1,6 +1,6 @@
 [
   {
-    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-42488",
+    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-18762",
     "question": "SSH가 활성화된 장비 목록은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "answer": "CE1, CE2, sample10, sample7, sample8, sample9",
@@ -27,11 +27,12 @@
       "question_length": 17,
       "answer_length": 45,
       "has_numbers": false,
-      "has_technical_terms": false
+      "has_technical_terms": false,
+      "task_category": "보안 질의"
     }
   },
   {
-    "id": "BASIC_DSL-SSH_MISSING_COUNT-38148",
+    "id": "BASIC_DSL-SSH_MISSING_COUNT-37022",
     "question": "SSH가 비활성화(또는 설정 없음)인 장비 수는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1\n장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1\n장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "0",
@@ -62,11 +63,12 @@
       "question_length": 27,
       "answer_length": 1,
       "has_numbers": false,
-      "has_technical_terms": false
+      "has_technical_terms": false,
+      "task_category": "보안 질의"
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-44787",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-5526",
     "question": "sample10 장비의 iBGP 피어 목록은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "1.1.1.1, 2.2.2.2, 3.3.3.3",
@@ -93,11 +95,12 @@
       "question_length": 25,
       "answer_length": 25,
       "has_numbers": true,
-      "has_technical_terms": false
+      "has_technical_terms": false,
+      "task_category": "단순 조회 업무"
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-31110",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-1456",
     "question": "sample7 장비의 iBGP 피어 목록은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "2.2.2.2, 3.3.3.3, 4.4.4.4",
@@ -124,11 +127,12 @@
       "question_length": 24,
       "answer_length": 25,
       "has_numbers": true,
-      "has_technical_terms": false
+      "has_technical_terms": false,
+      "task_category": "단순 조회 업무"
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-53239",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-8",
     "question": "sample8 장비의 iBGP 피어 목록은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "1.1.1.1, 3.3.3.3, 4.4.4.4",
@@ -155,11 +159,12 @@
       "question_length": 24,
       "answer_length": 25,
       "has_numbers": true,
-      "has_technical_terms": false
+      "has_technical_terms": false,
+      "task_category": "단순 조회 업무"
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-55216",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-29920",
     "question": "sample9 장비의 iBGP 피어 목록은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "1.1.1.1, 2.2.2.2, 4.4.4.4",
@@ -186,11 +191,12 @@
       "question_length": 24,
       "answer_length": 25,
       "has_numbers": true,
-      "has_technical_terms": false
+      "has_technical_terms": false,
+      "task_category": "단순 조회 업무"
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-42488",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-18762",
     "question": "CE1 장비의 eBGP 피어 목록은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "answer": "192.168.1.10",
@@ -217,11 +223,12 @@
       "question_length": 20,
       "answer_length": 12,
       "has_numbers": true,
-      "has_technical_terms": false
+      "has_technical_terms": false,
+      "task_category": "단순 조회 업무"
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-48141",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-3673",
     "question": "CE2 장비의 eBGP 피어 목록은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "answer": "192.168.3.10",
@@ -248,11 +255,12 @@
       "question_length": 20,
       "answer_length": 12,
       "has_numbers": true,
-      "has_technical_terms": false
+      "has_technical_terms": false,
+      "task_category": "단순 조회 업무"
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-44787",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-5526",
     "question": "sample10 장비의 eBGP 피어 목록은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "192.168.4.11",
@@ -279,11 +287,12 @@
       "question_length": 25,
       "answer_length": 12,
       "has_numbers": true,
-      "has_technical_terms": false
+      "has_technical_terms": false,
+      "task_category": "단순 조회 업무"
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-31110",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-1456",
     "question": "sample7 장비의 eBGP 피어 목록은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "192.168.1.11",
@@ -310,11 +319,12 @@
       "question_length": 24,
       "answer_length": 12,
       "has_numbers": true,
-      "has_technical_terms": false
+      "has_technical_terms": false,
+      "task_category": "단순 조회 업무"
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-53239",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-8",
     "question": "sample8 장비의 eBGP 피어 목록은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "192.168.2.11",
@@ -341,11 +351,12 @@
       "question_length": 24,
       "answer_length": 12,
       "has_numbers": true,
-      "has_technical_terms": false
+      "has_technical_terms": false,
+      "task_category": "단순 조회 업무"
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-55216",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-29920",
     "question": "sample9 장비의 eBGP 피어 목록은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "192.168.3.11",
@@ -372,11 +383,12 @@
       "question_length": 24,
       "answer_length": 12,
       "has_numbers": true,
-      "has_technical_terms": false
+      "has_technical_terms": false,
+      "task_category": "단순 조회 업무"
     }
   },
   {
-    "id": "BASIC_DSL-IBGP_FULLMESH_OK-61336",
+    "id": "BASIC_DSL-IBGP_FULLMESH_OK-15174",
     "question": "AS 65000 도메인의 iBGP 풀메시 구성이 완전한가",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "예",
@@ -406,11 +418,12 @@
       "question_length": 31,
       "answer_length": 1,
       "has_numbers": true,
-      "has_technical_terms": false
+      "has_technical_terms": false,
+      "task_category": "단순 조회 업무"
     }
   },
   {
-    "id": "BASIC_DSL-IBGP_FULLMESH_OK-41973",
+    "id": "BASIC_DSL-IBGP_FULLMESH_OK-7595",
     "question": "AS 65001 도메인의 iBGP 풀메시 구성이 완전한가",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "answer": "예",
@@ -437,11 +450,12 @@
       "question_length": 31,
       "answer_length": 1,
       "has_numbers": true,
-      "has_technical_terms": false
+      "has_technical_terms": false,
+      "task_category": "단순 조회 업무"
     }
   },
   {
-    "id": "BASIC_DSL-IBGP_FULLMESH_OK-19042",
+    "id": "BASIC_DSL-IBGP_FULLMESH_OK-50080",
     "question": "AS 65003 도메인의 iBGP 풀메시 구성이 완전한가",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "answer": "예",
@@ -468,83 +482,35 @@
       "question_length": 31,
       "answer_length": 1,
       "has_numbers": true,
-      "has_technical_terms": false
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-001",
-    "question": "iBGP 풀메시 누락이 AS 65001의 경로 수렴성에 미치는 영향을 평가하라.",
-    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "answer": "AS 65001의 iBGP 풀메시 상태를 평가한 결과, 다음과 같은 사항이 확인되었습니다.\n\n1. **iBGP 풀메시 상태**: 첫 번째 단계에서 확인한 바에 따르면, AS 65001의 iBGP 풀메시 상태는 정상으로 나타났습니다(✅ 정상). 이는 모든 iBGP 라우터가 서로 연결되어 있으며, 경로 정보가 원활하게 교환되고 있음을 의미합니다.\n\n2. **누락된 iBGP 페어 수**: 두 번째 단계에서 확인한 결과, AS 65001 내에서 누락된 iBGP 페어 수는 0으로 나타났습니다. 이는 모든 iBGP 라우터 간의 연결이 완전하다는 것을 의미하며, 추가적인 경로 수렴성 문제는 발생하지 않고 있습니다.\n\n3. **BGP 일관성**: 세 번째 단계에서 확인한 바에 따르면, iBGP 풀메시 누락으로 인한 BGP 일관성 문제는 발견되지 않았습니다. 즉, AS 65001 내에서 경로 수렴성에 영향을 미치는 요소가 없음을 나타냅니다.\n\n### 결론\n현재 AS 65001의 iBGP 풀메시 상태는 정상이며, 누락된 페어가 없고, BGP 일관성 문제도 발견되지 않았습니다. 따라서, iBGP 풀메시 누락이 AS 65001의 경로 수렴성에 미치는 영향은 없다고 평가할 수 있습니다. \n\n### 추가 사항\n현재 상태에서 문제가 발견되지 않았으므로, 추가적인 조치나 해결책은 필요하지 않습니다. 그러나 네트워크 환경이 변화할 경우, 지속적인 모니터링과 정기적인 점검을 통해 iBGP 풀메시 상태를 유지하는 것이 중요합니다.",
-    "answer_type": "long",
-    "category": "advanced",
-    "complexity": "analytical",
-    "level": 3,
-    "persona": "network_engineer",
-    "scenario": "BGP 경로 수렴 분석",
-    "source_files": null,
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "step": 1,
-          "description": "AS 65001의 iBGP 풀메시 상태 확인",
-          "required_metric": "ibgp_fullmesh_ok",
-          "metric_params": {
-            "asn": "65001"
-          },
-          "synthesis": "fetch"
-        },
-        {
-          "step": 2,
-          "description": "AS 65001 내 누락된 iBGP 페어 수 확인",
-          "required_metric": "ibgp_missing_pairs_count",
-          "metric_params": {
-            "asn": "65001"
-          },
-          "synthesis": "fetch"
-        },
-        {
-          "step": 3,
-          "description": "iBGP 풀메시 누락이 경로 수렴성에 미치는 영향 요약",
-          "required_metric": "bgp_inconsistent_as_count",
-          "metric_params": {
-            "asn": "65001"
-          },
-          "synthesis": "summarize"
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_1_ibgp_fullmesh_ok": true,
-        "step_2_ibgp_missing_pairs_count": 0,
-        "step_3_bgp_inconsistent_as_count": null
-      },
-      "question_length": 44,
-      "answer_length": 736,
-      "has_numbers": true,
-      "has_technical_terms": false
+      "has_technical_terms": false,
+      "task_category": "단순 조회 업무"
     }
   },
   {
     "id": "ENHANCED_ENHANCED-ANALYTICAL-002",
-    "question": "AS 65003에서 특정 피어 장애 시 전체 네트워크에 미치는 파급효과를 평가하라.",
-    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
-    "answer": "AS 65003에서 특정 피어 장애 시 전체 네트워크에 미치는 파급효과를 평가한 결과는 다음과 같습니다.\n\n1. **BGP 피어 수 확인 (bgp_peer_count)**: 현재 AS 65003의 BGP 피어 수에 대한 정보가 \"None\"으로 나타났습니다. 이는 AS 65003가 현재 BGP 피어를 설정하지 않았거나, 피어 정보가 수집되지 않았음을 의미합니다. 따라서, 특정 피어 장애가 발생할 경우, 피어가 없기 때문에 직접적인 파급효과는 존재하지 않습니다.\n\n2. **iBGP 쌍 누락 확인 (ibgp_missing_pairs_count)**: 이 단계에서 확인된 결과는 \"0\"으로, 이는 AS 65003 내에서 iBGP 쌍이 모두 정상적으로 설정되어 있음을 나타냅니다. 즉, 내부 BGP 피어 간의 연결이 원활하게 이루어지고 있어, 특정 피어의 장애가 발생하더라도 다른 피어들이 정상적으로 작동할 가능성이 높습니다.\n\n3. **L2VPN 단방향 연결 확인 (l2vpn_unidir_count)**: 이 단계에서도 \"0\"으로 나타났습니다. 이는 L2VPN 연결이 양방향으로 정상적으로 작동하고 있음을 의미합니다. 따라서, 특정 피어의 장애가 발생하더라도 L2VPN 서비스에 대한 영향은 없을 것으로 보입니다.\n\n### 종합 평가:\n현재 AS 65003의 네트워크 설정을 기반으로 할 때, 특정 피어의 장애가 발생하더라도 전체 네트워크에 미치는 파급효과는 미미할 것으로 판단됩니다. BGP 피어가 설정되지 않았거나 정보가 수집되지 않았기 때문에, 피어 장애로 인한 직접적인 영향은 없으며, 내부 BGP 쌍과 L2VPN 연결이 정상적으로 작동하고 있어 네트워크의 안정성이 유지될 것으로 예상됩니다.\n\n### 결론:\n현재 수집된 증거에 따르면, AS 65003의 네트워크는 특정 피어 장애에 대해 강한 내성을 가지고 있으며, 추가적인 문제가 발견되지 않았습니다. 그러나 BGP 피어 수에 대한 정보가 부족하므로, 향후 피어 설정을 검토하고, 피어 장애 시의 대응 계획을 마련하는 것이 좋습니다.",
+    "question": "AS 65003의 특정 BGP 피어 장애가 전체 네트워크에 미치는 파급 효과는 무엇인가?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "answer": "AS 65003의 특정 BGP 피어 장애가 전체 네트워크에 미치는 파급 효과를 분석한 결과는 다음과 같습니다.\n\n1. **BGP 피어 수 확인**: 수집된 증거에 따르면, AS 65003의 활성 BGP 피어 수는 'None'으로 나타났습니다. 이는 현재 AS 65003에 연결된 BGP 피어가 없음을 의미합니다. 따라서, 특정 BGP 피어의 장애가 발생할 경우, 실제로 영향을 미칠 피어가 존재하지 않기 때문에 네트워크에 미치는 직접적인 파급 효과는 없습니다.\n\n2. **장애 발생 시 영향을 받을 수 있는 장비 및 경로 식별**: AS 65003의 인터페이스 수는 5개로 확인되었습니다. 이 인터페이스들은 AS 65003의 네트워크와 외부 네트워크 간의 연결을 담당하고 있습니다. 그러나 BGP 피어가 없기 때문에, 이 인터페이스들은 BGP 경로를 통해 외부와 연결되지 않으며, 따라서 BGP 피어의 장애가 발생하더라도 이 인터페이스들에 대한 영향은 없습니다.\n\n3. **네트워크 경로 변경 및 대체 경로 가능성 평가**: OSPF 영역 수는 'None'으로 나타났습니다. 이는 AS 65003 내에서 OSPF 프로토콜을 사용하는 경로가 없음을 의미합니다. 따라서, BGP 피어의 장애로 인해 OSPF 경로가 변경되거나 대체 경로가 필요할 상황도 발생하지 않습니다.\n\n### 결론\n현재 AS 65003에는 활성 BGP 피어가 없고, OSPF 경로도 존재하지 않기 때문에 특정 BGP 피어의 장애가 전체 네트워크에 미치는 파급 효과는 없습니다. 이는 AS 65003의 네트워크가 외부와의 BGP 연결이 없고, 내부적으로도 OSPF를 사용하지 않기 때문입니다.\n\n### 문제 발견 및 해결책\n- **문제 발견**: BGP 피어가 없다는 것은 AS 65003가 외부 네트워크와의 연결이 없음을 의미하며, 이는 네트워크의 확장성이나 외부와의 통신에 제한을 줄 수 있습니다.\n- **해결책**: AS 65003의 네트워크 설계를 재검토하여 필요한 경우 BGP 피어를 설정하고, OSPF와 같은 내부 라우팅 프로토콜을 도입하여 네트워크의 안정성과 확장성을 높이는 것이 필요합니다. \n\n이러한 조치를 통해 AS 65003는 외부와의 연결성을 확보하고, 장애 발생 시에도 더 나은 대처가 가능할 것입니다.",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "analytical",
     "level": 3,
     "persona": "network_engineer",
     "scenario": "BGP 경로 수렴 분석",
-    "source_files": null,
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
         {
           "step": 1,
-          "description": "AS 65003의 BGP 피어 수 확인",
+          "description": "AS 65003의 활성 BGP 피어 수 확인",
           "required_metric": "bgp_peer_count",
           "metric_params": {
             "asn": "65003"
@@ -553,18 +519,20 @@
         },
         {
           "step": 2,
-          "description": "AS 65003에서 장애가 발생할 가능성이 있는 피어 식별",
-          "required_metric": "ibgp_missing_pairs_count",
+          "description": "장애 발생 시 영향을 받을 수 있는 장비 및 경로 식별",
+          "required_metric": "interface_count",
           "metric_params": {
             "asn": "65003"
           },
-          "synthesis": "fetch"
+          "synthesis": "compare"
         },
         {
           "step": 3,
-          "description": "장애 시 네트워크에 미치는 파급효과 요약",
-          "required_metric": "l2vpn_unidir_count",
-          "metric_params": {},
+          "description": "피어 장애 시 네트워크 경로 변경 및 대체 경로 가능성 평가",
+          "required_metric": "ospf_area_count",
+          "metric_params": {
+            "asn": "65003"
+          },
           "synthesis": "summarize"
         }
       ],
@@ -572,55 +540,67 @@
       "expected_analysis_depth": "detailed",
       "evidence": {
         "step_1_bgp_peer_count": null,
-        "step_2_ibgp_missing_pairs_count": 0,
-        "step_3_l2vpn_unidir_count": 0
+        "step_2_interface_count": 5,
+        "step_3_ospf_area_count": null
       },
-      "question_length": 46,
-      "answer_length": 1004,
+      "question_length": 49,
+      "answer_length": 1115,
       "has_numbers": true,
-      "has_technical_terms": false
+      "has_technical_terms": true,
+      "task_category": "네트워크 토폴로지 구성 질의"
     }
   },
   {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-002",
-    "question": "네트워크 확장이 기존 L2/L3VPN 서비스에 미치는 영향을 최소화하기 위해 어떤 조치를 취해야 하는가?",
-    "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
-    "answer": "네트워크 확장이 기존 L2/L3VPN 서비스에 미치는 영향을 최소화하기 위해서는 다음과 같은 조치를 취해야 합니다.\n\n1. **현재 L2VPN 상태 점검**: 수집된 증거에 따르면, L2VPN에서 발생하고 있는 문제는 없으며, `l2vpn_unidir_count`가 0으로 나타났습니다. 이는 현재 L2VPN 서비스가 정상적으로 운영되고 있음을 의미합니다. 따라서, 네트워크 확장 시 L2VPN의 설정을 변경하거나 추가할 때, 기존의 설정을 유지하고 새로운 연결을 추가하는 방식으로 접근해야 합니다.\n\n2. **VRF 설정 검토**: `vrf_without_rt_count`가 0인 것은 VRF 설정에서 Route Target(RT) 요소가 누락되지 않았음을 나타냅니다. 이는 VRF 간의 경로 전파가 원활하게 이루어질 수 있음을 의미합니다. 네트워크 확장 시 새로운 VRF를 추가할 경우, 반드시 RT 설정을 포함하여 기존 VRF와의 경로 전파가 원활하도록 해야 합니다.\n\n3. **BGP 설정 확인**: `bgp_inconsistent_as_count`가 None으로 나타난 것은 BGP 설정에 일관성이 있음을 보여줍니다. 이는 L3VPN 서비스가 안정적으로 운영되고 있다는 것을 의미합니다. 네트워크 확장 시 BGP 설정을 변경할 경우, AS 번호의 일관성을 유지하고, 새로운 경로가 기존 경로와 충돌하지 않도록 주의해야 합니다.\n\n4. **L2/L3VPN 서비스 안정성 보장**: `l2vpn_issues`가 없다는 것은 현재 L2/L3VPN 서비스에 문제가 없음을 나타냅니다. 따라서, 네트워크 확장 시에는 기존 서비스에 영향을 미치지 않도록, 새로운 장비나 링크를 추가할 때 기존의 트래픽 흐름을 고려하여 설계해야 합니다. 또한, 확장 후에는 서비스의 성능을 모니터링하여 예상치 못한 문제가 발생하지 않도록 지속적으로 점검해야 합니다.\n\n결론적으로, 네트워크 확장을 계획할 때는 기존 L2/L3VPN 서비스의 안정성을 유지하기 위해 현재의 설정을 철저히 검토하고, 새로운 요소를 추가할 때는 기존의 구조와 일관성을 유지하는 것이 중요합니다. 추가적인 문제가 발견되지 않았으므로, 현재의 설정을 기반으로 신중하게 확장 계획을 수립하는 것이 바람직합니다.",
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-001",
+    "question": "AS 65000에 속하면서 BGP 피어 수가 2개 이하인 장비는 총 몇 개인가?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "answer": "제공된 증거를 바탕으로 AS 65000에 속하면서 BGP 피어 수가 2개 이하인 장비의 총 개수를 확인하기 위한 분석을 진행했습니다. 그러나 수집된 증거에서 다음과 같은 사항이 발견되었습니다:\n\n1. **1단계 (bgp_inconsistent_as_count)**: 이 단계에서 AS 65000에 속한 장비의 목록을 가져오는 과정이 있었으나, 결과가 \"None\"으로 나타났습니다. 이는 AS 65000에 속한 장비가 없거나, 해당 정보를 수집하는 데 문제가 있었음을 의미합니다.\n\n2. **2단계 (bgp_peer_count)**: 각 장비의 BGP 피어 수를 확인하는 단계에서도 결과가 \"None\"으로 나타났습니다. 이는 AS 65000에 속한 장비가 없기 때문에 피어 수를 확인할 수 없음을 나타냅니다.\n\n3. **3단계 (bgp_peer_count)**: BGP 피어 수가 2개 이하인 장비를 필터링하는 과정에서도 역시 결과가 \"None\"으로 나타났습니다. 이는 필터링할 장비가 존재하지 않음을 의미합니다.\n\n4. **4단계 (bgp_peer_count)**: 필터링된 장비의 총 개수를 계산하는 단계에서도 결과가 \"None\"으로 나타났습니다.\n\n결론적으로, AS 65000에 속하면서 BGP 피어 수가 2개 이하인 장비는 존재하지 않거나, 해당 정보를 수집하는 데 문제가 발생했습니다. \n\n### 문제 원인 및 해결책:\n- **문제 원인**: AS 65000에 속한 장비가 없거나, 네트워크 설정에서 정보 수집이 제대로 이루어지지 않았을 가능성이 있습니다.\n- **해결책**: 네트워크 장비의 AS 설정을 재확인하고, BGP 설정이 올바르게 구성되어 있는지 점검해야 합니다. 또한, 정보 수집 프로세스에 문제가 있는지 확인하고, 필요한 경우 로그를 분석하여 문제를 해결해야 합니다.\n\n따라서, 현재로서는 AS 65000에 속하면서 BGP 피어 수가 2개 이하인 장비의 총 개수는 **0개**로 판단됩니다. 추가적인 데이터 수집이 필요합니다.",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "analytical",
     "level": 3,
-    "persona": "network_architect",
-    "scenario": "네트워크 확장 계획",
-    "source_files": null,
+    "persona": "troubleshooter",
+    "scenario": "규정 위반 장비 식별",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
         {
           "step": 1,
-          "description": "현재 L2VPN에서 발생하고 있는 이슈 확인",
-          "required_metric": "l2vpn_unidir_count",
-          "metric_params": {},
+          "description": "AS 65000에 속한 모든 장비의 목록을 가져옴",
+          "required_metric": "bgp_inconsistent_as_count",
+          "metric_params": {
+            "asn": "65000"
+          },
           "synthesis": "fetch"
         },
         {
           "step": 2,
-          "description": "VRF 설정에서 누락된 RT 요소 확인",
-          "required_metric": "vrf_without_rt_count",
+          "description": "각 장비의 BGP 피어 수를 확인",
+          "required_metric": "bgp_peer_count",
           "metric_params": {},
           "synthesis": "fetch"
         },
         {
           "step": 3,
-          "description": "현재 L3VPN의 설정 및 서비스 상태 평가",
-          "required_metric": "bgp_inconsistent_as_count",
-          "metric_params": {},
-          "synthesis": "fetch"
+          "description": "BGP 피어 수가 2개 이하인 장비 필터링",
+          "required_metric": "bgp_peer_count",
+          "metric_params": {
+            "max_peers": 2
+          },
+          "synthesis": "compare"
         },
         {
           "step": 4,
-          "description": "수집한 정보를 바탕으로 L2/L3VPN 서비스의 안정성을 보장하기 위한 조치 종합",
-          "required_metric": "l2vpn_issues",
+          "description": "필터링된 장비의 총 개수 계산",
+          "required_metric": "bgp_peer_count",
           "metric_params": {},
           "synthesis": "summarize"
         }
@@ -628,29 +608,153 @@
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed",
       "evidence": {
-        "step_1_l2vpn_unidir_count": 0,
-        "step_2_vrf_without_rt_count": 0,
-        "step_3_bgp_inconsistent_as_count": null,
-        "step_4_l2vpn_issues": null
+        "step_1_bgp_inconsistent_as_count": null,
+        "step_2_bgp_peer_count": null,
+        "step_3_bgp_peer_count": null,
+        "step_4_bgp_peer_count": null
       },
-      "question_length": 58,
-      "answer_length": 1098,
+      "question_length": 44,
+      "answer_length": 978,
       "has_numbers": true,
-      "has_technical_terms": false
+      "has_technical_terms": true,
+      "task_category": "기술적 오류 질의"
     }
   },
   {
     "id": "ENHANCED_ENHANCED-DIAGNOSTIC-002",
-    "question": "SSH 설정이 최신 보안 가이드를 따르고 있는지 평가하려면 어떤 과정이 필요할까요?",
+    "question": "발견된 네트워크 보안 문제들의 위험도를 어떤 기준으로 우선순위화할 수 있을까요?",
     "context": "보안 설정 현황:\nCE1: SSH ON, AAA OFF\nCE2: SSH ON, AAA OFF\nsample10: SSH ON, AAA ON\nsample7: SSH ON, AAA ON\nsample8: SSH ON, AAA ON",
-    "answer": "SSH 설정이 최신 보안 가이드를 따르고 있는지 평가하기 위해서는 다음과 같은 과정을 거쳐야 합니다.\n\n1. **SSH 보안 설정 누락 여부 확인**: \n   - 첫 번째 단계에서는 `ssh_missing_count`를 통해 SSH 보안 설정이 누락된 장비들을 식별합니다. 제공된 증거에 따르면 `ssh_missing_count` 값이 0으로 나타나, 이는 모든 장비에서 필요한 SSH 보안 설정이 누락되지 않았음을 의미합니다. 따라서 이 단계는 문제없이 완료되었습니다.\n\n2. **SSH 활성화 상태 확인**: \n   - 두 번째 단계에서는 `ssh_all_enabled_bool` 값을 확인하여 모든 장비에 SSH가 활성화되어 있는지를 점검합니다. 증거에 따르면 이 값이 ✅로 나타나, 모든 장비에서 SSH가 정상적으로 활성화되어 있음을 확인할 수 있습니다. 이 또한 문제없이 완료되었습니다.\n\n3. **SSH 설정의 일관성과 최신 보안 가이드 준수 여부 평가**: \n   - 세 번째 단계에서도 `ssh_all_enabled_bool` 값을 사용하여 SSH 설정의 일관성을 평가합니다. 이 값이 다시 ✅로 나타나, 모든 장비에서 SSH 설정이 일관되며 최신 보안 가이드에 부합하고 있음을 확인할 수 있습니다.\n\n결론적으로, 수집된 증거에 따르면 SSH 설정은 최신 보안 가이드를 따르고 있으며, 모든 장비에서 필요한 보안 설정이 누락되지 않고 활성화되어 있습니다. 현재로서는 문제가 발견되지 않았으며, 추가적인 조치가 필요하지 않습니다. \n\n만약 향후 SSH 설정에 대한 추가적인 검토가 필요하다면, 다음과 같은 사항을 고려할 수 있습니다:\n- SSH 프로토콜 버전 확인 (최신 버전 사용)\n- 강력한 암호화 알고리즘 사용 여부\n- 비밀번호 인증 대신 공개키 인증 사용 권장\n- 불필요한 사용자 계정 및 접근 권한 검토\n\n이러한 점검을 통해 SSH 보안 설정을 더욱 강화할 수 있습니다.",
+    "answer": "네트워크 보안 문제의 위험도를 우선순위화하기 위해서는 여러 기준을 고려해야 합니다. 제공된 증거를 바탕으로 각 단계에서의 결과를 분석하고, 이를 통해 우선순위를 설정하는 방법을 설명하겠습니다.\n\n1. **BGP 피어링 문제 (bgp_missing_pairs)**:\n   - 현재 수집된 증거에 따르면, BGP 피어링 문제는 발견되지 않았습니다. 이는 네트워크의 BGP 설정이 정상적으로 이루어지고 있음을 나타내며, 이로 인해 BGP 관련 보안 문제의 위험도는 낮습니다. 따라서 이 항목은 우선순위에서 제외할 수 있습니다.\n\n2. **L2VPN 이슈 (l2vpn_unidir_count)**:\n   - L2VPN 관련 문제도 발견되지 않았습니다. L2VPN의 단방향 연결 수가 0으로 나타나므로, 이 또한 네트워크의 안정성을 보장하는 요소입니다. 이로 인해 L2VPN 관련 보안 문제의 위험도 역시 낮습니다. 따라서 이 항목도 우선순위에서 제외할 수 있습니다.\n\n3. **BGP 불일치 AS 카운트 (bgp_inconsistent_as_count)**:\n   - 현재 이 항목에 대한 증거는 제공되지 않았습니다. BGP 불일치 AS가 발견될 경우, 이는 네트워크의 라우팅 안정성에 심각한 영향을 미칠 수 있으며, 공격자가 라우팅 정보를 조작할 수 있는 가능성을 열어줍니다. 따라서 이 항목은 우선순위에서 가장 높은 위험도로 평가되어야 합니다.\n\n### 결론 및 권장 사항:\n- 현재 수집된 증거에 따르면, BGP 피어링 문제와 L2VPN 이슈는 발견되지 않았으므로 이들에 대한 우선순위는 낮습니다.\n- 그러나 BGP 불일치 AS 카운트에 대한 정보가 부족하므로, 이 문제에 대한 추가적인 조사가 필요합니다. 만약 이 문제가 발견된다면, 즉시 해당 AS와의 연결을 검토하고, 라우팅 정책을 재조정하여 보안성을 강화해야 합니다.\n\n### 추가 조치:\n- BGP 불일치 AS 카운트에 대한 모니터링을 강화하고, 정기적인 네트워크 감사 및 검토를 통해 잠재적인 보안 문제를 사전에 식별할 수 있는 체계를 마련하는 것이 중요합니다. \n\n이와 같은 방식으로 네트워크 보안 문제의 위험도를 평가하고 우선순위를 설정할 수 있습니다.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "diagnostic",
+    "level": 3,
+    "persona": "security_auditor",
+    "scenario": "보안 취약점 진단",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "step": 1,
+          "description": "BGP 피어링 문제의 수를 확인하고 위험도를 평가",
+          "required_metric": "bgp_missing_pairs",
+          "metric_params": {},
+          "synthesis": "fetch"
+        },
+        {
+          "step": 2,
+          "description": "L2VPN 이슈 수를 확인하여 중요도 평가",
+          "required_metric": "l2vpn_unidir_count",
+          "metric_params": {},
+          "synthesis": "fetch"
+        },
+        {
+          "step": 3,
+          "description": "발견된 보안 문제들을 종합하여 위험도 기반으로 우선순위 설정",
+          "required_metric": "bgp_inconsistent_as_count",
+          "metric_params": {},
+          "synthesis": "summarize"
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_1_bgp_missing_pairs": null,
+        "step_2_l2vpn_unidir_count": 0,
+        "step_3_bgp_inconsistent_as_count": null
+      },
+      "question_length": 44,
+      "answer_length": 1072,
+      "has_numbers": false,
+      "has_technical_terms": false,
+      "task_category": "보안 질의"
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-001",
+    "question": "현재 네트워크 장비의 모든 AAA 인증 및 패스워드 정책이 사내 표준 및 규제 요구사항을 얼마나 충족하고 있는가?",
+    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+    "answer": "현재 네트워크 장비의 AAA 인증 및 패스워드 정책이 사내 표준 및 규제 요구사항을 충족하는 정도는 매우 낮습니다. 수집된 증거를 바탕으로 다음과 같은 분석을 할 수 있습니다.\n\n1. **AAA 인증 설정**: \n   - 1단계와 3단계에서 확인된 바에 따르면, AAA 인증이 활성화된 장비는 **없습니다**. 이는 네트워크 보안의 기본 요소인 인증, 권한 부여 및 회계(AAA)가 전혀 적용되지 않고 있음을 의미합니다. 따라서, 사내 표준 및 규제 요구사항을 충족하지 못하고 있습니다.\n\n2. **패스워드 정책**:\n   - 2단계에서 확인된 바에 따르면, 네트워크 장비의 수는 **5개**입니다. 그러나 AAA 인증이 활성화되지 않았기 때문에 패스워드 정책의 일관성을 평가할 수 있는 기반이 부족합니다. 패스워드 정책이 제대로 적용되지 않을 가능성이 높으며, 이는 보안 취약점을 초래할 수 있습니다.\n\n### 문제점:\n- **AAA 인증 미설정**: 모든 장비에서 AAA 인증이 비활성화되어 있어, 사용자 인증 및 권한 관리가 이루어지지 않고 있습니다. 이는 외부 공격자나 내부의 비인가 사용자가 네트워크에 접근할 수 있는 위험을 증가시킵니다.\n- **패스워드 정책의 불확실성**: 패스워드 정책이 적용되지 않거나 일관성이 결여되어 있을 가능성이 높습니다. 이는 사용자 계정의 보안성을 저하시킬 수 있습니다.\n\n### 해결책:\n1. **AAA 인증 활성화**: 모든 네트워크 장비에서 AAA 인증을 활성화해야 합니다. 이를 통해 사용자 인증 및 권한 부여를 강화하고, 네트워크 접근을 보다 안전하게 관리할 수 있습니다.\n2. **패스워드 정책 수립 및 적용**: 패스워드 복잡성, 만료 주기, 재사용 제한 등의 요소를 포함한 강력한 패스워드 정책을 수립하고 이를 모든 장비에 적용해야 합니다.\n3. **정기적인 감사 및 모니터링**: 네트워크 장비의 AAA 설정 및 패스워드 정책을 정기적으로 감사하고 모니터링하여, 지속적으로 보안 상태를 점검하고 개선할 필요가 있습니다.\n\n결론적으로, 현재 네트워크 장비의 AAA 인증 및 패스워드 정책은 사내 표준 및 규제 요구사항을 충족하지 않으며, 즉각적인 조치가 필요합니다.",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "diagnostic",
     "level": 3,
     "persona": "compliance_officer",
     "scenario": "정책 준수 점검",
-    "source_files": null,
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "step": 1,
+          "description": "AAA 인증 설정이 활성화된 장비 수 확인",
+          "required_metric": "aaa_enabled_devices",
+          "metric_params": {},
+          "synthesis": "fetch"
+        },
+        {
+          "step": 2,
+          "description": "모든 장비에서 패스워드 정책의 일관성 확인",
+          "required_metric": "interface_count",
+          "metric_params": {},
+          "synthesis": "fetch"
+        },
+        {
+          "step": 3,
+          "description": "AAA 인증 설정과 패스워드 정책을 비교하여 표준 준수 여부 평가",
+          "required_metric": "aaa_enabled_devices",
+          "metric_params": {},
+          "synthesis": "compare"
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_1_aaa_enabled_devices": null,
+        "step_2_interface_count": 5,
+        "step_3_aaa_enabled_devices": null
+      },
+      "question_length": 63,
+      "answer_length": 1075,
+      "has_numbers": false,
+      "has_technical_terms": true,
+      "task_category": "기술적 오류 질의"
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-002",
+    "question": "SSH 설정이 최신 보안 가이드를 얼마나 따르고 있는지 확인하려면 어떤 장비가 취약한가?",
+    "context": "보안 설정 현황:\nCE1: SSH ON, AAA OFF\nCE2: SSH ON, AAA OFF\nsample10: SSH ON, AAA ON\nsample7: SSH ON, AAA ON\nsample8: SSH ON, AAA ON",
+    "answer": "SSH 설정의 보안 상태를 평가한 결과, 다음과 같은 사항이 확인되었습니다.\n\n1. **SSH 보안 설정 누락 여부**: \n   - **ssh_missing_count**: 0\n   - 이는 SSH 보안 설정이 누락된 장비가 없음을 의미합니다. 따라서 이 단계에서는 취약한 장비가 발견되지 않았습니다.\n\n2. **SSH 설정 활성화된 장비 수**:\n   - **ssh_enabled_devices**: CE1, CE2, sample10 등 총 6개의 장비에서 SSH 설정이 활성화되어 있습니다. 이 장비들은 SSH를 통해 원격 접속이 가능하다는 것을 나타냅니다.\n\n3. **SSH 설정의 전반적인 보안 상태**:\n   - **ssh_all_enabled_bool**: ✅ 정상\n   - 모든 장비에서 SSH 설정이 활성화되어 있으며, 보안 설정이 누락되지 않았기 때문에 현재로서는 보안 취약성이 발견되지 않았습니다.\n\n결론적으로, 현재 수집된 증거에 따르면 SSH 설정이 최신 보안 가이드를 잘 따르고 있으며, 취약한 장비는 없습니다. 모든 장비에서 SSH가 활성화되어 있고, 보안 설정이 누락된 부분이 없으므로 추가적인 조치가 필요하지 않습니다.\n\n다만, 보안 환경은 지속적으로 변화할 수 있으므로 정기적인 점검과 업데이트를 권장합니다. SSH 설정에 대한 최신 보안 가이드를 주기적으로 검토하고, 필요 시 추가적인 보안 조치를 취하는 것이 좋습니다.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "diagnostic",
+    "level": 3,
+    "persona": "compliance_officer",
+    "scenario": "정책 준수 점검",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
@@ -663,14 +767,14 @@
         },
         {
           "step": 2,
-          "description": "모든 장비에 SSH가 활성화되어 있는지 확인",
-          "required_metric": "ssh_all_enabled_bool",
+          "description": "SSH 설정이 활성화된 모든 장비 수 확인",
+          "required_metric": "ssh_enabled_devices",
           "metric_params": {},
           "synthesis": "fetch"
         },
         {
           "step": 3,
-          "description": "SSH 설정의 일관성과 최신 보안 가이드 준수 여부 평가",
+          "description": "SSH 설정 누락 및 활성 상태를 비교하여 보안 취약성 평가",
           "required_metric": "ssh_all_enabled_bool",
           "metric_params": {},
           "synthesis": "summarize"
@@ -680,50 +784,77 @@
       "expected_analysis_depth": "detailed",
       "evidence": {
         "step_1_ssh_missing_count": 0,
-        "step_2_ssh_all_enabled_bool": true,
+        "step_2_ssh_enabled_devices": [
+          "CE1",
+          "CE2",
+          "sample10",
+          "sample7",
+          "sample8",
+          "sample9"
+        ],
         "step_3_ssh_all_enabled_bool": true
       },
-      "question_length": 46,
-      "answer_length": 947,
+      "question_length": 49,
+      "answer_length": 701,
       "has_numbers": false,
-      "has_technical_terms": true
+      "has_technical_terms": true,
+      "task_category": "기술적 오류 질의"
     }
   },
   {
-    "id": "ENHANCED_ENHANCED-SYNTHETIC-001",
-    "question": "L2VPN과 L3VPN 서비스가 동시에 장애가 발생했을 때, 비즈니스에 미치는 영향을 고려하여 어떤 순서로 복구를 진행해야 하는가?",
-    "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
-    "answer": "L2VPN과 L3VPN 서비스가 동시에 장애가 발생했을 때, 비즈니스에 미치는 영향을 최소화하기 위해 복구를 진행하는 순서는 다음과 같습니다.\n\n### 1단계: L2VPN 상태 확인\n- **증거**: `l2vpn_unidir_count` 값이 0으로 나타났습니다. 이는 L2VPN에 장애가 없음을 의미합니다.\n- **결론**: L2VPN 서비스는 정상 상태이므로, 이 단계에서 추가적인 조치는 필요하지 않습니다.\n\n### 2단계: L3VPN BGP 풀메시 상태 확인\n- **증거**: `ibgp_fullmesh_ok` 상태가 ✅로 나타났습니다. 이는 L3VPN 관련 AS에서 BGP 풀메시가 정상임을 나타냅니다.\n- **결론**: L3VPN 서비스도 정상 상태이므로, 이 단계에서도 추가적인 조치는 필요하지 않습니다.\n\n### 3단계: L3VPN 장애 영향 평가\n- **증거**: `bgp_peer_count` 값이 None으로 나타났습니다. 이는 BGP 피어링이 설정되지 않았거나, 피어링 상태를 확인할 수 없음을 의미합니다.\n- **결론**: L3VPN의 장애가 발생했을 가능성이 높으며, 이는 비즈니스에 심각한 영향을 미칠 수 있습니다. L3VPN은 일반적으로 인터넷 연결 및 외부 네트워크와의 통신을 담당하므로, 이 서비스의 장애는 고객 서비스 및 데이터 전송에 직접적인 영향을 미칠 수 있습니다.\n\n### 복구 순서 및 조치\n1. **L2VPN 상태 확인**: 정상 상태이므로 무시.\n2. **L3VPN BGP 풀메시 상태 확인**: 정상 상태이므로 무시.\n3. **BGP 피어링 상태 점검**: `bgp_peer_count`가 None인 상태에서, BGP 피어링 설정을 점검하고 필요한 경우 재설정합니다. 이 과정에서 네트워크 장비의 로그를 확인하여 피어링 실패 원인을 파악해야 합니다.\n\n### 원인 및 해결책\n- **원인**: BGP 피어링이 설정되지 않았거나, 네트워크 장비 간의 연결 문제로 인해 피어링이 실패했을 수 있습니다.\n- **해결책**: \n  - BGP 설정을 점검하고, 피어 IP 주소 및 ASN 설정이 올바른지 확인합니다.\n  - 네트워크 장비 간의 물리적 연결 상태를 점검하고, 필요한 경우 재부팅하거나 재설정을 수행합니다.\n  - BGP 세션을 수동으로 재시작하여 피어링을 복구합니다.\n\n### 결론\nL2VPN은 정상 상태이므로 우선적으로 L3VPN의 BGP 피어링 문제를 해결해야 합니다. L3VPN의 복구가 완료되면, 비즈니스 운영에 미치는 영향을 최소화할 수 있습니다. 현재 제공된 증거로는 L3VPN의 장애 원인을 명확히 파악하기 어려우므로, 추가적인 로그 분석이 필요합니다.",
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-002",
+    "question": "현재 네트워크의 잠재적 서비스 위험 요소를 식별하여 예방적 모니터링 계획을 수립할 수 있는가?",
+    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+    "answer": "현재 네트워크의 잠재적 서비스 위험 요소를 식별하기 위한 분석 결과는 다음과 같습니다.\n\n1. **BGP 피어의 누락된 페어링 (bgp_missing_pairs)**: 이 단계에서 확인된 바에 따르면, 누락된 BGP 피어링이 없습니다. 이는 BGP 설정이 올바르게 구성되어 있으며, 피어 간의 연결이 정상적으로 이루어지고 있음을 나타냅니다.\n\n2. **SSH 설정이 누락된 장비 (ssh_missing_count)**: SSH 설정이 누락된 장비가 없다는 결과가 나왔습니다. 이는 모든 장비가 안전한 원격 관리 프로토콜을 사용하고 있음을 의미하며, 보안 측면에서 긍정적인 요소입니다.\n\n3. **OSPF 영역의 복잡성 평가 (ospf_area_count)**: OSPF 영역에 대한 정보가 제공되지 않았습니다. 이는 OSPF 설정이 없거나, 관련 데이터가 수집되지 않았음을 나타냅니다. OSPF 영역의 복잡성은 네트워크의 확장성과 안정성에 영향을 미칠 수 있으므로, 이 부분에 대한 추가적인 모니터링이 필요합니다.\n\n4. **BGP와 OSPF 연계를 통한 잠재적 위험 요소 (bgp_inconsistent_as_count)**: BGP와 OSPF 간의 불일치가 발견되지 않았습니다. 이는 두 프로토콜 간의 설정이 일관되며, 네트워크의 라우팅 안정성이 확보되어 있음을 나타냅니다.\n\n5. **식별된 위험 요소 기반의 예방적 모니터링 계획 (aaa_enabled_devices)**: AAA(인증, 인가, 회계) 기능이 활성화된 장비에 대한 정보가 없습니다. 이는 네트워크 보안 관리에 중요한 요소로, AAA 기능이 활성화되지 않은 장비가 있을 경우 보안 취약점이 발생할 수 있습니다. 따라서, 모든 장비에 대해 AAA 기능의 활성화 여부를 확인하고, 필요한 경우 설정을 적용해야 합니다.\n\n### 결론 및 권장 사항:\n현재 수집된 증거에 따르면, BGP 및 SSH 설정은 양호하며, BGP와 OSPF 간의 연계도 안정적입니다. 그러나 OSPF 영역에 대한 정보가 부족하고, AAA 기능 활성화 여부에 대한 데이터가 없으므로, 이 두 가지 요소에 대한 추가적인 검토가 필요합니다.\n\n1. **OSPF 영역 검토**: OSPF 설정을 점검하고, 필요한 경우 영역 구성을 최적화하여 네트워크의 복잡성을 줄이고 안정성을 높이십시오.\n\n2. **AAA 기능 활성화**: 모든 네트워크 장비에 대해 AAA 기능이 활성화되어 있는지 확인하고, 비활성화된 장비가 있다면 즉시 설정을 적용하여 보안성을 강화하십시오.\n\n이러한 예방적 조치를 통해 네트워크의 서비스 위험 요소를 최소화하고, 안정적인 운영을 유지할 수 있을 것입니다.",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "synthetic",
     "level": 4,
     "persona": "noc_operator",
     "scenario": "서비스 영향도 분석",
-    "source_files": null,
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
         {
           "step": 1,
-          "description": "L2VPN 장애 수 파악",
-          "required_metric": "l2vpn_unidir_count",
+          "description": "BGP 피어의 누락된 페어링 식별",
+          "required_metric": "bgp_missing_pairs",
           "metric_params": {},
           "synthesis": "fetch"
         },
         {
           "step": 2,
-          "description": "L3VPN 관련 AS에서의 BGP 풀메시 상태 확인",
-          "required_metric": "ibgp_fullmesh_ok",
-          "metric_params": {
-            "asn": "65003"
-          },
+          "description": "SSH 설정이 누락된 장비 식별",
+          "required_metric": "ssh_missing_count",
+          "metric_params": {},
           "synthesis": "fetch"
         },
         {
           "step": 3,
-          "description": "L2VPN과 L3VPN 장애 영향을 종합하여 비즈니스에 미치는 영향도 평가",
-          "required_metric": "bgp_peer_count",
+          "description": "OSPF 영역의 복잡성 평가",
+          "required_metric": "ospf_area_count",
+          "metric_params": {},
+          "synthesis": "fetch"
+        },
+        {
+          "step": 4,
+          "description": "BGP와 OSPF 연계를 통한 잠재적 위험 요소 식별",
+          "required_metric": "bgp_inconsistent_as_count",
+          "metric_params": {},
+          "synthesis": "summarize"
+        },
+        {
+          "step": 5,
+          "description": "식별된 위험 요소 기반의 예방적 모니터링 계획 수립",
+          "required_metric": "aaa_enabled_devices",
           "metric_params": {},
           "synthesis": "summarize"
         }
@@ -731,14 +862,17 @@
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed",
       "evidence": {
-        "step_1_l2vpn_unidir_count": 0,
-        "step_2_ibgp_fullmesh_ok": true,
-        "step_3_bgp_peer_count": null
+        "step_1_bgp_missing_pairs": null,
+        "step_2_ssh_missing_count": 0,
+        "step_3_ospf_area_count": null,
+        "step_4_bgp_inconsistent_as_count": null,
+        "step_5_aaa_enabled_devices": null
       },
-      "question_length": 73,
-      "answer_length": 1298,
-      "has_numbers": true,
-      "has_technical_terms": false
+      "question_length": 52,
+      "answer_length": 1294,
+      "has_numbers": false,
+      "has_technical_terms": false,
+      "task_category": "네트워크 토폴로지 구성 질의"
     }
   }
 ]

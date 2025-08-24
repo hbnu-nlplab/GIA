@@ -1,6 +1,6 @@
 [
   {
-    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-42488",
+    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-18762",
     "question": "SSH가 활성화된 장비 목록은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "answer": "CE1, CE2, sample10, sample7, sample8, sample9",
@@ -27,7 +27,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-48141",
+    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-3673",
     "question": "SSH가 활성화된 장비 목록은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "answer": "CE1, CE2, sample10, sample7, sample8, sample9",
@@ -54,7 +54,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-44787",
+    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-5526",
     "question": "SSH가 활성화된 장비 목록은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "CE1, CE2, sample10, sample7, sample8, sample9",
@@ -81,7 +81,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-31110",
+    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-1456",
     "question": "SSH가 활성화된 장비 목록은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "CE1, CE2, sample10, sample7, sample8, sample9",
@@ -108,7 +108,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-53239",
+    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-8",
     "question": "SSH가 활성화된 장비 목록은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "CE1, CE2, sample10, sample7, sample8, sample9",
@@ -135,7 +135,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-55216",
+    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-29920",
     "question": "SSH가 활성화된 장비 목록은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "CE1, CE2, sample10, sample7, sample8, sample9",
@@ -162,7 +162,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SSH_MISSING_COUNT-38148",
+    "id": "BASIC_DSL-SSH_MISSING_COUNT-37022",
     "question": "SSH가 비활성화(또는 설정 없음)인 장비 수는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1\n장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1\n장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "0",
@@ -193,7 +193,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-44787",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-5526",
     "question": "sample10 장비의 iBGP 피어 목록은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "1.1.1.1, 2.2.2.2, 3.3.3.3",
@@ -220,7 +220,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-31110",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-1456",
     "question": "sample7 장비의 iBGP 피어 목록은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "2.2.2.2, 3.3.3.3, 4.4.4.4",
@@ -247,7 +247,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-53239",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-8",
     "question": "sample8 장비의 iBGP 피어 목록은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "1.1.1.1, 3.3.3.3, 4.4.4.4",
@@ -274,7 +274,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-55216",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-29920",
     "question": "sample9 장비의 iBGP 피어 목록은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "1.1.1.1, 2.2.2.2, 4.4.4.4",
@@ -301,7 +301,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-42488",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-18762",
     "question": "CE1 장비의 eBGP 피어 목록은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "answer": "192.168.1.10",
@@ -328,7 +328,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-48141",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-3673",
     "question": "CE2 장비의 eBGP 피어 목록은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "answer": "192.168.3.10",
@@ -355,7 +355,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-44787",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-5526",
     "question": "sample10 장비의 eBGP 피어 목록은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "192.168.4.11",
@@ -382,7 +382,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-31110",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-1456",
     "question": "sample7 장비의 eBGP 피어 목록은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "192.168.1.11",
@@ -409,7 +409,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-53239",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-8",
     "question": "sample8 장비의 eBGP 피어 목록은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "192.168.2.11",
@@ -436,7 +436,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-55216",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-29920",
     "question": "sample9 장비의 eBGP 피어 목록은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "192.168.3.11",
@@ -463,7 +463,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-IBGP_FULLMESH_OK-61336",
+    "id": "BASIC_DSL-IBGP_FULLMESH_OK-15174",
     "question": "AS 65000 도메인의 iBGP 풀메시 구성이 완전한가",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "예",
@@ -493,7 +493,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-IBGP_FULLMESH_OK-41973",
+    "id": "BASIC_DSL-IBGP_FULLMESH_OK-7595",
     "question": "AS 65001 도메인의 iBGP 풀메시 구성이 완전한가",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "answer": "예",
@@ -520,7 +520,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-IBGP_FULLMESH_OK-19042",
+    "id": "BASIC_DSL-IBGP_FULLMESH_OK-50080",
     "question": "AS 65003 도메인의 iBGP 풀메시 구성이 완전한가",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "answer": "예",
@@ -547,7 +547,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-61336",
+    "id": "BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-15174",
     "question": "AS 65000 iBGP 풀메시에서 누락된 링크 개수는?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "0",
@@ -577,7 +577,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-41973",
+    "id": "BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-7595",
     "question": "AS 65001 iBGP 풀메시에서 누락된 링크 개수는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "answer": "0",
@@ -604,7 +604,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-19042",
+    "id": "BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-50080",
     "question": "AS 65003 iBGP 풀메시에서 누락된 링크 개수는?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "answer": "0",
@@ -631,7 +631,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_WITHOUT_RT_COUNT-38148",
+    "id": "BASIC_DSL-VRF_WITHOUT_RT_COUNT-37022",
     "question": "route-target이 없는 VRF (장비/VRF) 개수는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1\n장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1\n장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "0",
@@ -662,7 +662,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_RD_MAP-34001",
+    "id": "BASIC_DSL-VRF_RD_MAP-319",
     "question": "VRF exam-l3vpn 의 장비별 RD 매핑은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "exam-l3vpn: 65000:1000",
@@ -690,7 +690,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_RD_MAP-2200",
+    "id": "BASIC_DSL-VRF_RD_MAP-14772",
     "question": "VRF exam-l3vpn 의 장비별 RD 매핑은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "exam-l3vpn: 65000:1000",
@@ -718,7 +718,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_RD_MAP-20867",
+    "id": "BASIC_DSL-VRF_RD_MAP-47387",
     "question": "VRF exam-l3vpn 의 장비별 RD 매핑은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "exam-l3vpn: 65000:1000",
@@ -746,7 +746,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_RD_MAP-39077",
+    "id": "BASIC_DSL-VRF_RD_MAP-42299",
     "question": "VRF exam-l3vpn 의 장비별 RD 매핑은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "exam-l3vpn: 65000:1000",
@@ -774,7 +774,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_RT_LIST_PER_DEVICE-34001",
+    "id": "BASIC_DSL-VRF_RT_LIST_PER_DEVICE-319",
     "question": "sample10 의 VRF exam-l3vpn route-target 목록은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "65000:1000",
@@ -802,7 +802,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_RT_LIST_PER_DEVICE-2200",
+    "id": "BASIC_DSL-VRF_RT_LIST_PER_DEVICE-14772",
     "question": "sample7 의 VRF exam-l3vpn route-target 목록은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "65000:1000",
@@ -830,7 +830,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_RT_LIST_PER_DEVICE-20867",
+    "id": "BASIC_DSL-VRF_RT_LIST_PER_DEVICE-47387",
     "question": "sample8 의 VRF exam-l3vpn route-target 목록은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "65000:1000",
@@ -858,7 +858,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_RT_LIST_PER_DEVICE-39077",
+    "id": "BASIC_DSL-VRF_RT_LIST_PER_DEVICE-42299",
     "question": "sample9 의 VRF exam-l3vpn route-target 목록은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "65000:1000",
@@ -886,7 +886,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-11056",
+    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-60133",
     "question": "CE1의 VRF exam-l3vpn에 바인딩된 인터페이스 수는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "answer": "0",
@@ -914,7 +914,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-45631",
+    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-60717",
     "question": "CE2의 VRF exam-l3vpn에 바인딩된 인터페이스 수는?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "answer": "0",
@@ -942,7 +942,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-34001",
+    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-319",
     "question": "sample10의 VRF exam-l3vpn에 바인딩된 인터페이스 수는?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "0",
@@ -970,7 +970,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-2200",
+    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-14772",
     "question": "sample7의 VRF exam-l3vpn에 바인딩된 인터페이스 수는?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "0",
@@ -998,7 +998,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-20867",
+    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-47387",
     "question": "sample8의 VRF exam-l3vpn에 바인딩된 인터페이스 수는?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "0",
@@ -1026,7 +1026,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-39077",
+    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-42299",
     "question": "sample9의 VRF exam-l3vpn에 바인딩된 인터페이스 수는?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "answer": "0",

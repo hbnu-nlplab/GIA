@@ -1,22 +1,29 @@
 [
   {
     "id": "ENHANCED_ENHANCED-ANALYTICAL-001",
-    "question": "iBGP 풀메시 누락이 AS 65001의 경로 수렴성에 미치는 영향을 평가하라.",
+    "question": "iBGP 풀메시 누락이 AS 65001의 경로 수렴에 미치는 영향을 어떻게 분석할 수 있을까?",
     "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "answer": "AS 65001의 iBGP 풀메시 상태를 평가한 결과, 다음과 같은 사항이 확인되었습니다.\n\n1. **iBGP 풀메시 상태**: 첫 번째 단계에서 확인한 바에 따르면, AS 65001의 iBGP 풀메시 상태는 정상으로 나타났습니다(✅ 정상). 이는 모든 iBGP 라우터가 서로 연결되어 있으며, 경로 정보가 원활하게 교환되고 있음을 의미합니다.\n\n2. **누락된 iBGP 페어 수**: 두 번째 단계에서 확인한 결과, AS 65001 내에서 누락된 iBGP 페어 수는 0으로 나타났습니다. 이는 모든 iBGP 라우터 간의 연결이 완전하다는 것을 의미하며, 추가적인 경로 수렴성 문제는 발생하지 않고 있습니다.\n\n3. **BGP 일관성**: 세 번째 단계에서 확인한 바에 따르면, iBGP 풀메시 누락으로 인한 BGP 일관성 문제는 발견되지 않았습니다. 즉, AS 65001 내에서 경로 수렴성에 영향을 미치는 요소가 없음을 나타냅니다.\n\n### 결론\n현재 AS 65001의 iBGP 풀메시 상태는 정상이며, 누락된 페어가 없고, BGP 일관성 문제도 발견되지 않았습니다. 따라서, iBGP 풀메시 누락이 AS 65001의 경로 수렴성에 미치는 영향은 없다고 평가할 수 있습니다. \n\n### 추가 사항\n현재 상태에서 문제가 발견되지 않았으므로, 추가적인 조치나 해결책은 필요하지 않습니다. 그러나 네트워크 환경이 변화할 경우, 지속적인 모니터링과 정기적인 점검을 통해 iBGP 풀메시 상태를 유지하는 것이 중요합니다.",
+    "answer": "AS 65001의 iBGP 풀메시 상태를 분석한 결과, 다음과 같은 사항을 확인할 수 있습니다.\n\n1. **iBGP 풀메시 상태**: 첫 번째 단계에서 확인한 바에 따르면, AS 65001 내의 iBGP 풀메시 상태는 정상으로 나타났습니다(✅ 정상). 이는 모든 iBGP 라우터가 서로 연결되어 있어, 경로 정보가 원활하게 교환될 수 있음을 의미합니다.\n\n2. **누락된 iBGP 페어 수**: 두 번째 단계에서 확인한 결과, 누락된 iBGP 페어의 수는 0으로 나타났습니다. 이는 AS 65001 내의 모든 iBGP 라우터가 서로 연결되어 있으며, 경로 수렴에 지연을 초래할 수 있는 문제가 없음을 시사합니다.\n\n3. **BGP 불일치 AS 수**: 세 번째 단계에서는 BGP 불일치 AS 수가 'None'으로 나타났습니다. 이는 AS 65001 내에서 경로 정보가 일관되게 유지되고 있으며, 다른 AS와의 경로 불일치 문제도 없음을 의미합니다.\n\n### 결론\n제공된 증거에 따르면, AS 65001의 iBGP 풀메시 상태는 정상이며, 누락된 페어도 없고, BGP 불일치 문제도 존재하지 않습니다. 따라서 현재 AS 65001의 경로 수렴에 대한 문제는 발견되지 않았습니다. \n\n### 추가 분석\n현재 상태에서 문제가 발견되지 않았으므로, 추가적인 조치나 해결책은 필요하지 않습니다. 그러나, 네트워크의 변화나 확장에 따라 iBGP 풀메시 상태를 지속적으로 모니터링하고, 누락된 페어가 발생할 경우 즉시 대응할 수 있는 체계를 마련하는 것이 좋습니다. \n\n이러한 분석을 통해 AS 65001의 iBGP 설정이 안정적임을 확인할 수 있었으며, 향후에도 지속적인 모니터링이 필요합니다.",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "analytical",
     "level": 3,
     "persona": "network_engineer",
     "scenario": "BGP 경로 수렴 분석",
-    "source_files": null,
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
         {
           "step": 1,
-          "description": "AS 65001의 iBGP 풀메시 상태 확인",
+          "description": "AS 65001 내 iBGP 풀메시 상태를 확인",
           "required_metric": "ibgp_fullmesh_ok",
           "metric_params": {
             "asn": "65001"
@@ -25,7 +32,7 @@
         },
         {
           "step": 2,
-          "description": "AS 65001 내 누락된 iBGP 페어 수 확인",
+          "description": "누락된 iBGP 페어의 수를 확인하여 경로 수렴 지연 가능성 평가",
           "required_metric": "ibgp_missing_pairs_count",
           "metric_params": {
             "asn": "65001"
@@ -34,11 +41,9 @@
         },
         {
           "step": 3,
-          "description": "iBGP 풀메시 누락이 경로 수렴성에 미치는 영향 요약",
+          "description": "기존 iBGP 설정과 누락된 페어 수를 종합하여 경로 수렴성 분석",
           "required_metric": "bgp_inconsistent_as_count",
-          "metric_params": {
-            "asn": "65001"
-          },
+          "metric_params": {},
           "synthesis": "summarize"
         }
       ],
@@ -53,22 +58,29 @@
   },
   {
     "id": "ENHANCED_ENHANCED-ANALYTICAL-002",
-    "question": "AS 65003에서 특정 피어 장애 시 전체 네트워크에 미치는 파급효과를 평가하라.",
-    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
-    "answer": "AS 65003에서 특정 피어 장애 시 전체 네트워크에 미치는 파급효과를 평가한 결과는 다음과 같습니다.\n\n1. **BGP 피어 수 확인 (bgp_peer_count)**: 현재 AS 65003의 BGP 피어 수에 대한 정보가 \"None\"으로 나타났습니다. 이는 AS 65003가 현재 BGP 피어를 설정하지 않았거나, 피어 정보가 수집되지 않았음을 의미합니다. 따라서, 특정 피어 장애가 발생할 경우, 피어가 없기 때문에 직접적인 파급효과는 존재하지 않습니다.\n\n2. **iBGP 쌍 누락 확인 (ibgp_missing_pairs_count)**: 이 단계에서 확인된 결과는 \"0\"으로, 이는 AS 65003 내에서 iBGP 쌍이 모두 정상적으로 설정되어 있음을 나타냅니다. 즉, 내부 BGP 피어 간의 연결이 원활하게 이루어지고 있어, 특정 피어의 장애가 발생하더라도 다른 피어들이 정상적으로 작동할 가능성이 높습니다.\n\n3. **L2VPN 단방향 연결 확인 (l2vpn_unidir_count)**: 이 단계에서도 \"0\"으로 나타났습니다. 이는 L2VPN 연결이 양방향으로 정상적으로 작동하고 있음을 의미합니다. 따라서, 특정 피어의 장애가 발생하더라도 L2VPN 서비스에 대한 영향은 없을 것으로 보입니다.\n\n### 종합 평가:\n현재 AS 65003의 네트워크 설정을 기반으로 할 때, 특정 피어의 장애가 발생하더라도 전체 네트워크에 미치는 파급효과는 미미할 것으로 판단됩니다. BGP 피어가 설정되지 않았거나 정보가 수집되지 않았기 때문에, 피어 장애로 인한 직접적인 영향은 없으며, 내부 BGP 쌍과 L2VPN 연결이 정상적으로 작동하고 있어 네트워크의 안정성이 유지될 것으로 예상됩니다.\n\n### 결론:\n현재 수집된 증거에 따르면, AS 65003의 네트워크는 특정 피어 장애에 대해 강한 내성을 가지고 있으며, 추가적인 문제가 발견되지 않았습니다. 그러나 BGP 피어 수에 대한 정보가 부족하므로, 향후 피어 설정을 검토하고, 피어 장애 시의 대응 계획을 마련하는 것이 좋습니다.",
+    "question": "AS 65003의 특정 BGP 피어 장애가 전체 네트워크에 미치는 파급 효과는 무엇인가?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "answer": "AS 65003의 특정 BGP 피어 장애가 전체 네트워크에 미치는 파급 효과를 분석한 결과는 다음과 같습니다.\n\n1. **BGP 피어 수 확인**: 수집된 증거에 따르면, AS 65003의 활성 BGP 피어 수는 'None'으로 나타났습니다. 이는 현재 AS 65003에 연결된 BGP 피어가 없음을 의미합니다. 따라서, 특정 BGP 피어의 장애가 발생할 경우, 실제로 영향을 미칠 피어가 존재하지 않기 때문에 네트워크에 미치는 직접적인 파급 효과는 없습니다.\n\n2. **장애 발생 시 영향을 받을 수 있는 장비 및 경로 식별**: AS 65003의 인터페이스 수는 5개로 확인되었습니다. 이 인터페이스들은 AS 65003의 네트워크와 외부 네트워크 간의 연결을 담당하고 있습니다. 그러나 BGP 피어가 없기 때문에, 이 인터페이스들은 BGP 경로를 통해 외부와 연결되지 않으며, 따라서 BGP 피어의 장애가 발생하더라도 이 인터페이스들에 대한 영향은 없습니다.\n\n3. **네트워크 경로 변경 및 대체 경로 가능성 평가**: OSPF 영역 수는 'None'으로 나타났습니다. 이는 AS 65003 내에서 OSPF 프로토콜을 사용하는 경로가 없음을 의미합니다. 따라서, BGP 피어의 장애로 인해 OSPF 경로가 변경되거나 대체 경로가 필요할 상황도 발생하지 않습니다.\n\n### 결론\n현재 AS 65003에는 활성 BGP 피어가 없고, OSPF 경로도 존재하지 않기 때문에 특정 BGP 피어의 장애가 전체 네트워크에 미치는 파급 효과는 없습니다. 이는 AS 65003의 네트워크가 외부와의 BGP 연결이 없고, 내부적으로도 OSPF를 사용하지 않기 때문입니다.\n\n### 문제 발견 및 해결책\n- **문제 발견**: BGP 피어가 없다는 것은 AS 65003가 외부 네트워크와의 연결이 없음을 의미하며, 이는 네트워크의 확장성이나 외부와의 통신에 제한을 줄 수 있습니다.\n- **해결책**: AS 65003의 네트워크 설계를 재검토하여 필요한 경우 BGP 피어를 설정하고, OSPF와 같은 내부 라우팅 프로토콜을 도입하여 네트워크의 안정성과 확장성을 높이는 것이 필요합니다. \n\n이러한 조치를 통해 AS 65003는 외부와의 연결성을 확보하고, 장애 발생 시에도 더 나은 대처가 가능할 것입니다.",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "analytical",
     "level": 3,
     "persona": "network_engineer",
     "scenario": "BGP 경로 수렴 분석",
-    "source_files": null,
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
         {
           "step": 1,
-          "description": "AS 65003의 BGP 피어 수 확인",
+          "description": "AS 65003의 활성 BGP 피어 수 확인",
           "required_metric": "bgp_peer_count",
           "metric_params": {
             "asn": "65003"
@@ -77,18 +89,20 @@
         },
         {
           "step": 2,
-          "description": "AS 65003에서 장애가 발생할 가능성이 있는 피어 식별",
-          "required_metric": "ibgp_missing_pairs_count",
+          "description": "장애 발생 시 영향을 받을 수 있는 장비 및 경로 식별",
+          "required_metric": "interface_count",
           "metric_params": {
             "asn": "65003"
           },
-          "synthesis": "fetch"
+          "synthesis": "compare"
         },
         {
           "step": 3,
-          "description": "장애 시 네트워크에 미치는 파급효과 요약",
-          "required_metric": "l2vpn_unidir_count",
-          "metric_params": {},
+          "description": "피어 장애 시 네트워크 경로 변경 및 대체 경로 가능성 평가",
+          "required_metric": "ospf_area_count",
+          "metric_params": {
+            "asn": "65003"
+          },
           "synthesis": "summarize"
         }
       ],
@@ -96,29 +110,36 @@
       "expected_analysis_depth": "detailed",
       "evidence": {
         "step_1_bgp_peer_count": null,
-        "step_2_ibgp_missing_pairs_count": 0,
-        "step_3_l2vpn_unidir_count": 0
+        "step_2_interface_count": 5,
+        "step_3_ospf_area_count": null
       }
     }
   },
   {
     "id": "ENHANCED_ENHANCED-ANALYTICAL-001",
-    "question": "새로운 데이터센터 추가 시, BGP와 OSPF의 재구성이 필요한지 여부를 어떻게 평가할 수 있는가?",
+    "question": "새로운 데이터센터 추가 시, BGP 및 OSPF 설정을 어떻게 재구성할 것인가?",
     "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "answer": "새로운 데이터센터를 추가할 때 BGP와 OSPF의 재구성이 필요한지 여부를 평가하기 위해 수집된 증거를 분석한 결과는 다음과 같습니다.\n\n1. **iBGP 풀메시 상태**: 현재 AS 65001의 iBGP 풀메시 상태가 정상(✅)으로 확인되었습니다. 이는 모든 BGP 라우터가 서로 피어링되어 있어, 새로운 데이터센터가 추가되더라도 기존의 BGP 피어링 구조에 큰 영향을 미치지 않을 것임을 시사합니다.\n\n2. **BGP 피어링 상태**: BGP 피어링 상태를 확인한 결과, 피어 수가 'None'으로 나타났습니다. 이는 현재 BGP 피어가 설정되어 있지 않음을 의미합니다. 새로운 데이터센터를 추가할 경우, 해당 데이터센터와의 BGP 피어링을 설정해야 할 필요가 있습니다. 따라서, 새로운 데이터센터와의 BGP 피어링을 구성하는 것이 필요합니다.\n\n3. **OSPF 영역 설정**: OSPF 영역 수 또한 'None'으로 나타났습니다. 이는 현재 OSPF가 설정되어 있지 않음을 의미하며, 새로운 데이터센터가 OSPF를 통해 연결될 경우, OSPF 영역을 새로 설정해야 할 필요가 있습니다. 따라서, OSPF 영역의 재구성이 필요할 것으로 보입니다.\n\n4. **iBGP 누락된 피어링 수**: iBGP 누락된 피어링 수가 0으로 확인되었습니다. 이는 현재 설정된 BGP 피어링 간에 문제가 없음을 나타내며, 새로운 데이터센터 추가 시 기존의 BGP 설정에 문제가 발생하지 않을 것임을 의미합니다.\n\n### 종합 평가\n결론적으로, 새로운 데이터센터를 추가할 경우 BGP와 OSPF의 재구성이 필요합니다. 구체적으로는:\n- **BGP**: 새로운 데이터센터와의 BGP 피어링을 설정해야 합니다.\n- **OSPF**: 새로운 데이터센터를 포함하기 위해 OSPF 영역을 새로 설정해야 합니다.\n\n이러한 재구성 작업은 데이터센터의 네트워크 통합 및 안정성을 보장하는 데 필수적입니다. 추가적인 증거가 부족한 경우, 현재의 네트워크 토폴로지와 트래픽 패턴을 고려하여 보다 구체적인 계획을 수립하는 것이 좋습니다.",
+    "answer": "새로운 데이터센터를 추가할 때 BGP 및 OSPF 설정을 재구성하는 과정은 다음과 같은 단계로 진행됩니다. 수집된 증거를 바탕으로 각 단계의 상태를 분석하고, 필요한 조치를 제안하겠습니다.\n\n### 1단계: iBGP 풀메시 상태 확인\n- **결과**: `ibgp_fullmesh_ok`가 ✅로 확인되었습니다.\n- **해석**: AS 65001 내의 iBGP 풀메시가 정상적으로 구성되어 있습니다. 이는 모든 라우터가 서로 연결되어 있어, BGP 라우팅 정보가 원활하게 전파될 수 있음을 의미합니다.\n\n### 2단계: BGP 피어링 수 확인\n- **결과**: `bgp_peer_count`가 None으로 확인되었습니다.\n- **해석**: AS 65000의 BGP 피어링 수가 확인되지 않았습니다. 이는 새로운 데이터센터와의 BGP 피어링이 설정되지 않았거나, 피어링 정보가 누락되었음을 나타냅니다.\n- **조치**: 새로운 데이터센터의 라우터와 기존 AS 65000의 라우터 간에 BGP 피어링을 설정해야 합니다. 피어링을 설정할 때는 각 라우터의 IP 주소와 AS 번호를 정확히 입력해야 하며, 필요 시 BGP 정책을 조정하여 트래픽 흐름을 최적화해야 합니다.\n\n### 3단계: OSPF 영역 수 확인\n- **결과**: `ospf_area_count`가 None으로 확인되었습니다.\n- **해석**: OSPF 영역 수가 확인되지 않았습니다. 이는 OSPF 설정이 제대로 구성되지 않았거나, 새로운 데이터센터의 OSPF 영역이 기존 네트워크와 통합되지 않았음을 의미합니다.\n- **조치**: 새로운 데이터센터의 OSPF 설정을 검토하고, 기존 OSPF 영역에 통합해야 합니다. 필요한 경우 새로운 OSPF 영역을 생성하고, 해당 영역에 속하는 라우터를 추가하여 OSPF 라우팅 정보를 공유할 수 있도록 해야 합니다.\n\n### 4단계: BGP 및 OSPF 설정 종합 평가\n- **결과**: `bgp_inconsistent_as_count`가 None으로 확인되었습니다.\n- **해석**: 현재 BGP 설정에서 AS 간 불일치가 발견되지 않았습니다. 이는 기존 설정이 일관성을 유지하고 있음을 나타냅니다.\n- **조치**: 새로운 데이터센터 추가 후에도 이러한 일관성을 유지하기 위해, BGP 및 OSPF 설정을 정기적으로 검토하고, 필요 시 업데이트해야 합니다.\n\n### 결론\n새로운 데이터센터를 추가할 때 BGP 및 OSPF 설정을 재구성하기 위해서는 다음과 같은 조치를 취해야 합니다:\n1. AS 65000의 BGP 피어링을 설정하여 새로운 데이터센터와의 연결을 확립합니다.\n2. OSPF 영역을 재구성하여 새로운 데이터센터의 라우터가 기존 네트워크와 통신할 수 있도록 합니다.\n3. 설정 후에는 BGP 및 OSPF의 상태를 지속적으로 모니터링하여 문제 발생 시 즉시 대응할 수 있도록 합니다.\n\n현재 수집된 증거로는 BGP 피어링 수와 OSPF 영역 수에 대한 정보가 부족하므로, 이 부분에 대한 추가적인 검토가 필요합니다.",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "analytical",
     "level": 3,
     "persona": "network_architect",
     "scenario": "네트워크 확장 계획",
-    "source_files": null,
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
         {
           "step": 1,
-          "description": "현재 AS 65001의 iBGP 풀메시 상태 확인",
+          "description": "AS 65001의 iBGP 풀메시 상태 확인",
           "required_metric": "ibgp_fullmesh_ok",
           "metric_params": {
             "asn": "65001"
@@ -127,22 +148,24 @@
         },
         {
           "step": 2,
-          "description": "BGP 피어링 상태를 확인하여 새로운 데이터센터 추가 시의 영향 평가",
+          "description": "AS 65000의 BGP 피어링 수 확인",
           "required_metric": "bgp_peer_count",
-          "metric_params": {},
+          "metric_params": {
+            "asn": "65000"
+          },
           "synthesis": "fetch"
         },
         {
           "step": 3,
-          "description": "OSPF 영역의 현재 설정 확인 및 변경 필요성 평가",
+          "description": "OSPF 영역 재구성을 위한 영역 수 확인",
           "required_metric": "ospf_area_count",
           "metric_params": {},
           "synthesis": "fetch"
         },
         {
           "step": 4,
-          "description": "BGP 및 OSPF 설정 수집한 결과를 바탕으로 재구성 필요성 종합 평가",
-          "required_metric": "ibgp_missing_pairs_count",
+          "description": "기존 BGP 및 OSPF 설정을 종합하여 재구성 필요성 평가",
+          "required_metric": "bgp_inconsistent_as_count",
           "metric_params": {},
           "synthesis": "summarize"
         }
@@ -153,49 +176,56 @@
         "step_1_ibgp_fullmesh_ok": true,
         "step_2_bgp_peer_count": null,
         "step_3_ospf_area_count": null,
-        "step_4_ibgp_missing_pairs_count": 0
+        "step_4_bgp_inconsistent_as_count": null
       }
     }
   },
   {
     "id": "ENHANCED_ENHANCED-ANALYTICAL-002",
-    "question": "네트워크 확장이 기존 L2/L3VPN 서비스에 미치는 영향을 최소화하기 위해 어떤 조치를 취해야 하는가?",
+    "question": "데이터센터 확장이 기존 L2/L3VPN 서비스에 미치는 영향을 어떻게 최소화할 것인가?",
     "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
-    "answer": "네트워크 확장이 기존 L2/L3VPN 서비스에 미치는 영향을 최소화하기 위해서는 다음과 같은 조치를 취해야 합니다.\n\n1. **현재 L2VPN 상태 점검**: 수집된 증거에 따르면, L2VPN에서 발생하고 있는 문제는 없으며, `l2vpn_unidir_count`가 0으로 나타났습니다. 이는 현재 L2VPN 서비스가 정상적으로 운영되고 있음을 의미합니다. 따라서, 네트워크 확장 시 L2VPN의 설정을 변경하거나 추가할 때, 기존의 설정을 유지하고 새로운 연결을 추가하는 방식으로 접근해야 합니다.\n\n2. **VRF 설정 검토**: `vrf_without_rt_count`가 0인 것은 VRF 설정에서 Route Target(RT) 요소가 누락되지 않았음을 나타냅니다. 이는 VRF 간의 경로 전파가 원활하게 이루어질 수 있음을 의미합니다. 네트워크 확장 시 새로운 VRF를 추가할 경우, 반드시 RT 설정을 포함하여 기존 VRF와의 경로 전파가 원활하도록 해야 합니다.\n\n3. **BGP 설정 확인**: `bgp_inconsistent_as_count`가 None으로 나타난 것은 BGP 설정에 일관성이 있음을 보여줍니다. 이는 L3VPN 서비스가 안정적으로 운영되고 있다는 것을 의미합니다. 네트워크 확장 시 BGP 설정을 변경할 경우, AS 번호의 일관성을 유지하고, 새로운 경로가 기존 경로와 충돌하지 않도록 주의해야 합니다.\n\n4. **L2/L3VPN 서비스 안정성 보장**: `l2vpn_issues`가 없다는 것은 현재 L2/L3VPN 서비스에 문제가 없음을 나타냅니다. 따라서, 네트워크 확장 시에는 기존 서비스에 영향을 미치지 않도록, 새로운 장비나 링크를 추가할 때 기존의 트래픽 흐름을 고려하여 설계해야 합니다. 또한, 확장 후에는 서비스의 성능을 모니터링하여 예상치 못한 문제가 발생하지 않도록 지속적으로 점검해야 합니다.\n\n결론적으로, 네트워크 확장을 계획할 때는 기존 L2/L3VPN 서비스의 안정성을 유지하기 위해 현재의 설정을 철저히 검토하고, 새로운 요소를 추가할 때는 기존의 구조와 일관성을 유지하는 것이 중요합니다. 추가적인 문제가 발견되지 않았으므로, 현재의 설정을 기반으로 신중하게 확장 계획을 수립하는 것이 바람직합니다.",
+    "answer": "데이터센터 확장이 기존 L2/L3VPN 서비스에 미치는 영향을 최소화하기 위해서는 현재의 네트워크 설정을 면밀히 분석하고, 필요한 조치를 취하는 것이 중요합니다. 수집된 증거를 바탕으로 다음과 같은 분석과 권장 사항을 제시합니다.\n\n1. **L2VPN 구성의 문제점 확인**: \n   - **l2vpn_unidir_count**: 0\n   - 이 수치는 현재 L2VPN 구성에서 단방향 연결 문제가 없음을 나타냅니다. 따라서, L2VPN 서비스의 안정성은 확보된 상태입니다.\n\n2. **VRF 설정에서 RT 누락 여부 확인**:\n   - **vrf_without_rt_count**: 0\n   - 이 결과는 VRF(Virtual Routing and Forwarding) 설정에서 Route Target(RT) 누락이 없음을 의미합니다. 이는 L3VPN 서비스의 안정성을 보장하는 중요한 요소로, 데이터센터 확장 시에도 라우팅 문제가 발생하지 않을 것입니다.\n\n3. **L3VPN 구성의 안정성을 위한 인터페이스 수 확인**:\n   - **interface_count**: 5\n   - 현재 5개의 인터페이스가 설정되어 있으며, 이는 L3VPN의 안정성을 유지하는 데 충분한 수치입니다. 데이터센터 확장 시 추가적인 트래픽을 처리할 수 있는 여유가 있을 것으로 보입니다.\n\n4. **L2/L3VPN 서비스의 전체적인 안정성 평가**:\n   - **l2vpn_issues**: None\n   - L2VPN 및 L3VPN 서비스에서 문제가 발견되지 않았습니다. 이는 데이터센터 확장 시 기존 서비스에 대한 영향을 최소화할 수 있는 긍정적인 신호입니다.\n\n### 결론 및 권장 사항:\n현재의 네트워크 설정은 데이터센터 확장에 대비하여 안정적인 상태입니다. L2VPN과 L3VPN 모두에서 문제가 발견되지 않았으며, 인터페이스 수 또한 적절하여 추가적인 트래픽을 수용할 수 있는 여유가 있습니다. \n\n따라서, 데이터센터 확장을 진행할 때는 다음과 같은 조치를 권장합니다:\n- **모니터링 강화**: 확장 후에도 지속적으로 L2VPN 및 L3VPN의 성능을 모니터링하여 예상치 못한 문제가 발생하지 않도록 합니다.\n- **트래픽 테스트**: 확장 후 초기 트래픽 부하 테스트를 실시하여 시스템의 반응을 확인하고, 필요 시 추가적인 리소스를 배치합니다.\n- **문서화 및 계획 수립**: 확장 계획을 문서화하고, 예상되는 문제에 대한 대응 방안을 미리 수립하여 신속하게 대응할 수 있도록 합니다.\n\n이러한 조치를 통해 데이터센터 확장이 기존 L2/L3VPN 서비스에 미치는 영향을 최소화할 수 있을 것입니다. 추가적인 증거가 필요할 경우, 네트워크 트래픽 분석이나 성능 테스트 결과를 수집하여 보다 구체적인 대응 방안을 마련할 수 있습니다.",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "analytical",
     "level": 3,
     "persona": "network_architect",
     "scenario": "네트워크 확장 계획",
-    "source_files": null,
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
         {
           "step": 1,
-          "description": "현재 L2VPN에서 발생하고 있는 이슈 확인",
+          "description": "현재 L2VPN 구성의 문제점 확인",
           "required_metric": "l2vpn_unidir_count",
           "metric_params": {},
           "synthesis": "fetch"
         },
         {
           "step": 2,
-          "description": "VRF 설정에서 누락된 RT 요소 확인",
+          "description": "VRF 설정에서 RT 누락 여부 확인",
           "required_metric": "vrf_without_rt_count",
           "metric_params": {},
           "synthesis": "fetch"
         },
         {
           "step": 3,
-          "description": "현재 L3VPN의 설정 및 서비스 상태 평가",
-          "required_metric": "bgp_inconsistent_as_count",
+          "description": "L3VPN 구성의 안정성을 위한 인터페이스 수 확인",
+          "required_metric": "interface_count",
           "metric_params": {},
           "synthesis": "fetch"
         },
         {
           "step": 4,
-          "description": "수집한 정보를 바탕으로 L2/L3VPN 서비스의 안정성을 보장하기 위한 조치 종합",
+          "description": "L2/L3VPN 서비스의 전체적인 안정성 평가",
           "required_metric": "l2vpn_issues",
           "metric_params": {},
           "synthesis": "summarize"
@@ -206,8 +236,73 @@
       "evidence": {
         "step_1_l2vpn_unidir_count": 0,
         "step_2_vrf_without_rt_count": 0,
-        "step_3_bgp_inconsistent_as_count": null,
+        "step_3_interface_count": 5,
         "step_4_l2vpn_issues": null
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-001",
+    "question": "AS 65000에 속하면서 BGP 피어 수가 2개 이하인 장비는 총 몇 개인가?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "answer": "제공된 증거를 바탕으로 AS 65000에 속하면서 BGP 피어 수가 2개 이하인 장비의 총 개수를 확인하기 위한 분석을 진행했습니다. 그러나 수집된 증거에서 다음과 같은 사항이 발견되었습니다:\n\n1. **1단계 (bgp_inconsistent_as_count)**: 이 단계에서 AS 65000에 속한 장비의 목록을 가져오는 과정이 있었으나, 결과가 \"None\"으로 나타났습니다. 이는 AS 65000에 속한 장비가 없거나, 해당 정보를 수집하는 데 문제가 있었음을 의미합니다.\n\n2. **2단계 (bgp_peer_count)**: 각 장비의 BGP 피어 수를 확인하는 단계에서도 결과가 \"None\"으로 나타났습니다. 이는 AS 65000에 속한 장비가 없기 때문에 피어 수를 확인할 수 없음을 나타냅니다.\n\n3. **3단계 (bgp_peer_count)**: BGP 피어 수가 2개 이하인 장비를 필터링하는 과정에서도 역시 결과가 \"None\"으로 나타났습니다. 이는 필터링할 장비가 존재하지 않음을 의미합니다.\n\n4. **4단계 (bgp_peer_count)**: 필터링된 장비의 총 개수를 계산하는 단계에서도 결과가 \"None\"으로 나타났습니다.\n\n결론적으로, AS 65000에 속하면서 BGP 피어 수가 2개 이하인 장비는 존재하지 않거나, 해당 정보를 수집하는 데 문제가 발생했습니다. \n\n### 문제 원인 및 해결책:\n- **문제 원인**: AS 65000에 속한 장비가 없거나, 네트워크 설정에서 정보 수집이 제대로 이루어지지 않았을 가능성이 있습니다.\n- **해결책**: 네트워크 장비의 AS 설정을 재확인하고, BGP 설정이 올바르게 구성되어 있는지 점검해야 합니다. 또한, 정보 수집 프로세스에 문제가 있는지 확인하고, 필요한 경우 로그를 분석하여 문제를 해결해야 합니다.\n\n따라서, 현재로서는 AS 65000에 속하면서 BGP 피어 수가 2개 이하인 장비의 총 개수는 **0개**로 판단됩니다. 추가적인 데이터 수집이 필요합니다.",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "analytical",
+    "level": 3,
+    "persona": "troubleshooter",
+    "scenario": "규정 위반 장비 식별",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "step": 1,
+          "description": "AS 65000에 속한 모든 장비의 목록을 가져옴",
+          "required_metric": "bgp_inconsistent_as_count",
+          "metric_params": {
+            "asn": "65000"
+          },
+          "synthesis": "fetch"
+        },
+        {
+          "step": 2,
+          "description": "각 장비의 BGP 피어 수를 확인",
+          "required_metric": "bgp_peer_count",
+          "metric_params": {},
+          "synthesis": "fetch"
+        },
+        {
+          "step": 3,
+          "description": "BGP 피어 수가 2개 이하인 장비 필터링",
+          "required_metric": "bgp_peer_count",
+          "metric_params": {
+            "max_peers": 2
+          },
+          "synthesis": "compare"
+        },
+        {
+          "step": 4,
+          "description": "필터링된 장비의 총 개수 계산",
+          "required_metric": "bgp_peer_count",
+          "metric_params": {},
+          "synthesis": "summarize"
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_1_bgp_inconsistent_as_count": null,
+        "step_2_bgp_peer_count": null,
+        "step_3_bgp_peer_count": null,
+        "step_4_bgp_peer_count": null
       }
     }
   }

@@ -2,1018 +2,267 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GIA-Re 데이터셋 보고서</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f5f7fa;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-        
-        .header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-        
-        .section {
-            background: white;
-            margin-bottom: 30px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            overflow: hidden;
-        }
-        
-        .section-header {
-            background: #f8f9fa;
-            padding: 20px;
-            border-bottom: 1px solid #dee2e6;
-        }
-        
-        .section-header h2 {
-            color: #495057;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .section-content {
-            padding: 25px;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .stat-card {
-            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            transition: transform 0.3s ease;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        
-        .stat-label {
-            font-size: 0.9rem;
-            opacity: 0.9;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .pipeline-steps {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin: 20px 0;
-        }
-        
-        .pipeline-step {
-            flex: 1;
-            min-width: 200px;
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            position: relative;
-        }
-        
-        .pipeline-step.success {
-            border-color: #28a745;
-            background: #d4edda;
-        }
-        
-        .pipeline-step.error {
-            border-color: #dc3545;
-            background: #f8d7da;
-        }
-        
-        .pipeline-step::after {
-            content: '→';
-            position: absolute;
-            right: -25px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 1.5rem;
-            color: #6c757d;
-        }
-        
-        .pipeline-step:last-child::after {
-            display: none;
-        }
-        
-        .chart-container {
-            width: 100%;
-            height: 400px;
-            margin: 20px 0;
-        }
-        
-        .tabs {
-            display: flex;
-            border-bottom: 2px solid #dee2e6;
-            margin-bottom: 20px;
-        }
-        
-        .tab {
-            padding: 15px 25px;
-            background: #f8f9fa;
-            border: none;
-            border-bottom: 3px solid transparent;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        .tab.active {
-            background: white;
-            border-bottom-color: #667eea;
-            color: #667eea;
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        .question-card {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 15px;
-            transition: box-shadow 0.3s ease;
-        }
-        
-        .question-card:hover {
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-        }
-        
-        .question-text {
-            font-weight: 600;
-            color: #495057;
-            margin-bottom: 10px;
-            font-size: 1.1rem;
-        }
-        
-        .answer-text {
-            background: #e8f5e8;
-            border: 1px solid #c3e6c3;
-            border-radius: 5px;
-            padding: 10px;
-            font-family: 'Courier New', monospace;
-            color: #155724;
-            margin-bottom: 10px;
-            max-height: 150px;
-            overflow-y: auto;
-        }
-        
-        .question-meta {
-            font-size: 0.85rem;
-            color: #6c757d;
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        
-        .meta-tag {
-            background: #e9ecef;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-        }
-        
-        .file-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        
-        .file-table th,
-        .file-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #dee2e6;
-        }
-        
-        .file-table th {
-            background: #f8f9fa;
-            font-weight: 600;
-            color: #495057;
-        }
-        
-        .file-table tr:hover {
-            background: #f8f9fa;
-        }
-        
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #e9ecef;
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #28a745, #20c997);
-            transition: width 0.3s ease;
-        }
-        
-        .badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        
-        .badge-success { background: #d4edda; color: #155724; }
-        .badge-warning { background: #fff3cd; color: #856404; }
-        .badge-info { background: #d1ecf1; color: #0c5460; }
-        .badge-danger { background: #f8d7da; color: #721c24; }
-        
-        .footer {
-            text-align: center;
-            padding: 30px;
-            color: #6c757d;
-            border-top: 1px solid #dee2e6;
-            margin-top: 50px;
-        }
-        
-        .explanation-box {
-            background: #e3f2fd;
-            border: 1px solid #bbdefb;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 15px 0;
-        }
-        
-        .explanation-title {
-            font-weight: 600;
-            color: #1565c0;
-            margin-bottom: 8px;
-        }
-        
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            
-            .header h1 {
-                font-size: 2rem;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            }
-            
-            .pipeline-steps {
-                flex-direction: column;
-            }
-            
-            .pipeline-step::after {
-                display: none;
-            }
-        }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;color:#222;background:#f6f8fb;line-height:1.55}
+.container{max-width:1100px;margin:24px auto;padding:0 16px}
+.header{background:#ffffff;border:1px solid #e9eef5;border-radius:14px;padding:22px 24px;margin-bottom:18px}
+.h-title{font-size:22px;font-weight:700;color:#304153;margin-bottom:6px}
+.h-sub{font-size:13px;color:#6b7a90}
+.kv{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.kv .tag{font-size:12px;background:#f1f5fb;color:#3c4b61;border:1px solid #e2e8f0;border-radius:999px;padding:6px 10px}
+.section{background:#ffffff;border:1px solid #e9eef5;border-radius:14px;padding:18px 18px;margin:14px 0}
+.s-title{font-size:16px;font-weight:700;color:#314055;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.card{background:#f8fbff;border:1px solid #e1e8f4;border-radius:12px;padding:14px}
+.card .num{font-size:24px;font-weight:800;color:#2e5aac}
+.card .lbl{font-size:12px;color:#6a7a90;margin-top:2px}
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;border:1px solid #e1e8f4;color:#2f4156;background:#f3f7fd;margin-right:6px}
+.badge.ok{background:#e7f7ee;color:#106a37;border-color:#bfe8cf}
+.badge.fail{background:#fde8ea;color:#8b1a2b;border-color:#f6c7cd}
+.kv-table{width:100%;border-collapse:collapse}
+.kv-table th,.kv-table td{border-bottom:1px solid #eef2f7;padding:10px 6px;text-align:left;font-size:13px}
+.kv-table th{color:#50637a;font-weight:700;background:#fafcff}
+.progress{height:8px;background:#eef3fb;border-radius:6px;overflow:hidden}
+.progress > span{display:block;height:100%;background:#2f6ef2}
+.q{border:1px solid #e5ecf7;border-radius:10px;padding:12px;margin-bottom:12px;background:#fbfdff}
+.q .q-title{font-weight:700;color:#2b3a52;margin-bottom:6px}
+.q .meta{font-size:12px;color:#6b7a90;margin-top:6px}
+.small{font-size:12px;color:#6b7a90}
+.files{width:100%;border-collapse:collapse}
+.files th,.files td{border-bottom:1px solid #eef2f7;padding:8px 6px;text-align:left;font-size:13px}
+.files th{color:#50637a;background:#fafcff}
+.footer{color:#6b7a90;font-size:12px;text-align:center;margin-top:10px}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px}
+.filters input[type="text"], .filters select{padding:8px 10px;border:1px solid #dbe4f0;border-radius:8px;background:#fff;font-size:13px}
+.filters button{padding:8px 12px;border:1px solid #dbe4f0;border-radius:8px;background:#f6f9ff;color:#2e5aac;font-size:13px;cursor:pointer}
+.filters button:hover{background:#edf4ff}
+.pagination{display:flex;gap:6px;justify-content:center;margin-top:10px}
+.pagination button{padding:6px 10px;border:1px solid #dbe4f0;border-radius:8px;background:#fff;cursor:pointer;font-size:13px}
+.pagination button.active{background:#2f6ef2;color:#fff;border-color:#2f6ef2}
         
     </style>
 </head>
 <body>
     <div class="container">
         
-        <div class="header">
-            <h1>🎯 GIA-Re 데이터셋 보고서</h1>
-            <p>네트워크 설정 질문-답변 데이터셋 종합 분석</p>
-            <p>생성일시: 2025년 08월 23일 17:14:15</p>
-        </div>
+<div class="header">
+  <div class="h-title">NetworkConfigQA <span class="badge">v1.0</span></div>
+  <div class="h-sub">LLM 네트워크 설정 파악 성능 평가 데이터셋</div>
+  <div class="kv">
+    <span class="tag">생성: 2025-08-24 22:46:36</span>
+    <span class="tag">경로: demo_output</span>
+  </div>
+</div>
         
         
-        <div class="section">
-            <div class="section-header">
-                <h2>📊 데이터셋 개요</h2>
-            </div>
-            <div class="section-content">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-number">0</div>
-                        <div class="stat-label">총 질문 수</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">2</div>
-                        <div class="stat-label">카테고리 수</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">0</div>
-                        <div class="stat-label">네트워크 장비</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">100.0%</div>
-                        <div class="stat-label">파이프라인 성공률</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">0.71</div>
-                        <div class="stat-label">평균 품질 점수</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">0.4MB</div>
-                        <div class="stat-label">총 데이터 크기</div>
-                    </div>
-                </div>
-                
-                <div class="explanation-box">
-                    <div class="explanation-title">📈 주요 지표 설명</div>
-                    <ul style="margin-left: 20px;">
-                        <li><strong>총 질문 수:</strong> 생성된 모든 질문-답변 쌍의 총 개수</li>
-                        <li><strong>카테고리 수:</strong> BGP, 보안, VRF 등 다양한 네트워크 영역</li>
-                        <li><strong>네트워크 장비:</strong> 분석된 라우터/스위치 개수</li>
-                        <li><strong>파이프라인 성공률:</strong> 6단계 생성 과정의 성공률</li>
-                        <li><strong>평균 품질 점수:</strong> BLEU, F1 등 다중 메트릭 기반 점수</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+<div class="section">
+  <div class="s-title">📊 데이터셋 개요</div>
+  <div class="grid">
+    <div class="card"><div class="num">21</div><div class="lbl">총 질문 수</div></div>
+    <div class="card"><div class="num">2</div><div class="lbl">카테고리 수</div></div>
+    <div class="card"><div class="num">6</div><div class="lbl">네트워크 장비</div></div>
+    <div class="card"><div class="num">100.0%</div><div class="lbl">파이프라인 성공률</div></div>
+    <div class="card"><div class="num">0.74</div><div class="lbl">평균 품질 점수</div></div>
+    <div class="card"><div class="num">0.3KB</div><div class="lbl">총 데이터 크기</div></div>
+  </div>
+</div>
         
         
-        <div class="section">
-            <div class="section-header">
-                <h2>🔧 파이프라인 실행 결과</h2>
-            </div>
-            <div class="section-content">
-                <div class="pipeline-steps">
-                    
-            <div class="pipeline-step success">
-                <div style="font-size: 1.5rem; margin-bottom: 10px;">📄</div>
-                <div style="font-weight: 600; margin-bottom: 5px;">XML 파싱</div>
-                <div style="font-size: 0.9rem; color: #6c757d;">
-                    네트워크 설정 파일 분석
-                </div>
-            </div>
-            
-            <div class="pipeline-step success">
-                <div style="font-size: 1.5rem; margin-bottom: 10px;">📝</div>
-                <div style="font-weight: 600; margin-bottom: 5px;">기초 질문 생성</div>
-                <div style="font-size: 0.9rem; color: #6c757d;">
-                    규칙 기반 질문 생성
-                </div>
-            </div>
-            
-            <div class="pipeline-step success">
-                <div style="font-size: 1.5rem; margin-bottom: 10px;">🤖</div>
-                <div style="font-weight: 600; margin-bottom: 5px;">심화 질문 생성</div>
-                <div style="font-size: 0.9rem; color: #6c757d;">
-                    LLM 기반 질문 생성
-                </div>
-            </div>
-            
-            <div class="pipeline-step success">
-                <div style="font-size: 1.5rem; margin-bottom: 10px;">🔧</div>
-                <div style="font-weight: 600; margin-bottom: 5px;">데이터 통합</div>
-                <div style="font-size: 0.9rem; color: #6c757d;">
-                    질문 통합 및 중복 제거
-                </div>
-            </div>
-            
-            <div class="pipeline-step success">
-                <div style="font-size: 1.5rem; margin-bottom: 10px;">✅</div>
-                <div style="font-weight: 600; margin-bottom: 5px;">품질 검증</div>
-                <div style="font-size: 0.9rem; color: #6c757d;">
-                    품질 필터링
-                </div>
-            </div>
-            
-            <div class="pipeline-step success">
-                <div style="font-size: 1.5rem; margin-bottom: 10px;">📊</div>
-                <div style="font-weight: 600; margin-bottom: 5px;">평가</div>
-                <div style="font-size: 0.9rem; color: #6c757d;">
-                    다면적 성능 평가
-                </div>
-            </div>
-            
-                </div>
-                
-                <div class="explanation-box">
-                    <div class="explanation-title">📈 생성 통계</div>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
-                        <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
-                            <div style="font-size: 1.5rem; font-weight: bold; color: #28a745;">0</div>
-                            <div style="font-size: 0.9rem; color: #6c757d;">기초 질문 생성</div>
-                        </div>
-                        <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
-                            <div style="font-size: 1.5rem; font-weight: bold; color: #007bff;">0</div>
-                            <div style="font-size: 0.9rem; color: #6c757d;">심화 질문 생성</div>
-                        </div>
-                        <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
-                            <div style="font-size: 1.5rem; font-weight: bold; color: #6f42c1;">0</div>
-                            <div style="font-size: 0.9rem; color: #6c757d;">최종 데이터셋</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="section">
+  <div class="s-title">🧩 파이프라인 상태</div>
+  <table class="kv-table">
+    <thead><tr><th>단계</th><th>상태</th><th>요약</th></tr></thead>
+    <tbody>
+      <tr><td>파싱</td><td><span class="badge ok">성공</span></td><td></td></tr><tr><td>기본 생성</td><td><span class="badge ok">성공</span></td><td><span class="small">38개, 카테고리 3개</span></td></tr><tr><td>고도화 생성</td><td><span class="badge ok">성공</span></td><td><span class="small">12개, 복잡도 3종</span></td></tr><tr><td>어셈블리</td><td><span class="badge ok">성공</span></td><td><span class="small">중복제거 24, 검증 21</span></td></tr><tr><td>검증</td><td><span class="badge ok">성공</span></td><td></td></tr><tr><td>평가</td><td><span class="badge ok">성공</span></td><td></td></tr>
+    </tbody>
+  </table>
+</div>
         
         
-        <div class="section">
-            <div class="section-header">
-                <h2>📚 데이터셋 구성</h2>
-            </div>
-            <div class="section-content">
-                <div class="tabs">
-                    <button class="tab active" onclick="switchTab('split')">Train/Val/Test 분할</button>
-                    <button class="tab" onclick="switchTab('categories')">카테고리별 분포</button>
-                    <button class="tab" onclick="switchTab('complexity')">복잡도 분포</button>
-                </div>
-                
-                <div id="split" class="tab-content active">
-                    <div class="chart-container">
-                        <canvas id="splitChart"></canvas>
-                    </div>
-                    <div class="explanation-box">
-                        <div class="explanation-title">📊 데이터 분할 상세</div>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 10px;">
-                            <div>
-                                <strong>Train (15개):</strong>
-                                <p style="font-size: 0.9rem; color: #6c757d; margin-top: 5px;">
-                                    모델 학습에 사용되는 주 데이터셋으로, 전체의 70%를 차지합니다.
-                                </p>
-                            </div>
-                            <div>
-                                <strong>Validation (3개):</strong>
-                                <p style="font-size: 0.9rem; color: #6c757d; margin-top: 5px;">
-                                    하이퍼파라미터 튜닝과 모델 선택에 사용되는 검증 데이터셋입니다.
-                                </p>
-                            </div>
-                            <div>
-                                <strong>Test (4개):</strong>
-                                <p style="font-size: 0.9rem; color: #6c757d; margin-top: 5px;">
-                                    최종 성능 평가에 사용되는 테스트 데이터셋입니다.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div id="categories" class="tab-content">
-                    <div class="chart-container">
-                        <canvas id="categoryChart"></canvas>
-                    </div>
-                    <div class="explanation-box">
-                        <div class="explanation-title">🏷️ 카테고리 설명</div>
-                        <ul style="margin-left: 20px;">
-                            <li><strong>BGP_Consistency:</strong> Border Gateway Protocol 라우팅 설정의 일관성과 정확성을 검증하는 질문들</li>
-                            <li><strong>Security_Policy:</strong> SSH 접근, AAA 인증, 방화벽 등 네트워크 보안 정책 관련 질문들</li>
-                            <li><strong>VRF_Consistency:</strong> Virtual Routing and Forwarding 설정의 올바른 구성을 확인하는 질문들</li>
-                            <li><strong>Interface_Config:</strong> 네트워크 인터페이스 설정과 연결 상태를 점검하는 질문들</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div id="complexity" class="tab-content">
-                    <div class="chart-container">
-                        <canvas id="complexityChart"></canvas>
-                    </div>
-                    <div class="explanation-box">
-                        <div class="explanation-title">🎯 복잡도 레벨 설명</div>
-                        <ul style="margin-left: 20px;">
-                            <li><strong>BASIC:</strong> 직관적이고 단순한 확인 질문 (예: "SSH가 활성화된 장비는?")</li>
-                            <li><strong>ANALYTICAL:</strong> 단일 메트릭 기반 분석이 필요한 질문 (예: "BGP 피어 수는?")</li>
-                            <li><strong>SYNTHETIC:</strong> 다중 요소를 종합적으로 판단해야 하는 질문 (예: "네트워크 전체 보안 상태 평가")</li>
-                            <li><strong>DIAGNOSTIC:</strong> 문제 진단과 해결책 제시가 필요한 질문 (예: "BGP 연결 실패 원인 분석")</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        
-        <div class="section">
-            <div class="section-header">
-                <h2>🎯 품질 분석</h2>
-            </div>
-            <div class="section-content">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-number">0.591</div>
-                        <div class="stat-label">정확도 (Exact Match)</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">0.859</div>
-                        <div class="stat-label">F1 Score</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">0.961</div>
-                        <div class="stat-label">BLEU Score</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">0.711</div>
-                        <div class="stat-label">종합 점수</div>
-                    </div>
-                </div>
-                
-                <div class="explanation-box">
-                    <div class="explanation-title">📏 평가 메트릭 상세 설명</div>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 15px;">
-                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
-                            <h5 style="color: #007bff; margin-bottom: 8px;">🎯 Exact Match</h5>
-                            <p style="font-size: 0.9rem;">생성된 답변이 정답과 문자 그대로 완전히 일치하는 비율을 측정합니다.</p>
-                        </div>
-                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
-                            <h5 style="color: #28a745; margin-bottom: 8px;">📊 F1 Score</h5>
-                            <p style="font-size: 0.9rem;">정밀도(Precision)와 재현율(Recall)의 조화평균으로, 답변의 전반적 품질을 나타냅니다.</p>
-                        </div>
-                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
-                            <h5 style="color: #6f42c1; margin-bottom: 8px;">📝 BLEU Score</h5>
-                            <p style="font-size: 0.9rem;">n-gram 기반으로 생성된 텍스트와 참조 텍스트 간의 유사도를 측정합니다.</p>
-                        </div>
-                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
-                            <h5 style="color: #dc3545; margin-bottom: 8px;">⭐ 종합 점수</h5>
-                            <p style="font-size: 0.9rem;">모든 개별 메트릭들의 가중평균으로 계산된 최종 품질 점수입니다.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div style="margin-top: 20px;">
-                    <h4>📈 답변 유형별 성능</h4>
-                    <div style="display: flex; gap: 20px; margin-top: 15px;">
-                        <div style="flex: 1; background: #e8f5e8; padding: 15px; border-radius: 8px;">
-                            <strong>Short Answer 정확도:</strong> 0.800
-                            <p style="font-size: 0.9rem; margin-top: 5px;">간단한 팩트 기반 질문의 정확도</p>
-                        </div>
-                        <div style="flex: 1; background: #fff3cd; padding: 15px; border-radius: 8px;">
-                            <strong>Long Answer 품질:</strong> 0.143
-                            <p style="font-size: 0.9rem; margin-top: 5px;">복잡한 설명형 답변의 품질 점수</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        
-        <div class="section">
-            <div class="section-header">
-                <h2>📝 질문 샘플</h2>
-            </div>
-            <div class="section-content">
-                <div class="explanation-box">
-                    <div class="explanation-title">📋 샘플 설명</div>
-                    <p>실제 네트워크 설정 데이터를 기반으로 생성된 질문-답변 쌍들의 대표적인 예시입니다. 
-                    각 질문은 실무에서 활용할 수 있는 네트워크 지식을 평가하도록 설계되었습니다.</p>
-                </div>
-                
-            <div class="question-card">
-                <div class="question-text">❓ SSH가 활성화된 장비 목록은?</div>
-                <div class="answer-text">💡 CE1, CE2, sample10, sample7, sample8, sample9</div>
-                <div class="question-meta">
-                    <span class="meta-tag">ID: BASIC_DSL-SSH_ENABLED_DEVICES-58261</span>
-                    <span class="badge badge-info">SHORT</span>
-                    <span class="meta-tag">카테고리: basic</span>
-                    <span class="meta-tag">복잡도: basic</span>
-                </div>
-            </div>
-            
-            <div class="question-card">
-                <div class="question-text">❓ SSH가 활성화된 장비 목록은?</div>
-                <div class="answer-text">💡 CE1, CE2, sample10, sample7, sample8, sample9</div>
-                <div class="question-meta">
-                    <span class="meta-tag">ID: BASIC_DSL-SSH_ENABLED_DEVICES-41774</span>
-                    <span class="badge badge-info">SHORT</span>
-                    <span class="meta-tag">카테고리: basic</span>
-                    <span class="meta-tag">복잡도: basic</span>
-                </div>
-            </div>
-            
-            <div class="question-card">
-                <div class="question-text">❓ SSH가 활성화된 장비 목록은?</div>
-                <div class="answer-text">💡 CE1, CE2, sample10, sample7, sample8, sample9</div>
-                <div class="question-meta">
-                    <span class="meta-tag">ID: BASIC_DSL-SSH_ENABLED_DEVICES-64364</span>
-                    <span class="badge badge-info">SHORT</span>
-                    <span class="meta-tag">카테고리: basic</span>
-                    <span class="meta-tag">복잡도: basic</span>
-                </div>
-            </div>
-            
-            <div class="question-card">
-                <div class="question-text">❓ iBGP 풀메시 누락이 AS 65001의 경로 수렴에 미치는 영향을 어떻게 평가할 수 있을까?</div>
-                <div class="answer-text">💡 
-질문 "iBGP 풀메시 누락이 AS 65001의 경로 수렴에 미치는 영향을 어떻게 평가할 수 있을까?"에 대한 분석 결과:
+<div class="section">
+  <div class="s-title">🗂 데이터셋 구성</div>
+  <div class="grid">
+    <div class="card">
+      <div class="lbl">Train (14)</div>
+      <div class="progress" title="14 / 21"><span style="width:66%"></span></div>
+    </div>
+    <div class="card">
+      <div class="lbl">Validation (3)</div>
+      <div class="progress" title="3 / 21"><span style="width:14%"></span></div>
+    </div>
+    <div class="card">
+      <div class="lbl">Test (4)</div>
+      <div class="progress" title="4 / 21"><span style="width:19%"></span></div>
+    </div>
+  </div>
 
-수집된 증거:
-• 1단계 (ibgp_fullmesh_ok): ✅ 정상
-• 2단계 (ibgp_missing_pairs_count): 0 (문제없음)
-• 3단계 (bgp_peer_count): None
-• 4단계 (bgp_inconsi...</div>
-                <div class="question-meta">
-                    <span class="meta-tag">ID: ENHANCED_ENHANCED-ANALYTICAL-001</span>
-                    <span class="badge badge-warning">LONG</span>
-                    <span class="meta-tag">카테고리: advanced</span>
-                    <span class="meta-tag">복잡도: analytical</span>
-                </div>
-            </div>
-            
-            <div class="question-card">
-                <div class="question-text">❓ AS 65003에서 특정 BGP 피어 장애가 전체 네트워크에 미치는 파급효과는 무엇인가?</div>
-                <div class="answer-text">💡 
-질문 "AS 65003에서 특정 BGP 피어 장애가 전체 네트워크에 미치는 파급효과는 무엇인가?"에 대한 분석 결과:
+  <div style="height:10px"></div>
 
-수집된 증거:
-• 1단계 (bgp_peer_count): None
-• 2단계 (bgp_inconsistent_as_count): None
-• 3단계 (l2vpn_unidir_count): 0 (문제없음)
-• 4단계 (interface_c...</div>
-                <div class="question-meta">
-                    <span class="meta-tag">ID: ENHANCED_ENHANCED-ANALYTICAL-002</span>
-                    <span class="badge badge-warning">LONG</span>
-                    <span class="meta-tag">카테고리: advanced</span>
-                    <span class="meta-tag">복잡도: analytical</span>
-                </div>
-            </div>
-            
-            <div class="question-card">
-                <div class="question-text">❓ 네트워크 장비들의 SSH 및 AAA 설정이 표준에 맞게 일관성 있게 설정되어 있는지 확인하고, 각 AS 그룹별로 보안 정책 준수성을 평가하세요.</div>
-                <div class="answer-text">💡 
-질문 "네트워크 장비들의 SSH 및 AAA 설정이 표준에 맞게 일관성 있게 설정되어 있는지 확인하고, 각 AS 그룹별로 보안 정책 준수성을 평가하세요."에 대한 분석 결과:
-
-수집된 증거:
-• 1단계 (ssh_missing_count): 0 (문제없음)
-• 2단계 (aaa_enabled_devices): None
-• 3단계 (ssh_all_enabled_...</div>
-                <div class="question-meta">
-                    <span class="meta-tag">ID: ENHANCED_ENHANCED-DIAGNOSTIC-001</span>
-                    <span class="badge badge-warning">LONG</span>
-                    <span class="meta-tag">카테고리: advanced</span>
-                    <span class="meta-tag">복잡도: diagnostic</span>
-                </div>
-            </div>
-            
-            <div class="question-card">
-                <div class="question-text">❓ L2VPN/L3VPN 서비스의 장애가 발생했을 때, 각각의 서비스 계층에서 비즈니스에 미치는 영향을 평가하고 파급 범위를 분석하기 위한 방법은 무엇인가?</div>
-                <div class="answer-text">💡 
-질문 "L2VPN/L3VPN 서비스의 장애가 발생했을 때, 각각의 서비스 계층에서 비즈니스에 미치는 영향을 평가하고 파급 범위를 분석하기 위한 방법은 무엇인가?"에 대한 분석 결과:
-
-수집된 증거:
-• 1단계 (l2vpn_unidir_count): 0 (문제없음)
-• 2단계 (bgp_peer_count): None
-• 3단계 (bgp_inconsisten...</div>
-                <div class="question-meta">
-                    <span class="meta-tag">ID: ENHANCED_ENHANCED-SYNTHETIC-001</span>
-                    <span class="badge badge-warning">LONG</span>
-                    <span class="meta-tag">카테고리: advanced</span>
-                    <span class="meta-tag">복잡도: synthetic</span>
-                </div>
-            </div>
-            
-            <div class="question-card">
-                <div class="question-text">❓ sample9 장비의 iBGP 피어 목록은?</div>
-                <div class="answer-text">💡 1.1.1.1, 2.2.2.2, 4.4.4.4</div>
-                <div class="question-meta">
-                    <span class="meta-tag">ID: BASIC_DSL-NEIGHBOR_LIST_IBGP-27790</span>
-                    <span class="badge badge-info">SHORT</span>
-                    <span class="meta-tag">카테고리: basic</span>
-                    <span class="meta-tag">복잡도: basic</span>
-                </div>
-            </div>
-            
-                
-            </div>
-        </div>
+  <div class="grid" style="grid-template-columns:1fr 1fr;">
+    <div class="card">
+      <div class="lbl" style="margin-bottom:6px">복잡도 분포</div>
+      <table class="kv-table"><tbody><tr><td>basic</td><td>15</td></tr><tr><td>analytical</td><td>2</td></tr><tr><td>diagnostic</td><td>3</td></tr><tr><td>synthetic</td><td>1</td></tr></tbody></table>
+    </div>
+    <div class="card">
+      <div class="lbl" style="margin-bottom:6px">정답 유형 분포</div>
+      <table class="kv-table"><tbody><tr><td>short</td><td>15</td></tr><tr><td>long</td><td>6</td></tr></tbody></table>
+    </div>
+  </div>
+</div>
         
         
-        <div class="section">
-            <div class="section-header">
-                <h2>📂 출력 파일 목록</h2>
-            </div>
-            <div class="section-content">
-                <div class="explanation-box">
-                    <div class="explanation-title">📁 파일 구조 안내</div>
-                    <p>데이터셋 생성 과정에서 생성된 모든 파일들의 목록과 각각의 용도입니다. 
-                    각 파일은 특정 목적에 맞게 설계되었으며, 연구나 개발 목적에 따라 적절한 파일을 선택하여 사용할 수 있습니다.</p>
-                </div>
-                
-                <table class="file-table">
-                    <thead>
-                        <tr>
-                            <th>📋 파일명</th>
-                            <th>📝 설명 및 용도</th>
-                            <th>📏 크기</th>
-                            <th>🕒 수정일시</th>
-                            <th>📍 경로</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        
-            <tr>
-                <td><strong>network_config_qa_dataset.json</strong></td>
-                <td>📋 최종 통합 데이터셋 + 상세한 평가 결과</td>
-                <td style='color: #007bff;'>0.11 MB</td>
-                <td>2025-08-23 17:09:53</td>
-                <td><code>network_config_qa_dataset.json</code></td>
-            </tr>
-            
-            <tr>
-                <td><strong>dataset_report.html</strong></td>
-                <td>📄 생성된 데이터 파일</td>
-                <td style='color: #6c757d;'>0.04 MB</td>
-                <td>2025-08-23 16:51:38</td>
-                <td><code>dataset_report.html</code></td>
-            </tr>
-            
-            <tr>
-                <td><strong>train.json</strong></td>
-                <td>🎓 모델 학습용 데이터 (전체의 약 70%)</td>
-                <td style='color: #6c757d;'>0.04 MB</td>
-                <td>2025-08-23 17:09:53</td>
-                <td><code>train.json</code></td>
-            </tr>
-            
-            <tr>
-                <td><strong>validated_dataset.json</strong></td>
-                <td>✅ 품질 검증을 통과한 검증된 질문-답변 쌍들</td>
-                <td style='color: #6c757d;'>0.03 MB</td>
-                <td>2025-08-23 17:09:53</td>
-                <td><code>validated_dataset.json</code></td>
-            </tr>
-            
-            <tr>
-                <td><strong>basic_dataset.json</strong></td>
-                <td>📝 규칙 기반으로 생성된 기초 질문들 (정확한 메트릭 기반)</td>
-                <td style='color: #6c757d;'>0.03 MB</td>
-                <td>2025-08-23 17:08:31</td>
-                <td><code>basic_dataset.json</code></td>
-            </tr>
-            
-            <tr>
-                <td><strong>metadata.json</strong></td>
-                <td>🔧 데이터셋 생성 과정의 모든 설정과 통계 정보를 포함한 메타데이터</td>
-                <td style='color: #6c757d;'>0.03 MB</td>
-                <td>2025-08-23 17:09:53</td>
-                <td><code>metadata.json</code></td>
-            </tr>
-            
-            <tr>
-                <td><strong>enhanced_dataset.json</strong></td>
-                <td>🤖 LLM으로 생성된 심화 질문들 (복잡한 추론 포함)</td>
-                <td style='color: #6c757d;'>0.02 MB</td>
-                <td>2025-08-23 17:09:53</td>
-                <td><code>enhanced_dataset.json</code></td>
-            </tr>
-            
-            <tr>
-                <td><strong>parsed_facts.json</strong></td>
-                <td>🌐 XML 파일에서 추출한 구조화된 네트워크 설정 데이터</td>
-                <td style='color: #6c757d;'>0.02 MB</td>
-                <td>2025-08-23 17:08:31</td>
-                <td><code>parsed_facts.json</code></td>
-            </tr>
-            
-            <tr>
-                <td><strong>assembled_basic.json</strong></td>
-                <td>🔧 기본 복잡도 질문들만 모아놓은 어셈블리</td>
-                <td style='color: #6c757d;'>0.01 MB</td>
-                <td>2025-08-23 17:09:53</td>
-                <td><code>assembled_basic.json</code></td>
-            </tr>
-            
-            <tr>
-                <td><strong>assembled_analytical.json</strong></td>
-                <td>🔍 분석적 사고가 필요한 질문들의 어셈블리</td>
-                <td style='color: #6c757d;'>0.01 MB</td>
-                <td>2025-08-23 17:09:53</td>
-                <td><code>assembled_analytical.json</code></td>
-            </tr>
-            
-            <tr>
-                <td><strong>assembled_diagnostic.json</strong></td>
-                <td>🩺 진단형 질문들의 어셈블리</td>
-                <td style='color: #6c757d;'>0.01 MB</td>
-                <td>2025-08-23 17:09:53</td>
-                <td><code>assembled_diagnostic.json</code></td>
-            </tr>
-            
-            <tr>
-                <td><strong>test.json</strong></td>
-                <td>📊 최종 성능 평가용 테스트 데이터 (약 15%)</td>
-                <td style='color: #6c757d;'>0.01 MB</td>
-                <td>2025-08-23 17:09:53</td>
-                <td><code>test.json</code></td>
-            </tr>
-            
-            <tr>
-                <td><strong>validation.json</strong></td>
-                <td>🔍 하이퍼파라미터 튜닝 및 모델 검증용 데이터 (약 15%)</td>
-                <td style='color: #6c757d;'>0.01 MB</td>
-                <td>2025-08-23 17:09:53</td>
-                <td><code>validation.json</code></td>
-            </tr>
-            
-            <tr>
-                <td><strong>assembled_synthetic.json</strong></td>
-                <td>🔄 종합적 판단이 필요한 질문들의 어셈블리</td>
-                <td style='color: #6c757d;'>0.00 MB</td>
-                <td>2025-08-23 17:09:53</td>
-                <td><code>assembled_synthetic.json</code></td>
-            </tr>
-            
-            <tr>
-                <td><strong>all_cases.json</strong></td>
-                <td>🎭 다양한 네트워크 시나리오별 확장 케이스 (장애, 확장 등)</td>
-                <td style='color: #6c757d;'>0.00 MB</td>
-                <td>2025-08-23 17:09:53</td>
-                <td><code>cases\all_cases.json</code></td>
-            </tr>
-            
-                    </tbody>
-                </table>
-                
-                <div style="margin-top: 20px;">
-                    <h4>🎯 파일 사용 가이드</h4>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 15px;">
-                        <div style="background: #e8f5e8; padding: 15px; border-radius: 8px;">
-                            <strong>🎓 모델 학습용:</strong>
-                            <p style="font-size: 0.9rem; margin-top: 5px;">train.json, validation.json, test.json 사용</p>
-                        </div>
-                        <div style="background: #fff3cd; padding: 15px; border-radius: 8px;">
-                            <strong>📚 연구 분석용:</strong>
-                            <p style="font-size: 0.9rem; margin-top: 5px;">network_config_qa_dataset.json + metadata.json 사용</p>
-                        </div>
-                        <div style="background: #d1ecf1; padding: 15px; border-radius: 8px;">
-                            <strong>🔧 커스텀 개발용:</strong>
-                            <p style="font-size: 0.9rem; margin-top: 5px;">basic_dataset.json + enhanced_dataset.json 사용</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="section">
+  <div class="s-title">📝 샘플 Q/A</div>
+  <div class="filters">
+    <input type="text" id="searchInput" placeholder="질문/답변/컨텍스트 검색" />
+    <select id="filterSubset"></select>
+    <select id="filterCategory"></select>
+    <select id="filterComplexity"></select>
+    <select id="filterAnswerType"></select>
+    <select id="filterPersona"></select>
+    <button id="resetFilters">초기화</button>
+  </div>
+  <div id="samplesCount" class="small"></div>
+  <div id="samplesContainer"></div>
+  <div id="pagination" class="pagination"></div>
+</div>
         
         
-        <div class="footer">
-            <p>🎯 <strong>GIA-Re: 네트워크 설정 질문-답변 데이터셋 생성 시스템</strong></p>
-            <p>인공지능 기반 네트워크 교육 및 평가를 위한 고품질 데이터셋</p>
-            <p style="margin-top: 10px; font-size: 0.9rem; color: #aaa;">
-                Generated by DatasetReportGenerator | 
-                <a href="https://github.com/YUjinEDU/GIA-Re" style="color: #667eea;">GitHub Repository</a>
-            </p>
-        </div>
+<div class="section">
+  <div class="s-title">📁 파일 목록</div>
+  <table class="files">
+    <thead><tr><th>파일</th><th>크기</th><th>설명</th></tr></thead>
+    <tbody>
+      <tr><td>network_config_qa_dataset.json</td><td>0.2KB</td><td>통합 데이터셋(JSON)</td></tr><tr><td>enhanced_dataset.json</td><td>0.1KB</td><td>고도화 LLM 생성 결과</td></tr><tr><td>train.json</td><td>0.0KB</td><td>학습 세트</td></tr><tr><td>metadata.json</td><td>0.0KB</td><td>메타데이터 및 파이프라인 요약</td></tr><tr><td>validated_dataset.json</td><td>0.0KB</td><td>검증 결과 요약</td></tr><tr><td>basic_dataset.json</td><td>0.0KB</td><td>규칙 기반 기본 생성 결과</td></tr><tr><td>assembled_analytical.json</td><td>0.0KB</td><td>어셈블된 샘플 묶음</td></tr><tr><td>parsed_facts.json</td><td>0.0KB</td><td>파싱된 사실 정보</td></tr><tr><td>assembled_diagnostic.json</td><td>0.0KB</td><td>어셈블된 샘플 묶음</td></tr><tr><td>dataset_for_evaluation.csv</td><td>0.0KB</td><td>평가용 CSV</td></tr><tr><td>test.json</td><td>0.0KB</td><td>테스트 세트</td></tr><tr><td>dataset_report.html</td><td>0.0KB</td><td>이 보고서</td></tr><tr><td>validation.json</td><td>0.0KB</td><td>검증 세트</td></tr><tr><td>assembled_basic.json</td><td>0.0KB</td><td>어셈블된 샘플 묶음</td></tr><tr><td>assembled_synthetic.json</td><td>0.0KB</td><td>어셈블된 샘플 묶음</td></tr><tr><td>cases\all_cases.json</td><td>0.0KB</td><td>JSON 데이터 파일</td></tr>
+    </tbody>
+  </table>
+</div>
+        
+        
+<div class="footer">생성 시각: 2025-08-24 22:46:36 · 경량 리포트 · GIA-Re</div>
         
     </div>
     
-    <script>
+<script id="samples-data" type="application/json">[{"id": "ENHANCED_ENHANCED-DIAGNOSTIC-002", "question": "SSH 설정이 최신 보안 가이드를 얼마나 따르고 있는지 확인하려면 어떤 장비가 취약한가?", "answer": "SSH 설정의 보안 상태를 평가한 결과, 다음과 같은 사항이 확인되었습니다.\n\n1. **SSH 보안 설정 누락 여부**: \n   - **ssh_missing_count**: 0\n   - 이는 SSH 보안 설정이 누락된 장비가 없음을 의미합니다. 따라서 이 단계에서는 취약한 장비가 발견되지 않았습니다.\n\n2. **SSH 설정 활성화된 장비 수**:\n   - **ssh_enabled_devices**: CE1, CE2, sample10 등 총 6개의 장비에서 SSH 설정이 활성화되어 있습니다. 이 장비들은 SSH를 통해 원격 접속이 가능하다는 것을 나타냅니다.\n\n3. **SSH 설정의 전반적인 보안 상태**:\n   - **ssh_all_enabled_bool**: ✅ 정상\n   - 모든 장비에서 SSH 설정이 활성화되어 있으며, 보안 설정이 누락되지 않았기 때문에 현재로서는 보안 취약성이 발견되지 않았습니다.\n\n결론적으로, 현재 수집된 증거에 따르면 SSH 설정이 최신 보안 가이드를 잘 따르고 있으며, 취약한 장비는 없습니다. 모든 장비에서 SSH가 활성화되어 있고, 보안 설정이 누락된 부분이 없으므로 추가적인 조치가 필요하지 않습니다.\n\n다만, 보안 환경은 지속적으로 변화할 수 있으므로 정기적인 점검과 업데이트를 권장합니다. SSH 설정에 대한 최신 보안 가이드를 주기적으로 검토하고, 필요 시 추가적인 보안 조치를 취하는 것이 좋습니다.", "context": "보안 설정 현황:\nCE1: SSH ON, AAA OFF\nCE2: SSH ON, AAA OFF\nsample10: SSH ON, AAA ON\nsample7: SSH ON, AAA ON\nsample8: SSH ON, AAA ON", "answer_type": "long", "category": "advanced", "complexity": "diagnostic", "level": 3, "persona": "compliance_officer", "scenario": "정책 준수 점검", "subset": "train"}, {"id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-29920", "question": "sample9 장비의 iBGP 피어 목록은?", "answer": "1.1.1.1, 2.2.2.2, 4.4.4.4", "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1", "answer_type": "short", "category": "basic", "complexity": "basic", "level": 1, "persona": null, "scenario": "정상", "subset": "train"}, {"id": "BASIC_DSL-IBGP_FULLMESH_OK-50080", "question": "AS 65003 도메인의 iBGP 풀메시 구성이 완전한가", "answer": "예", "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1", "answer_type": "short", "category": "basic", "complexity": "basic", "level": 2, "persona": null, "scenario": "정상", "subset": "train"}, {"id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-8", "question": "sample8 장비의 iBGP 피어 목록은?", "answer": "1.1.1.1, 3.3.3.3, 4.4.4.4", "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1", "answer_type": "short", "category": "basic", "complexity": "basic", "level": 1, "persona": null, "scenario": "정상", "subset": "train"}, {"id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-1456", "question": "sample7 장비의 eBGP 피어 목록은?", "answer": "192.168.1.11", "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1", "answer_type": "short", "category": "basic", "complexity": "basic", "level": 1, "persona": null, "scenario": "정상", "subset": "train"}, {"id": "BASIC_DSL-IBGP_FULLMESH_OK-7595", "question": "AS 65001 도메인의 iBGP 풀메시 구성이 완전한가", "answer": "예", "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1", "answer_type": "short", "category": "basic", "complexity": "basic", "level": 2, "persona": null, "scenario": "정상", "subset": "train"}, {"id": "ENHANCED_ENHANCED-ANALYTICAL-002", "question": "AS 65003의 특정 BGP 피어 장애가 전체 네트워크에 미치는 파급 효과는 무엇인가?", "answer": "AS 65003의 특정 BGP 피어 장애가 전체 네트워크에 미치는 파급 효과를 분석한 결과는 다음과 같습니다.\n\n1. **BGP 피어 수 확인**: 수집된 증거에 따르면, AS 65003의 활성 BGP 피어 수는 'None'으로 나타났습니다. 이는 현재 AS 65003에 연결된 BGP 피어가 없음을 의미합니다. 따라서, 특정 BGP 피어의 장애가 발생할 경우, 실제로 영향을 미칠 피어가 존재하지 않기 때문에 네트워크에 미치는 직접적인 파급 효과는 없습니다.\n\n2. **장애 발생 시 영향을 받을 수 있는 장비 및 경로 식별**: AS 65003의 인터페이스 수는 5개로 확인되었습니다. 이 인터페이스들은 AS 65003의 네트워크와 외부 네트워크 간의 연결을 담당하고 있습니다. 그러나 BGP 피어가 없기 때문에, 이 인터페이스들은 BGP 경로를 통해 외부와 연결되지 않으며, 따라서 BGP 피어의 장애가 발생하더라도 이 인터페이스들에 대한 영향은 없습니다.\n\n3. **네트워크 경로 변경 및 대체 경로 가능성 평가**: OSPF 영역 수는 'None'으로 나타났습니다. 이는 AS 65003 내에서 OSPF 프로토콜을 사용하는 경로가 없음을 의미합니다. 따라서, BGP 피어의 장애로 인해 OSPF 경로가 변경되거나 대체 경로가 필요할 상황도 발생하지 않습니다.\n\n### 결론\n현재 AS 65003에는 활성 BGP 피어가 없고, OSPF 경로도 존재하지 않기 때문에 특정 BGP 피어의 장애가 전체 네트워크에 미치는 파급 효과는 없습니다. 이는 AS 65003의 네트워크가 외부와의 BGP 연결이 없고, 내부적으로도 OSPF를 사용하지 않기 때문입니다.\n\n### 문제 발견 및 해결책\n- **문제 발견**: BGP 피어가 없다는 것은 AS 65003가 외부 네트워크와의 연결이 없음을 의미하며, 이는 네트워크의 확장성이나 외부와의 통신에 제한을 줄 수 있습니다.\n- **해결책**: AS 65003의 네트워크 설계를 재검토하여 필요한 경우 BGP 피어를 설정하고, OSPF와 같은 내부 라우팅 프로토콜을 도입하여 네트워크의 안정성과 확장성을 높이는 것이 필요합니다. \n\n이러한 조치를 통해 AS 65003는 외부와의 연결성을 확보하고, 장애 발생 시에도 더 나은 대처가 가능할 것입니다.", "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어", "answer_type": "long", "category": "advanced", "complexity": "analytical", "level": 3, "persona": "network_engineer", "scenario": "BGP 경로 수렴 분석", "subset": "train"}, {"id": "ENHANCED_ENHANCED-DIAGNOSTIC-001", "question": "현재 네트워크 장비의 모든 AAA 인증 및 패스워드 정책이 사내 표준 및 규제 요구사항을 얼마나 충족하고 있는가?", "answer": "현재 네트워크 장비의 AAA 인증 및 패스워드 정책이 사내 표준 및 규제 요구사항을 충족하는 정도는 매우 낮습니다. 수집된 증거를 바탕으로 다음과 같은 분석을 할 수 있습니다.\n\n1. **AAA 인증 설정**: \n   - 1단계와 3단계에서 확인된 바에 따르면, AAA 인증이 활성화된 장비는 **없습니다**. 이는 네트워크 보안의 기본 요소인 인증, 권한 부여 및 회계(AAA)가 전혀 적용되지 않고 있음을 의미합니다. 따라서, 사내 표준 및 규제 요구사항을 충족하지 못하고 있습니다.\n\n2. **패스워드 정책**:\n   - 2단계에서 확인된 바에 따르면, 네트워크 장비의 수는 **5개**입니다. 그러나 AAA 인증이 활성화되지 않았기 때문에 패스워드 정책의 일관성을 평가할 수 있는 기반이 부족합니다. 패스워드 정책이 제대로 적용되지 않을 가능성이 높으며, 이는 보안 취약점을 초래할 수 있습니다.\n\n### 문제점:\n- **AAA 인증 미설정**: 모든 장비에서 AAA 인증이 비활성화되어 있어, 사용자 인증 및 권한 관리가 이루어지지 않고 있습니다. 이는 외부 공격자나 내부의 비인가 사용자가 네트워크에 접근할 수 있는 위험을 증가시킵니다.\n- **패스워드 정책의 불확실성**: 패스워드 정책이 적용되지 않거나 일관성이 결여되어 있을 가능성이 높습니다. 이는 사용자 계정의 보안성을 저하시킬 수 있습니다.\n\n### 해결책:\n1. **AAA 인증 활성화**: 모든 네트워크 장비에서 AAA 인증을 활성화해야 합니다. 이를 통해 사용자 인증 및 권한 부여를 강화하고, 네트워크 접근을 보다 안전하게 관리할 수 있습니다.\n2. **패스워드 정책 수립 및 적용**: 패스워드 복잡성, 만료 주기, 재사용 제한 등의 요소를 포함한 강력한 패스워드 정책을 수립하고 이를 모든 장비에 적용해야 합니다.\n3. **정기적인 감사 및 모니터링**: 네트워크 장비의 AAA 설정 및 패스워드 정책을 정기적으로 감사하고 모니터링하여, 지속적으로 보안 상태를 점검하고 개선할 필요가 있습니다.\n\n결론적으로, 현재 네트워크 장비의 AAA 인증 및 패스워드 정책은 사내 표준 및 규제 요구사항을 충족하지 않으며, 즉각적인 조치가 필요합니다.", "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003", "answer_type": "long", "category": "advanced", "complexity": "diagnostic", "level": 3, "persona": "compliance_officer", "scenario": "정책 준수 점검", "subset": "train"}, {"id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-18762", "question": "CE1 장비의 eBGP 피어 목록은?", "answer": "192.168.1.10", "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1", "answer_type": "short", "category": "basic", "complexity": "basic", "level": 1, "persona": null, "scenario": "정상", "subset": "train"}, {"id": "BASIC_DSL-IBGP_FULLMESH_OK-15174", "question": "AS 65000 도메인의 iBGP 풀메시 구성이 완전한가", "answer": "예", "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1", "answer_type": "short", "category": "basic", "complexity": "basic", "level": 2, "persona": null, "scenario": "정상", "subset": "train"}, {"id": "ENHANCED_ENHANCED-DIAGNOSTIC-002", "question": "발견된 네트워크 보안 문제들의 위험도를 어떤 기준으로 우선순위화할 수 있을까요?", "answer": "네트워크 보안 문제의 위험도를 우선순위화하기 위해서는 여러 기준을 고려해야 합니다. 제공된 증거를 바탕으로 각 단계에서의 결과를 분석하고, 이를 통해 우선순위를 설정하는 방법을 설명하겠습니다.\n\n1. **BGP 피어링 문제 (bgp_missing_pairs)**:\n   - 현재 수집된 증거에 따르면, BGP 피어링 문제는 발견되지 않았습니다. 이는 네트워크의 BGP 설정이 정상적으로 이루어지고 있음을 나타내며, 이로 인해 BGP 관련 보안 문제의 위험도는 낮습니다. 따라서 이 항목은 우선순위에서 제외할 수 있습니다.\n\n2. **L2VPN 이슈 (l2vpn_unidir_count)**:\n   - L2VPN 관련 문제도 발견되지 않았습니다. L2VPN의 단방향 연결 수가 0으로 나타나므로, 이 또한 네트워크의 안정성을 보장하는 요소입니다. 이로 인해 L2VPN 관련 보안 문제의 위험도 역시 낮습니다. 따라서 이 항목도 우선순위에서 제외할 수 있습니다.\n\n3. **BGP 불일치 AS 카운트 (bgp_inconsistent_as_count)**:\n   - 현재 이 항목에 대한 증거는 제공되지 않았습니다. BGP 불일치 AS가 발견될 경우, 이는 네트워크의 라우팅 안정성에 심각한 영향을 미칠 수 있으며, 공격자가 라우팅 정보를 조작할 수 있는 가능성을 열어줍니다. 따라서 이 항목은 우선순위에서 가장 높은 위험도로 평가되어야 합니다.\n\n### 결론 및 권장 사항:\n- 현재 수집된 증거에 따르면, BGP 피어링 문제와 L2VPN 이슈는 발견되지 않았으므로 이들에 대한 우선순위는 낮습니다.\n- 그러나 BGP 불일치 AS 카운트에 대한 정보가 부족하므로, 이 문제에 대한 추가적인 조사가 필요합니다. 만약 이 문제가 발견된다면, 즉시 해당 AS와의 연결을 검토하고, 라우팅 정책을 재조정하여 보안성을 강화해야 합니다.\n\n### 추가 조치:\n- BGP 불일치 AS 카운트에 대한 모니터링을 강화하고, 정기적인 네트워크 감사 및 검토를 통해 잠재적인 보안 문제를 사전에 식별할 수 있는 체계를 마련하는 것이 중요합니다. \n\n이와 같은 방식으로 네트워크 보안 문제의 위험도를 평가하고 우선순위를 설정할 수 있습니다.", "context": "보안 설정 현황:\nCE1: SSH ON, AAA OFF\nCE2: SSH ON, AAA OFF\nsample10: SSH ON, AAA ON\nsample7: SSH ON, AAA ON\nsample8: SSH ON, AAA ON", "answer_type": "long", "category": "advanced", "complexity": "diagnostic", "level": 3, "persona": "security_auditor", "scenario": "보안 취약점 진단", "subset": "train"}, {"id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-8", "question": "sample8 장비의 eBGP 피어 목록은?", "answer": "192.168.2.11", "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1", "answer_type": "short", "category": "basic", "complexity": "basic", "level": 1, "persona": null, "scenario": "정상", "subset": "train"}, {"id": "BASIC_DSL-SSH_MISSING_COUNT-37022", "question": "SSH가 비활성화(또는 설정 없음)인 장비 수는?", "answer": "0", "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1\n장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1\n장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1", "answer_type": "short", "category": "basic", "complexity": "basic", "level": 2, "persona": null, "scenario": "정상", "subset": "train"}, {"id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-29920", "question": "sample9 장비의 eBGP 피어 목록은?", "answer": "192.168.3.11", "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1", "answer_type": "short", "category": "basic", "complexity": "basic", "level": 1, "persona": null, "scenario": "정상", "subset": "train"}, {"id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-5526", "question": "sample10 장비의 iBGP 피어 목록은?", "answer": "1.1.1.1, 2.2.2.2, 3.3.3.3", "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1", "answer_type": "short", "category": "basic", "complexity": "basic", "level": 1, "persona": null, "scenario": "정상", "subset": "validation"}, {"id": "ENHANCED_ENHANCED-ANALYTICAL-001", "question": "AS 65000에 속하면서 BGP 피어 수가 2개 이하인 장비는 총 몇 개인가?", "answer": "제공된 증거를 바탕으로 AS 65000에 속하면서 BGP 피어 수가 2개 이하인 장비의 총 개수를 확인하기 위한 분석을 진행했습니다. 그러나 수집된 증거에서 다음과 같은 사항이 발견되었습니다:\n\n1. **1단계 (bgp_inconsistent_as_count)**: 이 단계에서 AS 65000에 속한 장비의 목록을 가져오는 과정이 있었으나, 결과가 \"None\"으로 나타났습니다. 이는 AS 65000에 속한 장비가 없거나, 해당 정보를 수집하는 데 문제가 있었음을 의미합니다.\n\n2. **2단계 (bgp_peer_count)**: 각 장비의 BGP 피어 수를 확인하는 단계에서도 결과가 \"None\"으로 나타났습니다. 이는 AS 65000에 속한 장비가 없기 때문에 피어 수를 확인할 수 없음을 나타냅니다.\n\n3. **3단계 (bgp_peer_count)**: BGP 피어 수가 2개 이하인 장비를 필터링하는 과정에서도 역시 결과가 \"None\"으로 나타났습니다. 이는 필터링할 장비가 존재하지 않음을 의미합니다.\n\n4. **4단계 (bgp_peer_count)**: 필터링된 장비의 총 개수를 계산하는 단계에서도 결과가 \"None\"으로 나타났습니다.\n\n결론적으로, AS 65000에 속하면서 BGP 피어 수가 2개 이하인 장비는 존재하지 않거나, 해당 정보를 수집하는 데 문제가 발생했습니다. \n\n### 문제 원인 및 해결책:\n- **문제 원인**: AS 65000에 속한 장비가 없거나, 네트워크 설정에서 정보 수집이 제대로 이루어지지 않았을 가능성이 있습니다.\n- **해결책**: 네트워크 장비의 AS 설정을 재확인하고, BGP 설정이 올바르게 구성되어 있는지 점검해야 합니다. 또한, 정보 수집 프로세스에 문제가 있는지 확인하고, 필요한 경우 로그를 분석하여 문제를 해결해야 합니다.\n\n따라서, 현재로서는 AS 65000에 속하면서 BGP 피어 수가 2개 이하인 장비의 총 개수는 **0개**로 판단됩니다. 추가적인 데이터 수집이 필요합니다.", "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어", "answer_type": "long", "category": "advanced", "complexity": "analytical", "level": 3, "persona": "troubleshooter", "scenario": "규정 위반 장비 식별", "subset": "validation"}, {"id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-3673", "question": "CE2 장비의 eBGP 피어 목록은?", "answer": "192.168.3.10", "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1", "answer_type": "short", "category": "basic", "complexity": "basic", "level": 1, "persona": null, "scenario": "정상", "subset": "validation"}, {"id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-5526", "question": "sample10 장비의 eBGP 피어 목록은?", "answer": "192.168.4.11", "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1", "answer_type": "short", "category": "basic", "complexity": "basic", "level": 1, "persona": null, "scenario": "정상", "subset": "test"}, {"id": "BASIC_DSL-SSH_ENABLED_DEVICES-18762", "question": "SSH가 활성화된 장비 목록은?", "answer": "CE1, CE2, sample10, sample7, sample8, sample9", "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1", "answer_type": "short", "category": "basic", "complexity": "basic", "level": 1, "persona": null, "scenario": "정상", "subset": "test"}, {"id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-1456", "question": "sample7 장비의 iBGP 피어 목록은?", "answer": "2.2.2.2, 3.3.3.3, 4.4.4.4", "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1", "answer_type": "short", "category": "basic", "complexity": "basic", "level": 1, "persona": null, "scenario": "정상", "subset": "test"}, {"id": "ENHANCED_ENHANCED-SYNTHETIC-002", "question": "현재 네트워크의 잠재적 서비스 위험 요소를 식별하여 예방적 모니터링 계획을 수립할 수 있는가?", "answer": "현재 네트워크의 잠재적 서비스 위험 요소를 식별하기 위한 분석 결과는 다음과 같습니다.\n\n1. **BGP 피어의 누락된 페어링 (bgp_missing_pairs)**: 이 단계에서 확인된 바에 따르면, 누락된 BGP 피어링이 없습니다. 이는 BGP 설정이 올바르게 구성되어 있으며, 피어 간의 연결이 정상적으로 이루어지고 있음을 나타냅니다.\n\n2. **SSH 설정이 누락된 장비 (ssh_missing_count)**: SSH 설정이 누락된 장비가 없다는 결과가 나왔습니다. 이는 모든 장비가 안전한 원격 관리 프로토콜을 사용하고 있음을 의미하며, 보안 측면에서 긍정적인 요소입니다.\n\n3. **OSPF 영역의 복잡성 평가 (ospf_area_count)**: OSPF 영역에 대한 정보가 제공되지 않았습니다. 이는 OSPF 설정이 없거나, 관련 데이터가 수집되지 않았음을 나타냅니다. OSPF 영역의 복잡성은 네트워크의 확장성과 안정성에 영향을 미칠 수 있으므로, 이 부분에 대한 추가적인 모니터링이 필요합니다.\n\n4. **BGP와 OSPF 연계를 통한 잠재적 위험 요소 (bgp_inconsistent_as_count)**: BGP와 OSPF 간의 불일치가 발견되지 않았습니다. 이는 두 프로토콜 간의 설정이 일관되며, 네트워크의 라우팅 안정성이 확보되어 있음을 나타냅니다.\n\n5. **식별된 위험 요소 기반의 예방적 모니터링 계획 (aaa_enabled_devices)**: AAA(인증, 인가, 회계) 기능이 활성화된 장비에 대한 정보가 없습니다. 이는 네트워크 보안 관리에 중요한 요소로, AAA 기능이 활성화되지 않은 장비가 있을 경우 보안 취약점이 발생할 수 있습니다. 따라서, 모든 장비에 대해 AAA 기능의 활성화 여부를 확인하고, 필요한 경우 설정을 적용해야 합니다.\n\n### 결론 및 권장 사항:\n현재 수집된 증거에 따르면, BGP 및 SSH 설정은 양호하며, BGP와 OSPF 간의 연계도 안정적입니다. 그러나 OSPF 영역에 대한 정보가 부족하고, AAA 기능 활성화 여부에 대한 데이터가 없으므로, 이 두 가지 요소에 대한 추가적인 검토가 필요합니다.\n\n1. **OSPF 영역 검토**: OSPF 설정을 점검하고, 필요한 경우 영역 구성을 최적화하여 네트워크의 복잡성을 줄이고 안정성을 높이십시오.\n\n2. **AAA 기능 활성화**: 모든 네트워크 장비에 대해 AAA 기능이 활성화되어 있는지 확인하고, 비활성화된 장비가 있다면 즉시 설정을 적용하여 보안성을 강화하십시오.\n\n이러한 예방적 조치를 통해 네트워크의 서비스 위험 요소를 최소화하고, 안정적인 운영을 유지할 수 있을 것입니다.", "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003", "answer_type": "long", "category": "advanced", "complexity": "synthetic", "level": 4, "persona": "noc_operator", "scenario": "서비스 영향도 분석", "subset": "test"}]</script>
+<script>
+(function(){
+  const PAGE_SIZE = 20;
+  const allSamples = JSON.parse(document.getElementById('samples-data').textContent || '[]');
+  const el = (id) => document.getElementById(id);
+  const container = el('samplesContainer');
+  const countEl = el('samplesCount');
+  const pagination = el('pagination');
+  const input = el('searchInput');
+  const fSubset = el('filterSubset');
+  const fCat = el('filterCategory');
+  const fComp = el('filterComplexity');
+  const fType = el('filterAnswerType');
+  const fPersona = el('filterPersona');
+  const resetBtn = el('resetFilters');
+
+  function uniq(arr) { return Array.from(new Set(arr.filter(Boolean))).sort(); }
+  function vals(key){ return uniq(allSamples.map(s => s[key]).filter(v => v !== null && v !== undefined && v !== '')); }
+  function optHtml(values, labelAll){
+    const opts = [`<option value="">${labelAll}</option>`].concat(values.map(v => `<option value="${String(v)}">${String(v)}</option>`));
+    return opts.join('');
+  }
+
+  fSubset.innerHTML = optHtml(vals('subset'), '전체 Subset');
+  fCat.innerHTML    = optHtml(vals('category'), '전체 카테고리');
+  fComp.innerHTML   = optHtml(vals('complexity'), '전체 복잡도');
+  fType.innerHTML   = optHtml(vals('answer_type'), '전체 유형');
+  fPersona.innerHTML= optHtml(vals('persona'), '전체 Persona');
+
+  let state = { page: 1 };
+
+  function matches(sample){
+    const t = (input.value || '').toLowerCase().trim();
+    if (fSubset.value && sample.subset !== fSubset.value) return false;
+    if (fCat.value && sample.category !== fCat.value) return false;
+    if (fComp.value && sample.complexity !== fComp.value) return false;
+    if (fType.value && sample.answer_type !== fType.value) return false;
+    if (fPersona.value && sample.persona !== fPersona.value) return false;
+    if (t) {
+      const hay = [sample.id, sample.question, sample.answer, sample.context].map(x => (x||'').toLowerCase());
+      if (!hay.some(x => x.includes(t))) return false;
+    }
+    return true;
+  }
+
+  function render(){
+    const filtered = allSamples.filter(matches);
+    const total = filtered.length;
+    const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    if (state.page > totalPages) state.page = totalPages;
+    const start = (state.page - 1) * PAGE_SIZE;
+    const pageItems = filtered.slice(start, start + PAGE_SIZE);
+
+    countEl.textContent = `총 ${total}건 · 페이지 ${state.page}/${totalPages}`;
+
+    // Render items
+    container.innerHTML = pageItems.map(s => {
+      const meta = [
+        s.id ? `ID: ${s.id}` : '',
+        s.subset ? `Subset: ${s.subset}` : '',
+        s.category ? `카테고리: ${s.category}` : '',
+        s.complexity ? `복잡도: ${s.complexity}` : '',
+        s.answer_type ? `유형: ${s.answer_type}` : '',
+        s.persona ? `Persona: ${s.persona}` : '',
+        (s.level !== undefined && s.level !== null) ? `Level: ${s.level}` : ''
+      ].filter(Boolean).join(' | ');
+      return `
+      <div class="q">
+        <div class="q-title">❓ ${s.question || '(질문 없음)'} </div>
+        ${s.context ? `<div class="small" style="white-space:pre-wrap;margin:6px 0 10px">${s.context}</div>` : ''}
+        ${s.answer ? `<div style="white-space:pre-wrap">${s.answer}</div>` : ''}
+        <div class="meta">${meta}</div>
+      </div>`;
+    }).join('');
+
+    // Render pagination
+    const pages = [];
+    function btn(p, label, active=false){
+      return `<button data-page="${p}" class="${active?'active':''}">${label}</button>`;
+    }
+    pages.push(btn(Math.max(1, state.page-1), '이전'));
+    const windowSize = 7;
+    let startPage = Math.max(1, state.page - Math.floor(windowSize/2));
+    let endPage = Math.min(totalPages, startPage + windowSize - 1);
+    if (endPage - startPage + 1 < windowSize) {
+      startPage = Math.max(1, endPage - windowSize + 1);
+    }
+    for (let p=startPage; p<=endPage; p++) pages.push(btn(p, String(p), p===state.page));
+    pages.push(btn(Math.min(totalPages, state.page+1), '다음'));
+    pagination.innerHTML = pages.join('');
+
+    Array.from(pagination.querySelectorAll('button')).forEach(b => {
+      b.addEventListener('click', () => {
+        const p = parseInt(b.getAttribute('data-page'));
+        if (!isNaN(p)) { state.page = p; render(); }
+      });
+    });
+  }
+
+  [input, fSubset, fCat, fComp, fType, fPersona].forEach(elm => {
+    elm.addEventListener('input', () => { state.page = 1; render(); });
+    elm.addEventListener('change', () => { state.page = 1; render(); });
+  });
+
+  resetBtn.addEventListener('click', () => {
+    input.value = '';
+    [fSubset, fCat, fComp, fType, fPersona].forEach(s => s.value = '');
+    state.page = 1; render();
+  });
+
+  render();
+})();
+</script>
         
-        // 탭 전환 함수
-        function switchTab(tabName) {
-            // 모든 탭과 콘텐츠 비활성화
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            
-            // 선택된 탭과 콘텐츠 활성화
-            event.target.classList.add('active');
-            document.getElementById(tabName).classList.add('active');
-        }
-        
-        // 차트 생성
-        window.addEventListener('load', function() {
-            // Train/Val/Test 분할 차트
-            const splitCtx = document.getElementById('splitChart').getContext('2d');
-            new Chart(splitCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Train', 'Validation', 'Test'],
-                    datasets: [{
-                        data: [15, 3, 4],
-                        backgroundColor: ['#74b9ff', '#a29bfe', '#fd79a8'],
-                        borderWidth: 3,
-                        borderColor: '#fff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                padding: 20,
-                                font: {
-                                    size: 14
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-            
-            // 카테고리 분포 차트
-            const categoryCtx = document.getElementById('categoryChart').getContext('2d');
-            new Chart(categoryCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['advanced', 'basic'],
-                    datasets: [{
-                        label: '질문 수',
-                        data: [17, 53],
-                        backgroundColor: '#74b9ff',
-                        borderColor: '#0984e3',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    }
-                }
-            });
-            
-            // 복잡도 분포 차트
-            const complexityCtx = document.getElementById('complexityChart').getContext('2d');
-            new Chart(complexityCtx, {
-                type: 'pie',
-                data: {
-                    labels: ['synthetic', 'basic', 'analytical', 'diagnostic'],
-                    datasets: [{
-                        data: [3, 53, 6, 8],
-                        backgroundColor: ['#00b894', '#fdcb6e', '#e17055', '#a29bfe'],
-                        borderWidth: 3,
-                        borderColor: '#fff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                padding: 20,
-                                font: {
-                                    size: 14
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        });
-        
-    </script>
 </body>
 </html>
         

@@ -145,7 +145,9 @@ class AnswerAgent:
                 if isinstance(ans, (list, dict)):
                     return json.dumps(ans, ensure_ascii=False)
                 return str(ans).strip()
-        except Exception:
+        except Exception as e:
+            import logging
+            logging.warning(f"AnswerAgent에서 LLM 답변 생성에 실패했습니다: {e}")
             pass
 
         summary = {
