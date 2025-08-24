@@ -95,6 +95,31 @@ class DatasetSample:
     metadata: Optional[Dict[str, Any]] = None
 
 
+def assign_task_category(sample: DatasetSample) -> str:
+    """질문의 특성에 따라 업무 분류를 결정합니다."""
+    question = sample.question.lower()
+    persona = sample.persona
+    complexity = sample.complexity
+
+    if "명령어" in question or "cli" in question or persona == "automation_engineer":
+        return "명령어 사용법/질의"
+
+    if sample.metadata and (sample.metadata.get("topic") == "Security_Policy" or persona == "security_auditor"):
+        return "보안 질의"
+
+    if complexity == "diagnostic" or persona == "troubleshooter":
+        return "기술적 오류 질의"
+
+    if ("토폴로지" in question or "연결" in question or "구성" in question or (sample.source_files and len(sample.source_files) > 1)):
+        if complexity in ["analytical", "synthetic"]:
+            return "네트워크 토폴로지 구성 질의"
+
+    if complexity == "basic":
+        return "단순 조회 업무"
+
+    return "네트워크 토폴로지 구성 질의"
+
+
 class NetworkConfigDatasetGenerator:
     """통합 네트워크 설정 데이터셋 생성기"""
     
@@ -265,7 +290,8 @@ class NetworkConfigDatasetGenerator:
             if not question_text or not reasoning_plan:
                 continue
 
-            final_answer = answer_agent.execute_plan(question_text, reasoning_plan)
+            result = answer_agent.execute_plan(question_text, reasoning_plan)
+            final_answer = result.get("answer")
             sample = DatasetSample(
                 id=f"ENHANCED_{eq.get('test_id', 'ENH')}",
                 question=question_text,
@@ -277,6 +303,7 @@ class NetworkConfigDatasetGenerator:
                 level=eq.get("level", 3),
                 persona=eq.get("persona"),
                 scenario=eq.get("scenario"),
+                source_files=result.get("source_files"),
                 metadata={
                     "origin": "enhanced_llm_with_agent",
                     "reasoning_plan": reasoning_plan,
@@ -378,7 +405,9 @@ class NetworkConfigDatasetGenerator:
             
             # Context 및 메타데이터 보완
             sample = self._enrich_sample_metadata(sample)
-            
+            # 업무 분류 태깅
+            sample.metadata["task_category"] = assign_task_category(sample)
+
             validated_samples.append(sample)
         
         self.logger.info(f"검증 완료: {len(validated_samples)}개 통과, {rejected_count}개 거부")
