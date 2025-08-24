@@ -94,37 +94,60 @@ class AnswerAgent:
         return self._synthesize_answer(question, plan_text)
 
     def _synthesize_answer(self, question: str, plan: Union[List[Dict[str, Any]], str]) -> str:
-        """Return a concise final answer based on collected evidence.
+        """Return a structured answer optimized for evaluation metrics.
 
-        LLM을 계산기로 활용하여 증거에서 최종 정답 값만 도출한다. 실패 시
-        증거 요약 JSON을 반환한다.
+        The answer is encoded as a JSON string with the following schema:
+        {
+            "eval_targets": {
+                "exact_match": <single concise value>,
+                "f1_score": [<items for list-based answers>]
+            },
+            "explanation": <one or two sentence rationale>
+        }
         """
+
         schema = {
-            "title": "AnswerSynthesis",
+            "title": "StructuredAnswer",
             "type": "object",
             "properties": {
-                "final_answer": {"type": ["string", "number", "array"]}
+                "eval_targets": {
+                    "type": "object",
+                    "properties": {
+                        "exact_match": {"type": ["string", "number", "boolean"]},
+                        "f1_score": {
+                            "type": ["array", "null"],
+                            "items": {"type": ["string", "number", "boolean"]}
+                        }
+                    },
+                    "required": ["exact_match", "f1_score"],
+                    "additionalProperties": False
+                },
+                "explanation": {"type": "string"}
             },
-            "required": ["final_answer"],
-            "additionalProperties": False,
+            "required": ["eval_targets", "explanation"],
+            "additionalProperties": False
         }
 
+        evidence_text = json.dumps(self.evidence, ensure_ascii=False, indent=2)
+
         system_prompt = (
-            "당신은 데이터를 분석하여 최종 결론을 도출하는 정확한 계산기입니다. "
-            "주어진 질문과 데이터를 바탕으로, 다른 설명 없이 오직 최종 정답 값만을 "
-            "계산하여 반환하세요."
+            "당신은 네트워크 데이터를 분석하여 평가용 정답을 생성하는 도우미입니다. "
+            "질문과 증거를 바탕으로 위 스키마에 맞춘 JSON 답변만 제공하세요."
         )
 
-        evidence_text = json.dumps(self.evidence, ensure_ascii=False, indent=2)
-        user_prompt = (
-            f"[질문]\n{question}\n\n[수집된 데이터]\n{evidence_text}\n\n"
-            "위 데이터를 근거로 질문에 대한 최종 정답을 계산하세요.\n\n"
-            "[응답 형식 규칙]\n"
-            "- 리스트: [\"A\", \"B\"]\n"
-            "- 숫자: 4\n"
-            "- 문자열: \"192.168.1.1\"\n"
-            "- 추가 설명 금지"
-        )
+        user_prompt = f"""
+질문: {question}
+
+수집된 증거:
+{evidence_text}
+
+[응답 지침]
+- eval_targets.exact_match에는 가장 핵심적인 단일 값을 넣으세요.
+- eval_targets.f1_score에는 정답이 리스트일 때 항목들의 리스트를 넣고, 그렇지 않으면 null 또는 빈 리스트를 사용하세요.
+- explanation에는 위 증거를 근거로 결론에 도달한 이유를 한두 문장으로 서술하세요.
+
+JSON 외의 다른 텍스트는 포함하지 마세요.
+"""
 
         messages = [
             {"role": "system", "content": system_prompt},
@@ -137,116 +160,20 @@ class AnswerAgent:
                 schema,
                 temperature=0.0,
                 model="gpt-4o-mini",
-                max_output_tokens=300,
+                max_output_tokens=500,
                 use_responses_api=False,
             )
-            ans = data.get("final_answer") if isinstance(data, dict) else None
-            if ans is not None:
-                if isinstance(ans, (list, dict)):
-                    return json.dumps(ans, ensure_ascii=False)
-                return str(ans).strip()
+            if isinstance(data, dict):
+                return json.dumps(data, ensure_ascii=False)
         except Exception as e:
             import logging
-            logging.warning(f"AnswerAgent에서 LLM 답변 생성에 실패했습니다: {e}")
-            pass
+            logging.warning(f"AnswerAgent LLM synthesis failed: {e}")
 
-        summary = {
-            "question": question,
-            "plan": plan,
-            "evidence": self.evidence,
+        fallback = {
+            "eval_targets": {"exact_match": "", "f1_score": []},
+            "explanation": self._format_evidence() if self.evidence else "No evidence available."
         }
-
-        # 수집된 증거를 바탕으로 최종 답변 생성 - 핵심 구현!
-        # Evidence가 비어있으면 기본 답변
-        if not self.evidence:
-            return self._generate_template_answer(question, "수집된 증거가 없습니다.")
-        
-        # 증거 요약 생성
-        evidence_summary = self._format_evidence()
-        
-        # LLM에게 최종 답변 생성 요청 - 강화된 프롬프트
-        synthesis_prompt = f"""당신은 네트워크 설정 전문가입니다. 수집된 증거를 바탕으로 질문에 대한 정확하고 구체적인 답변을 생성하세요.
-
-질문: {question}
-
-수집된 증거:
-{evidence_summary}
-
-실행된 계획:
-{json.dumps(plan, indent=2, ensure_ascii=False) if isinstance(plan, list) else plan}
-
-요구사항:
-1. 증거에 기반한 구체적이고 정확한 답변 작성
-2. 수치나 장비명 등 구체적 데이터 포함
-3. 문제가 발견되면 원인과 해결책 제시
-4. 전문적이면서도 이해하기 쉬운 서술형 답변
-5. 증거가 부족하면 명시적으로 언급
-
-답변:"""
-        
-        # Schema 정의 - 간단하게 수정
-        schema = {
-            "type": "object",
-            "properties": {
-                "final_answer": {
-                    "type": "string"
-                }
-            },
-            "required": ["final_answer"],
-            "additionalProperties": False
-        }
-
-        messages = [
-            {"role": "system", "content": "당신은 네트워크 설정 분석 전문가입니다. 제공된 증거를 정확히 분석하여 신뢰할 수 있는 답변을 생성하세요."},
-            {"role": "user", "content": synthesis_prompt}
-        ]
-
-        try:
-            # 직접 OpenAI API 호출로 단순화
-            import openai
-            
-            response = openai.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=messages,
-                temperature=0.1,
-                max_tokens=800
-            )
-            
-            final_answer = response.choices[0].message.content.strip()
-            
-            # 답변이 있으면 반환
-            if final_answer and len(final_answer) > 20:  # 최소 길이 체크
-                print(f"✅ LLM 답변 생성 성공 (길이: {len(final_answer)}자)")
-                return final_answer
-            else:
-                print(f"⚠️ LLM 답변이 너무 짧음: {len(final_answer)}자")
-                
-        except Exception as e:
-            print(f"🚨 OpenAI API 호출 실패: {e}")
-            
-            # OpenAI 직접 호출 실패 시 기존 방식 시도
-            try:
-                data = _call_llm_json(
-                    messages,
-                    schema,
-                    temperature=0.1,
-                    model="gpt-4o-mini",
-                    max_output_tokens=800,
-                    use_responses_api=False,
-                )
-                
-                if isinstance(data, dict) and data.get("final_answer"):
-                    final_answer = data["final_answer"].strip()
-                    print(f"✅ JSON LLM 답변 생성 성공 (길이: {len(final_answer)}자)")
-                    return final_answer
-                    
-            except Exception as e2:
-                print(f"🚨 JSON LLM도 실패: {e2}")
-                # 최후의 수단: 간단한 프롬프트로 재시도
-                return self._simple_llm_call(question, evidence_summary)
-
-        # 모든 시도 실패 시 기본 답변
-        return self._generate_template_answer(question, evidence_summary)
+        return json.dumps(fallback, ensure_ascii=False)
 
     def _format_evidence(self) -> str:
         """Evidence를 읽기 쉬운 형태로 포맷팅"""
