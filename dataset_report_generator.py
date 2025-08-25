@@ -576,7 +576,7 @@ body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;color:#222;background:#f6f8f
     if (fType.value && sample.answer_type !== fType.value) return false;
     if (fPersona.value && sample.persona !== fPersona.value) return false;
     if (t) {
-      const hay = [sample.id, sample.question, sample.ground_truth, sample.context].map(x => (x||'').toLowerCase());
+      const hay = [sample.id, sample.question, sample.ground_truth, sample.explanation, sample.context].map(x => (x||'').toLowerCase());
       if (!hay.some(x => x.includes(t))) return false;
     }
     return true;
