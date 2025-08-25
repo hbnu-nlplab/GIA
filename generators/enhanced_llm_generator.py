@@ -375,17 +375,62 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
     def _calculate_complexity_score(self, devices: int, bgp_peers: int, vrfs: int, l2vpns: int) -> str:
         """네트워크 복잡도 점수 계산"""
         score = devices * 0.3 + bgp_peers * 0.2 + vrfs * 0.3 + l2vpns * 0.2
-        
+
         if score < 10:
             return "simple"
         elif score < 30:
             return "moderate"
         else:
             return "complex"
+
+    def _construct_prompt_for_question_generation(
+        self,
+        template: QuestionTemplate,
+        network_facts_summary: str,
+        available_metrics: str,
+        count: int,
+    ) -> List[Dict[str, str]]:
+        """자기 반성을 포함한 질문 생성 프롬프트 구성"""
+
+        system_prompt = (
+            """당신은 네트워크 분야의 최고 전문가이자, LLM의 성능을 평가하기 위한 데이터셋 구축 전문가입니다.
+주어진 네트워크 데이터 요약본과 사용 가능한 지표 목록을 기반으로, 지정된 복잡도와 페르소나에 맞는 심층적인 질문을 생성해야 합니다.
+
+**생성 프로세스 (매우 중요):**
+1.  **[분석]**: 주어진 컨텍스트와 지표를 분석하여 흥미로운 분석 포인트를 2-3가지 도출합니다. (예: "BGP AS 번호가 여러 개 혼재되어 있군. 여기서 일관성 문제가 발생할 수 있겠다.")
+2.  **[초안 작성]**: 분석 포인트에 기반하여 질문의 초안을 작성합니다.
+3.  **[자기 반성 및 개선]**: 아래의 기준에 따라 질문 초안을 스스로 평가하고, 더 명확하고 깊이 있는 질문으로 개선합니다.
+    - **모호성**: 질문이 모호하지 않고 명확한가? (나쁜 예: "BGP는 어떤가요?")
+    - **실용성**: 네트워크 엔지니어가 실제 업무에서 마주할 만한 질문인가?
+    - **유효성**: 주어진 데이터와 지표로 답변이 가능한 질문인가?
+    - **단순함 방지**: 단순히 사실을 묻는 질문인가, 아니면 원인 분석, 영향 예측 등 추론이 필요한가? (단순 조회 질문은 생성하지 마세요.)
+4.  **[추론 계획 수립]**: 개선된 질문에 답하기 위한 논리적인 단계(reasoning_plan)를 수립합니다. 각 단계는 반드시 제공된 지표 중 하나를 사용해야 합니다.
+
+**결과물은 반드시 아래 JSON 스키마를 준수해야 합니다.**
+"""
+        )
+
+        user_prompt = (
+            f"""{template.prompt_template}
+
+네트워크 현황 요약:
+{network_facts_summary}
+
+사용 가능한 지표:
+{available_metrics}
+
+생성할 질문 수: {count}
+"""
+        )
+
+        return [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ]
     
     def _generate_from_template(
-        self, 
-        template: QuestionTemplate, 
+        self,
+        template: QuestionTemplate,
         context: Dict[str, Any],
         count: int
     ) -> List[Dict[str, Any]]:
@@ -442,32 +487,15 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
             "required": ["questions"],
             "additionalProperties": False
         }
+        network_facts_summary = (
+            f"- 장비 수: {context['device_count']}\n"
+            f"- AS 그룹: {list(context['as_groups'].keys())}\n"
+            f"- 발견된 이상징후: {context['anomalies']}\n"
+            f"- 네트워크 복잡도: {context['complexity_indicators']['complexity_score']}\n"
+            f"- 사용 기술: {[k for k, v in context['technologies'].items() if v]}"
+        )
 
-        system_prompt = f"""
-당신은 {template.persona.value} 역할의 네트워크 전문가입니다.
-복잡도: {template.complexity.value}
-시나리오: {template.scenario}
-
-주어진 네트워크 현황을 바탕으로, 복합적인 질문과 해당 질문을 해결하기 위한 단계별 **추론 계획(reasoning_plan)**을 함께 작성하세요.
-**규칙: 모든 질문과 설명은 반드시 한국어로 작성해야 합니다.**
-"""
-
-        user_prompt = f"""
-{template.prompt_template}
-
-네트워크 현황 요약:
-- 장비 수: {context['device_count']}
-- AS 그룹: {list(context['as_groups'].keys())}
-- 발견된 이상징후: {context['anomalies']}
-- 네트워크 복잡도: {context['complexity_indicators']['complexity_score']}
-- 사용 기술: {[k for k, v in context['technologies'].items() if v]}
-
-생성할 질문 수: {count}
-
-**중요: reasoning_plan 작성 가이드라인**
-
-사용 가능한 메트릭들:
-**[보안 관련]**
+        available_metrics = """**[보안 관련]**
 - ssh_enabled_devices, ssh_missing_devices, ssh_missing_count, ssh_present_bool, ssh_version_text
 - aaa_enabled_devices, aaa_missing_devices, aaa_present_bool, password_policy_present_bool
 - ssh_acl_applied_check
@@ -489,55 +517,11 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
 **[인터페이스/시스템 관련]**
 - interface_count, interface_ip_map, interface_vlan_set, subinterface_count, vrf_bind_map
 - system_hostname_text, system_version_text, system_user_count, system_timezone_text
-
-각 reasoning_plan 단계는 반드시 다음을 포함해야 합니다:
-1. **step**: 단계 번호 (1, 2, 3...)
-2. **description**: "AS 65001의 iBGP 풀메시 상태 확인" (구체적 작업)
-3. **required_metric**: "ibgp_fullmesh_ok" (실제 메트릭 이름)
-4. **metric_params**: {{"asn": "65001"}} (필요한 파라미터)
-5. **synthesis**: "fetch" (수집), "compare" (비교), "summarize" (요약)
-
-예시 reasoning_plan:
-[
-  {{
-    "step": 1,
-    "description": "SSH 보안 설정이 누락된 장비들을 식별",
-    "required_metric": "ssh_missing_count",
-    "metric_params": {{}},
-    "synthesis": "fetch"
-  }},
-  {{
-    "step": 2,
-    "description": "AAA 인증이 활성화된 장비 목록 확인",
-    "required_metric": "aaa_enabled_devices", 
-    "metric_params": {{}},
-    "synthesis": "fetch"
-  }},
-  {{
-    "step": 3,
-    "description": "SSH와 AAA 설정을 종합하여 보안 상태 평가",
-    "required_metric": "ssh_all_enabled_bool",
-    "metric_params": {{}},
-    "synthesis": "summarize"
-  }}
-]
-
-각 질문은 다음을 포함해야 합니다:
-1. 복합적 분석이 필요한 내용
-2. 실무 경험과 전문 지식 요구
-3. 단순한 팩트 조회를 넘어선 추론
-4. {template.answer_type} 형태의 상세한 답변 필요성
-5. **reasoning_plan**: 각 단계에 required_metric과 metric_params(필요 시)를 명시
-5. **실행 가능한 reasoning_plan**: 각 단계가 실제 메트릭으로 구현되어야 함
-
-
-**엄격한 규칙: 모든 응답은 반드시 한국어로만 작성해주십시오.**
 """
-        
-        messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt}
-        ]
+
+        messages = self._construct_prompt_for_question_generation(
+            template, network_facts_summary, available_metrics, count
+        )
         
         try:
             data = _call_llm_json(
@@ -574,6 +558,19 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
         except Exception as e:
             print(f"[Enhanced Generator] Failed for {template.scenario}: {e}")
             return []
+
+    def _review_generated_questions(
+        self, questions: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
+        """LLM 기반 리뷰를 통해 질문을 2차 검증합니다."""
+        assessor = QuestionQualityAssessor()
+        assessments = assessor.assess_question_quality(questions)
+        reviewed: List[Dict[str, Any]] = []
+        for assessment in assessments:
+            idx = assessment.get("question_index")
+            if assessment.get("is_approved") and idx is not None and idx < len(questions):
+                reviewed.append(questions[idx])
+        return reviewed
 
 
 class QuestionQualityAssessor:
