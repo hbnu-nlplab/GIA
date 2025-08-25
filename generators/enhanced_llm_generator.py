@@ -406,6 +406,14 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
     - **단순함 방지**: 단순히 사실을 묻는 질문인가, 아니면 원인 분석, 영향 예측 등 추론이 필요한가? (단순 조회 질문은 생성하지 마세요.)
 4.  **[추론 계획 수립]**: 개선된 질문에 답하기 위한 논리적인 단계(reasoning_plan)를 수립합니다. 각 단계는 반드시 제공된 지표 중 하나를 사용해야 합니다.
 
+**CLI 명령어 intent 사용 시 주의사항:**
+- reasoning_plan에서 intent를 사용할 때는 반드시 "사용 가능한 CLI 명령어 intent" 목록에서만 선택하세요.
+- **절대 사용하지 마세요**: vrf_names_set, vrf_interface_bind_count, bgp_neighbor_count 등은 **메트릭 이름**이지 명령어가 아닙니다!
+- CLI 명령어가 아닌 데이터 분석이 필요한 경우: "required_metric" 필드를 사용하세요.
+- params에는 호스트명, 인터페이스명, IP 주소 등 실제 값을 포함해야 합니다.
+- 예: {"intent": "show_bgp_summary", "params": {"host": "sample7"}}
+- 예: {"required_metric": "vrf_names_set", "metric_params": {"host": "sample7"}}
+
 **결과물은 반드시 아래 JSON 스키마를 준수해야 합니다.**
 """
         )
@@ -517,6 +525,17 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
 **[인터페이스/시스템 관련]**
 - interface_count, interface_ip_map, interface_vlan_set, subinterface_count, vrf_bind_map
 - system_hostname_text, system_version_text, system_user_count, system_timezone_text
+
+**[사용 가능한 CLI 명령어 intent]**
+- show_bgp_summary, show_bgp_neighbors, show_bgp_neighbor_detail
+- show_ip_interface_brief, show_interface_status, show_ip_route_ospf, show_route_table
+- show_ip_ospf_neighbor, show_ospf_database
+- show_l2vpn_vc, show_l2vpn_status
+- show_vrf, show_users, show_logging, show_log_include
+- show_processes_cpu, check_connectivity
+- ssh_direct_access, ssh_proxy_jump, ssh_multihop_jump
+- set_static_route, set_bgp_routemap, set_interface_description
+- create_vrf_and_assign, set_ospf_cost, set_vty_acl, set_hostname
 """
 
         messages = self._construct_prompt_for_question_generation(
@@ -524,6 +543,7 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
         )
         
         try:
+            # JSON 응답 파싱 시도
             data = _call_llm_json(
                 messages, schema, temperature=0.7,
                 model=settings.models.enhanced_generation, max_output_tokens=2000,
@@ -533,6 +553,32 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
             questions = []
             if isinstance(data, dict) and "questions" in data:
                 for idx, q_data in enumerate(data["questions"]):
+                    # q_data가 dict인지 확인
+                    if not isinstance(q_data, dict):
+                        print(f"[Enhanced Generator] Skipping malformed question data: {q_data}")
+                        continue
+                    
+                    # 필수 필드 검증
+                    if not q_data.get("question"):
+                        print(f"[Enhanced Generator] Skipping question without text: {q_data}")
+                        continue
+                    
+                    # reasoning_plan 검증 및 정리
+                    reasoning_plan = q_data.get("reasoning_plan", [])
+                    if isinstance(reasoning_plan, list):
+                        cleaned_plan = []
+                        for step in reasoning_plan:
+                            if isinstance(step, dict):
+                                cleaned_plan.append(step)
+                            elif isinstance(step, str):
+                                # 문자열인 경우 기본 step으로 변환
+                                cleaned_plan.append({
+                                    "step": len(cleaned_plan) + 1,
+                                    "description": step,
+                                    "synthesis": "fetch"
+                                })
+                        reasoning_plan = cleaned_plan
+                    
                     question_obj = {
                         "question": q_data["question"],
                         "complexity": template.complexity.value,
@@ -543,7 +589,7 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
                         "reasoning_requirement": q_data.get("reasoning_requirement", ""),
                         "expected_analysis_depth": q_data.get("expected_analysis_depth", "detailed"),
                         "metrics_involved": q_data.get("metrics_involved", template.expected_metrics),
-                        "reasoning_plan": q_data.get("reasoning_plan", []),
+                        "reasoning_plan": reasoning_plan,
                         "test_id": f"ENHANCED-{template.complexity.value.upper()}-{idx+1:03d}",
                         # 심화 파이프라인 구분을 위해 카테고리와 난이도 정보를 추가한다
                         "category": "advanced",
@@ -557,6 +603,7 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
             
         except Exception as e:
             print(f"[Enhanced Generator] Failed for {template.scenario}: {e}")
+            # JSON 파싱 오류의 경우 빈 질문 리스트 반환
             return []
 
     def _review_generated_questions(
@@ -643,11 +690,20 @@ class QuestionQualityAssessor:
             )
             
             if isinstance(data, dict) and "assessments" in data:
-                return data["assessments"]
+                # assessments가 리스트이고 각 항목이 dict인지 검증
+                assessments = data["assessments"]
+                if isinstance(assessments, list):
+                    valid_assessments = []
+                    for assessment in assessments:
+                        if isinstance(assessment, dict) and "question_index" in assessment:
+                            valid_assessments.append(assessment)
+                    
+                    if valid_assessments:
+                        return valid_assessments
             
         except Exception as e:
             print(f"[Quality Assessor] Failed: {e}")
         
-        # 폴백: 모든 질문 통과
+        # 폴백: 모든 질문 통과 (더 conservative한 접근)
         return [{"question_index": i, "complexity_score": 3, "clarity_score": 3, 
                 "practicality_score": 3, "is_approved": True} for i in range(len(questions))]

@@ -1,0 +1,253 @@
+[
+  {
+    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-942",
+    "question": "sample8 장비의 iBGP 피어 목록은?",
+    "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "1.1.1.1 3.3.3.3 4.4.4.4",
+    "explanation": "The list of devices for neighbor_list_ibgp is ['1.1.1.1', '3.3.3.3', '4.4.4.4'].",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample8.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample8"
+        },
+        "metric": "neighbor_list_ibgp"
+      },
+      "topic": "BGP_Consistency",
+      "question_length": 24,
+      "answer_length": 23,
+      "has_numbers": true,
+      "has_technical_terms": false,
+      "task_category": "단순 조회 업무",
+      "evaluation": {
+        "question_id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-942",
+        "answer_type": "short",
+        "predicted_answer": "1.1.1.1 3.3.3.3 4.4.4.4",
+        "ground_truth": "1.1.1.1 3.3.3.3 4.4.4.4",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-005",
+    "question": "불충분한 iBGP 피어링이 발견된 경우, 네트워크 안정성에 미치는 영향을 어떻게 평가할 수 있는가?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": "# ERROR: Failed to generate command for None\nshow bgp summary",
+    "explanation": "",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "diagnostic",
+    "level": 3,
+    "persona": "security_auditor",
+    "scenario": "보안 취약점 진단",
+    "source_files": null,
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "ibgp_missing_pairs_count",
+          "metric_params": {}
+        },
+        {
+          "intent": "show_bgp_summary",
+          "params": {
+            "host": "sample_device"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {},
+      "question_length": 55,
+      "answer_length": 61,
+      "has_numbers": false,
+      "has_technical_terms": false,
+      "task_category": "보안 질의",
+      "evaluation": {
+        "question_id": "ENHANCED_ENHANCED-DIAGNOSTIC-005",
+        "answer_type": "short",
+        "predicted_answer": "# ERROR: Failed to generate command for None\nshow bgp summary",
+        "ground_truth": "# ERROR: Failed to generate command for None\nshow bgp summary",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-14954",
+    "question": "SSH가 활성화된 장비 목록은?",
+    "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
+    "ground_truth": "CE1 CE2 sample10 sample7 sample8 sample9",
+    "explanation": "The list of devices for ssh_enabled_devices is ['CE1', 'CE2', 'sample10', 'sample7', 'sample8', 'sample9'].",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "ce1.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE1"
+        },
+        "metric": "ssh_enabled_devices"
+      },
+      "topic": "Security_Policy",
+      "question_length": 17,
+      "answer_length": 40,
+      "has_numbers": false,
+      "has_technical_terms": false,
+      "task_category": "보안 질의",
+      "evaluation": {
+        "question_id": "BASIC_DSL-SSH_ENABLED_DEVICES-14954",
+        "answer_type": "short",
+        "predicted_answer": "CE1 CE2 sample10 sample7 sample8 sample9",
+        "ground_truth": "CE1 CE2 sample10 sample7 sample8 sample9",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-4245",
+    "question": "SSH가 활성화된 장비 목록은?",
+    "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "CE1 CE2 sample10 sample7 sample8 sample9",
+    "explanation": "The list of devices for ssh_enabled_devices is ['CE1', 'CE2', 'sample10', 'sample7', 'sample8', 'sample9'].",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample7.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample7"
+        },
+        "metric": "ssh_enabled_devices"
+      },
+      "topic": "Security_Policy",
+      "question_length": 17,
+      "answer_length": 40,
+      "has_numbers": false,
+      "has_technical_terms": false,
+      "task_category": "보안 질의",
+      "evaluation": {
+        "question_id": "BASIC_DSL-SSH_ENABLED_DEVICES-4245",
+        "answer_type": "short",
+        "predicted_answer": "CE1 CE2 sample10 sample7 sample8 sample9",
+        "ground_truth": "CE1 CE2 sample10 sample7 sample8 sample9",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-002",
+    "question": "AAA 설정이 적용되어 있는 장비와 그렇지 않은 장비의 비율을 분석하여, 네트워크의 보안 준수성을 평가할 수 있는가?",
+    "context": "보안 설정 현황:\nCE1: SSH ON, AAA OFF\nCE2: SSH ON, AAA OFF\nsample10: SSH ON, AAA ON\nsample7: SSH ON, AAA ON\nsample8: SSH ON, AAA ON",
+    "ground_truth": "# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
+    "explanation": "",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "diagnostic",
+    "level": 3,
+    "persona": "security_auditor",
+    "scenario": "보안 취약점 진단",
+    "source_files": null,
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "aaa_enabled_devices",
+          "metric_params": {}
+        },
+        {
+          "required_metric": "aaa_missing_devices",
+          "metric_params": {}
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {},
+      "question_length": 65,
+      "answer_length": 89,
+      "has_numbers": false,
+      "has_technical_terms": true,
+      "task_category": "보안 질의",
+      "evaluation": {
+        "question_id": "ENHANCED_ENHANCED-DIAGNOSTIC-002",
+        "answer_type": "short",
+        "predicted_answer": "# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
+        "ground_truth": "# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  }
+]

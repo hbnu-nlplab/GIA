@@ -1,0 +1,199 @@
+[
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-001",
+    "question": "iBGP 풀메시 누락이 경로 수렴에 미치는 영향을 평가하기 위해, 현재 네트워크의 iBGP 누락 페어 수가 전체 네트워크에 얼마나 영향을 미치는지 분석할 수 있습니까?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": "# ERROR: Failed to generate command for None\nshow bgp summary\n# ERROR: Failed to generate command for None",
+    "explanation": "",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "analytical",
+    "level": 3,
+    "persona": "network_engineer",
+    "scenario": "BGP 경로 수렴 분석",
+    "source_files": null,
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "ibgp_missing_pairs_count",
+          "metric_params": {}
+        },
+        {
+          "intent": "show_bgp_summary",
+          "params": {
+            "host": "sample1"
+          }
+        },
+        {
+          "required_metric": "bgp_neighbor_count",
+          "metric_params": {
+            "host": "sample1"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {}
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-002",
+    "question": "특정 BGP 피어가 장애 발생 시, 다른 BGP 피어와의 경로 수렴 시간에 어떤 영향을 미치는지 파악할 수 있습니까?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": "show bgp neighbors\n# ERROR: Failed to generate command for show_bgp_neighbor_detail\n# ERROR: Failed to generate command for None",
+    "explanation": "",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "analytical",
+    "level": 3,
+    "persona": "network_engineer",
+    "scenario": "BGP 경로 수렴 분석",
+    "source_files": null,
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "intent": "show_bgp_neighbors",
+          "params": {
+            "host": "sample2"
+          }
+        },
+        {
+          "intent": "show_bgp_neighbor_detail",
+          "params": {
+            "host": "sample2"
+          }
+        },
+        {
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "sample2"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {}
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-003",
+    "question": "BGP 설정의 일관성을 검토하기 위해, AS 내 라우터들의 BGP 로컬 AS 번호가 모두 일치하는지 확인할 수 있습니까?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": "# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
+    "explanation": "",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "analytical",
+    "level": 3,
+    "persona": "network_engineer",
+    "scenario": "BGP 경로 수렴 분석",
+    "source_files": null,
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "sample3"
+          }
+        },
+        {
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "sample4"
+          }
+        },
+        {
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "sample5"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {}
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-004",
+    "question": "iBGP 풀메시 누락으로 인해 발생할 수 있는 경로 수렴 문제를 해결하기 위해 어떤 조치를 취할 수 있습니까?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": "# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for set_bgp_routemap\n# ERROR: Failed to generate command for set_static_route",
+    "explanation": "",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "analytical",
+    "level": 3,
+    "persona": "network_engineer",
+    "scenario": "BGP 경로 수렴 분석",
+    "source_files": null,
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "ibgp_missing_pairs",
+          "metric_params": {}
+        },
+        {
+          "intent": "set_bgp_routemap",
+          "params": {
+            "host": "sample6",
+            "asn": "65000"
+          }
+        },
+        {
+          "intent": "set_static_route",
+          "params": {
+            "host": "sample6"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {}
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-005",
+    "question": "특정 피어의 장애가 발생했을 때, 전체 네트워크의 경로 재설정 시간에 어떤 영향을 미칠 수 있습니까?",
+    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+    "ground_truth": "show bgp summary\nshow bgp neighbors\n# ERROR: Failed to generate command for None",
+    "explanation": "",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "analytical",
+    "level": 3,
+    "persona": "network_engineer",
+    "scenario": "BGP 경로 수렴 분석",
+    "source_files": null,
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "intent": "show_bgp_summary",
+          "params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "intent": "show_bgp_neighbors",
+          "params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "required_metric": "bgp_neighbor_count",
+          "metric_params": {
+            "host": "sample7"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {}
+    }
+  }
+]

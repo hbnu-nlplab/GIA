@@ -1,0 +1,681 @@
+{
+  "dataset_name": "NetworkConfigQA",
+  "version": "1.0",
+  "description": "LLM 네트워크 설정 파악 성능 평가 데이터셋",
+  "generation_config": {
+    "xml_data_dir": "XML_Data",
+    "policies_path": "policies/policies.json",
+    "target_categories": [
+      "BGP_Consistency",
+      "Basic_Info",
+      "Command_Generation",
+      "Interface_Inventory",
+      "L2VPN_Consistency",
+      "OSPF_Consistency",
+      "Routing_Inventory",
+      "Security_Inventory",
+      "Security_Policy",
+      "Services_Inventory",
+      "System_Inventory",
+      "VRF_Consistency"
+    ],
+    "basic_questions_per_category": 10,
+    "enhanced_questions_per_category": 15,
+    "scenario_type": "normal",
+    "scenario_overrides": null,
+    "target_complexities": [
+      "analytical",
+      "diagnostic",
+      "scenario"
+    ],
+    "target_personas": [
+      "network_engineer",
+      "security_auditor",
+      "noc_operator",
+      "network_architect",
+      "troubleshooter",
+      "compliance_officer"
+    ],
+    "enable_bert_score": false,
+    "short_answer_threshold": 20,
+    "output_dir": "output_dataset",
+    "save_intermediate": true
+  },
+  "pipeline_results": {
+    "parsing": {
+      "device_count": 6,
+      "success": true
+    },
+    "basic_generation": {
+      "question_count": 343,
+      "categories": [
+        "Security_Policy",
+        "BGP_Consistency",
+        "VRF_Consistency",
+        "L2VPN_Consistency",
+        "OSPF_Consistency",
+        "System_Inventory",
+        "Security_Inventory",
+        "Interface_Inventory",
+        "Routing_Inventory",
+        "Services_Inventory",
+        "Basic_Info"
+      ],
+      "success": true
+    },
+    "enhanced_generation": {
+      "question_count": 105,
+      "complexities": [
+        "analytical",
+        "scenario",
+        "diagnostic"
+      ],
+      "personas": [
+        "network_engineer",
+        "compliance_officer",
+        "security_auditor",
+        "troubleshooter",
+        "network_architect"
+      ],
+      "success": true
+    },
+    "assembly": {
+      "total_samples": 30,
+      "basic_count": 343,
+      "enhanced_count": 105,
+      "deduplicated_count": 418,
+      "complexity_counts": {
+        "basic": 15,
+        "analytical": 5,
+        "diagnostic": 5,
+        "scenario": 5
+      },
+      "success": true
+    },
+    "validation": {
+      "validated_count": 29,
+      "rejected_count": 1,
+      "short_answer_count": 25,
+      "long_answer_count": 4,
+      "success": true
+    },
+    "evaluation": {
+      "evaluation_data": [
+        {
+          "question_id": "BASIC_DSL-SSH_ENABLED_DEVICES-14954",
+          "answer_type": "short",
+          "predicted_answer": "CE1 CE2 sample10 sample7 sample8 sample9",
+          "ground_truth": "CE1 CE2 sample10 sample7 sample8 sample9",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": 1.0,
+          "normalized_accuracy": 1.0,
+          "bert_score": null,
+          "bleu_score": null,
+          "rouge_scores": null,
+          "structural_accuracy": null,
+          "overall_score": 1.0
+        },
+        {
+          "question_id": "BASIC_DSL-SSH_ENABLED_DEVICES-35836",
+          "answer_type": "short",
+          "predicted_answer": "CE1 CE2 sample10 sample7 sample8 sample9",
+          "ground_truth": "CE1 CE2 sample10 sample7 sample8 sample9",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": 1.0,
+          "normalized_accuracy": 1.0,
+          "bert_score": null,
+          "bleu_score": null,
+          "rouge_scores": null,
+          "structural_accuracy": null,
+          "overall_score": 1.0
+        },
+        {
+          "question_id": "BASIC_DSL-SSH_ENABLED_DEVICES-24593",
+          "answer_type": "short",
+          "predicted_answer": "CE1 CE2 sample10 sample7 sample8 sample9",
+          "ground_truth": "CE1 CE2 sample10 sample7 sample8 sample9",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": 1.0,
+          "normalized_accuracy": 1.0,
+          "bert_score": null,
+          "bleu_score": null,
+          "rouge_scores": null,
+          "structural_accuracy": null,
+          "overall_score": 1.0
+        },
+        {
+          "question_id": "BASIC_DSL-SSH_ENABLED_DEVICES-4245",
+          "answer_type": "short",
+          "predicted_answer": "CE1 CE2 sample10 sample7 sample8 sample9",
+          "ground_truth": "CE1 CE2 sample10 sample7 sample8 sample9",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": 1.0,
+          "normalized_accuracy": 1.0,
+          "bert_score": null,
+          "bleu_score": null,
+          "rouge_scores": null,
+          "structural_accuracy": null,
+          "overall_score": 1.0
+        },
+        {
+          "question_id": "BASIC_DSL-SSH_ENABLED_DEVICES-942",
+          "answer_type": "short",
+          "predicted_answer": "CE1 CE2 sample10 sample7 sample8 sample9",
+          "ground_truth": "CE1 CE2 sample10 sample7 sample8 sample9",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": 1.0,
+          "normalized_accuracy": 1.0,
+          "bert_score": null,
+          "bleu_score": null,
+          "rouge_scores": null,
+          "structural_accuracy": null,
+          "overall_score": 1.0
+        },
+        {
+          "question_id": "BASIC_DSL-SSH_ENABLED_DEVICES-51585",
+          "answer_type": "short",
+          "predicted_answer": "CE1 CE2 sample10 sample7 sample8 sample9",
+          "ground_truth": "CE1 CE2 sample10 sample7 sample8 sample9",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": 1.0,
+          "normalized_accuracy": 1.0,
+          "bert_score": null,
+          "bleu_score": null,
+          "rouge_scores": null,
+          "structural_accuracy": null,
+          "overall_score": 1.0
+        },
+        {
+          "question_id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-24593",
+          "answer_type": "short",
+          "predicted_answer": "1.1.1.1 2.2.2.2 3.3.3.3",
+          "ground_truth": "1.1.1.1 2.2.2.2 3.3.3.3",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": 1.0,
+          "normalized_accuracy": 1.0,
+          "bert_score": null,
+          "bleu_score": null,
+          "rouge_scores": null,
+          "structural_accuracy": null,
+          "overall_score": 1.0
+        },
+        {
+          "question_id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-4245",
+          "answer_type": "short",
+          "predicted_answer": "2.2.2.2 3.3.3.3 4.4.4.4",
+          "ground_truth": "2.2.2.2 3.3.3.3 4.4.4.4",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": 1.0,
+          "normalized_accuracy": 1.0,
+          "bert_score": null,
+          "bleu_score": null,
+          "rouge_scores": null,
+          "structural_accuracy": null,
+          "overall_score": 1.0
+        },
+        {
+          "question_id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-942",
+          "answer_type": "short",
+          "predicted_answer": "1.1.1.1 3.3.3.3 4.4.4.4",
+          "ground_truth": "1.1.1.1 3.3.3.3 4.4.4.4",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": 1.0,
+          "normalized_accuracy": 1.0,
+          "bert_score": null,
+          "bleu_score": null,
+          "rouge_scores": null,
+          "structural_accuracy": null,
+          "overall_score": 1.0
+        },
+        {
+          "question_id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-51585",
+          "answer_type": "short",
+          "predicted_answer": "1.1.1.1 2.2.2.2 4.4.4.4",
+          "ground_truth": "1.1.1.1 2.2.2.2 4.4.4.4",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": 1.0,
+          "normalized_accuracy": 1.0,
+          "bert_score": null,
+          "bleu_score": null,
+          "rouge_scores": null,
+          "structural_accuracy": null,
+          "overall_score": 1.0
+        },
+        {
+          "question_id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-14954",
+          "answer_type": "short",
+          "predicted_answer": "192.168.1.10",
+          "ground_truth": "192.168.1.10",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": 1.0,
+          "normalized_accuracy": 1.0,
+          "bert_score": null,
+          "bleu_score": null,
+          "rouge_scores": null,
+          "structural_accuracy": null,
+          "overall_score": 1.0
+        },
+        {
+          "question_id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-35836",
+          "answer_type": "short",
+          "predicted_answer": "192.168.3.10",
+          "ground_truth": "192.168.3.10",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": 1.0,
+          "normalized_accuracy": 1.0,
+          "bert_score": null,
+          "bleu_score": null,
+          "rouge_scores": null,
+          "structural_accuracy": null,
+          "overall_score": 1.0
+        },
+        {
+          "question_id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-24593",
+          "answer_type": "short",
+          "predicted_answer": "192.168.4.11",
+          "ground_truth": "192.168.4.11",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": 1.0,
+          "normalized_accuracy": 1.0,
+          "bert_score": null,
+          "bleu_score": null,
+          "rouge_scores": null,
+          "structural_accuracy": null,
+          "overall_score": 1.0
+        },
+        {
+          "question_id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-4245",
+          "answer_type": "short",
+          "predicted_answer": "192.168.1.11",
+          "ground_truth": "192.168.1.11",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": 1.0,
+          "normalized_accuracy": 1.0,
+          "bert_score": null,
+          "bleu_score": null,
+          "rouge_scores": null,
+          "structural_accuracy": null,
+          "overall_score": 1.0
+        },
+        {
+          "question_id": "ENHANCED_ENHANCED-ANALYTICAL-001",
+          "answer_type": "short",
+          "predicted_answer": "# ERROR: Failed to generate command for None\nshow bgp summary\n# ERROR: Failed to generate command for None",
+          "ground_truth": "# ERROR: Failed to generate command for None\nshow bgp summary\n# ERROR: Failed to generate command for None",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": 1.0,
+          "normalized_accuracy": 1.0,
+          "bert_score": null,
+          "bleu_score": null,
+          "rouge_scores": null,
+          "structural_accuracy": null,
+          "overall_score": 1.0
+        },
+        {
+          "question_id": "ENHANCED_ENHANCED-ANALYTICAL-002",
+          "answer_type": "short",
+          "predicted_answer": "show bgp neighbors\n# ERROR: Failed to generate command for show_bgp_neighbor_detail\n# ERROR: Failed to generate command for None",
+          "ground_truth": "show bgp neighbors\n# ERROR: Failed to generate command for show_bgp_neighbor_detail\n# ERROR: Failed to generate command for None",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": 1.0,
+          "normalized_accuracy": 1.0,
+          "bert_score": null,
+          "bleu_score": null,
+          "rouge_scores": null,
+          "structural_accuracy": null,
+          "overall_score": 1.0
+        },
+        {
+          "question_id": "ENHANCED_ENHANCED-ANALYTICAL-003",
+          "answer_type": "long",
+          "predicted_answer": "# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
+          "ground_truth": "# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": null,
+          "normalized_accuracy": null,
+          "bert_score": null,
+          "bleu_score": 1.0,
+          "rouge_scores": {
+            "rouge-1": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f": 1.0
+            },
+            "rouge-2": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f": 1.0
+            },
+            "rouge-l": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f": 1.0
+            }
+          },
+          "structural_accuracy": null,
+          "overall_score": 0.7
+        },
+        {
+          "question_id": "ENHANCED_ENHANCED-ANALYTICAL-004",
+          "answer_type": "long",
+          "predicted_answer": "# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for set_bgp_routemap\n# ERROR: Failed to generate command for set_static_route",
+          "ground_truth": "# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for set_bgp_routemap\n# ERROR: Failed to generate command for set_static_route",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": null,
+          "normalized_accuracy": null,
+          "bert_score": null,
+          "bleu_score": 1.0,
+          "rouge_scores": {
+            "rouge-1": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f": 1.0
+            },
+            "rouge-2": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f": 1.0
+            },
+            "rouge-l": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f": 1.0
+            }
+          },
+          "structural_accuracy": null,
+          "overall_score": 0.7
+        },
+        {
+          "question_id": "ENHANCED_ENHANCED-ANALYTICAL-005",
+          "answer_type": "short",
+          "predicted_answer": "show bgp summary\nshow bgp neighbors\n# ERROR: Failed to generate command for None",
+          "ground_truth": "show bgp summary\nshow bgp neighbors\n# ERROR: Failed to generate command for None",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": 1.0,
+          "normalized_accuracy": 1.0,
+          "bert_score": null,
+          "bleu_score": null,
+          "rouge_scores": null,
+          "structural_accuracy": null,
+          "overall_score": 1.0
+        },
+        {
+          "question_id": "ENHANCED_ENHANCED-DIAGNOSTIC-001",
+          "answer_type": "short",
+          "predicted_answer": "# ERROR: Failed to generate command for None\nssh admin@sample_device",
+          "ground_truth": "# ERROR: Failed to generate command for None\nssh admin@sample_device",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": 1.0,
+          "normalized_accuracy": 1.0,
+          "bert_score": null,
+          "bleu_score": null,
+          "rouge_scores": null,
+          "structural_accuracy": null,
+          "overall_score": 1.0
+        },
+        {
+          "question_id": "ENHANCED_ENHANCED-DIAGNOSTIC-002",
+          "answer_type": "short",
+          "predicted_answer": "# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
+          "ground_truth": "# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": 1.0,
+          "normalized_accuracy": 1.0,
+          "bert_score": null,
+          "bleu_score": null,
+          "rouge_scores": null,
+          "structural_accuracy": null,
+          "overall_score": 1.0
+        },
+        {
+          "question_id": "ENHANCED_ENHANCED-DIAGNOSTIC-003",
+          "answer_type": "short",
+          "predicted_answer": "# ERROR: Failed to generate command for None",
+          "ground_truth": "# ERROR: Failed to generate command for None",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": 1.0,
+          "normalized_accuracy": 1.0,
+          "bert_score": null,
+          "bleu_score": null,
+          "rouge_scores": null,
+          "structural_accuracy": null,
+          "overall_score": 1.0
+        },
+        {
+          "question_id": "ENHANCED_ENHANCED-DIAGNOSTIC-004",
+          "answer_type": "short",
+          "predicted_answer": "# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
+          "ground_truth": "# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": 1.0,
+          "normalized_accuracy": 1.0,
+          "bert_score": null,
+          "bleu_score": null,
+          "rouge_scores": null,
+          "structural_accuracy": null,
+          "overall_score": 1.0
+        },
+        {
+          "question_id": "ENHANCED_ENHANCED-DIAGNOSTIC-005",
+          "answer_type": "short",
+          "predicted_answer": "# ERROR: Failed to generate command for None\nshow bgp summary",
+          "ground_truth": "# ERROR: Failed to generate command for None\nshow bgp summary",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": 1.0,
+          "normalized_accuracy": 1.0,
+          "bert_score": null,
+          "bleu_score": null,
+          "rouge_scores": null,
+          "structural_accuracy": null,
+          "overall_score": 1.0
+        },
+        {
+          "question_id": "ENHANCED_ENHANCED-SCENARIO-001",
+          "answer_type": "long",
+          "predicted_answer": "# ERROR: Failed to generate command for show_vrf\n# ERROR: Failed to generate command for None\nshow bgp summary\n# ERROR: Failed to generate command for None",
+          "ground_truth": "# ERROR: Failed to generate command for show_vrf\n# ERROR: Failed to generate command for None\nshow bgp summary\n# ERROR: Failed to generate command for None",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": null,
+          "normalized_accuracy": null,
+          "bert_score": null,
+          "bleu_score": 1.0,
+          "rouge_scores": {
+            "rouge-1": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f": 1.0
+            },
+            "rouge-2": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f": 1.0
+            },
+            "rouge-l": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f": 1.0
+            }
+          },
+          "structural_accuracy": null,
+          "overall_score": 0.7
+        },
+        {
+          "question_id": "ENHANCED_ENHANCED-SCENARIO-002",
+          "answer_type": "short",
+          "predicted_answer": "show bgp neighbors\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
+          "ground_truth": "show bgp neighbors\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": 1.0,
+          "normalized_accuracy": 1.0,
+          "bert_score": null,
+          "bleu_score": null,
+          "rouge_scores": null,
+          "structural_accuracy": null,
+          "overall_score": 1.0
+        },
+        {
+          "question_id": "ENHANCED_ENHANCED-SCENARIO-003",
+          "answer_type": "short",
+          "predicted_answer": "show users\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
+          "ground_truth": "show users\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": 1.0,
+          "normalized_accuracy": 1.0,
+          "bert_score": null,
+          "bleu_score": null,
+          "rouge_scores": null,
+          "structural_accuracy": null,
+          "overall_score": 1.0
+        },
+        {
+          "question_id": "ENHANCED_ENHANCED-SCENARIO-004",
+          "answer_type": "long",
+          "predicted_answer": "# ERROR: Failed to generate command for create_vrf_and_assign\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
+          "ground_truth": "# ERROR: Failed to generate command for create_vrf_and_assign\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": null,
+          "normalized_accuracy": null,
+          "bert_score": null,
+          "bleu_score": 1.0,
+          "rouge_scores": {
+            "rouge-1": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f": 1.0
+            },
+            "rouge-2": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f": 1.0
+            },
+            "rouge-l": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f": 1.0
+            }
+          },
+          "structural_accuracy": null,
+          "overall_score": 0.7
+        },
+        {
+          "question_id": "ENHANCED_ENHANCED-SCENARIO-005",
+          "answer_type": "short",
+          "predicted_answer": "show bgp summary\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
+          "ground_truth": "show bgp summary\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
+          "exact_match": 1.0,
+          "f1_score": 1.0,
+          "token_accuracy": 1.0,
+          "normalized_accuracy": 1.0,
+          "bert_score": null,
+          "bleu_score": null,
+          "rouge_scores": null,
+          "structural_accuracy": null,
+          "overall_score": 1.0
+        }
+      ],
+      "batch_statistics": {
+        "total_questions": 29,
+        "exact_match_avg": 1.0,
+        "f1_score_avg": 1.0,
+        "overall_score_avg": 0.9586206896551723,
+        "short_answer_count": 25,
+        "short_answer_em": 1.0,
+        "short_answer_f1": 1.0,
+        "long_answer_count": 4,
+        "long_answer_em": 1.0,
+        "long_answer_f1": 1.0,
+        "long_answer_bleu": 1.0,
+        "long_answer_rouge_l": 1.0,
+        "average_overall_score": 0.9586206896551723,
+        "sample_evaluation_count": 29,
+        "total_dataset_size": 29,
+        "category_distribution": {
+          "basic": 14,
+          "advanced": 15
+        },
+        "complexity_distribution": {
+          "basic": 14,
+          "analytical": 5,
+          "diagnostic": 5,
+          "scenario": 5
+        },
+        "complexity_breakdown": {
+          "basic": {
+            "total": 15,
+            "short": 15,
+            "long": 0
+          },
+          "analytical": {
+            "total": 5,
+            "short": 3,
+            "long": 2
+          },
+          "diagnostic": {
+            "total": 5,
+            "short": 5,
+            "long": 0
+          },
+          "scenario": {
+            "total": 5,
+            "short": 3,
+            "long": 2
+          }
+        },
+        "answer_type_distribution": {
+          "short": 25,
+          "long": 4
+        }
+      },
+      "success": true
+    }
+  },
+  "total_samples": 29,
+  "categories": [
+    "advanced",
+    "basic"
+  ],
+  "complexities": [
+    "analytical",
+    "scenario",
+    "basic",
+    "diagnostic"
+  ],
+  "complexity_counts": {
+    "basic": 15,
+    "analytical": 5,
+    "diagnostic": 5,
+    "scenario": 5
+  },
+  "answer_types": [
+    "short",
+    "long"
+  ]
+}

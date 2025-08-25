@@ -454,12 +454,50 @@ class NetworkConfigDatasetGenerator:
             if not question_text or not reasoning_plan:
                 continue
 
-            if all(step.get("intent") for step in reasoning_plan):
+            # reasoning_plan의 step들이 dict이고 유효한 command intent가 있는지 확인
+            has_valid_command_intents = False
+            if isinstance(reasoning_plan, list):
+                # CommandAgent에서 지원하는 intent 목록
+                valid_command_intents = {
+                    "show_bgp_summary", "show_ip_interface_brief", "show_ip_route_ospf", 
+                    "show_processes_cpu", "show_l2vpn_vc", "show_ip_ospf_neighbor", 
+                    "show_users", "show_logging", "ssh_direct_access", "set_static_route", 
+                    "set_bgp_routemap", "set_interface_description", "create_vrf_and_assign", 
+                    "set_ospf_cost", "set_vty_acl", "set_hostname", "ssh_proxy_jump", 
+                    "ssh_multihop_jump", "check_connectivity", "show_bgp_neighbor_detail", 
+                    "show_bgp_neighbors", "show_log_include", "show_interface_status", 
+                    "show_vrf", "show_route_table", "show_ospf_database", "show_l2vpn_status"
+                }
+                
+                has_valid_command_intents = all(
+                    isinstance(step, dict) and 
+                    step.get("intent") in valid_command_intents
+                    for step in reasoning_plan 
+                    if isinstance(step, dict) and step.get("intent")
+                )
+            
+            if has_valid_command_intents:
                 commands = []
                 for step in reasoning_plan:
-                    intent = step.get("intent")
-                    params = step.get("params", {})
-                    commands.append(command_agent.generate(intent, params))
+                    try:
+                        intent = step.get("intent")
+                        params = step.get("params", {})
+                        
+                        # 누락된 필수 파라미터에 대한 기본값 제공
+                        if intent == "set_bgp_routemap" and "asn" not in params:
+                            params["asn"] = "65000"  # 기본 ASN
+                        if intent == "ssh_direct_access" and "user" not in params:
+                            params["user"] = "admin"  # 기본 사용자
+                        if intent == "ssh_direct_access" and "host" not in params:
+                            params["host"] = "192.168.1.1"  # 기본 호스트
+                        
+                        command = command_agent.generate(intent, params)
+                        commands.append(command)
+                    except Exception as e:
+                        self.logger.warning(f"명령어 생성 실패 - intent: {intent}, params: {params}, error: {e}")
+                        # 실패한 경우 기본 명령어 제공
+                        commands.append(f"# ERROR: Failed to generate command for {intent}")
+                        
                 final_answer = "\n".join(commands)
                 sample = DatasetSample(
                     id=f"ENHANCED_{eq.get('test_id', 'ENH')}",

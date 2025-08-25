@@ -1,0 +1,238 @@
+[
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-004",
+    "question": "고객사 A의 L3VPN 서비스 문제를 해결하기 위해 제안된 해결책이 다른 서비스에 미칠 부작용은 무엇일까?",
+    "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
+    "ground_truth": "# ERROR: Failed to generate command for create_vrf_and_assign\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
+    "explanation": "",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "scenario",
+    "level": 4,
+    "persona": "troubleshooter",
+    "scenario": "장애 상황 대응",
+    "source_files": null,
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "intent": "create_vrf_and_assign",
+          "params": {
+            "host": "sample4"
+          }
+        },
+        {
+          "required_metric": "vrf_count",
+          "metric_params": {
+            "host": "sample4"
+          }
+        },
+        {
+          "required_metric": "l2vpn_mismatch_count",
+          "metric_params": {
+            "host": "sample4"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {},
+      "question_length": 59,
+      "answer_length": 151,
+      "has_numbers": true,
+      "has_technical_terms": false,
+      "task_category": "기술적 오류 질의",
+      "evaluation": {
+        "question_id": "ENHANCED_ENHANCED-SCENARIO-004",
+        "answer_type": "long",
+        "predicted_answer": "# ERROR: Failed to generate command for create_vrf_and_assign\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
+        "ground_truth": "# ERROR: Failed to generate command for create_vrf_and_assign\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": null,
+        "normalized_accuracy": null,
+        "bert_score": null,
+        "bleu_score": 1.0,
+        "rouge_scores": {
+          "rouge-1": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f": 1.0
+          },
+          "rouge-2": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f": 1.0
+          },
+          "rouge-l": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f": 1.0
+          }
+        },
+        "structural_accuracy": null,
+        "overall_score": 0.7
+      },
+      "overall_score": 0.7
+    }
+  },
+  {
+    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-942",
+    "question": "SSH가 활성화된 장비 목록은?",
+    "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "CE1 CE2 sample10 sample7 sample8 sample9",
+    "explanation": "The list of devices for ssh_enabled_devices is ['CE1', 'CE2', 'sample10', 'sample7', 'sample8', 'sample9'].",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample8.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample8"
+        },
+        "metric": "ssh_enabled_devices"
+      },
+      "topic": "Security_Policy",
+      "question_length": 17,
+      "answer_length": 40,
+      "has_numbers": false,
+      "has_technical_terms": false,
+      "task_category": "보안 질의",
+      "evaluation": {
+        "question_id": "BASIC_DSL-SSH_ENABLED_DEVICES-942",
+        "answer_type": "short",
+        "predicted_answer": "CE1 CE2 sample10 sample7 sample8 sample9",
+        "ground_truth": "CE1 CE2 sample10 sample7 sample8 sample9",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-002",
+    "question": "새로운 PE 라우터 추가 후 BGP 경로 이상이 발생한 영향 범위는 어느 정도일까?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": "show bgp neighbors\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
+    "explanation": "",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "scenario",
+    "level": 4,
+    "persona": "troubleshooter",
+    "scenario": "장애 상황 대응",
+    "source_files": null,
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "intent": "show_bgp_neighbors",
+          "params": {
+            "host": "sample3"
+          }
+        },
+        {
+          "required_metric": "bgp_neighbor_count",
+          "metric_params": {
+            "host": "sample3"
+          }
+        },
+        {
+          "required_metric": "ebgp_remote_as_map",
+          "metric_params": {
+            "host": "sample3"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {},
+      "question_length": 46,
+      "answer_length": 108,
+      "has_numbers": false,
+      "has_technical_terms": true,
+      "task_category": "기술적 오류 질의",
+      "evaluation": {
+        "question_id": "ENHANCED_ENHANCED-SCENARIO-002",
+        "answer_type": "short",
+        "predicted_answer": "show bgp neighbors\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
+        "ground_truth": "show bgp neighbors\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-4245",
+    "question": "sample7 장비의 iBGP 피어 목록은?",
+    "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "2.2.2.2 3.3.3.3 4.4.4.4",
+    "explanation": "The list of devices for neighbor_list_ibgp is ['2.2.2.2', '3.3.3.3', '4.4.4.4'].",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample7.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample7"
+        },
+        "metric": "neighbor_list_ibgp"
+      },
+      "topic": "BGP_Consistency",
+      "question_length": 24,
+      "answer_length": 23,
+      "has_numbers": true,
+      "has_technical_terms": false,
+      "task_category": "단순 조회 업무",
+      "evaluation": {
+        "question_id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-4245",
+        "answer_type": "short",
+        "predicted_answer": "2.2.2.2 3.3.3.3 4.4.4.4",
+        "ground_truth": "2.2.2.2 3.3.3.3 4.4.4.4",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  }
+]

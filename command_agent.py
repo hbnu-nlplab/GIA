@@ -69,7 +69,13 @@ class CommandAgent:
                 # Additional intents for diagnostic plans
                 "check_connectivity": "ping {destination}",
                 "show_bgp_neighbor_detail": "show bgp neighbor {neighbor_ip} detail",
+                "show_bgp_neighbors": "show bgp neighbors",
                 "show_log_include": "show logging | include {keyword}",
+                "show_interface_status": "show interface {interface}",
+                "show_vrf": "show vrf {vrf_name}",
+                "show_route_table": "show ip route",
+                "show_ospf_database": "show ip ospf database",
+                "show_l2vpn_status": "show l2vpn atom vc detail",
             }
         }
         # IOS devices share the same basic syntax for these commands
