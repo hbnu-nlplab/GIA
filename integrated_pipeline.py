@@ -419,7 +419,7 @@ class NetworkConfigDatasetGenerator:
         return basic_samples
     
     def _execute_stage_enhanced_generation(self, network_facts: Dict[str, Any]) -> List[DatasetSample]:
-        """3단계: 심화 질문 생성 및 AnswerAgent를 통한 정답 계산"""
+        """3단계: 심화 질문 생성 및 LLM 리뷰 후, AnswerAgent를 통한 정답 계산"""
         self.logger.info("3단계: 심화 질문 생성 (Enhanced LLM) 및 정답 생성 (AnswerAgent)")
 
         enhanced_questions = self.enhanced_generator.generate_enhanced_questions(
@@ -427,12 +427,18 @@ class NetworkConfigDatasetGenerator:
             target_complexities=self.config.target_complexities,
             questions_per_template=self.config.enhanced_questions_per_category,
         )
+        self.logger.info(f"LLM이 생성한 초기 질문 수: {len(enhanced_questions)}")
+
+        reviewed_questions = self.enhanced_generator._review_generated_questions(
+            enhanced_questions
+        )
+        self.logger.info(f"LLM 리뷰 후 유효한 질문 수: {len(reviewed_questions)}")
 
         answer_agent = AnswerAgent(network_facts)
         command_agent = CommandAgent(network_facts)
         enhanced_samples: List[DatasetSample] = []
 
-        for eq in enhanced_questions:
+        for eq in reviewed_questions:
             # Handle string entries (malformed LLM output)
             if isinstance(eq, str):
                 self.logger.warning(f"Skipping malformed question entry: {eq[:100]}...")
@@ -883,22 +889,43 @@ class NetworkConfigDatasetGenerator:
         return ground_truth, explanation
     
     def _validate_sample_quality(self, sample: DatasetSample) -> bool:
-        """샘플 품질 검증"""
-        # 기본 필드 체크
-        if not sample.question or len(sample.question.strip()) < 10:
+        """샘플 품질을 더욱 엄격하게 검증합니다."""
+        if not all([sample.question, sample.ground_truth, sample.category]):
+            self.logger.debug(f"품질 미달 (필수 필드 누락): {sample.id}")
             return False
-        gt = sample.ground_truth
-        if gt is None or (isinstance(gt, str) and gt.strip() == "") or gt == []:
+        if len(sample.question.strip()) < 15:
+            self.logger.debug(f"품질 미달 (너무 짧은 질문): {sample.question}")
             return False
-        if not sample.category:
-            return False
-        
-        # 금지 패턴 체크
-        forbidden_patterns = ["어떻게", "무엇을", "설명하시오"]
+
         question_lower = sample.question.lower()
-        if any(pattern in question_lower for pattern in forbidden_patterns):
+
+        generic_patterns = [
+            "란 무엇인가",
+            "무엇입니까",
+            "설명하시오",
+            "알려줘",
+            "어떻게 생각해",
+            "요약해줘",
+        ]
+        if any(pattern in question_lower for pattern in generic_patterns):
+            self.logger.debug(f"품질 미달 (너무 일반적임): {sample.question}")
             return False
-        
+
+        gt_str = str(sample.ground_truth)
+        if gt_str.isdigit():
+            if not any(word in question_lower for word in ["몇 개", "수", "얼마나", "개수", "몇 명"]):
+                self.logger.debug(
+                    f"품질 미달 (답변<->질문 불일치): Q='{sample.question}', A='{gt_str}'"
+                )
+                return False
+
+        if "상태는 어떤가" in question_lower:
+            if gt_str not in ["정상", "비정상", "양호", "불량", "활성", "비활성"]:
+                self.logger.debug(
+                    f"품질 미달 (모호한 상태 질문): Q='{sample.question}', A='{gt_str}'"
+                )
+                return False
+
         return True
 
     def _determine_answer_type(self, answer: Any) -> str:
