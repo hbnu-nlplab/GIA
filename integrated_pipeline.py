@@ -615,7 +615,7 @@ class NetworkConfigDatasetGenerator:
                 try:
                     step["params"] = infer_missing_params(intent, params, network_facts)
                     inferred_steps.append(step)
-                except Exception as e:
+                except ValueError as e:
                     self.logger.warning(
                         f"Parameter inference failed - intent: {intent}, params: {params}, error: {e}"
                     )
