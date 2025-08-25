@@ -90,7 +90,8 @@ class DatasetSample:
     id: str
     question: str
     context: str  # 네트워크 설정 컨텍스트
-    answer: str
+    ground_truth: Any
+    explanation: str
     answer_type: str  # "short" or "long"
     category: str
     complexity: str
@@ -238,13 +239,14 @@ class NetworkConfigDatasetGenerator:
         basic_samples = []
         for category, tests in assembled_tests.items():
             for test in tests:
-                formatted_answer = self._format_answer(test.get('expected_answer', {}))
+                gt, expl = self._format_answer(test.get('expected_answer', {}))
                 sample = DatasetSample(
                     id=f"BASIC_{test.get('test_id', f'{category}_{len(basic_samples)}')}",
                     question=test.get('question', ''),
                     context=self._create_context(network_facts, test.get('source_files', [])),
-                    answer=formatted_answer,
-                    answer_type=self._determine_answer_type(formatted_answer),
+                    ground_truth=gt,
+                    explanation=expl,
+                    answer_type=self._determine_answer_type(gt),
                     category="basic",
                     level=test.get('level', 1),
                     complexity="basic",
@@ -268,13 +270,14 @@ class NetworkConfigDatasetGenerator:
             else:
                 metric_name = metric
             command = command_agent.generate(metric_name, params)
-            formatted_answer = self._format_answer({"value": command})
+            gt, expl = self._format_answer({"ground_truth": command, "explanation": ""})
             sample = DatasetSample(
                 id=f"BASIC_CMD_{idx}",
                 question=item.get('question', ''),
                 context=self._create_context(network_facts, []),
-                answer=formatted_answer,
-                answer_type=self._determine_answer_type(formatted_answer),
+                ground_truth=gt,
+                explanation=expl,
+                answer_type=self._determine_answer_type(gt),
                 category="basic",
                 level=item.get('level', 1),
                 complexity="basic",
@@ -343,7 +346,8 @@ class NetworkConfigDatasetGenerator:
                     id=f"ENHANCED_{eq.get('test_id', 'ENH')}",
                     question=question_text,
                     context="",
-                    answer=final_answer,
+                    ground_truth=final_answer,
+                    explanation="",
                     answer_type=eq.get("answer_type", "long"),
                     category=eq.get("category", "Enhanced_Analysis"),
                     complexity=eq.get("complexity", "analytical"),
@@ -361,12 +365,14 @@ class NetworkConfigDatasetGenerator:
                 )
             else:
                 result = answer_agent.execute_plan(question_text, reasoning_plan)
-                final_answer = result.get("answer")
+                final_answer = result.get("ground_truth")
+                explanation = result.get("explanation", "")
                 sample = DatasetSample(
                     id=f"ENHANCED_{eq.get('test_id', 'ENH')}",
                     question=question_text,
                     context="",
-                    answer=final_answer,
+                    ground_truth=final_answer,
+                    explanation=explanation,
                     answer_type=eq.get("answer_type", "long"),
                     category=eq.get("category", "Enhanced_Analysis"),
                     complexity=eq.get("complexity", "analytical"),
@@ -504,7 +510,7 @@ class NetworkConfigDatasetGenerator:
             mock_prediction = self._generate_mock_prediction(sample)
             predictions.append({
                 "predicted": mock_prediction,
-                "ground_truth": sample.answer,
+                "ground_truth": sample.ground_truth,
                 "question_id": sample.id,
                 "answer_type": sample.answer_type,
             })
@@ -674,35 +680,23 @@ class NetworkConfigDatasetGenerator:
         
         return " | ".join(summary)
     
-    def _format_answer(self, expected_answer: Dict[str, Any]) -> str:
-        """답변 포맷팅"""
-        value = expected_answer.get("value")
-        
-        if value is None:
-            return "정보 없음"
-        
-        if isinstance(value, (list, set)):
-            if not value:
-                return "없음"
-            return ", ".join(str(v) for v in sorted(value))
-        
-        if isinstance(value, dict):
-            if not value:
-                return "없음"
-            items = [f"{k}: {v}" for k, v in value.items()]
-            return "; ".join(items)
-        
-        if isinstance(value, bool):
-            return "예" if value else "아니오"
-        
-        return str(value)
+    def _format_answer(self, expected_answer: Dict[str, Any]) -> Tuple[Any, str]:
+        """Extract ground truth and explanation from expected_answer."""
+        if not expected_answer:
+            return None, ""
+        ground_truth = expected_answer.get("ground_truth")
+        explanation = expected_answer.get("explanation", "")
+        if ground_truth is None:
+            ground_truth = expected_answer.get("value")
+        return ground_truth, explanation
     
     def _validate_sample_quality(self, sample: DatasetSample) -> bool:
         """샘플 품질 검증"""
         # 기본 필드 체크
         if not sample.question or len(sample.question.strip()) < 10:
             return False
-        if not sample.answer or sample.answer.strip() == "":
+        gt = sample.ground_truth
+        if gt is None or (isinstance(gt, str) and gt.strip() == "") or gt == []:
             return False
         if not sample.category:
             return False
@@ -715,14 +709,14 @@ class NetworkConfigDatasetGenerator:
         
         return True
 
-    def _determine_answer_type(self, answer: str) -> str:
+    def _determine_answer_type(self, answer: Any) -> str:
         """단어 수 기반 answer type 결정"""
         tokens = str(answer).split()
         return "short" if len(tokens) <= self.config.short_answer_threshold else "long"
 
     def _reclassify_answer_type(self, sample: DatasetSample) -> str:
         """답변 타입 재분류"""
-        return self._determine_answer_type(sample.answer)
+        return self._determine_answer_type(sample.ground_truth)
     
     def _enrich_sample_metadata(self, sample: DatasetSample) -> DatasetSample:
         """샘플 메타데이터 보강"""
@@ -731,7 +725,7 @@ class NetworkConfigDatasetGenerator:
         
         # 질문 특성 분석
         sample.metadata["question_length"] = len(sample.question)
-        sample.metadata["answer_length"] = len(sample.answer)
+        sample.metadata["answer_length"] = len(str(sample.ground_truth))
         sample.metadata["has_numbers"] = bool(re.search(r'\d+', sample.question))
         sample.metadata["has_technical_terms"] = bool(re.search(r'\b(BGP|OSPF|VRF|L2VPN|SSH|AAA)\b', sample.question, re.IGNORECASE))
         
@@ -824,24 +818,22 @@ class NetworkConfigDatasetGenerator:
         # 여기서는 간단한 모의 답변 생성
         
         if sample.answer_type == "short":
-            # 정답에 약간의 노이즈 추가
-            if "개" in sample.answer or "수" in sample.answer:
+            answer_text = str(sample.ground_truth)
+            if "개" in answer_text or "수" in answer_text:
                 try:
-                    num = re.search(r'\d+', sample.answer)
+                    num = re.search(r'\d+', answer_text)
                     if num:
-                        # 숫자에 ±1 오차 추가
                         original = int(num.group())
                         predicted = max(0, original + (1 if original % 2 == 0 else -1))
                         return str(predicted)
                 except:
                     pass
-            
-            # Boolean 답변에 노이즈
-            if sample.answer in ["예", "아니오"]:
-                return "아니오" if sample.answer == "예" else "예"
-        
+
+            if answer_text in ["예", "아니오"]:
+                return "아니오" if answer_text == "예" else "예"
+
         # 기본적으로 정답 반환 (약간의 표현 변경)
-        answer = sample.answer
+        answer = str(sample.ground_truth)
         replacements = {
             "예": "yes",
             "아니오": "no", 

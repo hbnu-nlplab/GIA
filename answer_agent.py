@@ -1,5 +1,6 @@
-from typing import Dict, Any, List, Union, Set
+from typing import Dict, Any, List, Union, Set, Tuple
 import json
+import re
 
 from utils.builder_core import BuilderCore
 from utils.llm_adapter import _call_llm_json
@@ -17,21 +18,26 @@ class AnswerAgent:
         self.referenced_files: Set[str] = set()
 
     def execute_plan(self, question: str, plan: Union[List[Dict[str, Any]], str]) -> Dict[str, Any]:
-        """Execute reasoning steps and return synthesized answer and source files."""
+        """Execute reasoning steps and return ground truth, explanation and source files."""
         self.evidence = {}
         self.referenced_files = set()
 
-        # Handle string-based plans
         if isinstance(plan, str):
-            answer = self._synthesize_text_answer(question, plan)
-            return {"answer": answer, "source_files": sorted(self.referenced_files)}
+            ground_truth, explanation = self._synthesize_text_answer(question, plan)
+            return {
+                "ground_truth": ground_truth,
+                "explanation": explanation,
+                "source_files": sorted(self.referenced_files),
+            }
 
-        # Handle None or empty plans
         if not plan:
-            answer = self._synthesize_text_answer(question, "No reasoning plan provided")
-            return {"answer": answer, "source_files": sorted(self.referenced_files)}
+            ground_truth, explanation = self._synthesize_text_answer(question, "No reasoning plan provided")
+            return {
+                "ground_truth": ground_truth,
+                "explanation": explanation,
+                "source_files": sorted(self.referenced_files),
+            }
 
-        # Handle list-based plans (original behavior)
         if isinstance(plan, list):
             for step in sorted(plan, key=lambda x: x.get("step", 0) if isinstance(x, dict) else 0):
                 if not isinstance(step, dict):
@@ -47,28 +53,32 @@ class AnswerAgent:
                     files = []
                 self.evidence[f"step_{step.get('step')}_{metric}"] = result
                 self.referenced_files.update(files)
+            ground_truth, explanation = self._synthesize_answer(question, plan)
+            return {
+                "ground_truth": ground_truth,
+                "explanation": explanation,
+                "source_files": sorted(self.referenced_files),
+            }
 
-            answer = self._synthesize_answer(question, plan)
-            return {"answer": answer, "source_files": sorted(self.referenced_files)}
+        ground_truth, explanation = self._synthesize_text_answer(question, str(plan))
+        return {
+            "ground_truth": ground_truth,
+            "explanation": explanation,
+            "source_files": sorted(self.referenced_files),
+        }
 
-        # Handle other types as text
-        answer = self._synthesize_text_answer(question, str(plan))
-        return {"answer": answer, "source_files": sorted(self.referenced_files)}
-
-    def _synthesize_text_answer(self, question: str, plan_text: str) -> str:
+    def _synthesize_text_answer(self, question: str, plan_text: str) -> Tuple[Any, str]:
         """Handle text-based reasoning plans."""
-        # Try to extract metrics from the plan text
         potential_metrics = [
             "ssh_missing_count", "ssh_all_enabled_bool", "ssh_enabled_devices",
-            "ibgp_missing_pairs_count", "ibgp_fullmesh_ok", 
+            "ibgp_missing_pairs_count", "ibgp_fullmesh_ok",
             "vrf_without_rt_count", "l2vpn_unidir_count",
             "bgp_inconsistent_as_count", "aaa_enabled_devices"
         ]
-        
-        relevant_metrics = []
+
+        relevant_metrics: List[str] = []
         plan_lower = plan_text.lower()
-        
-        # Find relevant metrics based on question content
+
         question_lower = question.lower()
         if "ssh" in question_lower:
             relevant_metrics.extend(["ssh_missing_count", "ssh_enabled_devices", "ssh_all_enabled_bool"])
@@ -80,12 +90,10 @@ class AnswerAgent:
             relevant_metrics.extend(["aaa_enabled_devices"])
         if "l2vpn" in question_lower:
             relevant_metrics.extend(["l2vpn_unidir_count"])
-        
-        # If no specific metrics found, use general metrics
+
         if not relevant_metrics:
             relevant_metrics = ["ssh_enabled_devices", "ibgp_missing_pairs_count"]
-        
-        # Calculate relevant metrics
+
         for metric in relevant_metrics:
             try:
                 result, files = self.builder.calculate_metric(metric)
@@ -93,22 +101,13 @@ class AnswerAgent:
                 self.referenced_files.update(files)
             except Exception as e:
                 self.evidence[metric] = f"error: {e}"
-        
+
         return self._synthesize_answer(question, plan_text)
 
-    def _synthesize_answer(self, question: str, plan: Union[List[Dict[str, Any]], str]) -> str:
-        """Return a structured answer optimized for evaluation metrics.
-
-        The answer is encoded as a JSON string with the following schema:
-        {
-            "eval_targets": {
-                "exact_match": <single concise value>,
-                "f1_score": [<items for list-based answers>]
-            },
-            "explanation": <one or two sentence rationale>
-        }
-        """
-
+    def _synthesize_answer(
+        self, question: str, plan: Union[List[Dict[str, Any]], str]
+    ) -> Tuple[Any, str]:
+        """Return ground truth and explanation derived from LLM output."""
         schema = {
             "title": "StructuredAnswer",
             "type": "object",
@@ -119,16 +118,16 @@ class AnswerAgent:
                         "exact_match": {"type": ["string", "number", "boolean"]},
                         "f1_score": {
                             "type": ["array", "null"],
-                            "items": {"type": ["string", "number", "boolean"]}
-                        }
+                            "items": {"type": ["string", "number", "boolean"]},
+                        },
                     },
                     "required": ["exact_match", "f1_score"],
-                    "additionalProperties": False
+                    "additionalProperties": False,
                 },
-                "explanation": {"type": "string"}
+                "explanation": {"type": "string"},
             },
             "required": ["eval_targets", "explanation"],
-            "additionalProperties": False
+            "additionalProperties": False,
         }
 
         evidence_text = json.dumps(self.evidence, ensure_ascii=False, indent=2)
@@ -138,19 +137,7 @@ class AnswerAgent:
             "질문과 증거를 바탕으로 위 스키마에 맞춘 JSON 답변만 제공하세요."
         )
 
-        user_prompt = f"""
-질문: {question}
-
-수집된 증거:
-{evidence_text}
-
-[응답 지침]
-- eval_targets.exact_match에는 가장 핵심적인 단일 값을 넣으세요.
-- eval_targets.f1_score에는 정답이 리스트일 때 항목들의 리스트를 넣고, 그렇지 않으면 null 또는 빈 리스트를 사용하세요.
-- explanation에는 위 증거를 근거로 결론에 도달한 이유를 한두 문장으로 서술하세요.
-
-JSON 외의 다른 텍스트는 포함하지 마세요.
-"""
+        user_prompt = f"""\n질문: {question}\n\n수집된 증거:\n{evidence_text}\n\n[응답 지침]\n- eval_targets.exact_match에는 가장 핵심적인 단일 값을 넣으세요.\n- eval_targets.f1_score에는 정답이 리스트일 때 항목들의 리스트를 넣고, 그렇지 않으면 null 또는 빈 리스트를 사용하세요.\n- explanation에는 위 증거를 근거로 결론에 도달한 이유를 한두 문장으로 서술하세요.\n\nJSON 외의 다른 텍스트는 포함하지 마세요.\n"""
 
         messages = [
             {"role": "system", "content": system_prompt},
@@ -167,25 +154,58 @@ JSON 외의 다른 텍스트는 포함하지 마세요.
                 use_responses_api=False,
             )
             if isinstance(data, dict):
-                return json.dumps(data, ensure_ascii=False)
+                eval_targets = data.get("eval_targets", {})
+                explanation = data.get("explanation", "")
+                ground_truth = self._extract_ground_truth(eval_targets, explanation)
+                return ground_truth, explanation
         except Exception as e:
             import logging
             logging.warning(f"AnswerAgent LLM synthesis failed: {e}")
 
-        fallback = {
-            "eval_targets": {"exact_match": "", "f1_score": []},
-            "explanation": self._format_evidence() if self.evidence else "No evidence available."
-        }
-        return json.dumps(fallback, ensure_ascii=False)
+        explanation = (
+            self._format_evidence() if self.evidence else "No evidence available."
+        )
+        ground_truth = self._extract_ground_truth({}, explanation)
+        return ground_truth, explanation
+
+    def _extract_ground_truth(self, eval_targets: Dict[str, Any], explanation: str) -> Any:
+        """Infer ground truth from explanation text or eval_targets."""
+        ce_matches = re.findall(r"CE\d+", explanation)
+        if ce_matches:
+            unique: List[str] = []
+            for m in ce_matches:
+                if m not in unique:
+                    unique.append(m)
+            return unique[0] if len(unique) == 1 else unique
+
+        if any(kw in explanation for kw in ["없습니다", "없음", "0개"]):
+            f1 = eval_targets.get("f1_score") if isinstance(eval_targets, dict) else None
+            if isinstance(f1, list):
+                return []
+            return 0
+
+        num_match = re.search(r"(-?\d+)", explanation)
+        if num_match:
+            try:
+                return int(num_match.group(1))
+            except ValueError:
+                pass
+
+        if isinstance(eval_targets, dict):
+            f1 = eval_targets.get("f1_score")
+            if isinstance(f1, list) and f1:
+                return f1
+            return eval_targets.get("exact_match")
+
+        return ""
 
     def _format_evidence(self) -> str:
         """Evidence를 읽기 쉬운 형태로 포맷팅"""
         if not self.evidence:
             return "수집된 증거가 없습니다."
-        
+
         formatted = []
         for key, value in self.evidence.items():
-            # step_1_bgp_peer_count -> "1단계: BGP 피어 수"
             if key.startswith('step_'):
                 parts = key.split('_')
                 if len(parts) >= 3:
@@ -195,14 +215,11 @@ JSON 외의 다른 텍스트는 포함하지 마세요.
                 else:
                     formatted.append(f"• {key}: {self._format_value(value)}")
             else:
-                # 메트릭 이름을 한국어로 변환
                 korean_name = self._translate_metric_name(key)
                 formatted.append(f"• {korean_name}: {self._format_value(value)}")
-        
         return '\n'.join(formatted)
 
     def _translate_metric_name(self, metric_name: str) -> str:
-        """메트릭 이름을 한국어로 번역"""
         translations = {
             'ssh_enabled_devices': 'SSH 활성화된 장비',
             'ssh_missing_count': 'SSH 미설정 장비 수',
@@ -220,7 +237,6 @@ JSON 외의 다른 텍스트는 포함하지 마세요.
         return translations.get(metric_name, metric_name)
 
     def _format_value(self, value) -> str:
-        """값을 읽기 쉬운 형태로 포맷팅"""
         if isinstance(value, bool):
             return "✅ 정상" if value else "❌ 문제"
         elif isinstance(value, (int, float)) and value == 0:
@@ -238,43 +254,14 @@ JSON 외의 다른 텍스트는 포함하지 마세요.
             return str(value)
 
     def _generate_template_answer(self, question: str, evidence_summary: str) -> str:
-        """LLM 실패 시 템플릿 기반 답변 생성"""
         if "증거가 없습니다" in evidence_summary:
-            return f"""
-질문 "{question}"에 대한 분석을 시도했지만, 관련 증거를 수집할 수 없었습니다.
+            return f"""\n질문 "{question}"에 대한 분석을 시도했지만, 관련 증거를 수집할 수 없었습니다.\n\n이는 다음과 같은 원인일 수 있습니다:\n• 네트워크 설정 데이터에서 관련 정보를 찾을 수 없음\n• 질문과 관련된 메트릭이 아직 구현되지 않음\n• 데이터 파싱 과정에서 오류 발생\n\n더 구체적인 분석을 위해서는 네트워크 설정 파일과 질문의 적합성을 확인해 주세요.\n"""
 
-이는 다음과 같은 원인일 수 있습니다:
-• 네트워크 설정 데이터에서 관련 정보를 찾을 수 없음
-• 질문과 관련된 메트릭이 아직 구현되지 않음
-• 데이터 파싱 과정에서 오류 발생
-
-더 구체적인 분석을 위해서는 네트워크 설정 파일과 질문의 적합성을 확인해 주세요.
-"""
-        
-        return f"""
-질문 "{question}"에 대한 분석 결과:
-
-수집된 증거:
-{evidence_summary}
-
-위 증거를 바탕으로 네트워크의 현재 상태를 파악할 수 있습니다. 
-구체적인 수치와 설정 상태를 통해 해당 질문에 대한 답변을 도출할 수 있으며,
-문제가 발견된 경우 적절한 해결책을 고려해야 합니다.
-
-💡 더 정확한 분석을 위해서는 LLM 기반 답변 생성 기능을 활용하시기 바랍니다.
-"""
+        return f"""\n질문 "{question}"에 대한 분석 결과:\n\n수집된 증거:\n{evidence_summary}\n\n위 증거를 바탕으로 네트워크의 현재 상태를 파악할 수 있습니다.\n구체적인 수치와 설정 상태를 통해 해당 질문에 대한 답변을 도출할 수 있으며,\n문제가 발견된 경우 적절한 해결책을 고려해야 합니다.\n\n💡 더 정확한 분석을 위해서는 LLM 기반 답변 생성 기능을 활용하시기 바랍니다.\n"""
 
     def _simple_llm_call(self, question: str, evidence_summary: str) -> str:
-        """간단한 프롬프트로 LLM 호출 - 최후의 수단"""
         try:
-            simple_prompt = f"""네트워크 전문가로서 다음 질문에 답하세요.
-
-질문: {question}
-
-증거:
-{evidence_summary}
-
-위 증거를 바탕으로 질문에 대해 전문적이고 구체적인 답변을 한국어로 작성하세요. 증거의 수치와 상태를 언급하며 실무적인 관점에서 설명해주세요."""
+            simple_prompt = f"""네트워크 전문가로서 다음 질문에 답하세요.\n\n질문: {question}\n\n증거:\n{evidence_summary}\n\n위 증거를 바탕으로 질문에 대해 전문적이고 구체적인 답변을 한국어로 작성하세요. 증거의 수치와 상태를 언급하며 실무적인 관점에서 설명해주세요."""
 
             schema = {
                 "title": "SimpleAnswer",

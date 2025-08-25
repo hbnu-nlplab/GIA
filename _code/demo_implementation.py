@@ -419,7 +419,7 @@ class NetworkDatasetDemo:
         for i, sample in enumerate(samples):
             if hasattr(sample, 'question'):
                 q = sample.question
-                a = sample.answer
+                a = sample.ground_truth
                 t = sample.answer_type
             else:
                 q = sample.get('question', '')

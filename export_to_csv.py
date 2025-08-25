@@ -17,7 +17,8 @@ def convert_to_csv(json_path="demo_output/network_config_qa_dataset.json", csv_p
                 id=sample.get("id", ""),
                 question=sample.get("question", ""),
                 context=sample.get("context", ""),
-                answer=str(sample.get("answer", "")),
+                ground_truth=sample.get("ground_truth"),
+                explanation=sample.get("explanation", ""),
                 answer_type=sample.get("answer_type", ""),
                 category=sample.get("category", ""),
                 complexity=sample.get("complexity", ""),
@@ -32,7 +33,7 @@ def convert_to_csv(json_path="demo_output/network_config_qa_dataset.json", csv_p
             referenced_files_str = ", ".join(ds.source_files or [])
             rows.append({
                 "입력 쿼리": ds.question,
-                "정답": ds.answer,
+                "정답": ds.ground_truth,
                 "업무 분류": task_category,
                 "참고 파일이름": referenced_files_str,
             })

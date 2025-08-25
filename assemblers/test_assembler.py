@@ -365,27 +365,20 @@ class TestAssembler:
         return enriched
 
     def _expand_from_dsl(self, builder: BuilderCore, dsl_expanded: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
-        """Expand DSL and wrap answers into evaluation-friendly JSON."""
+        """Expand DSL and wrap answers into ground_truth/explanation fields."""
         by_cat = builder.expand_from_dsl(dsl_expanded)
         for cat, arr in by_cat.items():
             for t in arr:
                 original = (t.get("expected_answer") or {}).get("value")
                 metric_name = ((t.get("evidence_hint") or {}).get("metric"))
                 if isinstance(original, list):
-                    new_answer = {
-                        "eval_targets": {
-                            "exact_match": ", ".join(map(str, original)),
-                            "f1_score": original,
-                        },
-                        "explanation": f"The list of devices for {metric_name} is {original}.",
-                    }
+                    ground_truth = original
+                    explanation = f"The list of devices for {metric_name} is {original}."
                 else:
-                    new_answer = {
-                        "eval_targets": {
-                            "exact_match": original,
-                            "f1_score": [],
-                        },
-                        "explanation": f"The value for {metric_name} is {original}.",
-                    }
-                t["expected_answer"] = {"value": json.dumps(new_answer, ensure_ascii=False)}
+                    ground_truth = original
+                    explanation = f"The value for {metric_name} is {original}."
+                t["expected_answer"] = {
+                    "ground_truth": ground_truth,
+                    "explanation": explanation,
+                }
         return by_cat
