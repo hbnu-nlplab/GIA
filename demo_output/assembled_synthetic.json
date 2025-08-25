@@ -1,9 +1,9 @@
 [
   {
     "id": "ENHANCED_ENHANCED-SYNTHETIC-001",
-    "question": "L2VPN과 L3VPN 서비스 장애 시 비즈니스 영향도를 어떻게 평가하고 우선순위 복구 계획을 수립할 수 있는가?",
+    "question": "AS 65001 내에서 발생한 L2VPN 및 L3VPN 서비스 장애가 전체 네트워크에 미칠 수 있는 영향도를 평가하고, 비즈니스에 중요한 서비스에 대한 우선 복구 방안을 마련해야 한다. 이때 어떤 장비와 설정을 우선적으로 점검해야 할까?",
     "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
-    "answer": "L2VPN과 L3VPN 서비스 장애 시 비즈니스 영향도를 평가하고 우선순위 복구 계획을 수립하기 위해서는 수집된 증거를 기반으로 다음과 같은 분석을 진행할 수 있습니다.\n\n### 1. 비즈니스 영향도 평가\n\n#### L2VPN 상태\n- **l2vpn_unidir_count**: 0\n  - 이 수치는 L2VPN에서 단방향 연결 문제를 나타내며, 현재 문제가 없음을 의미합니다. 따라서 L2VPN 서비스는 정상적으로 운영되고 있습니다.\n\n#### L3VPN 상태\n- **vrf_without_rt_count**: 0\n  - VRF(Route Target) 설정에 문제가 없음을 나타내며, L3VPN 서비스 또한 정상입니다.\n\n#### BGP 피어링 상태\n- **bgp_peer_count**: None\n  - BGP 피어링이 설정되어 있지 않거나, 피어링 상태를 확인할 수 없는 상황입니다. 이는 네트워크의 전반적인 안정성에 영향을 미칠 수 있으며, BGP 피어링이 없으면 라우팅 정보가 전파되지 않아 서비스 장애가 발생할 수 있습니다.\n\n#### iBGP 풀 메쉬 상태\n- **ibgp_fullmesh_ok**: ✅\n  - iBGP 풀 메쉬가 정상적으로 작동하고 있음을 나타내며, 이는 내부 라우팅이 원활하게 이루어지고 있음을 의미합니다.\n\n#### 인터페이스 수\n- **interface_count**: 5\n  - 현재 5개의 인터페이스가 활성화되어 있으며, 이는 네트워크의 용량과 연결성을 나타냅니다. 비즈니스 서비스의 중요도에 따라 이 인터페이스들이 어떤 서비스에 연결되어 있는지를 파악해야 합니다.\n\n### 2. 우선순위 복구 계획 수립\n\n1. **BGP 피어링 문제 해결**: \n   - BGP 피어링이 설정되어 있지 않거나 확인할 수 없는 상태이므로, 이를 우선적으로 점검해야 합니다. BGP 피어링이 정상적으로 이루어지지 않으면, L3VPN 서비스의 라우팅 정보가 전파되지 않아 비즈니스 서비스에 심각한 영향을 미칠 수 있습니다. \n   - **해결책**: BGP 피어링 설정을 검토하고, 필요한 경우 피어링을 추가하거나 재구성합니다.\n\n2. **비즈니스 중요도에 따른 인터페이스 관리**:\n   - 5개의 인터페이스 중 어떤 인터페이스가 비즈니스에 더 중요한지를 평가하여, 해당 인터페이스의 장애 발생 시 우선적으로 복구할 수 있도록 계획합니다. \n   - **해결책**: 각 인터페이스가 연결된 서비스의 중요도를 평가하고, 중요도가 높은 서비스에 대한 복구 우선순위를 설정합니다.\n\n### 결론\n현재 L2VPN과 L3VPN 서비스는 정상적으로 운영되고 있으나, BGP 피어링 상태가 확인되지 않는 점은 우려 사항입니다. 이 문제를 해결하는 것이 비즈니스 서비스의 안정성을 확보하는 데 중요합니다. 인터페이스 수를 고려하여 비즈니스 중요도에 따라 복구 우선순위를 설정하는 것도 필수적입니다. 추가적인 증거가 필요할 경우, BGP 피어링 상태에 대한 구체적인 로그나 설정 정보를 수집해야 합니다.",
+    "answer": "{\"eval_targets\": {\"exact_match\": \"L2VPN 및 L3VPN 장비 점검\", \"f1_score\": null}, \"explanation\": \"수집된 증거에서 L2VPN 관련 이슈가 없고, iBGP 풀 메쉬가 정상인 것으로 보아 L2VPN 및 L3VPN 장비의 점검이 우선적으로 필요합니다.\"}",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "synthetic",
@@ -23,119 +23,109 @@
       "reasoning_plan": [
         {
           "step": 1,
-          "description": "L2VPN 장애 관련 이슈 수집",
+          "description": "AS 65001의 iBGP 풀메시 상태 확인",
+          "required_metric": "ibgp_fullmesh_ok",
+          "metric_params": {
+            "asn": "65001"
+          },
+          "synthesis": "fetch"
+        },
+        {
+          "step": 2,
+          "description": "AS 65001의 L2VPN 문제 확인 및 영향도 분석",
           "required_metric": "l2vpn_unidir_count",
+          "metric_params": {
+            "asn": "65001"
+          },
+          "synthesis": "fetch"
+        },
+        {
+          "step": 3,
+          "description": "AS 65001의 BGP 페어링 이상 징후 확인",
+          "required_metric": "bgp_inconsistent_as_count",
+          "metric_params": {
+            "asn": "65001"
+          },
+          "synthesis": "fetch"
+        },
+        {
+          "step": 4,
+          "description": "L2VPN 및 BGP 문제를 종합하여 서비스의 비즈니스 영향도 평가",
+          "required_metric": "l2vpn_issues",
+          "metric_params": {},
+          "synthesis": "summarize"
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_1_ibgp_fullmesh_ok": true,
+        "step_2_l2vpn_unidir_count": 0,
+        "step_3_bgp_inconsistent_as_count": null,
+        "step_4_l2vpn_issues": null
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-002",
+    "question": "현재 네트워크에서 잠재적인 서비스 위험 요소를 식별하여, 문제 발생 시 신속한 대응이 가능하도록 어떤 예방적 모니터링 체계를 구축해야 할까?",
+    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+    "answer": "{\"eval_targets\": {\"exact_match\": true, \"f1_score\": null}, \"explanation\": \"현재 수집된 증거에 따르면, SSH 결함이나 VRF 문제, BGP 쌍의 결함이 없으므로, 예방적 모니터링 체계는 효과적으로 구축되어 있다고 판단할 수 있습니다.\"}",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "synthetic",
+    "level": 4,
+    "persona": "noc_operator",
+    "scenario": "서비스 영향도 분석",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "step": 1,
+          "description": "전체 네트워크에서 SSH 설정이 누락된 장비 파악",
+          "required_metric": "ssh_missing_count",
           "metric_params": {},
           "synthesis": "fetch"
         },
         {
           "step": 2,
-          "description": "L3VPN의 VRF 관련 문제 여부 확인",
+          "description": "VRF 설정에서 누락된 RT 확인",
           "required_metric": "vrf_without_rt_count",
           "metric_params": {},
           "synthesis": "fetch"
         },
         {
           "step": 3,
-          "description": "BGP 피어링 상태를 통해 네트워크의 전반적인 안정성 평가",
+          "description": "AS 65003에서 BGP 페어링 누락된 경우 확인",
+          "required_metric": "bgp_missing_pairs",
+          "metric_params": {
+            "asn": "65003"
+          },
+          "synthesis": "fetch"
+        },
+        {
+          "step": 4,
+          "description": "수집된 데이터를 바탕으로 잠재적 서비스 위험 요소 종합 평가",
           "required_metric": "bgp_peer_count",
           "metric_params": {},
-          "synthesis": "fetch"
-        },
-        {
-          "step": 4,
-          "description": "L2VPN과 L3VPN의 장애가 비즈니스 서비스에 미치는 영향 분석",
-          "required_metric": "ibgp_fullmesh_ok",
-          "metric_params": {
-            "asn": "65001"
-          },
-          "synthesis": "summarize"
-        },
-        {
-          "step": 5,
-          "description": "비즈니스 중요도에 따라 복구 우선순위 설정",
-          "required_metric": "interface_count",
-          "metric_params": {},
           "synthesis": "summarize"
         }
       ],
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed",
       "evidence": {
-        "step_1_l2vpn_unidir_count": 0,
+        "step_1_ssh_missing_count": 0,
         "step_2_vrf_without_rt_count": 0,
-        "step_3_bgp_peer_count": null,
-        "step_4_ibgp_fullmesh_ok": true,
-        "step_5_interface_count": 5
-      }
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-SYNTHETIC-002",
-    "question": "현재 네트워크의 잠재적 서비스 위험 요소를 식별하여 예방적 모니터링 계획을 수립할 수 있는가?",
-    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
-    "answer": "현재 네트워크의 잠재적 서비스 위험 요소를 식별하기 위한 분석 결과는 다음과 같습니다.\n\n1. **BGP 피어의 누락된 페어링 (bgp_missing_pairs)**: 이 단계에서 확인된 바에 따르면, 누락된 BGP 피어링이 없습니다. 이는 BGP 설정이 올바르게 구성되어 있으며, 피어 간의 연결이 정상적으로 이루어지고 있음을 나타냅니다.\n\n2. **SSH 설정이 누락된 장비 (ssh_missing_count)**: SSH 설정이 누락된 장비가 없다는 결과가 나왔습니다. 이는 모든 장비가 안전한 원격 관리 프로토콜을 사용하고 있음을 의미하며, 보안 측면에서 긍정적인 요소입니다.\n\n3. **OSPF 영역의 복잡성 평가 (ospf_area_count)**: OSPF 영역에 대한 정보가 제공되지 않았습니다. 이는 OSPF 설정이 없거나, 관련 데이터가 수집되지 않았음을 나타냅니다. OSPF 영역의 복잡성은 네트워크의 확장성과 안정성에 영향을 미칠 수 있으므로, 이 부분에 대한 추가적인 모니터링이 필요합니다.\n\n4. **BGP와 OSPF 연계를 통한 잠재적 위험 요소 (bgp_inconsistent_as_count)**: BGP와 OSPF 간의 불일치가 발견되지 않았습니다. 이는 두 프로토콜 간의 설정이 일관되며, 네트워크의 라우팅 안정성이 확보되어 있음을 나타냅니다.\n\n5. **식별된 위험 요소 기반의 예방적 모니터링 계획 (aaa_enabled_devices)**: AAA(인증, 인가, 회계) 기능이 활성화된 장비에 대한 정보가 없습니다. 이는 네트워크 보안 관리에 중요한 요소로, AAA 기능이 활성화되지 않은 장비가 있을 경우 보안 취약점이 발생할 수 있습니다. 따라서, 모든 장비에 대해 AAA 기능의 활성화 여부를 확인하고, 필요한 경우 설정을 적용해야 합니다.\n\n### 결론 및 권장 사항:\n현재 수집된 증거에 따르면, BGP 및 SSH 설정은 양호하며, BGP와 OSPF 간의 연계도 안정적입니다. 그러나 OSPF 영역에 대한 정보가 부족하고, AAA 기능 활성화 여부에 대한 데이터가 없으므로, 이 두 가지 요소에 대한 추가적인 검토가 필요합니다.\n\n1. **OSPF 영역 검토**: OSPF 설정을 점검하고, 필요한 경우 영역 구성을 최적화하여 네트워크의 복잡성을 줄이고 안정성을 높이십시오.\n\n2. **AAA 기능 활성화**: 모든 네트워크 장비에 대해 AAA 기능이 활성화되어 있는지 확인하고, 비활성화된 장비가 있다면 즉시 설정을 적용하여 보안성을 강화하십시오.\n\n이러한 예방적 조치를 통해 네트워크의 서비스 위험 요소를 최소화하고, 안정적인 운영을 유지할 수 있을 것입니다.",
-    "answer_type": "long",
-    "category": "advanced",
-    "complexity": "synthetic",
-    "level": 4,
-    "persona": "noc_operator",
-    "scenario": "서비스 영향도 분석",
-    "source_files": [
-      "ce1.xml",
-      "ce2.xml",
-      "sample10.xml",
-      "sample7.xml",
-      "sample8.xml",
-      "sample9.xml"
-    ],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "step": 1,
-          "description": "BGP 피어의 누락된 페어링 식별",
-          "required_metric": "bgp_missing_pairs",
-          "metric_params": {},
-          "synthesis": "fetch"
-        },
-        {
-          "step": 2,
-          "description": "SSH 설정이 누락된 장비 식별",
-          "required_metric": "ssh_missing_count",
-          "metric_params": {},
-          "synthesis": "fetch"
-        },
-        {
-          "step": 3,
-          "description": "OSPF 영역의 복잡성 평가",
-          "required_metric": "ospf_area_count",
-          "metric_params": {},
-          "synthesis": "fetch"
-        },
-        {
-          "step": 4,
-          "description": "BGP와 OSPF 연계를 통한 잠재적 위험 요소 식별",
-          "required_metric": "bgp_inconsistent_as_count",
-          "metric_params": {},
-          "synthesis": "summarize"
-        },
-        {
-          "step": 5,
-          "description": "식별된 위험 요소 기반의 예방적 모니터링 계획 수립",
-          "required_metric": "aaa_enabled_devices",
-          "metric_params": {},
-          "synthesis": "summarize"
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_1_bgp_missing_pairs": null,
-        "step_2_ssh_missing_count": 0,
-        "step_3_ospf_area_count": null,
-        "step_4_bgp_inconsistent_as_count": null,
-        "step_5_aaa_enabled_devices": null
+        "step_3_bgp_missing_pairs": null,
+        "step_4_bgp_peer_count": null
       }
     }
   }

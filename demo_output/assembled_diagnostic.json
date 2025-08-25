@@ -1,9 +1,9 @@
 [
   {
     "id": "ENHANCED_ENHANCED-DIAGNOSTIC-001",
-    "question": "네트워크의 iBGP 풀메시 구성의 일관성과 보안 설정의 준수성을 어떻게 평가할 수 있을까요?",
+    "question": "네트워크 내 BGP 설정의 일관성과 보안 정책 준수 여부를 평가하고, 발견된 이상 징후가 비즈니스에 미치는 영향을 분석하시오.",
     "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "answer": "네트워크의 iBGP 풀메시 구성의 일관성과 보안 설정의 준수성을 평가한 결과는 다음과 같습니다.\n\n### 1. iBGP 풀메시 구성의 일관성\n수집된 증거에 따르면, 각 AS 그룹별로 iBGP 풀메시 상태는 모두 정상으로 확인되었습니다. 구체적으로:\n\n- **AS 65001**: iBGP 풀메시 상태 ✅ 정상\n- **AS 65003**: iBGP 풀메시 상태 ✅ 정상\n- **AS 65000**: iBGP 풀메시 상태 ✅ 정상\n\n이러한 결과는 모든 AS 그룹이 iBGP 풀메시 구성을 올바르게 유지하고 있음을 나타냅니다. 따라서, iBGP 풀메시 구성의 일관성에 대한 평가는 긍정적입니다.\n\n### 2. 보안 설정의 준수성\n보안 설정 측면에서 다음과 같은 사항이 확인되었습니다:\n\n- **SSH 보안 설정 활성화 장비**: CE1, CE2, sample10 등 총 6개 장비에서 SSH가 활성화되어 있습니다. 이는 원격 관리 시 보안성을 높이는 중요한 요소입니다.\n- **AAA 인증 활성화 장비**: 확인 결과, AAA 인증이 활성화된 장비는 없습니다. 이는 보안 측면에서 심각한 문제로, 인증 및 권한 부여가 제대로 이루어지지 않을 수 있습니다.\n\n### 3. 종합 평가\niBGP 풀메시 구성은 정상적으로 운영되고 있으나, 보안 설정에서 AAA 인증이 활성화되지 않은 점은 우려스러운 사항입니다. AAA 인증이 없으면 네트워크 장비에 대한 접근이 비인가된 사용자에게 열릴 수 있으며, 이는 보안 취약점을 초래할 수 있습니다.\n\n### 4. 문제의 원인 및 해결책\n- **문제 원인**: AAA 인증이 활성화되지 않은 이유는 설정 누락, 정책 미비, 또는 관리자의 인식 부족일 수 있습니다.\n- **해결책**: 모든 네트워크 장비에 대해 AAA 인증을 활성화하고, 이를 통해 사용자 인증 및 권한 부여를 강화해야 합니다. 또한, 보안 정책을 재검토하고, 정기적인 보안 감사 및 교육을 통해 관리자의 인식을 높이는 것이 필요합니다.\n\n### 결론\niBGP 풀메시 구성은 일관성을 유지하고 있으나, 보안 설정에서 AAA 인증이 활성화되지 않은 점은 즉각적인 개선이 요구됩니다. 이를 통해 네트워크의 전반적인 보안성을 강화할 수 있을 것입니다.",
+    "answer": "{\"eval_targets\": {\"exact_match\": true, \"f1_score\": null}, \"explanation\": \"BGP 설정의 일관성이 유지되고 있으며, iBGP 풀 메쉬가 정상적으로 작동하고 있어 보안 정책 준수에 문제가 없다고 판단됩니다.\"}",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "diagnostic",
@@ -23,7 +23,7 @@
       "reasoning_plan": [
         {
           "step": 1,
-          "description": "각 AS 그룹별로 iBGP 풀메시 상태를 확인하여 일관성을 평가",
+          "description": "AS 65001의 iBGP 풀메시 상태 확인",
           "required_metric": "ibgp_fullmesh_ok",
           "metric_params": {
             "asn": "65001"
@@ -32,40 +32,15 @@
         },
         {
           "step": 2,
-          "description": "AS 65003의 iBGP 풀메시 상태 확인",
-          "required_metric": "ibgp_fullmesh_ok",
-          "metric_params": {
-            "asn": "65003"
-          },
+          "description": "BGP 설정에서 일치하지 않는 AS 수 확인",
+          "required_metric": "bgp_inconsistent_as_count",
+          "metric_params": {},
           "synthesis": "fetch"
         },
         {
           "step": 3,
-          "description": "AS 65000의 iBGP 풀메시 상태 확인",
-          "required_metric": "ibgp_fullmesh_ok",
-          "metric_params": {
-            "asn": "65000"
-          },
-          "synthesis": "fetch"
-        },
-        {
-          "step": 4,
-          "description": "SSH 보안 설정이 활성화된 장비들을 식별",
-          "required_metric": "ssh_enabled_devices",
-          "metric_params": {},
-          "synthesis": "fetch"
-        },
-        {
-          "step": 5,
-          "description": "AAA 인증이 활성화된 장비 확인",
-          "required_metric": "aaa_enabled_devices",
-          "metric_params": {},
-          "synthesis": "fetch"
-        },
-        {
-          "step": 6,
-          "description": "iBGP 풀메시 구성과 보안 설정의 일관성을 종합하여 평가",
-          "required_metric": "bgp_inconsistent_as_count",
+          "description": "발견된 BGP 관련 이상 징후와 비즈니스 영향도 평가",
+          "required_metric": "bgp_missing_pairs",
           "metric_params": {},
           "synthesis": "summarize"
         }
@@ -74,26 +49,16 @@
       "expected_analysis_depth": "detailed",
       "evidence": {
         "step_1_ibgp_fullmesh_ok": true,
-        "step_2_ibgp_fullmesh_ok": true,
-        "step_3_ibgp_fullmesh_ok": true,
-        "step_4_ssh_enabled_devices": [
-          "CE1",
-          "CE2",
-          "sample10",
-          "sample7",
-          "sample8",
-          "sample9"
-        ],
-        "step_5_aaa_enabled_devices": null,
-        "step_6_bgp_inconsistent_as_count": null
+        "step_2_bgp_inconsistent_as_count": null,
+        "step_3_bgp_missing_pairs": null
       }
     }
   },
   {
     "id": "ENHANCED_ENHANCED-DIAGNOSTIC-002",
-    "question": "발견된 네트워크 보안 문제들의 위험도를 어떤 기준으로 우선순위화할 수 있을까요?",
+    "question": "네트워크의 SSH 및 AAA 설정 상태를 종합적으로 분석하고, 보안 취약점이 시스템에 미치는 위험도를 평가하시오.",
     "context": "보안 설정 현황:\nCE1: SSH ON, AAA OFF\nCE2: SSH ON, AAA OFF\nsample10: SSH ON, AAA ON\nsample7: SSH ON, AAA ON\nsample8: SSH ON, AAA ON",
-    "answer": "네트워크 보안 문제의 위험도를 우선순위화하기 위해서는 여러 기준을 고려해야 합니다. 제공된 증거를 바탕으로 각 단계에서의 결과를 분석하고, 이를 통해 우선순위를 설정하는 방법을 설명하겠습니다.\n\n1. **BGP 피어링 문제 (bgp_missing_pairs)**:\n   - 현재 수집된 증거에 따르면, BGP 피어링 문제는 발견되지 않았습니다. 이는 네트워크의 BGP 설정이 정상적으로 이루어지고 있음을 나타내며, 이로 인해 BGP 관련 보안 문제의 위험도는 낮습니다. 따라서 이 항목은 우선순위에서 제외할 수 있습니다.\n\n2. **L2VPN 이슈 (l2vpn_unidir_count)**:\n   - L2VPN 관련 문제도 발견되지 않았습니다. L2VPN의 단방향 연결 수가 0으로 나타나므로, 이 또한 네트워크의 안정성을 보장하는 요소입니다. 이로 인해 L2VPN 관련 보안 문제의 위험도 역시 낮습니다. 따라서 이 항목도 우선순위에서 제외할 수 있습니다.\n\n3. **BGP 불일치 AS 카운트 (bgp_inconsistent_as_count)**:\n   - 현재 이 항목에 대한 증거는 제공되지 않았습니다. BGP 불일치 AS가 발견될 경우, 이는 네트워크의 라우팅 안정성에 심각한 영향을 미칠 수 있으며, 공격자가 라우팅 정보를 조작할 수 있는 가능성을 열어줍니다. 따라서 이 항목은 우선순위에서 가장 높은 위험도로 평가되어야 합니다.\n\n### 결론 및 권장 사항:\n- 현재 수집된 증거에 따르면, BGP 피어링 문제와 L2VPN 이슈는 발견되지 않았으므로 이들에 대한 우선순위는 낮습니다.\n- 그러나 BGP 불일치 AS 카운트에 대한 정보가 부족하므로, 이 문제에 대한 추가적인 조사가 필요합니다. 만약 이 문제가 발견된다면, 즉시 해당 AS와의 연결을 검토하고, 라우팅 정책을 재조정하여 보안성을 강화해야 합니다.\n\n### 추가 조치:\n- BGP 불일치 AS 카운트에 대한 모니터링을 강화하고, 정기적인 네트워크 감사 및 검토를 통해 잠재적인 보안 문제를 사전에 식별할 수 있는 체계를 마련하는 것이 중요합니다. \n\n이와 같은 방식으로 네트워크 보안 문제의 위험도를 평가하고 우선순위를 설정할 수 있습니다.",
+    "answer": "{\"eval_targets\": {\"exact_match\": true, \"f1_score\": null}, \"explanation\": \"SSH 설정이 모두 활성화되어 있고, AAA 설정이 필요한 장치가 없으므로 보안 취약점이 시스템에 미치는 위험도가 낮다고 평가할 수 있습니다.\"}",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "diagnostic",
@@ -113,127 +78,21 @@
       "reasoning_plan": [
         {
           "step": 1,
-          "description": "BGP 피어링 문제의 수를 확인하고 위험도를 평가",
-          "required_metric": "bgp_missing_pairs",
-          "metric_params": {},
-          "synthesis": "fetch"
-        },
-        {
-          "step": 2,
-          "description": "L2VPN 이슈 수를 확인하여 중요도 평가",
-          "required_metric": "l2vpn_unidir_count",
-          "metric_params": {},
-          "synthesis": "fetch"
-        },
-        {
-          "step": 3,
-          "description": "발견된 보안 문제들을 종합하여 위험도 기반으로 우선순위 설정",
-          "required_metric": "bgp_inconsistent_as_count",
-          "metric_params": {},
-          "synthesis": "summarize"
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_1_bgp_missing_pairs": null,
-        "step_2_l2vpn_unidir_count": 0,
-        "step_3_bgp_inconsistent_as_count": null
-      }
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-001",
-    "question": "현재 네트워크 장비의 모든 AAA 인증 및 패스워드 정책이 사내 표준 및 규제 요구사항을 얼마나 충족하고 있는가?",
-    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
-    "answer": "현재 네트워크 장비의 AAA 인증 및 패스워드 정책이 사내 표준 및 규제 요구사항을 충족하는 정도는 매우 낮습니다. 수집된 증거를 바탕으로 다음과 같은 분석을 할 수 있습니다.\n\n1. **AAA 인증 설정**: \n   - 1단계와 3단계에서 확인된 바에 따르면, AAA 인증이 활성화된 장비는 **없습니다**. 이는 네트워크 보안의 기본 요소인 인증, 권한 부여 및 회계(AAA)가 전혀 적용되지 않고 있음을 의미합니다. 따라서, 사내 표준 및 규제 요구사항을 충족하지 못하고 있습니다.\n\n2. **패스워드 정책**:\n   - 2단계에서 확인된 바에 따르면, 네트워크 장비의 수는 **5개**입니다. 그러나 AAA 인증이 활성화되지 않았기 때문에 패스워드 정책의 일관성을 평가할 수 있는 기반이 부족합니다. 패스워드 정책이 제대로 적용되지 않을 가능성이 높으며, 이는 보안 취약점을 초래할 수 있습니다.\n\n### 문제점:\n- **AAA 인증 미설정**: 모든 장비에서 AAA 인증이 비활성화되어 있어, 사용자 인증 및 권한 관리가 이루어지지 않고 있습니다. 이는 외부 공격자나 내부의 비인가 사용자가 네트워크에 접근할 수 있는 위험을 증가시킵니다.\n- **패스워드 정책의 불확실성**: 패스워드 정책이 적용되지 않거나 일관성이 결여되어 있을 가능성이 높습니다. 이는 사용자 계정의 보안성을 저하시킬 수 있습니다.\n\n### 해결책:\n1. **AAA 인증 활성화**: 모든 네트워크 장비에서 AAA 인증을 활성화해야 합니다. 이를 통해 사용자 인증 및 권한 부여를 강화하고, 네트워크 접근을 보다 안전하게 관리할 수 있습니다.\n2. **패스워드 정책 수립 및 적용**: 패스워드 복잡성, 만료 주기, 재사용 제한 등의 요소를 포함한 강력한 패스워드 정책을 수립하고 이를 모든 장비에 적용해야 합니다.\n3. **정기적인 감사 및 모니터링**: 네트워크 장비의 AAA 설정 및 패스워드 정책을 정기적으로 감사하고 모니터링하여, 지속적으로 보안 상태를 점검하고 개선할 필요가 있습니다.\n\n결론적으로, 현재 네트워크 장비의 AAA 인증 및 패스워드 정책은 사내 표준 및 규제 요구사항을 충족하지 않으며, 즉각적인 조치가 필요합니다.",
-    "answer_type": "long",
-    "category": "advanced",
-    "complexity": "diagnostic",
-    "level": 3,
-    "persona": "compliance_officer",
-    "scenario": "정책 준수 점검",
-    "source_files": [
-      "ce1.xml",
-      "ce2.xml",
-      "sample10.xml",
-      "sample7.xml",
-      "sample8.xml",
-      "sample9.xml"
-    ],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "step": 1,
-          "description": "AAA 인증 설정이 활성화된 장비 수 확인",
-          "required_metric": "aaa_enabled_devices",
-          "metric_params": {},
-          "synthesis": "fetch"
-        },
-        {
-          "step": 2,
-          "description": "모든 장비에서 패스워드 정책의 일관성 확인",
-          "required_metric": "interface_count",
-          "metric_params": {},
-          "synthesis": "fetch"
-        },
-        {
-          "step": 3,
-          "description": "AAA 인증 설정과 패스워드 정책을 비교하여 표준 준수 여부 평가",
-          "required_metric": "aaa_enabled_devices",
-          "metric_params": {},
-          "synthesis": "compare"
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_1_aaa_enabled_devices": null,
-        "step_2_interface_count": 5,
-        "step_3_aaa_enabled_devices": null
-      }
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-002",
-    "question": "SSH 설정이 최신 보안 가이드를 얼마나 따르고 있는지 확인하려면 어떤 장비가 취약한가?",
-    "context": "보안 설정 현황:\nCE1: SSH ON, AAA OFF\nCE2: SSH ON, AAA OFF\nsample10: SSH ON, AAA ON\nsample7: SSH ON, AAA ON\nsample8: SSH ON, AAA ON",
-    "answer": "SSH 설정의 보안 상태를 평가한 결과, 다음과 같은 사항이 확인되었습니다.\n\n1. **SSH 보안 설정 누락 여부**: \n   - **ssh_missing_count**: 0\n   - 이는 SSH 보안 설정이 누락된 장비가 없음을 의미합니다. 따라서 이 단계에서는 취약한 장비가 발견되지 않았습니다.\n\n2. **SSH 설정 활성화된 장비 수**:\n   - **ssh_enabled_devices**: CE1, CE2, sample10 등 총 6개의 장비에서 SSH 설정이 활성화되어 있습니다. 이 장비들은 SSH를 통해 원격 접속이 가능하다는 것을 나타냅니다.\n\n3. **SSH 설정의 전반적인 보안 상태**:\n   - **ssh_all_enabled_bool**: ✅ 정상\n   - 모든 장비에서 SSH 설정이 활성화되어 있으며, 보안 설정이 누락되지 않았기 때문에 현재로서는 보안 취약성이 발견되지 않았습니다.\n\n결론적으로, 현재 수집된 증거에 따르면 SSH 설정이 최신 보안 가이드를 잘 따르고 있으며, 취약한 장비는 없습니다. 모든 장비에서 SSH가 활성화되어 있고, 보안 설정이 누락된 부분이 없으므로 추가적인 조치가 필요하지 않습니다.\n\n다만, 보안 환경은 지속적으로 변화할 수 있으므로 정기적인 점검과 업데이트를 권장합니다. SSH 설정에 대한 최신 보안 가이드를 주기적으로 검토하고, 필요 시 추가적인 보안 조치를 취하는 것이 좋습니다.",
-    "answer_type": "long",
-    "category": "advanced",
-    "complexity": "diagnostic",
-    "level": 3,
-    "persona": "compliance_officer",
-    "scenario": "정책 준수 점검",
-    "source_files": [
-      "ce1.xml",
-      "ce2.xml",
-      "sample10.xml",
-      "sample7.xml",
-      "sample8.xml",
-      "sample9.xml"
-    ],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "step": 1,
-          "description": "SSH 보안 설정이 누락된 장비들을 식별",
+          "description": "SSH 설정이 활성화되지 않은 장비 수 확인",
           "required_metric": "ssh_missing_count",
           "metric_params": {},
           "synthesis": "fetch"
         },
         {
           "step": 2,
-          "description": "SSH 설정이 활성화된 모든 장비 수 확인",
-          "required_metric": "ssh_enabled_devices",
+          "description": "AAA 인증이 활성화된 장비 목록 확인",
+          "required_metric": "aaa_enabled_devices",
           "metric_params": {},
           "synthesis": "fetch"
         },
         {
           "step": 3,
-          "description": "SSH 설정 누락 및 활성 상태를 비교하여 보안 취약성 평가",
+          "description": "SSH와 AAA 설정이 종합적으로 보안 정책에 부합하는지 평가",
           "required_metric": "ssh_all_enabled_bool",
           "metric_params": {},
           "synthesis": "summarize"
@@ -243,7 +102,112 @@
       "expected_analysis_depth": "detailed",
       "evidence": {
         "step_1_ssh_missing_count": 0,
-        "step_2_ssh_enabled_devices": [
+        "step_2_aaa_enabled_devices": null,
+        "step_3_ssh_all_enabled_bool": true
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-001",
+    "question": "네트워크 장비의 접근 제어 정책이 AAA 및 패스워드 정책에 따라 일관되게 설정되어 있는가?",
+    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+    "answer": "{\"eval_targets\": {\"exact_match\": false, \"f1_score\": null}, \"explanation\": \"수집된 증거에서 AAA가 활성화된 장비에 대한 정보가 없으므로, 접근 제어 정책이 일관되게 설정되어 있다고 판단할 수 없습니다.\"}",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "diagnostic",
+    "level": 3,
+    "persona": "compliance_officer",
+    "scenario": "정책 준수 점검",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "step": 1,
+          "description": "AAA 인증이 활성화된 장비 목록을 확인",
+          "required_metric": "aaa_enabled_devices",
+          "metric_params": {},
+          "synthesis": "fetch"
+        },
+        {
+          "step": 2,
+          "description": "AAA 인증이 활성화되지 않은 장비 식별",
+          "required_metric": "aaa_enabled_devices",
+          "metric_params": {},
+          "synthesis": "summarize"
+        },
+        {
+          "step": 3,
+          "description": "AAA 활성화 상태와 패스워드 정책의 일관성을 비교",
+          "required_metric": "aaa_enabled_devices",
+          "metric_params": {},
+          "synthesis": "compare"
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_1_aaa_enabled_devices": null,
+        "step_2_aaa_enabled_devices": null,
+        "step_3_aaa_enabled_devices": null
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-002",
+    "question": "SSH 설정이 최신 보안 가이드를 따르고 있는가?",
+    "context": "보안 설정 현황:\nCE1: SSH ON, AAA OFF\nCE2: SSH ON, AAA OFF\nsample10: SSH ON, AAA ON\nsample7: SSH ON, AAA ON\nsample8: SSH ON, AAA ON",
+    "answer": "{\"eval_targets\": {\"exact_match\": true, \"f1_score\": null}, \"explanation\": \"모든 SSH가 활성화된 장치에서 SSH 설정이 누락된 항목이 없고, 모든 장치에서 SSH가 활성화되어 있으므로 최신 보안 가이드를 따르고 있다고 판단할 수 있습니다.\"}",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "diagnostic",
+    "level": 3,
+    "persona": "compliance_officer",
+    "scenario": "정책 준수 점검",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "step": 1,
+          "description": "SSH가 활성화된 모든 장비를 식별",
+          "required_metric": "ssh_enabled_devices",
+          "metric_params": {},
+          "synthesis": "fetch"
+        },
+        {
+          "step": 2,
+          "description": "SSH가 활성화되지 않은 장비의 수를 확인",
+          "required_metric": "ssh_missing_count",
+          "metric_params": {},
+          "synthesis": "fetch"
+        },
+        {
+          "step": 3,
+          "description": "SSH 설정이 최신 보안 가이드를 따르는지 확인",
+          "required_metric": "ssh_all_enabled_bool",
+          "metric_params": {},
+          "synthesis": "summarize"
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_1_ssh_enabled_devices": [
           "CE1",
           "CE2",
           "sample10",
@@ -251,6 +215,7 @@
           "sample8",
           "sample9"
         ],
+        "step_2_ssh_missing_count": 0,
         "step_3_ssh_all_enabled_bool": true
       }
     }

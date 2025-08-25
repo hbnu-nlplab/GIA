@@ -14,5 +14,6 @@ CMD.txt
 # Python artifacts
 __pycache__/
 *.pyc
+
 .env
 !requirements.txt
