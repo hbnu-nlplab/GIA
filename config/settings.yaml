@@ -1,0 +1,26 @@
+api:
+  timeout: 60
+  max_retries: 2
+  base_url: null  # 기본값은 OpenAI 공식 API
+
+models:
+  default: "gpt-4o-mini"
+  paraphrase: "gpt-4o-mini"
+  question_generation: "gpt-4o-mini"
+  intent_parsing: "gpt-4o-mini"
+  hypothesis_review: "gpt-4o-mini"
+  answer_synthesis: "gpt-4o-mini"
+  enhanced_generation: "gpt-4o"
+
+features:
+  use_intent_llm: true
+  enable_llm_review: true
+  disable_hypo_review: false
+
+generation:
+  basic_questions_per_category: 3
+  enhanced_questions_per_category: 2
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(levelname)s - %(message)s"

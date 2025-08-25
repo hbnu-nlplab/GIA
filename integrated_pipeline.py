@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 from typing import Dict, Any, List, Optional, Tuple
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 from enum import Enum
 import json
 from pathlib import Path
@@ -20,6 +20,7 @@ from assemblers.test_assembler import TestAssembler, AssembleOptions
 from utils.builder_core import BuilderCore
 from answer_agent import AnswerAgent
 from command_agent import CommandAgent
+from utils.config_manager import get_settings
 
 # 새로운 향상된 모듈들 (위에서 생성한 것들)
 from generators.enhanced_llm_generator import EnhancedLLMQuestionGenerator, QuestionComplexity, PersonaType
@@ -45,8 +46,12 @@ class PipelineConfig:
     
     # 생성 설정
     target_categories: List[str]
-    basic_questions_per_category: int = 4
-    enhanced_questions_per_category: int = 3
+    basic_questions_per_category: int = field(
+        default_factory=lambda: get_settings().generation.basic_questions_per_category
+    )
+    enhanced_questions_per_category: int = field(
+        default_factory=lambda: get_settings().generation.enhanced_questions_per_category
+    )
 
     # 시나리오 설정
     scenario_type: str = "normal"  # normal, failure, expansion

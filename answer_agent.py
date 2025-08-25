@@ -3,6 +3,9 @@ import json
 
 from utils.builder_core import BuilderCore
 from utils.llm_adapter import _call_llm_json
+from utils.config_manager import get_settings
+
+settings = get_settings()
 
 class AnswerAgent:
     """Reasoning plan executor that synthesizes a descriptive answer."""
@@ -159,7 +162,7 @@ JSON 외의 다른 텍스트는 포함하지 마세요.
                 messages,
                 schema,
                 temperature=0.0,
-                model="gpt-4o-mini",
+                model=settings.models.answer_synthesis,
                 max_output_tokens=500,
                 use_responses_api=False,
             )
@@ -264,8 +267,6 @@ JSON 외의 다른 텍스트는 포함하지 마세요.
     def _simple_llm_call(self, question: str, evidence_summary: str) -> str:
         """간단한 프롬프트로 LLM 호출 - 최후의 수단"""
         try:
-            import openai
-            
             simple_prompt = f"""네트워크 전문가로서 다음 질문에 답하세요.
 
 질문: {question}
@@ -275,17 +276,27 @@ JSON 외의 다른 텍스트는 포함하지 마세요.
 
 위 증거를 바탕으로 질문에 대해 전문적이고 구체적인 답변을 한국어로 작성하세요. 증거의 수치와 상태를 언급하며 실무적인 관점에서 설명해주세요."""
 
-            response = openai.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[{"role": "user", "content": simple_prompt}],
+            schema = {
+                "title": "SimpleAnswer",
+                "type": "object",
+                "properties": {"answer": {"type": "string"}},
+                "required": ["answer"],
+                "additionalProperties": False,
+            }
+
+            messages = [{"role": "user", "content": simple_prompt}]
+            data = _call_llm_json(
+                messages,
+                schema,
                 temperature=0.1,
-                max_tokens=600
+                model=settings.models.answer_synthesis,
+                max_output_tokens=600,
+                use_responses_api=False,
             )
-            
-            answer = response.choices[0].message.content.strip()
-            print(f"✅ 간단한 LLM 호출 성공 (길이: {len(answer)}자)")
-            return answer
-            
+            answer = data.get("answer") if isinstance(data, dict) else None
+            if isinstance(answer, str):
+                print(f"✅ 간단한 LLM 호출 성공 (길이: {len(answer)}자)")
+                return answer
         except Exception as e:
             print(f"🚨 간단한 LLM 호출도 실패: {e}")
-            return self._generate_template_answer(question, evidence_summary)
+        return self._generate_template_answer(question, evidence_summary)

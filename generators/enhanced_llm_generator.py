@@ -9,8 +9,12 @@ import json
 from dataclasses import dataclass
 from enum import Enum
 
+from utils.config_manager import get_settings
 from utils.llm_adapter import _call_llm_json
 from utils.builder_core import BuilderCore, list_available_metrics
+
+
+settings = get_settings()
 
 
 class QuestionComplexity(Enum):
@@ -274,15 +278,18 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
         ]
     
     def generate_enhanced_questions(
-        self, 
-        network_facts: Dict[str, Any], 
+        self,
+        network_facts: Dict[str, Any],
         target_complexities: List[QuestionComplexity] = None,
-        questions_per_template: int = 2
+        questions_per_template: Optional[int] = None
     ) -> List[Dict[str, Any]]:
         """향상된 LLM 질문 생성"""
         
         if target_complexities is None:
             target_complexities = [QuestionComplexity.ANALYTICAL, QuestionComplexity.SYNTHETIC]
+
+        if questions_per_template is None:
+            questions_per_template = settings.generation.enhanced_questions_per_category
         
         # 네트워크 현황 분석
         context = self._analyze_network_context(network_facts)
@@ -517,7 +524,7 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
         try:
             data = _call_llm_json(
                 messages, schema, temperature=0.7,
-                model="gpt-4o", max_output_tokens=2000,
+                model=settings.models.enhanced_generation, max_output_tokens=2000,
                 use_responses_api=False
             )
             
@@ -616,7 +623,7 @@ class QuestionQualityAssessor:
         try:
             data = _call_llm_json(
                 messages, schema, temperature=0.1,
-                model="gpt-4o-mini", max_output_tokens=1500,
+                model=settings.models.hypothesis_review, max_output_tokens=1500,
                 use_responses_api=False
             )
             
