@@ -9,10 +9,13 @@ Simplified Network Question Generator
 from __future__ import annotations
 from typing import Dict, Any, List, Optional
 import json
-import os
 from dataclasses import dataclass
 
+from utils.config_manager import get_settings
 from .llm_adapter import _call_llm_json
+
+
+settings = get_settings()
 
 
 @dataclass
@@ -275,7 +278,7 @@ class LLMQuestionEnhancer:
         enhancement_count: int = 2
     ) -> List[SimpleQuestion]:
         """기본 질문을 LLM으로 보강"""
-        if not os.environ.get("OPENAI_API_KEY"):
+        if not settings.api.api_key:
             print("[LLM Enhancer] OPENAI_API_KEY not set, skipping enhancement")
             return []
         
@@ -362,7 +365,7 @@ class LLMQuestionEnhancer:
         try:
             data = _call_llm_json(
                 messages, schema, temperature=0.7,
-                model="gpt-4o-mini", max_output_tokens=1200,
+                model=settings.models.question_generation, max_output_tokens=1200,
                 use_responses_api=False
             )
             
@@ -442,7 +445,7 @@ class QuestionReviewer:
         
         # 2단계: LLM 검토 (임시 비활성화)
         # TODO: LLM 검토 로직 안정화 후 재활성화
-        if False and os.environ.get("OPENAI_API_KEY") and len(heuristic_passed) > 0:
+        if False and settings.api.api_key and len(heuristic_passed) > 0:
             llm_passed = self._llm_review(heuristic_passed)
             print(f"[Reviewer] LLM: {len(llm_passed)}/{len(heuristic_passed)} passed")
             return llm_passed
@@ -542,7 +545,7 @@ class QuestionReviewer:
         try:
             data = _call_llm_json(
                 messages, schema, temperature=0.1,
-                model="gpt-4o-mini", max_output_tokens=1500,
+                model=settings.models.hypothesis_review, max_output_tokens=1500,
                 use_responses_api=False
             )
             

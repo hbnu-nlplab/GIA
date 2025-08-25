@@ -13,8 +13,8 @@ from __future__ import annotations
 from typing import List, Dict, Any, Optional
 import json, os, time, re
 from dataclasses import dataclass
-# from openai import OpenAI
 
+from utils.config_manager import get_settings
 
 try:
     from openai import OpenAI
@@ -32,19 +32,20 @@ class _ClientConfig:
     max_retries: int
 
     @classmethod
-    def from_env(cls) -> "_ClientConfig":
+    def from_settings(cls) -> "_ClientConfig":
+        api = get_settings().api
         return cls(
-            api_key=os.environ.get("OPENAI_API_KEY"),
-            base_url=os.environ.get("OPENAI_BASE_URL"),
-            org_id=os.environ.get("OPENAI_ORG_ID"),
-            project=os.environ.get("OPENAI_PROJECT"),
-            timeout=float(os.environ.get("OPENAI_TIMEOUT_SEC", "60")),
-            max_retries=int(os.environ.get("OPENAI_MAX_RETRIES", "2")),
+            api_key=api.api_key,
+            base_url=api.base_url,
+            org_id=api.org_id,
+            project=api.project,
+            timeout=api.timeout,
+            max_retries=api.max_retries,
         )
 
 
 def _build_client() -> OpenAI:
-    cfg = _ClientConfig.from_env()
+    cfg = _ClientConfig.from_settings()
     if not cfg.api_key:
         raise RuntimeError("OPENAI_API_KEY is not set.")
     return OpenAI(
@@ -159,8 +160,8 @@ def _call_llm_json(
     """
     client = _build_client()
     strict_schema = _ensure_schema_strict(schema)
-    chosen_model = model or os.environ.get("OPENAI_MODEL_PARAPHRASE", "gpt-4o-mini")
-    cfg = _ClientConfig.from_env()
+    chosen_model = model or get_settings().models.paraphrase
+    cfg = _ClientConfig.from_settings()
     attempts = cfg.max_retries + 1
 
     def log_header(api: str):
@@ -341,7 +342,7 @@ def paraphrase_llm(pattern: str, ctx: Dict[str, Any]) -> List[str]:
         {"role": "user", "content": user_msg},
     ]
 
-    model = os.environ.get("OPENAI_MODEL_PARAPHRASE", "gpt-4o-mini")
+    model = get_settings().models.paraphrase
     data = _call_llm_json(messages, schema, temperature=0.6, model=model, max_output_tokens=800, use_responses_api=False)
 
     def same_placeholders(s: str) -> bool:
@@ -437,7 +438,7 @@ def synth_llm(payload: Dict[str, Any]) -> List[Dict[str, Any]]:
 
     ]
 
-    model = os.environ.get("OPENAI_MODEL_SYNTH", "gpt-4o")
+    model = get_settings().models.enhanced_generation
     data = _call_llm_json(
         messages, schema, temperature=0.25, model=model,
         max_output_tokens=2000, use_responses_api=False  # Chat 우선
@@ -513,7 +514,7 @@ def generate_questions_llm(
     try:
         data = _call_llm_json(
             messages, schema, temperature=0.7,
-            model=os.environ.get("OPENAI_MODEL_QUESTION", "gpt-4o-mini"),
+            model=get_settings().models.question_generation,
             max_output_tokens=1200, use_responses_api=False
         )
         
@@ -828,7 +829,7 @@ def parse_intent_llm(question: str, metrics: Iterable[str], hint_metric: str | N
     intent = {"metric": out_metric or "", "scope": scope}
 
     # 선택적 LLM 보강 (환경변수 ON)
-    if os.environ.get("GIA_USE_INTENT_LLM") == "1":
+    if get_settings().features.use_intent_llm:
         schema = {
             "title": "IntentParse",
             "type": "object",
@@ -851,7 +852,7 @@ def parse_intent_llm(question: str, metrics: Iterable[str], hint_metric: str | N
             }, ensure_ascii=False)}
         ]
         try:
-            data = _call_llm_json(messages, schema, temperature=0.0, model=os.environ.get("OPENAI_MODEL_INTENT","gpt-4o-mini"), max_output_tokens=500, use_responses_api=False)
+            data = _call_llm_json(messages, schema, temperature=0.0, model=get_settings().models.intent_parsing, max_output_tokens=500, use_responses_api=False)
             if isinstance(data, dict):
                 msel = data.get("metric")
                 if isinstance(msel, str) and msel in metrics_list:
@@ -871,7 +872,7 @@ def review_hypotheses_llm(hypotheses: List[Dict[str, Any]], capabilities: Dict[s
     """
     if not hypotheses:
         return []
-    if os.environ.get("GIA_DISABLE_HYPO_REVIEW") == "1":
+    if get_settings().features.disable_hypo_review:
         return [
             {"hypothesis_index": i, "total_score": 100, "is_recommended": True, "justification": "disabled"}
             for i,_ in enumerate(hypotheses)
@@ -912,7 +913,7 @@ def review_hypotheses_llm(hypotheses: List[Dict[str, Any]], capabilities: Dict[s
     ]
 
     try:
-        data = _call_llm_json(messages, schema, temperature=0.0, model=os.environ.get("OPENAI_MODEL_HYPO_REVIEW","gpt-4o-mini"), max_output_tokens=1200, use_responses_api=False)
+        data = _call_llm_json(messages, schema, temperature=0.0, model=get_settings().models.hypothesis_review, max_output_tokens=1200, use_responses_api=False)
         if isinstance(data, list):
             # total_score 누락 시 합산
             for it in data:
