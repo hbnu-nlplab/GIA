@@ -188,7 +188,7 @@ class AnswerAgent:
         if num_match:
             try:
                 return int(num_match.group(1))
-            except Exception:
+            except ValueError:
                 pass
 
         if isinstance(eval_targets, dict):
