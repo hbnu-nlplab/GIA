@@ -28,7 +28,7 @@ features:
 
 generation:
   basic_questions_per_category: 50    # 카테고리별 규칙 기반(베이직) 질문 생성 수
-  enhanced_questions_per_category: 40 # 카테고리별 고도화 LLM 질문 생성 수
+  enhanced_questions_per_category: 80 # 카테고리별 고도화 LLM 질문 생성 수
 
 logging:
   level: "INFO"   # 로그 레벨(DEBUG/INFO/WARNING/ERROR)

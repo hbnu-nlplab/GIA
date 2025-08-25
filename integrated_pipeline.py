@@ -80,7 +80,10 @@ class PipelineConfig:
             self.target_personas = [
                 PersonaType.NETWORK_ENGINEER,
                 PersonaType.SECURITY_AUDITOR,
-                PersonaType.NOC_OPERATOR
+                PersonaType.NOC_OPERATOR,
+                PersonaType.ARCHITECT,
+                PersonaType.TROUBLESHOOTER,
+                PersonaType.COMPLIANCE_OFFICER
             ]
 
 
@@ -643,15 +646,12 @@ class NetworkConfigDatasetGenerator:
                 numbers = re.findall(r"\d+", str(gt))
                 sample.ground_truth = numbers[0] if numbers else "0"
 
-        # 상태/여부 질문 -> 정규화
-        elif any(word in question_lower for word in ["상태", "여부", "적절", "정상"]):
-            gt_str = str(gt).lower()
-            if any(token in gt_str for token in ["정상", "ok", "true"]):
-                sample.ground_truth = "정상"
-            elif any(token in gt_str for token in ["비정상", "false", "문제"]):
-                sample.ground_truth = "비정상"
+        # 명령어 질문 -> 개행 구분
+        elif "명령어" in question_lower or "cli" in question_lower:
+            if isinstance(gt, list):
+                sample.ground_truth = "\n".join(gt)
             else:
-                sample.ground_truth = "알 수 없음"
+                sample.ground_truth = str(gt).strip()
 
         # 목록 질문 -> 공백 구분 문자열
         elif any(word in question_lower for word in ["목록", "리스트", "장비들"]):
@@ -663,17 +663,23 @@ class NetworkConfigDatasetGenerator:
 
         # IP/장비명 등 단일 값
         elif any(word in question_lower for word in ["ip", "주소", "장비", "호스트"]):
-            if isinstance(gt, list) and len(gt) == 1:
-                sample.ground_truth = str(gt[0])
-            elif isinstance(gt, str):
-                sample.ground_truth = gt.strip()
-
-        # 명령어 질문 -> 개행 구분
-        elif "명령어" in question_lower or "cli" in question_lower:
             if isinstance(gt, list):
-                sample.ground_truth = "\n".join(gt)
+                if gt:  # 리스트가 비어있지 않은 경우
+                    # 단일 값을 기대하므로 첫 번째 요소만 사용합니다.
+                    sample.ground_truth = str(gt[0]).strip()
             else:
+                # 문자열, 숫자 등 다른 타입은 문자열로 변환합니다.
                 sample.ground_truth = str(gt).strip()
+
+        # 상태/여부 질문 -> 정규화
+        elif any(word in question_lower for word in ["상태", "여부", "적절", "정상"]):
+            gt_str = str(gt).lower()
+            if any(token in gt_str for token in ["정상", "ok", "true"]):
+                sample.ground_truth = "정상"
+            elif any(token in gt_str for token in ["비정상", "false", "문제"]):
+                sample.ground_truth = "비정상"
+            else:
+                sample.ground_truth = "알 수 없음"
 
         # 복잡한 객체 -> 주요 정보만 추출
         elif isinstance(gt, dict):
@@ -685,7 +691,6 @@ class NetworkConfigDatasetGenerator:
                 sample.ground_truth = next(iter(gt.values()))
             else:
                 sample.ground_truth = "; ".join(f"{k}: {v}" for k, v in gt.items())
-
         return sample
     
     def _execute_stage_evaluation(self, samples: List[DatasetSample]) -> Dict[str, Any]:
@@ -1122,8 +1127,8 @@ def main():
         xml_data_dir="XML_Data",
         policies_path=policies_path,
         target_categories=all_categories,  # 모든 카테고리 자동 포함
-        basic_questions_per_category=6,
-        enhanced_questions_per_category=5,
+        basic_questions_per_category=10,
+        enhanced_questions_per_category=15,
         target_complexities=[
             QuestionComplexity.ANALYTICAL,    # 분석적 추론
             QuestionComplexity.DIAGNOSTIC,    # 문제 진단
@@ -1132,7 +1137,10 @@ def main():
         target_personas=[
             PersonaType.NETWORK_ENGINEER,
             PersonaType.SECURITY_AUDITOR,
-            PersonaType.NOC_OPERATOR
+            PersonaType.NOC_OPERATOR,
+            PersonaType.ARCHITECT,
+            PersonaType.TROUBLESHOOTER,
+            PersonaType.COMPLIANCE_OFFICER
         ],
         output_dir="output_dataset"
     )
