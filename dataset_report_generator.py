@@ -518,7 +518,8 @@ body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;color:#222;background:#f6f8f
                     {
                         "id": item.get("id"),
                         "question": item.get("question"),
-                        "answer": item.get("answer"),
+                        "ground_truth": item.get("ground_truth"),
+                        "explanation": item.get("explanation"),
                         "context": item.get("context"),
                         "answer_type": item.get("answer_type"),
                         "category": item.get("category"),
@@ -575,7 +576,7 @@ body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;color:#222;background:#f6f8f
     if (fType.value && sample.answer_type !== fType.value) return false;
     if (fPersona.value && sample.persona !== fPersona.value) return false;
     if (t) {
-      const hay = [sample.id, sample.question, sample.answer, sample.context].map(x => (x||'').toLowerCase());
+      const hay = [sample.id, sample.question, sample.ground_truth, sample.context].map(x => (x||'').toLowerCase());
       if (!hay.some(x => x.includes(t))) return false;
     }
     return true;
@@ -606,7 +607,7 @@ body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;color:#222;background:#f6f8f
       <div class="q">
         <div class="q-title">❓ ${s.question || '(질문 없음)'} </div>
         ${s.context ? `<div class="small" style="white-space:pre-wrap;margin:6px 0 10px">${s.context}</div>` : ''}
-        ${s.answer ? `<div style="white-space:pre-wrap">${s.answer}</div>` : ''}
+        ${s.explanation ? `<div style="white-space:pre-wrap">${s.explanation}</div>` : ''}
         <div class="meta">${meta}</div>
       </div>`;
     }).join('');

@@ -188,8 +188,8 @@ plan = [
     {"step": 2, "required_metric": "ssh_enabled_devices"}
 ]
 
-answer = agent.execute_plan("SSH 설정 상태는?", plan)
-print(answer)
+result = agent.execute_plan("SSH 설정 상태는?", plan)
+print(result)
 ```
 
 ---
