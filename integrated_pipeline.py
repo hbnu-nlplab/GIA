@@ -438,6 +438,74 @@ class NetworkConfigDatasetGenerator:
         command_agent = CommandAgent(network_facts)
         enhanced_samples: List[DatasetSample] = []
 
+        # CommandAgent에서 지원하는 intent 목록
+        valid_command_intents = {
+            "show_bgp_summary", "show_ip_interface_brief", "show_ip_route_ospf",
+            "show_processes_cpu", "show_l2vpn_vc", "show_ip_ospf_neighbor",
+            "show_users", "show_logging", "ssh_direct_access", "set_static_route",
+            "set_bgp_routemap", "set_interface_description", "create_vrf_and_assign",
+            "set_ospf_cost", "set_vty_acl", "set_hostname", "ssh_proxy_jump",
+            "ssh_multihop_jump", "check_connectivity", "show_bgp_neighbor_detail",
+            "show_bgp_neighbors", "show_log_include", "show_interface_status",
+            "show_vrf", "show_route_table", "show_ospf_database", "show_l2vpn_status"
+        }
+
+        def normalize_steps(steps: List[Dict[str, Any]]) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+            """Normalize reasoning steps by mapping intents or separating non-command steps."""
+            command_steps: List[Dict[str, Any]] = []
+            non_command_steps: List[Dict[str, Any]] = []
+
+            keyword_intent_map = {
+                "bgp neighbor detail": "show_bgp_neighbor_detail",
+                "bgp neighbors": "show_bgp_neighbors",
+                "bgp": "show_bgp_summary",
+                "interface brief": "show_ip_interface_brief",
+                "ospf neighbor": "show_ip_ospf_neighbor",
+                "ospf database": "show_ospf_database",
+                "ospf": "show_ip_route_ospf",
+                "cpu": "show_processes_cpu",
+                "l2vpn status": "show_l2vpn_status",
+                "l2vpn": "show_l2vpn_vc",
+                "users": "show_users",
+                "logging": "show_logging",
+                "static route": "set_static_route",
+                "routemap": "set_bgp_routemap",
+                "interface description": "set_interface_description",
+                "create vrf": "create_vrf_and_assign",
+                "ospf cost": "set_ospf_cost",
+                "vty acl": "set_vty_acl",
+                "hostname": "set_hostname",
+                "ssh proxy": "ssh_proxy_jump",
+                "ssh jump": "ssh_multihop_jump",
+                "ssh": "ssh_direct_access",
+                "connectivity": "check_connectivity",
+                "log include": "show_log_include",
+                "interface status": "show_interface_status",
+                "vrf": "show_vrf",
+                "route table": "show_route_table",
+            }
+
+            for step in steps:
+                if not isinstance(step, dict):
+                    non_command_steps.append(step)
+                    continue
+
+                intent = step.get("intent")
+                if not intent:
+                    text = f"{step.get('required_metric', '')} {step.get('description', '')}".lower()
+                    for keyword, mapped_intent in keyword_intent_map.items():
+                        if keyword in text:
+                            intent = mapped_intent
+                            step["intent"] = intent
+                            break
+
+                if intent in valid_command_intents:
+                    command_steps.append(step)
+                else:
+                    non_command_steps.append(step)
+
+            return command_steps, non_command_steps
+
         for eq in reviewed_questions:
             # Handle string entries (malformed LLM output)
             if isinstance(eq, str):
@@ -454,31 +522,14 @@ class NetworkConfigDatasetGenerator:
             if not question_text or not reasoning_plan:
                 continue
 
-            # reasoning_plan의 step들이 dict이고 유효한 command intent가 있는지 확인
-            has_valid_command_intents = False
             if isinstance(reasoning_plan, list):
-                # CommandAgent에서 지원하는 intent 목록
-                valid_command_intents = {
-                    "show_bgp_summary", "show_ip_interface_brief", "show_ip_route_ospf", 
-                    "show_processes_cpu", "show_l2vpn_vc", "show_ip_ospf_neighbor", 
-                    "show_users", "show_logging", "ssh_direct_access", "set_static_route", 
-                    "set_bgp_routemap", "set_interface_description", "create_vrf_and_assign", 
-                    "set_ospf_cost", "set_vty_acl", "set_hostname", "ssh_proxy_jump", 
-                    "ssh_multihop_jump", "check_connectivity", "show_bgp_neighbor_detail", 
-                    "show_bgp_neighbors", "show_log_include", "show_interface_status", 
-                    "show_vrf", "show_route_table", "show_ospf_database", "show_l2vpn_status"
-                }
-                
-                has_valid_command_intents = all(
-                    isinstance(step, dict) and 
-                    step.get("intent") in valid_command_intents
-                    for step in reasoning_plan 
-                    if isinstance(step, dict) and step.get("intent")
-                )
-            
-            if has_valid_command_intents:
+                command_steps, non_command_steps = normalize_steps(reasoning_plan)
+            else:
+                command_steps, non_command_steps = [], []
+
+            if command_steps and not non_command_steps:
                 commands = []
-                for step in reasoning_plan:
+                for step in command_steps:
                     try:
                         intent = step.get("intent")
                         params = step.get("params", {})
@@ -521,9 +572,34 @@ class NetworkConfigDatasetGenerator:
                     },
                 )
             else:
-                result = answer_agent.execute_plan(question_text, reasoning_plan)
+                # AnswerAgent로 처리할 단계
+                plan_for_answer = non_command_steps or reasoning_plan
+                result = answer_agent.execute_plan(question_text, plan_for_answer)
                 final_answer = result.get("ground_truth")
                 explanation = result.get("explanation", "")
+
+                if command_steps:
+                    commands = []
+                    for step in command_steps:
+                        try:
+                            intent = step.get("intent")
+                            params = step.get("params", {})
+                            if intent == "set_bgp_routemap" and "asn" not in params:
+                                params["asn"] = "65000"
+                            if intent == "ssh_direct_access" and "user" not in params:
+                                params["user"] = "admin"
+                            if intent == "ssh_direct_access" and "host" not in params:
+                                params["host"] = "192.168.1.1"
+                            command = command_agent.generate(intent, params)
+                            commands.append(command)
+                        except Exception as e:
+                            self.logger.warning(
+                                f"명령어 생성 실패 - intent: {intent}, params: {params}, error: {e}"
+                            )
+                            commands.append(f"# ERROR: Failed to generate command for {intent}")
+                    if commands:
+                        final_answer = "\n".join(commands + [str(final_answer)])
+
                 sample = DatasetSample(
                     id=f"ENHANCED_{eq.get('test_id', 'ENH')}",
                     question=question_text,
