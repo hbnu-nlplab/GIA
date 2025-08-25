@@ -586,29 +586,32 @@ class NetworkConfigDatasetGenerator:
     
     def _execute_stage_validation(self, samples: List[DatasetSample]) -> List[DatasetSample]:
         """5단계: 검증 및 품질 관리"""
-        self.logger.info("5단계: 데이터 검증 및 품질 관리")
-        
+        self.logger.info("5단계: 데이터 검증 및 답변 형식 표준화")
+
         validated_samples = []
         rejected_count = 0
-        
+
         for sample in samples:
             # 기본 품질 체크
             if not self._validate_sample_quality(sample):
                 rejected_count += 1
                 continue
-            
+
+            # Ground truth 표준화
+            sample = self._standardize_ground_truth(sample)
+
             # Answer type 재분류
             sample.answer_type = self._reclassify_answer_type(sample)
-            
+
             # Context 및 메타데이터 보완
             sample = self._enrich_sample_metadata(sample)
             # 업무 분류 태깅
             sample.metadata["task_category"] = assign_task_category(sample)
 
             validated_samples.append(sample)
-        
+
         self.logger.info(f"검증 완료: {len(validated_samples)}개 통과, {rejected_count}개 거부")
-        
+
         self.stage_results[PipelineStage.VALIDATION] = {
             "validated_count": len(validated_samples),
             "rejected_count": rejected_count,
@@ -616,11 +619,74 @@ class NetworkConfigDatasetGenerator:
             "long_answer_count": len([s for s in validated_samples if s.answer_type == "long"]),
             "success": True
         }
-        
+
         if self.config.save_intermediate:
             self._save_intermediate("validated_dataset.json", [asdict(s) for s in validated_samples])
-        
+
         return validated_samples
+
+    def _standardize_ground_truth(self, sample: DatasetSample) -> DatasetSample:
+        """Ground truth를 평가하기 쉬운 형식으로 표준화"""
+
+        question_lower = sample.question.lower()
+        gt = sample.ground_truth
+
+        # 개수/숫자 질문 -> 숫자만
+        if any(word in question_lower for word in ["수는", "개수", "몇 개"]):
+            if isinstance(gt, (list, dict)):
+                sample.ground_truth = str(len(gt))
+            elif isinstance(gt, int):
+                sample.ground_truth = str(gt)
+            elif isinstance(gt, str) and gt.isdigit():
+                sample.ground_truth = gt
+            else:
+                numbers = re.findall(r"\d+", str(gt))
+                sample.ground_truth = numbers[0] if numbers else "0"
+
+        # 상태/여부 질문 -> 정규화
+        elif any(word in question_lower for word in ["상태", "여부", "적절", "정상"]):
+            gt_str = str(gt).lower()
+            if any(token in gt_str for token in ["정상", "ok", "true"]):
+                sample.ground_truth = "정상"
+            elif any(token in gt_str for token in ["비정상", "false", "문제"]):
+                sample.ground_truth = "비정상"
+            else:
+                sample.ground_truth = "알 수 없음"
+
+        # 목록 질문 -> 공백 구분 문자열
+        elif any(word in question_lower for word in ["목록", "리스트", "장비들"]):
+            if isinstance(gt, list):
+                sample.ground_truth = " ".join(sorted(str(item).strip() for item in gt))
+            elif isinstance(gt, str):
+                items = re.split(r"[\s,\n]+", gt)
+                sample.ground_truth = " ".join(sorted(item for item in items if item))
+
+        # IP/장비명 등 단일 값
+        elif any(word in question_lower for word in ["ip", "주소", "장비", "호스트"]):
+            if isinstance(gt, list) and len(gt) == 1:
+                sample.ground_truth = str(gt[0])
+            elif isinstance(gt, str):
+                sample.ground_truth = gt.strip()
+
+        # 명령어 질문 -> 개행 구분
+        elif "명령어" in question_lower or "cli" in question_lower:
+            if isinstance(gt, list):
+                sample.ground_truth = "\n".join(gt)
+            else:
+                sample.ground_truth = str(gt).strip()
+
+        # 복잡한 객체 -> 주요 정보만 추출
+        elif isinstance(gt, dict):
+            if "status" in gt:
+                sample.ground_truth = gt["status"]
+            elif "result" in gt:
+                sample.ground_truth = gt["result"]
+            elif len(gt) == 1:
+                sample.ground_truth = next(iter(gt.values()))
+            else:
+                sample.ground_truth = "; ".join(f"{k}: {v}" for k, v in gt.items())
+
+        return sample
     
     def _execute_stage_evaluation(self, samples: List[DatasetSample]) -> Dict[str, Any]:
         """6단계: 평가 메트릭 계산 (자가 평가)"""
