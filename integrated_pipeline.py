@@ -273,14 +273,113 @@ class NetworkConfigDatasetGenerator:
                 basic_samples.append(sample)
 
         for idx, item in enumerate(command_items):
-            intent = item.get('intent', {})
-            metric = intent.get('metric', '')
-            params = intent.get('params', {})
+            # Check if this is from _generate_command_questions (has proper params) or DSL-style
+            if 'intent' in item and 'params' in item['intent'] and item['intent']['params']:
+                # This is from _generate_command_questions - has proper params
+                intent = item.get('intent', {})
+                metric = intent.get('metric', '')
+                params = intent.get('params', {})
+            else:
+                # This is DSL-style - need to generate params from network facts
+                intent = item.get('intent', {})
+                metric = intent.get('metric', '')
+                
+                # Generate parameters similar to _generate_command_questions
+                devices = network_facts.get("devices", [])
+                first_device = devices[0] if devices else {}
+                host = (
+                    first_device.get("system", {}).get("hostname")
+                    or first_device.get("name")
+                    or first_device.get("file")
+                    or "device1"
+                )
+                
+                # Get interfaces and BGP info
+                interfaces = first_device.get("interfaces") or [{}]
+                interface = interfaces[0].get("name", "GigabitEthernet0/0")
+                bgp = first_device.get("routing", {}).get("bgp", {})
+                asn = bgp.get("local_as", 65000)
+                neighbors = bgp.get("neighbors") or [{}]
+                neighbor_ip = neighbors[0].get("id") or neighbors[0].get("ip") or "2.2.2.2"
+                
+                # Create comprehensive params based on metric type
+                params_base = {
+                    "host": host,
+                    "interface": interface,
+                    "asn": asn,
+                    "neighbor_ip": neighbor_ip,
+                    "user": "admin",
+                    "prefix": "192.0.2.0",
+                    "mask": "255.255.255.0",
+                    "next_hop": "10.0.0.1",
+                    "map_name": "RM_OUT",
+                    "description": "Uplink to core",
+                    "vrf_name": "CUSTOMER_A",
+                    "process_id": 1,
+                    "cost": 100,
+                    "acl_name": "SSH_ONLY",
+                    "new_hostname": f"{host}-NEW",
+                    "jump_host": "jumphost",
+                    "destination_host": host,
+                }
+                
+                # Metric-specific parameter selection
+                if metric == "cmd_ssh_direct_access":
+                    params = {"user": params_base["user"], "host": host}
+                elif metric == "cmd_set_static_route":
+                    params = {
+                        "host": host,
+                        "prefix": params_base["prefix"],
+                        "mask": params_base["mask"],
+                        "next_hop": params_base["next_hop"],
+                    }
+                elif metric == "cmd_set_bgp_routemap":
+                    params = {
+                        "host": host,
+                        "asn": asn,
+                        "neighbor_ip": neighbor_ip,
+                        "map_name": params_base["map_name"],
+                    }
+                elif metric == "cmd_set_interface_description":
+                    params = {
+                        "host": host,
+                        "interface": interface,
+                        "description": params_base["description"],
+                    }
+                elif metric == "cmd_create_vrf_and_assign":
+                    params = {
+                        "host": host,
+                        "vrf_name": params_base["vrf_name"],
+                        "interface": interface,
+                    }
+                elif metric == "cmd_ssh_proxy_jump":
+                    hosts = [(
+                        d.get("system", {}).get("hostname")
+                        or d.get("name")
+                        or d.get("file")
+                        or host
+                    ) for d in devices]
+                    jump_host = hosts[1] if len(hosts) > 1 else "jumphost"
+                    dest_host = hosts[2] if len(hosts) > 2 else host
+                    params = {
+                        "user": params_base["user"],
+                        "jump_host": jump_host,
+                        "destination_host": dest_host,
+                    }
+                else:
+                    params = {"host": host}
+            
             if metric.startswith('cmd_'):
                 metric_name = metric[4:]
             else:
                 metric_name = metric
-            command = command_agent.generate(metric_name, params)
+                
+            try:
+                command = command_agent.generate(metric_name, params)
+            except KeyError as e:
+                self.logger.error(f"Missing parameter {e} for metric {metric_name}. Available params: {list(params.keys())}")
+                continue
+                
             gt, expl = self._format_answer({"ground_truth": command, "explanation": ""})
             sample = DatasetSample(
                 id=f"BASIC_CMD_{idx}",
@@ -428,14 +527,25 @@ class NetworkConfigDatasetGenerator:
         # 기초 + 심화 질문 통합
         all_samples = basic_samples + enhanced_samples
         
-        # 중복 제거 (질문 내용 기준)
-        seen_questions = set()
+        # 중복 제거 (질문 + 장비/컨텍스트 조합 기준으로 완화)
+        seen_combinations = set()
         deduplicated_samples = []
         
         for sample in all_samples:
+            # 질문 + 주요 장비/컨텍스트 정보로 고유성 판단
             question_normalized = sample.question.lower().strip()
-            if question_normalized not in seen_questions:
-                seen_questions.add(question_normalized)
+            context_key = sample.context[:100] if sample.context else ""
+            source_files_key = str(sample.source_files) if sample.source_files else ""
+            
+            # 복합 키로 중복 판단 (장비가 다르면 같은 질문이어도 허용)
+            combination_key = (
+                question_normalized,
+                context_key,
+                source_files_key
+            )
+            
+            if combination_key not in seen_combinations:
+                seen_combinations.add(combination_key)
                 deduplicated_samples.append(sample)
             else:
                 self.logger.debug(f"중복 질문 제거: {sample.question[:50]}...")
@@ -923,23 +1033,35 @@ class NetworkConfigDatasetGenerator:
 def main():
     """메인 실행 함수"""
     
+    # policies.json에서 모든 카테고리 자동 추출
+    def get_all_categories(policies_path: str) -> List[str]:
+        """policies.json에서 모든 카테고리 추출"""
+        import json
+        with open(policies_path, 'r', encoding='utf-8') as f:
+            policies_data = json.load(f)
+        
+        categories = set()
+        for policy in policies_data.get("policies", []):
+            category = policy.get("category")
+            if category:
+                categories.add(category)
+        
+        return sorted(list(categories))
+    
     # 설정
+    policies_path = "policies/policies.json"
+    all_categories = get_all_categories(policies_path)
+    
     config = PipelineConfig(
         xml_data_dir="XML_Data",
-        policies_path="policies/policies.json",
-        target_categories=[
-            "BGP_Consistency",
-            "VRF_Consistency", 
-            "Security_Policy",
-            "L2VPN_Consistency",
-            "OSPF_Consistency"
-        ],
+        policies_path=policies_path,
+        target_categories=all_categories,  # 모든 카테고리 자동 포함
         basic_questions_per_category=6,
         enhanced_questions_per_category=5,
         target_complexities=[
-        QuestionComplexity.ANALYTICAL,    # 분석적 추론
-        QuestionComplexity.DIAGNOSTIC,    # 문제 진단
-        QuestionComplexity.SCENARIO      # 시나리오 기반
+            QuestionComplexity.ANALYTICAL,    # 분석적 추론
+            QuestionComplexity.DIAGNOSTIC,    # 문제 진단
+            QuestionComplexity.SCENARIO      # 시나리오 기반
         ],
         target_personas=[
             PersonaType.NETWORK_ENGINEER,
@@ -948,6 +1070,9 @@ def main():
         ],
         output_dir="output_dataset"
     )
+    
+    # 추출된 카테고리 로그 출력
+    print(f"자동 추출된 카테고리: {all_categories}")
     
     # 데이터셋 생성기 초기화 및 실행
     generator = NetworkConfigDatasetGenerator(config)
@@ -967,6 +1092,6 @@ def main():
         print(f"데이터셋 생성 실패: {e}")
         raise
 
-
 if __name__ == "__main__":
     main()
+    

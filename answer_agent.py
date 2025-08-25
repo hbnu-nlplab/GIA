@@ -85,10 +85,12 @@ class AnswerAgent:
     ) -> Tuple[Any, str]:
         """Handle text-based reasoning plans."""
         potential_metrics = [
-            "ssh_missing_count", "ssh_all_enabled_bool", "ssh_enabled_devices",
-            "ibgp_missing_pairs_count", "ibgp_fullmesh_ok",
-            "vrf_without_rt_count", "l2vpn_unidir_count",
-            "bgp_inconsistent_as_count", "aaa_enabled_devices"
+            # 실제 구현된 메트릭들만 포함
+            "ssh_missing_count", "ssh_enabled_devices", "ssh_missing_devices",
+            "ibgp_missing_pairs_count", "ibgp_fullmesh_ok", "ibgp_missing_pairs",
+            "vrf_without_rt_count", "vrf_without_rt_pairs", "l2vpn_unidir_count",
+            "aaa_enabled_devices", "aaa_missing_devices", "ssh_present_bool",
+            "bgp_neighbor_count", "interface_count", "ospf_area0_if_count"
         ]
 
         relevant_metrics: List[str] = []
@@ -96,15 +98,19 @@ class AnswerAgent:
 
         question_lower = question.lower()
         if "ssh" in question_lower:
-            relevant_metrics.extend(["ssh_missing_count", "ssh_enabled_devices", "ssh_all_enabled_bool"])
+            relevant_metrics.extend(["ssh_missing_count", "ssh_enabled_devices", "ssh_missing_devices", "ssh_present_bool"])
         if "bgp" in question_lower:
-            relevant_metrics.extend(["ibgp_missing_pairs_count", "ibgp_fullmesh_ok", "bgp_inconsistent_as_count"])
+            relevant_metrics.extend(["ibgp_missing_pairs_count", "ibgp_fullmesh_ok", "ibgp_missing_pairs", "bgp_neighbor_count"])
         if "vrf" in question_lower:
-            relevant_metrics.extend(["vrf_without_rt_count"])
+            relevant_metrics.extend(["vrf_without_rt_count", "vrf_without_rt_pairs"])
         if "aaa" in question_lower:
-            relevant_metrics.extend(["aaa_enabled_devices"])
+            relevant_metrics.extend(["aaa_enabled_devices", "aaa_missing_devices"])
         if "l2vpn" in question_lower:
             relevant_metrics.extend(["l2vpn_unidir_count"])
+        if "interface" in question_lower or "인터페이스" in question_lower:
+            relevant_metrics.extend(["interface_count"])
+        if "ospf" in question_lower:
+            relevant_metrics.extend(["ospf_area0_if_count"])
 
         if not relevant_metrics:
             relevant_metrics = ["ssh_enabled_devices", "ibgp_missing_pairs_count"]
@@ -264,18 +270,113 @@ class AnswerAgent:
 
     def _translate_metric_name(self, metric_name: str) -> str:
         translations = {
+            # SSH 관련
             'ssh_enabled_devices': 'SSH 활성화된 장비',
+            'ssh_missing_devices': 'SSH 미설정 장비',
             'ssh_missing_count': 'SSH 미설정 장비 수',
             'ssh_all_enabled_bool': 'SSH 전체 활성화 여부',
-            'ibgp_missing_pairs_count': 'iBGP 누락 페어 수',
+            'ssh_present_bool': 'SSH 설정 존재 여부',
+            'ssh_version_text': 'SSH 버전',
+            'ssh_acl_applied_check': 'SSH ACL 적용 여부',
+            
+            # BGP 관련
             'ibgp_fullmesh_ok': 'iBGP 풀메시 정상 여부',
+            'ibgp_missing_pairs': 'iBGP 누락 페어',
+            'ibgp_missing_pairs_count': 'iBGP 누락 페어 수',
+            'ibgp_under_peered_devices': 'iBGP 피어 부족 장비',
+            'ibgp_under_peered_count': 'iBGP 피어 부족 장비 수',
+            'neighbor_list_ibgp': 'iBGP 이웃 목록',
+            'neighbor_list_ebgp': 'eBGP 이웃 목록',
+            'ebgp_remote_as_map': 'eBGP 원격 AS 매핑',
+            'ibgp_update_source_missing_set': 'iBGP 업데이트 소스 누락',
+            'bgp_local_as_numeric': 'BGP 로컬 AS 번호',
+            'bgp_neighbor_count': 'BGP 이웃 수',
             'bgp_inconsistent_as_count': 'BGP AS 불일치 수',
-            'aaa_enabled_devices': 'AAA 활성화된 장비',
-            'vrf_without_rt_count': 'RT 미설정 VRF 수',
-            'l2vpn_unidir_count': '단방향 L2VPN 수',
             'bgp_peer_count': 'BGP 피어 수',
+            'bgp_advertised_prefixes_list': 'BGP 광고 프리픽스 목록',
+            
+            # VRF 관련
+            'vrf_rd_map': 'VRF RD 매핑',
+            'vrf_rt_list_per_device': 'VRF RT 목록',
+            'vrf_without_rt_pairs': 'RT 미설정 VRF 쌍',
+            'vrf_without_rt_count': 'RT 미설정 VRF 수',
+            'vrf_interface_bind_count': 'VRF 인터페이스 바인딩 수',
+            'vrf_rd_format_invalid_set': 'RD 형식 오류 VRF',
+            'vrf_bind_map': 'VRF 바인딩 매핑',
+            'vrf_names_set': 'VRF 이름 목록',
+            'vrf_count': 'VRF 개수',
+            
+            # L2VPN 관련
+            'l2vpn_pairs': 'L2VPN 페어',
+            'l2vpn_unidirectional_pairs': '단방향 L2VPN 페어',
+            'l2vpn_unidir_count': '단방향 L2VPN 수',
+            'l2vpn_pwid_mismatch_pairs': 'PW-ID 불일치 L2VPN 페어',
+            'l2vpn_mismatch_count': 'L2VPN 불일치 수',
+            'l2vpn_pw_id_set': 'L2VPN PW-ID 목록',
+            
+            # OSPF 관련
+            'ospf_proc_ids': 'OSPF 프로세스 ID',
+            'ospf_area0_if_list': 'OSPF Area 0 인터페이스 목록',
+            'ospf_area0_if_count': 'OSPF Area 0 인터페이스 수',
+            'ospf_area_set': 'OSPF 영역 목록',
+            'ospf_area_count': 'OSPF 영역 수',
+            'ospf_process_ids_set': 'OSPF 프로세스 ID 목록',
+            
+            # AAA 관련
+            'aaa_enabled_devices': 'AAA 활성화된 장비',
+            'aaa_missing_devices': 'AAA 미설정 장비',
+            'aaa_present_bool': 'AAA 설정 존재 여부',
+            'password_policy_present_bool': '패스워드 정책 존재 여부',
+            
+            # 인터페이스 관련
             'interface_count': '인터페이스 수',
-            'ospf_area_count': 'OSPF 영역 수'
+            'interface_ip_map': '인터페이스 IP 매핑',
+            'interface_vlan_set': 'VLAN 목록',
+            'subinterface_count': '서브인터페이스 수',
+            'interface_mop_xenabled_bool': 'MOP xenabled 설정',
+            
+            # 시스템 관련
+            'system_hostname_text': '호스트네임',
+            'system_version_text': '시스템 버전',
+            'system_timezone_text': '시간대',
+            'system_user_count': '시스템 사용자 수',
+            'system_user_list': '시스템 사용자 목록',
+            'system_mgmt_address_text': '관리 IP 주소',
+            'system_users_detail_map': '시스템 사용자 상세',
+            'ios_config_register_text': 'Config Register 값',
+            'logging_buffered_severity_text': '로깅 버퍼 심각도',
+            'http_server_enabled_bool': 'HTTP 서버 활성화',
+            'ip_forward_protocol_nd_bool': 'IP Forward Protocol ND',
+            'ip_cef_enabled_bool': 'IP CEF 활성화',
+            'vty_first_last_text': 'VTY 라인 범위',
+            'vty_login_mode_text': 'VTY 로그인 모드',
+            'vty_password_secret_text': 'VTY 패스워드 시크릿',
+            'vty_transport_input_text': 'VTY 전송 입력',
+            
+            # 서비스 관련
+            'mpls_ldp_present_bool': 'MPLS LDP 존재 여부',
+            'rt_export_count': 'RT Export 수',
+            'rt_import_count': 'RT Import 수',
+            'qos_policer_applied_interfaces_list': 'QoS Policer 적용 인터페이스',
+            
+            # 명령어 관련
+            'cmd_show_bgp_summary': 'BGP 요약 명령어',
+            'cmd_show_ip_interface_brief': 'IP 인터페이스 요약 명령어',
+            'cmd_show_ip_route_ospf': 'OSPF 라우팅 테이블 명령어',
+            'cmd_show_processes_cpu': 'CPU 프로세스 명령어',
+            'cmd_show_l2vpn_vc': 'L2VPN VC 명령어',
+            'cmd_show_ip_ospf_neighbor': 'OSPF 이웃 명령어',
+            'cmd_show_users': '사용자 목록 명령어',
+            'cmd_show_logging': '로깅 명령어',
+            'cmd_ssh_direct_access': 'SSH 직접 접속 명령어',
+            'cmd_set_static_route': '정적 라우팅 설정 명령어',
+            'cmd_set_bgp_routemap': 'BGP 라우트맵 설정 명령어',
+            'cmd_set_interface_description': '인터페이스 설명 설정 명령어',
+            'cmd_create_vrf_and_assign': 'VRF 생성 및 할당 명령어',
+            'cmd_set_ospf_cost': 'OSPF 비용 설정 명령어',
+            'cmd_set_vty_acl': 'VTY ACL 설정 명령어',
+            'cmd_set_hostname': '호스트네임 설정 명령어',
+            'cmd_ssh_proxy_jump': 'SSH 프록시 점프 명령어',
         }
         return translations.get(metric_name, metric_name)
 

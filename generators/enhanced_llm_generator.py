@@ -467,10 +467,28 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
 **중요: reasoning_plan 작성 가이드라인**
 
 사용 가능한 메트릭들:
-- ssh_enabled_devices, ssh_missing_count, ssh_all_enabled_bool
-- ibgp_missing_pairs_count, ibgp_fullmesh_ok, bgp_inconsistent_as_count  
-- aaa_enabled_devices, vrf_without_rt_count, l2vpn_unidir_count
-- bgp_peer_count, interface_count, ospf_area_count
+**[보안 관련]**
+- ssh_enabled_devices, ssh_missing_devices, ssh_missing_count, ssh_present_bool, ssh_version_text
+- aaa_enabled_devices, aaa_missing_devices, aaa_present_bool, password_policy_present_bool
+- ssh_acl_applied_check
+
+**[BGP 관련]**
+- ibgp_fullmesh_ok, ibgp_missing_pairs, ibgp_missing_pairs_count, ibgp_under_peered_count
+- neighbor_list_ibgp, neighbor_list_ebgp, ebgp_remote_as_map, bgp_local_as_numeric, bgp_neighbor_count
+
+**[VRF/L3VPN 관련]**
+- vrf_rd_map, vrf_rt_list_per_device, vrf_without_rt_pairs, vrf_without_rt_count
+- vrf_interface_bind_count, vrf_count, vrf_names_set
+
+**[L2VPN 관련]**
+- l2vpn_pairs, l2vpn_unidirectional_pairs, l2vpn_unidir_count, l2vpn_pwid_mismatch_pairs, l2vpn_mismatch_count
+
+**[OSPF 관련]**
+- ospf_proc_ids, ospf_area0_if_list, ospf_area0_if_count, ospf_area_set, ospf_process_ids_set
+
+**[인터페이스/시스템 관련]**
+- interface_count, interface_ip_map, interface_vlan_set, subinterface_count, vrf_bind_map
+- system_hostname_text, system_version_text, system_user_count, system_timezone_text
 
 각 reasoning_plan 단계는 반드시 다음을 포함해야 합니다:
 1. **step**: 단계 번호 (1, 2, 3...)

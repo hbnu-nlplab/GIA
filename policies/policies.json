@@ -10,13 +10,13 @@
             "보안 취약점 점검",
             "설정 표준 감사"
         ],
-        "min_per_category": 6,
+        "min_per_category": 15,
         "mix": {
-            "boolean": 1,
-            "set": 1,
-            "numeric": 1,
-            "map": 1,
-            "text": 1
+            "boolean": 3,
+            "set": 3,
+            "numeric": 3,
+            "map": 3,
+            "text": 3
         }
     },
     "policies": [
@@ -627,6 +627,111 @@
                             "DEVICE_IF"
                         ],
                         "primary_metric": "interface_mop_xenabled_bool"
+                    }
+                ]
+            }
+        },
+        {
+            "category": "Command_Generation",
+            "levels": {
+                "1": [
+                    {
+                        "goal": "show_commands",
+                        "targets": [
+                            "DEVICE"
+                        ],
+                        "primary_metric": "cmd_show_bgp_summary",
+                        "notes": "BGP 상태 확인 명령어"
+                    },
+                    {
+                        "goal": "show_commands",
+                        "targets": [
+                            "DEVICE"
+                        ],
+                        "primary_metric": "cmd_show_ip_interface_brief",
+                        "notes": "인터페이스 상태 확인 명령어"
+                    },
+                    {
+                        "goal": "show_commands",
+                        "targets": [
+                            "DEVICE"
+                        ],
+                        "primary_metric": "cmd_show_ip_route_ospf",
+                        "notes": "OSPF 라우팅 정보 확인 명령어"
+                    },
+                    {
+                        "goal": "show_commands",
+                        "targets": [
+                            "DEVICE"
+                        ],
+                        "primary_metric": "cmd_show_ip_ospf_neighbor",
+                        "notes": "OSPF 이웃 상태 확인 명령어"
+                    },
+                    {
+                        "goal": "show_commands",
+                        "targets": [
+                            "DEVICE"
+                        ],
+                        "primary_metric": "cmd_show_users",
+                        "notes": "접속 사용자 확인 명령어"
+                    },
+                    {
+                        "goal": "show_commands",
+                        "targets": [
+                            "DEVICE"
+                        ],
+                        "primary_metric": "cmd_show_logging",
+                        "notes": "로그 확인 명령어"
+                    }
+                ],
+                "2": [
+                    {
+                        "goal": "config_commands",
+                        "targets": [
+                            "DEVICE"
+                        ],
+                        "primary_metric": "cmd_set_static_route",
+                        "notes": "정적 라우팅 설정 명령어"
+                    },
+                    {
+                        "goal": "config_commands",
+                        "targets": [
+                            "DEVICE"
+                        ],
+                        "primary_metric": "cmd_set_bgp_routemap",
+                        "notes": "BGP 라우트맵 설정 명령어"
+                    },
+                    {
+                        "goal": "config_commands",
+                        "targets": [
+                            "DEVICE"
+                        ],
+                        "primary_metric": "cmd_set_interface_description",
+                        "notes": "인터페이스 설명 설정 명령어"
+                    },
+                    {
+                        "goal": "config_commands",
+                        "targets": [
+                            "DEVICE"
+                        ],
+                        "primary_metric": "cmd_create_vrf_and_assign",
+                        "notes": "VRF 생성 및 할당 명령어"
+                    },
+                    {
+                        "goal": "ssh_commands",
+                        "targets": [
+                            "DEVICE"
+                        ],
+                        "primary_metric": "cmd_ssh_direct_access",
+                        "notes": "SSH 직접 접속 명령어"
+                    },
+                    {
+                        "goal": "ssh_commands",
+                        "targets": [
+                            "DEVICE"
+                        ],
+                        "primary_metric": "cmd_ssh_proxy_jump",
+                        "notes": "SSH 프록시 점프 명령어"
                     }
                 ]
             }

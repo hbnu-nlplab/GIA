@@ -120,6 +120,10 @@ def default_patterns(metric: str) -> str:
         "ospf_area_set": "{host} 장비가 참여한 OSPF Area 목록은?",
         "vrf_names_set": "{host} 장비의 VRF 이름 목록은?",
         "vrf_count": "{host} 장비의 VRF 개수는?",
+        "rt_import_count": "{host} 장비의 Route Target Import 설정 개수는?",
+        "rt_export_count": "{host} 장비의 Route Target Export 설정 개수는?",
+        "l2vpn_pw_id_set": "{host} 장비의 L2VPN Pseudowire ID 목록은?",
+        "mpls_ldp_present_bool": "{host} 장비에서 MPLS LDP가 설정되어 있습니까?",
         # Basic Info
         "system_mgmt_address_text": "{host} 장비의 관리 IP 주소는?",
         "ios_config_register_text": "{host} 장비의 config-register 값은?",
@@ -131,7 +135,7 @@ def default_patterns(metric: str) -> str:
         "vty_login_mode_text": "{host} 장비에서 VTY line의 login 방식은?",
         "vty_password_secret_text": "{host} 장비의 VTY password secret 값은?",
         "vty_transport_input_text": "{host} 장비에서 VTY의 transport input은?",
-        "system_users_detail_map": "{host} 장비의 사용자 상세(UID/GID/HOME 등)는?",
+        "system_users_detail_map": "{host} 장비의 사용자 상세(UID/GID/password/ssh_keydir/homedir 등)는?",
         "interface_mop_xenabled_bool": "{host} 장비에서 {if} 인터페이스의 MOP xenabled 설정은?",
         "ssh_acl_applied_check": "{host} 장비에 SSH 접속 ACL이 적용되어 있는가?",
         "bgp_advertised_prefixes_list": "{host} 장비가 BGP를 통해 외부로 광고하는 prefix 목록은?",
@@ -154,6 +158,25 @@ def default_patterns(metric: str) -> str:
         "cmd_set_vty_acl": "{host} 장비의 VTY 라인에 {acl_name} ACL을 inbound로 적용하는 명령어는?",
         "cmd_set_hostname": "{host} 장비의 호스트네임을 {new_hostname}(으)로 변경하는 명령어는?",
         "cmd_ssh_proxy_jump": "{user} 계정으로 {jump_host}를 거쳐 {destination_host} 장비에 SSH 접속하는 명령어는?",
+        
+        # Command generation (cmd_ 접두사 없는 버전)
+        "show_bgp_summary": "{host} 장비에서 BGP 피어 상태를 요약해서 확인하는 명령어는?",
+        "show_ip_interface_brief": "{host} 장비의 인터페이스 IP 상태를 간단히 보는 명령어는?",
+        "show_ip_route_ospf": "{host} 장비에서 OSPF로 학습된 라우팅 정보를 확인하는 명령어는?",
+        "show_processes_cpu": "{host} 장비에서 CPU 사용률 순으로 프로세스를 확인하는 명령어는?",
+        "show_l2vpn_vc": "{host} 장비에서 L2VPN 가상회선 상태를 확인하는 명령어는?",
+        "show_ip_ospf_neighbor": "{host} 장비에서 OSPF 이웃 상태를 조회하는 명령어는?",
+        "show_users": "{host} 장비에 현재 접속한 사용자 목록을 보는 명령어는?",
+        "show_logging": "{host} 장비의 로그 버퍼를 확인하는 명령어는?",
+        "ssh_direct_access": "{user} 계정으로 {host} 장비에 직접 SSH 접속하는 명령어는?",
+        "set_static_route": "{host} 장비에서 {prefix}/{mask} 네트워크로 가는 정적 경로를 {next_hop} 다음 홉으로 설정하는 명령어는?",
+        "set_bgp_routemap": "{host} 장비에서 BGP AS {asn}의 {neighbor_ip} 이웃에 {map_name} 라우트맵을 outbound로 적용하는 명령어는?",
+        "set_interface_description": "{host} 장비에서 {interface} 인터페이스에 '{description}' 설명을 설정하는 명령어는?",
+        "create_vrf_and_assign": "{host} 장비에서 {vrf_name} VRF를 생성하고 {interface} 인터페이스에 할당하는 명령어 시퀀스는?",
+        "set_ospf_cost": "{host} 장비에서 OSPF 프로세스 {process_id}의 {interface} 인터페이스 비용을 {cost}으로 설정하는 명령어는?",
+        "set_vty_acl": "{host} 장비의 VTY 라인에 {acl_name} ACL을 inbound로 적용하는 명령어는?",
+        "set_hostname": "{host} 장비의 호스트네임을 {new_hostname}(으)로 변경하는 명령어는?",
+        "ssh_proxy_jump": "{user} 계정으로 {jump_host}를 거쳐 {destination_host} 장비에 SSH 접속하는 명령어는?",
     }
     return table.get(metric, f"{metric} 측정값은?")
 
@@ -218,6 +241,19 @@ GOAL2METRICS = {
         ],
         "interface": [
             "interface_mop_xenabled_bool"
+        ]
+    },
+    # ---- Command Generation goals ----
+    "Command_Generation": {
+        "show_commands": [
+            "cmd_show_bgp_summary","cmd_show_ip_interface_brief","cmd_show_ip_route_ospf",
+            "cmd_show_ip_ospf_neighbor","cmd_show_users","cmd_show_logging"
+        ],
+        "config_commands": [
+            "cmd_set_static_route","cmd_set_bgp_routemap","cmd_set_interface_description","cmd_create_vrf_and_assign"
+        ],
+        "ssh_commands": [
+            "cmd_ssh_direct_access","cmd_ssh_proxy_jump"
         ]
     }
 }

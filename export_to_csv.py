@@ -12,12 +12,12 @@ def convert_to_csv(json_path="output_dataset/enhanced_dataset.json", csv_path="o
     header = [
         "id",
         "level",
-        "context",
+        "task_category",
+        "answer_type",
         "question",
         "ground_truth",
         "explanation",
-        "answer_type",
-        "task_category",
+        "context",
         "source_files",
     ]
     rows = []

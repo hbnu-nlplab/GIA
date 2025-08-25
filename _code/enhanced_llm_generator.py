@@ -77,7 +77,6 @@ class EnhancedLLMQuestionGenerator:
 
 1. **보안 정책 준수성**: SSH, AAA 설정의 일관성과 표준 준수 여부
 2. **취약점 우선순위**: 발견된 보안 문제의 위험도 평가
-3. **규정 준수 검증**: 보안 정책 위반 사항의 비즈니스 영향도
 
 질문 특성:
 - 보안 위험도 평가 필요
@@ -102,7 +101,6 @@ NOC 운영자 관점에서, 서비스 가용성과 관련된 복합적 상황 �
 
 질문 요구사항:
 - 다중 서비스 계층 고려
-- 비즈니스 영향도 포함
 - 운영 관점의 실용성
 """,
                 expected_metrics=["l2vpn_unidir_count", "l2vpn_mismatch_count", "vrf_without_rt_count"],
