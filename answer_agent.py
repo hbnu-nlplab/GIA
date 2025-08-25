@@ -17,13 +17,18 @@ class AnswerAgent:
         self.evidence: Dict[str, Any] = {}
         self.referenced_files: Set[str] = set()
 
-    def execute_plan(self, question: str, plan: Union[List[Dict[str, Any]], str]) -> Dict[str, Any]:
+    def execute_plan(
+        self,
+        question: str,
+        plan: Union[List[Dict[str, Any]], str],
+        answer_type: str = "long",
+    ) -> Dict[str, Any]:
         """Execute reasoning steps and return ground truth, explanation and source files."""
         self.evidence = {}
         self.referenced_files = set()
 
         if isinstance(plan, str):
-            ground_truth, explanation = self._synthesize_text_answer(question, plan)
+            ground_truth, explanation = self._synthesize_text_answer(question, plan, answer_type)
             return {
                 "ground_truth": ground_truth,
                 "explanation": explanation,
@@ -31,7 +36,9 @@ class AnswerAgent:
             }
 
         if not plan:
-            ground_truth, explanation = self._synthesize_text_answer(question, "No reasoning plan provided")
+            ground_truth, explanation = self._synthesize_text_answer(
+                question, "No reasoning plan provided", answer_type
+            )
             return {
                 "ground_truth": ground_truth,
                 "explanation": explanation,
@@ -39,7 +46,9 @@ class AnswerAgent:
             }
 
         if isinstance(plan, list):
-            for step in sorted(plan, key=lambda x: x.get("step", 0) if isinstance(x, dict) else 0):
+            for step in sorted(
+                plan, key=lambda x: x.get("step", 0) if isinstance(x, dict) else 0
+            ):
                 if not isinstance(step, dict):
                     continue
                 metric = step.get("required_metric")
@@ -53,21 +62,27 @@ class AnswerAgent:
                     files = []
                 self.evidence[f"step_{step.get('step')}_{metric}"] = result
                 self.referenced_files.update(files)
-            ground_truth, explanation = self._synthesize_answer(question, plan)
+            ground_truth, explanation = self._synthesize_json_answer(
+                question, plan, answer_type
+            )
             return {
                 "ground_truth": ground_truth,
                 "explanation": explanation,
                 "source_files": sorted(self.referenced_files),
             }
 
-        ground_truth, explanation = self._synthesize_text_answer(question, str(plan))
+        ground_truth, explanation = self._synthesize_text_answer(
+            question, str(plan), answer_type
+        )
         return {
             "ground_truth": ground_truth,
             "explanation": explanation,
             "source_files": sorted(self.referenced_files),
         }
 
-    def _synthesize_text_answer(self, question: str, plan_text: str) -> Tuple[Any, str]:
+    def _synthesize_text_answer(
+        self, question: str, plan_text: str, answer_type: str = "long"
+    ) -> Tuple[Any, str]:
         """Handle text-based reasoning plans."""
         potential_metrics = [
             "ssh_missing_count", "ssh_all_enabled_bool", "ssh_enabled_devices",
@@ -102,49 +117,64 @@ class AnswerAgent:
             except Exception as e:
                 self.evidence[metric] = f"error: {e}"
 
-        return self._synthesize_answer(question, plan_text)
+        return self._synthesize_json_answer(question, plan_text, answer_type)
 
-    def _synthesize_answer(
-        self, question: str, plan: Union[List[Dict[str, Any]], str]
+    def _synthesize_json_answer(
+        self,
+        question: str,
+        plan: Union[List[Dict[str, Any]], str],
+        answer_type: str = "long",
     ) -> Tuple[Any, str]:
-        """Return ground truth and explanation derived from LLM output.
-        변경: eval_targets(숫자/불리언) 중심이 아닌 서술형 answer 문자열을 직접 생성하도록 스키마/프롬프트를 변경.
-        """
+        """Return structured ground truth and explanation derived from LLM output."""
         schema = {
-            "title": "ComprehensiveAnswer",
+            "title": "StructuredAnswer",
             "type": "object",
             "properties": {
-                "answer": {
-                    "type": "string",
-                    "description": "증거를 근거로 질문에 직접 답하는 서술형 답변. 한두 문장 이상의 자연어로, 단순 불리언/숫자 단일값만 반환하지 말 것.",
+                "ground_truth": {
+                    "type": ["string", "boolean", "number", "array", "null"],
+                    "description": """
+                **[매우 중요]** 질문에 대한 핵심적이고 직접적인 '정답' 그 자체.
+                - 질문이 '개수'를 물으면: 숫자 (예: 0, 1, 5)
+                - 질문이 '목록'을 물으면: 문자열의 배열 (예: ["CE1", "CE2"])
+                - 질문이 '이름'이나 '값' 하나를 물으면: 문자열 (예: "CE1")
+                - 질문이 '분석'이나 '설명'을 요구하면: 완벽한 서술형 문장 (예: "iBGP 풀메시가 정상 작동하여...")
+                - **절대 '정답을 찾는 과정'을 서술하지 말 것.**
+                """,
                 },
                 "explanation": {
                     "type": "string",
-                    "description": "선택: 결론에 도달한 근거를 간단히 요약.",
+                    "description": "위 ground_truth가 왜 정답인지, 제공된 증거(evidence)를 바탕으로 상세히 설명하는 문장.",
                 },
             },
-            "required": ["answer"],
-            "additionalProperties": False,
+            "required": ["ground_truth", "explanation"],
         }
 
-        evidence_text = json.dumps(self.evidence, ensure_ascii=False, indent=2)
-
-        system_prompt = (
-            "당신은 네트워크 데이터를 분석하여 평가용 정답(서술형)을 생성하는 도우미입니다. "
-            "질문과 증거를 바탕으로 스키마에 맞춘 JSON만 반환하세요."
+        evidence_summary = (
+            self._format_evidence() if self.evidence else "No evidence available."
         )
 
+        system_prompt = f"""
+당신은 네트워크 데이터를 분석하여 '정답'과 '해설'을 엄격하게 분리하여 생성하는 AI 에이전트입니다.
+
+**[당신의 임무]**
+1. 주어진 '질문'과 '증거(evidence)'를 분석합니다.
+2. 질문의 의도를 파악하여, 채점에 사용될 수 있는 명확한 **'ground_truth'(정답)**를 먼저 결정합니다.
+3. 그 다음, 해당 정답이 나온 이유를 **'explanation'(해설)**으로 상세히 서술합니다.
+
+**[엄격한 규칙]**
+- `ground_truth` 필드에는 절대, 절대 설명을 넣지 마세요. 오직 '정답' 값만 포함해야 합니다.
+- 질문이 특정 숫자나 목록을 요구하면, `ground_truth`는 반드시 해당 형식(숫자, 배열)을 따라야 합니다.
+- `explanation`은 항상 완전한 문장 형태여야 합니다.
+"""
+
         user_prompt = f"""
-질문: {question}
+- **질문**: {question}
+- **질문 유형 힌트**: {answer_type}
+- **분석된 증거**: 
+{evidence_summary}
 
-수집된 증거:
-{evidence_text}
-
-[응답 지침]
-- answer에는 질문에 직접 답하는 서술형 문장을 작성하세요. 숫자/불리언 단일값만을 반환하지 마세요.
-- 가능한 한 근거(수치/상태)를 포함해 전문적으로 기술하세요.
-- explanation은 선택 사항입니다(간단 요약).
-- JSON 외의 다른 텍스트는 포함하지 마세요.
+위 정보를 바탕으로, JSON 스키마의 규칙에 따라 'ground_truth'와 'explanation'을 생성하세요.
+'질문 유형 힌트'가 'short'이면 `ground_truth`는 숫자, 리스트, 단일 문자열일 가능성이 높습니다.
 """
 
         messages = [
@@ -162,16 +192,15 @@ class AnswerAgent:
                 use_responses_api=False,
             )
             if isinstance(data, dict):
-                answer_text = data.get("answer")
+                ground_truth = data.get("ground_truth")
                 explanation = data.get("explanation", "")
-                if isinstance(answer_text, str) and answer_text.strip():
-                    return answer_text.strip(), explanation
+                if ground_truth is not None:
+                    return ground_truth, explanation
         except Exception as e:
             import logging
             logging.warning(f"AnswerAgent LLM synthesis failed: {e}")
 
-        # 폴백: 간단 LLM 호출 또는 템플릿 생성으로 서술형 답변 확보
-        evidence_summary = self._format_evidence() if self.evidence else "No evidence available."
+        # 폴백: 간단 LLM 호출 또는 템플릿 생성으로 답변 확보
         try:
             fallback_answer = self._simple_llm_call(question, evidence_summary)
             return fallback_answer, evidence_summary
