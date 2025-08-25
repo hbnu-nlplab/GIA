@@ -22,7 +22,6 @@ class AnswerType(Enum):
 
 @dataclass
 class EvaluationResult:
-    """평가 결과 통합 클래스"""
     question_id: str
     answer_type: AnswerType
     predicted_answer: str
@@ -101,6 +100,8 @@ class NetworkAnswerNormalizer:
     
     def extract_entities(self, answer: str) -> Dict[str, List[str]]:
         """네트워크 엔티티 추출"""
+        if not isinstance(answer, str):
+            answer = str(answer)
         entities = {
             'ip_addresses': self.ip_pattern.findall(answer),
             'as_numbers': [m.group(1) for m in self.as_pattern.finditer(answer)],
@@ -110,10 +111,19 @@ class NetworkAnswerNormalizer:
     
     def is_structured_answer(self, answer: str) -> bool:
         """구조화된 답변인지 판단 (JSON, XML, 리스트 등)"""
-        answer = answer.strip()
-        return (answer.startswith('{') and answer.endswith('}')) or \
-               (answer.startswith('[') and answer.endswith(']')) or \
-               (answer.startswith('<') and answer.endswith('>'))
+        # None 또는 원시 숫자 타입 보호
+        if answer is None:
+            return False
+        # dict/list는 구조화된 것으로 간주
+        if isinstance(answer, (dict, list)):
+            return True
+        try:
+            s = answer.strip() if isinstance(answer, str) else str(answer).strip()
+        except Exception:
+            return False
+        return (s.startswith('{') and s.endswith('}')) or \
+               (s.startswith('[') and s.endswith(']')) or \
+               (s.startswith('<') and s.endswith('>'))
 
 
 class ExactMatchEvaluator:
@@ -305,6 +315,8 @@ class BLEUEvaluator:
     
     def _tokenize(self, text: str) -> List[str]:
         """토큰화 (간단한 버전)"""
+        if not isinstance(text, str):
+            text = str(text)
         return text.lower().translate(str.maketrans('', '', string.punctuation)).split()
 
 
@@ -391,6 +403,8 @@ class ROUGEEvaluator:
     
     def _tokenize(self, text: str) -> List[str]:
         """토큰화"""
+        if not isinstance(text, str):
+            text = str(text)
         return text.lower().translate(str.maketrans('', '', string.punctuation)).split()
 
 
@@ -526,26 +540,55 @@ class ComprehensiveEvaluator:
             
         return len(pred_tokens & gt_tokens) / len(gt_tokens)
     
-    def _evaluate_structural_accuracy(self, predicted: str, ground_truth: str) -> float:
+    def _evaluate_structural_accuracy(self, predicted: str, ground_truth: Any) -> float:
         """구조화된 답변의 정확도 평가"""
         try:
-            # JSON 형태 답변 처리
-            if predicted.strip().startswith('{') and ground_truth.strip().startswith('{'):
-                pred_obj = json.loads(predicted)
-                gt_obj = json.loads(ground_truth)
+            # 문자열 캐스팅 (필요 시)
+            gt_is_str = isinstance(ground_truth, str)
+            gt_str = ground_truth if gt_is_str else str(ground_truth)
+
+            # JSON 객체 비교 준비
+            pred_obj = None
+            gt_obj = None
+            if isinstance(predicted, dict):
+                pred_obj = predicted
+            elif isinstance(predicted, str):
+                s = predicted.strip()
+                if s.startswith('{') and s.endswith('}'):
+                    pred_obj = json.loads(s)
+            # ground truth
+            if isinstance(ground_truth, dict):
+                gt_obj = ground_truth
+            elif gt_is_str:
+                sgt = gt_str.strip()
+                if sgt.startswith('{') and sgt.endswith('}'):
+                    gt_obj = json.loads(sgt)
+            if pred_obj is not None and gt_obj is not None:
                 return self._compare_json_objects(pred_obj, gt_obj)
-            
-            # 리스트 형태 답변 처리
-            elif predicted.strip().startswith('[') and ground_truth.strip().startswith('['):
-                pred_list = json.loads(predicted)
-                gt_list = json.loads(ground_truth)
+
+            # 리스트 비교 준비
+            pred_list = None
+            gt_list = None
+            if isinstance(predicted, list):
+                pred_list = predicted
+            elif isinstance(predicted, str):
+                s = predicted.strip()
+                if s.startswith('[') and s.endswith(']'):
+                    pred_list = json.loads(s)
+            if isinstance(ground_truth, list):
+                gt_list = ground_truth
+            elif gt_is_str:
+                sgt = gt_str.strip()
+                if sgt.startswith('[') and sgt.endswith(']'):
+                    gt_list = json.loads(sgt)
+            if pred_list is not None and gt_list is not None:
                 return self._compare_lists(pred_list, gt_list)
                 
-        except json.JSONDecodeError:
+        except (json.JSONDecodeError, AttributeError, TypeError, ValueError):
             pass
         
         # 구조화 실패시 일반 문자열 비교
-        return self.em_evaluator.evaluate(predicted, ground_truth)
+        return self.em_evaluator.evaluate(predicted, gt_str)
     
     def _compare_json_objects(self, pred: Dict, gt: Dict) -> float:
         """JSON 객체 비교"""

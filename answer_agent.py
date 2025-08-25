@@ -107,37 +107,45 @@ class AnswerAgent:
     def _synthesize_answer(
         self, question: str, plan: Union[List[Dict[str, Any]], str]
     ) -> Tuple[Any, str]:
-        """Return ground truth and explanation derived from LLM output."""
+        """Return ground truth and explanation derived from LLM output.
+        변경: eval_targets(숫자/불리언) 중심이 아닌 서술형 answer 문자열을 직접 생성하도록 스키마/프롬프트를 변경.
+        """
         schema = {
-            "title": "StructuredAnswer",
+            "title": "ComprehensiveAnswer",
             "type": "object",
             "properties": {
-                "eval_targets": {
-                    "type": "object",
-                    "properties": {
-                        "exact_match": {"type": ["string", "number", "boolean"]},
-                        "f1_score": {
-                            "type": ["array", "null"],
-                            "items": {"type": ["string", "number", "boolean"]},
-                        },
-                    },
-                    "required": ["exact_match", "f1_score"],
-                    "additionalProperties": False,
+                "answer": {
+                    "type": "string",
+                    "description": "증거를 근거로 질문에 직접 답하는 서술형 답변. 한두 문장 이상의 자연어로, 단순 불리언/숫자 단일값만 반환하지 말 것.",
                 },
-                "explanation": {"type": "string"},
+                "explanation": {
+                    "type": "string",
+                    "description": "선택: 결론에 도달한 근거를 간단히 요약.",
+                },
             },
-            "required": ["eval_targets", "explanation"],
+            "required": ["answer"],
             "additionalProperties": False,
         }
 
         evidence_text = json.dumps(self.evidence, ensure_ascii=False, indent=2)
 
         system_prompt = (
-            "당신은 네트워크 데이터를 분석하여 평가용 정답을 생성하는 도우미입니다. "
-            "질문과 증거를 바탕으로 위 스키마에 맞춘 JSON 답변만 제공하세요."
+            "당신은 네트워크 데이터를 분석하여 평가용 정답(서술형)을 생성하는 도우미입니다. "
+            "질문과 증거를 바탕으로 스키마에 맞춘 JSON만 반환하세요."
         )
 
-        user_prompt = f"""\n질문: {question}\n\n수집된 증거:\n{evidence_text}\n\n[응답 지침]\n- eval_targets.exact_match에는 가장 핵심적인 단일 값을 넣으세요.\n- eval_targets.f1_score에는 정답이 리스트일 때 항목들의 리스트를 넣고, 그렇지 않으면 null 또는 빈 리스트를 사용하세요.\n- explanation에는 위 증거를 근거로 결론에 도달한 이유를 한두 문장으로 서술하세요.\n\nJSON 외의 다른 텍스트는 포함하지 마세요.\n"""
+        user_prompt = f"""
+질문: {question}
+
+수집된 증거:
+{evidence_text}
+
+[응답 지침]
+- answer에는 질문에 직접 답하는 서술형 문장을 작성하세요. 숫자/불리언 단일값만을 반환하지 마세요.
+- 가능한 한 근거(수치/상태)를 포함해 전문적으로 기술하세요.
+- explanation은 선택 사항입니다(간단 요약).
+- JSON 외의 다른 텍스트는 포함하지 마세요.
+"""
 
         messages = [
             {"role": "system", "content": system_prompt},
@@ -150,23 +158,29 @@ class AnswerAgent:
                 schema,
                 temperature=0.0,
                 model=settings.models.answer_synthesis,
-                max_output_tokens=500,
+                max_output_tokens=700,
                 use_responses_api=False,
             )
             if isinstance(data, dict):
-                eval_targets = data.get("eval_targets", {})
+                answer_text = data.get("answer")
                 explanation = data.get("explanation", "")
-                ground_truth = self._extract_ground_truth(eval_targets, explanation)
-                return ground_truth, explanation
+                if isinstance(answer_text, str) and answer_text.strip():
+                    return answer_text.strip(), explanation
         except Exception as e:
             import logging
             logging.warning(f"AnswerAgent LLM synthesis failed: {e}")
 
-        explanation = (
-            self._format_evidence() if self.evidence else "No evidence available."
-        )
-        ground_truth = self._extract_ground_truth({}, explanation)
-        return ground_truth, explanation
+        # 폴백: 간단 LLM 호출 또는 템플릿 생성으로 서술형 답변 확보
+        evidence_summary = self._format_evidence() if self.evidence else "No evidence available."
+        try:
+            fallback_answer = self._simple_llm_call(question, evidence_summary)
+            return fallback_answer, evidence_summary
+        except Exception:
+            # 최후 폴백: 증거 요약을 explanation으로, 간단한 문장 생성
+            return (
+                f"질문에 대한 분석 결과는 증거 요약을 참조하세요. 주요 증거: {evidence_summary[:200]}...",
+                evidence_summary,
+            )
 
     def _extract_ground_truth(self, eval_targets: Dict[str, Any], explanation: str) -> Any:
         """Infer ground truth from explanation text or eval_targets."""

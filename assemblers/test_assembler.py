@@ -43,7 +43,9 @@ def lint_drop_unanswerable(by_cat: dict):
             q = (t.get("question") or "").strip()
             if "{" in q and "}" in q:
                 continue
-            ans = (t.get("expected_answer") or {}).get("value", None)
+            # Support both old and new expected_answer structures
+            expected_answer = t.get("expected_answer") or {}
+            ans = expected_answer.get("value") or expected_answer.get("ground_truth")
             at  = (t.get("answer_type") or "").strip().lower()
             if _is_bad_value(ans):
                 continue

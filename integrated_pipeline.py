@@ -217,11 +217,22 @@ class NetworkConfigDatasetGenerator:
         self.logger.info("2단계: 기초 질문 생성 (Rule-based)")
         
         # Rule-based 생성
+        self.logger.info(f"Debug: categories = {self.config.target_categories}")
+        self.logger.info(f"Debug: scenario_type = {self.config.scenario_type}")
+        
         dsl_items = self.rule_generator.compile(
             capabilities=network_facts,
             categories=self.config.target_categories,
             scenario_type=self.config.scenario_type,
         )
+        
+        self.logger.info(f"Debug: dsl_items count = {len(dsl_items)}")
+        if len(dsl_items) == 0:
+            self.logger.warning("Debug: No DSL items generated. Checking policies...")
+            # Check if policies are loaded
+            self.logger.info(f"Debug: policies count = {len(self.rule_generator.policies)}")
+            for i, pol in enumerate(self.rule_generator.policies[:3]):  # Show first 3
+                self.logger.info(f"Debug: policy[{i}] category = {pol.get('category')}")
 
         command_items = [d for d in dsl_items if d.get("category") == "Command_Generation"]
         dsl_items = [d for d in dsl_items if d.get("category") != "Command_Generation"]

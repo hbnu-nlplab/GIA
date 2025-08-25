@@ -27,8 +27,8 @@ features:
   disable_hypo_review: false # true: 가설 리뷰 단계를 완전히 비활성화(바이패스)
 
 generation:
-  basic_questions_per_category: 12    # 카테고리별 규칙 기반(베이직) 질문 생성 수
-  enhanced_questions_per_category: 8 # 카테고리별 고도화 LLM 질문 생성 수
+  basic_questions_per_category: 30    # 카테고리별 규칙 기반(베이직) 질문 생성 수
+  enhanced_questions_per_category: 30 # 카테고리별 고도화 LLM 질문 생성 수
 
 logging:
   level: "INFO"   # 로그 레벨(DEBUG/INFO/WARNING/ERROR)

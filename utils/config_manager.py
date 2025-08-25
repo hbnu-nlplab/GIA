@@ -3,32 +3,39 @@ import yaml
 from pathlib import Path
 from typing import Any, Dict, Optional, List
 from dotenv import load_dotenv
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, AliasChoices
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class ApiSettings(BaseModel):
-    timeout: int = Field(60, env="OPENAI_TIMEOUT_SEC")
-    max_retries: int = Field(2, env="OPENAI_MAX_RETRIES")
-    base_url: Optional[str] = Field(None, env="OPENAI_BASE_URL")
-    api_key: Optional[str] = Field(None, env="OPENAI_API_KEY")
-    org_id: Optional[str] = Field(None, env="OPENAI_ORG_ID")
-    project: Optional[str] = Field(None, env="OPENAI_PROJECT_ID")
+class ApiSettings(BaseSettings):
+    model_config = SettingsConfigDict(env_file='.env', extra='ignore')
+    
+    timeout: int = Field(60, validation_alias=AliasChoices("OPENAI_TIMEOUT_SEC"))
+    max_retries: int = Field(2, validation_alias=AliasChoices("OPENAI_MAX_RETRIES"))
+    base_url: Optional[str] = Field(None, validation_alias=AliasChoices("OPENAI_BASE_URL"))
+    api_key: Optional[str] = Field(None, validation_alias=AliasChoices("OPENAI_API_KEY"))
+    org_id: Optional[str] = Field(None, validation_alias=AliasChoices("OPENAI_ORG_ID"))
+    project: Optional[str] = Field(None, validation_alias=AliasChoices("OPENAI_PROJECT_ID"))
 
 
-class ModelsSettings(BaseModel):
+class ModelsSettings(BaseSettings):
+    model_config = SettingsConfigDict(env_file='.env', extra='ignore')
+    
     default: str = "gpt-4o-mini"
-    paraphrase: str = Field("gpt-4o-mini", env="OPENAI_MODEL_PARAPHRASE")
-    question_generation: str = Field("gpt-4o-mini", env="OPENAI_MODEL_QUESTION")
-    intent_parsing: str = Field("gpt-4o-mini", env="OPENAI_MODEL_INTENT")
-    hypothesis_review: str = Field("gpt-4o-mini", env="OPENAI_MODEL_HYPO_REVIEW")
-    answer_synthesis: str = Field("gpt-4o-mini", env="OPENAI_MODEL_ANSWER_SYNTH")
-    enhanced_generation: str = Field("gpt-4o", env="OPENAI_MODEL_ENHANCED_GEN")
+    paraphrase: str = Field("gpt-4o-mini", validation_alias=AliasChoices("OPENAI_MODEL_PARAPHRASE"))
+    question_generation: str = Field("gpt-4o-mini", validation_alias=AliasChoices("OPENAI_MODEL_QUESTION"))
+    intent_parsing: str = Field("gpt-4o-mini", validation_alias=AliasChoices("OPENAI_MODEL_INTENT"))
+    hypothesis_review: str = Field("gpt-4o-mini", validation_alias=AliasChoices("OPENAI_MODEL_HYPO_REVIEW"))
+    answer_synthesis: str = Field("gpt-4o-mini", validation_alias=AliasChoices("OPENAI_MODEL_ANSWER_SYNTH"))
+    enhanced_generation: str = Field("gpt-4o", validation_alias=AliasChoices("OPENAI_MODEL_ENHANCED_GEN"))
 
 
-class FeaturesSettings(BaseModel):
-    use_intent_llm: bool = Field(True, env="GIA_USE_INTENT_LLM")
-    enable_llm_review: bool = Field(True, env="GIA_ENABLE_LLM_REVIEW")
-    disable_hypo_review: bool = Field(False, env="GIA_DISABLE_HYPO_REVIEW")
+class FeaturesSettings(BaseSettings):
+    model_config = SettingsConfigDict(env_file='.env', extra='ignore')
+    
+    use_intent_llm: bool = Field(True, validation_alias=AliasChoices("GIA_USE_INTENT_LLM"))
+    enable_llm_review: bool = Field(True, validation_alias=AliasChoices("GIA_ENABLE_LLM_REVIEW"))
+    disable_hypo_review: bool = Field(False, validation_alias=AliasChoices("GIA_DISABLE_HYPO_REVIEW"))
 
 
 class GenerationSettings(BaseModel):
@@ -41,12 +48,14 @@ class LoggingSettings(BaseModel):
     format: str = "%(asctime)s - %(levelname)s - %(message)s"
 
 
-class Settings(BaseModel):
-    api: ApiSettings = ApiSettings()
-    models: ModelsSettings = ModelsSettings()
-    features: FeaturesSettings = FeaturesSettings()
-    generation: GenerationSettings = GenerationSettings()
-    logging: LoggingSettings = LoggingSettings()
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file='.env', extra='ignore')
+    
+    api: ApiSettings = Field(default_factory=ApiSettings)
+    models: ModelsSettings = Field(default_factory=ModelsSettings)
+    features: FeaturesSettings = Field(default_factory=FeaturesSettings)
+    generation: GenerationSettings = Field(default_factory=GenerationSettings)
+    logging: LoggingSettings = Field(default_factory=LoggingSettings)
 
 
 class ConfigManager:
@@ -62,18 +71,26 @@ class ConfigManager:
         if hasattr(self, 'settings'):
             return
 
+        # .env 로드
         load_dotenv()
 
         config_dir = os.environ.get("GIA_CONFIG_DIR", "config")
         env = os.environ.get("GIA_ENV", "")
 
+        # YAML 설정 로드 (환경별 오버레이)
         base_config = self._load_yaml(config_dir, "settings.yaml")
-
         if env:
             env_config = self._load_yaml(config_dir, f"settings.{env}.yaml")
             self._deep_update(base_config, env_config)
 
-        self.settings = Settings.model_validate(base_config)
+        # 1) YAML 기반 Settings
+        yaml_settings = Settings.model_validate(base_config)
+        # 2) .env 기반 Settings
+        env_settings = Settings()
+        # 3) 병합: YAML을 기본으로, .env 값이 존재하면 덮어쓰기
+        merged_settings = yaml_settings.model_copy(update=env_settings.model_dump(exclude_unset=True, exclude_none=True))
+
+        self.settings = merged_settings
 
     def _load_yaml(self, config_dir: str, filename: str) -> Dict[str, Any]:
         config_path = Path(config_dir) / filename
