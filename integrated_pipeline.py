@@ -450,6 +450,88 @@ class NetworkConfigDatasetGenerator:
             "show_vrf", "show_route_table", "show_ospf_database", "show_l2vpn_status"
         }
 
+        def infer_missing_params(
+            intent: str, params: Dict[str, Any], network_facts: Dict[str, Any]
+        ) -> Dict[str, Any]:
+            """Infer or supply default values for missing command parameters."""
+            updated = dict(params)
+            devices = network_facts.get("devices", [])
+            peers = (
+                network_facts.get("bgp_neighbors")
+                or network_facts.get("bgp_peers")
+                or []
+            )
+
+            def _device_ip(idx: int) -> Optional[str]:
+                if idx < len(devices):
+                    d = devices[idx]
+                    return (
+                        d.get("management_ip")
+                        or d.get("mgmt_ip")
+                        or d.get("ip")
+                        or d.get("name")
+                    )
+                return None
+
+            if intent in {"set_bgp_routemap", "show_bgp_neighbor_detail", "check_connectivity"}:
+                if "neighbor_ip" not in updated:
+                    if peers:
+                        peer = peers[0]
+                        updated["neighbor_ip"] = (
+                            peer.get("neighbor_ip")
+                            or peer.get("remote_ip")
+                            or peer.get("ip")
+                            or peer.get("remote")
+                        )
+                    if "neighbor_ip" not in updated:
+                        candidate = _device_ip(1)
+                        if candidate:
+                            updated["neighbor_ip"] = candidate
+                    if "neighbor_ip" not in updated:
+                        updated["neighbor_ip"] = "192.0.2.1"
+                if intent == "set_bgp_routemap":
+                    if "asn" not in updated:
+                        asn = devices[0].get("as") if devices else None
+                        updated["asn"] = asn or "65000"
+                    if "map_name" not in updated:
+                        updated["map_name"] = "DEFAULT_MAP"
+                if intent == "check_connectivity" and "destination" not in updated:
+                    updated["destination"] = updated.get("neighbor_ip", "192.0.2.1")
+
+            if intent in {"ssh_direct_access", "ssh_proxy_jump", "ssh_multihop_jump"}:
+                if "user" not in updated:
+                    updated["user"] = network_facts.get("default_user", "admin")
+                if intent == "ssh_direct_access":
+                    if "host" not in updated:
+                        updated["host"] = _device_ip(0) or "192.168.1.1"
+                elif intent == "ssh_proxy_jump":
+                    if "jump_host" not in updated:
+                        updated["jump_host"] = _device_ip(0) or "192.168.1.1"
+                    if "destination_host" not in updated:
+                        updated["destination_host"] = _device_ip(1) or "192.168.1.2"
+                elif intent == "ssh_multihop_jump":
+                    if "jump_host1" not in updated:
+                        updated["jump_host1"] = _device_ip(0) or "192.168.1.1"
+                    if "jump_host2" not in updated:
+                        updated["jump_host2"] = _device_ip(1) or "192.168.1.2"
+                    if "destination_host" not in updated:
+                        updated["destination_host"] = _device_ip(2) or "192.168.1.3"
+
+            required_params = {
+                "set_bgp_routemap": {"asn", "neighbor_ip", "map_name"},
+                "ssh_direct_access": {"user", "host"},
+                "ssh_proxy_jump": {"user", "jump_host", "destination_host"},
+                "ssh_multihop_jump": {"user", "jump_host1", "jump_host2", "destination_host"},
+                "check_connectivity": {"destination"},
+                "show_bgp_neighbor_detail": {"neighbor_ip"},
+            }
+            required = required_params.get(intent, set())
+            missing = [p for p in required if p not in updated or not updated[p]]
+            if missing:
+                raise ValueError(f"Missing parameters for intent '{intent}': {missing}")
+
+            return updated
+
         def normalize_steps(steps: List[Dict[str, Any]]) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
             """Normalize reasoning steps by mapping intents or separating non-command steps."""
             command_steps: List[Dict[str, Any]] = []
@@ -526,6 +608,19 @@ class NetworkConfigDatasetGenerator:
                 command_steps, non_command_steps = normalize_steps(reasoning_plan)
             else:
                 command_steps, non_command_steps = [], []
+            inferred_steps: List[Dict[str, Any]] = []
+            for step in command_steps:
+                intent = step.get("intent")
+                params = step.get("params", {})
+                try:
+                    step["params"] = infer_missing_params(intent, params, network_facts)
+                    inferred_steps.append(step)
+                except ValueError as e:
+                    self.logger.warning(
+                        f"Parameter inference failed - intent: {intent}, params: {params}, error: {e}"
+                    )
+                    non_command_steps.append(step)
+            command_steps = inferred_steps
 
             if command_steps and not non_command_steps:
                 commands = []
@@ -533,22 +628,14 @@ class NetworkConfigDatasetGenerator:
                     try:
                         intent = step.get("intent")
                         params = step.get("params", {})
-                        
-                        # 누락된 필수 파라미터에 대한 기본값 제공
-                        if intent == "set_bgp_routemap" and "asn" not in params:
-                            params["asn"] = "65000"  # 기본 ASN
-                        if intent == "ssh_direct_access" and "user" not in params:
-                            params["user"] = "admin"  # 기본 사용자
-                        if intent == "ssh_direct_access" and "host" not in params:
-                            params["host"] = "192.168.1.1"  # 기본 호스트
-                        
                         command = command_agent.generate(intent, params)
                         commands.append(command)
                     except Exception as e:
-                        self.logger.warning(f"명령어 생성 실패 - intent: {intent}, params: {params}, error: {e}")
-                        # 실패한 경우 기본 명령어 제공
+                        self.logger.warning(
+                            f"명령어 생성 실패 - intent: {intent}, params: {params}, error: {e}"
+                        )
                         commands.append(f"# ERROR: Failed to generate command for {intent}")
-                        
+
                 final_answer = "\n".join(commands)
                 sample = DatasetSample(
                     id=f"ENHANCED_{eq.get('test_id', 'ENH')}",
@@ -584,12 +671,6 @@ class NetworkConfigDatasetGenerator:
                         try:
                             intent = step.get("intent")
                             params = step.get("params", {})
-                            if intent == "set_bgp_routemap" and "asn" not in params:
-                                params["asn"] = "65000"
-                            if intent == "ssh_direct_access" and "user" not in params:
-                                params["user"] = "admin"
-                            if intent == "ssh_direct_access" and "host" not in params:
-                                params["host"] = "192.168.1.1"
                             command = command_agent.generate(intent, params)
                             commands.append(command)
                         except Exception as e:
