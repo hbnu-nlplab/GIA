@@ -237,6 +237,40 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
                 expected_metrics=["ssh_present_bool", "aaa_present_bool", "bgp_neighbor_count"],
                 answer_type="short",
             ),
+            # 장애 진단 명령어 시퀀스 - 트러블슈터
+            QuestionTemplate(
+                complexity=QuestionComplexity.DIAGNOSTIC,
+                persona=PersonaType.TROUBLESHOOTER,
+                scenario="장애 진단 명령어 시퀀스",
+                scenario_type=ScenarioType.FAILURE,
+                prompt_template="""
+네트워크 트러블슈터 관점에서, 특정 장애 상황을 가정하고 문제를 진단하기 위해 순서대로 실행해야 할 CLI 명령어 3가지를 묻는 질문을 생성하세요.
+
+요구 사항:
+- 질문에는 실제 장비 이름과 장애 원인이 포함되어야 합니다.
+- reasoning_plan에는 각 단계별 intent와 params를 JSON 배열로 제공하세요.
+- intent는 CommandAgent에서 인식 가능한 명령어 이름을 사용합니다.
+""",
+                expected_metrics=[],
+                answer_type="long",
+            ),
+            # SSH 심화 시나리오 - 네트워크 엔지니어
+            QuestionTemplate(
+                complexity=QuestionComplexity.SCENARIO,
+                persona=PersonaType.NETWORK_ENGINEER,
+                scenario="SSH 심화 시나리오",
+                scenario_type=ScenarioType.NORMAL,
+                prompt_template="""
+네트워크 엔지니어 관점에서, 다단계 SSH 접속이 필요한 복잡한 운영 시나리오를 가정하고 목적지 장비에 도달하기 위한 SSH 명령어 시퀀스를 묻는 질문을 생성하세요.
+
+요구 사항:
+- 최소 두 개 이상의 점프 호스트를 포함해야 합니다.
+- reasoning_plan에는 각 단계별 intent와 params를 JSON 배열로 제공하세요.
+- intent는 ssh 관련 CommandAgent 명령어 이름을 사용합니다.
+""",
+                expected_metrics=[],
+                answer_type="long",
+            ),
         ]
     
     def generate_enhanced_questions(
@@ -380,12 +414,14 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
                                             "properties": {},
                                             "additionalProperties": True
                                         },
+                                        "intent": {"type": "string"},
+                                        "params": {"type": "object", "additionalProperties": True},
                                         "synthesis": {
                                             "type": "string",
                                             "enum": ["fetch", "compare", "summarize"]
                                         }
                                     },
-                                    "required": ["step", "description", "required_metric", "synthesis"],
+                                    "required": ["step"],
                                     "additionalProperties": False
                                 }
                             }

@@ -53,6 +53,25 @@ ALLOWED_METRICS = {
     "QoS_Verification": [
         "qos_policer_applied_interfaces_list"
     ],
+    "Command_Generation": [
+        "cmd_show_bgp_summary",
+        "cmd_show_ip_interface_brief",
+        "cmd_show_ip_route_ospf",
+        "cmd_show_processes_cpu",
+        "cmd_show_l2vpn_vc",
+        "cmd_show_ip_ospf_neighbor",
+        "cmd_show_users",
+        "cmd_show_logging",
+        "cmd_ssh_direct_access",
+        "cmd_set_static_route",
+        "cmd_set_bgp_routemap",
+        "cmd_set_interface_description",
+        "cmd_create_vrf_and_assign",
+        "cmd_set_ospf_cost",
+        "cmd_set_vty_acl",
+        "cmd_set_hostname",
+        "cmd_ssh_proxy_jump",
+    ],
 }
 
 def default_patterns(metric: str) -> str:
@@ -116,7 +135,25 @@ def default_patterns(metric: str) -> str:
         "interface_mop_xenabled_bool": "{host} 장비에서 {if} 인터페이스의 MOP xenabled 설정은?",
         "ssh_acl_applied_check": "{host} 장비에 SSH 접속 ACL이 적용되어 있는가?",
         "bgp_advertised_prefixes_list": "{host} 장비가 BGP를 통해 외부로 광고하는 prefix 목록은?",
-        "qos_policer_applied_interfaces_list": "{host} 장비에서 QoS Policer가 적용된 인터페이스 목록은?"
+        "qos_policer_applied_interfaces_list": "{host} 장비에서 QoS Policer가 적용된 인터페이스 목록은?",
+        # Command generation
+        "cmd_show_bgp_summary": "{host} 장비에서 BGP 피어 상태를 요약해서 확인하는 명령어는?",
+        "cmd_show_ip_interface_brief": "{host} 장비의 인터페이스 IP 상태를 간단히 보는 명령어는?",
+        "cmd_show_ip_route_ospf": "{host} 장비에서 OSPF로 학습된 라우팅 정보를 확인하는 명령어는?",
+        "cmd_show_processes_cpu": "{host} 장비에서 CPU 사용률 순으로 프로세스를 확인하는 명령어는?",
+        "cmd_show_l2vpn_vc": "{host} 장비에서 L2VPN 가상회선 상태를 확인하는 명령어는?",
+        "cmd_show_ip_ospf_neighbor": "{host} 장비에서 OSPF 이웃 상태를 조회하는 명령어는?",
+        "cmd_show_users": "{host} 장비에 현재 접속한 사용자 목록을 보는 명령어는?",
+        "cmd_show_logging": "{host} 장비의 로그 버퍼를 확인하는 명령어는?",
+        "cmd_ssh_direct_access": "{user} 계정으로 {host} 장비에 직접 SSH 접속하는 명령어는?",
+        "cmd_set_static_route": "{host} 장비에서 {prefix}/{mask} 네트워크로 가는 정적 경로를 {next_hop} 다음 홉으로 설정하는 명령어는?",
+        "cmd_set_bgp_routemap": "{host} 장비에서 BGP AS {asn}의 {neighbor_ip} 이웃에 {map_name} 라우트맵을 outbound로 적용하는 명령어는?",
+        "cmd_set_interface_description": "{host} 장비에서 {interface} 인터페이스에 '{description}' 설명을 설정하는 명령어는?",
+        "cmd_create_vrf_and_assign": "{host} 장비에서 {vrf_name} VRF를 생성하고 {interface} 인터페이스에 할당하는 명령어 시퀀스는?",
+        "cmd_set_ospf_cost": "{host} 장비에서 OSPF 프로세스 {process_id}의 {interface} 인터페이스 비용을 {cost}으로 설정하는 명령어는?",
+        "cmd_set_vty_acl": "{host} 장비의 VTY 라인에 {acl_name} ACL을 inbound로 적용하는 명령어는?",
+        "cmd_set_hostname": "{host} 장비의 호스트네임을 {new_hostname}(으)로 변경하는 명령어는?",
+        "cmd_ssh_proxy_jump": "{user} 계정으로 {jump_host}를 거쳐 {destination_host} 장비에 SSH 접속하는 명령어는?",
     }
     return table.get(metric, f"{metric} 측정값은?")
 
@@ -456,4 +493,131 @@ class RuleBasedGenerator:
             if key in seen:
                 continue
             seen.add(key); out.append(t)
+        if "Command_Generation" in categories:
+            out.extend(self._generate_command_questions(capabilities))
         return out
+
+    def _generate_command_questions(self, facts: Dict[str, Any]) -> List[Dict[str, Any]]:
+        devices = facts.get("devices", [])
+        first = devices[0] if devices else {}
+        host = (
+            first.get("system", {}).get("hostname")
+            or first.get("name")
+            or first.get("file")
+            or "device1"
+        )
+        interfaces = (first.get("interfaces") or [{}])
+        interface = interfaces[0].get("name", "GigabitEthernet0/0")
+        bgp = first.get("routing", {}).get("bgp", {})
+        asn = bgp.get("local_as", 65000)
+        neighbors = bgp.get("neighbors") or [{}]
+        neighbor_ip = neighbors[0].get("id") or neighbors[0].get("ip") or "2.2.2.2"
+        hosts = [(
+            d.get("system", {}).get("hostname")
+            or d.get("name")
+            or d.get("file")
+            or host
+        ) for d in devices]
+        jump_host = hosts[1] if len(hosts) > 1 else "jumphost"
+        dest_host = hosts[2] if len(hosts) > 2 else host
+
+        level_map = {
+            "cmd_show_bgp_summary": 1,
+            "cmd_show_ip_interface_brief": 1,
+            "cmd_show_ip_route_ospf": 1,
+            "cmd_show_processes_cpu": 1,
+            "cmd_show_l2vpn_vc": 1,
+            "cmd_show_ip_ospf_neighbor": 1,
+            "cmd_show_users": 1,
+            "cmd_show_logging": 1,
+            "cmd_ssh_direct_access": 1,
+            "cmd_set_static_route": 2,
+            "cmd_set_bgp_routemap": 2,
+            "cmd_set_interface_description": 2,
+            "cmd_create_vrf_and_assign": 2,
+            "cmd_set_ospf_cost": 2,
+            "cmd_set_vty_acl": 2,
+            "cmd_set_hostname": 2,
+            "cmd_ssh_proxy_jump": 2,
+        }
+
+        params_base = {
+            "host": host,
+            "interface": interface,
+            "asn": asn,
+            "neighbor_ip": neighbor_ip,
+            "user": "admin",
+            "prefix": "192.0.2.0",
+            "mask": "255.255.255.0",
+            "next_hop": "10.0.0.1",
+            "map_name": "RM_OUT",
+            "description": "Uplink to core",
+            "vrf_name": "CUSTOMER_A",
+            "process_id": 1,
+            "cost": 100,
+            "acl_name": "SSH_ONLY",
+            "new_hostname": f"{host}-NEW",
+            "jump_host": jump_host,
+            "destination_host": dest_host,
+        }
+
+        cmd_items: List[Dict[str, Any]] = []
+        for metric in ALLOWED_METRICS.get("Command_Generation", []):
+            params = dict(params_base)
+            if metric == "cmd_ssh_direct_access":
+                params = {"user": params["user"], "host": host}
+            elif metric == "cmd_set_static_route":
+                params = {
+                    "host": host,
+                    "prefix": params["prefix"],
+                    "mask": params["mask"],
+                    "next_hop": params["next_hop"],
+                }
+            elif metric == "cmd_set_bgp_routemap":
+                params = {
+                    "host": host,
+                    "asn": asn,
+                    "neighbor_ip": neighbor_ip,
+                    "map_name": params["map_name"],
+                }
+            elif metric == "cmd_set_interface_description":
+                params = {
+                    "host": host,
+                    "interface": interface,
+                    "description": params["description"],
+                }
+            elif metric == "cmd_create_vrf_and_assign":
+                params = {
+                    "host": host,
+                    "vrf_name": params["vrf_name"],
+                    "interface": interface,
+                }
+            elif metric == "cmd_set_ospf_cost":
+                params = {
+                    "host": host,
+                    "process_id": params["process_id"],
+                    "interface": interface,
+                    "cost": params["cost"],
+                }
+            elif metric == "cmd_set_vty_acl":
+                params = {"host": host, "acl_name": params["acl_name"]}
+            elif metric == "cmd_set_hostname":
+                params = {"host": host, "new_hostname": params["new_hostname"]}
+            elif metric == "cmd_ssh_proxy_jump":
+                params = {
+                    "user": params["user"],
+                    "jump_host": params["jump_host"],
+                    "destination_host": params["destination_host"],
+                }
+            else:
+                params = {"host": host}
+
+            question = default_patterns(metric).format(**params)
+            cmd_items.append({
+                "test_id": metric.upper(),
+                "category": "Command_Generation",
+                "question": question,
+                "intent": {"metric": metric, "params": params},
+                "level": level_map.get(metric, 1),
+            })
+        return cmd_items
