@@ -54,7 +54,8 @@
         "step_2_ibgp_missing_pairs_count": 0,
         "step_3_bgp_inconsistent_as_count": null
       }
-    }
+    },
+    "ground_truth": "영향 없음"
   },
   {
     "id": "ENHANCED_ENHANCED-ANALYTICAL-002",
@@ -111,7 +112,8 @@
         "step_2_interface_count": 5,
         "step_3_ospf_area_count": null
       }
-    }
+    },
+    "ground_truth": "5"
   },
   {
     "id": "ENHANCED_ENHANCED-DIAGNOSTIC-001",
@@ -166,7 +168,8 @@
         "step_2_bgp_inconsistent_as_count": null,
         "step_3_bgp_missing_pairs": null
       }
-    }
+    },
+    "ground_truth": "정상"
   },
   {
     "id": "ENHANCED_ENHANCED-DIAGNOSTIC-002",
@@ -219,7 +222,8 @@
         "step_2_aaa_enabled_devices": null,
         "step_3_ssh_all_enabled_bool": true
       }
-    }
+    },
+    "ground_truth": "낮음"
   },
   {
     "id": "ENHANCED_ENHANCED-SYNTHETIC-001",
@@ -286,7 +290,8 @@
         "step_3_bgp_inconsistent_as_count": null,
         "step_4_l2vpn_issues": null
       }
-    }
+    },
+    "ground_truth": "L2VPN 및 L3VPN 장비 점검"
   },
   {
     "id": "ENHANCED_ENHANCED-SYNTHETIC-002",
@@ -349,7 +354,8 @@
         "step_3_bgp_missing_pairs": null,
         "step_4_bgp_peer_count": null
       }
-    }
+    },
+    "ground_truth": "추가 조치 없음"
   },
   {
     "id": "ENHANCED_ENHANCED-ANALYTICAL-001",
@@ -411,7 +417,8 @@
         "step_2_bgp_peer_count": null,
         "step_3_ospf_area_count": null
       }
-    }
+    },
+    "ground_truth": "필요 없음"
   },
   {
     "id": "ENHANCED_ENHANCED-ANALYTICAL-002",
@@ -471,7 +478,8 @@
         "step_2_vrf_without_rt_count": 0,
         "step_3_aaa_enabled_devices": null
       }
-    }
+    },
+    "ground_truth": "불필요"
   },
   {
     "id": "ENHANCED_ENHANCED-DIAGNOSTIC-001",
@@ -524,7 +532,8 @@
         "step_2_aaa_enabled_devices": null,
         "step_3_aaa_enabled_devices": null
       }
-    }
+    },
+    "ground_truth": "아니오"
   },
   {
     "id": "ENHANCED_ENHANCED-DIAGNOSTIC-002",
@@ -584,7 +593,8 @@
         "step_2_ssh_missing_count": 0,
         "step_3_ssh_all_enabled_bool": true
       }
-    }
+    },
+    "ground_truth": "예"
   },
   {
     "id": "ENHANCED_ENHANCED-ANALYTICAL-001",
@@ -641,7 +651,8 @@
         "step_2_bgp_peer_count": null,
         "step_3_bgp_peer_count": null
       }
-    }
+    },
+    "ground_truth": "0"
   },
   {
     "id": "ENHANCED_ENHANCED-ANALYTICAL-002",
@@ -686,6 +697,7 @@
         "step_1_l2vpn_unidir_count": 0,
         "step_2_l2vpn_issues": null
       }
-    }
+    },
+    "ground_truth": "없음"
   }
 ]
