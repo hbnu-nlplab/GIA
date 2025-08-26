@@ -48,7 +48,13 @@ class CommandAgent:
             if allow_fallback:
                 fallback = templates.get("_default")
                 if fallback:
-                    return fallback[0].format(**params)
+                    template, required = fallback
+                    missing = [p for p in required if p not in params]
+                    if missing:
+                        raise ValueError(
+                            f"Missing parameters for fallback for intent '{intent}': {', '.join(missing)}"
+                        )
+                    return template.format(**params)
                 return f"# unsupported intent: {intent}"
             raise ValueError(f"Unsupported intent '{intent}' for vendor '{vendor}'")
 
