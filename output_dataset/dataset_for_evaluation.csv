@@ -1,155 +1,860 @@
-﻿id,level,task_category,answer_type,question,ground_truth,explanation,context,source_files
-ENHANCED_ENHANCED-ANALYTICAL-001,3,네트워크 토폴로지 구성 질의,long,iBGP 풀메시 누락이 AS 65001에서 경로 수렴성에 미치는 영향을 분석하라.,"AS 65001에서 iBGP 풀메시가 누락되지 않았기 때문에 경로 수렴성에 부정적인 영향을 미치지 않았다. 수집된 증거에 따르면, iBGP 풀메시가 정상적으로 작동하고 있으며, 누락된 쌍이 없기 때문에 경로 수렴성은 유지되고 있다. 이는 BGP의 일관성을 보장하는 데 중요한 요소이다.",iBGP 풀메시가 정상적으로 작동함에 따라 AS 내의 모든 라우터가 서로의 경로 정보를 공유할 수 있어 경로 수렴성이 확보되었다.,"BGP 설정 현황:
+﻿id,origin,level,task_category,answer_type,complexity,persona,question,ground_truth,explanation,context,source_files
+BASIC_DSL-SSH_ENABLED_DEVICES-24609,rule_based,1,보안 질의,short,basic,,SSH가 활성화된 장비 목록은?,"[""CE1"", ""CE2"", ""sample10"", ""sample7"", ""sample8"", ""sample9""]","The list of devices for ssh_enabled_devices is ['CE1', 'CE2', 'sample10', 'sample7', 'sample8', 'sample9'].",장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SSH_ENABLED_DEVICES-32362,rule_based,1,보안 질의,short,basic,,SSH가 활성화된 장비 목록은?,"[""CE1"", ""CE2"", ""sample10"", ""sample7"", ""sample8"", ""sample9""]","The list of devices for ssh_enabled_devices is ['CE1', 'CE2', 'sample10', 'sample7', 'sample8', 'sample9'].",장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SSH_ENABLED_DEVICES-1597,rule_based,1,보안 질의,short,basic,,SSH가 활성화된 장비 목록은?,"[""CE1"", ""CE2"", ""sample10"", ""sample7"", ""sample8"", ""sample9""]","The list of devices for ssh_enabled_devices is ['CE1', 'CE2', 'sample10', 'sample7', 'sample8', 'sample9'].",장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SSH_ENABLED_DEVICES-25299,rule_based,1,보안 질의,short,basic,,SSH가 활성화된 장비 목록은?,"[""CE1"", ""CE2"", ""sample10"", ""sample7"", ""sample8"", ""sample9""]","The list of devices for ssh_enabled_devices is ['CE1', 'CE2', 'sample10', 'sample7', 'sample8', 'sample9'].",장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SSH_ENABLED_DEVICES-36080,rule_based,1,보안 질의,short,basic,,SSH가 활성화된 장비 목록은?,"[""CE1"", ""CE2"", ""sample10"", ""sample7"", ""sample8"", ""sample9""]","The list of devices for ssh_enabled_devices is ['CE1', 'CE2', 'sample10', 'sample7', 'sample8', 'sample9'].",장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SSH_ENABLED_DEVICES-13781,rule_based,1,보안 질의,short,basic,,SSH가 활성화된 장비 목록은?,"[""CE1"", ""CE2"", ""sample10"", ""sample7"", ""sample8"", ""sample9""]","The list of devices for ssh_enabled_devices is ['CE1', 'CE2', 'sample10', 'sample7', 'sample8', 'sample9'].",장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SSH_MISSING_COUNT-64521,rule_based,2,보안 질의,short,basic,,SSH가 비활성화(또는 설정 없음)인 장비 수는?,0,The value for ssh_missing_count is 0.,"장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1
+장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1
+장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-NEIGHBOR_LIST_IBGP-1597,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 iBGP 피어 목록은?,"[""1.1.1.1"", ""2.2.2.2"", ""3.3.3.3""]","The list of devices for neighbor_list_ibgp is ['1.1.1.1', '2.2.2.2', '3.3.3.3'].",장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-NEIGHBOR_LIST_IBGP-25299,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 iBGP 피어 목록은?,"[""2.2.2.2"", ""3.3.3.3"", ""4.4.4.4""]","The list of devices for neighbor_list_ibgp is ['2.2.2.2', '3.3.3.3', '4.4.4.4'].",장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-NEIGHBOR_LIST_IBGP-36080,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 iBGP 피어 목록은?,"[""1.1.1.1"", ""3.3.3.3"", ""4.4.4.4""]","The list of devices for neighbor_list_ibgp is ['1.1.1.1', '3.3.3.3', '4.4.4.4'].",장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-NEIGHBOR_LIST_IBGP-13781,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 iBGP 피어 목록은?,"[""1.1.1.1"", ""2.2.2.2"", ""4.4.4.4""]","The list of devices for neighbor_list_ibgp is ['1.1.1.1', '2.2.2.2', '4.4.4.4'].",장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-NEIGHBOR_LIST_EBGP-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 eBGP 피어 목록은?,"[""192.168.1.10""]",The list of devices for neighbor_list_ebgp is ['192.168.1.10'].,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-NEIGHBOR_LIST_EBGP-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 eBGP 피어 목록은?,"[""192.168.3.10""]",The list of devices for neighbor_list_ebgp is ['192.168.3.10'].,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-NEIGHBOR_LIST_EBGP-1597,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 eBGP 피어 목록은?,"[""192.168.4.11""]",The list of devices for neighbor_list_ebgp is ['192.168.4.11'].,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-NEIGHBOR_LIST_EBGP-25299,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 eBGP 피어 목록은?,"[""192.168.1.11""]",The list of devices for neighbor_list_ebgp is ['192.168.1.11'].,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-NEIGHBOR_LIST_EBGP-36080,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 eBGP 피어 목록은?,"[""192.168.2.11""]",The list of devices for neighbor_list_ebgp is ['192.168.2.11'].,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-NEIGHBOR_LIST_EBGP-13781,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 eBGP 피어 목록은?,"[""192.168.3.11""]",The list of devices for neighbor_list_ebgp is ['192.168.3.11'].,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-IBGP_FULLMESH_OK-35314,rule_based,2,단순 조회 업무,short,basic,,AS 65000 도메인의 iBGP 풀메시 구성이 완전한가,True,The value for ibgp_fullmesh_ok is True.,"장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-IBGP_FULLMESH_OK-59930,rule_based,2,단순 조회 업무,short,basic,,AS 65001 도메인의 iBGP 풀메시 구성이 완전한가,True,The value for ibgp_fullmesh_ok is True.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-IBGP_FULLMESH_OK-49279,rule_based,2,단순 조회 업무,short,basic,,AS 65003 도메인의 iBGP 풀메시 구성이 완전한가,True,The value for ibgp_fullmesh_ok is True.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-35314,rule_based,2,단순 조회 업무,short,basic,,AS 65000 iBGP 풀메시에서 누락된 링크 개수는?,0,The value for ibgp_missing_pairs_count is 0.,"장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-59930,rule_based,2,단순 조회 업무,short,basic,,AS 65001 iBGP 풀메시에서 누락된 링크 개수는?,0,The value for ibgp_missing_pairs_count is 0.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-49279,rule_based,2,단순 조회 업무,short,basic,,AS 65003 iBGP 풀메시에서 누락된 링크 개수는?,0,The value for ibgp_missing_pairs_count is 0.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-VRF_WITHOUT_RT_COUNT-64521,rule_based,2,단순 조회 업무,short,basic,,route-target이 없는 VRF (장비/VRF) 개수는?,0,The value for vrf_without_rt_count is 0.,"장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1
+장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1
+장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-VRF_RD_MAP-28540,rule_based,2,단순 조회 업무,short,basic,,VRF exam-l3vpn 의 장비별 RD 매핑은?,"{""exam-l3vpn"": ""65000:1000""}",The value for vrf_rd_map is {'exam-l3vpn': '65000:1000'}.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-VRF_RD_MAP-13206,rule_based,2,단순 조회 업무,short,basic,,VRF exam-l3vpn 의 장비별 RD 매핑은?,"{""exam-l3vpn"": ""65000:1000""}",The value for vrf_rd_map is {'exam-l3vpn': '65000:1000'}.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-VRF_RD_MAP-4978,rule_based,2,단순 조회 업무,short,basic,,VRF exam-l3vpn 의 장비별 RD 매핑은?,"{""exam-l3vpn"": ""65000:1000""}",The value for vrf_rd_map is {'exam-l3vpn': '65000:1000'}.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-VRF_RD_MAP-38269,rule_based,2,단순 조회 업무,short,basic,,VRF exam-l3vpn 의 장비별 RD 매핑은?,"{""exam-l3vpn"": ""65000:1000""}",The value for vrf_rd_map is {'exam-l3vpn': '65000:1000'}.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-VRF_RT_LIST_PER_DEVICE-28540,rule_based,1,단순 조회 업무,short,basic,,sample10 의 VRF exam-l3vpn route-target 목록은?,"[""65000:1000""]",The list of devices for vrf_rt_list_per_device is ['65000:1000'].,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-VRF_RT_LIST_PER_DEVICE-13206,rule_based,1,단순 조회 업무,short,basic,,sample7 의 VRF exam-l3vpn route-target 목록은?,"[""65000:1000""]",The list of devices for vrf_rt_list_per_device is ['65000:1000'].,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-VRF_RT_LIST_PER_DEVICE-4978,rule_based,1,단순 조회 업무,short,basic,,sample8 의 VRF exam-l3vpn route-target 목록은?,"[""65000:1000""]",The list of devices for vrf_rt_list_per_device is ['65000:1000'].,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-VRF_RT_LIST_PER_DEVICE-38269,rule_based,1,단순 조회 업무,short,basic,,sample9 의 VRF exam-l3vpn route-target 목록은?,"[""65000:1000""]",The list of devices for vrf_rt_list_per_device is ['65000:1000'].,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-VRF_INTERFACE_BIND_COUNT-57884,rule_based,2,단순 조회 업무,short,basic,,CE1의 VRF exam-l3vpn에 바인딩된 인터페이스 수는?,0,The value for vrf_interface_bind_count is 0.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-VRF_INTERFACE_BIND_COUNT-30402,rule_based,2,단순 조회 업무,short,basic,,CE2의 VRF exam-l3vpn에 바인딩된 인터페이스 수는?,0,The value for vrf_interface_bind_count is 0.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-VRF_INTERFACE_BIND_COUNT-28540,rule_based,2,단순 조회 업무,short,basic,,sample10의 VRF exam-l3vpn에 바인딩된 인터페이스 수는?,0,The value for vrf_interface_bind_count is 0.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-VRF_INTERFACE_BIND_COUNT-13206,rule_based,2,단순 조회 업무,short,basic,,sample7의 VRF exam-l3vpn에 바인딩된 인터페이스 수는?,0,The value for vrf_interface_bind_count is 0.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-VRF_INTERFACE_BIND_COUNT-4978,rule_based,2,단순 조회 업무,short,basic,,sample8의 VRF exam-l3vpn에 바인딩된 인터페이스 수는?,0,The value for vrf_interface_bind_count is 0.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-VRF_INTERFACE_BIND_COUNT-38269,rule_based,2,단순 조회 업무,short,basic,,sample9의 VRF exam-l3vpn에 바인딩된 인터페이스 수는?,0,The value for vrf_interface_bind_count is 0.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-L2VPN_PAIRS-64521,rule_based,1,단순 조회 업무,short,basic,,구성된 L2VPN pseudowire 회선(장비쌍) 목록은?,"[""sample7<->sample9"", ""sample9<->sample7""]","The list of devices for l2vpn_pairs is ['sample7<->sample9', 'sample9<->sample7'].","장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1
+장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1
+장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-L2VPN_PWID_MISMATCH_PAIRS-64521,rule_based,2,단순 조회 업무,short,basic,,PW-ID 불일치 L2VPN 회선(장비쌍) 목록은?,"[""sample7<->sample9"", ""sample9<->sample7""]","The list of devices for l2vpn_pwid_mismatch_pairs is ['sample7<->sample9', 'sample9<->sample7'].","장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1
+장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1
+장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-L2VPN_MISMATCH_COUNT-64521,rule_based,2,단순 조회 업무,short,basic,,PW-ID 불일치(또는 역방향 미존재) 회선 수는?,2,The value for l2vpn_mismatch_count is 2.,"장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1
+장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1
+장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-L2VPN_UNIDIR_COUNT-64521,rule_based,2,단순 조회 업무,short,basic,,역방향이 없는 L2VPN 회선(장비쌍) 개수는?,0,The value for l2vpn_unidir_count is 0.,"장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1
+장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1
+장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-OSPF_AREA0_IF_LIST-1597,rule_based,1,단순 조회 업무,short,basic,,sample10 의 OSPF Area 0 인터페이스 목록은?,"[""GigabitEthernet0/0/0/0"", ""GigabitEthernet0/0/0/2"", ""Loopback0""]","The list of devices for ospf_area0_if_list is ['GigabitEthernet0/0/0/0', 'GigabitEthernet0/0/0/2', 'Loopback0'].",장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-OSPF_AREA0_IF_LIST-25299,rule_based,1,단순 조회 업무,short,basic,,sample7 의 OSPF Area 0 인터페이스 목록은?,"[""GigabitEthernet0/0/0/0"", ""GigabitEthernet0/0/0/2"", ""Loopback0""]","The list of devices for ospf_area0_if_list is ['GigabitEthernet0/0/0/0', 'GigabitEthernet0/0/0/2', 'Loopback0'].",장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-OSPF_AREA0_IF_LIST-36080,rule_based,1,단순 조회 업무,short,basic,,sample8 의 OSPF Area 0 인터페이스 목록은?,"[""GigabitEthernet0/0/0/0"", ""GigabitEthernet0/0/0/2"", ""Loopback0""]","The list of devices for ospf_area0_if_list is ['GigabitEthernet0/0/0/0', 'GigabitEthernet0/0/0/2', 'Loopback0'].",장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-OSPF_AREA0_IF_LIST-13781,rule_based,1,단순 조회 업무,short,basic,,sample9 의 OSPF Area 0 인터페이스 목록은?,"[""GigabitEthernet0/0/0/0"", ""GigabitEthernet0/0/0/2"", ""Loopback0""]","The list of devices for ospf_area0_if_list is ['GigabitEthernet0/0/0/0', 'GigabitEthernet0/0/0/2', 'Loopback0'].",장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-OSPF_PROC_IDS-1597,rule_based,1,단순 조회 업무,short,basic,,sample10 의 OSPF 프로세스 ID는?,1,The value for ospf_proc_ids is 1.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-OSPF_PROC_IDS-25299,rule_based,1,단순 조회 업무,short,basic,,sample7 의 OSPF 프로세스 ID는?,1,The value for ospf_proc_ids is 1.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-OSPF_PROC_IDS-36080,rule_based,1,단순 조회 업무,short,basic,,sample8 의 OSPF 프로세스 ID는?,1,The value for ospf_proc_ids is 1.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-OSPF_PROC_IDS-13781,rule_based,1,단순 조회 업무,short,basic,,sample9 의 OSPF 프로세스 ID는?,1,The value for ospf_proc_ids is 1.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-OSPF_AREA0_IF_COUNT-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 의 OSPF Area 0 인터페이스 수는?,0,The value for ospf_area0_if_count is 0.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-OSPF_AREA0_IF_COUNT-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 의 OSPF Area 0 인터페이스 수는?,0,The value for ospf_area0_if_count is 0.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-OSPF_AREA0_IF_COUNT-1597,rule_based,1,단순 조회 업무,short,basic,,sample10 의 OSPF Area 0 인터페이스 수는?,3,The value for ospf_area0_if_count is 3.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-OSPF_AREA0_IF_COUNT-25299,rule_based,1,단순 조회 업무,short,basic,,sample7 의 OSPF Area 0 인터페이스 수는?,3,The value for ospf_area0_if_count is 3.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-OSPF_AREA0_IF_COUNT-36080,rule_based,1,단순 조회 업무,short,basic,,sample8 의 OSPF Area 0 인터페이스 수는?,3,The value for ospf_area0_if_count is 3.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-OSPF_AREA0_IF_COUNT-13781,rule_based,1,단순 조회 업무,short,basic,,sample9 의 OSPF Area 0 인터페이스 수는?,3,The value for ospf_area0_if_count is 3.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 호스트네임은?,CE1,The value for system_hostname_text is CE1.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 호스트네임은?,CE2,The value for system_hostname_text is CE2.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-1597,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 호스트네임은?,sample10,The value for system_hostname_text is sample10.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-25299,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 호스트네임은?,sample7,The value for system_hostname_text is sample7.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-36080,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 호스트네임은?,sample8,The value for system_hostname_text is sample8.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-13781,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 호스트네임은?,sample9,The value for system_hostname_text is sample9.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SYSTEM_VERSION_TEXT-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 OS/이미지 버전은?,15.4,The value for system_version_text is 15.4.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_VERSION_TEXT-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 OS/이미지 버전은?,15.4,The value for system_version_text is 15.4.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SYSTEM_USER_COUNT-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 로컬 사용자 수는?,1,The value for system_user_count is 1.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_USER_COUNT-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 로컬 사용자 수는?,1,The value for system_user_count is 1.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SYSTEM_USER_COUNT-1597,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 로컬 사용자 수는?,1,The value for system_user_count is 1.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SYSTEM_USER_COUNT-25299,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 로컬 사용자 수는?,1,The value for system_user_count is 1.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SYSTEM_USER_COUNT-36080,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 로컬 사용자 수는?,1,The value for system_user_count is 1.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SYSTEM_USER_COUNT-13781,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 로컬 사용자 수는?,1,The value for system_user_count is 1.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SYSTEM_USER_LIST-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 로컬 사용자 목록은?,"[""nso""]",The list of devices for system_user_list is ['nso'].,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_USER_LIST-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 로컬 사용자 목록은?,"[""nso""]",The list of devices for system_user_list is ['nso'].,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SYSTEM_USER_LIST-1597,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 로컬 사용자 목록은?,"[""nso""]",The list of devices for system_user_list is ['nso'].,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SYSTEM_USER_LIST-25299,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 로컬 사용자 목록은?,"[""nso""]",The list of devices for system_user_list is ['nso'].,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SYSTEM_USER_LIST-36080,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 로컬 사용자 목록은?,"[""nso""]",The list of devices for system_user_list is ['nso'].,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SYSTEM_USER_LIST-13781,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 로컬 사용자 목록은?,"[""nso""]",The list of devices for system_user_list is ['nso'].,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SYSTEM_TIMEZONE_TEXT-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 시간대(Timezone)는?,KST,The value for system_timezone_text is KST.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_TIMEZONE_TEXT-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 시간대(Timezone)는?,KST,The value for system_timezone_text is KST.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SSH_PRESENT_BOOL-24609,rule_based,1,단순 조회 업무,short,basic,,ssh_present_bool 측정값은?,True,The value for ssh_present_bool is True.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SSH_PRESENT_BOOL-32362,rule_based,1,단순 조회 업무,short,basic,,ssh_present_bool 측정값은?,True,The value for ssh_present_bool is True.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SSH_PRESENT_BOOL-1597,rule_based,1,단순 조회 업무,short,basic,,ssh_present_bool 측정값은?,True,The value for ssh_present_bool is True.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SSH_PRESENT_BOOL-25299,rule_based,1,단순 조회 업무,short,basic,,ssh_present_bool 측정값은?,True,The value for ssh_present_bool is True.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SSH_PRESENT_BOOL-36080,rule_based,1,단순 조회 업무,short,basic,,ssh_present_bool 측정값은?,True,The value for ssh_present_bool is True.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SSH_PRESENT_BOOL-13781,rule_based,1,단순 조회 업무,short,basic,,ssh_present_bool 측정값은?,True,The value for ssh_present_bool is True.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SSH_VERSION_TEXT-24609,rule_based,1,단순 조회 업무,short,basic,,ssh_version_text 측정값은?,2,The value for ssh_version_text is 2.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SSH_VERSION_TEXT-32362,rule_based,1,단순 조회 업무,short,basic,,ssh_version_text 측정값은?,2,The value for ssh_version_text is 2.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-AAA_PRESENT_BOOL-24609,rule_based,1,단순 조회 업무,short,basic,,aaa_present_bool 측정값은?,False,The value for aaa_present_bool is False.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-AAA_PRESENT_BOOL-32362,rule_based,1,단순 조회 업무,short,basic,,aaa_present_bool 측정값은?,False,The value for aaa_present_bool is False.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-AAA_PRESENT_BOOL-1597,rule_based,1,단순 조회 업무,short,basic,,aaa_present_bool 측정값은?,True,The value for aaa_present_bool is True.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-AAA_PRESENT_BOOL-25299,rule_based,1,단순 조회 업무,short,basic,,aaa_present_bool 측정값은?,True,The value for aaa_present_bool is True.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-AAA_PRESENT_BOOL-36080,rule_based,1,단순 조회 업무,short,basic,,aaa_present_bool 측정값은?,True,The value for aaa_present_bool is True.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-AAA_PRESENT_BOOL-13781,rule_based,1,단순 조회 업무,short,basic,,aaa_present_bool 측정값은?,True,The value for aaa_present_bool is True.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-24609,rule_based,1,단순 조회 업무,short,basic,,password_policy_present_bool 측정값은?,False,The value for password_policy_present_bool is False.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-32362,rule_based,1,단순 조회 업무,short,basic,,password_policy_present_bool 측정값은?,False,The value for password_policy_present_bool is False.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-1597,rule_based,1,단순 조회 업무,short,basic,,password_policy_present_bool 측정값은?,False,The value for password_policy_present_bool is False.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-25299,rule_based,1,단순 조회 업무,short,basic,,password_policy_present_bool 측정값은?,False,The value for password_policy_present_bool is False.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-36080,rule_based,1,단순 조회 업무,short,basic,,password_policy_present_bool 측정값은?,False,The value for password_policy_present_bool is False.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-13781,rule_based,1,단순 조회 업무,short,basic,,password_policy_present_bool 측정값은?,False,The value for password_policy_present_bool is False.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_COUNT-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 인터페이스 개수는?,5,The value for interface_count is 5.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_COUNT-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 인터페이스 개수는?,5,The value for interface_count is 5.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_COUNT-1597,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 인터페이스 개수는?,7,The value for interface_count is 7.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_COUNT-25299,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 인터페이스 개수는?,7,The value for interface_count is 7.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_COUNT-36080,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 인터페이스 개수는?,6,The value for interface_count is 6.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_COUNT-13781,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 인터페이스 개수는?,7,The value for interface_count is 7.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_IP_MAP-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 인터페이스-IP 매핑은?,"{""Ethernet0/0"": """", ""Ethernet0/0.100"": ""192.168.1.11/255.255.255.0"", ""Ethernet0/1"": ""192.168.10.1/255.255.255.0"", ""Ethernet0/2"": ""172.16.1.41/255.255.255.0"", ""Ethernet0/3"": """"}","The value for interface_ip_map is {'Ethernet0/0': '', 'Ethernet0/0.100': '192.168.1.11/255.255.255.0', 'Ethernet0/1': '192.168.10.1/255.255.255.0', 'Ethernet0/2': '172.16.1.41/255.255.255.0', 'Ethernet0/3': ''}.",장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_IP_MAP-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 인터페이스-IP 매핑은?,"{""Ethernet0/0"": """", ""Ethernet0/0.100"": ""192.168.3.11/255.255.255.0"", ""Ethernet0/1"": ""192.168.30.1/255.255.255.0"", ""Ethernet0/2"": ""172.16.1.41/255.255.255.0"", ""Ethernet0/3"": """"}","The value for interface_ip_map is {'Ethernet0/0': '', 'Ethernet0/0.100': '192.168.3.11/255.255.255.0', 'Ethernet0/1': '192.168.30.1/255.255.255.0', 'Ethernet0/2': '172.16.1.41/255.255.255.0', 'Ethernet0/3': ''}.",장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_IP_MAP-1597,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 인터페이스-IP 매핑은?,"{""Loopback0"": ""4.4.4.4/255.255.255.255"", ""MgmtEth0/RP0/CPU0/0"": ""172.16.1.133/255.255.255.0"", ""GigabitEthernet0/0/0/0"": ""10.1.31.2/255.255.255.0"", ""GigabitEthernet0/0/0/1"": """", ""GigabitEthernet0/0/0/2"": ""10.1.15.2/255.255.255.0"", ""GigabitEthernet0/0/0/3"": """", ""GigabitEthernet0/0/0/1.400"": ""192.168.4.10/255.255.255.0""}","The value for interface_ip_map is {'Loopback0': '4.4.4.4/255.255.255.255', 'MgmtEth0/RP0/CPU0/0': '172.16.1.133/255.255.255.0', 'GigabitEthernet0/0/0/0': '10.1.31.2/255.255.255.0', 'GigabitEthernet0/0/0/1': '', 'GigabitEthernet0/0/0/2': '10.1.15.2/255.255.255.0', 'GigabitEthernet0/0/0/3': '', 'GigabitEthernet0/0/0/1.400': '192.168.4.10/255.255.255.0'}.",장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_IP_MAP-25299,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 인터페이스-IP 매핑은?,"{""Loopback0"": ""1.1.1.1/255.255.255.255"", ""MgmtEth0/RP0/CPU0/0"": ""172.16.1.130/255.255.255.0"", ""GigabitEthernet0/0/0/0"": ""10.1.13.1/255.255.255.0"", ""GigabitEthernet0/0/0/2"": ""10.1.15.1/255.255.255.0"", ""GigabitEthernet0/0/0/3"": """", ""GigabitEthernet0/0/0/0.1"": """", ""GigabitEthernet0/0/0/1.100"": ""192.168.1.10/255.255.255.0""}","The value for interface_ip_map is {'Loopback0': '1.1.1.1/255.255.255.255', 'MgmtEth0/RP0/CPU0/0': '172.16.1.130/255.255.255.0', 'GigabitEthernet0/0/0/0': '10.1.13.1/255.255.255.0', 'GigabitEthernet0/0/0/2': '10.1.15.1/255.255.255.0', 'GigabitEthernet0/0/0/3': '', 'GigabitEthernet0/0/0/0.1': '', 'GigabitEthernet0/0/0/1.100': '192.168.1.10/255.255.255.0'}.",장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_IP_MAP-36080,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 인터페이스-IP 매핑은?,"{""Loopback0"": ""2.2.2.2/255.255.255.255"", ""MgmtEth0/RP0/CPU0/0"": ""172.16.1.131/255.255.255.0"", ""GigabitEthernet0/0/0/0"": ""10.1.13.2/255.255.255.0"", ""GigabitEthernet0/0/0/2"": ""10.1.27.1/255.255.255.0"", ""GigabitEthernet0/0/0/3"": """", ""GigabitEthernet0/0/0/1.200"": ""192.168.2.10/255.255.255.0""}","The value for interface_ip_map is {'Loopback0': '2.2.2.2/255.255.255.255', 'MgmtEth0/RP0/CPU0/0': '172.16.1.131/255.255.255.0', 'GigabitEthernet0/0/0/0': '10.1.13.2/255.255.255.0', 'GigabitEthernet0/0/0/2': '10.1.27.1/255.255.255.0', 'GigabitEthernet0/0/0/3': '', 'GigabitEthernet0/0/0/1.200': '192.168.2.10/255.255.255.0'}.",장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_IP_MAP-13781,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 인터페이스-IP 매핑은?,"{""Loopback0"": ""3.3.3.3/255.255.255.255"", ""MgmtEth0/RP0/CPU0/0"": ""172.16.1.132/255.255.255.0"", ""GigabitEthernet0/0/0/0"": """", ""GigabitEthernet0/0/0/2"": ""10.1.27.2/255.255.255.0"", ""GigabitEthernet0/0/0/3"": """", ""GigabitEthernet0/0/0/0.1"": """", ""GigabitEthernet0/0/0/1.300"": ""192.168.3.10/255.255.255.0""}","The value for interface_ip_map is {'Loopback0': '3.3.3.3/255.255.255.255', 'MgmtEth0/RP0/CPU0/0': '172.16.1.132/255.255.255.0', 'GigabitEthernet0/0/0/0': '', 'GigabitEthernet0/0/0/2': '10.1.27.2/255.255.255.0', 'GigabitEthernet0/0/0/3': '', 'GigabitEthernet0/0/0/0.1': '', 'GigabitEthernet0/0/0/1.300': '192.168.3.10/255.255.255.0'}.",장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_VLAN_SET-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 VLAN 목록은?,"[""100""]",The list of devices for interface_vlan_set is ['100'].,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_VLAN_SET-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 VLAN 목록은?,"[""300""]",The list of devices for interface_vlan_set is ['300'].,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_VLAN_SET-1597,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 VLAN 목록은?,"[""400""]",The list of devices for interface_vlan_set is ['400'].,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_VLAN_SET-25299,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 VLAN 목록은?,"[""100""]",The list of devices for interface_vlan_set is ['100'].,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_VLAN_SET-36080,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 VLAN 목록은?,"[""200""]",The list of devices for interface_vlan_set is ['200'].,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_VLAN_SET-13781,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 VLAN 목록은?,"[""300""]",The list of devices for interface_vlan_set is ['300'].,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SUBINTERFACE_COUNT-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 서브인터페이스 개수는?,0,The value for subinterface_count is 0.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SUBINTERFACE_COUNT-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 서브인터페이스 개수는?,0,The value for subinterface_count is 0.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SUBINTERFACE_COUNT-1597,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 서브인터페이스 개수는?,0,The value for subinterface_count is 0.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SUBINTERFACE_COUNT-25299,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 서브인터페이스 개수는?,0,The value for subinterface_count is 0.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SUBINTERFACE_COUNT-36080,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 서브인터페이스 개수는?,0,The value for subinterface_count is 0.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SUBINTERFACE_COUNT-13781,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 서브인터페이스 개수는?,0,The value for subinterface_count is 0.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-VRF_BIND_MAP-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 인터페이스별 VRF 바인딩 현황은?,"{""Ethernet0/0"": """", ""Ethernet0/0.100"": """", ""Ethernet0/1"": """", ""Ethernet0/2"": """", ""Ethernet0/3"": """"}","The value for vrf_bind_map is {'Ethernet0/0': '', 'Ethernet0/0.100': '', 'Ethernet0/1': '', 'Ethernet0/2': '', 'Ethernet0/3': ''}.",장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-VRF_BIND_MAP-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 인터페이스별 VRF 바인딩 현황은?,"{""Ethernet0/0"": """", ""Ethernet0/0.100"": """", ""Ethernet0/1"": """", ""Ethernet0/2"": """", ""Ethernet0/3"": """"}","The value for vrf_bind_map is {'Ethernet0/0': '', 'Ethernet0/0.100': '', 'Ethernet0/1': '', 'Ethernet0/2': '', 'Ethernet0/3': ''}.",장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-VRF_BIND_MAP-1597,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 인터페이스별 VRF 바인딩 현황은?,"{""Loopback0"": """", ""MgmtEth0/RP0/CPU0/0"": """", ""GigabitEthernet0/0/0/0"": """", ""GigabitEthernet0/0/0/1"": """", ""GigabitEthernet0/0/0/2"": """", ""GigabitEthernet0/0/0/3"": """", ""GigabitEthernet0/0/0/1.400"": """"}","The value for vrf_bind_map is {'Loopback0': '', 'MgmtEth0/RP0/CPU0/0': '', 'GigabitEthernet0/0/0/0': '', 'GigabitEthernet0/0/0/1': '', 'GigabitEthernet0/0/0/2': '', 'GigabitEthernet0/0/0/3': '', 'GigabitEthernet0/0/0/1.400': ''}.",장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-VRF_BIND_MAP-25299,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 인터페이스별 VRF 바인딩 현황은?,"{""Loopback0"": """", ""MgmtEth0/RP0/CPU0/0"": """", ""GigabitEthernet0/0/0/0"": """", ""GigabitEthernet0/0/0/2"": """", ""GigabitEthernet0/0/0/3"": """", ""GigabitEthernet0/0/0/0.1"": """", ""GigabitEthernet0/0/0/1.100"": """"}","The value for vrf_bind_map is {'Loopback0': '', 'MgmtEth0/RP0/CPU0/0': '', 'GigabitEthernet0/0/0/0': '', 'GigabitEthernet0/0/0/2': '', 'GigabitEthernet0/0/0/3': '', 'GigabitEthernet0/0/0/0.1': '', 'GigabitEthernet0/0/0/1.100': ''}.",장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-VRF_BIND_MAP-36080,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 인터페이스별 VRF 바인딩 현황은?,"{""Loopback0"": """", ""MgmtEth0/RP0/CPU0/0"": """", ""GigabitEthernet0/0/0/0"": """", ""GigabitEthernet0/0/0/2"": """", ""GigabitEthernet0/0/0/3"": """", ""GigabitEthernet0/0/0/1.200"": """"}","The value for vrf_bind_map is {'Loopback0': '', 'MgmtEth0/RP0/CPU0/0': '', 'GigabitEthernet0/0/0/0': '', 'GigabitEthernet0/0/0/2': '', 'GigabitEthernet0/0/0/3': '', 'GigabitEthernet0/0/0/1.200': ''}.",장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-VRF_BIND_MAP-13781,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 인터페이스별 VRF 바인딩 현황은?,"{""Loopback0"": """", ""MgmtEth0/RP0/CPU0/0"": """", ""GigabitEthernet0/0/0/0"": """", ""GigabitEthernet0/0/0/2"": """", ""GigabitEthernet0/0/0/3"": """", ""GigabitEthernet0/0/0/0.1"": """", ""GigabitEthernet0/0/0/1.300"": """"}","The value for vrf_bind_map is {'Loopback0': '', 'MgmtEth0/RP0/CPU0/0': '', 'GigabitEthernet0/0/0/0': '', 'GigabitEthernet0/0/0/2': '', 'GigabitEthernet0/0/0/3': '', 'GigabitEthernet0/0/0/0.1': '', 'GigabitEthernet0/0/0/1.300': ''}.",장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-BGP_LOCAL_AS_NUMERIC-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 BGP Local-AS 번호는?,65001,The value for bgp_local_as_numeric is 65001.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-BGP_LOCAL_AS_NUMERIC-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 BGP Local-AS 번호는?,65003,The value for bgp_local_as_numeric is 65003.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-BGP_LOCAL_AS_NUMERIC-1597,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 BGP Local-AS 번호는?,65000,The value for bgp_local_as_numeric is 65000.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-BGP_LOCAL_AS_NUMERIC-25299,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 BGP Local-AS 번호는?,65000,The value for bgp_local_as_numeric is 65000.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-BGP_LOCAL_AS_NUMERIC-36080,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 BGP Local-AS 번호는?,65000,The value for bgp_local_as_numeric is 65000.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-BGP_LOCAL_AS_NUMERIC-13781,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 BGP Local-AS 번호는?,65000,The value for bgp_local_as_numeric is 65000.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-BGP_NEIGHBOR_COUNT-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 BGP 이웃(피어) 수는?,1,The value for bgp_neighbor_count is 1.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-BGP_NEIGHBOR_COUNT-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 BGP 이웃(피어) 수는?,1,The value for bgp_neighbor_count is 1.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-BGP_NEIGHBOR_COUNT-1597,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 BGP 이웃(피어) 수는?,4,The value for bgp_neighbor_count is 4.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-BGP_NEIGHBOR_COUNT-25299,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 BGP 이웃(피어) 수는?,4,The value for bgp_neighbor_count is 4.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-BGP_NEIGHBOR_COUNT-36080,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 BGP 이웃(피어) 수는?,4,The value for bgp_neighbor_count is 4.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-BGP_NEIGHBOR_COUNT-13781,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 BGP 이웃(피어) 수는?,4,The value for bgp_neighbor_count is 4.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-OSPF_AREA_SET-1597,rule_based,1,단순 조회 업무,short,basic,,sample10 장비가 참여한 OSPF Area 목록은?,"[""0""]",The list of devices for ospf_area_set is ['0'].,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-OSPF_AREA_SET-25299,rule_based,1,단순 조회 업무,short,basic,,sample7 장비가 참여한 OSPF Area 목록은?,"[""0""]",The list of devices for ospf_area_set is ['0'].,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-OSPF_AREA_SET-36080,rule_based,1,단순 조회 업무,short,basic,,sample8 장비가 참여한 OSPF Area 목록은?,"[""0""]",The list of devices for ospf_area_set is ['0'].,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-OSPF_AREA_SET-13781,rule_based,1,단순 조회 업무,short,basic,,sample9 장비가 참여한 OSPF Area 목록은?,"[""0""]",The list of devices for ospf_area_set is ['0'].,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-VRF_NAMES_SET-1597,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 VRF 이름 목록은?,"[""exam-l3vpn""]",The list of devices for vrf_names_set is ['exam-l3vpn'].,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-VRF_NAMES_SET-25299,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 VRF 이름 목록은?,"[""exam-l3vpn""]",The list of devices for vrf_names_set is ['exam-l3vpn'].,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-VRF_NAMES_SET-36080,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 VRF 이름 목록은?,"[""exam-l3vpn""]",The list of devices for vrf_names_set is ['exam-l3vpn'].,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-VRF_NAMES_SET-13781,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 VRF 이름 목록은?,"[""exam-l3vpn""]",The list of devices for vrf_names_set is ['exam-l3vpn'].,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-L2VPN_PW_ID_SET-25299,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 L2VPN Pseudowire ID 목록은?,"[""13""]",The list of devices for l2vpn_pw_id_set is ['13'].,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-L2VPN_PW_ID_SET-13781,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 L2VPN Pseudowire ID 목록은?,"[""31""]",The list of devices for l2vpn_pw_id_set is ['31'].,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-RT_IMPORT_COUNT-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 Route Target Import 설정 개수는?,0,The value for rt_import_count is 0.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-RT_IMPORT_COUNT-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 Route Target Import 설정 개수는?,0,The value for rt_import_count is 0.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-RT_IMPORT_COUNT-1597,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 Route Target Import 설정 개수는?,0,The value for rt_import_count is 0.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-RT_IMPORT_COUNT-25299,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 Route Target Import 설정 개수는?,0,The value for rt_import_count is 0.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-RT_IMPORT_COUNT-36080,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 Route Target Import 설정 개수는?,0,The value for rt_import_count is 0.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-RT_IMPORT_COUNT-13781,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 Route Target Import 설정 개수는?,0,The value for rt_import_count is 0.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-RT_EXPORT_COUNT-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 Route Target Export 설정 개수는?,0,The value for rt_export_count is 0.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-RT_EXPORT_COUNT-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 Route Target Export 설정 개수는?,0,The value for rt_export_count is 0.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-RT_EXPORT_COUNT-1597,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 Route Target Export 설정 개수는?,0,The value for rt_export_count is 0.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-RT_EXPORT_COUNT-25299,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 Route Target Export 설정 개수는?,0,The value for rt_export_count is 0.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-RT_EXPORT_COUNT-36080,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 Route Target Export 설정 개수는?,0,The value for rt_export_count is 0.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-RT_EXPORT_COUNT-13781,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 Route Target Export 설정 개수는?,0,The value for rt_export_count is 0.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-VRF_COUNT-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 VRF 개수는?,0,The value for vrf_count is 0.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-VRF_COUNT-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 VRF 개수는?,0,The value for vrf_count is 0.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-VRF_COUNT-1597,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 VRF 개수는?,1,The value for vrf_count is 1.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-VRF_COUNT-25299,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 VRF 개수는?,1,The value for vrf_count is 1.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-VRF_COUNT-36080,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 VRF 개수는?,1,The value for vrf_count is 1.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-VRF_COUNT-13781,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 VRF 개수는?,1,The value for vrf_count is 1.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 호스트네임은?,CE1,The value for system_hostname_text is CE1.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 호스트네임은?,CE2,The value for system_hostname_text is CE2.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-1597,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 호스트네임은?,sample10,The value for system_hostname_text is sample10.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-25299,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 호스트네임은?,sample7,The value for system_hostname_text is sample7.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-36080,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 호스트네임은?,sample8,The value for system_hostname_text is sample8.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-13781,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 호스트네임은?,sample9,The value for system_hostname_text is sample9.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 관리 IP 주소는?,172.16.1.40,The value for system_mgmt_address_text is 172.16.1.40.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 관리 IP 주소는?,172.16.1.41,The value for system_mgmt_address_text is 172.16.1.41.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-1597,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 관리 IP 주소는?,172.16.1.133,The value for system_mgmt_address_text is 172.16.1.133.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-25299,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 관리 IP 주소는?,172.16.1.130,The value for system_mgmt_address_text is 172.16.1.130.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-36080,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 관리 IP 주소는?,172.16.1.131,The value for system_mgmt_address_text is 172.16.1.131.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-13781,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 관리 IP 주소는?,172.16.1.132,The value for system_mgmt_address_text is 172.16.1.132.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SYSTEM_VERSION_TEXT-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 OS/이미지 버전은?,15.4,The value for system_version_text is 15.4.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_VERSION_TEXT-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 OS/이미지 버전은?,15.4,The value for system_version_text is 15.4.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-IOS_CONFIG_REGISTER_TEXT-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 config-register 값은?,0x0,The value for ios_config_register_text is 0x0.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-IOS_CONFIG_REGISTER_TEXT-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 config-register 값은?,0x0,The value for ios_config_register_text is 0x0.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-LOGGING_BUFFERED_SEVERITY_TEXT-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에서 logging buffered의 severity-level은?,debugging,The value for logging_buffered_severity_text is debugging.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-LOGGING_BUFFERED_SEVERITY_TEXT-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에서 logging buffered의 severity-level은?,debugging,The value for logging_buffered_severity_text is debugging.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에서 HTTP 서버가 활성화되어 있습니까?,False,The value for http_server_enabled_bool is False.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에서 HTTP 서버가 활성화되어 있습니까?,False,The value for http_server_enabled_bool is False.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-1597,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에서 HTTP 서버가 활성화되어 있습니까?,False,The value for http_server_enabled_bool is False.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-25299,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에서 HTTP 서버가 활성화되어 있습니까?,False,The value for http_server_enabled_bool is False.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-36080,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에서 HTTP 서버가 활성화되어 있습니까?,False,The value for http_server_enabled_bool is False.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-13781,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에서 HTTP 서버가 활성화되어 있습니까?,False,The value for http_server_enabled_bool is False.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에서 ip forward-protocol nd가 설정되어 있습니까?,False,The value for ip_forward_protocol_nd_bool is False.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에서 ip forward-protocol nd가 설정되어 있습니까?,False,The value for ip_forward_protocol_nd_bool is False.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-1597,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에서 ip forward-protocol nd가 설정되어 있습니까?,False,The value for ip_forward_protocol_nd_bool is False.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-25299,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에서 ip forward-protocol nd가 설정되어 있습니까?,False,The value for ip_forward_protocol_nd_bool is False.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-36080,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에서 ip forward-protocol nd가 설정되어 있습니까?,False,The value for ip_forward_protocol_nd_bool is False.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-13781,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에서 ip forward-protocol nd가 설정되어 있습니까?,False,The value for ip_forward_protocol_nd_bool is False.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-IP_CEF_ENABLED_BOOL-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에서 IP CEF가 활성화되어 있습니까?,False,The value for ip_cef_enabled_bool is False.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-IP_CEF_ENABLED_BOOL-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에서 IP CEF가 활성화되어 있습니까?,False,The value for ip_cef_enabled_bool is False.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-IP_CEF_ENABLED_BOOL-1597,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에서 IP CEF가 활성화되어 있습니까?,False,The value for ip_cef_enabled_bool is False.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-IP_CEF_ENABLED_BOOL-25299,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에서 IP CEF가 활성화되어 있습니까?,False,The value for ip_cef_enabled_bool is False.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-IP_CEF_ENABLED_BOOL-36080,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에서 IP CEF가 활성화되어 있습니까?,False,The value for ip_cef_enabled_bool is False.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-IP_CEF_ENABLED_BOOL-13781,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에서 IP CEF가 활성화되어 있습니까?,False,The value for ip_cef_enabled_bool is False.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-VTY_FIRST_LAST_TEXT-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에서 VTY의 first~last 라인 번호는?,0~4,The value for vty_first_last_text is 0~4.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-VTY_FIRST_LAST_TEXT-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에서 VTY의 first~last 라인 번호는?,0~4,The value for vty_first_last_text is 0~4.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-VTY_LOGIN_MODE_TEXT-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에서 VTY line의 login 방식은?,local,The value for vty_login_mode_text is local.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-VTY_LOGIN_MODE_TEXT-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에서 VTY line의 login 방식은?,local,The value for vty_login_mode_text is local.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-VTY_PASSWORD_SECRET_TEXT-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 VTY password secret 값은?,12345678,The value for vty_password_secret_text is 12345678.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-VTY_PASSWORD_SECRET_TEXT-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 VTY password secret 값은?,12345678,The value for vty_password_secret_text is 12345678.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-VTY_TRANSPORT_INPUT_TEXT-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에서 VTY의 transport input은?,ssh,The value for vty_transport_input_text is ssh.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-VTY_TRANSPORT_INPUT_TEXT-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에서 VTY의 transport input은?,ssh,The value for vty_transport_input_text is ssh.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SYSTEM_USERS_DETAIL_MAP-24609,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 사용자 상세(UID/GID/password/ssh_keydir/homedir 등)는?,"{""nso"": {""privilege"": ""15"", ""secret_type"": ""5"", ""secret"": ""$1$ou/O$Fc2FfZtj0B5/97GkzArNj/""}}","The value for system_users_detail_map is {'nso': {'privilege': '15', 'secret_type': '5', 'secret': '$1$ou/O$Fc2FfZtj0B5/97GkzArNj/'}}.",장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_USERS_DETAIL_MAP-32362,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 사용자 상세(UID/GID/password/ssh_keydir/homedir 등)는?,"{""nso"": {""privilege"": ""15"", ""secret_type"": ""5"", ""secret"": ""$1$ou/O$Fc2FfZtj0B5/97GkzArNj/""}}","The value for system_users_detail_map is {'nso': {'privilege': '15', 'secret_type': '5', 'secret': '$1$ou/O$Fc2FfZtj0B5/97GkzArNj/'}}.",장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SYSTEM_USERS_DETAIL_MAP-1597,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 사용자 상세(UID/GID/password/ssh_keydir/homedir 등)는?,"{""nso"": {""uid"": ""9000"", ""gid"": ""100"", ""password"": ""$1$4OXc$YKd36/09DZDXOk1MZ7r9r."", ""ssh_keydir"": ""/var/confd/homes/nso/.ssh"", ""homedir"": ""/var/confd/homes/nso""}}","The value for system_users_detail_map is {'nso': {'uid': '9000', 'gid': '100', 'password': '$1$4OXc$YKd36/09DZDXOk1MZ7r9r.', 'ssh_keydir': '/var/confd/homes/nso/.ssh', 'homedir': '/var/confd/homes/nso'}}.",장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SYSTEM_USERS_DETAIL_MAP-25299,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 사용자 상세(UID/GID/password/ssh_keydir/homedir 등)는?,"{""nso"": {""uid"": ""9000"", ""gid"": ""100"", ""password"": ""$1$mUZJ$QPpVX3QwNEtq0gZBajM8T1"", ""ssh_keydir"": ""/var/confd/homes/nso/.ssh"", ""homedir"": ""/var/confd/homes/nso""}}","The value for system_users_detail_map is {'nso': {'uid': '9000', 'gid': '100', 'password': '$1$mUZJ$QPpVX3QwNEtq0gZBajM8T1', 'ssh_keydir': '/var/confd/homes/nso/.ssh', 'homedir': '/var/confd/homes/nso'}}.",장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SYSTEM_USERS_DETAIL_MAP-36080,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 사용자 상세(UID/GID/password/ssh_keydir/homedir 등)는?,"{""nso"": {""uid"": ""9000"", ""gid"": ""100"", ""password"": ""$1$b7Ry$jRnK9Vkv2I9SxP2L2ElCU."", ""ssh_keydir"": ""/var/confd/homes/nso/.ssh"", ""homedir"": ""/var/confd/homes/nso""}}","The value for system_users_detail_map is {'nso': {'uid': '9000', 'gid': '100', 'password': '$1$b7Ry$jRnK9Vkv2I9SxP2L2ElCU.', 'ssh_keydir': '/var/confd/homes/nso/.ssh', 'homedir': '/var/confd/homes/nso'}}.",장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SYSTEM_USERS_DETAIL_MAP-13781,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 사용자 상세(UID/GID/password/ssh_keydir/homedir 등)는?,"{""nso"": {""uid"": ""9000"", ""gid"": ""100"", ""password"": ""$1$YTSP$KsBQUPBU.LLpYLlRcBiV9/"", ""ssh_keydir"": ""/var/confd/homes/nso/.ssh"", ""homedir"": ""/var/confd/homes/nso""}}","The value for system_users_detail_map is {'nso': {'uid': '9000', 'gid': '100', 'password': '$1$YTSP$KsBQUPBU.LLpYLlRcBiV9/', 'ssh_keydir': '/var/confd/homes/nso/.ssh', 'homedir': '/var/confd/homes/nso'}}.",장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-33553,rule_based,2,단순 조회 업무,short,basic,,CE1 장비에서 Ethernet0/0 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-24405,rule_based,2,단순 조회 업무,short,basic,,CE1 장비에서 Ethernet0/0.100 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-34659,rule_based,2,단순 조회 업무,short,basic,,CE1 장비에서 Ethernet0/1 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-53342,rule_based,2,단순 조회 업무,short,basic,,CE1 장비에서 Ethernet0/2 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-7644,rule_based,2,단순 조회 업무,short,basic,,CE1 장비에서 Ethernet0/3 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-22544,rule_based,2,단순 조회 업무,short,basic,,CE1 장비에서 GigabitEthernet0/0/0/0 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-53693,rule_based,2,단순 조회 업무,short,basic,,CE1 장비에서 GigabitEthernet0/0/0/0.1 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-19256,rule_based,2,단순 조회 업무,short,basic,,CE1 장비에서 GigabitEthernet0/0/0/1 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-23560,rule_based,2,단순 조회 업무,short,basic,,CE1 장비에서 GigabitEthernet0/0/0/1.100 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-17098,rule_based,2,단순 조회 업무,short,basic,,CE1 장비에서 GigabitEthernet0/0/0/1.200 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-36499,rule_based,2,단순 조회 업무,short,basic,,CE1 장비에서 GigabitEthernet0/0/0/1.300 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-53006,rule_based,2,단순 조회 업무,short,basic,,CE1 장비에서 GigabitEthernet0/0/0/1.400 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-53465,rule_based,2,단순 조회 업무,short,basic,,CE1 장비에서 GigabitEthernet0/0/0/2 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-16434,rule_based,2,단순 조회 업무,short,basic,,CE1 장비에서 GigabitEthernet0/0/0/3 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-9475,rule_based,2,단순 조회 업무,short,basic,,CE1 장비에서 Loopback0 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-51369,rule_based,2,단순 조회 업무,short,basic,,CE1 장비에서 MgmtEth0/RP0/CPU0/0 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-10641,rule_based,2,단순 조회 업무,short,basic,,CE2 장비에서 Ethernet0/0 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-19602,rule_based,2,단순 조회 업무,short,basic,,CE2 장비에서 Ethernet0/0.100 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-52200,rule_based,2,단순 조회 업무,short,basic,,CE2 장비에서 Ethernet0/1 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-46601,rule_based,2,단순 조회 업무,short,basic,,CE2 장비에서 Ethernet0/2 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-51297,rule_based,2,단순 조회 업무,short,basic,,CE2 장비에서 Ethernet0/3 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-35369,rule_based,2,단순 조회 업무,short,basic,,CE2 장비에서 GigabitEthernet0/0/0/0 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-19183,rule_based,2,단순 조회 업무,short,basic,,CE2 장비에서 GigabitEthernet0/0/0/0.1 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-24817,rule_based,2,단순 조회 업무,short,basic,,CE2 장비에서 GigabitEthernet0/0/0/1 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-39414,rule_based,2,단순 조회 업무,short,basic,,CE2 장비에서 GigabitEthernet0/0/0/1.100 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-8334,rule_based,2,단순 조회 업무,short,basic,,CE2 장비에서 GigabitEthernet0/0/0/1.200 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-22043,rule_based,2,단순 조회 업무,short,basic,,CE2 장비에서 GigabitEthernet0/0/0/1.300 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-32372,rule_based,2,단순 조회 업무,short,basic,,CE2 장비에서 GigabitEthernet0/0/0/1.400 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-54577,rule_based,2,단순 조회 업무,short,basic,,CE2 장비에서 GigabitEthernet0/0/0/2 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-59338,rule_based,2,단순 조회 업무,short,basic,,CE2 장비에서 GigabitEthernet0/0/0/3 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-47160,rule_based,2,단순 조회 업무,short,basic,,CE2 장비에서 Loopback0 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-48928,rule_based,2,단순 조회 업무,short,basic,,CE2 장비에서 MgmtEth0/RP0/CPU0/0 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-3284,rule_based,2,단순 조회 업무,short,basic,,sample10 장비에서 Ethernet0/0 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-45045,rule_based,2,단순 조회 업무,short,basic,,sample10 장비에서 Ethernet0/0.100 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-17373,rule_based,2,단순 조회 업무,short,basic,,sample10 장비에서 Ethernet0/1 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-46848,rule_based,2,단순 조회 업무,short,basic,,sample10 장비에서 Ethernet0/2 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-21578,rule_based,2,단순 조회 업무,short,basic,,sample10 장비에서 Ethernet0/3 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-18055,rule_based,2,단순 조회 업무,short,basic,,sample10 장비에서 GigabitEthernet0/0/0/0 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-38634,rule_based,2,단순 조회 업무,short,basic,,sample10 장비에서 GigabitEthernet0/0/0/0.1 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-19740,rule_based,2,단순 조회 업무,short,basic,,sample10 장비에서 GigabitEthernet0/0/0/1 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-26110,rule_based,2,단순 조회 업무,short,basic,,sample10 장비에서 GigabitEthernet0/0/0/1.100 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-56021,rule_based,2,단순 조회 업무,short,basic,,sample10 장비에서 GigabitEthernet0/0/0/1.200 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-59539,rule_based,2,단순 조회 업무,short,basic,,sample10 장비에서 GigabitEthernet0/0/0/1.300 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-26804,rule_based,2,단순 조회 업무,short,basic,,sample10 장비에서 GigabitEthernet0/0/0/1.400 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-61971,rule_based,2,단순 조회 업무,short,basic,,sample10 장비에서 GigabitEthernet0/0/0/2 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-5013,rule_based,2,단순 조회 업무,short,basic,,sample10 장비에서 GigabitEthernet0/0/0/3 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-32096,rule_based,2,단순 조회 업무,short,basic,,sample10 장비에서 Loopback0 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-53180,rule_based,2,단순 조회 업무,short,basic,,sample10 장비에서 MgmtEth0/RP0/CPU0/0 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-40644,rule_based,2,단순 조회 업무,short,basic,,sample7 장비에서 Ethernet0/0 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-53509,rule_based,2,단순 조회 업무,short,basic,,sample7 장비에서 Ethernet0/0.100 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-63592,rule_based,2,단순 조회 업무,short,basic,,sample7 장비에서 Ethernet0/1 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-53444,rule_based,2,단순 조회 업무,short,basic,,sample7 장비에서 Ethernet0/2 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-13087,rule_based,2,단순 조회 업무,short,basic,,sample7 장비에서 Ethernet0/3 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-26208,rule_based,2,단순 조회 업무,short,basic,,sample7 장비에서 GigabitEthernet0/0/0/0 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-8095,rule_based,2,단순 조회 업무,short,basic,,sample7 장비에서 GigabitEthernet0/0/0/0.1 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-56653,rule_based,2,단순 조회 업무,short,basic,,sample7 장비에서 GigabitEthernet0/0/0/1 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-26434,rule_based,2,단순 조회 업무,short,basic,,sample7 장비에서 GigabitEthernet0/0/0/1.100 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-34182,rule_based,2,단순 조회 업무,short,basic,,sample7 장비에서 GigabitEthernet0/0/0/1.200 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-2319,rule_based,2,단순 조회 업무,short,basic,,sample7 장비에서 GigabitEthernet0/0/0/1.300 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-13510,rule_based,2,단순 조회 업무,short,basic,,sample7 장비에서 GigabitEthernet0/0/0/1.400 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-42728,rule_based,2,단순 조회 업무,short,basic,,sample7 장비에서 GigabitEthernet0/0/0/2 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-55810,rule_based,2,단순 조회 업무,short,basic,,sample7 장비에서 GigabitEthernet0/0/0/3 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-21351,rule_based,2,단순 조회 업무,short,basic,,sample7 장비에서 Loopback0 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-43155,rule_based,2,단순 조회 업무,short,basic,,sample7 장비에서 MgmtEth0/RP0/CPU0/0 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-64565,rule_based,2,단순 조회 업무,short,basic,,sample8 장비에서 Ethernet0/0 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-39454,rule_based,2,단순 조회 업무,short,basic,,sample8 장비에서 Ethernet0/0.100 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-48079,rule_based,2,단순 조회 업무,short,basic,,sample8 장비에서 Ethernet0/1 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-36930,rule_based,2,단순 조회 업무,short,basic,,sample8 장비에서 Ethernet0/2 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-5416,rule_based,2,단순 조회 업무,short,basic,,sample8 장비에서 Ethernet0/3 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-44046,rule_based,2,단순 조회 업무,short,basic,,sample8 장비에서 GigabitEthernet0/0/0/0 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-8916,rule_based,2,단순 조회 업무,short,basic,,sample8 장비에서 GigabitEthernet0/0/0/0.1 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-63241,rule_based,2,단순 조회 업무,short,basic,,sample8 장비에서 GigabitEthernet0/0/0/1 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-44774,rule_based,2,단순 조회 업무,short,basic,,sample8 장비에서 GigabitEthernet0/0/0/1.100 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-745,rule_based,2,단순 조회 업무,short,basic,,sample8 장비에서 GigabitEthernet0/0/0/1.200 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-52634,rule_based,2,단순 조회 업무,short,basic,,sample8 장비에서 GigabitEthernet0/0/0/1.300 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-28568,rule_based,2,단순 조회 업무,short,basic,,sample8 장비에서 GigabitEthernet0/0/0/1.400 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-23002,rule_based,2,단순 조회 업무,short,basic,,sample8 장비에서 GigabitEthernet0/0/0/2 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-26364,rule_based,2,단순 조회 업무,short,basic,,sample8 장비에서 GigabitEthernet0/0/0/3 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-17160,rule_based,2,단순 조회 업무,short,basic,,sample8 장비에서 Loopback0 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-41873,rule_based,2,단순 조회 업무,short,basic,,sample8 장비에서 MgmtEth0/RP0/CPU0/0 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-47780,rule_based,2,단순 조회 업무,short,basic,,sample9 장비에서 Ethernet0/0 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-42182,rule_based,2,단순 조회 업무,short,basic,,sample9 장비에서 Ethernet0/0.100 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-64908,rule_based,2,단순 조회 업무,short,basic,,sample9 장비에서 Ethernet0/1 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-48348,rule_based,2,단순 조회 업무,short,basic,,sample9 장비에서 Ethernet0/2 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-924,rule_based,2,단순 조회 업무,short,basic,,sample9 장비에서 Ethernet0/3 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-11410,rule_based,2,단순 조회 업무,short,basic,,sample9 장비에서 GigabitEthernet0/0/0/0 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-11484,rule_based,2,단순 조회 업무,short,basic,,sample9 장비에서 GigabitEthernet0/0/0/0.1 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-27371,rule_based,2,단순 조회 업무,short,basic,,sample9 장비에서 GigabitEthernet0/0/0/1 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-34976,rule_based,2,단순 조회 업무,short,basic,,sample9 장비에서 GigabitEthernet0/0/0/1.100 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-5592,rule_based,2,단순 조회 업무,short,basic,,sample9 장비에서 GigabitEthernet0/0/0/1.200 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-15372,rule_based,2,단순 조회 업무,short,basic,,sample9 장비에서 GigabitEthernet0/0/0/1.300 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-57100,rule_based,2,단순 조회 업무,short,basic,,sample9 장비에서 GigabitEthernet0/0/0/1.400 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-2366,rule_based,2,단순 조회 업무,short,basic,,sample9 장비에서 GigabitEthernet0/0/0/2 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-9201,rule_based,2,단순 조회 업무,short,basic,,sample9 장비에서 GigabitEthernet0/0/0/3 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-32414,rule_based,2,단순 조회 업무,short,basic,,sample9 장비에서 Loopback0 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-36229,rule_based,2,단순 조회 업무,short,basic,,sample9 장비에서 MgmtEth0/RP0/CPU0/0 인터페이스의 MOP xenabled 설정은?,False,The value for interface_mop_xenabled_bool is False.,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_CMD_0,rule_based,1,명령어 사용법/질의,short,basic,,CE1 장비의 BGP 상태를 요약해서 확인하는 명령어는?,show bgp summary,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_1,rule_based,1,명령어 사용법/질의,short,basic,,CE1 장비의 인터페이스 IP 상태를 간략히 확인하는 명령어는?,show ip interface brief,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_2,rule_based,1,명령어 사용법/질의,short,basic,,CE1 장비에서 OSPF를 통해 학습된 경로 정보를 확인하는 명령어는?,show ip route ospf,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_3,rule_based,1,명령어 사용법/질의,short,basic,,CE1 장비의 OSPF 이웃(neighbor) 상태를 조회하는 명령어는?,show ip ospf neighbor,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_4,rule_based,1,명령어 사용법/질의,short,basic,,CE1 장비에 현재 접속해 있는 사용자를 확인하는 명령어는?,show users,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_5,rule_based,1,명령어 사용법/질의,short,basic,,CE1 장비의 시스템 로그를 확인하는 명령어는?,show logging,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_6,rule_based,2,명령어 사용법/질의,short,basic,,CE1 장비에서 192.0.2.0/24 네트워크로 가는 정적 경로를 10.0.0.1 넥스트홉으로 설정하는 명령어는?,ip route 192.0.2.0 255.255.255.0 10.0.0.1,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_7,rule_based,2,명령어 사용법/질의,short,basic,,CE1 장비의 BGP 네이버 192.168.1.10에 나가는(out) 방향으로 'RM_OUT' 라우트맵을 적용하는 명령어는?,"router bgp 65001
+ neighbor 192.168.1.10 route-map RM_OUT out",,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_8,rule_based,2,명령어 사용법/질의,short,basic,,CE1 장비의 Ethernet0/0 인터페이스에 'Uplink to core' 설명을 추가하는 명령어는?,"interface Ethernet0/0
+ description Uplink to core",,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_9,rule_based,2,명령어 사용법/질의,short,basic,,CE1 장비에 'CUSTOMER_A' VRF를 생성하고 Ethernet0/0 인터페이스에 할당하는 명령어는?,"vrf definition CUSTOMER_A
+ exit
+ interface Ethernet0/0
+ vrf forwarding CUSTOMER_A",,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_10,rule_based,2,명령어 사용법/질의,short,basic,,admin 계정을 사용하여 CE1 장비로 직접 SSH 접속하는 명령어는?,ssh admin@CE1,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_11,rule_based,2,명령어 사용법/질의,short,basic,,admin 계정으로 CE2를 점프 호스트로 사용하여 sample10 장비에 SSH 접속하는 명령어는?,ssh -J admin@CE2 admin@sample10,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_12,rule_based,1,명령어 사용법/질의,short,basic,,CE1 장비에서 BGP 피어 상태를 요약해서 확인하는 명령어는?,show bgp summary,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_13,rule_based,1,명령어 사용법/질의,short,basic,,CE1 장비의 인터페이스 IP 상태를 간단히 보는 명령어는?,show ip interface brief,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_14,rule_based,1,명령어 사용법/질의,short,basic,,CE1 장비에서 OSPF로 학습된 라우팅 정보를 확인하는 명령어는?,show ip route ospf,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_15,rule_based,1,명령어 사용법/질의,short,basic,,CE1 장비에서 CPU 사용률 순으로 프로세스를 확인하는 명령어는?,show processes cpu sorted,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_16,rule_based,1,명령어 사용법/질의,short,basic,,CE1 장비에서 L2VPN 가상회선 상태를 확인하는 명령어는?,show l2vpn atom vc,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_17,rule_based,1,명령어 사용법/질의,short,basic,,CE1 장비에서 OSPF 이웃 상태를 조회하는 명령어는?,show ip ospf neighbor,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_18,rule_based,1,명령어 사용법/질의,short,basic,,CE1 장비에 현재 접속한 사용자 목록을 보는 명령어는?,show users,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_19,rule_based,1,명령어 사용법/질의,short,basic,,CE1 장비의 로그 버퍼를 확인하는 명령어는?,show logging,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_20,rule_based,1,명령어 사용법/질의,short,basic,,admin 계정으로 CE1 장비에 직접 SSH 접속하는 명령어는?,ssh admin@CE1,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_21,rule_based,2,명령어 사용법/질의,short,basic,,CE1 장비에서 192.0.2.0/255.255.255.0 네트워크로 가는 정적 경로를 10.0.0.1 다음 홉으로 설정하는 명령어는?,ip route 192.0.2.0 255.255.255.0 10.0.0.1,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_22,rule_based,2,명령어 사용법/질의,short,basic,,CE1 장비에서 BGP AS 65001의 192.168.1.10 이웃에 RM_OUT 라우트맵을 outbound로 적용하는 명령어는?,"router bgp 65001
+ neighbor 192.168.1.10 route-map RM_OUT out",,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_23,rule_based,2,명령어 사용법/질의,short,basic,,CE1 장비에서 Ethernet0/0 인터페이스에 'Uplink to core' 설명을 설정하는 명령어는?,"interface Ethernet0/0
+ description Uplink to core",,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_24,rule_based,2,명령어 사용법/질의,short,basic,,CE1 장비에서 CUSTOMER_A VRF를 생성하고 Ethernet0/0 인터페이스에 할당하는 명령어 시퀀스는?,"vrf definition CUSTOMER_A
+ exit
+ interface Ethernet0/0
+ vrf forwarding CUSTOMER_A",,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_25,rule_based,2,명령어 사용법/질의,short,basic,,CE1 장비에서 OSPF 프로세스 1의 Ethernet0/0 인터페이스 비용을 100으로 설정하는 명령어는?,"router ospf 1
+ interface Ethernet0/0
+ ip ospf cost 100",,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_26,rule_based,2,명령어 사용법/질의,short,basic,,CE1 장비의 VTY 라인에 SSH_ONLY ACL을 inbound로 적용하는 명령어는?,"line vty 0 4
+ access-class SSH_ONLY in",,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_27,rule_based,2,명령어 사용법/질의,short,basic,,CE1 장비의 호스트네임을 CE1-NEW(으)로 변경하는 명령어는?,hostname CE1-NEW,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_28,rule_based,2,명령어 사용법/질의,short,basic,,admin 계정으로 CE2를 거쳐 sample10 장비에 SSH 접속하는 명령어는?,ssh -J admin@CE2 admin@sample10,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-ANALYTICAL-001,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,long,analytical,network_engineer,"iBGP의 풀메시 구성 누락이 경로 수렴 시간에 어떻게 영향을 미칠 수 있으며, 이러한 영향이 다른 경로 프로토콜(OSPF 등)과 상호작용할 때 어떤 결과를 초래할 수 있을까요?","iBGP의 풀메시 구성이 누락되면 경로 수렴 시간이 지연될 수 있으며, 이는 OSPF와 같은 다른 경로 프로토콜과의 상호작용에서 경로 불일치 및 비효율적인 라우팅을 초래할 수 있다.","iBGP의 풀메시 구성이 누락되면, iBGP 라우터 간에 모든 경로 정보가 공유되지 않아 경로 수렴 시간이 증가할 수 있습니다. 이는 OSPF와 같은 다른 프로토콜과의 상호작용에서 경로 정보의 불일치로 이어져, 최적의 경로 선택이 어려워지고, 결과적으로 네트워크의 전반적인 성능 저하를 초래할 수 있습니다.","BGP 설정 현황:
 CE1: AS65001, 1개 피어
 CE2: AS65003, 1개 피어
 sample10: AS65000, 3개 피어
 sample7: AS65000, 3개 피어
 sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-ANALYTICAL-002,3,네트워크 토폴로지 구성 질의,long,AS 65003에서 특정 피어 장애 시 전체 네트워크에 미치는 파급효과를 평가하라.,"AS 65003에서 특정 피어가 장애가 발생할 경우, 전체 네트워크에 미치는 파급효과는 상당할 수 있습니다. 현재 수집된 증거에 따르면, AS 65003은 5개의 인터페이스를 운영하고 있으며, 이는 네트워크의 복잡성과 연결성을 나타냅니다. 특정 피어의 장애는 해당 피어와 연결된 인터페이스를 통해 이루어지는 트래픽에 직접적인 영향을 미치며, 이로 인해 다른 인터페이스와의 연결에도 간접적인 영향을 줄 수 있습니다. 따라서, 피어 장애는 전체 네트워크의 안정성과 성능에 부정적인 영향을 미칠 가능성이 높습니다.",피어 장애는 네트워크의 연결성과 트래픽 흐름에 중대한 영향을 미칠 수 있습니다.,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-ANALYTICAL-003,3,네트워크 토폴로지 구성 질의,long,AS 65000의 라우터들 사이에서 BGP 설정의 일관성을 검증하라.,"AS 65000의 라우터들 사이에서 BGP 설정의 일관성을 검증한 결과, 내부 BGP(IBGP) 쌍이 누락된 경우는 없으며, IBGP 풀 메쉬 연결이 정상적으로 설정되어 있는 것으로 확인되었습니다. 따라서, AS 65000 내의 BGP 설정은 일관성이 유지되고 있습니다.","수집된 증거에 따르면, IBGP 쌍이 누락된 경우는 0이며, 풀 메쉬 연결이 정상적이므로 설정의 일관성이 확보된 것으로 판단됩니다.","BGP 설정 현황:
+ENHANCED_ENHANCED-ANALYTICAL-002,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,long,analytical,network_engineer,"특정 BGP 피어가 장애를 일으켰을 때, 다른 피어와의 연결성 및 전체 경로 수렴성에 어떤 파급효과가 있을까요?","장애가 발생한 BGP 피어와 연결된 다른 피어들은 경로 수렴성에 영향을 받을 수 있으며, 전체 네트워크의 경로 정보가 업데이트되지 않아 라우팅 루프나 비효율적인 경로가 발생할 수 있다.","특정 BGP 피어가 장애를 일으키면, 해당 피어와 연결된 다른 피어들은 그 피어를 통해 수신하던 경로 정보를 잃게 됩니다. 이로 인해 다른 피어들은 새로운 경로를 찾기 위해 경로 수렴 과정을 거쳐야 하며, 이 과정에서 경로 정보의 업데이트가 지연되거나 비효율적인 경로가 선택될 수 있습니다. 따라서 전체 네트워크의 연결성과 경로 수렴성에 부정적인 영향을 미칠 수 있습니다.","BGP 설정 현황:
 CE1: AS65001, 1개 피어
 CE2: AS65003, 1개 피어
 sample10: AS65000, 3개 피어
 sample7: AS65000, 3개 피어
 sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-ANALYTICAL-004,3,네트워크 토폴로지 구성 질의,long,AS 65001에서 l2vpn 이슈가 네트워크 안정성에 미치는 영향을 평가하라.,"AS 65001에서 L2VPN 이슈는 현재로서는 네트워크 안정성에 큰 영향을 미치지 않는 것으로 평가됩니다. 수집된 데이터에 따르면, L2VPN 관련 단방향 트래픽 카운트는 0으로 나타나며, 이는 L2VPN의 문제로 인한 트래픽 손실이 없음을 의미합니다. 또한, 5개의 인터페이스가 활성화되어 있어 네트워크의 연결성이 유지되고 있음을 보여줍니다. OSPF 영역 카운트는 수집되지 않았지만, 현재의 인터페이스 상태로 보아 네트워크의 안정성은 양호한 것으로 판단됩니다.","L2VPN 이슈가 없고, 활성화된 인터페이스가 존재하여 네트워크 안정성이 확보되고 있음을 나타냅니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-ANALYTICAL-005,3,네트워크 토폴로지 구성 질의,long,AS 65003의 네트워크 보안 설정의 일관성을 평가하라.,"AS 65003의 네트워크 보안 설정은 일관성이 있으며, SSH 관련 설정에서 결함이 발견되지 않았습니다. SSH가 활성화된 모든 장치에서 SSH가 올바르게 설정되어 있으며, SSH 관련 결함이 전혀 없는 것으로 나타났습니다. 그러나 AAA(인증, 권한 부여 및 계정 관리) 기능이 활성화된 장치에 대한 정보는 수집되지 않았습니다.","SSH 설정이 완벽하게 구성되어 있지만, AAA 설정에 대한 정보가 부족하여 전체적인 보안 평가에 대한 추가 검토가 필요합니다.","보안 설정 현황:
-CE1: SSH ON, AAA OFF
-CE2: SSH ON, AAA OFF
-sample10: SSH ON, AAA ON
-sample7: SSH ON, AAA ON
-sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-DIAGNOSTIC-001,3,보안 질의,long,네트워크 장비의 SSH 설정이 보안 정책을 준수하고 있는지 평가하려면 어떻게 해야 할까요?,"네트워크 장비의 SSH 설정이 보안 정책을 준수하고 있는지 평가하기 위해서는 먼저 SSH가 활성화된 장비를 확인해야 합니다. 수집된 증거에 따르면, SSH가 활성화된 장비는 CE1, CE2, sample10, sample7, sample8, sample9 총 6대입니다. 또한, SSH 설정이 누락된 장비는 없으며, 모든 장비에서 SSH가 활성화되어 있는 것으로 확인되었습니다. 따라서, 현재 SSH 설정은 보안 정책을 준수하고 있는 것으로 평가할 수 있습니다.",SSH가 활성화된 모든 장비에서 누락된 설정이 없으므로 보안 정책을 준수하고 있습니다.,"보안 설정 현황:
-CE1: SSH ON, AAA OFF
-CE2: SSH ON, AAA OFF
-sample10: SSH ON, AAA ON
-sample7: SSH ON, AAA ON
-sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-DIAGNOSTIC-002,3,보안 질의,long,발견된 BGP 관련 이상징후가 네트워크 운영에 미치는 위험도를 어떻게 평가할 수 있을까요?,"BGP 관련 이상징후의 위험도를 평가하기 위해서는 여러 요소를 고려해야 합니다. 현재 수집된 증거에 따르면, iBGP 풀 메쉬가 정상적으로 구성되어 있어 안정적인 라우팅 경로가 유지되고 있습니다. 그러나 BGP 쌍이 누락되었거나 AS 카운트의 불일치가 발견되지 않았다는 점은 추가적인 검토가 필요함을 시사합니다. 이러한 요소들은 네트워크의 신뢰성과 안정성에 영향을 미칠 수 있으며, 특히 BGP 쌍의 누락은 라우팅 루프나 경로 선택의 비효율성을 초래할 수 있습니다. 따라서, 현재 상태에서는 BGP 관련 이상징후가 심각한 위험을 초래하지 않지만, 지속적인 모니터링과 검토가 필요합니다.","iBGP 풀 메쉬가 정상적이며, BGP 쌍의 누락이나 AS 카운트의 불일치가 발견되지 않아 현재 위험도는 낮음.","BGP 설정 현황:
+ENHANCED_ENHANCED-ANALYTICAL-003,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,short,analytical,network_engineer,AS 그룹 내 라우터들의 BGP 설정에서 일관성 문제가 있는지 확인하려면 어떤 메트릭을 주로 살펴봐야 할까요?,"[""bgp_local_as_numeric"", ""ibgp_fullmesh_ok""]","BGP 설정의 일관성 문제를 확인하기 위해서는 'bgp_local_as_numeric'와 'ibgp_fullmesh_ok' 메트릭을 주로 살펴봐야 합니다. 'bgp_local_as_numeric'은 AS 번호의 일관성을 나타내며, 'ibgp_fullmesh_ok'는 내부 BGP 피어링의 완전성을 확인하는 데 중요합니다.","BGP 설정 현황:
 CE1: AS65001, 1개 피어
 CE2: AS65003, 1개 피어
 sample10: AS65000, 3개 피어
 sample7: AS65000, 3개 피어
 sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-DIAGNOSTIC-003,3,보안 질의,long,AAA 설정이 모든 네트워크 장비에서 일관되게 적용되어 있는지 확인하기 위해 어떤 절차가 필요할까요?,"AAA 설정이 모든 네트워크 장비에서 일관되게 적용되었는지 확인하기 위해서는 먼저 AAA가 활성화된 장비 목록을 수집하고, 각 장비의 인터페이스 수를 확인하여 최소 5개 이상의 인터페이스가 있는지 점검해야 합니다. 또한, 모든 장비에서 SSH가 활성화되어 있는지 여부를 확인하여 보안 접근이 일관되게 적용되고 있는지를 검토해야 합니다. 현재 수집된 증거에 따르면, SSH가 모든 장비에서 활성화되어 있으며, 인터페이스 수는 5개로 확인되었습니다.",이 절차를 통해 AAA 설정의 일관성을 검증할 수 있습니다.,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-DIAGNOSTIC-004,3,보안 질의,long,L2VPN 관련 이상징후가 비즈니스에 미치는 영향도를 평가하기 위한 방법은 무엇인가요?,"L2VPN 관련 이상징후가 비즈니스에 미치는 영향도를 평가하기 위해서는 우선 L2VPN의 단방향 트래픽 수를 확인하고, 발생한 문제의 유형을 분석해야 합니다. 현재 수집된 데이터에 따르면 단방향 트래픽 수는 0으로 나타나며, L2VPN 관련 문제는 발견되지 않았습니다. 또한, 총 5개의 인터페이스가 존재하지만, 이들에서 문제가 발생하지 않았기 때문에 현재로서는 비즈니스에 미치는 영향이 없다고 평가할 수 있습니다.",이상징후가 발견되지 않았으므로 비즈니스에 미치는 영향은 최소화된 상태입니다.,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-DIAGNOSTIC-005,3,보안 질의,long,OSPF 영역 구성의 일관성이 보안에 미치는 영향을 어떻게 평가할 수 있을까요?,"OSPF 영역 구성의 일관성은 네트워크의 보안에 중요한 영향을 미칩니다. OSPF 영역이 일관되지 않으면 라우팅 정보의 불일치가 발생할 수 있으며, 이는 공격자가 네트워크에 침투하거나 데이터 유출을 초래할 수 있는 취약점을 만들 수 있습니다. 수집된 증거에서 OSPF 영역 수는 확인되지 않았지만, BGP 피어 수와 VRF에서 RT가 없는 경우가 0인 점은 네트워크의 라우팅 구조가 비교적 안정적임을 나타냅니다. 그러나 OSPF 영역의 수와 구성 상태를 명확히 파악하는 것이 보안 강화를 위해 필수적입니다.",OSPF 영역의 일관성은 보안 취약점을 줄이는 데 기여합니다.,"보안 설정 현황:
+ENHANCED_ENHANCED-ANALYTICAL-004,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,short,analytical,network_engineer,"iBGP 풀메시 구성이 누락된 경우, 특정 라우터에서 발생할 수 있는 경로 누락 문제를 어떻게 해결할 수 있을까요?",iBGP 풀메시 구성을 추가하여 모든 iBGP 라우터 간의 경로 정보를 교환할 수 있도록 합니다.,iBGP 풀메시 구성이 누락되면 특정 라우터가 다른 라우터로부터 경로 정보를 받지 못하게 되어 경로 누락 문제가 발생할 수 있습니다. 이를 해결하기 위해서는 모든 iBGP 라우터 간에 직접 연결을 설정하여 경로 정보를 교환할 수 있도록 해야 합니다.,"BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-005,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,long,analytical,network_engineer,"BGP 피어 중 하나가 다운될 때, L2VPN 연결에는 어떤 영향을 미칠 수 있으며, 이를 방지하기 위한 예방 조치는 무엇일까요?","{""impact"": ""L2VPN 연결이 중단되거나 불안정해질 수 있다."", ""preventive_measures"": [""BGP 피어링의 이중화"", ""L2VPN 경로의 모니터링 및 경고 시스템 구축"", ""정기적인 네트워크 점검 및 유지보수""]}","BGP 피어 중 하나가 다운되면 해당 피어를 통해 연결된 L2VPN 경로가 영향을 받아 연결이 중단되거나 불안정해질 수 있습니다. 이를 방지하기 위해 BGP 피어링의 이중화를 통해 대체 경로를 확보하고, L2VPN 경로의 모니터링 및 경고 시스템을 구축하여 문제 발생 시 즉각 대응할 수 있도록 해야 합니다. 또한, 정기적인 네트워크 점검 및 유지보수를 통해 잠재적인 문제를 사전에 예방할 수 있습니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-006,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,long,analytical,network_engineer,다중 AS 번호가 혼재된 네트워크에서 BGP 설정의 비일관성이 경로 결정에 미치는 영향을 어떻게 평가할 수 있을까요?,"BGP 설정의 비일관성은 경로 결정 과정에서 불안정성을 초래할 수 있으며, 이는 최적의 경로 선택을 방해하고 네트워크 성능 저하를 유발할 수 있습니다.","다중 AS 번호가 혼재된 네트워크에서는 BGP 설정의 비일관성이 경로 결정에 부정적인 영향을 미칠 수 있습니다. 이는 경로 선택 과정에서 불안정성을 초래하고, 최적의 경로를 선택하는 데 어려움을 겪게 하여 결국 네트워크 성능 저하로 이어질 수 있습니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-007,enhanced_llm_with_agent,3,명령어 사용법/질의,short,analytical,network_engineer,특정 BGP 피어가 다운된 상황에서 OSPF 기반 경로가 자동으로 대체되도록 설정했는지 확인하려면 어떤 명령어와 메트릭을 사용해야 할까요?,show ip route ospf,특정 BGP 피어가 다운된 상황에서 OSPF 기반 경로가 자동으로 대체되도록 설정했는지 확인하기 위해 'show ip route ospf' 명령어를 사용하여 OSPF 경로를 확인할 수 있습니다. 이 명령어는 OSPF 프로토콜을 통해 학습된 경로와 그 메트릭을 보여줍니다.,"BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-008,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,long,analytical,network_engineer,BGP 설정의 비일관성으로 인해 발생할 수 있는 경로 루프 문제를 어떻게 식별하고 해결할 수 있을까요?,"BGP 경로 루프 문제를 식별하기 위해 BGP 경로를 추적하고, AS 경로를 분석하여 동일한 AS가 반복되는지 확인합니다. 이를 해결하기 위해 BGP 설정을 검토하고, iBGP 풀 메쉬 구성을 확인하며, 필요시 Route Reflector를 도입하여 경로 전파를 최적화합니다.","BGP 설정의 비일관성으로 인해 경로 루프가 발생할 수 있으며, 이를 식별하기 위해 BGP 경로를 추적하고 AS 경로를 분석하는 것이 중요합니다. 동일한 AS가 반복되는 경우 경로 루프가 발생하고 있음을 나타냅니다. 이를 해결하기 위해서는 BGP 설정을 검토하고, iBGP 풀 메쉬 구성을 확인해야 하며, 필요에 따라 Route Reflector를 도입하여 경로 전파를 최적화할 수 있습니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-009,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,short,analytical,network_engineer,"장비 간 iBGP 연결 누락으로 인한 경로 수렴 지연이 예상될 때, 이를 개선하기 위한 방법은 무엇인가요?",iBGP 연결을 추가하여 모든 장비 간의 경로 수렴을 보장합니다.,"iBGP 연결이 누락되면 경로 수렴이 지연될 수 있으므로, 모든 장비 간에 iBGP 연결을 설정하여 경로 정보가 원활하게 교환되도록 해야 합니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-010,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,short,analytical,network_engineer,BGP 피어 장애가 전체 네트워크에 미치는 영향을 분석하기 위해 어떤 지표를 우선적으로 분석해야 할까요?,"[""BGP 피어 수"", ""라우팅 테이블 변화"", ""패킷 손실률"", ""지연 시간""]","BGP 피어 장애가 전체 네트워크에 미치는 영향을 분석하기 위해서는 BGP 피어 수, 라우팅 테이블 변화, 패킷 손실률, 지연 시간과 같은 지표를 우선적으로 분석해야 합니다. 이러한 지표들은 피어 장애로 인해 발생할 수 있는 라우팅 문제와 네트워크 성능 저하를 평가하는 데 중요한 역할을 합니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-011,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,short,analytical,network_engineer,AS 내 라우터들이 서로 다른 BGP 설정을 가지고 있을 때 발생할 수 있는 문제와 이를 해결하기 위한 방안은 무엇일까요?,"[""라우팅 루프"", ""비효율적인 경로 선택"", ""네트워크 불안정성""]","AS 내 라우터들이 서로 다른 BGP 설정을 가지고 있을 경우, 라우팅 루프가 발생할 수 있으며, 이는 패킷이 무한히 순환하게 만드는 문제를 초래합니다. 또한, 비효율적인 경로 선택이 이루어져 최적의 경로가 아닌 경로로 트래픽이 흐를 수 있으며, 이로 인해 네트워크의 전반적인 안정성이 저하될 수 있습니다. 이러한 문제를 해결하기 위해서는 모든 라우터의 BGP 설정을 일관되게 유지하고, 정책 기반 라우팅을 통해 경로 선택을 최적화하는 방안이 필요합니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-012,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,long,analytical,network_engineer,"BGP 피어 장애 시, L3VPN 경로가 자동으로 전환되도록 설정되어 있는지 확인하려면 어떤 절차를 따라야 할까요?","BGP 피어 장애 시 L3VPN 경로 전환을 확인하기 위해서는 VRF 라우팅 테이블을 점검하고, BGP 설정을 검토하여 경로 자동 전환이 활성화되어 있는지 확인해야 합니다.","L3VPN 경로가 자동으로 전환되도록 설정되어 있는지 확인하기 위해서는 먼저 VRF 라우팅 테이블을 확인하여 해당 경로가 존재하는지 점검해야 합니다. 그 다음, BGP 설정을 검토하여 경로 자동 전환 기능이 활성화되어 있는지 확인하는 절차를 따라야 합니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-013,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,short,analytical,network_engineer,iBGP 풀메시가 누락된 상태에서 경로 수렴성을 높이기 위한 최적의 경로 정책 설정 방법은 무엇인가요?,경로 반사기 사용,"iBGP 풀메시가 누락된 상태에서는 경로 반사기를 사용하여 경로 수렴성을 높일 수 있습니다. 경로 반사기는 iBGP 네트워크 내에서 경로 정보를 효율적으로 전파하여, 모든 라우터가 동일한 경로 정보를 공유할 수 있도록 도와줍니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-014,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,long,analytical,network_engineer,BGP 설정에서 장애 시 경로 전환이 원활하게 이루어지도록 하는 설정 검증 방법은 무엇인가요?,"BGP 경로 전환 검증을 위해 BGP 상태 확인, 경로 선택 프로세스 검토, 경로 수 동기화 및 장애 시 시뮬레이션 테스트를 수행해야 합니다.","BGP 설정에서 장애 시 경로 전환이 원활하게 이루어지도록 하려면, 먼저 BGP 상태를 확인하여 이웃과의 연결이 정상인지 점검해야 합니다. 또한, 경로 선택 프로세스를 검토하여 최적의 경로가 선택되는지 확인하고, 경로 수 동기화를 통해 모든 경로 정보가 일관되게 유지되는지 점검해야 합니다. 마지막으로, 장애 시뮬레이션 테스트를 통해 실제 장애 상황에서 경로 전환이 원활하게 이루어지는지를 검증하는 것이 중요합니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-015,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,long,analytical,network_engineer,다중 AS 환경에서 발생할 수 있는 BGP 설정 비일관성 문제를 해결하기 위한 전략은 무엇인가요?,"[""BGP 설정 검토 및 일관성 확인"", ""AS 경로 필터링 적용"", ""정책 기반 라우팅 사용"", ""BGP 세션 모니터링 및 로그 분석"", ""자동화 도구 활용""]","다중 AS 환경에서 BGP 설정 비일관성 문제를 해결하기 위해서는 여러 가지 전략을 사용할 수 있습니다. 첫째, BGP 설정을 정기적으로 검토하고 일관성을 확인하는 것이 중요합니다. 둘째, AS 경로 필터링을 적용하여 불필요한 경로가 전파되지 않도록 해야 합니다. 셋째, 정책 기반 라우팅을 사용하여 트래픽 흐름을 제어할 수 있습니다. 넷째, BGP 세션을 모니터링하고 로그를 분석하여 문제를 조기에 발견할 수 있습니다. 마지막으로, 자동화 도구를 활용하여 설정을 관리하고 일관성을 유지하는 것이 효과적입니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-001,enhanced_llm_with_agent,3,보안 질의,long,diagnostic,security_auditor,네트워크 장비에서 SSH 설정이 모든 장비에 일관되게 적용되어 있는지 확인하는 방법은 무엇입니까?,"SSH 설정이 모든 장비에 일관되게 적용되었는지 확인하기 위해서는 각 장비의 SSH 설정 상태를 점검하고, SSH가 활성화된 장비 목록과 SSH 설정이 존재하는지 여부를 비교해야 합니다. 이를 통해 일관성을 확인할 수 있습니다.","SSH 설정이 모든 장비에 일관되게 적용되었는지 확인하기 위해서는 각 네트워크 장비에서 SSH가 활성화되어 있는지 확인하고, SSH 설정이 존재하는지 여부를 점검해야 합니다. 예를 들어, CE1, CE2와 같은 장비에서 SSH가 활성화되어 있는지 확인하고, 설정이 누락된 장비가 있는지 확인함으로써 일관성을 평가할 수 있습니다. 만약 SSH가 활성화되지 않은 장비가 있다면, 이는 설정이 일관되지 않음을 나타냅니다.","보안 설정 현황:
 CE1: SSH ON, AAA OFF
 CE2: SSH ON, AAA OFF
 sample10: SSH ON, AAA ON
 sample7: SSH ON, AAA ON
 sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-SCENARIO-001,4,기술적 오류 질의,long,고객사 A의 L3VPN 서비스가 간헐적으로 끊어지는 문제의 근본 원인은 무엇인가?,"고객사 A의 L3VPN 서비스가 간헐적으로 끊어지는 문제의 근본 원인은 BGP 피어 수가 확인되지 않았지만, iBGP 풀 메쉬가 정상적으로 구성되어 있고, L2VPN의 단방향 연결 수가 0인 점에서, 네트워크의 구성이나 외부 요인에 의한 불안정성이 원인일 가능성이 높습니다.","BGP 피어 수가 null인 상태는 추가적인 분석이 필요함을 나타내며, 이는 서비스의 안정성에 영향을 미칠 수 있습니다.","VRF 설정 현황:
+ENHANCED_ENHANCED-DIAGNOSTIC-002,enhanced_llm_with_agent,3,보안 질의,long,diagnostic,security_auditor,네트워크 장비의 AAA 설정이 모든 장비에 일관되게 적용되어 있는지 확인하는 방법은 무엇입니까?,"AAA 설정이 모든 장비에 일관되게 적용되어 있는지 확인하기 위해서는 각 장비의 AAA 설정을 검토하고, 설정이 일관되게 적용되었는지 비교하는 절차를 수행해야 합니다.","AAA 설정이 모든 장비에 일관되게 적용되었는지 확인하기 위해서는 각 장비의 AAA 설정을 수집하고, 이를 서로 비교하여 설정의 일관성을 검토해야 합니다. 또한, 설정이 제대로 적용되지 않은 장비가 있는지 확인하기 위해 'aaa_enabled_devices'와 'aaa_present_bool'의 상태를 점검하는 것이 중요합니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-003,enhanced_llm_with_agent,3,보안 질의,short,diagnostic,security_auditor,BGP 구성에서 발견된 이상징후가 네트워크의 보안 위험도를 어떻게 증가시킬 수 있는지 평가하세요.,BGP 구성에서 발견된 이상징후는 네트워크의 보안 위험도를 증가시킬 수 있습니다.,"BGP(Border Gateway Protocol) 구성에서 이상징후가 발견되면, 이는 네트워크의 라우팅 정보가 조작되거나 잘못된 경로가 설정될 가능성을 나타냅니다. 이러한 상황은 공격자가 네트워크 트래픽을 가로채거나, 서비스 거부 공격을 수행하는 등의 보안 위협을 초래할 수 있습니다. 따라서 BGP의 이상징후는 네트워크의 보안 위험도를 증가시키는 중요한 요소로 작용합니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-004,enhanced_llm_with_agent,3,보안 질의,short,diagnostic,security_auditor,SSH 설정이 네트워크 보안 정책을 얼마나 잘 준수하고 있는지 평가하세요.,부분적으로 준수,"SSH 설정은 6개의 장치에서 활성화되어 있으며, SSH가 누락된 장치는 없으므로 기본적인 보안 요구 사항은 충족하고 있습니다. 그러나 SSH 접근 제어 목록(ACL)이 적용되지 않은 것으로 나타나, 이는 네트워크 보안 정책을 완전히 준수하지 못하고 있음을 의미합니다.","보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-005,enhanced_llm_with_agent,3,보안 질의,short,diagnostic,security_auditor,발견된 L2VPN 이슈가 네트워크의 보안과 가용성에 미치는 영향을 평가하세요.,문제가 없음,"제공된 증거에 따르면 L2VPN 이슈가 발견되지 않았으며, unidirectional count도 0으로 나타나 문제없음을 의미합니다. 따라서 네트워크의 보안과 가용성에 미치는 영향은 없다고 평가할 수 있습니다.","보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-006,enhanced_llm_with_agent,3,보안 질의,long,diagnostic,security_auditor,네트워크의 보안 정책 위반 사항이 비즈니스 연속성에 미치는 잠재적 영향을 평가하세요.,"네트워크 보안 정책 위반은 비즈니스 연속성을 심각하게 저해할 수 있으며, 데이터 유출, 서비스 중단, 고객 신뢰 상실 등의 결과를 초래할 수 있습니다.","네트워크 보안 정책이 위반되면 해커나 악의적인 공격자가 시스템에 접근할 수 있는 기회를 제공하게 되어, 중요한 데이터가 유출되거나 손상될 수 있습니다. 이러한 사건은 비즈니스 운영에 직접적인 영향을 미치며, 서비스 중단이나 고객의 신뢰 상실로 이어질 수 있습니다. 결과적으로, 이는 기업의 재정적 손실과 평판 손상으로 연결될 수 있습니다.","보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-007,enhanced_llm_with_agent,3,보안 질의,short,diagnostic,security_auditor,BGP AS 번호의 일관성 문제로 인해 발생할 수 있는 보안 위협은 무엇입니까?,BGP 세션 하이재킹,"BGP AS 번호의 일관성 문제는 BGP 세션 하이재킹과 같은 보안 위협을 초래할 수 있습니다. 이는 공격자가 잘못된 AS 번호를 사용하여 BGP 경로를 조작하고, 이를 통해 트래픽을 가로채거나 유도할 수 있는 상황을 만들어냅니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어",sample7.xml
+ENHANCED_ENHANCED-DIAGNOSTIC-008,enhanced_llm_with_agent,3,보안 질의,long,diagnostic,security_auditor,SSH 설정의 버전이 보안 표준을 준수하는지 확인하는 방법은 무엇입니까?,"SSH 설정의 버전이 보안 표준을 준수하는지 확인하기 위해서는 SSH 버전을 확인하고, 해당 버전이 최신 보안 패치가 적용된 버전인지 검토해야 합니다. 또한, 보안 정책에 따라 강력한 암호화 알고리즘과 인증 방법이 사용되고 있는지 확인해야 합니다.","SSH 설정의 버전이 보안 표준을 준수하는지 확인하는 방법은 SSH 버전을 확인하고, 해당 버전이 최신 보안 패치가 적용되었는지, 그리고 보안 정책에 따라 강력한 암호화 알고리즘과 인증 방법이 사용되고 있는지를 검토하는 것입니다.","보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON",sample8.xml
+ENHANCED_ENHANCED-DIAGNOSTIC-009,enhanced_llm_with_agent,3,보안 질의,short,diagnostic,security_auditor,"VRF 구성에서 RT 설정이 누락된 경우, 이로 인해 발생할 수 있는 보안 문제는 무엇입니까?",라우팅 루프 및 데이터 유출,"VRF 구성에서 RT 설정이 누락되면, 서로 다른 VRF 간의 경로가 혼동되어 라우팅 루프가 발생할 수 있으며, 이는 네트워크의 안정성을 저하시킬 수 있습니다. 또한, RT가 설정되지 않으면 특정 VRF에 속하는 데이터가 다른 VRF로 유출될 위험이 있어 보안 문제가 발생할 수 있습니다.","보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON",sample9.xml
+ENHANCED_ENHANCED-DIAGNOSTIC-010,enhanced_llm_with_agent,3,보안 질의,short,diagnostic,security_auditor,네트워크에서 AAA 설정의 누락이 보안에 미치는 잠재적 위험을 평가하세요.,"AAA 설정이 누락되면 인증, 권한 부여 및 계정 관리가 제대로 이루어지지 않아 네트워크에 대한 무단 접근과 데이터 유출의 위험이 증가합니다.","AAA(인증, 권한 부여, 계정 관리) 설정이 누락되면 네트워크 자원에 대한 접근 제어가 약화되어, 공격자가 시스템에 무단으로 접근할 수 있는 가능성이 높아집니다. 이는 데이터 유출, 서비스 중단, 그리고 기타 보안 사고로 이어질 수 있습니다. 따라서 AAA 설정은 네트워크 보안의 중요한 요소로 작용합니다.","보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON",sample10.xml
+ENHANCED_ENHANCED-DIAGNOSTIC-011,enhanced_llm_with_agent,3,보안 질의,short,diagnostic,security_auditor,네트워크의 보안 설정이 모든 장비에 대해 일관되게 적용되었는지 확인하세요.,False,"네트워크의 보안 설정이 모든 장비에 대해 일관되게 적용되지 않았습니다. 증거에 따르면, SSH와 AAA 설정이 모두 문제로 나타났기 때문에 보안 설정이 제대로 이루어지지 않았음을 알 수 있습니다.","보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-012,enhanced_llm_with_agent,3,보안 질의,long,diagnostic,security_auditor,OSPF 프로세스에서의 불일치가 보안에 미치는 잠재적 영향을 평가하세요.,"OSPF 프로세스의 불일치는 네트워크의 라우팅 테이블에 혼란을 초래할 수 있으며, 이는 공격자가 네트워크 트래픽을 가로채거나 변조할 수 있는 기회를 제공할 수 있습니다.","OSPF 프로세스에서 불일치가 발생하면 라우터 간의 라우팅 정보가 일치하지 않게 되어, 잘못된 경로가 선택되거나 일부 경로가 차단될 수 있습니다. 이러한 상황은 공격자가 네트워크의 특정 부분에 대한 접근을 얻거나, 데이터 패킷을 가로채는 등의 보안 위협을 초래할 수 있습니다. 따라서 OSPF 프로세스의 불일치는 보안에 심각한 영향을 미칠 수 있습니다.","보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-013,enhanced_llm_with_agent,3,보안 질의,short,diagnostic,security_auditor,L2VPN 구성에서의 불일치가 보안에 미치는 잠재적 영향을 평가하세요.,"L2VPN 구성에서의 불일치는 보안 취약점을 초래할 수 있으며, 이는 데이터 유출이나 서비스 중단으로 이어질 수 있습니다.","L2VPN 구성에서의 불일치는 두 개의 장치 간의 연결이 일관되지 않음을 나타내며, 이는 데이터 전송 중에 보안이 손상될 수 있는 가능성을 높입니다. 예를 들어, sample7과 sample9 간의 불일치는 이들 간의 데이터 흐름이 예상과 다르게 처리될 수 있음을 의미하며, 이는 악의적인 공격자가 데이터를 가로채거나 변조할 수 있는 기회를 제공할 수 있습니다. 따라서 이러한 불일치는 보안에 심각한 영향을 미칠 수 있습니다.","보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-014,enhanced_llm_with_agent,3,보안 질의,long,diagnostic,security_auditor,네트워크에서 발견된 보안 이슈가 비즈니스 운영에 미치는 영향을 평가하세요.,"보안 이슈는 비즈니스 운영에 심각한 영향을 미칠 수 있으며, 데이터 유출, 고객 신뢰 상실, 재정적 손실, 법적 문제 등을 초래할 수 있습니다.","네트워크에서 발견된 보안 이슈는 비즈니스의 여러 측면에 부정적인 영향을 미칠 수 있습니다. 예를 들어, 고객의 개인 정보가 유출되면 고객의 신뢰를 잃게 되고, 이는 매출 감소로 이어질 수 있습니다. 또한, 보안 침해로 인해 발생하는 법적 문제와 재정적 손실은 기업의 운영에 큰 부담을 줄 수 있습니다. 따라서 이러한 이슈는 비즈니스 운영의 지속 가능성에 중대한 위협이 됩니다.","보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-015,enhanced_llm_with_agent,3,보안 질의,short,diagnostic,security_auditor,SSH와 AAA 설정이 표준 보안 정책을 준수하고 있는지 어떻게 확인할 수 있습니까?,SSH와 AAA 설정이 표준 보안 정책을 준수하지 않음,"분석된 증거에 따르면, SSH ACL이 적용되지 않았고 AAA 설정이 존재하지 않기 때문에, 이 두 가지 요소가 표준 보안 정책을 준수하지 않는 것으로 판단됩니다.","보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-SCENARIO-001,enhanced_llm_with_agent,4,기술적 오류 질의,short,scenario,troubleshooter,고객사 A의 L3VPN 서비스가 간헐적으로 끊어지는 문제의 근본 원인은 무엇인가?,네트워크 구성 요소의 불안정성,"고객사 A의 L3VPN 서비스가 간헐적으로 끊어지는 문제는 네트워크 구성 요소의 불안정성으로 인해 발생할 수 있습니다. 증거에서 None단계의 vrf_without_rt_count가 0으로 나타나지만, 이는 특정 문제를 나타내지 않으며, 다른 네트워크 요소나 외부 요인에 의해 서비스가 불안정해질 수 있습니다.","VRF 설정 현황:
 sample10: 1개 VRF (exam-l3vpn)
 sample7: 1개 VRF (exam-l3vpn)
 sample8: 1개 VRF (exam-l3vpn)
 sample9: 1개 VRF (exam-l3vpn)","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-SCENARIO-002,4,기술적 오류 질의,long,새로운 PE 라우터 추가 후 BGP 경로 이상이 발생한 다른 서비스에 미치는 영향은 무엇인가?,"새로운 PE 라우터를 추가한 후 BGP 경로에 이상이 발생할 경우, 이는 다른 서비스에 부정적인 영향을 미칠 수 있습니다. 특히, BGP 피어 수가 불확실한 상태에서 iBGP 풀 메쉬가 정상적으로 유지되고 있는 것은 긍정적이나, BGP 경로의 일관성이 결여될 경우 라우팅 루프나 경로 선택의 비효율성이 발생할 수 있습니다. 이러한 문제는 서비스의 가용성과 성능에 직접적인 영향을 미칠 수 있습니다.","BGP 경로의 일관성이 결여되면 라우팅 결정에 혼란을 초래할 수 있으며, 이는 서비스 중단이나 지연을 유발할 수 있습니다.","BGP 설정 현황:
+ENHANCED_ENHANCED-SCENARIO-002,enhanced_llm_with_agent,4,기술적 오류 질의,short,scenario,troubleshooter,새로운 PE 라우터 추가 후 BGP 경로 이상이 발생하는 원인은 무엇인가?,BGP 설정 오류 또는 라우터 간의 연결 문제,"새로운 PE 라우터를 추가한 후 BGP 경로에 이상이 발생하는 원인은 주로 BGP 설정 오류나 라우터 간의 연결 문제 때문입니다. 특히, iBGP 피어링이 제대로 설정되지 않았거나, 라우터 간의 네트워크 연결이 불안정할 경우 이러한 문제가 발생할 수 있습니다.","BGP 설정 현황:
 CE1: AS65001, 1개 피어
 CE2: AS65003, 1개 피어
 sample10: AS65000, 3개 피어
 sample7: AS65000, 3개 피어
 sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-SCENARIO-003,4,기술적 오류 질의,long,보안 점검 후 일부 장비의 접속 불가 문제를 해결하기 위한 검증 방법은 무엇인가?,"보안 점검 후 일부 장비의 접속 불가 문제를 해결하기 위해서는 SSH가 활성화된 모든 장비를 확인하는 것이 중요합니다. 수집된 증거에 따르면, SSH가 활성화된 장비는 모두 정상적으로 작동하고 있으며, SSH가 누락된 장비는 없으므로, 접속 불가 문제는 AAA 설정이나 다른 네트워크 구성 요소에서 발생할 가능성이 있습니다.","SSH가 활성화된 장비가 모두 정상 상태임을 확인함으로써, 접속 문제의 원인을 다른 요소에서 찾아야 함을 알 수 있습니다.","보안 설정 현황:
+ENHANCED_ENHANCED-SCENARIO-003,enhanced_llm_with_agent,4,기술적 오류 질의,long,scenario,troubleshooter,보안 점검 후 일부 장비 접속 불가의 근본 원인은 무엇인가?,보안 점검 후 일부 장비 접속 불가의 근본 원인은 None 단계에서 ssh_missing_count가 0이기 때문에 보안 설정이나 접근 권한 문제일 가능성이 높다.,보안 점검 결과에서 ssh_missing_count가 0으로 나타났다는 것은 SSH 관련 설정에 문제가 없음을 의미합니다. 따라서 접속 불가의 근본 원인은 다른 보안 설정이나 접근 권한 문제일 가능성이 높습니다.,"보안 설정 현황:
 CE1: SSH ON, AAA OFF
 CE2: SSH ON, AAA OFF
 sample10: SSH ON, AAA ON
 sample7: SSH ON, AAA ON
 sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-SCENARIO-004,4,기술적 오류 질의,long,L2VPN 관련 문제로 발생한 서비스 장애의 영향 범위는 어디까지인가?,"L2VPN 관련 문제로 발생한 서비스 장애의 영향 범위는 5개의 인터페이스에 해당하며, 이들 인터페이스는 VRF에 대한 라우팅 태그가 없는 상태입니다. 그러나 단방향 L2VPN 연결은 발생하지 않았습니다.","수집된 증거에 따르면, L2VPN의 단방향 연결 문제는 없으나, 5개의 인터페이스가 영향을 받았음을 나타냅니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-SCENARIO-005,4,기술적 오류 질의,long,BGP 경로 이슈 해결 방안의 부작용은 무엇인가?,"BGP 경로 이슈 해결 방안의 부작용으로는 iBGP 풀 메쉬가 유지되고 있는 경우, 경로 업데이트가 증가하여 네트워크의 부하가 증가할 수 있다는 점이 있습니다. 현재 iBGP 풀 메쉬가 정상적으로 작동하고 있으므로, 추가적인 경로 정보가 네트워크에 부담을 줄 수 있습니다.",iBGP 풀 메쉬가 정상인 상태에서 경로 이슈를 해결하기 위한 조치가 네트워크 성능에 영향을 미칠 수 있음을 나타냅니다.,"BGP 설정 현황:
+ENHANCED_ENHANCED-SCENARIO-004,enhanced_llm_with_agent,4,기술적 오류 질의,short,scenario,troubleshooter,고객사 A의 L3VPN 서비스 문제로 영향을 받을 수 있는 다른 서비스는 무엇인가?,[],"고객사 A의 L3VPN 서비스 문제로 영향을 받을 수 있는 다른 서비스는 없으며, 현재 vrf_interface_bind_count가 0으로 나타나 문제 없음이 확인되었습니다.","VRF 설정 현황:
+sample10: 1개 VRF (exam-l3vpn)
+sample7: 1개 VRF (exam-l3vpn)
+sample8: 1개 VRF (exam-l3vpn)
+sample9: 1개 VRF (exam-l3vpn)","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-SCENARIO-005,enhanced_llm_with_agent,4,기술적 오류 질의,long,scenario,troubleshooter,새로운 PE 라우터에서 BGP 경로 이상이 다른 AS에 미칠 영향은 무엇인가?,"BGP 경로 이상은 다른 AS에 경로 선택 및 트래픽 흐름에 영향을 미칠 수 있으며, 이는 네트워크 안정성 및 성능 저하를 초래할 수 있다.","새로운 PE 라우터에서 BGP 경로 이상이 발생하면, 이로 인해 다른 자율 시스템(AS)에서 경로 선택 과정에 혼란이 생길 수 있습니다. BGP는 경로 선택을 위해 여러 기준을 사용하며, 경로 이상이 발생하면 잘못된 경로가 선택되거나, 트래픽이 비효율적으로 흐를 수 있습니다. 이러한 문제는 네트워크의 안정성을 저하시킬 수 있으며, 결과적으로 서비스 품질에 부정적인 영향을 미칠 수 있습니다.","BGP 설정 현황:
 CE1: AS65001, 1개 피어
 CE2: AS65003, 1개 피어
 sample10: AS65000, 3개 피어
 sample7: AS65000, 3개 피어
 sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-ANALYTICAL-001,3,네트워크 토폴로지 구성 질의,long,"새로운 데이터센터 추가 시, AS 65001의 iBGP 구성에 풀메시 상태를 유지하기 위한 추가 설정이 필요한가?","새로운 데이터센터를 추가하더라도 AS 65001의 iBGP 구성에서 풀메시 상태를 유지하기 위해 추가 설정은 필요하지 않습니다. 현재 iBGP 풀메시 상태가 유지되고 있으며, iBGP 피어링 쌍이 결여된 경우도 없기 때문입니다. 구체적으로, iBGP 풀메시 상태가 확인되었고, 결여된 피어링 쌍의 수는 0으로 나타났습니다.",이러한 상태는 추가적인 설정 없이도 iBGP 풀메시 구성이 유지될 수 있음을 시사합니다.,"BGP 설정 현황:
+ENHANCED_ENHANCED-SCENARIO-006,enhanced_llm_with_agent,4,기술적 오류 질의,short,scenario,troubleshooter,보안 점검 후 접속 불가 문제로 인해 영향을 받을 수 있는 다른 장비는 무엇인가?,"[""CE1"", ""CE2"", ""sample10""]","보안 점검 후 접속 불가 문제는 ssh가 활성화된 장비들에 영향을 미칠 수 있으며, 제공된 정보에 따르면 CE1, CE2, sample10이 해당 장비들로 확인됩니다.","보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-SCENARIO-007,enhanced_llm_with_agent,4,기술적 오류 질의,short,scenario,troubleshooter,고객사 A의 L3VPN 서비스 문제를 해결하기 위한 방안의 부작용은 무엇인가?,"서비스 중단, 고객 불만 증가, 추가 비용 발생","L3VPN 서비스 문제를 해결하기 위한 방안으로는 다양한 접근이 있을 수 있지만, 이러한 방안들이 가져올 수 있는 부작용으로는 서비스 중단이 발생할 수 있으며, 이는 고객의 불만을 증가시킬 수 있습니다. 또한, 문제 해결을 위한 추가적인 작업이나 자원 투입이 필요할 경우, 예상치 못한 추가 비용이 발생할 수 있습니다.","VRF 설정 현황:
+sample10: 1개 VRF (exam-l3vpn)
+sample7: 1개 VRF (exam-l3vpn)
+sample8: 1개 VRF (exam-l3vpn)
+sample9: 1개 VRF (exam-l3vpn)",sample7.xml
+ENHANCED_ENHANCED-SCENARIO-008,enhanced_llm_with_agent,4,기술적 오류 질의,short,scenario,troubleshooter,새로운 PE 라우터의 BGP 경로 이상 해결 방안의 부작용은 무엇인가?,"BGP 경로 이상 해결 방안의 부작용은 경로 루프 발생, 네트워크 불안정성 증가, 그리고 트래픽 경로의 비효율성이 포함될 수 있다.","새로운 PE 라우터의 BGP 경로 이상 해결 방안은 여러 가지 부작용을 초래할 수 있습니다. 예를 들어, 경로 루프가 발생할 수 있으며, 이는 네트워크의 안정성을 저하시킬 수 있습니다. 또한, 이러한 해결 방안이 잘못 적용될 경우 네트워크의 전반적인 불안정성이 증가할 수 있으며, 트래픽이 비효율적으로 경로를 따라 흐르게 되어 성능 저하를 초래할 수 있습니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어",sample8.xml
+ENHANCED_ENHANCED-SCENARIO-009,enhanced_llm_with_agent,4,기술적 오류 질의,long,scenario,troubleshooter,보안 점검 후 접속 불가 문제 해결 방안의 부작용은 무엇인가?,"보안 점검 후 접속 불가 문제 해결 방안의 부작용은 시스템의 보안 취약점이 발생할 수 있으며, 사용자 데이터의 손실이나 서비스 중단이 발생할 수 있습니다.","보안 점검 후 접속 불가 문제를 해결하기 위해 취하는 조치가 시스템의 보안 설정을 변경하거나, 특정 기능을 비활성화하는 경우, 이는 새로운 보안 취약점을 초래할 수 있습니다. 또한, 이러한 조치가 잘못 적용될 경우 사용자 데이터가 손실되거나 서비스가 중단되는 등의 부작용이 발생할 수 있습니다.","보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON",sample9.xml
+ENHANCED_ENHANCED-SCENARIO-010,enhanced_llm_with_agent,4,기술적 오류 질의,short,scenario,troubleshooter,고객사 A의 L3VPN 서비스 문제와 관련된 BGP 경로 분석을 통해 어떤 문제를 더 발견할 수 있는가?,"[""BGP 경로 불일치"", ""루프 발생 가능성"", ""경로 선택 문제"", ""네트워크 혼잡""]","고객사 A의 L3VPN 서비스 문제와 관련된 BGP 경로 분석을 통해 BGP 경로 불일치, 루프 발생 가능성, 경로 선택 문제, 그리고 네트워크 혼잡과 같은 여러 문제를 발견할 수 있습니다. 이러한 문제들은 BGP 이웃 수가 4인 상황에서 발생할 수 있는 일반적인 이슈들입니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어",sample10.xml
+ENHANCED_ENHANCED-SCENARIO-011,enhanced_llm_with_agent,4,기술적 오류 질의,short,scenario,troubleshooter,새로운 PE 라우터의 BGP 경로 이상으로 인해 발생할 수 있는 네트워크 지연 문제는 무엇인가?,BGP 경로 수렴 지연,새로운 PE 라우터의 BGP 경로 이상으로 인해 발생할 수 있는 네트워크 지연 문제는 BGP 경로 수렴 지연입니다. 이는 BGP 라우터가 새로운 경로를 수집하고 이를 기반으로 최적의 경로를 선택하는 과정에서 발생할 수 있는 지연을 의미합니다.,"BGP 설정 현황:
 CE1: AS65001, 1개 피어
 CE2: AS65003, 1개 피어
 sample10: AS65000, 3개 피어
 sample7: AS65000, 3개 피어
 sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-ANALYTICAL-002,3,네트워크 토폴로지 구성 질의,long,데이터센터 추가가 기존 L2VPN 서비스의 안정성에 미치는 영향은 무엇인가?,"데이터센터 추가는 기존 L2VPN 서비스의 안정성에 긍정적인 영향을 미칠 것으로 예상됩니다. 현재 L2VPN 서비스에서 발생하는 문제는 없으며, 5개의 인터페이스가 활성화되어 있어 서비스의 확장성과 안정성을 높이는 데 기여할 수 있습니다. 이러한 요소들은 데이터센터 추가가 L2VPN 서비스의 전반적인 성능과 신뢰성을 향상시킬 것임을 시사합니다.","현재 L2VPN 서비스에 문제가 없고, 여러 인터페이스가 운영되고 있어 안정성이 높아질 것으로 보입니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-ANALYTICAL-003,3,네트워크 토폴로지 구성 질의,long,확장 구간에 대해 새로운 보안 정책 수립이 필요한가?,"확장 구간에 대한 새로운 보안 정책 수립은 필요하지 않습니다. 현재 SSH 관련 보안 상태를 보면, SSH가 활성화된 모든 장치에서 SSH가 정상적으로 작동하고 있으며, SSH 관련 결함이 발견되지 않았습니다. 또한 AAA(인증, 권한 부여, 계정 관리) 기능이 활성화된 장치가 없다는 점은 추가적인 보안 정책 수립의 필요성을 줄여줍니다.",현재 보안 상태가 양호하여 추가적인 정책 수립이 필요하지 않음을 나타냅니다.,"보안 설정 현황:
+ENHANCED_ENHANCED-SCENARIO-012,enhanced_llm_with_agent,4,기술적 오류 질의,short,scenario,troubleshooter,보안 점검 후 접속 불가 문제와 관련된 SSH 설정의 문제점은 무엇인가?,SSH ACL 설정이 적용되지 않음,"보안 점검 결과 SSH ACL이 적용되지 않은 것으로 나타났으며, 이는 접속 불가 문제의 원인으로 작용할 수 있습니다.","보안 설정 현황:
 CE1: SSH ON, AAA OFF
 CE2: SSH ON, AAA OFF
 sample10: SSH ON, AAA ON
 sample7: SSH ON, AAA ON
 sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-ANALYTICAL-004,3,네트워크 토폴로지 구성 질의,long,OSPF 영역의 구성 변경이 필요한가?,"현재 OSPF 영역의 구성 변경이 필요하지 않습니다. 수집된 증거에 따르면 OSPF 영역의 수는 확인할 수 없지만, 인터페이스 수는 5개로 나타나며, 이는 OSPF 설정에 적절한 수치로 보입니다. 추가적인 OSPF 영역이 필요할 경우, 현재의 인터페이스 수를 고려하여 재평가할 수 있습니다.","OSPF 영역의 수가 명시되지 않았으나, 인터페이스 수가 적절하여 즉각적인 변경은 필요하지 않음.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-ANALYTICAL-005,3,네트워크 토폴로지 구성 질의,long,비즈니스 연속성을 위해 어떤 추가적인 네트워크 리던던시가 필요한가?,"비즈니스 연속성을 위해 추가적인 네트워크 리던던시를 확보하기 위해서는 BGP 피어 수를 늘리고, 인터페이스 수를 증가시켜야 합니다. 현재 인터페이스 수는 5개로, 이는 기본적인 리던던시를 제공하지만, 더 많은 경로와 피어를 통해 네트워크의 신뢰성을 높일 수 있습니다. 또한, iBGP 쌍이 결여되지 않은 상태이므로, 추가적인 iBGP 피어를 설정하여 내부 경로의 안정성을 강화하는 것도 필요합니다.",현재의 네트워크 구조에서 리던던시를 강화하기 위해서는 BGP 피어와 인터페이스 수를 늘리는 것이 중요합니다.,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-DIAGNOSTIC-001,3,기술적 오류 질의,long,"현재 모든 장비에서 AAA 설정이 일관되게 적용되어 있는지 확인하고, 미적용 장비가 있는 경우 이를 식별하여 보안 위험을 평가하십시오.","현재 모든 장비에서 AAA 설정이 일관되게 적용되지 않고 있습니다. 수집된 증거에 따르면, AAA가 활성화된 장비에 대한 정보는 확인되지 않았으며, 인터페이스 수는 5개로 나타났습니다. 이는 미적용 장비가 존재할 가능성을 시사하며, 이러한 미적용 장비는 보안 위험을 초래할 수 있습니다.","AAA 설정이 없는 장비는 인증, 권한 부여 및 계정 관리 기능이 부족하여 보안 취약점을 유발할 수 있습니다.","보안 설정 현황:
-CE1: SSH ON, AAA OFF
-CE2: SSH ON, AAA OFF
-sample10: SSH ON, AAA ON
-sample7: SSH ON, AAA ON
-sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-DIAGNOSTIC-002,3,기술적 오류 질의,long,"로컬 로그 버퍼의 심각도 설정이 감사 기준을 충족하는지 여부를 평가하고, 불충족 시 적절한 조치를 제안하십시오.","로컬 로그 버퍼의 심각도 설정이 감사 기준을 충족하는지 여부를 평가하기 위해서는 로그 심각도 수준과 감사 기준 요구 사항을 비교해야 합니다. 그러나 현재 수집된 증거에서는 로그 심각도 수준과 감사 기준 요구 사항에 대한 정보가 모두 null로 나타나, 이를 통해 평가할 수 있는 데이터가 부족합니다. 따라서, 로그 심각도 설정이 감사 기준을 충족하는지 여부를 판단할 수 없습니다. 이 경우, 적절한 조치는 로그 심각도 수준을 명확히 정의하고, 감사 기준에 맞는 심각도 요구 사항을 수집하여 이를 기반으로 평가를 수행하는 것입니다.","현재 수집된 데이터가 부족하여 평가가 불가능하며, 추가적인 정보 수집이 필요합니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-DIAGNOSTIC-003,3,기술적 오류 질의,long,"SSH 설정이 최신 보안 가이드를 따르고 있는지 검토하고, 업데이트가 필요한 부분이 있는지 분석하십시오.","SSH 설정은 최신 보안 가이드를 따르고 있으며, 검토 결과 업데이트가 필요한 부분은 없습니다. 수집된 증거에 따르면, SSH 관련 설정에서 결함이나 누락된 항목이 발견되지 않았습니다. 구체적으로, 첫 번째 단계에서 SSH 관련 결함이 0건, 세 번째 단계에서도 결함이 0건으로 확인되었습니다.",이 결과는 SSH 설정이 현재 보안 기준을 충족하고 있음을 나타냅니다.,"보안 설정 현황:
-CE1: SSH ON, AAA OFF
-CE2: SSH ON, AAA OFF
-sample10: SSH ON, AAA ON
-sample7: SSH ON, AAA ON
-sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-DIAGNOSTIC-004,3,기술적 오류 질의,long,"AS 65001의 iBGP 풀메시 상태와 관련된 문제를 식별하고, 네트워크 안정성을 위한 조치를 제안하십시오.","AS 65001의 iBGP 풀메시 상태는 정상으로 확인되었습니다. 첫 번째 및 세 번째 단계에서 iBGP 풀메시가 모두 확인되었으며, BGP의 비일관적인 AS 수는 수집된 증거에서 확인되지 않았습니다. 따라서 현재 iBGP 풀메시 상태는 안정적입니다. 그러나 네트워크 안정성을 더욱 강화하기 위해, iBGP 풀메시를 유지하는 동시에, BGP 라우터 간의 연결 상태를 정기적으로 모니터링하고, 필요시 추가적인 라우터를 배치하여 장애 발생 시 대체 경로를 확보하는 것이 좋습니다.","iBGP 풀메시 상태가 양호하므로, 추가적인 조치를 통해 안정성을 더욱 높일 수 있습니다.","BGP 설정 현황:
+ENHANCED_ENHANCED-SCENARIO-013,enhanced_llm_with_agent,4,기술적 오류 질의,long,scenario,troubleshooter,고객사 A의 L3VPN 서비스 문제로 인해 발생할 수 있는 데이터 전송 지연 문제는 무엇인가?,"데이터 전송 지연 문제는 고객사 A의 L3VPN 서비스에서 발생할 수 있는 다양한 요인으로 인해 발생할 수 있으며, 이는 네트워크 혼잡, 라우팅 문제, 패킷 손실, 지연 시간 증가 등으로 나타날 수 있습니다.","L3VPN 서비스에서 데이터 전송 지연 문제는 여러 가지 원인에 의해 발생할 수 있습니다. 예를 들어, 네트워크 혼잡이 발생하면 패킷이 대기하게 되어 지연이 발생할 수 있으며, 라우팅 문제로 인해 패킷이 비효율적인 경로를 통해 전송될 경우에도 지연이 발생할 수 있습니다. 또한, 패킷 손실이 발생하면 재전송이 필요하게 되어 추가적인 지연이 발생할 수 있습니다. 마지막으로, 네트워크 장비의 성능 저하나 지연 시간 증가도 데이터 전송 지연의 원인이 될 수 있습니다.","VRF 설정 현황:
+sample10: 1개 VRF (exam-l3vpn)
+sample7: 1개 VRF (exam-l3vpn)
+sample8: 1개 VRF (exam-l3vpn)
+sample9: 1개 VRF (exam-l3vpn)","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-SCENARIO-014,enhanced_llm_with_agent,4,기술적 오류 질의,short,scenario,troubleshooter,새로운 PE 라우터의 BGP 경로 이상이 다른 라우터에 미칠 영향을 최소화할 수 있는 방법은 무엇인가?,BGP 경로 필터링을 사용하여 불필요한 경로 전파를 방지한다.,새로운 PE 라우터의 BGP 경로 이상이 다른 라우터에 미칠 영향을 최소화하기 위해서는 BGP 경로 필터링을 적용하여 불필요한 경로가 전파되지 않도록 하는 것이 중요합니다. 이를 통해 경로 이상이 발생하더라도 다른 라우터에 영향을 주지 않도록 할 수 있습니다.,"BGP 설정 현황:
 CE1: AS65001, 1개 피어
 CE2: AS65003, 1개 피어
 sample10: AS65000, 3개 피어
 sample7: AS65000, 3개 피어
 sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-DIAGNOSTIC-005,3,기술적 오류 질의,long,"L2VPN 이슈가 발생한 장비와 설정을 검토하여 원인을 파악하고, 해결 방안을 제안하십시오.","L2VPN 이슈를 조사한 결과, 수집된 데이터에 따르면 양방향 L2VPN 연결이 전혀 이루어지지 않고 있는 것으로 보입니다. 'step_1_l2vpn_unidir_count'와 'step_3_l2vpn_unidir_count' 모두 0으로 나타나, 단방향 연결이 없음을 확인할 수 있습니다. 설정 세부사항이 제공되지 않아 구체적인 원인을 파악하기는 어렵지만, L2VPN 설정이 누락되었거나 잘못 구성되었을 가능성이 있습니다. 따라서, L2VPN 설정을 재검토하고 필요한 경우 올바른 구성으로 수정하는 것이 해결 방안으로 제안됩니다.","L2VPN 연결이 전혀 이루어지지 않고 있으며, 설정 세부사항이 부족하여 원인 분석이 필요합니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-SCENARIO-001,4,네트워크 토폴로지 구성 질의,short,"CE1과 CE2를 연결하는 링크가 다운될 경우, CE1에서 sample9으로 가는 트래픽의 새로운 경로는 무엇인가?","CE1에서 sample9으로 가는 트래픽의 새로운 경로는 CE1의 다른 인터페이스를 통해 라우팅될 것입니다. 현재 CE1과 CE2를 연결하는 링크가 다운되었기 때문에, CE1은 남아있는 5개의 인터페이스 중 하나를 사용하여 sample9으로의 트래픽을 우회하게 됩니다.","링크 다운으로 인한 경로 변경은 OSPF 또는 BGP 프로토콜에 따라 자동으로 이루어질 수 있으며, CE1의 다른 인터페이스를 통해 트래픽이 전달될 것입니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-SCENARIO-002,4,네트워크 토폴로지 구성 질의,short,"sample8과 sample9을 연결하는 링크가 다운될 경우, sample8에서 CE2로 가는 트래픽의 새로운 경로는 무엇인가?","sample8에서 CE2로 가는 트래픽의 새로운 경로는 sample8과 sample9을 연결하는 링크가 다운된 경우, 다른 경로를 통해 우회하게 됩니다. 현재 수집된 증거에 따르면, 네트워크에는 5개의 인터페이스가 존재하며, 이 중에서 대체 경로를 제공할 수 있는 인터페이스가 활성화되어 있을 가능성이 높습니다. 따라서, sample8은 다른 인터페이스를 통해 CE2로의 트래픽을 전송할 수 있습니다.","링크 다운 상황에서 대체 경로를 찾는 것은 네트워크의 기본적인 라우팅 기능에 의존하며, 인터페이스 수가 많을수록 대체 경로의 가능성이 높아집니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-SCENARIO-003,4,네트워크 토폴로지 구성 질의,short,"sample10과 CE1을 연결하는 링크가 다운될 경우, sample10에서 CE2로 가는 트래픽의 새로운 경로는 무엇인가?","sample10과 CE1을 연결하는 링크가 다운될 경우, sample10에서 CE2로 가는 트래픽은 다른 경로를 통해 전송될 수 있습니다. 현재 네트워크에는 5개의 인터페이스가 존재하므로, 이 중 하나를 통해 대체 경로가 설정될 가능성이 높습니다. OSPF와 BGP 설정에 대한 정보가 부족하지만, 일반적으로 OSPF는 링크 다운 시 자동으로 다른 경로를 탐색하여 트래픽을 우회시키는 기능을 가지고 있습니다.",링크 다운 상황에서의 대체 경로 탐색은 네트워크의 안정성을 유지하는 데 중요한 요소입니다.,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-SCENARIO-004,4,네트워크 토폴로지 구성 질의,short,"sample9과 sample10을 연결하는 링크가 다운될 경우, sample9에서 sample7으로 가는 트래픽의 새로운 경로는 무엇인가?","sample9에서 sample7으로 가는 트래픽의 새로운 경로는 sample9가 sample10을 우회하여 다른 경로를 통해 sample7로 연결되는 것입니다. 현재 수집된 증거에 따르면, OSPF 영역 수나 BGP 피어 수에 대한 정보는 없지만, 5개의 인터페이스가 존재하므로 sample9는 다른 인터페이스를 통해 sample7로의 경로를 찾을 수 있습니다.","링크가 다운되면 대체 경로를 통해 트래픽이 흐를 수 있으며, 이는 네트워크의 유연성을 나타냅니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-SCENARIO-005,4,네트워크 토폴로지 구성 질의,short,"CE2와 sample7을 연결하는 링크가 다운될 경우, CE2에서 sample8로 가는 트래픽의 새로운 경로는 무엇인가?","CE2와 sample7을 연결하는 링크가 다운될 경우, CE2에서 sample8로 가는 트래픽은 다른 경로를 통해 전송될 것입니다. 현재 수집된 증거에 따르면, CE2는 5개의 인터페이스를 가지고 있으며, 이 중 하나 이상의 인터페이스를 통해 sample8로의 연결이 가능할 것으로 보입니다. 따라서, CE2는 다운된 링크를 우회하여 다른 활성화된 인터페이스를 통해 sample8로 트래픽을 전송할 수 있습니다.",링크 다운 상황에서도 대체 경로를 통해 통신이 가능하다는 점을 강조했습니다.,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-ANALYTICAL-001,3,기술적 오류 질의,short,AS 65000에 속하지만 iBGP 피어 수가 3개 미만인 장비는 총 몇 개인가?,"AS 65000에 속하는 장비 중에서 iBGP 피어 수가 3개 미만인 장비는 총 0개입니다. 수집된 증거에 따르면 iBGP 피어 수가 결측된 경우가 없으며, iBGP 피어 수가 3개 미만인 장비는 존재하지 않습니다.","증거에 따르면 iBGP 피어 수가 결측된 장비가 없으므로, AS 65000에 속하는 장비는 모두 iBGP 피어 수가 3개 이상입니다.","BGP 설정 현황:
+ENHANCED_ENHANCED-SCENARIO-015,enhanced_llm_with_agent,4,기술적 오류 질의,short,scenario,troubleshooter,보안 점검 후 접속 불가 문제를 사전에 예방할 수 있는 방법은 무엇인가?,비밀번호 정책을 강화하고 정기적인 보안 점검을 실시한다.,"보안 점검 후 접속 불가 문제를 예방하기 위해서는 비밀번호 정책을 강화하여 사용자가 강력한 비밀번호를 설정하도록 유도하고, 정기적으로 보안 점검을 실시하여 시스템의 취약점을 사전에 발견하고 수정하는 것이 중요합니다.","보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-001,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,short,analytical,network_architect,"새로운 데이터센터 추가 시, BGP 설정에서 이중화 및 안정성을 보장하기 위해 어떤 측면을 개선해야 할까요?","[""이중화된 BGP 피어링 구성"", ""BGP 라우팅 정책 최적화"", ""BGP 세션 모니터링 및 경고 시스템 구축"", ""BGP 경로 선택 기준 조정""]","새로운 데이터센터를 추가할 때 BGP 설정에서 이중화 및 안정성을 보장하기 위해서는 이중화된 BGP 피어링 구성을 통해 장애 발생 시에도 라우팅이 지속될 수 있도록 하고, BGP 라우팅 정책을 최적화하여 트래픽 흐름을 효율적으로 관리해야 합니다. 또한, BGP 세션 모니터링 및 경고 시스템을 구축하여 문제 발생 시 신속하게 대응할 수 있도록 하며, BGP 경로 선택 기준을 조정하여 최적의 경로를 선택할 수 있도록 해야 합니다.","BGP 설정 현황:
 CE1: AS65001, 1개 피어
 CE2: AS65003, 1개 피어
 sample10: AS65000, 3개 피어
 sample7: AS65000, 3개 피어
 sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-ANALYTICAL-002,3,기술적 오류 질의,short,SSH가 비활성화된 장비의 이름은 무엇인가?,"SSH가 비활성화된 장비는 없습니다. 수집된 데이터에 따르면, 모든 장비(CE1, CE2, sample10, sample7, sample8, sample9)에서 SSH가 활성화되어 있으며, SSH가 비활성화된 장비는 확인되지 않았습니다.",SSH가 비활성화된 장비의 수는 0으로 나타났습니다.,"보안 설정 현황:
+ENHANCED_ENHANCED-ANALYTICAL-002,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,short,analytical,network_architect,"데이터센터 확장으로 인해 OSPF 영역 구성에 어떤 변경이 필요하며, 이로 인해 네트워크 복잡도가 증가할 가능성은?","OSPF 영역을 재구성해야 하며, 네트워크 복잡도가 증가할 수 있다.","데이터센터 확장으로 인해 OSPF 영역을 재구성해야 하는 이유는 새로운 서브넷이나 장비가 추가되면서 기존의 OSPF 영역 설정이 더 이상 적합하지 않을 수 있기 때문입니다. 이러한 변경은 OSPF 라우팅 프로토콜의 동작 방식에 영향을 미치고, 네트워크의 복잡도를 증가시킬 수 있습니다. 예를 들어, 더 많은 라우터와 링크가 추가되면 라우팅 테이블이 커지고, OSPF의 라우팅 계산이 더 복잡해질 수 있습니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-003,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,short,analytical,network_architect,확장 네트워크에서 새로운 L2VPN 서비스가 기존 서비스에 미치는 영향을 최소화하기 위해 어떤 조치를 고려해야 할까요?,"[""서비스 품질(QoS) 보장"", ""트래픽 분리"", ""리소스 할당 최적화"", ""모니터링 및 관리 도구 강화""]","확장 네트워크에서 새로운 L2VPN 서비스가 기존 서비스에 미치는 영향을 최소화하기 위해서는 서비스 품질(QoS) 보장을 통해 트래픽의 우선순위를 설정하고, 트래픽 분리를 통해 서로 다른 서비스 간의 간섭을 줄이며, 리소스 할당을 최적화하여 네트워크 자원의 효율성을 높여야 합니다. 또한, 모니터링 및 관리 도구를 강화하여 네트워크 상태를 실시간으로 파악하고 문제를 조기에 발견할 수 있도록 해야 합니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-004,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,long,analytical,network_architect,데이터센터 확장에서 발생할 수 있는 보안 취약점을 방지하기 위해 어떤 보안 정책 검토가 필요할까요?,"[""정기적인 보안 감사 수행"", ""접근 제어 정책 강화"", ""데이터 암호화 적용"", ""네트워크 모니터링 및 침입 탐지 시스템 도입"", ""물리적 보안 강화""]","데이터센터 확장에서 발생할 수 있는 보안 취약점을 방지하기 위해서는 여러 가지 보안 정책을 검토해야 합니다. 정기적인 보안 감사 수행은 시스템의 취약점을 조기에 발견하고 수정할 수 있도록 도와줍니다. 접근 제어 정책을 강화하면 불법적인 접근을 차단할 수 있으며, 데이터 암호화를 통해 중요한 정보의 유출을 방지할 수 있습니다. 또한, 네트워크 모니터링 및 침입 탐지 시스템을 도입하면 실시간으로 위협을 감지하고 대응할 수 있습니다. 마지막으로, 물리적 보안을 강화하여 데이터센터에 대한 물리적 접근을 제한하는 것도 중요합니다.","보안 설정 현황:
 CE1: SSH ON, AAA OFF
 CE2: SSH ON, AAA OFF
 sample10: SSH ON, AAA ON
 sample7: SSH ON, AAA ON
 sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-ANALYTICAL-003,3,기술적 오류 질의,short,L2VPN 관련 이슈가 있는 장비는 총 몇 개인가?,"L2VPN 관련 이슈가 있는 장비는 총 0개입니다. 수집된 데이터에 따르면, 양 방향 및 단 방향 모두에서 L2VPN 이슈가 발견되지 않았습니다.",L2VPN 관련 이슈가 전혀 없는 상태입니다.,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-ANALYTICAL-004,3,기술적 오류 질의,short,VRF 'exam-l3vpn'에 연결된 eBGP 피어의 IP 주소는 무엇인가?,"VRF 'exam-l3vpn'에 연결된 eBGP 피어의 IP 주소에 대한 정보는 수집된 증거에서 확인할 수 없습니다. 현재로서는 eBGP 피어의 수나 AS 불일치 수에 대한 정보도 제공되지 않아, 피어의 IP 주소를 특정할 수 없습니다.","수집된 데이터에는 eBGP 피어의 수나 관련 정보가 포함되어 있지 않아, 질문에 대한 명확한 답변을 제공할 수 없습니다.","BGP 설정 현황:
+ENHANCED_ENHANCED-ANALYTICAL-005,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,short,analytical,network_architect,"현재의 VRF 구성에서 데이터센터 확장을 고려할 때, 추가적인 RT 설정이 필요한 경우는?",[],"현재의 VRF 구성에서 데이터센터 확장을 고려할 때, 추가적인 RT 설정이 필요하지 않습니다. 증거에 따르면, None 단계에서 RT 설정이 0으로 나타나므로, 문제없이 확장이 가능하다는 것을 의미합니다.","VRF 설정 현황:
+sample10: 1개 VRF (exam-l3vpn)
+sample7: 1개 VRF (exam-l3vpn)
+sample8: 1개 VRF (exam-l3vpn)
+sample9: 1개 VRF (exam-l3vpn)","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-006,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,long,analytical,network_architect,확장으로 인해 예상되는 BGP AS 번호의 증가가 네트워크 안정성에 미치는 영향을 평가하려면 어떤 분석이 필요할까요?,"BGP AS 번호의 증가가 네트워크 안정성에 미치는 영향을 평가하기 위해서는 BGP 경로의 다양성, 경로 수의 증가에 따른 라우팅 테이블의 크기 변화, AS 간의 피어링 관계 분석, 그리고 경로 수에 따른 라우팅 안정성 및 convergence 시간 분석이 필요합니다.","BGP AS 번호의 증가가 네트워크 안정성에 미치는 영향을 평가하기 위해서는 여러 가지 분석이 필요합니다. 첫째, BGP 경로의 다양성을 분석하여 다양한 경로가 존재하는지 확인해야 합니다. 둘째, AS 번호의 증가로 인해 라우팅 테이블의 크기가 어떻게 변화하는지를 살펴보아야 하며, 이는 메모리 사용량과 처리 성능에 영향을 미칠 수 있습니다. 셋째, AS 간의 피어링 관계를 분석하여 네트워크의 구조적 안정성을 평가해야 합니다. 마지막으로, 경로 수의 증가가 라우팅 안정성 및 convergence 시간에 미치는 영향을 분석하여 네트워크의 전반적인 안정성을 평가할 수 있습니다.","BGP 설정 현황:
 CE1: AS65001, 1개 피어
 CE2: AS65003, 1개 피어
 sample10: AS65000, 3개 피어
 sample7: AS65000, 3개 피어
 sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-ANALYTICAL-005,3,기술적 오류 질의,short,AAA 인증이 활성화된 장비의 이름은 무엇인가?,"현재 AAA 인증이 활성화된 장비는 없습니다. 수집된 데이터에 따르면, AAA 인증이 활성화된 장비 목록은 null로 나타나고 있습니다.",이 결과는 AAA 인증이 활성화된 장비가 존재하지 않음을 의미합니다.,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-SCENARIO-001,4,명령어 사용법/질의,long,"AS 65001의 장비 A에서 AS 65003의 장비 C로 SSH로 접속하려면 어떤 점프 호스트를 경유해야 하며, 어떤 명령어 시퀀스가 필요한가요?","AS 65001의 장비 A에서 AS 65003의 장비 C로 SSH로 접속하기 위해서는 CE1 또는 CE2와 같은 장비를 점프 호스트로 경유해야 합니다. SSH 접속을 위해서는 먼저 점프 호스트에 접속한 후, 해당 점프 호스트에서 AS 65003의 장비 C로 SSH 명령어를 실행해야 합니다. 예를 들어, 'ssh user@CE1' 또는 'ssh user@CE2' 명령어로 점프 호스트에 접속한 후, 'ssh user@C' 명령어를 사용하여 최종 목적지인 장비 C에 접속할 수 있습니다.","수집된 증거에 따르면, SSH가 활성화된 장비들이 CE1과 CE2를 포함하고 있으며, 모든 장비에서 SSH가 활성화되어 있습니다.","보안 설정 현황:
+ENHANCED_ENHANCED-ANALYTICAL-007,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,short,analytical,network_architect,기존 네트워크의 L3VPN 서비스가 새로운 데이터센터 추가 시 어떤 영향을 받을 수 있는지 분석하려면?,기존 L3VPN 서비스에 영향을 미치지 않음,"기존 네트워크의 L3VPN 서비스는 새로운 데이터센터 추가 시 vrf_interface_bind_count가 0으로 나타나므로, 현재 설정에 문제가 없음을 의미하며, 따라서 서비스에 영향을 미치지 않을 것으로 분석됩니다.","VRF 설정 현황:
+sample10: 1개 VRF (exam-l3vpn)
+sample7: 1개 VRF (exam-l3vpn)
+sample8: 1개 VRF (exam-l3vpn)
+sample9: 1개 VRF (exam-l3vpn)","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-008,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,short,analytical,network_architect,"데이터센터 확장으로 인한 OSPF 재구성이 필요한 경우, 어떤 영역의 인터페이스 구성이 우선적으로 검토되어야 할까요?",Area 0,"OSPF에서 모든 영역은 Area 0, 즉 백본 영역에 연결되어야 하므로, 데이터센터 확장으로 인한 OSPF 재구성이 필요할 경우 Area 0의 인터페이스 구성이 우선적으로 검토되어야 합니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-009,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,short,analytical,network_architect,"새로운 데이터센터 추가 시, 네트워크 장비 간 SSH 접근성의 일관성을 유지하기 위해 어떤 점검이 필요할까요?","[""SSH 접근성 점검"", ""네트워크 장비의 SSH 설정 확인"", ""방화벽 규칙 검토"", ""SSH 키 관리 및 배포 확인"", ""접근 로그 모니터링""]","새로운 데이터센터 추가 시, 네트워크 장비 간 SSH 접근성의 일관성을 유지하기 위해서는 SSH 접근성 점검, 네트워크 장비의 SSH 설정 확인, 방화벽 규칙 검토, SSH 키 관리 및 배포 확인, 그리고 접근 로그 모니터링이 필요합니다.","보안 설정 현황:
 CE1: SSH ON, AAA OFF
 CE2: SSH ON, AAA OFF
 sample10: SSH ON, AAA ON
 sample7: SSH ON, AAA ON
 sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-SCENARIO-002,4,명령어 사용법/질의,long,"AS 65000의 장비 D에서 AS 65003의 장비 F로 SSH 접속을 위해 필요한 점프 호스트는 무엇이며, 해당 명령어 시퀀스는 어떻게 되나요?","AS 65000의 장비 D에서 AS 65003의 장비 F로 SSH 접속을 위해 필요한 점프 호스트는 'sample10'입니다. SSH 접속을 위한 명령어 시퀀스는 다음과 같습니다: 먼저, 'ssh sample10' 명령어를 사용하여 점프 호스트에 접속한 후, 'ssh F' 명령어를 통해 최종 목적지인 AS 65003의 장비 F에 접속합니다. 이 과정에서 모든 장비에서 SSH가 활성화되어 있으며, iBGP 풀 메쉬가 정상적으로 구성되어 있습니다.","이 정보는 수집된 증거를 바탕으로 하여, SSH가 활성화된 장비 목록과 iBGP 상태를 고려하여 작성되었습니다.","보안 설정 현황:
+ENHANCED_ENHANCED-ANALYTICAL-010,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,short,analytical,network_architect,확장으로 인해 발생할 수 있는 L2VPN의 불일치 문제를 해결하기 위한 최적의 방법은 무엇일까요?,"L2VPN의 불일치 문제를 해결하기 위해서는 네트워크 장비 간의 구성 일치를 보장하고, 적절한 프로토콜을 사용하여 상태를 동기화하는 것이 최적의 방법입니다.","L2VPN의 불일치 문제는 주로 네트워크 장비 간의 설정 차이에서 발생합니다. 따라서, 이러한 문제를 해결하기 위해서는 모든 장비의 설정을 일관되게 유지하고, 필요한 경우 자동화된 도구를 사용하여 상태를 동기화하는 것이 중요합니다. 또한, 프로토콜을 통해 장비 간의 통신을 원활하게 하여 불일치를 최소화할 수 있습니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-011,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,short,analytical,network_architect,데이터센터 확장에서 비즈니스 연속성을 보장하기 위해 BGP 설정에서 어떤 요소를 검토해야 할까요?,"[""BGP 피어링 설정"", ""라우팅 정책"", ""경로 선택 기준"", ""Failover 메커니즘"", ""네트워크 모니터링""]","데이터센터 확장에서 비즈니스 연속성을 보장하기 위해 BGP 설정에서 검토해야 할 요소로는 BGP 피어링 설정, 라우팅 정책, 경로 선택 기준, Failover 메커니즘, 그리고 네트워크 모니터링이 포함됩니다. 이러한 요소들은 네트워크의 안정성과 가용성을 높이는 데 중요한 역할을 합니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-012,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,short,analytical,network_architect,"확장된 네트워크 환경에서 OSPF 비용 조정이 필요할 경우, 어떤 요소를 기준으로 판단해야 할까요?","[""대역폭"", ""지연 시간"", ""네트워크 토폴로지"", ""트래픽 부하""]","OSPF 비용 조정은 네트워크의 성능을 최적화하기 위해 여러 요소를 고려해야 합니다. 대역폭은 링크의 전송 용량을 나타내며, 지연 시간은 패킷이 목적지에 도달하는 데 걸리는 시간을 의미합니다. 또한, 네트워크 토폴로지는 라우터와 링크의 배치 및 연결 방식을 나타내며, 트래픽 부하는 네트워크에서 발생하는 데이터 전송의 양을 의미합니다. 이러한 요소들을 종합적으로 판단하여 OSPF 비용을 조정해야 합니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-013,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,short,analytical,network_architect,확장으로 인해 발생할 수 있는 VRF 내의 RT 결손 문제를 방지하기 위한 전략은 무엇인가요?,"VRF 내의 RT 결손 문제를 방지하기 위한 전략은 RT를 정기적으로 모니터링하고, 필요한 경우 자동으로 재생성하는 프로세스를 구현하는 것입니다.","VRF 내의 RT 결손 문제는 네트워크 확장 시 발생할 수 있는 문제로, 이를 방지하기 위해서는 RT를 지속적으로 모니터링하고, 결손이 발생할 경우 자동으로 RT를 재생성하는 시스템을 도입하는 것이 효과적입니다. 이러한 전략은 네트워크의 안정성을 높이고, 확장 과정에서의 문제를 최소화하는 데 기여합니다.","VRF 설정 현황:
+sample10: 1개 VRF (exam-l3vpn)
+sample7: 1개 VRF (exam-l3vpn)
+sample8: 1개 VRF (exam-l3vpn)
+sample9: 1개 VRF (exam-l3vpn)","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-014,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,short,analytical,network_architect,"데이터센터 확장 시, 네트워크 복잡성을 줄이기 위해 어떤 OSPF 영역 구성이 적합할까요?",stub area,"Stub areas are suitable for reducing network complexity in OSPF configurations during data center expansions because they limit the types of routes that are advertised into the area, thereby minimizing the amount of routing information and simplifying the overall network topology.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-015,enhanced_llm_with_agent,3,네트워크 토폴로지 구성 질의,short,analytical,network_architect,확장된 네트워크에서 L2VPN 서비스의 일관성을 유지하기 위해 어떤 점검이 필요할까요?,"[""연결 상태 점검"", ""대역폭 모니터링"", ""지연 시간 측정"", ""패킷 손실 확인"", ""구성 일관성 검토""]","L2VPN 서비스의 일관성을 유지하기 위해서는 연결 상태 점검, 대역폭 모니터링, 지연 시간 측정, 패킷 손실 확인, 그리고 구성 일관성 검토와 같은 점검이 필요합니다. 이러한 점검들은 네트워크의 성능과 안정성을 보장하는 데 중요한 역할을 합니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-001,enhanced_llm_with_agent,3,기술적 오류 질의,long,diagnostic,compliance_officer,현재 네트워크 장비의 SSH 설정이 최신 보안 가이드를 따르고 있는지 확인하기 위해 어떤 점을 검토해야 하나요?,"[""SSH 버전 확인"", ""강력한 암호화 알고리즘 사용 여부"", ""비밀번호 인증 대신 공개키 인증 사용 여부"", ""SSH 접근 제어 목록(ACL) 설정 확인"", ""SSH 포트 변경 여부"", ""로그인 시도 제한 설정 여부""]","현재 네트워크 장비의 SSH 설정이 최신 보안 가이드를 따르고 있는지 확인하기 위해서는 여러 가지 점을 검토해야 합니다. 첫째, SSH 버전이 최신인지 확인하고, 둘째, 강력한 암호화 알고리즘이 사용되고 있는지 점검해야 합니다. 셋째, 비밀번호 인증 대신 공개키 인증을 사용하는 것이 권장되며, 넷째, SSH 접근 제어 목록(ACL) 설정이 적절한지 확인해야 합니다. 다섯째, SSH 포트를 기본값에서 변경했는지 여부도 중요하며, 마지막으로 로그인 시도 제한 설정이 되어 있는지 확인하는 것이 필요합니다.","보안 설정 현황:
 CE1: SSH ON, AAA OFF
 CE2: SSH ON, AAA OFF
 sample10: SSH ON, AAA ON
 sample7: SSH ON, AAA ON
 sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-SCENARIO-003,4,명령어 사용법/질의,long,"AS 65003의 장비 E에서 AS 65001의 장비 B로 SSH로 접근하기 위해 어떤 점프 호스트를 경유해야 하며, 명령어 시퀀스는 무엇인가요?","AS 65003의 장비 E에서 AS 65001의 장비 B로 SSH로 접근하기 위해서는 CE1, CE2, sample10, sample7, sample8, sample9 중 하나의 장비를 점프 호스트로 경유해야 합니다. 이들 장비는 SSH가 활성화되어 있으며, AS 65003의 장비 E에서 해당 장비로 SSH 접속 후, 다시 AS 65001의 장비 B로 SSH 접속을 시도해야 합니다.","수집된 증거에 따르면, AS 65003의 장비 E는 SSH가 활성화된 여러 장비를 통해 AS 65001의 장비 B에 접근할 수 있습니다.","보안 설정 현황:
+ENHANCED_ENHANCED-DIAGNOSTIC-002,enhanced_llm_with_agent,3,기술적 오류 질의,short,diagnostic,compliance_officer,"AAA 및 패스워드 정책이 일관성 있게 설정되어 있지 않은 장비가 있는지 확인하고, 이를 개선하기 위해 어떤 조치를 취할 수 있을까요?","[""장비 점검"", ""AAA 정책 설정"", ""패스워드 정책 강화""]","AAA 및 패스워드 정책이 일관성 있게 설정되지 않은 장비가 발견되었습니다. 이를 개선하기 위해서는 먼저 모든 장비를 점검하여 AAA 정책이 설정되어 있는지 확인하고, 설정되지 않은 장비에는 AAA 정책을 적용해야 합니다. 또한, 패스워드 정책이 부재한 경우에는 강력한 패스워드 정책을 수립하고 이를 모든 장비에 적용하여 보안을 강화해야 합니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-003,enhanced_llm_with_agent,3,기술적 오류 질의,long,diagnostic,compliance_officer,로컬 로그 버퍼의 심각도 설정이 감사 기준을 충족하고 있는지 확인하려면 어떤 정보를 수집해야 하나요?,"[""로컬 로그 버퍼의 현재 심각도 설정"", ""감사 기준에 명시된 심각도 요구 사항"", ""로그 버퍼의 기록된 이벤트 유형"", ""이벤트 발생 빈도 및 패턴""]","로컬 로그 버퍼의 심각도 설정이 감사 기준을 충족하는지 확인하기 위해서는 현재 설정된 심각도 수준, 감사 기준에서 요구하는 심각도 수준, 로그 버퍼에 기록된 이벤트의 유형, 그리고 이벤트 발생 빈도 및 패턴과 같은 정보를 수집해야 합니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-DIAGNOSTIC-004,enhanced_llm_with_agent,3,기술적 오류 질의,short,diagnostic,compliance_officer,SSH 설정이 제대로 되어 있는지를 평가하기 위해 체크해야 할 중요 요소는 무엇인가요?,"[""SSH 서비스가 설치되어 있는지 확인"", ""SSH 접근 제어 목록(ACL)이 적용되어 있는지 확인""]","SSH 설정이 제대로 되어 있는지를 평가하기 위해서는 SSH 서비스가 설치되어 있는지 확인하고, SSH 접근 제어 목록(ACL)이 적용되어 있는지를 점검하는 것이 중요합니다. 이 두 가지 요소는 SSH의 보안성과 접근성을 보장하는 데 필수적입니다.","보안 설정 현황:
 CE1: SSH ON, AAA OFF
 CE2: SSH ON, AAA OFF
 sample10: SSH ON, AAA ON
 sample7: SSH ON, AAA ON
 sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-SCENARIO-004,4,명령어 사용법/질의,long,AS 65000의 장비 F에서 AS 65001의 장비 A로 SSH 접속을 위한 점프 호스트와 명령어 시퀀스는 어떻게 되나요?,"AS 65000의 장비 F에서 AS 65001의 장비 A로 SSH 접속을 위해서는 점프 호스트로 사용 가능한 장비들 중 하나를 선택해야 합니다. 수집된 증거에 따르면, SSH가 활성화된 장비는 CE1, CE2, sample10, sample7, sample8, sample9로 확인되었습니다. 이 중 하나를 점프 호스트로 설정한 후, 해당 장비를 통해 AS 65001의 장비 A로 SSH 접속을 시도하면 됩니다. 모든 장비에서 SSH가 활성화되어 있으므로, 점프 호스트를 통해 원활한 접속이 가능할 것입니다.","SSH 접속을 위한 점프 호스트는 SSH가 활성화된 장비 중에서 선택할 수 있으며, 모든 장비에서 SSH가 활성화되어 있어 접속이 용이합니다.","보안 설정 현황:
+ENHANCED_ENHANCED-DIAGNOSTIC-005,enhanced_llm_with_agent,3,기술적 오류 질의,short,diagnostic,compliance_officer,장비의 모든 인터페이스에 대해 AAA 설정이 적용되어 있는지 검토하려면 어떤 단계를 거쳐야 할까요?,"[""장비에 로그인"", ""인터페이스 목록 확인"", ""각 인터페이스에 대해 AAA 설정 확인"", ""설정이 적용되지 않은 인터페이스에 대해 AAA 설정 적용""]","장비의 모든 인터페이스에 대해 AAA 설정이 적용되어 있는지 검토하기 위해서는 먼저 장비에 로그인한 후, 인터페이스 목록을 확인해야 합니다. 그 다음 각 인터페이스에 대해 AAA 설정이 적용되어 있는지를 확인하고, 설정이 적용되지 않은 인터페이스가 있다면 해당 인터페이스에 AAA 설정을 적용해야 합니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-006,enhanced_llm_with_agent,3,기술적 오류 질의,short,diagnostic,compliance_officer,로컬 로그 버퍼의 심각도가 불충분하게 설정되어 있는지 판단하기 위해 어떤 지표를 참조해야 하나요?,로그 버퍼의 사용량 및 경고 메시지,"로컬 로그 버퍼의 심각도가 불충분하게 설정되어 있는지 판단하기 위해서는 로그 버퍼의 사용량과 경고 메시지를 참조해야 합니다. 사용량이 높은 경우 로그가 제대로 기록되지 않을 수 있으며, 경고 메시지는 설정된 심각도 수준이 적절하지 않음을 나타낼 수 있습니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-DIAGNOSTIC-007,enhanced_llm_with_agent,3,기술적 오류 질의,long,diagnostic,compliance_officer,SSH 설정이 모든 장비에서 일관되게 적용되어 있는지 확인하기 위해 어떤 검토가 필요할까요?,"[""SSH 설정 파일 검토"", ""SSH 서비스 상태 확인"", ""접속 로그 분석"", ""SSH 키 및 인증서 검토"", ""방화벽 및 보안 그룹 설정 확인""]","SSH 설정이 모든 장비에서 일관되게 적용되었는지 확인하기 위해서는 여러 가지 검토가 필요합니다. 첫째, 각 장비의 SSH 설정 파일을 검토하여 설정이 일관된지 확인해야 합니다. 둘째, SSH 서비스가 정상적으로 실행되고 있는지 상태를 확인해야 합니다. 셋째, 접속 로그를 분석하여 비정상적인 접근 시도가 있는지 점검해야 합니다. 넷째, SSH 키 및 인증서를 검토하여 유효성과 일관성을 확인해야 하며, 마지막으로 방화벽 및 보안 그룹 설정이 SSH 접근을 허용하는지 확인해야 합니다.","보안 설정 현황:
 CE1: SSH ON, AAA OFF
 CE2: SSH ON, AAA OFF
 sample10: SSH ON, AAA ON
 sample7: SSH ON, AAA ON
 sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
-ENHANCED_ENHANCED-SCENARIO-005,4,명령어 사용법/질의,long,"AS 65001의 장비 B에서 AS 65000의 장비 D로 SSH 접속을 시도할 때 어떤 점프 호스트를 사용해야 하며, 명령어 시퀀스는 무엇인가요?","AS 65001의 장비 B에서 AS 65000의 장비 D로 SSH 접속을 시도할 때, 사용해야 할 점프 호스트는 'sample10'입니다. SSH 접속을 위한 명령어 시퀀스는 'ssh user@sample10'을 통해 점프 호스트에 접속한 후, 'ssh user@D'를 통해 최종 목적지인 장비 D에 접속하는 방식입니다. 이 과정에서 모든 장비에서 SSH가 활성화되어 있으며, iBGP 풀 메쉬가 정상적으로 구성되어 있어 연결이 원활하게 이루어질 수 있습니다.","수집된 증거에 따르면, SSH가 활성화된 장비 목록에 'sample10'이 포함되어 있으며, iBGP 풀 메쉬가 정상적으로 작동하고 있습니다.","보안 설정 현황:
+ENHANCED_ENHANCED-DIAGNOSTIC-008,enhanced_llm_with_agent,3,기술적 오류 질의,short,diagnostic,compliance_officer,패스워드 정책이 모든 장비에서 일관되게 적용되어 있는지 확인하려면 어떤 정보를 수집해야 하나요?,"[""패스워드 정책 문서"", ""장비별 패스워드 설정 현황"", ""정기적인 패스워드 감사 기록"", ""정책 적용 여부 확인을 위한 테스트 결과""]","패스워드 정책이 모든 장비에서 일관되게 적용되고 있는지를 확인하기 위해서는 패스워드 정책 문서, 각 장비별 패스워드 설정 현황, 정기적인 패스워드 감사 기록, 그리고 정책 적용 여부를 확인하기 위한 테스트 결과와 같은 정보를 수집해야 합니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-009,enhanced_llm_with_agent,3,기술적 오류 질의,short,diagnostic,compliance_officer,AAA 설정이 누락된 장비가 있는지 확인하고 이를 개선하기 위한 방법은 무엇인가요?,[],"AAA 설정이 누락된 장비가 없음을 확인했습니다. 이를 개선하기 위해서는 모든 장비에 대해 AAA 설정을 검토하고, 필요한 경우 설정을 추가하여 보안을 강화하는 것이 중요합니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-010,enhanced_llm_with_agent,3,기술적 오류 질의,short,diagnostic,compliance_officer,장비 로그가 감사 기준에 부합하는지 검토하기 위해 어떤 로그 설정을 확인해야 합니까?,"[""로그 레벨 설정"", ""로그 보존 기간"", ""로그 포맷"", ""로그 접근 권한"", ""로그 전송 및 저장 방식""]","장비 로그가 감사 기준에 부합하는지 검토하기 위해서는 로그 레벨 설정, 로그 보존 기간, 로그 포맷, 로그 접근 권한, 그리고 로그 전송 및 저장 방식과 같은 여러 로그 설정을 확인해야 합니다. 이러한 요소들은 로그의 신뢰성과 무결성을 보장하며, 감사 기준을 충족하는 데 필수적입니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-DIAGNOSTIC-011,enhanced_llm_with_agent,3,기술적 오류 질의,short,diagnostic,compliance_officer,SSH 설정의 보안성을 높이기 위해 추가적으로 어떤 보안 조치를 검토해야 할까요?,"[""비밀번호 인증 대신 공개키 인증 사용"", ""SSH 포트 변경"", ""방화벽 설정"", ""SSH 접속 제한"", ""Fail2ban 설치""]","SSH 설정의 보안성을 높이기 위해서는 비밀번호 인증 대신 공개키 인증을 사용하는 것이 좋습니다. 또한, 기본 SSH 포트를 변경하여 공격자가 쉽게 접근하지 못하도록 하고, 방화벽을 설정하여 특정 IP만 SSH 접속을 허용하는 것이 중요합니다. SSH 접속을 제한하여 불필요한 접근을 차단하고, Fail2ban과 같은 도구를 설치하여 반복적인 로그인 시도를 차단하는 것도 효과적인 보안 조치입니다.","보안 설정 현황:
 CE1: SSH ON, AAA OFF
 CE2: SSH ON, AAA OFF
 sample10: SSH ON, AAA ON
 sample7: SSH ON, AAA ON
 sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-012,enhanced_llm_with_agent,3,기술적 오류 질의,long,diagnostic,compliance_officer,장비의 AAA 설정이 모든 인터페이스에 적용되고 있는지를 확인하기 위한 방법은 무엇인가요?,"장비의 AAA 설정이 모든 인터페이스에 적용되고 있는지를 확인하기 위해서는 'show running-config' 명령어를 사용하여 현재 설정을 확인하거나, 각 인터페이스의 설정을 개별적으로 검토하여 AAA 관련 설정이 포함되어 있는지를 확인해야 합니다.","이 방법을 통해 장비의 전체 설정을 확인하고, AAA 설정이 모든 인터페이스에 적용되었는지를 검증할 수 있습니다. 'show running-config' 명령어는 현재 장비의 실행 중인 구성 정보를 보여주며, 이를 통해 AAA 설정이 올바르게 적용되었는지 확인할 수 있습니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-013,enhanced_llm_with_agent,3,기술적 오류 질의,long,diagnostic,compliance_officer,SSH 설정이 최신 보안 가이드라인에 맞춰져 있는지를 확인하려면 어떤 정보를 확인해야 하나요?,"[""SSH 버전 확인"", ""강력한 암호화 알고리즘 사용 여부"", ""비밀번호 인증 비활성화"", ""공개 키 인증 사용 여부"", ""루트 로그인 비활성화"", ""SSH 포트 변경 여부"", ""로그인 시도 제한 설정 여부""]","SSH 설정이 최신 보안 가이드라인에 맞춰져 있는지를 확인하기 위해서는 여러 가지 정보를 점검해야 합니다. 먼저, SSH 버전을 확인하여 최신 버전이 사용되고 있는지 확인해야 하며, 강력한 암호화 알고리즘이 사용되고 있는지도 중요합니다. 또한, 비밀번호 인증을 비활성화하고 공개 키 인증을 사용하는지, 루트 로그인이 비활성화되어 있는지, SSH 포트가 기본값에서 변경되었는지, 그리고 로그인 시도 제한이 설정되어 있는지를 점검해야 합니다.","보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-014,enhanced_llm_with_agent,3,기술적 오류 질의,short,diagnostic,compliance_officer,패스워드 정책의 일관성을 보장하기 위해 어떤 점을 검토해야 할까요?,"[""패스워드 길이"", ""대문자 및 소문자 사용"", ""숫자 및 특수문자 포함"", ""정기적인 패스워드 변경"", ""패스워드 재사용 금지""]","패스워드 정책의 일관성을 보장하기 위해서는 패스워드의 길이, 대문자 및 소문자의 사용, 숫자 및 특수문자의 포함, 정기적인 패스워드 변경, 그리고 패스워드 재사용 금지와 같은 요소들을 검토해야 합니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-015,enhanced_llm_with_agent,3,기술적 오류 질의,long,diagnostic,compliance_officer,각 장비의 로그 설정이 감사 기준을 충족하는지 확인하기 위해 어떤 검토가 필요할까요?,"[""로그 설정의 일관성 검토"", ""로그 데이터의 보존 기간 확인"", ""로그 접근 권한 및 보안 설정 점검"", ""로그의 무결성 및 변조 방지 조치 확인"", ""감사 로그의 적시성 및 정확성 검토""]","각 장비의 로그 설정이 감사 기준을 충족하는지 확인하기 위해서는 로그 설정의 일관성을 검토하고, 로그 데이터의 보존 기간을 확인해야 하며, 로그 접근 권한 및 보안 설정을 점검해야 합니다. 또한, 로그의 무결성과 변조 방지 조치를 확인하고, 감사 로그의 적시성 및 정확성을 검토하는 것이 필요합니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-ANALYTICAL-001,enhanced_llm_with_agent,3,기술적 오류 질의,short,analytical,troubleshooter,BGP 피어 수가 5개 미만인 장비는 몇 개인가?,1,"주어진 증거에 따르면 BGP 피어 수가 0인 장비가 있으며, 이는 5개 미만의 피어를 가진 장비로 간주됩니다. 따라서 BGP 피어 수가 5개 미만인 장비는 총 1개입니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-002,enhanced_llm_with_agent,3,기술적 오류 질의,short,analytical,troubleshooter,AS 65000에 속한 장비들 중에서 iBGP 피어가 없는 장비는 몇 개인가?,1,AS 65000에 속한 장비 중에서 iBGP 피어가 없는 장비는 1개입니다. 이는 neighbor_list_ibgp가 없다는 증거에 기반하여 확인할 수 있습니다.,"BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-003,enhanced_llm_with_agent,3,기술적 오류 질의,short,analytical,troubleshooter,SSH가 활성화되지 않은 장비의 이름은 무엇인가?,[],"주어진 증거에 따르면 SSH가 활성화되지 않은 장비는 없으므로, 결과는 빈 배열로 나타냅니다.","보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-004,enhanced_llm_with_agent,3,기술적 오류 질의,short,analytical,troubleshooter,L2VPN의 일방향 연결 문제가 있는 장비의 개수는 몇 개인가?,0,L2VPN의 일방향 연결 문제가 있는 장비의 개수는 0개입니다. 이는 l2vpn_unidirectional_pairs에서 해당 문제가 발생한 장비가 없음을 나타냅니다.,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-005,enhanced_llm_with_agent,3,기술적 오류 질의,short,analytical,troubleshooter,VRF에 RT가 설정되지 않은 장비의 이름은 무엇인가?,[],"주어진 증거에 따르면, VRF에 RT가 설정되지 않은 장비는 None 단계에서 확인된 바가 없으므로, 해당 장비의 이름은 존재하지 않습니다.","VRF 설정 현황:
+sample10: 1개 VRF (exam-l3vpn)
+sample7: 1개 VRF (exam-l3vpn)
+sample8: 1개 VRF (exam-l3vpn)
+sample9: 1개 VRF (exam-l3vpn)","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-006,enhanced_llm_with_agent,3,기술적 오류 질의,long,analytical,troubleshooter,OSPF 프로세스 ID가 1인 장비의 이름은 무엇인가?,"OSPF(Open Shortest Path First) 프로세스 ID는 OSPF 인스턴스를 식별하는 고유한 숫자입니다. 질문에서 언급된 OSPF 프로세스 ID가 1인 장비의 이름을 확인하기 위해서는 해당 장비의 호스트 이름을 알아야 합니다. 그러나 제공된 증거에 따르면, 'None단계 (system_hostname_text)'에서 호스트 이름 정보가 없으며, 'None단계 (ospf_process_ids_set)'에서도 OSPF 프로세스 ID가 설정되어 있지 않음을 나타냅니다.
+
+이러한 상황에서는 OSPF 프로세스 ID가 1인 장비의 이름을 확인할 수 없습니다. 일반적으로 OSPF 프로세스 ID는 장비의 설정에서 확인할 수 있으며, 이를 통해 네트워크 내에서 OSPF 인스턴스를 관리하고 문제를 해결하는 데 중요한 역할을 합니다. 실무적으로는 OSPF 프로세스 ID와 호스트 이름이 모두 명확히 설정되어 있어야 네트워크의 가시성과 관리가 용이해집니다. 따라서, OSPF 프로세스 ID가 1인 장비의 이름을 확인하기 위해서는 추가적인 정보가 필요합니다.","• None단계 (ospf_process_ids_set): 없음
+• None단계 (system_hostname_text): ","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-007,enhanced_llm_with_agent,3,기술적 오류 질의,short,analytical,troubleshooter,AAA가 활성화되지 않은 장비의 이름은 무엇인가?,[],"주어진 증거에 따르면 AAA가 활성화되지 않은 장비에 대한 정보가 없으므로, 해당 장비의 이름을 알 수 없습니다. 따라서 정답은 빈 배열로 표현됩니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-008,enhanced_llm_with_agent,3,기술적 오류 질의,short,analytical,troubleshooter,L2VPN의 일방향 연결 문제의 개수는 몇 개인가?,0,"L2VPN의 일방향 연결 문제의 개수는 0으로, 이는 현재 문제가 없음을 나타냅니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-009,enhanced_llm_with_agent,3,기술적 오류 질의,short,analytical,troubleshooter,BGP가 설정된 모든 장비의 수는 몇 개인가?,0,"BGP가 설정된 모든 장비의 수는 0으로 나타나며, 이는 현재 BGP가 설정된 장비가 없음을 의미합니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-010,enhanced_llm_with_agent,3,기술적 오류 질의,short,analytical,troubleshooter,iBGP 피어 수가 부족한 장비의 수는 몇 개인가?,0,"주어진 증거에 따르면, iBGP 피어 수가 부족한 장비의 수는 0으로 나타나므로, 문제없는 상태입니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-011,enhanced_llm_with_agent,3,기술적 오류 질의,short,analytical,troubleshooter,VRF 'exam-l3vpn'에 연결된 eBGP 피어의 IP 주소는 무엇인가?,[],"주어진 증거에 따르면, VRF 'exam-l3vpn'에 연결된 eBGP 피어의 IP 주소에 대한 정보가 없습니다. 따라서 해당 IP 주소는 존재하지 않거나 확인할 수 없습니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-012,enhanced_llm_with_agent,3,기술적 오류 질의,short,analytical,troubleshooter,L2VPN 문제를 가진 장비의 이름은 무엇인가?,"[""sample7"", ""sample9""]","L2VPN 문제를 가진 장비는 sample7과 sample9로, 이 두 장비 간에 PWID 불일치가 발생하고 있습니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-014,enhanced_llm_with_agent,3,기술적 오류 질의,short,analytical,troubleshooter,BGP 설정이 되어 있지만 eBGP 피어가 없는 장비는 몇 개인가?,1,"BGP 설정이 되어 있지만 eBGP 피어가 없는 장비는 1개입니다. 이는 bgp_local_as_numeric이 0으로 설정되어 있고, neighbor_list_ebgp가 비어있기 때문입니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-001,enhanced_llm_with_agent,3,명령어 사용법/질의,short,diagnostic,troubleshooter,장비 'Router1'에서 BGP 피어링이 제대로 설정되지 않은 것으로 보입니다. 이 문제를 진단하기 위해 순서대로 실행해야 할 CLI 명령어는 무엇인가요?,"[""show ip bgp summary"", ""show ip bgp neighbors"", ""show running-config"", ""debug ip bgp""]","BGP 피어링 문제를 진단하기 위해서는 먼저 'show ip bgp summary' 명령어를 사용하여 BGP 상태를 확인하고, 다음으로 'show ip bgp neighbors' 명령어로 피어의 상태를 점검합니다. 이후 'show running-config' 명령어를 통해 현재 설정을 검토하고, 마지막으로 'debug ip bgp' 명령어를 사용하여 BGP 관련 로그를 실시간으로 모니터링하여 문제의 원인을 파악할 수 있습니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어",
+ENHANCED_ENHANCED-DIAGNOSTIC-002,enhanced_llm_with_agent,3,명령어 사용법/질의,short,diagnostic,troubleshooter,장비 'Router2'에서 L2VPN 연결 문제가 발생했습니다. 이를 조사하기 위해 어떤 명령어를 차례로 실행해야 하나요?,"[""show l2vpn connections"", ""show interface status"", ""show log"", ""show ip route""]","L2VPN 연결 문제를 조사하기 위해서는 먼저 'show l2vpn connections' 명령어를 사용하여 현재 L2VPN 연결 상태를 확인해야 합니다. 그 다음, 'show interface status' 명령어로 관련 인터페이스의 상태를 점검하고, 'show log' 명령어를 통해 로그를 확인하여 오류 메시지를 찾습니다. 마지막으로, 'show ip route' 명령어를 사용하여 라우팅 테이블을 검토하여 연결 문제의 원인을 파악할 수 있습니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-DIAGNOSTIC-003,enhanced_llm_with_agent,3,명령어 사용법/질의,short,diagnostic,troubleshooter,장비 'Router3'에서 AS 65001과의 BGP 피어링 문제가 보고되었습니다. 이 문제를 파악하기 위해 어떤 명령어를 사용해야 할까요?,show ip bgp summary,"BGP 피어링 문제를 진단하기 위해 'show ip bgp summary' 명령어를 사용하면, 현재 BGP 피어링 상태와 피어의 상태 정보를 확인할 수 있어 문제를 파악하는 데 도움이 됩니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어",
+ENHANCED_ENHANCED-DIAGNOSTIC-004,enhanced_llm_with_agent,3,명령어 사용법/질의,short,diagnostic,troubleshooter,장비 'Switch1'에서 OSPF 인접성이 형성되지 않는 문제가 발생했습니다. 이 문제를 해결하기 위한 CLI 명령어는?,show ip ospf neighbor,"OSPF 인접성을 확인하기 위해 'show ip ospf neighbor' 명령어를 사용하면 현재 OSPF 이웃 상태를 확인할 수 있으며, 이를 통해 문제의 원인을 파악하고 해결할 수 있습니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-DIAGNOSTIC-005,enhanced_llm_with_agent,3,명령어 사용법/질의,short,diagnostic,troubleshooter,장비 'Router5'에서 BGP 피어가 다운된 상태입니다. 원인을 파악하기 위해 어떤 명령어를 실행해야 할까요?,show ip bgp summary,"BGP 피어의 상태를 확인하기 위해 'show ip bgp summary' 명령어를 실행하면, 현재 BGP 피어의 상태와 관련된 정보를 확인할 수 있습니다. 이 명령어는 피어의 상태가 다운된 이유를 파악하는 데 유용한 정보를 제공합니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어",
+ENHANCED_ENHANCED-DIAGNOSTIC-006,enhanced_llm_with_agent,3,명령어 사용법/질의,short,diagnostic,troubleshooter,장비 'Router6'에서 특정 VRF에 경로가 없다는 보고가 있었습니다. 이 문제를 조사하기 위한 명령어는 무엇인가요?,show ip route vrf <VRF_NAME>,장비 'Router6'에서 특정 VRF에 경로가 없다는 문제를 조사하기 위해서는 해당 VRF의 라우팅 정보를 확인해야 합니다. 이를 위해 'show ip route vrf <VRF_NAME>' 명령어를 사용하여 특정 VRF에 대한 경로 정보를 조회할 수 있습니다.,"VRF 설정 현황:
+sample10: 1개 VRF (exam-l3vpn)
+sample7: 1개 VRF (exam-l3vpn)
+sample8: 1개 VRF (exam-l3vpn)
+sample9: 1개 VRF (exam-l3vpn)",
+ENHANCED_ENHANCED-DIAGNOSTIC-007,enhanced_llm_with_agent,3,명령어 사용법/질의,short,diagnostic,troubleshooter,장비 'CoreSwitch'에서 L2VPN의 일부가 비활성화된 상태입니다. 이를 확인하기 위한 순차적인 명령어는 무엇인가요?,"[""show l2vpn status"", ""show l2vpn interface"", ""show l2vpn connection""]","장비 'CoreSwitch'에서 L2VPN의 비활성화 상태를 확인하기 위해서는 먼저 'show l2vpn status' 명령어를 사용하여 L2VPN의 전반적인 상태를 확인하고, 그 다음 'show l2vpn interface' 명령어로 관련 인터페이스의 상태를 점검하며, 마지막으로 'show l2vpn connection' 명령어를 통해 연결 상태를 확인하는 것이 필요합니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-DIAGNOSTIC-008,enhanced_llm_with_agent,3,명령어 사용법/질의,short,diagnostic,troubleshooter,장비 'EdgeRouter'에서 BGP 피어링이 비정상적으로 동작하는 현상이 발생했습니다. 어떤 명령어를 통해 진단할 수 있을까요?,show ip bgp summary,"장비 'EdgeRouter'에서 BGP 피어링의 상태를 진단하기 위해 'show ip bgp summary' 명령어를 사용하면, 현재 BGP 피어의 상태와 관련된 정보를 확인할 수 있습니다. 이 명령어는 BGP 세션의 상태, 피어의 IP 주소, 그리고 BGP 라우팅 테이블의 요약 정보를 제공합니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어",
+ENHANCED_ENHANCED-DIAGNOSTIC-009,enhanced_llm_with_agent,3,명령어 사용법/질의,short,diagnostic,troubleshooter,장비 'Router4'에서 특정 BGP 피어가 계속해서 연결을 끊습니다. 이 문제를 해결하기 위한 명령어는 무엇인가요?,show ip bgp summary,"The command 'show ip bgp summary' is used to display the status of BGP peers and can help identify issues with specific BGP connections, including those that are frequently disconnecting.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어",
+ENHANCED_ENHANCED-DIAGNOSTIC-010,enhanced_llm_with_agent,3,명령어 사용법/질의,short,diagnostic,troubleshooter,장비 'Gateway1'에서 VRF 설정이 누락된 것으로 보입니다. 이를 확인하기 위한 명령어는?,show ip vrf,장비 'Gateway1'에서 VRF 설정을 확인하기 위해 사용할 수 있는 명령어는 'show ip vrf'입니다. 이 명령어는 현재 설정된 VRF의 목록과 각 VRF에 대한 정보를 표시합니다.,"VRF 설정 현황:
+sample10: 1개 VRF (exam-l3vpn)
+sample7: 1개 VRF (exam-l3vpn)
+sample8: 1개 VRF (exam-l3vpn)
+sample9: 1개 VRF (exam-l3vpn)",
+ENHANCED_ENHANCED-DIAGNOSTIC-011,enhanced_llm_with_agent,3,명령어 사용법/질의,short,diagnostic,troubleshooter,장비 'Router7'에서 OSPF가 정상적으로 동작하지 않는다고 보고되었습니다. 이를 해결하기 위한 명령어는 무엇인가요?,show ip ospf neighbor,장비 'Router7'에서 OSPF가 정상적으로 동작하지 않는 문제를 해결하기 위해 'show ip ospf neighbor' 명령어를 사용하여 OSPF 이웃 상태를 확인할 수 있습니다. 이 명령어는 OSPF 이웃과의 연결 상태를 보여주어 문제의 원인을 파악하는 데 도움을 줍니다.,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-DIAGNOSTIC-012,enhanced_llm_with_agent,3,명령어 사용법/질의,short,diagnostic,troubleshooter,장비 'Switch2'에서 L2VPN 연결이 일방향으로만 작동합니다. 이를 조사하기 위한 명령어는 무엇인가요?,show l2vpn connections,"L2VPN 연결의 상태를 확인하기 위해 'show l2vpn connections' 명령어를 사용하면, 연결이 일방향으로만 작동하는 원인을 파악하는 데 필요한 정보를 얻을 수 있습니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-DIAGNOSTIC-013,enhanced_llm_with_agent,3,명령어 사용법/질의,short,diagnostic,troubleshooter,장비 'Router8'에서 BGP 경로가 누락된 현상을 해결하기 위한 명령어는 무엇인가요?,show ip bgp,BGP 경로가 누락된 현상을 해결하기 위해 'show ip bgp' 명령어를 사용하여 현재 BGP 경로 정보를 확인할 수 있습니다. 이 명령어는 라우터의 BGP 테이블을 보여주어 문제의 원인을 파악하는 데 도움을 줍니다.,"BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어",
+ENHANCED_ENHANCED-DIAGNOSTIC-014,enhanced_llm_with_agent,3,명령어 사용법/질의,short,diagnostic,troubleshooter,장비 'Switch3'에서 OSPF 인접성에 문제가 발생했습니다. 이를 진단하기 위한 명령어는?,show ip ospf neighbor,OSPF 인접성 문제를 진단하기 위해 'show ip ospf neighbor' 명령어를 사용하면 현재 OSPF 이웃의 상태와 정보를 확인할 수 있습니다. 이 명령어는 OSPF 프로세스와 관련된 인접 라우터의 상태를 보여주어 문제의 원인을 파악하는 데 도움을 줍니다.,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-DIAGNOSTIC-015,enhanced_llm_with_agent,3,명령어 사용법/질의,short,diagnostic,troubleshooter,장비 'Router9'에서 특정 L2VPN 연결이 작동하지 않습니다. 이를 조사하기 위한 명령어는 무엇인가요?,show l2vpn connections,장비 'Router9'에서 L2VPN 연결의 상태를 확인하기 위해 'show l2vpn connections' 명령어를 사용해야 합니다. 이 명령어는 현재 활성화된 L2VPN 연결의 정보를 제공하여 문제를 진단하는 데 도움이 됩니다.,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-SCENARIO-001,enhanced_llm_with_agent,4,명령어 사용법/질의,short,scenario,network_engineer,두 개 이상의 점프 호스트를 통해 목적지 장비에 도달하기 위한 SSH 명령어 시퀀스를 설명해 주세요.,"ssh -J jump_host1,jump_host2 user@destination_host","SSH 명령어에서 '-J' 옵션은 중간 점프 호스트를 통해 최종 목적지에 연결할 수 있도록 해줍니다. 이 경우, 'jump_host1'과 'jump_host2'를 차례로 거쳐 'destination_host'에 접속하는 방식으로, 사용자는 최종 목적지에 도달할 수 있습니다.","보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON",

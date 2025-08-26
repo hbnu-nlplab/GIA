@@ -1,6 +1,6 @@
 [
   {
-    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-14954",
+    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-24609",
     "question": "SSH가 활성화된 장비 목록은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": [
@@ -35,7 +35,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-35836",
+    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-32362",
     "question": "SSH가 활성화된 장비 목록은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": [
@@ -70,7 +70,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-24593",
+    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-1597",
     "question": "SSH가 활성화된 장비 목록은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -105,7 +105,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-4245",
+    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-25299",
     "question": "SSH가 활성화된 장비 목록은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -140,7 +140,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-942",
+    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-36080",
     "question": "SSH가 활성화된 장비 목록은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -175,7 +175,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-51585",
+    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-13781",
     "question": "SSH가 활성화된 장비 목록은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -210,7 +210,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SSH_MISSING_COUNT-26542",
+    "id": "BASIC_DSL-SSH_MISSING_COUNT-64521",
     "question": "SSH가 비활성화(또는 설정 없음)인 장비 수는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1\n장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1\n장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 0,
@@ -242,7 +242,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-24593",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-1597",
     "question": "sample10 장비의 iBGP 피어 목록은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -274,7 +274,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-4245",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-25299",
     "question": "sample7 장비의 iBGP 피어 목록은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -306,7 +306,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-942",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-36080",
     "question": "sample8 장비의 iBGP 피어 목록은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -338,7 +338,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-51585",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-13781",
     "question": "sample9 장비의 iBGP 피어 목록은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -370,7 +370,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-14954",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-24609",
     "question": "CE1 장비의 eBGP 피어 목록은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": [
@@ -400,7 +400,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-35836",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-32362",
     "question": "CE2 장비의 eBGP 피어 목록은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": [
@@ -430,7 +430,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-24593",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-1597",
     "question": "sample10 장비의 eBGP 피어 목록은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -460,7 +460,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-4245",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-25299",
     "question": "sample7 장비의 eBGP 피어 목록은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -490,7 +490,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-942",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-36080",
     "question": "sample8 장비의 eBGP 피어 목록은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -520,7 +520,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-51585",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-13781",
     "question": "sample9 장비의 eBGP 피어 목록은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -550,7 +550,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-IBGP_FULLMESH_OK-62769",
+    "id": "BASIC_DSL-IBGP_FULLMESH_OK-35314",
     "question": "AS 65000 도메인의 iBGP 풀메시 구성이 완전한가",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": true,
@@ -581,7 +581,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-IBGP_FULLMESH_OK-40662",
+    "id": "BASIC_DSL-IBGP_FULLMESH_OK-59930",
     "question": "AS 65001 도메인의 iBGP 풀메시 구성이 완전한가",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": true,
@@ -609,7 +609,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-IBGP_FULLMESH_OK-53156",
+    "id": "BASIC_DSL-IBGP_FULLMESH_OK-49279",
     "question": "AS 65003 도메인의 iBGP 풀메시 구성이 완전한가",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": true,
@@ -637,7 +637,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-62769",
+    "id": "BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-35314",
     "question": "AS 65000 iBGP 풀메시에서 누락된 링크 개수는?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 0,
@@ -668,7 +668,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-40662",
+    "id": "BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-59930",
     "question": "AS 65001 iBGP 풀메시에서 누락된 링크 개수는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": 0,
@@ -696,7 +696,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-53156",
+    "id": "BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-49279",
     "question": "AS 65003 iBGP 풀메시에서 누락된 링크 개수는?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": 0,
@@ -724,7 +724,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_WITHOUT_RT_COUNT-26542",
+    "id": "BASIC_DSL-VRF_WITHOUT_RT_COUNT-64521",
     "question": "route-target이 없는 VRF (장비/VRF) 개수는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1\n장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1\n장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 0,
@@ -756,7 +756,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_RD_MAP-59282",
+    "id": "BASIC_DSL-VRF_RD_MAP-28540",
     "question": "VRF exam-l3vpn 의 장비별 RD 매핑은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": {
@@ -787,7 +787,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_RD_MAP-49679",
+    "id": "BASIC_DSL-VRF_RD_MAP-13206",
     "question": "VRF exam-l3vpn 의 장비별 RD 매핑은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": {
@@ -818,7 +818,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_RD_MAP-47611",
+    "id": "BASIC_DSL-VRF_RD_MAP-4978",
     "question": "VRF exam-l3vpn 의 장비별 RD 매핑은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": {
@@ -849,7 +849,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_RD_MAP-4447",
+    "id": "BASIC_DSL-VRF_RD_MAP-38269",
     "question": "VRF exam-l3vpn 의 장비별 RD 매핑은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": {
@@ -880,7 +880,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_RT_LIST_PER_DEVICE-59282",
+    "id": "BASIC_DSL-VRF_RT_LIST_PER_DEVICE-28540",
     "question": "sample10 의 VRF exam-l3vpn route-target 목록은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -911,7 +911,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_RT_LIST_PER_DEVICE-49679",
+    "id": "BASIC_DSL-VRF_RT_LIST_PER_DEVICE-13206",
     "question": "sample7 의 VRF exam-l3vpn route-target 목록은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -942,7 +942,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_RT_LIST_PER_DEVICE-47611",
+    "id": "BASIC_DSL-VRF_RT_LIST_PER_DEVICE-4978",
     "question": "sample8 의 VRF exam-l3vpn route-target 목록은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -973,7 +973,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_RT_LIST_PER_DEVICE-4447",
+    "id": "BASIC_DSL-VRF_RT_LIST_PER_DEVICE-38269",
     "question": "sample9 의 VRF exam-l3vpn route-target 목록은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -1004,7 +1004,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-60218",
+    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-57884",
     "question": "CE1의 VRF exam-l3vpn에 바인딩된 인터페이스 수는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": 0,
@@ -1033,7 +1033,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-2703",
+    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-30402",
     "question": "CE2의 VRF exam-l3vpn에 바인딩된 인터페이스 수는?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": 0,
@@ -1062,7 +1062,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-59282",
+    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-28540",
     "question": "sample10의 VRF exam-l3vpn에 바인딩된 인터페이스 수는?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 0,
@@ -1091,7 +1091,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-49679",
+    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-13206",
     "question": "sample7의 VRF exam-l3vpn에 바인딩된 인터페이스 수는?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 0,
@@ -1120,7 +1120,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-47611",
+    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-4978",
     "question": "sample8의 VRF exam-l3vpn에 바인딩된 인터페이스 수는?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 0,
@@ -1149,7 +1149,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-4447",
+    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-38269",
     "question": "sample9의 VRF exam-l3vpn에 바인딩된 인터페이스 수는?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 0,
@@ -1178,7 +1178,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-L2VPN_PAIRS-26542",
+    "id": "BASIC_DSL-L2VPN_PAIRS-64521",
     "question": "구성된 L2VPN pseudowire 회선(장비쌍) 목록은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1\n장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1\n장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -1213,7 +1213,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-L2VPN_PWID_MISMATCH_PAIRS-26542",
+    "id": "BASIC_DSL-L2VPN_PWID_MISMATCH_PAIRS-64521",
     "question": "PW-ID 불일치 L2VPN 회선(장비쌍) 목록은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1\n장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1\n장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -1248,7 +1248,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-L2VPN_MISMATCH_COUNT-26542",
+    "id": "BASIC_DSL-L2VPN_MISMATCH_COUNT-64521",
     "question": "PW-ID 불일치(또는 역방향 미존재) 회선 수는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1\n장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1\n장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 2,
@@ -1280,7 +1280,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-L2VPN_UNIDIR_COUNT-26542",
+    "id": "BASIC_DSL-L2VPN_UNIDIR_COUNT-64521",
     "question": "역방향이 없는 L2VPN 회선(장비쌍) 개수는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1\n장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1\n장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 0,
@@ -1312,7 +1312,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-OSPF_AREA0_IF_LIST-24593",
+    "id": "BASIC_DSL-OSPF_AREA0_IF_LIST-1597",
     "question": "sample10 의 OSPF Area 0 인터페이스 목록은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -1344,7 +1344,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-OSPF_AREA0_IF_LIST-4245",
+    "id": "BASIC_DSL-OSPF_AREA0_IF_LIST-25299",
     "question": "sample7 의 OSPF Area 0 인터페이스 목록은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -1376,7 +1376,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-OSPF_AREA0_IF_LIST-942",
+    "id": "BASIC_DSL-OSPF_AREA0_IF_LIST-36080",
     "question": "sample8 의 OSPF Area 0 인터페이스 목록은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -1408,7 +1408,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-OSPF_AREA0_IF_LIST-51585",
+    "id": "BASIC_DSL-OSPF_AREA0_IF_LIST-13781",
     "question": "sample9 의 OSPF Area 0 인터페이스 목록은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -1440,7 +1440,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-OSPF_PROC_IDS-24593",
+    "id": "BASIC_DSL-OSPF_PROC_IDS-1597",
     "question": "sample10 의 OSPF 프로세스 ID는?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": "1",
@@ -1468,7 +1468,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-OSPF_PROC_IDS-4245",
+    "id": "BASIC_DSL-OSPF_PROC_IDS-25299",
     "question": "sample7 의 OSPF 프로세스 ID는?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": "1",
@@ -1496,7 +1496,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-OSPF_PROC_IDS-942",
+    "id": "BASIC_DSL-OSPF_PROC_IDS-36080",
     "question": "sample8 의 OSPF 프로세스 ID는?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": "1",
@@ -1524,7 +1524,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-OSPF_PROC_IDS-51585",
+    "id": "BASIC_DSL-OSPF_PROC_IDS-13781",
     "question": "sample9 의 OSPF 프로세스 ID는?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": "1",
@@ -1552,7 +1552,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-OSPF_AREA0_IF_COUNT-14954",
+    "id": "BASIC_DSL-OSPF_AREA0_IF_COUNT-24609",
     "question": "CE1 의 OSPF Area 0 인터페이스 수는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": 0,
@@ -1580,7 +1580,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-OSPF_AREA0_IF_COUNT-35836",
+    "id": "BASIC_DSL-OSPF_AREA0_IF_COUNT-32362",
     "question": "CE2 의 OSPF Area 0 인터페이스 수는?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": 0,
@@ -1608,7 +1608,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-OSPF_AREA0_IF_COUNT-24593",
+    "id": "BASIC_DSL-OSPF_AREA0_IF_COUNT-1597",
     "question": "sample10 의 OSPF Area 0 인터페이스 수는?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 3,
@@ -1636,7 +1636,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-OSPF_AREA0_IF_COUNT-4245",
+    "id": "BASIC_DSL-OSPF_AREA0_IF_COUNT-25299",
     "question": "sample7 의 OSPF Area 0 인터페이스 수는?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 3,
@@ -1664,7 +1664,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-OSPF_AREA0_IF_COUNT-942",
+    "id": "BASIC_DSL-OSPF_AREA0_IF_COUNT-36080",
     "question": "sample8 의 OSPF Area 0 인터페이스 수는?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 3,
@@ -1692,7 +1692,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-OSPF_AREA0_IF_COUNT-51585",
+    "id": "BASIC_DSL-OSPF_AREA0_IF_COUNT-13781",
     "question": "sample9 의 OSPF Area 0 인터페이스 수는?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 3,
@@ -1720,7 +1720,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-14954",
+    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-24609",
     "question": "CE1 장비의 호스트네임은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": "CE1",
@@ -1748,7 +1748,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-35836",
+    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-32362",
     "question": "CE2 장비의 호스트네임은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": "CE2",
@@ -1776,7 +1776,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-24593",
+    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-1597",
     "question": "sample10 장비의 호스트네임은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": "sample10",
@@ -1804,7 +1804,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-4245",
+    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-25299",
     "question": "sample7 장비의 호스트네임은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": "sample7",
@@ -1832,7 +1832,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-942",
+    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-36080",
     "question": "sample8 장비의 호스트네임은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": "sample8",
@@ -1860,7 +1860,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-51585",
+    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-13781",
     "question": "sample9 장비의 호스트네임은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": "sample9",
@@ -1888,7 +1888,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_VERSION_TEXT-14954",
+    "id": "BASIC_DSL-SYSTEM_VERSION_TEXT-24609",
     "question": "CE1 장비의 OS/이미지 버전은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": "15.4",
@@ -1916,7 +1916,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_VERSION_TEXT-35836",
+    "id": "BASIC_DSL-SYSTEM_VERSION_TEXT-32362",
     "question": "CE2 장비의 OS/이미지 버전은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": "15.4",
@@ -1944,7 +1944,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_USER_COUNT-14954",
+    "id": "BASIC_DSL-SYSTEM_USER_COUNT-24609",
     "question": "CE1 장비의 로컬 사용자 수는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": 1,
@@ -1972,7 +1972,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_USER_COUNT-35836",
+    "id": "BASIC_DSL-SYSTEM_USER_COUNT-32362",
     "question": "CE2 장비의 로컬 사용자 수는?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": 1,
@@ -2000,7 +2000,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_USER_COUNT-24593",
+    "id": "BASIC_DSL-SYSTEM_USER_COUNT-1597",
     "question": "sample10 장비의 로컬 사용자 수는?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 1,
@@ -2028,7 +2028,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_USER_COUNT-4245",
+    "id": "BASIC_DSL-SYSTEM_USER_COUNT-25299",
     "question": "sample7 장비의 로컬 사용자 수는?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 1,
@@ -2056,7 +2056,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_USER_COUNT-942",
+    "id": "BASIC_DSL-SYSTEM_USER_COUNT-36080",
     "question": "sample8 장비의 로컬 사용자 수는?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 1,
@@ -2084,7 +2084,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_USER_COUNT-51585",
+    "id": "BASIC_DSL-SYSTEM_USER_COUNT-13781",
     "question": "sample9 장비의 로컬 사용자 수는?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 1,
@@ -2112,7 +2112,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_USER_LIST-14954",
+    "id": "BASIC_DSL-SYSTEM_USER_LIST-24609",
     "question": "CE1 장비의 로컬 사용자 목록은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": [
@@ -2142,7 +2142,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_USER_LIST-35836",
+    "id": "BASIC_DSL-SYSTEM_USER_LIST-32362",
     "question": "CE2 장비의 로컬 사용자 목록은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": [
@@ -2172,7 +2172,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_USER_LIST-24593",
+    "id": "BASIC_DSL-SYSTEM_USER_LIST-1597",
     "question": "sample10 장비의 로컬 사용자 목록은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -2202,7 +2202,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_USER_LIST-4245",
+    "id": "BASIC_DSL-SYSTEM_USER_LIST-25299",
     "question": "sample7 장비의 로컬 사용자 목록은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -2232,7 +2232,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_USER_LIST-942",
+    "id": "BASIC_DSL-SYSTEM_USER_LIST-36080",
     "question": "sample8 장비의 로컬 사용자 목록은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -2262,7 +2262,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_USER_LIST-51585",
+    "id": "BASIC_DSL-SYSTEM_USER_LIST-13781",
     "question": "sample9 장비의 로컬 사용자 목록은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -2292,7 +2292,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_TIMEZONE_TEXT-14954",
+    "id": "BASIC_DSL-SYSTEM_TIMEZONE_TEXT-24609",
     "question": "CE1 장비의 시간대(Timezone)는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": "KST",
@@ -2320,7 +2320,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_TIMEZONE_TEXT-35836",
+    "id": "BASIC_DSL-SYSTEM_TIMEZONE_TEXT-32362",
     "question": "CE2 장비의 시간대(Timezone)는?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": "KST",
@@ -2348,7 +2348,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SSH_PRESENT_BOOL-14954",
+    "id": "BASIC_DSL-SSH_PRESENT_BOOL-24609",
     "question": "ssh_present_bool 측정값은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": true,
@@ -2376,7 +2376,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SSH_PRESENT_BOOL-35836",
+    "id": "BASIC_DSL-SSH_PRESENT_BOOL-32362",
     "question": "ssh_present_bool 측정값은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": true,
@@ -2404,7 +2404,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SSH_PRESENT_BOOL-24593",
+    "id": "BASIC_DSL-SSH_PRESENT_BOOL-1597",
     "question": "ssh_present_bool 측정값은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": true,
@@ -2432,7 +2432,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SSH_PRESENT_BOOL-4245",
+    "id": "BASIC_DSL-SSH_PRESENT_BOOL-25299",
     "question": "ssh_present_bool 측정값은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": true,
@@ -2460,7 +2460,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SSH_PRESENT_BOOL-942",
+    "id": "BASIC_DSL-SSH_PRESENT_BOOL-36080",
     "question": "ssh_present_bool 측정값은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": true,
@@ -2488,7 +2488,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SSH_PRESENT_BOOL-51585",
+    "id": "BASIC_DSL-SSH_PRESENT_BOOL-13781",
     "question": "ssh_present_bool 측정값은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": true,
@@ -2516,7 +2516,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SSH_VERSION_TEXT-14954",
+    "id": "BASIC_DSL-SSH_VERSION_TEXT-24609",
     "question": "ssh_version_text 측정값은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": "2",
@@ -2544,7 +2544,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SSH_VERSION_TEXT-35836",
+    "id": "BASIC_DSL-SSH_VERSION_TEXT-32362",
     "question": "ssh_version_text 측정값은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": "2",
@@ -2572,7 +2572,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-AAA_PRESENT_BOOL-14954",
+    "id": "BASIC_DSL-AAA_PRESENT_BOOL-24609",
     "question": "aaa_present_bool 측정값은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -2600,7 +2600,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-AAA_PRESENT_BOOL-35836",
+    "id": "BASIC_DSL-AAA_PRESENT_BOOL-32362",
     "question": "aaa_present_bool 측정값은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -2628,7 +2628,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-AAA_PRESENT_BOOL-24593",
+    "id": "BASIC_DSL-AAA_PRESENT_BOOL-1597",
     "question": "aaa_present_bool 측정값은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": true,
@@ -2656,7 +2656,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-AAA_PRESENT_BOOL-4245",
+    "id": "BASIC_DSL-AAA_PRESENT_BOOL-25299",
     "question": "aaa_present_bool 측정값은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": true,
@@ -2684,7 +2684,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-AAA_PRESENT_BOOL-942",
+    "id": "BASIC_DSL-AAA_PRESENT_BOOL-36080",
     "question": "aaa_present_bool 측정값은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": true,
@@ -2712,7 +2712,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-AAA_PRESENT_BOOL-51585",
+    "id": "BASIC_DSL-AAA_PRESENT_BOOL-13781",
     "question": "aaa_present_bool 측정값은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": true,
@@ -2740,7 +2740,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-14954",
+    "id": "BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-24609",
     "question": "password_policy_present_bool 측정값은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -2768,7 +2768,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-35836",
+    "id": "BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-32362",
     "question": "password_policy_present_bool 측정값은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -2796,7 +2796,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-24593",
+    "id": "BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-1597",
     "question": "password_policy_present_bool 측정값은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -2824,7 +2824,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-4245",
+    "id": "BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-25299",
     "question": "password_policy_present_bool 측정값은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -2852,7 +2852,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-942",
+    "id": "BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-36080",
     "question": "password_policy_present_bool 측정값은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -2880,7 +2880,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-51585",
+    "id": "BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-13781",
     "question": "password_policy_present_bool 측정값은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -2908,7 +2908,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_COUNT-14954",
+    "id": "BASIC_DSL-INTERFACE_COUNT-24609",
     "question": "CE1 장비의 인터페이스 개수는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": 5,
@@ -2936,7 +2936,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_COUNT-35836",
+    "id": "BASIC_DSL-INTERFACE_COUNT-32362",
     "question": "CE2 장비의 인터페이스 개수는?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": 5,
@@ -2964,7 +2964,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_COUNT-24593",
+    "id": "BASIC_DSL-INTERFACE_COUNT-1597",
     "question": "sample10 장비의 인터페이스 개수는?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 7,
@@ -2992,7 +2992,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_COUNT-4245",
+    "id": "BASIC_DSL-INTERFACE_COUNT-25299",
     "question": "sample7 장비의 인터페이스 개수는?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 7,
@@ -3020,7 +3020,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_COUNT-942",
+    "id": "BASIC_DSL-INTERFACE_COUNT-36080",
     "question": "sample8 장비의 인터페이스 개수는?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 6,
@@ -3048,7 +3048,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_COUNT-51585",
+    "id": "BASIC_DSL-INTERFACE_COUNT-13781",
     "question": "sample9 장비의 인터페이스 개수는?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 7,
@@ -3076,7 +3076,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_IP_MAP-14954",
+    "id": "BASIC_DSL-INTERFACE_IP_MAP-24609",
     "question": "CE1 장비의 인터페이스-IP 매핑은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": {
@@ -3110,7 +3110,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_IP_MAP-35836",
+    "id": "BASIC_DSL-INTERFACE_IP_MAP-32362",
     "question": "CE2 장비의 인터페이스-IP 매핑은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": {
@@ -3144,7 +3144,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_IP_MAP-24593",
+    "id": "BASIC_DSL-INTERFACE_IP_MAP-1597",
     "question": "sample10 장비의 인터페이스-IP 매핑은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": {
@@ -3180,7 +3180,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_IP_MAP-4245",
+    "id": "BASIC_DSL-INTERFACE_IP_MAP-25299",
     "question": "sample7 장비의 인터페이스-IP 매핑은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": {
@@ -3216,7 +3216,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_IP_MAP-942",
+    "id": "BASIC_DSL-INTERFACE_IP_MAP-36080",
     "question": "sample8 장비의 인터페이스-IP 매핑은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": {
@@ -3251,7 +3251,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_IP_MAP-51585",
+    "id": "BASIC_DSL-INTERFACE_IP_MAP-13781",
     "question": "sample9 장비의 인터페이스-IP 매핑은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": {
@@ -3287,7 +3287,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_VLAN_SET-14954",
+    "id": "BASIC_DSL-INTERFACE_VLAN_SET-24609",
     "question": "CE1 장비의 VLAN 목록은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": [
@@ -3317,7 +3317,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_VLAN_SET-35836",
+    "id": "BASIC_DSL-INTERFACE_VLAN_SET-32362",
     "question": "CE2 장비의 VLAN 목록은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": [
@@ -3347,7 +3347,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_VLAN_SET-24593",
+    "id": "BASIC_DSL-INTERFACE_VLAN_SET-1597",
     "question": "sample10 장비의 VLAN 목록은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -3377,7 +3377,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_VLAN_SET-4245",
+    "id": "BASIC_DSL-INTERFACE_VLAN_SET-25299",
     "question": "sample7 장비의 VLAN 목록은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -3407,7 +3407,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_VLAN_SET-942",
+    "id": "BASIC_DSL-INTERFACE_VLAN_SET-36080",
     "question": "sample8 장비의 VLAN 목록은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -3437,7 +3437,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_VLAN_SET-51585",
+    "id": "BASIC_DSL-INTERFACE_VLAN_SET-13781",
     "question": "sample9 장비의 VLAN 목록은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -3467,7 +3467,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SUBINTERFACE_COUNT-14954",
+    "id": "BASIC_DSL-SUBINTERFACE_COUNT-24609",
     "question": "CE1 장비의 서브인터페이스 개수는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": 0,
@@ -3495,7 +3495,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SUBINTERFACE_COUNT-35836",
+    "id": "BASIC_DSL-SUBINTERFACE_COUNT-32362",
     "question": "CE2 장비의 서브인터페이스 개수는?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": 0,
@@ -3523,7 +3523,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SUBINTERFACE_COUNT-24593",
+    "id": "BASIC_DSL-SUBINTERFACE_COUNT-1597",
     "question": "sample10 장비의 서브인터페이스 개수는?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 0,
@@ -3551,7 +3551,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SUBINTERFACE_COUNT-4245",
+    "id": "BASIC_DSL-SUBINTERFACE_COUNT-25299",
     "question": "sample7 장비의 서브인터페이스 개수는?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 0,
@@ -3579,7 +3579,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SUBINTERFACE_COUNT-942",
+    "id": "BASIC_DSL-SUBINTERFACE_COUNT-36080",
     "question": "sample8 장비의 서브인터페이스 개수는?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 0,
@@ -3607,7 +3607,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SUBINTERFACE_COUNT-51585",
+    "id": "BASIC_DSL-SUBINTERFACE_COUNT-13781",
     "question": "sample9 장비의 서브인터페이스 개수는?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 0,
@@ -3635,7 +3635,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_BIND_MAP-14954",
+    "id": "BASIC_DSL-VRF_BIND_MAP-24609",
     "question": "CE1 장비의 인터페이스별 VRF 바인딩 현황은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": {
@@ -3669,7 +3669,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_BIND_MAP-35836",
+    "id": "BASIC_DSL-VRF_BIND_MAP-32362",
     "question": "CE2 장비의 인터페이스별 VRF 바인딩 현황은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": {
@@ -3703,7 +3703,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_BIND_MAP-24593",
+    "id": "BASIC_DSL-VRF_BIND_MAP-1597",
     "question": "sample10 장비의 인터페이스별 VRF 바인딩 현황은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": {
@@ -3739,7 +3739,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_BIND_MAP-4245",
+    "id": "BASIC_DSL-VRF_BIND_MAP-25299",
     "question": "sample7 장비의 인터페이스별 VRF 바인딩 현황은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": {
@@ -3775,7 +3775,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_BIND_MAP-942",
+    "id": "BASIC_DSL-VRF_BIND_MAP-36080",
     "question": "sample8 장비의 인터페이스별 VRF 바인딩 현황은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": {
@@ -3810,7 +3810,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_BIND_MAP-51585",
+    "id": "BASIC_DSL-VRF_BIND_MAP-13781",
     "question": "sample9 장비의 인터페이스별 VRF 바인딩 현황은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": {
@@ -3846,7 +3846,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-BGP_LOCAL_AS_NUMERIC-14954",
+    "id": "BASIC_DSL-BGP_LOCAL_AS_NUMERIC-24609",
     "question": "CE1 장비의 BGP Local-AS 번호는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": 65001,
@@ -3874,7 +3874,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-BGP_LOCAL_AS_NUMERIC-35836",
+    "id": "BASIC_DSL-BGP_LOCAL_AS_NUMERIC-32362",
     "question": "CE2 장비의 BGP Local-AS 번호는?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": 65003,
@@ -3902,7 +3902,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-BGP_LOCAL_AS_NUMERIC-24593",
+    "id": "BASIC_DSL-BGP_LOCAL_AS_NUMERIC-1597",
     "question": "sample10 장비의 BGP Local-AS 번호는?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 65000,
@@ -3930,7 +3930,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-BGP_LOCAL_AS_NUMERIC-4245",
+    "id": "BASIC_DSL-BGP_LOCAL_AS_NUMERIC-25299",
     "question": "sample7 장비의 BGP Local-AS 번호는?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 65000,
@@ -3958,7 +3958,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-BGP_LOCAL_AS_NUMERIC-942",
+    "id": "BASIC_DSL-BGP_LOCAL_AS_NUMERIC-36080",
     "question": "sample8 장비의 BGP Local-AS 번호는?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 65000,
@@ -3986,7 +3986,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-BGP_LOCAL_AS_NUMERIC-51585",
+    "id": "BASIC_DSL-BGP_LOCAL_AS_NUMERIC-13781",
     "question": "sample9 장비의 BGP Local-AS 번호는?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 65000,
@@ -4014,7 +4014,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-BGP_NEIGHBOR_COUNT-14954",
+    "id": "BASIC_DSL-BGP_NEIGHBOR_COUNT-24609",
     "question": "CE1 장비의 BGP 이웃(피어) 수는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": 1,
@@ -4042,7 +4042,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-BGP_NEIGHBOR_COUNT-35836",
+    "id": "BASIC_DSL-BGP_NEIGHBOR_COUNT-32362",
     "question": "CE2 장비의 BGP 이웃(피어) 수는?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": 1,
@@ -4070,7 +4070,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-BGP_NEIGHBOR_COUNT-24593",
+    "id": "BASIC_DSL-BGP_NEIGHBOR_COUNT-1597",
     "question": "sample10 장비의 BGP 이웃(피어) 수는?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 4,
@@ -4098,7 +4098,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-BGP_NEIGHBOR_COUNT-4245",
+    "id": "BASIC_DSL-BGP_NEIGHBOR_COUNT-25299",
     "question": "sample7 장비의 BGP 이웃(피어) 수는?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 4,
@@ -4126,7 +4126,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-BGP_NEIGHBOR_COUNT-942",
+    "id": "BASIC_DSL-BGP_NEIGHBOR_COUNT-36080",
     "question": "sample8 장비의 BGP 이웃(피어) 수는?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 4,
@@ -4154,7 +4154,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-BGP_NEIGHBOR_COUNT-51585",
+    "id": "BASIC_DSL-BGP_NEIGHBOR_COUNT-13781",
     "question": "sample9 장비의 BGP 이웃(피어) 수는?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 4,
@@ -4182,7 +4182,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-OSPF_AREA_SET-24593",
+    "id": "BASIC_DSL-OSPF_AREA_SET-1597",
     "question": "sample10 장비가 참여한 OSPF Area 목록은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -4212,7 +4212,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-OSPF_AREA_SET-4245",
+    "id": "BASIC_DSL-OSPF_AREA_SET-25299",
     "question": "sample7 장비가 참여한 OSPF Area 목록은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -4242,7 +4242,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-OSPF_AREA_SET-942",
+    "id": "BASIC_DSL-OSPF_AREA_SET-36080",
     "question": "sample8 장비가 참여한 OSPF Area 목록은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -4272,7 +4272,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-OSPF_AREA_SET-51585",
+    "id": "BASIC_DSL-OSPF_AREA_SET-13781",
     "question": "sample9 장비가 참여한 OSPF Area 목록은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -4302,7 +4302,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_NAMES_SET-24593",
+    "id": "BASIC_DSL-VRF_NAMES_SET-1597",
     "question": "sample10 장비의 VRF 이름 목록은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -4332,7 +4332,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_NAMES_SET-4245",
+    "id": "BASIC_DSL-VRF_NAMES_SET-25299",
     "question": "sample7 장비의 VRF 이름 목록은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -4362,7 +4362,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_NAMES_SET-942",
+    "id": "BASIC_DSL-VRF_NAMES_SET-36080",
     "question": "sample8 장비의 VRF 이름 목록은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -4392,7 +4392,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_NAMES_SET-51585",
+    "id": "BASIC_DSL-VRF_NAMES_SET-13781",
     "question": "sample9 장비의 VRF 이름 목록은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -4422,7 +4422,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-L2VPN_PW_ID_SET-4245",
+    "id": "BASIC_DSL-L2VPN_PW_ID_SET-25299",
     "question": "sample7 장비의 L2VPN Pseudowire ID 목록은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -4452,7 +4452,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-L2VPN_PW_ID_SET-51585",
+    "id": "BASIC_DSL-L2VPN_PW_ID_SET-13781",
     "question": "sample9 장비의 L2VPN Pseudowire ID 목록은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": [
@@ -4482,7 +4482,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-RT_IMPORT_COUNT-14954",
+    "id": "BASIC_DSL-RT_IMPORT_COUNT-24609",
     "question": "CE1 장비의 Route Target Import 설정 개수는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": 0,
@@ -4510,7 +4510,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-RT_IMPORT_COUNT-35836",
+    "id": "BASIC_DSL-RT_IMPORT_COUNT-32362",
     "question": "CE2 장비의 Route Target Import 설정 개수는?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": 0,
@@ -4538,7 +4538,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-RT_IMPORT_COUNT-24593",
+    "id": "BASIC_DSL-RT_IMPORT_COUNT-1597",
     "question": "sample10 장비의 Route Target Import 설정 개수는?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 0,
@@ -4566,7 +4566,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-RT_IMPORT_COUNT-4245",
+    "id": "BASIC_DSL-RT_IMPORT_COUNT-25299",
     "question": "sample7 장비의 Route Target Import 설정 개수는?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 0,
@@ -4594,7 +4594,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-RT_IMPORT_COUNT-942",
+    "id": "BASIC_DSL-RT_IMPORT_COUNT-36080",
     "question": "sample8 장비의 Route Target Import 설정 개수는?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 0,
@@ -4622,7 +4622,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-RT_IMPORT_COUNT-51585",
+    "id": "BASIC_DSL-RT_IMPORT_COUNT-13781",
     "question": "sample9 장비의 Route Target Import 설정 개수는?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 0,
@@ -4650,7 +4650,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-RT_EXPORT_COUNT-14954",
+    "id": "BASIC_DSL-RT_EXPORT_COUNT-24609",
     "question": "CE1 장비의 Route Target Export 설정 개수는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": 0,
@@ -4678,7 +4678,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-RT_EXPORT_COUNT-35836",
+    "id": "BASIC_DSL-RT_EXPORT_COUNT-32362",
     "question": "CE2 장비의 Route Target Export 설정 개수는?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": 0,
@@ -4706,7 +4706,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-RT_EXPORT_COUNT-24593",
+    "id": "BASIC_DSL-RT_EXPORT_COUNT-1597",
     "question": "sample10 장비의 Route Target Export 설정 개수는?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 0,
@@ -4734,7 +4734,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-RT_EXPORT_COUNT-4245",
+    "id": "BASIC_DSL-RT_EXPORT_COUNT-25299",
     "question": "sample7 장비의 Route Target Export 설정 개수는?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 0,
@@ -4762,7 +4762,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-RT_EXPORT_COUNT-942",
+    "id": "BASIC_DSL-RT_EXPORT_COUNT-36080",
     "question": "sample8 장비의 Route Target Export 설정 개수는?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 0,
@@ -4790,7 +4790,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-RT_EXPORT_COUNT-51585",
+    "id": "BASIC_DSL-RT_EXPORT_COUNT-13781",
     "question": "sample9 장비의 Route Target Export 설정 개수는?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 0,
@@ -4818,7 +4818,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_COUNT-14954",
+    "id": "BASIC_DSL-VRF_COUNT-24609",
     "question": "CE1 장비의 VRF 개수는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": 0,
@@ -4846,7 +4846,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_COUNT-35836",
+    "id": "BASIC_DSL-VRF_COUNT-32362",
     "question": "CE2 장비의 VRF 개수는?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": 0,
@@ -4874,7 +4874,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_COUNT-24593",
+    "id": "BASIC_DSL-VRF_COUNT-1597",
     "question": "sample10 장비의 VRF 개수는?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 1,
@@ -4902,7 +4902,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_COUNT-4245",
+    "id": "BASIC_DSL-VRF_COUNT-25299",
     "question": "sample7 장비의 VRF 개수는?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 1,
@@ -4930,7 +4930,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_COUNT-942",
+    "id": "BASIC_DSL-VRF_COUNT-36080",
     "question": "sample8 장비의 VRF 개수는?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 1,
@@ -4958,7 +4958,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VRF_COUNT-51585",
+    "id": "BASIC_DSL-VRF_COUNT-13781",
     "question": "sample9 장비의 VRF 개수는?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": 1,
@@ -4986,7 +4986,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-14954",
+    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-24609",
     "question": "CE1 장비의 호스트네임은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": "CE1",
@@ -5014,7 +5014,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-35836",
+    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-32362",
     "question": "CE2 장비의 호스트네임은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": "CE2",
@@ -5042,7 +5042,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-24593",
+    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-1597",
     "question": "sample10 장비의 호스트네임은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": "sample10",
@@ -5070,7 +5070,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-4245",
+    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-25299",
     "question": "sample7 장비의 호스트네임은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": "sample7",
@@ -5098,7 +5098,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-942",
+    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-36080",
     "question": "sample8 장비의 호스트네임은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": "sample8",
@@ -5126,7 +5126,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-51585",
+    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-13781",
     "question": "sample9 장비의 호스트네임은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": "sample9",
@@ -5154,7 +5154,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-14954",
+    "id": "BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-24609",
     "question": "CE1 장비의 관리 IP 주소는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": "172.16.1.40",
@@ -5182,7 +5182,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-35836",
+    "id": "BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-32362",
     "question": "CE2 장비의 관리 IP 주소는?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": "172.16.1.41",
@@ -5210,7 +5210,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-24593",
+    "id": "BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-1597",
     "question": "sample10 장비의 관리 IP 주소는?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": "172.16.1.133",
@@ -5238,7 +5238,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-4245",
+    "id": "BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-25299",
     "question": "sample7 장비의 관리 IP 주소는?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": "172.16.1.130",
@@ -5266,7 +5266,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-942",
+    "id": "BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-36080",
     "question": "sample8 장비의 관리 IP 주소는?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": "172.16.1.131",
@@ -5294,7 +5294,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-51585",
+    "id": "BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-13781",
     "question": "sample9 장비의 관리 IP 주소는?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": "172.16.1.132",
@@ -5322,7 +5322,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_VERSION_TEXT-14954",
+    "id": "BASIC_DSL-SYSTEM_VERSION_TEXT-24609",
     "question": "CE1 장비의 OS/이미지 버전은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": "15.4",
@@ -5350,7 +5350,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_VERSION_TEXT-35836",
+    "id": "BASIC_DSL-SYSTEM_VERSION_TEXT-32362",
     "question": "CE2 장비의 OS/이미지 버전은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": "15.4",
@@ -5378,7 +5378,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-IOS_CONFIG_REGISTER_TEXT-14954",
+    "id": "BASIC_DSL-IOS_CONFIG_REGISTER_TEXT-24609",
     "question": "CE1 장비의 config-register 값은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": "0x0",
@@ -5406,7 +5406,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-IOS_CONFIG_REGISTER_TEXT-35836",
+    "id": "BASIC_DSL-IOS_CONFIG_REGISTER_TEXT-32362",
     "question": "CE2 장비의 config-register 값은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": "0x0",
@@ -5434,7 +5434,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-LOGGING_BUFFERED_SEVERITY_TEXT-14954",
+    "id": "BASIC_DSL-LOGGING_BUFFERED_SEVERITY_TEXT-24609",
     "question": "CE1 장비에서 logging buffered의 severity-level은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": "debugging",
@@ -5462,7 +5462,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-LOGGING_BUFFERED_SEVERITY_TEXT-35836",
+    "id": "BASIC_DSL-LOGGING_BUFFERED_SEVERITY_TEXT-32362",
     "question": "CE2 장비에서 logging buffered의 severity-level은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": "debugging",
@@ -5490,7 +5490,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-14954",
+    "id": "BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-24609",
     "question": "CE1 장비에서 HTTP 서버가 활성화되어 있습니까?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -5518,7 +5518,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-35836",
+    "id": "BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-32362",
     "question": "CE2 장비에서 HTTP 서버가 활성화되어 있습니까?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -5546,7 +5546,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-24593",
+    "id": "BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-1597",
     "question": "sample10 장비에서 HTTP 서버가 활성화되어 있습니까?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -5574,7 +5574,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-4245",
+    "id": "BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-25299",
     "question": "sample7 장비에서 HTTP 서버가 활성화되어 있습니까?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -5602,7 +5602,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-942",
+    "id": "BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-36080",
     "question": "sample8 장비에서 HTTP 서버가 활성화되어 있습니까?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -5630,7 +5630,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-51585",
+    "id": "BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-13781",
     "question": "sample9 장비에서 HTTP 서버가 활성화되어 있습니까?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -5658,7 +5658,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-14954",
+    "id": "BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-24609",
     "question": "CE1 장비에서 ip forward-protocol nd가 설정되어 있습니까?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -5686,7 +5686,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-35836",
+    "id": "BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-32362",
     "question": "CE2 장비에서 ip forward-protocol nd가 설정되어 있습니까?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -5714,7 +5714,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-24593",
+    "id": "BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-1597",
     "question": "sample10 장비에서 ip forward-protocol nd가 설정되어 있습니까?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -5742,7 +5742,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-4245",
+    "id": "BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-25299",
     "question": "sample7 장비에서 ip forward-protocol nd가 설정되어 있습니까?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -5770,7 +5770,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-942",
+    "id": "BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-36080",
     "question": "sample8 장비에서 ip forward-protocol nd가 설정되어 있습니까?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -5798,7 +5798,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-51585",
+    "id": "BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-13781",
     "question": "sample9 장비에서 ip forward-protocol nd가 설정되어 있습니까?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -5826,7 +5826,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-IP_CEF_ENABLED_BOOL-14954",
+    "id": "BASIC_DSL-IP_CEF_ENABLED_BOOL-24609",
     "question": "CE1 장비에서 IP CEF가 활성화되어 있습니까?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -5854,7 +5854,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-IP_CEF_ENABLED_BOOL-35836",
+    "id": "BASIC_DSL-IP_CEF_ENABLED_BOOL-32362",
     "question": "CE2 장비에서 IP CEF가 활성화되어 있습니까?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -5882,7 +5882,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-IP_CEF_ENABLED_BOOL-24593",
+    "id": "BASIC_DSL-IP_CEF_ENABLED_BOOL-1597",
     "question": "sample10 장비에서 IP CEF가 활성화되어 있습니까?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -5910,7 +5910,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-IP_CEF_ENABLED_BOOL-4245",
+    "id": "BASIC_DSL-IP_CEF_ENABLED_BOOL-25299",
     "question": "sample7 장비에서 IP CEF가 활성화되어 있습니까?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -5938,7 +5938,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-IP_CEF_ENABLED_BOOL-942",
+    "id": "BASIC_DSL-IP_CEF_ENABLED_BOOL-36080",
     "question": "sample8 장비에서 IP CEF가 활성화되어 있습니까?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -5966,7 +5966,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-IP_CEF_ENABLED_BOOL-51585",
+    "id": "BASIC_DSL-IP_CEF_ENABLED_BOOL-13781",
     "question": "sample9 장비에서 IP CEF가 활성화되어 있습니까?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -5994,7 +5994,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VTY_FIRST_LAST_TEXT-14954",
+    "id": "BASIC_DSL-VTY_FIRST_LAST_TEXT-24609",
     "question": "CE1 장비에서 VTY의 first~last 라인 번호는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": "0~4",
@@ -6022,7 +6022,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VTY_FIRST_LAST_TEXT-35836",
+    "id": "BASIC_DSL-VTY_FIRST_LAST_TEXT-32362",
     "question": "CE2 장비에서 VTY의 first~last 라인 번호는?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": "0~4",
@@ -6050,7 +6050,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VTY_LOGIN_MODE_TEXT-14954",
+    "id": "BASIC_DSL-VTY_LOGIN_MODE_TEXT-24609",
     "question": "CE1 장비에서 VTY line의 login 방식은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": "local",
@@ -6078,7 +6078,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VTY_LOGIN_MODE_TEXT-35836",
+    "id": "BASIC_DSL-VTY_LOGIN_MODE_TEXT-32362",
     "question": "CE2 장비에서 VTY line의 login 방식은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": "local",
@@ -6106,7 +6106,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VTY_PASSWORD_SECRET_TEXT-14954",
+    "id": "BASIC_DSL-VTY_PASSWORD_SECRET_TEXT-24609",
     "question": "CE1 장비의 VTY password secret 값은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": "12345678",
@@ -6134,7 +6134,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VTY_PASSWORD_SECRET_TEXT-35836",
+    "id": "BASIC_DSL-VTY_PASSWORD_SECRET_TEXT-32362",
     "question": "CE2 장비의 VTY password secret 값은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": "12345678",
@@ -6162,7 +6162,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VTY_TRANSPORT_INPUT_TEXT-14954",
+    "id": "BASIC_DSL-VTY_TRANSPORT_INPUT_TEXT-24609",
     "question": "CE1 장비에서 VTY의 transport input은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": "ssh",
@@ -6190,7 +6190,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-VTY_TRANSPORT_INPUT_TEXT-35836",
+    "id": "BASIC_DSL-VTY_TRANSPORT_INPUT_TEXT-32362",
     "question": "CE2 장비에서 VTY의 transport input은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": "ssh",
@@ -6218,7 +6218,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_USERS_DETAIL_MAP-14954",
+    "id": "BASIC_DSL-SYSTEM_USERS_DETAIL_MAP-24609",
     "question": "CE1 장비의 사용자 상세(UID/GID/password/ssh_keydir/homedir 등)는?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": {
@@ -6252,7 +6252,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_USERS_DETAIL_MAP-35836",
+    "id": "BASIC_DSL-SYSTEM_USERS_DETAIL_MAP-32362",
     "question": "CE2 장비의 사용자 상세(UID/GID/password/ssh_keydir/homedir 등)는?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": {
@@ -6286,7 +6286,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_USERS_DETAIL_MAP-24593",
+    "id": "BASIC_DSL-SYSTEM_USERS_DETAIL_MAP-1597",
     "question": "sample10 장비의 사용자 상세(UID/GID/password/ssh_keydir/homedir 등)는?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": {
@@ -6322,7 +6322,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_USERS_DETAIL_MAP-4245",
+    "id": "BASIC_DSL-SYSTEM_USERS_DETAIL_MAP-25299",
     "question": "sample7 장비의 사용자 상세(UID/GID/password/ssh_keydir/homedir 등)는?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": {
@@ -6358,7 +6358,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_USERS_DETAIL_MAP-942",
+    "id": "BASIC_DSL-SYSTEM_USERS_DETAIL_MAP-36080",
     "question": "sample8 장비의 사용자 상세(UID/GID/password/ssh_keydir/homedir 등)는?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": {
@@ -6394,7 +6394,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SYSTEM_USERS_DETAIL_MAP-51585",
+    "id": "BASIC_DSL-SYSTEM_USERS_DETAIL_MAP-13781",
     "question": "sample9 장비의 사용자 상세(UID/GID/password/ssh_keydir/homedir 등)는?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": {
@@ -6430,7 +6430,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-58315",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-33553",
     "question": "CE1 장비에서 Ethernet0/0 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -6459,7 +6459,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-65108",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-24405",
     "question": "CE1 장비에서 Ethernet0/0.100 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -6488,7 +6488,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-15913",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-34659",
     "question": "CE1 장비에서 Ethernet0/1 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -6517,7 +6517,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-14847",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-53342",
     "question": "CE1 장비에서 Ethernet0/2 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -6546,7 +6546,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-56656",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-7644",
     "question": "CE1 장비에서 Ethernet0/3 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -6575,7 +6575,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-34690",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-22544",
     "question": "CE1 장비에서 GigabitEthernet0/0/0/0 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -6604,7 +6604,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-40260",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-53693",
     "question": "CE1 장비에서 GigabitEthernet0/0/0/0.1 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -6633,7 +6633,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-30568",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-19256",
     "question": "CE1 장비에서 GigabitEthernet0/0/0/1 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -6662,7 +6662,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-27038",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-23560",
     "question": "CE1 장비에서 GigabitEthernet0/0/0/1.100 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -6691,7 +6691,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-42359",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-17098",
     "question": "CE1 장비에서 GigabitEthernet0/0/0/1.200 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -6720,7 +6720,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-55294",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-36499",
     "question": "CE1 장비에서 GigabitEthernet0/0/0/1.300 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -6749,7 +6749,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-1977",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-53006",
     "question": "CE1 장비에서 GigabitEthernet0/0/0/1.400 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -6778,7 +6778,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-34190",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-53465",
     "question": "CE1 장비에서 GigabitEthernet0/0/0/2 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -6807,7 +6807,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-46218",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-16434",
     "question": "CE1 장비에서 GigabitEthernet0/0/0/3 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -6836,7 +6836,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-41596",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-9475",
     "question": "CE1 장비에서 Loopback0 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -6865,7 +6865,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-21813",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-51369",
     "question": "CE1 장비에서 MgmtEth0/RP0/CPU0/0 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -6894,7 +6894,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-10015",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-10641",
     "question": "CE2 장비에서 Ethernet0/0 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -6923,7 +6923,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-37986",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-19602",
     "question": "CE2 장비에서 Ethernet0/0.100 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -6952,7 +6952,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-62961",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-52200",
     "question": "CE2 장비에서 Ethernet0/1 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -6981,7 +6981,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-38665",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-46601",
     "question": "CE2 장비에서 Ethernet0/2 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -7010,7 +7010,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-40196",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-51297",
     "question": "CE2 장비에서 Ethernet0/3 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -7039,7 +7039,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-33771",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-35369",
     "question": "CE2 장비에서 GigabitEthernet0/0/0/0 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -7068,7 +7068,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-44004",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-19183",
     "question": "CE2 장비에서 GigabitEthernet0/0/0/0.1 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -7097,7 +7097,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-14265",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-24817",
     "question": "CE2 장비에서 GigabitEthernet0/0/0/1 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -7126,7 +7126,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-25819",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-39414",
     "question": "CE2 장비에서 GigabitEthernet0/0/0/1.100 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -7155,7 +7155,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-24911",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-8334",
     "question": "CE2 장비에서 GigabitEthernet0/0/0/1.200 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -7184,7 +7184,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-56452",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-22043",
     "question": "CE2 장비에서 GigabitEthernet0/0/0/1.300 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -7213,7 +7213,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-3560",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-32372",
     "question": "CE2 장비에서 GigabitEthernet0/0/0/1.400 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -7242,7 +7242,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-43879",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-54577",
     "question": "CE2 장비에서 GigabitEthernet0/0/0/2 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -7271,7 +7271,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-51828",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-59338",
     "question": "CE2 장비에서 GigabitEthernet0/0/0/3 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -7300,7 +7300,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-46154",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-47160",
     "question": "CE2 장비에서 Loopback0 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -7329,7 +7329,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-46635",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-48928",
     "question": "CE2 장비에서 MgmtEth0/RP0/CPU0/0 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": false,
@@ -7358,7 +7358,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-17990",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-3284",
     "question": "sample10 장비에서 Ethernet0/0 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -7387,7 +7387,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-33994",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-45045",
     "question": "sample10 장비에서 Ethernet0/0.100 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -7416,7 +7416,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-30484",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-17373",
     "question": "sample10 장비에서 Ethernet0/1 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -7445,7 +7445,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-10152",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-46848",
     "question": "sample10 장비에서 Ethernet0/2 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -7474,7 +7474,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-27802",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-21578",
     "question": "sample10 장비에서 Ethernet0/3 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -7503,7 +7503,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-24372",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-18055",
     "question": "sample10 장비에서 GigabitEthernet0/0/0/0 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -7532,7 +7532,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-22316",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-38634",
     "question": "sample10 장비에서 GigabitEthernet0/0/0/0.1 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -7561,7 +7561,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-3890",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-19740",
     "question": "sample10 장비에서 GigabitEthernet0/0/0/1 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -7590,7 +7590,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-14734",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-26110",
     "question": "sample10 장비에서 GigabitEthernet0/0/0/1.100 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -7619,7 +7619,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-18082",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-56021",
     "question": "sample10 장비에서 GigabitEthernet0/0/0/1.200 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -7648,7 +7648,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-4428",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-59539",
     "question": "sample10 장비에서 GigabitEthernet0/0/0/1.300 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -7677,7 +7677,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-5669",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-26804",
     "question": "sample10 장비에서 GigabitEthernet0/0/0/1.400 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -7706,7 +7706,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-58251",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-61971",
     "question": "sample10 장비에서 GigabitEthernet0/0/0/2 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -7735,7 +7735,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-58022",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-5013",
     "question": "sample10 장비에서 GigabitEthernet0/0/0/3 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -7764,7 +7764,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-65437",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-32096",
     "question": "sample10 장비에서 Loopback0 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -7793,7 +7793,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-42449",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-53180",
     "question": "sample10 장비에서 MgmtEth0/RP0/CPU0/0 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -7822,7 +7822,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-17518",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-40644",
     "question": "sample7 장비에서 Ethernet0/0 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -7851,7 +7851,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-3150",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-53509",
     "question": "sample7 장비에서 Ethernet0/0.100 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -7880,7 +7880,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-25378",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-63592",
     "question": "sample7 장비에서 Ethernet0/1 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -7909,7 +7909,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-23355",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-53444",
     "question": "sample7 장비에서 Ethernet0/2 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -7938,7 +7938,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-62919",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-13087",
     "question": "sample7 장비에서 Ethernet0/3 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -7967,7 +7967,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-46571",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-26208",
     "question": "sample7 장비에서 GigabitEthernet0/0/0/0 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -7996,7 +7996,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-5113",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-8095",
     "question": "sample7 장비에서 GigabitEthernet0/0/0/0.1 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8025,7 +8025,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-14181",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-56653",
     "question": "sample7 장비에서 GigabitEthernet0/0/0/1 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8054,7 +8054,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-14816",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-26434",
     "question": "sample7 장비에서 GigabitEthernet0/0/0/1.100 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8083,7 +8083,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-50545",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-34182",
     "question": "sample7 장비에서 GigabitEthernet0/0/0/1.200 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8112,7 +8112,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-36280",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-2319",
     "question": "sample7 장비에서 GigabitEthernet0/0/0/1.300 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8141,7 +8141,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-7468",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-13510",
     "question": "sample7 장비에서 GigabitEthernet0/0/0/1.400 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8170,7 +8170,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-5461",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-42728",
     "question": "sample7 장비에서 GigabitEthernet0/0/0/2 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8199,7 +8199,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-63796",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-55810",
     "question": "sample7 장비에서 GigabitEthernet0/0/0/3 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8228,7 +8228,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-41658",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-21351",
     "question": "sample7 장비에서 Loopback0 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8257,7 +8257,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-20188",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-43155",
     "question": "sample7 장비에서 MgmtEth0/RP0/CPU0/0 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8286,7 +8286,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-55112",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-64565",
     "question": "sample8 장비에서 Ethernet0/0 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8315,7 +8315,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-48834",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-39454",
     "question": "sample8 장비에서 Ethernet0/0.100 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8344,7 +8344,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-47614",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-48079",
     "question": "sample8 장비에서 Ethernet0/1 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8373,7 +8373,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-7039",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-36930",
     "question": "sample8 장비에서 Ethernet0/2 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8402,7 +8402,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-20783",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-5416",
     "question": "sample8 장비에서 Ethernet0/3 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8431,7 +8431,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-49545",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-44046",
     "question": "sample8 장비에서 GigabitEthernet0/0/0/0 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8460,7 +8460,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-48549",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-8916",
     "question": "sample8 장비에서 GigabitEthernet0/0/0/0.1 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8489,7 +8489,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-740",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-63241",
     "question": "sample8 장비에서 GigabitEthernet0/0/0/1 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8518,7 +8518,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-62478",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-44774",
     "question": "sample8 장비에서 GigabitEthernet0/0/0/1.100 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8547,7 +8547,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-46004",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-745",
     "question": "sample8 장비에서 GigabitEthernet0/0/0/1.200 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8576,7 +8576,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-20247",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-52634",
     "question": "sample8 장비에서 GigabitEthernet0/0/0/1.300 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8605,7 +8605,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-6481",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-28568",
     "question": "sample8 장비에서 GigabitEthernet0/0/0/1.400 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8634,7 +8634,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-57796",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-23002",
     "question": "sample8 장비에서 GigabitEthernet0/0/0/2 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8663,7 +8663,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-41883",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-26364",
     "question": "sample8 장비에서 GigabitEthernet0/0/0/3 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8692,7 +8692,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-15189",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-17160",
     "question": "sample8 장비에서 Loopback0 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8721,7 +8721,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-7628",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-41873",
     "question": "sample8 장비에서 MgmtEth0/RP0/CPU0/0 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8750,7 +8750,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-7558",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-47780",
     "question": "sample9 장비에서 Ethernet0/0 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8779,7 +8779,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-15720",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-42182",
     "question": "sample9 장비에서 Ethernet0/0.100 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8808,7 +8808,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-34233",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-64908",
     "question": "sample9 장비에서 Ethernet0/1 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8837,7 +8837,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-63744",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-48348",
     "question": "sample9 장비에서 Ethernet0/2 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8866,7 +8866,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-50145",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-924",
     "question": "sample9 장비에서 Ethernet0/3 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8895,7 +8895,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-34395",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-11410",
     "question": "sample9 장비에서 GigabitEthernet0/0/0/0 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8924,7 +8924,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-41892",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-11484",
     "question": "sample9 장비에서 GigabitEthernet0/0/0/0.1 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8953,7 +8953,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-31040",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-27371",
     "question": "sample9 장비에서 GigabitEthernet0/0/0/1 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -8982,7 +8982,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-40507",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-34976",
     "question": "sample9 장비에서 GigabitEthernet0/0/0/1.100 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -9011,7 +9011,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-35596",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-5592",
     "question": "sample9 장비에서 GigabitEthernet0/0/0/1.200 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -9040,7 +9040,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-31046",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-15372",
     "question": "sample9 장비에서 GigabitEthernet0/0/0/1.300 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -9069,7 +9069,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-21254",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-57100",
     "question": "sample9 장비에서 GigabitEthernet0/0/0/1.400 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -9098,7 +9098,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-8059",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-2366",
     "question": "sample9 장비에서 GigabitEthernet0/0/0/2 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -9127,7 +9127,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-19883",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-9201",
     "question": "sample9 장비에서 GigabitEthernet0/0/0/3 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -9156,7 +9156,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-65128",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-32414",
     "question": "sample9 장비에서 Loopback0 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -9185,7 +9185,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-57675",
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-36229",
     "question": "sample9 장비에서 MgmtEth0/RP0/CPU0/0 인터페이스의 MOP xenabled 설정은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": false,
@@ -9215,7 +9215,7 @@
   },
   {
     "id": "BASIC_CMD_0",
-    "question": "",
+    "question": "CE1 장비의 BGP 상태를 요약해서 확인하는 명령어는?",
     "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
     "ground_truth": "show bgp summary",
     "explanation": "",
@@ -9240,7 +9240,7 @@
   },
   {
     "id": "BASIC_CMD_1",
-    "question": "",
+    "question": "CE1 장비의 인터페이스 IP 상태를 간략히 확인하는 명령어는?",
     "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
     "ground_truth": "show ip interface brief",
     "explanation": "",
@@ -9265,7 +9265,7 @@
   },
   {
     "id": "BASIC_CMD_2",
-    "question": "",
+    "question": "CE1 장비에서 OSPF를 통해 학습된 경로 정보를 확인하는 명령어는?",
     "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
     "ground_truth": "show ip route ospf",
     "explanation": "",
@@ -9290,7 +9290,7 @@
   },
   {
     "id": "BASIC_CMD_3",
-    "question": "",
+    "question": "CE1 장비의 OSPF 이웃(neighbor) 상태를 조회하는 명령어는?",
     "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
     "ground_truth": "show ip ospf neighbor",
     "explanation": "",
@@ -9315,7 +9315,7 @@
   },
   {
     "id": "BASIC_CMD_4",
-    "question": "",
+    "question": "CE1 장비에 현재 접속해 있는 사용자를 확인하는 명령어는?",
     "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
     "ground_truth": "show users",
     "explanation": "",
@@ -9340,7 +9340,7 @@
   },
   {
     "id": "BASIC_CMD_5",
-    "question": "",
+    "question": "CE1 장비의 시스템 로그를 확인하는 명령어는?",
     "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
     "ground_truth": "show logging",
     "explanation": "",
@@ -9365,7 +9365,7 @@
   },
   {
     "id": "BASIC_CMD_6",
-    "question": "",
+    "question": "CE1 장비에서 192.0.2.0/24 네트워크로 가는 정적 경로를 10.0.0.1 넥스트홉으로 설정하는 명령어는?",
     "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
     "ground_truth": "ip route 192.0.2.0 255.255.255.0 10.0.0.1",
     "explanation": "",
@@ -9393,7 +9393,7 @@
   },
   {
     "id": "BASIC_CMD_7",
-    "question": "",
+    "question": "CE1 장비의 BGP 네이버 192.168.1.10에 나가는(out) 방향으로 'RM_OUT' 라우트맵을 적용하는 명령어는?",
     "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
     "ground_truth": "router bgp 65001\n neighbor 192.168.1.10 route-map RM_OUT out",
     "explanation": "",
@@ -9421,7 +9421,7 @@
   },
   {
     "id": "BASIC_CMD_8",
-    "question": "",
+    "question": "CE1 장비의 Ethernet0/0 인터페이스에 'Uplink to core' 설명을 추가하는 명령어는?",
     "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
     "ground_truth": "interface Ethernet0/0\n description Uplink to core",
     "explanation": "",
@@ -9448,7 +9448,7 @@
   },
   {
     "id": "BASIC_CMD_9",
-    "question": "",
+    "question": "CE1 장비에 'CUSTOMER_A' VRF를 생성하고 Ethernet0/0 인터페이스에 할당하는 명령어는?",
     "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
     "ground_truth": "vrf definition CUSTOMER_A\n exit\n interface Ethernet0/0\n vrf forwarding CUSTOMER_A",
     "explanation": "",
@@ -9475,7 +9475,7 @@
   },
   {
     "id": "BASIC_CMD_10",
-    "question": "",
+    "question": "admin 계정을 사용하여 CE1 장비로 직접 SSH 접속하는 명령어는?",
     "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
     "ground_truth": "ssh admin@CE1",
     "explanation": "",
@@ -9501,7 +9501,7 @@
   },
   {
     "id": "BASIC_CMD_11",
-    "question": "",
+    "question": "admin 계정으로 CE2를 점프 호스트로 사용하여 sample10 장비에 SSH 접속하는 명령어는?",
     "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
     "ground_truth": "ssh -J admin@CE2 admin@sample10",
     "explanation": "",

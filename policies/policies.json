@@ -718,6 +718,46 @@
                         "notes": "VRF 생성 및 할당 명령어"
                     },
                     {
+                        "goal": "config_commands",
+                        "targets": [
+                            "DEVICE"
+                        ],
+                        "primary_metric": "cmd_set_ospf_cost",
+                        "notes": "OSPF 비용 설정 명령어"
+                    },
+                    {
+                        "goal": "config_commands",
+                        "targets": [
+                            "DEVICE"
+                        ],
+                        "primary_metric": "cmd_set_vty_acl",
+                        "notes": "VTY ACL 설정 명령어"
+                    },
+                    {
+                        "goal": "config_commands",
+                        "targets": [
+                            "DEVICE"
+                        ],
+                        "primary_metric": "cmd_set_hostname",
+                        "notes": "호스트네임 설정 명령어"
+                    },
+                    {
+                        "goal": "show_commands",
+                        "targets": [
+                            "DEVICE"
+                        ],
+                        "primary_metric": "cmd_show_processes_cpu",
+                        "notes": "CPU 프로세스 확인 명령어"
+                    },
+                    {
+                        "goal": "show_commands",
+                        "targets": [
+                            "DEVICE"
+                        ],
+                        "primary_metric": "cmd_show_l2vpn_vc",
+                        "notes": "L2VPN VC 상태 확인 명령어"
+                    },
+                    {
                         "goal": "ssh_commands",
                         "targets": [
                             "DEVICE"

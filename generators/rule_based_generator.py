@@ -247,10 +247,12 @@ GOAL2METRICS = {
     "Command_Generation": {
         "show_commands": [
             "cmd_show_bgp_summary","cmd_show_ip_interface_brief","cmd_show_ip_route_ospf",
-            "cmd_show_ip_ospf_neighbor","cmd_show_users","cmd_show_logging"
+            "cmd_show_ip_ospf_neighbor","cmd_show_users","cmd_show_logging",
+            "cmd_show_processes_cpu","cmd_show_l2vpn_vc"
         ],
         "config_commands": [
-            "cmd_set_static_route","cmd_set_bgp_routemap","cmd_set_interface_description","cmd_create_vrf_and_assign"
+            "cmd_set_static_route","cmd_set_bgp_routemap","cmd_set_interface_description",
+            "cmd_create_vrf_and_assign","cmd_set_ospf_cost","cmd_set_vty_acl","cmd_set_hostname"
         ],
         "ssh_commands": [
             "cmd_ssh_direct_access","cmd_ssh_proxy_jump"
@@ -332,7 +334,25 @@ METRIC_AGG = {
     "interface_mop_xenabled_bool":"boolean",
     "ssh_acl_applied_check":"boolean",
     "bgp_advertised_prefixes_list":"set",
-    "qos_policer_applied_interfaces_list":"set"
+    "qos_policer_applied_interfaces_list":"set",
+    # Command Generation
+    "cmd_show_bgp_summary":"text",
+    "cmd_show_ip_interface_brief":"text",
+    "cmd_show_ip_route_ospf":"text",
+    "cmd_show_processes_cpu":"text",
+    "cmd_show_l2vpn_vc":"text",
+    "cmd_show_ip_ospf_neighbor":"text",
+    "cmd_show_users":"text",
+    "cmd_show_logging":"text",
+    "cmd_ssh_direct_access":"text",
+    "cmd_set_static_route":"text",
+    "cmd_set_bgp_routemap":"text",
+    "cmd_set_interface_description":"text",
+    "cmd_create_vrf_and_assign":"text",
+    "cmd_set_ospf_cost":"text",
+    "cmd_set_vty_acl":"text",
+    "cmd_set_hostname":"text",
+    "cmd_ssh_proxy_jump":"text"
 }
 
 CANDIDATES = {
@@ -631,20 +651,24 @@ class RuleBasedGenerator:
             elif metric == "cmd_set_ospf_cost":
                 params = {
                     "host": host,
-                    "process_id": params["process_id"],
+                    "process_id": params_base["process_id"],
                     "interface": interface,
-                    "cost": params["cost"],
+                    "cost": params_base["cost"],
                 }
             elif metric == "cmd_set_vty_acl":
-                params = {"host": host, "acl_name": params["acl_name"]}
+                params = {"host": host, "acl_name": params_base["acl_name"]}
             elif metric == "cmd_set_hostname":
-                params = {"host": host, "new_hostname": params["new_hostname"]}
+                params = {"host": host, "new_hostname": params_base["new_hostname"]}
             elif metric == "cmd_ssh_proxy_jump":
                 params = {
-                    "user": params["user"],
-                    "jump_host": params["jump_host"],
-                    "destination_host": params["destination_host"],
+                    "user": params_base["user"],
+                    "jump_host": params_base["jump_host"],
+                    "destination_host": params_base["destination_host"],
                 }
+            elif metric == "cmd_show_processes_cpu":
+                params = {"host": host}
+            elif metric == "cmd_show_l2vpn_vc":
+                params = {"host": host}
             else:
                 params = {"host": host}
 

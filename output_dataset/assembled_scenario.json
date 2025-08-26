@@ -1,26 +1,27 @@
 [
   {
     "id": "ENHANCED_ENHANCED-SCENARIO-001",
-    "question": "고객사 A의 L3VPN 서비스가 간헐적으로 끊어지는 근본 원인은 무엇일까?",
+    "question": "고객사 A의 L3VPN 서비스가 간헐적으로 끊어지는 문제의 근본 원인은 무엇인가?",
     "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
-    "ground_truth": "# ERROR: Failed to generate command for show_vrf\n# ERROR: Failed to generate command for None\nshow bgp summary\n# ERROR: Failed to generate command for None",
-    "explanation": "",
-    "answer_type": "long",
+    "ground_truth": "네트워크 구성 요소의 불안정성",
+    "explanation": "고객사 A의 L3VPN 서비스가 간헐적으로 끊어지는 문제는 네트워크 구성 요소의 불안정성으로 인해 발생할 수 있습니다. 증거에서 None단계의 vrf_without_rt_count가 0으로 나타나지만, 이는 특정 문제를 나타내지 않으며, 다른 네트워크 요소나 외부 요인에 의해 서비스가 불안정해질 수 있습니다.",
+    "answer_type": "short",
     "category": "advanced",
     "complexity": "scenario",
     "level": 4,
     "persona": "troubleshooter",
     "scenario": "장애 상황 대응",
-    "source_files": null,
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
-        {
-          "intent": "show_vrf",
-          "params": {
-            "host": "sample1"
-          }
-        },
         {
           "required_metric": "vrf_without_rt_count",
           "metric_params": {
@@ -28,165 +29,171 @@
           }
         },
         {
-          "intent": "show_bgp_summary",
+          "intent": "show_vrf",
           "params": {
-            "host": "sample1"
-          }
-        },
-        {
-          "required_metric": "ibgp_missing_pairs_count",
-          "metric_params": {
             "host": "sample1"
           }
         }
       ],
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed",
-      "evidence": {}
+      "evidence": {
+        "step_None_vrf_without_rt_count": 0
+      }
     }
   },
   {
     "id": "ENHANCED_ENHANCED-SCENARIO-002",
-    "question": "새로운 PE 라우터 추가 후 BGP 경로 이상이 발생한 영향 범위는 어느 정도일까?",
+    "question": "새로운 PE 라우터 추가 후 BGP 경로 이상이 발생하는 원인은 무엇인가?",
     "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "ground_truth": "show bgp neighbors\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
-    "explanation": "",
-    "answer_type": "long",
+    "ground_truth": "BGP 설정 오류 또는 라우터 간의 연결 문제",
+    "explanation": "새로운 PE 라우터를 추가한 후 BGP 경로에 이상이 발생하는 원인은 주로 BGP 설정 오류나 라우터 간의 연결 문제 때문입니다. 특히, iBGP 피어링이 제대로 설정되지 않았거나, 라우터 간의 네트워크 연결이 불안정할 경우 이러한 문제가 발생할 수 있습니다.",
+    "answer_type": "short",
     "category": "advanced",
     "complexity": "scenario",
     "level": 4,
     "persona": "troubleshooter",
     "scenario": "장애 상황 대응",
-    "source_files": null,
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
         {
-          "intent": "show_bgp_neighbors",
+          "required_metric": "ibgp_missing_pairs_count",
+          "metric_params": {
+            "host": "sample2"
+          }
+        },
+        {
+          "intent": "show_bgp_summary",
           "params": {
-            "host": "sample3"
-          }
-        },
-        {
-          "required_metric": "bgp_neighbor_count",
-          "metric_params": {
-            "host": "sample3"
-          }
-        },
-        {
-          "required_metric": "ebgp_remote_as_map",
-          "metric_params": {
-            "host": "sample3"
+            "host": "sample2"
           }
         }
       ],
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed",
-      "evidence": {}
+      "evidence": {
+        "step_None_ibgp_missing_pairs_count": 0
+      }
     }
   },
   {
     "id": "ENHANCED_ENHANCED-SCENARIO-003",
-    "question": "보안 점검 후 일부 장비 접속 불가 문제의 근본 원인은 무엇일까?",
+    "question": "보안 점검 후 일부 장비 접속 불가의 근본 원인은 무엇인가?",
     "context": "보안 설정 현황:\nCE1: SSH ON, AAA OFF\nCE2: SSH ON, AAA OFF\nsample10: SSH ON, AAA ON\nsample7: SSH ON, AAA ON\nsample8: SSH ON, AAA ON",
-    "ground_truth": "show users\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
-    "explanation": "",
+    "ground_truth": "보안 점검 후 일부 장비 접속 불가의 근본 원인은 None 단계에서 ssh_missing_count가 0이기 때문에 보안 설정이나 접근 권한 문제일 가능성이 높다.",
+    "explanation": "보안 점검 결과에서 ssh_missing_count가 0으로 나타났다는 것은 SSH 관련 설정에 문제가 없음을 의미합니다. 따라서 접속 불가의 근본 원인은 다른 보안 설정이나 접근 권한 문제일 가능성이 높습니다.",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "scenario",
     "level": 4,
     "persona": "troubleshooter",
     "scenario": "장애 상황 대응",
-    "source_files": null,
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
         {
-          "intent": "show_users",
-          "params": {
-            "host": "sample2"
-          }
-        },
-        {
           "required_metric": "ssh_missing_count",
           "metric_params": {
-            "host": "sample2"
+            "host": "sample3"
           }
         },
         {
-          "required_metric": "aaa_missing_devices",
-          "metric_params": {
-            "host": "sample2"
+          "intent": "show_users",
+          "params": {
+            "host": "sample3"
           }
         }
       ],
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed",
-      "evidence": {}
+      "evidence": {
+        "step_None_ssh_missing_count": 0
+      }
     }
   },
   {
     "id": "ENHANCED_ENHANCED-SCENARIO-004",
-    "question": "고객사 A의 L3VPN 서비스 문제를 해결하기 위해 제안된 해결책이 다른 서비스에 미칠 부작용은 무엇일까?",
+    "question": "고객사 A의 L3VPN 서비스 문제로 영향을 받을 수 있는 다른 서비스는 무엇인가?",
     "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
-    "ground_truth": "# ERROR: Failed to generate command for create_vrf_and_assign\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
-    "explanation": "",
-    "answer_type": "long",
+    "ground_truth": [],
+    "explanation": "고객사 A의 L3VPN 서비스 문제로 영향을 받을 수 있는 다른 서비스는 없으며, 현재 vrf_interface_bind_count가 0으로 나타나 문제 없음이 확인되었습니다.",
+    "answer_type": "short",
     "category": "advanced",
     "complexity": "scenario",
     "level": 4,
     "persona": "troubleshooter",
     "scenario": "장애 상황 대응",
-    "source_files": null,
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
         {
-          "intent": "create_vrf_and_assign",
+          "required_metric": "vrf_interface_bind_count",
+          "metric_params": {
+            "host": "sample4"
+          }
+        },
+        {
+          "intent": "show_route_table",
           "params": {
-            "host": "sample4"
-          }
-        },
-        {
-          "required_metric": "vrf_count",
-          "metric_params": {
-            "host": "sample4"
-          }
-        },
-        {
-          "required_metric": "l2vpn_mismatch_count",
-          "metric_params": {
             "host": "sample4"
           }
         }
       ],
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed",
-      "evidence": {}
+      "evidence": {
+        "step_None_vrf_interface_bind_count": 0
+      }
     }
   },
   {
     "id": "ENHANCED_ENHANCED-SCENARIO-005",
-    "question": "새로운 PE 라우터의 BGP 경로 이상으로 인해 다른 AS 그룹에 미치는 영향은 무엇인가?",
+    "question": "새로운 PE 라우터에서 BGP 경로 이상이 다른 AS에 미칠 영향은 무엇인가?",
     "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "ground_truth": "show bgp summary\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
-    "explanation": "",
+    "ground_truth": "BGP 경로 이상은 다른 AS에 경로 선택 및 트래픽 흐름에 영향을 미칠 수 있으며, 이는 네트워크 안정성 및 성능 저하를 초래할 수 있다.",
+    "explanation": "새로운 PE 라우터에서 BGP 경로 이상이 발생하면, 이로 인해 다른 자율 시스템(AS)에서 경로 선택 과정에 혼란이 생길 수 있습니다. BGP는 경로 선택을 위해 여러 기준을 사용하며, 경로 이상이 발생하면 잘못된 경로가 선택되거나, 트래픽이 비효율적으로 흐를 수 있습니다. 이러한 문제는 네트워크의 안정성을 저하시킬 수 있으며, 결과적으로 서비스 품질에 부정적인 영향을 미칠 수 있습니다.",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "scenario",
     "level": 4,
     "persona": "troubleshooter",
     "scenario": "장애 상황 대응",
-    "source_files": null,
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
-        {
-          "intent": "show_bgp_summary",
-          "params": {
-            "host": "sample5"
-          }
-        },
         {
           "required_metric": "bgp_local_as_numeric",
           "metric_params": {
@@ -194,15 +201,17 @@
           }
         },
         {
-          "required_metric": "ibgp_under_peered_count",
-          "metric_params": {
+          "intent": "show_bgp_neighbors",
+          "params": {
             "host": "sample5"
           }
         }
       ],
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed",
-      "evidence": {}
+      "evidence": {
+        "step_None_bgp_local_as_numeric": 0
+      }
     }
   }
 ]

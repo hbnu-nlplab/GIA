@@ -1,358 +1,64 @@
 [
   {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-005",
-    "question": "특정 피어의 장애가 발생했을 때, 전체 네트워크의 경로 재설정 시간에 어떤 영향을 미칠 수 있습니까?",
-    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
-    "ground_truth": "show bgp summary\nshow bgp neighbors\n# ERROR: Failed to generate command for None",
-    "explanation": "",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "analytical",
-    "level": 3,
-    "persona": "network_engineer",
-    "scenario": "BGP 경로 수렴 분석",
-    "source_files": null,
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "intent": "show_bgp_summary",
-          "params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "intent": "show_bgp_neighbors",
-          "params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "required_metric": "bgp_neighbor_count",
-          "metric_params": {
-            "host": "sample7"
-          }
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {},
-      "question_length": 56,
-      "answer_length": 80,
-      "has_numbers": false,
-      "has_technical_terms": false,
-      "task_category": "네트워크 토폴로지 구성 질의",
-      "evaluation": {
-        "question_id": "ENHANCED_ENHANCED-ANALYTICAL-005",
-        "answer_type": "short",
-        "predicted_answer": "show bgp summary\nshow bgp neighbors\n# ERROR: Failed to generate command for None",
-        "ground_truth": "show bgp summary\nshow bgp neighbors\n# ERROR: Failed to generate command for None",
-        "exact_match": 1.0,
-        "f1_score": 1.0,
-        "token_accuracy": 1.0,
-        "normalized_accuracy": 1.0,
-        "bert_score": null,
-        "bleu_score": null,
-        "rouge_scores": null,
-        "structural_accuracy": null,
-        "overall_score": 1.0
-      },
-      "overall_score": 1.0
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-001",
-    "question": "iBGP 풀메시 누락이 경로 수렴에 미치는 영향을 평가하기 위해, 현재 네트워크의 iBGP 누락 페어 수가 전체 네트워크에 얼마나 영향을 미치는지 분석할 수 있습니까?",
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-003",
+    "question": "AS 그룹 내 라우터들의 BGP 설정에서 일관성 문제가 있는지 확인하려면 어떤 메트릭을 주로 살펴봐야 할까요?",
     "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "ground_truth": "# ERROR: Failed to generate command for None\nshow bgp summary\n# ERROR: Failed to generate command for None",
-    "explanation": "",
+    "ground_truth": [
+      "bgp_local_as_numeric",
+      "ibgp_fullmesh_ok"
+    ],
+    "explanation": "BGP 설정의 일관성 문제를 확인하기 위해서는 'bgp_local_as_numeric'와 'ibgp_fullmesh_ok' 메트릭을 주로 살펴봐야 합니다. 'bgp_local_as_numeric'은 AS 번호의 일관성을 나타내며, 'ibgp_fullmesh_ok'는 내부 BGP 피어링의 완전성을 확인하는 데 중요합니다.",
     "answer_type": "short",
     "category": "advanced",
     "complexity": "analytical",
     "level": 3,
     "persona": "network_engineer",
     "scenario": "BGP 경로 수렴 분석",
-    "source_files": null,
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "ibgp_missing_pairs_count",
-          "metric_params": {}
-        },
-        {
-          "intent": "show_bgp_summary",
-          "params": {
-            "host": "sample1"
-          }
-        },
-        {
-          "required_metric": "bgp_neighbor_count",
-          "metric_params": {
-            "host": "sample1"
-          }
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {},
-      "question_length": 93,
-      "answer_length": 106,
-      "has_numbers": false,
-      "has_technical_terms": false,
-      "task_category": "네트워크 토폴로지 구성 질의",
-      "evaluation": {
-        "question_id": "ENHANCED_ENHANCED-ANALYTICAL-001",
-        "answer_type": "short",
-        "predicted_answer": "# ERROR: Failed to generate command for None\nshow bgp summary\n# ERROR: Failed to generate command for None",
-        "ground_truth": "# ERROR: Failed to generate command for None\nshow bgp summary\n# ERROR: Failed to generate command for None",
-        "exact_match": 1.0,
-        "f1_score": 1.0,
-        "token_accuracy": 1.0,
-        "normalized_accuracy": 1.0,
-        "bert_score": null,
-        "bleu_score": null,
-        "rouge_scores": null,
-        "structural_accuracy": null,
-        "overall_score": 1.0
-      },
-      "overall_score": 1.0
-    }
-  },
-  {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-14954",
-    "question": "CE1 장비의 eBGP 피어 목록은?",
-    "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
-    "ground_truth": "192.168.1.10",
-    "explanation": "The list of devices for neighbor_list_ebgp is ['192.168.1.10'].",
-    "answer_type": "short",
-    "category": "basic",
-    "complexity": "basic",
-    "level": 1,
-    "persona": null,
-    "scenario": "정상",
     "source_files": [
-      "ce1.xml"
-    ],
-    "metadata": {
-      "origin": "rule_based",
-      "intent": {},
-      "evidence_hint": {
-        "scope": {
-          "type": "DEVICE",
-          "host": "CE1"
-        },
-        "metric": "neighbor_list_ebgp"
-      },
-      "topic": "BGP_Consistency",
-      "question_length": 20,
-      "answer_length": 12,
-      "has_numbers": true,
-      "has_technical_terms": false,
-      "task_category": "단순 조회 업무",
-      "evaluation": {
-        "question_id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-14954",
-        "answer_type": "short",
-        "predicted_answer": "192.168.1.10",
-        "ground_truth": "192.168.1.10",
-        "exact_match": 1.0,
-        "f1_score": 1.0,
-        "token_accuracy": 1.0,
-        "normalized_accuracy": 1.0,
-        "bert_score": null,
-        "bleu_score": null,
-        "rouge_scores": null,
-        "structural_accuracy": null,
-        "overall_score": 1.0
-      },
-      "overall_score": 1.0
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-004",
-    "question": "L2VPN 설정에서 발견된 이상징후가 비즈니스 운영에 미칠 수 있는 영향을 평가할 수 있는가?",
-    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
-    "ground_truth": "# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
-    "explanation": "",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "diagnostic",
-    "level": 3,
-    "persona": "security_auditor",
-    "scenario": "보안 취약점 진단",
-    "source_files": null,
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "l2vpn_unidirectional_pairs",
-          "metric_params": {}
-        },
-        {
-          "required_metric": "l2vpn_mismatch_count",
-          "metric_params": {}
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {},
-      "question_length": 52,
-      "answer_length": 89,
-      "has_numbers": true,
-      "has_technical_terms": true,
-      "task_category": "보안 질의",
-      "evaluation": {
-        "question_id": "ENHANCED_ENHANCED-DIAGNOSTIC-004",
-        "answer_type": "short",
-        "predicted_answer": "# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
-        "ground_truth": "# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
-        "exact_match": 1.0,
-        "f1_score": 1.0,
-        "token_accuracy": 1.0,
-        "normalized_accuracy": 1.0,
-        "bert_score": null,
-        "bleu_score": null,
-        "rouge_scores": null,
-        "structural_accuracy": null,
-        "overall_score": 1.0
-      },
-      "overall_score": 1.0
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-003",
-    "question": "SSH 버전이 최신 표준을 준수하고 있는지 확인하고, 보안 위험을 평가할 수 있는가?",
-    "context": "보안 설정 현황:\nCE1: SSH ON, AAA OFF\nCE2: SSH ON, AAA OFF\nsample10: SSH ON, AAA ON\nsample7: SSH ON, AAA ON\nsample8: SSH ON, AAA ON",
-    "ground_truth": "# ERROR: Failed to generate command for None",
-    "explanation": "",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "diagnostic",
-    "level": 3,
-    "persona": "security_auditor",
-    "scenario": "보안 취약점 진단",
-    "source_files": null,
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "ssh_version_text",
-          "metric_params": {
-            "host": "sample_device"
-          }
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {},
-      "question_length": 47,
-      "answer_length": 44,
-      "has_numbers": false,
-      "has_technical_terms": true,
-      "task_category": "보안 질의",
-      "evaluation": {
-        "question_id": "ENHANCED_ENHANCED-DIAGNOSTIC-003",
-        "answer_type": "short",
-        "predicted_answer": "# ERROR: Failed to generate command for None",
-        "ground_truth": "# ERROR: Failed to generate command for None",
-        "exact_match": 1.0,
-        "f1_score": 1.0,
-        "token_accuracy": 1.0,
-        "normalized_accuracy": 1.0,
-        "bert_score": null,
-        "bleu_score": null,
-        "rouge_scores": null,
-        "structural_accuracy": null,
-        "overall_score": 1.0
-      },
-      "overall_score": 1.0
-    }
-  },
-  {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-24593",
-    "question": "sample10 장비의 iBGP 피어 목록은?",
-    "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
-    "ground_truth": "1.1.1.1 2.2.2.2 3.3.3.3",
-    "explanation": "The list of devices for neighbor_list_ibgp is ['1.1.1.1', '2.2.2.2', '3.3.3.3'].",
-    "answer_type": "short",
-    "category": "basic",
-    "complexity": "basic",
-    "level": 1,
-    "persona": null,
-    "scenario": "정상",
-    "source_files": [
-      "sample10.xml"
-    ],
-    "metadata": {
-      "origin": "rule_based",
-      "intent": {},
-      "evidence_hint": {
-        "scope": {
-          "type": "DEVICE",
-          "host": "sample10"
-        },
-        "metric": "neighbor_list_ibgp"
-      },
-      "topic": "BGP_Consistency",
-      "question_length": 25,
-      "answer_length": 23,
-      "has_numbers": true,
-      "has_technical_terms": false,
-      "task_category": "단순 조회 업무",
-      "evaluation": {
-        "question_id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-24593",
-        "answer_type": "short",
-        "predicted_answer": "1.1.1.1 2.2.2.2 3.3.3.3",
-        "ground_truth": "1.1.1.1 2.2.2.2 3.3.3.3",
-        "exact_match": 1.0,
-        "f1_score": 1.0,
-        "token_accuracy": 1.0,
-        "normalized_accuracy": 1.0,
-        "bert_score": null,
-        "bleu_score": null,
-        "rouge_scores": null,
-        "structural_accuracy": null,
-        "overall_score": 1.0
-      },
-      "overall_score": 1.0
-    }
-  },
-  {
-    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-51585",
-    "question": "SSH가 활성화된 장비 목록은?",
-    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
-    "ground_truth": "CE1 CE2 sample10 sample7 sample8 sample9",
-    "explanation": "The list of devices for ssh_enabled_devices is ['CE1', 'CE2', 'sample10', 'sample7', 'sample8', 'sample9'].",
-    "answer_type": "short",
-    "category": "basic",
-    "complexity": "basic",
-    "level": 1,
-    "persona": null,
-    "scenario": "정상",
-    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
       "sample9.xml"
     ],
     "metadata": {
-      "origin": "rule_based",
-      "intent": {},
-      "evidence_hint": {
-        "scope": {
-          "type": "DEVICE",
-          "host": "sample9"
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {}
         },
-        "metric": "ssh_enabled_devices"
+        {
+          "intent": "show_bgp_neighbor_detail",
+          "params": {
+            "host": "sample3"
+          }
+        },
+        {
+          "required_metric": "ibgp_fullmesh_ok",
+          "metric_params": {}
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_bgp_local_as_numeric": 65001,
+        "step_None_ibgp_fullmesh_ok": true
       },
-      "topic": "Security_Policy",
-      "question_length": 17,
-      "answer_length": 40,
+      "question_length": 61,
+      "answer_length": 44,
       "has_numbers": false,
-      "has_technical_terms": false,
-      "task_category": "보안 질의",
+      "has_technical_terms": true,
+      "task_category": "네트워크 토폴로지 구성 질의",
       "evaluation": {
-        "question_id": "BASIC_DSL-SSH_ENABLED_DEVICES-51585",
+        "question_id": "ENHANCED_ENHANCED-ANALYTICAL-003",
         "answer_type": "short",
-        "predicted_answer": "CE1 CE2 sample10 sample7 sample8 sample9",
-        "ground_truth": "CE1 CE2 sample10 sample7 sample8 sample9",
+        "predicted_answer": "['bgp_local_as_numeric', 'ibgp_fullmesh_ok']",
+        "ground_truth": [
+          "bgp_local_as_numeric",
+          "ibgp_fullmesh_ok"
+        ],
         "exact_match": 1.0,
         "f1_score": 1.0,
         "token_accuracy": 1.0,
@@ -360,14 +66,14 @@
         "bert_score": null,
         "bleu_score": null,
         "rouge_scores": null,
-        "structural_accuracy": null,
+        "structural_accuracy": 1.0,
         "overall_score": 1.0
       },
       "overall_score": 1.0
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-24593",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-1597",
     "question": "sample10 장비의 eBGP 피어 목록은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": "192.168.4.11",
@@ -398,7 +104,7 @@
       "has_technical_terms": false,
       "task_category": "단순 조회 업무",
       "evaluation": {
-        "question_id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-24593",
+        "question_id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-1597",
         "answer_type": "short",
         "predicted_answer": "192.168.4.11",
         "ground_truth": "192.168.4.11",
@@ -416,117 +122,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-35836",
-    "question": "CE2 장비의 eBGP 피어 목록은?",
-    "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
-    "ground_truth": "192.168.3.10",
-    "explanation": "The list of devices for neighbor_list_ebgp is ['192.168.3.10'].",
-    "answer_type": "short",
-    "category": "basic",
-    "complexity": "basic",
-    "level": 1,
-    "persona": null,
-    "scenario": "정상",
-    "source_files": [
-      "ce2.xml"
-    ],
-    "metadata": {
-      "origin": "rule_based",
-      "intent": {},
-      "evidence_hint": {
-        "scope": {
-          "type": "DEVICE",
-          "host": "CE2"
-        },
-        "metric": "neighbor_list_ebgp"
-      },
-      "topic": "BGP_Consistency",
-      "question_length": 20,
-      "answer_length": 12,
-      "has_numbers": true,
-      "has_technical_terms": false,
-      "task_category": "단순 조회 업무",
-      "evaluation": {
-        "question_id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-35836",
-        "answer_type": "short",
-        "predicted_answer": "192.168.3.10",
-        "ground_truth": "192.168.3.10",
-        "exact_match": 1.0,
-        "f1_score": 1.0,
-        "token_accuracy": 1.0,
-        "normalized_accuracy": 1.0,
-        "bert_score": null,
-        "bleu_score": null,
-        "rouge_scores": null,
-        "structural_accuracy": null,
-        "overall_score": 1.0
-      },
-      "overall_score": 1.0
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-002",
-    "question": "특정 BGP 피어가 장애 발생 시, 다른 BGP 피어와의 경로 수렴 시간에 어떤 영향을 미치는지 파악할 수 있습니까?",
-    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "ground_truth": "show bgp neighbors\n# ERROR: Failed to generate command for show_bgp_neighbor_detail\n# ERROR: Failed to generate command for None",
-    "explanation": "",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "analytical",
-    "level": 3,
-    "persona": "network_engineer",
-    "scenario": "BGP 경로 수렴 분석",
-    "source_files": null,
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "intent": "show_bgp_neighbors",
-          "params": {
-            "host": "sample2"
-          }
-        },
-        {
-          "intent": "show_bgp_neighbor_detail",
-          "params": {
-            "host": "sample2"
-          }
-        },
-        {
-          "required_metric": "bgp_local_as_numeric",
-          "metric_params": {
-            "host": "sample2"
-          }
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {},
-      "question_length": 65,
-      "answer_length": 128,
-      "has_numbers": false,
-      "has_technical_terms": true,
-      "task_category": "네트워크 토폴로지 구성 질의",
-      "evaluation": {
-        "question_id": "ENHANCED_ENHANCED-ANALYTICAL-002",
-        "answer_type": "short",
-        "predicted_answer": "show bgp neighbors\n# ERROR: Failed to generate command for show_bgp_neighbor_detail\n# ERROR: Failed to generate command for None",
-        "ground_truth": "show bgp neighbors\n# ERROR: Failed to generate command for show_bgp_neighbor_detail\n# ERROR: Failed to generate command for None",
-        "exact_match": 1.0,
-        "f1_score": 1.0,
-        "token_accuracy": 1.0,
-        "normalized_accuracy": 1.0,
-        "bert_score": null,
-        "bleu_score": null,
-        "rouge_scores": null,
-        "structural_accuracy": null,
-        "overall_score": 1.0
-      },
-      "overall_score": 1.0
-    }
-  },
-  {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-51585",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-13781",
     "question": "sample9 장비의 iBGP 피어 목록은?",
     "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": "1.1.1.1 2.2.2.2 4.4.4.4",
@@ -557,7 +153,7 @@
       "has_technical_terms": false,
       "task_category": "단순 조회 업무",
       "evaluation": {
-        "question_id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-51585",
+        "question_id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-13781",
         "answer_type": "short",
         "predicted_answer": "1.1.1.1 2.2.2.2 4.4.4.4",
         "ground_truth": "1.1.1.1 2.2.2.2 4.4.4.4",
@@ -575,27 +171,412 @@
     }
   },
   {
-    "id": "ENHANCED_ENHANCED-SCENARIO-001",
-    "question": "고객사 A의 L3VPN 서비스가 간헐적으로 끊어지는 근본 원인은 무엇일까?",
-    "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
-    "ground_truth": "# ERROR: Failed to generate command for show_vrf\n# ERROR: Failed to generate command for None\nshow bgp summary\n# ERROR: Failed to generate command for None",
-    "explanation": "",
+    "id": "ENHANCED_ENHANCED-SCENARIO-005",
+    "question": "새로운 PE 라우터에서 BGP 경로 이상이 다른 AS에 미칠 영향은 무엇인가?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": "BGP 경로 이상은 다른 AS에 경로 선택 및 트래픽 흐름에 영향을 미칠 수 있으며, 이는 네트워크 안정성 및 성능 저하를 초래할 수 있다.",
+    "explanation": "새로운 PE 라우터에서 BGP 경로 이상이 발생하면, 이로 인해 다른 자율 시스템(AS)에서 경로 선택 과정에 혼란이 생길 수 있습니다. BGP는 경로 선택을 위해 여러 기준을 사용하며, 경로 이상이 발생하면 잘못된 경로가 선택되거나, 트래픽이 비효율적으로 흐를 수 있습니다. 이러한 문제는 네트워크의 안정성을 저하시킬 수 있으며, 결과적으로 서비스 품질에 부정적인 영향을 미칠 수 있습니다.",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "scenario",
     "level": 4,
     "persona": "troubleshooter",
     "scenario": "장애 상황 대응",
-    "source_files": null,
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
         {
-          "intent": "show_vrf",
-          "params": {
-            "host": "sample1"
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "sample5"
           }
         },
+        {
+          "intent": "show_bgp_neighbors",
+          "params": {
+            "host": "sample5"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_bgp_local_as_numeric": 0
+      },
+      "question_length": 43,
+      "answer_length": 78,
+      "has_numbers": false,
+      "has_technical_terms": true,
+      "task_category": "기술적 오류 질의",
+      "evaluation": {
+        "question_id": "ENHANCED_ENHANCED-SCENARIO-005",
+        "answer_type": "long",
+        "predicted_answer": "BGP 경로 이상은 다른 AS에 경로 선택 및 트래픽 흐름에 영향을 미칠 수 있으며, 이는 네트워크 안정성 및 성능 저하를 초래할 수 있다.",
+        "ground_truth": "BGP 경로 이상은 다른 AS에 경로 선택 및 트래픽 흐름에 영향을 미칠 수 있으며, 이는 네트워크 안정성 및 성능 저하를 초래할 수 있다.",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": null,
+        "normalized_accuracy": null,
+        "bert_score": null,
+        "bleu_score": 1.0,
+        "rouge_scores": {
+          "rouge-1": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f": 1.0
+          },
+          "rouge-2": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f": 1.0
+          },
+          "rouge-l": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f": 1.0
+          }
+        },
+        "structural_accuracy": null,
+        "overall_score": 0.7
+      },
+      "overall_score": 0.7
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-003",
+    "question": "BGP 구성에서 발견된 이상징후가 네트워크의 보안 위험도를 어떻게 증가시킬 수 있는지 평가하세요.",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": "BGP 구성에서 발견된 이상징후는 네트워크의 보안 위험도를 증가시킬 수 있습니다.",
+    "explanation": "BGP(Border Gateway Protocol) 구성에서 이상징후가 발견되면, 이는 네트워크의 라우팅 정보가 조작되거나 잘못된 경로가 설정될 가능성을 나타냅니다. 이러한 상황은 공격자가 네트워크 트래픽을 가로채거나, 서비스 거부 공격을 수행하는 등의 보안 위협을 초래할 수 있습니다. 따라서 BGP의 이상징후는 네트워크의 보안 위험도를 증가시키는 중요한 요소로 작용합니다.",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "diagnostic",
+    "level": 3,
+    "persona": "security_auditor",
+    "scenario": "보안 취약점 진단",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "intent": "show_bgp_summary",
+          "params": {
+            "host": "sample3"
+          }
+        },
+        {
+          "required_metric": "ibgp_missing_pairs_count",
+          "metric_params": {
+            "host": "sample3"
+          }
+        },
+        {
+          "required_metric": "bgp_missing_pairs",
+          "metric_params": {
+            "host": "sample3"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_ibgp_missing_pairs_count": 0,
+        "step_None_bgp_missing_pairs": null
+      },
+      "question_length": 54,
+      "answer_length": 45,
+      "has_numbers": false,
+      "has_technical_terms": true,
+      "task_category": "보안 질의",
+      "evaluation": {
+        "question_id": "ENHANCED_ENHANCED-DIAGNOSTIC-003",
+        "answer_type": "short",
+        "predicted_answer": "BGP 구성에서 발견된 이상징후는 네트워크의 보안 위험도를 증가시킬 수 있습니다.",
+        "ground_truth": "BGP 구성에서 발견된 이상징후는 네트워크의 보안 위험도를 증가시킬 수 있습니다.",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-1597",
+    "question": "sample10 장비의 iBGP 피어 목록은?",
+    "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "1.1.1.1 2.2.2.2 3.3.3.3",
+    "explanation": "The list of devices for neighbor_list_ibgp is ['1.1.1.1', '2.2.2.2', '3.3.3.3'].",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample10.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample10"
+        },
+        "metric": "neighbor_list_ibgp"
+      },
+      "topic": "BGP_Consistency",
+      "question_length": 25,
+      "answer_length": 23,
+      "has_numbers": true,
+      "has_technical_terms": false,
+      "task_category": "단순 조회 업무",
+      "evaluation": {
+        "question_id": "BASIC_DSL-NEIGHBOR_LIST_IBGP-1597",
+        "answer_type": "short",
+        "predicted_answer": "1.1.1.1 2.2.2.2 3.3.3.3",
+        "ground_truth": "1.1.1.1 2.2.2.2 3.3.3.3",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-13781",
+    "question": "SSH가 활성화된 장비 목록은?",
+    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "CE1 CE2 sample10 sample7 sample8 sample9",
+    "explanation": "The list of devices for ssh_enabled_devices is ['CE1', 'CE2', 'sample10', 'sample7', 'sample8', 'sample9'].",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample9"
+        },
+        "metric": "ssh_enabled_devices"
+      },
+      "topic": "Security_Policy",
+      "question_length": 17,
+      "answer_length": 40,
+      "has_numbers": false,
+      "has_technical_terms": false,
+      "task_category": "보안 질의",
+      "evaluation": {
+        "question_id": "BASIC_DSL-SSH_ENABLED_DEVICES-13781",
+        "answer_type": "short",
+        "predicted_answer": "CE1 CE2 sample10 sample7 sample8 sample9",
+        "ground_truth": "CE1 CE2 sample10 sample7 sample8 sample9",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-24609",
+    "question": "CE1 장비의 eBGP 피어 목록은?",
+    "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
+    "ground_truth": "192.168.1.10",
+    "explanation": "The list of devices for neighbor_list_ebgp is ['192.168.1.10'].",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "ce1.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE1"
+        },
+        "metric": "neighbor_list_ebgp"
+      },
+      "topic": "BGP_Consistency",
+      "question_length": 20,
+      "answer_length": 12,
+      "has_numbers": true,
+      "has_technical_terms": false,
+      "task_category": "단순 조회 업무",
+      "evaluation": {
+        "question_id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-24609",
+        "answer_type": "short",
+        "predicted_answer": "192.168.1.10",
+        "ground_truth": "192.168.1.10",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-002",
+    "question": "특정 BGP 피어가 장애를 일으켰을 때, 다른 피어와의 연결성 및 전체 경로 수렴성에 어떤 파급효과가 있을까요?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": "장애가 발생한 BGP 피어와 연결된 다른 피어들은 경로 수렴성에 영향을 받을 수 있으며, 전체 네트워크의 경로 정보가 업데이트되지 않아 라우팅 루프나 비효율적인 경로가 발생할 수 있다.",
+    "explanation": "특정 BGP 피어가 장애를 일으키면, 해당 피어와 연결된 다른 피어들은 그 피어를 통해 수신하던 경로 정보를 잃게 됩니다. 이로 인해 다른 피어들은 새로운 경로를 찾기 위해 경로 수렴 과정을 거쳐야 하며, 이 과정에서 경로 정보의 업데이트가 지연되거나 비효율적인 경로가 선택될 수 있습니다. 따라서 전체 네트워크의 연결성과 경로 수렴성에 부정적인 영향을 미칠 수 있습니다.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "analytical",
+    "level": 3,
+    "persona": "network_engineer",
+    "scenario": "BGP 경로 수렴 분석",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "intent": "show_bgp_neighbors",
+          "params": {
+            "host": "sample2"
+          }
+        },
+        {
+          "required_metric": "bgp_neighbor_count",
+          "metric_params": {
+            "host": "sample2"
+          }
+        },
+        {
+          "intent": "check_connectivity",
+          "params": {
+            "host": "sample2"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_bgp_neighbor_count": 0
+      },
+      "question_length": 62,
+      "answer_length": 103,
+      "has_numbers": false,
+      "has_technical_terms": true,
+      "task_category": "네트워크 토폴로지 구성 질의",
+      "evaluation": {
+        "question_id": "ENHANCED_ENHANCED-ANALYTICAL-002",
+        "answer_type": "long",
+        "predicted_answer": "장애가 발생한 BGP 피어와 연결된 다른 피어들은 경로 수렴성에 영향을 받을 수 있으며, 전체 네트워크의 경로 정보가 업데이트되지 않아 라우팅 루프나 비효율적인 경로가 발생할 수 있다.",
+        "ground_truth": "장애가 발생한 BGP 피어와 연결된 다른 피어들은 경로 수렴성에 영향을 받을 수 있으며, 전체 네트워크의 경로 정보가 업데이트되지 않아 라우팅 루프나 비효율적인 경로가 발생할 수 있다.",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": null,
+        "normalized_accuracy": null,
+        "bert_score": null,
+        "bleu_score": 1.0,
+        "rouge_scores": {
+          "rouge-1": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f": 1.0
+          },
+          "rouge-2": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f": 1.0
+          },
+          "rouge-l": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f": 1.0
+          }
+        },
+        "structural_accuracy": null,
+        "overall_score": 0.7
+      },
+      "overall_score": 0.7
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-001",
+    "question": "고객사 A의 L3VPN 서비스가 간헐적으로 끊어지는 문제의 근본 원인은 무엇인가?",
+    "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
+    "ground_truth": "네트워크 구성 요소의 불안정성",
+    "explanation": "고객사 A의 L3VPN 서비스가 간헐적으로 끊어지는 문제는 네트워크 구성 요소의 불안정성으로 인해 발생할 수 있습니다. 증거에서 None단계의 vrf_without_rt_count가 0으로 나타나지만, 이는 특정 문제를 나타내지 않으며, 다른 네트워크 요소나 외부 요인에 의해 서비스가 불안정해질 수 있습니다.",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "scenario",
+    "level": 4,
+    "persona": "troubleshooter",
+    "scenario": "장애 상황 대응",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
         {
           "required_metric": "vrf_without_rt_count",
           "metric_params": {
@@ -603,101 +584,27 @@
           }
         },
         {
-          "intent": "show_bgp_summary",
+          "intent": "show_vrf",
           "params": {
-            "host": "sample1"
-          }
-        },
-        {
-          "required_metric": "ibgp_missing_pairs_count",
-          "metric_params": {
             "host": "sample1"
           }
         }
       ],
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed",
-      "evidence": {},
-      "question_length": 41,
-      "answer_length": 155,
+      "evidence": {
+        "step_None_vrf_without_rt_count": 0
+      },
+      "question_length": 45,
+      "answer_length": 16,
       "has_numbers": true,
       "has_technical_terms": false,
       "task_category": "기술적 오류 질의",
       "evaluation": {
         "question_id": "ENHANCED_ENHANCED-SCENARIO-001",
-        "answer_type": "long",
-        "predicted_answer": "# ERROR: Failed to generate command for show_vrf\n# ERROR: Failed to generate command for None\nshow bgp summary\n# ERROR: Failed to generate command for None",
-        "ground_truth": "# ERROR: Failed to generate command for show_vrf\n# ERROR: Failed to generate command for None\nshow bgp summary\n# ERROR: Failed to generate command for None",
-        "exact_match": 1.0,
-        "f1_score": 1.0,
-        "token_accuracy": null,
-        "normalized_accuracy": null,
-        "bert_score": null,
-        "bleu_score": 1.0,
-        "rouge_scores": {
-          "rouge-1": {
-            "precision": 1.0,
-            "recall": 1.0,
-            "f": 1.0
-          },
-          "rouge-2": {
-            "precision": 1.0,
-            "recall": 1.0,
-            "f": 1.0
-          },
-          "rouge-l": {
-            "precision": 1.0,
-            "recall": 1.0,
-            "f": 1.0
-          }
-        },
-        "structural_accuracy": null,
-        "overall_score": 0.7
-      },
-      "overall_score": 0.7
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-001",
-    "question": "네트워크 장비 중 SSH 설정이 누락된 장비가 있는지 파악하고, 이를 통해 보안 정책의 준수성을 평가할 수 있는가?",
-    "context": "보안 설정 현황:\nCE1: SSH ON, AAA OFF\nCE2: SSH ON, AAA OFF\nsample10: SSH ON, AAA ON\nsample7: SSH ON, AAA ON\nsample8: SSH ON, AAA ON",
-    "ground_truth": "# ERROR: Failed to generate command for None\nssh admin@sample_device",
-    "explanation": "",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "diagnostic",
-    "level": 3,
-    "persona": "security_auditor",
-    "scenario": "보안 취약점 진단",
-    "source_files": null,
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "ssh_missing_devices",
-          "metric_params": {}
-        },
-        {
-          "intent": "ssh_direct_access",
-          "params": {
-            "host": "sample_device",
-            "user": "admin"
-          }
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {},
-      "question_length": 64,
-      "answer_length": 68,
-      "has_numbers": false,
-      "has_technical_terms": true,
-      "task_category": "보안 질의",
-      "evaluation": {
-        "question_id": "ENHANCED_ENHANCED-DIAGNOSTIC-001",
         "answer_type": "short",
-        "predicted_answer": "# ERROR: Failed to generate command for None\nssh admin@sample_device",
-        "ground_truth": "# ERROR: Failed to generate command for None\nssh admin@sample_device",
+        "predicted_answer": "네트워크 구성 요소의 불안정성",
+        "ground_truth": "네트워크 구성 요소의 불안정성",
         "exact_match": 1.0,
         "f1_score": 1.0,
         "token_accuracy": 1.0,
@@ -712,53 +619,41 @@
     }
   },
   {
-    "id": "ENHANCED_ENHANCED-SCENARIO-005",
-    "question": "새로운 PE 라우터의 BGP 경로 이상으로 인해 다른 AS 그룹에 미치는 영향은 무엇인가?",
-    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "ground_truth": "show bgp summary\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
-    "explanation": "",
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-32362",
+    "question": "CE2 장비의 eBGP 피어 목록은?",
+    "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
+    "ground_truth": "192.168.3.10",
+    "explanation": "The list of devices for neighbor_list_ebgp is ['192.168.3.10'].",
     "answer_type": "short",
-    "category": "advanced",
-    "complexity": "scenario",
-    "level": 4,
-    "persona": "troubleshooter",
-    "scenario": "장애 상황 대응",
-    "source_files": null,
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "ce2.xml"
+    ],
     "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "intent": "show_bgp_summary",
-          "params": {
-            "host": "sample5"
-          }
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE2"
         },
-        {
-          "required_metric": "bgp_local_as_numeric",
-          "metric_params": {
-            "host": "sample5"
-          }
-        },
-        {
-          "required_metric": "ibgp_under_peered_count",
-          "metric_params": {
-            "host": "sample5"
-          }
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {},
-      "question_length": 50,
-      "answer_length": 106,
-      "has_numbers": false,
-      "has_technical_terms": true,
-      "task_category": "기술적 오류 질의",
+        "metric": "neighbor_list_ebgp"
+      },
+      "topic": "BGP_Consistency",
+      "question_length": 20,
+      "answer_length": 12,
+      "has_numbers": true,
+      "has_technical_terms": false,
+      "task_category": "단순 조회 업무",
       "evaluation": {
-        "question_id": "ENHANCED_ENHANCED-SCENARIO-005",
+        "question_id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-32362",
         "answer_type": "short",
-        "predicted_answer": "show bgp summary\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
-        "ground_truth": "show bgp summary\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
+        "predicted_answer": "192.168.3.10",
+        "ground_truth": "192.168.3.10",
         "exact_match": 1.0,
         "f1_score": 1.0,
         "token_accuracy": 1.0,
@@ -773,53 +668,63 @@
     }
   },
   {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-003",
-    "question": "BGP 설정의 일관성을 검토하기 위해, AS 내 라우터들의 BGP 로컬 AS 번호가 모두 일치하는지 확인할 수 있습니까?",
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-005",
+    "question": "BGP 피어 중 하나가 다운될 때, L2VPN 연결에는 어떤 영향을 미칠 수 있으며, 이를 방지하기 위한 예방 조치는 무엇일까요?",
     "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "ground_truth": "# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
-    "explanation": "",
+    "ground_truth": "impact: L2VPN 연결이 중단되거나 불안정해질 수 있다.; preventive_measures: ['BGP 피어링의 이중화', 'L2VPN 경로의 모니터링 및 경고 시스템 구축', '정기적인 네트워크 점검 및 유지보수']",
+    "explanation": "BGP 피어 중 하나가 다운되면 해당 피어를 통해 연결된 L2VPN 경로가 영향을 받아 연결이 중단되거나 불안정해질 수 있습니다. 이를 방지하기 위해 BGP 피어링의 이중화를 통해 대체 경로를 확보하고, L2VPN 경로의 모니터링 및 경고 시스템을 구축하여 문제 발생 시 즉각 대응할 수 있도록 해야 합니다. 또한, 정기적인 네트워크 점검 및 유지보수를 통해 잠재적인 문제를 사전에 예방할 수 있습니다.",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "analytical",
     "level": 3,
     "persona": "network_engineer",
     "scenario": "BGP 경로 수렴 분석",
-    "source_files": null,
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
         {
-          "required_metric": "bgp_local_as_numeric",
-          "metric_params": {
-            "host": "sample3"
+          "required_metric": "l2vpn_pairs",
+          "metric_params": {}
+        },
+        {
+          "intent": "show_bgp_neighbors",
+          "params": {
+            "host": "sample5"
           }
         },
         {
-          "required_metric": "bgp_local_as_numeric",
-          "metric_params": {
-            "host": "sample4"
-          }
-        },
-        {
-          "required_metric": "bgp_local_as_numeric",
-          "metric_params": {
+          "intent": "show_l2vpn_status",
+          "params": {
             "host": "sample5"
           }
         }
       ],
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed",
-      "evidence": {},
-      "question_length": 67,
-      "answer_length": 134,
-      "has_numbers": false,
+      "evidence": {
+        "step_None_l2vpn_pairs": [
+          "sample7<->sample9",
+          "sample9<->sample7"
+        ]
+      },
+      "question_length": 72,
+      "answer_length": 127,
+      "has_numbers": true,
       "has_technical_terms": true,
       "task_category": "네트워크 토폴로지 구성 질의",
       "evaluation": {
-        "question_id": "ENHANCED_ENHANCED-ANALYTICAL-003",
+        "question_id": "ENHANCED_ENHANCED-ANALYTICAL-005",
         "answer_type": "long",
-        "predicted_answer": "# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
-        "ground_truth": "# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
+        "predicted_answer": "impact: L2VPN 연결이 중단되거나 불안정해질 수 있다.; preventive_measures: ['BGP 피어링의 이중화', 'L2VPN 경로의 모니터링 및 경고 시스템 구축', '정기적인 네트워크 점검 및 유지보수']",
+        "ground_truth": "impact: L2VPN 연결이 중단되거나 불안정해질 수 있다.; preventive_measures: ['BGP 피어링의 이중화', 'L2VPN 경로의 모니터링 및 경고 시스템 구축', '정기적인 네트워크 점검 및 유지보수']",
         "exact_match": 1.0,
         "f1_score": 1.0,
         "token_accuracy": null,
@@ -850,68 +755,7 @@
     }
   },
   {
-    "id": "ENHANCED_ENHANCED-SCENARIO-003",
-    "question": "보안 점검 후 일부 장비 접속 불가 문제의 근본 원인은 무엇일까?",
-    "context": "보안 설정 현황:\nCE1: SSH ON, AAA OFF\nCE2: SSH ON, AAA OFF\nsample10: SSH ON, AAA ON\nsample7: SSH ON, AAA ON\nsample8: SSH ON, AAA ON",
-    "ground_truth": "show users\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
-    "explanation": "",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "scenario",
-    "level": 4,
-    "persona": "troubleshooter",
-    "scenario": "장애 상황 대응",
-    "source_files": null,
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "intent": "show_users",
-          "params": {
-            "host": "sample2"
-          }
-        },
-        {
-          "required_metric": "ssh_missing_count",
-          "metric_params": {
-            "host": "sample2"
-          }
-        },
-        {
-          "required_metric": "aaa_missing_devices",
-          "metric_params": {
-            "host": "sample2"
-          }
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {},
-      "question_length": 36,
-      "answer_length": 100,
-      "has_numbers": false,
-      "has_technical_terms": false,
-      "task_category": "기술적 오류 질의",
-      "evaluation": {
-        "question_id": "ENHANCED_ENHANCED-SCENARIO-003",
-        "answer_type": "short",
-        "predicted_answer": "show users\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
-        "ground_truth": "show users\n# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for None",
-        "exact_match": 1.0,
-        "f1_score": 1.0,
-        "token_accuracy": 1.0,
-        "normalized_accuracy": 1.0,
-        "bert_score": null,
-        "bleu_score": null,
-        "rouge_scores": null,
-        "structural_accuracy": null,
-        "overall_score": 1.0
-      },
-      "overall_score": 1.0
-    }
-  },
-  {
-    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-35836",
+    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-32362",
     "question": "SSH가 활성화된 장비 목록은?",
     "context": "장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1",
     "ground_truth": "CE1 CE2 sample10 sample7 sample8 sample9",
@@ -942,7 +786,7 @@
       "has_technical_terms": false,
       "task_category": "보안 질의",
       "evaluation": {
-        "question_id": "BASIC_DSL-SSH_ENABLED_DEVICES-35836",
+        "question_id": "BASIC_DSL-SSH_ENABLED_DEVICES-32362",
         "answer_type": "short",
         "predicted_answer": "CE1 CE2 sample10 sample7 sample8 sample9",
         "ground_truth": "CE1 CE2 sample10 sample7 sample8 sample9",
@@ -960,7 +804,154 @@
     }
   },
   {
-    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-4245",
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-001",
+    "question": "iBGP의 풀메시 구성 누락이 경로 수렴 시간에 어떻게 영향을 미칠 수 있으며, 이러한 영향이 다른 경로 프로토콜(OSPF 등)과 상호작용할 때 어떤 결과를 초래할 수 있을까요?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": "iBGP의 풀메시 구성이 누락되면 경로 수렴 시간이 지연될 수 있으며, 이는 OSPF와 같은 다른 경로 프로토콜과의 상호작용에서 경로 불일치 및 비효율적인 라우팅을 초래할 수 있다.",
+    "explanation": "iBGP의 풀메시 구성이 누락되면, iBGP 라우터 간에 모든 경로 정보가 공유되지 않아 경로 수렴 시간이 증가할 수 있습니다. 이는 OSPF와 같은 다른 프로토콜과의 상호작용에서 경로 정보의 불일치로 이어져, 최적의 경로 선택이 어려워지고, 결과적으로 네트워크의 전반적인 성능 저하를 초래할 수 있습니다.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "analytical",
+    "level": 3,
+    "persona": "network_engineer",
+    "scenario": "BGP 경로 수렴 분석",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "ibgp_missing_pairs_count",
+          "metric_params": {}
+        },
+        {
+          "required_metric": "ospf_area_set",
+          "metric_params": {}
+        },
+        {
+          "intent": "show_bgp_summary",
+          "params": {
+            "host": "sample1"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_ibgp_missing_pairs_count": 0,
+        "step_None_ospf_area_set": []
+      },
+      "question_length": 99,
+      "answer_length": 101,
+      "has_numbers": false,
+      "has_technical_terms": true,
+      "task_category": "네트워크 토폴로지 구성 질의",
+      "evaluation": {
+        "question_id": "ENHANCED_ENHANCED-ANALYTICAL-001",
+        "answer_type": "long",
+        "predicted_answer": "iBGP의 풀메시 구성이 누락되면 경로 수렴 시간이 지연될 수 있으며, 이는 OSPF와 같은 다른 경로 프로토콜과의 상호작용에서 경로 불일치 및 비효율적인 라우팅을 초래할 수 있다.",
+        "ground_truth": "iBGP의 풀메시 구성이 누락되면 경로 수렴 시간이 지연될 수 있으며, 이는 OSPF와 같은 다른 경로 프로토콜과의 상호작용에서 경로 불일치 및 비효율적인 라우팅을 초래할 수 있다.",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": null,
+        "normalized_accuracy": null,
+        "bert_score": null,
+        "bleu_score": 1.0,
+        "rouge_scores": {
+          "rouge-1": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f": 1.0
+          },
+          "rouge-2": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f": 1.0
+          },
+          "rouge-l": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f": 1.0
+          }
+        },
+        "structural_accuracy": null,
+        "overall_score": 0.7
+      },
+      "overall_score": 0.7
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-002",
+    "question": "새로운 PE 라우터 추가 후 BGP 경로 이상이 발생하는 원인은 무엇인가?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": "BGP 설정 오류 또는 라우터 간의 연결 문제",
+    "explanation": "새로운 PE 라우터를 추가한 후 BGP 경로에 이상이 발생하는 원인은 주로 BGP 설정 오류나 라우터 간의 연결 문제 때문입니다. 특히, iBGP 피어링이 제대로 설정되지 않았거나, 라우터 간의 네트워크 연결이 불안정할 경우 이러한 문제가 발생할 수 있습니다.",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "scenario",
+    "level": 4,
+    "persona": "troubleshooter",
+    "scenario": "장애 상황 대응",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "ibgp_missing_pairs_count",
+          "metric_params": {
+            "host": "sample2"
+          }
+        },
+        {
+          "intent": "show_bgp_summary",
+          "params": {
+            "host": "sample2"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_ibgp_missing_pairs_count": 0
+      },
+      "question_length": 41,
+      "answer_length": 25,
+      "has_numbers": false,
+      "has_technical_terms": true,
+      "task_category": "기술적 오류 질의",
+      "evaluation": {
+        "question_id": "ENHANCED_ENHANCED-SCENARIO-002",
+        "answer_type": "short",
+        "predicted_answer": "BGP 설정 오류 또는 라우터 간의 연결 문제",
+        "ground_truth": "BGP 설정 오류 또는 라우터 간의 연결 문제",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-25299",
     "question": "sample7 장비의 eBGP 피어 목록은?",
     "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": "192.168.1.11",
@@ -991,7 +982,7 @@
       "has_technical_terms": false,
       "task_category": "단순 조회 업무",
       "evaluation": {
-        "question_id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-4245",
+        "question_id": "BASIC_DSL-NEIGHBOR_LIST_EBGP-25299",
         "answer_type": "short",
         "predicted_answer": "192.168.1.11",
         "ground_truth": "192.168.1.11",
@@ -1009,7 +1000,7 @@
     }
   },
   {
-    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-24593",
+    "id": "BASIC_DSL-SSH_ENABLED_DEVICES-1597",
     "question": "SSH가 활성화된 장비 목록은?",
     "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
     "ground_truth": "CE1 CE2 sample10 sample7 sample8 sample9",
@@ -1040,7 +1031,7 @@
       "has_technical_terms": false,
       "task_category": "보안 질의",
       "evaluation": {
-        "question_id": "BASIC_DSL-SSH_ENABLED_DEVICES-24593",
+        "question_id": "BASIC_DSL-SSH_ENABLED_DEVICES-1597",
         "answer_type": "short",
         "predicted_answer": "CE1 CE2 sample10 sample7 sample8 sample9",
         "ground_truth": "CE1 CE2 sample10 sample7 sample8 sample9",
@@ -1059,17 +1050,24 @@
   },
   {
     "id": "ENHANCED_ENHANCED-ANALYTICAL-004",
-    "question": "iBGP 풀메시 누락으로 인해 발생할 수 있는 경로 수렴 문제를 해결하기 위해 어떤 조치를 취할 수 있습니까?",
+    "question": "iBGP 풀메시 구성이 누락된 경우, 특정 라우터에서 발생할 수 있는 경로 누락 문제를 어떻게 해결할 수 있을까요?",
     "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "ground_truth": "# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for set_bgp_routemap\n# ERROR: Failed to generate command for set_static_route",
-    "explanation": "",
-    "answer_type": "long",
+    "ground_truth": "iBGP 풀메시 구성을 추가하여 모든 iBGP 라우터 간의 경로 정보를 교환할 수 있도록 합니다.",
+    "explanation": "iBGP 풀메시 구성이 누락되면 특정 라우터가 다른 라우터로부터 경로 정보를 받지 못하게 되어 경로 누락 문제가 발생할 수 있습니다. 이를 해결하기 위해서는 모든 iBGP 라우터 간에 직접 연결을 설정하여 경로 정보를 교환할 수 있도록 해야 합니다.",
+    "answer_type": "short",
     "category": "advanced",
     "complexity": "analytical",
     "level": 3,
     "persona": "network_engineer",
     "scenario": "BGP 경로 수렴 분석",
-    "source_files": null,
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
@@ -1080,57 +1078,42 @@
         {
           "intent": "set_bgp_routemap",
           "params": {
-            "host": "sample6",
-            "asn": "65000"
+            "host": "sample4"
           }
         },
         {
-          "intent": "set_static_route",
+          "intent": "show_bgp_summary",
           "params": {
-            "host": "sample6"
+            "host": "sample4"
           }
         }
       ],
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed",
-      "evidence": {},
-      "question_length": 61,
-      "answer_length": 158,
+      "evidence": {
+        "step_None_ibgp_missing_pairs": []
+      },
+      "question_length": 64,
+      "answer_length": 54,
       "has_numbers": false,
       "has_technical_terms": false,
       "task_category": "네트워크 토폴로지 구성 질의",
       "evaluation": {
         "question_id": "ENHANCED_ENHANCED-ANALYTICAL-004",
-        "answer_type": "long",
-        "predicted_answer": "# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for set_bgp_routemap\n# ERROR: Failed to generate command for set_static_route",
-        "ground_truth": "# ERROR: Failed to generate command for None\n# ERROR: Failed to generate command for set_bgp_routemap\n# ERROR: Failed to generate command for set_static_route",
+        "answer_type": "short",
+        "predicted_answer": "iBGP 풀메시 구성을 추가하여 모든 iBGP 라우터 간의 경로 정보를 교환할 수 있도록 합니다.",
+        "ground_truth": "iBGP 풀메시 구성을 추가하여 모든 iBGP 라우터 간의 경로 정보를 교환할 수 있도록 합니다.",
         "exact_match": 1.0,
         "f1_score": 1.0,
-        "token_accuracy": null,
-        "normalized_accuracy": null,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
         "bert_score": null,
-        "bleu_score": 1.0,
-        "rouge_scores": {
-          "rouge-1": {
-            "precision": 1.0,
-            "recall": 1.0,
-            "f": 1.0
-          },
-          "rouge-2": {
-            "precision": 1.0,
-            "recall": 1.0,
-            "f": 1.0
-          },
-          "rouge-l": {
-            "precision": 1.0,
-            "recall": 1.0,
-            "f": 1.0
-          }
-        },
+        "bleu_score": null,
+        "rouge_scores": null,
         "structural_accuracy": null,
-        "overall_score": 0.7
+        "overall_score": 1.0
       },
-      "overall_score": 0.7
+      "overall_score": 1.0
     }
   }
 ]

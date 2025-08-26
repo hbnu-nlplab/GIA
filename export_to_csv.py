@@ -1,44 +1,42 @@
 import json
 import csv
+from pathlib import Path
 from integrated_pipeline import DatasetSample, assign_task_category
 
-
-def convert_to_csv(json_path="output_dataset/enhanced_dataset.json", csv_path="output_dataset/dataset_for_evaluation.csv"):
-    """최종 데이터셋 JSON을 평가용 CSV 파일로 변환합니다."""
-    with open(json_path, 'r', encoding='utf-8') as f:
-        dataset = json.load(f)
-
-    # rows의 키(id, level, context, question, ground_truth, explanation, answer_type, task_category, source_files)에 맞게 헤더 정렬
+def convert_to_csv(json_paths: list[str], csv_path: str):
+    """
+    여러 데이터셋 JSON 파일을 읽어 하나의 평가용 CSV 파일로 변환합니다.
+    """
+    print(f"🚀 {', '.join(json_paths)} 파일을 CSV로 변환 시작...")
+    
+    # [수정] 헤더에 'origin' 추가 (rule-based vs llm-generated 구분용)
     header = [
-        "id",
-        "level",
-        "task_category",
-        "answer_type",
-        "question",
-        "ground_truth",
-        "explanation",
-        "context",
-        "source_files",
+        "id", "origin", "level", "task_category", "answer_type", 
+        "complexity", "persona", "question", "ground_truth", 
+        "explanation", "context", "source_files"
     ]
+    all_samples = []
+
+    # [수정] 여러 JSON 파일을 순회하며 데이터 로드
+    for json_path in json_paths:
+        path = Path(json_path)
+        if not path.exists():
+            print(f"⚠️ 경고: {json_path} 파일을 찾을 수 없습니다. 건너뜁니다.")
+            continue
+        
+        with open(path, 'r', encoding='utf-8') as f:
+            dataset = json.load(f)
+
+        # JSON 데이터 구조에 따라 샘플 추출
+        if isinstance(dataset, dict):
+            for split in ["train", "validation", "test"]:
+                if split in dataset and isinstance(dataset[split], list):
+                    all_samples.extend(dataset[split])
+        elif isinstance(dataset, list):
+            all_samples.extend(dataset)
+
     rows = []
-
-    # 다양한 JSON 구조를 지원: {train/validation/test} 또는 리스트 형태
-    samples = []
-    if isinstance(dataset, dict):
-        for split in ["train", "validation", "test"]:
-            split_data = dataset.get(split)
-            if isinstance(split_data, list):
-                samples.extend(split_data)
-        # 스플릿 키가 없고 data 키가 있는 경우 대응
-        if not samples and isinstance(dataset.get("data"), list):
-            samples = dataset["data"]
-    elif isinstance(dataset, list):
-        samples = dataset
-    else:
-        print("지원하지 않는 데이터 형식의 JSON입니다.")
-        return
-
-    for sample in samples:
+    for sample in all_samples:
         ds = DatasetSample(
             id=sample.get("id", ""),
             question=sample.get("question", ""),
@@ -52,30 +50,50 @@ def convert_to_csv(json_path="output_dataset/enhanced_dataset.json", csv_path="o
             persona=sample.get("persona"),
             scenario=sample.get("scenario"),
             source_files=sample.get("source_files"),
-            metadata=sample.get("metadata"),
+            metadata=sample.get("metadata", {}),
         )
 
-        task_category = ds.metadata.get("task_category") if ds.metadata and "task_category" in ds.metadata else assign_task_category(ds)
-        referenced_files_str = ", ".join(ds.source_files or [])
+        task_category = ds.metadata.get("task_category") or assign_task_category(ds)
+        origin = ds.metadata.get("origin", "unknown")
+        
+        # ground_truth가 리스트나 딕셔너리일 경우 JSON 문자열로 변환
+        gt = ds.ground_truth
+        if isinstance(gt, (dict, list)):
+            gt_str = json.dumps(gt, ensure_ascii=False)
+        else:
+            gt_str = str(gt)
+
         rows.append({
             "id": ds.id,
+            "origin": origin,
             "level": ds.level,
-            "context": ds.context,
-            "question": ds.question,
-            "ground_truth": ds.ground_truth,
-            "explanation": ds.explanation,
-            "answer_type": ds.answer_type,
             "task_category": task_category,
-            "source_files": referenced_files_str,
+            "answer_type": ds.answer_type,
+            "complexity": ds.complexity,
+            "persona": ds.persona,
+            "question": ds.question,
+            "ground_truth": gt_str,
+            "explanation": ds.explanation,
+            "context": ds.context,
+            "source_files": ", ".join(ds.source_files or []),
         })
 
-    with open(csv_path, 'w', newline='', encoding='utf-8-sig') as f:
+    output_path = Path(csv_path)
+    output_path.parent.mkdir(exist_ok=True, parents=True)
+    
+    with open(output_path, 'w', newline='', encoding='utf-8-sig') as f:
         writer = csv.DictWriter(f, fieldnames=header)
         writer.writeheader()
         writer.writerows(rows)
+    
+    print(f"✅ CSV 변환 완료! {len(rows)}개 행이 {csv_path}에 저장되었습니다.")
 
-    print(f"✅ CSV 파일 생성 완료: {csv_path}")
-
-
-if __name__ == "__main__":
-    convert_to_csv()
+if __name__ == '__main__':
+    # [수정] basic과 enhanced JSON 파일을 모두 입력으로 전달
+    convert_to_csv(
+        json_paths=[
+            "output_dataset/basic_dataset.json",
+            "output_dataset/enhanced_dataset.json"
+        ],
+        csv_path="output_dataset/dataset_for_evaluation.csv"
+    )
