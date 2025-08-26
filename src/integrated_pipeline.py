@@ -1138,7 +1138,7 @@ def main():
             PersonaType.TROUBLESHOOTER,
             PersonaType.COMPLIANCE_OFFICER
         ],
-        output_dir="output_dataset"
+        output_dir="output"
     )
     
     # 추출된 카테고리 로그 출력
