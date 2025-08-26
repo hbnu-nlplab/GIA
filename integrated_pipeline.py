@@ -419,7 +419,7 @@ class NetworkConfigDatasetGenerator:
         return basic_samples
     
     def _execute_stage_enhanced_generation(self, network_facts: Dict[str, Any]) -> List[DatasetSample]:
-        """3단계: 심화 질문 생성 및 LLM 리뷰 후, AnswerAgent를 통한 정답 계산"""
+        """3단계: 심화 질문 생성 및 'AnswerAgent'를 통한 정답 생성"""
         self.logger.info("3단계: 심화 질문 생성 (Enhanced LLM) 및 정답 생성 (AnswerAgent)")
 
         enhanced_questions = self.enhanced_generator.generate_enhanced_questions(
@@ -428,258 +428,29 @@ class NetworkConfigDatasetGenerator:
             questions_per_template=self.config.enhanced_questions_per_category,
         )
         self.logger.info(f"LLM이 생성한 초기 질문 수: {len(enhanced_questions)}")
-
-        reviewed_questions = self.enhanced_generator._review_generated_questions(
-            enhanced_questions
-        )
+        reviewed_questions = self.enhanced_generator._review_generated_questions(enhanced_questions)
         self.logger.info(f"LLM 리뷰 후 유효한 질문 수: {len(reviewed_questions)}")
 
         answer_agent = AnswerAgent(network_facts)
-        command_agent = CommandAgent(network_facts)
         enhanced_samples: List[DatasetSample] = []
 
-        # CommandAgent에서 지원하는 intent 목록
-        valid_command_intents = {
-            "show_bgp_summary", "show_ip_interface_brief", "show_ip_route_ospf",
-            "show_processes_cpu", "show_l2vpn_vc", "show_ip_ospf_neighbor",
-            "show_users", "show_logging", "ssh_direct_access", "set_static_route",
-            "set_bgp_routemap", "set_interface_description", "create_vrf_and_assign",
-            "set_ospf_cost", "set_vty_acl", "set_hostname", "ssh_proxy_jump",
-            "ssh_multihop_jump", "check_connectivity", "show_bgp_neighbor_detail",
-            "show_bgp_neighbors", "show_log_include", "show_interface_status",
-            "show_vrf", "show_route_table", "show_ospf_database", "show_l2vpn_status"
-        }
-
-        def infer_missing_params(
-            intent: str, params: Dict[str, Any], network_facts: Dict[str, Any]
-        ) -> Dict[str, Any]:
-            """Infer or supply default values for missing command parameters."""
-            updated = dict(params)
-            devices = network_facts.get("devices", [])
-            peers = (
-                network_facts.get("bgp_neighbors")
-                or network_facts.get("bgp_peers")
-                or []
-            )
-
-            def _device_ip(idx: int) -> Optional[str]:
-                if idx < len(devices):
-                    d = devices[idx]
-                    return (
-                        d.get("management_ip")
-                        or d.get("mgmt_ip")
-                        or d.get("ip")
-                        or d.get("name")
-                    )
-                return None
-
-            if intent in {"set_bgp_routemap", "show_bgp_neighbor_detail", "check_connectivity"}:
-                if "neighbor_ip" not in updated:
-                    if peers:
-                        peer = peers[0]
-                        updated["neighbor_ip"] = (
-                            peer.get("neighbor_ip")
-                            or peer.get("remote_ip")
-                            or peer.get("ip")
-                            or peer.get("remote")
-                        )
-                    if "neighbor_ip" not in updated:
-                        candidate = _device_ip(1)
-                        if candidate:
-                            updated["neighbor_ip"] = candidate
-                    if "neighbor_ip" not in updated:
-                        updated["neighbor_ip"] = "192.0.2.1"
-                if intent == "set_bgp_routemap":
-                    if "asn" not in updated:
-                        asn = devices[0].get("as") if devices else None
-                        updated["asn"] = asn or "65000"
-                    if "map_name" not in updated:
-                        updated["map_name"] = "DEFAULT_MAP"
-                if intent == "check_connectivity" and "destination" not in updated:
-                    updated["destination"] = updated.get("neighbor_ip", "192.0.2.1")
-
-            if intent in {"ssh_direct_access", "ssh_proxy_jump", "ssh_multihop_jump"}:
-                if "user" not in updated:
-                    updated["user"] = network_facts.get("default_user", "admin")
-                if intent == "ssh_direct_access":
-                    if "host" not in updated:
-                        updated["host"] = _device_ip(0) or "192.168.1.1"
-                elif intent == "ssh_proxy_jump":
-                    if "jump_host" not in updated:
-                        updated["jump_host"] = _device_ip(0) or "192.168.1.1"
-                    if "destination_host" not in updated:
-                        updated["destination_host"] = _device_ip(1) or "192.168.1.2"
-                elif intent == "ssh_multihop_jump":
-                    if "jump_host1" not in updated:
-                        updated["jump_host1"] = _device_ip(0) or "192.168.1.1"
-                    if "jump_host2" not in updated:
-                        updated["jump_host2"] = _device_ip(1) or "192.168.1.2"
-                    if "destination_host" not in updated:
-                        updated["destination_host"] = _device_ip(2) or "192.168.1.3"
-
-            required_params = {
-                "set_bgp_routemap": {"asn", "neighbor_ip", "map_name"},
-                "ssh_direct_access": {"user", "host"},
-                "ssh_proxy_jump": {"user", "jump_host", "destination_host"},
-                "ssh_multihop_jump": {"user", "jump_host1", "jump_host2", "destination_host"},
-                "check_connectivity": {"destination"},
-                "show_bgp_neighbor_detail": {"neighbor_ip"},
-            }
-            required = required_params.get(intent, set())
-            missing = [p for p in required if p not in updated or not updated[p]]
-            if missing:
-                raise ValueError(f"Missing parameters for intent '{intent}': {missing}")
-
-            return updated
-
-        def normalize_steps(steps: List[Dict[str, Any]]) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
-            """Normalize reasoning steps by mapping intents or separating non-command steps."""
-            command_steps: List[Dict[str, Any]] = []
-            non_command_steps: List[Dict[str, Any]] = []
-
-            keyword_intent_map = {
-                "bgp neighbor detail": "show_bgp_neighbor_detail",
-                "bgp neighbors": "show_bgp_neighbors",
-                "bgp": "show_bgp_summary",
-                "interface brief": "show_ip_interface_brief",
-                "ospf neighbor": "show_ip_ospf_neighbor",
-                "ospf database": "show_ospf_database",
-                "ospf": "show_ip_route_ospf",
-                "cpu": "show_processes_cpu",
-                "l2vpn status": "show_l2vpn_status",
-                "l2vpn": "show_l2vpn_vc",
-                "users": "show_users",
-                "logging": "show_logging",
-                "static route": "set_static_route",
-                "routemap": "set_bgp_routemap",
-                "interface description": "set_interface_description",
-                "create vrf": "create_vrf_and_assign",
-                "ospf cost": "set_ospf_cost",
-                "vty acl": "set_vty_acl",
-                "hostname": "set_hostname",
-                "ssh proxy": "ssh_proxy_jump",
-                "ssh jump": "ssh_multihop_jump",
-                "ssh": "ssh_direct_access",
-                "connectivity": "check_connectivity",
-                "log include": "show_log_include",
-                "interface status": "show_interface_status",
-                "vrf": "show_vrf",
-                "route table": "show_route_table",
-            }
-
-            for step in steps:
-                if not isinstance(step, dict):
-                    non_command_steps.append(step)
-                    continue
-
-                intent = step.get("intent")
-                if not intent:
-                    text = f"{step.get('required_metric', '')} {step.get('description', '')}".lower()
-                    for keyword, mapped_intent in keyword_intent_map.items():
-                        if keyword in text:
-                            intent = mapped_intent
-                            step["intent"] = intent
-                            break
-
-                if intent in valid_command_intents:
-                    command_steps.append(step)
-                else:
-                    non_command_steps.append(step)
-
-            return command_steps, non_command_steps
-
         for eq in reviewed_questions:
-            # Handle string entries (malformed LLM output)
-            if isinstance(eq, str):
-                self.logger.warning(f"Skipping malformed question entry: {eq[:100]}...")
-                continue
-                
-            # Handle dict entries (normal case)
             if not isinstance(eq, dict):
                 self.logger.warning(f"Skipping non-dict entry: {type(eq)}")
                 continue
-                
+
             question_text = eq.get("question")
             reasoning_plan = eq.get("reasoning_plan")
             if not question_text or not reasoning_plan:
                 continue
 
-            if isinstance(reasoning_plan, list):
-                command_steps, non_command_steps = normalize_steps(reasoning_plan)
-            else:
-                command_steps, non_command_steps = [], []
-            inferred_steps: List[Dict[str, Any]] = []
-            for step in command_steps:
-                intent = step.get("intent")
-                params = step.get("params", {})
-                try:
-                    step["params"] = infer_missing_params(intent, params, network_facts)
-                    inferred_steps.append(step)
-                except ValueError as e:
-                    self.logger.warning(
-                        f"Parameter inference failed - intent: {intent}, params: {params}, error: {e}"
-                    )
-                    non_command_steps.append(step)
-            command_steps = inferred_steps
-
-            if command_steps and not non_command_steps:
-                commands = []
-                for step in command_steps:
-                    try:
-                        intent = step.get("intent")
-                        params = step.get("params", {})
-                        command = command_agent.generate(intent, params)
-                        commands.append(command)
-                    except Exception as e:
-                        self.logger.warning(
-                            f"명령어 생성 실패 - intent: {intent}, params: {params}, error: {e}"
-                        )
-                        commands.append(f"# ERROR: Failed to generate command for {intent}")
-
-                final_answer = "\n".join(commands)
-                sample = DatasetSample(
-                    id=f"ENHANCED_{eq.get('test_id', 'ENH')}",
-                    question=question_text,
-                    context="",
-                    ground_truth=final_answer,
-                    explanation="",
-                    answer_type=eq.get("answer_type", "long"),
-                    category=eq.get("category", "Enhanced_Analysis"),
-                    complexity=eq.get("complexity", "analytical"),
-                    level=eq.get("level", 3),
-                    persona=eq.get("persona"),
-                    scenario=eq.get("scenario"),
-                    source_files=None,
-                    metadata={
-                        "origin": "enhanced_llm_with_agent",
-                        "reasoning_plan": reasoning_plan,
-                        "reasoning_requirement": eq.get("reasoning_requirement", ""),
-                        "expected_analysis_depth": eq.get("expected_analysis_depth", "detailed"),
-                        "evidence": {},
-                    },
-                )
-            else:
-                # AnswerAgent로 처리할 단계
-                plan_for_answer = non_command_steps or reasoning_plan
-                result = answer_agent.execute_plan(question_text, plan_for_answer)
+            try:
+                result = answer_agent.execute_plan(question_text, reasoning_plan)
                 final_answer = result.get("ground_truth")
                 explanation = result.get("explanation", "")
-
-                if command_steps:
-                    commands = []
-                    for step in command_steps:
-                        try:
-                            intent = step.get("intent")
-                            params = step.get("params", {})
-                            command = command_agent.generate(intent, params)
-                            commands.append(command)
-                        except Exception as e:
-                            self.logger.warning(
-                                f"명령어 생성 실패 - intent: {intent}, params: {params}, error: {e}"
-                            )
-                            commands.append(f"# ERROR: Failed to generate command for {intent}")
-                    if commands:
-                        final_answer = "\n".join(commands + [str(final_answer)])
+                if final_answer in (None, ""):
+                    self.logger.warning(f"AnswerAgent가 질문에 대한 답을 생성하지 못했습니다: {question_text}")
+                    continue
 
                 sample = DatasetSample(
                     id=f"ENHANCED_{eq.get('test_id', 'ENH')}",
@@ -687,7 +458,7 @@ class NetworkConfigDatasetGenerator:
                     context="",
                     ground_truth=final_answer,
                     explanation=explanation,
-                    answer_type=eq.get("answer_type", "long"),
+                    answer_type=self._determine_answer_type(final_answer),
                     category=eq.get("category", "Enhanced_Analysis"),
                     complexity=eq.get("complexity", "analytical"),
                     level=eq.get("level", 3),
@@ -699,11 +470,14 @@ class NetworkConfigDatasetGenerator:
                         "reasoning_plan": reasoning_plan,
                         "reasoning_requirement": eq.get("reasoning_requirement", ""),
                         "expected_analysis_depth": eq.get("expected_analysis_depth", "detailed"),
-                        "evidence": answer_agent.evidence,
+                        "evidence": result.get("evidence", answer_agent.evidence),
                     },
                 )
-            sample.context = self._create_enhanced_context(network_facts, sample)
-            enhanced_samples.append(sample)
+                sample.context = self._create_enhanced_context(network_facts, sample)
+                enhanced_samples.append(sample)
+            except Exception as e:
+                self.logger.error(f"AnswerAgent 실행 중 오류 발생: Q='{question_text}', Error: {e}")
+                continue
 
         self.logger.info(f"심화 질문 및 정답 생성 완료: {len(enhanced_samples)}개")
 
