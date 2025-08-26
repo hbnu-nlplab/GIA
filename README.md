@@ -428,8 +428,8 @@ from generators.enhanced_llm_generator import QuestionComplexity, PersonaType
 
 # 맞춤 설정
 config = PipelineConfig(
-    xml_data_dir="XML_Data",
-    policies_path="policies/policies.json", 
+    xml_data_dir="data/raw/XML_Data",
+    policies_path="policies.json",
     target_categories=["Security_Policy", "BGP_Consistency"],
     basic_questions_per_category=5,
     enhanced_questions_per_category=3,

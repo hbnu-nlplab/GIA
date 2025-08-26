@@ -15,6 +15,6 @@ CMD.txt
 __pycache__/
 *.pyc
 demo_output/
-# output_dataset/
+output/
 .env
 !requirements.txt
