@@ -1,635 +1,524 @@
-# 🎯 GIA-Re: 네트워크 설정 질문-답변 데이터셋 생성 시스템
+# 🌐 LLM을 활용한 네트워크 매니지먼트 연구 현황 발표
 
-**Network Configuration Q&A Dataset Generation with AI-Powered Intelligence**
+## 📋 연구 개요
+---
 
-> 📡 네트워크 설정 분석 및 LLM 성능 평가를 위한 포괄적 데이터셋 생성 시스템
+### 🎯 **연구 목적**
+- **LLM의 네트워크 관리 도메인 이해 능력**을 체계적으로 평가할 수 있는 고품질 벤치마크 데이터셋 구축
+- **다양한 LLM들의 성능 비교**를 위한 표준화된 평가 프레임워크 제공
+- **자율 네트워크 관리 시스템** 개발의 기초 연구
 
-## 🚀 프로젝트 개요
-
-**GIA-Re**는 실제 네트워크 설정 파일(XML)을 분석하여 다양한 복잡도와 관점의 질문-답변 쌍을 자동 생성하는 시스템입니다. 규칙 기반 질문 생성과 LLM 기반 고급 질문 생성을 결합하여, 네트워크 전문가 수준의 평가 데이터셋을 제공합니다.
-
-### 🎯 주요 목표
-
-- **네트워크 LLM 성능 평가**: 실제 운영 환경과 유사한 질문으로 AI 모델 평가
-- **다각적 질문 생성**: 6가지 페르소나 x 4가지 복잡도로 다양한 관점 반영
-- **정확한 정답 생성**: 실제 네트워크 데이터 분석을 통한 검증된 답변 제공
-- **포괄적 평가 지원**: EM, F1, BERT-Score, BLEU, ROUGE 등 다중 메트릭 지원
+### 🔬 **연구 접근법**
+- **실제 네트워크 설정 파일(XML)**을 기반으로 한 실용적 데이터셋 생성
+- **하이브리드 전략**: Rule-based + LLM의 장점 결합
+- **End-to-End 자동화**: 파싱부터 평가까지 완전 자동화 파이프라인
 
 ---
 
-## 🏗️ 시스템 아키텍처
+## 🏗️ 시스템 아키텍처: 6단계 통합 파이프라인
+---
 
-### 📊 6단계 데이터셋 생성 파이프라인
-
-```mermaid
-graph TD
-    A[📄 XML 설정 파싱] --> B[🔧 기초 질문 생성]
-    A --> C[🤖 심화 질문 생성]
-    B --> D[🔄 통합 어셈블리]
-    C --> D
-    D --> E[✅ 검증 및 품질관리]
-    E --> F[📊 평가 메트릭 계산]
-    F --> G[📦 최종 데이터셋]
-
-    subgraph "1️⃣ 파싱 단계"
-        A
-    end
-
-    subgraph "2️⃣ 생성 단계"
-        B
-        C
-    end
-
-    subgraph "3️⃣ 처리 단계"
-        D
-        E
-        F
-    end
-
-    subgraph "4️⃣ 출력"
-        G
-    end
+### **전체 구조 개요**
+```
+입력: XML 설정 파일 (8개 네트워크 장비)
+     ↓
+6단계 파이프라인 처리
+     ↓
+출력: 고품질 Q&A 데이터셋 (Train/Val/Test)
 ```
 
-### 🎭 6가지 전문가 페르소나
+![agent_architecture](./agent_pipline.png)
 
-| 페르소나                      | 역할        | 관심 영역          | 질문 특성           |
-| ------------------------- | --------- | -------------- | --------------- |
-| 🔧 **Network Engineer**   | 기술적 설정 분석 | BGP, OSPF, 라우팅 | 설정 최적화, 기술적 정확성 |
-| 🔐 **Security Auditor**   | 보안 정책 검증  | SSH, AAA, 접근제어 | 취약점 분석, 규정 준수   |
-| 📊 **NOC Operator**       | 운영 모니터링   | 장애 대응, 성능      | 실시간 문제 해결       |
-| 🏗️ **Network Architect** | 토폴로지 설계   | 확장성, 구조        | 설계 검증, 미래 확장    |
-| 🔍 **Troubleshooter**     | 문제 진단     | 장애 원인 분석       | 근본 원인 분석        |
-| 📋 **Compliance Officer** | 규정 준수     | 정책 검토, 감사      | 표준 준수, 문서화      |
 
-### 🧠 4단계 복잡도 레벨
 
-| 레벨                | 복잡도    | 설명           | 예시 질문                     |
-| ----------------- |:------ | ------------ | ------------------------- |
-| 🟢 **Basic**      | 단순 조회  | 팩트 추출, 개수 세기 | "SSH가 설정된 장비는 몇 대인가?"     |
-| 🟡 **Analytical** | 분석적 추론 | 패턴 인식, 비교 분석 | "iBGP 풀메시 구성의 완전성을 분석하세요" |
-| 🟠 **Synthetic**  | 복합 종합  | 다중 정보 통합     | "네트워크 보안 위험도를 종합 평가하세요"   |
-| 🔴 **Diagnostic** | 문제 진단  | 원인 분석, 해결책   | "BGP 피어 불안정의 원인과 해결방안은?"  |
+### **📊 핵심 수치**
+- **35개 네트워크 메트릭** × **5가지 복잡도** × **6가지 페르소나**
+- **12개 주요 카테고리**: BGP, VRF, Security, L2VPN, OSPF, Interface 등
+- **2가지 생성 방식**: Rule-based (기초) + LLM Enhanced (심화)
 
 ---
 
-## 🏗️ 프로젝트 구조
-
-```text
-GIA-Re/
-├── 📁 parsers/           # XML 파싱 모듈
-│   ├── universal_parser.py          # 통합 XML 파서 (Cisco IOS/IOS-XR)
-│   └── vendor/                      # 벤더별 파서 확장
-├── 📁 generators/        # 질문 생성 모듈
-│   ├── rule_based_generator.py      # 규칙 기반 질문 생성 (기초)
-│   ├── enhanced_llm_generator.py    # LLM 기반 고급 질문 생성 (심화)
-│   └── llm_explorer.py             # LLM 탐색 엔진 (실험적)
-├── 📁 assemblers/        # 테스트 조립 모듈
-│   └── test_assembler.py           # 최종 테스트 데이터셋 조립
-├── 📁 inspectors/        # 평가 및 검증 모듈
-│   ├── evaluation_system.py       # 종합 평가 시스템
-│   └── intent_inspector.py        # 의도 분석 모듈
-├── 📁 utils/             # 핵심 유틸리티
-│   ├── builder_core.py            # 메트릭 계산 엔진 (100+ 메트릭)
-│   ├── llm_adapter.py             # LLM 연동 어댑터
-│   ├── config_manager.py          # 설정 관리
-│   └── simple_generator.py        # 간단 생성기
-├── 📁 policies/          # 정책 및 규칙 정의
-│   └── policies.json              # 11개 카테고리별 생성 정책
-├── 📁 XML_Data/          # 입력 XML 파일 (6대 장비)
-│   ├── ce1.xml, ce2.xml          # 고객 장비 설정 (CE)
-│   └── sample7-10.xml            # 통신사 장비 설정 (PE)
-├── 📁 xml_분석/          # 네트워크 분석 보고서
-│   ├── XML_설정_데이터_종합_분석_보고서.md
-│   ├── 네트워크_XML_설정_초보자_가이드.md
-│   └── XML_설정_빠른참조_치트시트.md
-├── 📁 demo_output/       # 생성 결과 및 보고서
-│   ├── network_config_qa_dataset.json    # 최종 데이터셋
-│   ├── dataset_report.html              # 인터랙티브 HTML 보고서
-│   └── train.json, validation.json, test.json
-├── answer_agent.py       # 답변 생성 에이전트
-├── command_agent.py      # 네트워크 명령어 생성 에이전트
-├── integrated_pipeline.py        # 통합 파이프라인 (메인 실행)
-└── README.md            # 본 문서
-```
-
+## 🔧 Stage 1: XML 파싱 및 정규화
 ---
 
-## 🔧 핵심 에이전트 시스템
+### **해결하는 문제**
+네트워크 장비 벤더별로 XML 스키마가 다름 → 통합 처리 필요
 
-### 1. 📡 Answer Agent (`answer_agent.py`)
-
-네트워크 전문가 수준의 정답 생성 및 설명 제공
-
+### **구현 원리**
 ```python
-class AnswerAgent:
-    """메트릭 기반 추론을 통한 전문적 답변 생성기"""
-
-    def execute_plan(self, question: str, plan: Union[List[Dict], str]) -> Dict:
-        """
-        단계별 추론을 통해 정답과 설명 생성
-        - 100+ 네트워크 메트릭 활용
-        - 다단계 추론 지원  
-        - 검증된 증거 기반 답변
-        """
+# Universal Parser 핵심 로직
+class UniversalParser:
+    def normalize_xml(self, xml_files):
+        # 1. 네임스페이스 통합
+        unified_namespace = self.merge_namespaces(xml_files)
+        
+        # 2. 계층 구조 정규화  
+        # IOS-XR: router bgp → neighbor → address-family
+        # 표준화: bgp.neighbor.af
+        normalized_facts = self.flatten_hierarchy(unified_namespace)
+        
+        return normalized_facts
 ```
 
-**🎯 주요 기능:**
+### **핵심 성과**
+- **Cisco IOS, IOS-XR, NSO** 등 이질적 XML 구조 → **단일 팩트 모델** 변환
+- **벤더 독립적** 질문 생성 가능
 
-- **📊 메트릭 기반 추론**: BGP, OSPF, VRF, SSH 등 100+ 메트릭 활용
-- **🧮 다단계 계산**: 복합 메트릭을 조합한 심화 분석
-- **📝 설명 생성**: LLM을 활용한 전문적 해설 제공
-- **🔍 증거 추적**: 답변 근거가 되는 설정 파일 및 수치 제시
+---
 
-**💡 실행 예시:**
+## 📝 Stage 2: Rule-based 기초 질문 생성 
+---
 
+### **설계 철학**
+**정확성과 일관성**을 보장하는 대량 기초 질문 자동 생성
+
+### **35개 핵심 메트릭 체계**
+| 카테고리 | 주요 메트릭 | 질문 예시 |
+|----------|-------------|-----------|
+| **BGP_Consistency** | `ibgp_missing_pairs` | "AS 65000의 iBGP 누락 페어는?" |
+| **Security_Policy** | `ssh_enabled_devices` | "SSH가 활성화된 장비 목록은?" |
+| **VRF_Consistency** | `vrf_without_rt_pairs` | "RT 미설정 VRF 쌍은?" |
+| **L2VPN_Consistency** | `l2vpn_pwid_mismatch` | "PW-ID 불일치 회선은?" |
+
+### **템플릿 매칭 시스템**
 ```python
-from answer_agent import AnswerAgent
+# Rule-based 생성 수식
+Q_basic = Template(M_i, P_network)
 
-agent = AnswerAgent(network_facts)
-plan = [
-    {"step": 1, "required_metric": "ssh_missing_count"},
-    {"step": 2, "required_metric": "ssh_enabled_devices"}
-]
-
-result = agent.execute_plan("SSH 설정 상태는?", plan)
-print(result)
-# {
-#   "ground_truth": "SSH가 설정되지 않은 장비는 2대입니다.",
-#   "explanation": "전체 6대 장비 중 sample8과 sample10에서 SSH 설정이 누락...",
-#   "source_files": ["sample8.xml", "sample10.xml"]
-# }
+# 예시: BGP 템플릿 매칭
+template = "AS {asn}의 iBGP 피어 수는?"
+params = {"asn": 65000}  # XML에서 추출
+question = template.format(**params)  # "AS 65000의 iBGP 피어 수는?"
 ```
 
-### 2. 💻 Command Agent (`command_agent.py`)
+### **장점**
+- ✅ **100% 정확한 정답** 보장 (XML에서 직접 계산)
+- ✅ **일관된 형식**으로 대량 생성
+- ✅ **핵심 메트릭 완전 커버**
 
-네트워크 장비별 맞춤 명령어 생성
+---
 
-```python
-class CommandAgent:
-    """벤더별 네트워크 명령어 생성 시스템"""
+## 🧠 Stage 3: LLM 기반 심화 질문 생성
+---
 
-    def generate(self, metric_name: str, params: Dict) -> str:
-        """
-        장비 유형에 맞는 CLI 명령어 생성
-        - Cisco IOS/IOS-XR 지원
-        - 파라미터 기반 동적 생성
-        - 실무 시나리오 반영
-        """
+### **설계 목표**
+Rule-based로 불가능한 **전문가 수준의 복잡한 분석 질문** 생성
+
+### **5단계 복잡도 계층**
+```
+Basic (단순 조회) 
+  ↓
+Analytical (분석적 추론) 
+  ↓  
+Synthetic (복합 정보 종합) 
+  ↓
+Diagnostic (문제 진단) 
+  ↓
+Scenario (시나리오 기반)
 ```
 
-**🛠️ 지원 명령어 유형:**
+### **6가지 전문가 페르소나**
+| 페르소나 | 관심 영역 | 질문 특징 |
+|----------|-----------|-----------|
+| **Network Engineer** | 라우팅, 프로토콜 | "BGP 경로 수렴에 영향을 주는 요소는?" |
+| **Security Auditor** | 보안 정책, 컴플라이언스 | "보안 정책 위반 사항을 분석하시오" |
+| **NOC Operator** | 모니터링, 장애 대응 | "현재 네트워크 상태를 종합 평가하시오" |
+| **Architect** | 설계, 확장성 | "토폴로지 확장 시 고려사항은?" |
+| **Troubleshooter** | 문제 진단, 해결 | "L2VPN 장애의 근본 원인을 파악하시오" |
+| **Compliance Officer** | 표준 준수, 감사 | "설정 표준 준수 여부를 검토하시오" |
 
-| 카테고리      | 명령어 예시                                        | 용도      |
-| --------- | --------------------------------------------- | ------- |
-| 🔍 **진단** | `show bgp summary`, `show ip interface brief` | 상태 확인   |
-| ⚙️ **설정** | `router bgp`, `interface description`         | 구성 변경   |
-| 🔐 **보안** | `ssh`, `access-class`, `aaa`                  | 보안 설정   |
-| 🌐 **고급** | `ssh proxy jump`, `vrf forwarding`            | 복합 시나리오 |
-
----
-
-## 📊 메트릭 시스템 (`utils/builder_core.py`)
-
-### 🔢 100+ 네트워크 메트릭 지원
-
-#### 🔐 보안 메트릭
-
-| 메트릭명                  | 설명             | 반환값 예시                   |
-| --------------------- | -------------- | ------------------------ |
-| `ssh_enabled_devices` | SSH 활성화된 장비 목록 | `["sample7", "sample9"]` |
-| `ssh_missing_count`   | SSH 미설정 장비 수   | `2`                      |
-| `aaa_enabled_devices` | AAA 활성화된 장비 목록 | `["ce1", "ce2"]`         |
-
-#### 🌐 BGP 메트릭
-
-| 메트릭명                      | 설명               | 반환값 예시                                    |
-| ------------------------- | ---------------- | ----------------------------------------- |
-| `ibgp_missing_pairs`      | iBGP 풀메시 누락 피어 쌍 | `["sample8-sample9", "sample8-sample10"]` |
-| `ibgp_under_peered_count` | iBGP 피어 부족 장비 수  | `1`                                       |
-| `neighbor_list_ibgp`      | iBGP 이웃 목록       | `{"sample7": ["1.1.1.1", "2.2.2.2"]}`     |
-
-#### 🔀 VRF 메트릭
-
-| 메트릭명                   | 설명           | 반환값 예시                         |
-| ---------------------- | ------------ | ------------------------------ |
-| `vrf_without_rt_count` | RT 미설정 VRF 수 | `1`                            |
-| `vrf_rd_map`           | VRF RD 매핑    | `{"CUSTOMER_A": "65000:100"}`  |
-| `vrf_names_set`        | VRF 이름 목록    | `["CUSTOMER_A", "CUSTOMER_B"]` |
-
-#### 🔗 L2VPN 메트릭
-
-| 메트릭명                 | 설명             | 반환값 예시       |
-| -------------------- | -------------- | ------------ |
-| `l2vpn_unidir_count` | 단방향 L2VPN 수    | `0`          |
-| `l2vpn_pw_id_set`    | L2VPN PW-ID 목록 | `[100, 200]` |
-
-#### 📡 OSPF 메트릭
-
-| 메트릭명                   | 설명                  | 반환값 예시     |
-| ---------------------- | ------------------- | ---------- |
-| `ospf_area0_if_count`  | OSPF Area 0 인터페이스 수 | `4`        |
-| `ospf_process_ids_set` | OSPF 프로세스 ID 목록     | `[1, 100]` |
-
----
-
-## 🎯 질문 생성 시스템
-
-### 📋 Rule-Based Generator (`generators/rule_based_generator.py`)
-
-정책 기반 체계적 질문 생성
-
-**🗂️ 지원 카테고리 (11개):**
-
-| 카테고리                       | 설명                   | 대표 메트릭                 | 질문 예시                    |
-| -------------------------- | -------------------- | ---------------------- | ------------------------ |
-| 🔐 **Security_Policy**     | SSH, AAA 보안 설정 검증    | `ssh_missing_count`    | "SSH가 설정되지 않은 장비는?"      |
-| 🌐 **BGP_Consistency**     | iBGP 풀메시, 피어링 일관성    | `ibgp_missing_pairs`   | "iBGP 풀메시에서 누락된 피어는?"    |
-| 🔀 **VRF_Consistency**     | VRF RD/RT 설정, 라우팅 격리 | `vrf_without_rt_count` | "RT가 설정되지 않은 VRF는?"      |
-| 🔗 **L2VPN_Consistency**   | L2VPN 연결성, PW-ID 매칭  | `l2vpn_unidir_count`   | "단방향 L2VPN 연결은?"         |
-| 🗺️ **OSPF_Consistency**   | OSPF 영역, 이웃 관계       | `ospf_area0_if_count`  | "OSPF Area 0의 인터페이스 수는?" |
-| 📊 **System_Inventory**    | 장비 정보, 버전, 사용자       | `system_hostname_text` | "각 장비의 호스트네임은?"          |
-| 🔍 **Security_Inventory**  | 보안 설정 현황             | `ssh_present_bool`     | "SSH 설정이 존재하는가?"         |
-| 🔌 **Interface_Inventory** | 인터페이스 상태, IP 할당      | `interface_count`      | "총 인터페이스 수는?"            |
-| 📡 **Routing_Inventory**   | 라우팅 프로토콜 현황          | `bgp_neighbor_count`   | "BGP 이웃의 총 수는?"          |
-| ⚡ **Services_Inventory**   | L3VPN, MPLS 서비스      | `vrf_count`            | "설정된 VRF의 수는?"           |
-| 💻 **Command_Generation**  | CLI 명령어 생성           | 명령어 템플릿                | "BGP 이웃 추가 명령어는?"        |
-
-### 🤖 Enhanced LLM Generator (`generators/enhanced_llm_generator.py`)
-
-AI 기반 복합 추론 질문 생성
-
-**🎨 특화 템플릿 예시:**
-
-```python
-QuestionTemplate(
-    complexity=QuestionComplexity.ANALYTICAL,
-    persona=PersonaType.NETWORK_ENGINEER,
-    scenario="BGP 경로 수렴 분석",
-    prompt_template="""
-    네트워크 엔지니어 관점에서, 주어진 BGP 설정을 분석하여:
-
-    1. 🔄 경로 수렴성 분석: iBGP 풀메시 누락이 경로 수렴에 미치는 영향
-    2. ⚠️ 장애 영향도 평가: 특정 피어 장애시 전체 네트워크 파급효과  
-    3. ✅ 설정 일관성 검증: AS 내 라우터들의 BGP 설정 일관성
-
-    각 질문은 분석적 추론이 필요하고 여러 메트릭을 종합한 판단을 요구합니다.
-    """,
-    expected_metrics=["ibgp_missing_pairs", "neighbor_list_ibgp", "bgp_neighbor_count"]
-)
-```
-
----
-
-## 🎨 평가 시스템 (`inspectors/evaluation_system.py`)
-
-### 📏 다중 평가 메트릭
-
-#### 📊 공통 메트릭
-
-| 메트릭                  | 설명          | 적용 대상 |
-| -------------------- | ----------- | ----- |
-| **Exact Match (EM)** | 정확한 일치율     | 모든 답변 |
-| **F1 Score**         | 토큰 레벨 F1 점수 | 모든 답변 |
-| **Token Accuracy**   | 토큰 정확도      | 단답형   |
-
-#### 📝 장문 답변 메트릭
-
-| 메트릭            | 설명           | 특징                    |
-| -------------- | ------------ | --------------------- |
-| **BERT-Score** | 의미적 유사도      | F1, Precision, Recall |
-| **BLEU**       | n-gram 기반 품질 | 번역 품질 평가              |
-| **ROUGE-L**    | 최장 공통 부분수열   | 요약 품질 평가              |
-
-#### 🔍 네트워크 도메인 특화 정규화
-
-| 정규화 유형      | 변환 예시                            | 목적         |
-| ----------- | -------------------------------- | ---------- |
-| **IP 주소**   | `192.168.1.1/24` → `192.168.1.1` | 서브넷 마스크 제거 |
-| **AS 번호**   | `AS 65000` → `as65000`           | 표기법 통일     |
-| **인터페이스**   | `GigabitEthernet0/0` → `ge0/0`   | 축약형 변환     |
-| **Boolean** | `활성` → `true`, `비활성` → `false`   | 언어 중립화     |
-
----
-
-## 💾 데이터셋 구조
-
-### 📋 샘플 데이터 형식
-
+### **Reasoning Plan 구조화**
 ```json
 {
-  "id": "ENHANCED_ENH_001",
-  "question": "현재 네트워크에서 iBGP 풀메시 구성이 완전한지 분석하고, 누락된 피어링이 있다면 그 영향도를 평가하세요.",
-  "context": "BGP 설정 현황:\nsample7: AS65000, 3개 피어\nsample8: AS65000, 2개 피어\nsample9: AS65000, 2개 피어\nsample10: AS65000, 2개 피어",
-  "ground_truth": "iBGP 풀메시가 불완전합니다. 총 4대의 라우터가 AS65000에 속해있지만, 필요한 6개의 피어 연결 중 4개만 설정되어 있습니다. 누락된 연결은 sample8-sample9, sample8-sample10입니다.",
-  "explanation": "iBGP 풀메시 분석 결과, sample7을 중심으로 한 허브 구조로 되어있어 sample8, sample9, sample10 간의 직접 피어링이 부족합니다. 이는 sample7 장애시 네트워크 분할을 야기할 수 있습니다.",
-  "answer_type": "long",
-  "category": "Enhanced_Analysis",
-  "complexity": "analytical",
-  "level": 3,
-  "persona": "network_engineer",
-  "source_files": ["sample7.xml", "sample8.xml", "sample9.xml", "sample10.xml"],
-  "metadata": {
-    "origin": "enhanced_llm_with_agent",
-    "task_category": "네트워크 토폴로지 구성 질의",
-    "overall_score": 0.89,
-    "reasoning_plan": [
-      {"step": 1, "action": "iBGP 피어 관계 분석"},
-      {"step": 2, "action": "풀메시 완전성 검증"},
-      {"step": 3, "action": "장애 영향도 평가"}
-    ]
-  }
-}
-```
-
-### 📂 출력 파일 구조
-
-```text
-demo_output/
-├── 📊 network_config_qa_dataset.json    # 전체 데이터셋
-├── 🚂 train.json                        # 훈련용 (70%)
-├── ✅ validation.json                   # 검증용 (15%)  
-├── 🧪 test.json                         # 테스트용 (15%)
-├── 📋 metadata.json                     # 생성 메타데이터
-├── 🎨 dataset_report.html               # 인터랙티브 HTML 리포트
-├── 📈 dataset_for_evaluation.csv        # 평가용 CSV
-└── 🔧 assembled_[complexity].json       # 복잡도별 중간 결과
-```
-
----
-
-## 🛠️ 실행 방법
-
-### 📦 설치 및 설정
-
-#### 1. **환경 준비**
-
-```bash
-# 저장소 클론
-git clone https://github.com/your-repo/GIA-Re.git
-cd GIA-Re
-
-# 가상환경 생성 (권장)
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# venv\Scripts\activate   # Windows
-
-# 의존성 설치
-pip install -r requirements.txt
-```
-
-#### 2. **환경 변수 설정** (`.env` 파일 생성)
-
-```env
-# OpenAI API (권장)
-OPENAI_API_KEY=your_openai_api_key_here
-
-# Anthropic API (선택사항)
-ANTHROPIC_API_KEY=your_anthropic_api_key_here
-```
-
-#### 3. **설정 파일 확인** (`config/settings.yaml`)
-
-```yaml
-models:
-  main: "gpt-4o"                 # 메인 생성 모델
-  answer_synthesis: "gpt-4o"     # 답변 합성 모델
-
-generation:
-  basic_questions_per_category: 10
-  enhanced_questions_per_category: 15
-
-llm:
-  temperature: 0.1
-  max_tokens: 1000
-```
-
-### 🚀 실행 옵션
-
-#### 기본 실행 (전체 파이프라인)
-
-```bash
-# 모든 카테고리로 전체 파이프라인 실행
-python integrated_pipeline.py
-```
-
-#### 빠른 데모 실행
-
-```bash
-# 축소 버전으로 빠른 테스트
-python demo_implementation.py
-```
-
-#### 맞춤 설정 실행
-
-```python
-from integrated_pipeline import NetworkConfigDatasetGenerator, PipelineConfig
-from generators.enhanced_llm_generator import QuestionComplexity, PersonaType
-
-# 맞춤 설정
-config = PipelineConfig(
-    xml_data_dir="data/raw/XML_Data",
-    policies_path="policies.json",
-    target_categories=["Security_Policy", "BGP_Consistency"],
-    basic_questions_per_category=5,
-    enhanced_questions_per_category=3,
-    target_complexities=[QuestionComplexity.ANALYTICAL],
-    target_personas=[PersonaType.NETWORK_ENGINEER, PersonaType.SECURITY_AUDITOR],
-    output_dir="custom_output"
-)
-
-# 생성 실행
-generator = NetworkConfigDatasetGenerator(config)
-dataset = generator.generate_complete_dataset()
-
-print(f"✅ 생성 완료: {dataset['metadata']['total_samples']}개 질문")
-```
-
----
-
-## 📋 네트워크 환경 분석
-
-### 🖥️ 테스트 장비 구성 (6대)
-
-| 장비명          | 역할                  | 플랫폼          | 관리 IP        | BGP AS | 주요 기능   | 상태   |
-| ------------ | ------------------- | ------------ | ------------ | ------ | ------- | ---- |
-| **CE1**      | Customer Edge       | Cisco IOS    | 172.16.1.40  | 65001  | 고객 A 연결 | ✅ 운영 |
-| **CE2**      | Customer Edge       | Cisco IOS    | 172.16.1.41  | 65002  | 고객 B 연결 | ✅ 운영 |
-| **sample7**  | Provider Edge (Hub) | Cisco IOS-XR | 172.16.1.130 | 65000  | 중앙 허브   | ✅ 운영 |
-| **sample8**  | Provider Edge       | Cisco IOS-XR | 172.16.1.131 | 65000  | 동쪽 엣지   | ✅ 운영 |
-| **sample9**  | Provider Edge       | Cisco IOS-XR | 172.16.1.132 | 65000  | 서쪽 엣지   | ✅ 운영 |
-| **sample10** | Provider Edge       | Cisco IOS-XR | 172.16.1.133 | 65000  | 남쪽 엣지   | ✅ 운영 |
-
-### 🌐 네트워크 토폴로지
-
-```text
-                 Provider Network (AS 65000)
-    ┌─────────────────────────────────────────────────┐
-    │                                                 │
-    │    [CE1] ────── [sample7] ────── [sample8]      │
-    │   (65001)         │ (Hub)           │           │
-    │                   │                 │           │  
-    │    [CE2] ────── [sample10] ──── [sample9]       │
-    │   (65002)                                       │
-    │                                                 │
-    └─────────────────────────────────────────────────┘
-
-    🔗 연결 정보:
-    • iBGP 풀메시: AS65000 내부 (4대 PE 라우터)
-    • eBGP: CE ↔ PE 연결 (고객 AS ↔ 통신사 AS)
-    • L2VPN: sample7 ↔ sample9 (PW-ID: 100)
-    • Physical Links: 6개 (이중화 구조)
-```
-
-### 🔧 주요 서비스 구성
-
-| 서비스          | 설명                              | 구성 장비            | 상태            |
-| ------------ | ------------------------------- | ---------------- | ------------- |
-| 🌐 **BGP**   | AS65000 내 iBGP 풀메시 + eBGP 고객 연결 | 전체 6대            | 부분적 (풀메시 불완전) |
-| 🔗 **L2VPN** | Pseudowire 기반 Layer 2 연결        | sample7, sample9 | 정상            |
-| 📡 **OSPF**  | Provider 네트워크 내부 라우팅            | PE 4대            | 정상            |
-| 🔀 **VRF**   | L3VPN 서비스를 위한 가상 라우팅            | PE 4대            | 일부 RT 누락      |
-| 🔐 **보안**    | SSH, AAA 인증 설정                  | 전체 6대            | 일부 장비 누락      |
-
----
-
-## 📊 생성 결과 예시
-
-### 🎯 실제 생성 통계 (demo_output 기준)
-
-#### 질문 유형별 분포
-
-| 복잡도               | 개수  | 설명           |
-| ----------------- | --- | ------------ |
-| 🟢 **Basic**      | 343 | 단순 조회, 개수 세기 |
-| 🟡 **Analytical** | 45  | 분석적 추론, 비교   |
-| 🟠 **Synthetic**  | 43  | 복합 정보 종합     |
-| 🔴 **Diagnostic** | 16  | 문제 진단, 해결책   |
-
-
-
-### 🎨 질문 예시 샘플
-
-#### 🟢 Basic Level 질문
-
-```json
-{
-  "question": "SSH가 설정되지 않은 장비는 몇 대인가요?",
-  "ground_truth": "2",
-  "explanation": "전체 6대 장비 중 sample8과 sample10에서 SSH 설정이 누락되었습니다.",
-  "category": "Security_Policy",
-  "complexity": "basic",
-  "answer_type": "short"
-}
-```
-
-#### 🟡 Analytical Level 질문
-
-```json
-{
-  "question": "iBGP 풀메시 구성이 완전한지 분석하고, 누락된 연결이 있다면 나열하세요.",
-  "ground_truth": "불완전합니다. 누락된 연결: sample8-sample9, sample8-sample10",
-  "explanation": "AS65000 내 4대 라우터에서 풀메시를 위해서는 6개 연결이 필요하지만 현재 4개만 설정되어 있습니다. sample7을 중심으로 한 허브 구조로 되어있어 sample8과 다른 PE 간 직접 피어링이 부족합니다.",
-  "category": "BGP_Consistency",
-  "complexity": "analytical",
-  "answer_type": "long"
-}
-```
-
-#### 🔴 Diagnostic Level 질문
-
-```json
-{
-  "question": "현재 네트워크에서 가장 위험한 단일 장애점(SPOF)을 식별하고 그 영향도를 평가하세요.",
-  "ground_truth": "sample7이 가장 위험한 SPOF입니다.",
-  "explanation": "sample7은 허브 역할을 하며 CE1 연결, L2VPN 종단점, 다른 PE들과의 주요 연결점입니다. 이 장비가 장애나면 CE1 서비스 중단, L2VPN 연결 끊김, iBGP 경로 수렴 문제가 발생합니다.",
-  "category": "Enhanced_Analysis",
-  "complexity": "diagnostic",
-  "answer_type": "long"
+  "question": "전체 토폴로지에서 단일 장애점을 분석하시오",
+  "reasoning_plan": [
+    {"step": 1, "metric": "physical_topology", "synthesis": "fetch"},
+    {"step": 2, "metric": "bgp_sessions", "synthesis": "analyze"},
+    {"step": 3, "metric": "redundancy_check", "synthesis": "evaluate"}
+  ],
+  "complexity": "synthetic",
+  "persona": "network_architect"
 }
 ```
 
 ---
 
-## 
+## 🤖 Stage 4: Answer Agent - 증거 기반 답변 생성
+---
 
-## 🧪 확장 및 개발
+### **핵심 아이디어**
+LLM의 **환각(Hallucination) 문제**를 해결하기 위한 증거 기반 답변 생성
 
-### 🔌 새로운 메트릭 추가
-
-#### 1. 메트릭 구현
-
+### **Answer Agent 작동 원리**
 ```python
-# utils/builder_core.py에 추가
-def calculate_custom_security_score(self, params: Dict = None) -> Tuple[float, List[str]]:
-    """커스텀 보안 점수 메트릭"""
-    security_factors = {
-        'ssh_enabled': 0.3,
-        'aaa_enabled': 0.3, 
-        'acl_configured': 0.2,
-        'password_policy': 0.2
+# Algorithm: Reasoning Plan 실행
+def execute_plan(question, reasoning_plan, network_facts):
+    evidence = {}
+    source_files = set()
+    
+    # 1. 증거 수집 단계
+    for step in reasoning_plan:
+        metric = step["metric"]
+        params = step["parameters"]
+        
+        # BuilderCore로 실제 XML에서 증거 추출
+        result = BuilderCore.execute(metric, params, network_facts)
+        evidence[step["id"]] = result
+        source_files.update(result.source_files)
+    
+    # 2. LLM 답변 합성 단계
+    evidence_summary = summarize(evidence)
+    ground_truth, explanation = LLM_synthesize(
+        question, evidence_summary, structured_schema
+    )
+    
+    return ground_truth, explanation, source_files
+```
+
+### **BuilderCore: 35개 메트릭 실행 엔진**
+- **BGP 분석**: 세션 수, AS 번호, 경로 테이블 등
+- **VRF 분석**: Route Target, 인스턴스 개수 등  
+- **보안 분석**: SSH 상태, 접근 제어 등
+- **토폴로지 분석**: 물리 연결, 이중화 상태 등
+
+### **답변 품질 보장 메커니즘**
+- ✅ **Temperature=0.0**: 결정론적 답변 생성
+- ✅ **구조화된 스키마**: JSON 형태로 일관된 출력
+- ✅ **Evidence 기반**: 실제 XML 데이터에서 추출한 증거만 활용
+
+---
+
+## 🔗 Stage 5-6: 통합, 검증 및 품질 관리
+---
+
+### **Stage 4: 데이터 통합 및 어셈블리**
+```python
+# 통합 전략
+def integrate_datasets(rule_questions, llm_questions):
+    # 1. 중복 제거
+    unique_questions = remove_semantic_duplicates(
+        rule_questions + llm_questions
+    )
+    
+    # 2. 카테고리 균형 조정
+    balanced_questions = balance_categories(unique_questions)
+    
+    # 3. 컨텍스트 보강
+    for question in balanced_questions:
+        question.context = create_rich_context(question)
+    
+    return balanced_questions
+```
+
+### **Stage 5: 검증 및 품질 관리**
+- **답변 정확성 검증**: XML 원본과 Answer Agent 결과 비교
+- **질문 품질 필터링**: 모호한 질문, 문법 오류 제거
+- **데이터 분할**: Train(70%) / Validation(15%) / Test(15%)
+
+### **Stage 6: 다층 평가 메트릭**
+| 답변 유형 | 평가 메트릭 | 측정 목적 |
+|-----------|-------------|-----------|
+| **단답형** | Exact Match, F1-Score | 정확한 사실 정보 추출 능력 |
+| **서술형** | BLEU, ROUGE-L | 자연스러운 설명 생성 능력 |
+| **구조화** | Token Accuracy | 리스트, JSON 등 구조적 정확도 |
+
+---
+
+## 🌟 하이브리드 전략의 핵심 차별점
+---
+
+### **기존 연구의 한계점**
+| 접근법 | 장점 | 단점 |
+|--------|------|------|
+| **순수 Rule-based** | 정확성, 일관성 | 다양성, 창의성 부족 |
+| **순수 LLM-based** | 창의성, 유연성 | 환각, 도메인 정확성 문제 |
+
+### **본 연구의 하이브리드 전략**
+```
+Rule-based (기초 토대)  +  LLM Enhanced (창의적 확장)
+      ↓                           ↓
+  정확성 보장               복잡도/다양성 확보
+      ↓                           ↓
+           Answer Agent (증거 기반 답변)
+                      ↓
+              환각 문제 해결 + 고품질 답변
+```
+
+### **🎯 핵심 혁신 포인트**
+1. **증거 기반 답변 생성**: LLM이 추측하지 않고 실제 XML 데이터에서 증거 수집 후 답변
+2. **단계적 복잡도 확장**: 단순 → 복잡으로 체계적 난이도 조절
+3. **전문가 관점 다양화**: 6가지 실무 역할별 차별화된 질문
+4. **완전 자동화**: 수동 개입 없이 대규모 데이터셋 생성
+
+---
+
+## 📈 현재 구현 현황 및 성과
+---
+
+### **✅ 구현 완료 항목**
+
+#### **1. XML 파싱 시스템**
+- Universal Parser 완성
+- 8개 실제 네트워크 장비 설정 파일 처리
+- Cisco IOS, IOS-XR 호환성 확보
+
+#### **2. 질문 생성 시스템**
+- **Rule-based Generator**: 35개 메트릭 × 12개 카테고리
+- **Enhanced LLM Generator**: 5×6 = 30가지 템플릿 조합
+- **질문 품질 검증**: LLM 기반 2차 리뷰 시스템
+
+#### **3. 답변 생성 시스템**  
+- **Answer Agent**: Reasoning plan 실행 엔진
+- **BuilderCore**: 35개 네트워크 메트릭 분석 엔진
+- **증거 수집**: XML → 구체적 수치/상태 추출
+
+#### **4. 품질 관리 시스템**
+- **중복 제거**: 의미적 유사 질문 자동 필터링
+- **검증 절차**: 답변 정확성 자동 확인
+- **평가 메트릭**: EM, F1, BLEU, ROUGE 등 다층 평가
+
+### **📊 생성 데이터셋 통계** (예상)
+- **총 질문 수**: 1,000+ 개
+- **카테고리 분포**: 12개 영역 균등 분배
+- **복잡도 분포**: Basic(30%) → Advanced(70%)
+- **답변 유형**: Short(60%) + Long(40%)
+
+---
+
+## 🔬 각 단계별 세부 원리 및 기술적 구현
+---
+
+### **Stage 1: XML 파싱의 기술적 도전과 해결책**
+
+#### **문제 상황**
+```xml
+<!-- Cisco IOS -->
+<interface>
+  <GigabitEthernet>0/0/0</GigabitEthernet>
+</interface>
+
+<!-- Cisco IOS-XR -->  
+<cisco-ios-xr:GigabitEthernet xmlns:cisco-ios-xr="...">
+  <cisco-ios-xr:id>0/0/0/0</cisco-ios-xr:id>
+</cisco-ios-xr:GigabitEthernet>
+```
+
+#### **해결 방법**
+```python
+# 정규화 결과
+{
+  "interfaces": {
+    "GigabitEthernet0/0/0": {
+      "ip_address": "10.1.13.1",
+      "status": "up",
+      "protocol": "up"
     }
-
-    score = 0.0
-    source_files = []
-
-    for device in self.devices:
-        # 보안 요소별 점수 계산
-        device_score = self._calculate_device_security(device, security_factors)
-        score += device_score
-        source_files.append(device.get('file'))
-
-    return score / len(self.devices), source_files
-```
-
-#### 2. 정책 파일 업데이트
-
-```json
-{
-  "category": "Custom_Security_Analysis",
-  "levels": {
-    "1": [{
-      "goal": "security_assessment",
-      "targets": ["GLOBAL"],
-      "primary_metric": "custom_security_score"
-    }]
   }
 }
 ```
 
-### 🎭 새로운 페르소나 추가
+### **Stage 2-3: 하이브리드 질문 생성의 상세 메커니즘**
 
-#### 1. 페르소나 정의
-
+#### **Rule-based 템플릿 엔진**
 ```python
-# generators/enhanced_llm_generator.py
-class PersonaType(Enum):
-    CLOUD_ARCHITECT = "cloud_architect"
-    DEVOPS_ENGINEER = "devops_engineer"
-    NETWORK_AUTOMATION_ENGINEER = "automation_engineer"
+# 템플릿 정의
+templates = {
+    "BGP_Consistency": [
+        ("AS {asn}의 iBGP 피어 수는?", "neighbor_count"),
+        ("{host} 장비의 BGP Local-AS 번호는?", "local_as"),
+    ]
+}
+
+# 실행 과정
+def generate_rule_questions(network_facts):
+    questions = []
+    for category, template_list in templates.items():
+        for template, metric in template_list:
+            # XML에서 파라미터 추출
+            params = extract_parameters(network_facts, metric)
+            # 템플릿 적용
+            question = template.format(**params)
+            questions.append({
+                "question": question,
+                "metric": metric,
+                "category": category
+            })
+    return questions
 ```
 
-#### 2. 전용 질문 템플릿
+#### **LLM Enhanced 생성 프롬프트 설계**
+```
+시스템 프롬프트:
+"당신은 {persona} 역할의 네트워크 전문가입니다.
+주어진 네트워크 설정을 바탕으로 {complexity} 수준의 
+전문적인 질문을 생성하세요."
 
-```python
-QuestionTemplate(
-    complexity=QuestionComplexity.SYNTHETIC,
-    persona=PersonaType.CLOUD_ARCHITECT,
-    scenario="클라우드 네트워크 설계",
-    prompt_template="""
-    클라우드 아키텍트 관점에서 다음을 분석하세요:
+사용자 프롬프트:
+"네트워크 팩트: {network_facts}
+복잡도: {complexity}  
+페르소나: {persona}
 
-    1. 🌩️ 클라우드 마이그레이션 적합성
-    2. 🔄 하이브리드 연결 설계  
-    3. 📈 확장성 및 성능 최적화
-    4. 💰 비용 효율성 분석
-
-    클라우드 서비스와의 통합 관점에서 현재 네트워크 구성을 평가해주세요.
-    """,
-    expected_metrics=["vrf_count", "bgp_neighbor_count", "interface_count"]
-)
+위 조건에 맞는 질문을 reasoning plan과 함께 생성하세요."
 ```
 
- 
+### **Answer Agent의 증거 기반 답변 생성 원리**
 
-</div>
+#### **BuilderCore 메트릭 실행 예시**
+```python
+# BGP 세션 수 계산 예시
+def calculate_bgp_neighbors(network_facts, params):
+    devices = network_facts["devices"]
+    target_as = params["asn"]
+    
+    neighbor_count = 0
+    source_files = []
+    
+    for device in devices:
+        if device.get("bgp", {}).get("local_as") == target_as:
+            neighbors = device["bgp"]["neighbors"]
+            neighbor_count += len(neighbors)
+            source_files.append(device["source_file"])
+    
+    return {
+        "result": neighbor_count,
+        "source_files": source_files,
+        "evidence": f"AS {target_as}에서 총 {neighbor_count}개 BGP 네이버 발견"
+    }
+```
+
+#### **LLM 답변 합성 과정**
+```python
+# 구조화된 답변 스키마
+answer_schema = {
+    "ground_truth": "실제 답변 (수치/상태/목록)",
+    "explanation": "상세한 설명 (증거 기반)"
+}
+
+# LLM 호출로 최종 답변 생성
+def synthesize_answer(question, evidence_summary):
+    prompt = f"""
+    질문: {question}
+    수집된 증거: {evidence_summary}
+    
+    위 증거를 바탕으로 정확한 답변과 설명을 생성하세요.
+    """
+    
+    response = call_llm(prompt, schema=answer_schema, temperature=0.0)
+    return response["ground_truth"], response["explanation"]
+```
+
+---
+
+## 🎯 연구의 핵심 기여도
+---
+
+### **1. 기술적 혁신**
+- **세계 최초**: 네트워크 관리 도메인 특화 대규모 Q&A 데이터셋
+- **하이브리드 접근법**: Rule + LLM의 최적 결합 방법론 제시
+- **증거 기반 생성**: LLM 환각 문제 근본 해결
+
+### **2. 실용적 가치**  
+- **벤치마크 표준화**: 다양한 LLM 성능 공정 비교 가능
+- **실제 데이터 기반**: 실무에서 활용 가능한 현실적 문제들
+- **확장 가능성**: 다른 네트워크 환경으로 쉽게 확장
+
+### **3. 학술적 의의**
+- **자율 네트워크 관리** 연구의 기초 토대 제공
+- **도메인 특화 LLM 평가** 방법론 정립
+- **멀티모달 네트워크 데이터** 처리 기법 발전
+
+---
+
+## 🚀 향후 연구 계획 및 활용 방안
+---
+
+### **단기 계획 (현재 진행)**
+- **팀원과 협업**: 생성된 데이터셋으로 다양한 LLM 성능 측정
+  - GPT-4, Claude, Llama, Gemini 등 주요 LLM 비교
+  - 모델별 강점/약점 분석
+
+### **중기 계획**
+- **데이터셋 공개**: 학계 표준 벤치마크로 제공
+- **도메인 확장**: 보안, 클라우드, IoT 네트워크로 확장
+- **실시간 적용**: 운영 중인 네트워크에서 실시간 질문 생성
+
+### **장기 비전**
+- **자율 네트워크 관리 시스템** 개발
+- **LLM 기반 네트워크 운영 자동화** 솔루션
+- **네트워크 AI 어시스턴트** 상용화
+
+---
+
+## 💡 Demo 시나리오 (발표 시 시연 가능)
+---
+
+### **입력 → 출력 예시**
+
+#### **입력**: XML 설정 파일
+```xml
+<router>
+  <bgp>
+    <as>65000</as>
+    <neighbor>
+      <ip>2.2.2.2</ip>
+      <remote-as>65000</remote-as>
+    </neighbor>
+  </bgp>
+</router>
+```
+
+#### **Rule-based 생성 예시**
+```
+질문: "AS 65000의 iBGP 피어 수는?"
+답변: "2개"
+설명: "sample7과 sample8에서 iBGP 네이버 관계 확인됨"
+```
+
+#### **LLM Enhanced 생성 예시**
+```
+질문: "현재 BGP 토폴로지에서 단일 장애점이 존재하는가? 
+       존재한다면 어떤 영향을 미칠 것인가?"
+답변: "sample9 장비가 단일 장애점입니다. 해당 장비 장애 시 
+       L2VPN 서비스와 AS 65004 고객 연결이 중단됩니다."
+```
+
+---
+
+## 📊 예상 발표 Q&A 대비
+---
+
+### **Q: 기존 네트워크 관리 도구와의 차이점은?**
+**A**: 기존 도구는 단순 모니터링/설정에 한정. 본 연구는 **LLM의 추론 능력**을 활용한 **지능적 분석과 진단** 가능
+
+### **Q: 왜 하이브리드 전략을 택했나?**
+**A**: Rule-based만으로는 **창의적 질문 한계**, LLM만으로는 **정확성 보장 어려움**. 두 방식 결합으로 **정확성과 다양성 모두 확보**
+
+### **Q: 다른 네트워크 환경에도 적용 가능한가?**
+**A**: **Universal Parser 설계**로 벤더 독립적. **메트릭 추가**만으로 새로운 프로토콜/장비 지원 가능
+
+### **Q: 실제 운영 환경에서의 활용성은?**
+**A**: 현재는 **연구용 벤치마크**에 집중. 향후 **실시간 네트워크 상태 분석, 장애 진단 자동화** 등으로 확장 계획
+
+---
+
+## 🎊 결론: 연구의 임팩트
+---
+
+### **학술적 기여**
+- 네트워크 관리 × LLM 융합 연구의 **새로운 패러다임** 제시
+- **도메인 특화 데이터셋 생성 방법론** 정립
+- **증거 기반 LLM 활용** 기법 개발
+
+### **실용적 가치**
+- **산업계 표준 벤치마크** 제공
+- **LLM 기반 네트워크 솔루션** 개발 토대
+- **자율 네트워크 운영** 기술 발전 기여
+
+### **향후 파급효과**
+- **네트워크 운영 패러다임 변화**: 수동 → 지능형 자동화
+- **LLM 응용 분야 확장**: 텍스트 → 구조화된 기술 도메인
+- **교육 및 훈련 혁신**: AI 기반 네트워크 전문가 교육
+
+---
+
+*"단순한 질문 생성을 넘어, LLM이 네트워크를 이해하는 방식을 근본적으로 바꾸는 연구"*
