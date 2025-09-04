@@ -18,3 +18,13 @@ demo_output/
 output/
 .env
 !requirements.txt
+HCLT/
+.vscode/
+.DS_Store
+.idea/
+.vs/
+.claude/
+csv/
+predictions/
+
+

@@ -12,11 +12,11 @@
         ],
         "min_per_category": 15,
         "mix": {
-            "boolean": 3,
-            "set": 3,
-            "numeric": 3,
-            "map": 3,
-            "text": 3
+            "boolean": 2,
+            "set": 1,
+            "numeric": 4,
+            "map": 1,
+            "text": 4
         }
     },
     "policies": [

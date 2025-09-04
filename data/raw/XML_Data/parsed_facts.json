@@ -7,15 +7,7 @@
         "mgmt_address": "172.16.1.40",
         "version": "15.4",
         "timezone": "KST",
-        "config_register": "0x0",
-        "users": [
-          {
-            "name": "nso",
-            "privilege": "15",
-            "secret_type": "5",
-            "secret": "$1$ou/O$Fc2FfZtj0B5/97GkzArNj/"
-          }
-        ]
+        "config_register": "0x0"
       },
       "security": {
         "ssh": {
@@ -29,39 +21,8 @@
           "server_enabled": false
         }
       },
-      "interfaces": [
-        {
-          "name": "Ethernet0/0",
-          "ipv4": null,
-          "vlan": null,
-          "mop_xenabled": false
-        },
-        {
-          "name": "Ethernet0/0.100",
-          "ipv4": "192.168.1.11/255.255.255.0",
-          "vlan": "100",
-          "mop_xenabled": false
-        },
-        {
-          "name": "Ethernet0/1",
-          "ipv4": "192.168.10.1/255.255.255.0",
-          "vlan": null,
-          "mop_xenabled": false
-        },
-        {
-          "name": "Ethernet0/2",
-          "ipv4": "172.16.1.41/255.255.255.0",
-          "vlan": null,
-          "mop_xenabled": false
-        },
-        {
-          "name": "Ethernet0/3",
-          "ipv4": null,
-          "vlan": null,
-          "mop_xenabled": false
-        }
-      ],
-      "num_interfaces": 5,
+      "interfaces": [],
+      "num_interfaces": 0,
       "routing": {
         "bgp": {
           "local_as": "65001",
@@ -79,6 +40,9 @@
         }
       },
       "services": {
+        "ip": {
+          "forward_protocol_nd": true
+        },
         "vrf": [],
         "l2vpn": [],
         "mpls": {
@@ -88,19 +52,7 @@
           "present": false
         }
       },
-      "file": "ce1.xml",
-      "logging": {
-        "buffered_severity": "debugging"
-      },
-      "line": {
-        "vty": {
-          "first": 0,
-          "last": 4,
-          "login_mode": "local",
-          "password_secret": "12345678",
-          "transport_input": "ssh"
-        }
-      }
+      "file": "ce1.xml"
     },
     {
       "vendor": "ios-xr",
@@ -109,15 +61,7 @@
         "mgmt_address": "172.16.1.41",
         "version": "15.4",
         "timezone": "KST",
-        "config_register": "0x0",
-        "users": [
-          {
-            "name": "nso",
-            "privilege": "15",
-            "secret_type": "5",
-            "secret": "$1$ou/O$Fc2FfZtj0B5/97GkzArNj/"
-          }
-        ]
+        "config_register": "0x0"
       },
       "security": {
         "ssh": {
@@ -131,39 +75,8 @@
           "server_enabled": false
         }
       },
-      "interfaces": [
-        {
-          "name": "Ethernet0/0",
-          "ipv4": null,
-          "vlan": null,
-          "mop_xenabled": false
-        },
-        {
-          "name": "Ethernet0/0.100",
-          "ipv4": "192.168.3.11/255.255.255.0",
-          "vlan": "300",
-          "mop_xenabled": false
-        },
-        {
-          "name": "Ethernet0/1",
-          "ipv4": "192.168.30.1/255.255.255.0",
-          "vlan": null,
-          "mop_xenabled": false
-        },
-        {
-          "name": "Ethernet0/2",
-          "ipv4": "172.16.1.41/255.255.255.0",
-          "vlan": null,
-          "mop_xenabled": false
-        },
-        {
-          "name": "Ethernet0/3",
-          "ipv4": null,
-          "vlan": null,
-          "mop_xenabled": false
-        }
-      ],
-      "num_interfaces": 5,
+      "interfaces": [],
+      "num_interfaces": 0,
       "routing": {
         "bgp": {
           "local_as": "65003",
@@ -181,6 +94,9 @@
         }
       },
       "services": {
+        "ip": {
+          "forward_protocol_nd": true
+        },
         "vrf": [],
         "l2vpn": [],
         "mpls": {
@@ -190,19 +106,7 @@
           "present": false
         }
       },
-      "file": "ce2.xml",
-      "logging": {
-        "buffered_severity": "debugging"
-      },
-      "line": {
-        "vty": {
-          "first": 0,
-          "last": 4,
-          "login_mode": "local",
-          "password_secret": "12345678",
-          "transport_input": "ssh"
-        }
-      }
+      "file": "ce2.xml"
     },
     {
       "vendor": "ios-xr",
@@ -243,37 +147,44 @@
         {
           "name": "Loopback0",
           "ipv4": "4.4.4.4/255.255.255.255",
-          "vlan": null
+          "vlan": null,
+          "vrf": null
         },
         {
           "name": "MgmtEth0/RP0/CPU0/0",
           "ipv4": "172.16.1.133/255.255.255.0",
-          "vlan": null
+          "vlan": null,
+          "vrf": null
         },
         {
           "name": "GigabitEthernet0/0/0/0",
           "ipv4": "10.1.31.2/255.255.255.0",
-          "vlan": null
+          "vlan": null,
+          "vrf": null
         },
         {
           "name": "GigabitEthernet0/0/0/1",
           "ipv4": null,
-          "vlan": null
+          "vlan": null,
+          "vrf": null
         },
         {
           "name": "GigabitEthernet0/0/0/2",
           "ipv4": "10.1.15.2/255.255.255.0",
-          "vlan": null
+          "vlan": null,
+          "vrf": null
         },
         {
           "name": "GigabitEthernet0/0/0/3",
           "ipv4": null,
-          "vlan": null
+          "vlan": null,
+          "vrf": null
         },
         {
           "name": "GigabitEthernet0/0/0/1.400",
           "ipv4": "192.168.4.10/255.255.255.0",
-          "vlan": "400"
+          "vlan": "400",
+          "vrf": null
         }
       ],
       "num_interfaces": 7,
@@ -283,15 +194,18 @@
           "neighbors": [
             {
               "id": "1.1.1.1",
-              "remote_as": "65000"
+              "remote_as": "65000",
+              "type": "ibgp"
             },
             {
               "id": "2.2.2.2",
-              "remote_as": "65000"
+              "remote_as": "65000",
+              "type": "ibgp"
             },
             {
               "id": "3.3.3.3",
-              "remote_as": "65000"
+              "remote_as": "65000",
+              "type": "ibgp"
             }
           ],
           "vrfs": [
@@ -301,7 +215,8 @@
               "neighbors": [
                 {
                   "id": "192.168.4.11",
-                  "remote_as": "65004"
+                  "remote_as": "65004",
+                  "type": "ebgp"
                 }
               ]
             }
@@ -382,37 +297,44 @@
         {
           "name": "Loopback0",
           "ipv4": "1.1.1.1/255.255.255.255",
-          "vlan": null
+          "vlan": null,
+          "vrf": null
         },
         {
           "name": "MgmtEth0/RP0/CPU0/0",
           "ipv4": "172.16.1.130/255.255.255.0",
-          "vlan": null
+          "vlan": null,
+          "vrf": null
         },
         {
           "name": "GigabitEthernet0/0/0/0",
           "ipv4": "10.1.13.1/255.255.255.0",
-          "vlan": null
+          "vlan": null,
+          "vrf": null
         },
         {
           "name": "GigabitEthernet0/0/0/2",
           "ipv4": "10.1.15.1/255.255.255.0",
-          "vlan": null
+          "vlan": null,
+          "vrf": null
         },
         {
           "name": "GigabitEthernet0/0/0/3",
           "ipv4": null,
-          "vlan": null
+          "vlan": null,
+          "vrf": null
         },
         {
           "name": "GigabitEthernet0/0/0/0.1",
           "ipv4": null,
-          "vlan": null
+          "vlan": null,
+          "vrf": null
         },
         {
           "name": "GigabitEthernet0/0/0/1.100",
           "ipv4": "192.168.1.10/255.255.255.0",
-          "vlan": "100"
+          "vlan": "100",
+          "vrf": null
         }
       ],
       "num_interfaces": 7,
@@ -422,15 +344,18 @@
           "neighbors": [
             {
               "id": "2.2.2.2",
-              "remote_as": "65000"
+              "remote_as": "65000",
+              "type": "ibgp"
             },
             {
               "id": "3.3.3.3",
-              "remote_as": "65000"
+              "remote_as": "65000",
+              "type": "ibgp"
             },
             {
               "id": "4.4.4.4",
-              "remote_as": "65000"
+              "remote_as": "65000",
+              "type": "ibgp"
             }
           ],
           "vrfs": [
@@ -440,7 +365,8 @@
               "neighbors": [
                 {
                   "id": "192.168.1.11",
-                  "remote_as": "65001"
+                  "remote_as": "65001",
+                  "type": "ebgp"
                 }
               ]
             }
@@ -527,32 +453,38 @@
         {
           "name": "Loopback0",
           "ipv4": "2.2.2.2/255.255.255.255",
-          "vlan": null
+          "vlan": null,
+          "vrf": null
         },
         {
           "name": "MgmtEth0/RP0/CPU0/0",
           "ipv4": "172.16.1.131/255.255.255.0",
-          "vlan": null
+          "vlan": null,
+          "vrf": null
         },
         {
           "name": "GigabitEthernet0/0/0/0",
           "ipv4": "10.1.13.2/255.255.255.0",
-          "vlan": null
+          "vlan": null,
+          "vrf": null
         },
         {
           "name": "GigabitEthernet0/0/0/2",
           "ipv4": "10.1.27.1/255.255.255.0",
-          "vlan": null
+          "vlan": null,
+          "vrf": null
         },
         {
           "name": "GigabitEthernet0/0/0/3",
           "ipv4": null,
-          "vlan": null
+          "vlan": null,
+          "vrf": null
         },
         {
           "name": "GigabitEthernet0/0/0/1.200",
           "ipv4": "192.168.2.10/255.255.255.0",
-          "vlan": "200"
+          "vlan": "200",
+          "vrf": null
         }
       ],
       "num_interfaces": 6,
@@ -562,15 +494,18 @@
           "neighbors": [
             {
               "id": "1.1.1.1",
-              "remote_as": "65000"
+              "remote_as": "65000",
+              "type": "ibgp"
             },
             {
               "id": "3.3.3.3",
-              "remote_as": "65000"
+              "remote_as": "65000",
+              "type": "ibgp"
             },
             {
               "id": "4.4.4.4",
-              "remote_as": "65000"
+              "remote_as": "65000",
+              "type": "ibgp"
             }
           ],
           "vrfs": [
@@ -580,7 +515,8 @@
               "neighbors": [
                 {
                   "id": "192.168.2.11",
-                  "remote_as": "65002"
+                  "remote_as": "65002",
+                  "type": "ebgp"
                 }
               ]
             }
@@ -661,37 +597,44 @@
         {
           "name": "Loopback0",
           "ipv4": "3.3.3.3/255.255.255.255",
-          "vlan": null
+          "vlan": null,
+          "vrf": null
         },
         {
           "name": "MgmtEth0/RP0/CPU0/0",
           "ipv4": "172.16.1.132/255.255.255.0",
-          "vlan": null
+          "vlan": null,
+          "vrf": null
         },
         {
           "name": "GigabitEthernet0/0/0/0",
           "ipv4": null,
-          "vlan": null
+          "vlan": null,
+          "vrf": null
         },
         {
           "name": "GigabitEthernet0/0/0/2",
           "ipv4": "10.1.27.2/255.255.255.0",
-          "vlan": null
+          "vlan": null,
+          "vrf": null
         },
         {
           "name": "GigabitEthernet0/0/0/3",
           "ipv4": null,
-          "vlan": null
+          "vlan": null,
+          "vrf": null
         },
         {
           "name": "GigabitEthernet0/0/0/0.1",
           "ipv4": null,
-          "vlan": null
+          "vlan": null,
+          "vrf": null
         },
         {
           "name": "GigabitEthernet0/0/0/1.300",
           "ipv4": "192.168.3.10/255.255.255.0",
-          "vlan": "300"
+          "vlan": "300",
+          "vrf": null
         }
       ],
       "num_interfaces": 7,
@@ -701,15 +644,18 @@
           "neighbors": [
             {
               "id": "1.1.1.1",
-              "remote_as": "65000"
+              "remote_as": "65000",
+              "type": "ibgp"
             },
             {
               "id": "2.2.2.2",
-              "remote_as": "65000"
+              "remote_as": "65000",
+              "type": "ibgp"
             },
             {
               "id": "4.4.4.4",
-              "remote_as": "65000"
+              "remote_as": "65000",
+              "type": "ibgp"
             }
           ],
           "vrfs": [
@@ -719,7 +665,8 @@
               "neighbors": [
                 {
                   "id": "192.168.3.11",
-                  "remote_as": "65003"
+                  "remote_as": "65003",
+                  "type": "ebgp"
                 }
               ]
             }

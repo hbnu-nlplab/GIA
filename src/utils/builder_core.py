@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import Dict, Any, List, Set, Tuple, Union
 import json
+import re
+import copy
 from collections import defaultdict, deque
 
 class BuilderCore:
@@ -408,10 +410,17 @@ class BuilderCore:
         elif metric == "ip_cef_enabled_bool":
             host = scope.get("host")
             for d in self.devices:
-                if host and self._hostname(d) != host: continue
-                val = (((d.get("services") or {}).get("ip") or {}).get("cef_enabled"))
+                if host and self._hostname(d) != host:
+                    continue
+                v_services = (((d.get("services") or {}).get("ip") or {}).get("cef_enabled"))
+                v_ip = ((d.get("ip") or {}).get("cef-conf") or {}).get("cef")
+                if v_ip is None:
+                    v_ip = (d.get("ip") or {}).get("cef")
+                val = v_services if v_services is not None else v_ip
                 return "boolean", bool(val)
             return "boolean", False
+
+
         elif metric == "logging_buffered_severity_text":
             host = scope.get("host")
             for d in self.devices:
@@ -425,7 +434,8 @@ class BuilderCore:
                 if host and self._hostname(d) != host: continue
                 vty = ((d.get("line") or {}).get("vty") or {})
                 first = vty.get("first"); last = vty.get("last")
-                return "text", f"{first}~{last}" if (first is not None and last is not None) else ""
+                return "text", f"{first} {last}" if (first is not None and last is not None) else ""
+
             return "text", ""
         elif metric == "vty_login_mode_text":
             host = scope.get("host")
@@ -585,10 +595,8 @@ class BuilderCore:
             host = scope.get("host")
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
-                c=0
-                for i in d.get("interfaces") or []:
-                    subs=i.get("subinterfaces") or []
-                    c += len(subs)
+                c = sum(1 for i in (d.get("interfaces") or []) if "." in (i.get("name") or ""))
+                
                 return "numeric", c
             return "numeric", 0
 
@@ -635,8 +643,9 @@ class BuilderCore:
                 if host and self._hostname(d) != host: continue
                 s=set()
                 ospf = ((d.get("routing") or {}).get("ospf") or {})
-                for p in (ospf.get("processes") or []):
-                    if p.get("id") is not None: s.add(str(p.get("id")))
+                for pid in (ospf.get("process_ids") or []):
+                    s.add(str(pid))
+
                 return "set", sorted(s)
             return "set", []
 
@@ -780,14 +789,17 @@ class BuilderCore:
 
         elif metric == "vrf_interface_bind_count":
             host = scope.get("host"); vrf = scope.get("vrf")
-            cnt=0
+            cnt = 0
+            if not vrf:
+                return "numeric", 0  # VRF 미지정이면 0
             for d in self.devices:
-                if host and (d.get("system",{}).get("hostname") != host): 
+                if host and (d.get("system",{}).get("hostname") != host):
                     continue
                 for iface in (d.get("interfaces") or []):
-                    if (iface.get("vrf") or iface.get("l3vrf")) == (vrf or iface.get("vrf")):
+                    if (iface.get("vrf") or iface.get("l3vrf")) == vrf:
                         cnt += 1
             return "numeric", cnt
+
 
         elif metric == "vrf_rd_format_invalid_set":
             bad=[]
@@ -1280,8 +1292,8 @@ def execute_intent(intent: Dict[str, Any], facts: Any) -> Dict[str, Any]:
         else: # 기존의 단일 metric intent일 경우
             metric = intent.get("metric")
             scope = intent.get("scope") or {}
-            if not metric: # metric이 없는 경우 에러 처리
-                 raise ValueError("intent.metric is required for single metric questions")
+            if not metric:
+                raise ValueError("intent.metric is required for single metric questions")
             answer_type, value = core._answer_for_metric(metric, scope, pre)
 
         return {"answer_type": answer_type, "value": value}

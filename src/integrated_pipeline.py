@@ -17,9 +17,10 @@ from parsers.universal_parser import UniversalParser
 from generators.rule_based_generator import RuleBasedGenerator, RuleBasedGeneratorConfig
 # from generators.llm_explorer import LLMExplorer
 from assemblers.test_assembler import TestAssembler, AssembleOptions
+from inspectors.intent_inspector import IntentInspector
 from utils.builder_core import BuilderCore
-from answer_agent import AnswerAgent
-from command_agent import CommandAgent
+from agents.answer_agent import AnswerAgent
+from agents.command_agent import CommandAgent
 from utils.config_manager import get_settings
 
 # 새로운 향상된 모듈들 (위에서 생성한 것들)
@@ -142,7 +143,7 @@ class NetworkConfigDatasetGenerator:
         self.rule_generator = RuleBasedGenerator(
             RuleBasedGeneratorConfig(
                 policies_path=config.policies_path,
-                min_per_cat=config.basic_questions_per_category,
+                min_per_cat=config.basic_questions_per_category * 2,  # 카테고리당 더 많은 질문
                 scenario_type=config.scenario_type,
             )
         )
@@ -216,34 +217,39 @@ class NetworkConfigDatasetGenerator:
         return network_facts
     
     def _execute_stage_basic_generation(self, network_facts: Dict[str, Any]) -> List[DatasetSample]:
-        """2단계: 기초 질문 생성 (Rule-based)"""
-        self.logger.info("2단계: 기초 질문 생성 (Rule-based)")
+        """2단계: 기초 질문 생성 (Rule-based) - 다중 시나리오 지원"""
+        self.logger.info("2단계: 기초 질문 생성 (Rule-based) - 다중 시나리오")
         
-        # Rule-based 생성
-        self.logger.info(f"Debug: categories = {self.config.target_categories}")
-        self.logger.info(f"Debug: scenario_type = {self.config.scenario_type}")
+        # 다중 시나리오로 더 많은 질문 생성
+        scenarios = ["normal", "failure", "expansion"]
+        all_dsl_items = []
+        all_command_items = []
         
-        dsl_items = self.rule_generator.compile(
-            capabilities=network_facts,
-            categories=self.config.target_categories,
-            scenario_type=self.config.scenario_type,
-        )
+        for scenario in scenarios:
+            self.logger.info(f"시나리오 '{scenario}' 질문 생성 중...")
+            
+            dsl_items = self.rule_generator.compile(
+                capabilities=network_facts,
+                categories=self.config.target_categories,
+                scenario_type=scenario,
+            )
+            
+            # 시나리오 정보 태깅
+            for item in dsl_items:
+                item["scenario"] = scenario
+                
+            command_items = [d for d in dsl_items if d.get("category") == "Command_Generation"]
+            regular_items = [d for d in dsl_items if d.get("category") != "Command_Generation"]
+            
+            all_dsl_items.extend(regular_items)
+            all_command_items.extend(command_items)
         
-        self.logger.info(f"Debug: dsl_items count = {len(dsl_items)}")
-        if len(dsl_items) == 0:
-            self.logger.warning("Debug: No DSL items generated. Checking policies...")
-            # Check if policies are loaded
-            self.logger.info(f"Debug: policies count = {len(self.rule_generator.policies)}")
-            for i, pol in enumerate(self.rule_generator.policies[:3]):  # Show first 3
-                self.logger.info(f"Debug: policy[{i}] category = {pol.get('category')}")
-
-        command_items = [d for d in dsl_items if d.get("category") == "Command_Generation"]
-        dsl_items = [d for d in dsl_items if d.get("category") != "Command_Generation"]
+        self.logger.info(f"총 DSL 아이템: {len(all_dsl_items)}, 명령어 아이템: {len(all_command_items)}")
         
         # 어셈블리를 통한 답변 계산
         assembled_tests = self.assembler.assemble(
             network_facts,
-            dsl_items,
+            all_dsl_items,
             scenario_conditions=self.config.scenario_overrides,
         )
 
@@ -264,7 +270,7 @@ class NetworkConfigDatasetGenerator:
                     category="basic",
                     level=test.get('level', 1),
                     complexity="basic",
-                    scenario=test.get('scenario'),
+                    scenario=test.get('scenario', 'normal'),
                     source_files=test.get('source_files', []),
                     metadata={
                         "origin": "rule_based",
@@ -275,127 +281,41 @@ class NetworkConfigDatasetGenerator:
                 )
                 basic_samples.append(sample)
 
-        for idx, item in enumerate(command_items):
-            # Check if this is from _generate_command_questions (has proper params) or DSL-style
-            if 'intent' in item and 'params' in item['intent'] and item['intent']['params']:
-                # This is from _generate_command_questions - has proper params
-                intent = item.get('intent', {})
-                metric = intent.get('metric', '')
-                params = intent.get('params', {})
-            else:
-                # This is DSL-style - need to generate params from network facts
-                intent = item.get('intent', {})
-                metric = intent.get('metric', '')
-                
-                # Generate parameters similar to _generate_command_questions
-                devices = network_facts.get("devices", [])
-                first_device = devices[0] if devices else {}
-                host = (
-                    first_device.get("system", {}).get("hostname")
-                    or first_device.get("name")
-                    or first_device.get("file")
-                    or "device1"
-                )
-                
-                # Get interfaces and BGP info
-                interfaces = first_device.get("interfaces") or [{}]
-                interface = interfaces[0].get("name", "GigabitEthernet0/0")
-                bgp = first_device.get("routing", {}).get("bgp", {})
-                asn = bgp.get("local_as", 65000)
-                neighbors = bgp.get("neighbors") or [{}]
-                neighbor_ip = neighbors[0].get("id") or neighbors[0].get("ip") or "2.2.2.2"
-                
-                # Create comprehensive params based on metric type
-                params_base = {
-                    "host": host,
-                    "interface": interface,
-                    "asn": asn,
-                    "neighbor_ip": neighbor_ip,
-                    "user": "admin",
-                    "prefix": "192.0.2.0",
-                    "mask": "255.255.255.0",
-                    "next_hop": "10.0.0.1",
-                    "map_name": "RM_OUT",
-                    "description": "Uplink to core",
-                    "vrf_name": "CUSTOMER_A",
-                    "process_id": 1,
-                    "cost": 100,
-                    "acl_name": "SSH_ONLY",
-                    "new_hostname": f"{host}-NEW",
-                    "jump_host": "jumphost",
-                    "destination_host": host,
-                }
-                
-                # Metric-specific parameter selection
-                if metric == "cmd_ssh_direct_access":
-                    params = {"user": params_base["user"], "host": host}
-                elif metric == "cmd_set_static_route":
-                    params = {
-                        "host": host,
-                        "prefix": params_base["prefix"],
-                        "mask": params_base["mask"],
-                        "next_hop": params_base["next_hop"],
-                    }
-                elif metric == "cmd_set_bgp_routemap":
-                    params = {
-                        "host": host,
-                        "asn": asn,
-                        "neighbor_ip": neighbor_ip,
-                        "map_name": params_base["map_name"],
-                    }
-                elif metric == "cmd_set_interface_description":
-                    params = {
-                        "host": host,
-                        "interface": interface,
-                        "description": params_base["description"],
-                    }
-                elif metric == "cmd_create_vrf_and_assign":
-                    params = {
-                        "host": host,
-                        "vrf_name": params_base["vrf_name"],
-                        "interface": interface,
-                    }
-                elif metric == "cmd_ssh_proxy_jump":
-                    hosts = [(
-                        d.get("system", {}).get("hostname")
-                        or d.get("name")
-                        or d.get("file")
-                        or host
-                    ) for d in devices]
-                    jump_host = hosts[1] if len(hosts) > 1 else "jumphost"
-                    dest_host = hosts[2] if len(hosts) > 2 else host
-                    params = {
-                        "user": params_base["user"],
-                        "jump_host": jump_host,
-                        "destination_host": dest_host,
-                    }
-                else:
-                    params = {"host": host}
+        # Command Generation 카테고리 전용 처리 (시나리오별 중복 방지)
+        # rule_based_generator에서 _generate_command_questions로 생성된 명령어 질문들 처리
+        command_questions = self.rule_generator._generate_command_questions(network_facts)
+        
+        for idx, item in enumerate(command_questions):
+            intent = item.get('intent', {})
+            metric = intent.get('metric', '')
+            params = intent.get('params', {})
             
+            # CommandAgent를 통해 실제 명령어 생성
             if metric.startswith('cmd_'):
-                metric_name = metric[4:]
+                metric_name = metric[4:]  # 'cmd_' 접두사 제거
             else:
                 metric_name = metric
                 
             try:
                 command = command_agent.generate(metric_name, params)
-            except KeyError as e:
-                self.logger.error(f"Missing parameter {e} for metric {metric_name}. Available params: {list(params.keys())}")
-                continue
+            except Exception as e:
+                self.logger.error(f"Command generation failed for {metric_name}: {e}")
+                # 대안으로 기본 명령어 패턴 사용
+                command = f"show {metric_name}"
                 
             gt, expl = self._format_answer({"ground_truth": command, "explanation": ""})
             sample = DatasetSample(
                 id=f"BASIC_CMD_{idx}",
                 question=item.get('question', ''),
-                context=self._create_context(network_facts, []),
+                context=self._create_context(network_facts, item.get('source_files', [])),
                 ground_truth=gt,
                 explanation=expl,
                 answer_type=self._determine_answer_type(gt),
                 category="basic",
                 level=item.get('level', 1),
                 complexity="basic",
-                scenario=item.get('scenario'),
-                source_files=[],
+                scenario="normal",  # Command 질문은 기본적으로 normal 시나리오
+                source_files=item.get('source_files', []),
                 metadata={
                     "origin": "rule_based",
                     "intent": {"command": metric_name, "params": params},
@@ -410,6 +330,7 @@ class NetworkConfigDatasetGenerator:
         self.stage_results[PipelineStage.BASIC_GENERATION] = {
             "question_count": len(basic_samples),
             "categories": list(assembled_tests.keys()),
+            "scenarios": scenarios,
             "success": True
         }
         
@@ -422,6 +343,9 @@ class NetworkConfigDatasetGenerator:
         """3단계: 심화 질문 생성 및 'AnswerAgent'를 통한 정답 생성"""
         self.logger.info("3단계: 심화 질문 생성 (Enhanced LLM) 및 정답 생성 (AnswerAgent)")
 
+        print(f"[Pipeline] target_complexities: {[c.value for c in self.config.target_complexities]}")
+        print(f"[Pipeline] questions_per_template: {self.config.enhanced_questions_per_category}")
+        
         enhanced_questions = self.enhanced_generator.generate_enhanced_questions(
             network_facts=network_facts,
             target_complexities=self.config.target_complexities,
@@ -1123,12 +1047,14 @@ def main():
         xml_data_dir="data/raw/XML_Data",
         policies_path=policies_path,
         target_categories=all_categories,  # 모든 카테고리 자동 포함
-        basic_questions_per_category=10,
-        enhanced_questions_per_category=15,
+        basic_questions_per_category=30,  # 대폭 증가: 카테고리당 30개
+        enhanced_questions_per_category=50,  # 안정적인 수치: 카테고리당 20개
         target_complexities=[
+            QuestionComplexity.BASIC,         # 기본
             QuestionComplexity.ANALYTICAL,    # 분석적 추론
             QuestionComplexity.DIAGNOSTIC,    # 문제 진단
-            QuestionComplexity.SCENARIO      # 시나리오 기반
+            QuestionComplexity.SCENARIO,      # 시나리오 기반
+            QuestionComplexity.SYNTHETIC      # 통합 분석
         ],
         target_personas=[
             PersonaType.NETWORK_ENGINEER,
@@ -1136,7 +1062,8 @@ def main():
             PersonaType.NOC_OPERATOR,
             PersonaType.ARCHITECT,
             PersonaType.TROUBLESHOOTER,
-            PersonaType.COMPLIANCE_OFFICER
+            PersonaType.COMPLIANCE_OFFICER,
+            # PersonaType.AUTOMATION_ENGINEER
         ],
         output_dir="output"
     )
@@ -1164,4 +1091,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    

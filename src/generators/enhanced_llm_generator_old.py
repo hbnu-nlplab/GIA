@@ -290,55 +290,22 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
 
         if questions_per_template is None:
             questions_per_template = settings.generation.enhanced_questions_per_category
-            
-        # 유효한 템플릿 필터링 및 질문 수 분산
-        valid_templates = [t for t in self.templates if t.complexity in target_complexities]
-        questions_per_single_template = max(10, questions_per_template // len(valid_templates))  # 템플릿당 최소 10개씩
-        
-        print(f"[Enhanced Generator] 유효한 템플릿 수: {len(valid_templates)}")
-        print(f"[Enhanced Generator] 각 템플릿당 시도 횟수: {questions_per_single_template}")
         
         # 네트워크 현황 분석
         context = self._analyze_network_context(network_facts)
         
         generated_questions = []
         
-        print(f"[Enhanced Generator] 총 템플릿 수: {len(self.templates)}")
-        print(f"[Enhanced Generator] 목표 복잡도: {[c.value for c in target_complexities]}")
-        print(f"[Enhanced Generator] 총 목표 생성 수: {questions_per_template}")
-        print(f"[Enhanced Generator] 각 템플릿당 생성 수: {questions_per_single_template}")
-        
-        success_count = 0
-        failure_count = 0
-        
-        for i, template in enumerate(self.templates):
-            print(f"[Enhanced Generator] 템플릿 {i+1}: 복잡도={template.complexity.value}, 페르소나={template.persona.value}")
-            
+        for template in self.templates:
             if template.complexity not in target_complexities:
-                print(f"[Enhanced Generator] 템플릿 {i+1} 건너뛰기 (복잡도 불일치)")
                 continue
                 
-            print(f"[Enhanced Generator] 템플릿 {i+1}에서 질문 생성 중...")
             questions = self._generate_from_template(
-                template, context, questions_per_single_template
+                template, context, questions_per_template
             )
-            
-            if len(questions) > 0:
-                print(f"[Enhanced Generator] 템플릿 {i+1}에서 {len(questions)}개 질문 생성 성공!")
-                generated_questions.extend(questions)
-                success_count += 1
-            else:
-                print(f"[Enhanced Generator] 템플릿 {i+1}에서 질문 생성 실패")
-                failure_count += 1
+            generated_questions.extend(questions)
         
-        print(f"[Enhanced Generator] 템플릿 성공/실패: {success_count}/{failure_count}")
-        
-        # LLM으로만 고품질 질문 생성에 집중
-        print(f"[Enhanced Generator] LLM으로만 생성된 고품질 질문: {len(generated_questions)}개")
-        
-        print(f"[Enhanced Generator] 총 생성된 질문 수: {len(generated_questions)}")
         return generated_questions
-    
     
     def _analyze_network_context(self, facts: Dict[str, Any]) -> Dict[str, Any]:
         """네트워크 현황 분석 및 컨텍스트 생성"""
@@ -576,31 +543,12 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
         )
         
         try:
-            # JSON 응답 파싱 시도 (여러 방법으로 시도)
-            data = None
-            attempts = [
-                ("Primary", settings.models.enhanced_generation, 0.7, 2000, False),
-                ("Secondary", "gpt-4o-mini", 0.5, 1500, False),
-                ("Fallback", "gpt-4o-mini", 0.3, 1000, True),  # use_responses_api=True로 시도
-            ]
-            
-            for attempt_name, model, temp, max_tokens, use_resp_api in attempts:
-                try:
-                    print(f"[Enhanced Generator] {attempt_name} 시도: {model}, temp={temp}")
-                    data = _call_llm_json(
-                        messages, schema, temperature=temp,
-                        model=model, max_output_tokens=max_tokens,
-                        use_responses_api=use_resp_api
-                    )
-                    print(f"[Enhanced Generator] {attempt_name} JSON parsing 성공!")
-                    break
-                except Exception as e:
-                    print(f"[Enhanced Generator] {attempt_name} JSON parsing 실패: {e}")
-                    continue
-            
-            if not data:
-                print(f"[Enhanced Generator] 모든 JSON 파싱 시도 실패, 템플릿 건너뛰기")
-                return []
+            # JSON 응답 파싱 시도
+            data = _call_llm_json(
+                messages, schema, temperature=0.7,
+                model=settings.models.enhanced_generation, max_output_tokens=2000,
+                use_responses_api=False
+            )
             
             questions = []
             if isinstance(data, dict) and "questions" in data:
@@ -649,8 +597,6 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
                         # level과 동일한 값을 가지는 answer_difficulty 필드를 명시적으로 포함한다
                         "answer_difficulty": 4 if template.complexity in [QuestionComplexity.SYNTHETIC, QuestionComplexity.SCENARIO] else 3
                     }
-                    
-                    print(f"[Enhanced Generator] 최종 생성된 질문 {idx+1}: 복잡도={template.complexity.value}, 페르소나={template.persona.value}, 시나리오={template.scenario}")
                     questions.append(question_obj)
             
             return questions

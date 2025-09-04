@@ -43,6 +43,9 @@ class EvaluationResult:
     # 구조적 메트릭 (JSON, XML 등)
     structural_accuracy: Optional[float] = None
     
+    # VRF 정보
+    vrf: Optional[str] = None
+    
     def overall_score(self) -> float:
         """전체 점수 계산 (가중평균)"""
         if self.answer_type == AnswerType.SHORT:
@@ -63,6 +66,30 @@ class NetworkAnswerNormalizer:
         self.ip_pattern = re.compile(r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b')
         self.as_pattern = re.compile(r'\bAS\s*(\d+)\b', re.IGNORECASE)
         self.interface_pattern = re.compile(r'\b(?:GigabitEthernet|FastEthernet|Ethernet|Loopback)[\d/\.]+\b', re.IGNORECASE)
+        self.hex_pattern = re.compile(r'^0x[0-9a-fA-F]+$')
+        
+    def normalize_hex_literal(self, answer: str) -> str:
+        """16진수 리터럴 정규화"""
+        if not isinstance(answer, str):
+            answer = str(answer)
+        
+        # 0x로 시작하는 16진수를 정규화
+        # 예: 0x1A -> 0x1a (소문자), 0x001A -> 0x1a (앞자리 0 제거)
+        def hex_normalizer(match):
+            hex_value = match.group(0)
+            # 0x 제거하고 16진수 부분만 추출
+            hex_digits = hex_value[2:]
+            # 정수로 변환했다가 다시 16진수로 (앞자리 0 제거)
+            try:
+                int_value = int(hex_digits, 16)
+                return f"0x{int_value:x}"  # 소문자 16진수
+            except ValueError:
+                return hex_value  # 변환 실패시 원본 반환
+        
+        # 16진수 패턴을 찾아서 정규화
+        normalized = re.sub(r'0x[0-9a-fA-F]+', hex_normalizer, answer)
+        
+        return normalized
         
     def normalize_answer(self, answer: str) -> str:
         """네트워크 답변 정규화"""
@@ -137,12 +164,20 @@ class ExactMatchEvaluator:
         pred_norm = self.normalizer.normalize_answer(predicted)
         gt_norm = self.normalizer.normalize_answer(ground_truth)
         
+        # Exact/Fuzzy 비교 직전에 hex literal 정규화 적용
+        pred_norm = self.normalizer.normalize_hex_literal(pred_norm)
+        gt_norm = self.normalizer.normalize_hex_literal(gt_norm)
+        
         return 1.0 if pred_norm == gt_norm else 0.0
     
     def evaluate_fuzzy(self, predicted: str, ground_truth: str, threshold: float = 0.9) -> float:
         """유사도 기반 Fuzzy Exact Match"""
         pred_norm = self.normalizer.normalize_answer(predicted)
         gt_norm = self.normalizer.normalize_answer(ground_truth)
+        
+        # Exact/Fuzzy 비교 직전에 hex literal 정규화 적용
+        pred_norm = self.normalizer.normalize_hex_literal(pred_norm)
+        gt_norm = self.normalizer.normalize_hex_literal(gt_norm)
         
         if pred_norm == gt_norm:
             return 1.0
@@ -417,15 +452,25 @@ class ComprehensiveEvaluator:
         self.f1_evaluator = F1ScoreEvaluator()
         self.bleu_evaluator = BLEUEvaluator()
         self.rouge_evaluator = ROUGEEvaluator()
+        # VRF 자동주입을 위한 패턴
+        self.vrf_pattern = re.compile(r'VRF\s*([A-Za-z0-9\-_]+)', re.IGNORECASE)
     
     def evaluate_single(
         self, 
         predicted: str, 
         ground_truth: str, 
         question_id: str,
-        answer_type: str = "auto"
+        answer_type: str = "auto",
+        question: str = ""
     ) -> EvaluationResult:
         """단일 답변 종합 평가"""
+        
+        # VRF 자동주입
+        vrf_info = None
+        if question:
+            vrf_match = self.vrf_pattern.search(question)
+            if vrf_match:
+                vrf_info = vrf_match.group(1)
         
         # Answer Type 자동 감지
         if answer_type == "auto":
@@ -443,7 +488,8 @@ class ComprehensiveEvaluator:
             predicted_answer=predicted,
             ground_truth=ground_truth,
             exact_match=em_score,
-            f1_score=f1_score
+            f1_score=f1_score,
+            vrf=vrf_info
         )
         
         # Answer Type별 추가 메트릭
@@ -473,18 +519,21 @@ class ComprehensiveEvaluator:
                 pred_data['predicted'],
                 pred_data['ground_truth'],
                 pred_data['question_id'],
-                pred_data.get('answer_type', 'auto')
+                pred_data.get('answer_type', 'auto'),
+                pred_data.get('question', '')
             )
             results.append(result)
         
         # 통계 계산
         stats = self._calculate_batch_statistics(results)
+        vrf_stats = self._calculate_vrf_statistics(results)
         
         return {
             'individual_results': results,
             'overall_statistics': stats,
             'short_answer_stats': self._filter_stats(results, AnswerType.SHORT),
-            'long_answer_stats': self._filter_stats(results, AnswerType.LONG)
+            'long_answer_stats': self._filter_stats(results, AnswerType.LONG),
+            'vrf_statistics': vrf_stats
         }
 
     def evaluate_dataset(
@@ -678,6 +727,38 @@ class ComprehensiveEvaluator:
             'f1_score': np.mean([r.f1_score for r in filtered]),
             'overall_score': np.mean([r.overall_score() for r in filtered])
         }
+    
+    def _calculate_vrf_statistics(self, results: List[EvaluationResult]) -> Dict[str, Dict[str, float]]:
+        """VRF별 통계 계산"""
+        vrf_stats = {}
+        
+        for result in results:
+            if result.vrf:
+                if result.vrf not in vrf_stats:
+                    vrf_stats[result.vrf] = {
+                        'count': 0,
+                        'exact_match': [],
+                        'f1_score': [],
+                        'overall_score': []
+                    }
+                
+                vrf_stats[result.vrf]['count'] += 1
+                vrf_stats[result.vrf]['exact_match'].append(result.exact_match)
+                vrf_stats[result.vrf]['f1_score'].append(result.f1_score)
+                vrf_stats[result.vrf]['overall_score'].append(result.overall_score())
+        
+        # 평균 계산
+        for vrf, stats in vrf_stats.items():
+            stats['exact_match_avg'] = np.mean(stats['exact_match'])
+            stats['f1_score_avg'] = np.mean(stats['f1_score'])
+            stats['overall_score_avg'] = np.mean(stats['overall_score'])
+            
+            # 리스트 제거 (평균만 유지)
+            del stats['exact_match']
+            del stats['f1_score']
+            del stats['overall_score']
+        
+        return vrf_stats
 
     def _to_serializable(self, obj: Any) -> Any:
         """JSON 직렬화를 위한 기본 타입 변환"""
@@ -690,3 +771,31 @@ class ComprehensiveEvaluator:
         if isinstance(obj, list):
             return [self._to_serializable(v) for v in obj]
         return obj
+
+    def normalize_hex_literal(self, x: str) -> str:
+        """16진수 리터럴 정규화"""
+        x = x.strip()
+        return x.lower() if self.hex_pattern.match(x) else x
+    
+    def extract_vrf_from_question(self, question: str) -> Optional[str]:
+        """질문에서 VRF 정보 추출"""
+        if not question:
+            return None
+        
+        vrf_match = self.vrf_pattern.search(question)
+        return vrf_match.group(1) if vrf_match else None
+    
+    def get_vrf_questions(self, predictions: List[Dict[str, Any]]) -> Dict[str, List[str]]:
+        """VRF별 질문 목록 반환"""
+        vrf_questions = {}
+        
+        for pred_data in predictions:
+            question = pred_data.get('question', '')
+            vrf = self.extract_vrf_from_question(question)
+            
+            if vrf:
+                if vrf not in vrf_questions:
+                    vrf_questions[vrf] = []
+                vrf_questions[vrf].append(question)
+        
+        return vrf_questions

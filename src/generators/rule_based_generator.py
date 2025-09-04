@@ -76,109 +76,122 @@ ALLOWED_METRICS = {
 
 def default_patterns(metric: str) -> str:
     table = {
-        "ibgp_fullmesh_ok": "AS {asn} 도메인의 iBGP 풀메시 구성이 완전한가",
-        "ibgp_missing_pairs": "AS {asn} iBGP 풀메시에서 누락된 링크(장비쌍) 목록은?",
-        "ibgp_under_peered_devices": "AS {asn} 에서 iBGP 피어 수가 기대치보다 적은 장비 목록은?",
-        "ibgp_under_peered_count": "AS {asn} 에서 iBGP 피어 수가 기대치보다 적은 장비 수는?",
-        "ibgp_missing_pairs_count": "AS {asn} iBGP 풀메시에서 누락된 링크 개수는?",
-        "neighbor_list_ibgp": "{host} 장비의 iBGP 피어 목록은?",
-        "neighbor_list_ebgp": "{host} 장비의 eBGP 피어 목록은?",
-        "vrf_rd_map": "VRF {vrf} 의 장비별 RD 매핑은?",
-        "vrf_rt_list_per_device": "{host} 의 VRF {vrf} route-target 목록은?",
-        "vrf_without_rt_pairs": "route-target이 없는 VRF (장비/VRF) 목록은?",
-        "vrf_without_rt_count": "route-target이 없는 VRF (장비/VRF) 개수는?",
-        "l2vpn_pairs": "구성된 L2VPN pseudowire 회선(장비쌍) 목록은?",
-        "l2vpn_unidirectional_pairs": "역방향이 없는 L2VPN 회선(장비쌍) 목록은?",
-        "l2vpn_unidir_count": "역방향이 없는 L2VPN 회선(장비쌍) 개수는?",
-        "l2vpn_pwid_mismatch_pairs": "PW-ID 불일치 L2VPN 회선(장비쌍) 목록은?",
-        "l2vpn_mismatch_count": "PW-ID 불일치(또는 역방향 미존재) 회선 수는?",
-        "ospf_proc_ids": "{host} 의 OSPF 프로세스 ID는?",
-        "ospf_area0_if_list": "{host} 의 OSPF Area 0 인터페이스 목록은?",
-        "ospf_area0_if_count": "{host} 의 OSPF Area 0 인터페이스 수는?",
-        "ssh_enabled_devices": "SSH가 활성화된 장비 목록은?",
-        "ssh_missing_devices": "SSH가 비활성화(또는 설정 없음)인 장비는?",
-        "ssh_missing_count": "SSH가 비활성화(또는 설정 없음)인 장비 수는?",
-        "aaa_enabled_devices": "AAA가 활성화된 장비 목록은?",
-        "aaa_missing_devices": "AAA가 비활성화(또는 설정 없음)인 장비는?",
-        "ebgp_remote_as_map": "{host} VRF {vrf}의 eBGP 피어 remote-as 매핑은?",
-        "ibgp_update_source_missing_set": "AS {asn} iBGP에서 update-source가 누락된 피어는?",
-        "vrf_interface_bind_count": "{host}의 VRF {vrf}에 바인딩된 인터페이스 수는?",
-        "vrf_rd_format_invalid_set": "RD 형식이 비정상인 VRF 목록은?",
-        "system_hostname_text": "{host} 장비의 호스트네임은?",
-        "system_version_text": "{host} 장비의 OS/이미지 버전은?",
-        "system_timezone_text": "{host} 장비의 시간대(Timezone)는?",
-        "system_user_list": "{host} 장비의 로컬 사용자 목록은?",
-        "system_user_count": "{host} 장비의 로컬 사용자 수는?",
-        "interface_count": "{host} 장비의 인터페이스 개수는?",
-        "interface_ip_map": "{host} 장비의 인터페이스-IP 매핑은?",
-        "interface_vlan_set": "{host} 장비의 VLAN 목록은?",
-        "subinterface_count": "{host} 장비의 서브인터페이스 개수는?",
-        "vrf_bind_map": "{host} 장비의 인터페이스별 VRF 바인딩 현황은?",
-        "bgp_local_as_numeric": "{host} 장비의 BGP Local-AS 번호는?",
-        "bgp_neighbor_count": "{host} 장비의 BGP 이웃(피어) 수는?",
-        "ospf_process_ids_set": "{host} 장비의 OSPF 프로세스 ID 목록은?",
-        "ospf_area_set": "{host} 장비가 참여한 OSPF Area 목록은?",
-        "vrf_names_set": "{host} 장비의 VRF 이름 목록은?",
-        "vrf_count": "{host} 장비의 VRF 개수는?",
-        "rt_import_count": "{host} 장비의 Route Target Import 설정 개수는?",
-        "rt_export_count": "{host} 장비의 Route Target Export 설정 개수는?",
-        "l2vpn_pw_id_set": "{host} 장비의 L2VPN Pseudowire ID 목록은?",
-        "mpls_ldp_present_bool": "{host} 장비에서 MPLS LDP가 설정되어 있습니까?",
-        # Basic Info
-        "system_mgmt_address_text": "{host} 장비의 관리 IP 주소는?",
-        "ios_config_register_text": "{host} 장비의 config-register 값은?",
-        "logging_buffered_severity_text": "{host} 장비에서 logging buffered의 severity-level은?",
-        "http_server_enabled_bool": "{host} 장비에서 HTTP 서버가 활성화되어 있습니까?",
-        "ip_forward_protocol_nd_bool": "{host} 장비에서 ip forward-protocol nd가 설정되어 있습니까?",
-        "ip_cef_enabled_bool": "{host} 장비에서 IP CEF가 활성화되어 있습니까?",
-        "vty_first_last_text": "{host} 장비에서 VTY의 first~last 라인 번호는?",
-        "vty_login_mode_text": "{host} 장비에서 VTY line의 login 방식은?",
-        "vty_password_secret_text": "{host} 장비의 VTY password secret 값은?",
-        "vty_transport_input_text": "{host} 장비에서 VTY의 transport input은?",
-        "system_users_detail_map": "{host} 장비의 사용자 상세(UID/GID/password/ssh_keydir/homedir 등)는?",
-        "interface_mop_xenabled_bool": "{host} 장비에서 {if} 인터페이스의 MOP xenabled 설정은?",
-        "ssh_acl_applied_check": "{host} 장비에 SSH 접속 ACL이 적용되어 있는가?",
-        "bgp_advertised_prefixes_list": "{host} 장비가 BGP를 통해 외부로 광고하는 prefix 목록은?",
-        "qos_policer_applied_interfaces_list": "{host} 장비에서 QoS Policer가 적용된 인터페이스 목록은?",
+        # BGP Consistency
+        "ibgp_fullmesh_ok": "AS {asn}의 iBGP Full-Mesh 구성은 완벽합니까? (true/false)",
+        "ibgp_missing_pairs": "AS {asn}의 iBGP Full-Mesh에서 누락된 장비쌍 목록을 알려주세요.",
+        "ibgp_under_peered_devices": "AS {asn}에서 iBGP 피어 수가 부족한 장비 목록을 알려주세요.",
+        "ibgp_under_peered_count": "AS {asn}에서 iBGP 피어 수가 부족한 장비는 총 몇 대입니까?",
+        "ibgp_missing_pairs_count": "AS {asn}의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까?",
+        "neighbor_list_ibgp": "{host} 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.",
+        "neighbor_list_ebgp": "{host} 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.",
+        # VRF Consistency
+        "vrf_rd_map": "{host} 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요.",
+        "vrf_rt_list_per_device": "{host} 장비의 각 VRF에 설정된 route-target 목록을 알려주세요.",
+        "vrf_without_rt_pairs": "route-target이 없는 VRF(장비/VRF) 목록을 알려주세요.",
+        "vrf_without_rt_count": "route-target이 없는 VRF(장비/VRF)는 총 몇 개입니까?",
+        # L2VPN Consistency
+        "l2vpn_pairs": "구성된 L2VPN pseudowire 회선(장비쌍) 목록을 알려주세요.",
+        "l2vpn_unidirectional_pairs": "단방향으로만 설정된 L2VPN 회선(장비쌍) 목록을 알려주세요.",
+        "l2vpn_unidir_count": "단방향으로만 설정된 L2VPN 회선은 총 몇 개입니까?",
+        "l2vpn_pwid_mismatch_pairs": "PW-ID가 불일치하는 L2VPN 회선(장비쌍) 목록을 알려주세요.",
+        "l2vpn_mismatch_count": "PW-ID 불일치 또는 단방향 L2VPN 회선은 총 몇 개입니까?",
+        # OSPF Consistency
+        "ospf_proc_ids": "{host} 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.",
+        "ospf_area0_if_list": "{host} 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.",
+        "ospf_area0_if_count": "{host} 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?",
+        # Security Policy
+        "ssh_enabled_devices": "SSH 접속이 가능한 장비 목록을 알려주세요.",
+        "ssh_missing_devices": "SSH 접속이 불가능한 장비 목록을 알려주세요.",
+        "ssh_missing_count": "SSH 접속이 불가능한 장비는 총 몇 대입니까?",
+        "aaa_enabled_devices": "AAA 기능이 활성화된 장비 목록을 알려주세요.",
+        "aaa_missing_devices": "AAA 기능이 비활성화된 장비 목록을 알려주세요.",
+        # 기타
+        "ebgp_remote_as_map": "{host} 장비의 각 VRF별 eBGP 피어 remote-as 매핑을 알려주세요.",
+        "ibgp_update_source_missing_set": "AS {asn}의 iBGP에서 update-source가 누락된 피어 목록을 알려주세요.",
+        "vrf_interface_bind_count": "{host} 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?",
+        "vrf_rd_format_invalid_set": "RD 형식이 잘못된 VRF 목록을 알려주세요.",
+        # System Inventory
+        "system_hostname_text": "{host} 장비의 호스트네임은 무엇입니까?",
+        "system_version_text": "{host} 장비의 운영체제(OS) 버전은 무엇입니까?",
+        "system_timezone_text": "{host} 장비의 시간대(Timezone)는 무엇입니까?",
+        "system_user_list": "{host} 장비에 등록된 로컬 사용자 목록을 알려주세요.",
+        "system_user_count": "{host} 장비에 등록된 로컬 사용자는 총 몇 명입니까?",
+        # Interface Inventory
+        "interface_count": "{host} 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?",
+        "interface_ip_map": "{host} 장비의 각 인터페이스에 할당된 IP 주소를 알려주세요.",
+        "interface_vlan_set": "{host} 장비에 설정된 VLAN 목록을 알려주세요.",
+        "subinterface_count": "{host} 장비에 설정된 서브인터페이스는 총 몇 개입니까?",
+        "vrf_bind_map": "{host} 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요.",
+        # Routing Inventory
+        "bgp_local_as_numeric": "{host} 장비의 BGP Local-AS 번호는 무엇입니까?",
+        "bgp_neighbor_count": "{host} 장비의 BGP 피어(이웃)는 총 몇 개입니까?",
+        "ospf_process_ids_set": "{host} 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.",
+        "ospf_area_set": "{host} 장비가 참여하는 OSPF Area 목록을 알려주세요.",
+        # Services Inventory
+        "vrf_names_set": "{host} 장비에 설정된 VRF 이름 목록을 알려주세요.",
+        "vrf_count": "{host} 장비에 설정된 VRF는 총 몇 개입니까?",
+        "rt_import_count": "{host} 장비의 Route Target Import 설정은 총 몇 개입니까?",
+        "rt_export_count": "{host} 장비의 Route Target Export 설정은 총 몇 개입니까?",
+        "l2vpn_pw_id_set": "{host} 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.",
+        # _bool 질문 개선
+        "aaa_present_bool": "{host} 장비에 AAA 기능이 설정되어 있습니까? (true/false)",
+        "password_policy_present_bool": "{host} 장비에 패스워드 정책이 적용되어 있습니까? (true/false)",
+        "ssh_present_bool": "{host} 장비에 SSH가 활성화되어 있습니까? (true/false)",
+        "mpls_ldp_present_bool": "{host} 장비에서 MPLS LDP가 설정되어 있습니까? (true/false)",
+        "http_server_enabled_bool": "{host} 장비에서 HTTP 서버가 활성화되어 있습니까? (true/false)",
+        "ip_forward_protocol_nd_bool": "{host} 장비에서 ip forward-protocol nd가 설정되어 있습니까? (true/false)",
+        "ip_cef_enabled_bool": "{host} 장비에서 IP CEF가 활성화되어 있습니까? (true/false)",
+        "interface_mop_xenabled_bool": "{host} 장비의 {if} 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+        # 기타
+        "system_mgmt_address_text": "{host} 장비의 관리용 IP 주소는 무엇입니까?",
+        "ios_config_register_text": "{host} 장비의 config-register 값은 무엇입니까?",
+        "logging_buffered_severity_text": "{host} 장비에서 logging buffered의 severity-level은 무엇입니까?",
+        "vty_first_last_text": "{host} 장비의 VTY 라인 번호 범위는 어떻게 됩니까?",
+        "vty_login_mode_text": "{host} 장비의 VTY line 로그인 방식은 무엇입니까?",
+        "vty_password_secret_text": "{host} 장비의 VTY password secret 값은 무엇입니까?",
+        "vty_transport_input_text": "{host} 장비의 VTY transport input 설정은 무엇입니까?",
+        "system_users_detail_map": "{host} 장비의 사용자 상세 정보(UID/GID/password/ssh_keydir/homedir 등)를 알려주세요.",
+        "ssh_acl_applied_check": "{host} 장비에 SSH 접속 ACL이 적용되어 있습니까? (true/false)",
+        "bgp_advertised_prefixes_list": "{host} 장비가 BGP를 통해 외부로 광고하는 prefix 목록을 알려주세요.",
+        "qos_policer_applied_interfaces_list": "{host} 장비에서 QoS Policer가 적용된 인터페이스 목록을 알려주세요.",
         # Command generation
-        "cmd_show_bgp_summary": "{host} 장비에서 BGP 피어 상태를 요약해서 확인하는 명령어는?",
-        "cmd_show_ip_interface_brief": "{host} 장비의 인터페이스 IP 상태를 간단히 보는 명령어는?",
-        "cmd_show_ip_route_ospf": "{host} 장비에서 OSPF로 학습된 라우팅 정보를 확인하는 명령어는?",
-        "cmd_show_processes_cpu": "{host} 장비에서 CPU 사용률 순으로 프로세스를 확인하는 명령어는?",
-        "cmd_show_l2vpn_vc": "{host} 장비에서 L2VPN 가상회선 상태를 확인하는 명령어는?",
-        "cmd_show_ip_ospf_neighbor": "{host} 장비에서 OSPF 이웃 상태를 조회하는 명령어는?",
-        "cmd_show_users": "{host} 장비에 현재 접속한 사용자 목록을 보는 명령어는?",
-        "cmd_show_logging": "{host} 장비의 로그 버퍼를 확인하는 명령어는?",
-        "cmd_ssh_direct_access": "{user} 계정으로 {host} 장비에 직접 SSH 접속하는 명령어는?",
-        "cmd_set_static_route": "{host} 장비에서 {prefix}/{mask} 네트워크로 가는 정적 경로를 {next_hop} 다음 홉으로 설정하는 명령어는?",
-        "cmd_set_bgp_routemap": "{host} 장비에서 BGP AS {asn}의 {neighbor_ip} 이웃에 {map_name} 라우트맵을 outbound로 적용하는 명령어는?",
-        "cmd_set_interface_description": "{host} 장비에서 {interface} 인터페이스에 '{description}' 설명을 설정하는 명령어는?",
-        "cmd_create_vrf_and_assign": "{host} 장비에서 {vrf_name} VRF를 생성하고 {interface} 인터페이스에 할당하는 명령어 시퀀스는?",
-        "cmd_set_ospf_cost": "{host} 장비에서 OSPF 프로세스 {process_id}의 {interface} 인터페이스 비용을 {cost}으로 설정하는 명령어는?",
-        "cmd_set_vty_acl": "{host} 장비의 VTY 라인에 {acl_name} ACL을 inbound로 적용하는 명령어는?",
-        "cmd_set_hostname": "{host} 장비의 호스트네임을 {new_hostname}(으)로 변경하는 명령어는?",
-        "cmd_ssh_proxy_jump": "{user} 계정으로 {jump_host}를 거쳐 {destination_host} 장비에 SSH 접속하는 명령어는?",
-        
+        "cmd_show_bgp_summary": "{host} 장비에서 BGP 피어 상태를 요약해서 확인하는 명령어는 무엇입니까?",
+        "cmd_show_ip_interface_brief": "{host} 장비의 인터페이스 IP 상태를 간단히 확인하는 명령어는 무엇입니까?",
+        "cmd_show_ip_route_ospf": "{host} 장비에서 OSPF로 학습된 라우팅 정보를 확인하는 명령어는 무엇입니까?",
+        "cmd_show_processes_cpu": "{host} 장비에서 CPU 사용률 순으로 프로세스를 확인하는 명령어는 무엇입니까?",
+        "cmd_show_l2vpn_vc": "{host} 장비에서 L2VPN 가상회선 상태를 확인하는 명령어는 무엇입니까?",
+        "cmd_show_ip_ospf_neighbor": "{host} 장비에서 OSPF 이웃 상태를 조회하는 명령어는 무엇입니까?",
+        "cmd_show_users": "{host} 장비에 현재 접속한 사용자 목록을 확인하는 명령어는 무엇입니까?",
+        "cmd_show_logging": "{host} 장비의 로그 버퍼를 확인하는 명령어는 무엇입니까?",
+        "cmd_ssh_direct_access": "{user} 계정으로 {host} 장비에 직접 SSH 접속하는 명령어는 무엇입니까?",
+        "cmd_set_static_route": "{host} 장비에서 {prefix}/{mask} 네트워크로 가는 정적 경로를 {next_hop} 다음 홉으로 설정하는 명령어는 무엇입니까?",
+        "cmd_set_bgp_routemap": "{host} 장비에서 BGP AS {asn}의 {neighbor_ip} 이웃에 {map_name} 라우트맵을 outbound로 적용하는 명령어는 무엇입니까?",
+        "cmd_set_interface_description": "{host} 장비에서 {interface} 인터페이스에 '{description}' 설명을 설정하는 명령어는 무엇입니까?",
+        "cmd_create_vrf_and_assign": "{host} 장비에서 {vrf_name} VRF를 생성하고 {interface} 인터페이스에 할당하는 명령어 시퀀스는 무엇입니까?",
+        "cmd_set_ospf_cost": "{host} 장비에서 OSPF 프로세스 {process_id}의 {interface} 인터페이스 비용을 {cost}으로 설정하는 명령어는 무엇입니까?",
+        "cmd_set_vty_acl": "{host} 장비의 VTY 라인에 {acl_name} ACL을 inbound로 적용하는 명령어는 무엇입니까?",
+        "cmd_set_hostname": "{host} 장비의 호스트네임을 {new_hostname}(으)로 변경하는 명령어는 무엇입니까?",
+        "cmd_ssh_proxy_jump": "{user} 계정으로 {jump_host}를 거쳐 {destination_host} 장비에 SSH 접속하는 명령어는 무엇입니까?",
         # Command generation (cmd_ 접두사 없는 버전)
-        "show_bgp_summary": "{host} 장비에서 BGP 피어 상태를 요약해서 확인하는 명령어는?",
-        "show_ip_interface_brief": "{host} 장비의 인터페이스 IP 상태를 간단히 보는 명령어는?",
-        "show_ip_route_ospf": "{host} 장비에서 OSPF로 학습된 라우팅 정보를 확인하는 명령어는?",
-        "show_processes_cpu": "{host} 장비에서 CPU 사용률 순으로 프로세스를 확인하는 명령어는?",
-        "show_l2vpn_vc": "{host} 장비에서 L2VPN 가상회선 상태를 확인하는 명령어는?",
-        "show_ip_ospf_neighbor": "{host} 장비에서 OSPF 이웃 상태를 조회하는 명령어는?",
-        "show_users": "{host} 장비에 현재 접속한 사용자 목록을 보는 명령어는?",
-        "show_logging": "{host} 장비의 로그 버퍼를 확인하는 명령어는?",
-        "ssh_direct_access": "{user} 계정으로 {host} 장비에 직접 SSH 접속하는 명령어는?",
-        "set_static_route": "{host} 장비에서 {prefix}/{mask} 네트워크로 가는 정적 경로를 {next_hop} 다음 홉으로 설정하는 명령어는?",
-        "set_bgp_routemap": "{host} 장비에서 BGP AS {asn}의 {neighbor_ip} 이웃에 {map_name} 라우트맵을 outbound로 적용하는 명령어는?",
-        "set_interface_description": "{host} 장비에서 {interface} 인터페이스에 '{description}' 설명을 설정하는 명령어는?",
-        "create_vrf_and_assign": "{host} 장비에서 {vrf_name} VRF를 생성하고 {interface} 인터페이스에 할당하는 명령어 시퀀스는?",
-        "set_ospf_cost": "{host} 장비에서 OSPF 프로세스 {process_id}의 {interface} 인터페이스 비용을 {cost}으로 설정하는 명령어는?",
-        "set_vty_acl": "{host} 장비의 VTY 라인에 {acl_name} ACL을 inbound로 적용하는 명령어는?",
-        "set_hostname": "{host} 장비의 호스트네임을 {new_hostname}(으)로 변경하는 명령어는?",
-        "ssh_proxy_jump": "{user} 계정으로 {jump_host}를 거쳐 {destination_host} 장비에 SSH 접속하는 명령어는?",
+        "show_bgp_summary": "{host} 장비에서 BGP 피어 상태를 요약해서 확인하는 명령어는 무엇입니까?",
+        "show_ip_interface_brief": "{host} 장비의 인터페이스 IP 상태를 간단히 확인하는 명령어는 무엇입니까?",
+        "show_ip_route_ospf": "{host} 장비에서 OSPF로 학습된 라우팅 정보를 확인하는 명령어는 무엇입니까?",
+        "show_processes_cpu": "{host} 장비에서 CPU 사용률 순으로 프로세스를 확인하는 명령어는 무엇입니까?",
+        "show_l2vpn_vc": "{host} 장비에서 L2VPN 가상회선 상태를 확인하는 명령어는 무엇입니까?",
+        "show_ip_ospf_neighbor": "{host} 장비에서 OSPF 이웃 상태를 조회하는 명령어는 무엇입니까?",
+        "show_users": "{host} 장비에 현재 접속한 사용자 목록을 확인하는 명령어는 무엇입니까?",
+        "show_logging": "{host} 장비의 로그 버퍼를 확인하는 명령어는 무엇입니까?",
+        "ssh_direct_access": "{user} 계정으로 {host} 장비에 직접 SSH 접속하는 명령어는 무엇입니까?",
+        "set_static_route": "{host} 장비에서 {prefix}/{mask} 네트워크로 가는 정적 경로를 {next_hop} 다음 홉으로 설정하는 명령어는 무엇입니까?",
+        "set_bgp_routemap": "{host} 장비에서 BGP AS {asn}의 {neighbor_ip} 이웃에 {map_name} 라우트맵을 outbound로 적용하는 명령어는 무엇입니까?",
+        "set_interface_description": "{host} 장비에서 {interface} 인터페이스에 '{description}' 설명을 설정하는 명령어는 무엇입니까?",
+        "create_vrf_and_assign": "{host} 장비에서 {vrf_name} VRF를 생성하고 {interface} 인터페이스에 할당하는 명령어 시퀀스는 무엇입니까?",
+        "set_ospf_cost": "{host} 장비에서 OSPF 프로세스 {process_id}의 {interface} 인터페이스 비용을 {cost}으로 설정하는 명령어는 무엇입니까?",
+        "set_vty_acl": "{host} 장비의 VTY 라인에 {acl_name} ACL을 inbound로 적용하는 명령어는 무엇입니까?",
+        "set_hostname": "{host} 장비의 호스트네임을 {new_hostname}(으)로 변경하는 명령어는 무엇입니까?",
+        "ssh_proxy_jump": "{user} 계정으로 {jump_host}를 거쳐 {destination_host} 장비에 SSH 접속하는 명령어는 무엇입니까?",
     }
-    return table.get(metric, f"{metric} 측정값은?")
+    return table.get(metric, f"{metric}에 대한 질문을 자연스럽게 작성해주세요.")
 
 GOAL2METRICS = {
     "Security_Policy": {
@@ -409,10 +422,36 @@ CANDIDATES = {
 }
 
 
+# src/generators/rule_based_generator.py 상단에 추가
+
+def normalize_to_plain_text(data: Any) -> str:
+    """모든 데이터 타입을 '정규화된 평문'으로 변환합니다."""
+    if data is None:
+        return ""
+
+    # 리스트(List) 타입 처리
+    if isinstance(data, list):
+        # 1. 모든 요소를 문자열로 변환
+        # 2. 중복 제거 및 오름차순 정렬
+        # 3. 쉼표와 공백으로 연결
+        str_items = sorted(list(set(map(str, data))))
+        return ", ".join(str_items)
+
+    # 딕셔너리(Dictionary) 타입 처리
+    if isinstance(data, dict):
+        # 1. Key를 기준으로 오름차순 정렬
+        # 2. "Key: Value" 형태로 변환하여 쉼표와 공백으로 연결
+        sorted_items = sorted(data.items())
+        return ", ".join([f"{k}: {v}" for k, v in sorted_items])
+
+    # 그 외 타입 (String, Integer, Boolean 등)은 그대로 문자열로 변환
+    return str(data)
+
+
 def _allowed(cat: str, metric: str) -> bool:
     return metric in (ALLOWED_METRICS.get(cat) or [])
 
-
+# 모든 데이터 타입을 '정규화된 평문'으로 변환
 def _mk(metric: str, agg: str, cat: str) -> Dict[str, Any]:
     scope={"type":"GLOBAL"}; placeholders=[]
     if "ibgp" in metric:
@@ -618,11 +657,14 @@ class RuleBasedGenerator:
         }
 
         cmd_items: List[Dict[str, Any]] = []
+
+        # 1) 일반 명령(SSH 제외)은 기존 방식 유지
+        ssh_metrics = {"cmd_ssh_direct_access", "cmd_ssh_proxy_jump"}
         for metric in ALLOWED_METRICS.get("Command_Generation", []):
+            if metric in ssh_metrics:
+                continue
             params = dict(params_base)
-            if metric == "cmd_ssh_direct_access":
-                params = {"user": params["user"], "host": host}
-            elif metric == "cmd_set_static_route":
+            if metric == "cmd_set_static_route":
                 params = {
                     "host": host,
                     "prefix": params["prefix"],
@@ -659,12 +701,6 @@ class RuleBasedGenerator:
                 params = {"host": host, "acl_name": params_base["acl_name"]}
             elif metric == "cmd_set_hostname":
                 params = {"host": host, "new_hostname": params_base["new_hostname"]}
-            elif metric == "cmd_ssh_proxy_jump":
-                params = {
-                    "user": params_base["user"],
-                    "jump_host": params_base["jump_host"],
-                    "destination_host": params_base["destination_host"],
-                }
             elif metric == "cmd_show_processes_cpu":
                 params = {"host": host}
             elif metric == "cmd_show_l2vpn_vc":
@@ -680,4 +716,50 @@ class RuleBasedGenerator:
                 "intent": {"metric": metric, "params": params},
                 "level": level_map.get(metric, 1),
             })
+
+        # 2) SSH 명령은 실제 XML 장비 정보를 사용해 장비별로 생성
+        enabled_devices: List[Dict[str, Any]] = []
+        for d in devices:
+            sys = d.get("system", {})
+            sec = d.get("security", {})
+            ssh_present = bool((sec.get("ssh") or {}).get("present", False))
+            d_file = d.get("file")
+            d_host = sys.get("hostname") or d.get("name") or d_file or "device"
+            d_mgmt = sys.get("mgmt_address") or d_host
+            if ssh_present:
+                enabled_devices.append({
+                    "hostname": d_host,
+                    "mgmt": d_mgmt,
+                    "file": d_file,
+                })
+                # 직접 접속(Direct)
+                q_direct = default_patterns("cmd_ssh_direct_access").format(user="admin", host=d_mgmt)
+                cmd_items.append({
+                    "test_id": f"CMD_SSH_DIRECT_ACCESS_{d_host.upper()}",
+                    "category": "Command_Generation",
+                    "question": q_direct,
+                    "intent": {"metric": "cmd_ssh_direct_access", "params": {"user": "admin", "host": d_mgmt}},
+                    "level": level_map.get("cmd_ssh_direct_access", 1),
+                    "source_files": [d_file] if d_file else [],
+                })
+
+        # 프록시 점프(ProxyJump): 인접한 두 장비를 페어링하여 생성 (과도한 증식 방지로 최대 5쌍)
+        if len(enabled_devices) >= 2:
+            max_pairs = min(5, len(enabled_devices) - 1)
+            for i in range(max_pairs):
+                j = enabled_devices[i]
+                k = enabled_devices[(i + 1) % len(enabled_devices)]
+                if j["mgmt"] == k["mgmt"]:
+                    continue
+                q_jump = default_patterns("cmd_ssh_proxy_jump").format(user="admin", jump_host=j["mgmt"], destination_host=k["mgmt"])
+                src_files = [f for f in [j.get("file"), k.get("file")] if f]
+                cmd_items.append({
+                    "test_id": f"CMD_SSH_PROXY_JUMP_{j['hostname'].upper()}_TO_{k['hostname'].upper()}",
+                    "category": "Command_Generation",
+                    "question": q_jump,
+                    "intent": {"metric": "cmd_ssh_proxy_jump", "params": {"user": "admin", "jump_host": j["mgmt"], "destination_host": k["mgmt"]}},
+                    "level": level_map.get("cmd_ssh_proxy_jump", 2),
+                    "source_files": src_files,
+                })
+
         return cmd_items

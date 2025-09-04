@@ -144,7 +144,13 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
             facts.setdefault("services", {}).setdefault("ip", {})
             facts["services"]["ip"]["forward_protocol_nd"] = True
         # ip cef
-        cef_present = find(dev, "ncs:config/ios:ip/ios:cef-conf/ios:cef") is not None
+        cef_present = root.find(".//ios:ip/ios:cef-conf/ios:cef", ns) is not None \
+           or root.find(".//ios:ip/ios:cef", ns) is not None
+
+        facts.setdefault("services", {}).setdefault("ip", {})["cef_enabled"] = cef_present
+        # 원형 표현도 유지하고 싶으면:
+        facts.setdefault("ip", {}).setdefault("cef-conf", {})["cef"] = cef_present
+
         if cef_present:
             facts.setdefault("services", {}).setdefault("ip", {})
             facts["services"]["ip"]["cef_enabled"] = True
@@ -215,8 +221,14 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
                 name = f"{tag}{if_id}" if if_id else tag
                 ip   = text(find(ch, "xr:ipv4/xr:address/xr:ip"))
                 mask = text(find(ch, "xr:ipv4/xr:address/xr:mask"))
+                vrf  = (
+                    text(find(ch, "xr:vrf//xr:name")) or
+                    text(find(ch, "xr:vrf-name"))     or
+                    text(find(ch, "xr:vrf"))          or
+                    ""
+                )
                 ipv4 = f"{ip}/{mask}" if (ip and mask) else (ip or None)
-                facts["interfaces"].append({"name": name, "ipv4": ipv4, "vlan": None})
+                facts["interfaces"].append({"name": name, "ipv4": ipv4, "vlan": None, "vrf": vrf or None})
         sub = find(iface_root, "xr:GigabitEthernet-subinterface")
         if sub is not None:
             for gig in findall(sub, "xr:GigabitEthernet"):
@@ -226,7 +238,13 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
                 mask = text(find(gig, "xr:ipv4/xr:address/xr:mask"))
                 vlan = text(find(gig, "xr:encapsulation/xr:dot1q/xr:vlan-id"))
                 ipv4 = f"{ip}/{mask}" if (ip and mask) else (ip or None)
-                facts["interfaces"].append({"name": name, "ipv4": ipv4, "vlan": vlan})
+                vrf  = (
+                    text(find(ch, "xr:vrf//xr:name")) or
+                    text(find(ch, "xr:vrf-name"))     or
+                    text(find(ch, "xr:vrf"))          or
+                    ""
+                )
+                facts["interfaces"].append({"name": name, "ipv4": ipv4, "vlan": vlan, "vrf": vrf or None})
     facts["num_interfaces"] = len(facts["interfaces"])
 
     # -------- Services (VRF/L2VPN/MPLS/SNMP) --------
@@ -248,28 +266,36 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
     snmp_present = admin is not None and (
         find(admin, "xr:SNMP-COMMUNITY-MIB") is not None or find(admin, "xr:SNMPv2-MIB") is not None
     )
-    facts["services"] = {
+    facts.setdefault("services", {})
+    facts["services"].update({
         "vrf": vrfs,
         "l2vpn": l2vpns,
         "mpls": {"ldp_interfaces": ldp_ifs},
         "snmp": {"present": snmp_present},
-    }
+    })
+
 
     # -------- Routing: BGP / OSPF --------
     bgp = {"local_as": None, "neighbors": [], "vrfs": []}
     bgp_ni = find(dev, "ncs:config/xr:router/xr:bgp/xr:bgp-no-instance")
     if bgp_ni is not None:
         bgp["local_as"] = text(find(bgp_ni, "xr:id"))
+        las = bgp["local_as"]
         for n in findall(bgp_ni, "xr:neighbor"):
-            bgp["neighbors"].append(
-                {"id": text(find(n, "xr:id")), "remote_as": text(find(n, "xr:remote-as"))}
-            )
+            rid = text(find(n, "xr:id"))
+            ras = text(find(n, "xr:remote-as"))
+            typ = "ibgp" if (ras and las and ras == las) else "ebgp"
+            bgp["neighbors"].append({"id": rid, "remote_as": ras, "type": typ})
         for v in findall(bgp_ni, "xr:vrf"):
             vname = text(find(v, "xr:name"))
             rd    = text(find(v, "xr:rd"))
             vneis = []
+            las = bgp["local_as"]
             for n in findall(v, "xr:neighbor"):
-                vneis.append({"id": text(find(n, "xr:id")), "remote_as": text(find(n, "xr:remote-as"))})
+                rid = text(find(n, "xr:id"))
+                ras = text(find(n, "xr:remote-as"))
+                typ = "ibgp" if (ras and las and ras == las) else "ebgp"
+                vneis.append({"id": rid, "remote_as": ras, "type": typ})
             bgp["vrfs"].append({"name": vname, "rd": rd, "neighbors": vneis})
     # IOS BGP (optional)
     bgp_ios = find(dev, "ncs:config/ios:router/ios:bgp")

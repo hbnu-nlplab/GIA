@@ -16,7 +16,7 @@ VDACij1/SioX</key-data>
         </host-key>
       </ssh>
       <authgroup>kreonet</authgroup>
-      <device-type>
+      <device-type> 
         <cli>
           <ned-id xmlns:cisco-ios-cli-6.109="http://tail-f.com/ns/ned-id/cisco-ios-cli-6.109">cisco-ios-cli-6.109:cisco-ios-cli-6.109</ned-id>
           <protocol>ssh</protocol>

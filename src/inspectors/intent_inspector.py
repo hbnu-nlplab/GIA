@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
 _semantic_map = {
     "idle": {"down", "끊김", "비정상", "idle"},
@@ -10,12 +10,25 @@ _semantic_map = {
 }
 
 class IntentInspector:
+    
+    def __init__(self):
+        import re
+        self.vrf_pattern = re.compile(r'VRF\s*([A-Za-z0-9\-_]+)', re.IGNORECASE)
+        
+
     def inspect(self, tests_by_cat: Dict[str, List[Dict[str, Any]]]) -> Dict[str, List[Dict[str, Any]]]:
         for cat, arr in (tests_by_cat or {}).items():
             for t in arr:
                 t.setdefault("verification", {})
                 t["verification"].setdefault("status", "PASS")
                 t["verification"].setdefault("needs_review", False)
+                
+                # VRF 자동주입
+                question = t.get("question", "") or ""
+                vrf_match = self.vrf_pattern.search(question)
+                if vrf_match:
+                    t.setdefault("metric_params", {})["vrf"] = vrf_match.group(1)
+                
                 self._auto_tag_difficulty_and_type(t)
         return tests_by_cat
 
@@ -184,3 +197,27 @@ class IntentInspector:
             except Exception:
                 continue
         return validated
+    
+    def extract_vrf_from_question(self, question: str) -> Optional[str]:
+        """질문에서 VRF 정보 추출"""
+        if not question:
+            return None
+        
+        vrf_match = self.vrf_pattern.search(question)
+        return vrf_match.group(1) if vrf_match else None
+    
+    def get_vrf_tests(self, tests_by_cat: Dict[str, List[Dict[str, Any]]]) -> Dict[str, List[Dict[str, Any]]]:
+        """VRF별 테스트 항목 그룹화"""
+        vrf_tests = {}
+        
+        for cat, arr in (tests_by_cat or {}).items():
+            for t in arr:
+                question = t.get("question", "")
+                vrf = self.extract_vrf_from_question(question)
+                
+                if vrf:
+                    if vrf not in vrf_tests:
+                        vrf_tests[vrf] = []
+                    vrf_tests[vrf].append(t)
+        
+        return vrf_tests

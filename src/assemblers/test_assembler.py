@@ -5,15 +5,25 @@ from dataclasses import dataclass
 import os
 import sys
 
-# Allow running this script directly (e.g. `python assemblers/test_assembler.py`)
-# by ensuring the project root is on the module search path.
-sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+# 디버깅: 경로 확인
+current_dir = os.path.dirname(__file__)
+parent_dir = os.path.dirname(current_dir)
+builder_core_path = os.path.join(parent_dir, 'utils', 'builder_core.py')
+
+print(f"Current file: {__file__}")
+print(f"Current dir: {current_dir}")
+print(f"Parent dir: {parent_dir}")
+print(f"Builder core exists: {os.path.exists(builder_core_path)}")
+print(f"sys.path: {sys.path[:3]}...")  # 처음 3개만 출력
+
+sys.path.insert(0, parent_dir)
 
 from utils.builder_core import BuilderCore
 
 # --- Embedded minimal Postprocessor (from legacy) ---
 import re
 SCENARIO_TAG = re.compile(r"^\[(.+?)\]\s*")
+VRF_PATTERN = re.compile(r'VRF\s*([A-Za-z0-9\-_]+)', re.IGNORECASE)
 
 def _strip_scenario_prefix(q: str) -> tuple[str, str]:
     if not isinstance(q, str):
@@ -24,6 +34,25 @@ def _strip_scenario_prefix(q: str) -> tuple[str, str]:
     return q.strip(), ""
 
 BAD_SENTINELS = {"value", "n/a", "na", "none", "null", "미정", "없음", "unknown", "??", "..."}
+
+# 파일: src/assemblers/test_assembler.py
+# 상단 from ... import ... 아래에 이 코드를 추가하세요.
+
+
+def normalize_to_plain_text(data: Any) -> str:
+    """모든 데이터 타입을 '정규화된 평문'으로 변환합니다."""
+    if data is None:
+        return ""
+    if isinstance(data, list):
+        str_items = sorted(list(set(map(str, data))))
+        return ", ".join(str_items)
+    if isinstance(data, dict):
+        sorted_items = sorted(data.items())
+        return ", ".join([f"{k}: {v}" for k, v in sorted_items])
+    if isinstance(data, bool):
+        return str(data)
+    return str(data)
+
 
 def _is_bad_value(v):
     if v is None:
@@ -74,6 +103,37 @@ def assign_task_tags(t: dict):
     if any(k in q for k in ["ibgp", "ebgp", "as ", "풀메시"]):
         tags.add("라우팅 점검")
     t["tags"] = sorted(tags)
+
+def inject_vrf_info(t: dict):
+    """테스트 항목에 VRF 정보 자동주입"""
+    question = t.get("question", "") or ""
+    vrf_match = VRF_PATTERN.search(question)
+    if vrf_match:
+        t.setdefault("metric_params", {})["vrf"] = vrf_match.group(1)
+
+def extract_vrf_from_question(question: str) -> Optional[str]:
+    """질문에서 VRF 정보 추출"""
+    if not question:
+        return None
+    
+    vrf_match = VRF_PATTERN.search(question)
+    return vrf_match.group(1) if vrf_match else None
+
+def get_vrf_tests(tests_by_cat: Dict[str, List[Dict[str, Any]]]) -> Dict[str, List[Dict[str, Any]]]:
+    """VRF별 테스트 항목 그룹화"""
+    vrf_tests = {}
+    
+    for cat, arr in (tests_by_cat or {}).items():
+        for t in arr:
+            question = t.get("question", "")
+            vrf = extract_vrf_from_question(question)
+            
+            if vrf:
+                if vrf not in vrf_tests:
+                    vrf_tests[vrf] = []
+                vrf_tests[vrf].append(t)
+    
+    return vrf_tests
 
 
 def _auto_tag_difficulty_and_type_rule_based(t: dict) -> None:
@@ -355,10 +415,11 @@ class TestAssembler:
         # 2-1) 시나리오 조건에 따른 정답 변형
         by_cat = self.apply_scenario(by_cat, scenario_conditions)
 
-        # 3) 태그/린트
+        # 3) 태그/린트/VRF 자동주입
         for cat, arr in by_cat.items():
             for t in arr:
                 assign_task_tags(t)
+                inject_vrf_info(t)
         by_cat = lint_drop_unanswerable(by_cat)
         by_cat = strip_unwanted_fields(by_cat)
 
@@ -371,16 +432,23 @@ class TestAssembler:
         by_cat = builder.expand_from_dsl(dsl_expanded)
         for cat, arr in by_cat.items():
             for t in arr:
+                # pattern을 question으로 변환
+                if "pattern" in t and "question" not in t:
+                    t["question"] = t["pattern"]
+                
                 original = (t.get("expected_answer") or {}).get("value")
                 metric_name = ((t.get("evidence_hint") or {}).get("metric"))
+                
+                # `normalize_to_plain_text` 함수를 사용하여 `ground_truth`를 변환합니다.
+                ground_truth = normalize_to_plain_text(original)
+                
+                # explanation도 새로운 ground_truth 형식을 반영하여 수정합니다.
                 if isinstance(original, list):
-                    ground_truth = original
-                    explanation = f"The list of devices for {metric_name} is {original}."
+                    explanation = f"The list of items for {metric_name} is: {ground_truth}."
                 else:
-                    ground_truth = original
-                    explanation = f"The value for {metric_name} is {original}."
-                t["expected_answer"] = {
-                    "ground_truth": ground_truth,
-                    "explanation": explanation,
-                }
+                    explanation = f"The value for {metric_name} is {ground_truth}."
+                    t["expected_answer"] = {
+                        "ground_truth": ground_truth,
+                        "explanation": explanation,
+                    }
         return by_cat
