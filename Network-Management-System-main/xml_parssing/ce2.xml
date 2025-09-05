@@ -1,0 +1,222 @@
+<config xmlns="http://tail-f.com/ns/config/1.0">
+  <devices xmlns="http://tail-f.com/ns/ncs">
+    <device>
+      <name>CE2</name>
+      <address>172.16.1.41</address>
+      <port>22</port>
+      <ssh>
+        <host-key>
+          <algorithm>ssh-rsa</algorithm>
+          <key-data>AAAAB3NzaC1yc2EAAAADAQABAAABAQCxZFajeYU+EdQNhzzQ2Pqn7lNwIrdMk5Df+VuHms/I
+NgMt03bFDH9IlC4a3GopaQtD7RPO5i9Ax7ukeqVwumTTwwY4e3c1/0YT0SMCIClDMACPOJhB
+UHIF6Nm3zttLHTgX13uhe/SjiTGGxATmaAZ4CqB2mjMD235Ae3cLtJrdwnHs0JV5e/DNYwu6
+R/H6ornB/CokyV6WV+KBvzpNp6E/Dri6SCT3WwQd3s4WTjekpzMDlRy3hyMuVtHIPM+uiiKC
+bZ7SMlYIjt8ELqiv2OLZUWIFqqvNsGyEEh/uBYYQ8+c0hqzkOMfNmpcSTPJuDrOfRjkBGRBY
+VDACij1/SioX</key-data>
+        </host-key>
+      </ssh>
+      <authgroup>kreonet</authgroup>
+      <device-type>
+        <cli>
+          <ned-id xmlns:cisco-ios-cli-6.109="http://tail-f.com/ns/ned-id/cisco-ios-cli-6.109">cisco-ios-cli-6.109:cisco-ios-cli-6.109</ned-id>
+          <protocol>ssh</protocol>
+        </cli>
+      </device-type>
+      <state>
+        <admin-state>unlocked</admin-state>
+      </state>
+      <config>
+        <hostname xmlns="urn:ios">CE2</hostname>
+        <tailfned xmlns="urn:ios">
+          <police>cirmode</police>
+        </tailfned>
+        <version xmlns="urn:ios">15.4</version>
+        <service xmlns="urn:ios">
+          <timestamps>
+            <debug>
+              <datetime>
+                <msec/>
+              </datetime>
+            </debug>
+            <log>
+              <datetime>
+                <msec/>
+              </datetime>
+            </log>
+          </timestamps>
+        </service>
+        <enable xmlns="urn:ios">
+          <password>
+            <secret>12345678</secret>
+          </password>
+          <secret>
+            <type>5</type>
+            <secret>$1$8dga$xaXiEHsAP7p2QDiR0VAQr0</secret>
+          </secret>
+        </enable>
+        <clock xmlns="urn:ios">
+          <timezone>
+            <zone>KST</zone>
+            <hours>9</hours>
+            <minutes>0</minutes>
+          </timezone>
+        </clock>
+        <ip xmlns="urn:ios">
+          <cef-conf>
+            <cef/>
+          </cef-conf>
+          <domain>
+            <name>examdomain.com</name>
+          </domain>
+          <ssh>
+            <version>2</version>
+          </ssh>
+          <forward-protocol>
+            <nd/>
+          </forward-protocol>
+          <http>
+            <server>false</server>
+            <secure-server>false</secure-server>
+          </http>
+        </ip>
+        <multilink xmlns="urn:ios">
+          <bundle-name>authenticated</bundle-name>
+        </multilink>
+        <username xmlns="urn:ios">
+          <name>nso</name>
+          <privilege>15</privilege>
+          <secret>
+            <type>5</type>
+            <secret>$1$ou/O$Fc2FfZtj0B5/97GkzArNj/</secret>
+          </secret>
+        </username>
+        <redundancy xmlns="urn:ios"/>
+        <interface xmlns="urn:ios">
+          <Ethernet>
+            <name>0/0</name>
+            <ip>
+              <no-address>
+                <address>false</address>
+              </no-address>
+            </ip>
+          </Ethernet>
+          <Ethernet>
+            <name>0/0.100</name>
+            <encapsulation>
+              <dot1Q>
+                <vlan-id>300</vlan-id>
+              </dot1Q>
+            </encapsulation>
+            <ip>
+              <address>
+                <primary>
+                  <address>192.168.3.11</address>
+                  <mask>255.255.255.0</mask>
+                </primary>
+              </address>
+            </ip>
+          </Ethernet>
+          <Ethernet>
+            <name>0/1</name>
+            <ip>
+              <address>
+                <primary>
+                  <address>192.168.30.1</address>
+                  <mask>255.255.255.0</mask>
+                </primary>
+              </address>
+            </ip>
+          </Ethernet>
+          <Ethernet>
+            <name>0/2</name>
+            <ip>
+              <address>
+                <primary>
+                  <address>172.16.1.41</address>
+                  <mask>255.255.255.0</mask>
+                </primary>
+              </address>
+            </ip>
+          </Ethernet>
+          <Ethernet>
+            <name>0/3</name>
+            <mop>
+              <xenabled>false</xenabled>
+            </mop>
+            <ip>
+              <no-address>
+                <address>false</address>
+              </no-address>
+            </ip>
+          </Ethernet>
+        </interface>
+        <control-plane xmlns="urn:ios"/>
+        <config-register xmlns="urn:ios">0x0</config-register>
+        <line xmlns="urn:ios">
+          <console>
+            <first>0</first>
+            <logging>
+              <synchronous/>
+            </logging>
+          </console>
+          <aux>
+            <first>0</first>
+          </aux>
+          <vty>
+            <first>0</first>
+            <last>4</last>
+            <login>
+              <local/>
+            </login>
+            <password>
+              <secret>12345678</secret>
+            </password>
+            <transport>
+              <input>ssh</input>
+            </transport>
+          </vty>
+        </line>
+        <logging xmlns="urn:ios">
+          <buffered>
+            <severity-level>debugging</severity-level>
+          </buffered>
+          <console>
+            <severity-level>debugging</severity-level>
+          </console>
+          <monitor>
+            <severity-level>debugging</severity-level>
+          </monitor>
+        </logging>
+        <router xmlns="urn:ios">
+          <bgp>
+            <as-no>65003</as-no>
+            <bgp>
+              <log-neighbor-changes>true</log-neighbor-changes>
+            </bgp>
+            <neighbor>
+              <id>192.168.3.10</id>
+              <remote-as>65000</remote-as>
+            </neighbor>
+            <address-family>
+              <ipv4>
+                <af>unicast</af>
+                <network-address>
+                  <network>
+                    <number>192.168.30.0</number>
+                  </network>
+                </network-address>
+                <neighbor>
+                  <id>192.168.3.10</id>
+                  <activate/>
+                </neighbor>
+              </ipv4>
+              <vpnv4>
+                <af>unicast</af>
+              </vpnv4>
+            </address-family>
+          </bgp>
+        </router>
+      </config>
+    </device>
+  </devices>
+</config>

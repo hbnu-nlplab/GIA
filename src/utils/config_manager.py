@@ -10,7 +10,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class ApiSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file='.env', extra='ignore')
     
-    timeout: int = Field(60, validation_alias=AliasChoices("OPENAI_TIMEOUT_SEC"))
+    timeout: int = Field(180, validation_alias=AliasChoices("OPENAI_TIMEOUT_SEC"))
     max_retries: int = Field(2, validation_alias=AliasChoices("OPENAI_MAX_RETRIES"))
     base_url: Optional[str] = Field(None, validation_alias=AliasChoices("OPENAI_BASE_URL"))
     api_key: Optional[str] = Field(None, validation_alias=AliasChoices("OPENAI_API_KEY"))
@@ -22,13 +22,13 @@ class ModelsSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file='.env', extra='ignore')
     
     # GPT-5 기반 권장 기본값 (YAML/ENV로 자유롭게 오버라이드)
-    default: str = "gpt-5-mini"
-    paraphrase: str = Field("gpt-5-mini", validation_alias=AliasChoices("OPENAI_MODEL_PARAPHRASE"))
-    question_generation: str = Field("gpt-5-mini", validation_alias=AliasChoices("OPENAI_MODEL_QUESTION"))
-    intent_parsing: str = Field("gpt-5-mini", validation_alias=AliasChoices("OPENAI_MODEL_INTENT"))
-    hypothesis_review: str = Field("gpt-5", validation_alias=AliasChoices("OPENAI_MODEL_HYPO_REVIEW"))
-    answer_synthesis: str = Field("gpt-5-mini", validation_alias=AliasChoices("OPENAI_MODEL_ANSWER_SYNTH"))
-    enhanced_generation: str = Field("gpt-5", validation_alias=AliasChoices("OPENAI_MODEL_ENHANCED_GEN"))
+    default: str = "gpt-5-mini-2025-08-07"
+    paraphrase: str = Field("gpt-5-mini-2025-08-07", validation_alias=AliasChoices("OPENAI_MODEL_PARAPHRASE"))
+    question_generation: str = Field("gpt-5-mini-2025-08-07", validation_alias=AliasChoices("OPENAI_MODEL_QUESTION"))
+    intent_parsing: str = Field("gpt-5-mini-2025-08-07", validation_alias=AliasChoices("OPENAI_MODEL_INTENT"))
+    hypothesis_review: str = Field("gpt-5-2025-08-07", validation_alias=AliasChoices("OPENAI_MODEL_HYPO_REVIEW"))
+    answer_synthesis: str = Field("gpt-5-mini-2025-08-07", validation_alias=AliasChoices("OPENAI_MODEL_ANSWER_SYNTH"))
+    enhanced_generation: str = Field("gpt-5-2025-08-07", validation_alias=AliasChoices("OPENAI_MODEL_ENHANCED_GEN"))
 
 
 class FeaturesSettings(BaseSettings):

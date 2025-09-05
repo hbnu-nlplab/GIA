@@ -200,7 +200,7 @@ class AnswerAgent:
                 schema,
                 temperature=0.0,
                 model=settings.models.answer_synthesis,
-                max_output_tokens=700,
+                max_output_tokens=8000,
                 use_responses_api=False,
                 use_chat_parse=True,
                 pydantic_model=StructuredAnswerModel,
@@ -220,7 +220,7 @@ class AnswerAgent:
                 schema,
                 temperature=0.0,
                 model=settings.models.answer_synthesis,
-                max_output_tokens=700,
+                max_output_tokens=8000,
                 use_responses_api=False,
                 use_chat_parse=False,
             )
@@ -448,7 +448,7 @@ class AnswerAgent:
                 schema,
                 temperature=0.1,
                 model=settings.models.answer_synthesis,
-                max_output_tokens=600,
+                max_output_tokens=8000,
                 use_responses_api=False,
             )
             answer = data.get("answer") if isinstance(data, dict) else None

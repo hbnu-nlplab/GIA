@@ -546,7 +546,7 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
             # JSON 응답 파싱 시도
             data = _call_llm_json(
                 messages, schema, temperature=0.7,
-                model=settings.models.enhanced_generation, max_output_tokens=2000,
+                model=settings.models.enhanced_generation, max_output_tokens=8000,
                 use_responses_api=False
             )
             
@@ -685,7 +685,7 @@ class QuestionQualityAssessor:
         try:
             data = _call_llm_json(
                 messages, schema, temperature=0.1,
-                model=settings.models.hypothesis_review, max_output_tokens=1500,
+                model=settings.models.hypothesis_review, max_output_tokens=8000,
                 use_responses_api=False
             )
             

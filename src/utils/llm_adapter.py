@@ -2,11 +2,11 @@
 """
 LLM Adapter (OpenAI) — robust JSON with multi-stage fallbacks.
 
-- Prefers Responses API Structured Outputs (response_format)
-- If Responses fails (e.g., 400 'text.format.name'), fallback to Chat Completions
+- Prefers Responses API Structured Outputs (text.format)
+- If Responses fails (e.g., 400 on formatting), fallback to Chat Completions
   * Chat path: json_schema → json_object
 - Final fallback: Chat tools(function calling) with an OBJECT-wrapped schema
-- Correct Chat param: max_tokens (not max_completion_tokens)
+- For GPT-5 Chat, use max_completion_tokens (not max_tokens)
 """
 
 from __future__ import annotations
@@ -64,7 +64,8 @@ def _ensure_schema_strict(schema: Dict[str, Any]) -> Dict[str, Any]:
         if isinstance(node, dict):
             t = node.get("type")
             if t == "object":
-                node.setdefault("additionalProperties", False)
+                # Force strictness on every object node
+                node["additionalProperties"] = False
                 props = node.get("properties", {})
                 if isinstance(props, dict):
                     for _, v in list(props.items()):
@@ -145,18 +146,279 @@ def _retry_backoff(attempt: int, base: float = 0.8, cap: float = 6.0) -> float:
     return delay * (0.8 + 0.4 * (os.urandom(1)[0] / 255.0))
 
 
+def _schema_has_optional_props(schema: Dict[str, Any]) -> bool:
+    """Detect if any object node declares optional properties (i.e., properties keys not all in required).
+    If so, Responses strict mode may reject the schema; return True to suggest relaxing.
+    """
+    def _walk(node: Any) -> bool:
+        if isinstance(node, dict):
+            t = node.get("type")
+            if t == "object":
+                props = node.get("properties", {})
+                req = set(node.get("required", []))
+                if isinstance(props, dict) and props:
+                    keys = set(props.keys())
+                    if not req or (keys - req):
+                        return True
+                    # Recurse into children
+                    for v in props.values():
+                        if _walk(v):
+                            return True
+            elif t == "array":
+                if "items" in node and _walk(node["items"]):
+                    return True
+        return False
+    try:
+        data = json.loads(json.dumps(schema, ensure_ascii=False))
+    except Exception:
+        data = schema
+    return _walk(data)
+
+
 def _call_llm_json(
     messages: List[Dict[str, str]],
     schema: Dict[str, Any],
     temperature: float = 0.6,
     *,
     model: Optional[str] = None,
-    max_output_tokens: int = 1200,
-    use_responses_api: bool = False,
+    max_output_tokens: int = 10000,
+    use_responses_api: Optional[bool] = None,
     prefer_object: bool = True,
     use_chat_parse: bool = False,
     pydantic_model: Optional[Any] = None,
 ) -> Any:
+    """
+    Robust JSON caller with detailed debugging
+    """
+    client = _build_client()
+    strict_schema = _ensure_schema_strict(schema)
+    chosen_model = model or get_settings().models.paraphrase
+    cfg = _ClientConfig.from_settings()
+    attempts = cfg.max_retries + 1
+
+    # 🔍 디버깅: 모델 정보 출력
+    print(f"\n[DEBUG] ========== LLM CALL DEBUG ==========")
+    print(f"[DEBUG] Model requested: {chosen_model}")
+    print(f"[DEBUG] API Key present: {bool(cfg.api_key)}")
+    print(f"[DEBUG] API Key prefix: {cfg.api_key[:10] if cfg.api_key else 'None'}...")
+    
+    def log_header(api: str):
+        print(f"[LLM] call start | api={api} | model={chosen_model} | temp={temperature} | max_out={max_output_tokens} | schema={strict_schema.get('title','(no-title)')} | messages={len(messages)}")
+        for i, m in enumerate(messages[:3]):
+            prev = (m.get("content") or "")[:240].replace("\n", " ")
+            print(f"  - msg[{i}] role={m.get('role')} len={len(m.get('content') or '')} preview={prev}")
+
+    # Responses API 사용 여부 결정
+    try:
+        s = get_settings()
+        if use_responses_api is None:
+            use_responses_api = bool(
+                isinstance(chosen_model, str)
+                and chosen_model.startswith("gpt-5")
+                and getattr(s.features, "use_responses_api_for_gpt5", False)
+            )
+        else:
+            use_responses_api = bool(use_responses_api)
+    except Exception as e:
+        print(f"[DEBUG] Error checking settings: {e}")
+        use_responses_api = bool(use_responses_api)
+
+    print(f"[DEBUG] use_responses_api: {use_responses_api}")
+    
+    relax_needed = _schema_has_optional_props(schema)
+
+    if use_responses_api:
+        for attempt in range(1, attempts + 1):
+            try:
+                log_header("Responses")
+                
+                # messages 변환
+                if isinstance(messages, list):
+                    input_text = "\n".join([
+                        f"{msg.get('role', 'user')}: {msg.get('content', '')}"
+                        for msg in messages
+                    ])
+                else:
+                    input_text = messages
+                
+                # 🔍 디버깅: 입력 내용 출력
+                print(f"[DEBUG] Input text length: {len(input_text)}")
+                print(f"[DEBUG] Input text preview: {input_text[:200]}...")
+                
+                # text 파라미터 구성
+                text_config = {
+                    "format": {
+                        "type": "json_schema",
+                        "name": strict_schema.get("title", "structured_output"),
+                        "strict": False if relax_needed else True,
+                        "schema": strict_schema,
+                    }
+                }
+                
+                # verbosity 추가
+                try:
+                    if chosen_model.startswith("gpt-5"):
+                        text_config["verbosity"] = s.features.gpt5_text_verbosity
+                except:
+                    pass
+                
+                # reasoning 파라미터
+                reasoning_config = {}
+                try:
+                    if chosen_model.startswith("gpt-5"):
+                        reasoning_config = {"effort": s.features.gpt5_reasoning_effort}
+                except:
+                    reasoning_config = {"effort": "minimal"}
+                
+                # 🔍 디버깅: API 호출 파라미터 출력
+                print(f"[DEBUG] API Call Parameters:")
+                print(f"  - model: {chosen_model}")
+                print(f"  - input type: {type(input_text)}")
+                print(f"  - text config: {text_config}")
+                print(f"  - reasoning: {reasoning_config}")
+                print(f"  - max_output_tokens: {max_output_tokens}")
+                
+                # API 호출
+                resp = client.responses.create(
+                    model=chosen_model,
+                    input=input_text,
+                    text=text_config,
+                    reasoning=reasoning_config,
+                    max_output_tokens=max_output_tokens,
+                )
+                
+                # 🔍 디버깅: 응답 객체 상세 분석
+                print(f"[DEBUG] Response type: {type(resp)}")
+                print(f"[DEBUG] Response dir: {dir(resp)}")
+                print(f"[DEBUG] Response attributes:")
+                for attr in dir(resp):
+                    if not attr.startswith('_'):
+                        try:
+                            val = getattr(resp, attr)
+                            print(f"  - {attr}: {type(val)} = {str(val)[:100] if val else 'None'}")
+                        except:
+                            print(f"  - {attr}: <unable to access>")
+                
+                # 응답에서 텍스트 추출 시도
+                text = _extract_output_text(resp)
+                
+                # 🔍 디버깅: 추출된 텍스트 정보
+                print(f"[DEBUG] Extracted text type: {type(text)}")
+                print(f"[DEBUG] Extracted text length: {len(text) if text else 0}")
+                print(f"[DEBUG] Extracted text: {text[:200] if text else 'None'}")
+                
+                if not isinstance(text, str) or not text.strip():
+                    raise ValueError(f"Empty output_text from model. Response object: {resp}")
+                    
+                print(f"[LLM] raw text len={len(text)}")
+                return _safe_json_loads(_extract_json_from_codeblock(text) or text)
+                
+            except Exception as e:
+                print(f"[LLM] error on attempt {attempt}: {e}")
+                print(f"[DEBUG] Full error: {repr(e)}")
+                import traceback
+                print(f"[DEBUG] Traceback:\n{traceback.format_exc()}")
+                
+                if attempt >= attempts:
+                    print("[LLM] fall back to Chat API")
+                else:
+                    time.sleep(_retry_backoff(attempt-1))
+
+    # 2) Chat API
+    for attempt in range(1, attempts + 1):
+        try:
+            log_header("Chat")
+            messages_json = list(messages)
+            
+            # 🔍 디버깅: Chat API 시도
+            print(f"[DEBUG] Trying Chat API with model: {chosen_model}")
+            
+            # JSON 키워드 추가
+            try:
+                has_json_kw = any(
+                    isinstance(m, dict) and isinstance(m.get("content"), str) and ("json" in m["content"].lower())
+                    for m in messages_json
+                )
+            except Exception:
+                has_json_kw = False
+                
+            if not has_json_kw:
+                messages_json.append({
+                    "role": "developer",
+                    "content": (
+                        "Return only JSON. Output a single valid JSON object or array that follows the intent of the schema. "
+                        "Do not include prose, markdown, or code fences. json"
+                    )
+                })
+
+            extra: Dict[str, Any] = {}
+
+            # GPT-5용 특별 처리
+            if isinstance(chosen_model, str) and chosen_model.startswith("gpt-5"):
+                # 🔍 디버깅: GPT-5 Chat API 호출
+                print(f"[DEBUG] GPT-5 Chat API call")
+                print(f"[DEBUG] Using max_completion_tokens instead of max_tokens")
+                
+                try:
+                    resp = client.chat.completions.create(
+                        model=chosen_model,
+                        messages=messages_json,
+                        response_format={"type": "json_object"},
+                        max_completion_tokens=max_output_tokens,
+                        **extra,
+                    )
+                except Exception as api_error:
+                    print(f"[DEBUG] GPT-5 Chat API error: {api_error}")
+                    print(f"[DEBUG] Error type: {type(api_error)}")
+                    print(f"[DEBUG] Error details: {repr(api_error)}")
+                    raise
+            else:
+                resp = client.chat.completions.create(
+                    model=chosen_model,
+                    messages=messages_json,
+                    response_format={"type": "json_object"},
+                    max_tokens=max_output_tokens,
+                    temperature=temperature,
+                    **extra,
+                )
+            
+            # 🔍 디버깅: Chat API 응답 분석
+            print(f"[DEBUG] Chat response type: {type(resp)}")
+            print(f"[DEBUG] Chat response attributes: {dir(resp)}")
+            if hasattr(resp, 'choices') and resp.choices:
+                print(f"[DEBUG] Choices count: {len(resp.choices)}")
+                if resp.choices[0].message:
+                    print(f"[DEBUG] Message content present: {bool(resp.choices[0].message.content)}")
+                    
+            text = _extract_output_text(resp)
+            
+            if not isinstance(text, str) or not text.strip():
+                raise ValueError(f"Empty output_text from model. Full response: {resp}")
+                
+            print(f"[LLM] raw text len={len(text)}")
+            payload = _extract_json_from_codeblock(text) or text
+            
+            try:
+                return _safe_json_loads(payload)
+            except Exception as json_error:
+                print(f"[DEBUG] JSON parsing error: {json_error}")
+                # JSON 추출 재시도
+                import re
+                m = re.search(r"\[\s*\{[\s\S]*\}\s*\]", payload)
+                if m:
+                    return _safe_json_loads(m.group(0))
+                m = re.search(r"\{[\s\S]*\}", payload)
+                if m:
+                    return _safe_json_loads(m.group(0))
+                raise
+                
+        except Exception as e:
+            print(f"[LLM] error on attempt {attempt}: {e}")
+            print(f"[DEBUG] Full Chat API error: {repr(e)}")
+            if attempt >= attempts:
+                print("[LLM] final fallback → tools(function calling)")
+            else:
+                time.sleep(_retry_backoff(attempt-1))
     """
     Robust JSON caller:
       Responses(JSON schema) → Chat(json_schema/json_object) → Chat tools(function calling)
@@ -173,61 +435,84 @@ def _call_llm_json(
             prev = (m.get("content") or "")[:240].replace("\n", " ")
             print(f"  - msg[{i}] role={m.get('role')} len={len(m.get('content') or '')} preview={prev}")
 
-    # 1) Responses API first (optional)
-    # Auto-enable for GPT-5 if configured
+    # Decide whether to use Responses API:
+    # - If caller explicitly passed True/False, respect it.
+    # - Otherwise, auto-enable for GPT-5 if configured in settings.
     try:
         s = get_settings()
-        if (model or chosen_model).startswith("gpt-5") and s.features.use_responses_api_for_gpt5:
-            use_responses_api = True
+        if use_responses_api is None:
+            use_responses_api = bool(
+                isinstance(chosen_model, str)
+                and chosen_model.startswith("gpt-5")
+                and getattr(s.features, "use_responses_api_for_gpt5", False)
+            )
+        else:
+            use_responses_api = bool(use_responses_api)
     except Exception:
-        pass
+        use_responses_api = bool(use_responses_api)
+
+    # Determine if schema contains optional properties; if so, relax strict mode
+    relax_needed = _schema_has_optional_props(schema)
 
     if use_responses_api:
         for attempt in range(1, attempts + 1):
             try:
                 log_header("Responses")
-                # gpt-5 reasoning/verbosity extras
-                extras: Dict[str, Any] = {}
+                
+                # messages를 단일 문자열로 변환
+                if isinstance(messages, list):
+                    input_text = "\n".join([
+                        f"{msg.get('role', 'user')}: {msg.get('content', '')}"
+                        for msg in messages
+                    ])
+                else:
+                    input_text = messages
+                
+                # text 파라미터 구성 (format + verbosity)
+                text_config = {
+                    "format": {
+                        "type": "json_schema",
+                        "name": strict_schema.get("title", "structured_output"),
+                        "strict": False if relax_needed else True,
+                        "schema": strict_schema,
+                    }
+                }
+                
+                # verbosity 추가 (옵션)
                 try:
                     if chosen_model.startswith("gpt-5"):
-                        extras["reasoning"] = {"effort": s.features.gpt5_reasoning_effort}
-                        extras["text"] = {"verbosity": s.features.gpt5_text_verbosity}
-                except Exception:
+                        text_config["verbosity"] = s.features.gpt5_text_verbosity
+                except:
                     pass
-                # preambles: inject instruction
-                instr = None
+                
+                # reasoning 파라미터 구성
+                reasoning_config = {}
                 try:
-                    if s.features.enable_preambles:
-                        instr = "Before you produce the final answer, briefly outline your approach in one sentence."
-                except Exception:
-                    instr = None
-
-                # Note: some reasoning models (e.g., gpt-5) do not accept 'temperature'
-                # Enforce structured outputs via response_format=json_schema to avoid free-form text
+                    if chosen_model.startswith("gpt-5"):
+                        reasoning_config = {"effort": s.features.gpt5_reasoning_effort}
+                except:
+                    reasoning_config = {"effort": "medium"}
+                
+                # Responses API 호출
                 resp = client.responses.create(
                     model=chosen_model,
-                    input=messages,
-                    response_format={
-                        "type": "json_schema",
-                        "json_schema": {
-                            "name": strict_schema.get("title", "structured_output"),
-                            "schema": strict_schema,
-                            "strict": True,
-                        },
-                    },
+                    input=input_text,
+                    text=text_config,  # ✅ format과 verbosity 모두 포함
+                    reasoning=reasoning_config,  # ✅ effort 포함
                     max_output_tokens=max_output_tokens,
-                    instructions=instr,
-                    **extras,
                 )
+                
+                # 응답 처리
                 text = _extract_output_text(resp)
                 if not isinstance(text, str) or not text.strip():
                     raise ValueError("Empty output_text from model")
                 print(f"[LLM] raw text len={len(text)}")
                 return _safe_json_loads(_extract_json_from_codeblock(text) or text)
+            
             except Exception as e:
                 print(f"[LLM] error on attempt {attempt}: {e}")
                 if attempt >= attempts:
-                    print("[LLM] fall back to Chat API")
+                    print("[LLM] final fallback → chat(function calling)")
                 else:
                     time.sleep(_retry_backoff(attempt-1))
 
@@ -310,13 +595,13 @@ def _call_llm_json(
                     # omit temperature for gpt-5 chat
                     resp = client.chat.completions.create(
                         model=chosen_model,
-                        messages=messages,
+                        messages=messages_json,
                         response_format={
                             "type": "json_schema",
                             "json_schema": {
                                 "name": strict_schema.get("title", "structured_output"),
                                 "schema": strict_schema,
-                                "strict": True,
+                                "strict": False if relax_needed else True,
                             },
                         },
                         max_completion_tokens=max_output_tokens,
@@ -325,13 +610,13 @@ def _call_llm_json(
                 else:
                     resp = client.chat.completions.create(
                         model=chosen_model,
-                        messages=messages,
+                        messages=messages_json,
                         response_format={
                             "type": "json_schema",
                             "json_schema": {
                                 "name": strict_schema.get("title", "structured_output"),
                                 "schema": strict_schema,
-                                "strict": True,
+                                "strict": False if relax_needed else True,
                             },
                         },
                         max_tokens=max_output_tokens,
@@ -348,11 +633,10 @@ def _call_llm_json(
                 return _safe_json_loads(payload)
             except Exception:
                 # 괄호 내 JSON 추출 재시도
-                import re as _re
-                m = _re.search(r"\[\s*\{[\s\S]*\}\s*\]", payload)
+                m = re.search(r"\[\s*\{[\s\S]*\}\s*\]", payload)
                 if m:
                     return _safe_json_loads(m.group(0))
-                m = _re.search(r"\{[\s\S]*\}", payload)
+                m = re.search(r"\{[\s\S]*\}", payload)
                 if m:
                     return _safe_json_loads(m.group(0))
                 raise
@@ -373,6 +657,12 @@ def _call_llm_json(
             "required": ["data"],
             "additionalProperties": False
         }
+        # Use correct token param for GPT-5 chat
+        token_kwargs = (
+            {"max_completion_tokens": max_output_tokens}
+            if isinstance(chosen_model, str) and chosen_model.startswith("gpt-5")
+            else {"max_tokens": max_output_tokens, "temperature": temperature}
+        )
         resp = client.chat.completions.create(
             model=chosen_model,
             messages=messages + [
@@ -384,8 +674,7 @@ def _call_llm_json(
                 "parameters": tool_parameters
             }}],
             tool_choice={"type": "function", "function": {"name": "return_json"}},
-            max_tokens=max_output_tokens,
-            temperature=temperature,
+            **token_kwargs,
         )
         tc = resp.choices[0].message.tool_calls
         if tc and len(tc) > 0:
@@ -402,7 +691,6 @@ def _call_llm_json(
 # High-level wrappers
 # -----------------------------
 def paraphrase_llm(pattern: str, ctx: Dict[str, Any]) -> List[str]:
-    import re, os, json
     placeholders = re.findall(r"\{[a-zA-Z0-9_]+\}", pattern)
 
     schema = {
@@ -434,7 +722,7 @@ def paraphrase_llm(pattern: str, ctx: Dict[str, Any]) -> List[str]:
     ]
 
     model = get_settings().models.paraphrase
-    data = _call_llm_json(messages, schema, temperature=0.6, model=model, max_output_tokens=800, use_responses_api=False)
+    data = _call_llm_json(messages, schema, temperature=0.6, model=model, max_output_tokens=8000, use_responses_api=False)
 
     def same_placeholders(s: str) -> bool:
         return sorted(re.findall(r"\{[a-zA-Z0-9_]+\}", s)) == sorted(placeholders)
@@ -502,12 +790,11 @@ def synth_llm(payload: Dict[str, Any]) -> List[Dict[str, Any]]:
             "1) GROUNDING: adjust 'scope' to fit CAPABILITIES. If only one AS exists, drop or simplify multi-AS comparisons. NEVER change 'metric'.\n"
             "2) CREATIVE: rewrite 'pattern' into concise, fluent Korean reflecting 'goal' and any 'policy_hints'. Keep placeholders like {host},{asn},{vrf}.\n"
             "RULES:\n"
-            f"- Ensure ~{min_per_cat} items per category when possible.\n"
-            "- Use allowed metrics only. Remove duplicates or trivial items.\n"
-                "REFINE THE DRAFT DSL ITEMS WITH TWO STEPS:\n"
+            "REFINE THE DRAFT DSL ITEMS WITH TWO STEPS:\n"
             "1) GROUNDING: adjust 'scope' to fit CAPABILITIES. If only one AS exists, drop or simplify multi-AS comparisons. NEVER change 'metric'.\n"
             "2) CREATIVE: rewrite 'pattern' into concise, fluent Korean reflecting 'goal' and any 'policy_hints'. Keep placeholders like {host},{asn},{vrf}.\n"
             "STRICT RULES:\n"
+            f"- Ensure ~{min_per_cat} items per category when possible.\n"
             "- Do NOT add bracketed scenario labels like [운영], [감사], etc.\n"
             "- Do NOT include 5W1H fillers unless directly answerable by data.\n"
             "- Do NOT expose metric identifiers (e.g., ibgp_fullmesh_ok) in the pattern.\n"
@@ -532,14 +819,15 @@ def synth_llm(payload: Dict[str, Any]) -> List[Dict[str, Any]]:
     model = get_settings().models.enhanced_generation
     data = _call_llm_json(
         messages, schema, temperature=0.25, model=model,
-        max_output_tokens=2000, use_responses_api=False  # Chat 우선
+        max_output_tokens=8000, use_responses_api=False  # Chat 우선
     )
 
     allowed = payload.get("allowed_metrics", {})
-    out=[]
+    out = []
     if isinstance(data, list):
         for x in data:
-            cat = x.get("category"); metric = (x.get("intent") or {}).get("metric")
+            cat = x.get("category")
+            metric = (x.get("intent") or {}).get("metric")
             if not cat or cat not in categories:
                 continue
             if metric not in (allowed.get(cat) or []):
@@ -606,7 +894,7 @@ def generate_questions_llm(
         data = _call_llm_json(
             messages, schema, temperature=0.7,
             model=get_settings().models.question_generation,
-            max_output_tokens=1200, use_responses_api=False
+            max_output_tokens=8000, use_responses_api=False
         )
         
         if isinstance(data, dict) and "questions" in data:
@@ -618,7 +906,7 @@ def generate_questions_llm(
         return []
 
 
-def generate_questions_llm(network_summary: str, category: str, num_questions: int = 3, examples: str = "") -> List[Dict[str, Any]]:
+def generate_questions_llm_v2(network_summary: str, category: str, num_questions: int = 3, examples: str = "") -> List[Dict[str, Any]]:
     """
     단일 LLM 호출로 카테고리별 추가 질문 생성
     """
@@ -943,7 +1231,7 @@ def parse_intent_llm(question: str, metrics: Iterable[str], hint_metric: str | N
             }, ensure_ascii=False)}
         ]
         try:
-            data = _call_llm_json(messages, schema, temperature=0.0, model=get_settings().models.intent_parsing, max_output_tokens=500, use_responses_api=False)
+            data = _call_llm_json(messages, schema, temperature=0.0, model=get_settings().models.intent_parsing, max_output_tokens=8000, use_responses_api=False)
             if isinstance(data, dict):
                 msel = data.get("metric")
                 if isinstance(msel, str) and msel in metrics_list:
@@ -1004,7 +1292,7 @@ def review_hypotheses_llm(hypotheses: List[Dict[str, Any]], capabilities: Dict[s
     ]
 
     try:
-        data = _call_llm_json(messages, schema, temperature=0.0, model=get_settings().models.hypothesis_review, max_output_tokens=1200, use_responses_api=False)
+        data = _call_llm_json(messages, schema, temperature=0.0, model=get_settings().models.hypothesis_review, max_output_tokens=8000, use_responses_api=False)
         if isinstance(data, list):
             # total_score 누락 시 합산
             for it in data:

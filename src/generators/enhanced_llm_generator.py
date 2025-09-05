@@ -504,11 +504,28 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
                                         "metric_params": {
                                             "type": "object",
                                             "description": "calculate_metric 호출 시 전달할 파라미터",
-                                            "properties": {},
-                                            "additionalProperties": True
+                                            "properties": {
+                                                "host":      {"type": "string"},
+                                                "asn":       {"type": "string"},
+                                                "vrf":       {"type": "string"},
+                                                "interface": {"type": "string"},
+                                                "ip":        {"type": "string"},
+                                                "down_link": {"type": "string"}
+                                            },
+                                            "additionalProperties": False
                                         },
                                         "intent": {"type": "string"},
-                                        "params": {"type": "object", "additionalProperties": True},
+                                        "params": {
+                                            "type": "object",
+                                            "properties": {
+                                                "host":      {"type": "string"},
+                                                "target":    {"type": "string"},
+                                                "vrf":       {"type": "string"},
+                                                "interface": {"type": "string"},
+                                                "ip":        {"type": "string"}
+                                            },
+                                            "additionalProperties": False
+                                        },
                                         "synthesis": {
                                             "type": "string",
                                             "enum": ["fetch", "compare", "summarize"]
@@ -579,9 +596,9 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
             # JSON 응답 파싱 시도 (여러 방법으로 시도)
             data = None
             attempts = [
-                ("Primary", settings.models.enhanced_generation, 0.7, 2000, False),
-                ("Secondary", "gpt-4o-mini", 0.5, 1500, False),
-                ("Fallback", "gpt-4o-mini", 0.3, 1000, False),  # Responses API 비활성 (호환성 이슈 회피)
+                ("Primary", settings.models.enhanced_generation, 0.7, 8000, False),
+                ("Secondary", "gpt-5-mini-2025-08-07", 0.5, 1500, False),
+                ("Fallback", "gpt-5-mini-2025-08-07", 0.3, 1000, False),  # Responses API 비활성 (호환성 이슈 회피)
             ]
             
             for attempt_name, model, temp, max_tokens, use_resp_api in attempts:
@@ -739,7 +756,7 @@ class QuestionQualityAssessor:
         try:
             data = _call_llm_json(
                 messages, schema, temperature=0.1,
-                model=settings.models.hypothesis_review, max_output_tokens=1500,
+                model=settings.models.hypothesis_review, max_output_tokens=8000,
                 use_responses_api=False
             )
             

@@ -1,0 +1,48 @@
+[
+  {
+    "original_item": {
+      "id": "BASIC_DSL-SSH_ENABLED_DEVICES-20451",
+      "question": "SSH 접속이 가능한 장비 목록을 알려주세요.",
+      "context": "장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1",
+      "ground_truth": [
+        "CE1",
+        "CE2",
+        "sample10",
+        "sample7",
+        "sample8",
+        "sample9"
+      ],
+      "explanation": "",
+      "answer_type": "short",
+      "category": "basic",
+      "complexity": "basic",
+      "level": 1,
+      "persona": null,
+      "scenario": "정상",
+      "source_files": [
+        "ce1.xml"
+      ],
+      "metadata": {
+        "origin": "rule_based",
+        "intent": {},
+        "evidence_hint": {
+          "scope": {
+            "type": "DEVICE",
+            "host": "CE1"
+          },
+          "metric": "ssh_enabled_devices"
+        },
+        "topic": "Security_Policy"
+      }
+    },
+    "is_correct": false,
+    "generated_answer": [
+      "CE1",
+      "CE2",
+      "sample10",
+      "sample7",
+      "sample8",
+      "sample9"
+    ],
+    "actual_answer": null,
+    "error_type": 

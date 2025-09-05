@@ -4,7 +4,7 @@
 # - 필요 시 환경별 파일(config/settings.production.yaml 등)로 오버라이드하세요.
 
 api:
-  timeout: 60        # 초 단위 요청 타임아웃(서버 응답을 기다리는 최대 시간)
+  timeout: 180        # 초 단위 요청 타임아웃(서버 응답을 기다리는 최대 시간)
   max_retries: 2     # 일시적 오류 발생 시 재시도 횟수(클라이언트 레벨에서 제어)
   base_url: null     # OpenAI 호환 API 엔드포인트(URL). null이면 기본(OpenAI 공식)
   # api_key: ""     # (권장) 환경변수로 설정: OPENAI_API_KEY
@@ -13,13 +13,13 @@ api:
 
 models:
   # 파이프라인 단계별 기본 모델명. 값이 비어있으면 default가 사용됩니다.
-  default: "gpt-5-mini"                 # 명시되지 않은 용도 기본 모델(경량)
-  paraphrase: "gpt-5-mini"              # 질문 표면변형/리라이팅 단계(경량)
-  question_generation: "gpt-5-mini"     # 규칙/LLM 질문 생성(속도/비용 우선)
-  intent_parsing: "gpt-5-mini"          # 의도/카테고리 추출(경량)
-  hypothesis_review: "gpt-5"            # 고품질 리뷰/검토(정밀)
-  answer_synthesis: "gpt-5-mini"        # 최종 답변 합성/정리(경량)
-  enhanced_generation: "gpt-5"          # 고도화 생성(복합 추론, 정밀)
+  default: "gpt-5-mini-2025-08-07"                 # 명시되지 않은 용도 기본 모델(경량)
+  paraphrase: "gpt-5-mini-2025-08-07"              # 질문 표면변형/리라이팅 단계(경량)
+  question_generation: "gpt-5-mini-2025-08-07"     # 규칙/LLM 질문 생성(속도/비용 우선)
+  intent_parsing: "gpt-5-mini-2025-08-07"          # 의도/카테고리 추출(경량)
+  hypothesis_review: "gpt-5-2025-08-07"            # 고품질 리뷰/검토(정밀)
+  answer_synthesis: "gpt-5-mini-2025-08-07"        # 최종 답변 합성/정리(경량)
+  enhanced_generation: "gpt-5-2025-08-07"          # 고도화 생성(복합 추론, 정밀)
 
 features:
   use_intent_llm: true   # true: 의도 분석에 LLM 사용, false: 규칙 기반 우선

@@ -1,0 +1,40 @@
+{
+    "dataset_path": "dataset/test.csv",
+    "models_to_test": [
+        "gpt-4o-mini",
+        "claude-3-haiku",
+        "llama-3-8b",
+        "qwen-2.5-7b"
+    ],
+    "run_baseline": true,
+    "use_rag": true,
+    "top_k_values": [
+        1,
+        5,
+        10,
+        20,
+        50
+    ],
+    "max_questions": 100,
+    "chromadb_path": "/workspace/jke/chromadb_qwen",
+    "collection_name": "network_devices",
+    "max_iterations": 3,
+    "output_dir": "benchmark_results",
+    "evaluation_metrics": [
+        "exact_match",
+        "f1_score",
+        "bert_score",
+        "rouge_l"
+    ],
+    "experiment_settings": {
+        "temperature": 0.1,
+        "max_tokens": 2000,
+        "timeout": 30
+    },
+    "logging": {
+        "log_level": "INFO",
+        "save_predictions": true,
+        "save_metrics": true,
+        "generate_visualizations": true
+    }
+}

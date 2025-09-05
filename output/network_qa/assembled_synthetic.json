@@ -1,0 +1,532 @@
+[
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-001",
+    "question": "L2VPN 서비스 장애가 다른 서비스 계층에 미치는 영향을 분석하기 위해 어떤 지표를 사용해야 하며, 우선적으로 처리해야 할 문제는 무엇인가?",
+    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+    "ground_truth": [
+      "서비스 가용성",
+      "지연 시간",
+      "패킷 손실"
+    ],
+    "explanation": "L2VPN 서비스 장애가 다른 서비스 계층에 미치는 영향을 분석하기 위해서는 서비스 가용성, 지연 시간, 패킷 손실과 같은 지표를 사용해야 합니다. 이러한 지표들은 L2VPN의 성능과 안정성을 평가하는 데 중요한 요소이며, 우선적으로 처리해야 할 문제는 서비스 가용성의 저하입니다. 이는 고객에게 직접적인 영향을 미치기 때문에 가장 먼저 해결해야 할 사항입니다.",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "synthetic",
+    "level": 4,
+    "persona": "noc_operator",
+    "scenario": "서비스 영향도 분석",
+    "source_files": [
+      "sample7.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "l2vpn_issues",
+          "metric_params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "required_metric": "l2vpn_unidir_count",
+          "metric_params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "intent": "show_l2vpn_status",
+          "params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "intent": "show_bgp_summary",
+          "params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "intent": "show_ip_route_ospf",
+          "params": {
+            "host": "sample7"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_l2vpn_issues": null,
+        "step_None_l2vpn_unidir_count": 0
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-002",
+    "question": "BGP의 iBGP 페어링 누락이 L3VPN 서비스에 주는 잠재적 위험 요소는 무엇이며, 이를 예방하기 위한 모니터링 포인트는?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": [
+      "라우팅 루프 발생",
+      "패킷 손실",
+      "서비스 중단"
+    ],
+    "explanation": "BGP의 iBGP 페어링이 누락되면 라우팅 정보가 제대로 전파되지 않아 라우팅 루프가 발생할 수 있으며, 이로 인해 패킷 손실이나 서비스 중단과 같은 심각한 문제가 발생할 수 있습니다. 이를 예방하기 위해서는 iBGP 페어링 상태를 모니터링하고, 누락된 페어링이 있는지 확인하는 것이 중요합니다.",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "synthetic",
+    "level": 4,
+    "persona": "noc_operator",
+    "scenario": "서비스 영향도 분석",
+    "source_files": [
+      "sample7.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "ibgp_missing_pairs_count",
+          "metric_params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "required_metric": "vrf_rt_list_per_device",
+          "metric_params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "intent": "show_bgp_neighbors",
+          "params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "intent": "show_vrf",
+          "params": {
+            "host": "sample7"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_ibgp_missing_pairs_count": 0,
+        "step_None_vrf_rt_list_per_device": [
+          "65000:1000"
+        ]
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-003",
+    "question": "L3VPN의 VRF 구성에서 RT가 누락된 경우, 서비스 가용성에 미치는 영향과 이를 복구하기 위한 우선순위는?",
+    "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
+    "ground_truth": "서비스 가용성에 영향 없음, 복구 우선순위 없음",
+    "explanation": "RT가 누락된 경우, 현재 VRF 구성에서 문제를 나타내는 지표가 없으므로 서비스 가용성에 영향을 미치지 않으며, 복구를 위한 우선순위도 필요하지 않습니다.",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "synthetic",
+    "level": 4,
+    "persona": "noc_operator",
+    "scenario": "서비스 영향도 분석",
+    "source_files": [
+      "sample7.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "vrf_without_rt_count",
+          "metric_params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "required_metric": "vrf_interface_bind_count",
+          "metric_params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "intent": "show_vrf",
+          "params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "intent": "create_vrf_and_assign",
+          "params": {
+            "host": "sample7"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_vrf_without_rt_count": 0,
+        "step_None_vrf_interface_bind_count": 0
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-004",
+    "question": "BGP 네트워크에서의 AS 번호 혼재가 서비스 가용성에 미치는 영향은 무엇이며, 이를 해결하기 위한 방법은?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": {
+      "impact": "AS 번호 혼재는 경로 선택의 복잡성을 증가시켜 서비스 가용성을 저하시킬 수 있다.",
+      "solution": "AS 번호 혼재 문제를 해결하기 위해서는 BGP 정책을 조정하거나, AS 번호를 통합하여 경로 선택을 단순화하는 방법이 있다."
+    },
+    "explanation": "BGP 네트워크에서 AS 번호 혼재는 여러 AS가 동일한 경로를 통해 트래픽을 전달할 때 발생하며, 이로 인해 경로 선택이 복잡해지고, 결과적으로 서비스 가용성이 저하될 수 있습니다. 이를 해결하기 위해서는 BGP 정책을 조정하거나, 여러 AS 번호를 통합하여 경로 선택을 단순화하는 방법이 효과적입니다.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "synthetic",
+    "level": 4,
+    "persona": "noc_operator",
+    "scenario": "서비스 영향도 분석",
+    "source_files": [
+      "sample7.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "required_metric": "bgp_neighbor_count",
+          "metric_params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "intent": "show_bgp_summary",
+          "params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "intent": "set_bgp_routemap",
+          "params": {
+            "host": "sample7"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_bgp_local_as_numeric": 65000,
+        "step_None_bgp_neighbor_count": 4
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-005",
+    "question": "OSPF 설정에서 Area 0에 인터페이스가 누락된 경우, 서비스에 미치는 영향과 이를 보완하기 위한 조치는?",
+    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+    "ground_truth": {
+      "impact": "OSPF 라우팅이 제대로 작동하지 않으며, Area 0에 연결된 다른 라우터와의 통신이 불가능해질 수 있다.",
+      "remedy": "누락된 인터페이스를 Area 0에 추가하거나, OSPF 설정을 검토하여 모든 인터페이스가 올바르게 구성되었는지 확인해야 한다."
+    },
+    "explanation": "Area 0은 OSPF의 백본 영역으로, 모든 다른 영역은 이 영역을 통해 연결되어야 합니다. 만약 Area 0에 인터페이스가 누락되면, 해당 영역에 속한 라우터들은 서로 통신할 수 없게 되어 OSPF 라우팅이 실패할 수 있습니다. 이를 보완하기 위해서는 누락된 인터페이스를 Area 0에 추가하거나, OSPF 설정을 점검하여 모든 인터페이스가 올바르게 설정되었는지 확인해야 합니다.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "synthetic",
+    "level": 4,
+    "persona": "noc_operator",
+    "scenario": "서비스 영향도 분석",
+    "source_files": [
+      "sample7.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "ospf_area0_if_count",
+          "metric_params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "intent": "show_ip_ospf_neighbor",
+          "params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "intent": "show_ospf_database",
+          "params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "intent": "set_ospf_cost",
+          "params": {
+            "host": "sample7"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_ospf_area0_if_count": 3
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-006",
+    "question": "SSH 설정이 누락된 장비가 서비스 운영에 미치는 잠재적 위험은 무엇이며, 이를 어떻게 예방할 수 있는가?",
+    "context": "보안 설정 현황:\nCE1: SSH ON, AAA OFF\nCE2: SSH ON, AAA OFF\nsample10: SSH ON, AAA ON\nsample7: SSH ON, AAA ON\nsample8: SSH ON, AAA ON",
+    "ground_truth": "SSH 설정이 누락된 장비는 원격 관리가 불가능해져 보안 취약점이 발생할 수 있으며, 이를 예방하기 위해 SSH 설정을 반드시 적용하고 정기적으로 점검해야 합니다.",
+    "explanation": "SSH 설정이 누락된 장비는 원격으로 접근할 수 없기 때문에 관리자가 물리적으로 장비에 접근해야 하며, 이로 인해 보안 취약점이 발생할 수 있습니다. 또한, 원격 관리가 불가능하면 긴급 상황에서 신속한 대응이 어려워질 수 있습니다. 이를 예방하기 위해서는 모든 장비에 SSH 설정을 적용하고, 정기적으로 해당 설정이 유지되고 있는지 점검하는 것이 중요합니다.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "synthetic",
+    "level": 4,
+    "persona": "noc_operator",
+    "scenario": "서비스 영향도 분석",
+    "source_files": [
+      "sample7.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "ssh_missing_count",
+          "metric_params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "required_metric": "ssh_missing_devices",
+          "metric_params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "intent": "ssh_direct_access",
+          "params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "intent": "set_vty_acl",
+          "params": {
+            "host": "sample7"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_ssh_missing_count": 0,
+        "step_None_ssh_missing_devices": []
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-007",
+    "question": "현재 환경에서 발생한 BGP iBGP 페어링 누락이 다른 서비스 계층에 미치는 영향과 복구 시나리오는?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": "BGP iBGP 페어링 누락이 발생하지 않았습니다.",
+    "explanation": "현재 환경에서 BGP iBGP 페어링 누락이 없음을 나타내는 'ibgp_missing_pairs_count' 값이 0으로 확인되었습니다. 이는 다른 서비스 계층에 미치는 영향이 없음을 의미하며, 복구 시나리오 또한 필요하지 않습니다.",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "synthetic",
+    "level": 4,
+    "persona": "noc_operator",
+    "scenario": "서비스 영향도 분석",
+    "source_files": [
+      "sample7.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "ibgp_missing_pairs_count",
+          "metric_params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "intent": "show_bgp_neighbors",
+          "params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "intent": "show_l2vpn_status",
+          "params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "intent": "set_bgp_routemap",
+          "params": {
+            "host": "sample7"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_ibgp_missing_pairs_count": 0
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-008",
+    "question": "L2VPN의 비대칭 페어링 문제를 해결하지 않을 경우, 서비스 가용성에 어떤 영향을 미치는가?",
+    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+    "ground_truth": "서비스 가용성이 저하될 수 있다.",
+    "explanation": "L2VPN의 비대칭 페어링 문제를 해결하지 않으면, 데이터 전송 경로가 비대칭적으로 구성되어 서비스의 가용성이 저하될 수 있습니다. 이는 패킷 손실이나 지연을 초래하여 최종 사용자에게 영향을 미칠 수 있습니다.",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "synthetic",
+    "level": 4,
+    "persona": "noc_operator",
+    "scenario": "서비스 영향도 분석",
+    "source_files": [
+      "sample7.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "l2vpn_unidir_count",
+          "metric_params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "intent": "show_l2vpn_vc",
+          "params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "intent": "show_l2vpn_status",
+          "params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "intent": "set_interface_description",
+          "params": {
+            "host": "sample7"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_l2vpn_unidir_count": 0
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-009",
+    "question": "OSPF 네트워크 내 프로세스 ID의 비일관성이 서비스 운영에 미치는 영향은 무엇이며, 이를 해결하기 위한 조치는?",
+    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+    "ground_truth": "OSPF 네트워크 내 프로세스 ID의 비일관성은 라우팅 루프, 경로 선택 오류 및 네트워크 분할을 초래할 수 있으며, 이를 해결하기 위해 모든 라우터의 프로세스 ID를 일관되게 설정하고, OSPF 설정을 검토하여 일관성을 유지해야 한다.",
+    "explanation": "OSPF(오픈 최단 경로 우선) 네트워크에서 프로세스 ID의 비일관성은 라우터 간의 OSPF 인스턴스가 서로 다르게 설정되어 있을 때 발생합니다. 이는 라우팅 루프를 유발하거나, 잘못된 경로 선택을 초래하며, 결국 네트워크 분할로 이어질 수 있습니다. 이러한 문제를 해결하기 위해서는 모든 라우터의 OSPF 프로세스 ID를 동일하게 설정하고, OSPF 설정을 정기적으로 검토하여 일관성을 유지하는 것이 중요합니다.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "synthetic",
+    "level": 4,
+    "persona": "noc_operator",
+    "scenario": "서비스 영향도 분석",
+    "source_files": [
+      "sample7.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "ospf_process_ids_set",
+          "metric_params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "intent": "show_ip_ospf_neighbor",
+          "params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "intent": "show_ospf_database",
+          "params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "intent": "set_ospf_cost",
+          "params": {
+            "host": "sample7"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_ospf_process_ids_set": [
+          "1"
+        ]
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-010",
+    "question": "BGP 네트워크에서 발생한 iBGP 페어링 누락이 L2VPN 서비스에 미치는 영향을 분석하고, 이를 완화하기 위한 조치는?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": [],
+    "explanation": "현재 iBGP 페어링 누락이 발생하지 않고 있으며, L2VPN 서비스에도 문제가 없기 때문에 추가적인 조치가 필요하지 않습니다.",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "synthetic",
+    "level": 4,
+    "persona": "noc_operator",
+    "scenario": "서비스 영향도 분석",
+    "source_files": [
+      "sample7.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "ibgp_missing_pairs_count",
+          "metric_params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "required_metric": "l2vpn_issues",
+          "metric_params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "intent": "show_bgp_summary",
+          "params": {
+            "host": "sample7"
+          }
+        },
+        {
+          "intent": "show_l2vpn_status",
+          "params": {
+            "host": "sample7"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_ibgp_missing_pairs_count": 0,
+        "step_None_l2vpn_issues": null
+      }
+    }
+  }
+]

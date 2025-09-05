@@ -365,7 +365,7 @@ class LLMQuestionEnhancer:
         try:
             data = _call_llm_json(
                 messages, schema, temperature=0.7,
-                model=settings.models.question_generation, max_output_tokens=1200,
+                model=settings.models.question_generation, max_output_tokens=8000,
                 use_responses_api=False
             )
             
@@ -545,7 +545,7 @@ class QuestionReviewer:
         try:
             data = _call_llm_json(
                 messages, schema, temperature=0.1,
-                model=settings.models.hypothesis_review, max_output_tokens=1500,
+                model=settings.models.hypothesis_review, max_output_tokens=8000,
                 use_responses_api=False
             )
             

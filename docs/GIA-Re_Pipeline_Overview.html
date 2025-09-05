@@ -1,584 +1,622 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>GIA-Re: 네트워크 설정 Q&A 데이터셋 생성 파이프라인</title>
-  <style>
-    :root {
-      --primary: #2563eb;
-      --secondary: #7c3aed;
-      --success: #059669;
-      --warning: #d97706;
-      --danger: #dc2626;
-      --info: #0891b2;
-      --dark: #1f2937;
-      --light: #f8fafc;
-      --border: #e5e7eb;
-      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    }
-    
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      line-height: 1.6;
-      color: var(--dark);
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-    }
-    
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    
-    .header {
-      text-align: center;
-      background: white;
-      border-radius: 16px;
-      padding: 40px;
-      margin-bottom: 30px;
-      box-shadow: var(--shadow);
-    }
-    
-    .header h1 {
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 10px;
-    }
-    
-    .header .subtitle {
-      font-size: 1.2rem;
-      color: #6b7280;
-      margin-bottom: 20px;
-    }
-    
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      margin: 20px 0;
-    }
-    
-    .stat-card {
-      background: var(--light);
-      padding: 15px;
-      border-radius: 12px;
-      text-align: center;
-      border: 2px solid var(--border);
-    }
-    
-    .stat-number {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--primary);
-    }
-    
-    .stat-label {
-      font-size: 0.9rem;
-      color: #6b7280;
-      margin-top: 5px;
-    }
-    
-    .pipeline-flow {
-      background: white;
-      border-radius: 16px;
-      padding: 30px;
-      margin-bottom: 30px;
-      box-shadow: var(--shadow);
-    }
-    
-    .flow-title {
-      text-align: center;
-      font-size: 1.8rem;
-      font-weight: 600;
-      color: var(--dark);
-      margin-bottom: 30px;
-    }
-    
-    .stage {
-      display: flex;
-      align-items: center;
-      margin-bottom: 25px;
-      position: relative;
-    }
-    
-    .stage:not(:last-child)::after {
-      content: '';
-      position: absolute;
-      left: 40px;
-      top: 80px;
-      width: 3px;
-      height: 40px;
-      background: linear-gradient(to bottom, var(--primary), var(--secondary));
-      border-radius: 2px;
-    }
-    
-    .stage-number {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-right: 25px;
-      box-shadow: var(--shadow);
-      flex-shrink: 0;
-    }
-    
-    .stage-content {
-      flex: 1;
-      background: var(--light);
-      padding: 25px;
-      border-radius: 12px;
-      border-left: 4px solid var(--primary);
-    }
-    
-    .stage-title {
-      font-size: 1.3rem;
-      font-weight: 600;
-      color: var(--dark);
-      margin-bottom: 10px;
-    }
-    
-    .stage-description {
-      color: #6b7280;
-      margin-bottom: 15px;
-      line-height: 1.5;
-    }
-    
-    .stage-details {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 15px;
-    }
-    
-    .detail-box {
-      background: white;
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-    }
-    
-    .detail-label {
-      font-weight: 600;
-      color: var(--primary);
-      font-size: 0.9rem;
-      margin-bottom: 5px;
-    }
-    
-    .detail-content {
-      font-size: 0.85rem;
-      color: var(--dark);
-      font-family: 'Courier New', monospace;
-    }
-    
-    .hybrid-validation {
-      background: linear-gradient(135deg, #fee2e2, #fecaca);
-      border-left-color: var(--danger);
-    }
-    
-    .feedback-loop {
-      background: linear-gradient(135deg, #fef3c7, #fde68a);
-      border-left-color: var(--warning);
-    }
-    
-    .components-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
-    }
-    
-    .component-card {
-      background: white;
-      border-radius: 12px;
-      padding: 25px;
-      box-shadow: var(--shadow);
-      border-top: 4px solid var(--primary);
-    }
-    
-    .component-title {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: var(--dark);
-      margin-bottom: 15px;
-    }
-    
-    .component-description {
-      color: #6b7280;
-      margin-bottom: 15px;
-      line-height: 1.5;
-    }
-    
-    .tech-stack {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    
-    .tech-tag {
-      background: var(--primary);
-      color: white;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 500;
-    }
-    
-    .validation-section {
-      background: white;
-      border-radius: 16px;
-      padding: 30px;
-      margin-bottom: 30px;
-      box-shadow: var(--shadow);
-    }
-    
-    .validation-title {
-      text-align: center;
-      font-size: 1.8rem;
-      font-weight: 600;
-      color: var(--danger);
-      margin-bottom: 20px;
-    }
-    
-    .validation-flow {
-      display: grid;
-      grid-template-columns: 1fr 2fr 1fr;
-      gap: 20px;
-      align-items: center;
-      margin: 30px 0;
-    }
-    
-    .validation-box {
-      background: var(--light);
-      padding: 20px;
-      border-radius: 12px;
-      text-align: center;
-      border: 2px solid var(--border);
-    }
-    
-    .validation-center {
-      background: linear-gradient(135deg, var(--danger), #f87171);
-      color: white;
-      padding: 30px;
-      border-radius: 16px;
-    }
-    
-    .comparison-results {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      margin: 20px 0;
-    }
-    
-    .result-card {
-      padding: 15px;
-      border-radius: 8px;
-      text-align: center;
-      font-weight: 600;
-    }
-    
-    .perfect { background: #dcfce7; color: #166534; }
-    .gt-wrong { background: #fee2e2; color: #dc2626; }
-    .agent-failed { background: #fef3c7; color: #d97706; }
-    .all-different { background: #f3f4f6; color: #374151; }
-    
-    .result-detail {
-      font-size: 0.8rem;
-      margin-top: 5px;
-    }
-    
-    .footer {
-      background: white;
-      border-radius: 16px;
-      padding: 30px;
-      text-align: center;
-      box-shadow: var(--shadow);
-    }
-    
-    .footer-quote {
-      font-style: italic;
-      color: var(--primary);
-    }
-    
-    .footer h3 {
-      color: var(--primary);
-      margin-bottom: 15px;
-    }
-    
-    .footer p {
-      color: #6b7280;
-      line-height: 1.6;
-    }
-    
-    @media (max-width: 768px) {
-      .container { padding: 10px; }
-      .header h1 { font-size: 2rem; }
-      .stage { flex-direction: column; text-align: center; }
-      .stage-number { margin-bottom: 15px; margin-right: 0; }
-      .validation-flow { grid-template-columns: 1fr; }
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GIA-Re: 네트워크 설정 Q&A 데이터셋 생성 파이프라인</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #7c3aed;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --info: #0891b2;
+            --dark: #1f2937;
+            --light: #f8fafc;
+            --border: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid var(--border);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+
+        .pipeline-flow {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .flow-title {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 30px;
+        }
+
+        .stage {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .stage:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 40px;
+            top: 80px;
+            width: 3px;
+            height: 40px;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        .stage-number {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-right: 25px;
+            box-shadow: var(--shadow);
+            flex-shrink: 0;
+        }
+
+        .stage-content {
+            flex: 1;
+            background: var(--light);
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .stage-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .stage-description {
+            color: #6b7280;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .stage-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .detail-box {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .detail-content {
+            font-size: 0.85rem;
+            color: var(--dark);
+            font-family: 'Courier New', monospace;
+        }
+
+        .hybrid-validation {
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            border-left-color: var(--danger);
+        }
+
+        .feedback-loop {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-left-color: var(--warning);
+        }
+
+        .components-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .component-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--primary);
+        }
+
+        .component-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+
+        .component-description {
+            color: #6b7280;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tech-tag {
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .validation-section {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .validation-title {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--danger);
+            margin-bottom: 20px;
+        }
+
+        .validation-flow {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 20px;
+            align-items: center;
+            margin: 30px 0;
+        }
+
+        .validation-box {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid var(--border);
+        }
+
+        .validation-center {
+            background: linear-gradient(135deg, var(--danger), #f87171);
+            color: white;
+            padding: 30px;
+            border-radius: 16px;
+        }
+
+        .comparison-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .result-card {
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .perfect {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .gt-wrong {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .agent-failed {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .all-different {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .result-detail {
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        .footer {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .footer-quote {
+            font-style: italic;
+            color: var(--primary);
+        }
+
+        .footer h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .footer p {
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .stage {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .stage-number {
+                margin-bottom: 15px;
+                margin-right: 0;
+            }
+
+            .validation-flow {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
+
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>🤖 GIA-Re Pipeline</h1>
-      <p class="subtitle">네트워크 설정 Q&A 데이터셋 자동 생성 및 검증 시스템</p>
-      <div class="stats">
-        <div class="stat-card">
-          <div class="stat-number">6</div>
-          <div class="stat-label">파싱된 네트워크 장비</div>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 GIA-Re Pipeline</h1>
+            <p class="subtitle">네트워크 설정 Q&A 데이터셋 자동 생성 및 검증 시스템</p>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number">6</div>
+                    <div class="stat-label">파싱된 네트워크 장비</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">638</div>
+                    <div class="stat-label">Rule-based 기초 질문</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">70</div>
+                    <div class="stat-label">LLM 심화 질문</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">30</div>
+                    <div class="stat-label">최종 선별 질문</div>
+                </div>
+            </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-number">638</div>
-          <div class="stat-label">Rule-based 기초 질문</div>
+
+        <div class="pipeline-flow">
+            <h2 class="flow-title">📊 파이프라인 플로우</h2>
+
+            <div class="stage">
+                <div class="stage-number">1</div>
+                <div class="stage-content">
+                    <h3 class="stage-title">🔍 네트워크 설정 파싱</h3>
+                    <p class="stage-description">XML 설정 파일을 표준화된 네트워크 팩트로 변환</p>
+                    <div class="stage-details">
+                        <div class="detail-box">
+                            <div class="detail-label">입력</div>
+                            <div class="detail-content">XML configs, policies.json</div>
+                        </div>
+                        <div class="detail-box">
+                            <div class="detail-label">처리</div>
+                            <div class="detail-content">UniversalParser</div>
+                        </div>
+                        <div class="detail-box">
+                            <div class="detail-label">출력</div>
+                            <div class="detail-content">network_facts (6개 장비)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stage">
+                <div class="stage-number">2</div>
+                <div class="stage-content">
+                    <h3 class="stage-title">⚙️ 기초 질문 생성 (Rule-based)</h3>
+                    <p class="stage-description">정책 기반 DSL을 사용하여 체계적인 기초 질문 생성</p>
+                    <div class="stage-details">
+                        <div class="detail-box">
+                            <div class="detail-label">시나리오</div>
+                            <div class="detail-content">normal, failure, expansion</div>
+                        </div>
+                        <div class="detail-box">
+                            <div class="detail-label">DSL 아이템</div>
+                            <div class="detail-content">204개 + 명령어 129개</div>
+                        </div>
+                        <div class="detail-box">
+                            <div class="detail-label">생성량</div>
+                            <div class="detail-content">638개 기초 질문</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stage">
+                <div class="stage-number">3</div>
+                <div class="stage-content">
+                    <h3 class="stage-title">🧠 심화 질문 생성 (LLM)</h3>
+                    <p class="stage-description">Enhanced LLM Generator + AnswerAgent를 통한 고품질 질문 생성</p>
+                    <div class="stage-details">
+                        <div class="detail-box">
+                            <div class="detail-label">초기 생성</div>
+                            <div class="detail-content">70개 LLM 질문</div>
+                        </div>
+                        <div class="detail-box">
+                            <div class="detail-label">리뷰 후</div>
+                            <div class="detail-content">70개 유효 질문</div>
+                        </div>
+                        <div class="detail-box">
+                            <div class="detail-label">처리</div>
+                            <div class="detail-content">AnswerAgent 정답 생성</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stage">
+                <div class="stage-number">4</div>
+                <div class="stage-content">
+                    <h3 class="stage-title">🔗 데이터셋 통합</h3>
+                    <p class="stage-description">기초+심화 질문 통합, 중복 제거, 품질 최적화</p>
+                    <div class="stage-details">
+                        <div class="detail-box">
+                            <div class="detail-label">통합 전</div>
+                            <div class="detail-content">708개 총 질문</div>
+                        </div>
+                        <div class="detail-box">
+                            <div class="detail-label">중복 제거</div>
+                            <div class="detail-content">678개 제거</div>
+                        </div>
+                        <div class="detail-box">
+                            <div class="detail-label">최종</div>
+                            <div class="detail-content">30개 선별 질문</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stage">
+                <div class="stage-number">5</div>
+                <div class="stage-content hybrid-validation">
+                    <h3 class="stage-title">🔍 하이브리드 검증</h3>
+                    <p class="stage-description">AI Agent + BuilderCore + Ground Truth 3중 비교 검증</p>
+                    <div class="stage-details">
+                        <div class="detail-box">
+                            <div class="detail-label">검증 방식</div>
+                            <div class="detail-content">3중 비교 시스템</div>
+                        </div>
+                        <div class="detail-box">
+                            <div class="detail-label">에이전트</div>
+                            <div class="detail-content">beginner/intermediate/expert</div>
+                        </div>
+                        <div class="detail-box">
+                            <div class="detail-label">목표</div>
+                            <div class="detail-content">95% 정확도 달성</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stage">
+                <div class="stage-number">6</div>
+                <div class="stage-content feedback-loop">
+                    <h3 class="stage-title">🔄 피드백 루프</h3>
+                    <p class="stage-description">자동 오류 교정 및 데이터셋 품질 개선</p>
+                    <div class="stage-details">
+                        <div class="detail-box">
+                            <div class="detail-label">GT 교정</div>
+                            <div class="detail-content">BuilderCore 값으로 수정</div>
+                        </div>
+                        <div class="detail-box">
+                            <div class="detail-label">질문 개선</div>
+                            <div class="detail-content">명확화, 컨텍스트 추가</div>
+                        </div>
+                        <div class="detail-box">
+                            <div class="detail-label">반복</div>
+                            <div class="detail-content">최대 3회 반복</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-number">70</div>
-          <div class="stat-label">LLM 심화 질문</div>
+
+        <div class="validation-section">
+            <h2 class="validation-title">⚖️ 하이브리드 검증 시스템</h2>
+
+            <div class="validation-flow">
+                <div class="validation-box">
+                    <h4>🤖 AI Agent</h4>
+                    <p>실제 문제 해결</p>
+                    <p><strong>답변 + 신뢰도</strong></p>
+                </div>
+
+                <div class="validation-center">
+                    <h4>3중 비교 분석</h4>
+                    <p>Agent vs Logic vs Ground Truth</p>
+                    <p><strong>오류 분류 및 개선 방향 도출</strong></p>
+                </div>
+
+                <div class="validation-box">
+                    <h4>⚙️ BuilderCore</h4>
+                    <p>로직 기반 계산</p>
+                    <p><strong>객관적 정답</strong></p>
+                </div>
+            </div>
+
+            <div class="comparison-results">
+                <div class="result-card perfect">
+                    <div>✅ PERFECT</div>
+                    <div class="result-detail">모든 답변 일치</div>
+                </div>
+                <div class="result-card gt-wrong">
+                    <div>🔴 GT_WRONG</div>
+                    <div class="result-detail">Ground Truth 오류</div>
+                </div>
+                <div class="result-card agent-failed">
+                    <div>⚠️ AGENT_FAILED</div>
+                    <div class="result-detail">에이전트 실패</div>
+                </div>
+                <div class="result-card all-different">
+                    <div>❌ ALL_DIFFERENT</div>
+                    <div class="result-detail">모든 답변 상이</div>
+                </div>
+            </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-number">30</div>
-          <div class="stat-label">최종 선별 질문</div>
+
+        <div class="components-grid">
+            <div class="component-card">
+                <h3 class="component-title">🔧 핵심 컴포넌트</h3>
+                <p class="component-description">파이프라인의 주요 처리 모듈들</p>
+                <div class="tech-stack">
+                    <span class="tech-tag">UniversalParser</span>
+                    <span class="tech-tag">RuleBasedGenerator</span>
+                    <span class="tech-tag">EnhancedLLMGenerator</span>
+                    <span class="tech-tag">TestAssembler</span>
+                </div>
+            </div>
+
+            <div class="component-card">
+                <h3 class="component-title">🤖 AI 에이전트</h3>
+                <p class="component-description">검증과 답변 생성을 담당하는 에이전트들</p>
+                <div class="tech-stack">
+                    <span class="tech-tag">AnswerAgent</span>
+                    <span class="tech-tag">CommandAgent</span>
+                    <span class="tech-tag">ValidationAgent</span>
+                    <span class="tech-tag">HybridValidator</span>
+                </div>
+            </div>
+
+            <div class="component-card">
+                <h3 class="component-title">📊 품질 보증</h3>
+                <p class="component-description">데이터셋 품질 관리 및 평가 시스템</p>
+                <div class="tech-stack">
+                    <span class="tech-tag">BuilderCore</span>
+                    <span class="tech-tag">HybridFeedbackLoop</span>
+                    <span class="tech-tag">ComprehensiveEvaluator</span>
+                    <span class="tech-tag">QualityAnalyzer</span>
+                </div>
+            </div>
         </div>
-      </div>
+
+        <div class="footer">
+            <h3>🎯 프로젝트 목표</h3>
+            <p>
+                네트워크 설정 도메인에서 고품질의 Q&A 데이터셋을 자동으로 생성하고,
+                AI 에이전트와 로직 기반 검증을 통해 데이터의 정확성과 신뢰성을 보장하는
+                차세대 데이터셋 생성 파이프라인을 구축합니다.
+            </p>
+            <br>
+            <p class="footer-quote">
+                "정확하고 신뢰할 수 있는 네트워크 지식 자동화의 새로운 패러다임"
+            </p>
+        </div>
     </div>
-
-    <div class="pipeline-flow">
-      <h2 class="flow-title">📊 파이프라인 플로우</h2>
-      
-      <div class="stage">
-        <div class="stage-number">1</div>
-        <div class="stage-content">
-          <h3 class="stage-title">🔍 네트워크 설정 파싱</h3>
-          <p class="stage-description">XML 설정 파일을 표준화된 네트워크 팩트로 변환</p>
-          <div class="stage-details">
-            <div class="detail-box">
-              <div class="detail-label">입력</div>
-              <div class="detail-content">XML configs, policies.json</div>
-            </div>
-            <div class="detail-box">
-              <div class="detail-label">처리</div>
-              <div class="detail-content">UniversalParser</div>
-            </div>
-            <div class="detail-box">
-              <div class="detail-label">출력</div>
-              <div class="detail-content">network_facts (6개 장비)</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="stage">
-        <div class="stage-number">2</div>
-        <div class="stage-content">
-          <h3 class="stage-title">⚙️ 기초 질문 생성 (Rule-based)</h3>
-          <p class="stage-description">정책 기반 DSL을 사용하여 체계적인 기초 질문 생성</p>
-          <div class="stage-details">
-            <div class="detail-box">
-              <div class="detail-label">시나리오</div>
-              <div class="detail-content">normal, failure, expansion</div>
-            </div>
-            <div class="detail-box">
-              <div class="detail-label">DSL 아이템</div>
-              <div class="detail-content">204개 + 명령어 129개</div>
-            </div>
-            <div class="detail-box">
-              <div class="detail-label">생성량</div>
-              <div class="detail-content">638개 기초 질문</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="stage">
-        <div class="stage-number">3</div>
-        <div class="stage-content">
-          <h3 class="stage-title">🧠 심화 질문 생성 (LLM)</h3>
-          <p class="stage-description">Enhanced LLM Generator + AnswerAgent를 통한 고품질 질문 생성</p>
-          <div class="stage-details">
-            <div class="detail-box">
-              <div class="detail-label">초기 생성</div>
-              <div class="detail-content">70개 LLM 질문</div>
-            </div>
-            <div class="detail-box">
-              <div class="detail-label">리뷰 후</div>
-              <div class="detail-content">70개 유효 질문</div>
-            </div>
-            <div class="detail-box">
-              <div class="detail-label">처리</div>
-              <div class="detail-content">AnswerAgent 정답 생성</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="stage">
-        <div class="stage-number">4</div>
-        <div class="stage-content">
-          <h3 class="stage-title">🔗 데이터셋 통합</h3>
-          <p class="stage-description">기초+심화 질문 통합, 중복 제거, 품질 최적화</p>
-          <div class="stage-details">
-            <div class="detail-box">
-              <div class="detail-label">통합 전</div>
-              <div class="detail-content">708개 총 질문</div>
-            </div>
-            <div class="detail-box">
-              <div class="detail-label">중복 제거</div>
-              <div class="detail-content">678개 제거</div>
-            </div>
-            <div class="detail-box">
-              <div class="detail-label">최종</div>
-              <div class="detail-content">30개 선별 질문</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="stage">
-        <div class="stage-number">5</div>
-        <div class="stage-content hybrid-validation">
-          <h3 class="stage-title">🔍 하이브리드 검증</h3>
-          <p class="stage-description">AI Agent + BuilderCore + Ground Truth 3중 비교 검증</p>
-          <div class="stage-details">
-            <div class="detail-box">
-              <div class="detail-label">검증 방식</div>
-              <div class="detail-content">3중 비교 시스템</div>
-            </div>
-            <div class="detail-box">
-              <div class="detail-label">에이전트</div>
-              <div class="detail-content">beginner/intermediate/expert</div>
-            </div>
-            <div class="detail-box">
-              <div class="detail-label">목표</div>
-              <div class="detail-content">95% 정확도 달성</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="stage">
-        <div class="stage-number">6</div>
-        <div class="stage-content feedback-loop">
-          <h3 class="stage-title">🔄 피드백 루프</h3>
-          <p class="stage-description">자동 오류 교정 및 데이터셋 품질 개선</p>
-          <div class="stage-details">
-            <div class="detail-box">
-              <div class="detail-label">GT 교정</div>
-              <div class="detail-content">BuilderCore 값으로 수정</div>
-            </div>
-            <div class="detail-box">
-              <div class="detail-label">질문 개선</div>
-              <div class="detail-content">명확화, 컨텍스트 추가</div>
-            </div>
-            <div class="detail-box">
-              <div class="detail-label">반복</div>
-              <div class="detail-content">최대 3회 반복</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="validation-section">
-      <h2 class="validation-title">⚖️ 하이브리드 검증 시스템</h2>
-      
-      <div class="validation-flow">
-        <div class="validation-box">
-          <h4>🤖 AI Agent</h4>
-          <p>실제 문제 해결</p>
-          <p><strong>답변 + 신뢰도</strong></p>
-        </div>
-        
-        <div class="validation-center">
-          <h4>3중 비교 분석</h4>
-          <p>Agent vs Logic vs Ground Truth</p>
-          <p><strong>오류 분류 및 개선 방향 도출</strong></p>
-        </div>
-        
-        <div class="validation-box">
-          <h4>⚙️ BuilderCore</h4>
-          <p>로직 기반 계산</p>
-          <p><strong>객관적 정답</strong></p>
-        </div>
-      </div>
-
-      <div class="comparison-results">
-        <div class="result-card perfect">
-          <div>✅ PERFECT</div>
-          <div class="result-detail">모든 답변 일치</div>
-        </div>
-        <div class="result-card gt-wrong">
-          <div>🔴 GT_WRONG</div>
-          <div class="result-detail">Ground Truth 오류</div>
-        </div>
-        <div class="result-card agent-failed">
-          <div>⚠️ AGENT_FAILED</div>
-          <div class="result-detail">에이전트 실패</div>
-        </div>
-        <div class="result-card all-different">
-          <div>❌ ALL_DIFFERENT</div>
-          <div class="result-detail">모든 답변 상이</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="components-grid">
-      <div class="component-card">
-        <h3 class="component-title">🔧 핵심 컴포넌트</h3>
-        <p class="component-description">파이프라인의 주요 처리 모듈들</p>
-        <div class="tech-stack">
-          <span class="tech-tag">UniversalParser</span>
-          <span class="tech-tag">RuleBasedGenerator</span>
-          <span class="tech-tag">EnhancedLLMGenerator</span>
-          <span class="tech-tag">TestAssembler</span>
-        </div>
-      </div>
-
-      <div class="component-card">
-        <h3 class="component-title">🤖 AI 에이전트</h3>
-        <p class="component-description">검증과 답변 생성을 담당하는 에이전트들</p>
-        <div class="tech-stack">
-          <span class="tech-tag">AnswerAgent</span>
-          <span class="tech-tag">CommandAgent</span>
-          <span class="tech-tag">ValidationAgent</span>
-          <span class="tech-tag">HybridValidator</span>
-        </div>
-      </div>
-
-      <div class="component-card">
-        <h3 class="component-title">📊 품질 보증</h3>
-        <p class="component-description">데이터셋 품질 관리 및 평가 시스템</p>
-        <div class="tech-stack">
-          <span class="tech-tag">BuilderCore</span>
-          <span class="tech-tag">HybridFeedbackLoop</span>
-          <span class="tech-tag">ComprehensiveEvaluator</span>
-          <span class="tech-tag">QualityAnalyzer</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="footer">
-      <h3>🎯 프로젝트 목표</h3>
-      <p>
-        네트워크 설정 도메인에서 고품질의 Q&A 데이터셋을 자동으로 생성하고, 
-        AI 에이전트와 로직 기반 검증을 통해 데이터의 정확성과 신뢰성을 보장하는 
-        차세대 데이터셋 생성 파이프라인을 구축합니다.
-      </p>
-      <br>
-      <p class="footer-quote">
-        "정확하고 신뢰할 수 있는 네트워크 지식 자동화의 새로운 패러다임"
-      </p>
-    </div>
-  </div>
 </body>
+
 </html>

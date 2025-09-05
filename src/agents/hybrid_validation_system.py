@@ -332,7 +332,7 @@ class HybridValidationSystem:
                     schema=schema,
                     temperature=temperature,
                     model=m,
-                    max_output_tokens=1000
+                    max_output_tokens=8000
                 )
                 ans = response.get("answer") if isinstance(response, dict) else None
                 if ans is None or (isinstance(ans, str) and not ans.strip()):
