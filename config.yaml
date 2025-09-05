@@ -13,13 +13,13 @@ api:
 
 models:
   # 파이프라인 단계별 기본 모델명. 값이 비어있으면 default가 사용됩니다.
-  default: "gpt-5-mini-2025-08-07"           # 명시되지 않은 용도에서 사용하는 기본 모델
-  paraphrase: "gpt-5-mini-2025-08-07"      # 질문 표면변형/리라이팅 단계
-  question_generation: "gpt-5-mini-2025-08-07" # 규칙/LLM 질문 생성 단계
-  intent_parsing: "gpt-5-mini-2025-08-07"    # 의도/카테고리 추출 단계
-  hypothesis_review: "gpt-5-mini-2025-08-07" # 가설/답변 품질 리뷰 단계
-  answer_synthesis: "gpt-5-mini-2025-08-07"  # 최종 답변 합성/정리 단계
-  enhanced_generation: "gpt-5-mini-2025-08-07"    # 고도화 생성(복합 추론용, 비용↑ 성능↑)
+  default: "gpt-5-mini"                 # 명시되지 않은 용도 기본 모델(경량)
+  paraphrase: "gpt-5-mini"              # 질문 표면변형/리라이팅 단계(경량)
+  question_generation: "gpt-5-mini"     # 규칙/LLM 질문 생성(속도/비용 우선)
+  intent_parsing: "gpt-5-mini"          # 의도/카테고리 추출(경량)
+  hypothesis_review: "gpt-5"            # 고품질 리뷰/검토(정밀)
+  answer_synthesis: "gpt-5-mini"        # 최종 답변 합성/정리(경량)
+  enhanced_generation: "gpt-5"          # 고도화 생성(복합 추론, 정밀)
 
 features:
   use_intent_llm: true   # true: 의도 분석에 LLM 사용, false: 규칙 기반 우선

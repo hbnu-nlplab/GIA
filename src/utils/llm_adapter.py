@@ -152,7 +152,10 @@ def _call_llm_json(
     *,
     model: Optional[str] = None,
     max_output_tokens: int = 1200,
-    use_responses_api: bool = True,
+    use_responses_api: bool = False,
+    prefer_object: bool = True,
+    use_chat_parse: bool = False,
+    pydantic_model: Optional[Any] = None,
 ) -> Any:
     """
     Robust JSON caller:
@@ -171,10 +174,36 @@ def _call_llm_json(
             print(f"  - msg[{i}] role={m.get('role')} len={len(m.get('content') or '')} preview={prev}")
 
     # 1) Responses API first (optional)
+    # Auto-enable for GPT-5 if configured
+    try:
+        s = get_settings()
+        if (model or chosen_model).startswith("gpt-5") and s.features.use_responses_api_for_gpt5:
+            use_responses_api = True
+    except Exception:
+        pass
+
     if use_responses_api:
         for attempt in range(1, attempts + 1):
             try:
                 log_header("Responses")
+                # gpt-5 reasoning/verbosity extras
+                extras: Dict[str, Any] = {}
+                try:
+                    if chosen_model.startswith("gpt-5"):
+                        extras["reasoning"] = {"effort": s.features.gpt5_reasoning_effort}
+                        extras["text"] = {"verbosity": s.features.gpt5_text_verbosity}
+                except Exception:
+                    pass
+                # preambles: inject instruction
+                instr = None
+                try:
+                    if s.features.enable_preambles:
+                        instr = "Before you produce the final answer, briefly outline your approach in one sentence."
+                except Exception:
+                    instr = None
+
+                # Note: some reasoning models (e.g., gpt-5) do not accept 'temperature'
+                # Enforce structured outputs via response_format=json_schema to avoid free-form text
                 resp = client.responses.create(
                     model=chosen_model,
                     input=messages,
@@ -186,8 +215,9 @@ def _call_llm_json(
                             "strict": True,
                         },
                     },
-                    temperature=temperature,
                     max_output_tokens=max_output_tokens,
+                    instructions=instr,
+                    **extras,
                 )
                 text = _extract_output_text(resp)
                 if not isinstance(text, str) or not text.strip():
@@ -201,53 +231,114 @@ def _call_llm_json(
                 else:
                     time.sleep(_retry_backoff(attempt-1))
 
-    # 2) Chat API (json_schema → json_object)
+    # 2) Chat API
     for attempt in range(1, attempts + 1):
         try:
             log_header("Chat")
-            # try json_schema first
+            messages_json = list(messages)
+            # response_format=json_object 사용 시 메시지에 json 키워드 보강
             try:
-                resp = client.chat.completions.create(
-                    model=chosen_model,
-                    messages=messages,
-                    response_format={
-                        "type": "json_schema",
-                        "json_schema": {
-                            "name": strict_schema.get("title", "structured_output"),
-                            "schema": strict_schema,
-                            "strict": True,
-                        },
-                    },
-                    max_tokens=max_output_tokens,
-                    temperature=temperature,
+                has_json_kw = any(
+                    isinstance(m, dict) and isinstance(m.get("content"), str) and ("json" in m["content"].lower())
+                    for m in messages_json
                 )
             except Exception:
-                print("[LLM] json_schema rejected; retrying with response_format=json_object")
-                # OpenAI 요구사항: response_format=json_object 사용 시 메시지 내에 'json' 단어가 포함되어야 함
-                # 메시지에 'json'이 없다면 개발자 메시지를 추가해 안전하게 통과시킨다.
-                messages_json = list(messages)
-                try:
-                    has_json_kw = any(
-                        isinstance(m, dict) and isinstance(m.get("content"), str) and ("json" in m["content"].lower())
-                        for m in messages_json
+                has_json_kw = False
+            if not has_json_kw:
+                messages_json.append({
+                    "role": "developer",
+                    "content": (
+                        "Return only JSON. Output a single valid JSON object or array that follows the intent of the schema. "
+                        "Do not include prose, markdown, or code fences. json"
                     )
-                except Exception:
-                    has_json_kw = False
-                if not has_json_kw:
-                    messages_json.append({
-                        "role": "developer",
-                        "content": (
-                            "Return only JSON. Output a single valid JSON object or array that strictly follows the schema. "
-                            "Do not include any prose, markdown, or code fences. json"
+                })
+
+            # Chat API extras: keep conservative for compatibility. Do NOT pass 'reasoning' or 'verbosity' here.
+            extra: Dict[str, Any] = {}
+
+            # Prefer Chat parse with Pydantic model if requested
+            if use_chat_parse and pydantic_model is not None:
+                try:
+                    # gpt-5 Chat may require 'max_completion_tokens' instead of 'max_tokens'
+                    if isinstance(chosen_model, str) and chosen_model.startswith("gpt-5"):
+                        # omit temperature (unsupported except default)
+                        resp = client.chat.completions.parse(
+                            model=chosen_model,
+                            messages=messages_json,
+                            response_format=pydantic_model,
+                            max_completion_tokens=max_output_tokens,
+                            **extra,
                         )
-                    })
-                resp = client.chat.completions.create(
-                    model=chosen_model,
-                    messages=messages_json,
-                    response_format={"type": "json_object"},
-                    max_tokens=max_output_tokens,
-                    temperature=temperature,
-                )
+                    else:
+                        resp = client.chat.completions.parse(
+                            model=chosen_model,
+                            messages=messages_json,
+                            response_format=pydantic_model,
+                            max_tokens=max_output_tokens,
+                            temperature=temperature,
+                            **extra,
+                        )
+                    parsed = getattr(resp.choices[0].message, "parsed", None)
+                    if parsed is not None:
+                        # Pydantic model instance → dict
+                        return parsed.model_dump() if hasattr(parsed, "model_dump") else parsed
+                except Exception as e:
+                    print(f"[LLM] chat.parse failed: {e}")
+
+            if prefer_object:
+                if isinstance(chosen_model, str) and chosen_model.startswith("gpt-5"):
+                    # omit temperature for gpt-5 chat
+                    resp = client.chat.completions.create(
+                        model=chosen_model,
+                        messages=messages_json,
+                        response_format={"type": "json_object"},
+                        max_completion_tokens=max_output_tokens,
+                        **extra,
+                    )
+                else:
+                    resp = client.chat.completions.create(
+                        model=chosen_model,
+                        messages=messages_json,
+                        response_format={"type": "json_object"},
+                        max_tokens=max_output_tokens,
+                        temperature=temperature,
+                        **extra,
+                    )
+            else:
+                # optional path: try json_schema when explicitly requested
+                if isinstance(chosen_model, str) and chosen_model.startswith("gpt-5"):
+                    # omit temperature for gpt-5 chat
+                    resp = client.chat.completions.create(
+                        model=chosen_model,
+                        messages=messages,
+                        response_format={
+                            "type": "json_schema",
+                            "json_schema": {
+                                "name": strict_schema.get("title", "structured_output"),
+                                "schema": strict_schema,
+                                "strict": True,
+                            },
+                        },
+                        max_completion_tokens=max_output_tokens,
+                        **extra,
+                    )
+                else:
+                    resp = client.chat.completions.create(
+                        model=chosen_model,
+                        messages=messages,
+                        response_format={
+                            "type": "json_schema",
+                            "json_schema": {
+                                "name": strict_schema.get("title", "structured_output"),
+                                "schema": strict_schema,
+                                "strict": True,
+                            },
+                        },
+                        max_tokens=max_output_tokens,
+                        temperature=temperature,
+                        **extra,
+                    )
+
             text = _extract_output_text(resp)
             if not isinstance(text, str) or not text.strip():
                 raise ValueError("Empty output_text from model")

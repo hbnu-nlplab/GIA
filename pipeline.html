@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>자율 검증 및 개선 파이프라인 순서도</title>
+    <style>
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            display: flex;
+            justify-content: center;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 1400px;
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+            color: #1a2533;
+        }
+
+        .pipeline {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .stage {
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .stage:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .stage h3 {
+            color: #0056b3;
+            border-bottom: 3px solid #0056b3;
+            padding-bottom: 12px;
+            margin-top: 0;
+            font-size: 1.6em;
+        }
+
+        .module {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 18px;
+            margin-top: 18px;
+            border-left: 6px solid #007bff;
+        }
+
+        .agent {
+            border-left-color: #fd7e14;
+        }
+
+        .feedback-loop {
+            border: 3px dashed #c82333;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+            background-color: #fff6f6;
+        }
+
+        .feedback-loop h4 {
+            color: #dc3545;
+            margin-top: 0;
+            font-size: 1.3em;
+        }
+
+        .arrow {
+            text-align: center;
+            font-size: 2.5em;
+            color: #007bff;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        .loop-arrow {
+            color: #c82333;
+        }
+
+        .final-product {
+            background-color: #e9f7ef;
+            border-left-color: #28a745;
+        }
+
+        .final-product h3 {
+            border-bottom-color: #28a745;
+            color: #1e7e34;
+        }
+
+        .io {
+            font-style: italic;
+            color: #6c757d;
+            font-size: 0.95em;
+            margin-top: 12px;
+            background-color: #e9ecef;
+            padding: 8px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>데이터셋 생성 및 자율 검증 파이프라인</h1>
+        <h2>(Self-Correcting Data Generation Pipeline)</h2>
+        <div class="pipeline">
+
+            <div class="stage">
+                <h3>1. 파싱 (Parsing)</h3>
+                <div class="module">
+                    <strong>모듈:</strong> UniversalParser<br>
+                    <strong>역할:</strong> 원본 XML 설정 파일들을 기계가 이해할 수 있는 표준화된 JSON 형식(`network_facts`)으로 변환합니다. 이는 모든 후속 단계의
+                    **'진실의 원천(Single Source of Truth)'**이 됩니다.
+                    <div class="io"><strong>Input:</strong> 원본 XML 파일들<br><strong>Output:</strong>
+                        <code>network_facts.json</code> (중간 저장)</div>
+                </div>
+            </div>
+            <div class="arrow">⬇️</div>
+
+            <div class="stage">
+                <h3>2. 생성 및 1차 검토 (Generation & Initial Review)</h3>
+                <div class="module">
+                    <strong>모듈:</strong> RuleBasedGenerator & EnhancedLLMQuestionGenerator<br>
+                    <strong>역할:</strong> `network_facts`를 기반으로 기초 및 심화 질문-답변 쌍을 생성합니다. <strong>(개선)</strong> 이 단계에서 LLM
+                    기반의 `QuestionQualityAssessor`가 하드코딩 규칙을 대체하여, 질문 자체의 품질(명확성, 측정 가능성 등)을 지능적으로 평가하고 기준 미달 질문은 피드백과 함께
+                    필터링합니다.
+                    <div class="io"><strong>Input:</strong> <code>network_facts.json</code><br><strong>Output:</strong>
+                        <code>integrated_dataset.json</code> (중간 저장)</div>
+                </div>
+            </div>
+            <div class="arrow">🔄</div>
+
+            <div class="stage feedback-loop">
+                <h3>3. 자율 검증 및 자동 교정 루프 (Iterative Validation & Correction)</h3>
+                <h4>(1) 검증 (학생 🧑‍🎓)</h4>
+                <div class="module agent">
+                    <strong>에이전트:</strong> ValidationAgent<br>
+                    <strong>역할:</strong> `integrated_dataset`의 모든 문제를 **`network_facts`를 정답지로 삼아** 직접 풀어봅니다. 기존 답변과 자신이
+                    푼 답을 비교하여 채점하고, 틀린 문제에 대한 **'오답노트(`ValidationResult`)'**를 작성합니다.
+                    <div class="io"><strong>Input:</strong> <code>integrated_dataset.json</code>,
+                        <code>network_facts.json</code><br><strong>Output:</strong> 오답노트 (<code>ValidationResult</code>
+                        리스트)</div>
+                </div>
+                <div class="arrow loop-arrow">⬇️</div>
+                <h4>(2) 교정 (튜터 👨‍🏫)</h4>
+                <div class="module agent">
+                    <strong>에이전트:</strong> FeedbackLoop<br>
+                    <strong>역할:</strong> 오답노트를 분석하여 오류 원인에 따라 맞춤형 교정을 수행합니다. 단순 값 오류는 `BuilderCore`의 실제 값으로 즉시 수정하고, 모호한
+                    질문 등은 LLM을 통해 재작성하여 데이터셋을 개선합니다.
+                    <div class="io"><strong>Input:</strong> 오답노트 (<code>ValidationResult</code>
+                        리스트)<br><strong>Output:</strong> <code>corrected_dataset_iteration_1.json</code></div>
+                </div>
+                <div class="arrow loop-arrow">🔁 **(정확도 98% 미만 시 최대 3회 반복)**</div>
+            </div>
+            <div class="arrow">⬇️</div>
+
+            <div class="stage final-product">
+                <h3>4. 최종 평가 및 리포팅 (Final Evaluation & Reporting)</h3>
+                <div class="module">
+                    <strong>모듈:</strong> ComprehensiveEvaluator<br>
+                    <strong>역할:</strong> 모든 검증과 교정이 완료된 최종 데이터셋의 품질을 종합적으로 평가하고 리포트를 생성합니다. <strong>(개선)</strong> 최종
+                    리포트에는 **'자동 교정 성공률'** 및 **'반복 횟수별 정확도 향상 추이'**와 같은 파이프라인 성능 지표가 포함됩니다.
+                    <div class="io"><strong>Input:</strong> 최종 교정된 데이터셋<br><strong>Output:</strong> 최종
+                        데이터셋(<code>train/test.json</code>), <code>pipeline.log</code>,
+                        <code>evaluation_report.json</code></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+
+</html>

@@ -242,6 +242,48 @@ class BuilderCore:
         files = self._infer_source_files(params or {}, value)
         return value, sorted(files)
 
+    # Public intent-based compute to support hybrid validators
+    def compute(self, intent: Dict[str, Any] | None, facts: Dict[str, Any] | None = None) -> Dict[str, Any]:
+        """Compute answer from an intent object.
+
+        Supports simple metric intents and composite intents.
+
+        Parameters
+        ----------
+        intent: Dict[str, Any]
+            Ex: {"metric": "ssh_missing_count", "params": {"host": "CE1"}}
+            or composite: {"type": "comparison", "metric": "bgp_neighbor_count", "scopes": [...], "operator": "=="}
+        facts: Dict[str, Any] | None
+            Unused (compat placeholder).
+
+        Returns
+        -------
+        Dict[str, Any]
+            {"answer_type": str, "value": Any, "files": List[str]}
+        """
+        if not isinstance(intent, dict):
+            return {"answer_type": "error", "value": None, "files": []}
+
+        try:
+            # Simple metric
+            metric = intent.get("metric")
+            if metric:
+                params = intent.get("params") or intent.get("scope") or {}
+                atype, value = self._answer_for_metric(metric, params, self._precompute())
+                files = self._infer_source_files(params, value)
+                return {"answer_type": atype, "value": value, "files": sorted(files)}
+
+            # Composite intent
+            if intent.get("type"):
+                atype, value = self._answer_for_composite_intent(intent, self._precompute())
+                files = self._infer_source_files(intent.get("params") or intent.get("scope") or {}, value)
+                return {"answer_type": atype, "value": value, "files": sorted(files)}
+
+        except Exception:
+            pass
+
+        return {"answer_type": "error", "value": None, "files": []}
+
     def _infer_source_files(self, params: Dict[str, Any], value: Any) -> Set[str]:
         """메트릭 계산에 사용된 설정 파일 목록을 추론합니다."""
         files: Set[str] = set()

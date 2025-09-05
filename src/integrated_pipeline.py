@@ -7,10 +7,15 @@ from __future__ import annotations
 from typing import Dict, Any, List, Optional, Tuple
 from dataclasses import dataclass, asdict, field
 from enum import Enum
+import hashlib
 import json
 from pathlib import Path
 import logging
 import re
+import logging
+
+
+
 
 # 기존 모듈들
 from parsers.universal_parser import UniversalParser
@@ -21,6 +26,11 @@ from inspectors.intent_inspector import IntentInspector
 from utils.builder_core import BuilderCore
 from agents.answer_agent import AnswerAgent
 from agents.command_agent import CommandAgent
+# from agents.validation_agent import ValidationAgent
+# from agents.feedback_loop import FeedbackLoop
+# 클래스에 추가할 import
+from agents.hybrid_validation_system import HybridValidationSystem, ValidationMode
+from agents.hybrid_feedback_loop import HybridFeedbackLoop
 from utils.config_manager import get_settings
 
 # 새로운 향상된 모듈들 (위에서 생성한 것들)
@@ -69,13 +79,20 @@ class PipelineConfig:
     # 출력 설정
     output_dir: str = "output"
     save_intermediate: bool = True
+
+    # 균형/중복 설정
+    balance_max_per_category: Optional[int] = None  # None이면 컷 비활성화
+    balance_group_key: str = "topic"  # topic(메타) 우선, 없으면 category
     
     def __post_init__(self):
         if self.target_complexities is None:
+            # 기본값: 모든 복잡도 사용
             self.target_complexities = [
+                QuestionComplexity.BASIC,
                 QuestionComplexity.ANALYTICAL, 
                 QuestionComplexity.SYNTHETIC,
-                QuestionComplexity.DIAGNOSTIC
+                QuestionComplexity.DIAGNOSTIC,
+                QuestionComplexity.SCENARIO,
             ]
         if self.target_personas is None:
             self.target_personas = [
@@ -136,6 +153,7 @@ class NetworkConfigDatasetGenerator:
     
     def __init__(self, config: PipelineConfig):
         self.config = config
+        Path(self.config.output_dir).mkdir(exist_ok=True)
         self.logger = self._setup_logger()
         
         # 파이프라인 컴포넌트 초기화
@@ -147,6 +165,14 @@ class NetworkConfigDatasetGenerator:
                 scenario_type=config.scenario_type,
             )
         )
+        self.evaluator = ComprehensiveEvaluator()
+        # 하이브리드 검증 시스템 (나중에 초기화)
+        self.hybrid_validator = None
+        self.hybrid_feedback = None
+        self.validation_mode = ValidationMode.HYBRID  # 기본값
+        self.max_validation_iterations = 3
+
+
         # self.llm_explorer = LLMExplorer()
         self.enhanced_generator = EnhancedLLMQuestionGenerator()
         self.assembler = TestAssembler(
@@ -159,12 +185,14 @@ class NetworkConfigDatasetGenerator:
         
     def generate_complete_dataset(self) -> Dict[str, Any]:
         """완전한 데이터셋 생성 - 메인 함수"""
-        self.logger.info("=== 네트워크 설정 테스트 데이터셋 생성 시작 ===")
+        self.logger.info("="*20 + " 데이터셋 생성 파이프라인 시작 " + "="*20)
         
         try:
             # 1단계: XML 파싱
             network_facts = self._execute_stage_parsing()
-            
+            # self.validation_agent = ValidationAgent(network_facts)
+            # self.feedback_loop = FeedbackLoop(network_facts)
+    
             # 2단계: 기초 질문 생성 (Rule-based)
             basic_dataset = self._execute_stage_basic_generation(network_facts)
             
@@ -176,26 +204,140 @@ class NetworkConfigDatasetGenerator:
                 network_facts, basic_dataset, enhanced_dataset
             )
             
-            # 5단계: 검증 및 품질 관리
-            validated_dataset = self._execute_stage_validation(integrated_dataset)
+            # (신규) 프리‑밸리데이션: BASIC/Rule 기반 항목의 GT를 로직값으로 자동 검증/교정
+            integrated_dataset = self._execute_pre_validation(network_facts, integrated_dataset)
             
+            # (개선) 검증 및 자동 교정 루프 실행
+            # corrected_dataset, validation_stats = self._execute_validation_and_feedback_loop(integrated_dataset)
+            # self.stage_results[PipelineStage.VALIDATION] = validation_stats
+            # self.logger.info(f"검증 및 교정 완료: {len(corrected_dataset)}개 항목")
+            
+
+                    # 6단계: 하이브리드 검증 루프 (새로운!)
+            final_dataset, validation_report = self._execute_hybrid_validation_loop(
+            integrated_dataset, network_facts)
+
             # 6단계: 평가 메트릭 계산 (자가 평가)
-            evaluation_results = self._execute_stage_evaluation(validated_dataset)
-            
+            evaluation_results = self._execute_stage_evaluation(final_dataset)
+            self.stage_results[PipelineStage.EVALUATION] = evaluation_results
             # 최종 데이터셋 구성
-            final_dataset = self._compose_final_dataset(
-                validated_dataset, evaluation_results
-            )
-            
-            # 결과 저장
+            final_dataset = self._compose_final_dataset(final_dataset, evaluation_results)
             self._save_results(final_dataset)
             
-            self.logger.info("=== 데이터셋 생성 완료 ===")
+            self.logger.info("="*20 + " 데이터셋 생성 완료 " + "="*20)
             return final_dataset
             
         except Exception as e:
             self.logger.error(f"데이터셋 생성 실패: {e}")
             raise
+
+    
+
+    # 새로운 메서드 추가
+    def _execute_hybrid_validation_loop(
+        self,
+        dataset: List[DatasetSample],
+        network_facts: Dict[str, Any]
+    ) -> Tuple[List[DatasetSample], Dict[str, Any]]:
+        """
+        6단계: 하이브리드 검증 루프
+        에이전트가 문제를 풀고, BuilderCore로 정답을 확인하는 이중 검증
+        """
+        
+        self.logger.info("="*60)
+        self.logger.info("6단계: 하이브리드 검증 루프 시작")
+        self.logger.info("="*60)
+        
+        # 하이브리드 시스템 초기화
+        if not self.hybrid_validator:
+            self.hybrid_validator = HybridValidationSystem(
+                network_facts=network_facts,
+                mode=self.validation_mode,
+                xml_base_dir=self.config.xml_data_dir
+            )
+            self.hybrid_feedback = HybridFeedbackLoop(network_facts)
+        
+        # 데이터셋 딕셔너리 변환
+        dataset_dicts = [asdict(sample) for sample in dataset]
+        
+        iteration = 0
+        validation_history = []
+        total_improvements = 0
+        
+        while iteration < self.max_validation_iterations:
+            self.logger.info(f"\n검증 반복 {iteration + 1}/{self.max_validation_iterations}")
+            
+            # Step 1: 하이브리드 검증 수행
+            # 샘플 크기 제어: config.validation_sample_size(없거나 0이면 전체)
+            initial_sample = getattr(self.config, "validation_sample_size", None)
+            sample_size = (initial_sample if (iteration == 0) else None)
+            if sample_size in (0, None):
+                sample_size = None
+
+            validation_results, validation_stats = self.hybrid_validator.validate_dataset(
+                dataset_dicts,
+                sample_size=sample_size
+            )
+            
+            validation_history.append(validation_stats)
+            
+            # 주요 지표 출력
+            self.logger.info(
+                f"에이전트 정확도: {validation_stats['agent_performance']['accuracy']:.1%}"
+            )
+            self.logger.info(
+                f"Ground Truth 정확도: {validation_stats['ground_truth_quality']['accuracy']:.1%}"
+            )
+            
+            # Step 2: 목표 달성 확인
+            if validation_stats['ground_truth_quality']['accuracy'] >= 0.95:
+                self.logger.info("✅ 목표 정확도 95% 달성!")
+                break
+            
+            # Step 3: 피드백 루프 실행
+            improved_dataset, improvement_report = self.hybrid_feedback.improve_dataset(
+                validation_results,
+                dataset_dicts
+            )
+            
+            if improvement_report['total_improvements'] == 0:
+                self.logger.info("개선할 항목이 없습니다.")
+                break
+            
+            # Step 4: 개선된 데이터셋으로 업데이트
+            dataset_dicts = improved_dataset
+            total_improvements += improvement_report['total_improvements']
+            
+            self.logger.info(
+                f"이번 반복에서 {improvement_report['total_improvements']}개 개선"
+            )
+            
+            iteration += 1
+        
+        # 최종 리포트 생성
+        final_report = {
+            "validation_mode": self.validation_mode.value,
+            "iterations": iteration + 1,
+            "total_improvements": total_improvements,
+            "validation_history": validation_history,
+            "final_stats": validation_history[-1] if validation_history else {}
+        }
+        
+        self.logger.info("\n" + "="*60)
+        self.logger.info("하이브리드 검증 완료!")
+        self.logger.info(f"총 반복: {iteration + 1}회")
+        self.logger.info(f"총 개선: {total_improvements}개")
+        if validation_history:
+            final_accuracy = validation_history[-1]['ground_truth_quality']['accuracy']
+            self.logger.info(f"최종 Ground Truth 정확도: {final_accuracy:.1%}")
+        self.logger.info("="*60)
+        
+        # DatasetSample로 변환
+        final_samples = [
+            self._dict_to_dataset_sample(d) for d in dataset_dicts
+        ]
+        
+        return final_samples, final_report
     
     def _execute_stage_parsing(self) -> Dict[str, Any]:
         """1단계: XML 파싱"""
@@ -429,21 +571,27 @@ class NetworkConfigDatasetGenerator:
         # 기초 + 심화 질문 통합
         all_samples = basic_samples + enhanced_samples
         
-        # 중복 제거 (질문 + 장비/컨텍스트 조합 기준으로 완화)
+        # 중복 제거 (질문+컨텍스트 해시+소스/시나리오/페르소나/복잡도 조합)
         seen_combinations = set()
         deduplicated_samples = []
         
         for sample in all_samples:
-            # 질문 + 주요 장비/컨텍스트 정보로 고유성 판단
-            question_normalized = sample.question.lower().strip()
-            context_key = sample.context[:100] if sample.context else ""
-            source_files_key = str(sample.source_files) if sample.source_files else ""
-            
-            # 복합 키로 중복 판단 (장비가 다르면 같은 질문이어도 허용)
+            # 질문 + 컨텍스트 해시 + 소스/시나리오/페르소나/복잡도 키로 고유성 판단
+            question_normalized = (sample.question or "").lower().strip()
+            ctx = sample.context or ""
+            ctx_hash = hashlib.sha1(ctx.encode("utf-8")).hexdigest()[:12] if ctx else ""
+            files = sample.source_files or []
+            source_files_key = ",".join(sorted(map(str, files)))
+            persona_key = sample.persona or ""
+            scenario_key = sample.scenario or ""
+            complexity_key = sample.complexity or ""
             combination_key = (
                 question_normalized,
-                context_key,
-                source_files_key
+                ctx_hash,
+                source_files_key,
+                scenario_key,
+                persona_key,
+                complexity_key,
             )
             
             if combination_key not in seen_combinations:
@@ -452,7 +600,7 @@ class NetworkConfigDatasetGenerator:
             else:
                 self.logger.debug(f"중복 질문 제거: {sample.question[:50]}...")
         
-        # 카테고리별 균형 조정
+        # 카테고리별 균형 조정 (기본 비활성화: config.balance_max_per_category=None)
         balanced_samples = self._balance_categories(deduplicated_samples)
         
         # Context 정보 보강
@@ -471,20 +619,77 @@ class NetworkConfigDatasetGenerator:
             for comp, items in samples_by_complexity.items():
                 self._save_intermediate(f"assembled_{comp}.json", [asdict(s) for s in items])
 
+        dedup_removed = len(all_samples) - len(deduplicated_samples)
+        balance_trim = len(deduplicated_samples) - len(balanced_samples)
         self.logger.info(
-            f"통합 완료: {len(balanced_samples)}개 (중복 제거: {len(all_samples) - len(balanced_samples)}개)"
+            f"통합 완료: {len(balanced_samples)}개 (중복 제거: {dedup_removed}개, 균형 컷: {balance_trim}개)"
         )
 
         self.stage_results[PipelineStage.ASSEMBLY] = {
             "total_samples": len(balanced_samples),
             "basic_count": len(basic_samples),
             "enhanced_count": len(enhanced_samples),
-            "deduplicated_count": len(all_samples) - len(balanced_samples),
+            "dedup_removed": dedup_removed,
+            "balance_trim": balance_trim,
             "complexity_counts": {k: len(v) for k, v in samples_by_complexity.items()},
             "success": True,
         }
 
         return balanced_samples
+    
+    def _execute_validation_and_feedback_loop(
+        self, dataset: List[DatasetSample]
+    ) -> Tuple[List[DatasetSample], Dict[str, Any]]:
+        """(신규) 검증과 교정을 반복하여 데이터셋 품질을 점진적으로 향상시키는 루프"""
+        self.logger.info("="*10 + " 5단계: 자율 검증 및 자동 교정 루프 시작 " + "="*10)
+        
+        dataset_dicts = [asdict(s) for s in dataset]
+        max_iterations = 3
+        target_accuracy = 0.98
+        validation_history = []
+        
+        for i in range(max_iterations):
+            self.logger.info(f"--- 검증 루프 Iteration {i+1}/{max_iterations} ---")
+            
+            validation_results, stats = self.validation_agent.validate_dataset(dataset_dicts)
+            validation_history.append(stats)
+            self.logger.info(f"검증 결과: 정확도 {stats['accuracy']:.2%}, 오류 {stats['incorrect']}개")
+            self._save_intermediate(f"validation_results_iter_{i+1}.json", [asdict(r) for r in validation_results])
+
+            if stats['accuracy'] >= target_accuracy or stats['incorrect'] == 0:
+                self.logger.info(f"목표 정확도({target_accuracy:.0%}) 도달. 루프를 종료합니다.")
+                break
+            
+            regenerated, regen_stats = self.feedback_loop.regenerate_failed_items(validation_results)
+            self.logger.info(f"자동 교정 시도: {regen_stats['regenerated_and_corrected']}개 항목 수정됨")
+            
+            if regen_stats['regenerated_and_corrected'] == 0:
+                self.logger.warning("더 이상 교정할 수 있는 항목이 없습니다. 루프를 종료합니다.")
+                break
+            
+            # 교정된 항목으로 데이터셋 업데이트
+            regen_map = {item['id']: item for item in regenerated}
+            dataset_dicts = [regen_map.get(item['id'], item) for item in dataset_dicts]
+            self._save_intermediate(f"corrected_dataset_iter_{i+1}.json", dataset_dicts)
+
+        initial_stats = validation_history[0]
+        final_stats = validation_history[-1]
+        total_corrected = final_stats['total_items'] - final_stats['correct']
+
+        # 최종 리포트용 통계 계산
+        report_stats = {
+            "initial_accuracy": initial_stats['accuracy'],
+            "final_accuracy": final_stats['accuracy'],
+            "total_iterations": len(validation_history),
+            "total_corrected_items": initial_stats['incorrect'] - final_stats['incorrect'],
+            "initial_errors": initial_stats['incorrect'],
+            "final_errors": final_stats['incorrect'],
+            "auto_correction_success_rate": ((initial_stats['incorrect'] - final_stats['incorrect']) / initial_stats['incorrect']) if initial_stats['incorrect'] > 0 else 1.0,
+            "validation_history": validation_history
+        }
+        
+        final_samples = [DatasetSample(**d) for d in dataset_dicts]
+        return final_samples, report_stats
     
     def _execute_stage_validation(self, samples: List[DatasetSample]) -> List[DatasetSample]:
         """5단계: 검증 및 품질 관리"""
@@ -651,6 +856,34 @@ class NetworkConfigDatasetGenerator:
             "dataset_statistics": batch_stats,
         }
     
+    def _make_serializable(self, obj):
+        """Enum 등을 JSON 직렬화 가능한 형태로 변환"""
+        if hasattr(obj, 'value'):  # Enum인 경우
+            return obj.value
+        elif isinstance(obj, dict):
+            return {k: self._make_serializable(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [self._make_serializable(item) for item in obj]
+        elif hasattr(obj, '__dict__'):  # dataclass나 객체인 경우
+            return {k: self._make_serializable(v) for k, v in obj.__dict__.items()}
+        else:
+            return obj
+
+    def _save_intermediate(self, filename: str, data: Any):
+        """중간 결과물을 output 디렉토리에 저장합니다."""
+        if not self.config.save_intermediate:
+            return
+        output_path = Path(self.config.output_dir) / filename
+        self.logger.info(f"중간 결과 저장 -> {output_path}")
+        try:
+            # JSON 직렬화 가능한 형태로 변환
+            serializable_data = self._make_serializable(data)
+            with open(output_path, 'w', encoding='utf-8') as f:
+                json.dump(serializable_data, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            self.logger.error(f"'{filename}' 저장 실패: {e}")
+
+
     def _compose_final_dataset(
         self, 
         samples: List[DatasetSample],
@@ -701,18 +934,21 @@ class NetworkConfigDatasetGenerator:
     
     # === 보조 메서드들 ===
     
-    def _setup_logger(self) -> logging.Logger:
-        """로거 설정"""
-        logger = logging.getLogger("NetworkDatasetGenerator")
+    def _setup_logger(self):
+        """파일 및 콘솔 로거를 설정합니다."""
+        logger = logging.getLogger("DatasetGenerator")
         logger.setLevel(logging.INFO)
+        if logger.hasHandlers():
+            logger.handlers.clear()
         
-        if not logger.handlers:
-            handler = logging.StreamHandler()
-            formatter = logging.Formatter(
-                '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-            )
-            handler.setFormatter(formatter)
-            logger.addHandler(handler)
+        log_file = Path(self.config.output_dir) / 'pipeline.log'
+        file_handler = logging.FileHandler(log_file, mode='w', encoding='utf-8')
+        file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+        logger.addHandler(file_handler)
+        
+        console_handler = logging.StreamHandler()
+        console_handler.setFormatter(logging.Formatter('[%(levelname)s] %(message)s'))
+        logger.addHandler(console_handler)
         
         return logger
     
@@ -844,27 +1080,38 @@ class NetworkConfigDatasetGenerator:
         return sample
     
     def _balance_categories(self, samples: List[DatasetSample]) -> List[DatasetSample]:
-        """카테고리별 균형 조정"""
-        # 간단한 균형 조정: 각 카테고리에서 최대 N개
-        max_per_category = 15
-        
-        by_category = {}
+        """카테고리별 균형 조정 (기본 비활성화). 
+        - 그룹 키: metadata.topic 우선, 없으면 sample.category
+        - 상한: config.balance_max_per_category(None이면 컷 없음)
+        """
+        max_per_category = getattr(self.config, "balance_max_per_category", None)
+        # 컷 비활성화: 그대로 반환
+        if max_per_category is None or max_per_category <= 0:
+            return samples
+
+        # 그룹핑: topic 우선
+        group_key_pref = getattr(self.config, "balance_group_key", "topic")
+        by_group: Dict[str, List[DatasetSample]] = {}
         for sample in samples:
-            by_category.setdefault(sample.category, []).append(sample)
-        
-        balanced = []
-        for category, category_samples in by_category.items():
-            # 복잡도별로 다양성 확보
-            by_complexity = {}
-            for sample in category_samples:
-                by_complexity.setdefault(sample.complexity, []).append(sample)
-            
-            selected = []
-            for complexity, complexity_samples in by_complexity.items():
-                selected.extend(complexity_samples[:max_per_category // len(by_complexity)])
-            
+            topic = None
+            if group_key_pref == "topic":
+                meta = sample.metadata or {}
+                topic = meta.get("topic")
+            key = topic or sample.category or "unknown"
+            by_group.setdefault(key, []).append(sample)
+
+        balanced: List[DatasetSample] = []
+        for key, items in by_group.items():
+            # 복잡도 다양성 유지: 균등 분배
+            by_complexity: Dict[str, List[DatasetSample]] = {}
+            for s in items:
+                by_complexity.setdefault(s.complexity or "", []).append(s)
+            share = max(1, max_per_category // max(1, len(by_complexity)))
+            selected: List[DatasetSample] = []
+            for comp, comp_items in by_complexity.items():
+                selected.extend(comp_items[:share])
             balanced.extend(selected[:max_per_category])
-        
+
         return balanced
     
     def _create_enhanced_context(self, network_facts: Dict[str, Any], sample: DatasetSample) -> str:
@@ -1019,6 +1266,81 @@ class NetworkConfigDatasetGenerator:
             json.dump(final_dataset["metadata"], f, ensure_ascii=False, indent=2)
         
         self.logger.info(f"결과 저장 완료: {output_dir}")
+
+    def _execute_pre_validation(self, network_facts: Dict[str, Any], samples: List[DatasetSample]) -> List[DatasetSample]:
+        """프리‑밸리데이션: BASIC/Rule 기반 항목에 대해 Logic vs GT 검증 및 자동 교정.
+        - 대상: category=='basic' 또는 metadata.origin=='rule_based'
+        - intent가 있는 항목만 처리
+        """
+        from utils.builder_core import BuilderCore
+
+        builder = BuilderCore(network_facts.get("devices", []))
+
+        def _cmp(a, b) -> bool:
+            if a is None or b is None:
+                return a == b
+            # 숫자
+            try:
+                fa = float(a); fb = float(b)
+                return abs(fa - fb) <= max(1.0, abs(fb) * 0.01)
+            except Exception:
+                pass
+            # 불린 텍스트 동등성
+            tmap = {"true": True, "false": False, "yes": True, "no": False, "활성": True, "비활성": False, "정상": True}
+            def _t(x):
+                xs = str(x).strip().lower();
+                return tmap.get(xs, None)
+            ta, tb = _t(a), _t(b)
+            if ta is not None and tb is not None:
+                return ta == tb
+            # 리스트/집합
+            if isinstance(a, list) and isinstance(b, list):
+                return set(map(str, a)) == set(map(str, b))
+            # 문자열 정규화 비교
+            return str(a).strip().lower() == str(b).strip().lower()
+
+        corrected = 0; checked = 0
+        out: List[DatasetSample] = []
+        for s in samples:
+            out.append(s)
+            if (s.category or "").lower() != "basic" and not ((s.metadata or {}).get("origin") == "rule_based"):
+                continue
+            intent = ((s.metadata or {}).get("intent")) or {}
+            metric = intent.get("metric"); params = intent.get("params") or intent.get("scope") or {}
+            if not metric:
+                continue
+            try:
+                checked += 1
+                logic_val, _files = builder.calculate_metric(metric, params)
+                if not _cmp(s.ground_truth, logic_val):
+                    s.metadata = s.metadata or {}
+                    s.metadata["correction_log"] = {
+                        "reason": "pre-validation logic vs GT mismatch",
+                        "old_ground_truth": s.ground_truth,
+                        "new_ground_truth": logic_val,
+                        "metric": metric,
+                        "params": params,
+                    }
+                    s.ground_truth = logic_val
+                    corrected += 1
+            except Exception:
+                continue
+
+        self.logger.info(f"프리‑밸리데이션: 검사 {checked}개, 자동 교정 {corrected}개")
+
+        if self.config.save_intermediate:
+            try:
+                self._save_intermediate("prevalidation_corrections.json", [
+                    {
+                        "id": s.id,
+                        "question": s.question,
+                        "correction_log": (s.metadata or {}).get("correction_log")
+                    }
+                    for s in out if (s.metadata or {}).get("correction_log")
+                ])
+            except Exception:
+                pass
+        return out
 
 
 def main():

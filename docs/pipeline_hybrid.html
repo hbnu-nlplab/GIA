@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GIA‑Re 하이브리드 파이프라인 도식</title>
+  <style>
+    :root{
+      --ink:#1b2638; --muted:#5f6b7a; --bg:#f6f8fb; --card:#fff; --border:#e6e9ef;
+      --p:#1d6fd8; --p2:#7b9fff; --g:#0fa37f; --o:#f08c00; --r:#e03131; --y:#fab005;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Noto Sans KR,Apple SD Gothic Neo,sans-serif}
+    .wrap{max-width:1320px;margin:32px auto;padding:0 16px}
+    h1{margin:0 0 6px;font-size:30px; letter-spacing:.2px}
+    .sub{color:var(--muted);margin:0 0 18px}
+    .legend{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0 22px}
+    .chip{font-size:12px;border:1px solid var(--border);background:var(--card);border-radius:9999px;padding:4px 10px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 14px rgba(0,0,0,.05)}
+    .stage-details{margin:24px 0;padding:18px}
+    details{border:1px solid var(--border);border-radius:10px;background:#fff;margin:10px 0}
+    summary{cursor:pointer;padding:12px 14px;font-weight:600}
+    .cnt{padding:8px 16px 16px;color:#263145}
+    .k{font-weight:600}
+    .io{display:grid;grid-template-columns:120px 1fr;gap:8px;margin:6px 0}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px}
+
+    /* SVG host */
+    .svgbox{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px;overflow:auto}
+    
+    /* Export tip */
+    .tip{font-size:12px;color:var(--muted);margin:6px 2px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>GIA‑Re 파이프라인 도식 (HTML/SVG)</h1>
+    <p class="sub">Parsing → Basic Generation → Enhanced Generation → Assembly → Hybrid Validation Loop → Evaluation</p>
+    <div class="legend">
+      <span class="chip">파서/집계: 파란색</span>
+      <span class="chip">질문 생성: 보라색</span>
+      <span class="chip">에이전트/플랜: 오렌지</span>
+      <span class="chip">하이브리드 검증/피드백: 빨강</span>
+      <span class="chip">평가/최종 산출: 초록</span>
+    </div>
+
+    <div class="svgbox card">
+      <!-- Responsive, printable SVG diagram -->
+      <svg viewBox="0 0 1400 1000" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg" text-rendering="geometricPrecision">
+        <defs>
+          <linearGradient id="bgP" x1="0" x2="1">
+            <stop offset="0%" stop-color="#eaf2ff"/>
+            <stop offset="100%" stop-color="#f5f9ff"/>
+          </linearGradient>
+          <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="10" markerHeight="10" orient="auto" markerUnits="strokeWidth">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#7c8aa1" />
+          </marker>
+          <marker id="arrowR" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="10" markerHeight="10" orient="auto" markerUnits="strokeWidth">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#e03131" />
+          </marker>
+          <style><![CDATA[
+            .node{stroke:#b9c2d6;stroke-width:1.6;fill:#fff}
+            .hdr{font-weight:800;fill:#0f172a;font-size:16px}
+            .lbl{fill:#1f2937;font-size:13.5px}
+            .s1{fill:#e8f0ff}
+            .s2{fill:#efe9ff}
+            .s3{fill:#fff5e6}
+            .s4{fill:#ffe9ea}
+            .s5{fill:#e7fbf3}
+            .tt{font-size:13px;fill:#374151}
+            .arrow{stroke:#334155;stroke-width:3;marker-end:url(#arrow); vector-effect: non-scaling-stroke}
+            .arrowR{stroke:#c92a2a;stroke-width:3;marker-end:url(#arrowR); vector-effect: non-scaling-stroke}
+            .dashed{stroke-dasharray:8 6}
+          ]]></style>
+        </defs>
+
+        <!-- Row 0: Inputs -->
+        <g class="node" transform="translate(380,15)">
+          <rect class="s1" x="0" y="0" width="240" height="60" rx="10"/>
+          <text class="hdr" x="16" y="26">XML Configs</text>
+          <text class="tt" x="16" y="46">장비 설정 원본(XML)</text>
+          <title>입력: 장비 설정 XML
+행동: UniversalParser가 표준 facts로 정규화
+출력: network_facts</title>
+        </g>
+        <g class="node" transform="translate(800,15)">
+          <rect class="s1" x="0" y="0" width="220" height="60" rx="10"/>
+          <text class="hdr" x="16" y="26">policies.json</text>
+          <text class="tt" x="16" y="46">카테고리/정책 힌트</text>
+          <title>입력: 정책/카테고리 스펙
+행동: Rule-based 생성에 힌트 제공
+출력: 대상 카테고리, 목표 메트릭</title>
+        </g>
+
+        <!-- Row 1: Parser -->
+        <g class="node" transform="translate(570,120)">
+          <rect class="s1" x="0" y="0" width="260" height="100" rx="14"/>
+          <text class="hdr" x="16" y="30">1) UniversalParser</text>
+          <text class="tt" x="16" y="56">XML → facts 정규화</text>
+          <text class="lbl" x="16" y="82">→ network_facts (devices[])</text>
+          <title>입력: XML 설정들, 정책 파일
+행동: 벤더-중립 facts 생성 (devices, routing, services 등)
+출력: network_facts, parsed_facts.json(옵션)</title>
+        </g>
+
+        <!-- Inputs → Parser -->
+        <path class="arrow" d="M 500 75 L 700 120"/>
+        <path class="arrow" d="M 910 75 L 740 120"/>
+
+        <!-- Row 2: Generation branches -->
+        <g class="node" transform="translate(240,300)">
+          <rect class="s2" x="0" y="0" width="360" height="120" rx="14"/>
+          <text class="hdr" x="16" y="30">2) RuleBasedGen + Assembler</text>
+          <text class="tt" x="16" y="58">정책 기반 DSL • 정답 계산</text>
+          <text class="lbl" x="16" y="86">→ basic_samples (GT/증거 힌트)</text>
+          <title>입력: network_facts, 카테고리, 시나리오
+행동: DSL 생성 → BuilderCore로 정답 계산 → 기본 Q&A 샘플 생성
+출력: basic_dataset.json, Command_Generation 포함</title>
+        </g>
+        <g class="node" transform="translate(800,300)">
+          <rect class="s2" x="0" y="0" width="360" height="120" rx="14"/>
+          <text class="hdr" x="16" y="30">3) EnhancedGen + AnswerAgent</text>
+          <text class="tt" x="16" y="58">고복잡 질문/플랜 • 증거기반 합성</text>
+          <text class="lbl" x="16" y="86">→ enhanced_samples (GT/해설/소스)</text>
+          <title>입력: network_facts
+행동: LLM 템플릿으로 고복잡 질문/플랜 생성 → AnswerAgent가 BuilderCore 메트릭을 실행하고 정답/해설 합성
+출력: enhanced_dataset.json</title>
+        </g>
+
+        <!-- Parser → Generation branches -->
+        <path class="arrow" d="M 700 220 C 700 260, 540 260, 420 300"/>
+        <path class="arrow" d="M 700 220 C 700 260, 860 260, 980 300"/>
+
+        <!-- Row 3: Assembly -->
+        <g class="node" transform="translate(570,480)">
+          <rect class="s5" x="0" y="0" width="260" height="110" rx="14"/>
+          <text class="hdr" x="16" y="30">4) Assembly</text>
+          <text class="tt" x="16" y="56">통합/중복제거/균형/컨텍스트</text>
+          <text class="lbl" x="16" y="82">결과 그룹 저장(복잡도별)</text>
+          <title>입력: basic_samples + enhanced_samples
+행동: 중복제거, 카테고리 균형화, 컨텍스트 보강, 복잡도 그룹 저장
+출력: assembled_*.json, 통합 샘플</title>
+        </g>
+        <path class="arrow" d="M 420 420 C 540 460, 600 460, 700 480"/>
+        <path class="arrow" d="M 980 420 C 860 460, 800 460, 700 480"/>
+
+        <!-- Row 4: Hybrid Validation + Feedback -->
+        <g class="node" transform="translate(570,660)">
+          <rect class="s4" x="0" y="0" width="260" height="100" rx="14"/>
+          <text class="hdr" x="16" y="30">5) HybridValidationSystem</text>
+          <text class="tt" x="16" y="56">3중 비교/오류분류/통계</text>
+          <text class="lbl" x="16" y="82">Agent vs Logic vs GT</text>
+          <title>입력: assembled_dataset, network_facts
+행동: 에이전트 추론값/로직계산값/GT의 3중 비교, 오류 카테고리 및 통계 산출
+출력: validation_results, validation_report</title>
+        </g>
+        <g class="node" transform="translate(920,648)">
+          <rect class="s4" x="0" y="0" width="320" height="124" rx="14"/>
+          <text class="hdr" x="16" y="30">5′) HybridFeedbackLoop</text>
+          <text class="tt" x="16" y="58">교정/명확화/컨텍스트/재생성</text>
+          <text class="lbl" x="16" y="86">Fix GT • Clarify • Add Context • Regenerate</text>
+          <title>입력: validation_results, 원본/개선 데이터셋
+행동: GT 오류는 로직값으로 교정, 모호 질문은 명확화/컨텍스트 추가, 문제 항목은 전면 재생성
+출력: improved_dataset, improvement_report</title>
+        </g>
+        <path class="arrow" d="M 700 760 L 920 760"/>
+        <path class="arrowR dashed" d="M 980 648 C 920 600, 760 600, 700 660"/>
+
+        <!-- Row 5: Evaluation -->
+        <g class="node" transform="translate(570,840)">
+          <rect class="s5" x="0" y="0" width="260" height="100" rx="14"/>
+          <text class="hdr" x="16" y="30">6) ComprehensiveEvaluator</text>
+          <text class="tt" x="16" y="56">Short/Long/구조화 평가</text>
+          <text class="lbl" x="16" y="82">EM • F1 • BLEU • ROUGE • 구조적</text>
+          <title>입력: 최종 개선 데이터셋
+행동: Short/Long/구조화 유형별 평가 메트릭 산출, 샘플 메타데이터 병합
+출력: evaluation_results, dataset_statistics</title>
+        </g>
+        <path class="arrow" d="M 1080 760 C 980 820, 820 820, 700 840"/>
+
+        <!-- Final outputs -->
+        <g class="node" transform="translate(910,860)">
+          <rect class="s5" x="0" y="0" width="360" height="80" rx="14"/>
+          <text class="hdr" x="16" y="30">Final Outputs</text>
+          <text class="lbl" x="16" y="56">train.json • validation.json • test.json • metadata.json</text>
+          <title>최종 산출: 데이터 분할 및 메타데이터 저장</title>
+        </g>
+        <path class="arrow" d="M 830 890 L 910 900"/>
+
+      </svg>
+    </div>
+    <p class="tip">Tip: 브라우저 인쇄(PDF) 또는 고해상도 스크린샷으로 논문 도식에 활용하세요. 노드 위에 마우스를 올리면 각 단계의 I/O가 툴팁으로 표시됩니다.</p>
+
+    <div class="stage-details card">
+      <h2 style="margin:0 0 8px 0;">단계별 세부 (입력 · 행동 · 출력)</h2>
+      <details open>
+        <summary>1) Parsing — UniversalParser</summary>
+        <div class="cnt">
+          <div class="io"><span class="k">입력</span><span class="mono">XML configs (data/raw/XML_Data/*.xml), policies.json</span></div>
+          <div class="io"><span class="k">행동</span><span>벤더 자동 감지, 네임스페이스 통합, 계층 평탄화로 인터페이스/라우팅/보안/서비스를 표준 facts로 정규화</span></div>
+          <div class="io"><span class="k">출력</span><span class="mono">network_facts</span></div>
+          <div class="io"><span class="k">모듈</span><span>XML 설정을 파싱해 벤더‑중립 facts로 변환하는 표준화 파서</span></div>
+        </div>
+      </details>
+      <details open>
+        <summary>2) Basic Generation — RuleBasedGenerator + TestAssembler</summary>
+        <div class="cnt">
+          <div class="io"><span class="k">입력</span><span class="mono">network_facts, target categories, scenarios(normal/failure/expansion)</span></div>
+          <div class="io"><span class="k">행동</span><span>정책/카테고리 기반 DSL 작성, 메트릭 엔진으로 정답 계산, 질문을 테스트 항목으로 어셈블링하며 증거 힌트와 소스파일 추론 부여</span></div>
+          <div class="io"><span class="k">출력</span><span class="mono">output/basic_dataset.json</span></div>
+          <div class="io"><span class="k">모듈</span><span>규칙 기반 DSL 생성기, 정답 계산 엔진, 테스트 어셈블러 및 증거 추출기</span></div>
+        </div>
+      </details>
+      <details open>
+        <summary>3) Enhanced Generation — EnhancedLLMQuestionGenerator + AnswerAgent</summary>
+        <div class="cnt">
+          <div class="io"><span class="k">입력</span><span class="mono">network_facts, target_complexities/personas</span></div>
+          <div class="io"><span class="k">행동</span><span>복잡도/페르소나/시나리오 템플릿으로 고품질 질문과 reasoning_plan 생성, AnswerAgent가 메트릭을 실행하고 증거 기반으로 정답·해설 합성</span></div>
+          <div class="io"><span class="k">출력</span><span class="mono">output/enhanced_dataset.json</span></div>
+          <div class="io"><span class="k">모듈</span><span>LLM 기반 심화 질문 생성기, 증거 기반 정답 합성 에이전트, LLM 어댑터와 메트릭 엔진</span></div>
+        </div>
+      </details>
+      <details open>
+        <summary>4) Assembly — 통합/중복제거/균형/컨텍스트</summary>
+        <div class="cnt">
+          <div class="io"><span class="k">입력</span><span class="mono">basic_samples + enhanced_samples</span></div>
+          <div class="io"><span class="k">행동</span><span>질문·컨텍스트·소스 조합 기반 중복 제거, 카테고리 균형화, 부족한 컨텍스트 보강, 복잡도별 그룹 통계 저장</span></div>
+          <div class="io"><span class="k">출력</span><span class="mono">output/assembled_*.json</span></div>
+          <div class="io"><span class="k">모듈</span><span>통합·정제 파이프라인: 중복 제거, 분포 균형, 컨텍스트 보강 및 그룹화</span></div>
+        </div>
+      </details>
+      <details open>
+        <summary>5) Hybrid Validation Loop — 3중 비교 + 자동 교정</summary>
+        <div class="cnt">
+          <div class="io"><span class="k">입력</span><span class="mono">assembled_dataset, network_facts</span></div>
+          <div class="io"><span class="k">행동</span><span>에이전트 답·로직 계산값·GT의 3중 비교로 오류 분류/통계 산출, 피드백 루프가 GT를 교정하고 질문을 명확화·재생성하여 수렴</span></div>
+          <div class="io"><span class="k">출력</span><span class="mono">improved_dataset, validation_report(validation_history, agent_performance, ground_truth_quality, recommendations)</span></div>
+          <div class="io"><span class="k">모듈</span><span>하이브리드 검증기(3중 비교·오류분석)와 개선 루프(GT 교정·명확화·재생성)</span></div>
+        </div>
+      </details>
+      <details open>
+        <summary>6) Evaluation — EM/F1/BLEU/ROUGE/구조적</summary>
+        <div class="cnt">
+          <div class="io"><span class="k">입력</span><span class="mono">최종 데이터셋(샘플별 GT/설명/메타)</span></div>
+          <div class="io"><span class="k">행동</span><span>Short/Long/구조화 유형 맞춤 메트릭(EM/F1/BLEU/ROUGE/구조적) 산출, 샘플 메타데이터 병합 및 배치 통계 생성</span></div>
+          <div class="io"><span class="k">출력</span><span class="mono">evaluation_results, dataset_statistics, train/validation/test.json, metadata.json</span></div>
+          <div class="io"><span class="k">모듈</span><span>다층 평가기: 단답/서술/구조화 답변에 대한 품질 지표와 종합 통계 산출</span></div>
+        </div>
+      </details>
+    </div>
+  </div>
+</body>
+</html>

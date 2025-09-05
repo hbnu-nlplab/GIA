@@ -1,4 +1,5 @@
 from typing import Dict, Any, List, Union, Set, Tuple
+from pydantic import BaseModel
 import json
 import re
 
@@ -132,6 +133,10 @@ class AnswerAgent:
         answer_type: str = "long",
     ) -> Tuple[Any, str]:
         """Return structured ground truth and explanation derived from LLM output."""
+        # Pydantic model for structured outputs (Chat parse)
+        class StructuredAnswerModel(BaseModel):
+            ground_truth: Any
+            explanation: str
         schema = {
             "title": "StructuredAnswer",
             "type": "object",
@@ -189,6 +194,7 @@ class AnswerAgent:
         ]
 
         try:
+            # Prefer Chat parse with Pydantic for schema adherence
             data = _call_llm_json(
                 messages,
                 schema,
@@ -196,15 +202,36 @@ class AnswerAgent:
                 model=settings.models.answer_synthesis,
                 max_output_tokens=700,
                 use_responses_api=False,
+                use_chat_parse=True,
+                pydantic_model=StructuredAnswerModel,
             )
             if isinstance(data, dict):
-                ground_truth = data.get("ground_truth")
-                explanation = data.get("explanation", "")
-                if ground_truth is not None:
-                    return ground_truth, explanation
+                gt = data.get("ground_truth") if "ground_truth" in data else None
+                ex = data.get("explanation", "")
+                if gt is not None:
+                    return gt, ex
         except Exception as e:
             import logging
-            logging.warning(f"AnswerAgent LLM synthesis failed: {e}")
+            logging.warning(f"AnswerAgent parse path failed: {e}")
+        # Fallback to json_object path
+        try:
+            data2 = _call_llm_json(
+                messages,
+                schema,
+                temperature=0.0,
+                model=settings.models.answer_synthesis,
+                max_output_tokens=700,
+                use_responses_api=False,
+                use_chat_parse=False,
+            )
+            if isinstance(data2, dict):
+                gt = data2.get("ground_truth")
+                ex = data2.get("explanation", "")
+                if gt is not None:
+                    return gt, ex
+        except Exception as e:
+            import logging
+            logging.warning(f"AnswerAgent json_object path failed: {e}")
 
         # 폴백: 간단 LLM 호출 또는 템플릿 생성으로 답변 확보
         try:

@@ -581,7 +581,7 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
             attempts = [
                 ("Primary", settings.models.enhanced_generation, 0.7, 2000, False),
                 ("Secondary", "gpt-4o-mini", 0.5, 1500, False),
-                ("Fallback", "gpt-4o-mini", 0.3, 1000, True),  # use_responses_api=True로 시도
+                ("Fallback", "gpt-4o-mini", 0.3, 1000, False),  # Responses API 비활성 (호환성 이슈 회피)
             ]
             
             for attempt_name, model, temp, max_tokens, use_resp_api in attempts:

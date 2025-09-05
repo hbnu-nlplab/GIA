@@ -21,13 +21,14 @@ class ApiSettings(BaseSettings):
 class ModelsSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file='.env', extra='ignore')
     
-    default: str = "gpt-4o-mini"
-    paraphrase: str = Field("gpt-4o-mini", validation_alias=AliasChoices("OPENAI_MODEL_PARAPHRASE"))
-    question_generation: str = Field("gpt-4o-mini", validation_alias=AliasChoices("OPENAI_MODEL_QUESTION"))
-    intent_parsing: str = Field("gpt-4o-mini", validation_alias=AliasChoices("OPENAI_MODEL_INTENT"))
-    hypothesis_review: str = Field("gpt-4o-mini", validation_alias=AliasChoices("OPENAI_MODEL_HYPO_REVIEW"))
-    answer_synthesis: str = Field("gpt-4o-mini", validation_alias=AliasChoices("OPENAI_MODEL_ANSWER_SYNTH"))
-    enhanced_generation: str = Field("gpt-4o", validation_alias=AliasChoices("OPENAI_MODEL_ENHANCED_GEN"))
+    # GPT-5 기반 권장 기본값 (YAML/ENV로 자유롭게 오버라이드)
+    default: str = "gpt-5-mini"
+    paraphrase: str = Field("gpt-5-mini", validation_alias=AliasChoices("OPENAI_MODEL_PARAPHRASE"))
+    question_generation: str = Field("gpt-5-mini", validation_alias=AliasChoices("OPENAI_MODEL_QUESTION"))
+    intent_parsing: str = Field("gpt-5-mini", validation_alias=AliasChoices("OPENAI_MODEL_INTENT"))
+    hypothesis_review: str = Field("gpt-5", validation_alias=AliasChoices("OPENAI_MODEL_HYPO_REVIEW"))
+    answer_synthesis: str = Field("gpt-5-mini", validation_alias=AliasChoices("OPENAI_MODEL_ANSWER_SYNTH"))
+    enhanced_generation: str = Field("gpt-5", validation_alias=AliasChoices("OPENAI_MODEL_ENHANCED_GEN"))
 
 
 class FeaturesSettings(BaseSettings):
@@ -36,6 +37,11 @@ class FeaturesSettings(BaseSettings):
     use_intent_llm: bool = Field(True, validation_alias=AliasChoices("GIA_USE_INTENT_LLM"))
     enable_llm_review: bool = Field(True, validation_alias=AliasChoices("GIA_ENABLE_LLM_REVIEW"))
     disable_hypo_review: bool = Field(False, validation_alias=AliasChoices("GIA_DISABLE_HYPO_REVIEW"))
+    # GPT-5/Responses API options
+    use_responses_api_for_gpt5: bool = Field(True, validation_alias=AliasChoices("GIA_GPT5_USE_RESPONSES"))
+    gpt5_reasoning_effort: str = Field("low", validation_alias=AliasChoices("GIA_GPT5_REASONING"))  # minimal/low/medium/high
+    gpt5_text_verbosity: str = Field("low", validation_alias=AliasChoices("GIA_GPT5_VERBOSITY"))    # low/medium/high
+    enable_preambles: bool = Field(False, validation_alias=AliasChoices("GIA_GPT5_PREAMBLES"))
 
 
 class GenerationSettings(BaseModel):

@@ -16,9 +16,24 @@ print(f"Parent dir: {parent_dir}")
 print(f"Builder core exists: {os.path.exists(builder_core_path)}")
 print(f"sys.path: {sys.path[:3]}...")  # 처음 3개만 출력
 
-sys.path.insert(0, parent_dir)
+# sys.path에 parent_dir이 없으면 추가
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
 
-from utils.builder_core import BuilderCore
+try:
+    from utils.builder_core import BuilderCore
+except ImportError as e:
+    print(f"Import error: {e}")
+    print(f"Available modules in utils: {os.listdir(os.path.join(parent_dir, 'utils')) if os.path.exists(os.path.join(parent_dir, 'utils')) else 'utils directory not found'}")
+    # 절대 경로로 다시 시도
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("builder_core", builder_core_path)
+    if spec and spec.loader:
+        builder_core_module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(builder_core_module)
+        BuilderCore = builder_core_module.BuilderCore
+    else:
+        raise ImportError(f"Could not load BuilderCore from {builder_core_path}")
 
 # --- Embedded minimal Postprocessor (from legacy) ---
 import re
@@ -35,10 +50,6 @@ def _strip_scenario_prefix(q: str) -> tuple[str, str]:
 
 BAD_SENTINELS = {"value", "n/a", "na", "none", "null", "미정", "없음", "unknown", "??", "..."}
 
-# 파일: src/assemblers/test_assembler.py
-# 상단 from ... import ... 아래에 이 코드를 추가하세요.
-
-
 def normalize_to_plain_text(data: Any) -> str:
     """모든 데이터 타입을 '정규화된 평문'으로 변환합니다."""
     if data is None:
@@ -52,7 +63,6 @@ def normalize_to_plain_text(data: Any) -> str:
     if isinstance(data, bool):
         return str(data)
     return str(data)
-
 
 def _is_bad_value(v):
     if v is None:
@@ -135,7 +145,6 @@ def get_vrf_tests(tests_by_cat: Dict[str, List[Dict[str, Any]]]) -> Dict[str, Li
     
     return vrf_tests
 
-
 def _auto_tag_difficulty_and_type_rule_based(t: dict) -> None:
     q = (t.get("question") or "").lower()
     intent = t.get("intent") or {}
@@ -155,7 +164,6 @@ def _auto_tag_difficulty_and_type_rule_based(t: dict) -> None:
     else:
         t["level"] = t.get("level") or 1
     t["tags"] = sorted(tags)
-
 
 def strip_unwanted_fields(by_cat: dict) -> dict:
     out = {}
@@ -447,8 +455,9 @@ class TestAssembler:
                     explanation = f"The list of items for {metric_name} is: {ground_truth}."
                 else:
                     explanation = f"The value for {metric_name} is {ground_truth}."
-                    t["expected_answer"] = {
-                        "ground_truth": ground_truth,
-                        "explanation": explanation,
-                    }
+                
+                t["expected_answer"] = {
+                    "ground_truth": ground_truth,
+                    "explanation": explanation,
+                }
         return by_cat
