@@ -123,6 +123,73 @@ def chunk_texts(text: str, chunk_size: int = 1500) -> List[str]:
     
     return parts
 
+def get_reranked_indices(question: str, documents: List[str], top_n: int = 5) -> List[int]:
+    """LLM을 사용하여 1차 검색 문서들의 중요도를 재정렬하고 인덱스 리스트를 반환.
+
+    Args:
+        question: 사용자 질문
+        documents: 1차 검색된 문서 텍스트 목록
+        top_n: 최종 선택할 문서 수
+
+    Returns:
+        재정렬된 상위 문서의 0-based 인덱스 리스트
+    """
+    if not documents:
+        return []
+
+    # LLM에 전달할 문서 포맷팅
+    docs_with_indices = [f"Doc[{i+1}]:\n{doc}" for i, doc in enumerate(documents)]
+    docs_str = "\n\n".join(docs_with_indices)
+
+    rerank_prompt = f"""
+    You are an expert document analyst. Re-rank the documents by relevance to the user question.
+
+    User Question: "{question}"
+
+    Provided Documents:
+    {docs_str}
+
+    Instructions:
+    1. Read the question and all documents carefully.
+    2. Choose the MOST relevant documents that directly help answer the question.
+    3. Output a comma-separated list of document numbers only (e.g., Doc[5],Doc[2],Doc[8]) in descending importance.
+    4. Return up to {top_n} documents. No explanations.
+    """
+
+    try:
+        response = openai_client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant that ranks documents."},
+                {"role": "user", "content": rerank_prompt}
+            ],
+            temperature=0.0
+        )
+        ranked_doc_indices_str = response.choices[0].message.content.strip()
+
+        # 예: "Doc[5],Doc[2]" -> [4, 1]
+        import re
+        ranked_indices: List[int] = []
+        matches = re.findall(r'Doc\[(\d+)\]', ranked_doc_indices_str)
+        for m in matches:
+            idx = int(m) - 1
+            if 0 <= idx < len(documents):
+                ranked_indices.append(idx)
+
+        # 비어있거나 일부만 반환 시 보완
+        if not ranked_indices:
+            ranked_indices = list(range(min(top_n, len(documents))))
+
+        return ranked_indices[:top_n]
+    except Exception as e:
+        print(f"[ERROR] Failed to re-rank documents: {e}")
+        return list(range(min(top_n, len(documents))))
+
+def get_reranked_documents(question: str, documents: List[str], top_n: int = 5) -> List[str]:
+    """문서 목록을 LLM으로 재정렬하여 상위 top_n 문서를 반환."""
+    idx = get_reranked_indices(question, documents, top_n=top_n)
+    return [documents[i] for i in idx]
+
 def get_classification_result(question: str) -> str:
     """사용자 입력을 2가지 작업 카테고리 중 하나로 분류"""
     classification_prompt = '''
@@ -516,8 +583,15 @@ class NetworkEngineeringPipeline:
         self.max_iterations = max_iterations
         print(f"[INFO] Pipeline initialized with {max_iterations} max iterations")
         
-    def get_chromadb_content(self, question: str, answer: str, n_results=5) -> Optional[str]:
-        """ChromaDB에서 관련 XML 설정 파일 검색 및 로깅"""
+    def get_chromadb_content(self, question: str, answer: str, n_results=5, top_n_after_rerank: int = 5) -> Optional[str]:
+        """ChromaDB에서 관련 XML 설정 파일 검색, LLM으로 Re-ranking, 그리고 로깅
+
+        Args:
+            question: 사용자 질문
+            answer: 현재까지의 초안/답변 (미사용 가능)
+            n_results: 1차 후보군 개수 (벡터 검색 Top-K)
+            top_n_after_rerank: Re-ranking 후 최종 컨텍스트로 사용할 문서 수
+        """
         query = f"단순 조회, {question}"
         print(f"[INFO] ChromaDB query: {query}")
         
@@ -526,6 +600,17 @@ class NetworkEngineeringPipeline:
         if results and results['documents'] and results['documents'][0]:
             documents = results['documents'][0]
             metadatas = results['metadatas'][0] if results.get('metadatas') else None
+
+            # Re-ranking 적용 (후보군이 충분히 클 때만)
+            if len(documents) > 1:
+                print(f"  ├─ Re-ranking {len(documents)} candidates → top {min(top_n_after_rerank, len(documents))}")
+                ranked_indices = get_reranked_indices(question, documents, top_n=top_n_after_rerank)
+
+                # 인덱스 기반으로 문서/메타데이터 정렬
+                documents = [documents[i] for i in ranked_indices]
+                if metadatas:
+                    metadatas = [metadatas[i] for i in ranked_indices]
+                print(f"  └─ ✓ Re-ranking complete. Selected {len(documents)} docs")
             
             # 메타데이터 정보 출력
             if metadatas:
