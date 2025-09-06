@@ -307,6 +307,31 @@ class BuilderCore:
             if dev and dev.get("file"):
                 files.add(dev.get("file"))
 
+        # 2.5) 결과 값에서 IP 주소를 추출하여 역매핑 (개선사항)
+        import re
+        ips: Set[str] = set()
+        
+        def collect_ips(x):
+            s = str(x)
+            if re.match(r'^\d{1,3}(\.\d{1,3}){3}$', s):
+                ips.add(s)
+        
+        if isinstance(value, (list, set, tuple)):
+            for v in value:
+                collect_ips(v)
+        elif isinstance(value, dict):
+            for k in value.keys():
+                collect_ips(k)
+        else:
+            collect_ips(value)
+
+        for ip in ips:
+            hn = self.loop_ip_index.get(ip)
+            if hn:
+                dev = self.host_index.get(hn)
+                if dev and dev.get("file"):
+                    files.add(dev["file"])
+
         # 3) 아무 것도 없으면 전체 장비 파일 반환 (보수적)
         if not files:
             for d in self.devices:

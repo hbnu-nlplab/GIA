@@ -26,9 +26,9 @@ class ModelsSettings(BaseSettings):
     paraphrase: str = Field("gpt-5-mini-2025-08-07", validation_alias=AliasChoices("OPENAI_MODEL_PARAPHRASE"))
     question_generation: str = Field("gpt-5-mini-2025-08-07", validation_alias=AliasChoices("OPENAI_MODEL_QUESTION"))
     intent_parsing: str = Field("gpt-5-mini-2025-08-07", validation_alias=AliasChoices("OPENAI_MODEL_INTENT"))
-    hypothesis_review: str = Field("gpt-5-2025-08-07", validation_alias=AliasChoices("OPENAI_MODEL_HYPO_REVIEW"))
+    hypothesis_review: str = Field("gpt-5-mini-2025-08-07", validation_alias=AliasChoices("OPENAI_MODEL_HYPO_REVIEW"))
     answer_synthesis: str = Field("gpt-5-mini-2025-08-07", validation_alias=AliasChoices("OPENAI_MODEL_ANSWER_SYNTH"))
-    enhanced_generation: str = Field("gpt-5-2025-08-07", validation_alias=AliasChoices("OPENAI_MODEL_ENHANCED_GEN"))
+    enhanced_generation: str = Field("gpt-5-mini-2025-08-07", validation_alias=AliasChoices("OPENAI_MODEL_ENHANCED_GEN"))
 
 
 class FeaturesSettings(BaseSettings):

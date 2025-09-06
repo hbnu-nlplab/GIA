@@ -28,7 +28,6 @@ from agents.answer_agent import AnswerAgent
 from agents.command_agent import CommandAgent
 # from agents.validation_agent import ValidationAgent
 # from agents.feedback_loop import FeedbackLoop
-# 클래스에 추가할 import
 from agents.hybrid_validation_system import HybridValidationSystem, ValidationMode
 from agents.hybrid_feedback_loop import HybridFeedbackLoop
 from utils.config_manager import get_settings
@@ -189,46 +188,59 @@ class NetworkConfigDatasetGenerator:
         
         try:
             # 1단계: XML 파싱
+            self.logger.info("🔄 1단계: XML 파싱 시작")
             network_facts = self._execute_stage_parsing()
-            # self.validation_agent = ValidationAgent(network_facts)
-            # self.feedback_loop = FeedbackLoop(network_facts)
-    
+            self.logger.info(f"✅ 1단계 완료: {network_facts.get('device_count', 0)}개 장비 파싱")
+            
             # 2단계: 기초 질문 생성 (Rule-based)
+            self.logger.info("🔄 2단계: 기초 질문 생성 시작")
             basic_dataset = self._execute_stage_basic_generation(network_facts)
+            self.logger.info(f"✅ 2단계 완료: {len(basic_dataset)}개 기초 질문 생성")
             
             # 3단계: 심화 질문 생성 (Enhanced LLM)
+            self.logger.info("🔄 3단계: 심화 질문 생성 시작")
             enhanced_dataset = self._execute_stage_enhanced_generation(network_facts)
+            self.logger.info(f"✅ 3단계 완료: {len(enhanced_dataset)}개 심화 질문 생성")
             
             # 4단계: 통합 및 어셈블리
+            self.logger.info("🔄 4단계: 통합 및 어셈블리 시작")
+            self.logger.info(f"통합 전 총 개수: {len(basic_dataset) + len(enhanced_dataset)}")
             integrated_dataset = self._execute_stage_assembly(
                 network_facts, basic_dataset, enhanced_dataset
             )
+            self.logger.info(f"✅ 4단계 완료: {len(integrated_dataset)}개 최종 통합")
             
             # (신규) 프리‑밸리데이션: BASIC/Rule 기반 항목의 GT를 로직값으로 자동 검증/교정
+            self.logger.info("🔄 프리 검증 시작")
             integrated_dataset = self._execute_pre_validation(network_facts, integrated_dataset)
-            
-            # (개선) 검증 및 자동 교정 루프 실행
-            # corrected_dataset, validation_stats = self._execute_validation_and_feedback_loop(integrated_dataset)
-            # self.stage_results[PipelineStage.VALIDATION] = validation_stats
-            # self.logger.info(f"검증 및 교정 완료: {len(corrected_dataset)}개 항목")
-            
+            self.logger.info(f"✅ 프리 검증 완료: {len(integrated_dataset)}개 검증")
 
-                    # 6단계: 하이브리드 검증 루프 (새로운!)
+            # 6단계: 하이브리드 검증 루프 (새로운!)
+            self.logger.info("🔄 하이브리드 검증 루프 시작")
             final_dataset, validation_report = self._execute_hybrid_validation_loop(
-            integrated_dataset, network_facts)
+                integrated_dataset, network_facts)
+            self.logger.info(f"✅ 하이브리드 검증 완료: {len(final_dataset)}개")
 
             # 6단계: 평가 메트릭 계산 (자가 평가)
+            self.logger.info("🔄 평가 메트릭 계산 시작")
             evaluation_results = self._execute_stage_evaluation(final_dataset)
             self.stage_results[PipelineStage.EVALUATION] = evaluation_results
+            self.logger.info("✅ 평가 메트릭 계산 완료")
+            
             # 최종 데이터셋 구성
+            self.logger.info("🔄 최종 데이터셋 구성 시작")
             final_dataset = self._compose_final_dataset(final_dataset, evaluation_results)
             self._save_results(final_dataset)
+            self.logger.info("✅ 최종 데이터셋 구성 완료")
             
             self.logger.info("="*20 + " 데이터셋 생성 완료 " + "="*20)
             return final_dataset
             
         except Exception as e:
             self.logger.error(f"데이터셋 생성 실패: {e}")
+            self.logger.error(f"오류 타입: {type(e).__name__}")
+            import traceback
+            self.logger.error(f"스택트레이스:\n{traceback.format_exc()}")
             raise
 
     
@@ -267,51 +279,61 @@ class NetworkConfigDatasetGenerator:
         while iteration < self.max_validation_iterations:
             self.logger.info(f"\n검증 반복 {iteration + 1}/{self.max_validation_iterations}")
             
-            # Step 1: 하이브리드 검증 수행
-            # 샘플 크기 제어: config.validation_sample_size(없거나 0이면 전체)
-            initial_sample = getattr(self.config, "validation_sample_size", None)
-            sample_size = (initial_sample if (iteration == 0) else None)
-            if sample_size in (0, None):
-                sample_size = None
+            try:
+                # Step 1: 하이브리드 검증 수행
+                # 샘플 크기 제어: config.validation_sample_size(없거나 0이면 전체)
+                initial_sample = getattr(self.config, "validation_sample_size", None)
+                sample_size = (initial_sample if (iteration == 0) else None)
+                if sample_size in (0, None):
+                    sample_size = None
 
-            validation_results, validation_stats = self.hybrid_validator.validate_dataset(
-                dataset_dicts,
-                sample_size=sample_size
-            )
-            
-            validation_history.append(validation_stats)
-            
-            # 주요 지표 출력
-            self.logger.info(
-                f"에이전트 정확도: {validation_stats['agent_performance']['accuracy']:.1%}"
-            )
-            self.logger.info(
-                f"Ground Truth 정확도: {validation_stats['ground_truth_quality']['accuracy']:.1%}"
-            )
-            
-            # Step 2: 목표 달성 확인
-            if validation_stats['ground_truth_quality']['accuracy'] >= 0.95:
-                self.logger.info("✅ 목표 정확도 95% 달성!")
-                break
-            
-            # Step 3: 피드백 루프 실행
-            improved_dataset, improvement_report = self.hybrid_feedback.improve_dataset(
-                validation_results,
-                dataset_dicts
-            )
-            
-            if improvement_report['total_improvements'] == 0:
-                self.logger.info("개선할 항목이 없습니다.")
-                break
-            
-            # Step 4: 개선된 데이터셋으로 업데이트
-            dataset_dicts = improved_dataset
-            total_improvements += improvement_report['total_improvements']
-            
-            self.logger.info(
-                f"이번 반복에서 {improvement_report['total_improvements']}개 개선"
-            )
-            
+                validation_results, validation_stats = self.hybrid_validator.validate_dataset(
+                    dataset_dicts,
+                    sample_size=sample_size
+                )
+                
+                validation_history.append(validation_stats)
+                
+                # 주요 지표 출력
+                self.logger.info(
+                    f"에이전트 정확도: {validation_stats['agent_performance']['accuracy']:.1%}"
+                )
+                self.logger.info(
+                    f"Ground Truth 정확도: {validation_stats['ground_truth_quality']['accuracy']:.1%}"
+                )
+                
+                # Step 2: 목표 달성 확인
+                if validation_stats['ground_truth_quality']['accuracy'] >= 0.95:
+                    self.logger.info("✅ 목표 정확도 95% 달성!")
+                    break
+                
+                # Step 3: 피드백 루프 실행
+                improved_dataset, improvement_report = self.hybrid_feedback.improve_dataset(
+                    validation_results,
+                    dataset_dicts
+                )
+                
+                if improvement_report['total_improvements'] == 0:
+                    self.logger.info("개선할 항목이 없습니다.")
+                    break
+                
+                # Step 4: 개선된 데이터셋으로 업데이트
+                dataset_dicts = improved_dataset
+                total_improvements += improvement_report['total_improvements']
+                
+                self.logger.info(
+                    f"이번 반복에서 {improvement_report['total_improvements']}개 개선"
+                )
+                
+            except Exception as e:
+                self.logger.error(f"검증 반복 {iteration + 1}에서 오류 발생: {e}")
+                self.logger.error(f"오류 타입: {type(e).__name__}")
+                import traceback
+                self.logger.error(f"스택트레이스:\n{traceback.format_exc()}")
+                
+                # 오류가 발생해도 루프를 계속 진행
+                self.logger.warning("오류 발생으로 이번 반복을 건너뜁니다.")
+                
             iteration += 1
         
         # 최종 리포트 생성
@@ -485,79 +507,99 @@ class NetworkConfigDatasetGenerator:
         """3단계: 심화 질문 생성 및 'AnswerAgent'를 통한 정답 생성"""
         self.logger.info("3단계: 심화 질문 생성 (Enhanced LLM) 및 정답 생성 (AnswerAgent)")
 
-        print(f"[Pipeline] target_complexities: {[c.value for c in self.config.target_complexities]}")
-        print(f"[Pipeline] questions_per_template: {self.config.enhanced_questions_per_category}")
-        
-        enhanced_questions = self.enhanced_generator.generate_enhanced_questions(
-            network_facts=network_facts,
-            target_complexities=self.config.target_complexities,
-            questions_per_template=self.config.enhanced_questions_per_category,
-        )
-        self.logger.info(f"LLM이 생성한 초기 질문 수: {len(enhanced_questions)}")
-        reviewed_questions = self.enhanced_generator._review_generated_questions(enhanced_questions)
-        self.logger.info(f"LLM 리뷰 후 유효한 질문 수: {len(reviewed_questions)}")
+        try:
+            print(f"[Pipeline] target_complexities: {[c.value for c in self.config.target_complexities]}")
+            print(f"[Pipeline] questions_per_template: {self.config.enhanced_questions_per_category}")
+            
+            enhanced_questions = self.enhanced_generator.generate_enhanced_questions(
+                network_facts=network_facts,
+                target_complexities=self.config.target_complexities,
+                questions_per_template=self.config.enhanced_questions_per_category,
+            )
+            self.logger.info(f"LLM이 생성한 초기 질문 수: {len(enhanced_questions)}")
+            
+            reviewed_questions = self.enhanced_generator._review_generated_questions(enhanced_questions)
+            self.logger.info(f"LLM 리뷰 후 유효한 질문 수: {len(reviewed_questions)}")
 
-        answer_agent = AnswerAgent(network_facts)
-        enhanced_samples: List[DatasetSample] = []
+            answer_agent = AnswerAgent(network_facts)
+            enhanced_samples: List[DatasetSample] = []
 
-        for eq in reviewed_questions:
-            if not isinstance(eq, dict):
-                self.logger.warning(f"Skipping non-dict entry: {type(eq)}")
-                continue
-
-            question_text = eq.get("question")
-            reasoning_plan = eq.get("reasoning_plan")
-            if not question_text or not reasoning_plan:
-                continue
-
-            try:
-                result = answer_agent.execute_plan(question_text, reasoning_plan)
-                final_answer = result.get("ground_truth")
-                explanation = result.get("explanation", "")
-                if final_answer in (None, ""):
-                    self.logger.warning(f"AnswerAgent가 질문에 대한 답을 생성하지 못했습니다: {question_text}")
+            for eq in reviewed_questions:
+                if not isinstance(eq, dict):
+                    self.logger.warning(f"Skipping non-dict entry: {type(eq)}")
                     continue
 
-                sample = DatasetSample(
-                    id=f"ENHANCED_{eq.get('test_id', 'ENH')}",
-                    question=question_text,
-                    context="",
-                    ground_truth=final_answer,
-                    explanation=explanation,
-                    answer_type=self._determine_answer_type(final_answer),
-                    category=eq.get("category", "Enhanced_Analysis"),
-                    complexity=eq.get("complexity", "analytical"),
-                    level=eq.get("level", 3),
-                    persona=eq.get("persona"),
-                    scenario=eq.get("scenario"),
-                    source_files=result.get("source_files"),
-                    metadata={
-                        "origin": "enhanced_llm_with_agent",
-                        "reasoning_plan": reasoning_plan,
-                        "reasoning_requirement": eq.get("reasoning_requirement", ""),
-                        "expected_analysis_depth": eq.get("expected_analysis_depth", "detailed"),
-                        "evidence": result.get("evidence", answer_agent.evidence),
-                    },
-                )
-                sample.context = self._create_enhanced_context(network_facts, sample)
-                enhanced_samples.append(sample)
-            except Exception as e:
-                self.logger.error(f"AnswerAgent 실행 중 오류 발생: Q='{question_text}', Error: {e}")
-                continue
+                question_text = eq.get("question")
+                reasoning_plan = eq.get("reasoning_plan")
+                if not question_text or not reasoning_plan:
+                    self.logger.debug(f"질문 또는 추론 계획 누락: question={bool(question_text)}, plan={bool(reasoning_plan)}")
+                    continue
 
-        self.logger.info(f"심화 질문 및 정답 생성 완료: {len(enhanced_samples)}개")
+                try:
+                    result = answer_agent.execute_plan(question_text, reasoning_plan)
+                    final_answer = result.get("ground_truth")
+                    explanation = result.get("explanation", "")
+                    if final_answer in (None, ""):
+                        self.logger.warning(f"AnswerAgent가 질문에 대한 답을 생성하지 못했습니다: {question_text}")
+                        continue
 
-        self.stage_results[PipelineStage.ENHANCED_GENERATION] = {
-            "question_count": len(enhanced_samples),
-            "complexities": list(set(s.complexity for s in enhanced_samples)),
-            "personas": list(set(s.persona for s in enhanced_samples if s.persona)),
-            "success": True,
-        }
+                    sample = DatasetSample(
+                        id=f"ENHANCED_{eq.get('test_id', 'ENH')}",
+                        question=question_text,
+                        context="",
+                        ground_truth=final_answer,
+                        explanation=explanation,
+                        answer_type=self._determine_answer_type(final_answer),
+                        category=eq.get("category", "Enhanced_Analysis"),
+                        complexity=eq.get("complexity", "analytical"),
+                        level=eq.get("level", 3),
+                        persona=eq.get("persona"),
+                        scenario=eq.get("scenario"),
+                        source_files=result.get("source_files"),
+                        metadata={
+                            "origin": "enhanced_llm_with_agent",
+                            "reasoning_plan": reasoning_plan,
+                            "reasoning_requirement": eq.get("reasoning_requirement", ""),
+                            "expected_analysis_depth": eq.get("expected_analysis_depth", "detailed"),
+                            "evidence": result.get("evidence", answer_agent.evidence),
+                        },
+                    )
+                    sample.context = self._create_enhanced_context(network_facts, sample)
+                    enhanced_samples.append(sample)
+                    
+                except Exception as e:
+                    self.logger.error(f"AnswerAgent 실행 중 오류 발생: Q='{question_text}', Error: {e}")
+                    continue
 
-        if self.config.save_intermediate:
-            self._save_intermediate("enhanced_dataset.json", [asdict(s) for s in enhanced_samples])
+            self.logger.info(f"심화 질문 및 정답 생성 완료: {len(enhanced_samples)}개")
 
-        return enhanced_samples
+            self.stage_results[PipelineStage.ENHANCED_GENERATION] = {
+                "question_count": len(enhanced_samples),
+                "complexities": list(set(s.complexity for s in enhanced_samples)),
+                "personas": list(set(s.persona for s in enhanced_samples if s.persona)),
+                "success": True,
+            }
+
+            if self.config.save_intermediate:
+                self._save_intermediate("enhanced_dataset.json", [asdict(s) for s in enhanced_samples])
+
+            return enhanced_samples
+            
+        except Exception as e:
+            self.logger.error(f"심화 질문 생성 단계에서 오류 발생: {e}")
+            self.logger.error(f"오류 타입: {type(e).__name__}")
+            import traceback
+            self.logger.error(f"스택트레이스:\n{traceback.format_exc()}")
+            
+            # 오류가 발생해도 빈 리스트 반환하여 파이프라인 계속 진행
+            self.stage_results[PipelineStage.ENHANCED_GENERATION] = {
+                "question_count": 0,
+                "complexities": [],
+                "personas": [],
+                "success": False,
+                "error": str(e)
+            }
+            return []
     
     def _execute_stage_assembly(
         self, 
@@ -574,8 +616,11 @@ class NetworkConfigDatasetGenerator:
         # 중복 제거 (질문+컨텍스트 해시+소스/시나리오/페르소나/복잡도 조합)
         seen_combinations = set()
         deduplicated_samples = []
+        duplicate_details = []
         
-        for sample in all_samples:
+        self.logger.info(f"중복 제거 시작: 전체 샘플 {len(all_samples)}개")
+        
+        for i, sample in enumerate(all_samples):
             # 질문 + 컨텍스트 해시 + 소스/시나리오/페르소나/복잡도 키로 고유성 판단
             question_normalized = (sample.question or "").lower().strip()
             ctx = sample.context or ""
@@ -597,8 +642,25 @@ class NetworkConfigDatasetGenerator:
             if combination_key not in seen_combinations:
                 seen_combinations.add(combination_key)
                 deduplicated_samples.append(sample)
+                self.logger.debug(f"샘플 {i+1} 유지: {sample.question[:50]}...")
             else:
-                self.logger.debug(f"중복 질문 제거: {sample.question[:50]}...")
+                duplicate_details.append({
+                    "index": i+1,
+                    "question": sample.question[:100],
+                    "id": sample.id,
+                    "combination_key": str(combination_key)[:100]
+                })
+                self.logger.debug(f"샘플 {i+1} 중복 제거: {sample.question[:50]}...")
+        
+        removed_count = len(all_samples) - len(deduplicated_samples)
+        self.logger.info(f"중복 제거 완료: {len(all_samples)}개 → {len(deduplicated_samples)}개 (제거: {removed_count}개)")
+        
+        # 중복 제거 상세 정보 저장
+        if self.config.save_intermediate and duplicate_details:
+            self._save_intermediate("duplicate_removal_details.json", {
+                "total_duplicates": len(duplicate_details),
+                "duplicate_samples": duplicate_details[:20]  # 상위 20개만 저장
+            })
         
         # 카테고리별 균형 조정 (기본 비활성화: config.balance_max_per_category=None)
         balanced_samples = self._balance_categories(deduplicated_samples)
@@ -937,16 +999,18 @@ class NetworkConfigDatasetGenerator:
     def _setup_logger(self):
         """파일 및 콘솔 로거를 설정합니다."""
         logger = logging.getLogger("DatasetGenerator")
-        logger.setLevel(logging.INFO)
+        logger.setLevel(logging.DEBUG)  # DEBUG 레벨로 변경
         if logger.hasHandlers():
             logger.handlers.clear()
         
         log_file = Path(self.config.output_dir) / 'pipeline.log'
         file_handler = logging.FileHandler(log_file, mode='w', encoding='utf-8')
-        file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+        file_handler.setLevel(logging.DEBUG)  # 파일에는 모든 로그 기록
+        file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(funcName)s:%(lineno)d - %(message)s'))
         logger.addHandler(file_handler)
         
         console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.INFO)  # 콘솔은 INFO 이상만
         console_handler.setFormatter(logging.Formatter('[%(levelname)s] %(message)s'))
         logger.addHandler(console_handler)
         
@@ -1341,6 +1405,24 @@ class NetworkConfigDatasetGenerator:
             except Exception:
                 pass
         return out
+    
+    def _dict_to_dataset_sample(self, data: Dict[str, Any]) -> DatasetSample:
+        """딕셔너리를 DatasetSample 객체로 변환"""
+        return DatasetSample(
+            id=data.get("id", ""),
+            question=data.get("question", ""),
+            context=data.get("context", ""),
+            ground_truth=data.get("ground_truth"),
+            explanation=data.get("explanation", ""),
+            answer_type=data.get("answer_type", "short"),
+            category=data.get("category", ""),
+            complexity=data.get("complexity", "basic"),
+            level=data.get("level", 1),
+            persona=data.get("persona"),
+            scenario=data.get("scenario"),
+            source_files=data.get("source_files", []),
+            metadata=data.get("metadata", {})
+        )
 
 
 def main():

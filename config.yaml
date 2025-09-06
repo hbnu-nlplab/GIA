@@ -17,9 +17,9 @@ models:
   paraphrase: "gpt-5-mini-2025-08-07"              # 질문 표면변형/리라이팅 단계(경량)
   question_generation: "gpt-5-mini-2025-08-07"     # 규칙/LLM 질문 생성(속도/비용 우선)
   intent_parsing: "gpt-5-mini-2025-08-07"          # 의도/카테고리 추출(경량)
-  hypothesis_review: "gpt-5-2025-08-07"            # 고품질 리뷰/검토(정밀)
+  hypothesis_review: "gpt-5-mini-2025-08-07"            # 고품질 리뷰/검토(정밀)
   answer_synthesis: "gpt-5-mini-2025-08-07"        # 최종 답변 합성/정리(경량)
-  enhanced_generation: "gpt-5-2025-08-07"          # 고도화 생성(복합 추론, 정밀)
+  enhanced_generation: "gpt-5-mini-2025-08-07"          # 고도화 생성(복합 추론, 정밀)
 
 features:
   use_intent_llm: true   # true: 의도 분석에 LLM 사용, false: 규칙 기반 우선

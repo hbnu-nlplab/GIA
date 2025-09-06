@@ -1,0 +1,125 @@
+{
+  "total_duplicates": 24,
+  "duplicate_samples": [
+    {
+      "index": 313,
+      "question": "CE1 장비의 호스트네임은 무엇입니까?",
+      "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-46140",
+      "combination_key": "('ce1 장비의 호스트네임은 무엇입니까?', '677c40484281', 'ce1.xml', '정상', '', 'basic')"
+    },
+    {
+      "index": 314,
+      "question": "CE2 장비의 호스트네임은 무엇입니까?",
+      "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-8756",
+      "combination_key": "('ce2 장비의 호스트네임은 무엇입니까?', 'cb69c2e582cc', 'ce2.xml', '정상', '', 'basic')"
+    },
+    {
+      "index": 315,
+      "question": "sample10 장비의 호스트네임은 무엇입니까?",
+      "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-60814",
+      "combination_key": "('sample10 장비의 호스트네임은 무엇입니까?', '0eb9276cae3c', 'sample10.xml', '정상', '', 'basic')"
+    },
+    {
+      "index": 316,
+      "question": "sample7 장비의 호스트네임은 무엇입니까?",
+      "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-19378",
+      "combination_key": "('sample7 장비의 호스트네임은 무엇입니까?', '6b9d2e6ac992', 'sample7.xml', '정상', '', 'basic')"
+    },
+    {
+      "index": 317,
+      "question": "sample8 장비의 호스트네임은 무엇입니까?",
+      "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-63773",
+      "combination_key": "('sample8 장비의 호스트네임은 무엇입니까?', '07fbfe164abf', 'sample8.xml', '정상', '', 'basic')"
+    },
+    {
+      "index": 318,
+      "question": "sample9 장비의 호스트네임은 무엇입니까?",
+      "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-9712",
+      "combination_key": "('sample9 장비의 호스트네임은 무엇입니까?', 'd6f677da94d1', 'sample9.xml', '정상', '', 'basic')"
+    },
+    {
+      "index": 325,
+      "question": "CE1 장비의 운영체제(OS) 버전은 무엇입니까?",
+      "id": "BASIC_DSL-SYSTEM_VERSION_TEXT-46140",
+      "combination_key": "('ce1 장비의 운영체제(os) 버전은 무엇입니까?', '677c40484281', 'ce1.xml', '정상', '', 'basic')"
+    },
+    {
+      "index": 326,
+      "question": "CE2 장비의 운영체제(OS) 버전은 무엇입니까?",
+      "id": "BASIC_DSL-SYSTEM_VERSION_TEXT-8756",
+      "combination_key": "('ce2 장비의 운영체제(os) 버전은 무엇입니까?', 'cb69c2e582cc', 'ce2.xml', '정상', '', 'basic')"
+    },
+    {
+      "index": 413,
+      "question": "CE1 장비의 호스트네임은 무엇입니까?",
+      "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-46140",
+      "combination_key": "('ce1 장비의 호스트네임은 무엇입니까?', '677c40484281', 'ce1.xml', '장애', '', 'basic')"
+    },
+    {
+      "index": 414,
+      "question": "CE2 장비의 호스트네임은 무엇입니까?",
+      "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-8756",
+      "combination_key": "('ce2 장비의 호스트네임은 무엇입니까?', 'cb69c2e582cc', 'ce2.xml', '장애', '', 'basic')"
+    },
+    {
+      "index": 415,
+      "question": "sample10 장비의 호스트네임은 무엇입니까?",
+      "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-60814",
+      "combination_key": "('sample10 장비의 호스트네임은 무엇입니까?', '0eb9276cae3c', 'sample10.xml', '장애', '', 'basic')"
+    },
+    {
+      "index": 416,
+      "question": "sample7 장비의 호스트네임은 무엇입니까?",
+      "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-19378",
+      "combination_key": "('sample7 장비의 호스트네임은 무엇입니까?', '6b9d2e6ac992', 'sample7.xml', '장애', '', 'basic')"
+    },
+    {
+      "index": 417,
+      "question": "sample8 장비의 호스트네임은 무엇입니까?",
+      "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-63773",
+      "combination_key": "('sample8 장비의 호스트네임은 무엇입니까?', '07fbfe164abf', 'sample8.xml', '장애', '', 'basic')"
+    },
+    {
+      "index": 418,
+      "question": "sample9 장비의 호스트네임은 무엇입니까?",
+      "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-9712",
+      "combination_key": "('sample9 장비의 호스트네임은 무엇입니까?', 'd6f677da94d1', 'sample9.xml', '장애', '', 'basic')"
+    },
+    {
+      "index": 425,
+      "question": "CE1 장비의 운영체제(OS) 버전은 무엇입니까?",
+      "id": "BASIC_DSL-SYSTEM_VERSION_TEXT-46140",
+      "combination_key": "('ce1 장비의 운영체제(os) 버전은 무엇입니까?', '677c40484281', 'ce1.xml', '장애', '', 'basic')"
+    },
+    {
+      "index": 426,
+      "question": "CE2 장비의 운영체제(OS) 버전은 무엇입니까?",
+      "id": "BASIC_DSL-SYSTEM_VERSION_TEXT-8756",
+      "combination_key": "('ce2 장비의 운영체제(os) 버전은 무엇입니까?', 'cb69c2e582cc', 'ce2.xml', '장애', '', 'basic')"
+    },
+    {
+      "index": 513,
+      "question": "CE1 장비의 호스트네임은 무엇입니까?",
+      "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-46140",
+      "combination_key": "('ce1 장비의 호스트네임은 무엇입니까?', '677c40484281', 'ce1.xml', '확장', '', 'basic')"
+    },
+    {
+      "index": 514,
+      "question": "CE2 장비의 호스트네임은 무엇입니까?",
+      "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-8756",
+      "combination_key": "('ce2 장비의 호스트네임은 무엇입니까?', 'cb69c2e582cc', 'ce2.xml', '확장', '', 'basic')"
+    },
+    {
+      "index": 515,
+      "question": "sample10 장비의 호스트네임은 무엇입니까?",
+      "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-60814",
+      "combination_key": "('sample10 장비의 호스트네임은 무엇입니까?', '0eb9276cae3c', 'sample10.xml', '확장', '', 'basic')"
+    },
+    {
+      "index": 516,
+      "question": "sample7 장비의 호스트네임은 무엇입니까?",
+      "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-19378",
+      "combination_key": "('sample7 장비의 호스트네임은 무엇입니까?', '6b9d2e6ac992', 'sample7.xml', '확장', '', 'basic')"
+    }
+  ]
+}

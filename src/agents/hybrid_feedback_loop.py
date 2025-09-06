@@ -252,7 +252,7 @@ class HybridFeedbackLoop:
        
        # LLM을 사용하여 질문 개선
        clarification_prompt = f"""
-다음 질문을 에이전트가 이해하지 못했습니다.
+당신은 한국어 네트워크 전문가입니다. 다음 질문을 에이전트가 이해하지 못했습니다.
 
 원본 질문: {result.question}
 정답: {result.ground_truth}
@@ -261,6 +261,12 @@ class HybridFeedbackLoop:
 
 이 질문을 더 명확하고 구체적으로 다시 작성하세요.
 모호한 부분을 제거하고, 정확히 무엇을 묻는지 명시하세요.
+
+**중요**: 
+- 반드시 한국어로만 답변하세요
+- 개선된 질문도 한국어로 작성하세요
+- GT(정답)는 명확하고 간결한 값이어야 합니다
+- EX(설명)는 답에 대한 근거를 설명해야 합니다
 """
        
        schema = {
@@ -308,6 +314,144 @@ class HybridFeedbackLoop:
        
        return None
    
+    def _add_context_to_question(
+        self,
+        result: ValidationResult
+    ) -> Optional[ImprovementAction]:
+        """질문에 필요한 컨텍스트 추가"""
+        
+        context_prompt = f"""
+당신은 한국어 네트워크 데이터셋 개선 전문가입니다.
+
+다음 질문이 컨텍스트 부족으로 에이전트가 답변에 실패했습니다.
+
+원본 질문: {result.question}
+정답: {result.ground_truth}
+에이전트 답변: {result.agent_answer}
+
+이 질문에 필요한 컨텍스트나 배경 정보를 추가하여 더 명확하게 만들어주세요.
+
+**요구사항**:
+- 반드시 한국어로만 답변하세요
+- GT는 명확하고 간결한 값이어야 합니다
+- EX는 답에 대한 근거를 설명해야 합니다
+- 네트워크 설정이나 토폴로지 정보를 적절히 포함하세요
+"""
+        
+        schema = {
+            "type": "object",
+            "properties": {
+                "improved_question": {"type": "string"},
+                "added_context": {"type": "array", "items": {"type": "string"}},
+                "clarity_score": {"type": "number", "minimum": 0, "maximum": 1}
+            },
+            "required": ["improved_question", "added_context"]
+        }
+        
+        try:
+            response = _call_llm_json(
+                messages=[
+                    {"role": "user", "content": context_prompt}
+                ],
+                schema=schema,
+                temperature=0.2
+            )
+            
+            original_item = self._find_original_item(result.question_id)
+            if original_item and response.get("improved_question"):
+                improved_item = original_item.copy()
+                improved_item["question"] = response["improved_question"]
+                improved_item["improvement_log"] = {
+                    "original_question": result.question,
+                    "added_context": response.get("added_context", []),
+                    "reason": "컨텍스트 부족 해결"
+                }
+                
+                action = ImprovementAction(
+                    action_type="add_context",
+                    original_item=original_item,
+                    improved_item=improved_item,
+                    reason="컨텍스트 추가",
+                    confidence=response.get("clarity_score", 0.7)
+                )
+                
+                self.improvement_stats["added_context"] += 1
+                return action
+                
+        except Exception as e:
+            print(f"컨텍스트 추가 실패: {e}")
+        
+        return None
+
+    def _simplify_question(
+        self,
+        result: ValidationResult
+    ) -> Optional[ImprovementAction]:
+        """복잡한 질문을 단순화"""
+        
+        simplify_prompt = f"""
+당신은 한국어 네트워크 데이터셋 개선 전문가입니다.
+
+다음 질문이 너무 복잡해서 에이전트가 답변에 실패했습니다.
+
+원본 질문: {result.question}
+정답: {result.ground_truth}
+에이전트 답변: {result.agent_answer}
+
+이 질문을 더 간단하고 직접적으로 만들어주세요.
+
+**요구사항**:
+- 반드시 한국어로만 답변하세요
+- 핵심 내용만 남기고 불필요한 부분은 제거하세요
+- GT는 명확하고 간결한 값이어야 합니다
+- EX는 답에 대한 근거를 설명해야 합니다
+- 하나의 명확한 질문으로 만드세요
+"""
+        
+        schema = {
+            "type": "object",
+            "properties": {
+                "simplified_question": {"type": "string"},
+                "removed_complexity": {"type": "array", "items": {"type": "string"}},
+                "simplicity_score": {"type": "number", "minimum": 0, "maximum": 1}
+            },
+            "required": ["simplified_question", "removed_complexity"]
+        }
+        
+        try:
+            response = _call_llm_json(
+                messages=[
+                    {"role": "user", "content": simplify_prompt}
+                ],
+                schema=schema,
+                temperature=0.2
+            )
+            
+            original_item = self._find_original_item(result.question_id)
+            if original_item and response.get("simplified_question"):
+                improved_item = original_item.copy()
+                improved_item["question"] = response["simplified_question"]
+                improved_item["improvement_log"] = {
+                    "original_question": result.question,
+                    "removed_complexity": response.get("removed_complexity", []),
+                    "reason": "질문 단순화"
+                }
+                
+                action = ImprovementAction(
+                    action_type="simplify_question",
+                    original_item=original_item,
+                    improved_item=improved_item,
+                    reason="질문 단순화",
+                    confidence=response.get("simplicity_score", 0.7)
+                )
+                
+                return action
+                
+        except Exception as e:
+            print(f"질문 단순화 실패: {e}")
+        
+        return None
+   
     def _handle_problematic_items(
        self,
        results: List[ValidationResult]
@@ -340,10 +484,18 @@ class HybridFeedbackLoop:
            return None
        
        regeneration_prompt = f"""
+당신은 한국어 네트워크 데이터셋 생성 전문가입니다. 
+
 네트워크 설정에서 답이 "{result.logic_answer}"인 새로운 질문을 생성하세요.
 
 원래 실패한 질문: {result.question}
 문제점: 에이전트({result.agent_answer}), 원래 정답({result.ground_truth}), 실제 답({result.logic_answer})이 모두 달랐습니다.
+
+**요구사항**:
+- 반드시 한국어로만 질문을 생성하세요
+- GT(Ground Truth)는 "{result.logic_answer}"와 정확히 일치해야 합니다
+- 질문은 명확하고 구체적이어야 합니다
+- 네트워크 엔지니어가 실제로 마주할 법한 질문이어야 합니다
 
 명확하고 구체적인 새 질문을 만들어주세요.
 """
@@ -461,3 +613,19 @@ class HybridFeedbackLoop:
        
        print(f"\n개선 성공률: {report['success_rate']:.1%}")
        print("="*60)
+
+    def _calculate_improvement_success_rate(self, improvement_actions: List[ImprovementAction]) -> float:
+        """개선 액션들의 성공률을 계산합니다"""
+        if not improvement_actions:
+            return 0.0
+        
+        successful_actions = sum(1 for action in improvement_actions if action.confidence >= 0.5)
+        return successful_actions / len(improvement_actions)
+    
+    def _count_actions_by_type(self, improvement_actions: List[ImprovementAction]) -> Dict[str, int]:
+        """액션 타입별로 개수를 세어 반환합니다"""
+        action_counts = {}
+        for action in improvement_actions:
+            action_type = action.action_type
+            action_counts[action_type] = action_counts.get(action_type, 0) + 1
+        return action_counts

@@ -1,11 +1,24 @@
 [
   {
     "id": "ENHANCED_ENHANCED-ANALYTICAL-001",
-    "question": "iBGP 풀메시 누락이 네트워크 경로 수렴에 어떤 영향을 미칠 수 있을까요?",
+    "question": "보고된 ibgp_missing_pairs = 3 중 특정 누락 쌍들이 AS 65001 내부의 핵심 라우터(R1, R2, R3 가정)에 집중되어 있다면, 해당 결함이 BGP 경로 수렴 시간과 경로 전달성에 어떤 영향을 미칠지 정량적으로 예측하려면 어떤 추가 데이터와 절차로 분석해야 하는가?",
     "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "ground_truth": "iBGP 풀메시 누락은 네트워크 경로 수렴을 지연시키거나 불완전하게 만들 수 있습니다.",
-    "explanation": "iBGP 풀메시가 누락되면, BGP 라우터 간의 정보 교환이 제한되어 경로 정보가 일부 라우터에만 존재하게 됩니다. 이로 인해 경로 수렴이 지연되거나, 일부 경로가 전파되지 않아 네트워크의 전체적인 경로 정보가 불완전해질 수 있습니다.",
-    "answer_type": "short",
+    "ground_truth": [
+      "Network topology and iBGP session matrix (detailed links among R1,R2,R3 and to other AS65001 routers)",
+      "BGP session states and timers for all iBGP peers (hold, keepalive, connect/retry) and route-reflector configuration",
+      "BGP update and withdrawal logs with precise timestamps (per-peer MRT/packet-capture or router logging)",
+      "RIB and FIB snapshots with timestamps for each router (route install/withdraw timestamps)",
+      "Routing policies and attributes (prefix lists, import/export filters, local-pref, MED, communities, next-hop handling)",
+      "Traffic matrix and list of critical prefixes with volume/SLA information",
+      "Historical BGP churn statistics and flap/announcement rates per prefix",
+      "Control-plane telemetry and resource metrics (CPU, memory, BGP update queue lengths, process stalls) on R1,R2,R3",
+      "Dataplane measurements between core routers and to critical prefixes (latency, loss, traceroute/mtr) over time",
+      "Flow/telemetry data (NetFlow/sFlow/IPFIX/telemetry) to observe traffic shifts during events",
+      "Planned active experiments and emulation environment (lab or simulator setup able to reproduce missing iBGP pairs and timers)",
+      "Analysis procedures and metrics definition (how to measure convergence time, reachability loss, path-change counts, path stretch and confidence intervals)"
+    ],
+    "explanation": "To predict quantitatively how three missing iBGP session pairs concentrated on core routers R1, R2 and R3 will affect BGP convergence time and route reachability, you must first collect precise topology and control-plane state so you know which routers will not exchange routes directly and what alternate propagation paths exist. BGP session states and timers are required because detection and reconvergence depend directly on hold/keepalive and connect timers and on whether route reflectors or confederations alter propagation. Timestamped BGP update and withdrawal logs plus RIB/FIB snapshots let you measure per-prefix propagation delays and the time between an origin change and final route installation on each router. Routing policies and attributes are necessary to determine whether alternate paths will be accepted or preferred, which affects both reachability and the set of prefixes that must converge. A traffic matrix and list of critical prefixes allow you to weight impacts by operational importance and to compute expected user-visible downtime or traffic loss. Historical churn and flap rates are required to estimate background noise and to compute how the added fragility from missing pairs amplifies total update load. Control-plane telemetry such as CPU, memory and BGP queue lengths is important because increased update fan-out (or rerouting through fewer speakers) can cause processing delays or drops that lengthen convergence time. Dataplane measurements (latency, packet loss, traceroutes) let you confirm whether control-plane changes translate into forwarding failures or path stretch. Flow telemetry provides evidence of traffic shifts during convergence and helps quantify user impact. To get quantitative results you must also run controlled experiments or simulations: reproduce the topology in a lab or emulator, or run coordinated live tests where you intentionally withdraw/announce prefixes and bring down the specific iBGP sessions among R1,R2,R3. For each test you measure convergence time per prefix (from event timestamp to last RIB/FIB update across the AS), percent of prefixes temporarily unreachable, number of path changes per prefix, and path stretch (increase in AS-hop or latency). Use statistical analysis across many runs to compute mean, median, percentiles and confidence intervals, and perform sensitivity analysis by varying timers, session tear-down order, and traffic loads. If available, augment empirical measurements with modeling: represent the iBGP graph and simulate propagation delays (detection time + BGP transmission delays + RIB/FIB install time) to estimate worst-case and typical convergence times. Finally, correlate convergence delays and reachability losses with control-plane resource metrics to identify thresholds where missing pairs cause non-linear degradation, and produce mitigation recommendations (repair sessions, introduce route-reflection adjustments, tune timers, or add redundancy) based on quantified impact metrics.",
+    "answer_type": "long",
     "category": "advanced",
     "complexity": "analytical",
     "level": 3,
@@ -24,35 +37,94 @@
       "reasoning_plan": [
         {
           "required_metric": "ibgp_missing_pairs_count",
-          "metric_params": {}
+          "metric_params": {
+            "as": "65001"
+          },
+          "purpose": "전체 누락 쌍 수와 위치(AS 65001 내)를 확인해 영향 범위를 좁힘."
+        },
+        {
+          "required_metric": "ibgp_fullmesh_ok",
+          "metric_params": {
+            "as": "65001"
+          },
+          "purpose": "풀메시 상태(전체적으로 OK인지 특정 노드만 문제인지) 확인."
+        },
+        {
+          "required_metric": "neighbor_list_ibgp",
+          "metric_params": {
+            "host": "R1"
+          },
+          "purpose": "문제 후보 호스트(R1 등)에 연결된 iBGP 이웃 목록을 확인해 의존 관계 파악."
         },
         {
           "intent": "show_bgp_summary",
           "params": {
-            "host": "sample1"
-          }
+            "host": "R1"
+          },
+          "purpose": "R1의 BGP 요약(접속 중인 이웃 수, 상태, prefix 수 등)으로 경로 전달 비율 추정."
         },
         {
-          "intent": "show_bgp_neighbors",
+          "intent": "show_route_table",
           "params": {
-            "host": "sample2"
-          }
+            "host": "R2"
+          },
+          "purpose": "R2에서 실제 수신되는 경로 수와 누락 경로 패턴을 확인해 수렴 영향 정량화."
+        },
+        {
+          "required_metric": "ibgp_under_peered_count",
+          "metric_params": {
+            "as": "65001"
+          },
+          "purpose": "iBGP가 충분히 피어링되지 않아 경로 결손 위험이 있는 노드 수를 파악."
         }
       ],
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed",
       "evidence": {
-        "step_None_ibgp_missing_pairs_count": 0
+        "step_None_ibgp_missing_pairs_count": 0,
+        "step_None_ibgp_fullmesh_ok": true,
+        "step_None_neighbor_list_ibgp": [],
+        "step_None_ibgp_under_peered_count": 0
       }
     }
   },
   {
     "id": "ENHANCED_ENHANCED-ANALYTICAL-002",
-    "question": "특정 eBGP 피어 장애가 네트워크 전반에 어떤 파급효과를 미칠 수 있을까요?",
+    "question": "ibgp_missing_pairs가 일부 라우터에 집중되어 있는지 확인한 뒤, 해당 라우터들에서 발생하는 수렴 지연을 줄이기 위한 실무적 완화책(예: Route Reflector 도입 vs 풀메시 유지)을 결정하려면 어떤 지표를 비교하고 어떤 기준으로 선택해야 하는가?",
     "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "ground_truth": "eBGP 피어 장애는 해당 피어와 연결된 네트워크의 라우팅 경로에 영향을 미쳐, 트래픽이 다른 경로로 우회하거나 일부 네트워크가 격리될 수 있습니다.",
-    "explanation": "특정 eBGP 피어가 장애가 발생하면, 그 피어와 연결된 네트워크는 더 이상 외부와의 통신이 불가능해질 수 있습니다. 이로 인해 해당 네트워크의 트래픽은 다른 경로로 우회해야 하며, 이 과정에서 지연이 발생하거나 일부 트래픽이 손실될 수 있습니다. 또한, 장애가 발생한 피어와 연결된 다른 네트워크들도 영향을 받을 수 있어, 전체 네트워크의 안정성과 성능에 부정적인 영향을 미칠 수 있습니다.",
-    "answer_type": "short",
+    "ground_truth": {
+      "metrics_to_compare": [
+        "ibgp_missing_pairs_per_router",
+        "iBGP_session_count_per_router",
+        "control_plane_CPU_utilization_during_events",
+        "control_plane_memory_usage",
+        "BGP_update_rate_per_router (updates/sec) and update burst magnitude",
+        "BGP_convergence_time_per_event (ms or seconds)",
+        "prefix_count_learned_and_advertised_per_router",
+        "route_churn_rate (prefixes changed/sec)",
+        "path_visibility / AS‑path diversity / ECMP availability",
+        "session_flap_counts and BFD_failures",
+        "latency/RTT_between_iBGP_peers",
+        "failure_domain_impact (how many routers/prefixes affected by one node failure)",
+        "operational_complexity_metrics (configuration churn, time_to_add_peer)"
+      ],
+      "numeric_thresholds_for_consideration": {
+        "peer_count_consider_rr_min": 20,
+        "peer_count_consider_rr_strong": 50,
+        "control_plane_cpu_pct_threshold": 70,
+        "update_rate_spike_per_sec_threshold": 500,
+        "acceptable_convergence_time": "operator-defined (example: <1s for critical services)"
+      },
+      "decision_guidelines": [
+        "If missing_pairs are concentrated on a few routers that also have high iBGP peer counts and elevated CPU/memory or update spikes, prefer introducing Route Reflectors on well-provisioned, highly available routers.",
+        "If peer counts per-router are low (below ~20–30), convergence is fast, and per‑peer path visibility/policy requirements are strict, maintain full mesh.",
+        "If RR is chosen, deploy redundant RRs, limit cluster size, monitor path visibility loss, and validate policies to avoid unintended path selection.",
+        "If full mesh failure domain or operational overhead is acceptable and path symmetry/policy per-peer is required, prefer full mesh despite some missing_pairs—fix missing sessions first.",
+        "If concentrated missing_pairs cause unacceptable convergence delays but RR would harm policy/path visibility, consider hybrid approaches (partial RRs, confederations, route servers) and test convergence impact before wide roll-out."
+      ]
+    },
+    "explanation": "To decide between introducing Route Reflectors (RRs) or keeping a full iBGP mesh when ibgp_missing_pairs are concentrated on particular routers, you must measure both control-plane scale and convergence behavior. Key metrics include the number of missing iBGP pairs per router and the raw iBGP session count per router because a small set of routers carrying many peers will create N^2 signaling and higher event amplification. Control-plane CPU and memory during BGP events show whether those routers are CPU- or memory-bound; sustained CPU above roughly 60–80% under churn suggests the control plane is under stress and is a practical trigger for design change. BGP update rate (absolute and burst magnitude) and route-churn rate indicate the signaling load; spikes on the order of hundreds to thousands of updates/sec point toward needing an architectural mitigation. Measure actual convergence time per event; compare it to your service SLAs (for example, critical services may need sub‑second or low‑second convergence). Prefix counts and path diversity matter because RRs can reduce path visibility and ECMP choices — if per‑peer path selection and visibility are critical, full mesh retains correctness. Session flap counts and BFD failures reveal stability issues that magnify convergence delays. Latency between peers affects propagation speed and should be measured because RRs can alter path propagation order. Also quantify failure-domain impact and operational complexity (how often config changes are needed and how error-prone they are). Use practical thresholds as guidance: consider RRs once per‑router peer counts exceed ~20–30 and more strongly when counts approach 50+, or when control-plane CPU sustains >70% during events, or when update bursts exceed a few hundred updates/sec causing measurable convergence degradation. If you choose RRs, place them on stable, well‑provisioned routers, deploy at least two for redundancy, keep cluster sizes bounded, and validate that policy/next‑hop/IGP interactions do not produce unacceptable path visibility loss. If full mesh meets convergence and policy requirements and peer counts remain small, retain full mesh and correct the missing sessions. For intermediate cases, consider hybrid solutions (partial RRs, route‑servers, confederations) and run staged tests measuring the same metrics to ensure the selected mitigation lowers convergence time without violating routing policy or introducing large failure domains.",
+    "answer_type": "long",
     "category": "advanced",
     "complexity": "analytical",
     "level": 3,
@@ -70,269 +142,69 @@
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
         {
-          "required_metric": "ebgp_remote_as_map",
-          "metric_params": {}
+          "required_metric": "ibgp_missing_pairs",
+          "metric_params": {
+            "as": "65001"
+          },
+          "purpose": "어떤 노드 쌍이 누락되었는지(특정 라우터 집중 여부)를 파악."
+        },
+        {
+          "required_metric": "bgp_neighbor_count",
+          "metric_params": {
+            "host": "R3"
+          },
+          "purpose": "문제 라우터(R3)의 BGP 이웃 수를 확인해 RR 도입 시 이득(부하 감소) 추정."
+        },
+        {
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "R3"
+          },
+          "purpose": "로컬 AS 설정 일관성을 확인해 RR 설계에 영향이 있는지 판단."
         },
         {
           "intent": "show_bgp_summary",
           "params": {
-            "host": "sample3"
-          }
-        },
-        {
-          "intent": "show_bgp_neighbor_detail",
-          "params": {
-            "host": "sample4"
-          }
+            "host": "R3"
+          },
+          "purpose": "R3의 prefix/peer 통계를 확인해 RR 도입 시 기대 개선 효과 정량화."
         }
       ],
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed",
       "evidence": {
-        "step_None_ebgp_remote_as_map": {
-          "192.168.4.11": "65004",
-          "192.168.1.11": "65001",
-          "192.168.2.11": "65002",
-          "192.168.3.11": "65003"
-        }
+        "step_None_ibgp_missing_pairs": [],
+        "step_None_bgp_neighbor_count": 0,
+        "step_None_bgp_local_as_numeric": 0
       }
     }
   },
   {
     "id": "ENHANCED_ENHANCED-ANALYTICAL-003",
-    "question": "AS 내 라우터들 간의 BGP 설정 일관성 문제점은 무엇인가요?",
+    "question": "만약 AS 65003의 eBGP 피어 중 하나(예: R5의 특정 eBGP 이웃)가 완전히 다운된다면, L2VPN/ PW 서비스의 비대칭성 또는 단방향 손실이 발생할 가능성은 어느 정도이며 이를 확인/정량화하려면 어떤 지표들을 조회해야 하는가?",
     "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "ground_truth": "BGP 설정 일관성 문제는 AS 번호의 불일치로 인해 발생할 수 있습니다.",
-    "explanation": "AS 내 라우터들 간의 BGP 설정 일관성 문제는 주로 AS 번호가 일치하지 않을 때 발생합니다. 예를 들어, 주어진 정보에서 'bgp_local_as_numeric' 값이 65001로 설정되어 있지만, 다른 라우터에서 이 값이 다르게 설정되어 있다면, BGP 피어링이 제대로 이루어지지 않거나 라우팅 정보가 올바르게 전파되지 않을 수 있습니다. 따라서 모든 라우터에서 동일한 AS 번호를 사용해야 BGP 설정의 일관성을 유지할 수 있습니다.",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "analytical",
-    "level": 3,
-    "persona": "network_engineer",
-    "scenario": "BGP 경로 수렴 분석",
-    "source_files": [
-      "ce1.xml",
-      "ce2.xml",
-      "sample10.xml",
-      "sample7.xml",
-      "sample8.xml",
-      "sample9.xml"
-    ],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "bgp_local_as_numeric",
-          "metric_params": {}
-        },
-        {
-          "intent": "show_bgp_neighbors",
-          "params": {
-            "host": "sample5"
-          }
-        },
-        {
-          "intent": "show_bgp_neighbor_detail",
-          "params": {
-            "host": "sample6"
-          }
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_None_bgp_local_as_numeric": 65001
-      }
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-004",
-    "question": "iBGP 풀메시 누락을 해결하지 않을 경우 예상되는 경로 수렴 지연은 얼마인가요?",
-    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "ground_truth": "상당한 지연이 발생할 수 있으며, 이는 네트워크의 규모와 구성에 따라 다르지만 일반적으로 수 초에서 수 분까지 걸릴 수 있습니다.",
-    "explanation": "iBGP 풀메시 누락은 BGP 라우터 간의 경로 정보 전파를 방해하여 경로 수렴 지연을 초래합니다. 이로 인해 라우터가 최신 경로 정보를 수신하지 못하게 되어, 전체 네트워크의 경로 수렴 시간이 증가하게 됩니다. 따라서 예상되는 지연 시간은 네트워크의 규모와 구성에 따라 다르지만, 일반적으로 수 초에서 수 분까지 걸릴 수 있습니다.",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "analytical",
-    "level": 3,
-    "persona": "network_engineer",
-    "scenario": "BGP 경로 수렴 분석",
-    "source_files": [
-      "ce1.xml",
-      "ce2.xml",
-      "sample10.xml",
-      "sample7.xml",
-      "sample8.xml",
-      "sample9.xml"
-    ],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "ibgp_missing_pairs",
-          "metric_params": {}
-        },
-        {
-          "intent": "show_bgp_summary",
-          "params": {
-            "host": "sample1"
-          }
-        },
-        {
-          "intent": "show_bgp_summary",
-          "params": {
-            "host": "sample2"
-          }
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_None_ibgp_missing_pairs": []
-      }
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-005",
-    "question": "특정 라우터에서 eBGP 피어가 다운되면 해당 라우터의 BGP 테이블 변화 양상은?",
-    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "ground_truth": "BGP 테이블에서 해당 eBGP 피어와 관련된 경로가 제거되고, 다른 피어를 통해 대체 경로가 존재할 경우 대체 경로가 활성화된다.",
-    "explanation": "eBGP 피어가 다운되면 해당 피어와 연결된 경로가 BGP 테이블에서 제거됩니다. 만약 다른 피어를 통해 동일한 목적지에 대한 대체 경로가 존재한다면, 이 대체 경로가 활성화되어 BGP 테이블에 남게 됩니다. 그러나 대체 경로가 없다면, 해당 목적지에 대한 경로는 BGP 테이블에서 완전히 사라지게 됩니다.",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "analytical",
-    "level": 3,
-    "persona": "network_engineer",
-    "scenario": "BGP 경로 수렴 분석",
-    "source_files": [],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "intent": "show_bgp_summary",
-          "params": {
-            "host": "sample3"
-          }
-        },
-        {
-          "intent": "show_bgp_neighbors",
-          "params": {
-            "host": "sample3"
-          }
-        },
-        {
-          "intent": "show_bgp_neighbor_detail",
-          "params": {
-            "host": "sample3"
-          }
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {}
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-006",
-    "question": "BGP 설정에 있어서 모든 라우터가 동일한 정책을 따르고 있는가?",
-    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "ground_truth": false,
-    "explanation": "BGP 설정에서 모든 라우터가 동일한 정책을 따르지 않는 경우가 많습니다. 각 라우터는 독립적으로 정책을 설정할 수 있으며, 이는 네트워크의 요구 사항이나 운영자의 결정에 따라 달라질 수 있습니다.",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "analytical",
-    "level": 3,
-    "persona": "network_engineer",
-    "scenario": "BGP 경로 수렴 분석",
-    "source_files": [
-      "ce1.xml",
-      "ce2.xml",
-      "sample10.xml",
-      "sample7.xml",
-      "sample8.xml",
-      "sample9.xml"
-    ],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "bgp_local_as_numeric",
-          "metric_params": {}
-        },
-        {
-          "intent": "show_bgp_neighbors",
-          "params": {
-            "host": "sample4"
-          }
-        },
-        {
-          "intent": "show_bgp_neighbor_detail",
-          "params": {
-            "host": "sample5"
-          }
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_None_bgp_local_as_numeric": 65001
-      }
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-007",
-    "question": "iBGP 풀메시 누락 시, 특정 라우터에서 발생할 수 있는 경로 수렴 문제는?",
-    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "ground_truth": "경로 수렴 문제",
-    "explanation": "iBGP 풀메시가 누락되면 특정 라우터에서 경로 수렴 문제가 발생할 수 있습니다. 이는 iBGP의 특성상 모든 라우터가 서로의 경로 정보를 공유해야 하는데, 풀메시가 이루어지지 않으면 일부 라우터가 다른 라우터의 경로 정보를 알지 못하게 되어 경로 수렴이 이루어지지 않기 때문입니다.",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "analytical",
-    "level": 3,
-    "persona": "network_engineer",
-    "scenario": "BGP 경로 수렴 분석",
-    "source_files": [
-      "ce1.xml",
-      "ce2.xml",
-      "sample10.xml",
-      "sample7.xml",
-      "sample8.xml",
-      "sample9.xml"
-    ],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "ibgp_missing_pairs",
-          "metric_params": {}
-        },
-        {
-          "intent": "show_bgp_neighbors",
-          "params": {
-            "host": "sample6"
-          }
-        },
-        {
-          "intent": "show_bgp_summary",
-          "params": {
-            "host": "sample5"
-          }
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_None_ibgp_missing_pairs": []
-      }
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-008",
-    "question": "eBGP 피어 장애 시 다른 라우터들이 경로를 어떻게 조정할까요?",
-    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "ground_truth": "다른 라우터들은 eBGP 피어 장애를 감지한 후, BGP 경로 선택 알고리즘에 따라 대체 경로를 사용하거나 경로를 재조정하여 트래픽을 우회시킵니다.",
-    "explanation": "eBGP 피어가 장애가 발생하면, 해당 피어를 통해 수신한 경로 정보가 더 이상 유효하지 않게 됩니다. 이 경우, 다른 라우터들은 BGP의 경로 선택 알고리즘을 사용하여 남아 있는 경로 중에서 최적의 경로를 선택하게 됩니다. 이를 통해 트래픽은 장애가 발생한 피어를 우회하여 정상적으로 전달될 수 있습니다.",
-    "answer_type": "short",
+    "ground_truth": {
+      "likelihood": "조건부: 중간 ~ 높음",
+      "metrics": [
+        "BGP 피어 상태 (예: show bgp summary / show ip bgp neighbors)",
+        "BGP RIB/경로 차이 (Adj-RIB-In/Adj-RIB-Out/loc-rib) 및 next-hop 변경",
+        "경로 수락/거부/withdraw 로그(경로 삭제 발생 여부)",
+        "MPLS LSP/LDP/RSVP 상태 및 라벨 바인딩",
+        "Pseudowire / L2VPN 상태 및 PW‑ID 일치 여부",
+        "PW 단위 패킷/바이트/오류 카운터 (입/출)",
+        "인터페이스 입출력 패킷/에러/드롭 카운터",
+        "Per‑VRF 또는 per‑PW 전달 카운터(ingress vs egress)",
+        "제어평면 로그(syslog)와 이벤트 타임스탬프(피어 다운 시점 상관관계)",
+        "양방향 가시성 테스트 결과 (traceroute, mtr) 및 경로 비대칭성 탐지",
+        "지연/지터/손실 측정 (TWAMP, one‑way delay tests, iperf 등)",
+        "BFD 세션 상태 및 손실/다운 경보",
+        "MAC 학습/플러딩/VPLS 복제 관련 카운터(대상 서비스가 VPLS인 경우)",
+        "패킷 캡처(ingress/egress)로의 seq/timestamp 비교",
+        "흐름 샘플(sFlow/NetFlow/IPFIX)으로 양방향 트래픽 비교"
+      ]
+    },
+    "explanation": "AS 65003의 한 eBGP 피어가 완전히 다운되면 L2VPN/PW 서비스에 비대칭 경로 또는 단방향 손실이 발생할 가능성은 네트워크 토폴로지와 해당 피어가 제공하던 경로의 유일성에 따라 달라집니다. 현재 증거에서 l2vpn_unidirectional_pairs가 없음은 이미 관찰된 단방향 손실은 없음을 시사하지만, l2vpn_pwid_mismatch_pairs(sample7<->sample9)이 존재하는 것은 PW 설정/매핑 문제로 인한 서비스 장애 위험을 보여줍니다. 따라서 피어가 다운될 때의 영향을 일반화하면 다음과 같습니다. 피어가 대상 트래픽의 유일한 경로였거나 특정 방향의 next‑hop을 독점하고 있었다면 피어 다운은 높은 확률로 트래픽 경로를 변경시켜 비대칭 또는 단방향 손실을 유발합니다. 반대로 동일한 목적지로 가는 대체 경로(리던던시)가 존재하고 라벨/표지자, PW 매핑이 올바르게 구성되어 있으면 영향은 적고 가능성은 낮습니다.\n\n확인 및 정량화 방법으로는 먼저 제어면(BGP)부터 확인해야 합니다. BGP 피어 상태와 경로 withdrawal/advertisement 로그로 다운 시점과 영향을 받는 prefix를 식별합니다. 이후 RIB의 next‑hop/AS path 변화와 FIB/LSP 라벨 바인딩 변화를 검토해 실제 포워딩 경로가 어떻게 바뀌었는지 확인합니다. PW·L2VPN 관점에서는 PW 상태와 PW‑ID 일치 여부를 확인하고, PW별 ingress/egress 패킷·바이트·에러 카운터를 비교하여 한 방향에서만 패킷이 사라지는지(예: ingress 카운터는 증가하나 egress는 정체) 계산합니다(손실% = (ingress_cnt - egress_cnt)/ingress_cnt * 100). 트래픽 경로가 비대칭인지 확인하려면 각각의 방향에서 traceroute/mtr을 수행하고, 정밀한 손실·지연 측정은 TWAMP나 one‑way delay 테스트(가능하면 동기화된 타임스탬프 사용)를 이용합니다. BFD 상태와 제어평면 로그를 상관시켜 문제 발생 시점을 정확히 맞추면 원인 규명이 빠릅니다. 또한 패킷 캡처(양쪽 엔드포인트의 ingress/egress)로 시퀀스나 타임스탬프를 비교하면 단방향 손실 여부를 확정할 수 있습니다.\n\n요약하면, 피어 다운의 영향도는 토폴로지와 PW 구성의 상태에 따라 '조건부(중간~높음)'이며, 정량화하려면 BGP 세션·RIB 변화, MPLS/PW 상태, ingress/egress 패킷·바이트·에러 카운터, 인터페이스 통계, 트레이스/측정(TWAMP, traceroute) 및 패킷 캡처를 조합해 분석해야 합니다.",
+    "answer_type": "long",
     "category": "advanced",
     "complexity": "analytical",
     "level": 3,
@@ -351,243 +223,259 @@
       "reasoning_plan": [
         {
           "required_metric": "ebgp_remote_as_map",
-          "metric_params": {}
+          "metric_params": {
+            "host": "R5"
+          },
+          "purpose": "R5의 eBGP 이웃과 그들의 원격 AS를 확인해 다운 시 영향을 미칠 도메인 범위 추정."
         },
         {
-          "intent": "show_bgp_summary",
+          "required_metric": "l2vpn_unidirectional_pairs",
+          "metric_params": {
+            "host": "R5"
+          },
+          "purpose": "이미 보고된 L2VPN 단방향 쌍과 연계해 eBGP 장애 시 증폭 가능성 확인."
+        },
+        {
+          "required_metric": "l2vpn_pwid_mismatch_pairs",
+          "metric_params": {
+            "host": "R5"
+          },
+          "purpose": "PW ID 불일치 정보로 인해 failover 시 L2 연결이 복구되지 않을 위험 파악."
+        },
+        {
+          "intent": "show_l2vpn_status",
           "params": {
-            "host": "sample1"
-          }
+            "host": "R5"
+          },
+          "purpose": "장비 관점에서 실제 VC 상태를 확인해 서비스 영향 범위 및 복구 가능성 평가."
         },
         {
           "intent": "show_bgp_neighbors",
           "params": {
-            "host": "sample2"
-          }
+            "host": "R5"
+          },
+          "purpose": "R5의 BGP 이웃 상태(Established/Idle 등)를 확인해 장애 전/후 상태 비교 가능성 확보."
         }
       ],
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed",
       "evidence": {
-        "step_None_ebgp_remote_as_map": {
-          "192.168.4.11": "65004",
-          "192.168.1.11": "65001",
-          "192.168.2.11": "65002",
-          "192.168.3.11": "65003"
-        }
-      }
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-009",
-    "question": "AS 내에서 BGP 설정이 일관되지 않으면 어떤 문제가 발생할 수 있나요?",
-    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "ground_truth": "BGP 라우팅 루프, 경로 선택 오류, 비일관성으로 인한 트래픽 손실",
-    "explanation": "AS 내에서 BGP 설정이 일관되지 않으면 BGP 라우팅 루프가 발생할 수 있으며, 이는 잘못된 경로 선택으로 이어져 트래픽 손실이 발생할 수 있습니다. 또한, 비일관성으로 인해 네트워크의 안정성이 저하되고, 최적의 경로가 선택되지 않아 성능 저하가 발생할 수 있습니다.",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "analytical",
-    "level": 3,
-    "persona": "network_engineer",
-    "scenario": "BGP 경로 수렴 분석",
-    "source_files": [
-      "ce1.xml",
-      "ce2.xml",
-      "sample10.xml",
-      "sample7.xml",
-      "sample8.xml",
-      "sample9.xml"
-    ],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "bgp_local_as_numeric",
-          "metric_params": {}
-        },
-        {
-          "intent": "show_bgp_neighbor_detail",
-          "params": {
-            "host": "sample4"
-          }
-        },
-        {
-          "intent": "show_bgp_neighbor_detail",
-          "params": {
-            "host": "sample5"
-          }
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_None_bgp_local_as_numeric": 65001
-      }
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-010",
-    "question": "iBGP 풀메시 누락으로 인해 발생할 수 있는 네트워크 성능 저하 요소는?",
-    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "ground_truth": [],
-    "explanation": "iBGP 풀메시 누락으로 인해 발생할 수 있는 네트워크 성능 저하 요소는 여러 가지가 있지만, 주어진 증거에 따르면 현재 iBGP의 누락된 쌍이 없으므로 성능 저하 요소가 존재하지 않습니다.",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "analytical",
-    "level": 3,
-    "persona": "network_engineer",
-    "scenario": "BGP 경로 수렴 분석",
-    "source_files": [
-      "ce1.xml",
-      "ce2.xml",
-      "sample10.xml",
-      "sample7.xml",
-      "sample8.xml",
-      "sample9.xml"
-    ],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "ibgp_missing_pairs_count",
-          "metric_params": {}
-        },
-        {
-          "intent": "show_bgp_summary",
-          "params": {
-            "host": "sample1"
-          }
-        },
-        {
-          "intent": "show_bgp_summary",
-          "params": {
-            "host": "sample2"
-          }
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_None_ibgp_missing_pairs_count": 0
-      }
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-001",
-    "question": "새로운 데이터센터 추가 시, BGP 네트워크가 확장됨에 따라 어떤 BGP 재구성 작업이 필요할까요?",
-    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "ground_truth": [
-      "BGP 피어링 설정",
-      "라우팅 정책 업데이트",
-      "AS 경로 조정",
-      "iBGP 풀 메쉬 확인"
-    ],
-    "explanation": "새로운 데이터센터가 추가되면 BGP 네트워크의 확장을 위해 BGP 피어링을 설정하고, 라우팅 정책을 업데이트하여 새로운 경로를 반영해야 합니다. 또한, AS 경로를 조정하여 트래픽 흐름을 최적화하고, iBGP 풀 메쉬가 정상인지 확인하여 모든 라우터 간의 연결성을 유지해야 합니다.",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "analytical",
-    "level": 3,
-    "persona": "network_architect",
-    "scenario": "네트워크 확장 계획",
-    "source_files": [
-      "sample7.xml"
-    ],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "bgp_local_as_numeric",
-          "metric_params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "intent": "show_bgp_summary",
-          "params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "required_metric": "ibgp_fullmesh_ok",
-          "metric_params": {
-            "host": "sample7"
-          }
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_None_bgp_local_as_numeric": 65000,
-        "step_None_ibgp_fullmesh_ok": true
-      }
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-002",
-    "question": "데이터센터 확장으로 인해 OSPF 네트워크에 어떤 영향을 미치며, OSPF 재구성이 필요한 부분은 무엇인가요?",
-    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
-    "ground_truth": [
-      "OSPF 네트워크의 라우팅 테이블이 변경될 수 있다.",
-      "OSPF 재구성이 필요할 수 있는 부분은 새로운 라우터의 추가와 관련된 OSPF 프로세스 ID 및 영역 설정이다."
-    ],
-    "explanation": "데이터센터 확장으로 인해 새로운 라우터가 추가되면 OSPF 네트워크의 라우팅 테이블이 변경될 수 있으며, 이는 네트워크의 경로 선택에 영향을 미칠 수 있습니다. 또한, 새로운 라우터가 기존 OSPF 프로세스에 통합되기 위해서는 OSPF 프로세스 ID와 영역 설정을 재구성해야 할 필요가 있습니다.",
-    "answer_type": "long",
-    "category": "advanced",
-    "complexity": "analytical",
-    "level": 3,
-    "persona": "network_architect",
-    "scenario": "네트워크 확장 계획",
-    "source_files": [
-      "sample7.xml"
-    ],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "ospf_proc_ids",
-          "metric_params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "intent": "show_ip_ospf_neighbor",
-          "params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "required_metric": "ospf_area0_if_list",
-          "metric_params": {
-            "host": "sample7"
-          }
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_None_ospf_proc_ids": "1",
-        "step_None_ospf_area0_if_list": [
-          "GigabitEthernet0/0/0/0",
-          "GigabitEthernet0/0/0/2",
-          "Loopback0"
+        "step_None_ebgp_remote_as_map": {},
+        "step_None_l2vpn_unidirectional_pairs": [],
+        "step_None_l2vpn_pwid_mismatch_pairs": [
+          "sample7<->sample9",
+          "sample9<->sample7"
         ]
       }
     }
   },
   {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-003",
-    "question": "새로운 데이터센터 확장이 기존 L2VPN 구성에 미치는 영향은 무엇이며, 어떤 문제를 사전에 해결해야 할까요?",
-    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
-    "ground_truth": "새로운 데이터센터 확장은 L2VPN의 대역폭, 지연 시간, 라우팅 경로에 영향을 미칠 수 있으며, 사전에 대역폭 요구 사항, 지연 시간 최적화, 라우팅 경로 조정 문제를 해결해야 합니다.",
-    "explanation": "새로운 데이터센터의 확장은 기존 L2VPN 구성에 여러 가지 영향을 미칠 수 있습니다. 첫째, 데이터센터 간의 연결이 증가함에 따라 대역폭 요구 사항이 증가할 수 있으며, 이는 네트워크 성능에 영향을 줄 수 있습니다. 둘째, 데이터센터 간의 지연 시간이 증가할 수 있으며, 이는 애플리케이션 성능에 부정적인 영향을 미칠 수 있습니다. 마지막으로, 새로운 경로가 추가됨에 따라 라우팅 경로의 조정이 필요할 수 있습니다. 따라서 이러한 문제를 사전에 해결하기 위해 대역폭 요구 사항을 분석하고, 지연 시간을 최적화하며, 라우팅 경로를 조정하는 것이 중요합니다.",
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-004",
+    "question": "단일 라우터(R6, AS 65000)가 예기치 않게 다운됐을 때 어떤 VRF들이 완전한 경로 전달을 잃게 될지, 그리고 그로 인해 다른 라우터들의 경로 테이블에 어떤 비대칭 또는 누락이 발생할지 파악하려면 어떤 지표와 명령을 어떻게 조합해야 하는가?",
+    "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
+    "ground_truth": [
+      "Per‑PE per‑VRF MP‑BGP route counts and adjacency state: show bgp vpnv4 unicast vrf <VRF> summary; show bgp vpnv4 unicast vrf <VRF> neighbors <peer> received-routes; show bgp summary; show bgp neighbors <peer> detail",
+      "Per‑VRF RIB vs FIB/CEF comparison: show ip route vrf <VRF> | include <prefix>; show ip route vrf <VRF> summary; show cef vrf <VRF> <prefix> (or show mpls forwarding-table vrf <VRF>)",
+      "Route‑Target / RD and import/export policy checks: show run | section vrf <VRF>; show bgp vpnv4 unicast vrf <VRF> route-target (or vendor equivalent); show bgp vpnv4 unicast all neighbors advertised-routes",
+      "Next‑hop reachability and IGP/LDP state: show ip route <next-hop>; show ip ospf neighbor/route (or show isis neighbor/route); show mpls ldp bindings; show mpls ldp neighbors; show mpls forwarding-table",
+      "BGP update/withdraw and counters for correlation: show bgp neighbors <peer> received/advertised-routes; show bgp neighbors <peer> updates; show logging and BGP update history (debug or log buffers)",
+      "End‑to‑end data‑plane verification per VRF: traceroute vrf <VRF> <prefix>; ping vrf <VRF> <prefix> with source as relevant CE/PE interface",
+      "Diffing and correlation steps to identify affected VRFs: collect per‑PE per‑VRF route lists (show bgp vpnv4 unicast vrf <VRF> received-routes) from all PEs and compute set differences to find missing prefixes; correlate missing prefixes with next-hop reachability, label bindings, BGP session state to determine cause",
+      "Automated/summary metrics to watch: per‑VRF received-route counts per‑PE, per‑VRF advertised-route counts from R6, BGP session up/down events, unresolved next‑hop counts, missing label bindings counts"
+    ],
+    "explanation": "Rationale: 첫째, MP‑BGP(예: vpnv4/vpnv6) 레벨에서 각 PE가 특정 VRF에 대해 실제로 몇 개의 경로를 받고 있는지(및 R6와의 BGP 세션 상태)를 확인해야 합니다. 그래서 'show bgp vpnv4 unicast vrf <VRF> summary'와 'show bgp vpnv4 unicast vrf <VRF> neighbors <peer> received-routes'로 PE별 수신 경로 수와 개별 피어의 통계를 수집합니다. 둘째, 라우팅이 RIB에만 존재하고 FIB/CEF에 반영되지 않으면 데이터 플레인 전달이 실패하므로 'show ip route vrf <VRF>'와 'show cef vrf <VRF> <prefix>'로 RIB 대 FIB 일치 여부 및 라벨 바인딩을 확인해야 합니다. 셋째, RT(RT import/export)과 RD 설정, 그리고 필터/정책이 올바른지 확인해야 하므로 VRF 구성과 BGP의 route-target 정보를 점검하여 정책으로 인해 경로가 필터링되는지 배제합니다; 질문의 증거에서 vrf_without_rt_count 가 0이므로 RT 누락은 주요 원인에서 제외할 수 있지만 검증은 여전히 필요합니다. 넷째, MP‑BGP 경로들이 올바른 next‑hop을 갖고 그 next‑hop이 IGP에서 해석 가능한지(즉, next‑hop이 해제되었거나 IGP 파티션으로 인해 도달 불가인지) 확인해야 하므로 'show ip route <next-hop>' 및 IGP 관련 명령과 함께 MPLS/LDP 라벨 바인딩('show mpls ldp bindings' 등)을 확인해야 합니다. 다섯째, R6가 다운되면 BGP withdraw/updates가 발생하므로 'show bgp neighbors <peer> updates'와 BGP 통계/로그를 통해 어떤 prefix들이 withdraw 되었는지 시간대별로 상관관계(correlation)해야 합니다. 여섯째, 실제 영향(데이터 플레인)을 검증하려면 VRF별로 sample prefix에 대해 'traceroute vrf <VRF>' 및 'ping vrf <VRF>'를 실행해 경로가 끝까지 전달되는지 확인합니다. 마지막으로, 대규모 판별을 위해 모든 PE에서 동일한 VRF에 대한 수신 경로 목록을 수집하여 집합 차집합(diff)을 계산하면 어느 VRF가 '완전한 경로 전달(full route delivery)'을 잃었는지(즉, 일부 또는 전체 접두사가 누락된 PE들)를 명확히 파악할 수 있습니다. 이 결과를 BGP 세션 상태, next‑hop reachability, 라벨 바인딩, 그리고 import/export 정책과 교차검증하면 비대칭(한 PE는 경로를 가지고 다른 PE는 없음), 부분 누락(일부 prefix만 withdraw), 또는 완전 누락(해당 VRF의 모든 prefix withdraw) 등의 원인과 영향을 진단할 수 있습니다.",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "analytical",
     "level": 3,
-    "persona": "network_architect",
-    "scenario": "네트워크 확장 계획",
+    "persona": "network_engineer",
+    "scenario": "BGP 경로 수렴 분석",
     "source_files": [
-      "sample7.xml"
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "vrf_rt_list_per_device",
+          "metric_params": {
+            "host": "R6"
+          },
+          "purpose": "R6에서 활성화된 VRF와 그 RT 목록을 확인해 영향 받을 VRF 후보 식별."
+        },
+        {
+          "required_metric": "vrf_without_rt_pairs",
+          "metric_params": {
+            "host": "R6"
+          },
+          "purpose": "RT가 누락된 VRF 페어가 있어 R6 장애 시 경로 손실이 확대될 가능성 판단."
+        },
+        {
+          "required_metric": "vrf_without_rt_count",
+          "metric_params": {
+            "host": "R6"
+          },
+          "purpose": "문제 VRF의 수를 정량화하여 영향 범위를 추정."
+        },
+        {
+          "intent": "show_vrf",
+          "params": {
+            "host": "R6"
+          },
+          "purpose": "장비에서 관점별 VRF 상태(인터페이스 바인딩 등)를 확인해 실제 영향도 검증."
+        },
+        {
+          "intent": "show_route_table",
+          "params": {
+            "host": "R2"
+          },
+          "purpose": "다른 핵심 라우터에서 R6 관련 VRF 경로가 어떻게 보이는지 확인해 누락/비대칭 파악."
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_vrf_rt_list_per_device": [],
+        "step_None_vrf_without_rt_pairs": [],
+        "step_None_vrf_without_rt_count": 0
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-005",
+    "question": "AS 전반(65001, 65003, 65000)에 배포된 라우터들에서 BGP 로컬 AS 값 또는 이웃 AS 매핑이 일관되지 않으면 특정 피어링(ibgp/ebgp)이 불안정해져 경로 누락 또는 루프를 유발할 수 있다. 이를 식별하려면 어떤 메트릭 조합으로 어떤 검사 절차를 수행해야 하는가?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": {
+      "metrics": [
+        "bgp_local_as_numeric",
+        "neighbor_remote_as_map",
+        "neighbor_session_type (ibgp/ebgp)",
+        "bgp_session_state",
+        "received_prefix_count_per_neighbor (RIB-in)",
+        "advertised_prefix_count_per_neighbor (RIB-out)",
+        "AS_PATH attributes (AS sequence/AS_SET)",
+        "originator_id / cluster_list (for route-reflectors)",
+        "route_presence_consistency_across_RIBs",
+        "bgp_update_rate / flaps",
+        "configuration_diff (routing-policy, as-override, local-as)"
+      ],
+      "checks": [
+        "1) 수집: 65001, 65003, 65000에 배포된 모든 라우터에서 위의 metrics를 동일한 시간대의 스냅샷으로 수집한다.",
+        "2) 정규화: AS 숫자 형식과 네이버 명명 규칙을 통일하여 비교 가능한 형태로 정규화한다.",
+        "3) 로컬 AS 일관성 검사: 같은 AS 내(예: 65001 소속 라우터들)에서 bgp_local_as_numeric 값이 모두 일치하는지 비교한다.",
+        "4) 이웃 매핑 대칭성 검사: 각 이웃에 대해 neighbor_remote_as_map가 양쪽에서 서로를 가리키는지(대칭성) 확인한다. ibgp이면 동일 AS, ebgp이면 상대방의 local AS와 일치해야 한다.",
+        "5) 세션 상태 및 TCP 점검: bgp_session_state가 Established인지, TCP 179 연결이 안정적인지 확인한다(Active/Idle 반복 시 플랩/매핑 문제 의심).",
+        "6) RIB 비교: 각 피어로부터 수신한 prefix 수와 RIB-in/RIB-out의 경로 존재 여부를 라우터들 간에 비교하여 누락(prefix drift)이나 중복/루프 증거를 찾는다.",
+        "7) AS_PATH·originator·cluster 검사: 수신 AS_PATH에서 예상치 못한 AS 변경(중복/루프용 AS 삽입), originator_id/cluster_list가 불일치하여 루프를 유발하는지 확인한다.",
+        "8) 업데이트/플랩 분석: 특정 피어에 대한 BGP update rate와 flap 빈도를 분석하여 불안정 피어를 식별한다.",
+        "9) 구성 및 정책 교차검증: routing-policy, as-override, local-as 설정의 구성 차이를 비교하여 의도치 않은 AS 변환이 있는지 확인한다.",
+        "10) 자동화 경보 및 재검증: 불일치(예: 로컬 AS 불일치, 비대칭 neighbor_remote_as_map, 세션 불안정, prefix 누락)가 발견되면 상세 로그(패킷 캡처, BGP debug)를 수집하고 수정 후 재수집하여 해결을 확인한다."
+      ],
+      "failure_indicators": [
+        "같은 AS 내에서 bgp_local_as_numeric 값 불일치",
+        "피어 간 neighbor_remote_as_map 비대칭(한 쪽만 다른 AS로 설정)",
+        "ebgp에서 기대되는 remote AS와 실제 상대방 local AS 불일치",
+        "BGP 세션이 Established가 아니고 Active/Idle을 반복",
+        "피어별 수신된 prefix 수가 다른 라우터들과 크게 불일치하거나 특정 prefix가 누락",
+        "AS_PATH에 루프를 시사하는 반복되는 AS 또는 예상치 못한 AS 삽입",
+        "route-reflector의 originator_id/cluster_list 불일치로 인한 루프",
+        "특정 피어의 BGP update 폭증(플랩)"
+      ]
+    },
+    "explanation": "문제의 본질은 라우터별로 설정된 BGP 로컬 AS 값이나 이웃의 remote AS 매핑이 일관되지 않을 때 iBGP/ eBGP 피어링이 불안정해져 경로가 누락되거나 루프가 발생할 수 있다는 점입니다. 따라서 우선적으로 수집해야 할 핵심 메트릭은 각 라우터의 bgp_local_as_numeric과 각 이웃에 대해 설정된 neighbor_remote_as_map입니다. 이 두 값이 기본적인 일관성 기준이기 때문입니다. 추가로 피어의 세션 타입(ibgp/ebgp), BGP 세션 상태, 피어별로 수신·광고되는 prefix 수(RIB-in/RIB-out), AS_PATH 및 originator_id/cluster_list와 같은 경로 속성들을 함께 비교하면 불일치가 실제로 경로 손실이나 루프를 유발하는지를 판단할 수 있습니다. 검사 절차는(1) 모든 라우터에서 동일 시점 스냅샷을 수집하고(2) AS 표기법을 정규화한 뒤(3) 같은 AS 내 로컬 AS 값의 일치 여부와(4) 이웃 매핑의 대칭성(양측에서 상대를 같은 AS로 보는지)을 확인하는 것이 기본입니다. 여기서 대칭성이 깨지면 ebgp의 경우 한 쪽이 다른 AS로 인식되어 세션이 맺어지지 않거나, ibgp의 경우 경로 학습이 차단될 수 있습니다. 또한 BGP 세션의 상태(Established/Active 등)와 TCP 연결 안정성, 피어별 수신 prefix 수의 불일치, AS_PATH 상의 비정상적 변경 등을 분석하면 어느 피어에서 문제가 발생하는지 좁힐 수 있습니다. 제공된 증거에서 bgp_local_as_numeric 값이 0으로 '문제없음'으로 표시되지만 ebgp_remote_as_map이 빈 값이고 neighbor_list_ebgp가 없다는 점은 EBGP 이웃 정보를 수집하지 못했거나 EBGP가 구성되지 않았음을 시사합니다. 그러므로 EBGP 관련 비교를 수행하려면 ebgp 이웃 정보를 보강 수집해야 하고, 수집 불가 상황에서는 iBGP 내부 일관성 검사와 RIB 비교를 통해 간접적으로 영향 범위를 파악해야 합니다. 마지막으로 구성 차이를 자동으로 감지(구성 diff)하고 불일치 발견 시 로그·패킷 캡처를 통해 원인 규명 후 수정(로컬 AS 정정, neighbor 설정 동기화, 필요한 경우 세션 재시작)하고 수정 효과를 재검증하는 절차를 권장합니다.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "analytical",
+    "level": 3,
+    "persona": "network_engineer",
+    "scenario": "BGP 경로 수렴 분석",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "R1"
+          },
+          "purpose": "R1의 로컬 AS 값을 수집해 전체 토폴로지 내 일관성 비교 기준 확보."
+        },
+        {
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "R4"
+          },
+          "purpose": "다른 라우터(R4)와의 로컬 AS 차이를 비교해 설정 불일치 탐지."
+        },
+        {
+          "required_metric": "ebgp_remote_as_map",
+          "metric_params": {
+            "host": "R5"
+          },
+          "purpose": "R5가 바라보는 원격 AS 매핑을 확인해 eBGP 세션 오설정 여부 확인."
+        },
+        {
+          "required_metric": "neighbor_list_ebgp",
+          "metric_params": {
+            "host": "R5"
+          },
+          "purpose": "R5의 eBGP 이웃 목록과 각 이웃의 기대 AS를 추적."
+        },
+        {
+          "intent": "show_bgp_neighbors",
+          "params": {
+            "host": "R1"
+          },
+          "purpose": "실제 이웃 상태(수립 여부, 접속 문제)를 확인해 설정 불일치 영향 확인."
+        },
+        {
+          "intent": "show_bgp_summary",
+          "params": {
+            "host": "R4"
+          },
+          "purpose": "R4의 BGP 요약으로 로컬 AS/이웃 수 불일치가 전체 동작에 미치는 영향 평가."
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_bgp_local_as_numeric": 0,
+        "step_None_ebgp_remote_as_map": {},
+        "step_None_neighbor_list_ebgp": []
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-006",
+    "question": "보고된 L2VPN 불일치(2건)가 BGP 설정 불일치(예: RD/RT 누락 또는 불일치)와 상관관계가 있는지 확인하고, 만약 관련 있다면 어떤 VRF/RT들을 우선적으로 교정해야 하는가?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": "Insufficient data to determine correlation between the two reported L2VPN mismatches and BGP RD/RT configuration.",
+    "explanation": "The available evidence shows two L2VPN entries for the same device pair (sample7<->sample9 and sample9<->sample7) and no unidirectional pairs, but there is no VRF/RT or RD mapping data provided (vrf_rt_list_per_device and vrf_without_rt_pairs are empty). Because the VRF-to-RD/RT mappings are missing, one cannot verify whether the L2VPN mismatches are caused by missing or mismatched RD/RT values. To resolve this, collect the VRF, RD, and RT lists for sample7 and sample9 and then compare them for the VRFs used by the L2VPNs between those two devices. If a correlation exists, prioritize correcting the VRFs participating in the sample7<->sample9 L2VPNs by ensuring each VRF has the correct RD, that export/import RTs match the intended policy on both ends, and that RT import/export directionality is consistent. Also verify BGP VPN/EVPN configuration and route-target import/export policies on both devices to ensure symmetric configuration in both directions.",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "analytical",
+    "level": 3,
+    "persona": "network_engineer",
+    "scenario": "BGP 경로 수렴 분석",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
     ],
     "metadata": {
       "origin": "enhanced_llm_with_agent",
@@ -595,20 +483,44 @@
         {
           "required_metric": "l2vpn_pairs",
           "metric_params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "intent": "show_l2vpn_status",
-          "params": {
-            "host": "sample7"
-          }
+            "host": "R5"
+          },
+          "purpose": "문제가 발생한 L2VPN 페어 목록을 얻어 영향을 받는 VRF/엔드포인트 식별."
         },
         {
           "required_metric": "l2vpn_unidirectional_pairs",
           "metric_params": {
-            "host": "sample7"
-          }
+            "host": "R5"
+          },
+          "purpose": "단방향 문제 발생 쌍과 L2VPN 불일치의 지역성 확인."
+        },
+        {
+          "required_metric": "vrf_rt_list_per_device",
+          "metric_params": {
+            "host": "R5"
+          },
+          "purpose": "R5에서의 VRF RT 목록을 조회해 RT 누락이 L2VPN 문제의 원인인지 확인."
+        },
+        {
+          "required_metric": "vrf_without_rt_pairs",
+          "metric_params": {
+            "host": "R5"
+          },
+          "purpose": "RT가 완전히 누락된 VRF 페어가 있는지 판단해 우선 교정 대상 선정."
+        },
+        {
+          "intent": "show_l2vpn_status",
+          "params": {
+            "host": "R5"
+          },
+          "purpose": "L2VPN 상태를 장비 관점에서 확인해 실제 서비스 영향 확인."
+        },
+        {
+          "intent": "show_vrf",
+          "params": {
+            "host": "R5"
+          },
+          "purpose": "해당 VRF의 인터페이스 바인딩과 RD/RT 구성을 최종 검증."
         }
       ],
       "reasoning_requirement": "",
@@ -618,69 +530,539 @@
           "sample7<->sample9",
           "sample9<->sample7"
         ],
-        "step_None_l2vpn_unidirectional_pairs": []
+        "step_None_l2vpn_unidirectional_pairs": [],
+        "step_None_vrf_rt_list_per_device": [],
+        "step_None_vrf_without_rt_pairs": []
       }
     }
   },
   {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-004",
-    "question": "확장에 따라 L3VPN 서비스가 어떻게 영향을 받을 수 있으며, 이를 보완하기 위한 조치는 무엇인가요?",
-    "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
-    "ground_truth": {
-      "impact": "L3VPN 서비스는 확장에 따라 성능 저하, 라우팅 복잡성 증가, 관리 어려움 등의 영향을 받을 수 있습니다.",
-      "mitigation": "이를 보완하기 위해 네트워크 용량을 확장하고, 효율적인 라우팅 프로토콜을 사용하며, 관리 도구를 도입해야 합니다."
-    },
-    "explanation": "L3VPN 서비스는 네트워크의 확장에 따라 성능 저하와 라우팅 복잡성이 증가할 수 있으며, 이는 서비스 품질에 부정적인 영향을 미칠 수 있습니다. 따라서, 이러한 문제를 해결하기 위해 네트워크 용량을 확장하고, 효율적인 라우팅 프로토콜을 도입하며, 관리 도구를 활용하여 네트워크 관리를 용이하게 해야 합니다.",
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-007",
+    "question": "ibgp_missing_pairs가 있는 상태에서 특정 iBGP 피어(R2)가 플랩(자주 재연결)하면, 그 플랩이 인접 라우터들의 경로 테이블에서 어떤 연쇄적 변화(재계산/withdraw/relearn)를 유발할지 시나리오별(다수 prefix vs 소수 prefix)로 예측하려면 어떤 데이터와 명령 출력을 비교해야 하는가?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": [
+      "BGP 이웃 상태 및 요약 (예: show bgp neighbors / show ip bgp summary) — R2와의 세션 상태/uptime/재연결 카운터",
+      "R2로부터 수신한 Adj‑RIB‑In 스냅샷(수신된 prefix 리스트와 카운트) — before/during/after",
+      "R2로 광고된 Adj‑RIB‑Out 스냅샷(타 iBGP 피어들로 광고되는 내용) — before/during/after",
+      "Loc‑RIB(선택된 best paths) 스냅샷과 prefix별 best‑path 선택 이유(예: show bgp <prefix> detail)",
+      "커널 RIB / 라우팅 테이블(예: show ip route) 스냅샷 및 prefix 설치/삭제 타이밍",
+      "FIB/CEF/포워딩 엔트리(예: show ip cef) 상태와 nexthop 해석 결과",
+      "BGP 업데이트 로그(실제 update/withdraw 메시지와 타임스탬프, tcpdump/pcap 포트179 캡처)",
+      "각 prefix의 경로 속성(AS_PATH, NEXT_HOP, LOCAL_PREF, MED, ORIGIN, COMMUNITY, weight)",
+      "베스트패스 결정 로그와 변경 히스토리(몇 번 reselect 됐는지, 경로 우선순위 변화)",
+      "iBGP 토폴로지/피어 매핑(누가 RR인지, RR 클라이언트 목록, ibgp_missing_pairs 맵)",
+      "각 라우터의 RIB/Adj‑RIB 변경으로 인한 route‑install 지연 및 설치 실패/에러 카운터",
+      "TCP/인터페이스 통계(재전송, 세션 재설정, 버퍼 오버플로우 등)",
+      "라우트 필터/정책/route‑map/route‑reflector 설정(임포트/익스포트 필터 결과)",
+      "라우트 플랩 댐핑 설정 및 댐핑 카운터",
+      "접속 라우터들의 CPU, 메모리, BGP 프로세스 계측치(플랩 시 과부하 여부 판단)",
+      "프리픽스 규모 지표(예: R2에서 온 prefix 수 — 소수 vs 다수)와 전체 라우팅 테이블 대비 비율",
+      "타임시크론(각 스냅샷의 정확한 타임스탬프, NTP 동기화 여부) — 이벤트 상관을 위해",
+      "트래픽/포워딩 영향 지표(플랩 전후의 NetFlow/sFlow 또는 인터페이스 바이트 카운트)"
+    ],
+    "explanation": "플랩이 인접 라우터들에 어떤 연쇄적 변화를 만드는지 예측하려면 플랩 이전, 발생중, 이후의 동일한 데이터 포인트들을 시간축으로 비교해야 합니다. 먼저 BGP 세션 상태와 재연결 카운터를 보면 플랩의 빈도와 세션 수준의 문제를 알 수 있고, Adj‑RIB‑In/Out과 Loc‑RIB 스냅샷을 비교하면 어떤 prefix들이 수신/광고/선택에서 빠지거나 다시 나타났는지 정확히 식별할 수 있습니다. 커널 RIB과 FIB 상태를 비교하면 경로가 라우팅 테이블과 포워딩 테이블에 실제로 설치되거나 제거되는 시점을 확인할 수 있으며, 이것이 실제 포워딩 중단으로 이어지는지 알 수 있습니다. BGP 업데이트 로그나 tcpdump 캡처는 withdraw/update 메시지의 수와 속도를 보여 주어 ‘다수 prefix’가 플랩될 때 발생하는 대량의 업데이트 폭주 여부를 판단하게 합니다. 각 prefix의 경로 속성(AS_PATH, NEXT_HOP, LOCAL_PREF 등)과 베스트패스 결정 로그는 플랩이 다른 경로 선택을 유발해 인접 라우터들이 재계산을 수행하는 조건을 설명합니다. iBGP 토폴로지와 ibgp_missing_pairs 맵을 보면 어느 라우터들이 R2의 정보에 직접 의존하는지 또는 RR를 통해 전파되는지를 알 수 있어, 누가 2차 파급을 일으킬 위험이 큰지 예측할 수 있습니다. TCP/인터페이스 통계와 라우팅 프로세스(CPU/메모리) 계측치는 다수 prefix 플랩 시 라우팅 프로세스가 과부하되어 업데이트 처리 지연이나 설치 실패, 더 많은 재전송/타임아웃을 일으키는지를 보여줍니다. 또한 라우트 필터나 댐핑 정책은 많은 prefix가 플랩될 때 전파량을 억제하거나 지연시킬 수 있으므로 반드시 비교해야 합니다. 실무적으로는 모든 스냅샷에 정확한 타임스탬프를 달아 비교하고, delta(변화량), 처리 지연(install latency), 업데이트 레이트(pps) 등을 측정하면 ‘소수 prefix’ 플랩은 국소적 재계산/withdraw/relearn으로 끝날 가능성이 높고 ‘다수 prefix’ 플랩은 BGP 업데이트 폭주, RIB/FIB 쓰로틀, 다른 iBGP 피어의 대량 재계산 및 잠재적 포워딩 장애로 이어질 가능성이 높다는 결론을 규명할 수 있습니다.",
     "answer_type": "long",
+    "category": "advanced",
+    "complexity": "analytical",
+    "level": 3,
+    "persona": "network_engineer",
+    "scenario": "BGP 경로 수렴 분석",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "ibgp_missing_pairs",
+          "metric_params": {
+            "as": "65001"
+          },
+          "purpose": "문제가 되는 iBGP 페어를 파악해 플랩 시 영향을 받는 경로 전파 경로를 도출."
+        },
+        {
+          "required_metric": "neighbor_list_ibgp",
+          "metric_params": {
+            "host": "R2"
+          },
+          "purpose": "R2의 iBGP 의존 라우터 목록을 확인해 플랩 전파 범위 추정."
+        },
+        {
+          "required_metric": "bgp_neighbor_count",
+          "metric_params": {
+            "host": "R2"
+          },
+          "purpose": "R2의 피어 수를 파악해 플랩이 미치는 부하 영향 예측."
+        },
+        {
+          "intent": "show_bgp_neighbor_detail",
+          "params": {
+            "host": "R2"
+          },
+          "purpose": "R2의 neighbor 세부 상태(경로 수, 메시지 카운터)로 플랩이 경로 수에 미치는 잠재 영향 분석."
+        },
+        {
+          "intent": "show_route_table",
+          "params": {
+            "host": "R3"
+          },
+          "purpose": "R3에서의 경로 변동(Withdraw/relearn)을 확인해 연쇄적 영향 정량화."
+        },
+        {
+          "intent": "show_bgp_summary",
+          "params": {
+            "host": "R3"
+          },
+          "purpose": "R3의 전체 BGP 상태 변화(접속/경로 수)로 플랩 영향의 폭을 비교."
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_ibgp_missing_pairs": [],
+        "step_None_neighbor_list_ibgp": [],
+        "step_None_bgp_neighbor_count": 0
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-008",
+    "question": "AS 내 라우터들에서 OSPF(특히 area 0 인터페이스) 구성 불일치가 존재할 경우 BGP 재분배 시 경로 수렴에 추가 지연을 초래할 수 있다. OSPF-관련 지표와 BGP 지표를 결합해 이 위험을 탐지하려면 어떤 절차로 어떤 지표를 확인해야 하는가?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": [
+      "1) 수집 및 기준선 설정: AS 내 라우터 인벤토리와 각 라우터의 OSPF area 0 인터페이스/인접 상태 및 BGP 이웃 상태를 수집한다.",
+      "2) OSPF area 0 무결성 검사: area 0 인터페이스 존재 여부, area 0 상의 인접(adjacency) 상태, LSDB(LSA 수·시퀀스·체크섬) 일관성, SPF 실행 시간 및 빈도를 확인한다.",
+      "3) OSPF 인터페이스·타이머·MTU 검사: area 0 관련 인터페이스의 MTU 불일치, hello/dead 타이머 불일치, 인터페이스 flaps를 확인한다.",
+      "4) BGP 상태·성능 지표 확인: BGP 이웃 상태(Established/Idle), update rate(분당/초당), 경로 변경(LOC-RIB→RIB-IN→RIB-OUT→FIB 설치 지연), next-hop 해석 실패 여부, iBGP mesh/Route-Reflector 구성 완전성 및 AS내 iBGP 이웃 수를 확인한다.",
+      "5) 상관관계 검사: OSPF area 0 이상(예: adjacency down, LSDB 불일치, SPF 지연)이 발생한 시점과 BGP 재분배/경로 갱신(대량 update, next-hop unreachable, BGP 재수립, FIB 미설치) 시점을 시간축으로 연관 비교한다.",
+      "6) 실험적 재현 및 계측: 안전한 테스트(특정 prefix withdraw/announce 또는 인터페이스/OSPF 재시작)를 수행하며 OSPF SPF 처리 시간, LSA 홍수/전파 지연, BGP update 전파 및 최종 수렴 시간(초 단위)을 계측한다.",
+      "7) 임계값·알림 설정: OSPF SPF 시간, LSA 생성/수신 속도, 인접 flaps, BGP update burst, BGP 경로 수렴 시간 등에 대해 운영 임계값을 설정하고 교차 알림(cross-domain alert)을 구성한다.",
+      "8) 우선순위 및 완화 조치: area 0 복구(인터페이스/타이머/MTU 정합), ABR/ASBR 구성 점검, iBGP mesh/Route-Reflector 보완, 재분배 정책 검토 및 next-hop/route-map 조정 순으로 대응한다."
+    ],
+    "explanation": "위 절차는 OSPF의 area 0 관련 구성 불일치가 BGP로 재분배될 때 발생하는 추가 수렴 지연을 탐지하기 위해 설계되었습니다. 첫째, 정확한 현황 파악을 위해 라우터별 OSPF area 0 인터페이스와 인접 상태, 그리고 BGP 이웃 상태를 수집해야 합니다. 질문의 증거에서 ospf_area0_if_list가 없고 ospf_area0_if_count가 0으로 보고된 것은 AS 내부에서 어떤 라우터도 area 0 인터페이스를 보고하지 않았음을 의미할 수 있으며, 이는 area 0 누락/분할로 인한 LSA 전파 문제 또는 ABR/ASBR가 올바르게 연결되지 않았음을 시사합니다. 둘째, LSDB의 일관성(동일한 area 내 라우터들 간 LSA 수·시퀀스·체크섬 일치)과 SPF 실행 시간·빈도를 점검해야 합니다. LSDB 불일치나 잦은 SPF는 재분배 시 BGP 경로 확정이 지연되는 직접적 원인이 됩니다. 셋째, 인터페이스 레벨의 불일치(hello/dead 타이머, MTU, 링크 flaps)는 OSPF 인접성 문제를 유발하므로 반드시 확인해야 합니다. 넷째, BGP 측에서는 이웃 상태(특히 iBGP가 없는 경우나 neighbor_list_ibgp가 없음으로 보고된 증거처럼 iBGP 세션 부재 여부), update 비율, 경로 변경 빈도, next-hop reachability, RIB→FIB 설치 지연 등을 측정해야 합니다. OSPF가 재분배 원천이라면 OSPF 이벤트(예: LSA 생성/전파, SPF 실행)와 BGP 이벤트(예: 대량 update, Established→Idle 전환, next-hop unreachable) 사이의 시간적 상관관계를 분석하면 원인 추적이 가능합니다. 실험적 재현 단계에서는 특정 prefix를 withdraw/announce하거나 제한된 범위에서 인터페이스를 재시작하여 OSPF와 BGP의 반응(LSA 전파 지연, SPF 완료 시간, BGP update 전파 및 최종 수렴 시간)을 계측해 정확한 지연 원인을 수치로 확인할 수 있습니다. 마지막으로, 탐지용 임계값(예: SPF 실행 시간(예: >200–500 ms), SPF 빈도(예: 5분당 >5회), BGP update burst(예: 분당 >100), BGP 수렴 시간(예: >5–10초))을 운영 환경에 맞게 설정하고, OSPF와 BGP 이벤트를 교차 알람하도록 구성하면 재발을 빠르게 감지하고 대응할 수 있습니다. 전반적으로 OSPF area 0의 부재 또는 불일치(질문 증거상 해당 가능성)는 BGP 재분배 시 경로 확정 지연의 핵심 요인이므로, 위 절차로 OSPF 지표와 BGP 지표를 결합해 원인을 탐지하고 우선순위에 따라 복구하는 것이 필요합니다.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "analytical",
+    "level": 3,
+    "persona": "network_engineer",
+    "scenario": "BGP 경로 수렴 분석",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "ospf_area0_if_list",
+          "metric_params": {
+            "host": "R1"
+          },
+          "purpose": "R1에서 area 0에 바인딩된 인터페이스를 확인해 OSPF 토폴로지 일관성 점검."
+        },
+        {
+          "required_metric": "ospf_area0_if_count",
+          "metric_params": {
+            "host": "R1"
+          },
+          "purpose": "area 0 인터페이스 수를 정량화해 예상 재분배 포인트 파악."
+        },
+        {
+          "required_metric": "ospf_area_set",
+          "metric_params": {
+            "host": "R1"
+          },
+          "purpose": "네트워크 전반의 OSPF area 구성 분포를 파악해 불일치 탐지."
+        },
+        {
+          "required_metric": "neighbor_list_ibgp",
+          "metric_params": {
+            "host": "R1"
+          },
+          "purpose": "BGP 이웃과 OSPF 재분배 포인트의 연계를 확인."
+        },
+        {
+          "intent": "show_ip_route_ospf",
+          "params": {
+            "host": "R2"
+          },
+          "purpose": "OSPF 학습 경로가 BGP 재분배 시 어떻게 보이는지 확인해 수렴 지연 가능성 평가."
+        },
+        {
+          "intent": "show_route_table",
+          "params": {
+            "host": "R2"
+          },
+          "purpose": "실제 라우팅 테이블에서 재분배된 경로의 존재와 우선순위를 확인."
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_ospf_area0_if_list": [],
+        "step_None_ospf_area0_if_count": 0,
+        "step_None_ospf_area_set": [],
+        "step_None_neighbor_list_ibgp": []
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-009",
+    "question": "네트워크의 일부 라우터들에서 'ibgp_under_peered_count'가 증가하고 있는데, 이 값이 높을 때 실무적으로 어떤 위험(예: 경로 누락, 수렴 지연, 제어 플레인 부하)으로 이어지는지 입증하려면 어떤 측정과 로그를 수집해야 하는가?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": [
+      "BGP 세션 상태 변경 로그(각 iBGP 이웃별, 타임스탬프 포함)",
+      "BGP UPDATE 메시지 카운트 및 초당 발생률(per-neighbor, per-prefix)",
+      "Adj‑RIB‑In / Adj‑RIB‑Out 덤프(정기 및 이벤트 발생 시)",
+      "Loc‑RIB 및 FIB 스냅샷(정기 및 이벤트 전후 비교)",
+      "프리픽스별 withdraw/announce 이벤트 기록(MRT/BGP 덤프, 타임스탬프 포함)",
+      "퍼포먼스/가용성 합성 프로브(퍼프릭스별 ping, traceroute, TCP/HTTP 헬스 체크) 타임스탬프 포함",
+      "수렴 시간 측정(의도적 이벤트 또는 자연 이벤트에 대한 prefix 복구까지의 시간, 타임스탬프 포함)",
+      "컨트롤플레인 CPU/메모리/스레드 사용량(1초~5초 해상도 권장) 및 BGP 프로세스 메트릭",
+      "BGP TCP 레벨 메트릭(재전송, 재연결, keepalive 타임아웃) 및 소켓 오류 로그",
+      "NetFlow/sFlow/IPFIX 또는 인터페이스별 송수신 바이트/패킷 카운터(프리픽스/피어/인터페이스 기반)",
+      "SNMP IF-MIB 등 인터페이스 오류/드롭/큐잉 통계",
+      "BFD 세션 상태 및 지연/타임아웃 로그(사용 시)",
+      "Route-reflector 관련 로그 및 under-peered 관련 카운터(클러스터 내부 메시지 지연·오류)",
+      "패킷 캡처(pcaps) : 문제 발생 기간의 BGP 세션 캡처(특히 TCP 재전송/옵션/패킷 지연 확인용)",
+      "구성 스냅샷(최근 변경 내역 포함): iBGP 토폴로지, RR 설정, route-policy, next-hop 처리 등",
+      "정확한 상호 비교를 위한 타임스탬프 동기화(NTP 상태) 및 이벤트 타임라인"
+    ],
+    "explanation": "위 목록의 측정 및 로그는 'ibgp_under_peered_count'가 증가할 때 발생할 수 있는 경로 누락, 수렴 지연, 컨트롤플레인 부하를 증명하고 원인을 좁히기 위해 필요합니다. BGP 세션 상태 로그와 TCP 레벨 메트릭은 세션 플랩 또는 재연결로 인해 경로가 일시적으로 사라졌는지 확인할 수 있게 해줍니다. BGP UPDATE 메시지의 카운트와 초당 발생률, 그리고 Adj‑RIB/Loc‑RIB/FIB 스냅샷은 많은 업데이트로 인한 라우팅 테이블 변화와 라우터 내부에서의 경로 미반영(RIB vs FIB 불일치)을 검증합니다. withdraw/announce 이벤트와 MRT 덤프는 어떤 프리픽스가 언제 제거되거나 재공개되었는지를 정확히 보여주어 경로 누락 사례를 증명하는 데 필수적입니다. 퍼포먼스 프로브와 NetFlow/sFlow 데이터는 실제 데이터 평면에서의 손실 또는 경로 변경으로 인한 트래픽 감소·편향을 확인하게 해줍니다. 컨트롤플레인 CPU/메모리 및 BGP 프로세스 메트릭은 BGP 업데이트 처리로 인한 과부하(처리 지연, 스레드 블로킹 등)를 직접적으로 보여주며, 패킷 캡처와 인터페이스 오류 통계는 네트워크 수준의 문제(TCP 재전송, 링크 오류)가 원인인지 여부를 판별하게 해줍니다. Route‑reflector 로그와 구성 스냅샷은 under‑peered 상태가 토폴로지나 정책 설정의 결과인지, RR의 부하나 메시지 전달 지연 때문인지 확인하는 데 필요합니다. 마지막으로 모든 로그와 측정값은 NTP로 정확히 동기화된 타임스탬프를 기반으로 사건 타임라인을 구성해야 하며, 베이스라인(문제없던 시점의 동일한 지표)과 이벤트 기간의 지표를 비교하면 증거로서 신뢰성 있게 제시할 수 있습니다. 이러한 자료들을 상호 연관시켜 분석하면 'ibgp_under_peered_count' 증가가 실제로 경로 누락, 수렴 지연, 또는 컨트롤플레인 부하로 이어졌는지와 구체적인 메커니즘을 입증할 수 있습니다.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "analytical",
+    "level": 3,
+    "persona": "network_engineer",
+    "scenario": "BGP 경로 수렴 분석",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "ibgp_under_peered_count",
+          "metric_params": {
+            "as": "65001"
+          },
+          "purpose": "Under-peered 노드 수를 확인해 위험 노드 우선순위 결정."
+        },
+        {
+          "required_metric": "ibgp_missing_pairs",
+          "metric_params": {
+            "as": "65001"
+          },
+          "purpose": "누락된 iBGP 쌍의 상세를 확보해 영향을 받는 경로 범위 추정."
+        },
+        {
+          "intent": "show_bgp_neighbor_detail",
+          "params": {
+            "host": "R3"
+          },
+          "purpose": "의심 노드(R3)의 neighbor별 메시지/에러 카운터로 제어 플레인 부하 증거 수집."
+        },
+        {
+          "intent": "show_bgp_summary",
+          "params": {
+            "host": "R3"
+          },
+          "purpose": "R3의 prefix 건수 및 peer 상태로 경로 누락 여부 확인."
+        },
+        {
+          "intent": "show_logging",
+          "params": {
+            "host": "R3"
+          },
+          "purpose": "관련 로그(이웃 재접속, BGP 에러)를 수집해 문제 재현/원인 규명."
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_ibgp_under_peered_count": 0,
+        "step_None_ibgp_missing_pairs": []
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-010",
+    "question": "즉시 적용 가능한 운영 개선안으로서 'iBGP 풀메시 복구'가 시간이 걸릴 때 임시 완화책(예: 특정 라우터에 대한 route-map/정적 라우트 또는 RR 구성 변경)을 제안하려면, 현재 상태를 어떤 지표로 우선 평가하고, 어떤 CLI 명령을 어떤 순서로 실행해야 하는가?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": {
+      "priority_metrics": [
+        "BGP neighbor state (Established/Idle/Active) and neighbor counts",
+        "Prefixes received/advertised per neighbor (Adj-RIBs count) and total BGP prefix count",
+        "Next-hop reachability (IGP route to BGP next-hops) and RIB→FIB install status",
+        "Route-Reflector topology and client relationships",
+        "BGP update/error/log messages and recent flaps",
+        "CPU/memory and interface errors on affected routers",
+        "Route export/import policy (route-maps, prefix-lists, communities) affecting propagation"
+      ],
+      "ordered_cli_sequence": [
+        {
+          "stage": "1_audit_readonly",
+          "commands": [
+            "show ip bgp summary",
+            "show bgp ipv4 unicast summary",
+            "show ip bgp neighbors",
+            "show ip bgp neighbors <peer-ip> detail",
+            "show ip bgp",
+            "show ip bgp regexp .",
+            "show ip route bgp",
+            "show ip cef <example-prefix>",
+            "show logging"
+          ]
+        },
+        {
+          "stage": "1_next-hop_and_igp",
+          "commands": [
+            "show ip route <next-hop-ip>",
+            "show ip ospf neighbor",
+            "show isis neighbors",
+            "traceroute <next-hop-ip>"
+          ]
+        },
+        {
+          "stage": "2_targeted_non-disruptive_actions",
+          "commands": [
+            "configure terminal",
+            "ip prefix-list PL-ALLOW permit <prefix>/<mask> (repeat as needed)",
+            "route-map RM-IN permit 10",
+            " match ip address prefix-list PL-ALLOW",
+            " set local-preference <value> (optional)",
+            "route-map RM-OUT permit 10",
+            " match ip address prefix-list PL-ALLOW",
+            " set community <value> (optional)",
+            "router bgp <ASN>",
+            " neighbor <peer-ip> route-map RM-IN in",
+            " neighbor <peer-ip> route-map RM-OUT out",
+            "end",
+            "show ip bgp neighbors <peer-ip> advertised-routes",
+            "show ip bgp neighbors <peer-ip> received-routes"
+          ]
+        },
+        {
+          "stage": "2a_temporary_static_route_workaround",
+          "commands": [
+            "configure terminal",
+            "ip route <prefix> <mask> <next-hop-ip> [distance] (on routers missing prefix)",
+            "end",
+            "show ip route <prefix>"
+          ]
+        },
+        {
+          "stage": "3_soft_refresh_and_targeted_clears",
+          "commands": [
+            "clear ip bgp <neighbor-ip> soft in",
+            "clear ip bgp <neighbor-ip> soft out",
+            "clear ip bgp <neighbor-ip> soft (if supported and safe)",
+            "show ip bgp summary"
+          ]
+        },
+        {
+          "stage": "4_route-reflector_minimal_changes (last resort)",
+          "commands": [
+            "configure terminal (on RR)",
+            "router bgp <ASN>",
+            " neighbor <client-ip> route-reflector-client",
+            "end",
+            "clear ip bgp <client-ip> soft in",
+            "show ip bgp summary"
+          ]
+        },
+        {
+          "stage": "5_monitor_and_revert_if_needed",
+          "commands": [
+            "show ip bgp summary",
+            "show ip bgp neighbors",
+            "show ip route bgp",
+            "show logging",
+            "remove temporary route-maps/static routes when persistent fix is in place",
+            "clear ip bgp <neighbor-ip> soft in/out to re-sync after removal"
+          ]
+        }
+      ]
+    },
+    "explanation": "우선순위로 평가할 지표는 BGP 세션 상태와 이웃 수, 각 이웃별 수신/광고된 prefix 수(Adj-RIBs), 그리고 BGP에서 사용되는 next-hop의 IGP 경로 존재 여부 및 RIB에서 FIB로 정상 설치되고 있는지를 확인하는 것입니다. 이는 문제의 범위(세션 문제인지, 경로 전파 문제인지, 또는 next-hop 미달성인지)를 빠르게 구분하기 위해 필요합니다. 또한 route-reflector(RR) 토폴로지와 client 관계를 확인하면 풀메시 미수복이 RR 관련인지 알 수 있고, 최근의 BGP 업데이트/에러 로그와 라우터 리소스(CPU/메모리)는 세션 불안정의 원인 규명에 중요합니다. 명령 실행 순서는 비파괴적 읽기 전용 점검으로 시작하여(예: show ip bgp summary, show ip bgp neighbors, show ip route bgp 등), 다음으로 next-hop/IGP 문제가 있는지 확인합니다. 문제가 next-hop 미달성일 경우에는 IGP를 수정하거나 임시로 정적 경로를 추가하여 트래픽·루트 설치를 복구합니다. 특정 라우터나 prefix에 대해서만 전파가 필요할 때는 route-map과 prefix-list를 사용해 대상 이웃에 인바운드/아웃바운드 정책을 적용하는 것이 바람직합니다. 세션 재설정은 넓은 영향이 있으므로 우선 소프트 리프레시(clear ip bgp <neighbor> soft in/out)로 재동기화하고, 소프트 리프레시로 해결되지 않으면 제한적으로 클리어를 고려합니다. RR 구성 변경(예: neighbor route-reflector-client 추가)은 풀메시 복구가 지연되어 근본 복구가 어려운 경우 최후 수단으로 적용하고, 적용 후에는 소프트 리프레시로 상태를 동기화합니다. 모든 변경 후에는 반드시 BGP 요약, 이웃 상태, RIB/FIB 및 로그를 모니터링하고 영구적(root cause) 해결이 완료되면 임시 route-map/static route 또는 RR 임시 설정을 원상복구해야 합니다.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "analytical",
+    "level": 3,
+    "persona": "network_engineer",
+    "scenario": "BGP 경로 수렴 분석",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "ibgp_missing_pairs_count",
+          "metric_params": {
+            "as": "65001"
+          },
+          "purpose": "현재 누락 쌍 수를 확인해 긴급도 판단."
+        },
+        {
+          "required_metric": "bgp_neighbor_count",
+          "metric_params": {
+            "host": "R1"
+          },
+          "purpose": "잠재적 RR 후보(R1)의 피어 수 및 부하 확인."
+        },
+        {
+          "intent": "show_bgp_summary",
+          "params": {
+            "host": "R1"
+          },
+          "purpose": "R1의 현재 prefix/peer 상태를 확인해 임시 정책 적용 영향 예측."
+        },
+        {
+          "intent": "set_bgp_routemap",
+          "params": {
+            "host": "R1",
+            "routemap_name": "TEMP-REDISTR",
+            "description": "임시 경로 전달/필터링을 위해 적용"
+          },
+          "purpose": "핫픽스로 일부 경로를 특정 노드로 전달/차단하여 수렴과정 단축."
+        },
+        {
+          "intent": "set_interface_description",
+          "params": {
+            "host": "R1",
+            "interface": "Gig0/0",
+            "description": "TEMP: RR-candidate"
+          },
+          "purpose": "운영 가시성 확보 및 추후 롤백시 혼동 방지."
+        },
+        {
+          "intent": "show_route_table",
+          "params": {
+            "host": "R2"
+          },
+          "purpose": "임시 조치 후 다른 라우터에서의 경로 반영 여부를 검증."
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_ibgp_missing_pairs_count": 0,
+        "step_None_bgp_neighbor_count": 0
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-001",
+    "question": "현 상태의 iBGP 결합 취약도(ibgp_missing_pairs_count)와 EBGP AS 맵(ebgp_remote_as_map), 로컬 AS 설정(bgp_local_as_numeric)을 근거로, 새로운 데이터센터 추가 시 iBGP 풀메시 유지, 라우트리플렉터(RR) 도입, 또는 AS Confederation 중 어느 설계가 장기적 확장성·운영 복잡도·장애 격리 관점에서 최적인가? 선택 시 예상 부작용(컨버전스 영향, RIB 증가, 설계 변경 순서)과 단계별 재구성 절차를 제시하라.",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": "Route Reflector (iBGP Route Reflector)",
+    "explanation": "주어진 증거에서 ibgp_missing_pairs_count가 0으로 현재는 iBGP 풀메시가 정상 동작하고 있으며, ebgp_remote_as_map이 비어 있고 bgp_local_as_numeric에 제약이 없어 외부 AS 정책이나 로컬 AS 숫자 때문에 설계가 제한되지 않습니다. 그러나 장기적 확장성·운영 복잡도·장애 격리 관점에서는 풀메시를 그대로 유지하면 세션수와 RIB/CPU 부담이 N*(N-1)/2로 급격히 증가하여 신규 데이터센터 추가 시 관리·자원 측면에서 비현실적입니다. AS Confederation은 특정 시나리오(정책적으로 여러 AS 번호 필요하거나 AS 경로 길이·정책을 세분화해야 할 때)에 유용하지만 설정·운영 복잡도가 높고 일반적인 내부 확장 문제를 해결하기 위한 첫 선택으로는 과도합니다. 따라서 균형적으로 최적인 선택은 iBGP Route Reflector(RR) 도입입니다. RR은 iBGP 세션 수를 선형(O(N))으로 줄여 각 라우터의 세션·메모리·CPU 부담을 낮추고 운영 복잡도를 크게 완화합니다. 예상 부작용으로는 (1) RR 노드에 RIB/CPU 집중이 발생하여 RR에서의 리소스 증설이 필요할 수 있고, (2) 경로 반사로 인한 경로 선택의 비일관성(잠재적 서브옵티멀 경로)과 수렴 행태 변화(특히 RR 장애 시 영향 범위)가 있을 수 있으며, (3) 설계 변경 순서와 단계적 마이그레이션이 필요합니다. 권장 단계별 재구성 절차는 다음과 같습니다. 1) 설계·계획: RR 후보(일반적으로 코어/백본에서 연결성이 좋은 장비)를 최소 2대 이상 이중화로 선정하고 클러스터 경계·cluster-id 설계, 원격지 장애 시 가용성 고려, 모니터링·알람 준비를 합니다. 2) 실환경 전 테스트: 랩/스테이징에서 RR 구성(루프백 인터페이스, update-source 설정, neighbor ... route-reflector-client 설정, originator-id와 cluster-list 동작 확인, next-hop 정책 검증)을 검증합니다. 3) 준비 작업: RR에 사용할 루프백 주소를 할당하고 iBGP 세션을 위한 update-source와 TTL/ebgp-multihop(필요시)을 설정합니다. 4) 단계적 배포: (a) 우선 RR 쌍을 배포하고 서로 iBGP로 연결합니다. (b) 소수의 클라이언트(또는 한 DC)를 RR에 클라이언트로 등록하여 동작·경로 반사·수렴을 관찰합니다. (c) 모니터링으로 경로 일관성·업데이트 빈도·RIB 크기·CPU 사용량을 확인하면서 점진적으로 클라이언트 수를 늘립니다. 5) 기존 풀메시 축소: 각 클라이언트가 RR로의 세션에서 정상적으로 경로를 수신하는 것이 확인되면 클라이언트 간의 직접 iBGP 세션을 단계적으로 해제합니다. 6) 운영화 및 튜닝: RR에 대한 리소스 모니터링을 강화하고 필요 시 RR 수를 늘리거나 RR를 지리적으로 분산하며 route policies(출발지/수신지 필터, next-hop 처리, MED/LOCAL_PREF 조정)를 적용합니다. 7) 롤백 계획: 각 단계에서 풀메시 세션을 복원할 수 있도록 구성 백업과 절차를 마련합니다. 추가 권고사항으로는 RR를 단일 장애지점으로 만들지 않기 위해 최소 2개 이상 배포하고 클러스터-ID 충돌 방지 및 originator-id/cluster-list를 올바르게 설정하여 루프를 방지해야 하며, RR에 대한 RIB/CPU 증설과 모니터링(합계 라우트 수, 업데이트 속도)을 사전 계획해야 합니다. 결론적으로 현재 상태에서는 즉시 풀메시를 해체할 필요는 없지만 신규 데이터센터와 향후 노드 증가를 대비해 단계적으로 Route Reflector 기반 설계로 전환하는 것이 장기적으로 최적입니다.",
+    "answer_type": "short",
     "category": "advanced",
     "complexity": "analytical",
     "level": 3,
     "persona": "network_architect",
     "scenario": "네트워크 확장 계획",
     "source_files": [
-      "sample7.xml"
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
     ],
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
         {
-          "required_metric": "vrf_rt_list_per_device",
+          "required_metric": "ibgp_missing_pairs_count",
           "metric_params": {
-            "host": "sample7"
-          }
+            "host": "core1"
+          },
+          "purpose": "현재 iBGP 결합 불완전성 정도 파악"
         },
         {
-          "intent": "show_vrf",
+          "required_metric": "ebgp_remote_as_map",
+          "metric_params": {
+            "host": "edge1"
+          },
+          "purpose": "기존 EBGP 피어링과 AS 경계 파악"
+        },
+        {
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "core1"
+          },
+          "purpose": "로컬 AS 배치 확인(AS 충돌/정책 영향 예측)"
+        },
+        {
+          "intent": "show_bgp_summary",
           "params": {
-            "host": "sample7"
-          }
+            "host": "core1"
+          },
+          "purpose": "라우팅 테이블 크기·네이버 상태로 RR 도입 시 영향 예측"
         },
         {
-          "required_metric": "vrf_without_rt_pairs",
-          "metric_params": {
-            "host": "sample7"
-          }
+          "intent": "set_bgp_routemap",
+          "params": {
+            "host": "core1",
+            "description": "시뮬레이션용 route-map 작성"
+          },
+          "purpose": "변경 시나리오에서 route-map 기반 정책 적용 필요성 검증"
         }
       ],
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed",
       "evidence": {
-        "step_None_vrf_rt_list_per_device": [
-          "65000:1000"
-        ],
-        "step_None_vrf_without_rt_pairs": []
+        "step_None_ibgp_missing_pairs_count": 0,
+        "step_None_ebgp_remote_as_map": {},
+        "step_None_bgp_local_as_numeric": 0
       }
     }
   },
   {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-005",
-    "question": "데이터센터 확장 시 보안 정책은 어떻게 변화해야 하며, SSH 설정은 어떻게 보완해야 할까요?",
-    "context": "보안 설정 현황:\nCE1: SSH ON, AAA OFF\nCE2: SSH ON, AAA OFF\nsample10: SSH ON, AAA ON\nsample7: SSH ON, AAA ON\nsample8: SSH ON, AAA ON",
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-002",
+    "question": "ibgp_missing_pairs_count와 현재의 BGP 네이버 분포(bgp_neighbor_count, neighbor_list_ibgp)를 바탕으로, 라우트 리플렉터 도입 vs 풀메시 유지 선택이 트래픽 엔지니어링(정책 적용 용이성)과 비즈니스 연속성(장애 시 경로 대체 능력, 컨버전스 시간)에 어떤 정량적·정성적 영향을 주는가? 의사결정에 사용할 우선순위(예: RTO, 수용 가능한 경로 플랩율)를 제안하라.",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
     "ground_truth": {
-      "security_policy_changes": "보안 정책은 데이터센터 확장에 따라 네트워크 접근 제어, 사용자 인증 및 권한 관리 강화, 데이터 암호화 및 모니터링 시스템을 포함해야 합니다.",
-      "ssh_hardening": "SSH 설정은 강력한 비밀번호 정책, 공개키 인증 사용, 비활성 사용자 계정 비활성화, 포트 변경 및 SSH 접근 로그 모니터링을 통해 보완해야 합니다."
+      "decision": "Maintain current state (no iBGP). If iBGP is introduced: use full-mesh for <=8 iBGP neighbors; use route-reflector (RR) architecture for >8 iBGP neighbors with at least 2 redundant RRs per cluster and clear RR placement/backup.",
+      "priority_order": [
+        "Business continuity (RTO / failover capability)",
+        "Policy enforcement / traffic engineering simplicity",
+        "Convergence time after failure or topology change",
+        "Acceptable route-flap tolerance (stability)",
+        "Operational complexity and scalability (O(n^2) vs O(n))"
+      ],
+      "quantitative_thresholds": {
+        "ibgp_full_mesh_max_neighbors": 8,
+        "rr_minimum_redundant_rrs_per_cluster": 2,
+        "preferred_RTO_seconds": 60,
+        "acceptable_route_flaps_per_prefix_per_day": 5,
+        "acceptable_total_route_flaps_per_day": 200,
+        "target_convergence_time_ms": 5000
+      }
     },
-    "explanation": "데이터센터 확장 시 보안 정책은 새로운 인프라에 맞춰 업데이트되어야 하며, 이는 네트워크 접근 제어와 사용자 인증을 강화하는 방향으로 진행되어야 합니다. 또한, 데이터 암호화와 모니터링 시스템을 도입하여 보안을 더욱 강화할 수 있습니다. SSH 설정의 경우, 강력한 비밀번호 정책과 공개키 인증을 사용하여 보안을 높이고, 비활성 사용자 계정을 비활성화하며, SSH 포트를 변경하고 접근 로그를 모니터링하는 것이 중요합니다.",
+    "explanation": "The evidence shows ibgp_missing_pairs_count = 0, bgp_neighbor_count = 0 and no neighbor_list_ibgp, which indicates there is currently no iBGP fabric to modify, so keeping the current state produces no immediate risk. When adding iBGP, the primary trade-offs are scalability and operational simplicity versus redundancy and path diversity. Full-mesh iBGP provides the simplest semantics for applying per-node policies and avoids RR-related reflection semantics, which makes policy application and debugging easier; however, full-mesh scales as O(n^2) and becomes operationally burdensome beyond a small number of routers. Industry practice and operational experience suggest using full-mesh for small deployments (we recommend up to 8 peers) because it minimizes RR-induced policy surprises and preserves maximum path diversity. For larger deployments (>8 peers) a route-reflector design reduces session count and operational overhead (scales toward O(n)) but introduces a dependence on RR availability and potential for suboptimal routing and slower or more complex policy propagation unless RRs and client roles are carefully designed. To mitigate RR risks, deploy at least two redundant RRs per cluster and place them to avoid correlated failures. In terms of business-continuity priorities, aim to meet a recoverability/RTO objective first (we recommend a preferred RTO of ~60 seconds for typical WAN/DC BGP use; tighten this if your applications require faster recovery), then ensure policy enforcement processes are clear and testable, then optimize for convergence time. Convergence targets should be realistic for BGP; we suggest targeting end-to-end convergence within ~5 seconds for intra-site or tuned environments and accepting longer times over wide-area links unless faster recovery is required. For stability, set an operational threshold for route-flap tolerance (for example no more than ~5 flaps per prefix per day and no more than ~200 total flaps/day across the network) and treat breaches as triggers to investigate configuration, aggregation, or dampening. Finally, operational controls that should influence the decision include: clear policy placement and testing procedures, RR redundancy and monitoring, BGP session timers and dampening policy, automated failover testing (to measure real RTO), and telemetry for flap/convergence metrics. Given the current evidence of no iBGP, there is no immediate need to convert; if you plan to introduce iBGP, use the neighbor-count threshold above to decide between full-mesh and RR and apply the quantitative thresholds and priorities as acceptance criteria for the chosen architecture.",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "analytical",
@@ -699,95 +1081,405 @@
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
         {
-          "required_metric": "ssh_enabled_devices",
+          "required_metric": "ibgp_missing_pairs_count",
           "metric_params": {
-            "host": "sample7"
-          }
+            "host": "core2"
+          },
+          "purpose": "현재 iBGP 누락 정도 확인"
         },
         {
-          "intent": "ssh_direct_access",
+          "required_metric": "bgp_neighbor_count",
+          "metric_params": {
+            "host": "core2"
+          },
+          "purpose": "노드당 네이버 수 파악(확장성 부담 판단)"
+        },
+        {
+          "required_metric": "neighbor_list_ibgp",
+          "metric_params": {
+            "host": "core2"
+          },
+          "purpose": "iBGP 네이버 토폴로지 상세 확인"
+        },
+        {
+          "intent": "show_bgp_neighbors",
           "params": {
-            "host": "sample7"
-          }
+            "host": "core2"
+          },
+          "purpose": "네이버 상태와 접속 이력으로 컨버전스/안정성 감별"
         },
         {
-          "required_metric": "aaa_present_bool",
-          "metric_params": {
-            "host": "sample7"
-          }
+          "intent": "show_bgp_summary",
+          "params": {
+            "host": "core2"
+          },
+          "purpose": "RIB/FIB 크기와 경로 분포 확인하여 성능 영향 예측"
         }
       ],
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed",
       "evidence": {
-        "step_None_ssh_enabled_devices": [
-          "CE1",
-          "CE2",
-          "sample10",
-          "sample7",
-          "sample8",
-          "sample9"
-        ],
-        "step_None_aaa_present_bool": true
+        "step_None_ibgp_missing_pairs_count": 0,
+        "step_None_bgp_neighbor_count": 0,
+        "step_None_neighbor_list_ibgp": []
       }
     }
   },
   {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-006",
-    "question": "새로운 데이터센터의 추가로 인해 인터페이스와 관련된 어떤 재설계가 필요하며, 이를 위해 어떤 지표를 검토해야 할까요?",
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-003",
+    "question": "현재 l2vpn_pairs, l2vpn_unidir_count, l2vpn_pwid_mismatch_pairs 지표를 근거로, 새로운 데이터센터 추가 시 기존 L2VPN 고객 서비스의 다운타임을 최소화하는 단계별 마이그레이션 전략(예: 트래픽 샤도잉→부분 전환→완전 전환)과 사전 검증 체크리스트(상호성, PWID 일관성, 동기화 테스트)를 제시하라. 또한 실패 시 즉시 복귀(롤백) 절차를 명확히 하라.",
     "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
-    "ground_truth": [
-      "인터페이스 수 증가",
-      "VLAN 설정 검토"
-    ],
-    "explanation": "새로운 데이터센터의 추가로 인해 인터페이스 수가 증가할 것으로 예상되므로, 인터페이스 수와 관련된 재설계가 필요합니다. 또한, VLAN 설정이 100으로 되어 있는 것을 고려할 때, VLAN 설정의 적절성을 검토하는 것도 중요합니다.",
-    "answer_type": "short",
+    "ground_truth": {
+      "migration_strategy": [
+        {
+          "phase": "준비(Preparation)",
+          "actions": [
+            "기존 L2VPN 엔티티 및 매핑 목록 추출(l2vpn_pairs 기준) 및 대상 DC에서 동일 매핑 템플릿 생성",
+            "PWID(패킷지향 식별자) 설정을 표준화하도록 양쪽 장비 설정 파일 준비",
+            "백업 및 복구 절차 문서화(구성 백업, 라우팅/레이블 테이블 스냅샷)",
+            "모니터링·알람 임계치 및 롤백 트리거 정의(예: 패킷 손실 >1%, 지연 급증, BFD 반복 실패 3회 등)"
+          ]
+        },
+        {
+          "phase": "트래픽 샤도잉(Traffic shadowing)",
+          "actions": [
+            "대상 DC로 동일 세션/라벨을 복제하되, 포워딩에는 반영하지 않는 샤도잉 경로 구성",
+            "샤도잉 경로에서 PWID 일관성, 라벨 분배, 제어-데이터 평면의 동작 확인",
+            "샤도잉 기간 모니터링(패킷 손실, 재전송, 지연, BFD 상태) 수행",
+            "샤도잉 중 발견된 PWID 불일치 또는 포워딩 오류는 절대 프로덕션 전환 전 해결"
+          ]
+        },
+        {
+          "phase": "부분 전환(Partial cutover)",
+          "actions": [
+            "테스트 고객 또는 소규모 서비스 그룹(예: 비핵심 VLAN 또는 낮은 트래픽 세그먼트) 먼저 전환",
+            "부분 전환 시 양방향 데이터 흐름, 세션 안정성, PWID 일관성 반복 검증",
+            "단계별로 전환 비율 확대(예: 10% → 30% → 60% → 100%)하며 각 단계마다 모니터링·검증",
+            "각 단계에서 이상 발견 시 즉시 롤백 실행"
+          ]
+        },
+        {
+          "phase": "완전 전환(Full cutover)",
+          "actions": [
+            "모든 고객 및 경로를 신규 DC 쪽 포워딩 테이블로 전환",
+            "모든 L2VPN 쌍에 대해 PWID와 라벨 정합성 최종 검증",
+            "전환 완료 후 안정화 기간(예: 30-60분) 동안 집중 모니터링"
+          ]
+        },
+        {
+          "phase": "사후 검증(Post-cutover validation)",
+          "actions": [
+            "서비스별 통화성 체크(양방향 트래픽 확인), 트래픽 특이치 탐지, SLA 지표 확인",
+            "운영팀·고객 대상 연결성·성능 테스트 완료 보고",
+            "최종 구성 및 상태를 영구화하고 스냅샷 저장"
+          ]
+        }
+      ],
+      "prevalidation_checklist": [
+        "l2vpn_pairs 상에 전환 대상 엔드포인트 쌍이 모두 존재하는지 확인",
+        "l2vpn_unidir_count가 0인지 확인하여 단방향 문제 여부 확인",
+        "l2vpn_pwid_mismatch_pairs가 없는 상태로 PWID 일관성 확보(불일치 항목은 전환 전 수정)",
+        "제어·데이터 평면 동기화 상태 확인(BGP/MP-BGP, LDP/RSVP 등)",
+        "레이블과 PWID 매핑의 양쪽 일치 여부 확인",
+        "BFD 또는 대체 헬스체크 활성화 및 정상 작동 확인",
+        "구성 백업·롤백 스크립트 및 권한 확보",
+        "모니터링 대시보드·알람 및 담당자 연락망 준비"
+      ],
+      "rollback_procedure": [
+        "롤백 의사결정(정의된 임계치 초과 또는 치명적 장애 발생 시) 선언",
+        "신규 DC 쪽으로의 포워딩 변경을 즉시 원복: 라우팅/레이블/포워딩 테이블을 이전 스냅샷으로 되돌림",
+        "전환 단계가 부분 전환 상태였으면 그 단계에서 사용 중이던 경로만 원상 복구",
+        "PWID나 라벨 동기화로 인해 남은 잔여 세션·스티키 상태 제거(세션 재설정 또는 ARP/ND 캐시 플러시)",
+        "롤백 후 양방향 연속성 및 서비스 정상화 확인(패킷 손실, 지연, BFD 상태 점검)",
+        "롤백 완료 보고 및 원인 분석(루트코즈) 수행, 수정 계획 수립",
+        "수정 완료 전까지 동일한 전환 재시도 금지"
+      ]
+    },
+    "explanation": "주어진 증거에서 l2vpn_pairs에 sample7<->sample9 쌍이 존재하나 l2vpn_pwid_mismatch_pairs에도 동일 쌍이 기록되어 있어 두 장비(또는 두 엔드포인트) 간 PWID 설정 불일치가 존재함을 의미합니다. l2vpn_unidir_count가 0인 점은 단방향 연결 문제는 관찰되지 않음을 나타내므로 기본 데이터 경로의 연결성 자체는 양호하다고 판단됩니다. 따라서 우선 순위는 PWID 불일치를 전환 전에 해결하는 것이며, 이를 보장하기 위해 트래픽 샤도잉으로 데이터 평면 동작을 검증하고 문제가 없을 때 소규모(부분) 전환을 통해 리스크를 점진적으로 줄이는 전략이 적절합니다. 각 단계마다 양방향성(상호성), PWID 일관성, 제어·데이터 평면 동기화, BFD 등 헬스체크를 확인해야 하며, 정의된 임계치를 초과하면 즉시 롤백해야 합니다. 롤백 절차는 포워딩과 라우팅/레이블 상태를 이전 스냅샷으로 빠르게 복원하고 잔여 세션을 정리한 뒤 서비스 정상화를 확인하는 순서로 진행하는 것이 가장 안전합니다. 이러한 접근은 증거에서 보여주는 PWID 불일치 리스크를 사전 제거하고, 단방향 문제가 없다는 점을 활용해 다운타임을 최소화하면서 점진적으로 전환하는 방법에 기반합니다.",
+    "answer_type": "long",
     "category": "advanced",
     "complexity": "analytical",
     "level": 3,
     "persona": "network_architect",
     "scenario": "네트워크 확장 계획",
     "source_files": [
-      "sample7.xml"
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
     ],
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
         {
-          "required_metric": "interface_count",
+          "required_metric": "l2vpn_pairs",
           "metric_params": {
-            "host": "sample7"
-          }
+            "host": "edge1"
+          },
+          "purpose": "현재 활성 L2VPN 페어 목록 파악"
         },
         {
-          "intent": "show_ip_interface_brief",
+          "required_metric": "l2vpn_unidir_count",
+          "metric_params": {
+            "host": "edge1"
+          },
+          "purpose": "단방향 장애 건수 확인(취약 서비스 우선 식별)"
+        },
+        {
+          "required_metric": "l2vpn_pwid_mismatch_pairs",
+          "metric_params": {
+            "host": "edge1"
+          },
+          "purpose": "PWID 불일치로 인한 호환성 이슈 확인"
+        },
+        {
+          "intent": "show_l2vpn_vc",
           "params": {
-            "host": "sample7"
-          }
+            "host": "edge1"
+          },
+          "purpose": "각 VC 상태 및 통계로 전환 시 리스크 정량화"
         },
         {
-          "required_metric": "interface_vlan_set",
-          "metric_params": {
-            "host": "sample7"
-          }
+          "intent": "show_l2vpn_status",
+          "params": {
+            "host": "edge1"
+          },
+          "purpose": "전체 L2VPN 건강도 확인"
         }
       ],
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed",
       "evidence": {
-        "step_None_interface_count": 7,
-        "step_None_interface_vlan_set": [
-          "100"
+        "step_None_l2vpn_pairs": [
+          "sample7<->sample9",
+          "sample9<->sample7"
+        ],
+        "step_None_l2vpn_unidir_count": 0,
+        "step_None_l2vpn_pwid_mismatch_pairs": [
+          "sample7<->sample9",
+          "sample9<->sample7"
         ]
       }
     }
   },
   {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-007",
-    "question": "확장된 네트워크에서 비즈니스 연속성을 보장하기 위한 라우팅 정책은 어떻게 설정되어야 할까요?",
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-004",
+    "question": "현재 vrf_count, vrf_rt_list_per_device, vrf_rd_map 데이터를 근거로, 신규 데이터센터 및 중장기 VRF 증가에 대비한 VRF 네이밍(RD), RT 설계(공유·비공유 정책), 그리고 자동화 템플릿(생성·검증·롤백) 전략을 제시하라. 또한 RT 변경이 L3VPN 서비스에 미치는 영향과 검증 절차를 기술하라.",
+    "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
+    "ground_truth": {
+      "rd_naming": {
+        "format": "<ASN>:<VRF_ID>",
+        "asn_assignment_policy": "assign one private ASN per datacenter (base ASN = 64520; datacenter ASN = base + DC_ID)",
+        "vrf_id_range": "1-65535 (unique per datacenter ASN)",
+        "reserved_ranges": {
+          "infrastructure_services": "1-999",
+          "tenant_vrfs": "1000-59999",
+          "future_expansion": "60000-65535"
+        },
+        "examples": [
+          "64520:100 (DC1 infra)",
+          "64521:1000 (DC2 tenant 1)"
+        ]
+      },
+      "rt_design_policy": {
+        "default_policy": "non-shared",
+        "default_rt_assignment": "RT == RD (use same numeric value as RD for export-only by default)",
+        "shared_service_policy": "explicit shared RTs only for designated shared services (DNS, auth, monitoring, shared internet egress)",
+        "shared_rt_format": "<ASN>:S<service_id>",
+        "shared_rt_reserved": {
+          "service_id_range": "1-999",
+          "examples": [
+            "64520:S1 (shared-dns)",
+            "64520:S2 (shared-auth)"
+          ]
+        },
+        "import_export_rules": {
+          "non_shared_vrf": {
+            "export": [
+              "RD value"
+            ],
+            "import": []
+          },
+          "shared_service_vrf": {
+            "export": [
+              "service RT(s)"
+            ],
+            "import": [
+              "service RT(s)"
+            ]
+          }
+        }
+      },
+      "rt_change_control_rules": {
+        "default_block": "Do not change RTs for in-service VRFs without change window and verification",
+        "allowed_changes": [
+          "assign new RT to new VRF",
+          "add shared RT to new VRF after pre-validation"
+        ],
+        "forbid_changes": [
+          "replacing RD of a live VRF",
+          "reassigning RTs that are currently exported and imported across sites without co-ordinated update"
+        ]
+      },
+      "automation_templates": {
+        "create_vrf": {
+          "name": "create_vrf",
+          "inputs": [
+            "vrf_name",
+            "vrf_id",
+            "rd",
+            "rt_export_list",
+            "rt_import_list",
+            "vrf_description",
+            "device_list",
+            "admin_tags"
+          ],
+          "features": [
+            "parameter validation",
+            "idempotent apply",
+            "dry-run",
+            "staged-deploy support",
+            "pre-change backup"
+          ]
+        },
+        "verify_vrf": {
+          "name": "verify_vrf",
+          "inputs": [
+            "vrf_name",
+            "expected_rd",
+            "expected_rts",
+            "device_list"
+          ],
+          "checks": [
+            "config-present",
+            "RD on device",
+            "RT export membership",
+            "RT import membership",
+            "BGP vpnv4 advertisement if applicable",
+            "control-plane adjacency checks"
+          ]
+        },
+        "rollback_vrf": {
+          "name": "rollback_vrf",
+          "inputs": [
+            "change_id",
+            "snapshot_id",
+            "device_list"
+          ],
+          "features": [
+            "transactional rollback",
+            "partial-rollback safety",
+            "post-rollback verification"
+          ]
+        },
+        "automation_behaviour": [
+          "use source-of-truth datastore",
+          "generate change plan with CLI/NETCONF/RESTCONF snippets",
+          "require approval for production changes",
+          "log change-id and snapshots",
+          "support dry-run and commit-confirm"
+        ]
+      },
+      "deployment_workflow": [
+        "1) Plan: assign RD/RTs from pools using automation; generate change-id and dry-run plan",
+        "2) Pre-validate: run verify_vrf against target devices in dry-run mode",
+        "3) Staged-apply: apply to one device/site canary; run verify_vrf",
+        "4) Progressive rollout: expand to remaining devices when canary passes",
+        "5) Post-validate: full verification and traffic checks",
+        "6) If failure: run rollback_vrf using saved snapshot"
+      ],
+      "verification_checklist_for_rt_changes": [
+        "A) Pre-change: ensure RT pools free and no collisions; verify route distinguisher uniqueness",
+        "B) Control-plane checks: validate BGP vpnv4 IPv4/IPv6 RIBs and route-target import/export lists",
+        "C) Data-plane checks: ping/traceroute between endpoints, traffic flows across sites, and service-level synthetic tests",
+        "D) Post-change: monitor routing tables, route counts, and convergence; validate no unintended route leaks"
+      ],
+      "l3vpn_impact_summary": {
+        "primary_impacts": [
+          "Changing RT import/export can cause routes to be imported by additional VRFs (route leakage)",
+          "Removing or changing exported RTs can cause loss of learned routes and service interruption",
+          "BGP vpnv4 advertisement and route selection behavior may change, affecting reachability and path selection"
+        ],
+        "mitigations": [
+          "Default non-shared RTs to avoid accidental leaks",
+          "Use explicit shared RTs only when required and document consumers",
+          "Staged rollout and canary validation for RT changes",
+          "Pre- and post-change verification of vpnv4 RIBs and route counts"
+        ]
+      }
+    },
+    "explanation": "Given the provided evidence that current vrf_count is 0 and there are no existing vrf_rt_list_per_device or vrf_rd_map entries, the recommended design starts from an empty, well-scoped naming and RT policy that is safe and scalable. Using a per-datacenter ASN-based RD format (<ASN>:<VRF_ID>) provides a simple unique keyspace that is easy to delegate and reserve; assigning one private ASN per datacenter and reserving ranges for infrastructure, tenant VRFs, and future expansion prevents collisions as the estate grows. For RTs, defaulting to non-shared behavior (exporting the RD value only) minimizes the risk of accidental route sharing in a greenfield environment. Where sharing is necessary (DNS, authentication, shared egress), create explicit shared RTs using a clear service-tagged format (<ASN>:S<service_id>) and keep a documented, small pool of shared IDs. Automation templates should be idempotent, support dry-run, and keep snapshots for rollback; separate create, verify, and rollback templates reduce human error and enable staged deployments. The deployment workflow must include plan, pre-validation, canary/staged apply, progressive rollout, and post-validation steps. RT changes to L3VPNs can cause route leaks or route loss because route-target import/export determines which vpnv4 routes are installed into which VRFs; therefore, changes must be done in a controlled maintenance window with pre-checks of RT occupancy, BGP vpnv4 RIBs, and route counts. Verification must include control-plane checks (vpnv4 routes, route-target membership, BGP adjacencies) and data-plane checks (ping/traceroute and service synthetic transactions), and automation must be prepared to rollback if any discrepancy or service degradation is detected. Because the current state is empty, take advantage of this to establish the naming, RT allocation, and automation rules now to avoid future rework and minimize operational risk as datacenters and VRFs scale up.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "analytical",
+    "level": 3,
+    "persona": "network_architect",
+    "scenario": "네트워크 확장 계획",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "vrf_count",
+          "metric_params": {
+            "host": "core1"
+          },
+          "purpose": "현재 VRF 총수 파악 및 확장 여지 평가"
+        },
+        {
+          "required_metric": "vrf_rt_list_per_device",
+          "metric_params": {
+            "host": "core1"
+          },
+          "purpose": "장비별 RT 분포로 충돌 가능성 점검"
+        },
+        {
+          "required_metric": "vrf_rd_map",
+          "metric_params": {
+            "host": "core1"
+          },
+          "purpose": "RD 네임스페이스 일관성 확인"
+        },
+        {
+          "intent": "show_vrf",
+          "params": {
+            "host": "core1"
+          },
+          "purpose": "운영상 VRF 상태와 바인딩 확인"
+        },
+        {
+          "intent": "create_vrf_and_assign",
+          "params": {
+            "host": "core1",
+            "description": "테스트 VRF 생성(검증용)"
+          },
+          "purpose": "자동화 템플릿 검증 가능성 테스트"
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_vrf_count": 0,
+        "step_None_vrf_rt_list_per_device": [],
+        "step_None_vrf_rd_map": {}
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-005",
+    "question": "현재의 ospf_area0_if_count, ospf_area_set, ospf_process_ids_set를 근거로, 새 데이터센터를 통합할 때 Area 0 중심의 확장(인터페이스 추가)으로 갈 것인지, OSPF 영역 분할 및 ABR 재배치로 갈 것인지 결정하라. 선택 시 예상 컨버전스 변화, 트래픽 경로 변화, 적용 순서(테스트→부분적 적용→전면 적용)와 검증 명령들을 제시하라.",
     "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
-    "ground_truth": "라우팅 정책은 경로 선택, 장애 조치 및 트래픽 분산을 포함하여 비즈니스 연속성을 보장하도록 설정되어야 합니다.",
-    "explanation": "확장된 네트워크에서 비즈니스 연속성을 보장하기 위해서는 라우팅 정책이 경로 선택, 장애 조치 및 트래픽 분산을 고려해야 합니다. 이를 통해 네트워크의 가용성을 높이고, 장애 발생 시 신속하게 대처할 수 있으며, 트래픽을 효율적으로 분산시켜 성능을 최적화할 수 있습니다.",
+    "ground_truth": "Area 0 중심의 확장(인터페이스 추가)",
+    "explanation": "주어진 증거에 따르면 현재 OSPF 구성에서 Area 0에 속한 인터페이스가 전혀 없고(ospf_area0_if_count = 0), 별도의 영역 집합이나 프로세스 식별자도 보고되지 않았습니다. 이 상황에서는 새로운 데이터센터를 통합할 때 우선적으로 OSPF의 올바른 백본(Area 0)을 확립하고 Area 0으로 인터페이스를 추가하는 방식이 바람직합니다. 그 이유는 다음과 같습니다. 첫째, 현재 네트워크에 영역 분할이나 ABR가 존재하지 않으므로 영역 분할과 ABR 재배치는 설계·운영 복잡도와 위험을 크게 증가시키며 불필요한 재설계를 초래할 가능성이 높습니다. 둘째, Area 0을 중심으로 확장하면 새로운 데이터센터와 기존 라우터 간의 LSA 교환이 단일 백본 내에서 이루어져 경로 계산과 트러블슈팅이 단순해집니다. 예상 컨버전스 변화는 상대적으로 경미합니다. 새로운 인터페이스들이 추가되면 해당 라우터들 사이에서 인접성(Adjacency) 형성 및 LSA 발송이 발생하여 일시적인 SPF 연산과 라우팅 재계산이 발생할 수 있으나, 네트워크가 현재 단순한 상태이므로 전체 수렴시간 증가는 미미할 것으로 예상됩니다(짧은 간헐적 지연과 몇 차례의 SPF 실행). 트래픽 경로 변화는 대부분 기존 경로를 유지하면서 일부 트래픽이 신규 DC로 향하도록 라우팅이 반영되는 수준으로, 전면적인 경로 리라이팅이나 계층적 재배치가 발생할 가능성은 낮습니다. 적용 순서는 안전성과 검증을 위해 다음 단계로 진행해야 합니다. 1) 테스트: 시험장(Test lab) 또는 분리된 랩 환경에서 신규 DC 라우터를 Area 0으로 구성하여 인접성 형성, LSA 유통, SPF 동작을 검증합니다. 2) 부분적 적용(필드 파일럿): 운영망의 일부 세그먼트(거점 1~2개)에서 동일 구성으로 적용하여 실제 트래픽 영향과 수렴시간을 관찰합니다. 3) 전면 적용: 단계별로 남은 링크/라우터를 Area 0으로 편입하여 전체 데이터센터 통합을 완료합니다. 각 단계별로 권장되는 검증 명령과 확인 포인트는 다음과 같습니다. - 인접성 및 상태 확인: show ip ospf neighbor 및 show ip ospf interface brief를 통해 인접성(NB) 상태가 FULL인지 확인합니다. - 라우팅 정보 확인: show ip route ospf로 신규 목적지(혹은 상호 연결망)가 제대로 학습되었는지 확인합니다. - 데이터베이스 일관성: show ip ospf database로 LSA 타입(특히 Router/Network/Net)을 확인하고 인접 장비 간 동일한 LSA가 존재하는지 비교합니다. - SPF/이벤트 로그: 로그(syslog)에서 OSPF SPF 실행 및 LSA 플러딩 타임스탬프를 관찰하고 필요 시 debug ip ospf events 또는 debug ip ospf adjacency를 시험 환경에서만 사용합니다(프로덕션에서는 주의). - 성능/타이머 검사: show processes cpu | include ospf(또는 플랫폼별 프로세스 모니터링)로 SPF 실행 시 CPU 사용량 상승 여부를 확인합니다. - 데이터면 검증: ping 및 traceroute로 신규 DC로의 경로 응답성과 홉 경로를 확인하고, 필요 시 mtr/iperf 등으로 트래픽 성능을 측정합니다. - 광고/요청 확인: show ip protocols로 네트워크 선언과 타이머(hello/dead)를 검토합니다. 적용시 주의사항으로는 Hello/Dead 타이머의 일관성 유지, MTU 불일치로 인한 adjacency 문제 확인, LSA 플러딩이 갑자기 대규모로 발생하지 않도록 단계적 편입을 권장하는 점을 명시합니다. 마지막으로, 네트워크가 향후 크게 확장되어 OSPF 도메인 규모가 커지거나 CPU/SPF 비용이 문제될 경우에는 영역 분할 및 ABR 배치(계층화)를 재검토하는 것이 바람직합니다. 그러나 현재 증거(Area 0 미구성, 추가 복잡도 없음)를 근거로 즉시 영역 분할을 선택하기보다는 Area 0 중심의 확장으로 시작하는 것이 안전하고 운영 리스크가 낮습니다.",
     "answer_type": "short",
     "category": "advanced",
     "complexity": "analytical",
@@ -795,7 +1487,223 @@
     "persona": "network_architect",
     "scenario": "네트워크 확장 계획",
     "source_files": [
-      "sample7.xml"
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "ospf_area0_if_count",
+          "metric_params": {
+            "host": "core1"
+          },
+          "purpose": "Area 0 인터페이스 밀집도 파악"
+        },
+        {
+          "required_metric": "ospf_area_set",
+          "metric_params": {
+            "host": "core1"
+          },
+          "purpose": "현재 사용 중인 OSPF 영역 집합 확인"
+        },
+        {
+          "required_metric": "ospf_process_ids_set",
+          "metric_params": {
+            "host": "core1"
+          },
+          "purpose": "프로세스 분리 가능성(프로세스당 상태) 확인"
+        },
+        {
+          "intent": "show_ip_route_ospf",
+          "params": {
+            "host": "core1"
+          },
+          "purpose": "OSPF 경로 분포로 라우팅 영향도 파악"
+        },
+        {
+          "intent": "set_ospf_cost",
+          "params": {
+            "host": "core1",
+            "description": "테스트용 비용 변경"
+          },
+          "purpose": "비용 조정으로 트래픽 리밸런싱 시나리오 검증"
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_ospf_area0_if_count": 0,
+        "step_None_ospf_area_set": [],
+        "step_None_ospf_process_ids_set": []
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-006",
+    "question": "현재 ssh_missing_count, ssh_acl_applied_check, aaa_missing_devices 지표를 근거로, 새로운 데이터센터 통합 시 관리 평면 보안을 위한 권장 아키텍처(관리 VRF 분리, 중앙 AAA/LDAP, VTY ACL 표준 템플릿)와 단계적 롤아웃 계획(테스트·점진적 적용·감사 검증)을 제시하라. 또한 관리 접속 실패나 인증 이상 시 비즈니스 연속성 확보를 위한 즉각 대응 플랜을 제안하라.",
+    "context": "보안 설정 현황:\nCE1: SSH ON, AAA OFF\nCE2: SSH ON, AAA OFF\nsample10: SSH ON, AAA ON\nsample7: SSH ON, AAA ON\nsample8: SSH ON, AAA ON",
+    "ground_truth": {
+      "recommended_architecture": {
+        "management_vrf": [
+          "구성: 모든 네트워크 장비에 전용 Management VRF를 생성하여 관리 평면을 분리한다.",
+          "분리정책: Management VRF에서만 AAA, NMS, 로그 서버로 라우팅을 허용하고 프로덕션 네트워크와는 별도 ACL/라우팅 정책을 적용한다.",
+          "OOB: 가능하면 별도 물리적 Out‑Of‑Band 콘솔 네트워크를 유지한다."
+        ],
+        "central_aaa_ldap": [
+          "인증구성: 중복성(Active/Standby 또는 로드밸런스) 있는 중앙 AAA(RADIUS/TACACS+)를 배포하고 LDAP/AD와 연동하여 계정 및 그룹 기반 RBAC을 적용한다.",
+          "연결성: AAA 서버는 Management VRF 내에 존재하거나 Management VRF에서만 접근 가능하도록 구성한다.",
+          "가용성: AAA 장애시를 대비한 이중화, 헬스체크 및 모니터링을 구현한다."
+        ],
+        "vty_acl_template": [
+          "템플릿: 표준 VTY(SSH/VTY) ACL 템플릿을 정의하여 허용된 관리자 IP, 점프호스트 및 NMS만 허용하도록 한다.",
+          "일관성: 템플릿을 IaC(Ansible 등)로 버전관리하고 전 장비에 자동 적용한다.",
+          "강제적용: VTY 라인과 관리 인터페이스에 해당 ACL을 강제 적용하고 변경은 변경관리 프로세스로만 허용한다."
+        ],
+        "audit_logging_monitoring": [
+          "계정감사: AAA 명령계정 및 콘솔/VTY 로그인 실패/성공 로그를 중앙 로그(예: SIEM)로 전송한다.",
+          "알림: 인증 실패, ACL 변경, 비정상 접속 시 자동 경보를 설정한다."
+        ],
+        "inventory_and_cmdb": [
+          "정확성: 모든 장비의 관리 인터페이스, 현재 SSH/ACL/AAA 적용 상태를 CMDB에 수집하여 가시성을 확보한다.",
+          "정책대응: CMDB 기반으로 미적용 장비를 식별하여 우선순위 적용한다."
+        ],
+        "backup_and_recovery": [
+          "비상계정: 강력한 'break‑glass' 로컬 계정(사용 로그, 시간제한, 별도 자격증명 금고 보관)을 준비한다.",
+          "접근경로: OOB 콘솔, 물리적 액세스 절차 및 자격증명 에스컬레이션 프로세스를 문서화한다."
+        ]
+      },
+      "rollout_plan": {
+        "test_stage": [
+          "랩에서 대표 장비군으로 Management VRF, 중앙 AAA, VTY ACL 템플릿을 적용해 기능·장애 시나리오를 검증한다.",
+          "SSH/ACL 미적용 케이스 및 AAA 불가 상황을 시뮬레이션하여 복구 절차를 검증한다."
+        ],
+        "pilot_stage": [
+          "비생산 비핵심 사이트 또는 소수의 장비군을 대상으로 정책을 적용하고 72시간 이상 모니터링한다.",
+          "로그/접속성 문제, 운영자 불편 등을 수집하여 템플릿과 자동화 플레이북을 조정한다."
+        ],
+        "phased_rollout": [
+          "장비군·사이트 단위로 점진적 적용을 수행하며 각 웨이브 전에 사전 체크(인벤토리, 백업, 롤백 플레이북)를 실행한다.",
+          "자동화 스크립트가 없는 장비는 수작업 표준 체크리스트를 통해 적용한다."
+        ],
+        "audit_and_validation": [
+          "자동화된 컴플라이언스 스캔으로 VTY ACL과 AAA 적용 여부를 확인하고 미준수 장비를 리포트한다.",
+          "외부 또는 내부 감사로 접근·인증 정책 준수를 검증한 후 전체 전환을 완료한다."
+        ],
+        "success_metrics": [
+          "VTY ACL 적용률, AAA 인증 성공률, 인증 실패 건수 추이, 복구시간(RTO) 등의 지표를 정의하여 측정한다."
+        ]
+      },
+      "immediate_response_plan": {
+        "containment": [
+          "문제가 감지되면 즉시 VTY ACL을 제한된 관리자 IP/점프호스트로 축소하여 추가 위험을 차단한다.",
+          "관리 평면에 대한 변경을 일시 중단한다."
+        ],
+        "fallback_access": [
+          "OOB 콘솔을 통해 즉각 접근을 시도하고, 물리적 접근이 가능한 경우 현장 콘솔로 로그인한다.",
+          "사전 준비된 break‑glass 로컬 계정을 안전한 금고/시스템에서 인출하여 사용한다."
+        ],
+        "auth_failover": [
+          "중앙 AAA 접근 불가 시(또는 AAA 오작동 시) 구성된 2차/캐시 인증 경로로 페일오버하고 로그를 집중 기록한다.",
+          "페일오버가 불가한 경우 제한된 로컬 인증을 허용하되 세션을 엄격히 로깅하고 시간이 제한된 임시 접근만 허용한다."
+        ],
+        "operational_actions": [
+          "즉시 NOC/보안팀/서비스 소유자에게 상황을 통보하고 사건 책임자를 지정한다.",
+          "변경 불가·롤백·임시 권한 부여에 대한 명확한 승인가이드를 준수한다."
+        ],
+        "post_recovery": [
+          "복구 후 임시 자격증명을 즉시 폐기하고 로그·감사자료를 수집하여 원인분석을 수행한다.",
+          "발생 원인에 따라 템플릿·자동화·모니터링을 보강한다."
+        ]
+      }
+    },
+    "explanation": "제시한 권장안은 제공된 지표를 반영하여 관리 평면의 분리, 인증 중앙화, VTY ACL 표준화에 우선순위를 둔 결과입니다. ssh_missing_count가 0으로 SSH 자체는 존재하므로 기본 접속 수단은 확보되어 있으나 ssh_acl_applied_check가 실패한 것으로 나타나 VTY/관리 ACL이 일관되게 적용되지 않은 상태임을 의미합니다. 따라서 VTY ACL 템플릿을 표준화하고 자동화로 강제 적용하는 것이 필요합니다. aaa_missing_devices 값이 None으로 되어 있어 AAA 적용 현황이 불명확하므로 우선 정확한 인벤토리와 CMDB 정합성 확보 후 중앙 AAA/LDAP 연동 및 중복 구성으로 인증 가용성과 회복력을 확보해야 합니다. Management VRF 분리는 관리 트래픽을 프로덕션과 격리하여 보안과 영향범위를 최소화하기 위한 표준 설계입니다. 단계적 롤아웃(Test→Pilot→Phased→Audit)은 초기 검증과 모니터링을 통해 운영 영향을 줄이고 템플릿·자동화 오류를 조기에 수정하기 위함입니다. 관리 접속 실패나 인증 이상 발생 시 즉시 VTY ACL을 제한하고 OOB·break‑glass 계정·AAA 페일오버를 통해 비즈니스 연속성을 유지하도록 하는 것은 실제 장애 시 다운타임과 보안 리스크를 동시에 관리하기 위한 실무적 조치입니다. 마지막으로 모든 임시 접근은 엄격히 로깅하고 사후에 폐기하여 감사 가능성을 확보해야 합니다.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "analytical",
+    "level": 3,
+    "persona": "network_architect",
+    "scenario": "네트워크 확장 계획",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "ssh_missing_count",
+          "metric_params": {
+            "host": "all"
+          },
+          "purpose": "SSH 누락 장비 확인(관리면 노출 위험 확인)"
+        },
+        {
+          "required_metric": "ssh_acl_applied_check",
+          "metric_params": {
+            "host": "all"
+          },
+          "purpose": "VTY ACL 적용 상태 확인"
+        },
+        {
+          "required_metric": "aaa_missing_devices",
+          "metric_params": {
+            "host": "all"
+          },
+          "purpose": "AAA 미적용 장비 파악"
+        },
+        {
+          "intent": "show_users",
+          "params": {
+            "host": "core1"
+          },
+          "purpose": "현 사용자·권한 구조 검토"
+        },
+        {
+          "intent": "set_vty_acl",
+          "params": {
+            "host": "core1",
+            "description": "관리 ACL 적용(테스트)"
+          },
+          "purpose": "관리 ACL 적용 영향 시뮬레이션"
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_ssh_missing_count": 0,
+        "step_None_ssh_acl_applied_check": false,
+        "step_None_aaa_missing_devices": null
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-007",
+    "question": "현재 bgp_neighbor_count, vrf_count, interface_count, system_version_text 지표를 이용하여, VRF/L3VPN 규모가 중장기적으로 증가할 때 RIB/FIB·네이버 처리(상태 추적)에서 발생할 수 있는 용량 병목(메모리/CPU/소프트웨어 제한)을 예측하고, 장비 스케일업(하드웨어 교체) vs 스케일아웃(토폴로지 분할/추가 경로 리플렉션) 중 어떤 재설계가 비용·운영성·비즈니스 연속성 관점에서 합리적인지 근거와 함께 제시하라.",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": "스케일아웃(토폴로지 분할 및 경로 리플렉션 도입) 권장",
+    "explanation": "제공된 증거에서 bgp_neighbor_count, vrf_count, interface_count가 모두 0이고 system_version_text가 비어 있으므로 현재 시스템의 실제 부하·제한을 확인할 수는 없습니다. 따라서 아래 권고는 VRF/L3VPN 규모가 중장기적으로 증가할 때 일반적으로 관찰되는 병목과 설계 관점의 비교·우선순위를 근거로 한 권고입니다. 1) 예상 병목 영역: (a) RIB/FIB 메모리: VRF 수와 각 VRF 내 라우트 수가 늘어나면 컨트롤플레인(RIB)과 포워딩테이블(FIB/TCAM) 사용량이 선형·비선형으로 증가하며, TCAM(ASIC) 용량 한계가 먼저 도달할 가능성이 큽니다. (b) CPU: 대량의 BGP 업데이트(대규모 리프/리플렉션, 라우트 리플레이스/변경) 시 컨트롤플레인 CPU가 급증하여 상태 추적·세션 처리·라우팅 재계산 성능을 저하시킬 수 있습니다. (c) 소프트웨어/플랫폼 제한: OS별 VRF 최대치, 라우트 수 제한, RIB 인스턴스당 메모리 분배 정책, BGP 경로 캐싱·경로 반사자 처리 한계 등 소프트웨어적 제한이 병목이 됩니다. (d) 운영성(Convergence/장애복구): 경로 수와 세션 수 증가 시 수렴시간이 길어져 비즈니스 영향이 커질 수 있습니다. 2) 스케일업(하드웨어 교체)의 장단점: 장점은 기존 토폴로지 유지·관리 단순화, 단일 장비의 더 높은 성능으로 일시적 용량 확보가 가능하다는 점입니다. 단점은 높은 일회성 자본비용, 교체 중 다운타임·이전 작업, 장기간 수요 증가 시 재반복 교체 필요성, 특정 장비 고유 한계(예: TCAM 슬롯)로 인한 근본적 한계가 존재할 수 있다는 점입니다. 3) 스케일아웃(토폴로지 분할·추가 경로 리플렉션)의 장단점: 장점은 점진적·비용분산적 확장, RIB/FIB·BGP 세션을 분산시켜 단일 장비 한계 회피, 가용성·격리성 향상(서비스·고객별 분리)이 가능하다는 점입니다. 단점은 설계·운영 복잡도 증가(정책·RT 필터링·경로 반사자 설계 필요), 라우팅 복잡도로 인한 수렴·디버깅 난이도 상승, 추가 장비·운영비용(OPEX). 4) 비용·운영성·비즈니스 연속성 관점 권고 근거: 장기·지속적 VRF/L3VPN 증가를 가정하면 단일 장비에 대한 반복적 스케일업은 CAPEX 부담과 교체 리스크(다운타임·이전 비용)를 지속적으로 유발하므로 총비용과 비즈니스 연속성 관점에서 비효율적입니다. 반면 스케일아웃은 점진적으로 용량을 분산시키고 장애영향을 국소화하며 무중단 또는 최소중단으로 확대 가능하므로 장기적으로 비용·가용성·운영 안정성 측면에서 합리적입니다. 5) 실무적 실행 사항(우선 수행 권장): (a) 현재값을 수집·모니터링: VRF별 라우트 수, 라우트 업데이트/초, 장비별 RIB/FIB 엔트리 수, TCAM/FIB 사용률, CPU·메모리(컨트롤플레인) 지속 부하, BGP 세션수 및 수렴시간, 소프트웨어(버전)별 한계치. (b) 임계치 기반 트리거 설정: 예컨대 FIB/TCAM 사용률 70% 이상, 컨트롤플레인 CPU 지속 50~60% 초과, 라우트 업데이트 폭주 시 확장 계획 개시. (c) 스케일아웃 설계 권장 패턴: 계층적/수평적 분리(서비스별 VRF 분산), 경로반사자(RR) 계층화·VRF 인지 RR 또는 RT 필터링 적용, EVPN/MP-BGP 최적화로 플레인 통합·효율화, 라우트 리플렉션 정책으로 불필요한 경로 홍보 최소화. (d) 필요시 병행 전략: 핵심 코어 장비가 노후하거나 보안·성능 요구로 단일장비 업그레이드가 필수면 제한적 스케일업(코어 교체)과 에지/서비스 레벨에서의 스케일아웃 병행을 검토. 6) 결론 요약: 현재 제공된 지표만으로는 구체적 임계점을 산정할 수 없으나, 중장기적인 VRF/L3VPN 증가에 대해 비용·운영성·비즈니스 연속성 측면에서 우선 권장되는 접근은 스케일아웃(토폴로지 분할 및 경로 반사자·분산 설계)이며, 이를 시행하기 전 반드시 상세한 계측(라우트/TCAM/CPU/메모리 등)과 소프트웨어 제한 검토를 통해 단계적 이행 계획과 명확한 트리거를 수립해야 합니다.",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "analytical",
+    "level": 3,
+    "persona": "network_architect",
+    "scenario": "네트워크 확장 계획",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
     ],
     "metadata": {
       "origin": "enhanced_llm_with_agent",
@@ -803,183 +1711,565 @@
         {
           "required_metric": "bgp_neighbor_count",
           "metric_params": {
-            "host": "sample7"
-          }
+            "host": "core1"
+          },
+          "purpose": "현재 BGP 네이버 규모로 경합 예측"
         },
         {
-          "intent": "show_bgp_neighbors",
-          "params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "intent": "set_bgp_routemap",
-          "params": {
-            "host": "sample7"
-          }
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_None_bgp_neighbor_count": 4
-      }
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-008",
-    "question": "확장 시 OSPF와 BGP 간의 상호작용에서 발생할 수 있는 문제는 무엇이며, 이를 해결하기 위한 방안은 무엇인가요?",
-    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "ground_truth": [
-      "루프 발생",
-      "경로 선택 문제",
-      "네트워크 불안정성"
-    ],
-    "explanation": "OSPF와 BGP 간의 상호작용에서 발생할 수 있는 문제로는 루프 발생, 경로 선택 문제, 그리고 네트워크 불안정성이 있습니다. 이러한 문제를 해결하기 위해서는 OSPF와 BGP 간의 경로 필터링, 적절한 메트릭 설정, 그리고 정책 기반 라우팅을 적용하는 것이 중요합니다.",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "analytical",
-    "level": 3,
-    "persona": "network_architect",
-    "scenario": "네트워크 확장 계획",
-    "source_files": [
-      "sample7.xml"
-    ],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "ospf_process_ids_set",
+          "required_metric": "vrf_count",
           "metric_params": {
-            "host": "sample7"
-          }
+            "host": "core1"
+          },
+          "purpose": "VRF 증가 추세로 RIB 영향 추정"
         },
         {
-          "intent": "show_ip_route_ospf",
-          "params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "intent": "set_ospf_cost",
-          "params": {
-            "host": "sample7"
-          }
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_None_ospf_process_ids_set": [
-          "1"
-        ]
-      }
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-009",
-    "question": "데이터센터 확장으로 인해 발생할 수 있는 네트워크 장애 요소는 무엇이며, 이를 모니터링하기 위한 방법은 무엇인가요?",
-    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
-    "ground_truth": [
-      "네트워크 장비의 구성 불일치",
-      "대역폭 부족",
-      "지연 시간 증가",
-      "패킷 손실",
-      "보안 취약점"
-    ],
-    "explanation": "데이터센터 확장으로 인해 발생할 수 있는 네트워크 장애 요소에는 네트워크 장비의 구성 불일치, 대역폭 부족, 지연 시간 증가, 패킷 손실, 보안 취약점 등이 있습니다. 이러한 요소들은 네트워크 성능 저하 및 안정성 문제를 초래할 수 있으며, 이를 모니터링하기 위해서는 네트워크 트래픽 분석, 성능 모니터링 도구, 로그 분석 및 경고 시스템을 활용할 수 있습니다.",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "analytical",
-    "level": 3,
-    "persona": "network_architect",
-    "scenario": "네트워크 확장 계획",
-    "source_files": [
-      "sample7.xml"
-    ],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "l2vpn_mismatch_count",
+          "required_metric": "interface_count",
           "metric_params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "intent": "show_logging",
-          "params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "intent": "show_log_include",
-          "params": {
-            "host": "sample7"
-          }
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_None_l2vpn_mismatch_count": 2
-      }
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-010",
-    "question": "확장된 네트워크에서 효과적인 자원 관리를 위해 어떤 인터페이스 및 시스템 지표를 중점적으로 확인해야 할까요?",
-    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
-    "ground_truth": [
-      "subinterface_count",
-      "system_version_text"
-    ],
-    "explanation": "효과적인 자원 관리를 위해서는 네트워크의 서브인터페이스 수와 시스템 버전 정보를 중점적으로 확인해야 합니다. 서브인터페이스 수는 네트워크의 확장성과 자원 분배를 이해하는 데 중요한 지표이며, 시스템 버전 정보는 네트워크의 안정성과 보안성을 평가하는 데 필수적입니다.",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "analytical",
-    "level": 3,
-    "persona": "network_architect",
-    "scenario": "네트워크 확장 계획",
-    "source_files": [
-      "sample7.xml"
-    ],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "subinterface_count",
-          "metric_params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "intent": "show_interface_status",
-          "params": {
-            "host": "sample7"
-          }
+            "host": "core1"
+          },
+          "purpose": "인터페이스·서브인터페이스 증가로 인한 자원 영향 파악"
         },
         {
           "required_metric": "system_version_text",
           "metric_params": {
-            "host": "sample7"
-          }
+            "host": "core1"
+          },
+          "purpose": "소프트웨어 기능/제한(예: 최대 RIB 항목) 확인"
+        },
+        {
+          "intent": "show_processes_cpu",
+          "params": {
+            "host": "core1"
+          },
+          "purpose": "현재 CPU 부하로 추가 부하 수용 가능성 평가"
         }
       ],
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed",
       "evidence": {
-        "step_None_subinterface_count": 2,
+        "step_None_bgp_neighbor_count": 0,
+        "step_None_vrf_count": 0,
+        "step_None_interface_count": 0,
         "step_None_system_version_text": ""
       }
     }
   },
   {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-001",
-    "question": "AS 65000에 속하지만 iBGP 피어 수가 3개 미만인 장비는 총 몇 개인가?",
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-008",
+    "question": "새 데이터센터 통합 과정에서 라우팅·L2/L3VPN·관리평면에 대한 소프트웨어 업그레이드 또는 구성 변경을 수행할 때, show_bgp_summary·show_route_table·show_ip_interface_brief·check_connectivity 자료를 기반으로 한 단계별 릴리스 절차(테스트, Canary, 점진 이전), 검증 체크리스트, 그리고 롤백 트리거(예: BGP Adj Down 임계치, VPN 단방향 발생 수) 및 즉시 복구 절차를 제시하라.",
     "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "ground_truth": 0,
-    "explanation": "AS 65000에 속하는 장비는 iBGP 피어가 3개 미만인 경우가 없으며, 주어진 증거에 따르면 해당 AS에 속하는 장비는 존재하지 않기 때문에 총 개수는 0입니다.",
+    "ground_truth": {
+      "release_phases": [
+        {
+          "phase": "Preparation",
+          "steps": [
+            "백업: 대상 장비의 running-config 및 startup-config, 컨트롤플레인/데이터플레인 스냅샷 저장",
+            "레퍼런스: 현재 show_bgp_summary·show_route_table·show_ip_interface_brief·check_connectivity 출력 스냅샷 저장 및 기준값 정의",
+            "검증환경: 동일 토폴로지의 랩/시뮬레이션에서 변경사항 테스트 및 자동화 플레이북 dry-run",
+            "롤백 계획: 각 변경별 명확한 rollback playbook 및 재부팅/수동 복구 절차 문서화",
+            "커뮤니케이션: 유지보수 윈도우 확정, 스테이크홀더·NOC 브리지 준비"
+          ]
+        },
+        {
+          "phase": "Test (Lab)",
+          "scope": "비운영 랙/시뮬레이션",
+          "steps": [
+            "구성/소프트웨어 변경 적용(자동화 도구 사용)",
+            "검증: show_bgp_summary·show_route_table·show_ip_interface_brief 실행 및 기준값과 비교",
+            "기능테스트: check_connectivity로 핵심 L2/L3VPN, 라우팅 경로, 관리평면 접근성 검증",
+            "안정성테스트: 30분 이상 모니터링하여 플랩, 연결소실, 경로누락 확인"
+          ]
+        },
+        {
+          "phase": "Canary",
+          "scope": "작은 수의 PE/플랫폼(1–2 장비 또는 소규모 POD)",
+          "steps": [
+            "변경을 Canary 대상에 적용",
+            "즉시검증: show_bgp_summary에서 모든 기대된 이웃이 UP인지 확인",
+            "라우팅검증: show_route_table로 VRF별 중요 prefix 존재 확인",
+            "인터페이스검증: show_ip_interface_brief로 admin/protocol 상태 확인",
+            "서비스검증: check_connectivity로 양방향 ICMP/TCP 테스트(대상 내부/외부 중요 엔드포인트)",
+            "관찰윈도우: 최소 10–30분(서비스 중요도에 따라 연장)"
+          ]
+        },
+        {
+          "phase": "Gradual Rollout (점진 이전)",
+          "scope": "배치 단위(예: POD, 랙, 지역)",
+          "steps": [
+            "배치 크기 정의(권장: 전체 대상의 10–20% 또는 1–5장비/배치)",
+            "각 배치 적용 전 Pre-check 수행",
+            "배치 적용 후 Immediate-check(위 Canary와 동일) 수행",
+            "각 배치 후 관찰윈도우: 15–60분(문제 없으면 다음 배치 진행)",
+            "모니터링 자동화로 전체 퍼포먼스/접속성/경로 통계 집계"
+          ]
+        },
+        {
+          "phase": "Cutover / Finalization",
+          "steps": [
+            "전체 배포 완료 후 전체 시스템 검증(전체 show_* 및 check_connectivity 자동 리포트)",
+            "장기 모니터링(24시간): 라우팅 안정성, VPN 도착/출발 트래픽, 관리평면 접근성 확인",
+            "변경 반영 문서 업데이트 및 백업 갱신",
+            "운영팀/서비스팀에 변경 완료 통보"
+          ]
+        }
+      ],
+      "verification_checklist": {
+        "pre-change": [
+          "현재 BGP 피어 수 및 상태 기록(show_bgp_summary)",
+          "VRF별/라우팅 테이블별 중요 prefix 목록과 카운트 기록(show_route_table)",
+          "관리/데이터 인터페이스 상태 기록(show_ip_interface_brief)",
+          "기본 연결성(핵심 L3VPN, 인터넷 엣지, DC 내부 서비스) 체크리스트 수립(check_connectivity)",
+          "자동 롤백 스냅샷 및 접근 방법 존재 여부 확인"
+        ],
+        "post-change_immediate": [
+          "모든 핵심 BGP 이웃이 Expected UP 상태인지 확인",
+          "중요 prefix가 빠지지 않았는지 확인",
+          "핵심 인터페이스 admin/protocol UP 확인",
+          "관리평면(SSH/SNMP/NETCONF) 접근성 확인",
+          "check_connectivity에서 지정된 경로 양방향 성공"
+        ],
+        "post-change_short_term_15_60": [
+          "BGP prefix 수 안정화(추가/삭제가 의도된 것인지 확인)",
+          "패킷 손실/지연이 기준 내인지 확인",
+          "VPN별 트래픽 대칭성 확인(양방향 정상)",
+          "시스템 로그에 에러/플랩 항목 없음"
+        ],
+        "post-change_longer_24h": [
+          "라우팅의 장기 안정성 확인(루프/플랩 재현 없음)",
+          "서비스 SLA 만족 여부 확인",
+          "모니터링 알람 이상 여부 없음"
+        ]
+      },
+      "monitoring_commands_expected": {
+        "show_bgp_summary": "Canary: 모든 대상 이웃 UP. Progressive: 전체 피어 중 다운 비율 ≤ 배치별 임계치(참고: Progressive 임계치는 1% 또는 2 peer 미만). BGP prefix count가 기준 대비 급격히 감소하지 않음",
+        "show_route_table": "VRF별 중요 prefix 존재, next-hop 유효, 경로 수가 계획 범위 내(급감 없음)",
+        "show_ip_interface_brief": "핵심 uplink/PE 인터페이스 admin up & protocol up. 예상치 못한 DOWN 없음",
+        "check_connectivity": "핵심 엔드포인트에 대한 ICMP/TCP 성공률 100%(Canary) / ≥98% (progressive 허용범위), 지연/패킷손실이 기준치 이하"
+      },
+      "rollback_triggers": [
+        {
+          "name": "BGP_Adjacency_Down_Canary",
+          "threshold": "Canary 단계에서 대상 장비의 production BGP neighbor 1개라도 DOWN 상태가 60초 이상 지속될 경우 즉시 롤백"
+        },
+        {
+          "name": "BGP_Adjacency_Down_Progressive",
+          "threshold": "롤아웃 전체 또는 배치에서 동시 BGP peer DOWN 수 ≥ max(2 peers, 전체 피어의 1%)가 120초 이상 지속될 경우 해당 배치 롤백 및 전체 롤아웃 보류"
+        },
+        {
+          "name": "VPN_Unidirectional",
+          "threshold": "어떤 L3VPN에서라도 단방향 통신(한 방향만 성공)이 Canary에서 30초 이상, Progressive에서 120초 이상 발견되거나 영향받는 VPN 수가 전체의 ≥5%인 경우 롤백"
+        },
+        {
+          "name": "Critical_Prefix_Loss",
+          "threshold": "정의된 'critical prefix' 중 하나라도 60초 이상 누락되거나, 전체 중요 prefix의 감소가 0.5% 초과 시 롤백"
+        },
+        {
+          "name": "Management_Plane_Loss",
+          "threshold": "SSH/NETCONF/SNMP 등 관리 접속 불가 상태가 120초 이상 지속될 경우 즉시 롤백"
+        },
+        {
+          "name": "Connectivity_Degradation",
+          "threshold": "핵심 엔드포인트 대상으로 패킷손실 >2% 또는 지연이 정상 대비 2배 이상인 상태가 120초 이상 지속될 경우 롤백"
+        }
+      ],
+      "immediate_recovery_procedures": [
+        {
+          "trigger": "BGP_Adjacency_Down_Canary",
+          "actions": [
+            "Canary 변경 중단 및 해당 장비 설정을 사전 백업본으로 즉시 롤백",
+            "롤백 후 BGP 세션 재확인(show_bgp_summary) 및 필요 시 clear bgp neighbor",
+            "문제 원인 로그 수집(syslog, bgp debug), NOC/ENG에 에스컬레이션"
+          ]
+        },
+        {
+          "trigger": "BGP_Adjacency_Down_Progressive",
+          "actions": [
+            "해당 배치 적용 즉시 중단 및 배치 구성만 롤백",
+            "피어간 인증, update-source, TTL, route-filter 등 설정 점검",
+            "임시로 트래픽을 우회하도록 BGP weight/local-preference 조정",
+            "10분 내 해결되지 않으면 배치 전체 이전 설정 롤백"
+          ]
+        },
+        {
+          "trigger": "VPN_Unidirectional",
+          "actions": [
+            "해당 PE에서 VPN 관련 route-target/import-export 정책 즉시 원복",
+            "show_route_table vrf로 경로 수신 여부 확인 및 route-refresh/clear 명령 실행",
+            "필요시 트래픽을 다른 PE로 우회시키고 배치 롤백"
+          ]
+        },
+        {
+          "trigger": "Critical_Prefix_Loss",
+          "actions": [
+            "해당 prefix에 대한 redistribution/route-reflector 설정을 즉시 복원",
+            "RR/BGP 정책을 재적용하고 clear bgp or soft-reconfiguration 수행",
+            "복구 불가능시 관련 장비 구성 롤백"
+          ]
+        },
+        {
+          "trigger": "Management_Plane_Loss",
+          "actions": [
+            "OOB 콘솔 접속으로 접근성 회복 후 변경사항 롤백",
+            "관리 ACL/인증 설정을 원상복구",
+            "관리 서비스(SSH/SNMP) 재시작 혹은 장비 리부트(승인 후)"
+          ]
+        },
+        {
+          "trigger": "Connectivity_Degradation",
+          "actions": [
+            "트래픽 셰이핑/라우팅 우회(일시적 static route 또는 BGP attribute 조정)로 서비스 보호",
+            "문제가 해결되지 않으면 해당 배치 롤백",
+            "근본 원인 분석 후 향후 변경 계획 수정"
+          ]
+        },
+        {
+          "trigger": "General_Restore",
+          "actions": [
+            "검증된 스냅샷/백업에서 구성 복원",
+            "필요시 자동화된 rollback playbook 실행",
+            "롤백 후 전체 검증 체크리스트 재실행 및 상태보고"
+          ]
+        }
+      ],
+      "operational_notes": {
+        "observation_windows": "Canary: 10–30분, 각 Progressive 배치: 15–60분, 전체: 24시간 모니터링",
+        "automation": "변경/롤백은 자동화 플레이북으로 수행하여 휴먼에러 최소화",
+        "logging_and_alerting": "변경 동안 syslog/streaming telemetry 레벨을 올려 중앙 수집기에서 실시간 알림 수신",
+        "stakeholder_comm": "각 단계 시작/종료와 이슈 발생 시 즉시 통지 및 상태 보고",
+        "backups": "변경 전후 구성 및 상태 스냅샷을 시간표시와 함께 저장"
+      }
+    },
+    "explanation": "요청은 데이터센터 통합 시 라우팅·L2/L3VPN·관리평면 관련 소프트웨어 업그레이드 또는 구성 변경을 안전하게 수행하기 위한 단계별 릴리스 절차, 검증 체크리스트, 롤백 트리거 및 즉시 복구 절차를 요구하고 있습니다. 따라서 표준적인 안전 배포 모델(랩 테스트 → Canary → 점진적 배포)을 기준으로 각 단계에서 수행할 검사 항목과 관찰 윈도우를 명확히 정의했습니다. show_bgp_summary·show_route_table·show_ip_interface_brief·check_connectivity는 각각 BGP 세션 상태, 라우팅 테이블 무결성, 인터페이스 상태 및 실제 서비스 연결성을 검증하는 핵심 명령이므로 이들을 기준 스냅샷으로 저장하고 변경 전후 비교하도록 했습니다. 롤백 트리거는 운영 리스크를 최소화하도록 수치화했으며(예: Canary 단계에서의 BGP peer 1개 다운은 즉시 롤백), 점진 배포에서는 허용치를 완화하되 전체 영향이 커지면 롤백하도록 임계값을 설정했습니다. VPN 단방향(비대칭성)은 서비스 장애로 직결되므로 Canary에서는 즉시 롤백, Progressive에서는 영향 범위와 지속시간을 기준으로 대응하도록 했습니다. 즉시 복구 절차는 일반적으로 '변경 중단 → 사전 백업 복원 → 필요한 경우 BGP/라우팅 클리어 및 트래픽 우회 → 문제 분석 및 에스컬레이션' 순으로 표준화하였고, 각 트리거 별로 우선 적용할 액션을 명시했습니다. 마지막으로 자동화된 플레이북, 충분한 로그 및 관찰 창, 사전·사후 스냅샷 보관과 명확한 커뮤니케이션 절차를 포함함으로써 변경 과정의 가시성과 복구 속도를 확보하도록 설계했습니다.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "analytical",
+    "level": 3,
+    "persona": "network_architect",
+    "scenario": "네트워크 확장 계획",
+    "source_files": [],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "intent": "show_bgp_summary",
+          "params": {
+            "host": "core1"
+          },
+          "purpose": "변경 전후 BGP 세션/경로 차이를 검증"
+        },
+        {
+          "intent": "show_route_table",
+          "params": {
+            "host": "core1"
+          },
+          "purpose": "라우트 테이블 상태로 경로 누락/대체 여부 확인"
+        },
+        {
+          "intent": "show_ip_interface_brief",
+          "params": {
+            "host": "core1"
+          },
+          "purpose": "인터페이스 상태로 물리/논리 문제 조기감지"
+        },
+        {
+          "intent": "check_connectivity",
+          "params": {
+            "src": "core1",
+            "dst": "dc-new-edge"
+          },
+          "purpose": "엔드투엔드 연결성 검증"
+        },
+        {
+          "intent": "show_l2vpn_status",
+          "params": {
+            "host": "edge1"
+          },
+          "purpose": "L2VPN 서비스 영향 감지"
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {}
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-009",
+    "question": "l2vpn_pairs, vrf_count, bgp_neighbor_count 및 show_route_table 출력을 근거로, 고객별(또는 서비스별) 마이그레이션 영향도를 High/Medium/Low로 분류하고 각 등급에 대한 권장 마이그레이션 순서·검증 명령·롤백 절차를 제시하라. 또한 L2→L3 전환이 필요한 고객에 대해 서비스 유지(무중단) 옵션들을 기술하라.",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": {
+      "customers": {
+        "sample9": {
+          "impact": "Medium",
+          "migration_order": 1,
+          "verification_commands": [
+            "show l2vpn xconnect detail | include sample9",
+            "show l2vpn vpls detail | include sample9",
+            "show mpls l2transport vc detail",
+            "show mac address-table dynamic | include <CE-facing-interface>",
+            "show interfaces <CE-facing-interface> brief",
+            "ping <CE-IP-on-svc>-from-local-router",
+            "trace <CE-IP> to <peer-CE-IP>",
+            "show logging | include l2vpn|vpls|pw"
+          ],
+          "rollback_steps": [
+            "Restore saved running-configuration (pre-migration) or re-apply previous L2 configuration for sample9",
+            "Re-enable the L2 pseudowire/VPLS instance and any bridge-domain bound to the CE interface",
+            "Clear learned MACs/ARP and re-age/refresh to force re-learning (clear mac address-table dynamic)",
+            "Validate CE-to-CE connectivity (ping/traceroute) and interface up status",
+            "Monitor logs and performance counters until service is stable"
+          ]
+        },
+        "sample7": {
+          "impact": "Medium",
+          "migration_order": 2,
+          "verification_commands": [
+            "show l2vpn xconnect detail | include sample7",
+            "show l2vpn vpls detail | include sample7",
+            "show mpls l2transport vc detail",
+            "show mac address-table dynamic | include <CE-facing-interface>",
+            "show interfaces <CE-facing-interface> brief",
+            "ping <CE-IP-on-svc>-from-local-router",
+            "trace <CE-IP> to <peer-CE-IP>",
+            "show logging | include l2vpn|vpls|pw"
+          ],
+          "rollback_steps": [
+            "Restore saved running-configuration (pre-migration) or re-apply previous L2 configuration for sample7",
+            "Re-enable the L2 pseudowire/VPLS instance and any bridge-domain bound to the CE interface",
+            "Clear learned MACs/ARP and re-age/refresh to force re-learning (clear mac address-table dynamic)",
+            "Validate CE-to-CE connectivity (ping/traceroute) and interface up status",
+            "Monitor logs and performance counters until service is stable"
+          ]
+        }
+      },
+      "overall_recommendation": {
+        "priority_sequence": [
+          "sample9",
+          "sample7"
+        ],
+        "general_prechecks": [
+          "Take full running-config backup and snapshot of relevant device state",
+          "Confirm no VRFs or BGP neighbors depend on these services (vrf_count=0, bgp_neighbor_count=0)",
+          "Coordinate change window with customer and schedule rollback window",
+          "Ensure out-of-band management and console access available",
+          "Pre-stage config snippets and automated rollback scripts"
+        ]
+      },
+      "l2_to_l3_seamless_options": [
+        "Deploy an L2-over-L3 encapsulation tunnel (VXLAN or GRE/VXLAN) between sites to preserve MAC/DCI while shifting transport to L3",
+        "Use EVPN (EVPN-VXLAN or EVPN-MPLS) as a migration plane to provide MAC learning + control-plane reachability while enabling L3 services",
+        "Perform a staged dual-homing cutover: enable L3 on CE and RAN in parallel while keeping L2 forwarding active via temporary bridging (split-horizon) and cut traffic over after validation",
+        "Use temporary NAT/Proxy-ARP or ARP-Proxy on migration routers to avoid client reconfiguration for IP continuity during the cutover",
+        "Implement gradual subnet migration with host route advertising (or static routes) and per-VLAN staged conversion to minimize blast radius"
+      ]
+    },
+    "explanation": "Given the evidence, the only cross-customer/service dependency is an L2VPN pairing between sample7 and sample9. There are no VRFs or BGP neighbors configured (vrf_count=0 and bgp_neighbor_count=0), so there are no control-plane routing dependencies that would elevate the impact to High. However, because sample7 and sample9 are L2-connected (L2VPN pair), any migration that changes the L2 forwarding plane (for example converting to L3 transport or changing pseudowire/VPLS behavior) risks interrupting MAC-layer connectivity and customer sessions, so each customer is rated Medium impact rather than Low. The recommended migration order lists sample9 first and sample7 second; with only two symmetric endpoints the order is arbitrary, but use a deterministic sequence so rollback and verification steps are consistent. Verification commands focus on L2VPN/VPLS and interface/MAC state plus basic IP connectivity tests; these commands verify that the pseudowire/VPLS instance is established, interfaces are up, MACs are being learned as expected, and that end-to-end traffic flows. Rollback procedures are standard: restore the pre-migration configuration (or re-enable the previous L2 constructs), clear learned MAC/ARP entries to force re-learning, and validate connectivity with pings/traces and log checks. For L2→L3 migrations where the objective is zero downtime, viable options include running L2-over-L3 tunnels (VXLAN/GRE), using EVPN as a control plane to maintain MAC reachability while moving transport to L3, staged dual-homing so both L2 and L3 paths are available during cutover, and using proxy-ARP or temporary NAT to preserve IP reachability during the change. These techniques allow a phased migration minimizing customer impact despite the lack of VRF/BGP dependencies. Finally, because VRFs and BGP neighbors are absent, most checks and rollback actions are limited to L2 constructs and interface state, which simplifies verification and reduces the operational complexity compared with service migrations that involve routing plane changes.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "analytical",
+    "level": 3,
+    "persona": "network_architect",
+    "scenario": "네트워크 확장 계획",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "l2vpn_pairs",
+          "metric_params": {
+            "host": "edge1"
+          },
+          "purpose": "서비스별 L2 의존성 파악"
+        },
+        {
+          "required_metric": "vrf_count",
+          "metric_params": {
+            "host": "core1"
+          },
+          "purpose": "L3VPN/VRF 의존성 파악"
+        },
+        {
+          "required_metric": "bgp_neighbor_count",
+          "metric_params": {
+            "host": "core1"
+          },
+          "purpose": "BGP 의존 서비스 규모 확인"
+        },
+        {
+          "intent": "show_route_table",
+          "params": {
+            "host": "core1"
+          },
+          "purpose": "실제 경로 분포로 마이그레이션 영향 추정"
+        },
+        {
+          "intent": "show_l2vpn_status",
+          "params": {
+            "host": "edge1"
+          },
+          "purpose": "L2VPN 현재 상태로 마이그레이션 위험요인 확인"
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_l2vpn_pairs": [
+          "sample7<->sample9",
+          "sample9<->sample7"
+        ],
+        "step_None_vrf_count": 0,
+        "step_None_bgp_neighbor_count": 0
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-010",
+    "question": "현재 interface_count, bgp_neighbor_count, system_version_text, system_user_count, show_processes_cpu 지표를 기반으로 향후 3–5년의 네트워크 확장 로드맵(자동화 도입 시점, 장비 교체/업그레이드 주기, 모니터링·알람 임계값 설정, 용량 예측 모델)을 제시하라. 각 단계가 비즈니스 연속성(서비스 SLA, 유지보수 윈도우 최소화)에 미치는 영향과 예산/운영 리스크를 함께 평가하라.",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": {
+      "timeline": {
+        "Year_0-12_months": {
+          "automation": "PoC months 1-4; pilot months 5-9; limited production automation by month 12",
+          "equipment": "Inventory and EOL assessment; immediate replacement only for confirmed EOL/high-risk devices",
+          "monitoring": "Baseline telemetry collection and alerting enabled; initial thresholds applied (see monitoring_thresholds)",
+          "capacity_model": "Deploy data collection (SNMP/NetFlow/sFlow) and build first time-series forecast (Prophet/ARIMA); retrain quarterly"
+        },
+        "Years_2-3": {
+          "automation": "Expand automation to provisioning, configuration templating, and repeatable maintenance tasks; target 50–70% of routine tasks automated",
+          "equipment": "Staged hardware upgrades for devices forecasted to reach 70% utilization or that are >3 years old; plan core refresh planning",
+          "monitoring": "Introduce predictive alerts tied to forecasted utilization and anomaly detection; tune thresholds based on 12 months of baseline",
+          "capacity_model": "Integrate forecasts into procurement cadence and capacity dashboards; run monthly forecasts and issue procurement flags"
+        },
+        "Years_4-5": {
+          "automation": "Implement closed-loop/continuous remediation for common incidents and full lifecycle automation for provisioning and patching",
+          "equipment": "Complete refresh of devices older than 5 years; migrate suitable functions to cloud/hybrid models when cost-effective",
+          "monitoring": "Mature anomaly-detection ML, reduce false positives, and automate escalation playbooks",
+          "capacity_model": "Automated capacity recommendations with annual architecture review and scenario planning"
+        }
+      },
+      "monitoring_thresholds": {
+        "interface_utilization_warning_percent": 60,
+        "interface_utilization_critical_percent": 85,
+        "cpu_usage_warning_percent": 70,
+        "cpu_usage_critical_percent": 90,
+        "process_cpu_spike_warning_percent": 75,
+        "process_cpu_spike_critical_percent": 95,
+        "bgp_neighbor_down_critical": true,
+        "system_user_count_anomaly_threshold": 10,
+        "forecast_procurement_trigger_utilization_percent": 70,
+        "safety_buffer_percent": 20
+      },
+      "capacity_prediction": {
+        "model_type": "time_series_forecasting (Prophet or ARIMA) augmented with ML anomaly detection",
+        "inputs": [
+          "SNMP ifInOctets/ifOutOctets per interface",
+          "NetFlow/sFlow traffic aggregates",
+          "BGP route counts and neighbor session status",
+          "interface_count and trends",
+          "CPU and process CPU trends",
+          "change event/maintenance logs"
+        ],
+        "horizon_months": 60,
+        "retrain_interval": "quarterly",
+        "procurement_trigger": "forecasted_utilization >= 70% within next 6-12 months",
+        "safety_buffer_percent": 20
+      },
+      "equipment_refresh_policy_years": {
+        "core_switches_routers": 5,
+        "distribution_switches": 4,
+        "access_switches": 3,
+        "firewalls_loadbalancers": "3-5",
+        "edge_devices": 3
+      },
+      "business_continuity_impacts": [
+        "Staged and rolling upgrades reduce SLA impact when appropriate redundancy is in place",
+        "Early automation phases increase change-control risk and require tighter testing to avoid service disruption",
+        "Predictive capacity planning reduces emergency procurements and unplanned outages",
+        "Maintenance windows can be minimized by canary and non-disruptive upgrade patterns"
+      ],
+      "budget_operational_risks": [
+        "Upfront CapEx for hardware refreshes and automation tooling; consider multi-year budgeting or leasing",
+        "Training and staffing costs to operate automation and interpret forecasts",
+        "Integration risk and potential vendor lock-in with chosen automation/orchestration solutions",
+        "Alert fatigue and false positives from immature anomaly detection, leading to missed critical events"
+      ]
+    },
+    "explanation": "The provided evidence shows no usable telemetry values (interface_count = 0, bgp_neighbor_count = 0, system_version_text empty, system_user_count = 0), which indicates either a lack of collected metrics or a reporting gap; therefore the first-year priority is to collect baseline data before committing to large capital or irreversible automation changes. Industry-typical monitoring thresholds are used (warning at 60% interface utilization and critical at 85%, CPU warnings at 70% and critical at 90%) because these values balance early warning with avoidance of frequent false alarms; process-level CPU thresholds are set higher to catch runaway processes. BGP neighbor loss is treated as a critical alert because session drops directly affect routing and reachability. The capacity-prediction approach recommends time-series forecasting (Prophet or ARIMA) augmented with ML-based anomaly detection because these methods handle seasonality and trend forecasting while highlighting outliers; inputs should include SNMP counters, NetFlow/sFlow, BGP route counts, interface and CPU trends, and change logs to correlate capacity changes with operational events. A 60-month horizon with quarterly retraining gives a 3–5 year roadmap while keeping models current; a procurement trigger at forecasted utilization >= 70% within the next 6–12 months provides sufficient lead time to source equipment and avoid emergency purchases. Equipment refresh policies follow common lifecycle guidance: 5 years for core routers/switches, 3–4 years for distribution/access and security appliances, with flexibility (3–5 years) for firewalls/load balancers depending on performance and feature needs. Automation should proceed incrementally: PoC and pilots in year one to reduce operational risk, scale to routine provisioning and maintenance in years two–three, and implement closed-loop operations by years four–five. Each phase includes evaluation of business continuity impacts: staged upgrades and redundant architectures limit SLA exposure, while early automation increases change-control risk and requires strong testing, rollback plans, and runbooks. Budget and operational risks include upfront CapEx and software/tooling costs, staff training requirements, potential vendor lock-in, and alert fatigue; mitigation measures are multi-year budgeting, phased vendor evaluation, training programs, and threshold/model tuning. Finally, because current telemetry appears absent or zeroed, the roadmap emphasizes immediate telemetry deployment and baseline establishment as the foundational activity before major upgrades or automation rollouts.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "analytical",
+    "level": 3,
+    "persona": "network_architect",
+    "scenario": "네트워크 확장 계획",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "interface_count",
+          "metric_params": {
+            "host": "all"
+          },
+          "purpose": "인터페이스 성장 추세로 포트·서브인터페이스 요구 예측"
+        },
+        {
+          "required_metric": "bgp_neighbor_count",
+          "metric_params": {
+            "host": "core1"
+          },
+          "purpose": "BGP 규모 증가로 인한 라우터 요구 예측"
+        },
+        {
+          "required_metric": "system_version_text",
+          "metric_params": {
+            "host": "all"
+          },
+          "purpose": "버전 호환성·기능 부족 여부 판단"
+        },
+        {
+          "required_metric": "system_user_count",
+          "metric_params": {
+            "host": "nms"
+          },
+          "purpose": "운영 조직 규모와 자동화 필요성 연계 분석"
+        },
+        {
+          "intent": "show_processes_cpu",
+          "params": {
+            "host": "core1"
+          },
+          "purpose": "현재 CPU 부담으로 향후 부하 수용성 예측"
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_interface_count": 0,
+        "step_None_bgp_neighbor_count": 0,
+        "step_None_system_version_text": "",
+        "step_None_system_user_count": 0
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-001",
+    "question": "Which devices belong to AS 65000 and have fewer than 3 iBGP peers?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": [],
+    "explanation": "제공된 증거에 따르면 bgp_local_as_numeric 값이 0으로 AS 65000을 사용하고 있는 장치가 없고, neighbor_list_ibgp 항목이 '없음'으로 iBGP 이웃이 존재하지 않습니다. 따라서 AS 65000에 속하며 iBGP 이웃 수가 3 미만인 장치는 없습니다.",
     "answer_type": "short",
     "category": "advanced",
     "complexity": "analytical",
@@ -999,32 +2289,164 @@
       "reasoning_plan": [
         {
           "required_metric": "bgp_local_as_numeric",
-          "metric_params": {}
+          "metric_params": {
+            "host": "rtr1"
+          }
+        },
+        {
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "rtr2"
+          }
+        },
+        {
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "rtr3"
+          }
+        },
+        {
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "rtr4"
+          }
+        },
+        {
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "rtr5"
+          }
+        },
+        {
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "rtr6"
+          }
         },
         {
           "required_metric": "neighbor_list_ibgp",
-          "metric_params": {}
+          "metric_params": {
+            "host": "rtr1"
+          }
         },
         {
-          "required_metric": "ibgp_under_peered_count",
-          "metric_params": {}
+          "required_metric": "neighbor_list_ibgp",
+          "metric_params": {
+            "host": "rtr2"
+          }
+        },
+        {
+          "required_metric": "neighbor_list_ibgp",
+          "metric_params": {
+            "host": "rtr3"
+          }
+        },
+        {
+          "required_metric": "neighbor_list_ibgp",
+          "metric_params": {
+            "host": "rtr4"
+          }
+        },
+        {
+          "required_metric": "neighbor_list_ibgp",
+          "metric_params": {
+            "host": "rtr5"
+          }
+        },
+        {
+          "required_metric": "neighbor_list_ibgp",
+          "metric_params": {
+            "host": "rtr6"
+          }
+        },
+        {
+          "description": "Filter: for hosts whose bgp_local_as_numeric == 65000, count entries in neighbor_list_ibgp and select hosts with count < 3."
         }
       ],
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed",
       "evidence": {
-        "step_None_bgp_local_as_numeric": 65001,
-        "step_None_neighbor_list_ibgp": [],
-        "step_None_ibgp_under_peered_count": 0
+        "step_None_bgp_local_as_numeric": 0,
+        "step_None_neighbor_list_ibgp": []
       }
     }
   },
   {
     "id": "ENHANCED_ENHANCED-ANALYTICAL-002",
-    "question": "VRF 'exam-l3vpn'에 연결된 eBGP 피어의 IP 주소는 무엇인가?",
+    "question": "Which devices report any ibgp_missing_pairs (non-zero)?",
     "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "ground_truth": "192.168.1.10",
-    "explanation": "주어진 증거에 따르면, VRF 'exam-l3vpn'에 연결된 eBGP 피어의 IP 주소는 192.168.1.10입니다.",
+    "ground_truth": [],
+    "explanation": "The evidence states that ibgp_missing_pairs is '없음' (None), which indicates there are no devices reporting any non-zero ibgp_missing_pairs. Therefore the list of devices with non-zero ibgp_missing_pairs is empty.",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "analytical",
+    "level": 3,
+    "persona": "troubleshooter",
+    "scenario": "규정 위반 장비 식별",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "ibgp_missing_pairs",
+          "metric_params": {
+            "host": "rtr1"
+          }
+        },
+        {
+          "required_metric": "ibgp_missing_pairs",
+          "metric_params": {
+            "host": "rtr2"
+          }
+        },
+        {
+          "required_metric": "ibgp_missing_pairs",
+          "metric_params": {
+            "host": "rtr3"
+          }
+        },
+        {
+          "required_metric": "ibgp_missing_pairs",
+          "metric_params": {
+            "host": "rtr4"
+          }
+        },
+        {
+          "required_metric": "ibgp_missing_pairs",
+          "metric_params": {
+            "host": "rtr5"
+          }
+        },
+        {
+          "required_metric": "ibgp_missing_pairs",
+          "metric_params": {
+            "host": "rtr6"
+          }
+        },
+        {
+          "description": "Collect hosts where ibgp_missing_pairs > 0 and return the list of those hostnames."
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_ibgp_missing_pairs": []
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-003",
+    "question": "What are the IP addresses of eBGP neighbors that are bound to any VRF whose name contains 'l3vpn'?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": [],
+    "explanation": "The provided evidence indicates that vrf_names_set is None (no VRF names were found). Because there are no VRFs whose name contains 'l3vpn', there cannot be any eBGP neighbors bound to such VRFs, so the list of IP addresses is empty.",
     "answer_type": "short",
     "category": "advanced",
     "complexity": "analytical",
@@ -1044,82 +2466,93 @@
       "reasoning_plan": [
         {
           "required_metric": "vrf_names_set",
-          "metric_params": {}
+          "metric_params": {
+            "host": "rtr1"
+          }
         },
         {
-          "required_metric": "neighbor_list_ebgp",
-          "metric_params": {}
+          "required_metric": "vrf_names_set",
+          "metric_params": {
+            "host": "rtr2"
+          }
+        },
+        {
+          "required_metric": "vrf_names_set",
+          "metric_params": {
+            "host": "rtr3"
+          }
+        },
+        {
+          "required_metric": "vrf_names_set",
+          "metric_params": {
+            "host": "rtr4"
+          }
+        },
+        {
+          "required_metric": "vrf_names_set",
+          "metric_params": {
+            "host": "rtr5"
+          }
+        },
+        {
+          "required_metric": "vrf_names_set",
+          "metric_params": {
+            "host": "rtr6"
+          }
         },
         {
           "intent": "show_bgp_neighbors",
           "params": {
-            "vrf": "exam-l3vpn"
+            "host": "rtr1"
           }
+        },
+        {
+          "intent": "show_bgp_neighbors",
+          "params": {
+            "host": "rtr2"
+          }
+        },
+        {
+          "intent": "show_bgp_neighbors",
+          "params": {
+            "host": "rtr3"
+          }
+        },
+        {
+          "intent": "show_bgp_neighbors",
+          "params": {
+            "host": "rtr4"
+          }
+        },
+        {
+          "intent": "show_bgp_neighbors",
+          "params": {
+            "host": "rtr5"
+          }
+        },
+        {
+          "intent": "show_bgp_neighbors",
+          "params": {
+            "host": "rtr6"
+          }
+        },
+        {
+          "description": "From each device: find VRF names containing 'l3vpn' (from vrf_names_set); from show_bgp_neighbors output, select neighbors with type eBGP (or whose remote AS != local AS) and whose neighbor VRF matches the l3vpn VRF(s). Collect and deduplicate neighbor IP addresses."
         }
       ],
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed",
       "evidence": {
-        "step_None_vrf_names_set": [],
-        "step_None_neighbor_list_ebgp": [
-          "192.168.1.10"
-        ]
-      }
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-003",
-    "question": "L2VPN 이슈가 있는 장비의 이름은 무엇인가?",
-    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
-    "ground_truth": [
-      "장비1",
-      "장비2"
-    ],
-    "explanation": "L2VPN 이슈가 있는 장비는 l2vpn_mismatch_count가 2로 나타나므로, 이와 관련된 두 개의 장비가 존재합니다.",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "analytical",
-    "level": 3,
-    "persona": "troubleshooter",
-    "scenario": "규정 위반 장비 식별",
-    "source_files": [
-      "ce1.xml",
-      "ce2.xml",
-      "sample10.xml",
-      "sample7.xml",
-      "sample8.xml",
-      "sample9.xml"
-    ],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "l2vpn_unidir_count",
-          "metric_params": {}
-        },
-        {
-          "required_metric": "l2vpn_mismatch_count",
-          "metric_params": {}
-        },
-        {
-          "intent": "show_l2vpn_status",
-          "params": {}
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_None_l2vpn_unidir_count": 0,
-        "step_None_l2vpn_mismatch_count": 2
+        "step_None_vrf_names_set": []
       }
     }
   },
   {
     "id": "ENHANCED_ENHANCED-ANALYTICAL-004",
-    "question": "AAA가 비활성화된 장비들은 무엇인가?",
+    "question": "Which devices are involved in any l2vpn_unidirectional_pairs?",
     "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
     "ground_truth": [],
-    "explanation": "AAA가 비활성화된 장비에 대한 정보가 제공되지 않았으므로, 해당 장비 목록은 비어 있습니다.",
+    "explanation": "The evidence states that there are no l2vpn_unidirectional_pairs present, so there are no devices involved in any such pairs.",
     "answer_type": "short",
     "category": "advanced",
     "complexity": "analytical",
@@ -1138,228 +2571,10 @@
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
         {
-          "required_metric": "aaa_missing_devices",
-          "metric_params": {}
+          "required_metric": "l2vpn_unidirectional_pairs"
         },
         {
-          "intent": "show_users",
-          "params": {}
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_None_aaa_missing_devices": null
-      }
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-005",
-    "question": "OSPF 프로세스 ID가 설정되지 않은 장비는 몇 개인가?",
-    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
-    "ground_truth": 1,
-    "explanation": "OSPF 프로세스 ID가 설정되지 않은 장비는 1개입니다.",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "analytical",
-    "level": 3,
-    "persona": "troubleshooter",
-    "scenario": "규정 위반 장비 식별",
-    "source_files": [
-      "ce1.xml",
-      "ce2.xml",
-      "sample10.xml",
-      "sample7.xml",
-      "sample8.xml",
-      "sample9.xml"
-    ],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "ospf_process_ids_set",
-          "metric_params": {}
-        },
-        {
-          "intent": "show_ip_ospf_neighbor",
-          "params": {}
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_None_ospf_process_ids_set": []
-      }
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-006",
-    "question": "SSH가 활성화된 장비의 이름은 무엇인가?",
-    "context": "보안 설정 현황:\nCE1: SSH ON, AAA OFF\nCE2: SSH ON, AAA OFF\nsample10: SSH ON, AAA ON\nsample7: SSH ON, AAA ON\nsample8: SSH ON, AAA ON",
-    "ground_truth": [
-      "CE1",
-      "CE2",
-      "sample10"
-    ],
-    "explanation": "SSH가 활성화된 장비의 이름은 CE1, CE2, sample10으로, 총 6개의 장비가 해당 조건을 만족합니다.",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "analytical",
-    "level": 3,
-    "persona": "troubleshooter",
-    "scenario": "규정 위반 장비 식별",
-    "source_files": [
-      "ce1.xml",
-      "ce2.xml",
-      "sample10.xml",
-      "sample7.xml",
-      "sample8.xml",
-      "sample9.xml"
-    ],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "ssh_enabled_devices",
-          "metric_params": {}
-        },
-        {
-          "intent": "ssh_direct_access",
-          "params": {}
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_None_ssh_enabled_devices": [
-          "CE1",
-          "CE2",
-          "sample10",
-          "sample7",
-          "sample8",
-          "sample9"
-        ]
-      }
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-007",
-    "question": "BGP 피어링에서 AS 65003에 속한 eBGP 피어의 개수는 몇 개인가?",
-    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "ground_truth": 1,
-    "explanation": "AS 65003에 속한 eBGP 피어는 1개로, 이는 bgp_neighbor_count에서 확인할 수 있습니다.",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "analytical",
-    "level": 3,
-    "persona": "troubleshooter",
-    "scenario": "규정 위반 장비 식별",
-    "source_files": [
-      "ce1.xml",
-      "ce2.xml",
-      "sample10.xml",
-      "sample7.xml",
-      "sample8.xml",
-      "sample9.xml"
-    ],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "ebgp_remote_as_map",
-          "metric_params": {}
-        },
-        {
-          "required_metric": "bgp_neighbor_count",
-          "metric_params": {}
-        },
-        {
-          "intent": "show_bgp_summary",
-          "params": {}
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_None_ebgp_remote_as_map": {
-          "192.168.4.11": "65004",
-          "192.168.1.11": "65001",
-          "192.168.2.11": "65002",
-          "192.168.3.11": "65003"
-        },
-        "step_None_bgp_neighbor_count": 1
-      }
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-008",
-    "question": "인터페이스에 바인딩된 VRF의 수가 가장 많은 장비는 무엇인가?",
-    "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
-    "ground_truth": "None",
-    "explanation": "주어진 증거에 따르면, 인터페이스에 바인딩된 VRF의 수가 0인 장비는 'None'으로 나타나며, 이는 해당 장비가 VRF를 사용하지 않음을 의미합니다.",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "analytical",
-    "level": 3,
-    "persona": "troubleshooter",
-    "scenario": "규정 위반 장비 식별",
-    "source_files": [
-      "ce1.xml",
-      "ce2.xml",
-      "sample10.xml",
-      "sample7.xml",
-      "sample8.xml",
-      "sample9.xml"
-    ],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "vrf_interface_bind_count",
-          "metric_params": {}
-        },
-        {
-          "intent": "show_vrf",
-          "params": {}
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_None_vrf_interface_bind_count": 0
-      }
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-009",
-    "question": "L2VPN 페어링이 일방향인 장비의 이름은 무엇인가?",
-    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
-    "ground_truth": [],
-    "explanation": "주어진 증거에 따르면, L2VPN 페어링이 일방향인 장비에 대한 정보가 없으므로, 해당 장비의 이름을 제공할 수 없습니다.",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "analytical",
-    "level": 3,
-    "persona": "troubleshooter",
-    "scenario": "규정 위반 장비 식별",
-    "source_files": [
-      "ce1.xml",
-      "ce2.xml",
-      "sample10.xml",
-      "sample7.xml",
-      "sample8.xml",
-      "sample9.xml"
-    ],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "l2vpn_unidirectional_pairs",
-          "metric_params": {}
-        },
-        {
-          "intent": "show_l2vpn_vc",
-          "params": {}
+          "description": "Extract device names from each unidirectional pair (both endpoints) and return the deduplicated list of device names."
         }
       ],
       "reasoning_requirement": "",
@@ -1370,11 +2585,11 @@
     }
   },
   {
-    "id": "ENHANCED_ENHANCED-ANALYTICAL-010",
-    "question": "SSH ACL이 적용되지 않은 장비는 무엇인가?",
-    "context": "보안 설정 현황:\nCE1: SSH ON, AAA OFF\nCE2: SSH ON, AAA OFF\nsample10: SSH ON, AAA ON\nsample7: SSH ON, AAA ON\nsample8: SSH ON, AAA ON",
-    "ground_truth": "None",
-    "explanation": "SSH ACL이 적용되지 않은 장비는 'None' 단계에서 확인되었으며, 이는 해당 장비에 SSH ACL이 설정되어 있지 않음을 나타냅니다.",
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-005",
+    "question": "How many devices belong to AS 65001 and report any l2vpn_pwid_mismatch_pairs (non-zero)?",
+    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+    "ground_truth": 0,
+    "explanation": "The evidence indicates bgp_local_as_numeric is 0, meaning no devices belong to AS 65001. Although there are l2vpn_pwid_mismatch_pairs reported between sample7 and sample9, none of those devices are in AS 65001, so zero devices meet both conditions.",
     "answer_type": "short",
     "category": "advanced",
     "complexity": "analytical",
@@ -1393,18 +2608,487 @@
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
         {
-          "required_metric": "ssh_acl_applied_check",
-          "metric_params": {}
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "rtr1"
+          }
         },
         {
-          "intent": "set_vty_acl",
-          "params": {}
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "rtr2"
+          }
+        },
+        {
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "rtr3"
+          }
+        },
+        {
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "rtr4"
+          }
+        },
+        {
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "rtr5"
+          }
+        },
+        {
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "rtr6"
+          }
+        },
+        {
+          "required_metric": "l2vpn_pwid_mismatch_pairs",
+          "metric_params": {
+            "host": "rtr1"
+          }
+        },
+        {
+          "required_metric": "l2vpn_pwid_mismatch_pairs",
+          "metric_params": {
+            "host": "rtr2"
+          }
+        },
+        {
+          "required_metric": "l2vpn_pwid_mismatch_pairs",
+          "metric_params": {
+            "host": "rtr3"
+          }
+        },
+        {
+          "required_metric": "l2vpn_pwid_mismatch_pairs",
+          "metric_params": {
+            "host": "rtr4"
+          }
+        },
+        {
+          "required_metric": "l2vpn_pwid_mismatch_pairs",
+          "metric_params": {
+            "host": "rtr5"
+          }
+        },
+        {
+          "required_metric": "l2vpn_pwid_mismatch_pairs",
+          "metric_params": {
+            "host": "rtr6"
+          }
+        },
+        {
+          "description": "Filter hosts where bgp_local_as_numeric == 65001 AND l2vpn_pwid_mismatch_pairs is non-empty. Return the count of such devices."
         }
       ],
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed",
       "evidence": {
-        "step_None_ssh_acl_applied_check": false
+        "step_None_bgp_local_as_numeric": 0,
+        "step_None_l2vpn_pwid_mismatch_pairs": [
+          "sample7<->sample9",
+          "sample9<->sample7"
+        ]
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-006",
+    "question": "Which devices have ssh_present_bool == false and ibgp_missing_pairs > 0?",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": [],
+    "explanation": "No devices meet the criteria. The evidence shows ssh_present_bool is marked as problematic (not a valid false value) and ibgp_missing_pairs is absent (no positive counts), so there are no devices with ssh_present_bool == false and ibgp_missing_pairs > 0.",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "analytical",
+    "level": 3,
+    "persona": "troubleshooter",
+    "scenario": "규정 위반 장비 식별",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "ssh_present_bool",
+          "metric_params": {
+            "host": "rtr1"
+          }
+        },
+        {
+          "required_metric": "ssh_present_bool",
+          "metric_params": {
+            "host": "rtr2"
+          }
+        },
+        {
+          "required_metric": "ssh_present_bool",
+          "metric_params": {
+            "host": "rtr3"
+          }
+        },
+        {
+          "required_metric": "ssh_present_bool",
+          "metric_params": {
+            "host": "rtr4"
+          }
+        },
+        {
+          "required_metric": "ssh_present_bool",
+          "metric_params": {
+            "host": "rtr5"
+          }
+        },
+        {
+          "required_metric": "ssh_present_bool",
+          "metric_params": {
+            "host": "rtr6"
+          }
+        },
+        {
+          "required_metric": "ibgp_missing_pairs",
+          "metric_params": {
+            "host": "rtr1"
+          }
+        },
+        {
+          "required_metric": "ibgp_missing_pairs",
+          "metric_params": {
+            "host": "rtr2"
+          }
+        },
+        {
+          "required_metric": "ibgp_missing_pairs",
+          "metric_params": {
+            "host": "rtr3"
+          }
+        },
+        {
+          "required_metric": "ibgp_missing_pairs",
+          "metric_params": {
+            "host": "rtr4"
+          }
+        },
+        {
+          "required_metric": "ibgp_missing_pairs",
+          "metric_params": {
+            "host": "rtr5"
+          }
+        },
+        {
+          "required_metric": "ibgp_missing_pairs",
+          "metric_params": {
+            "host": "rtr6"
+          }
+        },
+        {
+          "description": "Select hosts where ssh_present_bool == false AND ibgp_missing_pairs > 0; return their hostnames as a list."
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_ssh_present_bool": false,
+        "step_None_ibgp_missing_pairs": []
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-007",
+    "question": "How many unique interface IP addresses are configured on devices that belong to AS 65003?",
+    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+    "ground_truth": 0,
+    "explanation": "The interface_ip_map is empty ({}), which indicates there are no interface IP addresses recorded for devices in AS 65003; therefore the count of unique interface IP addresses is zero.",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "analytical",
+    "level": 3,
+    "persona": "troubleshooter",
+    "scenario": "규정 위반 장비 식별",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "rtr1"
+          }
+        },
+        {
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "rtr2"
+          }
+        },
+        {
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "rtr3"
+          }
+        },
+        {
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "rtr4"
+          }
+        },
+        {
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "rtr5"
+          }
+        },
+        {
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "rtr6"
+          }
+        },
+        {
+          "required_metric": "interface_ip_map",
+          "metric_params": {
+            "host": "rtr1"
+          }
+        },
+        {
+          "required_metric": "interface_ip_map",
+          "metric_params": {
+            "host": "rtr2"
+          }
+        },
+        {
+          "required_metric": "interface_ip_map",
+          "metric_params": {
+            "host": "rtr3"
+          }
+        },
+        {
+          "required_metric": "interface_ip_map",
+          "metric_params": {
+            "host": "rtr4"
+          }
+        },
+        {
+          "required_metric": "interface_ip_map",
+          "metric_params": {
+            "host": "rtr5"
+          }
+        },
+        {
+          "required_metric": "interface_ip_map",
+          "metric_params": {
+            "host": "rtr6"
+          }
+        },
+        {
+          "description": "Filter hosts where bgp_local_as_numeric == 65003, collect all interface IPs from interface_ip_map for those hosts, deduplicate and return the count of unique IP addresses."
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_bgp_local_as_numeric": 0,
+        "step_None_interface_ip_map": {}
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-008",
+    "question": "Which devices are involved in l2vpn_unidirectional_pairs and also report l2vpn_pwid_mismatch_pairs (non-empty)?",
+    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+    "ground_truth": [],
+    "explanation": "The l2vpn_unidirectional_pairs set is empty (없음), so there are no devices that can appear in both lists. Although l2vpn_pwid_mismatch_pairs contains sample7 and sample9 (sample7<->sample9, sample9<->sample7), the intersection with an empty set is empty, therefore no devices are involved in both.",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "analytical",
+    "level": 3,
+    "persona": "troubleshooter",
+    "scenario": "규정 위반 장비 식별",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "l2vpn_unidirectional_pairs"
+        },
+        {
+          "required_metric": "l2vpn_pwid_mismatch_pairs",
+          "metric_params": {
+            "host": "rtr1"
+          }
+        },
+        {
+          "required_metric": "l2vpn_pwid_mismatch_pairs",
+          "metric_params": {
+            "host": "rtr2"
+          }
+        },
+        {
+          "required_metric": "l2vpn_pwid_mismatch_pairs",
+          "metric_params": {
+            "host": "rtr3"
+          }
+        },
+        {
+          "required_metric": "l2vpn_pwid_mismatch_pairs",
+          "metric_params": {
+            "host": "rtr4"
+          }
+        },
+        {
+          "required_metric": "l2vpn_pwid_mismatch_pairs",
+          "metric_params": {
+            "host": "rtr5"
+          }
+        },
+        {
+          "required_metric": "l2vpn_pwid_mismatch_pairs",
+          "metric_params": {
+            "host": "rtr6"
+          }
+        },
+        {
+          "description": "From l2vpn_unidirectional_pairs extract the set of involved devices; from l2vpn_pwid_mismatch_pairs per device select those with non-empty mismatches. Return intersection of the two device sets."
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_l2vpn_unidirectional_pairs": [],
+        "step_None_l2vpn_pwid_mismatch_pairs": [
+          "sample7<->sample9",
+          "sample9<->sample7"
+        ]
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-009",
+    "question": "Which devices have system_user_count > 3 and ssh_version_text indicating a version earlier than 2.0?",
+    "context": "보안 설정 현황:\nCE1: SSH ON, AAA OFF\nCE2: SSH ON, AAA OFF\nsample10: SSH ON, AAA ON\nsample7: SSH ON, AAA ON\nsample8: SSH ON, AAA ON",
+    "ground_truth": [],
+    "explanation": "제공된 증거에서 system_user_count는 0으로서 조건인 > 3을 만족하지 않으며, ssh_version_text는 비어 있어 '2.0 이전'임을 확인할 수 없습니다. 따라서 두 조건을 동시에 만족하는 장치는 존재하지 않습니다.",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "analytical",
+    "level": 3,
+    "persona": "troubleshooter",
+    "scenario": "규정 위반 장비 식별",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "system_user_count",
+          "metric_params": {
+            "host": "rtr1"
+          }
+        },
+        {
+          "required_metric": "system_user_count",
+          "metric_params": {
+            "host": "rtr2"
+          }
+        },
+        {
+          "required_metric": "system_user_count",
+          "metric_params": {
+            "host": "rtr3"
+          }
+        },
+        {
+          "required_metric": "system_user_count",
+          "metric_params": {
+            "host": "rtr4"
+          }
+        },
+        {
+          "required_metric": "system_user_count",
+          "metric_params": {
+            "host": "rtr5"
+          }
+        },
+        {
+          "required_metric": "system_user_count",
+          "metric_params": {
+            "host": "rtr6"
+          }
+        },
+        {
+          "required_metric": "ssh_version_text",
+          "metric_params": {
+            "host": "rtr1"
+          }
+        },
+        {
+          "required_metric": "ssh_version_text",
+          "metric_params": {
+            "host": "rtr2"
+          }
+        },
+        {
+          "required_metric": "ssh_version_text",
+          "metric_params": {
+            "host": "rtr3"
+          }
+        },
+        {
+          "required_metric": "ssh_version_text",
+          "metric_params": {
+            "host": "rtr4"
+          }
+        },
+        {
+          "required_metric": "ssh_version_text",
+          "metric_params": {
+            "host": "rtr5"
+          }
+        },
+        {
+          "required_metric": "ssh_version_text",
+          "metric_params": {
+            "host": "rtr6"
+          }
+        },
+        {
+          "description": "Select hosts where system_user_count > 3 AND parsed numeric ssh_version_text < 2.0. Return the list of matching hostnames."
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_system_user_count": 0,
+        "step_None_ssh_version_text": ""
       }
     }
   }

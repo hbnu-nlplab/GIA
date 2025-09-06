@@ -32,7 +32,7 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
     dev = find(root, ".//ncs:devices/ncs:device")
 
     facts: Dict[str, Any] = {
-        "vendor": "ios-xr",
+        "vendor": None,  # ← 기본값 해제, 자동 판별 로직으로 결정
         "system": {},
         "security": {},
         "interfaces": [],
@@ -41,6 +41,18 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
         "services": {},
         "file": None,
     }
+
+    # -------- Vendor Auto-detection --------
+    ned_id = text(find(dev, "ncs:device-type/ncs:cli/ncs:ned-id")) \
+          or text(find(dev, "ncs:device-type/ncs:netconf/ncs:ned-id")) or ""
+
+    if ("ios-xr" in (ned_id or "").lower()) or (find(dev, "ncs:config/xr:router") is not None):
+        facts["vendor"] = "ios-xr"
+    elif ("ios-cli" in (ned_id or "").lower()) or (find(dev, "ncs:config/ios:hostname") is not None):
+        facts["vendor"] = "ios"
+    else:
+        # 최후의 수단: 네임스페이스 존재로 추정
+        facts["vendor"] = "ios" if find(dev, "ncs:config/ios:hostname") is not None else "ios-xr"
 
     # -------- System --------
     hostname = text(find(dev, "ncs:name"))
@@ -144,16 +156,13 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
             facts.setdefault("services", {}).setdefault("ip", {})
             facts["services"]["ip"]["forward_protocol_nd"] = True
         # ip cef
-        cef_present = root.find(".//ios:ip/ios:cef-conf/ios:cef", ns) is not None \
-           or root.find(".//ios:ip/ios:cef", ns) is not None
+        cef_present = (
+            root.find(".//ios:ip/ios:cef-conf/ios:cef", NS) is not None
+            or root.find(".//ios:ip/ios:cef", NS) is not None
+        )
 
-        facts.setdefault("services", {}).setdefault("ip", {})["cef_enabled"] = cef_present
-        # 원형 표현도 유지하고 싶으면:
-        facts.setdefault("ip", {}).setdefault("cef-conf", {})["cef"] = cef_present
-
-        if cef_present:
-            facts.setdefault("services", {}).setdefault("ip", {})
-            facts["services"]["ip"]["cef_enabled"] = True
+        facts.setdefault("services", {}).setdefault("ip", {})["cef_enabled"] = bool(cef_present)
+        facts.setdefault("ip", {}).setdefault("cef-conf", {})["cef"] = bool(cef_present)
 
         # Logging
         log_buf = text(find(dev, "ncs:config/ios:logging/ios:buffered/ios:severity-level"))
@@ -239,9 +248,9 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
                 vlan = text(find(gig, "xr:encapsulation/xr:dot1q/xr:vlan-id"))
                 ipv4 = f"{ip}/{mask}" if (ip and mask) else (ip or None)
                 vrf  = (
-                    text(find(ch, "xr:vrf//xr:name")) or
-                    text(find(ch, "xr:vrf-name"))     or
-                    text(find(ch, "xr:vrf"))          or
+                    text(find(gig, "xr:vrf//xr:name")) or
+                    text(find(gig, "xr:vrf-name"))     or
+                    text(find(gig, "xr:vrf"))          or
                     ""
                 )
                 facts["interfaces"].append({"name": name, "ipv4": ipv4, "vlan": vlan, "vrf": vrf or None})

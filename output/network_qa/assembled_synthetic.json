@@ -1,182 +1,43 @@
 [
   {
     "id": "ENHANCED_ENHANCED-SYNTHETIC-001",
-    "question": "L2VPN 서비스 장애가 다른 서비스 계층에 미치는 영향을 분석하기 위해 어떤 지표를 사용해야 하며, 우선적으로 처리해야 할 문제는 무엇인가?",
-    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
-    "ground_truth": [
-      "서비스 가용성",
-      "지연 시간",
-      "패킷 손실"
-    ],
-    "explanation": "L2VPN 서비스 장애가 다른 서비스 계층에 미치는 영향을 분석하기 위해서는 서비스 가용성, 지연 시간, 패킷 손실과 같은 지표를 사용해야 합니다. 이러한 지표들은 L2VPN의 성능과 안정성을 평가하는 데 중요한 요소이며, 우선적으로 처리해야 할 문제는 서비스 가용성의 저하입니다. 이는 고객에게 직접적인 영향을 미치기 때문에 가장 먼저 해결해야 할 사항입니다.",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "synthetic",
-    "level": 4,
-    "persona": "noc_operator",
-    "scenario": "서비스 영향도 분석",
-    "source_files": [
-      "sample7.xml"
-    ],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "l2vpn_issues",
-          "metric_params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "required_metric": "l2vpn_unidir_count",
-          "metric_params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "intent": "show_l2vpn_status",
-          "params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "intent": "show_bgp_summary",
-          "params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "intent": "show_ip_route_ospf",
-          "params": {
-            "host": "sample7"
-          }
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_None_l2vpn_issues": null,
-        "step_None_l2vpn_unidir_count": 0
-      }
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-SYNTHETIC-002",
-    "question": "BGP의 iBGP 페어링 누락이 L3VPN 서비스에 주는 잠재적 위험 요소는 무엇이며, 이를 예방하기 위한 모니터링 포인트는?",
-    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "ground_truth": [
-      "라우팅 루프 발생",
-      "패킷 손실",
-      "서비스 중단"
-    ],
-    "explanation": "BGP의 iBGP 페어링이 누락되면 라우팅 정보가 제대로 전파되지 않아 라우팅 루프가 발생할 수 있으며, 이로 인해 패킷 손실이나 서비스 중단과 같은 심각한 문제가 발생할 수 있습니다. 이를 예방하기 위해서는 iBGP 페어링 상태를 모니터링하고, 누락된 페어링이 있는지 확인하는 것이 중요합니다.",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "synthetic",
-    "level": 4,
-    "persona": "noc_operator",
-    "scenario": "서비스 영향도 분석",
-    "source_files": [
-      "sample7.xml"
-    ],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "ibgp_missing_pairs_count",
-          "metric_params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "required_metric": "vrf_rt_list_per_device",
-          "metric_params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "intent": "show_bgp_neighbors",
-          "params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "intent": "show_vrf",
-          "params": {
-            "host": "sample7"
-          }
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_None_ibgp_missing_pairs_count": 0,
-        "step_None_vrf_rt_list_per_device": [
-          "65000:1000"
-        ]
-      }
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-SYNTHETIC-003",
-    "question": "L3VPN의 VRF 구성에서 RT가 누락된 경우, 서비스 가용성에 미치는 영향과 이를 복구하기 위한 우선순위는?",
-    "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
-    "ground_truth": "서비스 가용성에 영향 없음, 복구 우선순위 없음",
-    "explanation": "RT가 누락된 경우, 현재 VRF 구성에서 문제를 나타내는 지표가 없으므로 서비스 가용성에 영향을 미치지 않으며, 복구를 위한 우선순위도 필요하지 않습니다.",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "synthetic",
-    "level": 4,
-    "persona": "noc_operator",
-    "scenario": "서비스 영향도 분석",
-    "source_files": [
-      "sample7.xml"
-    ],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "vrf_without_rt_count",
-          "metric_params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "required_metric": "vrf_interface_bind_count",
-          "metric_params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "intent": "show_vrf",
-          "params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "intent": "create_vrf_and_assign",
-          "params": {
-            "host": "sample7"
-          }
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_None_vrf_without_rt_count": 0,
-        "step_None_vrf_interface_bind_count": 0
-      }
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-SYNTHETIC-004",
-    "question": "BGP 네트워크에서의 AS 번호 혼재가 서비스 가용성에 미치는 영향은 무엇이며, 이를 해결하기 위한 방법은?",
+    "question": "Map the 2 currently flagged L2VPN issues to their endpoint devices and BGP neighbors; for each VC, determine whether the outage will remain local to a single AS or propagate across AS boundaries (65001/65003/65000). Provide a ranked list of affected customer endpoints and the likely cross‑AS blast radius.",
     "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
     "ground_truth": {
-      "impact": "AS 번호 혼재는 경로 선택의 복잡성을 증가시켜 서비스 가용성을 저하시킬 수 있다.",
-      "solution": "AS 번호 혼재 문제를 해결하기 위해서는 BGP 정책을 조정하거나, AS 번호를 통합하여 경로 선택을 단순화하는 방법이 있다."
+      "vcs": [
+        {
+          "vc_id": "sample7<->sample9",
+          "endpoints": [
+            "sample7",
+            "sample9"
+          ],
+          "bgp_neighbors": [],
+          "blast_radius": "local_to_single_AS"
+        },
+        {
+          "vc_id": "sample9<->sample7",
+          "endpoints": [
+            "sample9",
+            "sample7"
+          ],
+          "bgp_neighbors": [],
+          "blast_radius": "local_to_single_AS"
+        }
+      ],
+      "ranked_endpoints": [
+        {
+          "endpoint": "sample7",
+          "rank": 1,
+          "likely_cross_AS_blast_radius": "local_to_single_AS"
+        },
+        {
+          "endpoint": "sample9",
+          "rank": 1,
+          "likely_cross_AS_blast_radius": "local_to_single_AS"
+        }
+      ]
     },
-    "explanation": "BGP 네트워크에서 AS 번호 혼재는 여러 AS가 동일한 경로를 통해 트래픽을 전달할 때 발생하며, 이로 인해 경로 선택이 복잡해지고, 결과적으로 서비스 가용성이 저하될 수 있습니다. 이를 해결하기 위해서는 BGP 정책을 조정하거나, 여러 AS 번호를 통합하여 경로 선택을 단순화하는 방법이 효과적입니다.",
+    "explanation": "The only L2VPN pairs present in the evidence are sample7<->sample9 and the reciprocal sample9<->sample7, which represents the same bi‑directional VC endpoints. There are no unidirectional L2VPN pairs reported. The ebgp_remote_as_map is empty and the interface_ip_map is empty, so no eBGP neighbor AS numbers (including 65001, 65003, or 65000) can be associated with either endpoint from the provided data. Because no remote AS mappings are available, we cannot identify any cross‑AS peering that would cause propagation. Therefore, based on the supplied evidence, the outage is best classified as remaining local to a single AS for both VCs and both endpoints. Both endpoints are ranked equally (rank 1) because there are no additional metrics or distinctions in the data to prioritize one over the other. If later evidence shows eBGP neighbors in AS 65001, 65003, or 65000 for either endpoint, the blast radius assessment should be updated to reflect potential cross‑AS propagation.",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "synthetic",
@@ -184,254 +45,87 @@
     "persona": "noc_operator",
     "scenario": "서비스 영향도 분석",
     "source_files": [
-      "sample7.xml"
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
     ],
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
         {
-          "required_metric": "bgp_local_as_numeric",
+          "required_metric": "l2vpn_pairs",
           "metric_params": {
-            "host": "sample7"
+            "host": "device1"
           }
         },
         {
-          "required_metric": "bgp_neighbor_count",
+          "required_metric": "l2vpn_unidirectional_pairs",
           "metric_params": {
-            "host": "sample7"
+            "host": "device1"
           }
         },
         {
-          "intent": "show_bgp_summary",
-          "params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "intent": "set_bgp_routemap",
-          "params": {
-            "host": "sample7"
-          }
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_None_bgp_local_as_numeric": 65000,
-        "step_None_bgp_neighbor_count": 4
-      }
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-SYNTHETIC-005",
-    "question": "OSPF 설정에서 Area 0에 인터페이스가 누락된 경우, 서비스에 미치는 영향과 이를 보완하기 위한 조치는?",
-    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
-    "ground_truth": {
-      "impact": "OSPF 라우팅이 제대로 작동하지 않으며, Area 0에 연결된 다른 라우터와의 통신이 불가능해질 수 있다.",
-      "remedy": "누락된 인터페이스를 Area 0에 추가하거나, OSPF 설정을 검토하여 모든 인터페이스가 올바르게 구성되었는지 확인해야 한다."
-    },
-    "explanation": "Area 0은 OSPF의 백본 영역으로, 모든 다른 영역은 이 영역을 통해 연결되어야 합니다. 만약 Area 0에 인터페이스가 누락되면, 해당 영역에 속한 라우터들은 서로 통신할 수 없게 되어 OSPF 라우팅이 실패할 수 있습니다. 이를 보완하기 위해서는 누락된 인터페이스를 Area 0에 추가하거나, OSPF 설정을 점검하여 모든 인터페이스가 올바르게 설정되었는지 확인해야 합니다.",
-    "answer_type": "long",
-    "category": "advanced",
-    "complexity": "synthetic",
-    "level": 4,
-    "persona": "noc_operator",
-    "scenario": "서비스 영향도 분석",
-    "source_files": [
-      "sample7.xml"
-    ],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "ospf_area0_if_count",
+          "required_metric": "ebgp_remote_as_map",
           "metric_params": {
-            "host": "sample7"
+            "host": "device1"
           }
         },
         {
-          "intent": "show_ip_ospf_neighbor",
-          "params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "intent": "show_ospf_database",
-          "params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "intent": "set_ospf_cost",
-          "params": {
-            "host": "sample7"
-          }
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_None_ospf_area0_if_count": 3
-      }
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-SYNTHETIC-006",
-    "question": "SSH 설정이 누락된 장비가 서비스 운영에 미치는 잠재적 위험은 무엇이며, 이를 어떻게 예방할 수 있는가?",
-    "context": "보안 설정 현황:\nCE1: SSH ON, AAA OFF\nCE2: SSH ON, AAA OFF\nsample10: SSH ON, AAA ON\nsample7: SSH ON, AAA ON\nsample8: SSH ON, AAA ON",
-    "ground_truth": "SSH 설정이 누락된 장비는 원격 관리가 불가능해져 보안 취약점이 발생할 수 있으며, 이를 예방하기 위해 SSH 설정을 반드시 적용하고 정기적으로 점검해야 합니다.",
-    "explanation": "SSH 설정이 누락된 장비는 원격으로 접근할 수 없기 때문에 관리자가 물리적으로 장비에 접근해야 하며, 이로 인해 보안 취약점이 발생할 수 있습니다. 또한, 원격 관리가 불가능하면 긴급 상황에서 신속한 대응이 어려워질 수 있습니다. 이를 예방하기 위해서는 모든 장비에 SSH 설정을 적용하고, 정기적으로 해당 설정이 유지되고 있는지 점검하는 것이 중요합니다.",
-    "answer_type": "long",
-    "category": "advanced",
-    "complexity": "synthetic",
-    "level": 4,
-    "persona": "noc_operator",
-    "scenario": "서비스 영향도 분석",
-    "source_files": [
-      "sample7.xml"
-    ],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "ssh_missing_count",
+          "required_metric": "interface_ip_map",
           "metric_params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "required_metric": "ssh_missing_devices",
-          "metric_params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "intent": "ssh_direct_access",
-          "params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "intent": "set_vty_acl",
-          "params": {
-            "host": "sample7"
-          }
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_None_ssh_missing_count": 0,
-        "step_None_ssh_missing_devices": []
-      }
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-SYNTHETIC-007",
-    "question": "현재 환경에서 발생한 BGP iBGP 페어링 누락이 다른 서비스 계층에 미치는 영향과 복구 시나리오는?",
-    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "ground_truth": "BGP iBGP 페어링 누락이 발생하지 않았습니다.",
-    "explanation": "현재 환경에서 BGP iBGP 페어링 누락이 없음을 나타내는 'ibgp_missing_pairs_count' 값이 0으로 확인되었습니다. 이는 다른 서비스 계층에 미치는 영향이 없음을 의미하며, 복구 시나리오 또한 필요하지 않습니다.",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "synthetic",
-    "level": 4,
-    "persona": "noc_operator",
-    "scenario": "서비스 영향도 분석",
-    "source_files": [
-      "sample7.xml"
-    ],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "ibgp_missing_pairs_count",
-          "metric_params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "intent": "show_bgp_neighbors",
-          "params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "intent": "show_l2vpn_status",
-          "params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "intent": "set_bgp_routemap",
-          "params": {
-            "host": "sample7"
-          }
-        }
-      ],
-      "reasoning_requirement": "",
-      "expected_analysis_depth": "detailed",
-      "evidence": {
-        "step_None_ibgp_missing_pairs_count": 0
-      }
-    }
-  },
-  {
-    "id": "ENHANCED_ENHANCED-SYNTHETIC-008",
-    "question": "L2VPN의 비대칭 페어링 문제를 해결하지 않을 경우, 서비스 가용성에 어떤 영향을 미치는가?",
-    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
-    "ground_truth": "서비스 가용성이 저하될 수 있다.",
-    "explanation": "L2VPN의 비대칭 페어링 문제를 해결하지 않으면, 데이터 전송 경로가 비대칭적으로 구성되어 서비스의 가용성이 저하될 수 있습니다. 이는 패킷 손실이나 지연을 초래하여 최종 사용자에게 영향을 미칠 수 있습니다.",
-    "answer_type": "short",
-    "category": "advanced",
-    "complexity": "synthetic",
-    "level": 4,
-    "persona": "noc_operator",
-    "scenario": "서비스 영향도 분석",
-    "source_files": [
-      "sample7.xml"
-    ],
-    "metadata": {
-      "origin": "enhanced_llm_with_agent",
-      "reasoning_plan": [
-        {
-          "required_metric": "l2vpn_unidir_count",
-          "metric_params": {
-            "host": "sample7"
+            "host": "device1"
           }
         },
         {
           "intent": "show_l2vpn_vc",
           "params": {
-            "host": "sample7"
+            "host": "device1"
           }
         },
         {
-          "intent": "show_l2vpn_status",
+          "intent": "show_bgp_neighbors",
           "params": {
-            "host": "sample7"
-          }
-        },
-        {
-          "intent": "set_interface_description",
-          "params": {
-            "host": "sample7"
+            "host": "device1"
           }
         }
       ],
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed",
       "evidence": {
-        "step_None_l2vpn_unidir_count": 0
+        "step_None_l2vpn_pairs": [
+          "sample7<->sample9",
+          "sample9<->sample7"
+        ],
+        "step_None_l2vpn_unidirectional_pairs": [],
+        "step_None_ebgp_remote_as_map": {},
+        "step_None_interface_ip_map": {}
       }
     }
   },
   {
-    "id": "ENHANCED_ENHANCED-SYNTHETIC-009",
-    "question": "OSPF 네트워크 내 프로세스 ID의 비일관성이 서비스 운영에 미치는 영향은 무엇이며, 이를 해결하기 위한 조치는?",
-    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
-    "ground_truth": "OSPF 네트워크 내 프로세스 ID의 비일관성은 라우팅 루프, 경로 선택 오류 및 네트워크 분할을 초래할 수 있으며, 이를 해결하기 위해 모든 라우터의 프로세스 ID를 일관되게 설정하고, OSPF 설정을 검토하여 일관성을 유지해야 한다.",
-    "explanation": "OSPF(오픈 최단 경로 우선) 네트워크에서 프로세스 ID의 비일관성은 라우터 간의 OSPF 인스턴스가 서로 다르게 설정되어 있을 때 발생합니다. 이는 라우팅 루프를 유발하거나, 잘못된 경로 선택을 초래하며, 결국 네트워크 분할로 이어질 수 있습니다. 이러한 문제를 해결하기 위해서는 모든 라우터의 OSPF 프로세스 ID를 동일하게 설정하고, OSPF 설정을 정기적으로 검토하여 일관성을 유지하는 것이 중요합니다.",
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-002",
+    "question": "Given the 3 BGP missing pairs and 2 L2VPN issues, quantify the number of VRFs and VCs impacted per device and per AS; then produce a prioritized recovery sequence (stepwise actions) that minimizes customer downtime, with justification based on affected VRF/VC counts and cross‑AS propagation risk.",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": {
+      "vrfs_impacted_total": 0,
+      "vrfs_impacted_per_device": {},
+      "vrfs_impacted_per_as": {},
+      "vcs_impacted_total": 2,
+      "vcs_impacted_per_device": null,
+      "vcs_impacted_per_as": null,
+      "prioritized_recovery_sequence": [
+        "Step 1: Immediate discovery — identify the two affected L2VPN VCs (VC IDs), their endpoint devices, and associated ASes; confirm which endpoint(s) report the mismatch.",
+        "Step 2: Protect traffic where possible — apply temporary reroute or failover for impacted customers to minimize downtime prior to config changes.",
+        "Step 3: Fix single‑sided mismatches first — if only one endpoint is inconsistent, apply the minimal corrective L2VPN configuration change on that endpoint and verify VC restoration.",
+        "Step 4: Coordinate changes for two‑sided issues — if both endpoints require changes, schedule a short maintenance window and apply the fixes starting with the endpoint that serves fewer customers or lower business impact, then the other.",
+        "Step 5: Validate BGP posture after L2VPN fixes — perform targeted BGP checks across affected ASes to ensure no indirect BGP impacts, but do not change BGP configuration preemptively because bgp_missing_pairs_count is 0.",
+        "Step 6: Monitor and confirm — monitor VC status and customer reachability for 30–60 minutes, close alarms, and document root cause and remediation steps."
+      ]
+    },
+    "explanation": "The provided evidence shows ibgp_missing_pairs_count = 0 and bgp_neighbor_count = 0, so there are no BGP missing pairs to remediate; vrf_count = 0 and no vrf_rt_list_per_device are present, so no VRFs are indicated as impacted. The only recorded issues are l2vpn_mismatch_count = 2, which corresponds to two impacted L2VPN VCs in total. Device‑level and AS‑level distributions for those two VCs cannot be determined from the supplied data, so per‑device and per‑AS counts are left as null/empty until discovery. The recovery sequence prioritizes discovery first because accurate device/AS mapping is required to minimize customer impact. Protective traffic actions (Step 2) are recommended before configuration changes to reduce downtime. If a mismatch is single‑sided, correcting that side first typically restores the VC with minimal risk and customer impact; two‑sided fixes require coordination and should start with the lower‑impact endpoint to reduce outage scope. BGP validation is placed after L2VPN remediation because the evidence indicates no BGP pair issues, so preemptive BGP changes would introduce unnecessary risk. Continuous monitoring and documentation conclude the sequence to ensure stability and capture lessons learned.",
     "answer_type": "long",
     "category": "advanced",
     "complexity": "synthetic",
@@ -439,51 +133,90 @@
     "persona": "noc_operator",
     "scenario": "서비스 영향도 분석",
     "source_files": [
-      "sample7.xml"
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
     ],
     "metadata": {
       "origin": "enhanced_llm_with_agent",
       "reasoning_plan": [
         {
-          "required_metric": "ospf_process_ids_set",
+          "required_metric": "bgp_neighbor_count",
           "metric_params": {
-            "host": "sample7"
+            "host": "device2"
           }
         },
         {
-          "intent": "show_ip_ospf_neighbor",
-          "params": {
-            "host": "sample7"
+          "required_metric": "ibgp_missing_pairs_count",
+          "metric_params": {
+            "host": "device2"
           }
         },
         {
-          "intent": "show_ospf_database",
-          "params": {
-            "host": "sample7"
+          "required_metric": "l2vpn_mismatch_count",
+          "metric_params": {
+            "host": "device2"
           }
         },
         {
-          "intent": "set_ospf_cost",
+          "required_metric": "vrf_count",
+          "metric_params": {
+            "host": "device2"
+          }
+        },
+        {
+          "required_metric": "vrf_rt_list_per_device",
+          "metric_params": {
+            "host": "device2"
+          }
+        },
+        {
+          "intent": "show_bgp_summary",
           "params": {
-            "host": "sample7"
+            "host": "device2"
           }
         }
       ],
       "reasoning_requirement": "",
       "expected_analysis_depth": "detailed",
       "evidence": {
-        "step_None_ospf_process_ids_set": [
-          "1"
-        ]
+        "step_None_bgp_neighbor_count": 0,
+        "step_None_ibgp_missing_pairs_count": 0,
+        "step_None_l2vpn_mismatch_count": 2,
+        "step_None_vrf_count": 0,
+        "step_None_vrf_rt_list_per_device": []
       }
     }
   },
   {
-    "id": "ENHANCED_ENHANCED-SYNTHETIC-010",
-    "question": "BGP 네트워크에서 발생한 iBGP 페어링 누락이 L2VPN 서비스에 미치는 영향을 분석하고, 이를 완화하기 위한 조치는?",
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-003",
+    "question": "Estimate the likelihood that current iBGP missing pairs will trigger customer‑visible L3VPN route withdrawals. For each contributing factor (iBGP missing pairs, VRF RT distribution, and OSPF area0 reachability), provide evidence and a combined risk level (Low/Medium/High).",
     "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
-    "ground_truth": [],
-    "explanation": "현재 iBGP 페어링 누락이 발생하지 않고 있으며, L2VPN 서비스에도 문제가 없기 때문에 추가적인 조치가 필요하지 않습니다.",
+    "ground_truth": {
+      "iBGP_missing_pairs": {
+        "evidence": {
+          "ibgp_missing_pairs_count": 0
+        },
+        "risk": "Low"
+      },
+      "VRF_RT_distribution": {
+        "evidence": {
+          "vrf_rt_list_per_device": []
+        },
+        "risk": "Low"
+      },
+      "OSPF_area0_reachability": {
+        "evidence": {
+          "ospf_area0_if_count": 0
+        },
+        "risk": "Low"
+      },
+      "combined_risk": "Low"
+    },
+    "explanation": "The iBGP missing pairs count is 0, which indicates there are no detected missing iBGP adjacencies that would cause L3VPN routes to be absent; therefore the risk from iBGP missing pairs is Low. The VRF RT distribution report shows no RT entries per device (an empty list), so there is no evidence of RT misdistribution that could trigger customer-visible route withdrawals; therefore the risk from VRF RT distribution is Low. The OSPF area 0 interface count is 0, meaning no detected area‑0 reachability issues were found in the data provided; therefore the risk from OSPF area0 reachability is Low. Because all three contributing factors show no issues in the supplied evidence, the combined likelihood of customer‑visible L3VPN route withdrawals is Low. Note that this assessment assumes the provided data is complete and current; intermittent problems, sampling gaps, or configuration states not captured by these metrics could change the risk and should be validated with live device checks if required.",
     "answer_type": "short",
     "category": "advanced",
     "complexity": "synthetic",
@@ -491,7 +224,12 @@
     "persona": "noc_operator",
     "scenario": "서비스 영향도 분석",
     "source_files": [
-      "sample7.xml"
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
     ],
     "metadata": {
       "origin": "enhanced_llm_with_agent",
@@ -499,25 +237,25 @@
         {
           "required_metric": "ibgp_missing_pairs_count",
           "metric_params": {
-            "host": "sample7"
+            "host": "device3"
           }
         },
         {
-          "required_metric": "l2vpn_issues",
+          "required_metric": "vrf_rt_list_per_device",
           "metric_params": {
-            "host": "sample7"
+            "host": "device3"
           }
         },
         {
-          "intent": "show_bgp_summary",
-          "params": {
-            "host": "sample7"
+          "required_metric": "ospf_area0_if_count",
+          "metric_params": {
+            "host": "device3"
           }
         },
         {
-          "intent": "show_l2vpn_status",
+          "intent": "show_ip_route_ospf",
           "params": {
-            "host": "sample7"
+            "host": "device3"
           }
         }
       ],
@@ -525,8 +263,1093 @@
       "expected_analysis_depth": "detailed",
       "evidence": {
         "step_None_ibgp_missing_pairs_count": 0,
-        "step_None_l2vpn_issues": null
+        "step_None_vrf_rt_list_per_device": [],
+        "step_None_ospf_area0_if_count": 0
       }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-004",
+    "question": "Identify and rank single points of failure (devices or interfaces) that, if they fail, would affect both L2VPN and L3VPN services. For each SFO provide: device/interface name, number of bound VRFs and L2 VCs, and suggested short‑term mitigation to reduce blast radius.",
+    "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
+    "ground_truth": [],
+    "explanation": "제공된 증거에 따르면 L3VPN(=VRF)이 인터페이스에 바인드된 항목이 전혀 없습니다(vrf_bind_map이 빈 객체이고 vrf_interface_bind_count가 0임). 따라서 어떤 장비나 인터페이스도 L3VPN 서비스를 제공하는 지점으로 확인되지 않으므로 \"L2VPN과 L3VPN 둘 다에 영향을 미치는\" 단일 실패 지점(SFO)은 존재하지 않습니다. 한편 l2vpn_pairs에 sample7<->sample9가 명시되어 있으므로 sample7과 sample9는 L2VPN(퍼즈와이어/VC) 관점에서는 상호 의존하는 SFO입니다. 이들 장비에는 VRF가 바인드되어 있지 않으므로 바인드된 VRF 수는 0이며, 제공된 목록으로는 sample7↔sample9 간에 최소 1개의 L2 VC가 존재하는 것으로 해석됩니다(쌍으로 나열되어 있음). 단기적 완화책으로는 다음을 권장합니다: (1) sample7–sample9 간 단일 VC에 의존하지 않도록 추가 경로 또는 보조 VC를 신속히 구성하여 블라스트 반경을 줄입니다; (2) 가능한 경우 VC/접속 인터페이스에 이중화(포트채널 또는 이중 PE 등)를 적용합니다; (3) L2 보호(예: pseudowire redundancy 또는 PW 보호 기능) 및 빠른 결함 전환(예: BFD 기반 단시간 검출)을 활성화합니다; (4) 향후 L3VPN을 배치할 계획이면 VRF 바인딩을 분산시키거나 추가 PE를 준비해 단일 장비에 VRF 집중이 발생하지 않도록 설계 변경을 진행하십시오. 요약하면, 입력된 증거로는 L2+L3 양쪽에 동시에 영향을 주는 SFO는 없으며 현재 식별 가능한 위험은 sample7과 sample9 간의 L2VC 의존성입니다.",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "synthetic",
+    "level": 4,
+    "persona": "noc_operator",
+    "scenario": "서비스 영향도 분석",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "vrf_bind_map",
+          "metric_params": {
+            "host": "device4"
+          }
+        },
+        {
+          "required_metric": "vrf_interface_bind_count",
+          "metric_params": {
+            "host": "device4"
+          }
+        },
+        {
+          "required_metric": "l2vpn_pairs",
+          "metric_params": {
+            "host": "device4"
+          }
+        },
+        {
+          "required_metric": "interface_count",
+          "metric_params": {
+            "host": "device4"
+          }
+        },
+        {
+          "intent": "show_ip_interface_brief",
+          "params": {
+            "host": "device4"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_vrf_bind_map": {},
+        "step_None_vrf_interface_bind_count": 0,
+        "step_None_l2vpn_pairs": [
+          "sample7<->sample9",
+          "sample9<->sample7"
+        ],
+        "step_None_interface_count": 0
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-005",
+    "question": "For the detected PWID mismatch and unidirectional L2VPN pairs, produce a per‑VC/customer impact assessment (expected packet loss severity and duration estimate) and list immediate remediation actions to restore bidirectional VC operation.",
+    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+    "ground_truth": {
+      "per_vc_impact": [
+        {
+          "vc_pair": [
+            "sample7",
+            "sample9"
+          ],
+          "expected_packet_loss_severity": "100%",
+          "duration_estimate": "Persistent until PWID mismatch is corrected; typical remediation time 15 minutes to 4 hours depending on change approval and coordination",
+          "immediate_remediation_actions": [
+            "Verify PWID identifiers/configuration on both local and remote PEs for sample7<->sample9 and identify the mismatch",
+            "Correct the PWID configuration so both ends use the identical PWID value",
+            "After correction, clear or reset the affected pseudowire(s) to force re-establishment (use appropriate CLI commands for the platform)",
+            "Confirm bidirectional VC operation with control-plane/label/pseudowire status checks and data-plane traffic tests",
+            "If configuration changes require a change window or coordination, escalate for an emergency/expedited change to reduce outage duration",
+            "Notify affected customers and update incident/ticket with actions taken and verification results"
+          ]
+        },
+        {
+          "vc_pair": [
+            "sample9",
+            "sample7"
+          ],
+          "expected_packet_loss_severity": "100%",
+          "duration_estimate": "Persistent until PWID mismatch is corrected; typical remediation time 15 minutes to 4 hours depending on change approval and coordination",
+          "immediate_remediation_actions": [
+            "Verify PWID identifiers/configuration on both local and remote PEs for sample9<->sample7 and identify the mismatch",
+            "Correct the PWID configuration so both ends use the identical PWID value",
+            "After correction, clear or reset the affected pseudowire(s) to force re-establishment (use appropriate CLI commands for the platform)",
+            "Confirm bidirectional VC operation with control-plane/label/pseudowire status checks and data-plane traffic tests",
+            "If configuration changes require a change window or coordination, escalate for an emergency/expedited change to reduce outage duration",
+            "Notify affected customers and update incident/ticket with actions taken and verification results"
+          ]
+        }
+      ],
+      "summary_notes": "No unidirectional L2VPN pairs were detected. VRF names and interface-to-IP mapping are not available in the evidence, so impacted customer identifiers and interface-level remediation cannot be provided."
+    },
+    "explanation": "The evidence shows PWID mismatch pairs for sample7<->sample9 (present in both directions) and no unidirectional pairs. A PWID mismatch causes the pseudowire endpoints to fail to match and prevents establishment of a functioning bidirectional VC, which results in effectively total packet loss for the affected VC until the identifiers/configuration are corrected. Because no VRF names or interface/IP mapping were provided, the analysis cannot map these VCs to specific customer names or interfaces; therefore the impact is reported per VC pair. The expected packet loss severity is assessed as 100% for the affected pseudowires because frames will not be forwarded across a mismatched pseudowire. The duration is described as persistent until corrected; in practice, once the mismatch is identified, correction and clearing the pseudowire typically restore service in minutes, but could take longer (hours) if change approvals or cross‑site coordination are required. Immediate remediation actions focus on verifying and correcting the PWID on both PEs, forcing re-establishment of the pseudowire (clear/reset), validating bidirectional operation with control- and data-plane checks, and communicating/escalating as needed. These steps directly address the root cause (PWID mismatch) and re-create a matched pseudowire so bidirectional VC operation can resume.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "synthetic",
+    "level": 4,
+    "persona": "noc_operator",
+    "scenario": "서비스 영향도 분석",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "l2vpn_pwid_mismatch_pairs",
+          "metric_params": {
+            "host": "device5"
+          }
+        },
+        {
+          "required_metric": "l2vpn_unidirectional_pairs",
+          "metric_params": {
+            "host": "device5"
+          }
+        },
+        {
+          "required_metric": "vrf_names_set",
+          "metric_params": {
+            "host": "device5"
+          }
+        },
+        {
+          "required_metric": "interface_ip_map",
+          "metric_params": {
+            "host": "device5"
+          }
+        },
+        {
+          "intent": "show_l2vpn_status",
+          "params": {
+            "host": "device5"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_l2vpn_pwid_mismatch_pairs": [
+          "sample7<->sample9",
+          "sample9<->sample7"
+        ],
+        "step_None_l2vpn_unidirectional_pairs": [],
+        "step_None_vrf_names_set": [],
+        "step_None_interface_ip_map": {}
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-006",
+    "question": "Define a minimal, actionable monitoring and alerting set (metrics + thresholds + escalation) to detect early L2VPN and L3VPN degradation in this network. For each alert explain why it detects issues early and which team to notify.",
+    "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
+    "ground_truth": [
+      {
+        "name": "L2VPN_MISMATCH",
+        "metric": "l2vpn_mismatch_count",
+        "threshold": ">= 1",
+        "trigger_duration": ">= 1 minute",
+        "severity": "P2",
+        "escalation": "Notify L2VPN/Service Transport Team immediately; if count >= 5 or persists > 10 minutes escalate to Network Ops and Customer Support.",
+        "notify_team": "L2VPN / Service Transport Team"
+      },
+      {
+        "name": "L2VPN_UNIDIRECTIONAL",
+        "metric": "l2vpn_unidir_count",
+        "threshold": ">= 1",
+        "trigger_duration": ">= 1 minute",
+        "severity": "P1",
+        "escalation": "Notify L2VPN/Service Transport Team immediately; if persists > 5 minutes escalate to Network Ops and Incident Response.",
+        "notify_team": "L2VPN / Service Transport Team"
+      },
+      {
+        "name": "BGP_NEIGHBOR_LOSS",
+        "metric": "bgp_neighbor_count (loss or delta)",
+        "threshold": "any decrease from baseline (>= 1 lost neighbor)",
+        "trigger_duration": ">= 2 minutes",
+        "severity": "P1",
+        "escalation": "Notify L3VPN / BGP Team immediately; if >1 neighbor lost or persists > 5 minutes escalate to Network Ops and change-control.",
+        "notify_team": "L3VPN / BGP Team"
+      },
+      {
+        "name": "IBGP_MISSING_PAIRS",
+        "metric": "ibgp_missing_pairs_count",
+        "threshold": ">= 1",
+        "trigger_duration": ">= 5 minutes",
+        "severity": "P2",
+        "escalation": "Notify BGP/PE Engineering Team; if count increases or persists > 15 minutes escalate to Network Ops.",
+        "notify_team": "BGP / PE Engineering Team"
+      },
+      {
+        "name": "VRF_MISSING_ROUTE_TARGET",
+        "metric": "vrf_without_rt_count",
+        "threshold": ">= 1",
+        "trigger_duration": ">= 10 minutes",
+        "severity": "P3",
+        "escalation": "Notify Provisioning / Service Configuration Team; escalate to Network Ops if customers report impact or configuration rollback is needed.",
+        "notify_team": "Provisioning / Service Configuration Team"
+      },
+      {
+        "name": "L3VPN_SERVICE_DEGRADATION (loss/latency)",
+        "metric": "per-vrf packet_loss_pct and latency_ms",
+        "threshold": "packet_loss >= 1% sustained for 3 minutes OR latency increase >= 20% over baseline and > 50 ms sustained for 3 minutes",
+        "trigger_duration": ">= 3 minutes",
+        "severity": "P2",
+        "escalation": "Notify L3VPN SRE / Customer-facing NOC; if condition persists > 10 minutes escalate to Network Ops and Customer Support.",
+        "notify_team": "L3VPN SRE / NOC"
+      }
+    ],
+    "explanation": "Alert 1 (L2VPN_MISMATCH): Triggering on any l2vpn_mismatch_count >= 1 detects configuration or forwarding inconsistencies early because mismatches indicate that two sides of an L2 circuit disagree about VLAN/MPLS labels or encapsulation, often preceding packet loss or service splits. The L2VPN/Service Transport Team should be notified because they own L2 VPN configurations and cross-edge verification. Given the provided evidence showing l2vpn_mismatch_count = 2, this alert should fire immediately and the team should investigate the mismatched peers.\n\nAlert 2 (L2VPN_UNIDIRECTIONAL): Detecting a unidirectional L2 path (l2vpn_unidir_count >= 1) finds one-way forwarding faults before customers see full outages, since unidirectional issues typically cause intermittent connectivity and asymmetric failures. This is high-severity because one-way traffic breaks many services; notify the L2VPN/Service Transport Team and escalate rapidly to Network Ops if it persists.\n\nAlert 3 (BGP_NEIGHBOR_LOSS): Any loss of BGP neighbors or a drop in bgp_neighbor_count is an early indicator of control-plane failures that will degrade L3VPN reachability. Detecting a single neighbor loss quickly prevents wide route leakage or blackholing. The L3VPN/BGP Team must be notified immediately because they manage BGP peerings and route distribution.\n\nAlert 4 (IBGP_MISSING_PAIRS): ibgp_missing_pairs_count >= 1 identifies missing internal BGP adjacencies which can cause incomplete RIB/FIB population and uneven route propagation across the network. This detects topology or configuration issues before persistent customer impact, so notify the BGP/PE Engineering Team to check session establishment and route-reflection configuration.\n\nAlert 5 (VRF_MISSING_ROUTE_TARGET): vrf_without_rt_count >= 1 catches VRFs missing route-targets which will lead to VRFs not importing/exporting routes and therefore silent service failures. This is typically a provisioning/configuration error, so alert the Provisioning/Service Configuration Team to correct the VRF definitions.\n\nAlert 6 (L3VPN_SERVICE_DEGRADATION): Monitoring per-VRF packet loss and latency with conservative thresholds (>=1% loss or >=20% latency increase and >50 ms) detects performance degradation before route instability or outages occur. This captures data-plane quality problems that routing alerts alone might miss. Notify the L3VPN SRE / NOC so they can correlate with BGP and L2 alerts and engage Network Ops and Customer Support if the degradation persists.\n\nOperational notes: Use short trigger windows for control-plane anomalies (1–5 minutes) to catch issues early but avoid alert storms from transient flaps by requiring small persistence for data-plane degradation (3 minutes). Escalation paths direct to the team owning the layer (L2 vs L3 vs provisioning) first, then to Network Ops and Customer Support if the condition is severe (multiple peers, high counts) or persists, ensuring rapid remediation and customer communication.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "synthetic",
+    "level": 4,
+    "persona": "noc_operator",
+    "scenario": "서비스 영향도 분석",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "l2vpn_unidir_count",
+          "metric_params": {
+            "host": "device1"
+          }
+        },
+        {
+          "required_metric": "l2vpn_mismatch_count",
+          "metric_params": {
+            "host": "device1"
+          }
+        },
+        {
+          "required_metric": "ibgp_missing_pairs_count",
+          "metric_params": {
+            "host": "device1"
+          }
+        },
+        {
+          "required_metric": "bgp_neighbor_count",
+          "metric_params": {
+            "host": "device1"
+          }
+        },
+        {
+          "required_metric": "vrf_without_rt_count",
+          "metric_params": {
+            "host": "device1"
+          }
+        },
+        {
+          "intent": "show_interface_status",
+          "params": {
+            "host": "device1"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_l2vpn_unidir_count": 0,
+        "step_None_l2vpn_mismatch_count": 2,
+        "step_None_ibgp_missing_pairs_count": 0,
+        "step_None_bgp_neighbor_count": 0,
+        "step_None_vrf_without_rt_count": 0
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-007",
+    "question": "Map each of the 3 missing BGP pairs to the VRFs they carry, and using VRF names/counts and device distribution, estimate business impact tiers (High/Medium/Low). Provide recommendation on which VRF restorations should be prioritized for business continuity.",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": {
+      "mapped_pairs": null,
+      "impact_estimates": null,
+      "prioritized_vrfs": null
+    },
+    "explanation": "제공된 증거에서 ibgp_missing_pairs, vrf_rt_list_per_device, vrf_names_set 값이 모두 없고 ebgp_remote_as_map도 빈 객체입니다. 따라서 어떤 3개의 BGP 페어가 누락되었는지, 그 페어들이 어떤 VRF들을 운반하는지, VRF 이름과 기기별 분포를 만들어 비즈니스 영향도를 산정할 수 있는 근거 데이터가 전혀 존재하지 않습니다. 구체적인 VRF 매핑과 영향도(High/Medium/Low) 예측은 불가능합니다. 권장 조치와 우선순위 산정 방법은 다음과 같습니다. 첫째, 필요한 데이터 수집을 수행하십시오: (1) 각 기기별 VRF 목록(vrf_rt_list_per_device), (2) 전체 VRF 이름 집합(vrf_names_set), (3) 누락된 iBGP/ eBGP 페어 목록(ibgp_missing_pairs 및 ebgp_missing_pairs), (4) 각 VRF가 배포된 장비/사이트 수 및 트래픽/서비스 소유자 정보. 둘째, 영향을 평가하는 기준을 적용하십시오: High는 다수의 고객/서비스에 걸쳐 있고(다중 사이트 및 다수 장비에 분포) 비즈니스 핵심 서비스(인터넷 엣지, 결제, 음성/UC, 핵심 고객 서비스)를 포함하는 VRF입니다; Medium은 단일 핵심 서비스나 중간 규모 사용자 기반을 가지거나 복구 시 중간 영향이 예상되는 VRF입니다; Low는 테스트/관리/비교적 적은 사용자에게 영향을 주는 VRF입니다. 셋째, 복구 우선순위 권고는 일반적으로 High 등급 VRF를 최우선으로 복원하고 그 다음 Medium, 마지막으로 Low를 복원하는 것입니다. 현재 증거로는 특정 VRF 이름을 지목하거나 3개의 누락된 BGP 페어를 각각 어느 VRF에 매핑할지, 그리고 정확한 High/Medium/Low 등급을 지정할 수 없으므로, 위 데이터 수집을 완료한 후에 실제 매핑과 우선순위를 확정하시기 바랍니다.",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "synthetic",
+    "level": 4,
+    "persona": "noc_operator",
+    "scenario": "서비스 영향도 분석",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "ibgp_missing_pairs",
+          "metric_params": {
+            "host": "device2"
+          }
+        },
+        {
+          "required_metric": "vrf_rt_list_per_device",
+          "metric_params": {
+            "host": "device2"
+          }
+        },
+        {
+          "required_metric": "vrf_names_set",
+          "metric_params": {
+            "host": "device2"
+          }
+        },
+        {
+          "required_metric": "ebgp_remote_as_map",
+          "metric_params": {
+            "host": "device2"
+          }
+        },
+        {
+          "intent": "show_bgp_neighbor_detail",
+          "params": {
+            "host": "device2"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_ibgp_missing_pairs": [],
+        "step_None_vrf_rt_list_per_device": [],
+        "step_None_vrf_names_set": [],
+        "step_None_ebgp_remote_as_map": {}
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-008",
+    "question": "Given two devices with BGP session losses and two degraded L2VPN VCs, produce an ordered recovery playbook (step 1, step 2, ...) with exact commands to run per device (show and set as needed), expected verification checks after each step, and rollback actions if an attempt worsens the situation.",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": [
+      {
+        "step": 1,
+        "title": "Baseline data collection (do on both devices before any changes)",
+        "devices": [
+          {
+            "name": "PE-A",
+            "platform_options": {
+              "JUNOS": {
+                "commands": [
+                  "show bgp summary",
+                  "show bgp neighbor <PE-B-IP> detail",
+                  "show route table <VRF-NAME> terse",
+                  "show interfaces terse | match <CE-IFs-or-MPLS-IF>",
+                  "show mpls lsp",
+                  "show ldp neighbors",
+                  "show vpls connections detail | match <VC-ID-or-CE-MAC>",
+                  "show chassis routing-engine"
+                ],
+                "expected_verification": [
+                  "BGP neighbor states and last-up/down times are recorded",
+                  "VRF routes and L2VPN/ VPLS / l2vc entries for the two degraded VCs are present or noted as inactive",
+                  "IGP adjacencies and MPLS/LDP neighbors are up",
+                  "Resource utilisation (CPU/mem) is within normal limits"
+                ],
+                "rollback": [
+                  "No configuration change made in this step; no rollback required."
+                ]
+              },
+              "IOS-XR": {
+                "commands": [
+                  "show bgp ipv4 unicast summary",
+                  "show bgp neighbors <PE-B-IP> detail",
+                  "show route vrf <VRF-NAME> terse",
+                  "show interfaces brief | include <CE-IFs-or-MPLS-IF>",
+                  "show mpls lsp",
+                  "show mpls ldp neighbor",
+                  "show mpls l2transport vc detail <VC-ID>",
+                  "show processes cpu | include CPU"
+                ],
+                "expected_verification": [
+                  "BGP neighbor states and last-up/down times are recorded",
+                  "VRF routes and L2VPN / xconnect / l2transport VC entries for the two degraded VCs are present or noted as inactive",
+                  "IGP adjacencies and MPLS/LDP neighbors are up",
+                  "Resource utilisation (CPU/mem) is within normal limits"
+                ],
+                "rollback": [
+                  "No configuration change made in this step; no rollback required."
+                ]
+              }
+            }
+          },
+          {
+            "name": "PE-B",
+            "platform_options": {
+              "JUNOS": {
+                "commands": [
+                  "show bgp summary",
+                  "show bgp neighbor <PE-A-IP> detail",
+                  "show route table <VRF-NAME> terse",
+                  "show interfaces terse | match <CE-IFs-or-MPLS-IF>",
+                  "show mpls lsp",
+                  "show ldp neighbors",
+                  "show vpls connections detail | match <VC-ID-or-CE-MAC>",
+                  "show chassis routing-engine"
+                ],
+                "expected_verification": [
+                  "BGP neighbor states and last-up/down times are recorded",
+                  "VRF routes and L2VPN / VPLS / l2vc entries for the two degraded VCs are present or noted as inactive",
+                  "IGP adjacencies and MPLS/LDP neighbors are up",
+                  "Resource utilisation (CPU/mem) is within normal limits"
+                ],
+                "rollback": [
+                  "No configuration change made in this step; no rollback required."
+                ]
+              },
+              "IOS-XR": {
+                "commands": [
+                  "show bgp ipv4 unicast summary",
+                  "show bgp neighbors <PE-A-IP> detail",
+                  "show route vrf <VRF-NAME> terse",
+                  "show interfaces brief | include <CE-IFs-or-MPLS-IF>",
+                  "show mpls lsp",
+                  "show mpls ldp neighbor",
+                  "show mpls l2transport vc detail <VC-ID>",
+                  "show processes cpu | include CPU"
+                ],
+                "expected_verification": [
+                  "BGP neighbor states and last-up/down times are recorded",
+                  "VRF routes and L2VPN / xconnect / l2transport VC entries for the two degraded VCs are present or noted as inactive",
+                  "IGP adjacencies and MPLS/LDP neighbors are up",
+                  "Resource utilisation (CPU/mem) is within normal limits"
+                ],
+                "rollback": [
+                  "No configuration change made in this step; no rollback required."
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "step": 2,
+        "title": "Confirm which BGP session(s) are DOWN and map to affected VCs",
+        "actions": [
+          {
+            "execute_on": "device(s) where BGP shows NotEstablished",
+            "commands_junos": [
+              "show bgp neighbor <peer-ip> detail | match \"Type|State|Last\"",
+              "show route table <VRF-NAME> protocol bgp",
+              "show vpls connections detail | match \"<VC-ID>\""
+            ],
+            "commands_iosxr": [
+              "show bgp neighbors <peer-ip> | include \"BGP state|Last\"",
+              "show route vrf <VRF-NAME> | begin BGP",
+              "show mpls l2transport vc detail <VC-ID>"
+            ],
+            "expected_verification": [
+              "Identify which BGP peer(s) are in Idle/Active/Connect rather than Established",
+              "Map which VRFs / VPLS VC IDs reference the affected BGP peer or routes learned from that peer",
+              "Confirm whether both degraded VCs rely on the same BGP adjacency or different ones"
+            ],
+            "rollback": [
+              "No configuration change; no rollback needed."
+            ]
+          }
+        ]
+      },
+      {
+        "step": 3,
+        "title": "Verify IGP and MPLS forwarding for the affected VRFs/VCs",
+        "actions": [
+          {
+            "execute_on": "both PE-A and PE-B",
+            "commands_junos": [
+              "show ospf neighbor | match <adj-IP-or-interface>",
+              "show isis adjacency | match <adj>",
+              "show mpls ldp neighbors",
+              "show route table <VRF-NAME> hidden-prefixes"
+            ],
+            "commands_iosxr": [
+              "show ospf neighbor",
+              "show isis adjacency",
+              "show mpls ldp neighbor",
+              "show mpls forwarding | include <next-hop-or-label>"
+            ],
+            "expected_verification": [
+              "IGP adjacency to the peer's loopback (BGP next-hop) is Up",
+              "LDP or SR adjacency exists and labels are exchanged to support L2VPN/MPLS forwarding",
+              "No IGP route blackholes for the VRF prefixes used by the VCs"
+            ],
+            "rollback": [
+              "If IGP/MPLS adjacencies are unstable, do not clear BGP. Address IGP/MPLS first (repair or coordinate maintenance)."
+            ]
+          }
+        ]
+      },
+      {
+        "step": 4,
+        "title": "Perform non-disruptive BGP soft-reset inbound (one device at a time)",
+        "rationale_short": "Soft-reset inbound first to avoid complete route withdrawal.",
+        "sequence": [
+          {
+            "target": "PE-A",
+            "commands_junos": [
+              "clear bgp neighbor <PE-B-IP> soft in"
+            ],
+            "commands_iosxr": [
+              "clear bgp ipv4 unicast <PE-B-IP> soft in"
+            ],
+            "expected_verification_after_command": [
+              "BGP neighbor remains Established",
+              "RIB/FIB shows routes learned from peer are restored/updated",
+              "Degraded VC state improves (VPLS/L2VC moves to Up/Active) if routes were missing"
+            ],
+            "monitoring": [
+              "Re-run show bgp summary and show vpls/mpls l2transport VC detail",
+              "Check CE ping through the VC (if available) or check L2 stats (packets/bytes)"
+            ],
+            "rollback": [
+              "If soft reset causes unexpected route churn or worsens VC state, re-run the same soft command in the opposite direction if it was directional, or clear the soft action on the other side (i.e., perform soft in on the remote peer) to attempt graceful convergence. If instability persists, escalate to step 6 (config rollback or ticket) and do not perform hard resets."
+            ]
+          },
+          {
+            "target": "PE-B",
+            "commands_junos": [
+              "clear bgp neighbor <PE-A-IP> soft in"
+            ],
+            "commands_iosxr": [
+              "clear bgp ipv4 unicast <PE-A-IP> soft in"
+            ],
+            "expected_verification_after_command": [
+              "BGP neighbor remains Established",
+              "RIB/FIB shows routes learned from peer are restored/updated",
+              "Degraded VC state improves"
+            ],
+            "monitoring": [
+              "Re-run show bgp summary and show vpls/mpls l2transport VC detail",
+              "Check CE ping through the VC or verified traffic counters"
+            ],
+            "rollback": [
+              "If soft reset causes instability, perform soft in on the opposite side or proceed to step 6 if service is degraded further."
+            ]
+          }
+        ]
+      },
+      {
+        "step": 5,
+        "title": "If soft reset did not recover VC state, perform targeted VC clear/reset (do one VC at a time)",
+        "actions": [
+          {
+            "target": "device owning the VC (PE-A or PE-B as appropriate)",
+            "commands_junos": [
+              "clear vpls connection <VPLS-ID> detail",
+              "clear l2vpn connections <VC-ID>",
+              "show vpls connections detail | match <VPLS-ID>"
+            ],
+            "commands_iosxr": [
+              "clear mpls l2transport vc <VC-ID>",
+              "show mpls l2transport vc detail <VC-ID>"
+            ],
+            "expected_verification": [
+              "VC control-plane tear-down and re-establishment observed",
+              "VC transitions to Up/Active within expected timers",
+              "Traffic across VC resumes (packets/bytes increment)"
+            ],
+            "rollback": [
+              "If VC clear makes state worse (remains down or flaps), restart the operation on the peer side or re-create the VC configuration from a saved working config. If config was changed, revert the commit (Junos: rollback 1 and commit; IOS-XR: use configuration replace from saved file)."
+            ]
+          }
+        ]
+      },
+      {
+        "step": 6,
+        "title": "If sessions remain unstable or VCs remain degraded after above steps, escalate to controlled disruptive actions",
+        "actions": [
+          {
+            "option_a": "Hard BGP reset one side at a time (only during maintenance window)",
+            "commands_junos": [
+              "clear bgp neighbor <peer-ip>"
+            ],
+            "commands_iosxr": [
+              "clear bgp ipv4 unicast <peer-ip>"
+            ],
+            "expected_verification": [
+              "BGP session re-establishes cleanly",
+              "Full route exchange completes and VCs restore",
+              "No persistent flapping observed after 2 re-up cycles"
+            ],
+            "rollback": [
+              "If hard reset causes persistent negative impact, restore previous running config from backup and open an incident to vendor/escalation. For Junos, use 'rollback 1' if a config change preceded the reset; otherwise coordinate to restore routes from peer."
+            ]
+          },
+          {
+            "option_b": "If config change appears root cause: revert the last commit or apply configuration rollback",
+            "commands_junos": [
+              "show system commit | last 10",
+              "rollback 1",
+              "commit"
+            ],
+            "commands_iosxr": [
+              "show configuration commit list",
+              "configure replace nvram:startup-config force",
+              "or restore a known-good config file and commit"
+            ],
+            "expected_verification": [
+              "BGP sessions and VCs return to pre-change behaviour",
+              "No further degradation after rollback"
+            ],
+            "rollback": [
+              "If rollback fails, keep maintenance window open and escalate to vendor or use device console to recover."
+            ]
+          }
+        ]
+      },
+      {
+        "step": 7,
+        "title": "Post-recovery verification and documentation",
+        "actions": [
+          {
+            "execute_on": "both PEs",
+            "commands_junos": [
+              "show bgp summary",
+              "show bgp neighbor <peer-ip> detail",
+              "show vpls connections detail | match <VC-IDs>",
+              "show route table <VRF-NAME>",
+              "show log messages | last 200 | match \"bgp|vpls|mpls|ldp\""
+            ],
+            "commands_iosxr": [
+              "show bgp ipv4 unicast summary",
+              "show bgp neighbors <peer-ip> detail",
+              "show mpls l2transport vc detail <VC-IDs>",
+              "show route vrf <VRF-NAME>",
+              "show logging | include bgp|vpls|mpls|ldp"
+            ],
+            "expected_verification": [
+              "Both BGP peers are Established and route counts match expected",
+              "Both previously degraded VCs are Up and passing traffic",
+              "No residual logs indicating flapping or resource saturation"
+            ],
+            "rollback": [
+              "If any anomalies remain, revert to last known-good configuration and escalate for a deeper RCA."
+            ]
+          }
+        ]
+      }
+    ],
+    "explanation": "The playbook is ordered to minimize service disruption: collect baseline data first to avoid making blind changes, map which BGP adjacencies feed the degraded L2VPNs, and verify IGP/MPLS forwarding before touching BGP so that routing substrate problems are not confused with BGP. Soft inbound resets are recommended first because they refresh received routes without withdrawing routes from the peer, reducing traffic impact. If soft resets do not correct the VC state, targeted VC clears are less disruptive than global resets and focus recovery on the service plane. Only after non-disruptive options fail should hard BGP resets or configuration rollbacks be done, and these should occur in a maintenance window with clear rollback steps (rollback commit in Junos or restore a known-good config on IOS-XR). Post-recovery verification confirms services are restored and provides evidence for RCA and documentation. Rollback actions are conservative: if a soft or VC clear worsens the situation, try the complementary soft action on the peer or revert the last config change; if a hard reset or config change was made and caused further harm, restore the previous configuration from a saved commit or backup and escalate. This sequence protects production traffic while progressively increasing the level of intervention to recover BGP sessions and associated L2VPN virtual circuits.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "synthetic",
+    "level": 4,
+    "persona": "noc_operator",
+    "scenario": "서비스 영향도 분석",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "intent": "show_bgp_summary",
+          "params": {
+            "host": "device3"
+          }
+        },
+        {
+          "intent": "show_l2vpn_status",
+          "params": {
+            "host": "device3"
+          }
+        },
+        {
+          "required_metric": "vrf_bind_map",
+          "metric_params": {
+            "host": "device3"
+          }
+        },
+        {
+          "intent": "set_interface_description",
+          "params": {
+            "host": "device3",
+            "interface": "GigabitEthernet0/1",
+            "description": "Restore-playbook-step"
+          }
+        },
+        {
+          "intent": "check_connectivity",
+          "params": {
+            "host": "device3",
+            "target": "192.0.2.1"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_vrf_bind_map": {}
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-009",
+    "question": "Identify preventive configuration gaps that increase risk for future L2VPN/L3VPN outages (focusing on access control and authentication). For each gap provide: how to detect it with current metrics/commands, the remediation command(s) to apply, and the verification check.",
+    "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
+    "ground_truth": [
+      {
+        "gap": "missing_password_policy",
+        "detection": [
+          "show running-config | include security passwords",
+          "show running-config | section username",
+          "show running-config | section line vty",
+          "show running-config | include login block-for"
+        ],
+        "remediation_commands": [
+          "configure terminal",
+          "service password-encryption",
+          "security passwords min-length 12",
+          "password strength-check",
+          "login block-for 60 attempts 5 within 60",
+          "username <admin> privilege 15 secret <STRONG_SECRET>",
+          "end",
+          "write memory"
+        ],
+        "verification": [
+          "show running-config | include security passwords",
+          "show running-config | section username",
+          "show running-config | include login block-for",
+          "show running-config | section line vty"
+        ]
+      },
+      {
+        "gap": "ssh_acl_not_applied_to_vty",
+        "detection": [
+          "show running-config | section line vty",
+          "show access-lists",
+          "show run | include access-class",
+          "show ip access-lists <ACL_NAME> (if ACL exists) "
+        ],
+        "remediation_commands": [
+          "configure terminal",
+          "ip access-list standard MGMT_ONLY",
+          " permit <management_subnet> <wildcard_mask>",
+          " deny any",
+          "exit",
+          "line vty 0 4",
+          " access-class MGMT_ONLY in",
+          " transport input ssh",
+          " login local",
+          "end",
+          "write memory"
+        ],
+        "verification": [
+          "show running-config | section line vty",
+          "show access-lists MGMT_ONLY",
+          "show ssh",
+          "attempt an SSH login from an allowed IP to confirm access and from a denied IP to confirm blocking"
+        ]
+      }
+    ],
+    "explanation": "The provided evidence shows two preventive configuration gaps: password_policy_present_bool is marked as a problem, and ssh_acl_applied_check is marked as a problem, while aaa_missing_devices is None indicating AAA is not broadly missing. A missing/enforced password policy increases risk because weak or long-lived credentials allow attackers to gain privileged access and make changes that can disrupt L2VPN/L3VPN services; therefore check running configuration lines for password policy entries, username secrets, and any login-blocking settings. The recommended remediations enforce encrypted secrets, minimum password length, strength checking (where supported), account lockout (login block-for), and conversion of users to secret format; verify by re-checking the running-config entries and confirming login-block behavior. The absent SSH access control on VTY lines allows management access from any source, which raises the likelihood of unauthorized changes or brute-force attempts impacting VPN services; detect this by inspecting the line vty section and existing ACLs, remediate by creating a management-only ACL, applying it with access-class on line vty, and restricting transport to SSH, then verify by showing the applied ACL and testing allowed/denied SSH logins. Commands shown are example Cisco IOS-style sequences; platform-specific syntax may differ and should be adapted to the device OS and change control procedures.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "synthetic",
+    "level": 4,
+    "persona": "noc_operator",
+    "scenario": "서비스 영향도 분석",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "aaa_missing_devices",
+          "metric_params": {
+            "host": "device1"
+          }
+        },
+        {
+          "required_metric": "password_policy_present_bool",
+          "metric_params": {
+            "host": "device1"
+          }
+        },
+        {
+          "required_metric": "ssh_acl_applied_check",
+          "metric_params": {
+            "host": "device1"
+          }
+        },
+        {
+          "intent": "set_vty_acl",
+          "params": {
+            "host": "device1",
+            "acl_name": "NOC_VTY_ONLY"
+          }
+        },
+        {
+          "intent": "show_users",
+          "params": {
+            "host": "device1"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_aaa_missing_devices": null,
+        "step_None_password_policy_present_bool": false,
+        "step_None_ssh_acl_applied_check": false
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-010",
+    "question": "Provide a concise step‑by‑step NOC recovery checklist (commands to run and metrics to inspect) for combined L2VPN + L3VPN incidents on a 6‑device network. For each step include expected successful output/metric values and the next action if the check fails.",
+    "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
+    "ground_truth": [
+      {
+        "step": 1,
+        "title": "Scope & topology confirmation",
+        "commands": [
+          "show running-config | include hostname; show inventory",
+          "show l2vpn summary; show mpls ldp neighbors; show bgp summary",
+          "confirm affected CE(s)/VRF(s) and list 6 devices and roles (PE/CP/Provider)"
+        ],
+        "metrics_to_inspect": [
+          "Which CE/VRF/VLANs are impacted",
+          "Which PE devices (of the 6) carry the affected services"
+        ],
+        "expected_success": "Clear mapping of affected services to specific devices/VRFs/VLANs",
+        "next_action_if_fail": "Access console or out‑of‑band management to manually inspect device configs and physical topology; escalate to on‑site tech if device unreachable."
+      },
+      {
+        "step": 2,
+        "title": "Management-plane & device reachability",
+        "commands": [
+          "ping <device-mgmt-ip> repeat 5",
+          "ssh/console login to each of the 6 devices; show clock; show version"
+        ],
+        "metrics_to_inspect": [
+          "Ping success rate (should be 100%)",
+          "Accessible via SSH/console, correct time and firmware"
+        ],
+        "expected_success": "100% pings and successful login to all 6 devices",
+        "next_action_if_fail": "Use console, KVM or on‑site support to restore management access; check power, cabling, switch ports, and ACLs."
+      },
+      {
+        "step": 3,
+        "title": "Control‑plane health (CPU / Memory / Process)",
+        "commands": [
+          "show processes cpu | include CPU; show memory statistics",
+          "show platform software status control-plane  (vendor specific)"
+        ],
+        "metrics_to_inspect": [
+          "CPU usage (preferably < 70%)",
+          "Memory available (> 20% free)",
+          "No critical process crashes or Restarts"
+        ],
+        "expected_success": "Stable CPU (<70%) and memory with no crashed critical processes",
+        "next_action_if_fail": "Identify culprit process; consider process restart or failover to standby; escalate to vendor if kernel/system instability."
+      },
+      {
+        "step": 4,
+        "title": "IGP (OSPF/IS‑IS) adjacency & LSDB consistency",
+        "commands": [
+          "show ip ospf neighbor; show ip ospf database | include <area>",
+          "show isis neighbors; show isis database (vendor variant)"
+        ],
+        "metrics_to_inspect": [
+          "Adjacency state = FULL (OSPF) / Up (IS‑IS)",
+          "No missing important prefixes in LSDB"
+        ],
+        "expected_success": "All expected IGP adjacencies are up and LSDB consistent across PEs",
+        "next_action_if_fail": "Check authentication, MTU, ACLs; debug adjacency establishment; if flapping, isolate interface or adjacency and notify upstream."
+      },
+      {
+        "step": 5,
+        "title": "MPLS control-plane: LDP/RSVP sessions and label bindings",
+        "commands": [
+          "show mpls ldp neighbors; show mpls ldp bindings",
+          "show mpls interfaces; show rsvp interface (if RSVP‑TE used)"
+        ],
+        "metrics_to_inspect": [
+          "LDP neighbors state = Operational/Established",
+          "Labels bound for core/PE routes and for VRF routes if applicable"
+        ],
+        "expected_success": "LDP/RSVP neighbors established and expected label bindings present",
+        "next_action_if_fail": "Verify IGP (step 4), check LDP configuration (targeted/transport), MTU, ACLs; clear LDP peer or restart label protocol on affected device."
+      },
+      {
+        "step": 6,
+        "title": "BGP base peering and MP‑BGP (VPNv4/EVPN) sessions",
+        "commands": [
+          "show bgp summary",
+          "show bgp vpnv4 unicast all summary; show bgp evpn summary",
+          "show bgp neighbors <peer> advertised-routes/received-routes"
+        ],
+        "metrics_to_inspect": [
+          "BGP state = Established for all PE‑to‑PE MP‑BGP sessions",
+          "Expected number of VPNv4/EVPN routes present and not stuck in idle/reconnect"
+        ],
+        "expected_success": "All MP‑BGP sessions Established and expected prefixes/routes exchanged",
+        "next_action_if_fail": "Check TCP connectivity, BGP timers, authentication, next‑hop reachability; if peer flaps, capture BGP debug and escalate to peer/vendor."
+      },
+      {
+        "step": 7,
+        "title": "VRF routing (L3VPN) — RIB/Route import/export and next‑hops",
+        "commands": [
+          "show ip route vrf <VRF>; show route table vrf <VRF> (vendor)",
+          "show bgp vpnv4 unicast all | include <VRF‑prefix>",
+          "show ip cef vrf <VRF> <prefix> detail (or show route forwarding table vrf)"
+        ],
+        "metrics_to_inspect": [
+          "Presence of CE routes in VRF RIB",
+          "Correct next‑hop and label information in FIB/CEF",
+          "No route leaks or missing imports"
+        ],
+        "expected_success": "Expected CE prefixes present in VRF RIB with correct next‑hop/labels",
+        "next_action_if_fail": "Verify route‑target (RT) import/export, route‑distinguisher (RD) integrity, MP‑BGP advertisement; reconfigure or clear BGP for that VRF if needed."
+      },
+      {
+        "step": 8,
+        "title": "L2VPN (VPLS/EVPN) overlay health — control-plane and data‑plane",
+        "commands": [
+          "show vpls detail / show l2vpn vfi detail",
+          "show evpn route type 2/5; show evpn mac all",
+          "show bridge-domain <BD> or show mac address-table vlan <VLAN>"
+        ],
+        "metrics_to_inspect": [
+          "VPLS/EVPN instances state = Up",
+          "MAC learning present and correct remote MACs",
+          "No split‑horizon or split‑brain symptoms"
+        ],
+        "expected_success": "VPLS/EVPN instances up with expected MACs learned on correct PEs",
+        "next_action_if_fail": "Check BGP EVPN sessions, RT/RD, VNI/VLAN mapping, split‑horizon settings; clear EVPN or VPLS instance or reconfigure VLAN/VNI mappings."
+      },
+      {
+        "step": 9,
+        "title": "Forwarding verification: VRF/bridge‑domain pings & traceroutes",
+        "commands": [
+          "ping vrf <VRF> <CE-ip> source <local-vrf-ip>",
+          "traceroute vrf <VRF> <CE-ip>",
+          "for L2: ping to remote CE MAC via host behind CE, or use synthetic ping across VPLS/EVPN"
+        ],
+        "metrics_to_inspect": [
+          "Ping latency and packet loss (expected 0% loss for control tests)",
+          "Traceroute path shows correct PE/through‑labels"
+        ],
+        "expected_success": "Successful pings across L3VPN/observable L2 traffic flows with acceptable latency and 0% loss",
+        "next_action_if_fail": "If ICMP fails, inspect label forwarding (show mpls forwarding-table), check ACLs/VRF firewalling, MTU mismatches; capture packet with TTL/label info to isolate hop."
+      },
+      {
+        "step": 10,
+        "title": "Interface counters, drops, MTU and QoS queues",
+        "commands": [
+          "show interfaces <int> | include errors|drops|MTU",
+          "show interfaces counters errors; show queueing interface <int>"
+        ],
+        "metrics_to_inspect": [
+          "CRC/errors = 0 or low; drops/output queue low",
+          "MTU consistent end‑to‑end for MPLS/Ethernet frames"
+        ],
+        "expected_success": "No excessive errors/drops and MTU consistent for the service path",
+        "next_action_if_fail": "Replace bad cable/module, fix duplex/MTU mismatch, adjust QoS or apply policing/shaping changes; schedule maintenance if hardware replacement needed."
+      },
+      {
+        "step": 11,
+        "title": "Data-plane verification: MAC/ARP/ND table consistency and aging",
+        "commands": [
+          "show mac address-table vlan <VLAN>; show arp vrf <VRF>",
+          "show evpn mac-table; show l2vpn vfi mac"
+        ],
+        "metrics_to_inspect": [
+          "MAC/ARP entries for affected hosts present and learned on correct PE",
+          "Aging timers behaving as expected"
+        ],
+        "expected_success": "Correct MAC/ARP entries exist and map to expected next‑hops",
+        "next_action_if_fail": "Clear/flush offending MAC/ARP entries to force re‑learn; check bridging domain configuration and EVPN type‑2/2 routes."
+      },
+      {
+        "step": 12,
+        "title": "Controlled remediation and monitoring",
+        "commands": [
+          "clear bgp <neighbor> soft in/out or clear bgp vpnv4 <neighbor> (vendor-safe commands)",
+          "clear mpls ldp neighbor <peer>; clear evpn vni <vni> (vendor specific)",
+          "monitor with show logging, show log last 10m, and re-run key show commands after action"
+        ],
+        "metrics_to_inspect": [
+          "Neighbor re‑establishment times (expected within vendor‑defined seconds/minutes)",
+          "Service restoration confirmed by step 9 pings and customer confirmation"
+        ],
+        "expected_success": "Services restored, neighbors reestablished, and no regression in metrics",
+        "next_action_if_fail": "Roll back changes, escalate to vendor/provider with logs/packet captures, open RCA ticket and schedule maintenance window for in‑depth fix."
+      }
+    ],
+    "explanation": "I selected a stepwise checklist that first narrows scope and ensures management access, then validates control planes (IGP, MPLS, BGP) that underpin both L2VPN and L3VPN, followed by VRF and L2 instance checks and end‑to‑end forwarding tests. Each step lists concrete commands to run, the metrics to inspect, measurable expected outcomes, and clear next actions when checks fail. This ordering minimizes unnecessary disruptive actions (e.g., avoid mass clears before confirming root causes), isolates whether problems are in control‑plane or data‑plane, and provides escalation paths (console, hardware, vendor) appropriate for a 6‑device PE topology supporting combined L2/L3 VPN services.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "synthetic",
+    "level": 4,
+    "persona": "noc_operator",
+    "scenario": "서비스 영향도 분석",
+    "source_files": [],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "intent": "show_bgp_neighbor_detail",
+          "params": {
+            "host": "device4"
+          }
+        },
+        {
+          "intent": "show_l2vpn_vc",
+          "params": {
+            "host": "device4"
+          }
+        },
+        {
+          "intent": "show_route_table",
+          "params": {
+            "host": "device4"
+          }
+        },
+        {
+          "intent": "show_log_include",
+          "params": {
+            "host": "device4",
+            "pattern": "L2VPN|BGP|VRF"
+          }
+        },
+        {
+          "intent": "check_connectivity",
+          "params": {
+            "host": "device4",
+            "target": "198.51.100.1"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {}
     }
   }
 ]

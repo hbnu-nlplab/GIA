@@ -1,0 +1,832 @@
+[
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-001",
+    "question": "고객사 A의 L3VPN 간헐적 단절의 근본 원인을 식별하라. BGP 세션 불안정(미싱/플랩)인지, 아니면 VRF가 일부 PE에서 올바르게 바인딩/RT가 유효하지 않아 라우트가 유실되는지 증거를 모아 판단하라.",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": "원인 미확인",
+    "explanation": "제공된 증거에서 ibgp_missing_pairs_count 값이 0이므로 iBGP 누락이나 BGP 세션의 미싱/플랩과 같은 BGP 세션 불안정은 확인되지 않습니다. 또한 vrf_rt_list_per_device가 '없음'으로 보고되어 VRF가 일부 PE에서 바인딩되지 않거나 RT가 유효하지 않아 라우트가 유실되는 문제도 발견되지 않습니다. 따라서 주어진 데이터만으로는 근본 원인을 특정할 수 없으므로 추가 조사가 필요합니다. 추가 조사로는 시간대별 BGP 업데이트/로그와 플랩 기록 확인, PE별 RIB/FIB(VPN 라우트 존재 여부) 점검, BFD 및 PE-CE 링크 상태 확인, MPLS 라벨 분배(LDP/RSVP) 상태 확인, 관련 시점의 패킷 캡처 및 컨트롤플레인 리소스(CPU/메모리) 모니터링을 권장합니다.",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "scenario",
+    "level": 4,
+    "persona": "troubleshooter",
+    "scenario": "장애 상황 대응",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "ibgp_missing_pairs_count",
+          "metric_params": {
+            "host": "PE1"
+          }
+        },
+        {
+          "required_metric": "vrf_rt_list_per_device",
+          "metric_params": {
+            "host": "PE1",
+            "vrf": "CustA-VRF"
+          }
+        },
+        {
+          "intent": "show_vrf",
+          "params": {
+            "host": "PE1",
+            "vrf": "CustA-VRF"
+          }
+        },
+        {
+          "intent": "show_bgp_summary",
+          "params": {
+            "host": "PE1"
+          }
+        },
+        {
+          "intent": "check_connectivity",
+          "params": {
+            "src": "PE1",
+            "dst": "CE1"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_ibgp_missing_pairs_count": 0,
+        "step_None_vrf_rt_list_per_device": []
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-002",
+    "question": "PE3를 추가한 이후 특정 L3VPN 경로가 보이지 않거나 광고되지 않는 경우, 로컬 AS 설정 오류, eBGP 피어링의 원격 AS 불일치, 또는 누락된 route-map이 원인인지 판별하고 우선 원인으로 단정할 수 있는 증거를 제시하라.",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": "누락된 route-map",
+    "explanation": "제공된 증거에서 bgp_local_as_numeric이 0으로 나타나므로 PE3의 로컬 AS 구성 오류는 배제할 수 있습니다. ebgp_remote_as_map이 빈 객체({})로 나타나는 것은 eBGP 피어의 원격 AS 불일치가 감지되지 않았음을 의미하므로 원격 AS 불일치 역시 주원인으로 보기 어렵습니다. 따라서 남는 합리적인 원인은 route-map의 누락 또는 잘못된 적용으로, 이는 경로가 수신되거나 광고되는 것을 차단할 수 있습니다. 문제를 확정하려면 PE3의 BGP 이웃 구성에서 neighbor ... route-map 문구의 존재 여부와 route-map의 permit/deny 및 match/set 구성을 확인해야 합니다.",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "scenario",
+    "level": 4,
+    "persona": "troubleshooter",
+    "scenario": "장애 상황 대응",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "PE3"
+          }
+        },
+        {
+          "required_metric": "ebgp_remote_as_map",
+          "metric_params": {
+            "host": "PE3"
+          }
+        },
+        {
+          "intent": "show_bgp_neighbors",
+          "params": {
+            "host": "PE3"
+          }
+        },
+        {
+          "intent": "show_bgp_neighbor_detail",
+          "params": {
+            "host": "PE3",
+            "neighbor": "PE2"
+          }
+        },
+        {
+          "intent": "show_route_table",
+          "params": {
+            "host": "PE3",
+            "vrf": "CustA-VRF"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_bgp_local_as_numeric": 0,
+        "step_None_ebgp_remote_as_map": {}
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-003",
+    "question": "ibgp_missing_pairs(3개)가 있을 때, 어떤 VRF(또는 고객)가 영향을 받을지 파악하고, 그 영향이 전역(다수 고객)인지 특정 고객에 국한되는지 분석하라.",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": "판단 불가 — ibgp_missing_pairs 항목이 보고되지 않았으므로(데이터 없음) 영향을 받는 VRF(고객)과 그 범위(전역/특정)를 결정할 수 없습니다.",
+    "explanation": "제공된 증거에는 ibgp_missing_pairs, vrf_names_set, vrf_rt_list_per_device 항목이 모두 '없음'으로 표시되어 있어 어떤 iBGP 페어가 누락되었는지, 누가 그 페어를 사용하는지, 그리고 해당 세션이 어떤 주소가족(예: VPNv4/IPv4-VRF)을 전달하는지 확인할 수 없습니다. 일반적으로 누락된 iBGP 페어의 영향 범위는 다음과 같이 판단합니다: (1) 해당 페어가 라우트 리플렉터와 클라이언트 사이거나 VPNv4 등을 전달하는 세션이면 다수의 VRF(여러 고객)에 전역적으로 영향을 줄 수 있습니다. (2) 반대로 페어가 특정 VRF 전용의 PE 간 세션이거나 VRF별로 분리된 세션이면 특정 고객에 국한된 영향일 수 있습니다. 현재 증거로는 위 두 경우 중 어느 쪽인지 판정할 수 없으므로, 영향을 식별하려면 누락된 iBGP 페어의 구체적 목록(피어 IP/디바이스), 해당 페어의 주소가족 및 역할(라리트 리플렉터/클라이언트 여부), 그리고 디바이스별 VRF→RT 매핑(또는 vrf_rt_list_per_device)을 추가로 수집해야 합니다.",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "scenario",
+    "level": 4,
+    "persona": "troubleshooter",
+    "scenario": "장애 상황 대응",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "ibgp_missing_pairs",
+          "metric_params": {
+            "host": "PE1"
+          }
+        },
+        {
+          "required_metric": "vrf_names_set",
+          "metric_params": {
+            "host": "PE1"
+          }
+        },
+        {
+          "required_metric": "vrf_rt_list_per_device",
+          "metric_params": {
+            "host": "PE2"
+          }
+        },
+        {
+          "intent": "show_route_table",
+          "params": {
+            "host": "PE2",
+            "vrf": "CustA-VRF"
+          }
+        },
+        {
+          "intent": "show_bgp_summary",
+          "params": {
+            "host": "PE2"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_ibgp_missing_pairs": [],
+        "step_None_vrf_names_set": [],
+        "step_None_vrf_rt_list_per_device": []
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-004",
+    "question": "발견된 L2VPN 문제(2건)가 L3VPN 서비스에 직접적인 영향(데이터 플레인 단절)인지, 아니면 경로/광고 문제(제어 플레인)에 국한되는지 확인하라. 양측을 구분할 증거를 제시하라.",
+    "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
+    "ground_truth": "control_plane_only",
+    "explanation": "The evidence points to a control-plane (path/advertisement) issue rather than a direct L3VPN data-plane outage. There are no l2vpn_unidirectional_pairs reported, which indicates no observed unidirectional L2 forwarding failures that would signal an active data-plane disruption. The two findings are l2vpn_pwid_mismatch_pairs between sample7 and sample9 (both directions), which is a pseudowire ID/configuration mismatch and is characteristic of signaling or configuration asymmetry in the L2VPN control plane. A PWID mismatch prevents proper pseudowire establishment or advertisement but does not by itself prove that L3VPN packet forwarding is broken. To be certain, one should still verify L3VPN reachability (MP-BGP status, VRF route presence, and end-to-end ping/traceroute across the VPN) because if an L3VPN relies on the affected L2 pseudowire as its underlying transport, an unresolved PWID mismatch could indirectly disrupt L3 traffic. Based on the provided evidence alone, however, the issue is limited to the control plane (path/advertisement) rather than a direct L3VPN data-plane outage.",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "scenario",
+    "level": 4,
+    "persona": "troubleshooter",
+    "scenario": "장애 상황 대응",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "l2vpn_unidirectional_pairs",
+          "metric_params": {
+            "host": "P1"
+          }
+        },
+        {
+          "required_metric": "l2vpn_pwid_mismatch_pairs",
+          "metric_params": {
+            "host": "P1"
+          }
+        },
+        {
+          "intent": "show_l2vpn_vc",
+          "params": {
+            "host": "P1",
+            "vc": "vc-CustA"
+          }
+        },
+        {
+          "intent": "show_l2vpn_status",
+          "params": {
+            "host": "P1"
+          }
+        },
+        {
+          "intent": "check_connectivity",
+          "params": {
+            "src": "CE1",
+            "dst": "CE1",
+            "via_vrf": "CustA-VRF"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_l2vpn_unidirectional_pairs": [],
+        "step_None_l2vpn_pwid_mismatch_pairs": [
+          "sample7<->sample9",
+          "sample9<->sample7"
+        ]
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-005",
+    "question": "제안된 route-map(set_bgp_routemap)을 PE2에 적용하려고 할 때, 어떤 부작용(특정 고객의 경로 소실, 트래픽 루프 등)이 발생할 수 있는지 시나리오별로 검증 절차와 함께 제시하라.",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": [
+      {
+        "scenario_id": 1,
+        "situation": "route-map가 BGP next-hop을 PE2 또는 접근 불가 주소로 설정함",
+        "potential_side_effects": [
+          "특정 고객(또는 일부 프리픽스)의 경로 소실(경로가 설치되지 않음)",
+          "트래픽 루프(다른 경로가 PE2로 돌아오며 순환 발생 가능)"
+        ],
+        "verification_steps": [
+          "show route-map set_bgp_routemap",
+          "show ip bgp <affected-prefix> detail",
+          "show ip bgp vpnv4 vrf <VRF-name> <affected-prefix>",
+          "show ip bgp neighbors <peer-ip> advertised-routes",
+          "show ip route <next-hop> || ping <next-hop> from PE2",
+          "traceroute from CE toward destination and from PE2 toward CE to detect loops",
+          "debug ip bgp updates (주의: 영향 확인 후 사용)"
+        ]
+      },
+      {
+        "scenario_id": 2,
+        "situation": "route-map가 community/route-target을 설정하여 상위(또는 인근) 라우터의 필터 정책을 트리거함",
+        "potential_side_effects": [
+          "특정 고객의 VPNv4/vpnv6 경로가 다른 PE/AS로 전달되지 않거나 필터되어 소실됨",
+          "타 고객 트래픽이 잘못된 대상으로 유입되어 서비스 장애"
+        ],
+        "verification_steps": [
+          "show route-map set_bgp_routemap",
+          "show ip bgp vpnv4 vrf <VRF-name> community",
+          "show ip bgp neighbors <peer-ip> received-community",
+          "show ip bgp <prefix> community",
+          "show run | include route-target || show ip vrf detail",
+          "검증용 CE-CE ping/traceroute (CE에서 목적지 도달 여부 확인)",
+          "capture/packet-trace(필요시)로 community가 부착되어 전송되는지 확인"
+        ]
+      },
+      {
+        "scenario_id": 3,
+        "situation": "route-map가 local-preference/weight/med 값을 변경하여 경로 선호도가 바뀜",
+        "potential_side_effects": [
+          "트래픽 경로가 의도치 않게 다른 PE/포인트로 전환되어 비대칭 라우팅 또는 과부하 발생",
+          "특정 고객 트래픽이 검증되지 않은 경로로 유입되어 성능 저하 또는 패킷 손실"
+        ],
+        "verification_steps": [
+          "show ip bgp vpnv4 vrf <VRF-name> <prefix> attributes",
+          "show ip bgp vpnv4 <prefix> bestpath",
+          "show ip route <prefix> vrf <VRF-name>",
+          "show ip bgp neighbors <peer> routes | include weight|localpref|metric",
+          "span/monitor 트래픽 엔지니어링 지점에서 트래픽량 확인",
+          "CE에서의 traceroute 및 throughput 테스트"
+        ]
+      },
+      {
+        "scenario_id": 4,
+        "situation": "route-map가 AS-path를 수정(AS prepend/AS strip)하거나 origin을 변경함",
+        "potential_side_effects": [
+          "경로 선택이 다른 AS로 편향되어 특정 고객 경로가 차단되거나 루프 발생",
+          "경로 플랩/경로 불안정성(경로 재선택 빈번)"
+        ],
+        "verification_steps": [
+          "show ip bgp <prefix> as-path",
+          "show ip bgp neighbors <peer> received-routes",
+          "show ip bgp vpnv4 vrf <VRF-name> <prefix> detail",
+          "debug bgp events/updates(주의하여 사용)",
+          "모니터링 시스템에서 BGP 경로 변경 로그 확인"
+        ]
+      },
+      {
+        "scenario_id": 5,
+        "situation": "route-map가 VRF 관련 RD/RT 또는 MP-BGP 속성을 변경하여 import/export 동작을 깨뜨림",
+        "potential_side_effects": [
+          "VPN 경로가 특정 VRF에 임포트되지 않아 고객에게 보이지 않음(경로 소실)",
+          "다른 VRF로 잘못 임포트되어 보안/트래픽 혼재 발생"
+        ],
+        "verification_steps": [
+          "show ip bgp vpnv4 vrf <VRF-name> | include Route-Distinguisher|route-target",
+          "show bgp vpnv4 all labels",
+          "show ip route vrf <VRF-name>",
+          "show ip bgp vpnv4 vrf <VRF-name> <prefix> detail",
+          "verify RT/RT import/export 정책(정책문서 및 device config 확인)"
+        ]
+      },
+      {
+        "scenario_id": 6,
+        "situation": "route-map의 match/deny 규칙이 과도하게 넓어 다수 프리픽스를 차단함(실수로 deny all 등)",
+        "potential_side_effects": [
+          "여러 고객의 경로 대량 소실",
+          "서비스 중단 및 복구 시 긴 재수렴 시간"
+        ],
+        "verification_steps": [
+          "show route-map set_bgp_routemap",
+          "show ip bgp summary",
+          "show ip bgp vpnv4 vrf <VRF-name> | include prefixes",
+          "compare BGP prefix counts(before/after 적용)",
+          "simulate route-map 적용 전후의 advertise/receive behavior(test lab if possible)",
+          "rollback 계획 및 적용 전 staged 테스트"
+        ]
+      }
+    ],
+    "explanation": "각 시나리오에서 제안된 부작용은 route-map가 BGP 경로의 핵심 속성(next-hop, community, local-preference, AS-path, RD/RT 등)을 변경하거나 부적절하게 매칭/거부할 때 발생합니다. 시나리오 1에서 next-hop을 PE2 또는 도달 불가능한 주소로 설정하면 해당 경로의 next-hop 검증에 실패하여 라우터가 경로를 설치하지 않거나, 설치되더라도 트래픽이 되돌아와 루프를 형성할 수 있습니다. 따라서 next-hop의 도달성(ping)과 BGP 테이블에서의 next-hop 값 및 광고 정보를 확인하는 것이 유효한 검증 방법입니다. 시나리오 2에서는 community 혹은 route-target이 상위·이웃 장비의 필터 정책을 트리거하여 경로가 필터되어 사라질 수 있으므로, 전파된 community와 VRF의 import/export 상태를 확인하고 CE 간 통신으로 실제 서비스 가용성을 검증해야 합니다. 시나리오 3의 속성 변경(local-pref, weight, MED)은 경로 선호도를 바꿔 트래픽을 다른 방향으로 몰아 비대칭 라우팅 또는 과부하를 야기하므로 BGP의 베스트패스 속성과 RIB/FIB 간의 일치를 비교하고 실제 트래픽 플로우를 측정하여 검증해야 합니다. 시나리오 4는 AS-path나 origin 변경으로 경로 선택 순위가 바뀌며, 때로는 루프나 경로 불안정을 유발하므로 as-path를 확인하고 BGP 업데이트 로그를 모니터링하여 이상 징후를 잡아야 합니다. 시나리오 5는 MPLS/VPN 환경에서 RD/RT나 MP-BGP 속성 변경이 VRF간 import/export를 깨뜨려 고객 경로가 보이지 않게 만들 수 있으므로 VPNv4 라우트 디테일과 RT 설정을 반드시 검증해야 합니다. 마지막으로 시나리오 6은 route-map의 매치/deny 구성이 광범위하게 잘못되면 다수 프리픽스가 차단되어 대량 장애를 유발하므로, 적용 전후의 prefix 카운트 비교와 테스트 랩에서의 시뮬레이션, 적용 시점의 롤백 계획을 준비해야 합니다. 제시한 verification 단계들은 각 속성 변경이 BGP 테이블, VRF RIB/FIB, 실제 트래픽 경로에 어떤 영향을 주는지를 직접 확인할 수 있는 명령과 절차들로 구성되어 있어, 문제 발생 여부를 신속히 탐지하고 원인을 규명하는 데 적합합니다.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "scenario",
+    "level": 4,
+    "persona": "troubleshooter",
+    "scenario": "장애 상황 대응",
+    "source_files": [],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "intent": "show_bgp_summary",
+          "params": {
+            "host": "PE2"
+          }
+        },
+        {
+          "intent": "show_bgp_neighbors",
+          "params": {
+            "host": "PE2"
+          }
+        },
+        {
+          "intent": "set_bgp_routemap",
+          "params": {
+            "host": "PE2",
+            "routemap": "FILTER-CustA",
+            "direction": "in"
+          }
+        },
+        {
+          "intent": "show_route_table",
+          "params": {
+            "host": "PE2",
+            "vrf": "CustA-VRF"
+          }
+        },
+        {
+          "intent": "check_connectivity",
+          "params": {
+            "src": "PE2",
+            "dst": "CE1"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {}
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-006",
+    "question": "최근 보안 점검에서 적용한 VTY ACL(set_vty_acl)이 관리 연결(특정 NMS/운영자 IP)뿐 아니라 자동화/서비스(예: BGP 피어 관리)에 미치는 영향을 식별하고, 영향받을 장비 목록과 서비스 목록을 제시하라.",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": {
+      "affected_devices": [
+        "<devices_with_set_vty_acl_applied>"
+      ],
+      "affected_services": [
+        "SSH-based management access (operator SSH to vty)",
+        "Automation/orchestration using SSH (Ansible, scripts, orchestration jobs)",
+        "Netconf/RESTCONF over SSH (if used on vty/SSH)",
+        "Telnet-based management (if vty/telnet enabled)",
+        "NMS polling or active checks that use SSH to devices",
+        "BGP configuration/peer-management actions performed via SSH (management of BGP, not BGP peering itself)"
+      ]
+    },
+    "explanation": "The ssh_acl_applied_check failing indicates a VTY ACL (set_vty_acl) has been applied to device vty lines and is blocking SSH/telnet management plane connections that are not explicitly permitted. VTY ACLs control access to the device management plane (vty lines), so any management IPs or automation hosts not included in the ACL will be denied. This directly impacts SSH-based operator/NMS connections and any automation/orchestration systems that rely on SSH (for example Ansible playbooks, scripts, or Netconf/RESTCONF sessions tunneled over SSH). Telnet would be impacted similarly if still in use. BGP peerings (TCP 179) are control-plane protocols that run between routers and are not terminated on the vty lines; therefore BGP data-plane peering itself will not be disrupted by an ACL applied only to vty lines. However, any operational tasks that manage or troubleshoot BGP via SSH (for example issuing show/configure commands, restarting BGP, or automation that modifies BGP neighbor configuration) will be prevented if the management host is blocked by the VTY ACL. To produce a definitive list of affected devices and services you must: 1) enumerate inventory to find devices where set_vty_acl was applied (search running-config for 'line vty' + 'access-class' or the configuration snippet that installs set_vty_acl); 2) for each device, retrieve the ACL contents to see which source IPs are permitted/denied (show access-lists / show ip access-lists / show running-config section vty); 3) correlate permitted IPs against known NMS/operator IP addresses and automation host IPs to identify which hosts are blocked; and 4) check device logs/AAA logs and automation job failure messages for 'connection refused/permission denied' to confirm impact. Typical diagnostic commands and checks are: show running-config | section line vty; show access-lists <name>; show ip access-lists; show logging | include ACL|Denied|SSH; review automation/NMS job failures and their source IPs; and temporarily test by permitting an NMS/automation IP in a safe manner. Remediation steps include updating the VTY ACL to explicitly allow the management/NMS/automation IPs, applying a management-plane ACL that is scoped correctly, or rolling back the set_vty_acl change after validating inventory and change windows. The placeholder '<devices_with_set_vty_acl_applied>' in the ground_truth must be replaced by the concrete device list produced by the inventory/configuration queries described above.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "scenario",
+    "level": 4,
+    "persona": "troubleshooter",
+    "scenario": "장애 상황 대응",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "ssh_acl_applied_check",
+          "metric_params": {
+            "host": "PE1"
+          }
+        },
+        {
+          "intent": "show_users",
+          "params": {
+            "host": "PE1"
+          }
+        },
+        {
+          "intent": "set_vty_acl",
+          "params": {
+            "host": "PE1",
+            "acl": "deny-unauth-admin"
+          }
+        },
+        {
+          "intent": "show_logging",
+          "params": {
+            "host": "PE1"
+          }
+        },
+        {
+          "intent": "show_log_include",
+          "params": {
+            "host": "PE1",
+            "pattern": "vty|login|ssh"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_ssh_acl_applied_check": false
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-007",
+    "question": "OSPF area 0에 바인딩된 인터페이스 중 누락/비활성화된 인터페이스로 인해 PE가 필요한 IGP 경로를 학습하지 못해 L3VPN이 영향을 받았는지 근본 원인을 분석하라.",
+    "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
+    "ground_truth": "영향을 받음",
+    "explanation": "제공된 증거에 따르면 ospf_area0_if_list가 '없음'으로 보고되어 OSPF 백본(Area 0)에 바인딩된 인터페이스가 존재하지 않습니다. OSPF에서 Area 0은 백본 역할을 하므로 PE가 Area 0에 연결되어 있지 않으면 다른 영역이나 이웃으로부터 필요한 IGP 경로(백본을 통한 경로)를 학습할 수 없습니다. 결과적으로 PE가 IGP 경로를 학습하지 못하면 MP-BGP로 교환된 L3VPN 경로의 넥스트 홉을 해석하거나 라벨 기반 전달을 올바르게 구성할 수 없어 L3VPN 서비스에 영향이 발생합니다. 따라서 근본 원인은 해당 PE에서 OSPF Area 0에 바인딩된 인터페이스가 누락되었거나 비활성화되어 OSPF의 라우트 학습/교환이 이루어지지 않은 점입니다. 문제 해결을 위해서는 PE에 Area 0으로 바인딩될 적절한 인터페이스를 활성화하거나 OSPF 설정을 수정하여 백본 연결을 복구하고, OSPF 인접성 및 LSDB, IGP 경로 설치 여부(show ip ospf interface, show ip ospf neighbor, show ip route ospf 등)를 확인한 후 L3VPN(BGP VPNv4/MP-BGP) 경로 및 넥스트 홉 해석이 정상인지 재검증해야 합니다.",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "scenario",
+    "level": 4,
+    "persona": "troubleshooter",
+    "scenario": "장애 상황 대응",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "ospf_area0_if_list",
+          "metric_params": {
+            "host": "PE2"
+          }
+        },
+        {
+          "intent": "show_ip_interface_brief",
+          "params": {
+            "host": "PE2"
+          }
+        },
+        {
+          "intent": "show_ip_ospf_neighbor",
+          "params": {
+            "host": "PE2"
+          }
+        },
+        {
+          "intent": "show_ospf_database",
+          "params": {
+            "host": "PE2"
+          }
+        },
+        {
+          "intent": "show_ip_route_ospf",
+          "params": {
+            "host": "PE2"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_ospf_area0_if_list": []
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-008",
+    "question": "현재 네트워크의 AS 그룹(65001,65003,65000) 구성 불일치가 다른 고객/서비스에 파급되는 범위를 식별하라. 특히 어떤 PE가 잘못된 AS를 갖고 있는지, 그 PE가 호스팅하는 VRF/서비스를 모두 나열하라.",
+    "context": "VRF 설정 현황:\nsample10: 1개 VRF (exam-l3vpn)\nsample7: 1개 VRF (exam-l3vpn)\nsample8: 1개 VRF (exam-l3vpn)\nsample9: 1개 VRF (exam-l3vpn)",
+    "ground_truth": {
+      "misconfigured_pes": [],
+      "affected_vrfs": []
+    },
+    "explanation": "제공된 증거에서 bgp_local_as_numeric 값이 0이고 ebgp_remote_as_map과 neighbor_list_ebgp가 비어 있으며 vrf_count가 0이고 vrf_names_set이 없음으로 보고되어 있습니다. 따라서 네트워크 상에서 AS(65001, 65003, 65000) 구성 불일치를 유발하는 잘못된 AS를 가진 PE는 확인되지 않았습니다. 또한 VRF가 존재하지 않으므로 해당 문제로 인해 다른 고객이나 서비스에 파급되는 영향도 없습니다.",
+    "answer_type": "short",
+    "category": "advanced",
+    "complexity": "scenario",
+    "level": 4,
+    "persona": "troubleshooter",
+    "scenario": "장애 상황 대응",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "required_metric": "bgp_local_as_numeric",
+          "metric_params": {
+            "host": "PE1"
+          }
+        },
+        {
+          "required_metric": "ebgp_remote_as_map",
+          "metric_params": {
+            "host": "PE1"
+          }
+        },
+        {
+          "required_metric": "neighbor_list_ebgp",
+          "metric_params": {
+            "host": "PE1"
+          }
+        },
+        {
+          "required_metric": "vrf_count",
+          "metric_params": {
+            "host": "PE1"
+          }
+        },
+        {
+          "required_metric": "vrf_names_set",
+          "metric_params": {
+            "host": "PE1"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_bgp_local_as_numeric": 0,
+        "step_None_ebgp_remote_as_map": {},
+        "step_None_neighbor_list_ebgp": [],
+        "step_None_vrf_count": 0,
+        "step_None_vrf_names_set": []
+      }
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-009",
+    "question": "PE2에 임시 정적 라우트를 추가해 L3VPN을 복구하려고 할 때 발생할 수 있는 부작용(예: 트래픽 편향, BGP 경로 불일치)을 식별하고, 안전한 롤백 및 모니터링 절차를 상세히 제시하라.",
+    "context": "BGP 설정 현황:\nCE1: AS65001, 1개 피어\nCE2: AS65003, 1개 피어\nsample10: AS65000, 3개 피어\nsample7: AS65000, 3개 피어\nsample8: AS65000, 3개 피어",
+    "ground_truth": {
+      "side_effects": [
+        "Traffic bias/asymmetry toward PE2 causing suboptimal forwarding and potential congestion on PE2 and its links",
+        "BGP route inconsistency between PEs (BGP decision mismatch) leading to split-horizon or path selection differences",
+        "Blackholing if the static next-hop on PE2 is not actually reachable or the VRF forwarding table is inconsistent",
+        "Route preference override (static route winning over learned BGP/VPN routes) causing removal of expected VPN paths",
+        "Unintended redistribution or leakage of routes into the global RIB or into other VRFs if misconfigured",
+        "Route flapping or control-plane churn if static routes are added/removed repeatedly or interact badly with route dampening",
+        "Stateful features impact (e.g., RTBH, policers, BFD/ICMP reachability checks) producing false positives/negatives",
+        "Monitoring/visibility gaps if telemetry/flows are not capturing the temporary path (leading to delayed detection)",
+        "Persistence of stale entries in FIB/adj-RIBs after removal leading to transient forwarding anomalies"
+      ],
+      "safe_rollback_procedure": [
+        "Pre-change: take full backup of affected PE/router configs and capture current RIB/FIB/BGP state (export show ip route, show bgp vpnv4/ipv4/ipv6, show vrf, show mpls forwarding); notify stakeholders and schedule maintenance window.",
+        "Prepare and stage an automated rollback script or CLI command list that exactly reverses the static-route additions; include verification commands and timestamps in the script.",
+        "Minimize scope: apply static routes only to the specific affected VRF prefixes rather than broad aggregates; use route tags and a unique tag value for temporary routes to ease identification and removal.",
+        "If possible, deploy static routes with a deliberately less-preferred administrative distance than active BGP VPN routes, or use route-maps/policies to prevent accidental redistribution into BGP.",
+        "Apply the static routes during the maintenance window and immediately verify RIB and FIB (show ip route vrf, show bgp vpnv4 summary) and path selection from affected CEs and PEs.",
+        "If rollback is required, execute the pre-staged removal script to withdraw the static routes, then clear any soft-state (e.g., clear ip bgp <neighbor> soft out/soft in if necessary) and allow BGP to reconverge.",
+        "After removal, validate route restoration by verifying that the original BGP-learned VPN routes reappear in the VRF RIB and FIB, and confirm reachability with controlled pings/traceroutes from multiple vantage points.",
+        "If the static routes were redistributed or tagged, also remove any temporary redistribution rules and revoke the tags; then clear stale entries (adj-RIB, FIB) if present using targeted clears/refreshes.",
+        "If rollout/rollback involved multiple PEs, perform staggered rollback with health checks between each step to avoid simultaneous flapping across the core.",
+        "Document the event, timestamps, and exact commands executed, and update runbooks with lessons learned before closing the incident."
+      ],
+      "monitoring_and_validation_plan": [
+        "Baseline collection pre-change: traffic flows (NetFlow/sFlow), per-PE CPU/memory, BGP session states, VRF route counts, interface utilization and queue drops.",
+        "Immediate post-change checks: verify BGP routes (route origin and next-hop), RIB vs FIB consistency, and per-VRF forwarding entries; run scripted reachability tests between representative CEs.",
+        "Continuous monitoring during change (first 30–60 minutes): alert on increases in packet drops, interface utilization > threshold (e.g., 80%), CPU > threshold (e.g., 70%), BGP peer flaps, and unexpected route count changes.",
+        "Flow-level validation: compare NetFlow/sFlow before/after to detect traffic steering to PE2; set alerts for >20% deviation in expected path distribution for critical prefixes.",
+        "Control-plane monitoring: track BGP update rates and route-churn metrics; trigger rollback if update rate exceeds a defined threshold or if critical BGP peers flap.",
+        "Functional tests: schedule periodic synthetic transactions (pings, traceroutes, application-layer probes) from multiple vantage points and CEs to validate user experience.",
+        "Health checks after rollback: confirm that routes, FIB entries, and flow patterns return to baseline within a defined convergence window (documented SLA for reconvergence).",
+        "Logging and correlation: centralize syslog/telemetry and correlate alarms to detect side effects (e.g., correlated increase in drops and BGP changes), and retain logs for post-mortem.",
+        "Escalation triggers and automated rollback: define explicit thresholds and automated rollback triggers (e.g., critical service outage, persistent high packet loss, BGP instability) and test the rollback automation in lab first.",
+        "Post-change review: analyze monitoring data for anomalies, verify no stale routes remain, and confirm that the temporary static routes were fully removed if rollback executed."
+      ]
+    },
+    "explanation": "Adding temporary static routes directly on PE2 to recover an L3VPN can change how traffic and routing decisions are made because static routes typically have a very low administrative distance and are installed directly into the RIB/FIB. This causes traffic to be steered toward PE2 even when BGP-learned VPN paths exist elsewhere, producing traffic bias and potential congestion on PE2 and its connected links. Because BGP election and route propagation occur independently on each PE, inserting static routes on one PE can produce BGP route inconsistencies and split-brain path selection across the network. If the configured static next-hop is not reachable from the VRF or is wrong, traffic will be blackholed. Misapplied static routes can also be inadvertently redistributed or leak into other VRFs or the global table if route policies are not explicit, and repeated add/remove cycles can create route flapping and control-plane churn.\n\nTo avoid these risks, the rollback procedure is centered on preparation, limited scope, and repeatable automation. Taking backups and capturing pre-change state allows exact restoration points. Staging a scripted rollback that precisely removes only those temporary entries and any temporary redistribution minimizes human error. Using route tags and purposely less-preferred admin distances (or restrictive route-maps) prevents the temporary configuration from unintentionally overriding normal BGP behavior or being re-advertised. Performing changes in a maintenance window with stakeholder notification reduces impact and ensures that rollback can be done methodically. After withdrawal, explicit verification (RIB/FIB checks and active reachability tests) is required to confirm the network returned to its prior stable state.\n\nMonitoring must be both immediate and continuous. Baseline metrics are necessary to detect deviations such as traffic steering to PE2, increases in packet loss, interface or CPU saturation, and BGP instability. Flow telemetry (NetFlow/sFlow) and synthetic probes help validate forwarding planes and user experience. Automated thresholds and rollback triggers ensure that human operators do not need to react under pressure and that rollbacks occur before broader damage occurs. Finally, thorough logging, correlation, and a post-mortem ensure any root cause is captured and that runbooks are improved to reduce recurrence.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "scenario",
+    "level": 4,
+    "persona": "troubleshooter",
+    "scenario": "장애 상황 대응",
+    "source_files": [],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "intent": "show_route_table",
+          "params": {
+            "host": "PE2",
+            "vrf": "CustA-VRF"
+          }
+        },
+        {
+          "intent": "set_static_route",
+          "params": {
+            "host": "PE2",
+            "vrf": "CustA-VRF",
+            "prefix": "10.100.0.0/24",
+            "next_hop": "10.0.0.254"
+          }
+        },
+        {
+          "intent": "show_bgp_summary",
+          "params": {
+            "host": "PE2"
+          }
+        },
+        {
+          "intent": "check_connectivity",
+          "params": {
+            "src": "CE1",
+            "dst": "10.100.0.1"
+          }
+        },
+        {
+          "intent": "show_route_table",
+          "params": {
+            "host": "PE2",
+            "vrf": "CustA-VRF"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {}
+    }
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-010",
+    "question": "관리보안을 위해 VTY ACL을 적용하려고 할 때 자동화와 모니터링이 영향을 받지 않도록 하기 위한 검증 항목과 적용 후 모니터링/롤백 절차를 제시하라. 필요 시 SSH proxy/jump 대안까지 포함하라.",
+    "context": "보안 설정 현황:\nCE1: SSH ON, AAA OFF\nCE2: SSH ON, AAA OFF\nsample10: SSH ON, AAA ON\nsample7: SSH ON, AAA ON\nsample8: SSH ON, AAA ON",
+    "ground_truth": {
+      "validation_checks": [
+        "Inventory target devices and record management IPs, VRFs, and OOB addresses",
+        "List all automation, monitoring, NMS, backup, and operator source IPs and credentials",
+        "Verify SSH service is present and functional on each device (ssh_present_bool)",
+        "Gather existing VTY/line access and current ACLs applied to management plane",
+        "Define least-privilege VTY ACL entries permitting only approved source IPs and required protocols/ports",
+        "Include management VRF/loopback and any NAT translations in ACL design",
+        "Add explicit allowances for jump/bastion hosts and emergency console/OOB addresses",
+        "Prepare ACL logging rules (rate-limited) to capture denied attempts",
+        "Validate ACL order, sequence numbers, and implicit deny behavior",
+        "Take full configuration and ACL backups and store them off-device",
+        "Stage and test ACL on lab/test device or in a maintenance window for a pilot group",
+        "Prepare rollback configuration snippets and an automated rollback playbook",
+        "Schedule change window and notify all stakeholders including automation owners"
+      ],
+      "pre_deploy_tests": [
+        "From each automation/monitoring host, test SSH connectivity to target management IPs",
+        "From each operator IP, test interactive login and privilege escalation",
+        "Test access via planned jump/bastion hosts and verify ProxyJump/ProxyCommand behavior",
+        "Run config validation tools and ACL syntax checks (lint / dry-run / candidate commit)",
+        "Verify that scheduled jobs (backups, polling, scripts) can complete with the planned ACL"
+      ],
+      "apply_steps": [
+        "Apply the VTY ACL to a single pilot device or small batch during maintenance window",
+        "Enable ACL logging (rate-limited) for an observation period",
+        "Validate immediate connectivity from automation, monitoring, and operator sources",
+        "Monitor and review ACL logs and metrics continuously for the observation period",
+        "If pilot is successful, progressively roll out to remaining devices in controlled batches"
+      ],
+      "post_apply_monitoring": [
+        "Continuously monitor SSH session establishment and authentication success rates from automation and NMS",
+        "Alert on ACL-deny log events that originate from known automation, monitoring, or operator IPs",
+        "Monitor job outcomes for scheduled automation tasks, backups, and configuration pushes",
+        "Track device CPU/memory and excessive auth failures to detect unintended effects",
+        "Verify SNMP, syslog, traps, and telemetry delivery remain intact",
+        "Maintain elevated monitoring for a defined stabilization period (e.g., 24–72 hours)"
+      ],
+      "rollback_procedure": [
+        "If critical automation or monitoring is broken, immediately remove or replace the VTY ACL with the pre-prepared rollback snippet",
+        "If remote access is lost, use OOB console or physical access to restore ACL or full config from backup",
+        "If ACL removal is insufficient, restore the full saved running-config backup",
+        "After rollback, open an incident, collect logs and packet captures, and run a root-cause analysis before reattempt",
+        "Only reapply changes after corrective actions, updated ACL definitions, and successful re-testing"
+      ],
+      "ssh_proxy_jump_options": [
+        "Deploy a hardened SSH bastion/jump host in the management network with strict host-based allowlists",
+        "Use SSH ProxyJump (ProxyCommand) for client-to-target chaining and central logging of admin sessions",
+        "Implement public key authentication and restrict keys to specific target hosts on the bastion",
+        "Use multi-factor authentication and AAA integration on the jump host for stronger operator authentication",
+        "Automate health checks and connectivity tests through the jump host as part of pre-deploy tests",
+        "Whitelist only the bastion IP in device VTY ACLs and deny direct SSH from broad networks"
+      ]
+    },
+    "explanation": "This answer provides a structured verification checklist and operational procedures to ensure that applying VTY ACLs does not break automation or monitoring. First, inventorying devices, management IPs, VRFs, and all automation/NMS/operator source addresses is essential so ACLs explicitly permit known good sources and avoid surprises. Verifying SSH presence (ssh_present_bool) prevents applying an ACL that blocks access when SSH is not configured or reachable. Capturing existing VTY configurations and backing up running-configs ensures a quick restore point. Designing least-privilege ACLs means permitting only required source IPs and ports (typically TCP/22) and including management VRFs and loopbacks so indirect management paths still function. Including explicit allowances for jump/bastion hosts and OOB consoles provides emergency access paths. Enabling rate-limited ACL logging for a short observation period helps detect legitimate traffic that would be blocked without producing log floods. Validating ACL order and implicit deny behavior prevents unintended denials due to sequence mistakes. Pre-deploy tests from every automation and monitoring host confirm connectivity and job completion before wide roll-out. Applying changes first to a pilot device or small batch reduces blast radius and lets you observe real behavior and logs. Post-apply monitoring should focus on SSH session rates, authentication failures, and ACL-deny events that originate from known automation or operator IPs; any such alerts should trigger immediate investigation. Also monitor scheduled job outcomes (backups, polling), SNMP/syslog/telemetry delivery, and device resource metrics to detect indirect effects. The rollback plan must be prepared and rehearsed: have ready-to-apply ACL- removal or full-config restore snippets, and specify using OOB console if remote access is lost. Document incidents and perform RCA before reapplying changes. As an alternative to permitting many source IPs directly on devices, use a hardened SSH bastion/jump host: allow only the bastion in device VTY ACLs, require keys and MFA on the bastion, and use ProxyJump/ProxyCommand so session initiation is auditable and automation can route through the bastion. Finally, automate testing and include the bastion in pre-deploy tests so you do not inadvertently lock out automation. Following these steps minimizes service disruption, provides detect-and-respond controls, and ensures a rapid rollback path if issues occur.",
+    "answer_type": "long",
+    "category": "advanced",
+    "complexity": "scenario",
+    "level": 4,
+    "persona": "troubleshooter",
+    "scenario": "장애 상황 대응",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "enhanced_llm_with_agent",
+      "reasoning_plan": [
+        {
+          "intent": "show_users",
+          "params": {
+            "host": "PE1"
+          }
+        },
+        {
+          "required_metric": "ssh_present_bool",
+          "metric_params": {
+            "host": "PE1"
+          }
+        },
+        {
+          "intent": "set_vty_acl",
+          "params": {
+            "host": "PE1",
+            "acl": "allow-nms-and-admins"
+          }
+        },
+        {
+          "intent": "show_log_include",
+          "params": {
+            "host": "PE1",
+            "pattern": "vty|acl|login"
+          }
+        },
+        {
+          "intent": "ssh_proxy_jump",
+          "params": {
+            "host": "PE1",
+            "via": "P1",
+            "user": "admin"
+          }
+        }
+      ],
+      "reasoning_requirement": "",
+      "expected_analysis_depth": "detailed",
+      "evidence": {
+        "step_None_ssh_present_bool": false
+      }
+    }
+  }
+]

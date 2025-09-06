@@ -145,25 +145,40 @@ class HybridValidationSystem:
                 "model": fallback_models[0],
                 "fallback_models": fallback_models,
                 "temperature": 0.3,
-                "system_prompt": """당신은 네트워크 엔지니어 초급자입니다.
+                "system_prompt": """당신은 한국어로만 소통하는 네트워크 엔지니어 초급자입니다.
 기본적인 네트워크 설정을 이해하고 간단한 질문에 답할 수 있습니다.
-주어진 네트워크 설정 정보를 바탕으로 질문에 정확히 답하세요."""
+주어진 네트워크 설정 정보를 바탕으로 질문에 정확히 답하세요.
+
+**중요**: 
+- 모든 답변은 반드시 한국어로만 작성하세요
+- GT(정답)는 명확하고 간결한 값이어야 합니다  
+- EX(설명)는 답에 대한 근거를 설명해야 합니다"""
             },
             "intermediate": {
                 "model": fallback_models[0],
                 "fallback_models": fallback_models,
                 "temperature": 0.2,
-                "system_prompt": """당신은 3년 경력의 네트워크 엔지니어입니다.
+                "system_prompt": """당신은 한국어로만 소통하는 3년 경력의 네트워크 엔지니어입니다.
 복잡한 설정을 분석하고 문제를 해결할 수 있습니다.
-주어진 네트워크 설정을 종합적으로 분석하여 정확한 답변을 제시하세요."""
+주어진 네트워크 설정을 종합적으로 분석하여 정확한 답변을 제시하세요.
+
+**중요**: 
+- 모든 답변은 반드시 한국어로만 작성하세요
+- GT(정답)는 명확하고 간결한 값이어야 합니다  
+- EX(설명)는 답에 대한 근거를 설명해야 합니다"""
             },
             "expert": {
                 "model": fallback_models[0],
                 "fallback_models": fallback_models,
                 "temperature": 0.1,
-                "system_prompt": """당신은 10년 경력의 시니어 네트워크 아키텍트입니다.
+                "system_prompt": """당신은 한국어로만 소통하는 10년 경력의 시니어 네트워크 아키텍트입니다.
 가장 복잡한 네트워크 구성도 완벽히 이해하고 분석할 수 있습니다.
-모든 설정의 상호작용을 고려하여 정밀한 답변을 제공하세요."""
+모든 설정의 상호작용을 고려하여 정밀한 답변을 제공하세요.
+
+**중요**: 
+- 모든 답변은 반드시 한국어로만 작성하세요
+- GT(정답)는 명확하고 간결한 값이어야 합니다  
+- EX(설명)는 답에 대한 근거를 설명해야 합니다"""
             }
         }
     
@@ -286,6 +301,12 @@ class HybridValidationSystem:
 
 위 정보를 바탕으로 질문에 답하세요.
 단계별로 추론 과정을 설명하고, 최종 답변을 제시하세요.
+
+**중요한 규칙**:
+- 모든 답변은 반드시 한국어로만 작성하세요
+- 영어나 다른 언어는 절대 사용하지 마세요
+- GT(정답)는 명확하고 간결한 값이어야 합니다
+- EX(설명)는 답에 대한 근거를 상세히 설명해야 합니다
 """
         
         schema = {
@@ -294,14 +315,14 @@ class HybridValidationSystem:
                 "reasoning": {
                     "type": "array",
                     "items": {"type": "string"},
-                    "description": "단계별 추론 과정"
+                    "description": "단계별 추론 과정 (한국어로만 작성)"
                 },
                 "calculations": {
                     "type": "object",
-                    "description": "수행한 계산들"
+                    "description": "수행한 계산들 (한국어로만 작성)"
                 },
                 "answer": {
-                    "description": "최종 답변"
+                    "description": "최종 답변 (한국어로만 작성, 명확하고 간결하게)"
                 },
                 "confidence": {
                     "type": "number",
@@ -312,7 +333,7 @@ class HybridValidationSystem:
                 "data_sources": {
                     "type": "array",
                     "items": {"type": "string"},
-                    "description": "참조한 데이터"
+                    "description": "참조한 데이터 (한국어로만 작성)"
                 }
             },
             "required": ["reasoning", "answer", "confidence"]

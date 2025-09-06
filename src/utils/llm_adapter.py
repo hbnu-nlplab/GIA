@@ -215,7 +215,7 @@ def _call_llm_json(
             use_responses_api = bool(
                 isinstance(chosen_model, str)
                 and chosen_model.startswith("gpt-5")
-                and getattr(s.features, "use_responses_api_for_gpt5", False)
+                and getattr(s.features, "use_responses_api_for_gpt5", True)
             )
         else:
             use_responses_api = bool(use_responses_api)
@@ -444,7 +444,7 @@ def _call_llm_json(
             use_responses_api = bool(
                 isinstance(chosen_model, str)
                 and chosen_model.startswith("gpt-5")
-                and getattr(s.features, "use_responses_api_for_gpt5", False)
+                and getattr(s.features, "use_responses_api_for_gpt5", True)
             )
         else:
             use_responses_api = bool(use_responses_api)
