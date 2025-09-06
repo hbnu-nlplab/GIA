@@ -722,7 +722,7 @@ def paraphrase_llm(pattern: str, ctx: Dict[str, Any]) -> List[str]:
     ]
 
     model = get_settings().models.paraphrase
-    data = _call_llm_json(messages, schema, temperature=0.6, model=model, max_output_tokens=8000, use_responses_api=False)
+    data = _call_llm_json(messages, schema, temperature=0.6, model=model, max_output_tokens=8000, use_responses_api=True)
 
     def same_placeholders(s: str) -> bool:
         return sorted(re.findall(r"\{[a-zA-Z0-9_]+\}", s)) == sorted(placeholders)
@@ -819,7 +819,7 @@ def synth_llm(payload: Dict[str, Any]) -> List[Dict[str, Any]]:
     model = get_settings().models.enhanced_generation
     data = _call_llm_json(
         messages, schema, temperature=0.25, model=model,
-        max_output_tokens=8000, use_responses_api=False  # Chat 우선
+        max_output_tokens=8000, use_responses_api=True  # Chat 우선
     )
 
     allowed = payload.get("allowed_metrics", {})
@@ -894,7 +894,7 @@ def generate_questions_llm(
         data = _call_llm_json(
             messages, schema, temperature=0.7,
             model=get_settings().models.question_generation,
-            max_output_tokens=8000, use_responses_api=False
+            max_output_tokens=8000, use_responses_api=True
         )
         
         if isinstance(data, dict) and "questions" in data:
@@ -1231,7 +1231,7 @@ def parse_intent_llm(question: str, metrics: Iterable[str], hint_metric: str | N
             }, ensure_ascii=False)}
         ]
         try:
-            data = _call_llm_json(messages, schema, temperature=0.0, model=get_settings().models.intent_parsing, max_output_tokens=8000, use_responses_api=False)
+            data = _call_llm_json(messages, schema, temperature=0.0, model=get_settings().models.intent_parsing, max_output_tokens=8000, use_responses_api=True)
             if isinstance(data, dict):
                 msel = data.get("metric")
                 if isinstance(msel, str) and msel in metrics_list:
@@ -1292,7 +1292,7 @@ def review_hypotheses_llm(hypotheses: List[Dict[str, Any]], capabilities: Dict[s
     ]
 
     try:
-        data = _call_llm_json(messages, schema, temperature=0.0, model=get_settings().models.hypothesis_review, max_output_tokens=8000, use_responses_api=False)
+        data = _call_llm_json(messages, schema, temperature=0.0, model=get_settings().models.hypothesis_review, max_output_tokens=8000, use_responses_api=True)
         if isinstance(data, list):
             # total_score 누락 시 합산
             for it in data:

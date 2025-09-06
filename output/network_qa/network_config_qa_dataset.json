@@ -1,0 +1,53 @@
+{
+  "metadata": {
+    "dataset_name": "NetworkConfigQA",
+    "version": "1.0",
+    "description": "LLM 네트워크 설정 파악 성능 평가 데이터셋",
+    "generation_config": {
+      "xml_data_dir": "data/raw/XML_Data",
+      "policies_path": "policies.json",
+      "target_categories": [
+        "BGP_Consistency",
+        "Basic_Info",
+        "Command_Generation",
+        "Interface_Inventory",
+        "L2VPN_Consistency",
+        "OSPF_Consistency",
+        "Routing_Inventory",
+        "Security_Inventory",
+        "Security_Policy",
+        "Services_Inventory",
+        "System_Inventory",
+        "VRF_Consistency"
+      ],
+      "basic_questions_per_category": 30,
+      "enhanced_questions_per_category": 30,
+      "scenario_type": "normal",
+      "scenario_overrides": null,
+      "target_complexities": [
+        "basic",
+        "analytical",
+        "synthetic",
+        "diagnostic",
+        "scenario"
+      ],
+      "target_personas": [
+        "network_engineer",
+        "security_auditor",
+        "noc_operator",
+        "network_architect",
+        "troubleshooter",
+        "compliance_officer"
+      ],
+      "enable_bert_score": false,
+      "short_answer_threshold": 20,
+      "output_dir": "output/network_qa",
+      "save_intermediate": false,
+      "skip_validation": true,
+      "skip_feedback": true,
+      "validation_mode": 
+
+    
+    
+    }
+    

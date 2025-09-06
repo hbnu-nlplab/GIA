@@ -547,7 +547,7 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
             data = _call_llm_json(
                 messages, schema, temperature=0.7,
                 model=settings.models.enhanced_generation, max_output_tokens=8000,
-                use_responses_api=False
+                use_responses_api=True
             )
             
             questions = []
@@ -686,7 +686,7 @@ class QuestionQualityAssessor:
             data = _call_llm_json(
                 messages, schema, temperature=0.1,
                 model=settings.models.hypothesis_review, max_output_tokens=8000,
-                use_responses_api=False
+                use_responses_api=True
             )
             
             if isinstance(data, dict) and "assessments" in data:

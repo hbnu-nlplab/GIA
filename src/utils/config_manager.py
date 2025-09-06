@@ -45,8 +45,8 @@ class FeaturesSettings(BaseSettings):
 
 
 class GenerationSettings(BaseModel):
-    basic_questions_per_category: int = 3
-    enhanced_questions_per_category: int = 2
+    basic_questions_per_category: int = 30
+    enhanced_questions_per_category: int = 120
 
 
 class LoggingSettings(BaseModel):

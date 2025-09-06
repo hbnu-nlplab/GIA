@@ -1,0 +1,5039 @@
+[
+  {
+    "id": "BASIC_DSL-IP_CEF_ENABLED_BOOL-49586",
+    "question": "CE1 장비에서 IP CEF가 활성화되어 있습니까? (true/false)",
+    "context": "장비: CE1 | OS: ios | BGP AS: 65001 | BGP 피어 수: 1",
+    "ground_truth": "True",
+    "explanation": "The value for ip_cef_enabled_bool is True.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "ce1.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE1"
+        },
+        "metric": "ip_cef_enabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-IP_CEF_ENABLED_BOOL-49586",
+        "answer_type": "short",
+        "predicted_answer": "True",
+        "ground_truth": "True",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-RT_EXPORT_COUNT-8965",
+    "question": "sample9 장비의 Route Target Export 설정은 총 몇 개입니까?",
+    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "0",
+    "explanation": "The value for rt_export_count is 0.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample9"
+        },
+        "metric": "rt_export_count"
+      },
+      "topic": "Services_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-RT_EXPORT_COUNT-8965",
+        "answer_type": "short",
+        "predicted_answer": "0",
+        "ground_truth": "0",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-60321",
+    "question": "sample8 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "sample8.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "sample8",
+          "if": "GigabitEthernet0/0/0/1"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-60321",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_CMD_5",
+    "question": "CE1 장비에서 OSPF 이웃 상태를 조회하는 명령어는 무엇입니까?",
+    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+    "ground_truth": "show ip ospf neighbor",
+    "explanation": "",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "normal",
+    "source_files": [],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {
+        "command": "show_ip_ospf_neighbor",
+        "params": {
+          "host": "CE1"
+        }
+      },
+      "evidence_hint": {},
+      "topic": "Command_Generation",
+      "evaluation": {
+        "question_id": "BASIC_CMD_5",
+        "answer_type": "short",
+        "predicted_answer": "show ip ospf neighbor",
+        "ground_truth": "show ip ospf neighbor",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-BGP_NEIGHBOR_COUNT-49586",
+    "question": "CE1 장비의 BGP 피어(이웃)는 총 몇 개입니까?",
+    "context": "장비: CE1 | OS: ios | BGP AS: 65001 | BGP 피어 수: 1",
+    "ground_truth": "1",
+    "explanation": "The value for bgp_neighbor_count is 1.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "ce1.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE1"
+        },
+        "metric": "bgp_neighbor_count"
+      },
+      "topic": "Routing_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-BGP_NEIGHBOR_COUNT-49586",
+        "answer_type": "short",
+        "predicted_answer": "1",
+        "ground_truth": "1",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_CMD_20",
+    "question": "admin 계정으로 172.16.1.132 장비에 직접 SSH 접속하는 명령어는 무엇입니까?",
+    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "ssh admin@172.16.1.132",
+    "explanation": "",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "normal",
+    "source_files": [
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {
+        "command": "ssh_direct_access",
+        "params": {
+          "user": "admin",
+          "host": "172.16.1.132"
+        }
+      },
+      "evidence_hint": {},
+      "topic": "Command_Generation",
+      "evaluation": {
+        "question_id": "BASIC_CMD_20",
+        "answer_type": "short",
+        "predicted_answer": "ssh admin@172.16.1.132",
+        "ground_truth": "ssh admin@172.16.1.132",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-VRF_COUNT-23983",
+    "question": "CE2 장비에 설정된 VRF는 총 몇 개입니까?",
+    "context": "장비: CE2 | OS: ios | BGP AS: 65003 | BGP 피어 수: 1",
+    "ground_truth": "0",
+    "explanation": "The value for vrf_count is 0.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "ce2.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE2"
+        },
+        "metric": "vrf_count"
+      },
+      "topic": "Services_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-VRF_COUNT-23983",
+        "answer_type": "short",
+        "predicted_answer": "0",
+        "ground_truth": "0",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-SSH_PRESENT_BOOL-49586",
+    "question": "CE1 장비에 SSH가 활성화되어 있습니까? (true/false)",
+    "context": "장비: CE1 | OS: ios | BGP AS: 65001 | BGP 피어 수: 1",
+    "ground_truth": "True",
+    "explanation": "The value for ssh_present_bool is True.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "ce1.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE1"
+        },
+        "metric": "ssh_present_bool"
+      },
+      "topic": "Security_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-SSH_PRESENT_BOOL-49586",
+        "answer_type": "short",
+        "predicted_answer": "True",
+        "ground_truth": "True",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-IP_CEF_ENABLED_BOOL-20609",
+    "question": "sample7 장비에서 IP CEF가 활성화되어 있습니까? (true/false)",
+    "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for ip_cef_enabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "sample7.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample7"
+        },
+        "metric": "ip_cef_enabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-IP_CEF_ENABLED_BOOL-20609",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-37496",
+    "question": "sample7 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample7.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "sample7",
+          "if": "GigabitEthernet0/0/0/1.200"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-37496",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-12788",
+    "question": "CE2 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: CE2 | OS: ios | BGP AS: 65003 | BGP 피어 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "ce2.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "CE2",
+          "if": "MgmtEth0/RP0/CPU0/0"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-12788",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-SUBINTERFACE_COUNT-23983",
+    "question": "CE2 장비에 설정된 서브인터페이스는 총 몇 개입니까?",
+    "context": "장비: CE2 | OS: ios | BGP AS: 65003 | BGP 피어 수: 1",
+    "ground_truth": "1",
+    "explanation": "The value for subinterface_count is 1.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "ce2.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE2"
+        },
+        "metric": "subinterface_count"
+      },
+      "topic": "Interface_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-SUBINTERFACE_COUNT-23983",
+        "answer_type": "short",
+        "predicted_answer": "1",
+        "ground_truth": "1",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-49586",
+    "question": "CE1 장비에서 HTTP 서버가 활성화되어 있습니까? (true/false)",
+    "context": "장비: CE1 | OS: ios | BGP AS: 65001 | BGP 피어 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for http_server_enabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "ce1.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE1"
+        },
+        "metric": "http_server_enabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-49586",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-28167",
+    "question": "sample8 장비의 관리용 IP 주소는 무엇입니까?",
+    "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "172.16.1.131",
+    "explanation": "The value for system_mgmt_address_text is 172.16.1.131.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "sample8.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample8"
+        },
+        "metric": "system_mgmt_address_text"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-28167",
+        "answer_type": "short",
+        "predicted_answer": "172.16.1.131",
+        "ground_truth": "172.16.1.131",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-SUBINTERFACE_COUNT-49586",
+    "question": "CE1 장비에 설정된 서브인터페이스는 총 몇 개입니까?",
+    "context": "장비: CE1 | OS: ios | BGP AS: 65001 | BGP 피어 수: 1",
+    "ground_truth": "1",
+    "explanation": "The value for subinterface_count is 1.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "ce1.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE1"
+        },
+        "metric": "subinterface_count"
+      },
+      "topic": "Interface_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-SUBINTERFACE_COUNT-49586",
+        "answer_type": "short",
+        "predicted_answer": "1",
+        "ground_truth": "1",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-OSPF_AREA0_IF_COUNT-8965",
+    "question": "sample9 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?",
+    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "3",
+    "explanation": "The value for ospf_area0_if_count is 3.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample9"
+        },
+        "metric": "ospf_area0_if_count"
+      },
+      "topic": "OSPF_Consistency",
+      "evaluation": {
+        "question_id": "BASIC_DSL-OSPF_AREA0_IF_COUNT-8965",
+        "answer_type": "short",
+        "predicted_answer": "3",
+        "ground_truth": "3",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-VRF_COUNT-28167",
+    "question": "sample8 장비에 설정된 VRF는 총 몇 개입니까?",
+    "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "1",
+    "explanation": "The value for vrf_count is 1.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample8.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample8"
+        },
+        "metric": "vrf_count"
+      },
+      "topic": "Services_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-VRF_COUNT-28167",
+        "answer_type": "short",
+        "predicted_answer": "1",
+        "ground_truth": "1",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-34613",
+    "question": "sample7 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample7.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "sample7",
+          "if": "Loopback0"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-34613",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-23983",
+    "question": "CE2 장비에서 HTTP 서버가 활성화되어 있습니까? (true/false)",
+    "context": "장비: CE2 | OS: ios | BGP AS: 65003 | BGP 피어 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for http_server_enabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "ce2.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE2"
+        },
+        "metric": "http_server_enabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-23983",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_CMD_13",
+    "question": "CE1 장비의 VTY 라인에 SSH_ONLY ACL을 inbound로 적용하는 명령어는 무엇입니까?",
+    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+    "ground_truth": "line vty 0 4\n access-class SSH_ONLY in",
+    "explanation": "",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "normal",
+    "source_files": [],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {
+        "command": "set_vty_acl",
+        "params": {
+          "host": "CE1",
+          "acl_name": "SSH_ONLY"
+        }
+      },
+      "evidence_hint": {},
+      "topic": "Command_Generation",
+      "evaluation": {
+        "question_id": "BASIC_CMD_13",
+        "answer_type": "short",
+        "predicted_answer": "line vty 0 4\n access-class SSH_ONLY in",
+        "ground_truth": "line vty 0 4\n access-class SSH_ONLY in",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-BGP_LOCAL_AS_NUMERIC-49586",
+    "question": "CE1 장비의 BGP Local-AS 번호는 무엇입니까?",
+    "context": "장비: CE1 | OS: ios | BGP AS: 65001 | BGP 피어 수: 1",
+    "ground_truth": "65001",
+    "explanation": "The value for bgp_local_as_numeric is 65001.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "ce1.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE1"
+        },
+        "metric": "bgp_local_as_numeric"
+      },
+      "topic": "Routing_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-BGP_LOCAL_AS_NUMERIC-49586",
+        "answer_type": "short",
+        "predicted_answer": "65001",
+        "ground_truth": "65001",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-OSPF_AREA0_IF_COUNT-8965",
+    "question": "sample9 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?",
+    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "3",
+    "explanation": "The value for ospf_area0_if_count is 3.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample9"
+        },
+        "metric": "ospf_area0_if_count"
+      },
+      "topic": "OSPF_Consistency",
+      "evaluation": {
+        "question_id": "BASIC_DSL-OSPF_AREA0_IF_COUNT-8965",
+        "answer_type": "short",
+        "predicted_answer": "3",
+        "ground_truth": "3",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-28167",
+    "question": "sample8 장비에서 ip forward-protocol nd가 설정되어 있습니까? (true/false)",
+    "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for ip_forward_protocol_nd_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample8.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample8"
+        },
+        "metric": "ip_forward_protocol_nd_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-28167",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-BGP_LOCAL_AS_NUMERIC-32586",
+    "question": "sample10 장비의 BGP Local-AS 번호는 무엇입니까?",
+    "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "65000",
+    "explanation": "The value for bgp_local_as_numeric is 65000.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample10.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample10"
+        },
+        "metric": "bgp_local_as_numeric"
+      },
+      "topic": "Routing_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-BGP_LOCAL_AS_NUMERIC-32586",
+        "answer_type": "short",
+        "predicted_answer": "65000",
+        "ground_truth": "65000",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-5599",
+    "question": "sample9 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "sample9",
+          "if": "GigabitEthernet0/0/0/1.300"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-5599",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-RT_IMPORT_COUNT-49586",
+    "question": "CE1 장비의 Route Target Import 설정은 총 몇 개입니까?",
+    "context": "장비: CE1 | OS: ios | BGP AS: 65001 | BGP 피어 수: 1",
+    "ground_truth": "0",
+    "explanation": "The value for rt_import_count is 0.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "ce1.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE1"
+        },
+        "metric": "rt_import_count"
+      },
+      "topic": "Services_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-RT_IMPORT_COUNT-49586",
+        "answer_type": "short",
+        "predicted_answer": "0",
+        "ground_truth": "0",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-22648",
+    "question": "sample10 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample10.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "sample10",
+          "if": "GigabitEthernet0/0/0/1.100"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-22648",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-VTY_FIRST_LAST_TEXT-23983",
+    "question": "CE2 장비의 VTY 라인 번호 범위는 어떻게 됩니까?",
+    "context": "장비: CE2 | OS: ios | BGP AS: 65003 | BGP 피어 수: 1",
+    "ground_truth": "0 4",
+    "explanation": "The value for vty_first_last_text is 0 4.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "ce2.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE2"
+        },
+        "metric": "vty_first_last_text"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-VTY_FIRST_LAST_TEXT-23983",
+        "answer_type": "short",
+        "predicted_answer": "0 4",
+        "ground_truth": "0 4",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-SSH_PRESENT_BOOL-23983",
+    "question": "CE2 장비에 SSH가 활성화되어 있습니까? (true/false)",
+    "context": "장비: CE2 | OS: ios | BGP AS: 65003 | BGP 피어 수: 1",
+    "ground_truth": "True",
+    "explanation": "The value for ssh_present_bool is True.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "ce2.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE2"
+        },
+        "metric": "ssh_present_bool"
+      },
+      "topic": "Security_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-SSH_PRESENT_BOOL-23983",
+        "answer_type": "short",
+        "predicted_answer": "True",
+        "ground_truth": "True",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_CMD_22",
+    "question": "admin 계정으로 172.16.1.41를 거쳐 172.16.1.133 장비에 SSH 접속하는 명령어는 무엇입니까?",
+    "context": "장비: CE2 | OS: ios | BGP AS: 65003 | BGP 피어 수: 1\n장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "ssh -J admin@172.16.1.41 admin@172.16.1.133",
+    "explanation": "",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "normal",
+    "source_files": [
+      "ce2.xml",
+      "sample10.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {
+        "command": "ssh_proxy_jump",
+        "params": {
+          "user": "admin",
+          "jump_host": "172.16.1.41",
+          "destination_host": "172.16.1.133"
+        }
+      },
+      "evidence_hint": {},
+      "topic": "Command_Generation",
+      "evaluation": {
+        "question_id": "BASIC_CMD_22",
+        "answer_type": "short",
+        "predicted_answer": "ssh -J admin@172.16.1.41 admin@172.16.1.133",
+        "ground_truth": "ssh -J admin@172.16.1.41 admin@172.16.1.133",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-44608",
+    "question": "sample8 장비의 Ethernet0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "sample8.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "sample8",
+          "if": "Ethernet0/1"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-44608",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-AAA_PRESENT_BOOL-23983",
+    "question": "CE2 장비에 AAA 기능이 설정되어 있습니까? (true/false)",
+    "context": "장비: CE2 | OS: ios | BGP AS: 65003 | BGP 피어 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for aaa_present_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "ce2.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE2"
+        },
+        "metric": "aaa_present_bool"
+      },
+      "topic": "Security_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-AAA_PRESENT_BOOL-23983",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_CMD_3",
+    "question": "CE1 장비에서 CPU 사용률 순으로 프로세스를 확인하는 명령어는 무엇입니까?",
+    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+    "ground_truth": "show processes cpu sorted",
+    "explanation": "",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "normal",
+    "source_files": [],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {
+        "command": "show_processes_cpu",
+        "params": {
+          "host": "CE1"
+        }
+      },
+      "evidence_hint": {},
+      "topic": "Command_Generation",
+      "evaluation": {
+        "question_id": "BASIC_CMD_3",
+        "answer_type": "short",
+        "predicted_answer": "show processes cpu sorted",
+        "ground_truth": "show processes cpu sorted",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-51306",
+    "question": "CE1 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: CE1 | OS: ios | BGP AS: 65001 | BGP 피어 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "ce1.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "CE1",
+          "if": "GigabitEthernet0/0/0/1.400"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-51306",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-OSPF_AREA0_IF_COUNT-23983",
+    "question": "CE2 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?",
+    "context": "장비: CE2 | OS: ios | BGP AS: 65003 | BGP 피어 수: 1",
+    "ground_truth": "0",
+    "explanation": "The value for ospf_area0_if_count is 0.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "ce2.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE2"
+        },
+        "metric": "ospf_area0_if_count"
+      },
+      "topic": "OSPF_Consistency",
+      "evaluation": {
+        "question_id": "BASIC_DSL-OSPF_AREA0_IF_COUNT-23983",
+        "answer_type": "short",
+        "predicted_answer": "0",
+        "ground_truth": "0",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-VRF_COUNT-20609",
+    "question": "sample7 장비에 설정된 VRF는 총 몇 개입니까?",
+    "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "1",
+    "explanation": "The value for vrf_count is 1.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample7.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample7"
+        },
+        "metric": "vrf_count"
+      },
+      "topic": "Services_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-VRF_COUNT-20609",
+        "answer_type": "short",
+        "predicted_answer": "1",
+        "ground_truth": "1",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_COUNT-28167",
+    "question": "sample8 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?",
+    "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "6",
+    "explanation": "The value for interface_count is 6.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "sample8.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample8"
+        },
+        "metric": "interface_count"
+      },
+      "topic": "Interface_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_COUNT-28167",
+        "answer_type": "short",
+        "predicted_answer": "6",
+        "ground_truth": "6",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-60569",
+    "question": "CE1 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: CE1 | OS: ios | BGP AS: 65001 | BGP 피어 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "ce1.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "CE1",
+          "if": "MgmtEth0/RP0/CPU0/0"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-60569",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-12788",
+    "question": "CE2 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: CE2 | OS: ios | BGP AS: 65003 | BGP 피어 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "ce2.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "CE2",
+          "if": "MgmtEth0/RP0/CPU0/0"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-12788",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-SSH_PRESENT_BOOL-49586",
+    "question": "CE1 장비에 SSH가 활성화되어 있습니까? (true/false)",
+    "context": "장비: CE1 | OS: ios | BGP AS: 65001 | BGP 피어 수: 1",
+    "ground_truth": "True",
+    "explanation": "The value for ssh_present_bool is True.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "ce1.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE1"
+        },
+        "metric": "ssh_present_bool"
+      },
+      "topic": "Security_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-SSH_PRESENT_BOOL-49586",
+        "answer_type": "short",
+        "predicted_answer": "True",
+        "ground_truth": "True",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-63898",
+    "question": "CE2 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: CE2 | OS: ios | BGP AS: 65003 | BGP 피어 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "ce2.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "CE2",
+          "if": "GigabitEthernet0/0/0/1.200"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-63898",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-48800",
+    "question": "sample10 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "sample10.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "sample10",
+          "if": "GigabitEthernet0/0/0/0.1"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-48800",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-28167",
+    "question": "sample8 장비에서 ip forward-protocol nd가 설정되어 있습니까? (true/false)",
+    "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for ip_forward_protocol_nd_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "sample8.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample8"
+        },
+        "metric": "ip_forward_protocol_nd_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-28167",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-7024",
+    "question": "sample9 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "sample9",
+          "if": "GigabitEthernet0/0/0/1.100"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-7024",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-35782",
+    "question": "sample9 장비의 Ethernet0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "sample9",
+          "if": "Ethernet0/1"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-35782",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-SYSTEM_USER_COUNT-23983",
+    "question": "CE2 장비에 등록된 로컬 사용자는 총 몇 명입니까?",
+    "context": "장비: CE2 | OS: ios | BGP AS: 65003 | BGP 피어 수: 1",
+    "ground_truth": "1",
+    "explanation": "The value for system_user_count is 1.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "ce2.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE2"
+        },
+        "metric": "system_user_count"
+      },
+      "topic": "System_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-SYSTEM_USER_COUNT-23983",
+        "answer_type": "short",
+        "predicted_answer": "1",
+        "ground_truth": "1",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_CMD_9",
+    "question": "CE1 장비에서 BGP AS 65001의 192.168.1.10 이웃에 RM_OUT 라우트맵을 outbound로 적용하는 명령어는 무엇입니까?",
+    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+    "ground_truth": "router bgp 65001\n neighbor 192.168.1.10 route-map RM_OUT out",
+    "explanation": "",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "normal",
+    "source_files": [],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {
+        "command": "set_bgp_routemap",
+        "params": {
+          "host": "CE1",
+          "asn": "65001",
+          "neighbor_ip": "192.168.1.10",
+          "map_name": "RM_OUT"
+        }
+      },
+      "evidence_hint": {},
+      "topic": "Command_Generation",
+      "evaluation": {
+        "question_id": "BASIC_CMD_9",
+        "answer_type": "short",
+        "predicted_answer": "router bgp 65001\n neighbor 192.168.1.10 route-map RM_OUT out",
+        "ground_truth": "router bgp 65001\n neighbor 192.168.1.10 route-map RM_OUT out",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-20609",
+    "question": "sample7 장비의 호스트네임은 무엇입니까?",
+    "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "sample7",
+    "explanation": "The value for system_hostname_text is sample7.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample7.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample7"
+        },
+        "metric": "system_hostname_text"
+      },
+      "topic": "System_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-20609",
+        "answer_type": "short",
+        "predicted_answer": "sample7",
+        "ground_truth": "sample7",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-RT_IMPORT_COUNT-32586",
+    "question": "sample10 장비의 Route Target Import 설정은 총 몇 개입니까?",
+    "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "0",
+    "explanation": "The value for rt_import_count is 0.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "sample10.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample10"
+        },
+        "metric": "rt_import_count"
+      },
+      "topic": "Services_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-RT_IMPORT_COUNT-32586",
+        "answer_type": "short",
+        "predicted_answer": "0",
+        "ground_truth": "0",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-BGP_NEIGHBOR_COUNT-8965",
+    "question": "sample9 장비의 BGP 피어(이웃)는 총 몇 개입니까?",
+    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "4",
+    "explanation": "The value for bgp_neighbor_count is 4.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample9"
+        },
+        "metric": "bgp_neighbor_count"
+      },
+      "topic": "Routing_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-BGP_NEIGHBOR_COUNT-8965",
+        "answer_type": "short",
+        "predicted_answer": "4",
+        "ground_truth": "4",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-L2VPN_MISMATCH_COUNT-48674",
+    "question": "PW-ID 불일치 또는 단방향 L2VPN 회선은 총 몇 개입니까?",
+    "context": "장비: CE1 | OS: ios | BGP AS: 65001 | BGP 피어 수: 1\n장비: CE2 | OS: ios | BGP AS: 65003 | BGP 피어 수: 1\n장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "2",
+    "explanation": "The value for l2vpn_mismatch_count is 2.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "GLOBAL"
+        },
+        "metric": "l2vpn_mismatch_count"
+      },
+      "topic": "L2VPN_Consistency",
+      "evaluation": {
+        "question_id": "BASIC_DSL-L2VPN_MISMATCH_COUNT-48674",
+        "answer_type": "short",
+        "predicted_answer": "2",
+        "ground_truth": "2",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-OSPF_PROC_IDS-8965",
+    "question": "sample9 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.",
+    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "1",
+    "explanation": "The value for ospf_proc_ids is 1.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample9"
+        },
+        "metric": "ospf_proc_ids"
+      },
+      "topic": "OSPF_Consistency",
+      "evaluation": {
+        "question_id": "BASIC_DSL-OSPF_PROC_IDS-8965",
+        "answer_type": "short",
+        "predicted_answer": "1",
+        "ground_truth": "1",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-SUBINTERFACE_COUNT-28167",
+    "question": "sample8 장비에 설정된 서브인터페이스는 총 몇 개입니까?",
+    "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "1",
+    "explanation": "The value for subinterface_count is 1.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample8.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample8"
+        },
+        "metric": "subinterface_count"
+      },
+      "topic": "Interface_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-SUBINTERFACE_COUNT-28167",
+        "answer_type": "short",
+        "predicted_answer": "1",
+        "ground_truth": "1",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-8965",
+    "question": "sample9 장비에서 HTTP 서버가 활성화되어 있습니까? (true/false)",
+    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for http_server_enabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample9"
+        },
+        "metric": "http_server_enabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-8965",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-10024",
+    "question": "CE2 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: CE2 | OS: ios | BGP AS: 65003 | BGP 피어 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "ce2.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "CE2",
+          "if": "GigabitEthernet0/0/0/0.1"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-10024",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-34245",
+    "question": "CE2 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: CE2 | OS: ios | BGP AS: 65003 | BGP 피어 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "ce2.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "CE2",
+          "if": "GigabitEthernet0/0/0/0"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-34245",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-12788",
+    "question": "CE2 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: CE2 | OS: ios | BGP AS: 65003 | BGP 피어 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "ce2.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "CE2",
+          "if": "MgmtEth0/RP0/CPU0/0"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-12788",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-RT_EXPORT_COUNT-49586",
+    "question": "CE1 장비의 Route Target Export 설정은 총 몇 개입니까?",
+    "context": "장비: CE1 | OS: ios | BGP AS: 65001 | BGP 피어 수: 1",
+    "ground_truth": "0",
+    "explanation": "The value for rt_export_count is 0.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "ce1.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE1"
+        },
+        "metric": "rt_export_count"
+      },
+      "topic": "Services_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-RT_EXPORT_COUNT-49586",
+        "answer_type": "short",
+        "predicted_answer": "0",
+        "ground_truth": "0",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-28265",
+    "question": "sample9 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "sample9",
+          "if": "GigabitEthernet0/0/0/0"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-28265",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-32586",
+    "question": "sample10 장비의 호스트네임은 무엇입니까?",
+    "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "sample10",
+    "explanation": "The value for system_hostname_text is sample10.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample10.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample10"
+        },
+        "metric": "system_hostname_text"
+      },
+      "topic": "System_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-32586",
+        "answer_type": "short",
+        "predicted_answer": "sample10",
+        "ground_truth": "sample10",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-31606",
+    "question": "sample10 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample10.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "sample10",
+          "if": "GigabitEthernet0/0/0/1"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-31606",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-SSH_PRESENT_BOOL-23983",
+    "question": "CE2 장비에 SSH가 활성화되어 있습니까? (true/false)",
+    "context": "장비: CE2 | OS: ios | BGP AS: 65003 | BGP 피어 수: 1",
+    "ground_truth": "True",
+    "explanation": "The value for ssh_present_bool is True.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "ce2.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE2"
+        },
+        "metric": "ssh_present_bool"
+      },
+      "topic": "Security_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-SSH_PRESENT_BOOL-23983",
+        "answer_type": "short",
+        "predicted_answer": "True",
+        "ground_truth": "True",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-51247",
+    "question": "sample8 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "sample8.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "sample8",
+          "if": "GigabitEthernet0/0/0/0"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-51247",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-IP_CEF_ENABLED_BOOL-28167",
+    "question": "sample8 장비에서 IP CEF가 활성화되어 있습니까? (true/false)",
+    "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for ip_cef_enabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "sample8.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample8"
+        },
+        "metric": "ip_cef_enabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-IP_CEF_ENABLED_BOOL-28167",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-L2VPN_MISMATCH_COUNT-48674",
+    "question": "PW-ID 불일치 또는 단방향 L2VPN 회선은 총 몇 개입니까?",
+    "context": "장비: CE1 | OS: ios | BGP AS: 65001 | BGP 피어 수: 1\n장비: CE2 | OS: ios | BGP AS: 65003 | BGP 피어 수: 1\n장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "2",
+    "explanation": "The value for l2vpn_mismatch_count is 2.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "GLOBAL"
+        },
+        "metric": "l2vpn_mismatch_count"
+      },
+      "topic": "L2VPN_Consistency",
+      "evaluation": {
+        "question_id": "BASIC_DSL-L2VPN_MISMATCH_COUNT-48674",
+        "answer_type": "short",
+        "predicted_answer": "2",
+        "ground_truth": "2",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-VRF_COUNT-49586",
+    "question": "CE1 장비에 설정된 VRF는 총 몇 개입니까?",
+    "context": "장비: CE1 | OS: ios | BGP AS: 65001 | BGP 피어 수: 1",
+    "ground_truth": "0",
+    "explanation": "The value for vrf_count is 0.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "ce1.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE1"
+        },
+        "metric": "vrf_count"
+      },
+      "topic": "Services_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-VRF_COUNT-49586",
+        "answer_type": "short",
+        "predicted_answer": "0",
+        "ground_truth": "0",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-47529",
+    "question": "CE1 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: CE1 | OS: ios | BGP AS: 65001 | BGP 피어 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "ce1.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "CE1",
+          "if": "GigabitEthernet0/0/0/0.1"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-47529",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-17934",
+    "question": "CE1 장비의 Ethernet0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: CE1 | OS: ios | BGP AS: 65001 | BGP 피어 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "ce1.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "CE1",
+          "if": "Ethernet0/3"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-17934",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-44034",
+    "question": "CE2 장비의 Ethernet0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: CE2 | OS: ios | BGP AS: 65003 | BGP 피어 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "ce2.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "CE2",
+          "if": "Ethernet0/2"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-44034",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-8965",
+    "question": "sample9 장비의 호스트네임은 무엇입니까?",
+    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "sample9",
+    "explanation": "The value for system_hostname_text is sample9.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample9"
+        },
+        "metric": "system_hostname_text"
+      },
+      "topic": "System_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-8965",
+        "answer_type": "short",
+        "predicted_answer": "sample9",
+        "ground_truth": "sample9",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-61287",
+    "question": "sample10 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample10.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "sample10",
+          "if": "GigabitEthernet0/0/0/1.200"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-61287",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-49586",
+    "question": "CE1 장비의 호스트네임은 무엇입니까?",
+    "context": "장비: CE1 | OS: ios | BGP AS: 65001 | BGP 피어 수: 1",
+    "ground_truth": "CE1",
+    "explanation": "The value for system_hostname_text is CE1.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "ce1.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE1"
+        },
+        "metric": "system_hostname_text"
+      },
+      "topic": "System_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-49586",
+        "answer_type": "short",
+        "predicted_answer": "CE1",
+        "ground_truth": "CE1",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_CMD_19",
+    "question": "admin 계정으로 172.16.1.131 장비에 직접 SSH 접속하는 명령어는 무엇입니까?",
+    "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "ssh admin@172.16.1.131",
+    "explanation": "",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "normal",
+    "source_files": [
+      "sample8.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {
+        "command": "ssh_direct_access",
+        "params": {
+          "user": "admin",
+          "host": "172.16.1.131"
+        }
+      },
+      "evidence_hint": {},
+      "topic": "Command_Generation",
+      "evaluation": {
+        "question_id": "BASIC_CMD_19",
+        "answer_type": "short",
+        "predicted_answer": "ssh admin@172.16.1.131",
+        "ground_truth": "ssh admin@172.16.1.131",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-VTY_PASSWORD_SECRET_TEXT-49586",
+    "question": "CE1 장비의 VTY password secret 값은 무엇입니까?",
+    "context": "장비: CE1 | OS: ios | BGP AS: 65001 | BGP 피어 수: 1",
+    "ground_truth": "12345678",
+    "explanation": "The value for vty_password_secret_text is 12345678.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "ce1.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE1"
+        },
+        "metric": "vty_password_secret_text"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-VTY_PASSWORD_SECRET_TEXT-49586",
+        "answer_type": "short",
+        "predicted_answer": "12345678",
+        "ground_truth": "12345678",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-SUBINTERFACE_COUNT-28167",
+    "question": "sample8 장비에 설정된 서브인터페이스는 총 몇 개입니까?",
+    "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "1",
+    "explanation": "The value for subinterface_count is 1.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "sample8.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample8"
+        },
+        "metric": "subinterface_count"
+      },
+      "topic": "Interface_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-SUBINTERFACE_COUNT-28167",
+        "answer_type": "short",
+        "predicted_answer": "1",
+        "ground_truth": "1",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-AAA_PRESENT_BOOL-8965",
+    "question": "sample9 장비에 AAA 기능이 설정되어 있습니까? (true/false)",
+    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "True",
+    "explanation": "The value for aaa_present_bool is True.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample9"
+        },
+        "metric": "aaa_present_bool"
+      },
+      "topic": "Security_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-AAA_PRESENT_BOOL-8965",
+        "answer_type": "short",
+        "predicted_answer": "True",
+        "ground_truth": "True",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-4891",
+    "question": "sample9 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "sample9",
+          "if": "GigabitEthernet0/0/0/3"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-4891",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-60920",
+    "question": "CE1 장비의 Ethernet0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: CE1 | OS: ios | BGP AS: 65001 | BGP 피어 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "ce1.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "CE1",
+          "if": "Ethernet0/0"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-60920",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_CMD_14",
+    "question": "CE1 장비의 호스트네임을 CE1-NEW(으)로 변경하는 명령어는 무엇입니까?",
+    "context": "총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+    "ground_truth": "hostname CE1-NEW",
+    "explanation": "",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "normal",
+    "source_files": [],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {
+        "command": "set_hostname",
+        "params": {
+          "host": "CE1",
+          "new_hostname": "CE1-NEW"
+        }
+      },
+      "evidence_hint": {},
+      "topic": "Command_Generation",
+      "evaluation": {
+        "question_id": "BASIC_CMD_14",
+        "answer_type": "short",
+        "predicted_answer": "hostname CE1-NEW",
+        "ground_truth": "hostname CE1-NEW",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-20609",
+    "question": "sample7 장비에 패스워드 정책이 적용되어 있습니까? (true/false)",
+    "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for password_policy_present_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "sample7.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample7"
+        },
+        "metric": "password_policy_present_bool"
+      },
+      "topic": "Security_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-20609",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-28864",
+    "question": "AS 65000의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까?",
+    "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1\n장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "0",
+    "explanation": "The value for ibgp_missing_pairs_count is 0.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "AS",
+          "asn": "65000"
+        },
+        "metric": "ibgp_missing_pairs_count"
+      },
+      "topic": "BGP_Consistency",
+      "evaluation": {
+        "question_id": "BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-28864",
+        "answer_type": "short",
+        "predicted_answer": "0",
+        "ground_truth": "0",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-RT_EXPORT_COUNT-32586",
+    "question": "sample10 장비의 Route Target Export 설정은 총 몇 개입니까?",
+    "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "0",
+    "explanation": "The value for rt_export_count is 0.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "sample10.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample10"
+        },
+        "metric": "rt_export_count"
+      },
+      "topic": "Services_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-RT_EXPORT_COUNT-32586",
+        "answer_type": "short",
+        "predicted_answer": "0",
+        "ground_truth": "0",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-IP_CEF_ENABLED_BOOL-8965",
+    "question": "sample9 장비에서 IP CEF가 활성화되어 있습니까? (true/false)",
+    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for ip_cef_enabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample9"
+        },
+        "metric": "ip_cef_enabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-IP_CEF_ENABLED_BOOL-8965",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-8965",
+    "question": "sample9 장비에서 HTTP 서버가 활성화되어 있습니까? (true/false)",
+    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for http_server_enabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample9"
+        },
+        "metric": "http_server_enabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-8965",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-BGP_LOCAL_AS_NUMERIC-20609",
+    "question": "sample7 장비의 BGP Local-AS 번호는 무엇입니까?",
+    "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "65000",
+    "explanation": "The value for bgp_local_as_numeric is 65000.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample7.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample7"
+        },
+        "metric": "bgp_local_as_numeric"
+      },
+      "topic": "Routing_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-BGP_LOCAL_AS_NUMERIC-20609",
+        "answer_type": "short",
+        "predicted_answer": "65000",
+        "ground_truth": "65000",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-59739",
+    "question": "sample9 장비의 Ethernet0/0.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "sample9",
+          "if": "Ethernet0/0.100"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-59739",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_CMD_17",
+    "question": "admin 계정으로 172.16.1.133 장비에 직접 SSH 접속하는 명령어는 무엇입니까?",
+    "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "ssh admin@172.16.1.133",
+    "explanation": "",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "normal",
+    "source_files": [
+      "sample10.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {
+        "command": "ssh_direct_access",
+        "params": {
+          "user": "admin",
+          "host": "172.16.1.133"
+        }
+      },
+      "evidence_hint": {},
+      "topic": "Command_Generation",
+      "evaluation": {
+        "question_id": "BASIC_CMD_17",
+        "answer_type": "short",
+        "predicted_answer": "ssh admin@172.16.1.133",
+        "ground_truth": "ssh admin@172.16.1.133",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-5866",
+    "question": "sample7 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "sample7.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "sample7",
+          "if": "GigabitEthernet0/0/0/0"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-5866",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_COUNT-8965",
+    "question": "sample9 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?",
+    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "7",
+    "explanation": "The value for interface_count is 7.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample9"
+        },
+        "metric": "interface_count"
+      },
+      "topic": "Interface_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_COUNT-8965",
+        "answer_type": "short",
+        "predicted_answer": "7",
+        "ground_truth": "7",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-37154",
+    "question": "sample9 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "sample9",
+          "if": "Loopback0"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-37154",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-30189",
+    "question": "sample9 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?",
+    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "1",
+    "explanation": "The value for vrf_interface_bind_count is 1.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_VRF",
+          "host": "sample9",
+          "vrf": "exam-l3vpn"
+        },
+        "metric": "vrf_interface_bind_count"
+      },
+      "topic": "VRF_Consistency",
+      "evaluation": {
+        "question_id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-30189",
+        "answer_type": "short",
+        "predicted_answer": "1",
+        "ground_truth": "1",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-17934",
+    "question": "CE1 장비의 Ethernet0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: CE1 | OS: ios | BGP AS: 65001 | BGP 피어 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "ce1.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "CE1",
+          "if": "Ethernet0/3"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-17934",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-7294",
+    "question": "sample10 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "sample10.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "sample10",
+          "if": "GigabitEthernet0/0/0/0"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-7294",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-BGP_LOCAL_AS_NUMERIC-28167",
+    "question": "sample8 장비의 BGP Local-AS 번호는 무엇입니까?",
+    "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "65000",
+    "explanation": "The value for bgp_local_as_numeric is 65000.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "sample8.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample8"
+        },
+        "metric": "bgp_local_as_numeric"
+      },
+      "topic": "Routing_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-BGP_LOCAL_AS_NUMERIC-28167",
+        "answer_type": "short",
+        "predicted_answer": "65000",
+        "ground_truth": "65000",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-BGP_LOCAL_AS_NUMERIC-23983",
+    "question": "CE2 장비의 BGP Local-AS 번호는 무엇입니까?",
+    "context": "장비: CE2 | OS: ios | BGP AS: 65003 | BGP 피어 수: 1",
+    "ground_truth": "65003",
+    "explanation": "The value for bgp_local_as_numeric is 65003.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "ce2.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE2"
+        },
+        "metric": "bgp_local_as_numeric"
+      },
+      "topic": "Routing_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-BGP_LOCAL_AS_NUMERIC-23983",
+        "answer_type": "short",
+        "predicted_answer": "65003",
+        "ground_truth": "65003",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-23983",
+    "question": "CE2 장비의 호스트네임은 무엇입니까?",
+    "context": "장비: CE2 | OS: ios | BGP AS: 65003 | BGP 피어 수: 1",
+    "ground_truth": "CE2",
+    "explanation": "The value for system_hostname_text is CE2.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "ce2.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE2"
+        },
+        "metric": "system_hostname_text"
+      },
+      "topic": "System_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-23983",
+        "answer_type": "short",
+        "predicted_answer": "CE2",
+        "ground_truth": "CE2",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-8140",
+    "question": "CE2 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?",
+    "context": "장비: CE2 | OS: ios | BGP AS: 65003 | BGP 피어 수: 1",
+    "ground_truth": "0",
+    "explanation": "The value for vrf_interface_bind_count is 0.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "ce2.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_VRF",
+          "host": "CE2",
+          "vrf": "exam-l3vpn"
+        },
+        "metric": "vrf_interface_bind_count"
+      },
+      "topic": "VRF_Consistency",
+      "evaluation": {
+        "question_id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-8140",
+        "answer_type": "short",
+        "predicted_answer": "0",
+        "ground_truth": "0",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-52759",
+    "question": "sample7 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?",
+    "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "1",
+    "explanation": "The value for vrf_interface_bind_count is 1.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "sample7.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_VRF",
+          "host": "sample7",
+          "vrf": "exam-l3vpn"
+        },
+        "metric": "vrf_interface_bind_count"
+      },
+      "topic": "VRF_Consistency",
+      "evaluation": {
+        "question_id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-52759",
+        "answer_type": "short",
+        "predicted_answer": "1",
+        "ground_truth": "1",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-1822",
+    "question": "sample9 장비의 Ethernet0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "sample9",
+          "if": "Ethernet0/3"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-1822",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-VTY_FIRST_LAST_TEXT-49586",
+    "question": "CE1 장비의 VTY 라인 번호 범위는 어떻게 됩니까?",
+    "context": "장비: CE1 | OS: ios | BGP AS: 65001 | BGP 피어 수: 1",
+    "ground_truth": "0 4",
+    "explanation": "The value for vty_first_last_text is 0 4.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "ce1.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE1"
+        },
+        "metric": "vty_first_last_text"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-VTY_FIRST_LAST_TEXT-49586",
+        "answer_type": "short",
+        "predicted_answer": "0 4",
+        "ground_truth": "0 4",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-SYSTEM_USER_COUNT-20609",
+    "question": "sample7 장비에 등록된 로컬 사용자는 총 몇 명입니까?",
+    "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "1",
+    "explanation": "The value for system_user_count is 1.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample7.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample7"
+        },
+        "metric": "system_user_count"
+      },
+      "topic": "System_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-SYSTEM_USER_COUNT-20609",
+        "answer_type": "short",
+        "predicted_answer": "1",
+        "ground_truth": "1",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-8",
+    "question": "sample8 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "sample8.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "sample8",
+          "if": "Loopback0"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-8",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-56753",
+    "question": "sample9 장비의 Ethernet0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "sample9",
+          "if": "Ethernet0/0"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-56753",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-SYSTEM_USER_COUNT-32586",
+    "question": "sample10 장비에 등록된 로컬 사용자는 총 몇 명입니까?",
+    "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "1",
+    "explanation": "The value for system_user_count is 1.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "sample10.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample10"
+        },
+        "metric": "system_user_count"
+      },
+      "topic": "System_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-SYSTEM_USER_COUNT-32586",
+        "answer_type": "short",
+        "predicted_answer": "1",
+        "ground_truth": "1",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-32586",
+    "question": "sample10 장비에 패스워드 정책이 적용되어 있습니까? (true/false)",
+    "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for password_policy_present_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample10.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample10"
+        },
+        "metric": "password_policy_present_bool"
+      },
+      "topic": "Security_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-32586",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-BGP_NEIGHBOR_COUNT-49586",
+    "question": "CE1 장비의 BGP 피어(이웃)는 총 몇 개입니까?",
+    "context": "장비: CE1 | OS: ios | BGP AS: 65001 | BGP 피어 수: 1",
+    "ground_truth": "1",
+    "explanation": "The value for bgp_neighbor_count is 1.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "ce1.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "CE1"
+        },
+        "metric": "bgp_neighbor_count"
+      },
+      "topic": "Routing_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-BGP_NEIGHBOR_COUNT-49586",
+        "answer_type": "short",
+        "predicted_answer": "1",
+        "ground_truth": "1",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-BGP_LOCAL_AS_NUMERIC-28167",
+    "question": "sample8 장비의 BGP Local-AS 번호는 무엇입니까?",
+    "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "65000",
+    "explanation": "The value for bgp_local_as_numeric is 65000.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "sample8.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample8"
+        },
+        "metric": "bgp_local_as_numeric"
+      },
+      "topic": "Routing_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-BGP_LOCAL_AS_NUMERIC-28167",
+        "answer_type": "short",
+        "predicted_answer": "65000",
+        "ground_truth": "65000",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-RT_IMPORT_COUNT-8965",
+    "question": "sample9 장비의 Route Target Import 설정은 총 몇 개입니까?",
+    "context": "장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "0",
+    "explanation": "The value for rt_import_count is 0.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "장애",
+    "source_files": [
+      "sample9.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample9"
+        },
+        "metric": "rt_import_count"
+      },
+      "topic": "Services_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-RT_IMPORT_COUNT-8965",
+        "answer_type": "short",
+        "predicted_answer": "0",
+        "ground_truth": "0",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-52759",
+    "question": "sample7 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?",
+    "context": "장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "1",
+    "explanation": "The value for vrf_interface_bind_count is 1.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "정상",
+    "source_files": [
+      "sample7.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_VRF",
+          "host": "sample7",
+          "vrf": "exam-l3vpn"
+        },
+        "metric": "vrf_interface_bind_count"
+      },
+      "topic": "VRF_Consistency",
+      "evaluation": {
+        "question_id": "BASIC_DSL-VRF_INTERFACE_BIND_COUNT-52759",
+        "answer_type": "short",
+        "predicted_answer": "1",
+        "ground_truth": "1",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-28167",
+    "question": "sample8 장비의 호스트네임은 무엇입니까?",
+    "context": "장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "sample8",
+    "explanation": "The value for system_hostname_text is sample8.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 1,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "sample8.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE",
+          "host": "sample8"
+        },
+        "metric": "system_hostname_text"
+      },
+      "topic": "System_Inventory",
+      "evaluation": {
+        "question_id": "BASIC_DSL-SYSTEM_HOSTNAME_TEXT-28167",
+        "answer_type": "short",
+        "predicted_answer": "sample8",
+        "ground_truth": "sample8",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  },
+  {
+    "id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-53201",
+    "question": "sample10 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)",
+    "context": "장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1",
+    "ground_truth": "False",
+    "explanation": "The value for interface_mop_xenabled_bool is False.",
+    "answer_type": "short",
+    "category": "basic",
+    "complexity": "basic",
+    "level": 2,
+    "persona": null,
+    "scenario": "확장",
+    "source_files": [
+      "sample10.xml"
+    ],
+    "metadata": {
+      "origin": "rule_based",
+      "intent": {},
+      "evidence_hint": {
+        "scope": {
+          "type": "DEVICE_IF",
+          "host": "sample10",
+          "if": "GigabitEthernet0/0/0/1.300"
+        },
+        "metric": "interface_mop_xenabled_bool"
+      },
+      "topic": "Basic_Info",
+      "evaluation": {
+        "question_id": "BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-53201",
+        "answer_type": "short",
+        "predicted_answer": "False",
+        "ground_truth": "False",
+        "exact_match": 1.0,
+        "f1_score": 1.0,
+        "token_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "bert_score": null,
+        "bleu_score": null,
+        "rouge_scores": null,
+        "structural_accuracy": null,
+        "vrf": null,
+        "overall_score": 1.0
+      },
+      "overall_score": 1.0
+    }
+  }
+]

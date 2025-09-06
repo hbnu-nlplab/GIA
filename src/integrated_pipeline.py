@@ -247,12 +247,16 @@ class NetworkConfigDatasetGenerator:
             
             # 최종 데이터셋 구성
             self.logger.info("🔄 최종 데이터셋 구성 시작")
-            final_dataset = self._compose_final_dataset(final_dataset, evaluation_results)
-            self._save_results(final_dataset)
+            final_dataset_dict = self._compose_final_dataset(final_dataset, evaluation_results)
+            
+            # 검증 리포트 추가
+            final_dataset_dict['validation_report'] = validation_report
+            
+            self._save_results(final_dataset_dict)
             self.logger.info("✅ 최종 데이터셋 구성 완료")
             
             self.logger.info("="*20 + " 데이터셋 생성 완료 " + "="*20)
-            return final_dataset
+            return final_dataset_dict
             
         except Exception as e:
             self.logger.error(f"데이터셋 생성 실패: {e}")
@@ -999,6 +1003,18 @@ class NetworkConfigDatasetGenerator:
             return v
         cfg["target_complexities"] = _enum_to_value_list(cfg.get("target_complexities"))
         cfg["target_personas"] = _enum_to_value_list(cfg.get("target_personas"))
+        # 단일 Enum 필드 직렬화 (validation_mode 등)
+        try:
+            from enum import Enum as _Enum
+            vm = cfg.get("validation_mode")
+            if isinstance(vm, _Enum):
+                cfg["validation_mode"] = vm.value
+            elif hasattr(vm, "value"):
+                cfg["validation_mode"] = vm.value
+        except Exception:
+            vm = cfg.get("validation_mode")
+            if vm is not None and not isinstance(vm, (str, int, float, bool)):
+                cfg["validation_mode"] = str(vm)
         
         final_dataset = {
             "metadata": {
@@ -1335,7 +1351,11 @@ class NetworkConfigDatasetGenerator:
         
         filepath = output_dir / filename
         with open(filepath, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
+            try:
+                serializable = self._make_serializable(data)
+            except Exception:
+                serializable = data
+            json.dump(serializable, f, ensure_ascii=False, indent=2)
     
     def _save_results(self, final_dataset: Dict[str, Any]) -> None:
         """최종 결과 저장"""

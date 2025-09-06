@@ -55,6 +55,8 @@ class QuestionTemplate:
 class EnhancedLLMQuestionGenerator:
     def __init__(self):
         self.templates = self._initialize_templates()
+        # Last generation per-template stats for external consumers (pipeline)
+        self.last_generation_stats: List[Dict[str, Any]] = []
     
     def _initialize_templates(self) -> List[QuestionTemplate]:
         """복합성과 페르소나를 고려한 질문 템플릿 초기화"""
@@ -284,6 +286,8 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
         questions_per_template: Optional[int] = None
     ) -> List[Dict[str, Any]]:
         """향상된 LLM 질문 생성"""
+        # reset stats for this run
+        self.last_generation_stats = []
         
         if target_complexities is None:
             target_complexities = [QuestionComplexity.ANALYTICAL, QuestionComplexity.SYNTHETIC]
@@ -319,9 +323,40 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
                 continue
                 
             print(f"[Enhanced Generator] 템플릿 {i+1}에서 질문 생성 중...")
-            questions = self._generate_from_template(
+            questions_raw = self._generate_from_template(
                 template, context, questions_per_single_template
             )
+            # facts-only 검증 필터 적용: reasoning_plan/metric 일치, 설명형 제거 (디버그 통계 포함)
+            questions, stats = self._validate_generated_questions_with_stats(
+                questions_raw,
+                expected_metrics=template.expected_metrics,
+                allowed_metrics=list_available_metrics(),
+            )
+            # 템플릿별 디버그 통계 출력
+            try:
+                print(
+                    f"[Enhanced Generator][Template {i+1}] {template.scenario} | raw={stats['raw']}, kept={stats['kept']}, "
+                    f"drop(no_plan={stats['filtered_no_plan']}, metric={stats['filtered_metric']}, "
+                    f"explainer={stats['filtered_explainer']}, other={stats['filtered_other']})"
+                )
+            except Exception:
+                pass
+
+            # persist per-template stats for pipeline
+            try:
+                self.last_generation_stats.append({
+                    "index": i + 1,
+                    "complexity": template.complexity.value,
+                    "persona": template.persona.value,
+                    "scenario": template.scenario,
+                    "scenario_type": template.scenario_type.value,
+                    "expected_metrics": list(template.expected_metrics or []),
+                    "answer_type": template.answer_type,
+                    **stats,
+                })
+            except Exception:
+                # fallback minimal
+                self.last_generation_stats.append({"index": i + 1, **stats})
             
             if len(questions) > 0:
                 print(f"[Enhanced Generator] 템플릿 {i+1}에서 {len(questions)}개 질문 생성 성공!")
@@ -423,31 +458,17 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
         available_metrics: str,
         count: int,
     ) -> List[Dict[str, str]]:
-        """자기 반성을 포함한 질문 생성 프롬프트 구성"""
+        """facts-only 생성 잠금: expected_metrics 중심, short 정답 유도, why/how 금지"""
 
         system_prompt = (
-            """당신은 네트워크 분야의 최고 전문가이자, LLM의 성능을 평가하기 위한 데이터셋 구축 전문가입니다.
-주어진 네트워크 데이터 요약본과 사용 가능한 지표 목록을 기반으로, 지정된 복잡도와 페르소나에 맞는 심층적인 질문을 생성해야 합니다.
-
-**생성 프로세스 (매우 중요):**
-1.  **[분석]**: 주어진 컨텍스트와 지표를 분석하여 흥미로운 분석 포인트를 2-3가지 도출합니다. (예: "BGP AS 번호가 여러 개 혼재되어 있군. 여기서 일관성 문제가 발생할 수 있겠다.")
-2.  **[초안 작성]**: 분석 포인트에 기반하여 질문의 초안을 작성합니다.
-3.  **[자기 반성 및 개선]**: 아래의 기준에 따라 질문 초안을 스스로 평가하고, 더 명확하고 깊이 있는 질문으로 개선합니다.
-    - **모호성**: 질문이 모호하지 않고 명확한가? (나쁜 예: "BGP는 어떤가요?")
-    - **실용성**: 네트워크 엔지니어가 실제 업무에서 마주할 만한 질문인가?
-    - **유효성**: 주어진 데이터와 지표로 답변이 가능한 질문인가?
-    - **단순함 방지**: 단순히 사실을 묻는 질문인가, 아니면 원인 분석, 영향 예측 등 추론이 필요한가? (단순 조회 질문은 생성하지 마세요.)
-4.  **[추론 계획 수립]**: 개선된 질문에 답하기 위한 논리적인 단계(reasoning_plan)를 수립합니다. 각 단계는 반드시 제공된 지표 중 하나를 사용해야 합니다.
-
-**CLI 명령어 intent 사용 시 주의사항:**
-- reasoning_plan에서 intent를 사용할 때는 반드시 "사용 가능한 CLI 명령어 intent" 목록에서만 선택하세요.
-- **절대 사용하지 마세요**: vrf_names_set, vrf_interface_bind_count, bgp_neighbor_count 등은 **메트릭 이름**이지 명령어가 아닙니다!
-- CLI 명령어가 아닌 데이터 분석이 필요한 경우: "required_metric" 필드를 사용하세요.
-- params에는 호스트명, 인터페이스명, IP 주소 등 실제 값을 포함해야 합니다.
-- 예: {"intent": "show_bgp_summary", "params": {"host": "sample7"}}
-- 예: {"required_metric": "vrf_names_set", "metric_params": {"host": "sample7"}}
-
-**결과물은 반드시 아래 JSON 스키마를 준수해야 합니다.**
+            """당신은 네트워크 분야 최고 수준의 문제 출제자입니다.
+반드시 '제공된 facts와 metrics'만으로 풀 수 있는 질문을 생성합니다.
+중요 규칙:
+1) 질문은 expected_metrics와 available_metrics에서 명시된 메트릭만으로 풉니다.
+2) reasoning_plan(JSON 배열)을 반드시 포함하고, 각 단계에 {required_metric, metric_params}를 기입합니다.
+3) 최종 정답이 숫자/단일문자열/리스트가 되도록 질문 자체를 그렇게 만드세요.
+4) '왜/어떻게/영향' 등 설명·원인분석형(why/how) 질문 금지. 오직 '무엇/어떤/몇'의 검증 가능 질문만 허용.
+5) 토폴로지 일반론이나 상식 사용 금지. facts 안에서 계산 가능해야 합니다.
 """
         )
 
@@ -627,8 +648,13 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
                         print(f"[Enhanced Generator] Skipping malformed question data: {q_data}")
                         continue
                     
-                    # 필수 필드 검증
-                    if not q_data.get("question"):
+                    # 필수 필드 검증 (한국어 키 fallback 허용)
+                    text = (
+                        q_data.get("question")
+                        or q_data.get("question_kor")
+                        or q_data.get("question_text")
+                    )
+                    if not text:
                         print(f"[Enhanced Generator] Skipping question without text: {q_data}")
                         continue
                     
@@ -649,7 +675,7 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
                         reasoning_plan = cleaned_plan
                     
                     question_obj = {
-                        "question": q_data["question"],
+                        "question": text,
                         "complexity": template.complexity.value,
                         "persona": template.persona.value,
                         "scenario": template.scenario,
@@ -676,6 +702,114 @@ NOC 운영자 관점에서, 네트워크의 특정 링크에 장애가 발생했
             print(f"[Enhanced Generator] Failed for {template.scenario}: {e}")
             # JSON 파싱 오류의 경우 빈 질문 리스트 반환
             return []
+
+    def _validate_generated_questions(self, questions, expected_metrics: List[str], allowed_metrics: List[str]):
+        """facts-only 가드: reasoning_plan/metric 검증 + 설명형 차단
+
+        Relaxations to avoid over-filtering:
+        - If expected_metrics is empty (intent-based templates), allow plans that contain CLI intents even
+          when no required_metric is present.
+        - If expected_metrics is non-empty, require that every present required_metric is in allowed_metrics,
+          and at least one step's required_metric is in expected_metrics.
+        """
+        def is_explainer(text: str) -> bool:
+            t = (text or "").lower()
+            bad = ["why", "how", "영향", "원인", "explain", "분석하시오", "평가하시오"]
+            return any(k in t for k in bad)
+        out = []
+        exp_set = set(expected_metrics or [])
+        allowed_set = set(allowed_metrics or [])
+        for q in questions or []:
+            rp = (q or {}).get("reasoning_plan") or []
+            if not isinstance(rp, list) or not rp:
+                continue
+            # classify steps
+            req_metrics = [ (step or {}).get("required_metric") for step in rp if isinstance(step, dict) ]
+            intents = [ (step or {}).get("intent") for step in rp if isinstance(step, dict) ]
+            has_req = any(bool(m) for m in req_metrics)
+            has_intent = any(bool(i) for i in intents)
+
+            ok = True
+            if not exp_set:
+                # intent-based template: allow if there is at least one intent or allowed required_metric
+                if not (has_intent or any((m in allowed_set) for m in req_metrics if m)):
+                    ok = False
+            else:
+                # metric-based template: all required metrics must be allowed; at least one must be expected
+                if any((m and m not in allowed_set) for m in req_metrics if m):
+                    ok = False
+                if not any((m in exp_set) for m in req_metrics if m):
+                    ok = False
+            if not ok:
+                continue
+            if is_explainer(q.get("question", "")):
+                continue
+            q.setdefault("answer_type", "short")
+            out.append(q)
+        return out
+
+    def _validate_generated_questions_with_stats(self, questions, expected_metrics: List[str], allowed_metrics: List[str]):
+        """facts-only 검증 + 템플릿별 드랍 사유 통계 반환
+
+        Returns
+        -------
+        tuple(list, dict): (kept_questions, stats)
+            stats keys: raw, kept, filtered_no_plan, filtered_metric, filtered_explainer, filtered_other
+        """
+        def is_explainer(text: str) -> bool:
+            t = (text or "").lower()
+            bad = ["why", "how", "영향", "원인", "explain", "분석하시오", "평가하시오"]
+            return any(k in t for k in bad)
+
+        kept = []
+        stats = {
+            "raw": len(questions or []),
+            "kept": 0,
+            "filtered_no_plan": 0,
+            "filtered_metric": 0,
+            "filtered_explainer": 0,
+            "filtered_other": 0,
+        }
+        exp_set = set(expected_metrics or [])
+        allowed_set = set(allowed_metrics or [])
+
+        for q in questions or []:
+            try:
+                rp = (q or {}).get("reasoning_plan") or []
+                if not isinstance(rp, list) or not rp:
+                    stats["filtered_no_plan"] += 1
+                    continue
+
+                req_metrics = [ (step or {}).get("required_metric") for step in rp if isinstance(step, dict) ]
+                intents = [ (step or {}).get("intent") for step in rp if isinstance(step, dict) ]
+                has_intent = any(bool(i) for i in intents)
+
+                ok = True
+                if not exp_set:
+                    if not (has_intent or any((m in allowed_set) for m in req_metrics if m)):
+                        ok = False
+                else:
+                    if any((m and m not in allowed_set) for m in req_metrics if m):
+                        ok = False
+                    if not any((m in exp_set) for m in req_metrics if m):
+                        ok = False
+
+                if not ok:
+                    stats["filtered_metric"] += 1
+                    continue
+
+                if is_explainer(q.get("question", "")):
+                    stats["filtered_explainer"] += 1
+                    continue
+
+                q.setdefault("answer_type", "short")
+                kept.append(q)
+                stats["kept"] += 1
+            except Exception:
+                stats["filtered_other"] += 1
+                continue
+
+        return kept, stats
 
     def _review_generated_questions(
         self, questions: List[Dict[str, Any]]
@@ -732,7 +866,7 @@ class QuestionQualityAssessor:
 2. 명확성 (1-5): 모호함(1) ~ 매우 명확(5)  
 3. 실용성 (1-5): 이론적(1) ~ 실무적(5)
 4. 추론 깊이: shallow/moderate/deep
-5. 승인 여부: 전체 점수 12점 이상 승인
+5. 승인 여부: 전체 점수 10점 이상 승인
 
 연구용 데이터셋 생성이 목적이므로 높은 기준을 적용하세요.
 """
@@ -757,7 +891,7 @@ class QuestionQualityAssessor:
             data = _call_llm_json(
                 messages, schema, temperature=0.1,
                 model=settings.models.hypothesis_review, max_output_tokens=8000,
-                use_responses_api=False
+                use_responses_api=True
             )
             
             if isinstance(data, dict) and "assessments" in data:

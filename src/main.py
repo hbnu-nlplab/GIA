@@ -61,7 +61,7 @@ def main():
     )
     parser.add_argument(
         '--output-dir',
-        default='output/network_qa',
+        default='output/no_feedback',
         help='출력 디렉토리'
     )
     
@@ -75,7 +75,7 @@ def main():
     parser.add_argument(
         '--enhanced-per-category',
         type=int,
-        default=30,
+        default=120,
         help='카테고리당 향상된 질문 수'
     )
     
@@ -182,28 +182,37 @@ def main():
         dataset_file = output_path / f"dataset_final_{timestamp}.json"
         with open(dataset_file, 'w', encoding='utf-8') as f:
             json.dump(
-                final_dataset['dataset'], 
+                final_dataset, 
                 f, 
                 ensure_ascii=False, 
                 indent=2
             )
         
-        # 리포트 저장
-        report_file = output_path / f"report_{timestamp}.json"
-        with open(report_file, 'w', encoding='utf-8') as f:
-            json.dump(
-                final_dataset['report'],
-                f,
-                ensure_ascii=False,
-                indent=2
-            )
+        # 리포트 저장 (evaluation_results가 있는 경우)
+        if 'evaluation_results' in final_dataset:
+            report_file = output_path / f"report_{timestamp}.json"
+            with open(report_file, 'w', encoding='utf-8') as f:
+                json.dump(
+                    final_dataset['evaluation_results'],
+                    f,
+                    ensure_ascii=False,
+                    indent=2
+                )
         
         # 최종 요약 출력
         print("\n" + "="*70)
         print("✅ 완료!")
         print("="*70)
         print(f"\n📊 최종 통계:")
-        print(f"  • 총 질문 수: {len(final_dataset['dataset'])}개")
+        
+        # 전체 샘플 수 계산
+        total_samples = (len(final_dataset.get('train', [])) + 
+                        len(final_dataset.get('validation', [])) + 
+                        len(final_dataset.get('test', [])))
+        print(f"  • 총 질문 수: {total_samples}개")
+        print(f"    - 훈련용: {len(final_dataset.get('train', []))}개")
+        print(f"    - 검증용: {len(final_dataset.get('validation', []))}개") 
+        print(f"    - 테스트용: {len(final_dataset.get('test', []))}개")
         
         if 'validation_report' in final_dataset:
             val_report = final_dataset['validation_report']
@@ -214,7 +223,8 @@ def main():
         
         print(f"\n📁 결과 파일:")
         print(f"  • 데이터셋: {dataset_file}")
-        print(f"  • 리포트: {report_file}")
+        if 'evaluation_results' in final_dataset:
+            print(f"  • 리포트: {report_file}")
         print("="*70)
         
         return 0

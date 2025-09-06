@@ -143,6 +143,9 @@ class AnswerAgent:
             "properties": {
                 "ground_truth": {
                     "type": ["string", "boolean", "number", "array", "null"],
+                    # Responses API 요구사항: type에 'array'가 포함되면 items를 명시해야 함
+                    # (다형성 케이스에서도 허용됨)
+                    "items": {"type": ["string", "number", "boolean"]},
                     "description": """
                 **[매우 중요]** 질문에 대한 핵심적이고 직접적인 '정답' 그 자체.
                 - 질문이 '개수'를 물으면: 숫자 (예: 0, 1, 5)
@@ -178,11 +181,17 @@ class AnswerAgent:
 - `explanation`은 항상 완전한 문장 형태여야 합니다.
 """
 
+        # 허용값(디바이스명/AS/VRF/IP/카운트 등) 수집
+        allowed = self._collect_allowed_answers(self.evidence)
+        allowed_hint = ", ".join(sorted(map(str, list(allowed)))[:50])
+
         user_prompt = f"""
 - **질문**: {question}
 - **질문 유형 힌트**: {answer_type}
 - **분석된 증거**: 
 {evidence_summary}
+
+**Allowed answers (선택지/힌트)**: {allowed_hint}
 
 위 정보를 바탕으로, JSON 스키마의 규칙에 따라 'ground_truth'와 'explanation'을 생성하세요.
 '질문 유형 힌트'가 'short'이면 `ground_truth`는 숫자, 리스트, 단일 문자열일 가능성이 높습니다.
@@ -201,15 +210,20 @@ class AnswerAgent:
                 temperature=0.0,
                 model=settings.models.answer_synthesis,
                 max_output_tokens=8000,
-                use_responses_api=False,
+                use_responses_api=True,
                 use_chat_parse=True,
                 pydantic_model=StructuredAnswerModel,
             )
             if isinstance(data, dict):
                 gt = data.get("ground_truth") if "ground_truth" in data else None
                 ex = data.get("explanation", "")
-                if gt is not None:
+                # 1) 형식 검증 및 허용값 체크
+                if self._is_valid_gt(gt, answer_type, allowed):
                     return gt, ex
+                # 2) 실패 시 explanation에서 정답 추출 시도
+                fixed = self._extract_ground_truth(self.evidence, ex)
+                if self._is_valid_gt(fixed, answer_type, allowed):
+                    return fixed, ex
         except Exception as e:
             import logging
             logging.warning(f"AnswerAgent parse path failed: {e}")
@@ -221,28 +235,79 @@ class AnswerAgent:
                 temperature=0.0,
                 model=settings.models.answer_synthesis,
                 max_output_tokens=8000,
-                use_responses_api=False,
+                use_responses_api=True,
                 use_chat_parse=False,
             )
             if isinstance(data2, dict):
                 gt = data2.get("ground_truth")
                 ex = data2.get("explanation", "")
-                if gt is not None:
+                if self._is_valid_gt(gt, answer_type, allowed):
                     return gt, ex
+                fixed = self._extract_ground_truth(self.evidence, ex)
+                if self._is_valid_gt(fixed, answer_type, allowed):
+                    return fixed, ex
         except Exception as e:
             import logging
             logging.warning(f"AnswerAgent json_object path failed: {e}")
 
-        # 폴백: 간단 LLM 호출 또는 템플릿 생성으로 답변 확보
+        # 폴백: 허용값 이탈 또는 추출 실패 시 insufficient_evidence로 처리
+        return ("insufficient_evidence", evidence_summary)
+
+    def _is_valid_gt(self, gt, answer_type: str, allowed: set) -> bool:
+        if gt is None:
+            return False
+        at = (answer_type or "").lower()
+        if at == "short":
+            ok_type = isinstance(gt, (int, float, str, list))
+        else:
+            ok_type = True
+        if not ok_type:
+            return False
+        # 허용값 존재 시 membership 우선(숫자/문자/리스트)
+        if isinstance(gt, list):
+            return all((str(x) in allowed) or isinstance(x, (int, float)) for x in gt)
+        if isinstance(gt, (int, float)):
+            return True
+        return str(gt) in allowed if allowed else True
+
+    def _collect_allowed_answers(self, evidence: Dict[str, Any]) -> set:
+        import re
+        allowed: set = set()
+        # 1) 디바이스명
         try:
-            fallback_answer = self._simple_llm_call(question, evidence_summary)
-            return fallback_answer, evidence_summary
+            allowed |= set(self.builder.host_index.keys())
         except Exception:
-            # 최후 폴백: 증거 요약을 explanation으로, 간단한 문장 생성
-            return (
-                f"질문에 대한 분석 결과는 증거 요약을 참조하세요. 주요 증거: {evidence_summary[:200]}...",
-                evidence_summary,
-            )
+            pass
+        # 2) AS 번호/카운트/숫자 및 IPv4
+        def walk(x):
+            if isinstance(x, dict):
+                for k, v in x.items():
+                    walk(k); walk(v)
+            elif isinstance(x, (list, tuple, set)):
+                for i in x:
+                    walk(i)
+            else:
+                s = str(x) if x is not None else ""
+                if re.fullmatch(r"\d{1,10}", s):
+                    allowed.add(s)
+                if re.fullmatch(r"\d{1,3}(?:\.\d{1,3}){3}", s):
+                    allowed.add(s)
+        for v in (evidence or {}).values():
+            walk(v)
+        # 3) VRF/인터페이스명 후보
+        try:
+            for d in self.builder.devices:
+                for vrf in (d.get("services", {}) or {}).get("vrf", []) or []:
+                    nm = (vrf or {}).get("name")
+                    if nm:
+                        allowed.add(str(nm))
+                for it in d.get("interfaces", []) or []:
+                    nm = (it or {}).get("name")
+                    if nm:
+                        allowed.add(str(nm))
+        except Exception:
+            pass
+        return allowed
 
     def _extract_ground_truth(self, eval_targets: Dict[str, Any], explanation: str) -> Any:
         """Infer ground truth from explanation text or eval_targets."""
@@ -449,7 +514,7 @@ class AnswerAgent:
                 temperature=0.1,
                 model=settings.models.answer_synthesis,
                 max_output_tokens=8000,
-                use_responses_api=False,
+                use_responses_api=True,
             )
             answer = data.get("answer") if isinstance(data, dict) else None
             if isinstance(answer, str):
