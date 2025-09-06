@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 from typing import Dict, Any, List, Optional, Tuple
+import csv
 from dataclasses import dataclass, asdict, field
 from enum import Enum
 import hashlib
@@ -603,6 +604,58 @@ class NetworkConfigDatasetGenerator:
                     continue
 
             self.logger.info(f"심화 질문 및 정답 생성 완료: {len(enhanced_samples)}개")
+
+            # === 추가 저장 로직: 생성/제거/남은 질문들을 CSV로 저장 (문제,gt,ex) ===
+            try:
+                output_dir = Path(self.config.output_dir)
+                output_dir.mkdir(exist_ok=True)
+
+                # 1) 기준 집합들 준비
+                all_generated = enhanced_questions or []  # LLM 생성(내부 1차 검증 후)
+                kept_after_review = reviewed_questions or []  # LLM 리뷰 통과
+                kept_q_texts = set((q or {}).get("question", "") for q in kept_after_review)
+                removed_by_review = [q for q in all_generated if (q or {}).get("question", "") not in kept_q_texts]
+
+                # 2) 공통 실행기: 질문 리스트 → (문제, gt, ex)
+                def build_rows(question_dicts: List[Dict[str, Any]]) -> List[List[str]]:
+                    rows: List[List[str]] = []
+                    for q in question_dicts or []:
+                        if not isinstance(q, dict):
+                            continue
+                        q_text = q.get("question") or ""
+                        plan = q.get("reasoning_plan")
+                        try:
+                            res = answer_agent.execute_plan(q_text, plan)
+                            gt = res.get("ground_truth")
+                            ex = res.get("explanation", "")
+                        except Exception as e:
+                            gt = f"error: {e}"
+                            ex = ""
+                        # CSV는 텍스트만 담는다
+                        rows.append([str(q_text), json.dumps(gt, ensure_ascii=False), str(ex)])
+                    return rows
+
+                # 3) 각 CSV 작성
+                def write_csv(filename: str, rows: List[List[str]]):
+                    path = output_dir / filename
+                    with open(path, "w", newline="", encoding="utf-8") as f:
+                        w = csv.writer(f)
+                        w.writerow(["문제", "gt", "ex"])
+                        w.writerows(rows)
+                    self.logger.info(f"CSV 저장 완료 -> {path}")
+
+                gen_rows = build_rows(all_generated)
+                rem_rows = build_rows(removed_by_review)
+                # 남은 질문들은 enhanced_samples에서 ground_truth/explanation이 이미 확정됨
+                kept_rows: List[List[str]] = []
+                for s in enhanced_samples:
+                    kept_rows.append([str(s.question), json.dumps(s.ground_truth, ensure_ascii=False), str(s.explanation or "")])
+
+                write_csv("enhanced_llm_generated.csv", gen_rows)
+                write_csv("enhanced_removed_by_review.csv", rem_rows)
+                write_csv("enhanced_remaining_after_review.csv", kept_rows)
+            except Exception as e:
+                self.logger.warning(f"생성/제거/남음 CSV 저장 중 오류: {e}")
 
             self.stage_results[PipelineStage.ENHANCED_GENERATION] = {
                 "question_count": len(enhanced_samples),
@@ -1499,7 +1552,7 @@ def main():
         policies_path=policies_path,
         target_categories=all_categories,  # 모든 카테고리 자동 포함
         basic_questions_per_category=30,  # 대폭 증가: 카테고리당 30개
-        enhanced_questions_per_category=50,  # 안정적인 수치: 카테고리당 20개
+        enhanced_questions_per_category=120,  # 안정적인 수치: 카테고리당 20개
         target_complexities=[
             QuestionComplexity.BASIC,         # 기본
             QuestionComplexity.ANALYTICAL,    # 분석적 추론
