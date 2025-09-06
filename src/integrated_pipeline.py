@@ -79,6 +79,13 @@ class PipelineConfig:
     output_dir: str = "output"
     save_intermediate: bool = True
 
+    # 검증 및 피드백 설정
+    skip_validation: bool = False  # 검증 완전 비활성화
+    skip_feedback: bool = False    # 피드백 완전 비활성화
+    validation_mode: Optional[ValidationMode] = None  # None이면 HYBRID 기본값
+    max_validation_iterations: int = 3
+    validation_sample_size: Optional[int] = None  # None이면 전체 검증
+
     # 균형/중복 설정
     balance_max_per_category: Optional[int] = None  # None이면 컷 비활성화
     balance_group_key: str = "topic"  # topic(메타) 우선, 없으면 category
@@ -102,6 +109,10 @@ class PipelineConfig:
                 PersonaType.TROUBLESHOOTER,
                 PersonaType.COMPLIANCE_OFFICER
             ]
+        
+        # 검증 모드 기본값 설정
+        if self.validation_mode is None:
+            self.validation_mode = ValidationMode.HYBRID
 
 
 @dataclass
@@ -168,8 +179,10 @@ class NetworkConfigDatasetGenerator:
         # 하이브리드 검증 시스템 (나중에 초기화)
         self.hybrid_validator = None
         self.hybrid_feedback = None
-        self.validation_mode = ValidationMode.HYBRID  # 기본값
-        self.max_validation_iterations = 3
+        self.validation_mode = config.validation_mode
+        self.max_validation_iterations = config.max_validation_iterations
+        self.skip_validation = config.skip_validation
+        self.skip_feedback = config.skip_feedback
 
 
         # self.llm_explorer = LLMExplorer()
@@ -216,10 +229,15 @@ class NetworkConfigDatasetGenerator:
             self.logger.info(f"✅ 프리 검증 완료: {len(integrated_dataset)}개 검증")
 
             # 6단계: 하이브리드 검증 루프 (새로운!)
-            self.logger.info("🔄 하이브리드 검증 루프 시작")
-            final_dataset, validation_report = self._execute_hybrid_validation_loop(
-                integrated_dataset, network_facts)
-            self.logger.info(f"✅ 하이브리드 검증 완료: {len(final_dataset)}개")
+            if not self.skip_validation:
+                self.logger.info("🔄 하이브리드 검증 루프 시작")
+                final_dataset, validation_report = self._execute_hybrid_validation_loop(
+                    integrated_dataset, network_facts)
+                self.logger.info(f"✅ 하이브리드 검증 완료: {len(final_dataset)}개")
+            else:
+                self.logger.info("⏭️  하이브리드 검증 건너뛰기 (skip_validation=True)")
+                final_dataset = integrated_dataset
+                validation_report = {"skipped": True, "message": "검증이 비활성화되었습니다."}
 
             # 6단계: 평가 메트릭 계산 (자가 평가)
             self.logger.info("🔄 평가 메트릭 계산 시작")
@@ -267,7 +285,12 @@ class NetworkConfigDatasetGenerator:
                 mode=self.validation_mode,
                 xml_base_dir=self.config.xml_data_dir
             )
-            self.hybrid_feedback = HybridFeedbackLoop(network_facts)
+            # 피드백이 비활성화되지 않은 경우에만 초기화
+            if not self.skip_feedback:
+                self.hybrid_feedback = HybridFeedbackLoop(network_facts)
+            else:
+                self.logger.info("⏭️  피드백 시스템 초기화 건너뛰기 (skip_feedback=True)")
+                self.hybrid_feedback = None
         
         # 데이터셋 딕셔너리 변환
         dataset_dicts = [asdict(sample) for sample in dataset]
@@ -308,22 +331,26 @@ class NetworkConfigDatasetGenerator:
                     break
                 
                 # Step 3: 피드백 루프 실행
-                improved_dataset, improvement_report = self.hybrid_feedback.improve_dataset(
-                    validation_results,
-                    dataset_dicts
-                )
-                
-                if improvement_report['total_improvements'] == 0:
-                    self.logger.info("개선할 항목이 없습니다.")
-                    break
-                
-                # Step 4: 개선된 데이터셋으로 업데이트
-                dataset_dicts = improved_dataset
-                total_improvements += improvement_report['total_improvements']
-                
-                self.logger.info(
-                    f"이번 반복에서 {improvement_report['total_improvements']}개 개선"
-                )
+                if not self.skip_feedback:
+                    improved_dataset, improvement_report = self.hybrid_feedback.improve_dataset(
+                        validation_results,
+                        dataset_dicts
+                    )
+                    
+                    if improvement_report['total_improvements'] == 0:
+                        self.logger.info("개선할 항목이 없습니다.")
+                        break
+                    
+                    # Step 4: 개선된 데이터셋으로 업데이트
+                    dataset_dicts = improved_dataset
+                    total_improvements += improvement_report['total_improvements']
+                    
+                    self.logger.info(
+                        f"이번 반복에서 {improvement_report['total_improvements']}개 개선"
+                    )
+                else:
+                    self.logger.info("⏭️  피드백 루프 건너뛰기 (skip_feedback=True)")
+                    break  # 피드백이 비활성화되면 한 번만 검증하고 종료
                 
             except Exception as e:
                 self.logger.error(f"검증 반복 {iteration + 1}에서 오류 발생: {e}")

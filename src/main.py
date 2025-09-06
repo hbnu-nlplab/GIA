@@ -87,6 +87,16 @@ def main():
         help='검증 모드 (skip: 검증 안 함)'
     )
     parser.add_argument(
+        '--skip-validation',
+        action='store_true',
+        help='검증 완전 비활성화 (--validation-mode skip과 동일)'
+    )
+    parser.add_argument(
+        '--skip-feedback', 
+        action='store_true',
+        help='피드백 루프 비활성화 (검증은 실행하되 개선은 안 함)'
+    )
+    parser.add_argument(
         '--max-validation-iter',
         type=int,
         default=3,
@@ -118,7 +128,15 @@ def main():
     print(f"\n설정:")
     print(f"  • XML 디렉토리: {args.xml_dir}")
     print(f"  • 카테고리: {', '.join(args.categories)}")
-    print(f"  • 검증 모드: {args.validation_mode}")
+    
+    # 검증/피드백 상태 표시
+    if args.skip_validation or args.validation_mode == 'skip':
+        print(f"  • 검증: ❌ 비활성화")
+        print(f"  • 피드백: ❌ 비활성화 (검증 비활성화로 인해)")
+    else:
+        print(f"  • 검증 모드: {args.validation_mode}")
+        print(f"  • 피드백: {'❌ 비활성화' if args.skip_feedback else '✅ 활성화'}")
+    
     print(f"  • 출력 디렉토리: {args.output_dir}")
     print("-"*70)
     
@@ -134,7 +152,10 @@ def main():
     )
     
     # 검증 모드 설정
-    if args.validation_mode != 'skip':
+    if args.skip_validation or args.validation_mode == 'skip':
+        config.skip_validation = True
+        config.skip_feedback = True  # 검증을 안 하면 피드백도 자동으로 비활성화
+    else:
         mode_map = {
             'agent': ValidationMode.AGENT_ONLY,
             'logic': ValidationMode.LOGIC_ONLY,
@@ -143,8 +164,7 @@ def main():
         config.validation_mode = mode_map[args.validation_mode]
         config.max_validation_iterations = args.max_validation_iter
         config.validation_sample_size = args.sample_validation
-    else:
-        config.skip_validation = True
+        config.skip_feedback = args.skip_feedback
     
     # 생성기 초기화 및 실행
     generator = NetworkConfigDatasetGenerator(config)

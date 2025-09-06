@@ -1,0 +1,1174 @@
+[
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-001",
+    "question": "iBGP 풀메시 설정의 누락이 AS 65001 내 경로 수렴에 어떤 영향을 미치고 있습니까?",
+    "ground_truth": "iBGP 풀메시 설정의 누락은 AS 65001 내 경로 수렴에 영향을 미치지 않는다.",
+    "explanation": "iBGP 풀메시 설정이 누락되었지만, 분석된 증거에 따르면 'ibgp_missing_pairs_count'가 0으로 나타나고 있으며, 'neighbor_list_ibgp'가 없음에도 불구하고 문제없이 경로 수렴이 이루어지고 있다는 것을 의미합니다. 따라서, 현재 상태에서는 iBGP 풀메시 설정의 누락이 경로 수렴에 영향을 미치지 않는다고 결론지을 수 있습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-002",
+    "question": "특정 BGP 피어가 다운될 경우, AS 65003의 네트워크 안정성에 어떤 파급 효과가 있을까요?",
+    "ground_truth": "BGP 피어가 다운되면 AS 65003의 네트워크 안정성이 저하될 수 있으며, 이는 경로 선택에 영향을 미쳐 트래픽 흐름이 비효율적으로 변할 수 있습니다.",
+    "explanation": "특정 BGP 피어가 다운되면 해당 피어를 통해 연결된 경로가 사라지게 되어, AS 65003의 네트워크가 다른 경로를 통해 트래픽을 처리해야 합니다. 이로 인해 경로 선택이 변경되고, 트래픽이 비효율적으로 흐를 수 있으며, 결과적으로 네트워크의 안정성이 저하될 수 있습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-003",
+    "question": "AS 65000 내의 라우터들이 동일한 BGP 설정을 유지하고 있는지 일관성을 검증해 보세요.",
+    "ground_truth": false,
+    "explanation": "AS 65000 내의 라우터들이 동일한 BGP 설정을 유지하고 있는지 검증하기 위해서는 BGP 설정의 일관성을 확인해야 합니다. 제공된 증거에 따르면, 'bgp_local_as_numeric' 값이 0으로 설정되어 있으며, 'neighbor_list_ebgp'는 존재하지 않습니다. 이는 AS 65000 내의 라우터들이 BGP 설정을 공유하지 않거나, 이 설정이 일관되지 않음을 나타냅니다. 따라서, 일관성이 없다고 판단할 수 있습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-004",
+    "question": "iBGP 풀메시가 적절히 설정되지 않았을 때, OSPF와의 경로 교환에 어떤 영향을 미칠 수 있습니까?",
+    "ground_truth": "OSPF와의 경로 교환이 이루어지지 않을 수 있다.",
+    "explanation": "iBGP 풀메시가 적절히 설정되지 않으면, BGP 라우터 간에 경로 정보가 제대로 전파되지 않아 OSPF와의 경로 교환이 원활하지 않을 수 있습니다. 이는 OSPF 라우터가 필요한 경로 정보를 받지 못하게 되어 네트워크의 라우팅 효율성에 부정적인 영향을 미칠 수 있습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-005",
+    "question": "AS 65001의 BGP 설정이 AS 내 라우터 간의 경로 수렴을 방해할 수 있는 잠재적인 문제는 무엇인가요?",
+    "ground_truth": "BGP 라우터 간의 경로 수렴 문제는 iBGP 피어링이 부족하거나 잘못된 설정으로 인해 발생할 수 있습니다.",
+    "explanation": "AS 65001의 BGP 설정에서 iBGP 피어링이 없거나 잘못된 경우, 라우터 간의 경로 정보가 제대로 전파되지 않아 경로 수렴이 방해받을 수 있습니다. 특히, iBGP 피어 간의 연결이 없으면 라우터가 외부 경로 정보를 공유하지 못하게 되어, 전체 AS 내에서 일관된 경로 정보를 유지하는 데 어려움이 생길 수 있습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-006",
+    "question": "AS 65003에서의 특정 피어 장애가 L2VPN 연결에 미치는 영향은 무엇입니까?",
+    "ground_truth": "L2VPN 연결에 장애가 발생할 수 있으며, 특히 피어 간의 불일치가 문제를 일으킬 수 있습니다.",
+    "explanation": "AS 65003에서 특정 피어 장애가 발생하면 L2VPN 연결에 영향을 미칠 수 있습니다. 분석된 증거에 따르면, l2vpn_mismatch_count가 2로 나타나 불일치가 존재함을 보여줍니다. 이러한 불일치는 L2VPN 연결의 안정성과 성능에 부정적인 영향을 미칠 수 있으며, 결국 연결 장애로 이어질 수 있습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-007",
+    "question": "AS 65000 내에서 BGP 설정의 일관성을 확보하기 위해 어떤 개선 조치가 필요할까요?",
+    "ground_truth": [
+      "BGP 피어링의 일관성 검토",
+      "정기적인 BGP 설정 감사",
+      "BGP 정책 문서화 및 교육",
+      "BGP 경로 필터링 규칙 적용"
+    ],
+    "explanation": "AS 65000 내에서 BGP 설정의 일관성을 확보하기 위해서는 BGP 피어링의 일관성을 검토하고, 정기적인 BGP 설정 감사를 실시하며, BGP 정책을 문서화하고 관련 교육을 제공하는 것이 중요합니다. 또한, BGP 경로 필터링 규칙을 적용하여 불필요한 경로 전파를 방지하는 것도 필요합니다.",
+    "source_files": [
+      "sample7.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-008",
+    "question": "OSPF와 BGP의 설정 불일치가 AS 65001 내 경로 수렴에 미치는 영향은 무엇입니까?",
+    "ground_truth": "OSPF와 BGP의 설정 불일치는 AS 65001 내 경로 수렴을 지연시키거나 경로 선택에 영향을 미칠 수 있습니다.",
+    "explanation": "OSPF와 BGP는 서로 다른 프로토콜로, 각각의 경로 수렴 방식이 다릅니다. OSPF는 링크 상태 프로토콜로, 네트워크의 링크 상태를 기반으로 경로를 계산합니다. 반면 BGP는 경로 벡터 프로토콜로, AS 간의 경로 정보를 교환하여 최적의 경로를 선택합니다. 설정 불일치가 발생하면 OSPF에서 수집한 경로 정보가 BGP에 제대로 반영되지 않거나, BGP가 OSPF의 경로를 신뢰하지 않을 수 있습니다. 이로 인해 AS 65001 내에서 경로 수렴이 지연되거나 비효율적인 경로가 선택될 수 있습니다.",
+    "source_files": [
+      "sample8.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-009",
+    "question": "AS 65003 내 특정 BGP 피어 장애 시, 장애 전후의 경로 수렴 시간을 비교해 보세요.",
+    "ground_truth": {
+      "pre_failure_route_convergence_time": null,
+      "post_failure_route_convergence_time": null
+    },
+    "explanation": "주어진 증거에서는 BGP 피어의 장애 전후 경로 수렴 시간을 비교할 수 있는 구체적인 데이터가 제공되지 않았습니다. 따라서 장애 전후의 경로 수렴 시간을 명확히 제시할 수 없습니다.",
+    "source_files": [
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-010",
+    "question": "AS 65000에서 모든 라우터가 일관된 BGP 설정을 따르고 있는지 어떻게 확인할 수 있을까요?",
+    "ground_truth": "BGP 설정을 확인하기 위해 각 라우터의 BGP 구성 파일을 검토하고, AS 번호, 이웃 IP 주소, 그리고 BGP 정책이 일관되게 설정되어 있는지 비교해야 합니다.",
+    "explanation": "AS 65000에서 모든 라우터가 일관된 BGP 설정을 따르고 있는지 확인하려면, 각 라우터의 BGP 설정을 검토해야 합니다. 이를 통해 AS 번호(여기서는 65000)와 이웃 IP 주소(예: 192.168.4.11)가 동일하게 설정되어 있는지 확인할 수 있습니다. 또한, BGP 정책이나 필터링 규칙이 일관되게 적용되었는지도 점검해야 합니다.",
+    "source_files": [
+      "sample10.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-001",
+    "question": "SSH 설정이 모든 장비에서 일관되게 적용되고 있는가? 만약 적용되지 않은 곳이 있다면, 그 이유는 무엇인가?",
+    "ground_truth": true,
+    "explanation": "SSH 설정이 모든 장비에서 일관되게 적용되고 있으며, 적용되지 않은 장비가 없다는 것을 나타내는 'ssh_missing_devices'가 없음으로 확인되었습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-002",
+    "question": "AAA 설정이 모든 장비에서 일관되게 적용되고 있는가? 일관성이 부족한 경우, 보안 위험도는 어느 정도인가?",
+    "ground_truth": "일관성이 부족하며 보안 위험도가 높습니다.",
+    "explanation": "AAA 설정이 모든 장비에서 일관되게 적용되지 않고 있으며, 관련된 문제로 인해 보안 위험도가 높아질 수 있습니다. 특히, AAA 설정이 결여된 장비가 존재하고, 비밀번호 정책 또한 적용되지 않는 상황은 보안 취약점을 초래할 수 있습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-003",
+    "question": "BGP 설정에서 발생한 이상 징후들이 네트워크 보안에 어떤 영향을 미칠 수 있는가?",
+    "ground_truth": "BGP 설정에서 발생한 이상 징후는 네트워크 보안에 부정적인 영향을 미칠 수 있으며, 특히 BGP 피어링 문제나 경로 전파의 오류로 인해 트래픽이 잘못된 경로로 유도되거나, DDoS 공격에 취약해질 수 있다.",
+    "explanation": "BGP 설정에서 이상 징후가 발생하면, 네트워크의 경로 선택 및 피어링에 문제가 생길 수 있습니다. 예를 들어, BGP 피어가 제대로 설정되지 않거나, 경로 정보가 잘못 전파되면, 공격자가 네트워크 트래픽을 가로채거나, 잘못된 경로로 유도할 수 있습니다. 이러한 상황은 DDoS 공격에 대한 취약성을 증가시키고, 네트워크의 가용성을 저하시킬 수 있습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-004",
+    "question": "SSH ACL이 모든 장비에 올바르게 적용되어 있는가? 적용되지 않은 경우, 보안 취약점으로 작용할 가능성이 있는가?",
+    "ground_truth": false,
+    "explanation": "SSH ACL이 모든 장비에 올바르게 적용되지 않았기 때문에, 이는 보안 취약점으로 작용할 가능성이 있습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-005",
+    "question": "L2VPN 설정에서 발견된 이상 징후가 네트워크의 안전성을 어떻게 위협할 수 있는가?",
+    "ground_truth": "L2VPN 설정에서 발견된 이상 징후는 네트워크의 안전성을 위협할 수 있다.",
+    "explanation": "L2VPN 설정에서 'None단계'의 발견과 'l2vpn_mismatch_count'가 2인 경우는 설정의 불일치가 존재함을 나타내며, 이는 데이터 전송의 신뢰성을 저하시킬 수 있습니다. 이러한 불일치는 공격자가 네트워크에 침투하거나 데이터 유출을 초래할 수 있는 취약점을 만들 수 있습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-006",
+    "question": "네트워크 장비들이 규정된 시스템 시간대를 사용하고 있는가? 그렇지 않다면, 어떤 문제가 발생할 수 있는가?",
+    "ground_truth": "네트워크 장비들이 규정된 시스템 시간대인 KST를 사용하고 있습니다.",
+    "explanation": "네트워크 장비들이 규정된 시스템 시간대인 KST를 사용하고 있기 때문에, 시간대와 관련된 문제는 발생하지 않을 것입니다. 만약 장비들이 올바른 시간대를 사용하지 않는다면, 로그 기록의 불일치, 예약된 작업의 실패, 보안 인증의 문제 등 여러 가지 문제가 발생할 수 있습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-007",
+    "question": "VRF 설정에서 RT가 지정되지 않은 경우, 네트워크 보안에 어떤 영향을 미칠 수 있는가?",
+    "ground_truth": "RT가 지정되지 않으면 라우팅 정보가 격리되지 않아 보안 취약점이 발생할 수 있다.",
+    "explanation": "VRF 설정에서 RT(Route Target)가 지정되지 않으면, 서로 다른 VRF 간의 라우팅 정보가 혼합될 수 있으며, 이는 네트워크의 보안성을 저하시킬 수 있습니다. RT는 특정 VRF에 속하는 경로를 식별하고 격리하는 역할을 하므로, RT가 없으면 의도하지 않은 경로가 다른 VRF에 노출될 수 있습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-008",
+    "question": "OSPF 설정이 규정대로 되어 있는가? 만약 그렇지 않다면, 어떤 보안 위험이 존재할 수 있는가?",
+    "ground_truth": "아니오",
+    "explanation": "OSPF 설정이 규정대로 되어 있지 않으며, 이는 OSPF 프로세스 ID와 OSPF 영역이 설정되지 않았기 때문입니다. 이러한 설정이 누락되면 네트워크의 라우팅 정보가 제대로 전파되지 않아, 라우팅 루프나 네트워크 분할과 같은 심각한 보안 위험이 발생할 수 있습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-009",
+    "question": "네트워크 전반에 걸쳐 SSH 버전이 일관되게 설정되어 있는가? 만약 그렇지 않다면, 어떤 보안 문제가 발생할 수 있는가?",
+    "ground_truth": "아니오",
+    "explanation": "SSH 버전이 일관되게 설정되지 않으면, 보안 취약점이 발생할 수 있습니다. 예를 들어, 구버전의 SSH 프로토콜은 알려진 취약점에 노출될 수 있으며, 이는 해커가 시스템에 침투하거나 데이터를 가로채는 데 악용될 수 있습니다. 따라서 모든 시스템에서 동일한 최신 버전의 SSH를 사용하는 것이 중요합니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-010",
+    "question": "VRF와 L2VPN 설정 간의 충돌이 네트워크 보안에 미치는 영향은 무엇인가?",
+    "ground_truth": "L2VPN 설정 간의 충돌은 VRF와의 연결 문제를 야기하여 데이터 전송의 신뢰성을 저하시킬 수 있으며, 이는 네트워크 보안에 부정적인 영향을 미칠 수 있다.",
+    "explanation": "VRF와 L2VPN 설정 간의 충돌은 네트워크의 데이터 흐름에 혼란을 초래할 수 있으며, 이로 인해 데이터가 잘못된 경로로 전송되거나 손실될 수 있습니다. 특히, L2VPN 설정에서 발생하는 PWID 불일치는 서로 다른 네트워크 간의 연결을 방해하여 보안 취약점을 초래할 수 있습니다. 이러한 문제는 데이터의 기밀성과 무결성을 위협할 수 있으며, 결과적으로 네트워크 보안에 부정적인 영향을 미칠 수 있습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-001",
+    "question": "BGP의 Missing Pairs 문제로 인해 L2VPN/L3VPN 서비스에 어떤 영향이 있을 수 있으며, 이러한 문제를 해결하기 위해 어떤 복구 순서를 제안할 수 있는가?",
+    "ground_truth": {
+      "service_impact": "None",
+      "recovery_steps": []
+    },
+    "explanation": "BGP의 Missing Pairs 문제에 대한 분석 결과, 현재 ibgp_missing_pairs_count가 0으로 나타나며, L2VPN 및 L3VPN 서비스에 대한 문제도 발견되지 않았습니다. 따라서 서비스에 미치는 영향은 없으며, 복구 단계도 필요하지 않습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-002",
+    "question": "L2VPN 문제로 인한 서비스 장애의 파급 범위를 분석하고, 이를 복구하기 위한 우선순위를 어떻게 설정할 수 있는가?",
+    "ground_truth": {
+      "service_impact": "Limited impact due to 0 unidirectional issues and 2 mismatches.",
+      "recovery_priority": "Address the 2 mismatches first to prevent potential service degradation."
+    },
+    "explanation": "The analysis indicates that there are no unidirectional issues, which suggests that the L2VPN service is functioning correctly in that aspect. However, the presence of 2 mismatches indicates potential configuration issues that could lead to service degradation. Therefore, the priority for recovery should focus on resolving these mismatches to ensure the stability and reliability of the service.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-003",
+    "question": "L3VPN에서 VRF의 RT가 설정되지 않은 경우, 비즈니스 서비스에 미치는 잠재적 영향을 평가하고 예방 조치를 제안하라.",
+    "ground_truth": "문제 없음",
+    "explanation": "L3VPN에서 VRF의 RT가 설정되지 않은 경우, 현재 분석된 증거에 따르면 vrf_without_rt_count가 0으로 나타나므로 비즈니스 서비스에 미치는 잠재적 영향이 없음을 의미합니다. 또한, vrf_rt_list_per_device가 없고 service_impact_analysis가 None으로 나타나기 때문에, RT 설정이 누락된 상황에서도 서비스에 문제가 발생하지 않는 것으로 평가됩니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-004",
+    "question": "OSPF가 정상적으로 동작하지 않을 경우, L3VPN 경로에 미치는 영향과 이를 해결하기 위한 방법은 무엇인가?",
+    "ground_truth": "OSPF의 비정상 동작은 L3VPN 경로의 불안정성을 초래하며, 이를 해결하기 위해 OSPF 프로세스를 재시작하거나 설정을 점검해야 한다.",
+    "explanation": "OSPF가 정상적으로 동작하지 않으면 라우팅 정보가 제대로 전파되지 않아 L3VPN 경로의 안정성이 저하될 수 있습니다. 이로 인해 패킷 손실이나 지연이 발생할 수 있습니다. 문제를 해결하기 위해서는 OSPF 프로세스를 재시작하거나, OSPF 설정을 점검하여 문제의 원인을 파악하고 수정해야 합니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-005",
+    "question": "현재 네트워크에서 BGP와 OSPF의 상호작용이 서비스 가용성에 어떻게 영향을 미칠 수 있는가?",
+    "ground_truth": "BGP와 OSPF의 상호작용은 네트워크의 경로 선택 및 라우팅 안정성에 영향을 미쳐 서비스 가용성을 높이거나 낮출 수 있다.",
+    "explanation": "BGP(Border Gateway Protocol)와 OSPF(Open Shortest Path First)는 각각 다른 계층에서 작동하는 라우팅 프로토콜로, BGP는 주로 인터넷과 같은 대규모 네트워크에서 사용되고 OSPF는 내부 네트워크에서 사용됩니다. 이 두 프로토콜이 상호작용할 때, BGP가 OSPF로부터 수신한 경로 정보를 기반으로 최적의 경로를 선택하게 되며, 이 과정에서 경로의 안정성과 가용성이 영향을 받을 수 있습니다. 예를 들어, OSPF가 제공하는 경로가 불안정하거나 비효율적일 경우, BGP는 이를 통해 잘못된 경로를 선택할 수 있어 서비스 가용성이 저하될 수 있습니다. 반대로, OSPF가 안정적인 경로를 제공하면 BGP의 경로 선택이 개선되어 서비스 가용성이 증가할 수 있습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-006",
+    "question": "장비 간 SSH 연결이 차단될 경우, L2VPN 서비스에 미치는 잠재적 영향을 어떻게 평가할 수 있는가?",
+    "ground_truth": "SSH 연결이 차단되면 L2VPN 서비스에 영향을 미치지 않음.",
+    "explanation": "주어진 증거에 따르면, SSH 연결이 차단된 경우에 대한 문제는 없으며, L2VPN 서비스에 대한 문제도 발생하지 않았습니다. 따라서 SSH 연결이 차단되더라도 L2VPN 서비스에는 잠재적인 영향이 없다고 평가할 수 있습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-007",
+    "question": "BGP AS 번호의 일관성 문제로 인해 발생할 수 있는 서비스 장애를 예방하기 위한 방안은 무엇인가?",
+    "ground_truth": "BGP AS 번호의 일관성을 유지하기 위해 AS 번호 관리 정책을 수립하고, 정기적인 검토 및 모니터링을 실시하며, BGP 설정을 자동화하여 오류를 최소화하는 것이 중요하다.",
+    "explanation": "BGP AS 번호의 일관성 문제는 네트워크의 안정성과 신뢰성에 큰 영향을 미칠 수 있으므로, 이를 예방하기 위해서는 체계적인 관리와 모니터링이 필요합니다. AS 번호 관리 정책을 수립하면 각 AS 번호의 사용과 변경을 명확히 할 수 있으며, 정기적인 검토를 통해 잠재적인 문제를 조기에 발견할 수 있습니다. 또한, BGP 설정을 자동화하면 수동 설정에서 발생할 수 있는 오류를 줄일 수 있습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-008",
+    "question": "L3VPN에서 VRF Interface Bind Count가 서비스 가용성에 미치는 잠재적 영향을 평가하라.",
+    "ground_truth": "문제가 없음",
+    "explanation": "L3VPN에서 VRF Interface Bind Count가 0인 경우, 이는 현재 VRF 인터페이스가 바인딩되지 않았음을 나타내며, 서비스 가용성에 문제가 없음을 의미합니다. 따라서 서비스에 미치는 잠재적 영향은 없다고 평가할 수 있습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-009",
+    "question": "여러 장애가 동시 발생할 때, 서비스 복구 우선순위를 결정할 수 있는 기준은 무엇인가?",
+    "ground_truth": [
+      "서비스의 중요도",
+      "장애의 영향 범위",
+      "복구 시간",
+      "비즈니스 요구사항"
+    ],
+    "explanation": "서비스 복구 우선순위를 결정하는 기준은 여러 가지가 있으며, 가장 중요한 요소는 서비스의 중요도입니다. 또한 장애가 발생한 서비스가 비즈니스에 미치는 영향 범위, 복구에 소요되는 시간, 그리고 비즈니스의 특정 요구사항 등을 고려해야 합니다. 이러한 요소들은 복구 작업의 우선순위를 정하는 데 필수적인 기준이 됩니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SYNTHETIC-010",
+    "question": "네트워크의 잠재적 보안 문제로 인해 L3VPN 서비스가 중단될 위험을 어떻게 예방할 수 있는가?",
+    "ground_truth": [
+      "정기적인 보안 점검 수행",
+      "VPN 장비의 최신 패치 적용",
+      "위험 평가 및 관리 프로세스 수립",
+      "접근 제어 및 인증 강화",
+      "모니터링 및 경고 시스템 구축"
+    ],
+    "explanation": "L3VPN 서비스의 중단 위험을 예방하기 위해서는 정기적인 보안 점검을 수행하고, VPN 장비에 최신 패치를 적용하여 알려진 취약점을 해결해야 합니다. 또한, 위험 평가 및 관리 프로세스를 수립하여 잠재적인 보안 문제를 사전에 식별하고 대응할 수 있어야 합니다. 접근 제어 및 인증을 강화하여 무단 접근을 방지하고, 모니터링 및 경고 시스템을 구축하여 이상 징후를 조기에 발견하는 것이 중요합니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-001",
+    "question": "고객사 A의 L3VPN 서비스가 간헐적으로 끊어지는 문제의 근본 원인은 무엇인가?",
+    "ground_truth": "L3VPN 서비스의 간헐적 끊김 문제는 VRF 라우팅 테이블의 과부하로 인한 것으로 보입니다.",
+    "explanation": "고객사 A의 L3VPN 서비스에서 VRF 라우팅 테이블의 수가 65000:1000으로 나타나고 있으며, 이는 VRF의 수가 많아져서 라우팅 테이블이 과부하 상태에 이를 수 있음을 시사합니다. 이러한 과부하는 간헐적인 서비스 중단을 초래할 수 있는 주요 원인으로 작용할 수 있습니다.",
+    "source_files": [
+      "sample7.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-002",
+    "question": "새로운 PE 라우터 추가 후 BGP 경로 이상이 발생한 원인은 무엇인가?",
+    "ground_truth": "BGP 경로 이상은 새로운 PE 라우터의 설정이나 연결 문제로 인해 발생할 수 있습니다.",
+    "explanation": "새로운 PE 라우터를 추가한 후 BGP 경로에 이상이 발생한 원인은 여러 가지가 있을 수 있으며, 일반적으로 라우터의 설정 오류, iBGP 피어 간의 연결 문제, 또는 라우팅 정책의 불일치 등이 포함됩니다. 그러나 제공된 증거에서 iBGP 피어 간의 문제는 없으므로, 다른 설정이나 연결 문제를 점검해야 할 필요가 있습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-003",
+    "question": "보안 점검 후 일부 장비 접속 불가의 근본 원인은 무엇인가?",
+    "ground_truth": "ssh_acl_applied_check 문제",
+    "explanation": "보안 점검 결과, ssh_acl_applied_check에서 문제가 발견되었으며, 이는 일부 장비의 접속 불가와 관련이 있을 수 있습니다.",
+    "source_files": [
+      "sample7.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-004",
+    "question": "고객사 A의 L3VPN 장애가 다른 서비스에 미치는 영향은 무엇인가?",
+    "ground_truth": "L3VPN 장애는 고객사 A의 데이터 전송에 영향을 미치며, 이로 인해 서비스 지연이나 중단이 발생할 수 있습니다.",
+    "explanation": "고객사 A의 L3VPN 장애는 해당 고객의 네트워크 연결에 직접적인 영향을 미치므로, 데이터 전송이 원활하지 않게 되어 서비스 지연이나 중단이 발생할 수 있습니다. 이는 고객사 A의 비즈니스 운영에 부정적인 영향을 미칠 수 있습니다.",
+    "source_files": [
+      "sample7.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-005",
+    "question": "BGP 경로 이상 문제의 영향을 받을 수 있는 다른 네트워크 장비는 무엇인가?",
+    "ground_truth": [
+      "라우터",
+      "스위치",
+      "방화벽",
+      "로드 밸런서"
+    ],
+    "explanation": "BGP 경로 이상 문제는 네트워크의 라우팅 정보를 변경하거나 손상시킬 수 있으며, 이로 인해 라우터, 스위치, 방화벽, 로드 밸런서와 같은 다양한 네트워크 장비들이 영향을 받을 수 있습니다. 이러한 장비들은 BGP를 통해 경로 정보를 교환하고, 경로 이상이 발생하면 트래픽 흐름에 문제가 생길 수 있습니다.",
+    "source_files": [
+      "sample7.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-006",
+    "question": "보안 점검 후 접속 불가 문제로 인해 영향을 받을 수 있는 다른 서비스는 무엇인가?",
+    "ground_truth": [
+      "서비스 A",
+      "서비스 B",
+      "서비스 C"
+    ],
+    "explanation": "보안 점검 후 접속 불가 문제는 네트워크 장비에 영향을 미치며, 이로 인해 해당 장비에 의존하는 서비스들이 영향을 받을 수 있습니다. 예를 들어, CE1과 CE2와 같은 장비가 특정 서비스에 연결되어 있다면, 이들 장비의 접속 불가로 인해 서비스 A, B, C와 같은 다른 서비스들도 영향을 받을 수 있습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-007",
+    "question": "L3VPN 문제 해결을 위해 제안한 해결책이 BGP 설정에 미치는 부작용은 무엇인가?",
+    "ground_truth": "BGP 설정의 복잡성이 증가할 수 있으며, 이로 인해 라우팅 루프나 경로 선택의 비효율성이 발생할 수 있다.",
+    "explanation": "L3VPN 문제 해결을 위해 제안한 해결책이 BGP 설정에 미치는 부작용으로는 BGP 설정의 복잡성이 증가할 수 있다는 점이 있습니다. 이는 라우팅 루프나 경로 선택의 비효율성을 초래할 수 있으며, 결과적으로 네트워크 성능에 부정적인 영향을 미칠 수 있습니다.",
+    "source_files": [
+      "sample7.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-008",
+    "question": "BGP 경로 이상 해결을 위한 제안한 방법이 OSPF에 미칠 수 있는 영향은 무엇인가?",
+    "ground_truth": "BGP 경로 이상 해결을 위한 방법이 OSPF의 라우팅 효율성을 저하시킬 수 있으며, 이는 OSPF의 경로 선택 및 트래픽 분산에 영향을 미칠 수 있다.",
+    "explanation": "BGP 경로 이상 해결을 위한 방법이 OSPF에 미치는 영향은 주로 OSPF의 라우팅 프로토콜 동작에 관련이 있습니다. BGP와 OSPF는 서로 다른 라우팅 프로토콜로, BGP의 경로 변경이나 정책 적용이 OSPF의 경로 선택에 영향을 줄 수 있습니다. 예를 들어, BGP에서 특정 경로를 우선시하거나 차단하는 경우, OSPF가 사용하는 경로가 변경되어 OSPF의 트래픽 분산 및 효율성이 저하될 수 있습니다. 따라서 BGP의 변화가 OSPF의 성능에 직접적인 영향을 미칠 수 있습니다.",
+    "source_files": [
+      "sample7.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-009",
+    "question": "보안 점검 후 접속 불가 문제 해결을 위한 제안한 방안이 네트워크 장비의 CPU 사용률에 미치는 영향은 무엇인가?",
+    "ground_truth": "네트워크 장비의 CPU 사용률이 증가할 수 있다.",
+    "explanation": "보안 점검 후 접속 불가 문제를 해결하기 위한 방안은 종종 추가적인 프로세스나 리소스를 요구하게 되며, 이로 인해 네트워크 장비의 CPU 사용률이 증가할 수 있습니다. 예를 들어, 보안 점검을 위한 로그 분석이나 추가적인 보안 프로토콜의 적용은 CPU에 부하를 줄 수 있습니다.",
+    "source_files": [
+      "sample7.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-010",
+    "question": "고객사 A의 L3VPN 장애가 L2VPN 설정에 미치는 영향은 무엇인가?",
+    "ground_truth": "L3VPN 장애는 L2VPN 설정에 영향을 미치지 않음.",
+    "explanation": "고객사 A의 L3VPN 장애가 발생했지만, 분석된 증거에 따르면 L2VPN 설정에서 문제를 나타내는 지표가 없으며, l2vpn_unidir_count가 0으로 나타나고 l2vpn_pairs가 정상적으로 설정되어 있기 때문에 L3VPN 장애가 L2VPN에 영향을 미치지 않는다고 결론지을 수 있습니다.",
+    "source_files": [
+      "sample7.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-001",
+    "question": "확장된 데이터센터의 BGP 구성을 기존 네트워크와 통합할 때, AS 번호 충돌을 방지하기 위해 어떤 조치를 취해야 할까요?",
+    "ground_truth": "AS 번호를 변경하거나, BGP 세션을 설정할 때 'local-as' 옵션을 사용하여 기존 AS 번호와 충돌하지 않도록 합니다.",
+    "explanation": "AS 번호 충돌을 방지하기 위해서는 새로운 데이터센터의 BGP 구성을 기존 네트워크와 통합할 때, 기존 AS 번호와 다른 AS 번호를 할당하거나, 'local-as' 옵션을 사용하여 기존 AS 번호를 임시로 사용할 수 있습니다. 이를 통해 두 네트워크 간의 BGP 세션이 원활하게 설정될 수 있습니다.",
+    "source_files": [
+      "sample7.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-002",
+    "question": "새로운 데이터센터 추가 시, 기존 L2VPN 서비스의 원활한 작동을 보장하기 위해 어떤 구성 요소를 검토해야 할까요?",
+    "ground_truth": [
+      "L2VPN 구성 요소",
+      "네트워크 대역폭",
+      "지연 시간",
+      "보안 설정",
+      "장비 호환성",
+      "IP 주소 계획"
+    ],
+    "explanation": "새로운 데이터센터를 추가할 때 기존 L2VPN 서비스의 원활한 작동을 보장하기 위해서는 L2VPN 구성 요소, 네트워크 대역폭, 지연 시간, 보안 설정, 장비 호환성, 그리고 IP 주소 계획을 검토해야 합니다. 이러한 요소들은 L2VPN의 성능과 안정성에 직접적인 영향을 미치기 때문에, 각 요소를 면밀히 분석하고 적절히 구성하는 것이 중요합니다.",
+    "source_files": [
+      "sample7.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-003",
+    "question": "데이터센터 확장 시 OSPF 영역 구성을 최적화하여 네트워크 안정성을 어떻게 확보할 수 있을까요?",
+    "ground_truth": "OSPF 영역을 적절히 나누고, 각 영역의 경계를 명확히 하여 라우팅 정보를 최적화함으로써 네트워크 안정성을 확보할 수 있습니다.",
+    "explanation": "데이터센터 확장 시 OSPF 영역 구성을 최적화하면 라우팅 테이블의 크기를 줄이고, 라우팅 업데이트의 빈도를 감소시켜 네트워크의 안정성을 높일 수 있습니다. 각 영역은 독립적으로 라우팅 정보를 처리하므로, 특정 영역에서 발생하는 문제는 다른 영역에 영향을 미치지 않게 됩니다. 또한, OSPF의 계층적 구조를 활용하여 경로 선택을 효율적으로 관리할 수 있습니다.",
+    "source_files": [
+      "sample7.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-004",
+    "question": "확장된 네트워크에서 BGP 피어링 구성의 일관성을 유지하기 위해 사전에 어떤 문제를 확인해야 할까요?",
+    "ground_truth": [
+      "BGP 피어링의 구성 오류",
+      "iBGP 피어링의 누락",
+      "라우팅 루프",
+      "AS 경계 문제",
+      "네트워크 경로의 일관성"
+    ],
+    "explanation": "확장된 네트워크에서 BGP 피어링 구성의 일관성을 유지하기 위해서는 BGP 피어링의 구성 오류, iBGP 피어링의 누락, 라우팅 루프, AS 경계 문제, 그리고 네트워크 경로의 일관성을 사전에 확인해야 합니다.",
+    "source_files": [
+      "sample7.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-005",
+    "question": "새로운 데이터센터 추가가 기존 L3VPN 서비스에 미칠 수 있는 영향을 최소화하기 위해 어떤 사항을 점검해야 할까요?",
+    "ground_truth": [
+      "기존 L3VPN 서비스의 트래픽 패턴 분석",
+      "새로운 데이터센터의 네트워크 용량 평가",
+      "L3VPN 라우팅 테이블의 일관성 확인",
+      "기존 네트워크 장비의 성능 검토",
+      "장애 발생 시 복구 계획 수립"
+    ],
+    "explanation": "새로운 데이터센터를 추가할 때 기존 L3VPN 서비스에 미치는 영향을 최소화하기 위해서는 여러 가지 사항을 점검해야 합니다. 첫째, 기존 L3VPN 서비스의 트래픽 패턴을 분석하여 새로운 데이터센터가 이 트래픽에 미치는 영향을 이해해야 합니다. 둘째, 새로운 데이터센터의 네트워크 용량을 평가하여 기존 인프라와의 조화를 확인해야 합니다. 셋째, L3VPN 라우팅 테이블의 일관성을 확인하여 라우팅 오류를 방지해야 합니다. 넷째, 기존 네트워크 장비의 성능을 검토하여 추가된 데이터센터가 성능 저하를 초래하지 않도록 해야 합니다. 마지막으로, 장애 발생 시 복구 계획을 수립하여 서비스 중단을 최소화할 수 있도록 준비해야 합니다.",
+    "source_files": [
+      "sample7.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-006",
+    "question": "데이터센터 확장 시 보안 강화를 위해 SSH 접근 제어를 어떻게 개선할 수 있나요?",
+    "ground_truth": [
+      "SSH 키 기반 인증 사용",
+      "비밀번호 인증 비활성화",
+      "IP 화이트리스트 설정",
+      "정기적인 SSH 키 회전",
+      "SSH 포트 변경"
+    ],
+    "explanation": "데이터센터 확장 시 SSH 접근 제어를 개선하기 위해서는 여러 가지 방법을 고려할 수 있습니다. 첫째, SSH 키 기반 인증을 사용하여 비밀번호 대신 공개 키를 통해 인증을 수행함으로써 보안을 강화할 수 있습니다. 둘째, 비밀번호 인증을 비활성화하여 무차별 대입 공격의 위험을 줄일 수 있습니다. 셋째, 특정 IP 주소만 SSH 접근을 허용하는 IP 화이트리스트를 설정하여 외부 공격으로부터 보호할 수 있습니다. 넷째, SSH 키를 정기적으로 회전시켜 키가 유출되더라도 피해를 최소화할 수 있습니다. 마지막으로, 기본 SSH 포트를 변경하여 공격자가 일반적인 포트를 스캔하는 것을 어렵게 만들 수 있습니다.",
+    "source_files": [
+      "sample7.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-007",
+    "question": "확장된 네트워크에서 인터페이스의 용량을 최적화하기 위해 어떤 분석을 수행해야 할까요?",
+    "ground_truth": [
+      "트래픽 분석",
+      "대역폭 사용량 모니터링",
+      "지연 시간 측정",
+      "패킷 손실 분석",
+      "인터페이스 성능 벤치마킹",
+      "네트워크 토폴로지 검토",
+      "용량 계획"
+    ],
+    "explanation": "확장된 네트워크에서 인터페이스의 용량을 최적화하기 위해서는 다양한 분석을 수행해야 합니다. 트래픽 분석을 통해 데이터 흐름을 이해하고, 대역폭 사용량 모니터링을 통해 현재 용량의 활용도를 파악해야 합니다. 또한, 지연 시간 측정과 패킷 손실 분석을 통해 성능 문제를 진단하고, 인터페이스 성능 벤치마킹을 통해 최적의 성능을 유지할 수 있도록 해야 합니다. 마지막으로, 네트워크 토폴로지를 검토하고 용량 계획을 수립하여 미래의 요구 사항을 충족할 수 있도록 준비해야 합니다.",
+    "source_files": [
+      "sample7.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-008",
+    "question": "데이터센터 확장 후 BGP의 성능을 최적화하기 위해 어떤 경로 수립 정책을 고려해야 할까요?",
+    "ground_truth": [
+      "경로 필터링",
+      "정책 기반 라우팅",
+      "AS-PATH 프리픽스",
+      "MED (Multi-Exit Discriminator) 설정",
+      "BGP 커뮤니티 사용"
+    ],
+    "explanation": "데이터센터 확장 후 BGP의 성능을 최적화하기 위해서는 여러 경로 수립 정책을 고려해야 합니다. 경로 필터링을 통해 불필요한 경로를 제거하고, 정책 기반 라우팅을 통해 특정 트래픽에 대한 경로를 제어할 수 있습니다. AS-PATH 프리픽스를 활용하여 경로 선택을 최적화하고, MED 설정을 통해 다중 출구를 관리할 수 있습니다. 마지막으로, BGP 커뮤니티를 사용하여 라우팅 정책을 더욱 세분화할 수 있습니다.",
+    "source_files": [
+      "sample7.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-009",
+    "question": "확장된 네트워크에서 L2VPN의 비대칭 문제를 해결하기 위해 어떤 조치를 취해야 할까요?",
+    "ground_truth": "L2VPN의 비대칭 문제를 해결하기 위해서는 양방향 트래픽을 지원하는 설정을 적용하고, 네트워크 장비의 구성 및 라우팅 경로를 점검하여 비대칭 경로를 방지해야 합니다.",
+    "explanation": "L2VPN의 비대칭 문제는 주로 트래픽이 한 방향으로만 흐르거나, 서로 다른 경로를 통해 흐르는 경우 발생합니다. 이를 해결하기 위해서는 양방향 트래픽을 지원하는 설정을 적용하고, 네트워크 장비의 구성 및 라우팅 경로를 점검하여 비대칭 경로를 방지하는 것이 중요합니다.",
+    "source_files": [
+      "sample7.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-010",
+    "question": "데이터센터 확장 시 비즈니스 연속성을 보장하기 위해 어떤 네트워크 중단 요소를 사전에 파악해야 할까요?",
+    "ground_truth": [
+      "네트워크 장비의 장애",
+      "전력 공급 중단",
+      "인터넷 서비스 제공업체(ISP) 문제",
+      "물리적 접근 제한",
+      "소프트웨어 및 구성 오류"
+    ],
+    "explanation": "데이터센터 확장 시 비즈니스 연속성을 보장하기 위해서는 다양한 네트워크 중단 요소를 사전에 파악해야 합니다. 여기에는 네트워크 장비의 장애, 전력 공급 중단, 인터넷 서비스 제공업체(ISP) 문제, 물리적 접근 제한, 그리고 소프트웨어 및 구성 오류 등이 포함됩니다. 이러한 요소들은 데이터센터의 운영에 직접적인 영향을 미칠 수 있으므로, 사전에 점검하고 대비하는 것이 중요합니다.",
+    "source_files": [
+      "sample7.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-001",
+    "question": "모든 네트워크 장비에서 AAA가 일관되게 설정되어 있는지 확인하고, 미설정된 장비에 대한 개선 권고를 제시하세요.",
+    "ground_truth": "모든 네트워크 장비에서 AAA 설정이 미비하므로, 모든 장비에 대해 AAA 설정을 적용해야 합니다.",
+    "explanation": "분석된 증거에 따르면, 모든 네트워크 장비에서 AAA 설정이 일관되게 적용되지 않고 있으며, 이는 보안 및 접근 제어에 심각한 문제를 초래할 수 있습니다. 따라서, 미설정된 장비에 대해 AAA 설정을 반드시 적용할 것을 권고합니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-002",
+    "question": "모든 장비에서 패스워드 정책이 적용되어 있는지 확인하고, 미적용된 장비에 대해 개선 권고를 제시하세요.",
+    "ground_truth": "모든 장비에서 패스워드 정책이 적용되지 않았습니다. 개선 권고: 모든 장비에 패스워드 정책을 적용해야 합니다.",
+    "explanation": "분석된 증거에 따르면, 패스워드 정책이 적용되지 않은 장비가 존재하며, 이는 보안 취약점을 초래할 수 있습니다. 따라서 모든 장비에 대해 패스워드 정책을 적용하는 것이 필요합니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-003",
+    "question": "SSH가 모든 장비에 올바르게 설정되어 있는지 확인하고, 필요한 개선 조치를 제안하세요.",
+    "ground_truth": "SSH가 모든 장비에 올바르게 설정되어 있습니다.",
+    "explanation": "현재 SSH 설정 상태가 정상으로 확인되었으므로, 모든 장비에 SSH가 올바르게 설정되어 있다고 판단할 수 있습니다. 추가적인 개선 조치는 필요하지 않습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-004",
+    "question": "로컬 로그 버퍼의 심각도 설정이 감사 기준을 충족하는지 평가하고, 미충족 시 개선 권고를 제시하세요.",
+    "ground_truth": "미충족",
+    "explanation": "로컬 로그 버퍼의 심각도 설정이 감사 기준을 충족하지 않는 경우, 로그의 심각도 수준을 재검토하고 필요한 경우 더 높은 심각도 수준으로 조정하여 감사 기준을 만족하도록 개선할 필요가 있습니다.",
+    "source_files": []
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-005",
+    "question": "장비별로 BGP 설정의 일관성을 평가하고, 일관되지 않은 부분에 대한 개선 권고를 제시하세요.",
+    "ground_truth": "정상",
+    "explanation": "BGP 설정의 일관성을 평가한 결과, ibgp_fullmesh_ok가 정상으로 나타났고, ibgp_missing_pairs_count가 0으로 확인되어 일관성에 문제가 없음을 알 수 있습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-006",
+    "question": "VRF 설정에서 RT가 누락된 장비가 있는지 확인하고, 필요한 개선 조치를 제안하세요.",
+    "ground_truth": 0,
+    "explanation": "VRF 설정에서 RT가 누락된 장비가 없으므로, 개선 조치가 필요하지 않습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-007",
+    "question": "L2VPN 설정에서 문제가 발생한 장비를 식별하고, 이를 해결하기 위한 개선 권고를 제시하세요.",
+    "ground_truth": "장비 A와 장비 B",
+    "explanation": "L2VPN 설정에서 문제가 발생한 장비는 None 단계에서 l2vpn_mismatch_count가 2로 나타난 장비 A와 장비 B입니다. 이 문제를 해결하기 위해서는 두 장비 간의 L2VPN 설정을 비교하고, 설정 불일치 사항을 수정하여 일관성을 확보하는 것이 필요합니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-008",
+    "question": "OSPF 설정의 일관성을 평가하고, 일관되지 않은 부분에 대한 개선 권고를 제시하세요.",
+    "ground_truth": "OSPF 설정에 일관성이 없습니다.",
+    "explanation": "OSPF 설정에서 'None단계 (ospf_process_ids_set)'가 없다는 것은 OSPF 프로세스 ID가 설정되지 않았음을 의미하며, 이는 OSPF의 정상적인 작동을 방해할 수 있습니다. 따라서 OSPF 프로세스 ID를 설정하여 일관성을 개선해야 합니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-009",
+    "question": "SSH 설정이 최신 보안 가이드를 따르고 있는지 평가하고, 개선이 필요한 부분을 제시하세요.",
+    "ground_truth": "SSH 설정은 최신 보안 가이드를 따르지 않으며, 개선이 필요합니다.",
+    "explanation": "SSH 설정이 최신 보안 가이드를 따르고 있는지 평가하기 위해서는 SSH 버전, 암호화 알고리즘, 인증 방법 등을 검토해야 합니다. 현재 제공된 정보에 따르면 SSH 버전이 2로 설정되어 있지만, 추가적인 보안 설정이나 권장 사항이 적용되지 않았을 가능성이 있습니다. 따라서, SSH 설정을 최신 보안 가이드에 맞게 개선할 필요가 있습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-010",
+    "question": "네트워크 장비의 접근 제어 정책이 일관되게 적용되고 있는지 평가하고, 필요한 개선 조치를 제안하세요.",
+    "ground_truth": "접근 제어 정책이 일관되게 적용되지 않고 있으며, 비밀번호 정책도 부재합니다.",
+    "explanation": "분석된 증거에 따르면, 접근 제어 정책이 일관되게 적용되지 않고 있으며, 비밀번호 정책이 존재하지 않는 것으로 나타났습니다. 이는 네트워크 보안에 심각한 문제를 초래할 수 있으므로, 접근 제어 정책을 강화하고 비밀번호 정책을 수립하는 개선 조치가 필요합니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-001",
+    "question": "CE1과 sample7을 연결하는 링크가 다운될 경우, CE1에서 sample10으로 가는 트래픽의 새로운 경로는 무엇인가?",
+    "ground_truth": [],
+    "explanation": "CE1에서 sample10으로 가는 트래픽의 새로운 경로를 찾기 위해서는 CE1과 sample7을 연결하는 링크가 다운된 경우, 다른 경로를 탐색해야 합니다. 그러나 제공된 증거에 따르면 대체 경로를 찾을 수 있는 정보가 없으므로, 새로운 경로를 제시할 수 없습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-002",
+    "question": "sample8과 sample9를 연결하는 링크가 다운될 경우, sample8에서 CE2로 가는 트래픽의 새로운 경로는 무엇인가?",
+    "ground_truth": [],
+    "explanation": "sample8과 sample9를 연결하는 링크가 다운될 경우, sample8에서 CE2로 가는 트래픽의 새로운 경로를 찾기 위한 대안 경로가 없다는 것을 의미합니다. 따라서 새로운 경로는 존재하지 않습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-003",
+    "question": "sample9과 sample10을 연결하는 링크가 다운될 경우, sample10에서 CE1으로 가는 트래픽의 새로운 경로는 무엇인가?",
+    "ground_truth": [],
+    "explanation": "sample9과 sample10을 연결하는 링크가 다운될 경우, sample10에서 CE1으로 가는 트래픽의 새로운 경로를 찾기 위한 대안 경로가 없다는 것을 의미합니다. 따라서, 새로운 경로는 존재하지 않습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-004",
+    "question": "CE2와 sample8을 연결하는 링크가 다운될 경우, CE2에서 sample9으로 가는 트래픽의 새로운 경로는 무엇인가?",
+    "ground_truth": [],
+    "explanation": "CE2와 sample8을 연결하는 링크가 다운될 경우, CE2에서 sample9으로 가는 새로운 경로를 찾기 위한 대안 경로가 없다는 것을 의미합니다. 따라서, CE2에서 sample9으로 가는 트래픽은 새로운 경로를 사용할 수 없습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-005",
+    "question": "sample7과 sample9를 연결하는 링크가 다운될 경우, sample7에서 CE2로 가는 트래픽의 새로운 경로는 무엇인가?",
+    "ground_truth": [],
+    "explanation": "sample7과 sample9를 연결하는 링크가 다운될 경우, sample7에서 CE2로 가는 트래픽의 새로운 경로를 찾기 위한 대안 경로가 없다는 것을 의미합니다. 따라서, 새로운 경로는 존재하지 않습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-006",
+    "question": "sample8과 CE1을 연결하는 링크가 다운될 경우, sample8에서 sample7로 가는 트래픽의 새로운 경로는 무엇인가?",
+    "ground_truth": [],
+    "explanation": "sample8과 CE1을 연결하는 링크가 다운되면, sample8에서 sample7로 가는 트래픽은 대체 경로를 찾을 수 없으므로 새로운 경로가 존재하지 않습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-007",
+    "question": "sample10과 CE1을 연결하는 링크가 다운될 경우, sample10에서 CE2로 가는 트래픽의 새로운 경로는 무엇인가?",
+    "ground_truth": [],
+    "explanation": "sample10과 CE1을 연결하는 링크가 다운될 경우, sample10에서 CE2로 가는 트래픽의 새로운 경로를 찾기 위한 대안 경로가 없다는 것을 의미합니다. 따라서, 새로운 경로는 존재하지 않습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-008",
+    "question": "CE2와 sample9을 연결하는 링크가 다운될 경우, CE2에서 sample8로 가는 트래픽의 새로운 경로는 무엇인가?",
+    "ground_truth": [],
+    "explanation": "CE2와 sample9을 연결하는 링크가 다운될 경우, CE2에서 sample8로 가는 트래픽의 새로운 경로를 찾기 위한 대안 경로가 없다는 것을 의미합니다. 따라서, 새로운 경로는 존재하지 않습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-009",
+    "question": "CE1과 sample9을 연결하는 링크가 다운될 경우, CE1에서 sample8로 가는 트래픽의 새로운 경로는 무엇인가?",
+    "ground_truth": [],
+    "explanation": "CE1에서 sample9으로 가는 링크가 다운될 경우, CE1에서 sample8로 가는 새로운 경로를 찾기 위한 대안 경로가 없다는 것을 의미합니다. 따라서, CE1에서 sample8로 가는 트래픽은 기존의 경로를 사용할 수 없게 됩니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-SCENARIO-010",
+    "question": "sample10과 sample8을 연결하는 링크가 다운될 경우, sample10에서 sample9로 가는 트래픽의 새로운 경로는 무엇인가?",
+    "ground_truth": [],
+    "explanation": "sample10과 sample8을 연결하는 링크가 다운되면, sample10에서 sample9로 가는 트래픽의 새로운 경로를 찾기 위해 대체 경로를 확인해야 합니다. 그러나 제공된 증거에 따르면 대체 경로가 없으므로, sample10에서 sample9로 가는 트래픽은 현재 경로를 사용할 수 없습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-001",
+    "question": "AS 65000에 속하는 장비 중 iBGP 피어 수가 3개 미만인 장비의 수는 몇 개인가?",
+    "ground_truth": 0,
+    "explanation": "주어진 증거에 따르면, AS 65000에 속하는 장비는 없으며, iBGP 피어 수가 3개 미만인 장비의 수는 0개입니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-002",
+    "question": "VRF 'exam-l3vpn'에 연결된 eBGP 피어의 IP 주소는 무엇인가?",
+    "ground_truth": "192.168.1.10",
+    "explanation": "주어진 증거에 따르면, VRF 'exam-l3vpn'에 연결된 eBGP 피어의 IP 주소는 192.168.1.10입니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-003",
+    "question": "VRF가 설정되어 있지만 Route Target이 없는 장비의 이름은 무엇인가?",
+    "ground_truth": [],
+    "explanation": "VRF가 설정되어 있지만 Route Target이 없는 장비는 None 단계에 해당하며, 이 경우에는 장비의 이름이 존재하지 않기 때문에 결과는 빈 배열로 나타납니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-004",
+    "question": "L2VPN 페어 간 비대칭 문제가 있는 장비의 이름은 무엇인가?",
+    "ground_truth": "None",
+    "explanation": "주어진 증거에 따르면 L2VPN 페어 간 비대칭 문제가 있는 장비는 없으며, 이는 'None'으로 나타납니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-005",
+    "question": "iBGP 풀메시 상태가 불완전한 장비의 수는 몇 개인가?",
+    "ground_truth": 0,
+    "explanation": "iBGP 풀메시 상태가 불완전한 장비의 수는 0개로, 이는 ibgp_missing_pairs_count 값이 0임을 나타냅니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-006",
+    "question": "SSH가 비활성화된 장비의 이름은 무엇인가?",
+    "ground_truth": [],
+    "explanation": "주어진 증거에 따르면 SSH가 비활성화된 장비는 없으므로, 해당 장비의 이름은 존재하지 않습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-007",
+    "question": "AS 65003에 속하는 장비 중 eBGP 피어가 없는 장비의 수는 몇 개인가?",
+    "ground_truth": 0,
+    "explanation": "주어진 증거에 따르면, AS 65003에 속하는 장비는 eBGP 피어가 없는 장비가 없습니다. 'bgp_neighbor_count'가 1로 나타나므로, 해당 장비는 하나의 eBGP 피어를 가지고 있습니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-008",
+    "question": "L2VPN PWID 불일치 문제가 있는 페어의 수는 몇 개인가?",
+    "ground_truth": 2,
+    "explanation": "L2VPN PWID 불일치 문제가 있는 페어는 sample7<->sample9와 sample9<->sample7의 두 쌍이므로 총 2개입니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-009",
+    "question": "BGP 이웃 중 연결 상태가 비정상인 장비의 이름은 무엇인가?",
+    "ground_truth": "BGP 이웃 중 연결 상태가 비정상인 장비는 일반적으로 \"Down\" 상태로 표시됩니다. BGP(Border Gateway Protocol)는 자율 시스템 간의 라우팅 정보를 교환하는 프로토콜로, 이웃 장비와의 연결 상태는 BGP 세션의 활성화 여부에 따라 결정됩니다. \n\nBGP 이웃의 상태는 다음과 같은 여러 단계로 나뉘어 있습니다:\n1. **Idle**: BGP 프로세스가 시작되었지만 이웃과의 연결이 설정되지 않은 상태\n2. **Connect**: 이웃과의 TCP 연결을 시도 중인 상태\n3. **Active**: TCP 연결을 시도 중이며, 이웃과의 세션이 아직 설정되지 않은 상태\n4. **OpenSent**: 이웃과의 연결이 설정되었고, OPEN 메시지를 전송한 상태\n5. **OpenConfirm**: OPEN 메시지를 수신하고 확인 중인 상태\n6. **Established**: BGP 세션이 성공적으로 설정된 상태\n\n이 중에서 \"Down\" 상태는 BGP 세션이 \"Idle\" 또는 \"Active\" 상태에 있을 때 나타나며, 이는 이웃 장비와의 연결이 실패했음을 의미합니다. \n\n실무적인 관점에서, BGP 이웃의 연결 상태가 비정상인 경우, 다음과 같은 원인을 점검해야 합니다:\n- 네트워크 경로의 물리적 문제 (케이블 손상, 포트 장애 등)\n- 방화벽이나 ACL(Access Control List) 설정으로 인한 트래픽 차단\n- BGP 설정 오류 (AS 번호, IP 주소 등)\n- TCP 연결 문제 (포트 179가 열려 있는지 확인)\n\n이러한 문제를 해결하기 위해서는 장비의 로그를 확인하고, BGP 상태를 모니터링하며, 필요한 경우 네트워크 장비의 재부팅이나 설정 수정을 고려해야 합니다.",
+    "explanation": "No evidence available.",
+    "source_files": []
+  },
+  {
+    "id": "ENHANCED_ENHANCED-ANALYTICAL-010",
+    "question": "OSPF 프로세스가 실행 중인 장비의 수는 몇 개인가?",
+    "ground_truth": 0,
+    "explanation": "주어진 증거에 따르면 OSPF 프로세스가 실행 중인 장비의 수는 0개입니다. 이는 ospf_process_ids_set이 없음으로 나타납니다.",
+    "source_files": [
+      "ce1.xml",
+      "ce2.xml",
+      "sample10.xml",
+      "sample7.xml",
+      "sample8.xml",
+      "sample9.xml"
+    ]
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-001",
+    "question": "Sample1 장비에서 BGP 연결 문제로 인해 외부 네트워크와의 연결이 끊어졌습니다. 이 문제를 진단하기 위해 어떤 CLI 명령어를 순서대로 실행해야 하나요?",
+    "ground_truth": [
+      "show ip bgp summary",
+      "show ip bgp neighbors",
+      "show ip route",
+      "debug ip bgp",
+      "show logging"
+    ],
+    "explanation": "BGP 연결 문제를 진단하기 위해서는 먼저 'show ip bgp summary' 명령어를 사용하여 BGP 상태를 확인하고, 이어서 'show ip bgp neighbors'로 이웃 라우터와의 연결 상태를 점검합니다. 그 다음 'show ip route'를 통해 라우팅 테이블을 확인하고, 'debug ip bgp'를 사용하여 BGP 프로토콜의 동작을 실시간으로 모니터링합니다. 마지막으로 'show logging' 명령어로 시스템 로그를 확인하여 추가적인 오류 메시지를 찾는 것이 중요합니다.",
+    "source_files": []
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-002",
+    "question": "Sample2 장비에서 L2VPN 연결이 정상적으로 작동하지 않고 있습니다. 이를 진단하기 위해 어떤 CLI 명령어를 사용해야 하나요?",
+    "ground_truth": [
+      "show l2vpn connections",
+      "show l2vpn status",
+      "show interface",
+      "show log"
+    ],
+    "explanation": "L2VPN 연결의 문제를 진단하기 위해서는 여러 CLI 명령어를 사용할 수 있습니다. 'show l2vpn connections' 명령어는 현재 L2VPN 연결 상태를 확인하는 데 유용하며, 'show l2vpn status'는 L2VPN의 전반적인 상태를 보여줍니다. 또한, 'show interface' 명령어를 통해 관련 인터페이스의 상태를 점검할 수 있고, 'show log' 명령어를 사용하여 시스템 로그를 확인함으로써 문제의 원인을 파악할 수 있습니다.",
+    "source_files": []
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-003",
+    "question": "Sample3 장비에서 OSPF 경로가 예상대로 설정되지 않았습니다. 이를 해결하기 위해 어떤 명령어를 순서대로 실행해야 할까요?",
+    "ground_truth": [
+      "show ip ospf neighbor",
+      "show ip route",
+      "show ip ospf interface",
+      "debug ip ospf events",
+      "configure terminal",
+      "router ospf [process-id]",
+      "network [network-address] [wildcard-mask] area [area-id]",
+      "end",
+      "write memory"
+    ],
+    "explanation": "OSPF 경로가 예상대로 설정되지 않은 경우, 먼저 OSPF 이웃 상태를 확인하기 위해 'show ip ospf neighbor' 명령어를 실행합니다. 그 다음, OSPF 경로 테이블을 확인하기 위해 'show ip route'를 사용하고, OSPF 인터페이스 상태를 확인하기 위해 'show ip ospf interface'를 실행합니다. 문제를 진단하기 위해 'debug ip ospf events' 명령어로 OSPF 이벤트를 모니터링합니다. 이후, 설정을 수정하기 위해 'configure terminal'로 설정 모드에 들어가고, OSPF 프로세스를 설정하기 위해 'router ospf [process-id]'를 입력합니다. 네트워크를 추가하기 위해 'network [network-address] [wildcard-mask] area [area-id]' 명령어를 사용하고, 설정을 종료하기 위해 'end'를 입력한 후, 변경 사항을 저장하기 위해 'write memory'를 실행합니다.",
+    "source_files": []
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-004",
+    "question": "Sample4 장비에서 VRF가 올바르게 설정되지 않아 경로가 제대로 작동하지 않습니다. 어떤 CLI 명령어를 사용해야 이 문제를 진단할 수 있을까요?",
+    "ground_truth": "show ip route vrf <VRF_NAME>",
+    "explanation": "이 명령어는 특정 VRF에 대한 IP 라우팅 테이블을 표시하여 VRF 설정이 올바르게 작동하는지 확인하는 데 도움이 됩니다.",
+    "source_files": []
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-005",
+    "question": "Sample5 장비에서 l2vpn_unidirectional_pairs 문제가 발견되었습니다. 문제를 해결하기 위해 어떤 명령어를 사용해야 하나요?",
+    "ground_truth": "show l2vpn unidirectional-pairs",
+    "explanation": "To resolve the l2vpn_unidirectional_pairs issue on the Sample5 device, the command 'show l2vpn unidirectional-pairs' should be used, as it provides information about the unidirectional pairs in the L2VPN configuration.",
+    "source_files": []
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-006",
+    "question": "Sample6 장비의 BGP 설정에서 한쪽 방향 연결이 끊어진 문제가 발생했습니다. 이를 진단하기 위한 CLI 명령어는 무엇인가요?",
+    "ground_truth": "show ip bgp summary",
+    "explanation": "BGP 설정에서 한쪽 방향 연결이 끊어진 문제를 진단하기 위해 'show ip bgp summary' 명령어를 사용하면 BGP 피어의 상태와 연결 정보를 확인할 수 있습니다. 이 명령어는 BGP 세션의 상태를 보여주어 문제의 원인을 파악하는 데 도움이 됩니다.",
+    "source_files": []
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-007",
+    "question": "Sample3 장비에서 예상치 못한 OSPF 네이버가 발견되었습니다. 문제를 파악하기 위해 어떤 명령어를 사용할 수 있을까요?",
+    "ground_truth": "show ip ospf neighbor",
+    "explanation": "Sample3 장비에서 예상치 못한 OSPF 네이버를 확인하기 위해 'show ip ospf neighbor' 명령어를 사용하면 현재 OSPF 네이버의 상태와 정보를 확인할 수 있습니다.",
+    "source_files": []
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-008",
+    "question": "Sample5 장비에서 L2VPN이 한 방향으로만 작동하는 문제가 있습니다. 문제 진단을 위해 어떤 명령어를 사용하면 좋을까요?",
+    "ground_truth": "show l2vpn statistics",
+    "explanation": "L2VPN이 한 방향으로만 작동하는 문제를 진단하기 위해 'show l2vpn statistics' 명령어를 사용하면, L2VPN의 통계 정보를 확인할 수 있어 문제의 원인을 파악하는 데 도움이 됩니다.",
+    "source_files": []
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-009",
+    "question": "Sample1 장비에서 BGP 피어링이 끊어진 경우, 문제의 원인을 파악하기 위해 어떤 명령어를 순서대로 사용해야 하나요?",
+    "ground_truth": [
+      "show ip bgp summary",
+      "show ip bgp neighbors",
+      "show logging",
+      "show interfaces",
+      "debug ip bgp"
+    ],
+    "explanation": "BGP 피어링 문제를 진단하기 위해서는 먼저 'show ip bgp summary' 명령어를 사용하여 BGP 상태를 확인하고, 다음으로 'show ip bgp neighbors'를 통해 피어의 상태를 점검합니다. 이후 'show logging' 명령어로 로그를 확인하여 오류 메시지를 찾고, 'show interfaces'로 인터페이스 상태를 점검한 후, 마지막으로 'debug ip bgp'를 사용하여 BGP 프로세스의 실시간 동작을 분석합니다.",
+    "source_files": []
+  },
+  {
+    "id": "ENHANCED_ENHANCED-DIAGNOSTIC-010",
+    "question": "Sample6 장비에서 VRF 설정 오류로 인해 네트워크 연결 문제가 발생했습니다. 문제를 해결하기 위해 어떤 명령어를 사용하면 좋을까요?",
+    "ground_truth": "show ip vrf",
+    "explanation": "VRF 설정 오류로 인한 네트워크 연결 문제를 해결하기 위해 'show ip vrf' 명령어를 사용하면 현재 VRF 설정을 확인할 수 있으며, 이를 통해 문제의 원인을 파악하고 수정할 수 있습니다.",
+    "source_files": []
+  }
+]
