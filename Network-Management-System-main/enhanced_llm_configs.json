@@ -4,7 +4,7 @@
         "model_name": "gpt-4",
         "max_tokens": 4096,
         "temperature": 0.0,
-        "api_key": null,
+        "api_key": "",
         "description": "OpenAI GPT-4 - 최고 성능 범용 모델"
     },
     "gpt-4-turbo": {
@@ -12,7 +12,7 @@
         "model_name": "gpt-4-0125-preview",
         "max_tokens": 4096,
         "temperature": 0.0,
-        "api_key": null,
+        "api_key": "",
         "description": "OpenAI GPT-4 Turbo - 빠른 성능과 긴 컨텍스트"
     },
     "gpt-3.5-turbo": {
@@ -20,7 +20,7 @@
         "model_name": "gpt-3.5-turbo",
         "max_tokens": 4096,
         "temperature": 0.0,
-        "api_key": null,
+        "api_key": "",
         "description": "OpenAI GPT-3.5 Turbo - 비용 효율적"
     },
     "claude-3-opus": {

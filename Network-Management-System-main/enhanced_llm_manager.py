@@ -59,9 +59,17 @@ class OpenAIProvider(BaseLLMProvider):
     
     def __init__(self, config: Dict[str, Any]):
         super().__init__(config)
-        self.client = openai.AsyncOpenAI(
-            api_key=config.get('api_key') or os.getenv('OPENAI_API_KEY')
-        )
+        
+        # 테스트 모드 체크
+        self.test_mode = config.get('test_mode', False) or os.getenv('LLM_TEST_MODE', '').lower() == 'true'
+        
+        if not self.test_mode:
+            api_key = config.get('api_key') or os.getenv('OPENAI_API_KEY')
+            if not api_key:
+                print(f"경고: OpenAI API 키가 설정되지 않았습니다. 테스트 모드로 전환합니다.")
+                self.test_mode = True
+            else:
+                self.client = openai.AsyncOpenAI(api_key=api_key)
         
         # 모델별 가격 정보 (입력/출력 토큰당 달러)
         self.pricing = {
@@ -72,6 +80,23 @@ class OpenAIProvider(BaseLLMProvider):
     
     async def generate(self, prompt: str, system_prompt: str = None) -> LLMResponse:
         start_time = time.time()
+        
+        # 테스트 모드인 경우 모킹된 응답 반환
+        if self.test_mode:
+            await asyncio.sleep(0.1)  # 실제 API 호출 시뮬레이션
+            latency = time.time() - start_time
+            
+            # 모킹된 응답 생성
+            mock_content = f"[테스트 모드] {self.model_name}의 모킹된 응답입니다. 질문: {prompt[:100]}..."
+            
+            return LLMResponse(
+                content=mock_content,
+                input_tokens=len(prompt.split()) + (len(system_prompt.split()) if system_prompt else 0),
+                output_tokens=len(mock_content.split()),
+                latency=latency,
+                cost=0.001,  # 테스트용 고정 비용
+                metadata={'test_mode': True, 'model': self.model_name}
+            )
         
         messages = []
         if system_prompt:
@@ -126,9 +151,17 @@ class AnthropicProvider(BaseLLMProvider):
     
     def __init__(self, config: Dict[str, Any]):
         super().__init__(config)
-        self.client = anthropic.AsyncAnthropic(
-            api_key=config.get('api_key') or os.getenv('ANTHROPIC_API_KEY')
-        )
+        
+        # 테스트 모드 체크
+        self.test_mode = config.get('test_mode', False) or os.getenv('LLM_TEST_MODE', '').lower() == 'true'
+        
+        if not self.test_mode:
+            api_key = config.get('api_key') or os.getenv('ANTHROPIC_API_KEY')
+            if not api_key:
+                print(f"경고: Anthropic API 키가 설정되지 않았습니다. 테스트 모드로 전환합니다.")
+                self.test_mode = True
+            else:
+                self.client = anthropic.AsyncAnthropic(api_key=api_key)
         
         self.pricing = {
             'claude-3-opus-20240229': {'input': 0.000015, 'output': 0.000075},
@@ -138,6 +171,23 @@ class AnthropicProvider(BaseLLMProvider):
     
     async def generate(self, prompt: str, system_prompt: str = None) -> LLMResponse:
         start_time = time.time()
+        
+        # 테스트 모드인 경우 모킹된 응답 반환
+        if self.test_mode:
+            await asyncio.sleep(0.1)  # 실제 API 호출 시뮬레이션
+            latency = time.time() - start_time
+            
+            # 모킹된 응답 생성
+            mock_content = f"[테스트 모드] {self.model_name}의 모킹된 응답입니다. 질문: {prompt[:100]}..."
+            
+            return LLMResponse(
+                content=mock_content,
+                input_tokens=len(prompt.split()) + (len(system_prompt.split()) if system_prompt else 0),
+                output_tokens=len(mock_content.split()),
+                latency=latency,
+                cost=0.001,  # 테스트용 고정 비용
+                metadata={'test_mode': True, 'model': self.model_name}
+            )
         
         try:
             response = await self.client.messages.create(

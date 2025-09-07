@@ -1,5 +1,5 @@
 {
-  "llm_config_path": "enhanced_llm_configs.json",
+  "llm_config_path": "llm_configs.json",
   "dataset_path": "dataset/test.csv",
   "docs_path": "docs7_export",
   "db_path": "benchmark_experiments.db",
@@ -16,13 +16,13 @@
       "description": "RAG 기반 성능 측정",
       "use_rag": true,
       "max_iterations": 1,
-      "top_k_contexts": 1
+      "top_k_contexts": 5
     },
     "rag_iterative": {
       "description": "RAG + 반복 개선",
       "use_rag": true,
       "max_iterations": 3,
-      "top_k_contexts": 1
+      "top_k_contexts": 5
     }
   }
 }

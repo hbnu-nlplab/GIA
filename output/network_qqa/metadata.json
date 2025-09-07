@@ -1,0 +1,153 @@
+{
+  "dataset_name": "NetworkConfigQA",
+  "version": "1.0",
+  "description": "LLM 네트워크 설정 파악 성능 평가 데이터셋",
+  "generation_config": {
+    "xml_data_dir": "data/raw/XML_Data",
+    "policies_path": "policies.json",
+    "target_categories": [
+      "BGP_Consistency",
+      "Basic_Info",
+      "Command_Generation",
+      "Interface_Inventory",
+      "L2VPN_Consistency",
+      "OSPF_Consistency",
+      "Routing_Inventory",
+      "Security_Inventory",
+      "Security_Policy",
+      "Services_Inventory",
+      "System_Inventory",
+      "VRF_Consistency"
+    ],
+    "basic_questions_per_category": 30,
+    "enhanced_questions_per_category": 30,
+    "scenario_type": "normal",
+    "scenario_overrides": null,
+    "target_complexities": [
+      "basic",
+      "analytical",
+      "synthetic",
+      "diagnostic",
+      "scenario"
+    ],
+    "target_personas": [
+      "network_engineer",
+      "security_auditor",
+      "noc_operator",
+      "network_architect",
+      "troubleshooter",
+      "compliance_officer"
+    ],
+    "enable_bert_score": false,
+    "short_answer_threshold": 20,
+    "output_dir": "output/network_qqa",
+    "save_intermediate": true,
+    "balance_max_per_category": null,
+    "balance_group_key": "topic"
+  },
+  "pipeline_results": {
+    "parsing": {
+      "device_count": 6,
+      "success": true
+    },
+    "basic_generation": {
+      "question_count": 638,
+      "categories": [
+        "Security_Policy",
+        "BGP_Consistency",
+        "VRF_Consistency",
+        "L2VPN_Consistency",
+        "OSPF_Consistency",
+        "System_Inventory",
+        "Security_Inventory",
+        "Interface_Inventory",
+        "Routing_Inventory",
+        "Services_Inventory",
+        "Basic_Info"
+      ],
+      "scenarios": [
+        "normal",
+        "failure",
+        "expansion"
+      ],
+      "success": true
+    },
+    "enhanced_generation": {
+      "question_count": 49,
+      "complexities": [
+        "diagnostic",
+        "analytical",
+        "scenario"
+      ],
+      "personas": [
+        "compliance_officer",
+        "network_architect",
+        "troubleshooter"
+      ],
+      "success": true
+    },
+    "assembly": {
+      "total_samples": 663,
+      "basic_count": 638,
+      "enhanced_count": 49,
+      "dedup_removed": 24,
+      "balance_trim": 0,
+      "complexity_counts": {
+        "basic": 614,
+        "scenario": 10,
+        "analytical": 19,
+        "diagnostic": 20
+      },
+      "success": true
+    },
+    "evaluation": {
+      "sample_evaluations": [],
+      "dataset_statistics": {
+        "average_overall_score": 0.0,
+        "sample_evaluation_count": 0,
+        "total_dataset_size": 0,
+        "category_distribution": {},
+        "complexity_distribution": {},
+        "complexity_breakdown": {
+          "basic": {
+            "total": 614,
+            "short": 614,
+            "long": 0
+          },
+          "scenario": {
+            "total": 10,
+            "short": 6,
+            "long": 4
+          },
+          "analytical": {
+            "total": 19,
+            "short": 11,
+            "long": 8
+          },
+          "diagnostic": {
+            "total": 20,
+            "short": 17,
+            "long": 3
+          }
+        },
+        "answer_type_distribution": {
+          "short": 0,
+          "long": 0
+        }
+      }
+    }
+  },
+  "total_samples": 0,
+  "categories": [],
+  "complexities": [],
+  "complexity_counts": {
+    "basic": 614,
+    "scenario": 10,
+    "analytical": 19,
+    "diagnostic": 20
+  },
+  "answer_types": [
+    "short",
+    "long"
+  ]
+}

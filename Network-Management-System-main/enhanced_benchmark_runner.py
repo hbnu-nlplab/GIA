@@ -139,12 +139,56 @@ class NetworkBenchmarkRunner:
         """설정 파일 로드"""
         try:
             with open(config_path, 'r', encoding='utf-8') as f:
-                return json.load(f)
+                existing_config = json.load(f)
+            
+            # 기존 설정을 새로운 형식으로 변환
+            if "experiments" not in existing_config:
+                # 기존 형식을 새로운 형식으로 변환
+                converted_config = {
+                    "llm_config_path": "enhanced_llm_configs.json",
+                    "dataset_path": existing_config.get("dataset_path", "dataset/test_fin.csv"),
+                    "docs_path": "docs7_export",
+                    "db_path": "benchmark_experiments.db",
+                    "enable_rag": existing_config.get("use_rag", True),
+                    "max_concurrent": 3,
+                    "system_prompt": """당신은 네트워크 엔지니어링 전문가입니다. 
+네트워크 설정, BGP, OSPF, VLAN, 보안 등에 대한 정확하고 기술적인 답변을 제공해주세요.
+제공된 문서나 컨텍스트가 있다면 이를 참고하여 답변하세요.""",
+                    "experiments": {
+                        "baseline": {
+                            "description": "RAG 없이 순수 LLM 성능 측정",
+                            "use_rag": False,
+                            "max_iterations": 1
+                        },
+                        "rag": {
+                            "description": "RAG 기반 성능 측정",
+                            "use_rag": True,
+                            "max_iterations": 1,
+                            "top_k_contexts": existing_config.get("top_k_values", [5])[0] if isinstance(existing_config.get("top_k_values"), list) else 5
+                        },
+                        "rag_iterative": {
+                            "description": "RAG + 반복 개선",
+                            "use_rag": True,
+                            "max_iterations": existing_config.get("max_iterations", 3),
+                            "top_k_contexts": existing_config.get("top_k_values", [5])[0] if isinstance(existing_config.get("top_k_values"), list) else 5
+                        }
+                    }
+                }
+                
+                # 변환된 설정을 파일에 저장
+                with open(config_path, 'w', encoding='utf-8') as f:
+                    json.dump(converted_config, f, indent=2, ensure_ascii=False)
+                
+                print(f"기존 설정 파일을 새로운 형식으로 변환: {config_path}")
+                return converted_config
+            else:
+                return existing_config
+                
         except FileNotFoundError:
             # 기본 설정 생성
             default_config = {
-                "llm_config_path": "llm_configs.json",
-                "dataset_path": "dataset/test.csv",
+                "llm_config_path": "enhanced_llm_configs.json",
+                "dataset_path": "dataset/test_fin.csv",
                 "docs_path": "docs7_export",
                 "db_path": "benchmark_experiments.db",
                 "enable_rag": True,
@@ -215,7 +259,11 @@ class NetworkBenchmarkRunner:
             print(f"데이터셋 샘플링: {sample_size}개 질문")
         
         # 실험 ID 생성
-        experiment_id = f"{experiment_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        if sample_size:
+            experiment_id = f"{experiment_name}_sample_{sample_size}_{timestamp}"
+        else:
+            experiment_id = f"{experiment_name}_{timestamp}"
         
         # 실험 시작 로깅
         self.logger.log_experiment_start(
@@ -416,7 +464,7 @@ class NetworkBenchmarkRunner:
             if sample_sizes:
                 for sample_size in sample_sizes:
                     exp_id = await self.run_single_experiment(
-                        f"{exp_name}_sample_{sample_size}",
+                        exp_name,
                         model_ids,
                         sample_size
                     )

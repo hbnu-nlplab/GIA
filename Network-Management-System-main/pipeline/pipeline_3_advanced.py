@@ -20,7 +20,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 # wlsruddms@gmail.com
 os.environ["GOOGLE_CSE_ID"] = "API_key"  # Your Google CSE ID
 os.environ["GOOGLE_API_KEY"] = "API_key"  # Your Google API Key
-os.environ["OPENAI_API_KEY"] = "API_key"
+os.environ["OPENAI_API_KEY"] = ""
 
 # Constants
 OPENAI_EMBED_MODEL = "text-embedding-3-large"
@@ -847,7 +847,7 @@ class NetworkEngineeringPipeline:
 def main():
     """파이프라인 실행 예제"""
     
-    CHROMADB_PATH = "/workspace/jke/chromadb_qwen"  # 사전 임베딩된 XML 파일들이 저장된 경로
+    CHROMADB_PATH = "/workspace/Yujin/GIA/Network-Management-System-main/docs7_export"  # 사전 임베딩된 XML 파일들이 저장된 경로
     COLLECTION_NAME = "network_devices"  # XML 설정 파일 컬렉션
     MAX_ITERATIONS = 3  # 반복 횟수 설정
 
@@ -860,7 +860,7 @@ def main():
     
     # 테스트 쿼리들
     # "CE1 IP address.",
-    csv_path = "/workspace/jke/dataset/test.csv"
+    csv_path = "/workspace/Yujin/GIA/Network-Management-System-main/dataset/test_fin.csv"
 
     # question 컬럼만 읽어서 리스트로 변환  
     df = pd.read_csv(csv_path)
