@@ -12,36 +12,36 @@
 # ============================================================================
 
 # 🔑 API 키 설정
-GOOGLE_CSE_ID = "API_key"  # Google Custom Search Engine ID
-GOOGLE_API_KEY = "API_key"  # Google API Key
-OPENAI_API_KEY = ""  # OpenAI API Key
+# GOOGLE_CSE_ID = "API_key"  # Google Custom Search Engine ID (비활성화)
+# GOOGLE_API_KEY = "API_key"  # Google API Key (비활성화)
+OPENAI_API_KEY = ""
 
 # 📂 파일 경로 설정
-CHROMADB_PATH = "/workspace/jke/chromadb_qwen"  # ChromaDB 저장 경로 (자동 생성됨)
-XML_DIRECTORY = "c:/Users/yujin/CodeSpace/GIA-Re/docs/xml_분석"  # XML 파일들이 있는 디렉토리
-CSV_PATH = "c:/Users/yujin/CodeSpace/GIA-Re/Network-Management-System-main/dataset/test_fin.csv"  # 평가 데이터셋
+CHROMADB_PATH = "Network-Management-System-main/docs7_export"  # ChromaDB 저장 경로 (자동 생성됨)
+XML_DIRECTORY = "Network-Management-System-main/xml_parssing"  # XML 파일들이 있는 디렉토리
+CSV_PATH = "Network-Management-System-main/dataset/test_fin.csv"  # 평가 데이터셋
 
 # 🎛️ 실험 파라미터 설정
 COLLECTION_NAME = "network_devices"  # ChromaDB 컬렉션 이름
 MAX_ITERATIONS = 3  # RAG 파이프라인 최대 반복 횟수
-TOP_K_VALUES = [5, 10, 20]  # RAG에서 테스트할 Top-K 값들
+TOP_K_VALUES = [5, 10, 15]  # RAG에서 테스트할 Top-K 값들
 
 # 🤖 모델 설정
 EMBEDDING_MODEL = "Qwen/Qwen3-Embedding-8B"  # 임베딩 모델
 EMBEDDING_DEVICE = "cuda:1"  # 임베딩 모델 실행 디바이스
-EMBEDDING_BATCH_SIZE = 8  # 임베딩 배치 크기
+EMBEDDING_BATCH_SIZE = 32  # 임베딩 배치 크기
 LLM_MODEL = "gpt-4o-mini"  # 메인 LLM 모델
 LLM_TEMPERATURE = 0.05  # LLM Temperature
 
 # 📊 Non-RAG 설정
-NON_RAG_USE_EMBEDDING = True  # Non-RAG에서 임베딩 기반 문서 선택 사용 여부
-NON_RAG_MAX_DOCS = 5  # Non-RAG에서 선택할 최대 문서 수
-NON_RAG_CHUNK_SIZE = 1500  # 청크 크기 (토큰 단위)
+NON_RAG_USE_EMBEDDING = False  # Non-RAG에서 임베딩 기반 문서 선택 사용 여부
+NON_RAG_MAX_DOCS = 6  # Non-RAG에서 선택할 최대 문서 수
+NON_RAG_CHUNK_SIZE = 50000  # 청크 크기 (토큰 단위)
 
 # 🔧 기타 설정
 OPENAI_EMBED_MODEL = "text-embedding-3-large"  # OpenAI 임베딩 모델 (사용 안함)
 EMBED_DIMS = None  # 임베딩 차원 (None이면 모델 기본값)
-EXPERIMENT_BASE_DIR = "experiment_results"  # 실험 결과 저장 디렉토리
+EXPERIMENT_BASE_DIR = "Network-Management-System-main/experiment_results"  # 실험 결과 저장 디렉토리
 
 # ============================================================================
 # 필요한 라이브러리 Import
@@ -51,10 +51,10 @@ from openai import OpenAI
 from datetime import datetime
 from multiprocessing import Process, Queue
 from typing import List, Dict, Optional, Tuple
-from langchain_core.tools import Tool
-from langchain_google_community import GoogleSearchAPIWrapper
-from langchain_community.document_loaders import AsyncHtmlLoader
-from langchain_community.document_transformers import Html2TextTransformer
+# from langchain_core.tools import Tool  # Google 검색 비활성화
+# from langchain_google_community import GoogleSearchAPIWrapper  # Google 검색 비활성화
+# from langchain_community.document_loaders import AsyncHtmlLoader  # Google 검색 비활성화
+# from langchain_community.document_transformers import Html2TextTransformer  # Google 검색 비활성화
 from langchain_huggingface import HuggingFaceEmbeddings
 
 # 평가를 위한 추가 라이브러리
@@ -78,9 +78,11 @@ import contextlib
 # 환경 변수 설정 (위의 설정값들을 적용)
 # ============================================================================
 
-os.environ["GOOGLE_CSE_ID"] = GOOGLE_CSE_ID
-os.environ["GOOGLE_API_KEY"] = GOOGLE_API_KEY  
+# os.environ["GOOGLE_CSE_ID"] = GOOGLE_CSE_ID  # Google 검색 비활성화
+# os.environ["GOOGLE_API_KEY"] = GOOGLE_API_KEY  # Google 검색 비활성화
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
+# USER_AGENT 설정 (경고 메시지 방지용)
+os.environ["USER_AGENT"] = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
 
 # ============================================================================
 # 시스템 프롬프트 및 전역 변수
@@ -720,7 +722,7 @@ def get_draft(question: str, task_type: str) -> str:
             - IP addresses: "192.168.1.1"
             - Device names: "CE1, sample7"
             - Port numbers: "22, 80, 443"
-            - Boolean: "Yes" or "No"
+            - Boolean: "True" or "False" (no Yes/No, OK, etc) (No extra text)
         '''
     else:
         prompt = '''
@@ -817,114 +819,129 @@ def get_internet_query(question: str, answer: str) -> str:
 
 
 def get_google_search(query: str = "", k: int = 3) -> Optional[List[Dict]]:
-    """수정된 Google Search API 함수"""
-    try:
-        # 디버깅 정보 출력
-        print(f"[DEBUG] Google search query: '{query}' (k={k})")
-        
-        # API 키 확인
-        api_key = os.environ.get("GOOGLE_API_KEY")
-        cse_id = os.environ.get("GOOGLE_CSE_ID")
-        
-        if not api_key:
-            print("[ERROR] GOOGLE_API_KEY 환경변수가 설정되지 않았습니다.")
-            return None
-            
-        if not cse_id:
-            print("[ERROR] GOOGLE_CSE_ID 환경변수가 설정되지 않았습니다.")
-            return None
-        
-        # GoogleSearchAPIWrapper 생성
-        search = GoogleSearchAPIWrapper(
-            k=k,
-            google_api_key=api_key,
-            google_cse_id=cse_id
-        )
-        
-        # 검색 함수 정의
-        def search_results(query):
-            try:
-                results = search.results(query, k)
-                print(f"[DEBUG] Search results count: {len(results) if results else 0}")
-                return results
-            except Exception as e:
-                print(f"[ERROR] search.results() 호출 중 오류: {e}")
-                return None
-        
-        # Tool 생성
-        tool = Tool(
-            name="Google Search Snippets",
-            description="Search Google for recent results.",
-            func=search_results,
-        )
-        
-        # 검색 실행
-        ref_text = tool.run(query)
-        
-        if len(ref_text) > 0:
-            # 결과 검증 - 첫 번째 항목이 딕셔너리인지 확인
-            first_item = ref_text[0]
-            if isinstance(first_item, dict):
-                # 'Result' 키가 없으면 유효한 결과로 판단 (원래 조건 수정)
-                if 'Result' not in first_item:
-                    print(f"[SUCCESS] Valid search results found: {len(ref_text)} items")
-                    return ref_text
-                else:
-                    print("[WARNING] Results contain 'Result' key - treating as invalid")
-                    return None
-            else:
-                # 딕셔너리가 아니어도 결과가 있다면 반환
-                print(f"[INFO] Non-dict results found: {len(ref_text)} items")
-                return ref_text
-        else:
-            print("[INFO] No search results returned")
-            return None
-            
-    except ImportError as e:
-        print(f"[ERROR] 필요한 라이브러리 import 실패: {e}")
-        print("다음 명령어로 설치하세요: pip install langchain-google-community")
-        return None
-    except Exception as e:
-        print(f"[ERROR] Google search 실행 중 오류: {e}")
-        import traceback
-        traceback.print_exc()
-        return None
+    """Google Search API 함수 - 비활성화됨"""
+    print("[INFO] Google search is disabled")
+    return None
+
+# def get_google_search(query: str = "", k: int = 3) -> Optional[List[Dict]]:
+#     """수정된 Google Search API 함수"""
+#     try:
+#         # 디버깅 정보 출력
+#         print(f"[DEBUG] Google search query: '{query}' (k={k})")
+#         
+#         # API 키 확인
+#         api_key = os.environ.get("GOOGLE_API_KEY")
+#         cse_id = os.environ.get("GOOGLE_CSE_ID")
+#         
+#         if not api_key:
+#             print("[ERROR] GOOGLE_API_KEY 환경변수가 설정되지 않았습니다.")
+#             return None
+#             
+#         if not cse_id:
+#             print("[ERROR] GOOGLE_CSE_ID 환경변수가 설정되지 않았습니다.")
+#             return None
+#         
+#         # GoogleSearchAPIWrapper 생성
+#         search = GoogleSearchAPIWrapper(
+#             k=k,
+#             google_api_key=api_key,
+#             google_cse_id=cse_id
+#         )
+#         
+#         # 검색 함수 정의
+#         def search_results(query):
+#             try:
+#                 results = search.results(query, k)
+#                 print(f"[DEBUG] Search results count: {len(results) if results else 0}")
+#                 return results
+#             except Exception as e:
+#                 print(f"[ERROR] search.results() 호출 중 오류: {e}")
+#                 return None
+#         
+#         # Tool 생성
+#         tool = Tool(
+#             name="Google Search Snippets",
+#             description="Search Google for recent results.",
+#             func=search_results,
+#         )
+#         
+#         # 검색 실행
+#         ref_text = tool.run(query)
+#         
+#         if len(ref_text) > 0:
+#             # 결과 검증 - 첫 번째 항목이 딕셔너리인지 확인
+#             first_item = ref_text[0]
+#             if isinstance(first_item, dict):
+#                 # 'Result' 키가 없으면 유효한 결과로 판단 (원래 조건 수정)
+#                 if 'Result' not in first_item:
+#                     print(f"[SUCCESS] Valid search results found: {len(ref_text)} items")
+#                     return ref_text
+#                 else:
+#                     print("[WARNING] Results contain 'Result' key - treating as invalid")
+#                     return None
+#             else:
+#                 # 딕셔너리가 아니어도 결과가 있다면 반환
+#                 print(f"[INFO] Non-dict results found: {len(ref_text)} items")
+#                 return ref_text
+#         else:
+#             print("[INFO] No search results returned")
+#             return None
+#             
+#     except ImportError as e:
+#         print(f"[ERROR] 필요한 라이브러리 import 실패: {e}")
+#         print("다음 명령어로 설치하세요: pip install langchain-google-community")
+#         return None
+#     except Exception as e:
+#         print(f"[ERROR] Google search 실행 중 오류: {e}")
+#         import traceback
+#         traceback.print_exc()
+#         return None
 
 def get_page_content(link: str) -> Optional[str]:
-    """웹 페이지 내용 추출"""
-    try:
-        loader = AsyncHtmlLoader([link])
-        docs = loader.load()
-        html2text = Html2TextTransformer()
-        docs_transformed = html2text.transform_documents(docs)
-        if len(docs_transformed) > 0:
-            return docs_transformed[0].page_content
-        else:
-            return None
-    except Exception as e:
-        print(f"[ERROR] Failed to fetch page content: {e}")
-        return None
+    """웹 페이지 내용 추출 - 비활성화됨"""
+    print("[INFO] Web page content extraction is disabled")
+    return None
+
+# def get_page_content(link: str) -> Optional[str]:
+#     """웹 페이지 내용 추출"""
+#     try:
+#         loader = AsyncHtmlLoader([link])
+#         docs = loader.load()
+#         html2text = Html2TextTransformer()
+#         docs_transformed = html2text.transform_documents(docs)
+#         if len(docs_transformed) > 0:
+#             return docs_transformed[0].page_content
+#         else:
+#             return None
+#     except Exception as e:
+#         print(f"[ERROR] Failed to fetch page content: {e}")
+#         return None
     
 def get_internet_content(query: str) -> Optional[List[str]]:
-    """Google 검색을 통해 인터넷 콘텐츠 가져오기"""
-    search_results = get_google_search(query, k=3)
-    
-    if not search_results:
-        print("[INFO] No Google search results found")
-        return None
-    
-    all_content = []
-    for result in search_results[:2]:  # 상위 2개 결과만 처리
-        link = result.get('link')
-        if link:
-            print(f"[INFO] Fetching content from: {link}")
-            page_content = get_page_content(link)
-            if page_content:
-                # 콘텐츠를 청크로 분할
-                chunks = chunk_texts(page_content, NON_RAG_CHUNK_SIZE)
-                all_content.extend(chunks[:2])  # 각 페이지에서 최대 2개 청크
-    
-    return all_content if all_content else None
+    """Google 검색을 통해 인터넷 콘텐츠 가져오기 - 비활성화됨"""
+    print("[INFO] Internet content search is disabled")
+    return None
+
+# def get_internet_content(query: str) -> Optional[List[str]]:
+#     """Google 검색을 통해 인터넷 콘텐츠 가져오기"""
+#     search_results = get_google_search(query, k=3)
+#     
+#     if not search_results:
+#         print("[INFO] No Google search results found")
+#         return None
+#     
+#     all_content = []
+#     for result in search_results[:2]:  # 상위 2개 결과만 처리
+#         link = result.get('link')
+#         if link:
+#             print(f"[INFO] Fetching content from: {link}")
+#             page_content = get_page_content(link)
+#             if page_content:
+#                 # 콘텐츠를 청크로 분할
+#                 chunks = chunk_texts(page_content, NON_RAG_CHUNK_SIZE)
+#                 all_content.extend(chunks[:2])  # 각 페이지에서 최대 2개 청크
+#     
+#     return all_content if all_content else None
 
 def get_revise_answer(question: str, answer: str, content: str, task_type: str) -> str:
     """참조 자료를 바탕으로 답변 수정"""
@@ -976,12 +993,16 @@ def get_revise_answer(question: str, answer: str, content: str, task_type: str) 
     return response.choices[0].message.content
 
 def determine_reference_source(task_type: str, iteration: int) -> str:
-    """작업 유형과 반복 횟수에 따라 참조 소스 결정"""
-    if task_type == "Simple Lookup Tasks":
-        # Simple Lookup은 주로 내부 XML DB 사용
-        return "chromadb"
-    else:
-        return "chromadb" if iteration % 2 == 0 else "internet"
+    """작업 유형과 반복 횟수에 따라 참조 소스 결정 - 인터넷 검색 비활성화"""
+    # 인터넷 검색을 사용하지 않으므로 항상 ChromaDB만 사용
+    return "chromadb"
+    
+    # 원래 로직 (비활성화)
+    # if task_type == "Simple Lookup Tasks":
+    #     # Simple Lookup은 주로 내부 XML DB 사용
+    #     return "chromadb"
+    # else:
+    #     return "chromadb" if iteration % 2 == 0 else "internet"
 
 def run_with_timeout(func, timeout, *args, **kwargs):
     """타임아웃이 있는 함수 실행"""
@@ -1088,15 +1109,19 @@ class NetworkEngineeringPipeline:
         self.max_iterations = max_iterations
         print(f"[INFO] Pipeline initialized with {max_iterations} max iterations")
         
-    def get_chromadb_content(self, question: str, answer: str, n_results=5, top_n_after_rerank: int = 5) -> Optional[str]:
+    def get_chromadb_content(self, question: str, answer: str, top_n_after_rerank: int = 5) -> Optional[str]:
         """ChromaDB에서 관련 XML 설정 파일 검색, LLM으로 Re-ranking, 그리고 로깅
-
+        
         Args:
             question: 사용자 질문
             answer: 현재까지의 초안/답변 (미사용 가능)
             n_results: 1차 후보군 개수 (벡터 검색 Top-K)
             top_n_after_rerank: Re-ranking 후 최종 컨텍스트로 사용할 문서 수
         """
+
+        candidate_multiplier = 3  # 3배 더 많이 검색
+        n_results = top_n_after_rerank * candidate_multiplier
+
         query = f"단순 조회, {question}"
         print(f"[INFO] ChromaDB query: {query}")
         
@@ -1324,150 +1349,6 @@ class NetworkEngineeringPipeline:
         print(f"{'='*70}\n")
         
         return results
-            ref_source = determine_reference_source(task_type, iteration)
-            print(f"  ├─ Reference source: {ref_source.upper()}")
-            
-            reference_content = None
-            source_details = {}
-            
-            if ref_source == "chromadb":
-                # ChromaDB에서 XML 설정 파일 검색
-                print("  ├─ Searching ChromaDB for XML configurations...")
-                reference_content = self.get_chromadb_content(user_question, current_answer, n_results=top_k_chroma)
-                
-                
-                if reference_content:
-                    print(f"  ├─ Found relevant XML configurations")
-                    source_details = {"type": "xml_config", "source": "chromadb"}
-                else:
-                    print("  ├─ No relevant XML found in ChromaDB")
-                    
-            else:  # internet
-                # 인터넷에서 최신 정보 검색
-                print("  ├─ Searching internet for latest information...")
-                query = get_internet_query(user_question, current_answer)
-                print(f"  ├─ Search query: {query}")
-                
-                content_list = get_internet_content(query)
-                
-                if content_list:
-                    reference_content = "\n\n".join(content_list)
-                    print(f"  ├─ Retrieved {len(content_list)} content chunks")
-                    source_details = {"type": "web_content", "source": "google"}
-                else:
-                    print("  ├─ No relevant content found online")
-            
-            # 참조 자료가 있으면 답변 수정
-            if reference_content:
-                print("  ├─ Revising answer with references...")
-                revised_answer = run_with_timeout(
-                    get_revise_answer, 10, user_question, current_answer, 
-                    reference_content, task_type  # 토큰 제한
-                )
-                
-                if revised_answer and revised_answer != current_answer:
-                    print("  └─ ✓ Answer improved")
-                    current_answer = revised_answer
-                    results["total_revisions"] += 1
-                    
-                    # JSON 로깅: 수정된 답변
-                    log_data.append({
-                        "step": f"iteration_{iteration + 1}_revised",
-                        "content": current_answer,
-                        "timestamp": timestamp
-                    })
-                    
-                    iteration_result = {
-                        "iteration": iteration + 1,
-                        "source": ref_source,
-                        "reference_found": True,
-                        "answer_revised": True,
-                        "source_details": source_details
-                    }
-                else:
-                    print("  └─ ○ No changes needed")
-                    iteration_result = {
-                        "iteration": iteration + 1,
-                        "source": ref_source,
-                        "reference_found": True,
-                        "answer_revised": False,
-                        "source_details": source_details
-                    }
-            else:
-                print("  └─ ○ No references found")
-                iteration_result = {
-                    "iteration": iteration + 1,
-                    "source": ref_source,
-                    "reference_found": False,
-                    "answer_revised": False,
-                    "source_details": {}
-                }
-            
-            results["iterations"].append(iteration_result)
-        
-        # 6. 최종 응답 생성 (NEW STEP)
-        print(f"\n[STEP 6/6] Generating final optimized response...")
-        print("  ├─ Optimizing for Exact Match and BERT-F1 Score...")
-        
-        final_response = run_with_timeout(
-            get_final_response, 10, user_question, current_answer, task_type
-        )
-        
-        if final_response and final_response != current_answer:
-            print("  └─ ✓ Final response optimized for evaluation metrics")
-            results["final_optimization"] = True
-        else:
-            print("  └─ ○ Current answer already optimal")
-            final_response = current_answer
-            results["final_optimization"] = False
-        
-        # JSON 로깅: 최종 응답
-        log_data.append({
-            "step": "final_response",
-            "content": final_response,
-            "timestamp": timestamp
-        })
-        
-        # JSON 파일로 저장
-        import json
-        import os
-        
-        # 로그 디렉토리 생성
-        log_dir = "logs2"
-        if not os.path.exists(log_dir):
-            os.makedirs(log_dir)
-        
-        # JSON 파일 경로
-        json_filename = f"{log_dir}/pipeline_log_{timestamp}.json"
-        
-        # JSON 형태로 전체 로그 구성
-        complete_log = {
-            "question": user_question,
-            "task_type": task_type,
-            "timestamp": timestamp,
-            "pipeline_steps": log_data
-        }
-        
-        # JSON 파일 저장
-        with open(json_filename, 'w', encoding='utf-8') as jsonfile:
-            json.dump(complete_log, jsonfile, ensure_ascii=False, indent=2)
-        
-        print(f"  ├─ Logged to: {json_filename}")
-        results["log_file"] = json_filename
-        
-        # 최종 결과
-        results["final_answer"] = final_response
-        results["processing_time"] = round(time.time() - start_time, 2)
-        
-        print(f"\n{'='*70}")
-        print(f"PIPELINE COMPLETE")
-        print(f"  - Total time: {results['processing_time']}s")
-        print(f"  - Total revisions: {results['total_revisions']}")
-        print(f"  - Final optimization: {'YES' if results['final_optimization'] else 'NO'}")
-        print(f"  - Task type: {task_type}")
-        print(f"{'='*70}\n")
-        
-        return results
 
 def main():
     """두 가지 실험을 위한 파이프라인 실행"""
@@ -1505,8 +1386,19 @@ def main():
             "top_k_values": TOP_K_VALUES,
             "embedding_model": EMBEDDING_MODEL
         }
-        }
-        
+
+        # 실험 개요 로깅
+        # experiment_logger.log_experiment_overview(experiment_overview)
+        print("\n" + "="*80)
+        print("EXPERIMENT OVERVIEW")
+        print("="*80)
+        for k, v in experiment_overview.items():
+            print(f"{k}: {v}")
+        print("="*80 + "\n")
+        # ===============================
+
+
+
         # 테스트 데이터 로드
         print("Loading test data...")
         df = pd.read_csv(CSV_PATH)
@@ -1750,7 +1642,7 @@ def load_xml_files(xml_directory: str) -> str:
 
 
 class ImprovedNonRAGPipeline:
-    """개선된 Non-RAG 파이프라인 - 지능형 XML 청킹 및 선택"""
+    """개선된 Non-RAG 파이프라인 - 모든 XML을 그대로 제공"""
     
     def __init__(self, xml_directory: str):
         """
@@ -1758,32 +1650,48 @@ class ImprovedNonRAGPipeline:
         Args:
             xml_directory: 원본 XML 파일들이 있는 디렉토리 경로
         """
-        self.xml_files = self._load_xml_files_with_chunking(xml_directory)
-        self.embedder = HuggingFaceEmbedder()  # 기본 설정값 사용
-        print(f"[INFO] Loaded {len(self.xml_files)} XML files with intelligent chunking")
-        total_chunks = sum(len(xml_file['chunks']) for xml_file in self.xml_files)
-        print(f"[INFO] Total chunks created: {total_chunks}")
+        self.xml_files = self._load_all_xml_files(xml_directory)
+        # 임베딩 모델 로딩하지 않음 (NON_RAG_USE_EMBEDDING = False이므로)
+        if NON_RAG_USE_EMBEDDING:
+            self.embedder = HuggingFaceEmbedder()
+            print(f"[INFO] Embedding model loaded for Non-RAG")
+        else:
+            self.embedder = None
+            print(f"[INFO] No embedding model loaded - using raw XML content")
+            
+        print(f"[INFO] Loaded {len(self.xml_files)} XML files")
+        total_size = sum(len(xml_file['content']) for xml_file in self.xml_files)
+        print(f"[INFO] Total XML content size: {total_size} characters")
     
-    def _load_xml_files_with_chunking(self, xml_directory: str) -> List[Dict]:
-        """XML 파일들을 개별적으로 로드하여 지능형 청킹 적용"""
+    def _load_all_xml_files(self, xml_directory: str) -> List[Dict]:
+        """XML 파일들을 원본 그대로 로드 (청킹 없음)"""
         xml_files = []
         
         for xml_file in glob.glob(os.path.join(xml_directory, "*.xml")):
             try:
-                with open(xml_file, 'r', encoding='utf-8') as f:
-                    content = f.read()
+                # 다양한 인코딩으로 시도
+                content = None
+                for encoding in ['utf-8', 'utf-8-sig', 'latin-1', 'cp1252']:
+                    try:
+                        with open(xml_file, 'r', encoding=encoding) as f:
+                            content = f.read()
+                        break
+                    except UnicodeDecodeError:
+                        continue
+                
+                if content is None:
+                    print(f"[ERROR] Could not read file {xml_file} with any encoding")
+                    continue
                     
-                    # 의미 단위로 청킹 (XML 태그 기반)
-                    chunks = self._intelligent_xml_chunking(content)
+                xml_files.append({
+                    "filename": os.path.basename(xml_file),
+                    "filepath": xml_file,
+                    "content": content,
+                    "size": len(content),
+                    "tokens": num_tokens_from_string(content)
+                })
                     
-                    xml_files.append({
-                        "filename": os.path.basename(xml_file),
-                        "original_content": content,
-                        "chunks": chunks,
-                        "chunk_count": len(chunks)
-                    })
-                    
-                print(f"[INFO] Processed {os.path.basename(xml_file)}: {len(chunks)} chunks")
+                print(f"[INFO] Loaded {os.path.basename(xml_file)}: {len(content)} chars, ~{num_tokens_from_string(content)} tokens")
                     
             except Exception as e:
                 print(f"[WARNING] Failed to load {xml_file}: {e}")
@@ -1793,207 +1701,31 @@ class ImprovedNonRAGPipeline:
     def _intelligent_xml_chunking(self, xml_content: str, max_chunk_size: int = 1500) -> List[Dict]:
         """XML 내용을 의미 단위로 지능형 청킹"""
         chunks = []
-        
-        # XML 구조를 고려한 분할 패턴들
-        xml_patterns = [
-            r'<device[^>]*>.*?</device>',  # 디바이스 단위
-            r'<interface[^>]*>.*?</interface>',  # 인터페이스 단위
-            r'<vlan[^>]*>.*?</vlan>',  # VLAN 단위
-            r'<routing[^>]*>.*?</routing>',  # 라우팅 단위
-            r'<security[^>]*>.*?</security>',  # 보안 단위
-            r'<configuration[^>]*>.*?</configuration>',  # 설정 단위
-        ]
-        
-        # 패턴별로 매칭된 청크들 수집
-        matched_chunks = []
-        remaining_content = xml_content
-        
-        for pattern in xml_patterns:
-            matches = re.findall(pattern, xml_content, re.DOTALL | re.IGNORECASE)
-            for match in matches:
-                chunk_info = self._create_chunk_info(match, pattern)
-                if chunk_info and chunk_info not in matched_chunks:
-                    matched_chunks.append(chunk_info)
-                    # 매칭된 부분을 제거
-                    remaining_content = remaining_content.replace(match, '', 1)
-        
-        # 매칭되지 않은 나머지 내용도 청킹
-        if remaining_content.strip():
-            remaining_chunks = chunk_texts(remaining_content, max_chunk_size)
-            for i, chunk_text in enumerate(remaining_chunks):
-                if chunk_text.strip():
-                    matched_chunks.append({
-                        "content": chunk_text,
-                        "type": "miscellaneous",
-                        "chunk_id": f"misc_{i}",
-                        "tokens": num_tokens_from_string(chunk_text)
-                    })
-        
-        # 토큰 크기가 큰 청크들을 다시 분할
-        final_chunks = []
-        for chunk in matched_chunks:
-            if chunk["tokens"] > max_chunk_size:
-                sub_chunks = chunk_texts(chunk["content"], max_chunk_size)
-                for j, sub_chunk in enumerate(sub_chunks):
-                    final_chunks.append({
-                        "content": sub_chunk,
-                        "type": f"{chunk['type']}_sub",
-                        "chunk_id": f"{chunk['chunk_id']}_{j}",
-                        "tokens": num_tokens_from_string(sub_chunk)
-                    })
-            else:
-                final_chunks.append(chunk)
-        
-        return final_chunks
     
-    def _create_chunk_info(self, content: str, pattern: str) -> Dict:
-        """청크 정보 생성"""
-        # 패턴에서 타입 추출
-        type_mapping = {
-            'device': 'device_config',
-            'interface': 'interface_config', 
-            'vlan': 'vlan_config',
-            'routing': 'routing_config',
-            'security': 'security_config',
-            'configuration': 'general_config'
-        }
+    def _get_all_xml_content(self, max_tokens: int = 50000) -> str:
+        """모든 XML 파일의 내용을 그대로 반환"""
+        print("[INFO] Providing ALL XML files without filtering")
         
-        chunk_type = 'unknown'
-        for key, value in type_mapping.items():
-            if key in pattern:
-                chunk_type = value
-                break
-        
-        return {
-            "content": content,
-            "type": chunk_type,
-            "chunk_id": f"{chunk_type}_{hash(content) % 10000}",
-            "tokens": num_tokens_from_string(content)
-        }
-    
-    def _select_relevant_chunks_with_embedding(self, question: str, max_tokens: int = 15000) -> str:
-        """임베딩 기반으로 질문과 관련된 XML 청크들을 지능적으로 선택"""
-        
-        print(f"[INFO] Selecting relevant chunks for question: {question[:50]}...")
-        
-        # 모든 청크들 수집
-        all_chunks = []
-        for xml_file in self.xml_files:
-            for chunk in xml_file["chunks"]:
-                chunk_with_metadata = chunk.copy()
-                chunk_with_metadata["filename"] = xml_file["filename"]
-                all_chunks.append(chunk_with_metadata)
-        
-        print(f"[INFO] Total chunks to analyze: {len(all_chunks)}")
-        
-        # 질문 임베딩
-        question_embedding = self.embedder.embed([question])[0]
-        
-        # 청크들 임베딩 및 유사도 계산
-        chunk_texts = [chunk["content"] for chunk in all_chunks]
-        chunk_embeddings = self.embedder.embed(chunk_texts)
-        
-        # 코사인 유사도 계산
-        similarities = []
-        for i, chunk_emb in enumerate(chunk_embeddings):
-            similarity = self._cosine_similarity(question_embedding, chunk_emb)
-            similarities.append((similarity, i))
-        
-        # 유사도순으로 정렬
-        similarities.sort(reverse=True)
-        
-        # 유사도 기반 + 다양성을 고려한 선택
-        selected_chunks = []
+        all_content = []
         total_tokens = 0
-        type_counts = {}
         
-        for similarity, idx in similarities:
-            chunk = all_chunks[idx]
-            chunk_type = chunk["type"]
-            
+        for xml_file in self.xml_files:
             # 토큰 제한 확인
-            if total_tokens + chunk["tokens"] > max_tokens:
-                continue
-            
-            # 타입 다양성 고려 (각 타입별 최대 제한)
-            type_limit = max_tokens // 8  # 각 타입별 대략적 제한
-            if type_counts.get(chunk_type, 0) * 500 > type_limit:  # 대략적 계산
-                continue
-            
-            # 최소 유사도 임계값
-            if similarity < 0.1:  # 너무 낮은 유사도는 제외
+            if total_tokens + xml_file["tokens"] > max_tokens:
+                print(f"[WARNING] Token limit reached. Skipping {xml_file['filename']}")
                 break
-            
-            selected_chunks.append({
-                "content": chunk["content"],
-                "filename": chunk["filename"],
-                "type": chunk["type"],
-                "similarity": similarity,
-                "tokens": chunk["tokens"]
-            })
-            
-            total_tokens += chunk["tokens"]
-            type_counts[chunk_type] = type_counts.get(chunk_type, 0) + 1
-            
-            # 충분한 정보가 모이면 종료
-            if len(selected_chunks) >= 20 or total_tokens >= max_tokens * 0.9:
-                break
-        
-        print(f"[INFO] Selected {len(selected_chunks)} relevant chunks ({total_tokens} tokens)")
-        print(f"[INFO] Type distribution: {type_counts}")
-        
-        # 선택된 청크들을 포맷팅
-        formatted_content = []
-        for i, chunk in enumerate(selected_chunks):
-            header = f"=== {chunk['filename']} | {chunk['type']} | Similarity: {chunk['similarity']:.3f} ==="
-            formatted_content.append(f"{header}\n{chunk['content']}")
-        
-        return "\n\n".join(formatted_content)
-    
-    def _cosine_similarity(self, vec1: List[float], vec2: List[float]) -> float:
-        """코사인 유사도 계산"""
-        import numpy as np
-        
-        vec1 = np.array(vec1)
-        vec2 = np.array(vec2)
-        
-        dot_product = np.dot(vec1, vec2)
-        norm1 = np.linalg.norm(vec1)
-        norm2 = np.linalg.norm(vec2)
-        
-        if norm1 == 0 or norm2 == 0:
-            return 0.0
-        
-        return dot_product / (norm1 * norm2)
-    
-    def _fallback_keyword_selection(self, question: str, max_tokens: int = 15000) -> str:
-        """임베딩 실패시 키워드 기반 폴백 선택"""
-        print("[WARNING] Using fallback keyword-based selection")
-        
-        # 키워드 기반 관련성 점수 계산
-        question_keywords = set(question.lower().split())
-        scored_chunks = []
-        
-        for xml_file in self.xml_files:
-            for chunk in xml_file["chunks"]:
-                # 키워드 매칭 점수
-                chunk_words = set(chunk["content"].lower().split())
-                overlap = len(question_keywords.intersection(chunk_words))
                 
-                scored_chunks.append({
-                    "content": chunk["content"],
-                    "filename": xml_file["filename"],
-                    "type": chunk["type"],
-                    "score": overlap,
-                    "tokens": chunk["tokens"]
-                })
+            header = f"=== {xml_file['filename']} | Complete File | Size: {xml_file['size']} chars ==="
+            content = f"{header}\n{xml_file['content']}"
+            all_content.append(content)
+            total_tokens += xml_file["tokens"]
+            
+            print(f"[INFO] Added {xml_file['filename']}: {xml_file['tokens']} tokens")
         
-        # 점수순으로 정렬
-        scored_chunks.sort(key=lambda x: x["score"], reverse=True)
+        combined_content = "\n\n".join(all_content)
+        print(f"[INFO] Total content provided: {len(combined_content)} characters, ~{total_tokens} tokens")
         
-        # 토큰 제한 내에서 상위 청크들 선택
-        selected_content = []
-        total_tokens = 0
+        return combined_content
         
         for chunk in scored_chunks:
             if total_tokens + chunk["tokens"] <= max_tokens and chunk["score"] > 0:
@@ -2008,11 +1740,11 @@ class ImprovedNonRAGPipeline:
         return "\n\n".join(selected_content)
     
     def process_query(self, user_question: str) -> Dict:
-        """개선된 Non-RAG 쿼리 처리"""
+        """간소화된 Non-RAG 쿼리 처리 - 모든 XML 파일 제공"""
         start_time = time.time()
         
         print(f"\n{'='*70}")
-        print(f"IMPROVED NON-RAG PIPELINE (Intelligent Chunking)")
+        print(f"NON-RAG PIPELINE (All XML Files)")
         print(f"{'='*70}")
         print(f"Query: {user_question[:100]}...")
         print(f"Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -2023,29 +1755,25 @@ class ImprovedNonRAGPipeline:
         task_type = get_classification_result(user_question)
         print(f"  └─ Classified as: {task_type}")
         
-        # 질문과 관련된 XML 청크들을 지능적으로 선택
-        print("\n[STEP 2/3] Selecting relevant XML chunks...")
+        # XML 내용 준비
+        print("\n[STEP 2/3] Preparing XML content...")
         
-        if NON_RAG_USE_EMBEDDING:
-            try:
-                relevant_xml = self._select_relevant_chunks_with_embedding(user_question, max_tokens=15000)
-                print(f"  └─ Using embedding-based selection")
-            except Exception as e:
-                print(f"[WARNING] Embedding-based selection failed: {e}")
-                print(f"  └─ Falling back to keyword-based selection")
-                relevant_xml = self._fallback_keyword_selection(user_question, max_tokens=15000)
+        if NON_RAG_USE_EMBEDDING and self.embedder is not None:
+            print("  └─ Using embedding-based selection (NOT RECOMMENDED for pure LLM evaluation)")
+            # 임베딩 기반 선택 (설정이 True인 경우에만)
+            relevant_xml = "Embedding-based selection is not implemented in this simplified version"
         else:
-            print(f"  └─ Using keyword-based selection (embedding disabled)")
-            relevant_xml = self._fallback_keyword_selection(user_question, max_tokens=15000)
+            print("  └─ Providing ALL XML files for comprehensive analysis")
+            relevant_xml = self._get_all_xml_content(max_tokens=NON_RAG_CHUNK_SIZE)
         
         # LLM으로 최종 답변 생성
-        print("\n[STEP 3/3] Generating answer with selected XML chunks...")
+        print("\n[STEP 3/3] Generating answer with ALL XML content...")
         
         if task_type == "Simple Lookup Tasks":
             prompt_template = f"""
-            You are a network engineering expert analyzing pre-selected relevant XML configuration chunks.
+            You are a network engineering expert analyzing complete XML configuration files.
 
-            RELEVANT XML Configuration Data (intelligently selected for this question):
+            COMPLETE XML Configuration Data:
             {relevant_xml}
 
             User Question: {user_question}
@@ -2055,7 +1783,7 @@ class ImprovedNonRAGPipeline:
                - IP addresses: "192.168.1.1" (no labels)
                - Device names: "CE1" or "sample7" (exact name only)
                - Port numbers: "22" or "443" (number only)
-               - Boolean answers: "Yes" or "No"
+               - Boolean answers: "True" or "False" (no extra text)
                
             2. **Multiple Value Questions**: Use comma-separated format
                - Device lists: "CE1, CE2, sample10"
@@ -2082,15 +1810,15 @@ class ImprovedNonRAGPipeline:
             """
         else:
             prompt_template = f"""
-            You are a network engineering expert analyzing pre-selected relevant XML configuration chunks.
+            You are a network engineering expert analyzing complete XML configuration files.
 
-            RELEVANT XML Configuration Data (intelligently selected for this question):
+            COMPLETE XML Configuration Data:
             {relevant_xml}
 
             User Question: {user_question}
 
             INSTRUCTIONS:
-            - Analyze the provided XML chunks thoroughly
+            - Analyze all provided XML files thoroughly
             - Extract exact technical values for ground truth
             - Provide comprehensive technical explanation in Korean
             - Use specific device names, IPs, configurations from the XML data
@@ -2120,10 +1848,10 @@ class ImprovedNonRAGPipeline:
         processing_time = round(time.time() - start_time, 2)
         
         print(f"\n{'='*70}")
-        print(f"IMPROVED NON-RAG PIPELINE COMPLETE")
+        print(f"NON-RAG PIPELINE COMPLETE")
         print(f"  - Total time: {processing_time}s")
         print(f"  - Task type: {task_type}")
-        print(f"  - XML chunks analyzed: {len(relevant_xml.split('===')) - 1}")
+        print(f"  - XML files provided: {len(self.xml_files)}")
         print(f"{'='*70}\n")
         
         return {
@@ -2131,8 +1859,8 @@ class ImprovedNonRAGPipeline:
             "task_type": task_type,
             "final_answer": final_answer,
             "processing_time": processing_time,
-            "method": "improved_non_rag_with_chunking",
-            "xml_chunks_used": len(relevant_xml.split("===")) - 1
+            "method": "non_rag_all_xml",
+            "xml_files_used": len(self.xml_files)
         }
 
 
@@ -2311,3 +2039,9 @@ def evaluate_predictions(predictions: List[Dict], test_data: pd.DataFrame) -> Di
             "question_count": len(enhanced_llm_indices)
         }
     }
+
+# ----------------------------------------------------------------------------
+# Script entry point
+# ----------------------------------------------------------------------------
+if __name__ == "__main__":
+    main()
