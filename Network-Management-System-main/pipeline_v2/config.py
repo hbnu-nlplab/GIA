@@ -160,7 +160,7 @@ EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "Qwen/Qwen3-Embedding-8B")
 EMBEDDING_DEVICE: str = os.getenv("EMBEDDING_DEVICE", "cuda:1")
 EMBEDDING_BATCH_SIZE: int = int(os.getenv("EMBEDDING_BATCH_SIZE", "32"))
 MAX_ITERATIONS: int = int(os.getenv("MAX_ITERATIONS", "0"))
-DEFAULT_TOP_K_VALUES: List[int] = [int(x.strip()) for x in os.getenv("DEFAULT_TOP_K_VALUES", "1,5,10,20,50").split(",") if x.strip()]
+DEFAULT_TOP_K_VALUES: List[int] = [int(x.strip()) for x in os.getenv("DEFAULT_TOP_K_VALUES", "1,5,10,20").split(",") if x.strip()]
 
 # ChromaDB 동작 제어
 # - `AUTO_EMBED_XML_ON_EMPTY`: 컬렉션이 비어 있을 때만 XML을 자동 임베딩 (기본 False: 기존 인덱스만 사용)
