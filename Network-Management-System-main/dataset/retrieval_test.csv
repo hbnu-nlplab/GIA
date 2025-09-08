@@ -1,0 +1,814 @@
+question,source_files
+SSH 접속이 가능한 장비 목록을 알려주세요.,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+SSH 접속이 불가능한 장비는 총 몇 대입니까?,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+sample10 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,sample10.xml
+sample7 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,sample7.xml
+sample8 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,sample8.xml
+sample9 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,sample9.xml
+CE1 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,ce1.xml
+CE2 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,ce2.xml
+sample10 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,sample10.xml
+sample7 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,sample7.xml
+sample8 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,sample8.xml
+sample9 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,sample9.xml
+AS 65000의 iBGP Full-Mesh 구성은 완벽합니까? (True/False),"sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+AS 65001의 iBGP Full-Mesh 구성은 완벽합니까? (True/False),ce1.xml
+AS 65003의 iBGP Full-Mesh 구성은 완벽합니까? (True/False),ce2.xml
+AS 65000의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까?,"sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+AS 65001의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까?,ce1.xml
+AS 65003의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까?,ce2.xml
+sample10 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,sample10.xml
+sample7 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,sample7.xml
+sample8 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,sample8.xml
+sample9 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,sample9.xml
+CE1 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,ce1.xml
+CE2 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,ce2.xml
+sample10 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,sample10.xml
+sample7 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,sample7.xml
+sample8 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,sample8.xml
+sample9 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,sample9.xml
+AS 65000의 iBGP Full-Mesh 구성은 완벽합니까? (True/False),"sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+AS 65001의 iBGP Full-Mesh 구성은 완벽합니까? (True/False),ce1.xml
+AS 65003의 iBGP Full-Mesh 구성은 완벽합니까? (True/False),ce2.xml
+AS 65000의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까?,"sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+AS 65001의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까?,ce1.xml
+AS 65003의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까?,ce2.xml
+sample10 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,sample10.xml
+sample7 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,sample7.xml
+sample8 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,sample8.xml
+sample9 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,sample9.xml
+CE1 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,ce1.xml
+CE2 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,ce2.xml
+sample10 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,sample10.xml
+sample7 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,sample7.xml
+sample8 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,sample8.xml
+sample9 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,sample9.xml
+AS 65000의 iBGP Full-Mesh 구성은 완벽합니까? (True/False),"sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+AS 65001의 iBGP Full-Mesh 구성은 완벽합니까? (True/False),ce1.xml
+AS 65003의 iBGP Full-Mesh 구성은 완벽합니까? (True/False),ce2.xml
+AS 65000의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까?,"sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+AS 65001의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까?,ce1.xml
+AS 65003의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까?,ce2.xml
+route-target이 없는 VRF(장비/VRF)는 총 몇 개입니까?,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+sample10 장비의 각 VRF에 설정된 route-target 목록을 알려주세요.,sample10.xml
+sample7 장비의 각 VRF에 설정된 route-target 목록을 알려주세요.,sample7.xml
+sample8 장비의 각 VRF에 설정된 route-target 목록을 알려주세요.,sample8.xml
+sample9 장비의 각 VRF에 설정된 route-target 목록을 알려주세요.,sample9.xml
+CE1 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,ce1.xml
+CE2 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,ce2.xml
+sample10 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,sample10.xml
+sample7 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,sample7.xml
+sample8 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,sample8.xml
+sample9 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,sample9.xml
+route-target이 없는 VRF(장비/VRF)는 총 몇 개입니까?,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+sample10 장비의 각 VRF에 설정된 route-target 목록을 알려주세요.,sample10.xml
+sample7 장비의 각 VRF에 설정된 route-target 목록을 알려주세요.,sample7.xml
+sample8 장비의 각 VRF에 설정된 route-target 목록을 알려주세요.,sample8.xml
+sample9 장비의 각 VRF에 설정된 route-target 목록을 알려주세요.,sample9.xml
+CE1 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,ce1.xml
+CE2 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,ce2.xml
+sample10 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,sample10.xml
+sample7 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,sample7.xml
+sample8 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,sample8.xml
+sample9 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,sample9.xml
+route-target이 없는 VRF(장비/VRF)는 총 몇 개입니까?,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+sample10 장비의 각 VRF에 설정된 route-target 목록을 알려주세요.,sample10.xml
+sample7 장비의 각 VRF에 설정된 route-target 목록을 알려주세요.,sample7.xml
+sample8 장비의 각 VRF에 설정된 route-target 목록을 알려주세요.,sample8.xml
+sample9 장비의 각 VRF에 설정된 route-target 목록을 알려주세요.,sample9.xml
+CE1 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,ce1.xml
+CE2 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,ce2.xml
+sample10 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,sample10.xml
+sample7 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,sample7.xml
+sample8 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,sample8.xml
+sample9 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,sample9.xml
+구성된 L2VPN pseudowire 회선(장비쌍) 목록을 알려주세요.,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+PW-ID가 불일치하는 L2VPN 회선(장비쌍) 목록을 알려주세요.,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+PW-ID 불일치 또는 단방향 L2VPN 회선은 총 몇 개입니까?,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+단방향으로만 설정된 L2VPN 회선은 총 몇 개입니까?,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+구성된 L2VPN pseudowire 회선(장비쌍) 목록을 알려주세요.,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+PW-ID가 불일치하는 L2VPN 회선(장비쌍) 목록을 알려주세요.,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+PW-ID 불일치 또는 단방향 L2VPN 회선은 총 몇 개입니까?,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+단방향으로만 설정된 L2VPN 회선은 총 몇 개입니까?,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+구성된 L2VPN pseudowire 회선(장비쌍) 목록을 알려주세요.,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+PW-ID가 불일치하는 L2VPN 회선(장비쌍) 목록을 알려주세요.,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+PW-ID 불일치 또는 단방향 L2VPN 회선은 총 몇 개입니까?,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+단방향으로만 설정된 L2VPN 회선은 총 몇 개입니까?,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+sample10 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.,sample10.xml
+sample7 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.,sample7.xml
+sample8 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.,sample8.xml
+sample9 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.,sample9.xml
+sample10 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,sample10.xml
+sample7 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,sample7.xml
+sample8 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,sample8.xml
+sample9 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,sample9.xml
+CE1 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,ce1.xml
+CE2 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,ce2.xml
+sample10 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,sample10.xml
+sample7 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,sample7.xml
+sample8 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,sample8.xml
+sample9 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,sample9.xml
+sample10 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.,sample10.xml
+sample7 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.,sample7.xml
+sample8 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.,sample8.xml
+sample9 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.,sample9.xml
+sample10 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,sample10.xml
+sample7 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,sample7.xml
+sample8 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,sample8.xml
+sample9 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,sample9.xml
+CE1 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,ce1.xml
+CE2 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,ce2.xml
+sample10 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,sample10.xml
+sample7 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,sample7.xml
+sample8 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,sample8.xml
+sample9 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,sample9.xml
+sample10 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.,sample10.xml
+sample7 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.,sample7.xml
+sample8 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.,sample8.xml
+sample9 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.,sample9.xml
+sample10 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,sample10.xml
+sample7 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,sample7.xml
+sample8 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,sample8.xml
+sample9 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,sample9.xml
+CE1 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,ce1.xml
+CE2 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,ce2.xml
+sample10 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,sample10.xml
+sample7 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,sample7.xml
+sample8 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,sample8.xml
+sample9 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,sample9.xml
+CE1 장비의 호스트네임은 무엇입니까?,ce1.xml
+CE2 장비의 호스트네임은 무엇입니까?,ce2.xml
+sample10 장비의 호스트네임은 무엇입니까?,sample10.xml
+sample7 장비의 호스트네임은 무엇입니까?,sample7.xml
+sample8 장비의 호스트네임은 무엇입니까?,sample8.xml
+sample9 장비의 호스트네임은 무엇입니까?,sample9.xml
+CE1 장비의 운영체제(OS) 버전은 무엇입니까?,ce1.xml
+CE2 장비의 운영체제(OS) 버전은 무엇입니까?,ce2.xml
+CE1 장비에 등록된 로컬 사용자는 총 몇 명입니까?,ce1.xml
+CE2 장비에 등록된 로컬 사용자는 총 몇 명입니까?,ce2.xml
+sample10 장비에 등록된 로컬 사용자는 총 몇 명입니까?,sample10.xml
+sample7 장비에 등록된 로컬 사용자는 총 몇 명입니까?,sample7.xml
+sample8 장비에 등록된 로컬 사용자는 총 몇 명입니까?,sample8.xml
+sample9 장비에 등록된 로컬 사용자는 총 몇 명입니까?,sample9.xml
+sample10 장비에 등록된 로컬 사용자 목록을 알려주세요.,sample10.xml
+sample7 장비에 등록된 로컬 사용자 목록을 알려주세요.,sample7.xml
+sample8 장비에 등록된 로컬 사용자 목록을 알려주세요.,sample8.xml
+sample9 장비에 등록된 로컬 사용자 목록을 알려주세요.,sample9.xml
+CE1 장비의 시간대(Timezone)는 무엇입니까?,ce1.xml
+CE2 장비의 시간대(Timezone)는 무엇입니까?,ce2.xml
+CE1 장비의 호스트네임은 무엇입니까?,ce1.xml
+CE2 장비의 호스트네임은 무엇입니까?,ce2.xml
+sample10 장비의 호스트네임은 무엇입니까?,sample10.xml
+sample7 장비의 호스트네임은 무엇입니까?,sample7.xml
+sample8 장비의 호스트네임은 무엇입니까?,sample8.xml
+sample9 장비의 호스트네임은 무엇입니까?,sample9.xml
+CE1 장비의 운영체제(OS) 버전은 무엇입니까?,ce1.xml
+CE2 장비의 운영체제(OS) 버전은 무엇입니까?,ce2.xml
+CE1 장비에 등록된 로컬 사용자는 총 몇 명입니까?,ce1.xml
+CE2 장비에 등록된 로컬 사용자는 총 몇 명입니까?,ce2.xml
+sample10 장비에 등록된 로컬 사용자는 총 몇 명입니까?,sample10.xml
+sample7 장비에 등록된 로컬 사용자는 총 몇 명입니까?,sample7.xml
+sample8 장비에 등록된 로컬 사용자는 총 몇 명입니까?,sample8.xml
+sample9 장비에 등록된 로컬 사용자는 총 몇 명입니까?,sample9.xml
+sample10 장비에 등록된 로컬 사용자 목록을 알려주세요.,sample10.xml
+sample7 장비에 등록된 로컬 사용자 목록을 알려주세요.,sample7.xml
+sample8 장비에 등록된 로컬 사용자 목록을 알려주세요.,sample8.xml
+sample9 장비에 등록된 로컬 사용자 목록을 알려주세요.,sample9.xml
+CE1 장비의 시간대(Timezone)는 무엇입니까?,ce1.xml
+CE2 장비의 시간대(Timezone)는 무엇입니까?,ce2.xml
+CE1 장비의 호스트네임은 무엇입니까?,ce1.xml
+CE2 장비의 호스트네임은 무엇입니까?,ce2.xml
+sample10 장비의 호스트네임은 무엇입니까?,sample10.xml
+sample7 장비의 호스트네임은 무엇입니까?,sample7.xml
+sample8 장비의 호스트네임은 무엇입니까?,sample8.xml
+sample9 장비의 호스트네임은 무엇입니까?,sample9.xml
+CE1 장비의 운영체제(OS) 버전은 무엇입니까?,ce1.xml
+CE2 장비의 운영체제(OS) 버전은 무엇입니까?,ce2.xml
+CE1 장비에 등록된 로컬 사용자는 총 몇 명입니까?,ce1.xml
+CE2 장비에 등록된 로컬 사용자는 총 몇 명입니까?,ce2.xml
+sample10 장비에 등록된 로컬 사용자는 총 몇 명입니까?,sample10.xml
+sample7 장비에 등록된 로컬 사용자는 총 몇 명입니까?,sample7.xml
+sample8 장비에 등록된 로컬 사용자는 총 몇 명입니까?,sample8.xml
+sample9 장비에 등록된 로컬 사용자는 총 몇 명입니까?,sample9.xml
+sample10 장비에 등록된 로컬 사용자 목록을 알려주세요.,sample10.xml
+sample7 장비에 등록된 로컬 사용자 목록을 알려주세요.,sample7.xml
+sample8 장비에 등록된 로컬 사용자 목록을 알려주세요.,sample8.xml
+sample9 장비에 등록된 로컬 사용자 목록을 알려주세요.,sample9.xml
+CE1 장비의 시간대(Timezone)는 무엇입니까?,ce1.xml
+CE2 장비의 시간대(Timezone)는 무엇입니까?,ce2.xml
+CE1 장비에 SSH가 활성화되어 있습니까? (True/False),ce1.xml
+CE2 장비에 SSH가 활성화되어 있습니까? (True/False),ce2.xml
+sample10 장비에 SSH가 활성화되어 있습니까? (True/False),sample10.xml
+sample7 장비에 SSH가 활성화되어 있습니까? (True/False),sample7.xml
+sample8 장비에 SSH가 활성화되어 있습니까? (True/False),sample8.xml
+sample9 장비에 SSH가 활성화되어 있습니까? (True/False),sample9.xml
+ssh_version_text에 대한 질문을 자연스럽게 작성해주세요.,ce1.xml
+ssh_version_text에 대한 질문을 자연스럽게 작성해주세요.,ce2.xml
+CE1 장비에 AAA 기능이 설정되어 있습니까? (True/False),ce1.xml
+CE2 장비에 AAA 기능이 설정되어 있습니까? (True/False),ce2.xml
+sample10 장비에 AAA 기능이 설정되어 있습니까? (True/False),sample10.xml
+sample7 장비에 AAA 기능이 설정되어 있습니까? (True/False),sample7.xml
+sample8 장비에 AAA 기능이 설정되어 있습니까? (True/False),sample8.xml
+sample9 장비에 AAA 기능이 설정되어 있습니까? (True/False),sample9.xml
+CE1 장비에 패스워드 정책이 적용되어 있습니까? (True/False),ce1.xml
+CE2 장비에 패스워드 정책이 적용되어 있습니까? (True/False),ce2.xml
+sample10 장비에 패스워드 정책이 적용되어 있습니까? (True/False),sample10.xml
+sample7 장비에 패스워드 정책이 적용되어 있습니까? (True/False),sample7.xml
+sample8 장비에 패스워드 정책이 적용되어 있습니까? (True/False),sample8.xml
+sample9 장비에 패스워드 정책이 적용되어 있습니까? (True/False),sample9.xml
+CE1 장비에 SSH가 활성화되어 있습니까? (True/False),ce1.xml
+CE2 장비에 SSH가 활성화되어 있습니까? (True/False),ce2.xml
+sample10 장비에 SSH가 활성화되어 있습니까? (True/False),sample10.xml
+sample7 장비에 SSH가 활성화되어 있습니까? (True/False),sample7.xml
+sample8 장비에 SSH가 활성화되어 있습니까? (True/False),sample8.xml
+sample9 장비에 SSH가 활성화되어 있습니까? (True/False),sample9.xml
+ssh_version_text에 대한 질문을 자연스럽게 작성해주세요.,ce1.xml
+ssh_version_text에 대한 질문을 자연스럽게 작성해주세요.,ce2.xml
+CE1 장비에 AAA 기능이 설정되어 있습니까? (True/False),ce1.xml
+CE2 장비에 AAA 기능이 설정되어 있습니까? (True/False),ce2.xml
+sample10 장비에 AAA 기능이 설정되어 있습니까? (True/False),sample10.xml
+sample7 장비에 AAA 기능이 설정되어 있습니까? (True/False),sample7.xml
+sample8 장비에 AAA 기능이 설정되어 있습니까? (True/False),sample8.xml
+sample9 장비에 AAA 기능이 설정되어 있습니까? (True/False),sample9.xml
+CE1 장비에 패스워드 정책이 적용되어 있습니까? (True/False),ce1.xml
+CE2 장비에 패스워드 정책이 적용되어 있습니까? (True/False),ce2.xml
+sample10 장비에 패스워드 정책이 적용되어 있습니까? (True/False),sample10.xml
+sample7 장비에 패스워드 정책이 적용되어 있습니까? (True/False),sample7.xml
+sample8 장비에 패스워드 정책이 적용되어 있습니까? (True/False),sample8.xml
+sample9 장비에 패스워드 정책이 적용되어 있습니까? (True/False),sample9.xml
+CE1 장비에 SSH가 활성화되어 있습니까? (True/False),ce1.xml
+CE2 장비에 SSH가 활성화되어 있습니까? (True/False),ce2.xml
+sample10 장비에 SSH가 활성화되어 있습니까? (True/False),sample10.xml
+sample7 장비에 SSH가 활성화되어 있습니까? (True/False),sample7.xml
+sample8 장비에 SSH가 활성화되어 있습니까? (True/False),sample8.xml
+sample9 장비에 SSH가 활성화되어 있습니까? (True/False),sample9.xml
+ssh_version_text에 대한 질문을 자연스럽게 작성해주세요.,ce1.xml
+ssh_version_text에 대한 질문을 자연스럽게 작성해주세요.,ce2.xml
+CE1 장비에 AAA 기능이 설정되어 있습니까? (True/False),ce1.xml
+CE2 장비에 AAA 기능이 설정되어 있습니까? (True/False),ce2.xml
+sample10 장비에 AAA 기능이 설정되어 있습니까? (True/False),sample10.xml
+sample7 장비에 AAA 기능이 설정되어 있습니까? (True/False),sample7.xml
+sample8 장비에 AAA 기능이 설정되어 있습니까? (True/False),sample8.xml
+sample9 장비에 AAA 기능이 설정되어 있습니까? (True/False),sample9.xml
+CE1 장비에 패스워드 정책이 적용되어 있습니까? (True/False),ce1.xml
+CE2 장비에 패스워드 정책이 적용되어 있습니까? (True/False),ce2.xml
+sample10 장비에 패스워드 정책이 적용되어 있습니까? (True/False),sample10.xml
+sample7 장비에 패스워드 정책이 적용되어 있습니까? (True/False),sample7.xml
+sample8 장비에 패스워드 정책이 적용되어 있습니까? (True/False),sample8.xml
+sample9 장비에 패스워드 정책이 적용되어 있습니까? (True/False),sample9.xml
+CE1 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,ce1.xml
+CE2 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,ce2.xml
+sample10 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,sample10.xml
+sample7 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,sample7.xml
+sample8 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,sample8.xml
+sample9 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,sample9.xml
+sample10 장비에 설정된 VLAN 목록을 알려주세요.,sample10.xml
+sample7 장비에 설정된 VLAN 목록을 알려주세요.,sample7.xml
+sample8 장비에 설정된 VLAN 목록을 알려주세요.,sample8.xml
+sample9 장비에 설정된 VLAN 목록을 알려주세요.,sample9.xml
+CE1 장비에 설정된 서브인터페이스는 총 몇 개입니까?,ce1.xml
+CE2 장비에 설정된 서브인터페이스는 총 몇 개입니까?,ce2.xml
+sample10 장비에 설정된 서브인터페이스는 총 몇 개입니까?,sample10.xml
+sample7 장비에 설정된 서브인터페이스는 총 몇 개입니까?,sample7.xml
+sample8 장비에 설정된 서브인터페이스는 총 몇 개입니까?,sample8.xml
+sample9 장비에 설정된 서브인터페이스는 총 몇 개입니까?,sample9.xml
+CE1 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,ce1.xml
+CE2 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,ce2.xml
+sample10 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,sample10.xml
+sample7 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,sample7.xml
+sample8 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,sample8.xml
+sample9 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,sample9.xml
+sample10 장비에 설정된 VLAN 목록을 알려주세요.,sample10.xml
+sample7 장비에 설정된 VLAN 목록을 알려주세요.,sample7.xml
+sample8 장비에 설정된 VLAN 목록을 알려주세요.,sample8.xml
+sample9 장비에 설정된 VLAN 목록을 알려주세요.,sample9.xml
+CE1 장비에 설정된 서브인터페이스는 총 몇 개입니까?,ce1.xml
+CE2 장비에 설정된 서브인터페이스는 총 몇 개입니까?,ce2.xml
+sample10 장비에 설정된 서브인터페이스는 총 몇 개입니까?,sample10.xml
+sample7 장비에 설정된 서브인터페이스는 총 몇 개입니까?,sample7.xml
+sample8 장비에 설정된 서브인터페이스는 총 몇 개입니까?,sample8.xml
+sample9 장비에 설정된 서브인터페이스는 총 몇 개입니까?,sample9.xml
+CE1 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,ce1.xml
+CE2 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,ce2.xml
+sample10 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,sample10.xml
+sample7 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,sample7.xml
+sample8 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,sample8.xml
+sample9 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,sample9.xml
+sample10 장비에 설정된 VLAN 목록을 알려주세요.,sample10.xml
+sample7 장비에 설정된 VLAN 목록을 알려주세요.,sample7.xml
+sample8 장비에 설정된 VLAN 목록을 알려주세요.,sample8.xml
+sample9 장비에 설정된 VLAN 목록을 알려주세요.,sample9.xml
+CE1 장비에 설정된 서브인터페이스는 총 몇 개입니까?,ce1.xml
+CE2 장비에 설정된 서브인터페이스는 총 몇 개입니까?,ce2.xml
+sample10 장비에 설정된 서브인터페이스는 총 몇 개입니까?,sample10.xml
+sample7 장비에 설정된 서브인터페이스는 총 몇 개입니까?,sample7.xml
+sample8 장비에 설정된 서브인터페이스는 총 몇 개입니까?,sample8.xml
+sample9 장비에 설정된 서브인터페이스는 총 몇 개입니까?,sample9.xml
+CE1 장비의 BGP Local-AS 번호는 무엇입니까?,ce1.xml
+CE2 장비의 BGP Local-AS 번호는 무엇입니까?,ce2.xml
+sample10 장비의 BGP Local-AS 번호는 무엇입니까?,sample10.xml
+sample7 장비의 BGP Local-AS 번호는 무엇입니까?,sample7.xml
+sample8 장비의 BGP Local-AS 번호는 무엇입니까?,sample8.xml
+sample9 장비의 BGP Local-AS 번호는 무엇입니까?,sample9.xml
+CE1 장비의 BGP 피어(이웃)는 총 몇 개입니까?,ce1.xml
+CE2 장비의 BGP 피어(이웃)는 총 몇 개입니까?,ce2.xml
+sample10 장비의 BGP 피어(이웃)는 총 몇 개입니까?,sample10.xml
+sample7 장비의 BGP 피어(이웃)는 총 몇 개입니까?,sample7.xml
+sample8 장비의 BGP 피어(이웃)는 총 몇 개입니까?,sample8.xml
+sample9 장비의 BGP 피어(이웃)는 총 몇 개입니까?,sample9.xml
+sample10 장비가 참여하는 OSPF Area 목록을 알려주세요.,sample10.xml
+sample7 장비가 참여하는 OSPF Area 목록을 알려주세요.,sample7.xml
+sample8 장비가 참여하는 OSPF Area 목록을 알려주세요.,sample8.xml
+sample9 장비가 참여하는 OSPF Area 목록을 알려주세요.,sample9.xml
+sample10 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,sample10.xml
+sample7 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,sample7.xml
+sample8 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,sample8.xml
+sample9 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,sample9.xml
+CE1 장비의 BGP Local-AS 번호는 무엇입니까?,ce1.xml
+CE2 장비의 BGP Local-AS 번호는 무엇입니까?,ce2.xml
+sample10 장비의 BGP Local-AS 번호는 무엇입니까?,sample10.xml
+sample7 장비의 BGP Local-AS 번호는 무엇입니까?,sample7.xml
+sample8 장비의 BGP Local-AS 번호는 무엇입니까?,sample8.xml
+sample9 장비의 BGP Local-AS 번호는 무엇입니까?,sample9.xml
+CE1 장비의 BGP 피어(이웃)는 총 몇 개입니까?,ce1.xml
+CE2 장비의 BGP 피어(이웃)는 총 몇 개입니까?,ce2.xml
+sample10 장비의 BGP 피어(이웃)는 총 몇 개입니까?,sample10.xml
+sample7 장비의 BGP 피어(이웃)는 총 몇 개입니까?,sample7.xml
+sample8 장비의 BGP 피어(이웃)는 총 몇 개입니까?,sample8.xml
+sample9 장비의 BGP 피어(이웃)는 총 몇 개입니까?,sample9.xml
+sample10 장비가 참여하는 OSPF Area 목록을 알려주세요.,sample10.xml
+sample7 장비가 참여하는 OSPF Area 목록을 알려주세요.,sample7.xml
+sample8 장비가 참여하는 OSPF Area 목록을 알려주세요.,sample8.xml
+sample9 장비가 참여하는 OSPF Area 목록을 알려주세요.,sample9.xml
+sample10 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,sample10.xml
+sample7 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,sample7.xml
+sample8 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,sample8.xml
+sample9 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,sample9.xml
+CE1 장비의 BGP Local-AS 번호는 무엇입니까?,ce1.xml
+CE2 장비의 BGP Local-AS 번호는 무엇입니까?,ce2.xml
+sample10 장비의 BGP Local-AS 번호는 무엇입니까?,sample10.xml
+sample7 장비의 BGP Local-AS 번호는 무엇입니까?,sample7.xml
+sample8 장비의 BGP Local-AS 번호는 무엇입니까?,sample8.xml
+sample9 장비의 BGP Local-AS 번호는 무엇입니까?,sample9.xml
+CE1 장비의 BGP 피어(이웃)는 총 몇 개입니까?,ce1.xml
+CE2 장비의 BGP 피어(이웃)는 총 몇 개입니까?,ce2.xml
+sample10 장비의 BGP 피어(이웃)는 총 몇 개입니까?,sample10.xml
+sample7 장비의 BGP 피어(이웃)는 총 몇 개입니까?,sample7.xml
+sample8 장비의 BGP 피어(이웃)는 총 몇 개입니까?,sample8.xml
+sample9 장비의 BGP 피어(이웃)는 총 몇 개입니까?,sample9.xml
+sample10 장비가 참여하는 OSPF Area 목록을 알려주세요.,sample10.xml
+sample7 장비가 참여하는 OSPF Area 목록을 알려주세요.,sample7.xml
+sample8 장비가 참여하는 OSPF Area 목록을 알려주세요.,sample8.xml
+sample9 장비가 참여하는 OSPF Area 목록을 알려주세요.,sample9.xml
+sample10 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,sample10.xml
+sample7 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,sample7.xml
+sample8 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,sample8.xml
+sample9 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,sample9.xml
+sample10 장비에 설정된 VRF 이름 목록을 알려주세요.,sample10.xml
+sample7 장비에 설정된 VRF 이름 목록을 알려주세요.,sample7.xml
+sample8 장비에 설정된 VRF 이름 목록을 알려주세요.,sample8.xml
+sample9 장비에 설정된 VRF 이름 목록을 알려주세요.,sample9.xml
+sample7 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.,sample7.xml
+sample9 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.,sample9.xml
+CE1 장비의 Route Target Import 설정은 총 몇 개입니까?,ce1.xml
+CE2 장비의 Route Target Import 설정은 총 몇 개입니까?,ce2.xml
+sample10 장비의 Route Target Import 설정은 총 몇 개입니까?,sample10.xml
+sample7 장비의 Route Target Import 설정은 총 몇 개입니까?,sample7.xml
+sample8 장비의 Route Target Import 설정은 총 몇 개입니까?,sample8.xml
+sample9 장비의 Route Target Import 설정은 총 몇 개입니까?,sample9.xml
+CE1 장비의 Route Target Export 설정은 총 몇 개입니까?,ce1.xml
+CE2 장비의 Route Target Export 설정은 총 몇 개입니까?,ce2.xml
+sample10 장비의 Route Target Export 설정은 총 몇 개입니까?,sample10.xml
+sample7 장비의 Route Target Export 설정은 총 몇 개입니까?,sample7.xml
+sample8 장비의 Route Target Export 설정은 총 몇 개입니까?,sample8.xml
+sample9 장비의 Route Target Export 설정은 총 몇 개입니까?,sample9.xml
+CE1 장비에 설정된 VRF는 총 몇 개입니까?,ce1.xml
+CE2 장비에 설정된 VRF는 총 몇 개입니까?,ce2.xml
+sample10 장비에 설정된 VRF는 총 몇 개입니까?,sample10.xml
+sample7 장비에 설정된 VRF는 총 몇 개입니까?,sample7.xml
+sample8 장비에 설정된 VRF는 총 몇 개입니까?,sample8.xml
+sample9 장비에 설정된 VRF는 총 몇 개입니까?,sample9.xml
+sample10 장비에 설정된 VRF 이름 목록을 알려주세요.,sample10.xml
+sample7 장비에 설정된 VRF 이름 목록을 알려주세요.,sample7.xml
+sample8 장비에 설정된 VRF 이름 목록을 알려주세요.,sample8.xml
+sample9 장비에 설정된 VRF 이름 목록을 알려주세요.,sample9.xml
+sample7 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.,sample7.xml
+sample9 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.,sample9.xml
+CE1 장비의 Route Target Import 설정은 총 몇 개입니까?,ce1.xml
+CE2 장비의 Route Target Import 설정은 총 몇 개입니까?,ce2.xml
+sample10 장비의 Route Target Import 설정은 총 몇 개입니까?,sample10.xml
+sample7 장비의 Route Target Import 설정은 총 몇 개입니까?,sample7.xml
+sample8 장비의 Route Target Import 설정은 총 몇 개입니까?,sample8.xml
+sample9 장비의 Route Target Import 설정은 총 몇 개입니까?,sample9.xml
+CE1 장비의 Route Target Export 설정은 총 몇 개입니까?,ce1.xml
+CE2 장비의 Route Target Export 설정은 총 몇 개입니까?,ce2.xml
+sample10 장비의 Route Target Export 설정은 총 몇 개입니까?,sample10.xml
+sample7 장비의 Route Target Export 설정은 총 몇 개입니까?,sample7.xml
+sample8 장비의 Route Target Export 설정은 총 몇 개입니까?,sample8.xml
+sample9 장비의 Route Target Export 설정은 총 몇 개입니까?,sample9.xml
+CE1 장비에 설정된 VRF는 총 몇 개입니까?,ce1.xml
+CE2 장비에 설정된 VRF는 총 몇 개입니까?,ce2.xml
+sample10 장비에 설정된 VRF는 총 몇 개입니까?,sample10.xml
+sample7 장비에 설정된 VRF는 총 몇 개입니까?,sample7.xml
+sample8 장비에 설정된 VRF는 총 몇 개입니까?,sample8.xml
+sample9 장비에 설정된 VRF는 총 몇 개입니까?,sample9.xml
+sample10 장비에 설정된 VRF 이름 목록을 알려주세요.,sample10.xml
+sample7 장비에 설정된 VRF 이름 목록을 알려주세요.,sample7.xml
+sample8 장비에 설정된 VRF 이름 목록을 알려주세요.,sample8.xml
+sample9 장비에 설정된 VRF 이름 목록을 알려주세요.,sample9.xml
+sample7 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.,sample7.xml
+sample9 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.,sample9.xml
+CE1 장비의 Route Target Import 설정은 총 몇 개입니까?,ce1.xml
+CE2 장비의 Route Target Import 설정은 총 몇 개입니까?,ce2.xml
+sample10 장비의 Route Target Import 설정은 총 몇 개입니까?,sample10.xml
+sample7 장비의 Route Target Import 설정은 총 몇 개입니까?,sample7.xml
+sample8 장비의 Route Target Import 설정은 총 몇 개입니까?,sample8.xml
+sample9 장비의 Route Target Import 설정은 총 몇 개입니까?,sample9.xml
+CE1 장비의 Route Target Export 설정은 총 몇 개입니까?,ce1.xml
+CE2 장비의 Route Target Export 설정은 총 몇 개입니까?,ce2.xml
+sample10 장비의 Route Target Export 설정은 총 몇 개입니까?,sample10.xml
+sample7 장비의 Route Target Export 설정은 총 몇 개입니까?,sample7.xml
+sample8 장비의 Route Target Export 설정은 총 몇 개입니까?,sample8.xml
+sample9 장비의 Route Target Export 설정은 총 몇 개입니까?,sample9.xml
+CE1 장비에 설정된 VRF는 총 몇 개입니까?,ce1.xml
+CE2 장비에 설정된 VRF는 총 몇 개입니까?,ce2.xml
+sample10 장비에 설정된 VRF는 총 몇 개입니까?,sample10.xml
+sample7 장비에 설정된 VRF는 총 몇 개입니까?,sample7.xml
+sample8 장비에 설정된 VRF는 총 몇 개입니까?,sample8.xml
+sample9 장비에 설정된 VRF는 총 몇 개입니까?,sample9.xml
+CE1 장비의 호스트네임은 무엇입니까?,ce1.xml
+CE2 장비의 호스트네임은 무엇입니까?,ce2.xml
+sample10 장비의 호스트네임은 무엇입니까?,sample10.xml
+sample7 장비의 호스트네임은 무엇입니까?,sample7.xml
+sample8 장비의 호스트네임은 무엇입니까?,sample8.xml
+sample9 장비의 호스트네임은 무엇입니까?,sample9.xml
+CE1 장비의 관리용 IP 주소는 무엇입니까?,ce1.xml
+CE2 장비의 관리용 IP 주소는 무엇입니까?,ce2.xml
+sample10 장비의 관리용 IP 주소는 무엇입니까?,sample10.xml
+sample7 장비의 관리용 IP 주소는 무엇입니까?,sample7.xml
+sample8 장비의 관리용 IP 주소는 무엇입니까?,sample8.xml
+sample9 장비의 관리용 IP 주소는 무엇입니까?,sample9.xml
+CE1 장비의 운영체제(OS) 버전은 무엇입니까?,ce1.xml
+CE2 장비의 운영체제(OS) 버전은 무엇입니까?,ce2.xml
+CE1 장비의 config-register 값은 무엇입니까?,ce1.xml
+CE2 장비의 config-register 값은 무엇입니까?,ce2.xml
+CE1 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),ce1.xml
+CE2 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),ce2.xml
+sample10 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),sample10.xml
+sample7 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),sample7.xml
+sample8 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),sample8.xml
+sample9 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),sample9.xml
+CE1 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),ce1.xml
+CE2 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),ce2.xml
+sample10 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),sample10.xml
+sample7 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),sample7.xml
+sample8 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),sample8.xml
+sample9 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),sample9.xml
+CE1 장비에서 IP CEF가 활성화되어 있습니까? (True/False),ce1.xml
+CE2 장비에서 IP CEF가 활성화되어 있습니까? (True/False),ce2.xml
+sample10 장비에서 IP CEF가 활성화되어 있습니까? (True/False),sample10.xml
+sample7 장비에서 IP CEF가 활성화되어 있습니까? (True/False),sample7.xml
+sample8 장비에서 IP CEF가 활성화되어 있습니까? (True/False),sample8.xml
+sample9 장비에서 IP CEF가 활성화되어 있습니까? (True/False),sample9.xml
+CE1 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE2 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+sample10 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample7 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample8 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample9 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+CE1 장비의 호스트네임은 무엇입니까?,ce1.xml
+CE2 장비의 호스트네임은 무엇입니까?,ce2.xml
+sample10 장비의 호스트네임은 무엇입니까?,sample10.xml
+sample7 장비의 호스트네임은 무엇입니까?,sample7.xml
+sample8 장비의 호스트네임은 무엇입니까?,sample8.xml
+sample9 장비의 호스트네임은 무엇입니까?,sample9.xml
+CE1 장비의 관리용 IP 주소는 무엇입니까?,ce1.xml
+CE2 장비의 관리용 IP 주소는 무엇입니까?,ce2.xml
+sample10 장비의 관리용 IP 주소는 무엇입니까?,sample10.xml
+sample7 장비의 관리용 IP 주소는 무엇입니까?,sample7.xml
+sample8 장비의 관리용 IP 주소는 무엇입니까?,sample8.xml
+sample9 장비의 관리용 IP 주소는 무엇입니까?,sample9.xml
+CE1 장비의 운영체제(OS) 버전은 무엇입니까?,ce1.xml
+CE2 장비의 운영체제(OS) 버전은 무엇입니까?,ce2.xml
+CE1 장비의 config-register 값은 무엇입니까?,ce1.xml
+CE2 장비의 config-register 값은 무엇입니까?,ce2.xml
+CE1 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),ce1.xml
+CE2 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),ce2.xml
+sample10 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),sample10.xml
+sample7 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),sample7.xml
+sample8 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),sample8.xml
+sample9 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),sample9.xml
+CE1 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),ce1.xml
+CE2 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),ce2.xml
+sample10 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),sample10.xml
+sample7 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),sample7.xml
+sample8 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),sample8.xml
+sample9 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),sample9.xml
+CE1 장비에서 IP CEF가 활성화되어 있습니까? (True/False),ce1.xml
+CE2 장비에서 IP CEF가 활성화되어 있습니까? (True/False),ce2.xml
+sample10 장비에서 IP CEF가 활성화되어 있습니까? (True/False),sample10.xml
+sample7 장비에서 IP CEF가 활성화되어 있습니까? (True/False),sample7.xml
+sample8 장비에서 IP CEF가 활성화되어 있습니까? (True/False),sample8.xml
+sample9 장비에서 IP CEF가 활성화되어 있습니까? (True/False),sample9.xml
+CE1 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE2 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+sample10 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample7 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample8 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample9 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+CE1 장비의 호스트네임은 무엇입니까?,ce1.xml
+CE2 장비의 호스트네임은 무엇입니까?,ce2.xml
+sample10 장비의 호스트네임은 무엇입니까?,sample10.xml
+sample7 장비의 호스트네임은 무엇입니까?,sample7.xml
+sample8 장비의 호스트네임은 무엇입니까?,sample8.xml
+sample9 장비의 호스트네임은 무엇입니까?,sample9.xml
+CE1 장비의 관리용 IP 주소는 무엇입니까?,ce1.xml
+CE2 장비의 관리용 IP 주소는 무엇입니까?,ce2.xml
+sample10 장비의 관리용 IP 주소는 무엇입니까?,sample10.xml
+sample7 장비의 관리용 IP 주소는 무엇입니까?,sample7.xml
+sample8 장비의 관리용 IP 주소는 무엇입니까?,sample8.xml
+sample9 장비의 관리용 IP 주소는 무엇입니까?,sample9.xml
+CE1 장비의 운영체제(OS) 버전은 무엇입니까?,ce1.xml
+CE2 장비의 운영체제(OS) 버전은 무엇입니까?,ce2.xml
+CE1 장비의 config-register 값은 무엇입니까?,ce1.xml
+CE2 장비의 config-register 값은 무엇입니까?,ce2.xml
+CE1 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),ce1.xml
+CE2 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),ce2.xml
+sample10 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),sample10.xml
+sample7 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),sample7.xml
+sample8 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),sample8.xml
+sample9 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),sample9.xml
+CE1 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),ce1.xml
+CE2 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),ce2.xml
+sample10 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),sample10.xml
+sample7 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),sample7.xml
+sample8 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),sample8.xml
+sample9 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),sample9.xml
+CE1 장비에서 IP CEF가 활성화되어 있습니까? (True/False),ce1.xml
+CE2 장비에서 IP CEF가 활성화되어 있습니까? (True/False),ce2.xml
+sample10 장비에서 IP CEF가 활성화되어 있습니까? (True/False),sample10.xml
+sample7 장비에서 IP CEF가 활성화되어 있습니까? (True/False),sample7.xml
+sample8 장비에서 IP CEF가 활성화되어 있습니까? (True/False),sample8.xml
+sample9 장비에서 IP CEF가 활성화되어 있습니까? (True/False),sample9.xml
+CE1 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE1 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce1.xml
+CE2 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+CE2 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),ce2.xml
+sample10 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample10 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample10.xml
+sample7 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample7 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample7.xml
+sample8 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample8 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample8.xml
+sample9 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+sample9 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),sample9.xml
+CE1 장비에서 BGP 피어 상태를 요약해서 확인하는 명령어는 무엇입니까?,
+CE1 장비의 인터페이스 IP 상태를 간단히 확인하는 명령어는 무엇입니까?,
+CE1 장비에서 OSPF로 학습된 라우팅 정보를 확인하는 명령어는 무엇입니까?,
+CE1 장비에서 CPU 사용률 순으로 프로세스를 확인하는 명령어는 무엇입니까?,
+CE1 장비에서 L2VPN 가상회선 상태를 확인하는 명령어는 무엇입니까?,
+CE1 장비에서 OSPF 이웃 상태를 조회하는 명령어는 무엇입니까?,
+CE1 장비에 현재 접속한 사용자 목록을 확인하는 명령어는 무엇입니까?,
+CE1 장비의 로그 버퍼를 확인하는 명령어는 무엇입니까?,
+CE1 장비에서 192.0.2.0/255.255.255.0 네트워크로 가는 정적 경로를 10.0.0.1 다음 홉으로 설정하는 명령어는 무엇입니까?,
+CE1 장비에서 BGP AS 65001의 192.168.1.10 이웃에 RM_OUT 라우트맵을 outbound로 적용하는 명령어는 무엇입니까?,
+CE1 장비에서 GigabitEthernet0/0 인터페이스에 'Uplink to core' 설명을 설정하는 명령어는 무엇입니까?,
+CE1 장비에서 CUSTOMER_A VRF를 생성하고 GigabitEthernet0/0 인터페이스에 할당하는 명령어 시퀀스는 무엇입니까?,
+CE1 장비에서 OSPF 프로세스 1의 GigabitEthernet0/0 인터페이스 비용을 100으로 설정하는 명령어는 무엇입니까?,
+CE1 장비의 VTY 라인에 SSH_ONLY ACL을 inbound로 적용하는 명령어는 무엇입니까?,
+CE1 장비의 호스트네임을 CE1-NEW(으)로 변경하는 명령어는 무엇입니까?,
+admin 계정으로 172.16.1.40 장비에 직접 SSH 접속하는 명령어는 무엇입니까?,ce1.xml
+admin 계정으로 172.16.1.41 장비에 직접 SSH 접속하는 명령어는 무엇입니까?,ce2.xml
+admin 계정으로 172.16.1.133 장비에 직접 SSH 접속하는 명령어는 무엇입니까?,sample10.xml
+admin 계정으로 172.16.1.130 장비에 직접 SSH 접속하는 명령어는 무엇입니까?,sample7.xml
+admin 계정으로 172.16.1.131 장비에 직접 SSH 접속하는 명령어는 무엇입니까?,sample8.xml
+admin 계정으로 172.16.1.132 장비에 직접 SSH 접속하는 명령어는 무엇입니까?,sample9.xml
+admin 계정으로 172.16.1.40를 거쳐 172.16.1.41 장비에 SSH 접속하는 명령어는 무엇입니까?,"ce1.xml, ce2.xml"
+admin 계정으로 172.16.1.41를 거쳐 172.16.1.133 장비에 SSH 접속하는 명령어는 무엇입니까?,"ce2.xml, sample10.xml"
+admin 계정으로 172.16.1.133를 거쳐 172.16.1.130 장비에 SSH 접속하는 명령어는 무엇입니까?,"sample10.xml, sample7.xml"
+admin 계정으로 172.16.1.130를 거쳐 172.16.1.131 장비에 SSH 접속하는 명령어는 무엇입니까?,"sample7.xml, sample8.xml"
+admin 계정으로 172.16.1.131를 거쳐 172.16.1.132 장비에 SSH 접속하는 명령어는 무엇입니까?,"sample8.xml, sample9.xml"
+"네트워크 장비에서 SSH 설정이 모든 장비에서 일관되게 적용되고 있나요? 만약 일부 장비에서 SSH 설정이 누락된 경우, 해당 장비의 보안 위험도는 어떻게 평가될 수 있을까요?","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+"현재 네트워크에서 사용 중인 SSH 버전은 무엇이며, 이는 보안 정책에 부합하는가요?","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+"BGP 설정에서 AS 번호 간의 일관성 문제는 없는지, 그리고 이러한 문제가 보안에 어떠한 영향을 미칠 수 있는지 평가하세요.","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+현재 BGP 구성에서 발견된 missing pair가 OSPF 경로에 미치는 영향과 이를 통해 서비스 가용성을 높이기 위한 방안은?,sample7.xml
+"모든 장비에서 패스워드 정책이 설정되어 있습니까? 설정되어 있지 않은 장비가 있다면, 이를 어떻게 수정할 수 있습니까?","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+"로컬 로그 버퍼의 심각도 설정이 감사 기준을 충족하고 있습니까? 충족하지 않는 장비가 있다면, 어떤 장비이며 어떻게 개선할 수 있습니까?",
+"SSH 설정이 모든 장비에 적용되어 있으며 최신 보안 가이드를 따르고 있습니까? 만약 아닌 장비가 있다면, 이를 어떻게 개선할 수 있습니까?","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+"SSH 인증에 대한 ACL이 모든 장비에 적용되어 있습니까? 만약 적용되지 않은 장비가 있다면, 어떻게 보완할 수 있습니까?","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+"BGP의 iBGP 풀메시 구성 상태는 어떠합니까? 만약 누락된 연결이 있다면, 이를 어떻게 개선할 수 있습니까?","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+"장비에서 VRF가 올바르게 설정되어 있으며, 모든 VRF에 RT가 할당되어 있습니까? 미설정 VRF가 있다면, 어떤 장비에서 발생하고 있으며 이를 어떻게 수정할 수 있습니까?","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+"L2VPN 설정에서 양방향 연결 문제가 발생하고 있습니까? 만약 그렇다면, 어떤 장비에서 문제가 발생하고 있으며 이를 어떻게 개선할 수 있습니까?","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+"모든 장비에서 OSPF 프로세스가 올바르게 설정되어 있습니까? 프로세스가 누락된 장비가 있다면, 이를 어떻게 보완할 수 있습니까?","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+"CE1과 sample7을 연결하는 링크가 다운될 경우, sample7에서 sample9으로 가는 트래픽의 새로운 경로는 무엇인가?",
+"sample8과 CE2를 연결하는 링크가 다운될 경우, CE2에서 sample10으로 가는 트래픽의 새로운 경로는 무엇인가?",
+"sample9에서 sample8으로 가는 링크가 다운될 경우, sample9에서 CE1으로 가는 트래픽의 새로운 경로는 무엇인가?",
+"sample10과 sample9을 연결하는 링크가 다운될 경우, sample10에서 CE2로 가는 트래픽의 새로운 경로는 무엇인가?",
+"CE2와 sample10을 연결하는 링크가 다운될 경우, CE2에서 sample7으로 가는 트래픽의 새로운 경로는 무엇인가?",
+"CE1과 sample8을 연결하는 링크가 다운될 경우, CE1에서 sample9으로 가는 트래픽의 새로운 경로는 무엇인가?",
+"sample7과 sample9을 연결하는 링크가 다운될 경우, sample7에서 CE2로 가는 트래픽의 새로운 경로는 무엇인가?",
+"sample8과 sample9을 연결하는 링크가 다운될 경우, sample8에서 sample10으로 가는 트래픽의 새로운 경로는 무엇인가?",
+"sample10과 CE1을 연결하는 링크가 다운될 경우, sample10에서 sample8으로 가는 트래픽의 새로운 경로는 무엇인가?",
+"CE1과 sample9을 연결하는 링크가 다운될 경우, CE1에서 sample7으로 가는 트래픽의 새로운 경로는 무엇인가?",
+AS 65000에 속하지만 iBGP 피어 수가 3개 미만인 장비는 총 몇 개인가?,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+VRF 'exam-l3vpn'에 연결된 eBGP 피어의 IP 주소는 무엇인가?,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+L2VPN 일방향 문제를 가진 장비는 몇 개인가?,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+AAA가 비활성화된 장비 목록은 무엇인가?,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BGP 피어가 5개 이상인 장비는 몇 개인가?,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+OSPF 프로세스 ID가 1이 아닌 장비는 무엇인가?,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BGP iBGP 풀메시 상태가 아닌 장비는 몇 개인가?,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+L2VPN에서 PWID 불일치가 발생한 장비는 무엇인가?,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+장비 'Router1'에서 BGP 피어링이 누락된 흔적이 있습니다. 이 문제를 진단하기 위해 어떤 CLI 명령어를 순서대로 실행해야 합니까?,
+장비 'SwitchA'에서 L2VPN 연결 문제가 보고되었습니다. 이 문제를 해결하기 위해 어떤 CLI 명령어를 순서대로 실행해야 합니까?,
+장비 'Router2'에서 VRF가 올바르게 설정되지 않은 것 같습니다. 이 문제를 진단하기 위해 어떤 CLI 명령어를 순서대로 실행해야 합니까?,
+장비 'Core1'에서 OSPF 피어와의 연결 문제가 발생하고 있는 것 같습니다. 이를 확인하기 위해 어떤 CLI 명령어를 순서대로 실행해야 합니까?,
+장비 'Router3'에서 BGP 피어링이 예상보다 적습니다. 이 문제를 진단하기 위해 어떤 CLI 명령어를 순서대로 실행해야 합니까?,
+장비 'SwitchB'에서 L2VPN이 올바르게 작동하지 않는 것 같습니다. 이 문제를 해결하기 위해 어떤 CLI 명령어를 순서대로 실행해야 합니까?,
+장비 'Router4'에서 VRF 설정이 누락된 것으로 보입니다. 이를 확인하기 위해 어떤 CLI 명령어를 순서대로 실행해야 합니까?,
+장비 'Core2'에서 OSPF 피어와의 연결 문제가 의심됩니다. 이를 확인하기 위해 어떤 CLI 명령어를 순서대로 실행해야 합니까?,
+장비 'Router5'에서 BGP 피어링 이슈가 발생했습니다. 이를 진단하기 위해 어떤 CLI 명령어를 순서대로 실행해야 합니까?,
+장비 'SwitchC'에서 L2VPN 연결 문제가 보고되었습니다. 이 문제를 해결하기 위해 어떤 CLI 명령어를 순서대로 실행해야 합니까?,
+다단계 SSH 접속을 통해 'Device1'에 접근하기 위해 최소 두 개의 점프 호스트를 거친 SSH 명령어 시퀀스를 어떻게 구성하시겠습니까?,
+SSH를 통해 'Device3'로 접근하기 위해 JumpHost1과 JumpHost3을 거치는 명령어 시퀀스를 설계하세요.,
+백업 목적으로 'Device5'에 접근하기 위해 JumpHost2와 JumpHost4를 경유하는 SSH 명령어 시퀀스를 제안하세요.,
+'Device2'에 접근하기 위해 JumpHost1과 JumpHost5를 거치는 SSH 접속 방법을 설명하세요.,
+점검을 위해 'Device4'에 접근할 때 JumpHost3과 JumpHost4를 경유하는 SSH 명령어 시퀀스를 구성하세요.,
+보안 점검을 위해 'Device6'에 접근하기 위한 SSH 명령어 시퀀스를 JumpHost1과 JumpHost2를 통해 설계하세요.,
+'Device1'에 접근하기 위해 JumpHost5와 JumpHost6을 거치는 다단계 SSH 접속 시퀀스를 작성하세요.,
+업데이트를 위해 'Device3'에 접근할 때 JumpHost2와 JumpHost6을 경유하는 SSH 명령어를 제시하세요.,
+문제 해결을 위해 'Device5'에 접근하는 방법으로 JumpHost4와 JumpHost5를 통한 다단계 SSH 접속을 설명하세요.,
+장비 점검을 위해 'Device2'에 접근할 때 JumpHost3과 JumpHost6을 경유하는 SSH 명령어 시퀀스를 설계하세요.,
