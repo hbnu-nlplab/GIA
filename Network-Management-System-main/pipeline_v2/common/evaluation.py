@@ -210,3 +210,55 @@ def evaluate_predictions(predictions: List[Dict], test_data: pd.DataFrame) -> Di
             "question_count": len(enhanced_idx),
         },
     }
+
+
+# ... 기존 evaluate_predictions 함수들 ...
+
+# vvv 아래 함수들을 파일 맨 아래에 추가 vvv
+import numpy as np
+
+def recall_at_k(results: list[str], ground_truth_doc_name: str, metadatas: list[dict], k: int) -> float:
+    """정답 문서가 top-k 검색 결과 안에 포함되면 1, 아니면 0"""
+    # ground_truth는 이제 정답 파일명(예: 'ce1.xml')을 기준으로 함
+    filenames_in_results = [meta.get('filename', '') for meta in metadatas[:k]]
+    return 1.0 if ground_truth_doc_name in filenames_in_results else 0.0
+
+def reciprocal_rank(results: list[str], ground_truth_doc_name: str, metadatas: list[dict]) -> float:
+    """정답 문서가 몇 번째에 등장하는지 Reciprocal Rank 계산"""
+    for idx, meta in enumerate(metadatas, start=1):
+        if meta.get('filename') == ground_truth_doc_name:
+            return 1.0 / idx
+    return 0.0
+
+def evaluate_retrieval(pipeline, dataset: pd.DataFrame, query_fn, k_values: list[int]):
+    """
+    RAG 파이프라인의 검색 단계 성능을 평가합니다.
+    - pipeline: get_chromadb_content_for_eval 메서드를 가진 파이프라인 객체
+    - dataset: 'question', 'ground_truth_filename' 컬럼을 가진 DataFrame
+    """
+    recall_scores = {k: [] for k in k_values}
+    rr_scores = []
+
+    max_k = max(k_values)
+    for _, row in dataset.iterrows():
+        question = row["question"]
+        gt_filename = row["ground_truth_filename"] # 정답 파일명 사용
+
+        # 1. 쿼리 생성 (Heuristic or LLM)
+        query = query_fn(question, "")
+        
+        # 2. 파이프라인을 통해 검색 및 재정렬 실행
+        # n_results는 평가에 필요한 최대 k값으로 설정
+        documents, metadatas = pipeline.get_chromadb_content_for_eval(query, n_results=max_k)
+        
+        # 3. Recall@k 계산
+        for k in k_values:
+            recall_scores[k].append(recall_at_k(documents, gt_filename, metadatas, k))
+        
+        # 4. MRR 계산
+        rr_scores.append(reciprocal_rank(documents, gt_filename, metadatas))
+    
+    # 평균 결과 반환
+    recall_avg = {k: np.mean(v) for k, v in recall_scores.items()}
+    mrr = np.mean(rr_scores)
+    return recall_avg, mrr
