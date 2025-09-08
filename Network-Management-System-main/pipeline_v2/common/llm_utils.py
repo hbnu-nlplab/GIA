@@ -377,3 +377,51 @@ class TrackedOpenAIClient:
         print(f"\n📈 전체 API 호출 수: {self.call_count}")
         if self.is_multi_key:
             self.client.print_stats()
+
+
+# -----------------------------
+# Lightweight helper for retrieval query generation
+# -----------------------------
+def get_xml_query(question: str, history: str = "") -> str:
+    """Generate a concise retrieval query for XML search via LLM.
+
+    - Uses configured OpenAI API key(s).
+    - Returns a single-line query string (no explanations).
+    """
+    from config import OPENAI_API_KEYS, LLM_MODEL
+
+    system_prompt = (
+        "You are an expert network engineering assistant. Generate a concise search query "
+        "to find relevant XML configuration snippets for the user's question."
+    )
+    instruction = (
+        "OUTPUT ONLY the search query string without quotes or explanations. "
+        "Keep it short and specific to likely XML terms and entities."
+    )
+
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {
+            "role": "user",
+            "content": (
+                f"Question: {question}\n\n"
+                f"Search History/Context: {history}\n\n"
+                f"Instruction: {instruction}"
+            ),
+        },
+    ]
+
+    # Prefer multi-key client for robustness; fall back to single-key OpenAI
+    try:
+        if len(OPENAI_API_KEYS) > 1:
+            mk = MultiKeyOpenAIClient(OPENAI_API_KEYS)
+            resp = mk.chat_completions_create(model=LLM_MODEL, messages=messages, temperature=0.05)
+        else:
+            client = OpenAI(api_key=OPENAI_API_KEYS[0])
+            resp = client.chat.completions.create(model=LLM_MODEL, messages=messages, temperature=0.05)
+        text = resp.choices[0].message.content.strip()
+        # Ensure single-line, trimmed output
+        return " ".join(text.split())
+    except Exception as e:
+        # Fail closed with a simple heuristic query
+        return f"단순 조회, {question}"

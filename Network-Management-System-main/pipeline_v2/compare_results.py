@@ -12,6 +12,11 @@ import re
 from pathlib import Path
 from typing import Dict, List, Tuple
 
+# Additional helpers
+from config import CSV_PATH
+from common.data_utils import extract_and_preprocess
+import pandas as pd
+
 
 def _load_json(p: str | Path):
     with open(p, "r", encoding="utf-8") as f:
@@ -223,6 +228,123 @@ def _markdown_report(rows: List[Dict], best: Dict, baseline_info: Dict) -> str:
     return "\n".join(lines)
 
 
+# -----------------------------
+# New tables per user spec
+# -----------------------------
+def _avg_processing_time(results: List[Dict]) -> float:
+    vals = [r.get("processing_time") for r in results if isinstance(r, dict) and r.get("processing_time") is not None]
+    return sum(vals) / len(vals) if vals else 0.0
+
+
+def _table1_basic(non_rag: Dict, rag_exps: Dict) -> str:
+    lines = ["## 표 1: RAG vs Non-RAG 기본 비교",
+             "| Method | Setting | Overall EM | Overall F1 | Processing Time |",
+             "|--------|---------|-----------:|-----------:|----------------:|"]
+    # Non-RAG
+    if non_rag:
+        ov = non_rag.get("evaluation", {}).get("overall", {})
+        pt = _avg_processing_time(non_rag.get("results", []))
+        lines.append(f"| Non-RAG | - | {_fmt(ov.get('exact_match', 0))} | {_fmt(ov.get('f1_score', 0))} | {_fmt(pt)} |")
+    # RAG k's
+    for k, obj in rag_exps.items():
+        ev = obj.get("evaluation", {})
+        ov = ev.get("overall", {})
+        pt = _avg_processing_time(obj.get("results", []))
+        lines.append(f"| RAG | {k.replace('top_k_', 'k=')} | {_fmt(ov.get('exact_match', 0))} | {_fmt(ov.get('f1_score', 0))} | {_fmt(pt)} |")
+    return "\n".join(lines)
+
+
+def _table2_rag_k_detail(rag_exps: Dict) -> str:
+    lines = ["## 표 2: RAG k값별 상세 분석",
+             "| Setting | Overall EM | Overall F1 | BERTScore F1 | ROUGE-L F1 |",
+             "|---------|-----------:|-----------:|-------------:|-----------:|"]
+    for k, obj in rag_exps.items():
+        ev = obj.get("evaluation", {})
+        ov = ev.get("overall", {})
+        expl = ev.get("enhanced_llm", {}).get("explanation", {})
+        lines.append(
+            f"| {k.replace('top_k_', 'k=')} | {_fmt(ov.get('exact_match', 0))} | {_fmt(ov.get('f1_score', 0))} | {_fmt(expl.get('bert_f1', 0))} | {_fmt(expl.get('rouge_l_f1', 0))} |"
+        )
+    return "\n".join(lines)
+
+
+def _table3_best_vs_baseline(non_rag: Dict, rag_exps: Dict) -> str:
+    # pick best k by EM (strict)
+    best_key = None
+    best_em = -1.0
+    for k, obj in rag_exps.items():
+        ev = obj.get("evaluation", {})
+        em = float(ev.get("overall", {}).get("exact_match", 0) or 0)
+        if em > best_em:
+            best_em = em
+            best_key = k
+    lines = ["## 표 3: RAG vs Non-RAG 상세 분석 비교 (RAG 최고성능 K 기준)",
+             "Setting | BERTScore F1 | Exact Match | ROUGE-1 F1 | ROUGE-2 F1 | ROUGE-L F1 |",
+             "---|---:|---:|---:|---:|---:|"]
+    # Non-RAG row
+    if non_rag:
+        ev = non_rag.get("evaluation", {})
+        expl = ev.get("enhanced_llm", {}).get("explanation", {})
+        lines.append(
+            f"Non-RAG | {_fmt(expl.get('bert_f1', 0))} | {_fmt(ev.get('overall', {}).get('exact_match', 0))} | {_fmt(expl.get('rouge_1_f1', 0))} | {_fmt(expl.get('rouge_2_f1', 0))} | {_fmt(expl.get('rouge_l_f1', 0))} |"
+        )
+    # Best RAG row
+    if best_key:
+        ev = rag_exps[best_key].get("evaluation", {})
+        expl = ev.get("enhanced_llm", {}).get("explanation", {})
+        lines.append(
+            f"RAG {best_key.replace('top_k_', 'k=')} | {_fmt(expl.get('bert_f1', 0))} | {_fmt(ev.get('overall', {}).get('exact_match', 0))} | {_fmt(expl.get('rouge_1_f1', 0))} | {_fmt(expl.get('rouge_2_f1', 0))} | {_fmt(expl.get('rouge_l_f1', 0))} |"
+        )
+    return "\n".join(lines)
+
+
+def _table5_taskwise(non_rag: Dict, rag_exps: Dict) -> str:
+    # Load dataset to fetch GTs
+    df = pd.read_csv(CSV_PATH)
+    gt = [str(x) for x in df["ground_truth"].tolist()]
+
+    def _compute_for_results(results: List[Dict]) -> Dict[str, Dict[str, float]]:
+        # Build predictions aligned by index
+        preds = []
+        types = []
+        for r in results:
+            ans = r.get("final_answer", "")
+            _, _, pre_gt, _ = extract_and_preprocess(ans)
+            preds.append(pre_gt)
+            t = r.get("task_type", "Other Tasks")
+            types.append("Simple Lookup" if "Simple" in t else "Other Tasks")
+        # split by type
+        from common.evaluation import calculate_exact_match, calculate_f1_score
+        out = {}
+        for tlabel in ["Simple Lookup", "Other Tasks"]:
+            idx = [i for i, t in enumerate(types) if t == tlabel]
+            if not idx:
+                out[tlabel] = {"em": 0.0, "f1": 0.0}
+                continue
+            p = [preds[i] for i in idx]
+            g = [gt[i] for i in idx]
+            out[tlabel] = {
+                "em": calculate_exact_match(p, g),
+                "f1": calculate_f1_score(p, g),
+            }
+        return out
+
+    lines = ["## 표 5: Task-wise Analysis",
+             "| Method | Task Type | Overall EM | Overall F1 |",
+             "|--------|-----------|-----------:|-----------:|"]
+    # Non-RAG
+    if non_rag:
+        by = _compute_for_results(non_rag.get("results", []))
+        for t in ["Simple Lookup", "Other Tasks"]:
+            lines.append(f"| Non-RAG | {t} | {_fmt(by[t]['em'])} | {_fmt(by[t]['f1'])} |")
+    # RAG (all k)
+    for k, obj in rag_exps.items():
+        by = _compute_for_results(obj.get("results", []))
+        for t in ["Simple Lookup", "Other Tasks"]:
+            lines.append(f"| RAG {k.replace('top_k_', 'k=')} | {t} | {_fmt(by[t]['em'])} | {_fmt(by[t]['f1'])} |")
+    return "\n".join(lines)
+
+
 def _latex_table(rows: List[Dict], best: Dict) -> str:
     """Non-RAG / RAG 성능 테이블 LaTeX 코드 생성"""
     def b(s: str, cond: bool) -> str:
@@ -261,6 +383,7 @@ def main():
     parser.add_argument("--rag", required=True, help="RAG 결과 JSON 파일 (또는 디렉토리)")
     parser.add_argument("--output", default="comparison_report.md")
     parser.add_argument("--latex-output", default=None, help="LaTeX 표 저장 경로 (미지정 시 output과 동일 basename .tex)")
+    parser.add_argument("--retrieval", default=None, help="Retrieval 성능 JSON(retrieval_performance.json) 경로(옵션)")
     args = parser.parse_args()
 
     non_rag_path = Path(args.non_rag)
@@ -272,7 +395,33 @@ def main():
     rag_exps = rag_data.get("experiments", {})
 
     rows, best, base = _collect_rows(non_eval, rag_exps)
-    md = _markdown_report(rows, best, base)
+    sections: List[str] = []
+    # Existing summary/relaxed + LaTeX preview
+    sections.append(_markdown_report(rows, best, base))
+    # Table 1
+    sections.append(_table1_basic(non_rag_data, rag_exps))
+    # Table 2
+    sections.append(_table2_rag_k_detail(rag_exps))
+    # Table 3
+    sections.append(_table3_best_vs_baseline(non_rag_data, rag_exps))
+    # Table 4 (optional if file provided)
+    if args.retrieval:
+        try:
+            rj = _load_json(Path(args.retrieval))
+            m = rj.get("methods", {})
+            lines = ["## 표 4: Retrieval Performance (RAG만)",
+                     "| Method | Recall@1 | Recall@5 | Recall@10 | MRR |",
+                     "|--------|---------:|---------:|----------:|----:|"]
+            h = m.get("heuristic+gpt_rerank", {})
+            l = m.get("llm+gpt_rerank", {})
+            lines.append(f"| Heuristic + GPT ReRank | {_fmt(h.get('recall@1', 0))} | {_fmt(h.get('recall@5', 0))} | {_fmt(h.get('recall@10', 0))} | {_fmt(h.get('mrr', 0))} |")
+            lines.append(f"| LLM Query + GPT ReRank | {_fmt(l.get('recall@1', 0))} | {_fmt(l.get('recall@5', 0))} | {_fmt(l.get('recall@10', 0))} | {_fmt(l.get('mrr', 0))} |")
+            sections.append("\n".join(lines))
+        except Exception:
+            pass
+    # Table 5
+    sections.append(_table5_taskwise(non_rag_data, rag_exps))
+    md = "\n\n".join(sections)
 
     out_md = Path(args.output)
     out_md.write_text(md, encoding="utf-8")

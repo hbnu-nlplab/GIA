@@ -110,16 +110,42 @@ else
     exit 1
 fi
 
-# 결과 통합
+# Retrieval 성능 평가
+log "🔹 Retrieval 성능 평가 시작..."
+RETRIEVAL_DATASET="Network-Management-System-main/dataset/retrieval_test.csv"
+
+RETRIEVAL_JSON=""
+if python Network-Management-System-main/pipeline_v2/common/run_retrieval_evaluation.py \
+    --dataset "$RETRIEVAL_DATASET" \
+    --k-values "1,5,10,20,50"; then
+    log "✅ Retrieval 성능 평가 완료"
+    # 방금 생성된 retrieval 결과 디렉토리 찾기
+    RETR_DIR=$(ls -td Network-Management-System-main/pipeline_v2/experiment_results/retrieval_* 2>/dev/null | head -1 || true)
+    if [ -n "$RETR_DIR" ] && [ -f "$RETR_DIR/retrieval_performance.json" ]; then
+        RETRIEVAL_JSON="$RETR_DIR/retrieval_performance.json"
+        log "🔎 Retrieval 결과 JSON: $RETRIEVAL_JSON"
+    else
+        warn "Retrieval 결과 JSON을 찾지 못했습니다. 표 4는 제외됩니다."
+    fi
+else
+    warn "❌ Retrieval 성능 평가 실패. 표 4는 제외됩니다."
+fi
+
+# 결과 통합 (Retrieval 포함 가능)
 log "🔹 결과 통합 분석 시작..."
 COMPARISON_FILE="${EXPERIMENT_DIR}/comparison_report.md"
 LATEX_FILE="${EXPERIMENT_DIR}/paper_table.tex"
 
-if python Network-Management-System-main/pipeline_v2/compare_results.py \
+COMPARE_CMD=(python Network-Management-System-main/pipeline_v2/compare_results.py \
     --non-rag "${EXPERIMENT_DIR}/non_rag" \
     --rag "${EXPERIMENT_DIR}/rag" \
     --output "$COMPARISON_FILE" \
-    --latex-output "$LATEX_FILE"; then
+    --latex-output "$LATEX_FILE")
+if [ -n "$RETRIEVAL_JSON" ]; then
+    COMPARE_CMD+=(--retrieval "$RETRIEVAL_JSON")
+fi
+
+if "${COMPARE_CMD[@]}"; then
     log "✅ 결과 통합 완료"
 else
     error "❌ 결과 통합 실패"

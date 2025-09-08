@@ -153,13 +153,15 @@ def main():
 
     md_lines = []
     md_lines.append("## 표 4: Retrieval Performance (RAG만)")
-    md_lines.append("| Method | Recall@1 | Recall@5 | Recall@10 | MRR |")
-    md_lines.append("|--------|---------:|---------:|----------:|----:|")
+    md_lines.append("| Method | Recall@1 | Recall@5 | Recall@10| Recall@20 | MRR |")
+    md_lines.append("|--------|---------:|---------:|----------:|----------:|----:|")
     md_lines.append(
-        f"| Heuristic + GPT ReRank | {recall_h.get(1,0):.4f} | {recall_h.get(5,0):.4f} | {recall_h.get(10,0):.4f} | {mrr_h:.4f} |"
+        f"| Heuristic + GPT ReRank | {recall_h.get(1,0):.4f} | {recall_h.get(5,0):.4f} | {recall_h.get(10,0):.4f} | {recall_h.get(20,0):.4f} | {mrr_h:.4f} |"
+        
     )
     md_lines.append(
-        f"| LLM Query + GPT ReRank | {recall_llm.get(1,0):.4f} | {recall_llm.get(5,0):.4f} | {recall_llm.get(10,0):.4f} | {mrr_llm:.4f} |"
+        f"| LLM Query + GPT ReRank | {recall_llm.get(1,0):.4f} | {recall_llm.get(5,0):.4f} | {recall_llm.get(10,0):.4f} | {recall_llm.get(20,0):.4f} | {mrr_llm:.4f} |"
+    
     )
     md = "\n".join(md_lines)
     (out_dir / "retrieval_performance.md").write_text(md, encoding="utf-8")

@@ -450,6 +450,28 @@ class NetworkEngineeringPipeline:
             pass
         return combined
 
+        # vvv 아래 메서드를 새로 추가 vvv
+    def get_chromadb_content_for_eval(self, query: str, n_results: int) -> tuple[list[str], list[dict]]:
+        """평가 전용: 검색 및 재정렬 후 문서와 메타데이터 리스트를 반환"""
+        # 재정렬을 고려하여 3배수만큼 초기 검색
+        initial_n_results = n_results * 3
+        
+        results = self.db.query(query, n_results=initial_n_results)
+        if not (results and results.get("documents") and results["documents"][0]):
+            return [], [] # 결과 없으면 빈 리스트 반환
+
+        documents = results["documents"][0]
+        metadatas = results.get("metadatas", [[]])[0] or [{}] * len(documents)
+        
+        # GPT ReRanking 수행
+        if len(documents) > 1:
+            ranked_idx = get_reranked_indices(query, documents, top_n=n_results)
+            documents = [documents[i] for i in ranked_idx]
+            metadatas = [metadatas[i] for i in ranked_idx]
+            
+        # 최종 k개만큼 잘라서 반환
+        return documents[:n_results], metadatas[:n_results]
+
     def process_query(self, user_question: str, top_k_chroma: int) -> Dict:
         assert tracked_openai_client is not None
         start = time.time()
