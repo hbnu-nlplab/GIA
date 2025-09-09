@@ -16,12 +16,28 @@ except Exception:
 from .data_utils import parse_answer_sections, clean_ground_truth_text
 
 
+def normalize_boolean_text(text: str) -> str:
+    """Boolean 텍스트를 정규화 (TRUE/FALSE, True/False, true/false 등을 통일)"""
+    text = str(text).strip().lower()
+    
+    # Boolean 값들을 표준화
+    if text in ['true', 'yes', '1', 'enabled', 'active', 'on']:
+        return 'true'
+    elif text in ['false', 'no', '0', 'disabled', 'inactive', 'off']:
+        return 'false'
+    
+    return text
+
+
 def calculate_exact_match(predictions: List[str], ground_truths: List[str]) -> float:
     if len(predictions) != len(ground_truths):
         raise ValueError("Predictions and ground truths must have the same length")
     correct = 0
     for pred, gt in zip(predictions, ground_truths):
-        if pred.strip().lower() == str(gt).strip().lower():
+        # Boolean 값들을 정규화해서 비교
+        normalized_pred = normalize_boolean_text(pred)
+        normalized_gt = normalize_boolean_text(gt)
+        if normalized_pred == normalized_gt:
             correct += 1
     return correct / len(predictions) if predictions else 0.0
 
@@ -32,9 +48,9 @@ def calculate_relaxed_exact_match(predictions: List[str], ground_truths: List[st
         raise ValueError("Predictions and ground truths must have the same length")
     correct = 0
     for pred, gt in zip(predictions, ground_truths):
-        # 쉼표로 분리하여 집합으로 비교
-        pred_items = set(item.strip().lower() for item in str(pred).split(',') if item.strip())
-        gt_items = set(item.strip().lower() for item in str(gt).split(',') if item.strip())
+        # 쉼표로 분리하여 집합으로 비교 (Boolean 정규화 포함)
+        pred_items = set(normalize_boolean_text(item) for item in str(pred).split(',') if item.strip())
+        gt_items = set(normalize_boolean_text(item) for item in str(gt).split(',') if item.strip())
         if pred_items == gt_items:
             correct += 1
     return correct / len(predictions) if predictions else 0.0
@@ -45,8 +61,11 @@ def calculate_f1_score(predictions: List[str], ground_truths: List[str]) -> floa
         raise ValueError("Predictions and ground truths must have the same length")
     f1_scores: List[float] = []
     for pred, gt in zip(predictions, ground_truths):
-        pred_tokens = set(str(pred).strip().lower().split())
-        gt_tokens = set(str(gt).strip().lower().split())
+        # Boolean 정규화 적용 후 토큰화
+        normalized_pred = normalize_boolean_text(pred)
+        normalized_gt = normalize_boolean_text(gt)
+        pred_tokens = set(normalized_pred.split())
+        gt_tokens = set(normalized_gt.split())
         if len(gt_tokens) == 0:
             f1_scores.append(1.0 if len(pred_tokens) == 0 else 0.0)
             continue
@@ -63,9 +82,9 @@ def calculate_relaxed_f1_score(predictions: List[str], ground_truths: List[str])
         raise ValueError("Predictions and ground truths must have the same length")
     f1_scores: List[float] = []
     for pred, gt in zip(predictions, ground_truths):
-        # 쉼표로 분리하여 각 항목을 토큰으로 처리
-        pred_items = set(item.strip().lower() for item in str(pred).split(',') if item.strip())
-        gt_items = set(item.strip().lower() for item in str(gt).split(',') if item.strip())
+        # 쉼표로 분리하여 각 항목을 토큰으로 처리 (Boolean 정규화 포함)
+        pred_items = set(normalize_boolean_text(item) for item in str(pred).split(',') if item.strip())
+        gt_items = set(normalize_boolean_text(item) for item in str(gt).split(',') if item.strip())
         
         if len(gt_items) == 0:
             f1_scores.append(1.0 if len(pred_items) == 0 else 0.0)

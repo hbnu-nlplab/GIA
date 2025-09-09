@@ -52,6 +52,48 @@ chatgpt_system_prompt = (
 )
 
 
+def get_plan(question: str) -> List[str]:
+    """Generate a concise, actionable plan (RAT: Retrieval Augmented Thoughts)."""
+    assert tracked_openai_client is not None
+    import re as _re
+    plan_prompt = f"""
+    You are a world-class network engineer acting as a meticulous planner. Create a step-by-step execution plan
+    to find the answer to the user's question from XML network configuration files.
+
+    User Question: "{question}"
+
+    CRITICAL INSTRUCTIONS:
+    1) Decompose the problem into atomic, verifiable steps.
+    2) Each step MUST start with an action verb (Search, Find, Extract, List, Compare, Calculate).
+    3) The final step MUST be: "Synthesize all findings into a final answer in the required format."
+    4) Output ONLY the numbered steps. No extra text.
+
+    --- EXAMPLE ---
+    1. Search for the BGP configuration of the device named 'sample7'.
+    2. Extract all BGP neighbor IP addresses and their corresponding remote-as numbers.
+    3. For each neighbor IP, search all documents to identify which device that IP belongs to.
+    4. Synthesize all findings into a final answer in the required format.
+    --- END EXAMPLE ---
+    """
+    resp = tracked_openai_client.chat_completions_create(
+        call_type="get_plan",
+        model=LLM_MODEL,
+        messages=[
+            {"role": "system", "content": chatgpt_system_prompt},
+            {"role": "user", "content": plan_prompt},
+        ],
+        temperature=0.0,
+    )
+    plan_text = resp.choices[0].message.content.strip()
+    steps = [s.strip() for s in _re.split(r"\n?\s*\d+\.\s+", plan_text) if s.strip()]
+    if not steps or not any("Synthesize" in s or "final answer" in s for s in steps):
+        steps.append("Synthesize all findings into a final answer in the required format.")
+    print("🧠 Generated Plan:")
+    for s in steps:
+        print(f"  - {s}")
+    return steps
+
+
 class HuggingFaceEmbedder:
     """HuggingFace 임베더 (GPU 자동 선택 및 OOM 폴백)"""
 
@@ -269,6 +311,7 @@ def get_draft(question: str, task_type: str, context: str = "") -> str:
         - Device names: "CE1, CE2, sample10"  
         - Count: "0" or "5" (just numbers)
         - IP list: "1.1.1.1, 2.2.2.2, 3.3.3.3"
+        - Boolean: "True" or "False"
         """
     else:
         user = f"""
@@ -322,6 +365,7 @@ def get_final_response(question: str, refined_answer: str, task_type: str) -> st
     - Multiple items: comma-separated with spaces "item1, item2, item3"
     - Numbers: just the number "0" or "5" (no units like "대", "개")
     - IP addresses: "1.1.1.1, 2.2.2.2, 3.3.3.3"
+    - Boolean: "True" or "False"
     
     [EXPLANATION] Korean technical explanation
     
@@ -353,6 +397,7 @@ def revise_with_reference(question: str, current_answer: str, reference_content:
     - Multiple values: comma-separated with spaces (e.g., "CE1, CE2")
     - Numbers only: "0", "5" (no "대", "개", "ea")
     - IP addresses: "1.1.1.1, 2.2.2.2, 3.3.3.3"
+    - Boolean: "True" or "False"
     
     [EXPLANATION]: Korean technical explanation referencing the data
     
@@ -473,92 +518,98 @@ class NetworkEngineeringPipeline:
         return documents[:n_results], metadatas[:n_results]
 
     def process_query(self, user_question: str, top_k_chroma: int) -> Dict:
+        """RAT-style pipeline: Plan → Step execution with retrieval → Final synthesis."""
         assert tracked_openai_client is not None
         start = time.time()
-        log_data: List[Dict] = []
+
+        # Keep task classification for downstream analyses (task-wise table)
         task_type = get_classification_result(user_question)
-        log_data.append({"step": "task_classification", "task_type": task_type})
-        
-        # 초기 답변 생성 전에 먼저 컨텍스트 검색
-        initial_context = self.get_chromadb_content(user_question, "", top_n_after_rerank=top_k_chroma)
-        current_answer = get_draft(user_question, task_type, initial_context)
-        log_data.append({"step": "initial_draft", "content": current_answer})
-        results: Dict = {
+
+        # 1) Plan
+        plan = get_plan(user_question)
+        executed: List[Dict] = []
+        context_for_next_step = "No context yet. This is the first step."
+
+        # 2) Execute each step with retrieval + focused LLM action
+        for i, step in enumerate(plan, 1):
+            print(f"\n▶️ Executing Plan Step {i}/{len(plan)}: {step}")
+            search_query = (
+                f"Execute: {step}. Prior findings: {context_for_next_step[:500]}"
+            )
+            reference_content = self.get_chromadb_content(search_query, context_for_next_step, top_n_after_rerank=top_k_chroma)
+
+            step_prompt = f"""
+            You are an expert agent executing a single step in a larger plan. Your focus is absolute.
+
+            Original Question (context only): "{user_question}"
+            Full Plan (context only):\n{plan}
+
+            CURRENT TASK: "{step}"
+            Previous Findings:\n{context_for_next_step}
+            Reference Content (USE ONLY THIS):\n{reference_content}
+
+            CRITICAL INSTRUCTIONS:
+            - Execute ONLY the current step. Do not jump ahead.
+            - Base your work STRICTLY on the "Reference Content". No prior knowledge.
+            - Output ONLY the direct result from this single step. Be concise and factual.
+            - If reference content is insufficient, output exactly: INSUFFICIENT_CONTEXT_FOR_THIS_STEP
+            """
+            resp = tracked_openai_client.chat_completions_create(
+                call_type=f"execute_plan_step_{i}",
+                model=LLM_MODEL,
+                messages=[
+                    {"role": "system", "content": chatgpt_system_prompt},
+                    {"role": "user", "content": step_prompt},
+                ],
+                temperature=0.0,
+            )
+            step_result = resp.choices[0].message.content.strip()
+            print(f"  - Step Result: {step_result[:200]}...")
+            executed.append({
+                "step_index": i,
+                "step": step,
+                "reference_present": bool(reference_content),
+                "result": step_result,
+            })
+            # accumulate
+            context_for_next_step = "\n\n".join(
+                [f"Result[{e['step_index']}] {e['step']}:\n{e['result']}" for e in executed]
+            )
+
+        # 3) Final synthesis into the strict output format
+        synth_prompt = f"""
+        You are a final rapporteur. Synthesize all step-by-step findings into the final answer.
+
+        Original User Question: "{user_question}"
+
+        Accumulated Findings:\n{context_for_next_step}
+
+        CRITICAL FORMATTING RULES:
+        - Output MUST contain BOTH [GROUND_TRUTH] and [EXPLANATION].
+        - [GROUND_TRUTH]: ONLY the exact value(s). No labels/extra words. Multiple items → comma+space.
+        - Sort device names alphabetically where relevant. Counts are numbers only.
+        - [EXPLANATION]: Detailed Korean technical explanation based strictly on the findings.
+        """
+        final_obj = tracked_openai_client.chat_completions_create(
+            call_type="final_synthesis",
+            model=LLM_MODEL,
+            messages=[
+                {"role": "system", "content": chatgpt_system_prompt},
+                {"role": "user", "content": synth_prompt},
+            ],
+            temperature=LLM_TEMPERATURE,
+        )
+        final_answer = final_obj.choices[0].message.content.strip()
+
+        return {
             "question": user_question,
             "task_type": task_type,
-            "initial_draft": current_answer,
-            "iterations": [],
-            "total_revisions": 0,
+            "plan": plan,
+            "iterations": executed,
+            "final_answer": final_answer,
+            "processing_time": round(time.time() - start, 2),
+            "method": "rag_rat",
         }
-        last_reference_content = initial_context
-        for it in range(self.max_iterations):
-            ref_source = determine_reference_source(task_type, it)
-            reference_content = None
-            if ref_source == "chromadb":
-                reference_content = self.get_chromadb_content(user_question, current_answer, top_n_after_rerank=top_k_chroma)
-            if reference_content:
-                # refine with explicit reference content
-                last_reference_content = reference_content
-                try:
-                    revised = revise_with_reference(user_question, current_answer, reference_content, task_type)
-                except Exception:
-                    revised = None
-                if revised and revised != current_answer:
-                    current_answer = revised
-                    results["total_revisions"] += 1
-                    log_data.append({
-                        "step": f"iteration_{it+1}",
-                        "reference_found": True,
-                        "answer_revised": True,
-                    })
-                    results["iterations"].append({
-                        "iteration": it + 1,
-                        "source": ref_source,
-                        "reference_found": True,
-                        "answer_revised": True,
-                    })
-                else:
-                    log_data.append({
-                        "step": f"iteration_{it+1}",
-                        "reference_found": True,
-                        "answer_revised": False,
-                    })
-                    results["iterations"].append({
-                        "iteration": it + 1,
-                        "source": ref_source,
-                        "reference_found": True,
-                        "answer_revised": False,
-                    })
-            else:
-                log_data.append({
-                    "step": f"iteration_{it+1}",
-                    "reference_found": False,
-                    "answer_revised": False,
-                })
-                results["iterations"].append({
-                    "iteration": it + 1,
-                    "source": ref_source,
-                    "reference_found": False,
-                    "answer_revised": False,
-                })
-        # final optimization (reuse last reference if available for stability)
-        try:
-            if last_reference_content:
-                # One more light pass using reference to enforce strict format
-                current_answer = revise_with_reference(user_question, current_answer, last_reference_content, task_type)
-        except Exception:
-            pass
-        final_resp = get_final_response(user_question, current_answer, task_type)
-        if final_resp and final_resp != current_answer:
-            results["final_optimization"] = True
-        else:
-            final_resp = current_answer
-            results["final_optimization"] = False
-        results["final_answer"] = final_resp
-        results["processing_time"] = round(time.time() - start, 2)
-        log_data.append({"step": "final_answer", "content": final_resp})
-        results["detailed_log"] = log_data
-        return results
 
 
 def main():
