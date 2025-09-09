@@ -30,3 +30,12 @@ predictions/
 logs/
 experiment_results/
 docs7_export/
+
+chroma_db
+chromadb
+chromadb_qwen
+
+# xml_Embedding/
+e38b9972-6202-4aa5-9f1a-f474850d5e11/
+*.db
+*.sqlite3
