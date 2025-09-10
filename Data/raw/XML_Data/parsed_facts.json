@@ -1,13 +1,21 @@
 {
   "devices": [
     {
-      "vendor": "ios-xr",
+      "vendor": "ios",
       "system": {
         "hostname": "CE1",
         "mgmt_address": "172.16.1.40",
         "version": "15.4",
         "timezone": "KST",
-        "config_register": "0x0"
+        "config_register": "0x0",
+        "users": [
+          {
+            "name": "nso",
+            "privilege": "15",
+            "secret_type": "5",
+            "secret": "$1$ou/O$Fc2FfZtj0B5/97GkzArNj/"
+          }
+        ]
       },
       "security": {
         "ssh": {
@@ -21,8 +29,39 @@
           "server_enabled": false
         }
       },
-      "interfaces": [],
-      "num_interfaces": 0,
+      "interfaces": [
+        {
+          "name": "Ethernet0/0",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/0.100",
+          "ipv4": "192.168.1.11/255.255.255.0",
+          "vlan": "100",
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/1",
+          "ipv4": "192.168.10.1/255.255.255.0",
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/2",
+          "ipv4": "172.16.1.41/255.255.255.0",
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/3",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        }
+      ],
+      "num_interfaces": 5,
       "routing": {
         "bgp": {
           "local_as": "65001",
@@ -41,7 +80,8 @@
       },
       "services": {
         "ip": {
-          "forward_protocol_nd": true
+          "forward_protocol_nd": true,
+          "cef_enabled": true
         },
         "vrf": [],
         "l2vpn": [],
@@ -52,16 +92,41 @@
           "present": false
         }
       },
-      "file": "ce1.xml"
+      "file": "ce1.xml",
+      "ip": {
+        "cef-conf": {
+          "cef": true
+        }
+      },
+      "logging": {
+        "buffered_severity": "debugging"
+      },
+      "line": {
+        "vty": {
+          "first": 0,
+          "last": 4,
+          "login_mode": "local",
+          "password_secret": "12345678",
+          "transport_input": "ssh"
+        }
+      }
     },
     {
-      "vendor": "ios-xr",
+      "vendor": "ios",
       "system": {
         "hostname": "CE2",
         "mgmt_address": "172.16.1.41",
         "version": "15.4",
         "timezone": "KST",
-        "config_register": "0x0"
+        "config_register": "0x0",
+        "users": [
+          {
+            "name": "nso",
+            "privilege": "15",
+            "secret_type": "5",
+            "secret": "$1$ou/O$Fc2FfZtj0B5/97GkzArNj/"
+          }
+        ]
       },
       "security": {
         "ssh": {
@@ -75,8 +140,39 @@
           "server_enabled": false
         }
       },
-      "interfaces": [],
-      "num_interfaces": 0,
+      "interfaces": [
+        {
+          "name": "Ethernet0/0",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/0.100",
+          "ipv4": "192.168.3.11/255.255.255.0",
+          "vlan": "300",
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/1",
+          "ipv4": "192.168.30.1/255.255.255.0",
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/2",
+          "ipv4": "172.16.1.41/255.255.255.0",
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/3",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        }
+      ],
+      "num_interfaces": 5,
       "routing": {
         "bgp": {
           "local_as": "65003",
@@ -95,7 +191,8 @@
       },
       "services": {
         "ip": {
-          "forward_protocol_nd": true
+          "forward_protocol_nd": true,
+          "cef_enabled": true
         },
         "vrf": [],
         "l2vpn": [],
@@ -106,7 +203,24 @@
           "present": false
         }
       },
-      "file": "ce2.xml"
+      "file": "ce2.xml",
+      "ip": {
+        "cef-conf": {
+          "cef": true
+        }
+      },
+      "logging": {
+        "buffered_severity": "debugging"
+      },
+      "line": {
+        "vty": {
+          "first": 0,
+          "last": 4,
+          "login_mode": "local",
+          "password_secret": "12345678",
+          "transport_input": "ssh"
+        }
+      }
     },
     {
       "vendor": "ios-xr",
@@ -184,7 +298,7 @@
           "name": "GigabitEthernet0/0/0/1.400",
           "ipv4": "192.168.4.10/255.255.255.0",
           "vlan": "400",
-          "vrf": null
+          "vrf": "exam-l3vpn"
         }
       ],
       "num_interfaces": 7,
@@ -236,6 +350,9 @@
         }
       },
       "services": {
+        "ip": {
+          "cef_enabled": false
+        },
         "vrf": [
           {
             "name": "exam-l3vpn",
@@ -256,7 +373,12 @@
           "present": true
         }
       },
-      "file": "sample10.xml"
+      "file": "sample10.xml",
+      "ip": {
+        "cef-conf": {
+          "cef": false
+        }
+      }
     },
     {
       "vendor": "ios-xr",
@@ -334,7 +456,7 @@
           "name": "GigabitEthernet0/0/0/1.100",
           "ipv4": "192.168.1.10/255.255.255.0",
           "vlan": "100",
-          "vrf": null
+          "vrf": "exam-l3vpn"
         }
       ],
       "num_interfaces": 7,
@@ -386,6 +508,9 @@
         }
       },
       "services": {
+        "ip": {
+          "cef_enabled": false
+        },
         "vrf": [
           {
             "name": "exam-l3vpn",
@@ -412,7 +537,12 @@
           "present": true
         }
       },
-      "file": "sample7.xml"
+      "file": "sample7.xml",
+      "ip": {
+        "cef-conf": {
+          "cef": false
+        }
+      }
     },
     {
       "vendor": "ios-xr",
@@ -484,7 +614,7 @@
           "name": "GigabitEthernet0/0/0/1.200",
           "ipv4": "192.168.2.10/255.255.255.0",
           "vlan": "200",
-          "vrf": null
+          "vrf": "exam-l3vpn"
         }
       ],
       "num_interfaces": 6,
@@ -536,6 +666,9 @@
         }
       },
       "services": {
+        "ip": {
+          "cef_enabled": false
+        },
         "vrf": [
           {
             "name": "exam-l3vpn",
@@ -556,7 +689,12 @@
           "present": true
         }
       },
-      "file": "sample8.xml"
+      "file": "sample8.xml",
+      "ip": {
+        "cef-conf": {
+          "cef": false
+        }
+      }
     },
     {
       "vendor": "ios-xr",
@@ -634,7 +772,7 @@
           "name": "GigabitEthernet0/0/0/1.300",
           "ipv4": "192.168.3.10/255.255.255.0",
           "vlan": "300",
-          "vrf": null
+          "vrf": "exam-l3vpn"
         }
       ],
       "num_interfaces": 7,
@@ -686,6 +824,9 @@
         }
       },
       "services": {
+        "ip": {
+          "cef_enabled": false
+        },
         "vrf": [
           {
             "name": "exam-l3vpn",
@@ -712,7 +853,12 @@
           "present": true
         }
       },
-      "file": "sample9.xml"
+      "file": "sample9.xml",
+      "ip": {
+        "cef-conf": {
+          "cef": false
+        }
+      }
     }
   ]
 }
