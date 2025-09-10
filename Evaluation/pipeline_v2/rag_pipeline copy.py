@@ -16,7 +16,6 @@ from typing import Dict, List, Optional
 import chromadb
 from langchain_huggingface import HuggingFaceEmbeddings
 import torch
-import pandas as pd
 
 from common import (
     evaluate_predictions,
@@ -51,17 +50,6 @@ chatgpt_system_prompt = (
     "You are an expert network engineering assistant with deep knowledge of network "
     "configurations, troubleshooting, and security best practices."
 )
-def _with_enhanced_origin_for_expl(df: pd.DataFrame) -> pd.DataFrame:
-    """설명 점수 대상 행(origin='enhanced_llm_with_agent') 라벨링.
-    - 기본 정책: explanation이 비어있지 않은 행만 enhanced로 지정
-    - 기존 origin이 있으면 유지, 없으면 'general'로 초기화
-    """
-    out = df.copy()
-    if "origin" not in out.columns:
-        out["origin"] = "general"
-    has_expl = out.get("explanation", pd.Series([""] * len(out))).astype(str).str.strip() != ""
-    out.loc[has_expl, "origin"] = "enhanced_llm_with_agent"
-    return out
 
 
 def get_plan(question: str) -> List[str]:
@@ -104,157 +92,6 @@ def get_plan(question: str) -> List[str]:
     for s in steps:
         print(f"  - {s}")
     return steps
-
-
-# =====================
-# AB-Compatible Helpers
-# =====================
-def build_context_from_docs(docs: List[str], metas: List[dict]) -> str:
-    """Build context string from docs/metas identical to C(RAT) formatting.
-
-    - Mirrors the join logic in get_chromadb_content (metadata section + content)
-    - Excludes file path related keys for cleanliness
-    """
-    exclude_keys = {"file_path", "source", "filename", "source_directory"}
-    if metas:
-        combined = "\n\n".join(
-            "[METADATA]\n"
-            + "\n".join(f"{k}: {v}" for k, v in m.items() if k not in exclude_keys)
-            + f"\n\n[CONTENT]\n{d}"
-            for d, m in zip(docs, metas)
-        )
-    else:
-        combined = "\n\n".join(docs)
-    return combined
-
-
-def generate_answer_brief(question: str, task_type: str, context: str) -> str:
-    """Group A (1-pass): Short plain explanation (<=2 sentences) + strict GT.
-
-    Returns full text in [GROUND_TRUTH]/[EXPLANATION] format.
-    """
-    assert tracked_openai_client is not None
-    prompt = f"""
-    Answer with the strict format below.
-
-    Question: {question}
-
-    Relevant Configuration Data:
-    {context}
-
-    FORMAT:
-    [GROUND_TRUTH]
-    {{EXACT VALUE(S) ONLY}}
-
-    [EXPLANATION]
-    {{Korean plain sentences, <=3 sentences, no lists, no inline citations}}
-
-    RULES:
-    - Device list: CE1, CE2, sample7, sample8, sample9, sample10 (alphabetical)
-    - Multiple values: "item1, item2"
-    - Numbers only; Boolean: True/False
-    - At the very end, add one optional line: [CITATIONS] doc_1, doc_3 (use indices of the context order in this turn; leave empty if unsure)
-    """
-    resp = tracked_openai_client.chat_completions_create(
-        call_type="ab_answer_brief",
-        model=LLM_MODEL,
-        messages=[
-            {"role": "system", "content": chatgpt_system_prompt},
-            {"role": "user", "content": prompt},
-        ],
-        temperature=LLM_TEMPERATURE,
-        metadata={"task_type": task_type},
-    )
-    return resp.choices[0].message.content
-
-
-def generate_explanation_only_plain(question: str, context: str) -> str:
-    """Group B Pass1: Produce ONLY an explanation in Korean (3–5 sentences)."""
-    assert tracked_openai_client is not None
-    prompt = f"""
-    Write ONLY an explanation (no final answer), in Korean, 3-5 sentences,
-    plain narrative (no lists, no numbering, no inline citations).
-    Base strictly on the reference below.
-
-    Reference:
-    {context}
-
-    User Question: {question}
-    """
-    resp = tracked_openai_client.chat_completions_create(
-        call_type="ab_expl_plain",
-        model=LLM_MODEL,
-        messages=[
-            {"role": "system", "content": chatgpt_system_prompt},
-            {"role": "user", "content": prompt},
-        ],
-        temperature=LLM_TEMPERATURE,
-    )
-    return resp.choices[0].message.content
-
-
-def finalize_with_rationale(question: str, rationale: str, context: str) -> str:
-    """Group B Pass2: Re-inject rationale + context and produce final GT/EX."""
-    ref = f"[SELF_RATIONALE]\n{rationale}\n\n[CONTEXT]\n{context}"
-    return revise_with_reference(
-        question=question,
-        current_answer="",
-        reference_content=ref,
-        task_type="Other Tasks",
-    )
-
-
-def run_experiment_ab(pipeline: "NetworkEngineeringPipeline", question: str, top_k: int) -> dict:
-    """Run A/B-compatible flows sharing the same Top-K context.
-
-    A: single pass brief answer; B: explanation-only then finalize with rationale.
-    """
-    task_type = get_classification_result(question)
-    docs, metas = pipeline.get_chromadb_content_for_eval(question, n_results=top_k)
-    context = build_context_from_docs(docs, metas)
-
-    # A: 1-pass brief
-    a_answer = generate_answer_brief(question, task_type, context)
-
-    # B: Pass1 explanation only
-    b_expl_plain = generate_explanation_only_plain(question, context)
-
-    # B: Pass2 finalize
-    b_answer = finalize_with_rationale(question, b_expl_plain, context)
-
-    return {
-        "A": {"question": question, "final_answer": a_answer, "context_used": top_k},
-        "B": {"question": question, "final_answer": b_answer, "explanation_plain": b_expl_plain, "context_used": top_k},
-        "retrieval_meta": metas,
-    }
-
-
-# =====================
-# RAT Enhancements
-# =====================
-def compress_to_query_terms(step_result: str, rolling_answer: str) -> str:
-    """Compress step result + current draft into a minimal query (Korean)."""
-    assert tracked_openai_client is not None
-    prompt = f"""
-    From the following step result and current draft, extract a minimal Korean query focusing on key
-    entities, protocols, identifiers, and device names. Output ONE line only; avoid punctuation except commas.
-
-    [STEP_RESULT]
-    {step_result}
-
-    [CURRENT_DRAFT]
-    {rolling_answer}
-    """
-    resp = tracked_openai_client.chat_completions_create(
-        call_type="query_compression",
-        model=LLM_MODEL,
-        messages=[
-            {"role": "system", "content": "You compress technical content into concise search queries."},
-            {"role": "user", "content": prompt},
-        ],
-        temperature=0.0,
-    )
-    return resp.choices[0].message.content.strip()
 
 
 class HuggingFaceEmbedder:
@@ -506,7 +343,7 @@ def get_draft(question: str, task_type: str, context: str = "") -> str:
             {"role": "system", "content": chatgpt_system_prompt},
             {"role": "user", "content": user},
         ],
-        temperature=LLM_TEMPERATURE,
+        temperature=0.2,
         metadata=metadata,
     )
     return resp.choices[0].message.content
@@ -547,45 +384,6 @@ def get_final_response(question: str, refined_answer: str, task_type: str) -> st
     return resp.choices[0].message.content.strip()
 
 
-def _parse_citations(answer_text: str) -> List[str]:
-    """[CITATIONS] 라인에서 인용을 추출 (쉼표 분리). 없으면 빈 리스트."""
-    try:
-        import re as _re
-        m = _re.findall(r"\[CITATIONS\]\s*(.*)$", str(answer_text), flags=_re.IGNORECASE | _re.MULTILINE)
-        if not m:
-            return []
-        raw = m[-1]
-        items = [x.strip() for x in raw.split(",") if x.strip()]
-        return items
-    except Exception:
-        return []
-
-def _compute_support_at_k(citations: List[str], metas: List[dict]) -> bool:
-    """Compute Support@K via intersection between cited docs and retrieved top-K.
-    - Supports filenames or 1-based indices (doc_1, 1, #2)
-    """
-    if not citations or not metas:
-        return False
-    try:
-        import re as _re
-        retrieved = set(str(m.get("filename", "")).strip().lower() for m in metas if m)
-        n = len(metas)
-        for c in citations:
-            s = str(c).strip().lower()
-            if not s:
-                continue
-            if s in retrieved and s:
-                return True
-            m = _re.search(r"(?:doc[_\s-]?|#)?(\d+)", s)
-            if m:
-                idx = int(m.group(1)) - 1
-                if 0 <= idx < n:
-                    return True
-        return False
-    except Exception:
-        return False
-
-
 def revise_with_reference(question: str, current_answer: str, reference_content: str, task_type: str) -> str:
     """LLM에 검색된 컨텍스트를 명시적으로 제공하여 답변을 보정"""
     assert tracked_openai_client is not None
@@ -602,10 +400,8 @@ def revise_with_reference(question: str, current_answer: str, reference_content:
     - Boolean: "True" or "False"
     
     [EXPLANATION]: Korean technical explanation referencing the data
-
-    At the very end, add one optional line: [CITATIONS] doc_i, doc_j (use indices of provided context in this turn or filenames if visible; leave empty if unsure).
-
-    Return the complete revised answer in the exact [GROUND_TRUTH]/[EXPLANATION] format plus the optional [CITATIONS] line.
+    
+    Return the complete revised answer in the exact [GROUND_TRUTH]/[EXPLANATION] format.
     """
     resp = tracked_openai_client.chat_completions_create(
         call_type="answer_revision",
@@ -707,11 +503,7 @@ class NetworkEngineeringPipeline:
         
         results = self.db.query(query, n_results=initial_n_results)
         if not (results and results.get("documents") and results["documents"][0]):
-            # 간단한 휴리스틱 접두어로 재시도 (RAT와 유사한 fallback)
-            alt_query = f"단순 조회, {query}"
-            results = self.db.query(alt_query, n_results=initial_n_results)
-            if not (results and results.get("documents") and results["documents"][0]):
-                return [], [] # 결과 없으면 빈 리스트 반환
+            return [], [] # 결과 없으면 빈 리스트 반환
 
         documents = results["documents"][0]
         metadatas = results.get("metadatas", [[]])[0] or [{}] * len(documents)
@@ -725,42 +517,8 @@ class NetworkEngineeringPipeline:
         # 최종 k개만큼 잘라서 반환
         return documents[:n_results], metadatas[:n_results]
 
-    def get_chromadb_content_with_meta(self, query: str, top_n_after_rerank: int = 5) -> tuple[Optional[str], list[dict]]:
-        """RAT용: 컨텐츠 문자열과 메타데이터를 함께 반환 (fallback 포함)."""
-        candidate_multiplier = 3
-        n_results = top_n_after_rerank * candidate_multiplier
-        # 1차 시도
-        results = self.db.query(query, n_results=n_results)
-        if not (results and results.get("documents") and results["documents"][0]):
-            # Fallback: 접두어 "단순 조회," 시도
-            alt_query = f"단순 조회, {query}"
-            results = self.db.query(alt_query, n_results=n_results)
-            if not (results and results.get("documents") and results["documents"][0]):
-                return None, []
-
-        documents = results["documents"][0]
-        metadatas = results.get("metadatas", [[]])[0] or [{}] * len(documents)
-        if len(documents) > 1:
-            ranked_idx = get_reranked_indices(query, documents, top_n=top_n_after_rerank)
-            documents = [documents[i] for i in ranked_idx]
-            metadatas = [metadatas[i] for i in ranked_idx]
-
-        exclude_keys = {"file_path", "source", "filename", "source_directory"}
-        if metadatas:
-            combined = "\n\n".join(
-                "[METADATA]\n"
-                + "\n".join(f"{k}: {v}" for k, v in m.items() if k not in exclude_keys)
-                + f"\n\n[CONTENT]\n{d}"
-                for d, m in zip(documents, metadatas)
-            )
-        else:
-            combined = "\n\n".join(documents)
-        return combined, metadatas
-
     def process_query(self, user_question: str, top_k_chroma: int) -> Dict:
-        """RAT-style pipeline (paper-style): Plan → Execute each step with retrieval →
-        Rolling revision of draft with reference → Compressed next query → Final synthesis.
-        """
+        """RAT-style pipeline: Plan → Step execution with retrieval → Final synthesis."""
         assert tracked_openai_client is not None
         start = time.time()
 
@@ -771,23 +529,14 @@ class NetworkEngineeringPipeline:
         plan = get_plan(user_question)
         executed: List[Dict] = []
         context_for_next_step = "No context yet. This is the first step."
-        # Initialize rolling draft (no context for initial draft)
-        rolling_answer = get_draft(user_question, task_type)
-        # Initialize search query with the user question
-        next_search_query = user_question
-        # Track last non-empty reference metadatas for Support@K
-        last_ref_metas: List[dict] = []
 
         # 2) Execute each step with retrieval + focused LLM action
         for i, step in enumerate(plan, 1):
             print(f"\n▶️ Executing Plan Step {i}/{len(plan)}: {step}")
-            # Build/retrieve reference content with metadata
-            search_query = next_search_query or (
-                f"Execute: {step}. Prior findings: {context_for_next_step[:300]}"
+            search_query = (
+                f"Execute: {step}. Prior findings: {context_for_next_step[:500]}"
             )
-            reference_content, ref_metas = self.get_chromadb_content_with_meta(search_query, top_n_after_rerank=top_k_chroma)
-            if ref_metas:
-                last_ref_metas = ref_metas
+            reference_content = self.get_chromadb_content(search_query, context_for_next_step, top_n_after_rerank=top_k_chroma)
 
             step_prompt = f"""
             You are an expert agent executing a single step in a larger plan. Your focus is absolute.
@@ -821,27 +570,11 @@ class NetworkEngineeringPipeline:
                 "step": step,
                 "reference_present": bool(reference_content),
                 "result": step_result,
-                "citations": [m.get("filename") for m in (ref_metas or []) if m],
             })
             # accumulate
             context_for_next_step = "\n\n".join(
                 [f"Result[{e['step_index']}] {e['step']}:\n{e['result']}" for e in executed]
             )
-
-            # Rolling draft revision using reference
-            if reference_content:
-                rolling_answer = revise_with_reference(
-                    question=user_question,
-                    current_answer=rolling_answer or step_result,
-                    reference_content=reference_content,
-                    task_type=task_type,
-                )
-
-            # Build compressed query for next iteration
-            try:
-                next_search_query = compress_to_query_terms(step_result, rolling_answer)
-            except Exception:
-                next_search_query = user_question
 
         # 3) Final synthesis into the strict output format
         synth_prompt = f"""
@@ -851,14 +584,11 @@ class NetworkEngineeringPipeline:
 
         Accumulated Findings:\n{context_for_next_step}
 
-        Current Rolling Draft:\n{rolling_answer}
-
         CRITICAL FORMATTING RULES:
         - Output MUST contain BOTH [GROUND_TRUTH] and [EXPLANATION].
         - [GROUND_TRUTH]: ONLY the exact value(s). No labels/extra words. Multiple items → comma+space.
         - Sort device names alphabetically where relevant. Counts are numbers only.
         - [EXPLANATION]: Detailed Korean technical explanation based strictly on the findings.
-        - At the very end, add one optional line: [CITATIONS] doc_i, doc_j (use filenames if available; leave empty if unsure).
         """
         final_obj = tracked_openai_client.chat_completions_create(
             call_type="final_synthesis",
@@ -870,8 +600,6 @@ class NetworkEngineeringPipeline:
             temperature=LLM_TEMPERATURE,
         )
         final_answer = final_obj.choices[0].message.content.strip()
-        citations = _parse_citations(final_answer)
-        support = _compute_support_at_k(citations, last_ref_metas)
 
         return {
             "question": user_question,
@@ -879,9 +607,6 @@ class NetworkEngineeringPipeline:
             "plan": plan,
             "iterations": executed,
             "final_answer": final_answer,
-            "citations": citations,
-            "support_at_k": support,
-            "final_context_metas": last_ref_metas,
             "processing_time": round(time.time() - start, 2),
             "method": "rag_rat",
         }
@@ -892,8 +617,6 @@ def main():
     parser.add_argument("--top-k", default="5,10,15", help="Comma-separated Top-K values")
     parser.add_argument("--max-iterations", type=int, default=MAX_ITERATIONS)
     parser.add_argument("--max-questions", type=int, help="Maximum number of questions to process")
-    parser.add_argument("--experiment", choices=["ab", "rat", "both"], default="ab", help="Which experiment path to run")
-    parser.add_argument("--group", choices=["A", "B", "C"], default=None, help="Run a single group (A/B/C) and tag results accordingly")
     parser.add_argument(
         "--output-dir",
         default=f"{EXPERIMENT_BASE_DIR}/rag_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
@@ -931,246 +654,105 @@ def main():
     import pandas as pd
     merged_aug = None  # for final combined CSV with k-specific columns
     for top_k in top_k_values:
-        print(f"\n🎯 Experiments start (top_k={top_k})")
+        print(f"\n🎯 RAG 실험 시작 (top_k={top_k})")
+        results: List[Dict] = []
+        for i, row in test_data.iterrows():
+            print(f"Processing {i+1}/{len(test_data)} (k={top_k}): {row['question'][:50]}...")
+            # 질문 ID 설정 (1부터 시작, top_k별로 구분)
+            question_id = i + 1 + (top_k * 1000)  # top_k별로 다른 ID 범위 사용
+            tracked_openai_client.logger.set_current_question_id(question_id)
+            results.append(pipeline.process_query(row["question"], top_k_chroma=top_k))
+        evaluation = evaluate_predictions(results, test_data)
+        # relaxed scoring based on preprocessed GT (from after_rows built below)
+        all_results[f"top_k_{top_k}"] = {"results": results, "evaluation": evaluation}
+        logger.save_results({"top_k": top_k, "results": results, "evaluation": evaluation}, filename=f"rag_k{top_k}.json")
+        print(
+            f"✅ Top-K={top_k} 완료! EM: {evaluation['overall']['exact_match']:.4f} F1: {evaluation['overall']['f1_score']:.4f}"
+        )
 
-        # AB path (or single-group A/B override)
-        if (args.experiment in ("ab", "both")) or (args.group in ("A", "B")):
-            print("[AB] Running A and B compatible flows...")
-            A_results: List[Dict] = []
-            B_results: List[Dict] = []
-            Bexp_results: List[Dict] = []
-            for i, row in test_data.iterrows():
-                print(f"[AB] Processing {i+1}/{len(test_data)} (k={top_k}): {row['question'][:50]}...")
-                # AB 오프셋: 1000 * k + i
-                question_id = i + 1 + (top_k * 1000)
-                tracked_openai_client.logger.set_current_question_id(question_id)
-                out = run_experiment_ab(pipeline, row["question"], top_k)
-                if args.group in ("A", None):
-                    a_ans = out["A"]["final_answer"]
-                    a_cits = _parse_citations(a_ans)
-                    a_sup = _compute_support_at_k(a_cits, out.get("retrieval_meta", []))
-                    A_results.append({
-                        "question": row["question"],
-                        "final_answer": a_ans,
-                        "method": "rag_direct",
-                        "citations": a_cits,
-                        "support_at_k": a_sup,
-                    })
-                if args.group in ("B", None):
-                    b_ans = out["B"]["final_answer"]
-                    b_cits = _parse_citations(b_ans)
-                    b_sup = _compute_support_at_k(b_cits, out.get("retrieval_meta", []))
-                    B_results.append({
-                        "question": row["question"],
-                        "final_answer": b_ans,
-                        "method": "rag_rationale",
-                        "citations": b_cits,
-                        "support_at_k": b_sup,
-                    })
-                    # B Pass-1 explanation-only evaluation row
-                    bexp_ans = f"[GROUND_TRUTH]\n\n[EXPLANATION]\n{out['B'].get('explanation_plain', '')}"
-                    Bexp_results.append({
-                        "question": row["question"],
-                        "final_answer": bexp_ans,
-                        "method": "rag_rationale_pass1",
-                    })
-
-            if args.group == "A":
-                test_data_expl = _with_enhanced_origin_for_expl(test_data)
-                evalA = evaluate_predictions(A_results, test_data_expl)
-                all_results[f"A_top_k_{top_k}"] = {"results": A_results, "evaluation": evalA}
-                logger.save_results({"top_k": top_k, "results": A_results, "evaluation": evalA}, filename=f"ragA_k{top_k}.json")
-                print(f"[A] EM={evalA['overall']['exact_match']:.4f} F1={evalA['overall']['f1_score']:.4f}")
-            elif args.group == "B":
-                test_data_expl = _with_enhanced_origin_for_expl(test_data)
-                evalB = evaluate_predictions(B_results, test_data_expl)
-                all_results[f"B_top_k_{top_k}"] = {"results": B_results, "evaluation": evalB}
-                logger.save_results({"top_k": top_k, "results": B_results, "evaluation": evalB}, filename=f"ragB_k{top_k}.json")
-                print(f"[B] EM={evalB['overall']['exact_match']:.4f} F1={evalB['overall']['f1_score']:.4f}")
-                # Bexp: explanation-only evaluation storage
-                if Bexp_results:
-                    test_data_expl = _with_enhanced_origin_for_expl(test_data)
-                    evalBexp = evaluate_predictions(Bexp_results, test_data_expl)
-                    all_results[f"Bexp_top_k_{top_k}"] = {"results": Bexp_results, "evaluation": evalBexp}
-                    logger.save_results({"top_k": top_k, "results": Bexp_results, "evaluation": evalBexp}, filename=f"ragBexp_k{top_k}.json")
-            else:
-                # default AB/both path
-                test_data_expl = _with_enhanced_origin_for_expl(test_data)
-                evalA = evaluate_predictions(A_results, test_data_expl)
-                evalB = evaluate_predictions(B_results, test_data_expl)
-                all_results[f"A_top_k_{top_k}"] = {"results": A_results, "evaluation": evalA}
-                all_results[f"B_top_k_{top_k}"] = {"results": B_results, "evaluation": evalB}
-                logger.save_results({"top_k": top_k, "results": A_results, "evaluation": evalA}, filename=f"ragA_k{top_k}.json")
-                logger.save_results({"top_k": top_k, "results": B_results, "evaluation": evalB}, filename=f"ragB_k{top_k}.json")
-                print(f"[A] EM={evalA['overall']['exact_match']:.4f} F1={evalA['overall']['f1_score']:.4f}")
-                print(f"[B] EM={evalB['overall']['exact_match']:.4f} F1={evalB['overall']['f1_score']:.4f}")
-                # Bexp for AB/both
-                if Bexp_results:
-                    test_data_expl = _with_enhanced_origin_for_expl(test_data)
-                    evalBexp = evaluate_predictions(Bexp_results, test_data_expl)
-                    all_results[f"Bexp_top_k_{top_k}"] = {"results": Bexp_results, "evaluation": evalBexp}
-                    logger.save_results({"top_k": top_k, "results": Bexp_results, "evaluation": evalBexp}, filename=f"ragBexp_k{top_k}.json")
-
-            # before/after CSVs for AB (no merged aug across k to keep scope minimal)
-            def _write_before_after(tag: str, res_list: List[Dict]):
-                before_rows, after_rows = [], []
-                for i2, res in enumerate(res_list):
-                    ans = res.get("final_answer", "")
-                    gt_raw, ex_raw, pre_gt, pre_ex = extract_and_preprocess(ans)
-                    before_rows.append({
-                        "question": test_data.iloc[i2]["question"],
-                        "ground_truth": test_data.iloc[i2].get("ground_truth", ""),
-                        "explanation": test_data.iloc[i2].get("explanation", ""),
-                        "final_answer": ans,
-                        "raw_gt": gt_raw,
-                        "raw_ex": ex_raw,
-                    })
-                    after_rows.append({
-                        "question": test_data.iloc[i2]["question"],
-                        "ground_truth": test_data.iloc[i2].get("ground_truth", ""),
-                        "explanation": test_data.iloc[i2].get("explanation", ""),
-                        "pre_GT": pre_gt,
-                        "pre_EX": pre_ex,
-                    })
-                bdf = pd.DataFrame(before_rows)
-                adf = pd.DataFrame(after_rows)
-                bdf.to_csv(logger.results_dir / f"{tag}_before_k{top_k}.csv", index=False)
-                adf.to_csv(logger.results_dir / f"{tag}_after_k{top_k}.csv", index=False)
-                # relaxed scoring
-                def _norm(s: str) -> str:
-                    return clean_ground_truth_text(str(s)).lower()
-                preds_rel = [_norm(r["pre_GT"]) for r in after_rows]
-                gts_rel = [_norm(x) for x in test_data["ground_truth"].tolist()]
-                def _f1_rel(ps, gs):
-                    scores = []
-                    for p, g in zip(ps, gs):
-                        if ("," in g) or (";" in g) or ("," in p) or (";" in p):
-                            ps_set = set([x.strip() for x in re.split(r"[;,]", p) if x.strip()])
-                            gs_set = set([x.strip() for x in re.split(r"[;,]", g) if x.strip()])
-                            inter = ps_set & gs_set
-                            precision = len(inter)/len(ps_set) if ps_set else 0.0
-                            recall = len(inter)/len(gs_set) if gs_set else 0.0
-                            f1 = 0.0 if precision+recall==0 else 2*precision*recall/(precision+recall)
-                            scores.append(f1)
-                        else:
-                            pt, gtok = set(p.split()), set(g.split())
-                            inter = pt & gtok
-                            precision = len(inter)/len(pt) if pt else 0.0
-                            recall = len(inter)/len(gtok) if gtok else 0.0
-                            f1 = 0.0 if precision+recall==0 else 2*precision*recall/(precision+recall)
-                            scores.append(f1)
-                    return sum(scores)/len(scores) if scores else 0.0
-                em_rel = sum(1 for p, g in zip(preds_rel, gts_rel) if (
-                    (set([x.strip() for x in re.split(r"[;,]", p) if x.strip()]) == set([x.strip() for x in re.split(r"[;,]", g) if x.strip()])) if ("," in p or ";" in p or "," in g or ";" in g) else p == g
-                )) / len(preds_rel) if preds_rel else 0.0
-                f1_rel = _f1_rel(preds_rel, gts_rel)
-                return {"em_rel": em_rel, "f1_rel": f1_rel}
-
-            relA = _write_before_after("ragA", A_results)
-            relB = _write_before_after("ragB", B_results)
-            evalA.setdefault("overall_relaxed", {}).update({"exact_match": relA["em_rel"], "f1_score": relA["f1_rel"]})
-            evalB.setdefault("overall_relaxed", {}).update({"exact_match": relB["em_rel"], "f1_score": relB["f1_rel"]})
-
-        # RAT path
-        if (args.experiment in ("rat", "both")) or (args.group == "C"):
-            print("[C/RAT] Running RAT pipeline...")
-            results: List[Dict] = []
-            for i, row in test_data.iterrows():
-                print(f"[RAT] Processing {i+1}/{len(test_data)} (k={top_k}): {row['question'][:50]}...")
-                # RAT 오프셋: 2000 * k + i
-                question_id = i + 1 + (top_k * 2000)
-                tracked_openai_client.logger.set_current_question_id(question_id)
-                results.append(pipeline.process_query(row["question"], top_k_chroma=top_k))
-            test_data_expl = _with_enhanced_origin_for_expl(test_data)
-            evaluation = evaluate_predictions(results, test_data_expl)
-            all_results[f"C_top_k_{top_k}"] = {"results": results, "evaluation": evaluation}
-            logger.save_results({"top_k": top_k, "results": results, "evaluation": evaluation}, filename=f"ragC_k{top_k}.json")
-            print(
-                f"[C] EM={evaluation['overall']['exact_match']:.4f} F1={evaluation['overall']['f1_score']:.4f}"
+        # 전처리: before/after CSV 및 증강 입력 CSV(k별)
+        before_rows = []
+        after_rows = []
+        for i, res in enumerate(results):
+            ans = res.get("final_answer", "")
+            gt_raw, ex_raw, pre_gt, pre_ex = extract_and_preprocess(ans)
+            before_rows.append(
+                {
+                    "question": test_data.iloc[i]["question"],
+                    "ground_truth": test_data.iloc[i].get("ground_truth", ""),
+                    "explanation": test_data.iloc[i].get("explanation", ""),
+                    "final_answer": ans,
+                    "raw_gt": gt_raw,
+                    "raw_ex": ex_raw,
+                }
             )
+            after_rows.append(
+                {
+                    "question": test_data.iloc[i]["question"],
+                    "ground_truth": test_data.iloc[i].get("ground_truth", ""),
+                    "explanation": test_data.iloc[i].get("explanation", ""),
+                    "pre_GT": pre_gt,
+                    "pre_EX": pre_ex,
+                }
+            )
+        import pandas as pd
+        before_df = pd.DataFrame(before_rows)
+        after_df = pd.DataFrame(after_rows)
+        before_df.to_csv(logger.results_dir / f"rag_before_k{top_k}.csv", index=False)
+        after_df.to_csv(logger.results_dir / f"rag_after_k{top_k}.csv", index=False)
 
-            # 전처리: before/after CSV 및 증강 입력 CSV(k별)
-            before_rows = []
-            after_rows = []
-            for i, res in enumerate(results):
-                ans = res.get("final_answer", "")
-                gt_raw, ex_raw, pre_gt, pre_ex = extract_and_preprocess(ans)
-                before_rows.append(
-                    {
-                        "question": test_data.iloc[i]["question"],
-                        "ground_truth": test_data.iloc[i].get("ground_truth", ""),
-                        "explanation": test_data.iloc[i].get("explanation", ""),
-                        "final_answer": ans,
-                        "raw_gt": gt_raw,
-                        "raw_ex": ex_raw,
-                    }
-                )
-                after_rows.append(
-                    {
-                        "question": test_data.iloc[i]["question"],
-                        "ground_truth": test_data.iloc[i].get("ground_truth", ""),
-                        "explanation": test_data.iloc[i].get("explanation", ""),
-                        "pre_GT": pre_gt,
-                        "pre_EX": pre_ex,
-                    }
-                )
-            before_df = pd.DataFrame(before_rows)
-            after_df = pd.DataFrame(after_rows)
-            before_df.to_csv(logger.results_dir / f"rag_before_k{top_k}.csv", index=False)
-            after_df.to_csv(logger.results_dir / f"rag_after_k{top_k}.csv", index=False)
+        # compute relaxed EM/F1
+        def _norm(s: str) -> str:
+            return clean_ground_truth_text(str(s)).lower()
+        preds_rel = [ _norm(r["pre_GT"]) for r in after_rows ]
+        gts_rel = [ _norm(x) for x in test_data["ground_truth"].tolist() ]
+        def _f1_rel(ps, gs):
+            scores = []
+            for p,g in zip(ps,gs):
+                if ("," in g) or (";" in g) or ("," in p) or (";" in p):
+                    ps_set = set([x.strip() for x in re.split(r"[;,]", p) if x.strip()])
+                    gs_set = set([x.strip() for x in re.split(r"[;,]", g) if x.strip()])
+                    inter = ps_set & gs_set
+                    precision = len(inter)/len(ps_set) if ps_set else 0.0
+                    recall = len(inter)/len(gs_set) if gs_set else 0.0
+                    f1 = 0.0 if precision+recall==0 else 2*precision*recall/(precision+recall)
+                    scores.append(f1)
+                else:
+                    pt, gtok = set(p.split()), set(g.split())
+                    inter = pt & gtok
+                    precision = len(inter)/len(pt) if pt else 0.0
+                    recall = len(inter)/len(gtok) if gtok else 0.0
+                    f1 = 0.0 if precision+recall==0 else 2*precision*recall/(precision+recall)
+                    scores.append(f1)
+            return sum(scores)/len(scores) if scores else 0.0
+        em_rel = sum(1 for p,g in zip(preds_rel, gts_rel) if (
+            (set([x.strip() for x in re.split(r"[;,]", p) if x.strip()]) == set([x.strip() for x in re.split(r"[;,]", g) if x.strip()])) if ("," in p or ";" in p or "," in g or ";" in g) else p==g
+        )) / len(preds_rel) if preds_rel else 0.0
+        f1_rel = _f1_rel(preds_rel, gts_rel)
+        evaluation.setdefault("overall_relaxed", {})
+        evaluation["overall_relaxed"].update({"exact_match": em_rel, "f1_score": f1_rel})
 
-            # compute relaxed EM/F1
-            def _norm(s: str) -> str:
-                return clean_ground_truth_text(str(s)).lower()
-            preds_rel = [ _norm(r["pre_GT"]) for r in after_rows ]
-            gts_rel = [ _norm(x) for x in test_data["ground_truth"].tolist() ]
-            def _f1_rel(ps, gs):
-                scores = []
-                for p,g in zip(ps,gs):
-                    if ("," in g) or (";" in g) or ("," in p) or (";" in p):
-                        ps_set = set([x.strip() for x in re.split(r"[;,]", p) if x.strip()])
-                        gs_set = set([x.strip() for x in re.split(r"[;,]", g) if x.strip()])
-                        inter = ps_set & gs_set
-                        precision = len(inter)/len(ps_set) if ps_set else 0.0
-                        recall = len(inter)/len(gs_set) if gs_set else 0.0
-                        f1 = 0.0 if precision+recall==0 else 2*precision*recall/(precision+recall)
-                        scores.append(f1)
-                    else:
-                        pt, gtok = set(p.split()), set(g.split())
-                        inter = pt & gtok
-                        precision = len(inter)/len(pt) if pt else 0.0
-                        recall = len(inter)/len(gtok) if gtok else 0.0
-                        f1 = 0.0 if precision+recall==0 else 2*precision*recall/(precision+recall)
-                        scores.append(f1)
-                return sum(scores)/len(scores) if scores else 0.0
-            em_rel = sum(1 for p,g in zip(preds_rel, gts_rel) if (
-                (set([x.strip() for x in re.split(r"[;,]", p) if x.strip()]) == set([x.strip() for x in re.split(r"[;,]", g) if x.strip()])) if ("," in p or ";" in p or "," in g or ";" in g) else p==g
-            )) / len(preds_rel) if preds_rel else 0.0
-            f1_rel = _f1_rel(preds_rel, gts_rel)
-            evaluation.setdefault("overall_relaxed", {})
-            evaluation["overall_relaxed"].update({"exact_match": em_rel, "f1_score": f1_rel})
+        # detailed logs aggregate per k
+        all_logs = []
+        for r in results:
+            if isinstance(r, dict) and "detailed_log" in r:
+                all_logs.extend(r["detailed_log"])
+        if all_logs:
+            logger.save_detailed_log(all_logs, filename=f"rag_k{top_k}_detailed.json")
 
-            # detailed logs aggregate per k
-            all_logs = []
-            for r in results:
-                if isinstance(r, dict) and "detailed_log" in r:
-                    all_logs.extend(r["detailed_log"])
-            if all_logs:
-                logger.save_detailed_log(all_logs, filename=f"rag_k{top_k}_detailed.json")
+        aug = test_data.copy()
+        aug[f"pre_GT_k{top_k}"] = [r["pre_GT"] for r in after_rows]
+        aug[f"pre_EX_k{top_k}"] = [r["pre_EX"] for r in after_rows]
+        aug.to_csv(logger.results_dir / f"test_fin_with_predictions_rag_k{top_k}.csv", index=False)
 
-            aug = test_data.copy()
-            aug[f"pre_GT_k{top_k}"] = [r["pre_GT"] for r in after_rows]
-            aug[f"pre_EX_k{top_k}"] = [r["pre_EX"] for r in after_rows]
-            aug.to_csv(logger.results_dir / f"test_fin_with_predictions_rag_k{top_k}.csv", index=False)
-
-            # merge per-k augmented to one combined (on index)
-            merged_aug = aug if merged_aug is None else pd.concat([merged_aug, aug[[f"pre_GT_k{top_k}", f"pre_EX_k{top_k}"]]], axis=1)
+        # merge per-k augmented to one combined (on index)
+        merged_aug = aug if merged_aug is None else pd.concat([merged_aug, aug[[f"pre_GT_k{top_k}", f"pre_EX_k{top_k}"]]], axis=1)
 
     logger.save_results(
         {
             "experiments": all_results,
             "config": {
-                "method": args.experiment,
+                "method": "rag",
                 "top_k_values": top_k_values,
                 "max_iterations": args.max_iterations,
                 "embedding_model": EMBEDDING_MODEL,
@@ -1188,4 +770,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-# origin 라벨링 유틸 (설명 점수 대상 지정)

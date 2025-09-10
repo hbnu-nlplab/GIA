@@ -113,14 +113,14 @@ OPENAI_API_KEY: str = OPENAI_API_KEYS[0] if OPENAI_API_KEYS else ""
 # ChromaDB 저장/로드 경로
 # - RAG 파이프라인에서 임베딩 인덱스가 저장됩니다.
 # - 경로가 비어 있거나 컬렉션이 없으면, XML 디렉토리로부터 자동 임베딩을 시도합니다.
-CHROMADB_PATH: str = os.getenv("CHROMADB_PATH", "Network-Management-System-main/docs7_export")
+CHROMADB_PATH: str = os.getenv("CHROMADB_PATH", "Evaluation/xml_Embedding")
 # XML 원문 디렉토리
 # - Non‑RAG: LLM 컨텍스트로 직접 제공되는 원문 소스
 # - RAG: 최초 임베딩 소스로 사용(컬렉션 비어 있을 때 자동 임베딩)
-XML_DIRECTORY: str = os.getenv("XML_DIRECTORY", "Network-Management-System-main/xml_parssing")
+XML_DIRECTORY: str = os.getenv("XML_DIRECTORY", "Evaluation/xml_data")
 # 실험 데이터셋(CSV) 경로
 # - 필수 컬럼: question, ground_truth (선택: explanation, origin)
-CSV_PATH: str = os.getenv("CSV_PATH", "Network-Management-System-main/dataset/test_fin.csv")
+CSV_PATH: str = os.getenv("CSV_PATH", "Evaluation/dataset/test_fin.csv")
 
 # LLM 설정
 # LLM 설정
@@ -132,7 +132,7 @@ LLM_TEMPERATURE: float = float(os.getenv("LLM_TEMPERATURE", "0.05"))
 # 실험 설정
 # 실험 산출물(로그/결과) 기본 저장 폴더
 # - 각 실행마다 타임스탬프를 포함한 하위 폴더가 자동 생성됩니다.
-EXPERIMENT_BASE_DIR: str = os.getenv("EXPERIMENT_BASE_DIR", "Network-Management-System-main/experiment_results")
+EXPERIMENT_BASE_DIR: str = os.getenv("EXPERIMENT_BASE_DIR", "Evaluation/pipeline_v2/experiment_results")
 
 # ChromaDB 컬렉션명
 # - 같은 인덱스를 공유하고자 할 때 동일한 컬렉션명을 사용하세요.
@@ -157,10 +157,10 @@ NON_RAG_CHUNK_SIZE: int = int(os.getenv("NON_RAG_CHUNK_SIZE", "50000"))
 # - `MAX_ITERATIONS`: RAG 답변 개선 반복 횟수(컨텍스트 보강/재수정 루프)
 # - `DEFAULT_TOP_K_VALUES`: top‑k 리스트. `--top-k` 인자 미제공 시 참조
 EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "Qwen/Qwen3-Embedding-8B")
-EMBEDDING_DEVICE: str = os.getenv("EMBEDDING_DEVICE", "cuda:1")
-EMBEDDING_BATCH_SIZE: int = int(os.getenv("EMBEDDING_BATCH_SIZE", "32"))
+EMBEDDING_DEVICE: str = os.getenv("EMBEDDING_DEVICE", "auto")
+EMBEDDING_BATCH_SIZE: int = int(os.getenv("EMBEDDING_BATCH_SIZE", "64"))
 MAX_ITERATIONS: int = int(os.getenv("MAX_ITERATIONS", "0"))
-DEFAULT_TOP_K_VALUES: List[int] = [int(x.strip()) for x in os.getenv("DEFAULT_TOP_K_VALUES", "1,5,10,20").split(",") if x.strip()]
+DEFAULT_TOP_K_VALUES: List[int] = [int(x.strip()) for x in os.getenv("DEFAULT_TOP_K_VALUES", "10").split(",") if x.strip()]
 
 # ChromaDB 동작 제어
 # - `AUTO_EMBED_XML_ON_EMPTY`: 컬렉션이 비어 있을 때만 XML을 자동 임베딩 (기본 False: 기존 인덱스만 사용)

@@ -39,3 +39,5 @@ chromadb_qwen
 e38b9972-6202-4aa5-9f1a-f474850d5e11/
 *.db
 *.sqlite3
+
+runs/

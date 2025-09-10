@@ -98,9 +98,10 @@ def calculate_relaxed_f1_score(predictions: List[str], ground_truths: List[str])
 
 
 def _calculate_bert_score(pred: List[str], gt: List[str]) -> Dict[str, float]:
+    """BERTScore를 한국어로 계산."""
     if not bert_score:
         return {"precision": 0.0, "recall": 0.0, "f1": 0.0}
-    P, R, F1 = bert_score(pred, gt, lang="en", verbose=False)
+    P, R, F1 = bert_score(pred, gt, lang="ko", verbose=False)
     return {"precision": P.mean().item(), "recall": R.mean().item(), "f1": F1.mean().item()}
 
 
@@ -197,6 +198,7 @@ def evaluate_predictions(predictions: List[Dict], test_data: pd.DataFrame) -> Di
                 "rouge_l_f1": r.get("rouge-l", 0.0),
                 "valid_count": len(valid),
                 "total_count": len(enhanced_idx),
+                # 선택: 정성 표용 per-sample은 compare 단계에서 별도 계산 가능
             }
     else:
         enh_gt_em = 0.0
