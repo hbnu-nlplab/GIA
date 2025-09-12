@@ -1,0 +1,1057 @@
+﻿id,origin,level,task_category,answer_type,complexity,persona,question,ground_truth,explanation,context,source_files
+BASIC_DSL-SSH_ENABLED_DEVICES-48380,rule_based,1,보안 질의,short,basic,,SSH 접속이 가능한 장비 목록을 알려주세요.,"CE1, CE2, sample10, sample7, sample8, sample9",,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-SSH_MISSING_COUNT-32651,rule_based,2,보안 질의,short,basic,,SSH 접속이 불가능한 장비는 총 몇 대입니까?,0,,"장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1
+장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1
+장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-NEIGHBOR_LIST_IBGP-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,"1.1.1.1, 2.2.2.2, 3.3.3.3",,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-NEIGHBOR_LIST_IBGP-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,"2.2.2.2, 3.3.3.3, 4.4.4.4",,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-NEIGHBOR_LIST_IBGP-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,"1.1.1.1, 3.3.3.3, 4.4.4.4",,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-NEIGHBOR_LIST_IBGP-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,"1.1.1.1, 2.2.2.2, 4.4.4.4",,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-NEIGHBOR_LIST_EBGP-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,192.168.1.10,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-NEIGHBOR_LIST_EBGP-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,192.168.3.10,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-NEIGHBOR_LIST_EBGP-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,192.168.4.11,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-NEIGHBOR_LIST_EBGP-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,192.168.1.11,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-NEIGHBOR_LIST_EBGP-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,192.168.2.11,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-NEIGHBOR_LIST_EBGP-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,192.168.3.11,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-IBGP_FULLMESH_OK-31852,rule_based,2,단순 조회 업무,short,basic,,AS 65000의 iBGP Full-Mesh 구성은 완벽합니까? (True/False),TRUE,,"장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-IBGP_FULLMESH_OK-58973,rule_based,2,단순 조회 업무,short,basic,,AS 65001의 iBGP Full-Mesh 구성은 완벽합니까? (True/False),TRUE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-IBGP_FULLMESH_OK-15048,rule_based,2,단순 조회 업무,short,basic,,AS 65003의 iBGP Full-Mesh 구성은 완벽합니까? (True/False),TRUE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-31852,rule_based,2,단순 조회 업무,short,basic,,AS 65000의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까?,0,,"장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-58973,rule_based,2,단순 조회 업무,short,basic,,AS 65001의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까?,0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-15048,rule_based,2,단순 조회 업무,short,basic,,AS 65003의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까?,0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-NEIGHBOR_LIST_IBGP-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,"1.1.1.1, 2.2.2.2, 3.3.3.3",,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-NEIGHBOR_LIST_IBGP-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,"2.2.2.2, 3.3.3.3, 4.4.4.4",,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-NEIGHBOR_LIST_IBGP-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,"1.1.1.1, 3.3.3.3, 4.4.4.4",,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-NEIGHBOR_LIST_IBGP-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,"1.1.1.1, 2.2.2.2, 4.4.4.4",,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-NEIGHBOR_LIST_EBGP-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,192.168.1.10,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-NEIGHBOR_LIST_EBGP-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,192.168.3.10,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-NEIGHBOR_LIST_EBGP-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,192.168.4.11,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-NEIGHBOR_LIST_EBGP-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,192.168.1.11,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-NEIGHBOR_LIST_EBGP-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,192.168.2.11,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-NEIGHBOR_LIST_EBGP-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,192.168.3.11,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-IBGP_FULLMESH_OK-31852,rule_based,2,단순 조회 업무,short,basic,,AS 65000의 iBGP Full-Mesh 구성은 완벽합니까? (True/False),TRUE,,"장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-IBGP_FULLMESH_OK-58973,rule_based,2,단순 조회 업무,short,basic,,AS 65001의 iBGP Full-Mesh 구성은 완벽합니까? (True/False),TRUE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-IBGP_FULLMESH_OK-15048,rule_based,2,단순 조회 업무,short,basic,,AS 65003의 iBGP Full-Mesh 구성은 완벽합니까? (True/False),TRUE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-31852,rule_based,2,단순 조회 업무,short,basic,,AS 65000의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까?,0,,"장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-58973,rule_based,2,단순 조회 업무,short,basic,,AS 65001의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까?,0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-15048,rule_based,2,단순 조회 업무,short,basic,,AS 65003의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까?,0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-NEIGHBOR_LIST_IBGP-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,"1.1.1.1, 2.2.2.2, 3.3.3.3",,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-NEIGHBOR_LIST_IBGP-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,"2.2.2.2, 3.3.3.3, 4.4.4.4",,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-NEIGHBOR_LIST_IBGP-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,"1.1.1.1, 3.3.3.3, 4.4.4.4",,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-NEIGHBOR_LIST_IBGP-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,"1.1.1.1, 2.2.2.2, 4.4.4.4",,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-NEIGHBOR_LIST_EBGP-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,192.168.1.10,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-NEIGHBOR_LIST_EBGP-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,192.168.3.10,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-NEIGHBOR_LIST_EBGP-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,192.168.4.11,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-NEIGHBOR_LIST_EBGP-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,192.168.1.11,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-NEIGHBOR_LIST_EBGP-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,192.168.2.11,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-NEIGHBOR_LIST_EBGP-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.,192.168.3.11,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-IBGP_FULLMESH_OK-31852,rule_based,2,단순 조회 업무,short,basic,,AS 65000의 iBGP Full-Mesh 구성은 완벽합니까? (True/False),TRUE,,"장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-IBGP_FULLMESH_OK-58973,rule_based,2,단순 조회 업무,short,basic,,AS 65001의 iBGP Full-Mesh 구성은 완벽합니까? (True/False),TRUE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-IBGP_FULLMESH_OK-15048,rule_based,2,단순 조회 업무,short,basic,,AS 65003의 iBGP Full-Mesh 구성은 완벽합니까? (True/False),TRUE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-31852,rule_based,2,단순 조회 업무,short,basic,,AS 65000의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까?,0,,"장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-58973,rule_based,2,단순 조회 업무,short,basic,,AS 65001의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까?,0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-IBGP_MISSING_PAIRS_COUNT-15048,rule_based,2,단순 조회 업무,short,basic,,AS 65003의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까?,0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-VRF_WITHOUT_RT_COUNT-32651,rule_based,2,단순 조회 업무,short,basic,,route-target이 없는 VRF(장비/VRF)는 총 몇 개입니까?,0,,"장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1
+장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1
+장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-VRF_RT_LIST_PER_DEVICE-26063,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 각 VRF에 설정된 route-target 목록을 알려주세요.,65000:1000,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-VRF_RT_LIST_PER_DEVICE-23889,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 각 VRF에 설정된 route-target 목록을 알려주세요.,65000:1000,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-VRF_RT_LIST_PER_DEVICE-27584,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 각 VRF에 설정된 route-target 목록을 알려주세요.,65000:1000,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-VRF_RT_LIST_PER_DEVICE-17308,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 각 VRF에 설정된 route-target 목록을 알려주세요.,65000:1000,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-VRF_INTERFACE_BIND_COUNT-49783,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-VRF_INTERFACE_BIND_COUNT-33330,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-VRF_INTERFACE_BIND_COUNT-26063,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,0,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-VRF_INTERFACE_BIND_COUNT-23889,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,0,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-VRF_INTERFACE_BIND_COUNT-27584,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,0,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-VRF_INTERFACE_BIND_COUNT-17308,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,0,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-VRF_WITHOUT_RT_COUNT-32651,rule_based,2,단순 조회 업무,short,basic,,route-target이 없는 VRF(장비/VRF)는 총 몇 개입니까?,0,,"장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1
+장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1
+장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-VRF_RT_LIST_PER_DEVICE-26063,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 각 VRF에 설정된 route-target 목록을 알려주세요.,65000:1000,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-VRF_RT_LIST_PER_DEVICE-23889,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 각 VRF에 설정된 route-target 목록을 알려주세요.,65000:1000,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-VRF_RT_LIST_PER_DEVICE-27584,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 각 VRF에 설정된 route-target 목록을 알려주세요.,65000:1000,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-VRF_RT_LIST_PER_DEVICE-17308,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 각 VRF에 설정된 route-target 목록을 알려주세요.,65000:1000,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-VRF_INTERFACE_BIND_COUNT-49783,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-VRF_INTERFACE_BIND_COUNT-33330,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-VRF_INTERFACE_BIND_COUNT-26063,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,0,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-VRF_INTERFACE_BIND_COUNT-23889,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,0,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-VRF_INTERFACE_BIND_COUNT-27584,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,0,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-VRF_INTERFACE_BIND_COUNT-17308,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,0,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-VRF_WITHOUT_RT_COUNT-32651,rule_based,2,단순 조회 업무,short,basic,,route-target이 없는 VRF(장비/VRF)는 총 몇 개입니까?,0,,"장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1
+장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1
+장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-VRF_RT_LIST_PER_DEVICE-26063,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 각 VRF에 설정된 route-target 목록을 알려주세요.,65000:1000,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-VRF_RT_LIST_PER_DEVICE-23889,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 각 VRF에 설정된 route-target 목록을 알려주세요.,65000:1000,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-VRF_RT_LIST_PER_DEVICE-27584,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 각 VRF에 설정된 route-target 목록을 알려주세요.,65000:1000,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-VRF_RT_LIST_PER_DEVICE-17308,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 각 VRF에 설정된 route-target 목록을 알려주세요.,65000:1000,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-VRF_INTERFACE_BIND_COUNT-49783,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-VRF_INTERFACE_BIND_COUNT-33330,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-VRF_INTERFACE_BIND_COUNT-26063,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,0,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-VRF_INTERFACE_BIND_COUNT-23889,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,0,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-VRF_INTERFACE_BIND_COUNT-27584,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,0,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-VRF_INTERFACE_BIND_COUNT-17308,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 각 VRF에 바인딩된 인터페이스는 총 몇 개입니까?,0,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-L2VPN_PAIRS-32651,rule_based,1,단순 조회 업무,short,basic,,구성된 L2VPN pseudowire 회선(장비쌍) 목록을 알려주세요.(정답형식:장비<->장비),"sample7<->sample9, sample9<->sample7",,"장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1
+장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1
+장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-L2VPN_PWID_MISMATCH_PAIRS-32651,rule_based,2,단순 조회 업무,short,basic,,PW-ID가 불일치하는 L2VPN 회선(장비쌍) 목록을 알려주세요.(정답형식:장비<->장비),"sample7<->sample9, sample9<->sample7",,"장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1
+장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1
+장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-L2VPN_MISMATCH_COUNT-32651,rule_based,2,단순 조회 업무,short,basic,,PW-ID 불일치 또는 단방향 L2VPN 회선은 총 몇 개입니까?,2,,"장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1
+장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1
+장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-L2VPN_UNIDIR_COUNT-32651,rule_based,2,단순 조회 업무,short,basic,,단방향으로만 설정된 L2VPN 회선은 총 몇 개입니까?,0,,"장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1
+장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1
+장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-L2VPN_PAIRS-32651,rule_based,1,단순 조회 업무,short,basic,,구성된 L2VPN pseudowire 회선(장비쌍) 목록을 알려주세요.(정답형식:장비<->장비),"sample7<->sample9, sample9<->sample7",,"장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1
+장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1
+장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-L2VPN_PWID_MISMATCH_PAIRS-32651,rule_based,2,단순 조회 업무,short,basic,,PW-ID가 불일치하는 L2VPN 회선(장비쌍) 목록을 알려주세요.(정답형식:장비<->장비),"sample7<->sample9, sample9<->sample7",,"장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1
+장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1
+장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-L2VPN_MISMATCH_COUNT-32651,rule_based,2,단순 조회 업무,short,basic,,PW-ID 불일치 또는 단방향 L2VPN 회선은 총 몇 개입니까?,2,,"장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1
+장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1
+장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-L2VPN_UNIDIR_COUNT-32651,rule_based,2,단순 조회 업무,short,basic,,단방향으로만 설정된 L2VPN 회선은 총 몇 개입니까?,0,,"장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1
+장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1
+장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-L2VPN_PAIRS-32651,rule_based,1,단순 조회 업무,short,basic,,구성된 L2VPN pseudowire 회선(장비쌍) 목록을 알려주세요.(정답형식:장비<->장비),"sample7<->sample9, sample9<->sample7",,"장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1
+장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1
+장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-L2VPN_PWID_MISMATCH_PAIRS-32651,rule_based,2,단순 조회 업무,short,basic,,PW-ID가 불일치하는 L2VPN 회선(장비쌍) 목록을 알려주세요.(정답형식:장비<->장비),"sample7<->sample9, sample9<->sample7",,"장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1
+장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1
+장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-L2VPN_MISMATCH_COUNT-32651,rule_based,2,단순 조회 업무,short,basic,,PW-ID 불일치 또는 단방향 L2VPN 회선은 총 몇 개입니까?,2,,"장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1
+장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1
+장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-L2VPN_UNIDIR_COUNT-32651,rule_based,2,단순 조회 업무,short,basic,,단방향으로만 설정된 L2VPN 회선은 총 몇 개입니까?,0,,"장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1
+장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1
+장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+BASIC_DSL-OSPF_AREA0_IF_LIST-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.,"GigabitEthernet0/0/0/0, GigabitEthernet0/0/0/2, Loopback0",,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-OSPF_AREA0_IF_LIST-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.,"GigabitEthernet0/0/0/0, GigabitEthernet0/0/0/2, Loopback0",,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-OSPF_AREA0_IF_LIST-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.,"GigabitEthernet0/0/0/0, GigabitEthernet0/0/0/2, Loopback0",,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-OSPF_AREA0_IF_LIST-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.,"GigabitEthernet0/0/0/0, GigabitEthernet0/0/0/2, Loopback0",,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-OSPF_PROC_IDS-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,1,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-OSPF_PROC_IDS-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,1,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-OSPF_PROC_IDS-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,1,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-OSPF_PROC_IDS-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,1,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-OSPF_AREA0_IF_COUNT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-OSPF_AREA0_IF_COUNT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-OSPF_AREA0_IF_COUNT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,3,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-OSPF_AREA0_IF_COUNT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,3,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-OSPF_AREA0_IF_COUNT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,3,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-OSPF_AREA0_IF_COUNT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,3,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-OSPF_AREA0_IF_LIST-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.,"GigabitEthernet0/0/0/0, GigabitEthernet0/0/0/2, Loopback0",,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-OSPF_AREA0_IF_LIST-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.,"GigabitEthernet0/0/0/0, GigabitEthernet0/0/0/2, Loopback0",,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-OSPF_AREA0_IF_LIST-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.,"GigabitEthernet0/0/0/0, GigabitEthernet0/0/0/2, Loopback0",,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-OSPF_AREA0_IF_LIST-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.,"GigabitEthernet0/0/0/0, GigabitEthernet0/0/0/2, Loopback0",,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-OSPF_PROC_IDS-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,1,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-OSPF_PROC_IDS-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,1,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-OSPF_PROC_IDS-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,1,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-OSPF_PROC_IDS-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,1,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-OSPF_AREA0_IF_COUNT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-OSPF_AREA0_IF_COUNT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-OSPF_AREA0_IF_COUNT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,3,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-OSPF_AREA0_IF_COUNT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,3,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-OSPF_AREA0_IF_COUNT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,3,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-OSPF_AREA0_IF_COUNT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,3,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-OSPF_AREA0_IF_LIST-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.,"GigabitEthernet0/0/0/0, GigabitEthernet0/0/0/2, Loopback0",,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-OSPF_AREA0_IF_LIST-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.,"GigabitEthernet0/0/0/0, GigabitEthernet0/0/0/2, Loopback0",,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-OSPF_AREA0_IF_LIST-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.,"GigabitEthernet0/0/0/0, GigabitEthernet0/0/0/2, Loopback0",,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-OSPF_AREA0_IF_LIST-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.,"GigabitEthernet0/0/0/0, GigabitEthernet0/0/0/2, Loopback0",,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-OSPF_PROC_IDS-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,1,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-OSPF_PROC_IDS-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,1,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-OSPF_PROC_IDS-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,1,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-OSPF_PROC_IDS-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,1,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-OSPF_AREA0_IF_COUNT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-OSPF_AREA0_IF_COUNT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-OSPF_AREA0_IF_COUNT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,3,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-OSPF_AREA0_IF_COUNT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,3,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-OSPF_AREA0_IF_COUNT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,3,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-OSPF_AREA0_IF_COUNT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?,3,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 호스트네임은 무엇입니까?,CE1,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 호스트네임은 무엇입니까?,CE2,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 호스트네임은 무엇입니까?,sample10,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 호스트네임은 무엇입니까?,sample7,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 호스트네임은 무엇입니까?,sample8,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 호스트네임은 무엇입니까?,sample9,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SYSTEM_VERSION_TEXT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 운영체제(OS) 버전은 무엇입니까?,15.4,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_VERSION_TEXT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 운영체제(OS) 버전은 무엇입니까?,15.4,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SYSTEM_USER_COUNT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에 등록된 로컬 사용자는 총 몇 명입니까?,0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_USER_COUNT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에 등록된 로컬 사용자는 총 몇 명입니까?,0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SYSTEM_USER_COUNT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 등록된 로컬 사용자는 총 몇 명입니까?,1,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SYSTEM_USER_COUNT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 등록된 로컬 사용자는 총 몇 명입니까?,1,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SYSTEM_USER_COUNT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 등록된 로컬 사용자는 총 몇 명입니까?,1,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SYSTEM_USER_COUNT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 등록된 로컬 사용자는 총 몇 명입니까?,1,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SYSTEM_USER_LIST-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 등록된 로컬 사용자 목록을 알려주세요.,nso,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SYSTEM_USER_LIST-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 등록된 로컬 사용자 목록을 알려주세요.,nso,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SYSTEM_USER_LIST-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 등록된 로컬 사용자 목록을 알려주세요.,nso,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SYSTEM_USER_LIST-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 등록된 로컬 사용자 목록을 알려주세요.,nso,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SYSTEM_TIMEZONE_TEXT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 시간대(Timezone)는 무엇입니까?,KST,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_TIMEZONE_TEXT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 시간대(Timezone)는 무엇입니까?,KST,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 호스트네임은 무엇입니까?,CE1,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 호스트네임은 무엇입니까?,CE2,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 호스트네임은 무엇입니까?,sample10,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 호스트네임은 무엇입니까?,sample7,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 호스트네임은 무엇입니까?,sample8,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 호스트네임은 무엇입니까?,sample9,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SYSTEM_VERSION_TEXT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 운영체제(OS) 버전은 무엇입니까?,15.4,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_VERSION_TEXT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 운영체제(OS) 버전은 무엇입니까?,15.4,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SYSTEM_USER_COUNT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에 등록된 로컬 사용자는 총 몇 명입니까?,0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_USER_COUNT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에 등록된 로컬 사용자는 총 몇 명입니까?,0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SYSTEM_USER_COUNT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 등록된 로컬 사용자는 총 몇 명입니까?,1,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SYSTEM_USER_COUNT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 등록된 로컬 사용자는 총 몇 명입니까?,1,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SYSTEM_USER_COUNT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 등록된 로컬 사용자는 총 몇 명입니까?,1,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SYSTEM_USER_COUNT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 등록된 로컬 사용자는 총 몇 명입니까?,1,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SYSTEM_USER_LIST-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 등록된 로컬 사용자 목록을 알려주세요.,nso,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SYSTEM_USER_LIST-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 등록된 로컬 사용자 목록을 알려주세요.,nso,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SYSTEM_USER_LIST-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 등록된 로컬 사용자 목록을 알려주세요.,nso,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SYSTEM_USER_LIST-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 등록된 로컬 사용자 목록을 알려주세요.,nso,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SYSTEM_TIMEZONE_TEXT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 시간대(Timezone)는 무엇입니까?,KST,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_TIMEZONE_TEXT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 시간대(Timezone)는 무엇입니까?,KST,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 호스트네임은 무엇입니까?,CE1,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 호스트네임은 무엇입니까?,CE2,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 호스트네임은 무엇입니까?,sample10,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 호스트네임은 무엇입니까?,sample7,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 호스트네임은 무엇입니까?,sample8,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 호스트네임은 무엇입니까?,sample9,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SYSTEM_VERSION_TEXT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 운영체제(OS) 버전은 무엇입니까?,15.4,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_VERSION_TEXT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 운영체제(OS) 버전은 무엇입니까?,15.4,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SYSTEM_USER_COUNT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에 등록된 로컬 사용자는 총 몇 명입니까?,0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_USER_COUNT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에 등록된 로컬 사용자는 총 몇 명입니까?,0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SYSTEM_USER_COUNT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 등록된 로컬 사용자는 총 몇 명입니까?,1,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SYSTEM_USER_COUNT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 등록된 로컬 사용자는 총 몇 명입니까?,1,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SYSTEM_USER_COUNT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 등록된 로컬 사용자는 총 몇 명입니까?,1,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SYSTEM_USER_COUNT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 등록된 로컬 사용자는 총 몇 명입니까?,1,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SYSTEM_USER_LIST-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 등록된 로컬 사용자 목록을 알려주세요.,nso,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SYSTEM_USER_LIST-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 등록된 로컬 사용자 목록을 알려주세요.,nso,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SYSTEM_USER_LIST-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 등록된 로컬 사용자 목록을 알려주세요.,nso,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SYSTEM_USER_LIST-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 등록된 로컬 사용자 목록을 알려주세요.,nso,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SYSTEM_TIMEZONE_TEXT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 시간대(Timezone)는 무엇입니까?,KST,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_TIMEZONE_TEXT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 시간대(Timezone)는 무엇입니까?,KST,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SSH_PRESENT_BOOL-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에 SSH가 활성화되어 있습니까? (True/False),TRUE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SSH_PRESENT_BOOL-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에 SSH가 활성화되어 있습니까? (True/False),TRUE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SSH_PRESENT_BOOL-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 SSH가 활성화되어 있습니까? (True/False),TRUE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SSH_PRESENT_BOOL-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 SSH가 활성화되어 있습니까? (True/False),TRUE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SSH_PRESENT_BOOL-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 SSH가 활성화되어 있습니까? (True/False),TRUE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SSH_PRESENT_BOOL-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 SSH가 활성화되어 있습니까? (True/False),TRUE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SSH_VERSION_TEXT-48380,rule_based,1,단순 조회 업무,short,basic,,ssh_version_text에 대한 질문을 자연스럽게 작성해주세요.,2,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SSH_VERSION_TEXT-23145,rule_based,1,단순 조회 업무,short,basic,,ssh_version_text에 대한 질문을 자연스럽게 작성해주세요.,2,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-AAA_PRESENT_BOOL-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에 AAA 기능이 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-AAA_PRESENT_BOOL-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에 AAA 기능이 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-AAA_PRESENT_BOOL-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 AAA 기능이 설정되어 있습니까? (True/False),TRUE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-AAA_PRESENT_BOOL-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 AAA 기능이 설정되어 있습니까? (True/False),TRUE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-AAA_PRESENT_BOOL-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 AAA 기능이 설정되어 있습니까? (True/False),TRUE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-AAA_PRESENT_BOOL-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 AAA 기능이 설정되어 있습니까? (True/False),TRUE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에 패스워드 정책이 적용되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에 패스워드 정책이 적용되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 패스워드 정책이 적용되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 패스워드 정책이 적용되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 패스워드 정책이 적용되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 패스워드 정책이 적용되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SSH_PRESENT_BOOL-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에 SSH가 활성화되어 있습니까? (True/False),TRUE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SSH_PRESENT_BOOL-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에 SSH가 활성화되어 있습니까? (True/False),TRUE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SSH_PRESENT_BOOL-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 SSH가 활성화되어 있습니까? (True/False),TRUE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SSH_PRESENT_BOOL-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 SSH가 활성화되어 있습니까? (True/False),TRUE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SSH_PRESENT_BOOL-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 SSH가 활성화되어 있습니까? (True/False),TRUE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SSH_PRESENT_BOOL-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 SSH가 활성화되어 있습니까? (True/False),TRUE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SSH_VERSION_TEXT-48380,rule_based,1,단순 조회 업무,short,basic,,ssh_version_text에 대한 질문을 자연스럽게 작성해주세요.,2,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SSH_VERSION_TEXT-23145,rule_based,1,단순 조회 업무,short,basic,,ssh_version_text에 대한 질문을 자연스럽게 작성해주세요.,2,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-AAA_PRESENT_BOOL-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에 AAA 기능이 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-AAA_PRESENT_BOOL-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에 AAA 기능이 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-AAA_PRESENT_BOOL-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 AAA 기능이 설정되어 있습니까? (True/False),TRUE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-AAA_PRESENT_BOOL-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 AAA 기능이 설정되어 있습니까? (True/False),TRUE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-AAA_PRESENT_BOOL-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 AAA 기능이 설정되어 있습니까? (True/False),TRUE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-AAA_PRESENT_BOOL-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 AAA 기능이 설정되어 있습니까? (True/False),TRUE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에 패스워드 정책이 적용되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에 패스워드 정책이 적용되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 패스워드 정책이 적용되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 패스워드 정책이 적용되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 패스워드 정책이 적용되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 패스워드 정책이 적용되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SSH_PRESENT_BOOL-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에 SSH가 활성화되어 있습니까? (True/False),TRUE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SSH_PRESENT_BOOL-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에 SSH가 활성화되어 있습니까? (True/False),TRUE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SSH_PRESENT_BOOL-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 SSH가 활성화되어 있습니까? (True/False),TRUE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SSH_PRESENT_BOOL-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 SSH가 활성화되어 있습니까? (True/False),TRUE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SSH_PRESENT_BOOL-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 SSH가 활성화되어 있습니까? (True/False),TRUE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SSH_PRESENT_BOOL-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 SSH가 활성화되어 있습니까? (True/False),TRUE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SSH_VERSION_TEXT-48380,rule_based,1,단순 조회 업무,short,basic,,ssh_version_text에 대한 질문을 자연스럽게 작성해주세요.,2,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SSH_VERSION_TEXT-23145,rule_based,1,단순 조회 업무,short,basic,,ssh_version_text에 대한 질문을 자연스럽게 작성해주세요.,2,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-AAA_PRESENT_BOOL-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에 AAA 기능이 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-AAA_PRESENT_BOOL-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에 AAA 기능이 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-AAA_PRESENT_BOOL-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 AAA 기능이 설정되어 있습니까? (True/False),TRUE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-AAA_PRESENT_BOOL-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 AAA 기능이 설정되어 있습니까? (True/False),TRUE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-AAA_PRESENT_BOOL-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 AAA 기능이 설정되어 있습니까? (True/False),TRUE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-AAA_PRESENT_BOOL-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 AAA 기능이 설정되어 있습니까? (True/False),TRUE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에 패스워드 정책이 적용되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에 패스워드 정책이 적용되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 패스워드 정책이 적용되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 패스워드 정책이 적용되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 패스워드 정책이 적용되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-PASSWORD_POLICY_PRESENT_BOOL-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 패스워드 정책이 적용되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_COUNT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_COUNT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_COUNT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,7,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_COUNT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,7,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_COUNT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,6,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_COUNT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,7,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_VLAN_SET-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 설정된 VLAN 목록을 알려주세요.,400,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_VLAN_SET-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 설정된 VLAN 목록을 알려주세요.,100,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_VLAN_SET-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 설정된 VLAN 목록을 알려주세요.,200,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_VLAN_SET-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 설정된 VLAN 목록을 알려주세요.,300,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SUBINTERFACE_COUNT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에 설정된 서브인터페이스는 총 몇 개입니까?,0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SUBINTERFACE_COUNT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에 설정된 서브인터페이스는 총 몇 개입니까?,0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SUBINTERFACE_COUNT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 설정된 서브인터페이스는 총 몇 개입니까?,1,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SUBINTERFACE_COUNT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 설정된 서브인터페이스는 총 몇 개입니까?,2,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SUBINTERFACE_COUNT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 설정된 서브인터페이스는 총 몇 개입니까?,1,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SUBINTERFACE_COUNT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 설정된 서브인터페이스는 총 몇 개입니까?,2,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_COUNT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_COUNT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_COUNT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,7,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_COUNT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,7,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_COUNT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,6,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_COUNT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,7,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_VLAN_SET-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 설정된 VLAN 목록을 알려주세요.,400,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_VLAN_SET-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 설정된 VLAN 목록을 알려주세요.,100,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_VLAN_SET-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 설정된 VLAN 목록을 알려주세요.,200,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_VLAN_SET-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 설정된 VLAN 목록을 알려주세요.,300,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SUBINTERFACE_COUNT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에 설정된 서브인터페이스는 총 몇 개입니까?,0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SUBINTERFACE_COUNT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에 설정된 서브인터페이스는 총 몇 개입니까?,0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SUBINTERFACE_COUNT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 설정된 서브인터페이스는 총 몇 개입니까?,1,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SUBINTERFACE_COUNT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 설정된 서브인터페이스는 총 몇 개입니까?,2,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SUBINTERFACE_COUNT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 설정된 서브인터페이스는 총 몇 개입니까?,1,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SUBINTERFACE_COUNT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 설정된 서브인터페이스는 총 몇 개입니까?,2,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_COUNT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_COUNT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_COUNT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,7,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_COUNT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,7,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_COUNT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,6,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_COUNT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?,7,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_VLAN_SET-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 설정된 VLAN 목록을 알려주세요.,400,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_VLAN_SET-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 설정된 VLAN 목록을 알려주세요.,100,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_VLAN_SET-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 설정된 VLAN 목록을 알려주세요.,200,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_VLAN_SET-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 설정된 VLAN 목록을 알려주세요.,300,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SUBINTERFACE_COUNT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에 설정된 서브인터페이스는 총 몇 개입니까?,0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SUBINTERFACE_COUNT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에 설정된 서브인터페이스는 총 몇 개입니까?,0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SUBINTERFACE_COUNT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 설정된 서브인터페이스는 총 몇 개입니까?,1,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SUBINTERFACE_COUNT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 설정된 서브인터페이스는 총 몇 개입니까?,2,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SUBINTERFACE_COUNT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 설정된 서브인터페이스는 총 몇 개입니까?,1,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SUBINTERFACE_COUNT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 설정된 서브인터페이스는 총 몇 개입니까?,2,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-BGP_LOCAL_AS_NUMERIC-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 BGP Local-AS 번호는 무엇입니까?,65001,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-BGP_LOCAL_AS_NUMERIC-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 BGP Local-AS 번호는 무엇입니까?,65003,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-BGP_LOCAL_AS_NUMERIC-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 BGP Local-AS 번호는 무엇입니까?,65000,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-BGP_LOCAL_AS_NUMERIC-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 BGP Local-AS 번호는 무엇입니까?,65000,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-BGP_LOCAL_AS_NUMERIC-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 BGP Local-AS 번호는 무엇입니까?,65000,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-BGP_LOCAL_AS_NUMERIC-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 BGP Local-AS 번호는 무엇입니까?,65000,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-BGP_NEIGHBOR_COUNT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 BGP 피어(이웃)는 총 몇 개입니까?,1,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-BGP_NEIGHBOR_COUNT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 BGP 피어(이웃)는 총 몇 개입니까?,1,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-BGP_NEIGHBOR_COUNT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 BGP 피어(이웃)는 총 몇 개입니까?,4,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-BGP_NEIGHBOR_COUNT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 BGP 피어(이웃)는 총 몇 개입니까?,4,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-BGP_NEIGHBOR_COUNT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 BGP 피어(이웃)는 총 몇 개입니까?,4,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-BGP_NEIGHBOR_COUNT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 BGP 피어(이웃)는 총 몇 개입니까?,4,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-OSPF_AREA_SET-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비가 참여하는 OSPF Area 목록을 알려주세요.,0,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-OSPF_AREA_SET-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비가 참여하는 OSPF Area 목록을 알려주세요.,0,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-OSPF_AREA_SET-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비가 참여하는 OSPF Area 목록을 알려주세요.,0,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-OSPF_AREA_SET-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비가 참여하는 OSPF Area 목록을 알려주세요.,0,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-OSPF_PROCESS_IDS_SET-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,1,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-OSPF_PROCESS_IDS_SET-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,1,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-OSPF_PROCESS_IDS_SET-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,1,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-OSPF_PROCESS_IDS_SET-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,1,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-BGP_LOCAL_AS_NUMERIC-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 BGP Local-AS 번호는 무엇입니까?,65001,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-BGP_LOCAL_AS_NUMERIC-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 BGP Local-AS 번호는 무엇입니까?,65003,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-BGP_LOCAL_AS_NUMERIC-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 BGP Local-AS 번호는 무엇입니까?,65000,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-BGP_LOCAL_AS_NUMERIC-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 BGP Local-AS 번호는 무엇입니까?,65000,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-BGP_LOCAL_AS_NUMERIC-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 BGP Local-AS 번호는 무엇입니까?,65000,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-BGP_LOCAL_AS_NUMERIC-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 BGP Local-AS 번호는 무엇입니까?,65000,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-BGP_NEIGHBOR_COUNT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 BGP 피어(이웃)는 총 몇 개입니까?,1,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-BGP_NEIGHBOR_COUNT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 BGP 피어(이웃)는 총 몇 개입니까?,1,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-BGP_NEIGHBOR_COUNT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 BGP 피어(이웃)는 총 몇 개입니까?,4,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-BGP_NEIGHBOR_COUNT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 BGP 피어(이웃)는 총 몇 개입니까?,4,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-BGP_NEIGHBOR_COUNT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 BGP 피어(이웃)는 총 몇 개입니까?,4,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-BGP_NEIGHBOR_COUNT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 BGP 피어(이웃)는 총 몇 개입니까?,4,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-OSPF_AREA_SET-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비가 참여하는 OSPF Area 목록을 알려주세요.,0,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-OSPF_AREA_SET-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비가 참여하는 OSPF Area 목록을 알려주세요.,0,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-OSPF_AREA_SET-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비가 참여하는 OSPF Area 목록을 알려주세요.,0,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-OSPF_AREA_SET-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비가 참여하는 OSPF Area 목록을 알려주세요.,0,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-OSPF_PROCESS_IDS_SET-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,1,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-OSPF_PROCESS_IDS_SET-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,1,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-OSPF_PROCESS_IDS_SET-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,1,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-OSPF_PROCESS_IDS_SET-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,1,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-BGP_LOCAL_AS_NUMERIC-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 BGP Local-AS 번호는 무엇입니까?,65001,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-BGP_LOCAL_AS_NUMERIC-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 BGP Local-AS 번호는 무엇입니까?,65003,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-BGP_LOCAL_AS_NUMERIC-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 BGP Local-AS 번호는 무엇입니까?,65000,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-BGP_LOCAL_AS_NUMERIC-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 BGP Local-AS 번호는 무엇입니까?,65000,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-BGP_LOCAL_AS_NUMERIC-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 BGP Local-AS 번호는 무엇입니까?,65000,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-BGP_LOCAL_AS_NUMERIC-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 BGP Local-AS 번호는 무엇입니까?,65000,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-BGP_NEIGHBOR_COUNT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 BGP 피어(이웃)는 총 몇 개입니까?,1,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-BGP_NEIGHBOR_COUNT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 BGP 피어(이웃)는 총 몇 개입니까?,1,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-BGP_NEIGHBOR_COUNT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 BGP 피어(이웃)는 총 몇 개입니까?,4,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-BGP_NEIGHBOR_COUNT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 BGP 피어(이웃)는 총 몇 개입니까?,4,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-BGP_NEIGHBOR_COUNT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 BGP 피어(이웃)는 총 몇 개입니까?,4,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-BGP_NEIGHBOR_COUNT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 BGP 피어(이웃)는 총 몇 개입니까?,4,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-OSPF_AREA_SET-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비가 참여하는 OSPF Area 목록을 알려주세요.,0,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-OSPF_AREA_SET-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비가 참여하는 OSPF Area 목록을 알려주세요.,0,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-OSPF_AREA_SET-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비가 참여하는 OSPF Area 목록을 알려주세요.,0,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-OSPF_AREA_SET-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비가 참여하는 OSPF Area 목록을 알려주세요.,0,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-OSPF_PROCESS_IDS_SET-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,1,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-OSPF_PROCESS_IDS_SET-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,1,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-OSPF_PROCESS_IDS_SET-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,1,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-OSPF_PROCESS_IDS_SET-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.,1,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-VRF_NAMES_SET-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 설정된 VRF 이름 목록을 알려주세요.,exam-l3vpn,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-VRF_NAMES_SET-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 설정된 VRF 이름 목록을 알려주세요.,exam-l3vpn,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-VRF_NAMES_SET-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 설정된 VRF 이름 목록을 알려주세요.,exam-l3vpn,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-VRF_NAMES_SET-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 설정된 VRF 이름 목록을 알려주세요.,exam-l3vpn,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-L2VPN_PW_ID_SET-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.,13,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-L2VPN_PW_ID_SET-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.,31,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-RT_IMPORT_COUNT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 Route Target Import 설정은 총 몇 개입니까?,0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-RT_IMPORT_COUNT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 Route Target Import 설정은 총 몇 개입니까?,0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-RT_IMPORT_COUNT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 Route Target Import 설정은 총 몇 개입니까?,0,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-RT_IMPORT_COUNT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 Route Target Import 설정은 총 몇 개입니까?,0,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-RT_IMPORT_COUNT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 Route Target Import 설정은 총 몇 개입니까?,0,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-RT_IMPORT_COUNT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 Route Target Import 설정은 총 몇 개입니까?,0,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-RT_EXPORT_COUNT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 Route Target Export 설정은 총 몇 개입니까?,0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-RT_EXPORT_COUNT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 Route Target Export 설정은 총 몇 개입니까?,0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-RT_EXPORT_COUNT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 Route Target Export 설정은 총 몇 개입니까?,0,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-RT_EXPORT_COUNT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 Route Target Export 설정은 총 몇 개입니까?,0,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-RT_EXPORT_COUNT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 Route Target Export 설정은 총 몇 개입니까?,0,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-RT_EXPORT_COUNT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 Route Target Export 설정은 총 몇 개입니까?,0,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-VRF_COUNT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에 설정된 VRF는 총 몇 개입니까?,0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-VRF_COUNT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에 설정된 VRF는 총 몇 개입니까?,0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-VRF_COUNT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 설정된 VRF는 총 몇 개입니까?,1,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-VRF_COUNT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 설정된 VRF는 총 몇 개입니까?,1,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-VRF_COUNT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 설정된 VRF는 총 몇 개입니까?,1,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-VRF_COUNT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 설정된 VRF는 총 몇 개입니까?,1,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-VRF_NAMES_SET-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 설정된 VRF 이름 목록을 알려주세요.,exam-l3vpn,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-VRF_NAMES_SET-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 설정된 VRF 이름 목록을 알려주세요.,exam-l3vpn,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-VRF_NAMES_SET-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 설정된 VRF 이름 목록을 알려주세요.,exam-l3vpn,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-VRF_NAMES_SET-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 설정된 VRF 이름 목록을 알려주세요.,exam-l3vpn,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-L2VPN_PW_ID_SET-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.,13,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-L2VPN_PW_ID_SET-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.,31,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-RT_IMPORT_COUNT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 Route Target Import 설정은 총 몇 개입니까?,0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-RT_IMPORT_COUNT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 Route Target Import 설정은 총 몇 개입니까?,0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-RT_IMPORT_COUNT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 Route Target Import 설정은 총 몇 개입니까?,0,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-RT_IMPORT_COUNT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 Route Target Import 설정은 총 몇 개입니까?,0,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-RT_IMPORT_COUNT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 Route Target Import 설정은 총 몇 개입니까?,0,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-RT_IMPORT_COUNT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 Route Target Import 설정은 총 몇 개입니까?,0,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-RT_EXPORT_COUNT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 Route Target Export 설정은 총 몇 개입니까?,0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-RT_EXPORT_COUNT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 Route Target Export 설정은 총 몇 개입니까?,0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-RT_EXPORT_COUNT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 Route Target Export 설정은 총 몇 개입니까?,0,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-RT_EXPORT_COUNT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 Route Target Export 설정은 총 몇 개입니까?,0,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-RT_EXPORT_COUNT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 Route Target Export 설정은 총 몇 개입니까?,0,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-RT_EXPORT_COUNT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 Route Target Export 설정은 총 몇 개입니까?,0,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-VRF_COUNT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에 설정된 VRF는 총 몇 개입니까?,0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-VRF_COUNT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에 설정된 VRF는 총 몇 개입니까?,0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-VRF_COUNT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 설정된 VRF는 총 몇 개입니까?,1,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-VRF_COUNT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 설정된 VRF는 총 몇 개입니까?,1,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-VRF_COUNT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 설정된 VRF는 총 몇 개입니까?,1,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-VRF_COUNT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 설정된 VRF는 총 몇 개입니까?,1,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-VRF_NAMES_SET-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 설정된 VRF 이름 목록을 알려주세요.,exam-l3vpn,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-VRF_NAMES_SET-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 설정된 VRF 이름 목록을 알려주세요.,exam-l3vpn,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-VRF_NAMES_SET-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 설정된 VRF 이름 목록을 알려주세요.,exam-l3vpn,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-VRF_NAMES_SET-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 설정된 VRF 이름 목록을 알려주세요.,exam-l3vpn,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-L2VPN_PW_ID_SET-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.,13,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-L2VPN_PW_ID_SET-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.,31,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-RT_IMPORT_COUNT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 Route Target Import 설정은 총 몇 개입니까?,0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-RT_IMPORT_COUNT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 Route Target Import 설정은 총 몇 개입니까?,0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-RT_IMPORT_COUNT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 Route Target Import 설정은 총 몇 개입니까?,0,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-RT_IMPORT_COUNT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 Route Target Import 설정은 총 몇 개입니까?,0,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-RT_IMPORT_COUNT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 Route Target Import 설정은 총 몇 개입니까?,0,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-RT_IMPORT_COUNT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 Route Target Import 설정은 총 몇 개입니까?,0,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-RT_EXPORT_COUNT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 Route Target Export 설정은 총 몇 개입니까?,0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-RT_EXPORT_COUNT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 Route Target Export 설정은 총 몇 개입니까?,0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-RT_EXPORT_COUNT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 Route Target Export 설정은 총 몇 개입니까?,0,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-RT_EXPORT_COUNT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 Route Target Export 설정은 총 몇 개입니까?,0,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-RT_EXPORT_COUNT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 Route Target Export 설정은 총 몇 개입니까?,0,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-RT_EXPORT_COUNT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 Route Target Export 설정은 총 몇 개입니까?,0,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-VRF_COUNT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에 설정된 VRF는 총 몇 개입니까?,0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-VRF_COUNT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에 설정된 VRF는 총 몇 개입니까?,0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-VRF_COUNT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에 설정된 VRF는 총 몇 개입니까?,1,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-VRF_COUNT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에 설정된 VRF는 총 몇 개입니까?,1,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-VRF_COUNT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에 설정된 VRF는 총 몇 개입니까?,1,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-VRF_COUNT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에 설정된 VRF는 총 몇 개입니까?,1,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 호스트네임은 무엇입니까?,CE1,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 호스트네임은 무엇입니까?,CE2,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 호스트네임은 무엇입니까?,sample10,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 호스트네임은 무엇입니까?,sample7,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 호스트네임은 무엇입니까?,sample8,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 호스트네임은 무엇입니까?,sample9,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 관리용 IP 주소는 무엇입니까?,172.16.1.40,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 관리용 IP 주소는 무엇입니까?,172.16.1.41,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 관리용 IP 주소는 무엇입니까?,172.16.1.133,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 관리용 IP 주소는 무엇입니까?,172.16.1.130,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 관리용 IP 주소는 무엇입니까?,172.16.1.131,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 관리용 IP 주소는 무엇입니까?,172.16.1.132,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SYSTEM_VERSION_TEXT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 운영체제(OS) 버전은 무엇입니까?,15.4,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_VERSION_TEXT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 운영체제(OS) 버전은 무엇입니까?,15.4,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-IOS_CONFIG_REGISTER_TEXT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 config-register 값은 무엇입니까?,0x0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-IOS_CONFIG_REGISTER_TEXT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 config-register 값은 무엇입니까?,0x0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),TRUE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),TRUE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-IP_CEF_ENABLED_BOOL-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에서 IP CEF가 활성화되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-IP_CEF_ENABLED_BOOL-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에서 IP CEF가 활성화되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-IP_CEF_ENABLED_BOOL-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에서 IP CEF가 활성화되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-IP_CEF_ENABLED_BOOL-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에서 IP CEF가 활성화되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-IP_CEF_ENABLED_BOOL-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에서 IP CEF가 활성화되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-IP_CEF_ENABLED_BOOL-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에서 IP CEF가 활성화되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-24074,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-61875,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-56681,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-40301,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-20858,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-39536,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-40258,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-32459,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-41721,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-34335,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-63936,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-14279,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-51933,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-40465,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-5730,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-58364,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-18291,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-15581,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-37599,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-47763,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-44243,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-42385,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-28350,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-48903,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-23196,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-54880,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-13472,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-3405,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-11218,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-49612,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-56987,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-19203,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-44354,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-22706,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-20441,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-52605,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-50215,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-38728,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-9220,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-20012,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-28456,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-57773,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-18335,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-20194,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-29911,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-34910,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-11986,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-17550,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-21510,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-25207,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-30988,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-60752,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-21733,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-14238,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-3269,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-15868,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-10343,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-65127,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-8020,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-49441,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-13982,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-56518,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-51890,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-61418,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-49105,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-6949,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 호스트네임은 무엇입니까?,CE1,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 호스트네임은 무엇입니까?,CE2,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 호스트네임은 무엇입니까?,sample10,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 호스트네임은 무엇입니까?,sample7,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 호스트네임은 무엇입니까?,sample8,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 호스트네임은 무엇입니까?,sample9,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 관리용 IP 주소는 무엇입니까?,172.16.1.40,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 관리용 IP 주소는 무엇입니까?,172.16.1.41,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 관리용 IP 주소는 무엇입니까?,172.16.1.133,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 관리용 IP 주소는 무엇입니까?,172.16.1.130,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 관리용 IP 주소는 무엇입니까?,172.16.1.131,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 관리용 IP 주소는 무엇입니까?,172.16.1.132,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SYSTEM_VERSION_TEXT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 운영체제(OS) 버전은 무엇입니까?,15.4,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_VERSION_TEXT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 운영체제(OS) 버전은 무엇입니까?,15.4,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-IOS_CONFIG_REGISTER_TEXT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 config-register 값은 무엇입니까?,0x0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-IOS_CONFIG_REGISTER_TEXT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 config-register 값은 무엇입니까?,0x0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),TRUE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),TRUE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-IP_CEF_ENABLED_BOOL-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에서 IP CEF가 활성화되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-IP_CEF_ENABLED_BOOL-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에서 IP CEF가 활성화되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-IP_CEF_ENABLED_BOOL-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에서 IP CEF가 활성화되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-IP_CEF_ENABLED_BOOL-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에서 IP CEF가 활성화되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-IP_CEF_ENABLED_BOOL-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에서 IP CEF가 활성화되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-IP_CEF_ENABLED_BOOL-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에서 IP CEF가 활성화되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-24074,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-61875,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-56681,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-40301,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-20858,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-39536,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-40258,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-32459,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-41721,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-34335,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-63936,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-14279,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-51933,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-40465,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-5730,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-58364,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-18291,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-15581,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-37599,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-47763,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-44243,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-42385,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-28350,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-48903,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-23196,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-54880,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-13472,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-3405,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-11218,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-49612,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-56987,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-19203,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-44354,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-22706,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-20441,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-52605,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-50215,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-38728,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-9220,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-20012,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-28456,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-57773,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-18335,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-20194,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-29911,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-34910,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-11986,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-17550,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-21510,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-25207,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-30988,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-60752,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-21733,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-14238,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-3269,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-15868,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-10343,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-65127,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-8020,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-49441,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-13982,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-56518,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-51890,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-61418,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-49105,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-6949,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 호스트네임은 무엇입니까?,CE1,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 호스트네임은 무엇입니까?,CE2,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 호스트네임은 무엇입니까?,sample10,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 호스트네임은 무엇입니까?,sample7,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 호스트네임은 무엇입니까?,sample8,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SYSTEM_HOSTNAME_TEXT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 호스트네임은 무엇입니까?,sample9,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 관리용 IP 주소는 무엇입니까?,172.16.1.40,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 관리용 IP 주소는 무엇입니까?,172.16.1.41,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비의 관리용 IP 주소는 무엇입니까?,172.16.1.133,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비의 관리용 IP 주소는 무엇입니까?,172.16.1.130,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비의 관리용 IP 주소는 무엇입니까?,172.16.1.131,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-SYSTEM_MGMT_ADDRESS_TEXT-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비의 관리용 IP 주소는 무엇입니까?,172.16.1.132,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-SYSTEM_VERSION_TEXT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 운영체제(OS) 버전은 무엇입니까?,15.4,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-SYSTEM_VERSION_TEXT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 운영체제(OS) 버전은 무엇입니까?,15.4,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-IOS_CONFIG_REGISTER_TEXT-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비의 config-register 값은 무엇입니까?,0x0,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-IOS_CONFIG_REGISTER_TEXT-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비의 config-register 값은 무엇입니까?,0x0,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-HTTP_SERVER_ENABLED_BOOL-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에서 HTTP 서버가 활성화되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),TRUE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),TRUE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-IP_FORWARD_PROTOCOL_ND_BOOL-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에서 ip forward-protocol nd가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-IP_CEF_ENABLED_BOOL-48380,rule_based,1,단순 조회 업무,short,basic,,CE1 장비에서 IP CEF가 활성화되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-IP_CEF_ENABLED_BOOL-23145,rule_based,1,단순 조회 업무,short,basic,,CE2 장비에서 IP CEF가 활성화되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-IP_CEF_ENABLED_BOOL-43039,rule_based,1,단순 조회 업무,short,basic,,sample10 장비에서 IP CEF가 활성화되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-IP_CEF_ENABLED_BOOL-16411,rule_based,1,단순 조회 업무,short,basic,,sample7 장비에서 IP CEF가 활성화되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-IP_CEF_ENABLED_BOOL-19040,rule_based,1,단순 조회 업무,short,basic,,sample8 장비에서 IP CEF가 활성화되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-IP_CEF_ENABLED_BOOL-50941,rule_based,1,단순 조회 업무,short,basic,,sample9 장비에서 IP CEF가 활성화되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-24074,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-61875,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-56681,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-40301,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-20858,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-39536,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-40258,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-32459,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-41721,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-34335,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-63936,rule_based,2,단순 조회 업무,short,basic,,CE1 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-14279,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-51933,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-40465,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-5730,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-58364,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-18291,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-15581,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-37599,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-47763,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-44243,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-42385,rule_based,2,단순 조회 업무,short,basic,,CE2 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-28350,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-48903,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-23196,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-54880,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-13472,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-3405,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-11218,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-49612,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-56987,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-19203,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-44354,rule_based,2,단순 조회 업무,short,basic,,sample10 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-22706,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-20441,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-52605,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-50215,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-38728,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-9220,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-20012,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-28456,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-57773,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-18335,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-20194,rule_based,2,단순 조회 업무,short,basic,,sample7 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-29911,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-34910,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-11986,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-17550,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-21510,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-25207,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-30988,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-60752,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-21733,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-14238,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-3269,rule_based,2,단순 조회 업무,short,basic,,sample8 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-15868,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-10343,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-65127,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-8020,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-49441,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-13982,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-56518,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-51890,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-61418,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-49105,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_DSL-INTERFACE_MOP_XENABLED_BOOL-6949,rule_based,2,단순 조회 업무,short,basic,,sample9 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (True/False),FALSE,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_CMD_0,rule_based,1,명령어 사용법/질의,short,basic,,CE1 장비에서 BGP 피어 상태를 요약해서 확인하는 명령어는 무엇입니까?,show bgp summary,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_1,rule_based,1,명령어 사용법/질의,short,basic,,CE1 장비의 인터페이스 IP 상태를 간단히 확인하는 명령어는 무엇입니까?,show ip interface brief,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_2,rule_based,1,명령어 사용법/질의,short,basic,,CE1 장비에서 OSPF로 학습된 라우팅 정보를 확인하는 명령어는 무엇입니까?,show ip route ospf,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_3,rule_based,1,명령어 사용법/질의,short,basic,,CE1 장비에서 CPU 사용률 순으로 프로세스를 확인하는 명령어는 무엇입니까?,show processes cpu sorted,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_4,rule_based,1,명령어 사용법/질의,short,basic,,CE1 장비에서 L2VPN 가상회선 상태를 확인하는 명령어는 무엇입니까?,show l2vpn atom vc,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_5,rule_based,1,명령어 사용법/질의,short,basic,,CE1 장비에서 OSPF 이웃 상태를 조회하는 명령어는 무엇입니까?,show ip ospf neighbor,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_6,rule_based,1,명령어 사용법/질의,short,basic,,CE1 장비에 현재 접속한 사용자 목록을 확인하는 명령어는 무엇입니까?,show users,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_7,rule_based,1,명령어 사용법/질의,short,basic,,CE1 장비의 로그 버퍼를 확인하는 명령어는 무엇입니까?,show logging,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_8,rule_based,2,명령어 사용법/질의,short,basic,,CE1 장비에서 192.0.2.0/255.255.255.0 네트워크로 가는 정적 경로를 10.0.0.1 다음 홉으로 설정하는 명령어는 무엇입니까?,ip route 192.0.2.0 255.255.255.0 10.0.0.1,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_9,rule_based,2,명령어 사용법/질의,short,basic,,CE1 장비에서 BGP AS 65001의 192.168.1.10 이웃에 RM_OUT 라우트맵을 outbound로 적용하는 명령어는 무엇입니까?,"router bgp 65001
+ neighbor 192.168.1.10 route-map RM_OUT out",,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_10,rule_based,2,명령어 사용법/질의,short,basic,,CE1 장비에서 GigabitEthernet0/0 인터페이스에 'Uplink to core' 설명을 설정하는 명령어는 무엇입니까?,"interface GigabitEthernet0/0
+ description Uplink to core",,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_11,rule_based,2,명령어 사용법/질의,short,basic,,CE1 장비에서 CUSTOMER_A VRF를 생성하고 GigabitEthernet0/0 인터페이스에 할당하는 명령어 시퀀스는 무엇입니까?,"vrf definition CUSTOMER_A
+ exit
+ interface GigabitEthernet0/0
+ vrf forwarding CUSTOMER_A",,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_12,rule_based,2,명령어 사용법/질의,short,basic,,CE1 장비에서 OSPF 프로세스 1의 GigabitEthernet0/0 인터페이스 비용을 100으로 설정하는 명령어는 무엇입니까?,"router ospf 1
+ interface GigabitEthernet0/0
+ ip ospf cost 100",,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_13,rule_based,2,명령어 사용법/질의,short,basic,,CE1 장비의 VTY 라인에 SSH_ONLY ACL을 inbound로 적용하는 명령어는 무엇입니까?,"line vty 0 4
+ access-class SSH_ONLY in",,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_14,rule_based,2,명령어 사용법/질의,short,basic,,CE1 장비의 호스트네임을 CE1-NEW(으)로 변경하는 명령어는 무엇입니까?,hostname CE1-NEW,,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+BASIC_CMD_15,rule_based,1,명령어 사용법/질의,short,basic,,admin 계정으로 172.16.1.40 장비에 직접 SSH 접속하는 명령어는 무엇입니까?,ssh admin@172.16.1.40,,장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1,ce1.xml
+BASIC_CMD_16,rule_based,1,명령어 사용법/질의,short,basic,,admin 계정으로 172.16.1.41 장비에 직접 SSH 접속하는 명령어는 무엇입니까?,ssh admin@172.16.1.41,,장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1,ce2.xml
+BASIC_CMD_17,rule_based,1,명령어 사용법/질의,short,basic,,admin 계정으로 172.16.1.133 장비에 직접 SSH 접속하는 명령어는 무엇입니까?,ssh admin@172.16.1.133,,장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample10.xml
+BASIC_CMD_18,rule_based,1,명령어 사용법/질의,short,basic,,admin 계정으로 172.16.1.130 장비에 직접 SSH 접속하는 명령어는 무엇입니까?,ssh admin@172.16.1.130,,장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample7.xml
+BASIC_CMD_19,rule_based,1,명령어 사용법/질의,short,basic,,admin 계정으로 172.16.1.131 장비에 직접 SSH 접속하는 명령어는 무엇입니까?,ssh admin@172.16.1.131,,장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample8.xml
+BASIC_CMD_20,rule_based,1,명령어 사용법/질의,short,basic,,admin 계정으로 172.16.1.132 장비에 직접 SSH 접속하는 명령어는 무엇입니까?,ssh admin@172.16.1.132,,장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1,sample9.xml
+BASIC_CMD_21,rule_based,2,명령어 사용법/질의,short,basic,,admin 계정으로 172.16.1.40를 거쳐 172.16.1.41 장비에 SSH 접속하는 명령어는 무엇입니까?,ssh -J admin@172.16.1.40 admin@172.16.1.41,,"장비: CE1 | OS: ios-xr | BGP AS: 65001 | BGP 피어 수: 1
+장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1","ce1.xml, ce2.xml"
+BASIC_CMD_22,rule_based,2,명령어 사용법/질의,short,basic,,admin 계정으로 172.16.1.41를 거쳐 172.16.1.133 장비에 SSH 접속하는 명령어는 무엇입니까?,ssh -J admin@172.16.1.41 admin@172.16.1.133,,"장비: CE2 | OS: ios-xr | BGP AS: 65003 | BGP 피어 수: 1
+장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","ce2.xml, sample10.xml"
+BASIC_CMD_23,rule_based,2,명령어 사용법/질의,short,basic,,admin 계정으로 172.16.1.133를 거쳐 172.16.1.130 장비에 SSH 접속하는 명령어는 무엇입니까?,ssh -J admin@172.16.1.133 admin@172.16.1.130,,"장비: sample10 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","sample10.xml, sample7.xml"
+BASIC_CMD_24,rule_based,2,명령어 사용법/질의,short,basic,,admin 계정으로 172.16.1.130를 거쳐 172.16.1.131 장비에 SSH 접속하는 명령어는 무엇입니까?,ssh -J admin@172.16.1.130 admin@172.16.1.131,,"장비: sample7 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","sample7.xml, sample8.xml"
+BASIC_CMD_25,rule_based,2,명령어 사용법/질의,short,basic,,admin 계정으로 172.16.1.131를 거쳐 172.16.1.132 장비에 SSH 접속하는 명령어는 무엇입니까?,ssh -J admin@172.16.1.131 admin@172.16.1.132,,"장비: sample8 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1
+장비: sample9 | OS: ios-xr | BGP AS: 65000 | BGP 피어 수: 3 | VRF 수: 1","sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-001,enhanced_llm_with_agent,3,보안 질의,short,diagnostic,security_auditor,"모든 장비(CE1, CE2, sample7/8/9/10)에서 SSH 서버가 활성화되어 있습니까? (TRUE/FALSE)",TRUE,"각 장비의 관리 접속 설정을 보면, 원격 접속 수단으로 SSH가 켜져 있습니다. CE 계열은 VTY 라인에서 SSH 허용이 확인되고, PE 계열은 시스템 서비스로 SSH 서버가 활성화되어 있습니다. 장비별로 방식은 조금 다르지만 “SSH 가능”이라는 목적은 동일하게 만족하므로 전체적으로 활성화 상태로 판단합니다.","보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-003,enhanced_llm_with_agent,3,보안 질의,short,diagnostic,security_auditor,"IOS 장비(CE1, CE2)에 명시된 SSH 버전 값은 무엇입니까?",2,"CE1과 CE2는 SSH 버전을 수동으로 지정하는 구조인데, 둘 다 버전 2로 설정되어 있습니다. SSHv2는 암호 스위트와 키 교환 방식에서 SSHv1에 비해 안전하며, 요즘 보안 가이드라인에서도 기본 선택으로 권장됩니다. 따라서 “2”가 정답입니다.","보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-004,enhanced_llm_with_agent,3,보안 질의,short,diagnostic,security_auditor,AS 65000(PE) 네 대의 iBGP 이웃 remote-as 값이 모두 65000으로 일치합니까? (TRUE/FALSE),TRUE,"iBGP인지 eBGP인지는 이웃의 AS 번호로 구분됩니다. 네 대의 PE가 서로를 이웃으로 정의할 때 모두 remote-as 65000으로 맞춰져 있어, 같은 AS 안에서의 iBGP 관계가 장비 간 일관되게 유지됩니다. 이는 경로 전파·정책 적용에서 불필요한 혼선을 줄여 안정적인 코어 운용에 유리합니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-SYNTHETIC-007,enhanced_llm_with_agent,4,네트워크 토폴로지 구성 질의,long,synthetic,noc_operator,AS 65000의 iBGP Full-Mesh에서 누락된 피어 쌍 수는 몇 개입니까? (정답 형식: 0 이상의 정수),0,"Full-Mesh 기준은 “모든 라우터가 다른 모든 라우터와 iBGP를 직접 맺고 있는가”입니다. 장비가 4대면 고유한 쌍은 6개인데, 각 PE가 나머지 3대와 이웃을 정의해 전체 6쌍이 모두 존재합니다. 따라서 누락은 0개입니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어",sample7.xml
+ENHANCED_ENHANCED-DIAGNOSTIC-002,enhanced_llm_with_agent,3,기술적 오류 질의,short,diagnostic,compliance_officer,"CE 라우터(CE1, CE2)의 VTY 라인에 login local과 transport input ssh가 모두 설정되어 있습니까? (TRUE/FALSE)",TRUE,"login local은 장비 내부 사용자 DB를 통해 인증하겠다는 뜻이고, transport input ssh는 VTY로 SSH만 받도록 제한합니다. 두 가지가 함께 설정되어 있어야 “로컬 계정 기반의 SSH 전용” 원격접속이 완성되는데, CE1과 CE2 모두 두 항목이 동시에 설정되어 있습니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-003,enhanced_llm_with_agent,3,기술적 오류 질의,short,diagnostic,compliance_officer,"CE 라우터(CE1, CE2)의 logging buffered 심각도 값은 무엇입니까? (정답 형식: 단어 하나)",debugging,"logging buffered는 메모리 버퍼에 저장할 로그의 최소 심각도를 말합니다. 두 CE 모두 최상위(가장 상세) 레벨인 debugging으로 되어 있어, 트러블슈팅 시 세밀한 이벤트까지 장비 내부 버퍼에 기록됩니다. 운영 환경에서는 용량과 성능을 고려해 이 값을 조정하기도 합니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-DIAGNOSTIC-004,enhanced_llm_with_agent,3,기술적 오류 질의,short,diagnostic,compliance_officer,모든 PE 라우터(sample7/8/9/10)에서 SSH 서버가 활성화되어 있습니까? (정답 형식: TRUE/FALSE),TRUE,"PE는 서비스 운영 장비이므로 원격 관리용 SSH가 필수입니다. 각 장비의 시스템 서비스 섹션에서 SSH 서버가 켜져 있으며, 별도의 접근 제어는 네트워크 측 정책과 함께 적용됩니다. 네 대 모두 동일하게 활성화가 확인됩니다.","보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-005,enhanced_llm_with_agent,3,기술적 오류 질의,short,diagnostic,compliance_officer,"CE 라우터(CE1, CE2)의 VTY 라인에 SSH 접근제어(예: access-class)가 적용되어 있습니까? (정답 형식: TRUE/FALSE)",FALSE,"VTY 접근제어는 원격 접속 가능한 소스 IP를 ACL로 제한하는 추가 보안 단계입니다. CE1과 CE2의 VTY 설정에는 인증과 프로토콜 제한(SSH)만 있고, ACL을 연결하는 access-class 항목이 없습니다. 즉, “SSH만 허용”은 되어 있지만 “허용 원격지 제한”은 없는 상태입니다.","보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-007,enhanced_llm_with_agent,3,기술적 오류 질의,short,diagnostic,compliance_officer,AS 65000의 iBGP 풀메시 구성은 완전합니까? (정답 형식: TRUE/FALSE),TRUE,"풀메시는 “모든-모두” 연결을 뜻합니다. 네 대의 PE가 서로의 루프백을 대상으로 iBGP를 맺고 있으며, 각 장비에 3개의 iBGP 이웃 정의가 있어 요구 조건을 충족합니다. 이 구성이면 라우트 반사기가 없더라도 경로가 모든 노드에 고르게 전파됩니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-008,enhanced_llm_with_agent,3,기술적 오류 질의,short,diagnostic,compliance_officer,모든 PE 라우터(sample7/8/9/10)의 VRF exam-l3vpn에 Import/Export RT 65000:1000이 모두 설정되어 있습니까? (정답 형식: TRUE/FALSE),TRUE,"분석된 증거에 따르면, vrf_without_rt_count가 0으로 나타나며, 이는 미설정된 VRF가 없음을 의미합니다. 또한, vrf_without_rt_pairs가 없다는 것은 모든 VRF에 RT가 올바르게 설정되어 있다는 것을 확인할 수 있습니다.","VRF 설정 현황:
+sample10: 1개 VRF (exam-l3vpn)
+sample7: 1개 VRF (exam-l3vpn)
+sample8: 1개 VRF (exam-l3vpn)
+sample9: 1개 VRF (exam-l3vpn)","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-009,enhanced_llm_with_agent,3,기술적 오류 질의,short,diagnostic,compliance_officer,"sample7 ↔ sample9 사이에 설정된 L2VPN XConnect가 양단 매칭(동일한 neighbor, 동일한 PW-ID)을 충족합니까? (TRUE/FALSE)",FALSE,"XConnect는 양단의 설정이 동일한 이웃(Loopback IP) 과 동일한 PW-ID 로 짝을 이뤄야 합니다. 현재는 sample7이 가리키는 이웃과 sample9이 가리키는 이웃이 서로 다르고, PW-ID도 일치하지 않습니다. 이런 상태에선 Pseudowire가 수립되지 않아 트래픽이 흐르지 않습니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-010,enhanced_llm_with_agent,3,기술적 오류 질의,short,diagnostic,compliance_officer,모든 PE(sample7/8/9/10)에서 OSPF process 1이 area 0에 활성화되어 있습니까? (TRUE/FALSE),TRUE,"코어 라우팅은 PE들의 OSPF process 1이 담당하고, 각 PE는 Loopback0과 코어 물리 인터페이스(예: Gi0/0/0/0, Gi0/0/0/2)를 area 0에 참여시켜 상호 도달성을 확보합니다. 이 구조 덕분에 iBGP는 멀티홉(Loopback 기반) 으로 안정적으로 유지됩니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-SCENARIO-001,enhanced_llm_with_agent,4,네트워크 토폴로지 구성 질의,short,scenario,noc_operator,CE1·CE2에서 OSPF 프로세스가 구성되어 있습니까? (TRUE/FALSE),FALSE,"CE 라우터들은 BGP(eBGP)로 PE와 경로를 주고받으며, OSPF는 코어(PE 간)에서만 운용됩니다. 즉, PE는 OSPF, CE는 eBGP 역할 분담이라 CE 측엔 OSPF 프로세스가 없습니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-SCENARIO-002,enhanced_llm_with_agent,4,네트워크 토폴로지 구성 질의,short,scenario,noc_operator,"CE1–sample7 링크가 다운될 때, sample7 → sample9의 최단 경로와 경로 변화 여부는? (정답 형식: 장비명→장비명→장비명 ,(변경없음/변경됨))","sample7→sample8→sample9,변경없음",sample7과 sample9 사이의 코어 최단 경로는 원래 sample7→sample8→sample9 입니다. 장애는 CE1–sample7 엣지 링크에서 발생했으므로 코어 토폴로지(PE↔PE)에는 영향이 없습니다. 따라서 sample7에서 sample9으로의 경로는 그대로 유지됩니다.,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-SCENARIO-003,enhanced_llm_with_agent,4,네트워크 토폴로지 구성 질의,short,scenario,noc_operator,"sample9–sample8 코어 링크가 다운될 때, sample9 → CE1 도달이 가능합니까? (가능/불가능)",불가능,정상 시에는 sample9→sample8→sample7→CE1 순서로 갑니다. 그런데 sample9의 코어 이웃은 사실상 sample8이 유일합니다. 그 링크가 끊기면 sample9은 코어에서 고립되어 CE1 쪽(=sample7 방향)으로 우회할 경로가 없어집니다.,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-SCENARIO-004,enhanced_llm_with_agent,4,네트워크 토폴로지 구성 질의,short,scenario,noc_operator,"sample10과 sample9 사이에는 물리적 연결이 존재하지만, sample9 쪽 인터페이스가 불완전하게 구성되어 있습니다. 이 경우, sample10에서 CE2로 가는 트래픽은 어떤 경로를 통해 전달됩니까? (정답 형식: 장비면→…→장비면)",sample10→sample7→sample8→sample9→CE2,"sample10과 sample9 사이에는 실제 물리 링크가 있지만, sample9 쪽에 인터페이스 IP가 설정되지 않아 바로 통신할 수 없습니다. 따라서 sample10에서 CE2로 가는 데이터는 직접 경로를 쓰지 못하고, 안정적인 우회 경로를 선택합니다. 구체적으로 sample10은 먼저 sample7을 통해 코어에 진입하고, 이어서 sample8과 sample9을 거쳐 CE2에 도달합니다. 이렇게 하면 인터페이스 불완전 상태를 우회하면서도 통신이 유지됩니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-SCENARIO-005,enhanced_llm_with_agent,4,네트워크 토폴로지 구성 질의,short,scenario,noc_operator,"sample7–sample8 코어 링크가 다운될 때, sample7 → CE2 도달이 가능합니까? (가능/불가능)",불가능,"평상시엔 sample7→sample8→sample9→CE2 로 갑니다. 하지만 sample7이 코어로 나갈 수 있는 다른 길은 sample10 방향뿐인데, sample10에서 다시 sample8/9로 이어지는 코어 경로가 없습니다. 결과적으로 CE2로의 대체 경로가 사라져 도달 불가입니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-SCENARIO-006,enhanced_llm_with_agent,4,네트워크 토폴로지 구성 질의,short,scenario,noc_operator,"sample8–sample9 코어 링크가 다운될 때, sample8 → sample10 의 최단 경로는? (정답 형식: 장비명→…→장비명)",sample8→sample7→sample10,"sample8에서 sample10로 바로 가는 링크는 없지만, sample8은 sample7과, sample7은 sample10과 각각 직접 연결되어 있습니다. 따라서 유일하고 최단인 우회 경로는 sample8→sample7→sample10 입니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-SCENARIO-007,enhanced_llm_with_agent,4,네트워크 토폴로지 구성 질의,short,scenario,noc_operator,sample10 → sample8 의 최단 경로를 노드 순서로 적으세요. (정답 형식: 장비명→…→장비명),sample10→sample7→sample8,"sample10은 sample7을 통해 코어에 진입합니다. sample8은 sample7과 직접 연결되어 있으므로, 가장 짧은 경로는 sample10→sample7→sample8 입니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-SCENARIO-008,enhanced_llm_with_agent,4,네트워크 토폴로지 구성 질의,short,scenario,noc_operator,"sample10–sample7 코어 링크가 다운될 때, sample10 → sample8 도달이 가능합니까? (가능/불가능)",불가능,sample10이 코어로 나갈 수 있는 유일한 인접 노드는 sample7입니다. 그 링크가 끊어지면 sample10은 코어와 단절됩니다. sample8과의 다른 경로(직결 또는 제3의 코어 경유)도 없으므로 도달할 방법이 없습니다.,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-SCENARIO-009,enhanced_llm_with_agent,4,네트워크 토폴로지 구성 질의,short,scenario,noc_operator,"CE1 관련 장애가 있어도 sample10 → sample8 최단 경로는 바뀌지 않습니까? (정답 형식: 장비명→장비명→장비명 ,(변경없음/변경됨))","sample10→sample7→sample8,변경없음","sample10은 코어로 진입할 때 sample7을 단일 홉으로 사용하고, sample7은 다시 sample8과 직접 연결되어 있어요. CE1-연결은 VRF(엣지) 영역 문제라 코어(PE↔PE) 경로엔 영향이 없습니다. 그래서 기존 최단 경로가 그대로 유지됩니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-SCENARIO-010,enhanced_llm_with_agent,4,네트워크 토폴로지 구성 질의,short,scenario,noc_operator,CE1–sample7 링크가 다운될 때 CE1에서 sample7로 도달이 가능합니까? (가능/불가능),불가능,"CE1은 eBGP로 sample7에만 붙어 있어요. 그 단일 링크가 끊기면 CE1이 코어로 들어갈 대체 경로가 존재하지 않습니다. 즉, CE1→sample7 경로는 복구 전까지 불가입니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-ANALYTICAL-001,enhanced_llm_with_agent,3,기술적 오류 질의,short,analytical,troubleshooter,AS 65000(PE) 소속인데 iBGP 피어 수가 3개 미만인 장비는 몇 대입니까?,0,"AS 65000에는 PE가 네 대이고, 풀메시 형태로 각각 나머지 3대와 iBGP를 맺습니다. 따라서 “3개 미만” 조건을 만족하는 장비는 없습니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-002,enhanced_llm_with_agent,3,기술적 오류 질의,short,analytical,troubleshooter,"각 PE의 VRF exam-l3vpn에 연결된 eBGP 피어 IP를 나열하세요. (정답 형식: 장비명=IP,장비명=IP,...)","sample7=192.168.1.11, sample8=192.168.2.11, sample9=192.168.3.11, sample10=192.168.4.11","각 PE의 CE-향 서브인터페이스에 VRF가 묶여 있고, 거기에 연결된 CE의 eBGP 이웃 IP가 하나씩 정의되어 있습니다. 네 대 PE 모두 동일한 VRF 이름을 쓰되, 현장 VLAN/서브넷에 따라 피어 IP만 달라집니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-004,enhanced_llm_with_agent,3,기술적 오류 질의,short,analytical,troubleshooter,L2VPN XConnect에서 양단 neighbor/pw-id 불일치로 수립 실패하는 페어는 무엇입니까? (정답 형식: 장비면<->장비면),sample7<->sample9,"XConnect는 양단이 같은 상대(루프백)와 같은 PW-ID를 써야 성립합니다. 한쪽은 이웃을 3.3.3.3에, 다른 쪽은 1.1.1.1에 두고 PW-ID도 서로 다르게 설정되어 있어 페어 자체가 맞물리지 않습니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-005,enhanced_llm_with_agent,3,기술적 오류 질의,short,analytical,troubleshooter,AAA가 비활성화된 장비를 모두 적으세요.,"CE1, CE2",CE 라우터는 기본 보안 최소 구성(SSH/로컬 로그인)은 되어 있지만 AAA 프레임워크 자체는 켜져 있지 않습니다. 반면 PE는 AAA가 활성화되어 있어 차이가 납니다.,"총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-006,enhanced_llm_with_agent,3,기술적 오류 질의,short,analytical,troubleshooter,BGP 피어가 5개 이상인 장비는 몇 개인가?,0,"PE 한 대당 iBGP 3 + VRF eBGP 1로 보통 4개 정도이며, CE는 각 1개(상대 PE)만 가집니다. 따라서 5개 이상을 만족하는 장비는 없습니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-007,enhanced_llm_with_agent,3,기술적 오류 질의,short,analytical,troubleshooter,OSPF 프로세스 ID가 1이 아닌(=미구성 포함) 장비는 무엇입니까?,"CE1, CE2","OSPF는 코어 라우팅용으로 PE에서만 운용되고, CE는 eBGP로 경로를 주고받습니다. 따라서 CE 쪽엔 OSPF 프로세스가 존재하지 않아 “1이 아님”에 해당합니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-008,enhanced_llm_with_agent,3,기술적 오류 질의,short,analytical,troubleshooter,AS 650005(PE)의 iBGP 풀메시 구성은 완전합니까? (TRUE/FALSE),FALSE,"iBGP 풀메시는 같은 AS 안에 존재하는 라우터들끼리 모두 서로 이웃을 맺어야 성립합니다. 그런데 네트워크 구성 목록을 보면 사용 중이거나 예정된 AS는 65000(PE), 65001/65003(CE), 그리고 예약 슬롯으로 65002/65004뿐입니다. AS 65005에 속한 라우터 자체가 단 한 대도 없으므로, 해당 AS에서 iBGP를 맺을 대상이 존재하지 않습니다. 이 상황은 운영 관점에서 “평가 대상 AS 없음(N/A)”이므로 풀메시를 ‘완전’하다고 볼 수 없고, 결과는 FALSE가 됩니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-ANALYTICAL-010,enhanced_llm_with_agent,3,기술적 오류 질의,short,analytical,troubleshooter,L2VPN에서 PW-ID 불일치로 영향받는 장비 수는 몇 대입니까? (정수),2,"불일치는 페어 양쪽 장비 모두에 영향을 미칩니다. 이 경우 상대가 맞지 않아 양단에서 동시에 Pseudowire가 수립되지 않으므로, 해당 페어의 양쪽(2대)이 모두 영향받습니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+ENHANCED_ENHANCED-DIAGNOSTIC-001,enhanced_llm_with_agent,3,명령어 사용법/질의,short,diagnostic,troubleshooter,"[Scenario | IOS-XR] sample7에서 iBGP 이웃 3.3.3.3 세션에 이상이 발생했다고 가정할 때, 문제를 진단하기 위한 CLI를 올바른 순서로 제시하세요. (쉼표로 구분)","show bgp summary, show bgp neighbors 3.3.3.3, show route 3.3.3.3, show running-config bgp, show ipv4 interface brief","먼저 요약으로 전체 BGP 헬스를 보고, 특정 피어의 세부 상태(상태/타이머/정책)를 확인합니다. 이어서 피어 루프백으로의 IGP 경로 유무를 체크하고, BGP 구성(업데이트 소스, AF 활성, 정책)을 대조합니다. 마지막으로 인터페이스 요약으로 물리/3계층 이슈를 배제해 원인 범위를 좁힙니다","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어",
+ENHANCED_ENHANCED-DIAGNOSTIC-002,enhanced_llm_with_agent,3,명령어 사용법/질의,short,diagnostic,troubleshooter,"[Scenario | IOS] CE1에서 sample7(192.168.1.10)과의 eBGP 세션이 Established가 아니라고 가정할 때, 진단 CLI를 올바른 순서로 제시하세요.","show ip bgp summary, show ip bgp neighbors 192.168.1.10, show running-config | section ^router bgp, show ip route 192.168.1.10, show ip interface brief","세션 요약으로 상태와 카운터를 파악하고, 해당 피어의 세부 정보(인/아웃 정책, 상태 변화)를 확인합니다. 이어서 피어 IP에 대한 라우팅/ARP를 점검해 L3 도달성을 확인하고, 구성 섹션으로 피어 정의가 정확한지 검토합니다. 마지막으로 인터페이스 요약으로 서브인터페이스/상태 문제를 확인합니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-DIAGNOSTIC-003,enhanced_llm_with_agent,3,명령어 사용법/질의,short,diagnostic,troubleshooter,"[Scenario | IOS-XR] sample9의 VRF exam-l3vpn에서 CE2(192.168.3.11)와의 eBGP가 Down이라고 가정할 때, 진단 CLI를 올바른 순서로 제시하세요.","show bgp vpnv4 unicast vrf exam-l3vpn summary, show bgp vpnv4 unicast vrf exam-l3vpn neighbors 192.168.3.11, show route vrf exam-l3vpn 192.168.30.0/24, show running-config interface GigabitEthernet0/0/0/1.300, show running-config bgp","VRF 단위 BGP 요약→해당 피어 상세로 세션 상태를 확인합니다. 이후 고객 프리픽스가 VRF 라우팅 테이블에 실리는지 확인하고, CE-향 서브인터페이스의 VLAN/VRF 바인딩을 점검합니다. 마지막으로 BGP VRF 구성을 재확인해 AF/정책 누락을 찾아냅니다.","VRF 설정 현황:
+sample10: 1개 VRF (exam-l3vpn)
+sample7: 1개 VRF (exam-l3vpn)
+sample8: 1개 VRF (exam-l3vpn)
+sample9: 1개 VRF (exam-l3vpn)",
+ENHANCED_ENHANCED-DIAGNOSTIC-004,enhanced_llm_with_agent,3,명령어 사용법/질의,short,diagnostic,troubleshooter,"[IOS-XR] 현재 구성에서 sample7↔sample9 L2VPN XConnect가 수립되지 않는 원인을 확인하기 위해, 진단 CLI를 올바른 순서로 제시하세요.","show l2vpn xconnect brief, show l2vpn xconnect detail, show l2vpn xconnect interface GigabitEthernet0/0/0/0.1, show route 1.1.1.1, show route 3.3.3.3, show mpls ldp neighbor","먼저 XConnect 전체/상세로 양단 neighbor·PW-ID 매칭 여부를 확인합니다. 이어서 AC(접속 회선) 인터페이스 상태를 보고, 원격 루프백 경로 및 LDP 피어링을 점검해 전송망(MPLS/IGP) 문제와 설정 불일치를 구분합니다. 이 순서가 가장 빠르게 원인을 압축합니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-DIAGNOSTIC-005,enhanced_llm_with_agent,3,명령어 사용법/질의,short,diagnostic,troubleshooter,"[Scenario | IOS-XR] sample8에서 sample7과의 OSPF adjacency가 불안정하다고 가정할 때, 진단 CLI를 올바른 순서로 제시하세요.","show ospf neighbor, show ospf interface GigabitEthernet0/0/0/0, show ipv4 interface brief, show route 1.1.1.1, show running-config ospf","이웃 표로 adjacency 상태/상태변화를 확인하고, 해당 인터페이스의 OSPF 설정·DR/BDR 정보를 점검합니다. 다음으로 인터페이스 요약으로 L1/L2 이상을 배제하고, 루프백(상대 루프백)에 대한 경로 확인으로 IGP 도달성을 확인합니다. 마지막으로 OSPF 전역/프로세스 구성을 대조합니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어",
+ENHANCED_ENHANCED-DIAGNOSTIC-006,enhanced_llm_with_agent,3,명령어 사용법/질의,short,diagnostic,troubleshooter,"[Scenario | IOS] CE2에서 sample9(192.168.3.10) eBGP에 이상이 있다고 가정할 때, 진단 CLI를 올바른 순서로 제시하세요.","show ip bgp summary, show ip bgp neighbors 192.168.3.10, show running-config | section ^router bgp, show ip route 192.168.3.10, show logging","BGP 요약→피어 상세로 세션 상태를 확인하고, 구성 섹션으로 피어 정의/정책을 점검합니다. 피어 IP로의 경로 유무를 본 뒤, 마지막으로 로그에서 인증/타이머/패시브 등 이벤트 단서를 수집해 원인을 특정합니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-DIAGNOSTIC-007,enhanced_llm_with_agent,3,명령어 사용법/질의,short,diagnostic,troubleshooter,"[Scenario | IOS-XR] sample10의 코어 인터페이스 Gi0/0/0/0(10.1.31.2) 가 Down이라고 가정할 때, 영향 범위를 파악하기 위한 상태 수집 CLI를 올바른 순서로 제시하세요","show ipv4 interface brief, show ospf neighbor, show ospf interface GigabitEthernet0/0/0/0, show route 3.3.3.3, show bgp summary","인터페이스 요약으로 하드/링크 상태를 먼저 확인하고, OSPF 이웃/해당 인터페이스의 OSPF 설정으로 IGP 수립 여부를 봅니다. 이어서 핵심 루프백 경로 유무로 코어 도달성을 점검하고, 마지막으로 BGP 요약으로 상위 레이어 영향(세션 다운/플랩)을 확인합니다.","VRF 설정 현황:
+sample10: 1개 VRF (exam-l3vpn)
+sample7: 1개 VRF (exam-l3vpn)
+sample8: 1개 VRF (exam-l3vpn)
+sample9: 1개 VRF (exam-l3vpn)",
+ENHANCED_ENHANCED-DIAGNOSTIC-008,enhanced_llm_with_agent,3,명령어 사용법/질의,short,diagnostic,troubleshooter,[Actual | IOS-XR] 현재 구성에서 sample7의 CE-향 서브인터페이스 Gi0/0/0/1.100 의 VRF 바인딩과 경로 연동을 확인하기 위한 CLI를 올바른 순서로 제시하세요.,"show running-config interface GigabitEthernet0/0/0/1.100, show vrf, show bgp vpnv4 unicast vrf exam-l3vpn summary, show route vrf exam-l3vpn 192.168.10.0/24, show arp vrf exam-l3vpn","먼저 서브인터페이스에 VLAN/VRF가 정확히 묶였는지 확인하고, VRF 존재 여부를 점검합니다. 이어 VRF 단위 BGP 요약과 고객 프리픽스의 라우팅 반영 여부를 확인하며, 마지막으로 VRF ARP까지 확인해 L2/L3 연동 상태를 종합적으로 검증합니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-DIAGNOSTIC-009,enhanced_llm_with_agent,3,명령어 사용법/질의,short,diagnostic,troubleshooter,[Actual | IOS] 현재 구성에서 CE1은 AAA가 비활성화 상태입니다. VTY 접근 정책/보안 상태를 점검하기 위한 확인 CLI를 올바른 순서로 제시하세요.,"show running-config | section line vty, show running-config | section ^aaa, show ip ssh, show access-lists","VTY 섹션에서 인증/트랜스포트 정책을 확인하고, AAA 전역 설정 부재를 확인합니다. 다음으로 SSH 활성/버전을 점검하고, 마지막으로 ACL 적용 여부를 확인해 원격접속의 노출 범위를 평가합니다.","BGP 설정 현황:
+CE1: AS65001, 1개 피어
+CE2: AS65003, 1개 피어
+sample10: AS65000, 3개 피어
+sample7: AS65000, 3개 피어
+sample8: AS65000, 3개 피어",
+ENHANCED_ENHANCED-DIAGNOSTIC-010,enhanced_llm_with_agent,3,명령어 사용법/질의,short,diagnostic,troubleshooter,"[Scenario | IOS-XR] sample8에서 VPNv4 경로가 수신되지 않는다고 가정할 때, 기본 점검 CLI를 올바른 순서로 제시하세요.","show bgp vpnv4 unicast summary, show bgp vpnv4 unicast neighbors, show bgp vpnv4 unicast neighbors 1.1.1.1 received-routes, show running-config bgp, show route-target","AF 요약/피어 상태로 기본 헬스를 보고, 특정 피어의 수신 경로를 직접 확인합니다. 이어서 BGP 구성(주소패밀리/정책)을 점검하고, RT 매핑을 확인해 Import/Export 불일치나 정책 누락을 조기에 찾아냅니다.","총 장비 수: 6 | 사용 기술: BGP, OSPF, L2VPN, L3VPN | AS 번호: 65000, 65001, 65003",
+ENHANCED_ENHANCED-SCENARIO-001,enhanced_llm_with_agent,4,명령어 사용법/질의,short,scenario,network_engineer,OpenSSH를 사용해 sample7(1.1.1.1) → sample9(3.3.3.3) 를 점프 호스트로 거쳐 sample8(2.2.2.2) 에 접속하는 단일 명령을 작성하세요.,"ssh -J user@1.1.1.1,user@3.3.3.3 user@2.2.2.2","모든 장비에 SSH 서버가 활성화되어 있고, PE 간에는 OSPF로 상호 도달성이 보장돼요. 두 단계 점프는 OpenSSH의 -J로 쉼표 구분 리스트를 사용합니다(첫 hop: sample7, 둘째 hop: sample9, 최종: sample8).","보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON",
+ENHANCED_ENHANCED-SCENARIO-002,enhanced_llm_with_agent,4,명령어 사용법/질의,short,scenario,network_engineer,OpenSSH를 사용해 sample7(1.1.1.1) → sample8(2.2.2.2) 를 점프 호스트로 거쳐 sample9(3.3.3.3) 에 접속하는 명령을 작성하세요.,"ssh -J user@1.1.1.1,user@2.2.2.2 user@3.3.3.3","순차 점프(ProxyJump)는 “관리PC→1.1.1.1→2.2.2.2→3.3.3.3” 경로로 SSH 터널을 릴레이합니다. 주소는 각각 PE 루프백이며, 코어 OSPF로 중간 hop에서 다음 hop까지 라우팅이 가능합니다.","보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON",
+ENHANCED_ENHANCED-SCENARIO-003,enhanced_llm_with_agent,4,명령어 사용법/질의,short,scenario,network_engineer,OpenSSH를 사용해 sample7(1.1.1.1) → sample8(2.2.2.2) 를 점프 호스트로 거쳐 sample10(4.4.4.4) 에 접속하는 명령을 작성하세요.,"ssh -J user@1.1.1.1,user@2.2.2.2 user@4.4.4.4","최종 대상이 sample10(루프백 4.4.4.4)일 때도 동일합니다. 첫 hop(1.1.1.1)에서 둘째 hop(2.2.2.2)로, 다시 최종(4.4.4.4)로 연결합니다. iBGP/OSPF 토폴로지상 PE 간 경로가 확보돼 있어 유효합니다.","보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON",
+ENHANCED_ENHANCED-SCENARIO-004,enhanced_llm_with_agent,4,네트워크 토폴로지 구성 질의,short,scenario,network_engineer,OpenSSH를 사용해 sample7(1.1.1.1) → sample9(3.3.3.3) 를 점프 호스트로 거쳐 CE2(192.168.3.11) 에 접속하는 명령을 작성하세요.,"ssh -J user@1.1.1.1,user@3.3.3.3 user@192.168.3.11",CE2는 sample9의 CE-향(192.168.3.11/24)으로 붙어있습니다. 점프 마지막 hop을 sample9로 두면 CE2로 로컬 라우팅이 가능하므로 ProxyJump로 자연스럽게 접근할 수 있어요.,"보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON",
+ENHANCED_ENHANCED-SCENARIO-005,enhanced_llm_with_agent,4,명령어 사용법/질의,short,scenario,network_engineer,OpenSSH를 사용해 sample8(2.2.2.2) → sample7(1.1.1.1) 를 점프 호스트로 거쳐 CE1(192.168.1.11) 에 접속하는 명령을 작성하세요.,"ssh -J user@2.2.2.2,user@1.1.1.1 user@192.168.1.11",CE1은 sample7의 CE-향(192.168.1.11/24)에 존재합니다. 두 단계 점프의 마지막을 sample7로 두면 CE1로 바로 접속이 가능합니다.,"보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON",
+ENHANCED_ENHANCED-SCENARIO-006,enhanced_llm_with_agent,4,명령어 사용법/질의,short,scenario,network_engineer,"OpenSSH로 sample7(1.1.1.1) → sample10(4.4.4.4) 를 경유해 예정 CE(AS 65004, 192.168.4.11) 에 접속을 시도하는 명령을 작성하세요.","ssh -J user@1.1.1.1,user@4.4.4.4 user@192.168.4.11","sample10의 VRF exam-l3vpn에는 eBGP 이웃 192.168.4.11(AS 65004) 이 미리 구성되어 있습니다(미개통 슬롯). 실제 장비가 아직 없더라도, 접속 시도 경로의 정답은 sample7→sample10을 거쳐 192.168.4.11로 향하는 이 ProxyJump 문법입니다.","보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON",
+ENHANCED_ENHANCED-SCENARIO-007,enhanced_llm_with_agent,4,네트워크 토폴로지 구성 질의,short,scenario,network_engineer,OpenSSH를 사용해 sample9 → sample를 점프 호스트로 거쳐 sample7 에 접속하는 명령을 작성하세요,"ssh -J user@3.3.3.3,user@2.2.2.2 user@1.1.1.1","sample9→sample8→sample7 순으로 SSH가 체인되며, 코어 OSPF로 각 hop 간 라우팅이 성립합니다.","보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON",
+ENHANCED_ENHANCED-SCENARIO-008,enhanced_llm_with_agent,4,명령어 사용법/질의,short,scenario,network_engineer,OpenSSH를 사용해 sample10 → sample7 를 점프 호스트로 거쳐 sample8에 접속하는 명령을 작성하세요.,"ssh -J user@4.4.4.4,user@1.1.1.1 user@2.2.2.2","sample10에서 sample7로, 다시 sample8로 점프합니다. 각 대상은 루프백 주소이며, 장비 측 SSH 서버가 활성화되어 있어 ProxyJump 체인이 유효합니다.","보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON",
+ENHANCED_ENHANCED-SCENARIO-009,enhanced_llm_with_agent,4,네트워크 토폴로지 구성 질의,long,scenario,network_engineer,OpenSSH를 사용해 sample8 → sample9 를 점프 호스트로 거쳐 CE2 에 접속하는 명령을 작성하세요.,"ssh -J user@2.2.2.2,user@3.3.3.3 user@192.168.3.11",CE2는 sample9에 직접 연결되어 있으므로 마지막 hop을 sample9로 두면 CE2까지 로컬 라우팅으로 진입합니다. 첫 hop은 sample8로 설정해 2단계 체인을 만족합니다.,"보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON",
+ENHANCED_ENHANCED-SCENARIO-010,enhanced_llm_with_agent,4,명령어 사용법/질의,short,scenario,network_engineer,OpenSSH를 사용해 sample9 → sample7 를 점프 호스트로 거쳐 sample10 에 접속하는 명령을 작성하세요.,"ssh -J user@3.3.3.3,user@1.1.1.1 user@4.4.4.4",,"보안 설정 현황:
+CE1: SSH ON, AAA OFF
+CE2: SSH ON, AAA OFF
+sample10: SSH ON, AAA ON
+sample7: SSH ON, AAA ON
+sample8: SSH ON, AAA ON",

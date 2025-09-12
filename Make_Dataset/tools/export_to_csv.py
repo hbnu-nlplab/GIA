@@ -96,8 +96,8 @@ if __name__ == '__main__':
     # [수정] basic과 enhanced JSON 파일을 모두 입력으로 전달
     convert_to_csv(
         json_paths=[
-            "output/basic_dataset.json",
-            "output/enhanced_dataset.json"
+            "/workspace/Yujin/GIA/basic_dataset.json",
+            
         ],
-        csv_path="output/dataset_for_evaluation.csv"
+        csv_path="output/basic_dataset_many.csv"
     )

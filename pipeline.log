@@ -1,0 +1,175 @@
+2025-09-11 18:10:06,767 - INFO - _execute_stage_parsing:398 - 1단계: 네트워크 설정 파일 파싱
+2025-09-11 18:10:06,777 - INFO - _execute_stage_parsing:403 - 파싱 완료: 6개 장비
+2025-09-11 18:10:06,779 - INFO - _execute_stage_basic_generation:417 - 2단계: 기초 질문 생성 (Rule-based) - 다중 시나리오
+2025-09-11 18:10:06,779 - INFO - _execute_stage_basic_generation:425 - 시나리오 'normal' 질문 생성 중...
+2025-09-11 18:10:06,787 - INFO - _execute_stage_basic_generation:425 - 시나리오 'failure' 질문 생성 중...
+2025-09-11 18:10:06,794 - INFO - _execute_stage_basic_generation:425 - 시나리오 'expansion' 질문 생성 중...
+2025-09-11 18:10:06,801 - INFO - _execute_stage_basic_generation:443 - 총 DSL 아이템: 204, 명령어 아이템: 129
+2025-09-11 18:10:07,374 - INFO - _execute_stage_basic_generation:524 - 기초 질문 생성 완료: 758개
+2025-09-11 18:10:07,459 - DEBUG - _validate_sample_quality:1206 - 품질 미달 (답변<->질문 불일치): Q='SSH 접속이 불가능한 장비는 총 몇 대입니까?', A='0'
+2025-09-11 18:10:07,460 - DEBUG - _validate_sample_quality:1206 - 품질 미달 (답변<->질문 불일치): Q='SSH 접속이 불가능한 장비는 총 몇 대입니까?', A='0'
+2025-09-11 18:10:07,460 - DEBUG - _validate_sample_quality:1206 - 품질 미달 (답변<->질문 불일치): Q='SSH 접속이 불가능한 장비는 총 몇 대입니까?', A='0'
+2025-09-11 18:10:07,460 - DEBUG - _validate_sample_quality:1206 - 품질 미달 (답변<->질문 불일치): Q='sample10 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.', A='1'
+2025-09-11 18:10:07,460 - DEBUG - _validate_sample_quality:1206 - 품질 미달 (답변<->질문 불일치): Q='sample7 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.', A='1'
+2025-09-11 18:10:07,460 - DEBUG - _validate_sample_quality:1206 - 품질 미달 (답변<->질문 불일치): Q='sample8 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.', A='1'
+2025-09-11 18:10:07,460 - DEBUG - _validate_sample_quality:1206 - 품질 미달 (답변<->질문 불일치): Q='sample9 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.', A='1'
+2025-09-11 18:10:07,461 - DEBUG - _validate_sample_quality:1206 - 품질 미달 (답변<->질문 불일치): Q='sample10 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.', A='1'
+2025-09-11 18:10:07,461 - DEBUG - _validate_sample_quality:1206 - 품질 미달 (답변<->질문 불일치): Q='sample7 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.', A='1'
+2025-09-11 18:10:07,461 - DEBUG - _validate_sample_quality:1206 - 품질 미달 (답변<->질문 불일치): Q='sample8 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.', A='1'
+2025-09-11 18:10:07,461 - DEBUG - _validate_sample_quality:1206 - 품질 미달 (답변<->질문 불일치): Q='sample9 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.', A='1'
+2025-09-11 18:10:07,461 - DEBUG - _validate_sample_quality:1206 - 품질 미달 (답변<->질문 불일치): Q='sample10 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.', A='1'
+2025-09-11 18:10:07,461 - DEBUG - _validate_sample_quality:1206 - 품질 미달 (답변<->질문 불일치): Q='sample7 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.', A='1'
+2025-09-11 18:10:07,461 - DEBUG - _validate_sample_quality:1206 - 품질 미달 (답변<->질문 불일치): Q='sample8 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.', A='1'
+2025-09-11 18:10:07,461 - DEBUG - _validate_sample_quality:1206 - 품질 미달 (답변<->질문 불일치): Q='sample9 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.', A='1'
+2025-09-11 18:10:07,461 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,461 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,461 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample10 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,461 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample7 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,461 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample8 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,461 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample9 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,461 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 운영체제(OS) 버전은 무엇입니까?
+2025-09-11 18:10:07,461 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 운영체제(OS) 버전은 무엇입니까?
+2025-09-11 18:10:07,461 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 시간대(Timezone)는 무엇입니까?
+2025-09-11 18:10:07,461 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 시간대(Timezone)는 무엇입니까?
+2025-09-11 18:10:07,461 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,461 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,461 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample10 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,461 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample7 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,461 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample8 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,461 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample9 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,461 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 운영체제(OS) 버전은 무엇입니까?
+2025-09-11 18:10:07,461 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 운영체제(OS) 버전은 무엇입니까?
+2025-09-11 18:10:07,462 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 시간대(Timezone)는 무엇입니까?
+2025-09-11 18:10:07,462 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 시간대(Timezone)는 무엇입니까?
+2025-09-11 18:10:07,462 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,462 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,462 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample10 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,462 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample7 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,462 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample8 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,462 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample9 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,462 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 운영체제(OS) 버전은 무엇입니까?
+2025-09-11 18:10:07,462 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 운영체제(OS) 버전은 무엇입니까?
+2025-09-11 18:10:07,462 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 시간대(Timezone)는 무엇입니까?
+2025-09-11 18:10:07,462 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 시간대(Timezone)는 무엇입니까?
+2025-09-11 18:10:07,462 - DEBUG - _validate_sample_quality:1206 - 품질 미달 (답변<->질문 불일치): Q='ssh_version_text에 대한 질문을 자연스럽게 작성해주세요.', A='2'
+2025-09-11 18:10:07,462 - DEBUG - _validate_sample_quality:1206 - 품질 미달 (답변<->질문 불일치): Q='ssh_version_text에 대한 질문을 자연스럽게 작성해주세요.', A='2'
+2025-09-11 18:10:07,462 - DEBUG - _validate_sample_quality:1206 - 품질 미달 (답변<->질문 불일치): Q='ssh_version_text에 대한 질문을 자연스럽게 작성해주세요.', A='2'
+2025-09-11 18:10:07,462 - DEBUG - _validate_sample_quality:1206 - 품질 미달 (답변<->질문 불일치): Q='ssh_version_text에 대한 질문을 자연스럽게 작성해주세요.', A='2'
+2025-09-11 18:10:07,463 - DEBUG - _validate_sample_quality:1206 - 품질 미달 (답변<->질문 불일치): Q='ssh_version_text에 대한 질문을 자연스럽게 작성해주세요.', A='2'
+2025-09-11 18:10:07,463 - DEBUG - _validate_sample_quality:1206 - 품질 미달 (답변<->질문 불일치): Q='ssh_version_text에 대한 질문을 자연스럽게 작성해주세요.', A='2'
+2025-09-11 18:10:07,463 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 BGP Local-AS 번호는 무엇입니까?
+2025-09-11 18:10:07,463 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 BGP Local-AS 번호는 무엇입니까?
+2025-09-11 18:10:07,463 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample10 장비의 BGP Local-AS 번호는 무엇입니까?
+2025-09-11 18:10:07,463 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample7 장비의 BGP Local-AS 번호는 무엇입니까?
+2025-09-11 18:10:07,463 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample8 장비의 BGP Local-AS 번호는 무엇입니까?
+2025-09-11 18:10:07,463 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample9 장비의 BGP Local-AS 번호는 무엇입니까?
+2025-09-11 18:10:07,463 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 BGP Local-AS 번호는 무엇입니까?
+2025-09-11 18:10:07,464 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 BGP Local-AS 번호는 무엇입니까?
+2025-09-11 18:10:07,464 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample10 장비의 BGP Local-AS 번호는 무엇입니까?
+2025-09-11 18:10:07,464 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample7 장비의 BGP Local-AS 번호는 무엇입니까?
+2025-09-11 18:10:07,464 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample8 장비의 BGP Local-AS 번호는 무엇입니까?
+2025-09-11 18:10:07,464 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample9 장비의 BGP Local-AS 번호는 무엇입니까?
+2025-09-11 18:10:07,464 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 BGP Local-AS 번호는 무엇입니까?
+2025-09-11 18:10:07,464 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 BGP Local-AS 번호는 무엇입니까?
+2025-09-11 18:10:07,464 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample10 장비의 BGP Local-AS 번호는 무엇입니까?
+2025-09-11 18:10:07,464 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample7 장비의 BGP Local-AS 번호는 무엇입니까?
+2025-09-11 18:10:07,464 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample8 장비의 BGP Local-AS 번호는 무엇입니까?
+2025-09-11 18:10:07,464 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample9 장비의 BGP Local-AS 번호는 무엇입니까?
+2025-09-11 18:10:07,465 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,465 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,465 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample10 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,465 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample7 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,465 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample8 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,465 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample9 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,465 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 관리용 IP 주소는 무엇입니까?
+2025-09-11 18:10:07,465 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 관리용 IP 주소는 무엇입니까?
+2025-09-11 18:10:07,465 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample10 장비의 관리용 IP 주소는 무엇입니까?
+2025-09-11 18:10:07,465 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample7 장비의 관리용 IP 주소는 무엇입니까?
+2025-09-11 18:10:07,465 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample8 장비의 관리용 IP 주소는 무엇입니까?
+2025-09-11 18:10:07,465 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample9 장비의 관리용 IP 주소는 무엇입니까?
+2025-09-11 18:10:07,465 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 운영체제(OS) 버전은 무엇입니까?
+2025-09-11 18:10:07,465 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 운영체제(OS) 버전은 무엇입니까?
+2025-09-11 18:10:07,465 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 config-register 값은 무엇입니까?
+2025-09-11 18:10:07,465 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 config-register 값은 무엇입니까?
+2025-09-11 18:10:07,465 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비에서 logging buffered의 severity-level은 무엇입니까?
+2025-09-11 18:10:07,465 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비에서 logging buffered의 severity-level은 무엇입니까?
+2025-09-11 18:10:07,465 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 VTY line 로그인 방식은 무엇입니까?
+2025-09-11 18:10:07,465 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 VTY line 로그인 방식은 무엇입니까?
+2025-09-11 18:10:07,465 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 VTY password secret 값은 무엇입니까?
+2025-09-11 18:10:07,465 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 VTY password secret 값은 무엇입니까?
+2025-09-11 18:10:07,465 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 VTY transport input 설정은 무엇입니까?
+2025-09-11 18:10:07,465 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 VTY transport input 설정은 무엇입니까?
+2025-09-11 18:10:07,467 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,467 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,467 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample10 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,467 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample7 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,467 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample8 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,467 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample9 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,467 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 관리용 IP 주소는 무엇입니까?
+2025-09-11 18:10:07,467 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 관리용 IP 주소는 무엇입니까?
+2025-09-11 18:10:07,467 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample10 장비의 관리용 IP 주소는 무엇입니까?
+2025-09-11 18:10:07,467 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample7 장비의 관리용 IP 주소는 무엇입니까?
+2025-09-11 18:10:07,467 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample8 장비의 관리용 IP 주소는 무엇입니까?
+2025-09-11 18:10:07,467 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample9 장비의 관리용 IP 주소는 무엇입니까?
+2025-09-11 18:10:07,467 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 운영체제(OS) 버전은 무엇입니까?
+2025-09-11 18:10:07,467 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 운영체제(OS) 버전은 무엇입니까?
+2025-09-11 18:10:07,467 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 config-register 값은 무엇입니까?
+2025-09-11 18:10:07,467 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 config-register 값은 무엇입니까?
+2025-09-11 18:10:07,467 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비에서 logging buffered의 severity-level은 무엇입니까?
+2025-09-11 18:10:07,467 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비에서 logging buffered의 severity-level은 무엇입니까?
+2025-09-11 18:10:07,467 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 VTY line 로그인 방식은 무엇입니까?
+2025-09-11 18:10:07,468 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 VTY line 로그인 방식은 무엇입니까?
+2025-09-11 18:10:07,468 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 VTY password secret 값은 무엇입니까?
+2025-09-11 18:10:07,468 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 VTY password secret 값은 무엇입니까?
+2025-09-11 18:10:07,468 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 VTY transport input 설정은 무엇입니까?
+2025-09-11 18:10:07,468 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 VTY transport input 설정은 무엇입니까?
+2025-09-11 18:10:07,469 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,469 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,469 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample10 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,469 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample7 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,469 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample8 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,469 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample9 장비의 호스트네임은 무엇입니까?
+2025-09-11 18:10:07,469 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 관리용 IP 주소는 무엇입니까?
+2025-09-11 18:10:07,469 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 관리용 IP 주소는 무엇입니까?
+2025-09-11 18:10:07,469 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample10 장비의 관리용 IP 주소는 무엇입니까?
+2025-09-11 18:10:07,469 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample7 장비의 관리용 IP 주소는 무엇입니까?
+2025-09-11 18:10:07,469 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample8 장비의 관리용 IP 주소는 무엇입니까?
+2025-09-11 18:10:07,469 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): sample9 장비의 관리용 IP 주소는 무엇입니까?
+2025-09-11 18:10:07,469 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 운영체제(OS) 버전은 무엇입니까?
+2025-09-11 18:10:07,469 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 운영체제(OS) 버전은 무엇입니까?
+2025-09-11 18:10:07,469 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 config-register 값은 무엇입니까?
+2025-09-11 18:10:07,469 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 config-register 값은 무엇입니까?
+2025-09-11 18:10:07,469 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비에서 logging buffered의 severity-level은 무엇입니까?
+2025-09-11 18:10:07,469 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비에서 logging buffered의 severity-level은 무엇입니까?
+2025-09-11 18:10:07,470 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 VTY line 로그인 방식은 무엇입니까?
+2025-09-11 18:10:07,470 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 VTY line 로그인 방식은 무엇입니까?
+2025-09-11 18:10:07,470 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 VTY password secret 값은 무엇입니까?
+2025-09-11 18:10:07,470 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 VTY password secret 값은 무엇입니까?
+2025-09-11 18:10:07,470 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 VTY transport input 설정은 무엇입니까?
+2025-09-11 18:10:07,470 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE2 장비의 VTY transport input 설정은 무엇입니까?
+2025-09-11 18:10:07,471 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비에서 BGP 피어 상태를 요약해서 확인하는 명령어는 무엇입니까?
+2025-09-11 18:10:07,471 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 인터페이스 IP 상태를 간단히 확인하는 명령어는 무엇입니까?
+2025-09-11 18:10:07,471 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비에서 OSPF로 학습된 라우팅 정보를 확인하는 명령어는 무엇입니까?
+2025-09-11 18:10:07,471 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비에서 CPU 사용률 순으로 프로세스를 확인하는 명령어는 무엇입니까?
+2025-09-11 18:10:07,471 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비에서 L2VPN 가상회선 상태를 확인하는 명령어는 무엇입니까?
+2025-09-11 18:10:07,471 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비에서 OSPF 이웃 상태를 조회하는 명령어는 무엇입니까?
+2025-09-11 18:10:07,471 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비에 현재 접속한 사용자 목록을 확인하는 명령어는 무엇입니까?
+2025-09-11 18:10:07,471 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 로그 버퍼를 확인하는 명령어는 무엇입니까?
+2025-09-11 18:10:07,471 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비에서 192.0.2.0/255.255.255.0 네트워크로 가는 정적 경로를 10.0.0.1 다음 홉으로 설정하는 명령어는 무엇입니까?
+2025-09-11 18:10:07,471 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비에서 BGP AS 65001의 192.168.1.10 이웃에 RM_OUT 라우트맵을 outbound로 적용하는 명령어는 무엇입니까?
+2025-09-11 18:10:07,471 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비에서 Ethernet0/0 인터페이스에 'Uplink to core' 설명을 설정하는 명령어는 무엇입니까?
+2025-09-11 18:10:07,471 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비에서 CUSTOMER_A VRF를 생성하고 Ethernet0/0 인터페이스에 할당하는 명령어 시퀀스는 무엇입니까?
+2025-09-11 18:10:07,471 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비에서 OSPF 프로세스 1의 Ethernet0/0 인터페이스 비용을 100으로 설정하는 명령어는 무엇입니까?
+2025-09-11 18:10:07,471 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 VTY 라인에 SSH_ONLY ACL을 inbound로 적용하는 명령어는 무엇입니까?
+2025-09-11 18:10:07,472 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): CE1 장비의 호스트네임을 CE1-NEW(으)로 변경하는 명령어는 무엇입니까?
+2025-09-11 18:10:07,472 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): admin 계정으로 172.16.1.40 장비에 직접 SSH 접속하는 명령어는 무엇입니까?
+2025-09-11 18:10:07,472 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): admin 계정으로 172.16.1.41 장비에 직접 SSH 접속하는 명령어는 무엇입니까?
+2025-09-11 18:10:07,472 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): admin 계정으로 172.16.1.133 장비에 직접 SSH 접속하는 명령어는 무엇입니까?
+2025-09-11 18:10:07,472 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): admin 계정으로 172.16.1.130 장비에 직접 SSH 접속하는 명령어는 무엇입니까?
+2025-09-11 18:10:07,472 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): admin 계정으로 172.16.1.131 장비에 직접 SSH 접속하는 명령어는 무엇입니까?
+2025-09-11 18:10:07,472 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): admin 계정으로 172.16.1.132 장비에 직접 SSH 접속하는 명령어는 무엇입니까?
+2025-09-11 18:10:07,472 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): admin 계정으로 172.16.1.40를 거쳐 172.16.1.41 장비에 SSH 접속하는 명령어는 무엇입니까?
+2025-09-11 18:10:07,472 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): admin 계정으로 172.16.1.41를 거쳐 172.16.1.133 장비에 SSH 접속하는 명령어는 무엇입니까?
+2025-09-11 18:10:07,472 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): admin 계정으로 172.16.1.133를 거쳐 172.16.1.130 장비에 SSH 접속하는 명령어는 무엇입니까?
+2025-09-11 18:10:07,472 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): admin 계정으로 172.16.1.130를 거쳐 172.16.1.131 장비에 SSH 접속하는 명령어는 무엇입니까?
+2025-09-11 18:10:07,472 - DEBUG - _validate_sample_quality:1200 - 품질 미달 (너무 일반적임): admin 계정으로 172.16.1.131를 거쳐 172.16.1.132 장비에 SSH 접속하는 명령어는 무엇입니까?

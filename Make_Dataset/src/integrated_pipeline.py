@@ -1544,7 +1544,7 @@ def main():
         return sorted(list(categories))
     
     # 설정
-    policies_path = "policies.json"
+    policies_path = "/workspace/Yujin/GIA/policies.json"
     all_categories = get_all_categories(policies_path)
 
     config = PipelineConfig(
@@ -1593,5 +1593,120 @@ def main():
         print(f"데이터셋 생성 실패: {e}")
         raise
 
+def generate_basic_dataset_only():
+    """Basic dataset만 생성하는 함수"""
+    
+    # policies.json에서 모든 카테고리 자동 추출
+    def get_all_categories(policies_path: str) -> List[str]:
+        """policies.json에서 모든 카테고리 추출"""
+        import json
+        with open(policies_path, 'r', encoding='utf-8') as f:
+            policies_data = json.load(f)
+        
+        categories = set()
+        for policy in policies_data.get("policies", []):
+            category = policy.get("category")
+            if category:
+                categories.add(category)
+        
+        return sorted(list(categories))
+    
+    # 설정
+    policies_path = "policies.json"
+    all_categories = get_all_categories(policies_path)
+
+    config = PipelineConfig(
+        xml_data_dir="Data/raw/XML_Data",
+        policies_path=policies_path,
+        target_categories=all_categories,
+        basic_questions_per_category=30,  # 원하는 만큼 조정
+        output_dir=""  # 별도 디렉토리
+    )
+    
+    print("=== Basic Dataset 전용 생성 시작 ===")
+    print(f"대상 카테고리: {all_categories}")
+    
+    # 생성기 초기화
+    generator = NetworkConfigDatasetGenerator(config)
+    
+    try:
+        # 1단계: XML 파싱
+        print("🔄 XML 파싱 중...")
+        network_facts = generator._execute_stage_parsing()
+        print(f"✅ 파싱 완료: {network_facts.get('device_count', 0)}개 장비")
+        
+        # 2단계: Basic 질문 생성만 실행
+        print("🔄 Basic 질문 생성 중...")
+        basic_samples = generator._execute_stage_basic_generation(network_facts)
+        print(f"✅ Basic 질문 생성 완료: {len(basic_samples)}개")
+        
+        # 3단계: 검증 및 정제 (간단한 버전)
+        print("🔄 데이터 검증 중...")
+        validated_samples = []
+        for sample in basic_samples:
+            if generator._validate_sample_quality(sample):
+                sample = generator._standardize_ground_truth(sample)
+                sample.answer_type = generator._determine_answer_type(sample.ground_truth)
+                sample = generator._enrich_sample_metadata(sample)
+                sample.metadata["task_category"] = assign_task_category(sample)
+                validated_samples.append(sample)
+        
+        print(f"✅ 검증 완료: {len(validated_samples)}개")
+        
+        # 4단계: 최종 데이터셋 구성
+        print("🔄 최종 데이터셋 구성 중...")
+        
+        # 분할
+        train_samples, val_samples, test_samples = generator._split_dataset(validated_samples)
+        
+        final_dataset = {
+            "metadata": {
+                "dataset_name": "NetworkConfigQA_BasicOnly",
+                "version": "1.0",
+                "description": "Basic Rule-based 질문만으로 구성된 데이터셋",
+                "total_samples": len(validated_samples),
+                "categories": list(set(s.category for s in validated_samples)),
+                "generation_method": "rule_based_only",
+                "scenarios": ["normal", "failure", "expansion"]
+            },
+            "train": [asdict(s) for s in train_samples],
+            "validation": [asdict(s) for s in val_samples], 
+            "test": [asdict(s) for s in test_samples]
+        }
+        
+        # 저장
+        output_dir = Path(config.output_dir)
+        output_dir.mkdir(parents=True, exist_ok=True)
+        
+        with open(output_dir / "basic_dataset_only.json", 'w', encoding='utf-8') as f:
+            json.dump(final_dataset, f, ensure_ascii=False, indent=2)
+            
+        # 분할별 개별 저장
+        for split_name in ["train", "validation", "test"]:
+            with open(output_dir / f"basic_{split_name}.json", 'w', encoding='utf-8') as f:
+                json.dump(final_dataset[split_name], f, ensure_ascii=False, indent=2)
+        
+        print("\n=== Basic Dataset 생성 완료 ===")
+        print(f"총 샘플 수: {len(validated_samples)}")
+        print(f"Train: {len(train_samples)}")
+        print(f"Validation: {len(val_samples)}")
+        print(f"Test: {len(test_samples)}")
+        print(f"저장 위치: {output_dir}")
+        
+        return final_dataset
+        
+    except Exception as e:
+        print(f"Basic dataset 생성 실패: {e}")
+        import traceback
+        traceback.print_exc()
+        raise
+
 if __name__ == "__main__":
-    main()
+    import sys
+    
+    if len(sys.argv) > 1 and sys.argv[1] == "--basic-only":
+        # python integrated_pipeline.py --basic-only
+        generate_basic_dataset_only()
+    else:
+        # 기존 전체 파이프라인
+        main()

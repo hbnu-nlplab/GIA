@@ -305,7 +305,33 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
                 ras = text(find(n, "xr:remote-as"))
                 typ = "ibgp" if (ras and las and ras == las) else "ebgp"
                 vneis.append({"id": rid, "remote_as": ras, "type": typ})
-            bgp["vrfs"].append({"name": vname, "rd": rd, "neighbors": vneis})
+            
+            # BGP VRF 처리 직후 XR VRF 설정에서 import/export RT 추출
+            vrf_dict = {"name": vname, "rd": rd, "neighbors": vneis}
+
+            # 동일 VRF 이름의 XR VRF 설정 찾기
+            vrf_cfg = None
+            for vcfg in findall(dev, "ncs:config/xr:vrf/xr:vrf-list"):
+                if text(find(vcfg, "xr:name")) == vname:
+                    vrf_cfg = vcfg
+                    break
+
+            def _rt_names(root, path):
+                return sorted({ text(a) for a in findall(root, path) if text(a) })
+
+            if vrf_cfg is not None:
+                rt_imp = _rt_names(
+                    vrf_cfg,
+                    ".//xr:ipv4/xr:unicast/xr:import//xr:route-target//xr:address-list/xr:name"
+                )
+                rt_exp = _rt_names(
+                    vrf_cfg,
+                    ".//xr:ipv4/xr:unicast/xr:export//xr:route-target//xr:address-list/xr:name"
+                )
+                vrf_dict["rt_import"] = rt_imp
+                vrf_dict["rt_export"] = rt_exp
+
+            bgp["vrfs"].append(vrf_dict)
     # IOS BGP (optional)
     bgp_ios = find(dev, "ncs:config/ios:router/ios:bgp")
     if bgp_ios is not None:

@@ -1,0 +1,541 @@
+% This is the LaTex style file for HCLT 2025
+% modified version of the style used for ACL and NIPS.
+% If you are an Overleaf user, please edit "Menu->TeX Live version-> 2021".
+% --  Chanjun Park, Cheoneum Park
+
+\documentclass[twocolumn, 10pt]{article}
+
+\usepackage{float} % [H] 옵션 사용
+\usepackage{afterpage} % 특정 페이지에 플로팅 가능
+\usepackage{hclt}
+\usepackage{svg}
+\usepackage[utf8]{inputenc}
+\usepackage[pdfencoding=auto]{hyperref}
+\usepackage{url}
+\usepackage{amsmath}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage[hangul]{kotex}
+\usepackage{graphicx} % 그림
+\usepackage{array} % p{..} 열
+\hypersetup{unicode=true}
+\usepackage{amssymb}
+\usepackage[ruled, vlined]{algorithm2e}
+\usepackage{tikz}
+\usepackage{dblfloatfix} % 두단 float 배치 안정화
+\makeatletter
+\usetikzlibrary{arrows.meta, positioning, fit, calc, shapes.misc}
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+% Define subsubsubsection command (guard against redefinition)
+\@ifundefined{subsubsubsection}{%
+\newcommand{\subsubsubsection}[1]{\paragraph{#1}}%
+}{%
+\renewcommand{\subsubsubsection}[1]{\paragraph{#1}}%
+}
+\makeatother
+
+\title[korean]{NetConfigQA: LLM을 활용한 네트워크 매니지먼트}
+\title[english]{Network Management with Large Language Model}
+
+\author[korean]{박유진\footnotemark[1], 진경은\footnotemark[1], 박찬진, 김기현,
+김태훈, 전윤호, 박천음\footnotemark[2] \\
+국립한밭대학교, 한국과학기술정보연구원 \\
+\texttt{\{hong,kim\}@mail.ac.kr}\\
+}
+
+\author[english]{ Gil-Dong Hong$^{\circ}$, Cheoneum Park \\
+Hanbat National University }
+
+% \finalcopy % Uncomment for camera-ready version
+%---------------------------------------------------------------------------------------
+%---------------------------------------------------------------------------------------
+
+\begin{document}
+\twocolumn[
+\maketitle
+\begin{abstract}
+요약임!!!!!!!!!!!!!!!!!!!!!!!!!
+\end{abstract}
+
+% \begin{keyword}
+%   거대언어모델, 기계번역, 정보검색
+% \end{keyword}
+\noindent
+\textbf{키워드} — LLM, 네트워크매니지먼트, RAT,
+
+\vspace{0.5em}
+]
+
+\footnotetext[1]{Equal contribution}
+\footnotetext[2]{Corresponding author}
+
+%---------------------------------------------------------------------------------------
+%---------------------------------------------------------------------------------------
+  
+\section{서론}
+네트워크 관리(Network Management)는 네트워크의 안정성과 효율성을 보장하기 위한 주요 작업이다.
+그러나 대규모 환경에서 장비와 프로토콜의 다양성, 복잡한 구성, 장애의 불확실성으로 인해 관리 부담이 크게 증가하고 있다. 기존 규칙 기반 도구는 동적 변화를 충분히 반영하지 못해 확장성과 적응성에 한계가 있다.
+최근 대규모 언어 모델(Large Language Model, LLM)의 발전은 이러한 한계를 극복할 새로운 가능성을 제시한다.
+LLM은 네트워크 설정 파일을 해석하고 자연어 질의에 응답하며, 설정 오류를 검출하여 적절한 대응 방안을 제안할 수 있어 자율적 네트워크 관리(Autonomous Network Management) 구현의 기반을 제공한다.
+
+본 논문은 네트워크 장치 설정 파일 기반 질의응답 데이터셋 자동 생성 파이프라인과 LLM 기반 질의응답 시스템을 제안한다. 
+특히 복잡한 네트워크 문제 해결보다는 실제 네트워크 구성과 토폴로지를 얼마나 정확하고 세밀하게 파악할 수 있는지에 집중하여, 설정 파일로부터 네트워크 인프라의 세부 사항을 이해하는 LLM의 능력을 체계적으로 평가한다. 
+하이브리드 데이터 생성 방법론을 통해 35개 핵심 메트릭 기반 기초 질문과 전문가 페르소나 기반 심화 질문을 체계적으로 생성하고, 반복적 답변 개선을 통해 최적화된 응답을 제공한다.
+
+
+%---------------------------------------------------------------------------------------
+%---------------------------------------------------------------------------------------
+
+\section{관련연구}
+최근 대규모 언어 모델(LLM)을 네트워크 관리와 구성 자동화에 적용하려는 연구가 활발히 진행되고 있다 \cite{boateng2025survey}. 이러한 연구들은 크게 LLM이 수행하는 핵심 작업을 기준으로 (1) 새로운 설정을 만들어내는 생성 중심(Generation-focused) 접근법과, (2) 기존 설정을 분석하고 이해하는 해석 중심(Interpretation-focused) 접근법으로 나눌 수 있다. 레퍼런스 추가
+
+\begin{table*}[t]
+    \centering
+    \caption{LLM 기반 네트워크 관리 벤치마크 비교}
+    \label{tab:benchmark_comparison}
+    \begin{tabular}{l c c c}
+      \toprule
+      \textbf{벤치마크} & \textbf{평가 방향 (접근법)} & \textbf{데이터 생성} & \textbf{토폴로지 특화} \\
+      \midrule
+      NetConfEval & 요구사항 → \textbf{설정} (생성 중심) &  수동 & X \\
+      NETPRESS & 에이전트 운영 &  동적 생성 & △ \\
+      NETLLMBENCH & 명령어 생성 &  반자동 & △ \\
+      NeMoEval & 요구사항 → \textbf{코드} (생성 중심) &  수동 & X \\
+      \midrule
+      \textbf{NetworkConfigQA (Our)} & \textbf{설정 → Q\&A (해석 중심)} & \textbf{ 자동화 (규칙+LLM)} & \textbf{O} \\
+      \bottomrule
+    \end{tabular}
+\end{table*}
+
+[표~\ref{tab:benchmark_comparison}]과 같이, 기존 연구들은 주로 자연어 요구사항을 받아 네트워크 설정을 만드는 생성 중심 접근법(NetConfEval, NeMoEval 등)에 중점을 두었다.
+
+그러나 이러한 접근 방법은 실제 운영 환경에 이미 배포된 설정에 대하여 깊이 있는 해석, 정책적 타당성 검증, 잠재적 위험 추론 등의 과정을 수행하지 못한다.
+이에 본 논문에서는 네트워크 설정 파일을 직접 입력받아 질의응답을 수행하는 해석 중심 평가 프레임워크 NetworkConfigQA를 제안한다.
+  %---------------------------------------------------------------------------------------
+  %---------------------------------------------------------------------------------------
+  \section{연구방법}
+
+\begin{figure}[t]
+\centering
+\IfFileExists{pipeline_diagram.png}{%
+\includegraphics[width=\linewidth, keepaspectratio]{pipeline_diagram.png}%
+}
+%\fbox{\parbox{0.95\linewidth}{그림 파일 'pipeline_diagram.png'이(가) 누락되었습니다. 업로드해 주세요.}}%}
+
+\caption{5단계 통합 네트워크 Q\&A 데이터셋 생성 파이프라인}
+\label{fig:pipeline}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth, keepaspectratio]{figure2.png}
+\caption{질의응답 파이프라인}
+\label{fig:hctl-top}
+\end{figure}
+
+본 연구는 LLM의 네트워크 관리 도메인 이해 능력을 평가하기 위해, 네트워크 장치 설정 파일을 기반으로 질의응답 데이터셋을 자동 생성하는 5단계 파이프라인을 제안한다. 제안된 파이프라인은 설정 파일에서 네트워크 구성, 토폴로지, 장비 상태와 같은 핵심 정보를 추출하고 이를 토대로 질문을 생성한 뒤, 각 질문에 대해 네트워크 장비 설정을 기반으로 정답과 해설을 자동으로 생성한다. 이를 통해 실제 네트워크 인프라의 구조와 상태를 정확히 해석할 수 있는 LLM의 역량을 체계적으로 검증한다.
+% 이는 복잡한 네트워크 장애 해결이나 고급 분석보다는 네트워크 인프라의 현재 상태와 구성을 세밀하게 이해하는 핵심적인 역량을 검증하는 데 중점을 둔다.
+
+\subsection{데이터셋 생성 파이프라인 설계}
+
+제안 방법의 파이프라인은 네트워크 설정의 복잡성과 다양성을 반영하여 규칙 기반 생성과 LLM 기반 생성을 결합하는 하이브리드 방법으로 데이터 생성을 수행한다.
+데이터셋 구축 목표는 XML 설정 파일로부터 네트워크 토폴로지, 장비 구성, 프로토콜 상태 등을 정확히 파악하고 해석하는 능력을 검증하는 것이며, 이를 위해 실제 네트워크 설정의 세부 사항에 대한 체계적인 질문을 정의 및 생성한다. 
+% 이를 위해 실제 네트워크 설정의 세부 사항을 심층적으로 이해할 수 있는지를 평가하는 질문들을 체계적으로 생성한다. 
+전체 프로세스는 XML 파싱부터 품질 관리까지 5단계로 구성되며, 각 단계의 결과는 다음 단계로 propagation 된다.
+% 독립적으로 실행되면서도 이전 단계의 결과를 누적적으로 활용한다.
+
+\subsubsection{XML 파싱 및 정규화 (Stage 1)}
+네트워크 장비의 다양한 벤더별 XML 스키마 차이를 해결하기 위해 Universal
+Parser를 구현하였다. 이는 Cisco IOS, IOS-XR, NSO 등 여러가지 XML 구조를 통합된
+팩트 모델로 변환하는 핵심 컴포넌트이다.
+
+\subsubsubsection{네임스페이스 통합} 서로 다른 XML 네임스페이스를 단일 접근
+인터페이스로 통합한다. 예를 들어, Cisco IOS의 \texttt{<interface>} 태그와 IOS-XR의
+\texttt{<GigabitEthernet>} 태그를 동일한 인터페이스 객체로 매핑한다.
+
+\subsubsubsection{계층 구조 정규화} 벤더별로 상이한 계층 구조를 통합 팩트 모델로
+변환한다. BGP 설정의 경우, IOS-XR의 복잡한 3단계 중첩 구조(\texttt{router bgp
+$\rightarrow$ neighbor $\rightarrow$ address-family})를 단순한 점 표기법(\texttt{bgp.neighbor.af})으로
+정규화한다.
+
+\subsubsection{기초 질문 생성 (Stage 2)}
+
+정형화된 네트워크 설정으로부터 일관된 기초 질문을 대량 생성하기 위해 35개 핵심
+메트릭을 정의하고 이를 기반으로 한 템플릿 매칭 시스템을 구축하였다. 표~\ref{tab:category_details}에
+제시된 바와 같이, 12개 주요 카테고리별로 Level 1(직접 조회)과 Level 2(분석 필요)
+질문을 체계적으로 생성한다.
+
+\begin{align}
+Q_{basic}= Template(M_{i}, P_{network}) \label{eq:rule_based}
+\end{align}
+
+여기서 $M_{i}$는 35개 메트릭 중 하나이며, $P_{network}$는 파싱된 네트워크 설정
+파라미터이다. 예를 들어, \texttt{BGP\_Consistency} 카테고리의 경우 \texttt{ibgp\_missing\_pairs}
+메트릭을 활용하여 "AS \{asn\} iBGP 누락 페어는?"과 같은 질문을 자동 생성한다.
+
+규칙 기반 생성의 핵심 장점은 정확성과 일관성 보장이다. \textbf{실제 네트워크
+설정에서 직접 추출 가능한 구체적 정보}(예: BGP AS 번호, VRF 개수, SSH 활성화 상태,
+인터페이스 구성, 라우팅 테이블 엔트리 등)에 대한 질문들은 항상 명확한 정답이 존재하며,
+템플릿 매칭을 통해 일관된 형식으로 생성된다. 이러한 질문들은 LLM이 XML 설정 파일의
+내용을 얼마나 정확히 파악하고 해석할 수 있는지를 직접적으로 검증한다.
+
+\subsubsection{LLM 기반 심화 질문 생성 (Stage 3)}
+
+전문가 수준의 복잡한 분석 질문을 생성하기 위해 5가지 복잡도 계층과 6가지
+전문가 페르소나를 조합한 LLM 기반 생성 시스템을 설계하였다.
+
+\paragraph{복잡도 계층 설계}
+네트워크 설정 파악 능력의 인지적 복잡성을 반영하여 5단계 복잡도를 정의한다:
+\begin{itemize}
+\item \textbf{Basic}: XML 설정에서 직접 조회 (예: "BGP 세션 수는?", "활성화된
+  인터페이스 목록은?")
+
+\item \textbf{Analytical}: 설정 간 관계 분석 (예: "VRF별 RT 설정 일관성은?",
+  "BGP 네이버 상태 분포는?")
+
+\item \textbf{Synthetic}: 전체 토폴로지 구성 파악 (예: "MPLS L3VPN 서비스
+  토폴로지 구조는?", "네트워크 계층별 연결 관계는?")
+
+\item \textbf{Diagnostic}: 설정 불일치 탐지 (예: "L2VPN PW-ID 불일치 회선은?",
+  "BGP 세션 설정 오류는?")
+
+\item \textbf{Scenario}: 설정 기반 상황 분석 (예: "현재 설정에서 단일
+  장애점은?", "네트워크 확장 시 영향받는 구성 요소는?")
+\end{itemize}
+
+\paragraph{전문가 페르소나 적용}
+실제 네트워크 운영 환경의 다양한 역할을 반영하여 6가지 페르소나를 정의한다: Network
+Engineer, Security Auditor, NOC Operator, Network Architect, Troubleshooter,
+Compliance Officer. 각 페르소나는 고유한 관심사와 질문 패턴을 갖도록 프롬프트 템플릿을
+차별화한다.
+
+\begin{align}
+Q_{enhanced}= LLM(Template_{cp}, Facts_{network}, Persona_{j}) \label{eq:llm_based}
+\end{align}
+
+여기서 $Template_{cp}$는 복잡도 $c$와 페르소나 $p$에 특화된 프롬프트 템플릿이며,
+$Facts_{network}$는 Stage 1에서 추출된 네트워크 팩트이다. 각 질문은 단순한
+텍스트가 아닌 \textbf{reasoning plan}을 포함하여, 이후 Answer Agent가 체계적으로
+답변을 생성할 수 있도록 구조화된다.
+
+\subsubsection{Answer Agent 설계}
+
+생성된 질문에 대한 정확한 답변과 설명을 자동으로 생성하기 위해 reasoning plan
+기반의 Answer Agent를 설계하였다. 이 에이전트는 LLM이 생성한 reasoning plan을 단계별로
+실행하여 네트워크 설정으로부터 증거를 수집하고, 이를 바탕으로 ground truth와
+explanation을 합성한다.
+
+\begin{algorithm}
+[t]
+\caption{Answer Agent Reasoning Plan 실행}
+\label{alg:answer-agent} \KwIn{질의 $Q$, reasoning plan $P = \{s_{1}, s_{2}, ..., s_{k}\}$, 네트워크 팩트 $F$}
+\KwOut{ground truth $GT$, explanation $EX$, 참조 파일 목록 $SF$}
+
+$Evidence \leftarrow \emptyset$ \tcp*{증거 컬렉션 초기화}
+$SourceFiles \leftarrow \emptyset$ \tcp*{참조 파일 집합 초기화}
+
+\For{각 단계 $s_{i}\in P$}{ $metric \leftarrow s_{i}.metric$ \tcp*{실행할 메트릭 추출} $params \leftarrow s_{i}.parameters$ \tcp*{메트릭 파라미터}
+
+\tcp{BuilderCore를 통한 증거 수집} $result \leftarrow BuilderCore.execute(metric, params, F)$
+
+\If{$result$ is valid}{ $Evidence[s_{i}.id] \leftarrow result$ $SourceFiles \leftarrow SourceFiles \cup result.source\_files$ } }
+
+\tcp{LLM 기반 답변 합성} $summary \leftarrow summarize(Evidence)$ $GT, EX \leftarrow
+LLM\_synthesize(Q, summary, Answer\_Schema)$
+
+\Return $GT, EX, SourceFiles$
+\end{algorithm}
+
+Answer Agent의 핵심은 \textbf{BuilderCore}와의 연동이다. BuilderCore는 35개의
+네트워크 메트릭(BGP 세션 수, VRF 일관성, 보안 정책 상태 등)을 실제로 계산할 수
+있는 분석 엔진으로, XML 설정으로부터 정확한 수치와 상태 정보를 추출한다. 이를
+통해 생성된 답변이 추측이나 환각이 아닌 실제 설정 데이터에 근거함을 보장한다. \subsubsubsection{증거 수집 및 답변 합성}
+
+Answer Agent는 다음 두 단계로 답변을 생성한다:
+
+\begin{enumerate}
+\item \textbf{증거 수집}: Reasoning plan의 각 단계를 BuilderCore를 통해 실행하여
+  XML 설정으로부터 관련 증거를 추출한다. 예를 들어, "BGP 세션 불안정 원인" 질문의
+  경우 BGP 네이버 상태, 라우팅 테이블, 인터페이스 상태 등의 증거를 순차적으로
+  수집한다.
+
+\item \textbf{답변 합성}: 수집된 증거를 요약하여 LLM에게 제공하고, 구조화된
+  스키마를 통해 ground truth와 explanation을 생성한다. 이 과정에서 temperature=0.0을
+  사용하여 결정론적 답변을 보장한다.
+\end{enumerate}
+
+\subsubsubsection{데이터 통합 및 어셈블리 (Stage 4)}
+
+규칙 기반과 LLM 기반에서 생성된 질문들을 통합하는 과정에서는 다음 세 가지
+원칙을 적용한다:
+
+\begin{itemize}
+\item \textbf{중복 제거}: 질문 텍스트, 컨텍스트, 참조 파일 조합을 기준으로 의미적
+  중복 질문 제거
+
+\item \textbf{카테고리 균형}: 각 네트워크 관리 영역(BGP, VRF, 보안 등)별로 균등한
+  질문 분포 보장
+
+\item \textbf{컨텍스트 보강}: 각 질문에 관련 XML 설정 정보를 컨텍스트로 첨부
+\end{itemize}
+
+중복 제거 알고리즘은 질문의 의미적 유사성을 판단하기 위해 정규화된 질문 텍스트와
+컨텍스트 정보를 복합 키로 사용한다. 동일한 네트워크 개념을 다루더라도 서로
+다른 장비나 시나리오에서 발생하는 질문들은 고유한 학습 가치를 갖는 것으로
+판단하여 보존한다.
+
+\subsubsubsection{검증 및 품질 관리 (Stage 5)}
+
+생성된 데이터셋의 품질을 보장하기 위해 다층 검증 절차를 수행한다:
+
+\begin{itemize}
+\item \textbf{답변 정확성 검증}: Answer Agent가 생성한 답변을 네트워크 설정 데이터와
+  대조하여 사실적 오류 검출
+
+\item \textbf{질문 품질 필터링}: 문법적 오류, 모호한 표현, 답변 불가능한 질문
+  제거
+
+\item \textbf{범용적 확장성}: Universal Parser를 통한 벤더 독립적 설계로 Cisco,
+  Juniper, Huawei 등 다양한 네트워크 장비의 XML 설정 파일에 대해 동일한 파이프라인이
+  유효하게 동작
+
+\item \textbf{데이터 분할}: 전체 데이터셋을 70:15:15 비율로 훈련/검증/테스트
+  세트로 분할
+\end{itemize}
+
+특히 네트워크 도메인의 특성상 수치적 정확성이 중요하므로, 정량적 답변(예: BGP 세션
+수, IP 주소 범위)에 대해서는 XML 원본과의 완전 일치를 요구한다.
+
+\subsection{하이브리드 전략의 핵심 특징}
+
+제안하는 하이브리드 접근법은 네트워크 관리 도메인의 특성을 반영하여 설계되었다.
+순수 규칙 기반 시스템은 일관성과 정확성은 보장하지만 질문의 다양성과 창의성에
+한계가 있으며, 순수 LLM 기반 시스템은 창의적이지만 도메인 특화 지식의 정확성과
+일관성에서 한계를 보인다.
+
+본 논문의 하이브리드 전략은 다음과 같은 핵심 특징을 갖는다:
+
+\begin{itemize}
+\item \textbf{상호 보완적 생성}: Rule-based로 핵심 메트릭 기반의 필수 질문을
+  보장하고, LLM으로 전문가 관점의 복합 분석 질문을 확장
+
+\item \textbf{단계적 복잡도 확장}: Basic(직접 조회) $\rightarrow$ Analytical(분석적
+  추론) $\rightarrow$ Synthetic(복합 정보 종합) $\rightarrow$ Diagnostic(문제
+  진단) $\rightarrow$ Scenario(시나리오 기반) 순으로 체계적 확장
+
+\item \textbf{증거 기반 답변 생성}: Answer Agent가 reasoning plan을 실행하여
+  XML 설정으로부터 실제 증거를 수집한 후 LLM이 이를 바탕으로 답변을 합성함으로써
+  환각(hallucination) 문제 해결
+
+\item \textbf{자동화된 품질 관리}: 5단계 파이프라인을 통한 완전 자동화로 대규모
+  데이터셋 생성 시 일관성 보장
+
+\item \textbf{범용성과 확장성}: Universal Parser를 통한 벤더 독립적 설계로 다양한
+  XML 파일에도 유효하게 동작하며, 다른 네트워크 구성 형식으로의 확장 가능성
+  제공
+\end{itemize}
+
+이러한 설계를 통해 본 논문은 \textbf{LLM의 XML 네트워크 설정 파일 해석 능력과
+실제 네트워크 구성 파악 역량}에 특화된 Q\&A 데이터셋을 체계적으로 생성할 수
+있으며, 향후 다양한 LLM들이 네트워크 인프라의 현재 상태와 구성을 얼마나 정확하고
+세밀하게 이해할 수 있는지를 공정하게 비교 평가할 수 있는 기준 데이터를 제공한다.
+
+\begin{table}[t]
+\centering
+\caption{주요 카테고리별 메트릭 구성 및 질문 특성}
+\label{tab:category_details} \scriptsize
+\begin{tabular}{p{2.4cm}|c|c|p{3.8cm}}
+  \toprule 카테고리                      & L1          & L2          & 대표 메트릭 및 질문 패턴                                                        \\
+  \midrule \texttt{Security\_Policy} & 2           & 2           & \texttt{ssh\_enabled\_devices}: "SSH가 활성화된 장비 목록은?"                   \\
+  \texttt{BGP\_Consistency}          & 1           & 2           & ibgp\_missing\_pairs: "AS \{asn\} iBGP 누락 페어는?"                       \\
+  \texttt{VRF\_Consistency}          & 1           & 2           & vrf\_without\_rt\_pairs: "RT 미설정 VRF 쌍은?"                             \\
+  \texttt{L2VPN\_Consistency}        & 1           & 2           & l2vpn\_pwid\_mismatch\_pairs: "PW-ID 불일치 회선은?"                        \\
+  \texttt{Command\_Generation}       & 1           & 2           & cmd\_ssh\_proxy\_jump: "\{user\}@\{jump\}$\rightarrow$\{dest\} 명령어는?" \\
+  \texttt{System\_Inventory}         & 3           & 0           & system\_hostname\_text: "\{host\} 장비의 호스트네임은?"                        \\
+  \midrule \textbf{소계 (주요 6개)}       & \textbf{9}  & \textbf{10} & \textbf{19개 메트릭}                                                      \\
+  \textit{기타 6개 카테고리}                & 15          & 1           & \textit{Interface, Routing, Services 등}                               \\
+  \midrule \textbf{총계 (12개 카테고리)}    & \textbf{24} & \textbf{11} & \textbf{35개 메트릭}                                                      \\
+  \bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{LLM 질의응답 파이프라인 설계}
+본 논문에서는 네트워크 장비 설정 파일(XML) 및 외부 지식을 활용하여 다양한 유형의
+질의를 처리할 수 있는 LLM 기반 질의응답 파이프라인을 설계하였다. 제안하는
+파이프라인은 단순 조회(Simple Lookup Tasks) 와 기타 복합 과제(Other Tasks) 로
+분류하여 각각의 처리 전략을 달리 적용한다. 전체 구조는 그림~\ref{fig:hctl-top}와
+같이 (1) 작업 분류, (2) 반복적 답변 개선 그리고 (3) 최종 응답 최적화 세 단계로
+나뉜다.
+
+\subsubsection{작업 분류(Task Classification)}
+분류단계의 목적은 입력 질의를 XML 파일 의존 단순 조회와 기타 복합 과제로 이진 분류하여,
+이 후 파이프라인의 라우팅을 결정하는 작업이다. 본 논문은 제안한 분류 범주에 따른
+판정 원칙을 규정하고, 이를 기반으로 효과적인 과제 분류를 수행할 수 있도록
+프롬프트를 설계하였다.
+\paragraph{범주 정의}
+\begin{itemize}
+\item \textbf{Simple Lookup Tasks}: 네트워크 장비 \emph{XML 구성으로부터
+  직접 조회} 가능한 값/목록 추출형 질의. (예: 장비 상태, 라우팅 테이블, 인터페이스
+  등)
+
+\item \textbf{Other Tasks}: XML 참조만으로 충분하지 않은 절차/분석/변경/최적화/보안·감사
+  전반. (예: 설정 변경·정책 적용, 장애 분석·원인 파악·복구, 구성/정책 검토
+  및 최적화, 보안 이벤트 분석·준수 점검·감사 대응 등)
+\end{itemize}
+
+\paragraph{판정 원칙}
+\begin{itemize}
+\item \textbf{Simple Lookup}: XML 파일의 사실값만으로 응답 가능한 경우
+
+\item \textbf{Other Tasks}: 명령 실행/변경, 절차 제안, 원인 분석,
+  보안·컴플라이언스 판단이 핵심인 경우
+\end{itemize}
+
+\subsubsection{반복적 답변 개선}
+
+단일 단계에서 생성된 답변은 종종 불완전하거나 과도한 정보를 포함할 수 있다. 이에
+본 논문은 반복적 답변 개선(iterative answer refinement) 절차를 제안한다. 이 절차는
+초기 응답을 기반으로 참조 문서와 XML 구성으로부터 확인된 사실을 단계적으로 반영하여,
+응답의 정확성과 일관성을 높이는 것을 목표로 한다.
+
+반복 과정은 크게 네 단계로 구성된다: (1) 질의에 대한 초안 응답을 생성, (2) RAG
+Query 생성을 통한 관련 정보 검색, (3) Re-ranking을 통한 정보 우선순위 결정, (4)
+검증된 정보를 바탕으로 답변 개선. 이러한 과정을 반복 수행함으로써 최종적으로 간결하고
+신뢰성 있는 답변을 도출한다.
+
+\begin{algorithm}
+[t]
+\caption{반복적 답변 개선 절차}
+\label{alg:iterative-refine} \KwIn{질의 $Q$, 초안 답변 $T_{0}$, 최대 반복 횟수 $N$}
+\KwOut{개선된 최종 답변 $A_{N}$}
+
+\For{$n=1$ \KwTo $N$}{ \tcp{1. RAG Query 생성} $q_{n}\leftarrow$ GenerateQuery($Q, T_{n-1}$)
+
+\tcp{2. Retrieval} $V_{n}, I_{n}\leftarrow$ Retrieve($q_{n}$)
+
+\tcp{3. Re-ranking} $V_{n}^{*}, I_{n}^{*}\leftarrow$ ReRank($V_{n}, I_{n}, Q, T_{n-1}$)
+
+\tcp{4. Revise} $T_{n}\leftarrow$ Revise($Q, T_{n-1}, I_{n}^{*}$) }
+
+\Return $T_{N}$
+\end{algorithm}
+해당 절차의 세부 흐름은 \textbf{Algorithm~\ref{alg:iterative-refine}}에 제시하였다.
+이 알고리즘은 초기 답변 생성부터 검증 및 재수정 단계를 순차적으로 기술하며, 각
+반복마다 정확성, 간결성, 설명력의 기준을 충족하도록 설계되었다.
+
+\subsubsection{최종 응답 최적화}
+
+\paragraph{출력 원칙}
+\begin{itemize}
+\item \textbf{Simple Lookup Tasks}: 질의가 요구하는 값이나 장비명을 \emph{불필요한
+  설명 없이} 단일 값 혹은 콤마 구분 목록으로만 출력한다.
+
+\item \textbf{Other Tasks}: 정답([ANSWER])과 기술적 세부 사항([TECHNICAL
+  DETAILS])을 분리된 구조로 제시한다. 정답 부분은 핵심 결론을 간결히 담고, 기술적
+  세부 사항에는 설정 명령, 절차, 보안 고려 사항, 모범 사례를 포함한다.
+\end{itemize}
+
+\paragraph{처리 방식}
+\begin{itemize}
+\item 단순 조회 질의의 경우, 불필요한 서술을 제거하여 평가 지표(Exact Match,
+  BERTScore)의 일치도를 극대화하였다.
+
+\item 복합 과제 질의의 경우, 응답 구조를 이원화하여 간결성과 기술적 설명력을
+  동시에 확보하였다.
+\end{itemize}
+
+\subsection{제안 방법의 차별점}
+
+기존의 Retrieval-Augmented Thoughts(RAT) \cite{wang2024rat}는 Chain-of-Thought
+기반 추론 단계마다 retrieval을 결합하여 사고 단위별로 응답을 보정하는 방식을 제안함으로써,
+장기 추론 과제에서 성능을 향상시켰다. 이에 비해 본 논문은 네트워크 관리라는 특수
+도메인에 초점을 맞추어 질의응답 파이프라인을 다음과 같이 차별화하였다.
+
+\subsubsection{LLM 질의응답 파이프라인의 핵심 특징}
+\begin{itemize}
+\item \textbf{질의 유형 기반 라우팅}: RAT가 일반적 장기 추론을 위한 CoT 기반
+  보정에 집중하는 반면, 본 논문은 입력 질의를 \texttt{Simple Lookup}과
+  \texttt{Other Tasks}로 이진 분류하여 XML 기반 사실 조회와 복합 분석 과제를
+  명확히 분리하였다.
+
+\item \textbf{반복적 답변 개선 절차}: RAT는 사고 단계별 retrieval을 적용하지만,
+  본 논문은 Draft–Query 생성–Retrieval–Re-ranking–Revise로 이어지는 반복적
+  개선 구조를 채택하여, 도메인 특화 정보(XML 구성, 보안 정책 등)를 정제된
+  답변에 단계적으로 반영하였다.
+
+\item \textbf{최종 응답 최적화}: RAT가 CoT 보정 자체에 중점을 두는 것과 달리,
+  본 논문은 최종 단계에서 \texttt{Simple Lookup}은 간결한 값/목록, \texttt{Other
+  Tasks}는 [ANSWER]/[TECHNICAL DETAILS] 구조로 구분된 출력을 강제하였다.
+  이를 통해 평가 지표(Exact Match, BERTScore)와 실제 네트워크 엔지니어링 활용성을
+  동시에 보장하였다.
+\end{itemize}
+
+따라서 본 논문의 질의응답 파이프라인은 RAT의 반복적 retrieval 보정 개념을
+차용하면서도, 네트워크 관리 도메인에 맞추어 정형 데이터 기반 사실 조회와 다양한
+복합 과제 처리를 동시에 지원하는 구조적 차별성을 갖는다.
+
+\section{실험 설계}
+
+\subsection{실험 환경 및 데이터셋}
+
+\subsection{성능 평가 결과}
+
+\subsubsection{질의응답 성능 분석}
+
+\begin{table}[htbp]
+\centering
+\caption{생성 단계 성능 평가}
+\label{tab:generation_performance} \resizebox{\columnwidth}{!}{%
+\begin{tabular}{cccccc}
+  \hline
+  \textbf{top@k} & \textbf{BERTScore F1} & \textbf{Exact Match Acc.} & \textbf{ROUGE-1 F1} & \textbf{ROUGE-2 F1} & \textbf{ROUGE-L F1} \\
+  \hline
+  k=1            & 0.844                 & 0.151                     & 0.200               & 0.053               & 0.199               \\
+  k=5            & 0.843                 & 0.162                     & 0.218               & 0.075               & 0.217               \\
+  k=10           & 0.850                 & 0.198                     & 0.255               & 0.076               & 0.255               \\
+  k=20           & 0.855                 & 0.205                     & 0.295               & 0.088               & 0.292               \\
+  k=50           & 0.858                 & 0.256                     & 0.350               & 0.096               & 0.345               \\
+  \hline
+\end{tabular}%
+}
+\end{table}
+
+\subsubsection{검색 성능 비교 분석}
+
+\begin{table}[htbp]
+\centering
+\caption{검색 단계 성능 비교}
+\label{tab:retrieval_performance} \resizebox{0.9\columnwidth}{!}{%
+\begin{tabular}{cccccc}
+  \hline
+  \textbf{방법} & \textbf{Recall@1} & \textbf{Recall@5} & \textbf{Recall@10} & \textbf{Recall@20} & \textbf{MRR} \\
+  \hline
+  Heuristic   & 0.219             & 0.364             & 0.439              & 0.500              & 0.281        \\
+  LLM         & 0.217             & 0.339             & 0.434              & 0.509              & 0.272        \\
+  \hline
+\end{tabular}%
+}
+\end{table}
+
+\section{결론}
+
+본 논문은 LLM을 활용한 네트워크 관리 시스템을 위한 고품질 질의응답 데이터셋 생성
+파이프라인과 최적화된 질의응답 파이프라인을 제안하였다. 제안한 5단계
+하이브리드 데이터 생성 방법론은 규칙 기반과 LLM 기반 접근법을 결합하여 35개
+핵심 메트릭을 활용한 기초 질문과 전문가 페르소나 기반 심화 질문을 체계적으로
+생성하였다. 또한 반복적 답변 개선 절차를 통해 질의 유형별로 최적화된 응답을 제공하는
+질의응답 파이프라인을 구현하였다.
+
+실험 결과, 제안한 방법은 기존 접근법 대비 BERTScore F1에서 0.858, Exact Match 정확도에서
+0.256의 성능을 달성하였으며, 이는 네트워크 관리 도메인에서의 LLM 활용 가능성을
+입증한다. 향후 연구에서는 더 다양한 네트워크 장비와 프로토콜을 지원하는 확장된
+시스템 개발과 실제 운영 환경에서의 적용성 검증을 수행할 계획이다.
+
+\bibliographystyle{IEEEtran}
+\bibliography{refer}
+\end{document}

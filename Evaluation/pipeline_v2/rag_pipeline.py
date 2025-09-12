@@ -51,6 +51,8 @@ chatgpt_system_prompt = (
     "You are an expert network engineering assistant with deep knowledge of network "
     "configurations, troubleshooting, and security best practices."
 )
+
+
 def _with_enhanced_origin_for_expl(df: pd.DataFrame) -> pd.DataFrame:
     """설명 점수 대상 행(origin='enhanced_llm_with_agent') 라벨링.
     - 기본 정책: explanation이 비어있지 않은 행만 enhanced로 지정
@@ -59,7 +61,8 @@ def _with_enhanced_origin_for_expl(df: pd.DataFrame) -> pd.DataFrame:
     out = df.copy()
     if "origin" not in out.columns:
         out["origin"] = "general"
-    has_expl = out.get("explanation", pd.Series([""] * len(out))).astype(str).str.strip() != ""
+    has_expl = out.get("explanation", pd.Series(
+        [""] * len(out))).astype(str).str.strip() != ""
     out.loc[has_expl, "origin"] = "enhanced_llm_with_agent"
     return out
 
@@ -97,9 +100,11 @@ def get_plan(question: str) -> List[str]:
         temperature=0.0,
     )
     plan_text = resp.choices[0].message.content.strip()
-    steps = [s.strip() for s in _re.split(r"\n?\s*\d+\.\s+", plan_text) if s.strip()]
+    steps = [s.strip() for s in _re.split(
+        r"\n?\s*\d+\.\s+", plan_text) if s.strip()]
     if not steps or not any("Synthesize" in s or "final answer" in s for s in steps):
-        steps.append("Synthesize all findings into a final answer in the required format.")
+        steps.append(
+            "Synthesize all findings into a final answer in the required format.")
     print("🧠 Generated Plan:")
     for s in steps:
         print(f"  - {s}")
@@ -119,7 +124,8 @@ def build_context_from_docs(docs: List[str], metas: List[dict]) -> str:
     if metas:
         combined = "\n\n".join(
             "[METADATA]\n"
-            + "\n".join(f"{k}: {v}" for k, v in m.items() if k not in exclude_keys)
+            + "\n".join(f"{k}: {v}" for k, v in m.items()
+                        if k not in exclude_keys)
             + f"\n\n[CONTENT]\n{d}"
             for d, m in zip(docs, metas)
         )
@@ -210,7 +216,8 @@ def run_experiment_ab(pipeline: "NetworkEngineeringPipeline", question: str, top
     A: single pass brief answer; B: explanation-only then finalize with rationale.
     """
     task_type = get_classification_result(question)
-    docs, metas = pipeline.get_chromadb_content_for_eval(question, n_results=top_k)
+    docs, metas = pipeline.get_chromadb_content_for_eval(
+        question, n_results=top_k)
     context = build_context_from_docs(docs, metas)
 
     # A: 1-pass brief
@@ -311,7 +318,8 @@ class HuggingFaceEmbedder:
         try:
             return self.embedder.embed_documents(texts)
         except torch.cuda.OutOfMemoryError:
-            print("[WARNING] CUDA OOM during embedding. Falling back to CPU with smaller batch size.")
+            print(
+                "[WARNING] CUDA OOM during embedding. Falling back to CPU with smaller batch size.")
             # fallback to CPU with smaller batch size
             self.device = "cpu"
             self.batch_size = max(4, self.batch_size // 2)
@@ -335,15 +343,20 @@ class ChromaDB:
         except Exception:
             try:
                 if hasattr(self.client, "get_or_create_collection"):
-                    self.collection = self.client.get_or_create_collection(name=collection_name)
+                    self.collection = self.client.get_or_create_collection(
+                        name=collection_name)
                 else:
-                    self.collection = self.client.create_collection(name=collection_name)
+                    self.collection = self.client.create_collection(
+                        name=collection_name)
             except Exception:
                 # race-safe: fetch again
-                self.collection = self.client.get_collection(name=collection_name)
-        print(f"[INFO] Using collection: {collection_name} (count={self.collection.count()})")
+                self.collection = self.client.get_collection(
+                    name=collection_name)
+        print(f"[INFO] Using collection: {
+              collection_name} (count={self.collection.count()})")
         if AUTO_EMBED_XML_ON_EMPTY and self.collection.count() == 0 and self.xml_directory:
-            print("[INFO] AUTO_EMBED_XML_ON_EMPTY=True & empty collection → auto-embedding XML...")
+            print(
+                "[INFO] AUTO_EMBED_XML_ON_EMPTY=True & empty collection → auto-embedding XML...")
             self._auto_embed_xml_files()
 
     def _auto_embed_xml_files(self) -> None:
@@ -351,7 +364,8 @@ class ChromaDB:
         if not self.xml_directory or not os.path.exists(self.xml_directory):
             print(f"[WARNING] XML directory not found: {self.xml_directory}")
             return
-        files = [p for p in glob.glob(os.path.join(self.xml_directory, "**", "*.xml"), recursive=True)]
+        files = [p for p in glob.glob(os.path.join(
+            self.xml_directory, "**", "*.xml"), recursive=True)]
         if not files:
             print(f"[WARNING] No XML files found in: {self.xml_directory}")
             return
@@ -377,13 +391,15 @@ class ChromaDB:
                 metas.append({"filename": os.path.basename(f), "file_path": f})
                 if len(docs) >= batch:
                     embs = self.embedder.embed(docs)
-                    self.collection.add(ids=ids, documents=docs, embeddings=embs, metadatas=metas)
+                    self.collection.add(
+                        ids=ids, documents=docs, embeddings=embs, metadatas=metas)
                     ids, docs, metas = [], [], []
             except Exception as e:
                 print(f"[WARNING] Failed to embed {os.path.basename(f)}: {e}")
         if docs:
             embs = self.embedder.embed(docs)
-            self.collection.add(ids=ids, documents=docs, embeddings=embs, metadatas=metas)
+            self.collection.add(ids=ids, documents=docs,
+                                embeddings=embs, metadatas=metas)
         print(f"[INFO] Collection now has {self.collection.count()} documents")
 
     def query(self, text: str, n_results: int = 5) -> Dict:
@@ -396,7 +412,8 @@ def get_reranked_indices(question: str, documents: List[str], top_n: int = 5) ->
     assert tracked_openai_client is not None
     if not documents:
         return []
-    docs_str = "\n\n".join([f"Doc[{i+1}]:\n{d}" for i, d in enumerate(documents)])
+    docs_str = "\n\n".join(
+        [f"Doc[{i+1}]:\n{d}" for i, d in enumerate(documents)])
     prompt = f"""
     You are an expert document analyst. Re-rank the documents by relevance to the user question.
     User Question: "{question}"
@@ -437,7 +454,8 @@ def get_classification_result(question: str) -> str:
         model=LLM_MODEL,
         messages=[
             {"role": "system", "content": chatgpt_system_prompt},
-            {"role": "user", "content": f"Question: {question}\nInstruction: {prompt}"},
+            {"role": "user", "content": f"Question: {
+                question}\nInstruction: {prompt}"},
         ],
         temperature=LLM_TEMPERATURE,
     )
@@ -446,32 +464,33 @@ def get_classification_result(question: str) -> str:
 
 def get_draft(question: str, task_type: str, context: str = "") -> str:
     assert tracked_openai_client is not None
-    
+
     # 컨텍스트가 있으면 포함, 없으면 기존 방식
-    context_section = f"\n\nRelevant Configuration Data:\n{context}\n" if context else ""
-    
+    context_section = f"\n\nRelevant Configuration Data:\n{
+        context}\n" if context else ""
+
     if task_type == "Simple Lookup Tasks":
         user = f"""
         Answer the following network engineering question with exact precision.
-        
+
         Question: {question}{context_section}
-        
+
         FORMAT REQUIREMENTS:
         [GROUND_TRUTH]
         {{EXACT_VALUE_ONLY - no labels, no extra text, no descriptions}}
-        
+
         [EXPLANATION]
         {{Brief technical explanation in Korean}}
-        
+
         CRITICAL FORMATTING RULES:
         - Device lists: Use device names only (CE1, CE2, sample10) - NEVER use IP addresses
         - Multiple items: Separate with comma and space: "item1, item2, item3"
         - Numbers: Just the number (0, 1, 5) - no "대", "개", "ea" etc.
         - IP addresses: Only when specifically asked for IPs: "1.1.1.1, 2.2.2.2"
         - Sort device names alphabetically: CE1, CE2, sample7, sample8, sample9, sample10
-        
+
         EXAMPLES:
-        - Device names: "CE1, CE2, sample10"  
+        - Device names: "CE1, CE2, sample10"
         - Count: "0" or "5" (just numbers)
         - IP list: "1.1.1.1, 2.2.2.2, 3.3.3.3"
         - Boolean: "True" or "False"
@@ -479,26 +498,26 @@ def get_draft(question: str, task_type: str, context: str = "") -> str:
     else:
         user = f"""
         Provide a comprehensive answer to this network engineering question.
-        
+
         Question: {question}{context_section}
-        
+
         FORMAT REQUIREMENTS:
         [GROUND_TRUTH]
         {{Exact technical values only - no extra text}}
-        
+
         [EXPLANATION]
         {{Detailed technical explanation in Korean}}
-        
+
         For multiple values, use comma and space separation. Sort alphabetically when applicable.
         """
-    
+
     # 메타데이터에 컨텍스트 정보 포함 (모든 값을 문자열로 변환)
     metadata = {
         "has_context": str(bool(context)),
         "context_length": str(len(context) if context else 0),
         "context_preview": (context[:200] + "..." if len(context) > 200 else context) if context else "No context"
     }
-    
+
     resp = tracked_openai_client.chat_completions_create(
         call_type="initial_draft",
         model=LLM_MODEL,
@@ -521,17 +540,17 @@ def get_final_response(question: str, refined_answer: str, task_type: str) -> st
     assert tracked_openai_client is not None
     final_prompt = f"""
     Optimize the answer for exact evaluation format. Follow these rules strictly:
-    
-    [GROUND_TRUTH] 
+
+    [GROUND_TRUTH]
     - EXACT VALUES ONLY (no labels, no extra text)
     - Device lists: Use device names alphabetically (CE1, CE2, sample7, sample8, sample9, sample10)
     - Multiple items: comma-separated with spaces "item1, item2, item3"
     - Numbers: just the number "0" or "5" (no units like "대", "개")
     - IP addresses: "1.1.1.1, 2.2.2.2, 3.3.3.3"
     - Boolean: "True" or "False"
-    
+
     [EXPLANATION] Korean technical explanation
-    
+
     Question: {question}
     Current Answer: {refined_answer}
     """
@@ -551,7 +570,8 @@ def _parse_citations(answer_text: str) -> List[str]:
     """[CITATIONS] 라인에서 인용을 추출 (쉼표 분리). 없으면 빈 리스트."""
     try:
         import re as _re
-        m = _re.findall(r"\[CITATIONS\]\s*(.*)$", str(answer_text), flags=_re.IGNORECASE | _re.MULTILINE)
+        m = _re.findall(r"\[CITATIONS\]\s*(.*)$", str(answer_text),
+                        flags=_re.IGNORECASE | _re.MULTILINE)
         if not m:
             return []
         raw = m[-1]
@@ -559,6 +579,7 @@ def _parse_citations(answer_text: str) -> List[str]:
         return items
     except Exception:
         return []
+
 
 def _compute_support_at_k(citations: List[str], metas: List[dict]) -> bool:
     """Compute Support@K via intersection between cited docs and retrieved top-K.
@@ -568,7 +589,8 @@ def _compute_support_at_k(citations: List[str], metas: List[dict]) -> bool:
         return False
     try:
         import re as _re
-        retrieved = set(str(m.get("filename", "")).strip().lower() for m in metas if m)
+        retrieved = set(str(m.get("filename", "")).strip().lower()
+                        for m in metas if m)
         n = len(metas)
         for c in citations:
             s = str(c).strip().lower()
@@ -642,55 +664,61 @@ class NetworkEngineeringPipeline:
         n_results = top_n_after_rerank * candidate_multiplier
         query = f"단순 조회, {question}"
         results = self.db.query(query, n_results=n_results)
-        
+
         print(f"🔍 ChromaDB 검색 결과:")
         print(f"  - Query: {query}")
         print(f"  - 요청 문서 수: {n_results}")
-        print(f"  - 검색된 문서 수: {len(results.get('documents', [[]])[0]) if results else 0}")
-        
+        print(
+            f"  - 검색된 문서 수: {len(results.get('documents', [[]])[0]) if results else 0}")
+
         if not (results and results.get("documents") and results["documents"][0]):
             print("  - ❌ 검색 결과 없음 → Fallback 재시도 (원문 질문)")
             # Fallback: 접두어 없이 원문 질문으로 재시도
-            results = self.db.query(user_question := question, n_results=n_results)
+            results = self.db.query(
+                user_question := question, n_results=n_results)
             print(f"  - Fallback Query: {user_question}")
-            print(f"  - 검색된 문서 수(재시도): {len(results.get('documents', [[]])[0]) if results else 0}")
+            print(
+                f"  - 검색된 문서 수(재시도): {len(results.get('documents', [[]])[0]) if results else 0}")
             if not (results and results.get("documents") and results["documents"][0]):
                 print("  - ❌ 재시도도 실패")
                 return None
-            
+
         documents = results["documents"][0]
         metadatas = results.get("metadatas", [None])[0]
-        
+
         print(f"  - 초기 문서 수: {len(documents)}")
-        
+
         if len(documents) > 1:
-            ranked_idx = get_reranked_indices(question, documents, top_n=top_n_after_rerank)
+            ranked_idx = get_reranked_indices(
+                question, documents, top_n=top_n_after_rerank)
             documents = [documents[i] for i in ranked_idx]
             if metadatas:
                 metadatas = [metadatas[i] for i in ranked_idx]
-                
+
         print(f"  - 최종 문서 수: {len(documents)}")
         if metadatas:
             device_names = [m.get('device_name', 'unknown') for m in metadatas]
             print(f"  - 관련 장비: {device_names}")
-        
+
         # Join with metadata (excluding file paths)
         exclude_keys = {"file_path", "source", "filename", "source_directory"}
         if metadatas:
             combined = "\n\n".join(
                 "[METADATA]\n"
-                + "\n".join(f"{k}: {v}" for k, v in m.items() if k not in exclude_keys)
+                + "\n".join(f"{k}: {v}" for k, v in m.items()
+                            if k not in exclude_keys)
                 + f"\n\n[CONTENT]\n{d}"
                 for d, m in zip(documents, metadatas)
             )
         else:
             combined = "\n\n".join(documents)
-            
+
         print(f"  - 컨텍스트 길이: {len(combined)} 문자")
-        
+
         # context logging to file
         try:
-            log_path = os.path.join("Network-Management-System-main", "pipeline_v2", "input_docs.log")
+            log_path = os.path.join(
+                "Network-Management-System-main", "pipeline_v2", "input_docs.log")
             with open(log_path, "a", encoding="utf-8") as f:
                 f.write(f"\n[QUESTION]\n{question}\n")
                 f.write(f"\n[COMBINED_CONTENT]\n{combined}\n")
@@ -704,24 +732,25 @@ class NetworkEngineeringPipeline:
         """평가 전용: 검색 및 재정렬 후 문서와 메타데이터 리스트를 반환"""
         # 재정렬을 고려하여 3배수만큼 초기 검색
         initial_n_results = n_results * 3
-        
+
         results = self.db.query(query, n_results=initial_n_results)
         if not (results and results.get("documents") and results["documents"][0]):
             # 간단한 휴리스틱 접두어로 재시도 (RAT와 유사한 fallback)
             alt_query = f"단순 조회, {query}"
             results = self.db.query(alt_query, n_results=initial_n_results)
             if not (results and results.get("documents") and results["documents"][0]):
-                return [], [] # 결과 없으면 빈 리스트 반환
+                return [], []  # 결과 없으면 빈 리스트 반환
 
         documents = results["documents"][0]
         metadatas = results.get("metadatas", [[]])[0] or [{}] * len(documents)
-        
+
         # GPT ReRanking 수행
         if len(documents) > 1:
-            ranked_idx = get_reranked_indices(query, documents, top_n=n_results)
+            ranked_idx = get_reranked_indices(
+                query, documents, top_n=n_results)
             documents = [documents[i] for i in ranked_idx]
             metadatas = [metadatas[i] for i in ranked_idx]
-            
+
         # 최종 k개만큼 잘라서 반환
         return documents[:n_results], metadatas[:n_results]
 
@@ -741,7 +770,8 @@ class NetworkEngineeringPipeline:
         documents = results["documents"][0]
         metadatas = results.get("metadatas", [[]])[0] or [{}] * len(documents)
         if len(documents) > 1:
-            ranked_idx = get_reranked_indices(query, documents, top_n=top_n_after_rerank)
+            ranked_idx = get_reranked_indices(
+                query, documents, top_n=top_n_after_rerank)
             documents = [documents[i] for i in ranked_idx]
             metadatas = [metadatas[i] for i in ranked_idx]
 
@@ -749,7 +779,8 @@ class NetworkEngineeringPipeline:
         if metadatas:
             combined = "\n\n".join(
                 "[METADATA]\n"
-                + "\n".join(f"{k}: {v}" for k, v in m.items() if k not in exclude_keys)
+                + "\n".join(f"{k}: {v}" for k, v in m.items()
+                            if k not in exclude_keys)
                 + f"\n\n[CONTENT]\n{d}"
                 for d, m in zip(documents, metadatas)
             )
@@ -783,9 +814,11 @@ class NetworkEngineeringPipeline:
             print(f"\n▶️ Executing Plan Step {i}/{len(plan)}: {step}")
             # Build/retrieve reference content with metadata
             search_query = next_search_query or (
-                f"Execute: {step}. Prior findings: {context_for_next_step[:300]}"
+                f"Execute: {step}. Prior findings: {
+                    context_for_next_step[:300]}"
             )
-            reference_content, ref_metas = self.get_chromadb_content_with_meta(search_query, top_n_after_rerank=top_k_chroma)
+            reference_content, ref_metas = self.get_chromadb_content_with_meta(
+                search_query, top_n_after_rerank=top_k_chroma)
             if ref_metas:
                 last_ref_metas = ref_metas
 
@@ -825,7 +858,8 @@ class NetworkEngineeringPipeline:
             })
             # accumulate
             context_for_next_step = "\n\n".join(
-                [f"Result[{e['step_index']}] {e['step']}:\n{e['result']}" for e in executed]
+                [f"Result[{e['step_index']}] {e['step']}:\n{
+                    e['result']}" for e in executed]
             )
 
             # Rolling draft revision using reference
@@ -839,7 +873,8 @@ class NetworkEngineeringPipeline:
 
             # Build compressed query for next iteration
             try:
-                next_search_query = compress_to_query_terms(step_result, rolling_answer)
+                next_search_query = compress_to_query_terms(
+                    step_result, rolling_answer)
             except Exception:
                 next_search_query = user_question
 
@@ -889,14 +924,19 @@ class NetworkEngineeringPipeline:
 
 def main():
     parser = argparse.ArgumentParser(description="RAG Pipeline")
-    parser.add_argument("--top-k", default="5,10,15", help="Comma-separated Top-K values")
+    parser.add_argument("--top-k", default="5,10,15",
+                        help="Comma-separated Top-K values")
     parser.add_argument("--max-iterations", type=int, default=MAX_ITERATIONS)
-    parser.add_argument("--max-questions", type=int, help="Maximum number of questions to process")
-    parser.add_argument("--experiment", choices=["ab", "rat", "both"], default="ab", help="Which experiment path to run")
-    parser.add_argument("--group", choices=["A", "B", "C"], default=None, help="Run a single group (A/B/C) and tag results accordingly")
+    parser.add_argument("--max-questions", type=int,
+                        help="Maximum number of questions to process")
+    parser.add_argument(
+        "--experiment", choices=["ab", "rat", "both"], default="ab", help="Which experiment path to run")
+    parser.add_argument("--group", choices=["A", "B", "C"], default=None,
+                        help="Run a single group (A/B/C) and tag results accordingly")
     parser.add_argument(
         "--output-dir",
-        default=f"{EXPERIMENT_BASE_DIR}/rag_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
+        default=f"{
+            EXPERIMENT_BASE_DIR}/rag_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
         help="Output directory for results (will use this path directly)"
     )
     args = parser.parse_args()
@@ -918,7 +958,7 @@ def main():
         print(f"📊 처리할 질문 수 제한: {args.max_questions}")
     else:
         print(f"📊 모든 질문 처리: {len(test_data)}")
-        
+
     pipeline = NetworkEngineeringPipeline(
         chromadb_path=CHROMADB_PATH,
         collection_name=COLLECTION_NAME,
@@ -940,15 +980,18 @@ def main():
             B_results: List[Dict] = []
             Bexp_results: List[Dict] = []
             for i, row in test_data.iterrows():
-                print(f"[AB] Processing {i+1}/{len(test_data)} (k={top_k}): {row['question'][:50]}...")
+                print(f"[AB] Processing {
+                      i+1}/{len(test_data)} (k={top_k}): {row['question'][:50]}...")
                 # AB 오프셋: 1000 * k + i
                 question_id = i + 1 + (top_k * 1000)
-                tracked_openai_client.logger.set_current_question_id(question_id)
+                tracked_openai_client.logger.set_current_question_id(
+                    question_id)
                 out = run_experiment_ab(pipeline, row["question"], top_k)
                 if args.group in ("A", None):
                     a_ans = out["A"]["final_answer"]
                     a_cits = _parse_citations(a_ans)
-                    a_sup = _compute_support_at_k(a_cits, out.get("retrieval_meta", []))
+                    a_sup = _compute_support_at_k(
+                        a_cits, out.get("retrieval_meta", []))
                     A_results.append({
                         "question": row["question"],
                         "final_answer": a_ans,
@@ -959,7 +1002,8 @@ def main():
                 if args.group in ("B", None):
                     b_ans = out["B"]["final_answer"]
                     b_cits = _parse_citations(b_ans)
-                    b_sup = _compute_support_at_k(b_cits, out.get("retrieval_meta", []))
+                    b_sup = _compute_support_at_k(
+                        b_cits, out.get("retrieval_meta", []))
                     B_results.append({
                         "question": row["question"],
                         "final_answer": b_ans,
@@ -968,7 +1012,8 @@ def main():
                         "support_at_k": b_sup,
                     })
                     # B Pass-1 explanation-only evaluation row
-                    bexp_ans = f"[GROUND_TRUTH]\n\n[EXPLANATION]\n{out['B'].get('explanation_plain', '')}"
+                    bexp_ans = f"[GROUND_TRUTH]\n\n[EXPLANATION]\n{
+                        out['B'].get('explanation_plain', '')}"
                     Bexp_results.append({
                         "question": row["question"],
                         "final_answer": bexp_ans,
@@ -978,45 +1023,64 @@ def main():
             if args.group == "A":
                 test_data_expl = _with_enhanced_origin_for_expl(test_data)
                 evalA = evaluate_predictions(A_results, test_data_expl)
-                all_results[f"A_top_k_{top_k}"] = {"results": A_results, "evaluation": evalA}
-                logger.save_results({"top_k": top_k, "results": A_results, "evaluation": evalA}, filename=f"ragA_k{top_k}.json")
-                print(f"[A] EM={evalA['overall']['exact_match']:.4f} F1={evalA['overall']['f1_score']:.4f}")
+                all_results[f"A_top_k_{top_k}"] = {
+                    "results": A_results, "evaluation": evalA}
+                logger.save_results({"top_k": top_k, "results": A_results,
+                                    "evaluation": evalA}, filename=f"ragA_k{top_k}.json")
+                print(f"[A] EM={evalA['overall']['exact_match']:.4f} F1={
+                      evalA['overall']['f1_score']:.4f}")
             elif args.group == "B":
                 test_data_expl = _with_enhanced_origin_for_expl(test_data)
                 evalB = evaluate_predictions(B_results, test_data_expl)
-                all_results[f"B_top_k_{top_k}"] = {"results": B_results, "evaluation": evalB}
-                logger.save_results({"top_k": top_k, "results": B_results, "evaluation": evalB}, filename=f"ragB_k{top_k}.json")
-                print(f"[B] EM={evalB['overall']['exact_match']:.4f} F1={evalB['overall']['f1_score']:.4f}")
+                all_results[f"B_top_k_{top_k}"] = {
+                    "results": B_results, "evaluation": evalB}
+                logger.save_results({"top_k": top_k, "results": B_results,
+                                    "evaluation": evalB}, filename=f"ragB_k{top_k}.json")
+                print(f"[B] EM={evalB['overall']['exact_match']:.4f} F1={
+                      evalB['overall']['f1_score']:.4f}")
                 # Bexp: explanation-only evaluation storage
                 if Bexp_results:
                     test_data_expl = _with_enhanced_origin_for_expl(test_data)
-                    evalBexp = evaluate_predictions(Bexp_results, test_data_expl)
-                    all_results[f"Bexp_top_k_{top_k}"] = {"results": Bexp_results, "evaluation": evalBexp}
-                    logger.save_results({"top_k": top_k, "results": Bexp_results, "evaluation": evalBexp}, filename=f"ragBexp_k{top_k}.json")
+                    evalBexp = evaluate_predictions(
+                        Bexp_results, test_data_expl)
+                    all_results[f"Bexp_top_k_{top_k}"] = {
+                        "results": Bexp_results, "evaluation": evalBexp}
+                    logger.save_results({"top_k": top_k, "results": Bexp_results,
+                                        "evaluation": evalBexp}, filename=f"ragBexp_k{top_k}.json")
             else:
                 # default AB/both path
                 test_data_expl = _with_enhanced_origin_for_expl(test_data)
                 evalA = evaluate_predictions(A_results, test_data_expl)
                 evalB = evaluate_predictions(B_results, test_data_expl)
-                all_results[f"A_top_k_{top_k}"] = {"results": A_results, "evaluation": evalA}
-                all_results[f"B_top_k_{top_k}"] = {"results": B_results, "evaluation": evalB}
-                logger.save_results({"top_k": top_k, "results": A_results, "evaluation": evalA}, filename=f"ragA_k{top_k}.json")
-                logger.save_results({"top_k": top_k, "results": B_results, "evaluation": evalB}, filename=f"ragB_k{top_k}.json")
-                print(f"[A] EM={evalA['overall']['exact_match']:.4f} F1={evalA['overall']['f1_score']:.4f}")
-                print(f"[B] EM={evalB['overall']['exact_match']:.4f} F1={evalB['overall']['f1_score']:.4f}")
+                all_results[f"A_top_k_{top_k}"] = {
+                    "results": A_results, "evaluation": evalA}
+                all_results[f"B_top_k_{top_k}"] = {
+                    "results": B_results, "evaluation": evalB}
+                logger.save_results({"top_k": top_k, "results": A_results,
+                                    "evaluation": evalA}, filename=f"ragA_k{top_k}.json")
+                logger.save_results({"top_k": top_k, "results": B_results,
+                                    "evaluation": evalB}, filename=f"ragB_k{top_k}.json")
+                print(f"[A] EM={evalA['overall']['exact_match']:.4f} F1={
+                      evalA['overall']['f1_score']:.4f}")
+                print(f"[B] EM={evalB['overall']['exact_match']:.4f} F1={
+                      evalB['overall']['f1_score']:.4f}")
                 # Bexp for AB/both
                 if Bexp_results:
                     test_data_expl = _with_enhanced_origin_for_expl(test_data)
-                    evalBexp = evaluate_predictions(Bexp_results, test_data_expl)
-                    all_results[f"Bexp_top_k_{top_k}"] = {"results": Bexp_results, "evaluation": evalBexp}
-                    logger.save_results({"top_k": top_k, "results": Bexp_results, "evaluation": evalBexp}, filename=f"ragBexp_k{top_k}.json")
+                    evalBexp = evaluate_predictions(
+                        Bexp_results, test_data_expl)
+                    all_results[f"Bexp_top_k_{top_k}"] = {
+                        "results": Bexp_results, "evaluation": evalBexp}
+                    logger.save_results({"top_k": top_k, "results": Bexp_results,
+                                        "evaluation": evalBexp}, filename=f"ragBexp_k{top_k}.json")
 
             # before/after CSVs for AB (no merged aug across k to keep scope minimal)
             def _write_before_after(tag: str, res_list: List[Dict]):
                 before_rows, after_rows = [], []
                 for i2, res in enumerate(res_list):
                     ans = res.get("final_answer", "")
-                    gt_raw, ex_raw, pre_gt, pre_ex = extract_and_preprocess(ans)
+                    gt_raw, ex_raw, pre_gt, pre_ex = extract_and_preprocess(
+                        ans)
                     before_rows.append({
                         "question": test_data.iloc[i2]["question"],
                         "ground_truth": test_data.iloc[i2].get("ground_truth", ""),
@@ -1034,59 +1098,78 @@ def main():
                     })
                 bdf = pd.DataFrame(before_rows)
                 adf = pd.DataFrame(after_rows)
-                bdf.to_csv(logger.results_dir / f"{tag}_before_k{top_k}.csv", index=False)
-                adf.to_csv(logger.results_dir / f"{tag}_after_k{top_k}.csv", index=False)
+                bdf.to_csv(logger.results_dir /
+                           f"{tag}_before_k{top_k}.csv", index=False)
+                adf.to_csv(logger.results_dir /
+                           f"{tag}_after_k{top_k}.csv", index=False)
                 # relaxed scoring
+
                 def _norm(s: str) -> str:
                     return clean_ground_truth_text(str(s)).lower()
                 preds_rel = [_norm(r["pre_GT"]) for r in after_rows]
-                gts_rel = [_norm(x) for x in test_data["ground_truth"].tolist()]
+                gts_rel = [_norm(x)
+                           for x in test_data["ground_truth"].tolist()]
+
                 def _f1_rel(ps, gs):
                     scores = []
                     for p, g in zip(ps, gs):
                         if ("," in g) or (";" in g) or ("," in p) or (";" in p):
-                            ps_set = set([x.strip() for x in re.split(r"[;,]", p) if x.strip()])
-                            gs_set = set([x.strip() for x in re.split(r"[;,]", g) if x.strip()])
+                            ps_set = set(
+                                [x.strip() for x in re.split(r"[;,]", p) if x.strip()])
+                            gs_set = set(
+                                [x.strip() for x in re.split(r"[;,]", g) if x.strip()])
                             inter = ps_set & gs_set
-                            precision = len(inter)/len(ps_set) if ps_set else 0.0
+                            precision = len(inter) / \
+                                len(ps_set) if ps_set else 0.0
                             recall = len(inter)/len(gs_set) if gs_set else 0.0
-                            f1 = 0.0 if precision+recall==0 else 2*precision*recall/(precision+recall)
+                            f1 = 0.0 if precision+recall == 0 else 2 * \
+                                precision*recall/(precision+recall)
                             scores.append(f1)
                         else:
                             pt, gtok = set(p.split()), set(g.split())
                             inter = pt & gtok
                             precision = len(inter)/len(pt) if pt else 0.0
                             recall = len(inter)/len(gtok) if gtok else 0.0
-                            f1 = 0.0 if precision+recall==0 else 2*precision*recall/(precision+recall)
+                            f1 = 0.0 if precision+recall == 0 else 2 * \
+                                precision*recall/(precision+recall)
                             scores.append(f1)
                     return sum(scores)/len(scores) if scores else 0.0
                 em_rel = sum(1 for p, g in zip(preds_rel, gts_rel) if (
-                    (set([x.strip() for x in re.split(r"[;,]", p) if x.strip()]) == set([x.strip() for x in re.split(r"[;,]", g) if x.strip()])) if ("," in p or ";" in p or "," in g or ";" in g) else p == g
+                    (set([x.strip() for x in re.split(r"[;,]", p) if x.strip()]) == set([x.strip() for x in re.split(
+                        r"[;,]", g) if x.strip()])) if ("," in p or ";" in p or "," in g or ";" in g) else p == g
                 )) / len(preds_rel) if preds_rel else 0.0
                 f1_rel = _f1_rel(preds_rel, gts_rel)
                 return {"em_rel": em_rel, "f1_rel": f1_rel}
 
             relA = _write_before_after("ragA", A_results)
             relB = _write_before_after("ragB", B_results)
-            evalA.setdefault("overall_relaxed", {}).update({"exact_match": relA["em_rel"], "f1_score": relA["f1_rel"]})
-            evalB.setdefault("overall_relaxed", {}).update({"exact_match": relB["em_rel"], "f1_score": relB["f1_rel"]})
+            evalA.setdefault("overall_relaxed", {}).update(
+                {"exact_match": relA["em_rel"], "f1_score": relA["f1_rel"]})
+            evalB.setdefault("overall_relaxed", {}).update(
+                {"exact_match": relB["em_rel"], "f1_score": relB["f1_rel"]})
 
         # RAT path
         if (args.experiment in ("rat", "both")) or (args.group == "C"):
             print("[C/RAT] Running RAT pipeline...")
             results: List[Dict] = []
             for i, row in test_data.iterrows():
-                print(f"[RAT] Processing {i+1}/{len(test_data)} (k={top_k}): {row['question'][:50]}...")
+                print(f"[RAT] Processing {
+                      i+1}/{len(test_data)} (k={top_k}): {row['question'][:50]}...")
                 # RAT 오프셋: 2000 * k + i
                 question_id = i + 1 + (top_k * 2000)
-                tracked_openai_client.logger.set_current_question_id(question_id)
-                results.append(pipeline.process_query(row["question"], top_k_chroma=top_k))
+                tracked_openai_client.logger.set_current_question_id(
+                    question_id)
+                results.append(pipeline.process_query(
+                    row["question"], top_k_chroma=top_k))
             test_data_expl = _with_enhanced_origin_for_expl(test_data)
             evaluation = evaluate_predictions(results, test_data_expl)
-            all_results[f"C_top_k_{top_k}"] = {"results": results, "evaluation": evaluation}
-            logger.save_results({"top_k": top_k, "results": results, "evaluation": evaluation}, filename=f"ragC_k{top_k}.json")
+            all_results[f"C_top_k_{top_k}"] = {
+                "results": results, "evaluation": evaluation}
+            logger.save_results({"top_k": top_k, "results": results,
+                                "evaluation": evaluation}, filename=f"ragC_k{top_k}.json")
             print(
-                f"[C] EM={evaluation['overall']['exact_match']:.4f} F1={evaluation['overall']['f1_score']:.4f}"
+                f"[C] EM={evaluation['overall']['exact_match']:.4f} F1={
+                    evaluation['overall']['f1_score']:.4f}"
             )
 
             # 전처리: before/after CSV 및 증강 입력 CSV(k별)
@@ -1116,39 +1199,48 @@ def main():
                 )
             before_df = pd.DataFrame(before_rows)
             after_df = pd.DataFrame(after_rows)
-            before_df.to_csv(logger.results_dir / f"rag_before_k{top_k}.csv", index=False)
-            after_df.to_csv(logger.results_dir / f"rag_after_k{top_k}.csv", index=False)
+            before_df.to_csv(logger.results_dir /
+                             f"rag_before_k{top_k}.csv", index=False)
+            after_df.to_csv(logger.results_dir /
+                            f"rag_after_k{top_k}.csv", index=False)
 
             # compute relaxed EM/F1
             def _norm(s: str) -> str:
                 return clean_ground_truth_text(str(s)).lower()
-            preds_rel = [ _norm(r["pre_GT"]) for r in after_rows ]
-            gts_rel = [ _norm(x) for x in test_data["ground_truth"].tolist() ]
+            preds_rel = [_norm(r["pre_GT"]) for r in after_rows]
+            gts_rel = [_norm(x) for x in test_data["ground_truth"].tolist()]
+
             def _f1_rel(ps, gs):
                 scores = []
-                for p,g in zip(ps,gs):
+                for p, g in zip(ps, gs):
                     if ("," in g) or (";" in g) or ("," in p) or (";" in p):
-                        ps_set = set([x.strip() for x in re.split(r"[;,]", p) if x.strip()])
-                        gs_set = set([x.strip() for x in re.split(r"[;,]", g) if x.strip()])
+                        ps_set = set([x.strip()
+                                     for x in re.split(r"[;,]", p) if x.strip()])
+                        gs_set = set([x.strip()
+                                     for x in re.split(r"[;,]", g) if x.strip()])
                         inter = ps_set & gs_set
                         precision = len(inter)/len(ps_set) if ps_set else 0.0
                         recall = len(inter)/len(gs_set) if gs_set else 0.0
-                        f1 = 0.0 if precision+recall==0 else 2*precision*recall/(precision+recall)
+                        f1 = 0.0 if precision+recall == 0 else 2 * \
+                            precision*recall/(precision+recall)
                         scores.append(f1)
                     else:
                         pt, gtok = set(p.split()), set(g.split())
                         inter = pt & gtok
                         precision = len(inter)/len(pt) if pt else 0.0
                         recall = len(inter)/len(gtok) if gtok else 0.0
-                        f1 = 0.0 if precision+recall==0 else 2*precision*recall/(precision+recall)
+                        f1 = 0.0 if precision+recall == 0 else 2 * \
+                            precision*recall/(precision+recall)
                         scores.append(f1)
                 return sum(scores)/len(scores) if scores else 0.0
-            em_rel = sum(1 for p,g in zip(preds_rel, gts_rel) if (
-                (set([x.strip() for x in re.split(r"[;,]", p) if x.strip()]) == set([x.strip() for x in re.split(r"[;,]", g) if x.strip()])) if ("," in p or ";" in p or "," in g or ";" in g) else p==g
+            em_rel = sum(1 for p, g in zip(preds_rel, gts_rel) if (
+                (set([x.strip() for x in re.split(r"[;,]", p) if x.strip()]) == set([x.strip() for x in re.split(
+                    r"[;,]", g) if x.strip()])) if ("," in p or ";" in p or "," in g or ";" in g) else p == g
             )) / len(preds_rel) if preds_rel else 0.0
             f1_rel = _f1_rel(preds_rel, gts_rel)
             evaluation.setdefault("overall_relaxed", {})
-            evaluation["overall_relaxed"].update({"exact_match": em_rel, "f1_score": f1_rel})
+            evaluation["overall_relaxed"].update(
+                {"exact_match": em_rel, "f1_score": f1_rel})
 
             # detailed logs aggregate per k
             all_logs = []
@@ -1156,15 +1248,18 @@ def main():
                 if isinstance(r, dict) and "detailed_log" in r:
                     all_logs.extend(r["detailed_log"])
             if all_logs:
-                logger.save_detailed_log(all_logs, filename=f"rag_k{top_k}_detailed.json")
+                logger.save_detailed_log(all_logs, filename=f"rag_k{
+                                         top_k}_detailed.json")
 
             aug = test_data.copy()
             aug[f"pre_GT_k{top_k}"] = [r["pre_GT"] for r in after_rows]
             aug[f"pre_EX_k{top_k}"] = [r["pre_EX"] for r in after_rows]
-            aug.to_csv(logger.results_dir / f"test_fin_with_predictions_rag_k{top_k}.csv", index=False)
+            aug.to_csv(logger.results_dir /
+                       f"test_fin_with_predictions_rag_k{top_k}.csv", index=False)
 
             # merge per-k augmented to one combined (on index)
-            merged_aug = aug if merged_aug is None else pd.concat([merged_aug, aug[[f"pre_GT_k{top_k}", f"pre_EX_k{top_k}"]]], axis=1)
+            merged_aug = aug if merged_aug is None else pd.concat(
+                [merged_aug, aug[[f"pre_GT_k{top_k}", f"pre_EX_k{top_k}"]]], axis=1)
 
     logger.save_results(
         {
@@ -1180,7 +1275,8 @@ def main():
     )
     # save combined augmented dataset across all k
     if merged_aug is not None:
-        merged_aug.to_csv(logger.results_dir / "test_fin_with_predictions_rag.csv", index=False)
+        merged_aug.to_csv(logger.results_dir /
+                          "test_fin_with_predictions_rag.csv", index=False)
     print(f"✅ RAG 실험 모두 완료! 결과: {args.output_dir}")
     # 실험 마무리
     logger.finalize_experiment()

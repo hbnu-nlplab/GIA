@@ -1,0 +1,196 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- 그라디언트 정의 -->
+    <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4fc3f7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1976d2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#81c784;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#388e3c;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="orangeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffb74d;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f57c00;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="purpleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ba68c8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7b1fa2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="redGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e57373;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d32f2f;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="1200" height="800" fill="#f8f9fa"/>
+
+  <!-- 제목 -->
+  <text x="600" y="40" text-anchor="middle" style="font-family: 'Arial', sans-serif; font-size: 24px; font-weight: bold; fill: #2c3e50;">
+    🔧 Network Dataset Generation Pipeline
+  </text>
+
+  <!-- 1단계: XML 파싱 -->
+  <g id="stage1">
+    <!-- 배경 박스 -->
+    <rect x="50" y="100" width="180" height="120" rx="15" fill="url(#blueGradient)" stroke="#1565c0" stroke-width="2"/>
+    
+    <!-- 아이콘 (XML 파일) -->
+    <rect x="110" y="120" width="60" height="45" rx="5" fill="white" opacity="0.9"/>
+    <text x="140" y="140" text-anchor="middle" style="font-family: Arial; font-size: 12px; fill: #1976d2; font-weight: bold;">XML</text>
+    <text x="140" y="155" text-anchor="middle" style="font-family: Arial; font-size: 12px; fill: #1976d2;">&lt;/&gt;</text>
+    
+    <!-- 단계 라벨 -->
+    <text x="140" y="190" text-anchor="middle" style="font-family: Arial; font-size: 14px; font-weight: bold; fill: white;">Stage 1</text>
+    <text x="140" y="207" text-anchor="middle" style="font-family: Arial; font-size: 12px; fill: white;">XML Parsing</text>
+  </g>
+
+  <!-- 화살표 1 -->
+  <path d="M 240 160 L 290 160" stroke="#2c3e50" stroke-width="3" marker-end="url(#arrowhead)" fill="none"/>
+  
+  <!-- 2단계: Rule-based 질문 생성 -->
+  <g id="stage2">
+    <rect x="300" y="80" width="180" height="160" rx="15" fill="url(#greenGradient)" stroke="#2e7d32" stroke-width="2"/>
+    
+    <!-- 룰 아이콘 -->
+    <rect x="340" y="105" width="100" height="25" rx="12" fill="white" opacity="0.9"/>
+    <text x="390" y="122" text-anchor="middle" style="font-family: Arial; font-size: 11px; fill: #388e3c; font-weight: bold;">Rule Engine</text>
+    
+    <!-- 기어 아이콘 -->
+    <circle cx="370" cy="150" r="12" fill="white" opacity="0.9"/>
+    <circle cx="410" cy="150" r="12" fill="white" opacity="0.9"/>
+    <text x="390" y="175" text-anchor="middle" style="font-family: Arial; font-size: 10px; fill: white;">+ TestAssembler</text>
+    
+    <text x="390" y="200" text-anchor="middle" style="font-family: Arial; font-size: 14px; font-weight: bold; fill: white;">Stage 2</text>
+    <text x="390" y="217" text-anchor="middle" style="font-family: Arial; font-size: 12px; fill: white;">Basic Questions</text>
+    <text x="390" y="232" text-anchor="middle" style="font-family: Arial; font-size: 11px; fill: white; opacity: 0.9;">Rule-based</text>
+  </g>
+
+  <!-- 3단계: Enhanced LLM 질문 생성 -->
+  <g id="stage3">
+    <rect x="300" y="280" width="180" height="180" rx="15" fill="url(#orangeGradient)" stroke="#ef6c00" stroke-width="2"/>
+    
+    <!-- LLM 아이콘 -->
+    <rect x="340" y="305" width="100" height="25" rx="12" fill="white" opacity="0.9"/>
+    <text x="390" y="322" text-anchor="middle" style="font-family: Arial; font-size: 11px; fill: #f57c00; font-weight: bold;">🧠 LLM</text>
+    
+    <!-- 화살표 + Agent -->
+    <text x="390" y="345" text-anchor="middle" style="font-family: Arial; font-size: 16px;">⬇️</text>
+    
+    <rect x="340" y="355" width="100" height="25" rx="12" fill="white" opacity="0.9"/>
+    <text x="390" y="372" text-anchor="middle" style="font-family: Arial; font-size: 11px; fill: #f57c00; font-weight: bold;">AnswerAgent</text>
+    
+    <text x="390" y="410" text-anchor="middle" style="font-family: Arial; font-size: 14px; font-weight: bold; fill: white;">Stage 3</text>
+    <text x="390" y="427" text-anchor="middle" style="font-family: Arial; font-size: 12px; fill: white;">Enhanced Questions</text>
+    <text x="390" y="442" text-anchor="middle" style="font-family: Arial; font-size: 11px; fill: white; opacity: 0.9;">LLM + Agent</text>
+  </g>
+
+  <!-- 화살표 2 -->
+  <path d="M 490 300 L 540 230" stroke="#2c3e50" stroke-width="3" marker-end="url(#arrowhead)" fill="none"/>
+  <path d="M 490 200 L 540 230" stroke="#2c3e50" stroke-width="3" marker-end="url(#arrowhead)" fill="none"/>
+
+  <!-- 4단계: 통합 및 어셈블리 -->
+  <g id="stage4">
+    <rect x="550" y="180" width="180" height="120" rx="15" fill="url(#purpleGradient)" stroke="#6a1b9a" stroke-width="2"/>
+    
+    <!-- 통합 아이콘 -->
+    <circle cx="610" cy="220" r="15" fill="white" opacity="0.9"/>
+    <circle cx="670" cy="220" r="15" fill="white" opacity="0.9"/>
+    <text x="640" y="247" text-anchor="middle" style="font-family: Arial; font-size: 16px;">🔄</text>
+    
+    <text x="640" y="270" text-anchor="middle" style="font-family: Arial; font-size: 14px; font-weight: bold; fill: white;">Stage 4</text>
+    <text x="640" y="287" text-anchor="middle" style="font-family: Arial; font-size: 12px; fill: white;">Integration</text>
+  </g>
+
+  <!-- 화살표 3 -->
+  <path d="M 740 240 L 790 240" stroke="#2c3e50" stroke-width="3" marker-end="url(#arrowhead)" fill="none"/>
+
+  <!-- 5단계: 평가 메트릭 -->
+  <g id="stage5">
+    <rect x="800" y="180" width="180" height="120" rx="15" fill="url(#redGradient)" stroke="#c62828" stroke-width="2"/>
+    
+    <!-- 평가 아이콘 -->
+    <rect x="850" y="205" width="80" height="35" rx="5" fill="white" opacity="0.9"/>
+    <text x="890" y="222" text-anchor="middle" style="font-family: Arial; font-size: 10px; fill: #d32f2f; font-weight: bold;">📊 Metrics</text>
+    <text x="890" y="235" text-anchor="middle" style="font-family: Arial; font-size: 9px; fill: #d32f2f;">EM • F1 • BERT</text>
+    
+    <text x="890" y="270" text-anchor="middle" style="font-family: Arial; font-size: 14px; font-weight: bold; fill: white;">Stage 5</text>
+    <text x="890" y="287" text-anchor="middle" style="font-family: Arial; font-size: 12px; fill: white;">Evaluation</text>
+  </g>
+
+  <!-- 화살표 4 -->
+  <path d="M 890 310 L 890 360" stroke="#2c3e50" stroke-width="3" marker-end="url(#arrowhead)" fill="none"/>
+
+  <!-- 최종 결과 -->
+  <g id="final">
+    <rect x="750" y="370" width="280" height="100" rx="20" fill="#34495e" stroke="#2c3e50" stroke-width="3"/>
+    
+    <!-- 데이터셋 아이콘 -->
+    <rect x="770" y="390" width="50" height="35" rx="5" fill="#ecf0f1"/>
+    <rect x="775" y="395" width="40" height="5" rx="2" fill="#3498db"/>
+    <rect x="775" y="405" width="35" height="3" rx="1" fill="#95a5a6"/>
+    <rect x="775" y="412" width="30" height="3" rx="1" fill="#95a5a6"/>
+    <rect x="775" y="419" width="25" height="3" rx="1" fill="#95a5a6"/>
+    
+    <text x="900" y="410" text-anchor="middle" style="font-family: Arial; font-size: 18px; font-weight: bold; fill: white;">📁 Final Dataset</text>
+    <text x="900" y="430" text-anchor="middle" style="font-family: Arial; font-size: 12px; fill: #ecf0f1;">Questions + Answers + Evaluations</text>
+    <text x="900" y="445" text-anchor="middle" style="font-family: Arial; font-size: 11px; fill: #bdc3c7;">JSON Format</text>
+  </g>
+
+  <!-- 데이터 흐름 표시 -->
+  <g id="dataflow" opacity="0.7">
+    <!-- Network Facts -->
+    <ellipse cx="140" cy="250" rx="60" ry="20" fill="#e8f4fd" stroke="#2196f3" stroke-width="1"/>
+    <text x="140" y="255" text-anchor="middle" style="font-family: Arial; font-size: 10px; fill: #1976d2; font-weight: bold;">Network Facts</text>
+    
+    <!-- 연결선 -->
+    <path d="M 200 250 L 300 200" stroke="#2196f3" stroke-width="2" stroke-dasharray="5,5" fill="none"/>
+    <path d="M 200 250 L 300 360" stroke="#2196f3" stroke-width="2" stroke-dasharray="5,5" fill="none"/>
+  </g>
+
+  <!-- 통계 정보 -->
+  <g id="stats">
+    <rect x="50" y="550" width="1100" height="120" rx="10" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1"/>
+    
+    <!-- 제목 -->
+    <text x="600" y="580" text-anchor="middle" style="font-family: Arial; font-size: 16px; font-weight: bold; fill: #2c3e50;">📈 Pipeline Components & Outputs</text>
+    
+    <!-- 컴포넌트 정보 -->
+    <g id="component-info">
+      <!-- Stage 1 -->
+      <text x="80" y="610" style="font-family: Arial; font-size: 12px; fill: #1976d2; font-weight: bold;">🔧 UniversalParser</text>
+      <text x="80" y="625" style="font-family: Arial; font-size: 10px; fill: #666;">XML → Network Facts</text>
+      
+      <!-- Stage 2 -->
+      <text x="250" y="610" style="font-family: Arial; font-size: 12px; fill: #388e3c; font-weight: bold;">⚙️ RuleBasedGenerator</text>
+      <text x="250" y="625" style="font-family: Arial; font-size: 10px; fill: #666;">Rules + TestAssembler</text>
+      
+      <!-- Stage 3 -->
+      <text x="450" y="610" style="font-family: Arial; font-size: 12px; fill: #f57c00; font-weight: bold;">🧠 EnhancedLLM</text>
+      <text x="450" y="625" style="font-family: Arial; font-size: 10px; fill: #666;">LLM + AnswerAgent</text>
+      
+      <!-- Stage 4 -->
+      <text x="650" y="610" style="font-family: Arial; font-size: 12px; fill: #7b1fa2; font-weight: bold;">🔄 Integration</text>
+      <text x="650" y="625" style="font-family: Arial; font-size: 10px; fill: #666;">Merge + Context</text>
+      
+      <!-- Stage 5 -->
+      <text x="850" y="610" style="font-family: Arial; font-size: 12px; fill: #d32f2f; font-weight: bold;">📊 Evaluation</text>
+      <text x="850" y="625" style="font-family: Arial; font-size: 10px; fill: #666;">EM + F1 + BERT</text>
+    </g>
+    
+    <!-- 출력 통계 -->
+    <g id="output-stats">
+      <text x="80" y="650" style="font-family: Arial; font-size: 11px; fill: #2c3e50; font-weight: bold;">Output Types:</text>
+      <text x="180" y="650" style="font-family: Arial; font-size: 10px; fill: #666;">Basic Questions (Rule-based) • Enhanced Questions (LLM) • Ground Truth • Explanations • Evaluation Metrics</text>
+    </g>
+  </g>
+
+  <!-- 화살표 마커 정의 -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+     refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#2c3e50" />
+    </marker>
+  </defs>
+</svg> 

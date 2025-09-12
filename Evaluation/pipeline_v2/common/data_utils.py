@@ -61,6 +61,7 @@ def clean_ground_truth_text(text: str) -> str:
 
     - Removes newline (\n) and extra spaces
     - Strips common labels like '정답:', '답:', 'answer:', 'ground truth:' (case-insensitive)
+    - Removes leading colon pattern ': ' from LLM responses
     - Removes outer quotes
     """
     s = _normalize_whitespace(text)
@@ -68,6 +69,8 @@ def clean_ground_truth_text(text: str) -> str:
     s = re.sub(r"^\[\s*ground_truth\s*\]\s*", "", s, flags=re.I)
     # remove leading labels
     s = re.sub(r"^(정답|답|answer|ground\s*truth)\s*[:：]\s*", "", s, flags=re.I)
+    # remove leading colon pattern from LLM responses (e.g., ": answer" -> "answer")
+    s = re.sub(r"^\s*:\s*", "", s)
     # trim enclosing quotes
     if len(s) >= 2 and ((s[0] == '"' and s[-1] == '"') or (s[0] == "'" and s[-1] == "'")):
         s = s[1:-1].strip()
