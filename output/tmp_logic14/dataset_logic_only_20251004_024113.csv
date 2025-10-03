@@ -1,0 +1,821 @@
+﻿id,category,answer_type,level,question,ground_truth,explanation,source_files
+IBGP_FULLMESH_OK_0001,BGP_Consistency,boolean,2,"AS 65000의 iBGP Full-Mesh 구성은 완벽합니까? (true/false)
+[답변 형식: true/false (소문자)]",true,"metric `ibgp_fullmesh_ok` on asn=65000, type=AS → true","sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+IBGP_FULLMESH_OK_0002,BGP_Consistency,boolean,2,"AS 65001의 iBGP Full-Mesh 구성은 완벽합니까? (true/false)
+[답변 형식: true/false (소문자)]",true,"metric `ibgp_fullmesh_ok` on asn=65001, type=AS → true",ce1.xml
+IBGP_FULLMESH_OK_0003,BGP_Consistency,boolean,2,"AS 65003의 iBGP Full-Mesh 구성은 완벽합니까? (true/false)
+[답변 형식: true/false (소문자)]",true,"metric `ibgp_fullmesh_ok` on asn=65003, type=AS → true",ce2.xml
+IBGP_MISSING_PAIRS_0001,BGP_Consistency,set,2,"AS 65000의 iBGP Full-Mesh에서 누락된 장비쌍 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,"metric `ibgp_missing_pairs` on asn=65000, type=AS → 없음","sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+IBGP_MISSING_PAIRS_0002,BGP_Consistency,set,2,"AS 65001의 iBGP Full-Mesh에서 누락된 장비쌍 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,"metric `ibgp_missing_pairs` on asn=65001, type=AS → 없음",ce1.xml
+IBGP_MISSING_PAIRS_0003,BGP_Consistency,set,2,"AS 65003의 iBGP Full-Mesh에서 누락된 장비쌍 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,"metric `ibgp_missing_pairs` on asn=65003, type=AS → 없음",ce2.xml
+IBGP_MISSING_PAIRS_COUNT_0001,BGP_Consistency,numeric,2,"AS 65000의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",0,"metric `ibgp_missing_pairs_count` on asn=65000, type=AS → 0","sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+IBGP_MISSING_PAIRS_COUNT_0002,BGP_Consistency,numeric,2,"AS 65001의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",0,"metric `ibgp_missing_pairs_count` on asn=65001, type=AS → 0",ce1.xml
+IBGP_MISSING_PAIRS_COUNT_0003,BGP_Consistency,numeric,2,"AS 65003의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",0,"metric `ibgp_missing_pairs_count` on asn=65003, type=AS → 0",ce2.xml
+IBGP_UNDER_PEERED_DEVICES_0001,BGP_Consistency,set,2,"AS 65000에서 iBGP 피어 수가 부족한 장비 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,"metric `ibgp_under_peered_devices` on asn=65000, type=AS → 없음","sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+IBGP_UNDER_PEERED_DEVICES_0002,BGP_Consistency,set,2,"AS 65001에서 iBGP 피어 수가 부족한 장비 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,"metric `ibgp_under_peered_devices` on asn=65001, type=AS → 없음",ce1.xml
+IBGP_UNDER_PEERED_DEVICES_0003,BGP_Consistency,set,2,"AS 65003에서 iBGP 피어 수가 부족한 장비 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,"metric `ibgp_under_peered_devices` on asn=65003, type=AS → 없음",ce2.xml
+NEIGHBOR_LIST_EBGP_0001,BGP_Consistency,set,1,"CE1 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",192.168.1.10,"metric `neighbor_list_ebgp` on host=CE1, type=DEVICE → 192.168.1.10",ce1.xml
+NEIGHBOR_LIST_EBGP_0002,BGP_Consistency,set,1,"CE2 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",192.168.3.10,"metric `neighbor_list_ebgp` on host=CE2, type=DEVICE → 192.168.3.10",ce2.xml
+NEIGHBOR_LIST_EBGP_0003,BGP_Consistency,set,1,"sample10 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",192.168.4.11,"metric `neighbor_list_ebgp` on host=sample10, type=DEVICE → 192.168.4.11",sample10.xml
+NEIGHBOR_LIST_EBGP_0004,BGP_Consistency,set,1,"sample7 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",192.168.1.11,"metric `neighbor_list_ebgp` on host=sample7, type=DEVICE → 192.168.1.11",sample7.xml
+NEIGHBOR_LIST_EBGP_0005,BGP_Consistency,set,1,"sample8 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",192.168.2.11,"metric `neighbor_list_ebgp` on host=sample8, type=DEVICE → 192.168.2.11",sample8.xml
+NEIGHBOR_LIST_EBGP_0006,BGP_Consistency,set,1,"sample9 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",192.168.3.11,"metric `neighbor_list_ebgp` on host=sample9, type=DEVICE → 192.168.3.11",sample9.xml
+NEIGHBOR_LIST_IBGP_0001,BGP_Consistency,set,1,"CE1 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,"metric `neighbor_list_ibgp` on host=CE1, type=DEVICE → 없음",ce1.xml
+NEIGHBOR_LIST_IBGP_0002,BGP_Consistency,set,1,"CE2 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,"metric `neighbor_list_ibgp` on host=CE2, type=DEVICE → 없음",ce2.xml
+NEIGHBOR_LIST_IBGP_0003,BGP_Consistency,set,1,"sample10 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]","1.1.1.1, 2.2.2.2, 3.3.3.3","metric `neighbor_list_ibgp` on host=sample10, type=DEVICE → 1.1.1.1, 2.2.2.2, 3.3.3.3",sample10.xml
+NEIGHBOR_LIST_IBGP_0004,BGP_Consistency,set,1,"sample7 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]","2.2.2.2, 3.3.3.3, 4.4.4.4","metric `neighbor_list_ibgp` on host=sample7, type=DEVICE → 2.2.2.2, 3.3.3.3, 4.4.4.4",sample7.xml
+NEIGHBOR_LIST_IBGP_0005,BGP_Consistency,set,1,"sample8 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]","1.1.1.1, 3.3.3.3, 4.4.4.4","metric `neighbor_list_ibgp` on host=sample8, type=DEVICE → 1.1.1.1, 3.3.3.3, 4.4.4.4",sample8.xml
+NEIGHBOR_LIST_IBGP_0006,BGP_Consistency,set,1,"sample9 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]","1.1.1.1, 2.2.2.2, 4.4.4.4","metric `neighbor_list_ibgp` on host=sample9, type=DEVICE → 1.1.1.1, 2.2.2.2, 4.4.4.4",sample9.xml
+HTTP_SERVER_ENABLED_BOOL_0001,Basic_Info,boolean,1,"CE1 장비에서 HTTP 서버가 활성화되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `http_server_enabled_bool` on host=CE1, type=DEVICE → false",ce1.xml
+HTTP_SERVER_ENABLED_BOOL_0002,Basic_Info,boolean,1,"CE2 장비에서 HTTP 서버가 활성화되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `http_server_enabled_bool` on host=CE2, type=DEVICE → false",ce2.xml
+HTTP_SERVER_ENABLED_BOOL_0003,Basic_Info,boolean,1,"sample10 장비에서 HTTP 서버가 활성화되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `http_server_enabled_bool` on host=sample10, type=DEVICE → false",sample10.xml
+HTTP_SERVER_ENABLED_BOOL_0004,Basic_Info,boolean,1,"sample7 장비에서 HTTP 서버가 활성화되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `http_server_enabled_bool` on host=sample7, type=DEVICE → false",sample7.xml
+HTTP_SERVER_ENABLED_BOOL_0005,Basic_Info,boolean,1,"sample8 장비에서 HTTP 서버가 활성화되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `http_server_enabled_bool` on host=sample8, type=DEVICE → false",sample8.xml
+HTTP_SERVER_ENABLED_BOOL_0006,Basic_Info,boolean,1,"sample9 장비에서 HTTP 서버가 활성화되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `http_server_enabled_bool` on host=sample9, type=DEVICE → false",sample9.xml
+INTERFACE_MOP_XENABLED_BOOL_0001,Basic_Info,boolean,2,"CE1 장비의 Ethernet0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE1, if=Ethernet0/0, type=DEVICE_IF → false",ce1.xml
+INTERFACE_MOP_XENABLED_BOOL_0002,Basic_Info,boolean,2,"CE1 장비의 Ethernet0/0.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE1, if=Ethernet0/0.100, type=DEVICE_IF → false",ce1.xml
+INTERFACE_MOP_XENABLED_BOOL_0003,Basic_Info,boolean,2,"CE1 장비의 Ethernet0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE1, if=Ethernet0/1, type=DEVICE_IF → false",ce1.xml
+INTERFACE_MOP_XENABLED_BOOL_0004,Basic_Info,boolean,2,"CE1 장비의 Ethernet0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE1, if=Ethernet0/2, type=DEVICE_IF → false",ce1.xml
+INTERFACE_MOP_XENABLED_BOOL_0005,Basic_Info,boolean,2,"CE1 장비의 Ethernet0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE1, if=Ethernet0/3, type=DEVICE_IF → false",ce1.xml
+INTERFACE_MOP_XENABLED_BOOL_0006,Basic_Info,boolean,2,"CE1 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE1, if=GigabitEthernet0/0/0/0, type=DEVICE_IF → false",ce1.xml
+INTERFACE_MOP_XENABLED_BOOL_0007,Basic_Info,boolean,2,"CE1 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE1, if=GigabitEthernet0/0/0/0.1, type=DEVICE_IF → false",ce1.xml
+INTERFACE_MOP_XENABLED_BOOL_0008,Basic_Info,boolean,2,"CE1 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE1, if=GigabitEthernet0/0/0/1, type=DEVICE_IF → false",ce1.xml
+INTERFACE_MOP_XENABLED_BOOL_0009,Basic_Info,boolean,2,"CE1 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE1, if=GigabitEthernet0/0/0/1.100, type=DEVICE_IF → false",ce1.xml
+INTERFACE_MOP_XENABLED_BOOL_0010,Basic_Info,boolean,2,"CE1 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE1, if=GigabitEthernet0/0/0/1.200, type=DEVICE_IF → false",ce1.xml
+INTERFACE_MOP_XENABLED_BOOL_0011,Basic_Info,boolean,2,"CE1 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE1, if=GigabitEthernet0/0/0/1.300, type=DEVICE_IF → false",ce1.xml
+INTERFACE_MOP_XENABLED_BOOL_0012,Basic_Info,boolean,2,"CE1 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE1, if=GigabitEthernet0/0/0/1.400, type=DEVICE_IF → false",ce1.xml
+INTERFACE_MOP_XENABLED_BOOL_0013,Basic_Info,boolean,2,"CE1 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE1, if=GigabitEthernet0/0/0/2, type=DEVICE_IF → false",ce1.xml
+INTERFACE_MOP_XENABLED_BOOL_0014,Basic_Info,boolean,2,"CE1 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE1, if=GigabitEthernet0/0/0/3, type=DEVICE_IF → false",ce1.xml
+INTERFACE_MOP_XENABLED_BOOL_0015,Basic_Info,boolean,2,"CE1 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE1, if=Loopback0, type=DEVICE_IF → false",ce1.xml
+INTERFACE_MOP_XENABLED_BOOL_0016,Basic_Info,boolean,2,"CE1 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE1, if=MgmtEth0/RP0/CPU0/0, type=DEVICE_IF → false",ce1.xml
+INTERFACE_MOP_XENABLED_BOOL_0017,Basic_Info,boolean,2,"CE2 장비의 Ethernet0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE2, if=Ethernet0/0, type=DEVICE_IF → false",ce2.xml
+INTERFACE_MOP_XENABLED_BOOL_0018,Basic_Info,boolean,2,"CE2 장비의 Ethernet0/0.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE2, if=Ethernet0/0.100, type=DEVICE_IF → false",ce2.xml
+INTERFACE_MOP_XENABLED_BOOL_0019,Basic_Info,boolean,2,"CE2 장비의 Ethernet0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE2, if=Ethernet0/1, type=DEVICE_IF → false",ce2.xml
+INTERFACE_MOP_XENABLED_BOOL_0020,Basic_Info,boolean,2,"CE2 장비의 Ethernet0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE2, if=Ethernet0/2, type=DEVICE_IF → false",ce2.xml
+INTERFACE_MOP_XENABLED_BOOL_0021,Basic_Info,boolean,2,"CE2 장비의 Ethernet0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE2, if=Ethernet0/3, type=DEVICE_IF → false",ce2.xml
+INTERFACE_MOP_XENABLED_BOOL_0022,Basic_Info,boolean,2,"CE2 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE2, if=GigabitEthernet0/0/0/0, type=DEVICE_IF → false",ce2.xml
+INTERFACE_MOP_XENABLED_BOOL_0023,Basic_Info,boolean,2,"CE2 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE2, if=GigabitEthernet0/0/0/0.1, type=DEVICE_IF → false",ce2.xml
+INTERFACE_MOP_XENABLED_BOOL_0024,Basic_Info,boolean,2,"CE2 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE2, if=GigabitEthernet0/0/0/1, type=DEVICE_IF → false",ce2.xml
+INTERFACE_MOP_XENABLED_BOOL_0025,Basic_Info,boolean,2,"CE2 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE2, if=GigabitEthernet0/0/0/1.100, type=DEVICE_IF → false",ce2.xml
+INTERFACE_MOP_XENABLED_BOOL_0026,Basic_Info,boolean,2,"CE2 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE2, if=GigabitEthernet0/0/0/1.200, type=DEVICE_IF → false",ce2.xml
+INTERFACE_MOP_XENABLED_BOOL_0027,Basic_Info,boolean,2,"CE2 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE2, if=GigabitEthernet0/0/0/1.300, type=DEVICE_IF → false",ce2.xml
+INTERFACE_MOP_XENABLED_BOOL_0028,Basic_Info,boolean,2,"CE2 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE2, if=GigabitEthernet0/0/0/1.400, type=DEVICE_IF → false",ce2.xml
+INTERFACE_MOP_XENABLED_BOOL_0029,Basic_Info,boolean,2,"CE2 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE2, if=GigabitEthernet0/0/0/2, type=DEVICE_IF → false",ce2.xml
+INTERFACE_MOP_XENABLED_BOOL_0030,Basic_Info,boolean,2,"CE2 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE2, if=GigabitEthernet0/0/0/3, type=DEVICE_IF → false",ce2.xml
+INTERFACE_MOP_XENABLED_BOOL_0031,Basic_Info,boolean,2,"CE2 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE2, if=Loopback0, type=DEVICE_IF → false",ce2.xml
+INTERFACE_MOP_XENABLED_BOOL_0032,Basic_Info,boolean,2,"CE2 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=CE2, if=MgmtEth0/RP0/CPU0/0, type=DEVICE_IF → false",ce2.xml
+INTERFACE_MOP_XENABLED_BOOL_0033,Basic_Info,boolean,2,"sample10 장비의 Ethernet0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample10, if=Ethernet0/0, type=DEVICE_IF → false",sample10.xml
+INTERFACE_MOP_XENABLED_BOOL_0034,Basic_Info,boolean,2,"sample10 장비의 Ethernet0/0.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample10, if=Ethernet0/0.100, type=DEVICE_IF → false",sample10.xml
+INTERFACE_MOP_XENABLED_BOOL_0035,Basic_Info,boolean,2,"sample10 장비의 Ethernet0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample10, if=Ethernet0/1, type=DEVICE_IF → false",sample10.xml
+INTERFACE_MOP_XENABLED_BOOL_0036,Basic_Info,boolean,2,"sample10 장비의 Ethernet0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample10, if=Ethernet0/2, type=DEVICE_IF → false",sample10.xml
+INTERFACE_MOP_XENABLED_BOOL_0037,Basic_Info,boolean,2,"sample10 장비의 Ethernet0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample10, if=Ethernet0/3, type=DEVICE_IF → false",sample10.xml
+INTERFACE_MOP_XENABLED_BOOL_0038,Basic_Info,boolean,2,"sample10 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample10, if=GigabitEthernet0/0/0/0, type=DEVICE_IF → false",sample10.xml
+INTERFACE_MOP_XENABLED_BOOL_0039,Basic_Info,boolean,2,"sample10 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample10, if=GigabitEthernet0/0/0/0.1, type=DEVICE_IF → false",sample10.xml
+INTERFACE_MOP_XENABLED_BOOL_0040,Basic_Info,boolean,2,"sample10 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample10, if=GigabitEthernet0/0/0/1, type=DEVICE_IF → false",sample10.xml
+INTERFACE_MOP_XENABLED_BOOL_0041,Basic_Info,boolean,2,"sample10 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample10, if=GigabitEthernet0/0/0/1.100, type=DEVICE_IF → false",sample10.xml
+INTERFACE_MOP_XENABLED_BOOL_0042,Basic_Info,boolean,2,"sample10 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample10, if=GigabitEthernet0/0/0/1.200, type=DEVICE_IF → false",sample10.xml
+INTERFACE_MOP_XENABLED_BOOL_0043,Basic_Info,boolean,2,"sample10 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample10, if=GigabitEthernet0/0/0/1.300, type=DEVICE_IF → false",sample10.xml
+INTERFACE_MOP_XENABLED_BOOL_0044,Basic_Info,boolean,2,"sample10 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample10, if=GigabitEthernet0/0/0/1.400, type=DEVICE_IF → false",sample10.xml
+INTERFACE_MOP_XENABLED_BOOL_0045,Basic_Info,boolean,2,"sample10 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample10, if=GigabitEthernet0/0/0/2, type=DEVICE_IF → false",sample10.xml
+INTERFACE_MOP_XENABLED_BOOL_0046,Basic_Info,boolean,2,"sample10 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample10, if=GigabitEthernet0/0/0/3, type=DEVICE_IF → false",sample10.xml
+INTERFACE_MOP_XENABLED_BOOL_0047,Basic_Info,boolean,2,"sample10 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample10, if=Loopback0, type=DEVICE_IF → false",sample10.xml
+INTERFACE_MOP_XENABLED_BOOL_0048,Basic_Info,boolean,2,"sample10 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample10, if=MgmtEth0/RP0/CPU0/0, type=DEVICE_IF → false",sample10.xml
+INTERFACE_MOP_XENABLED_BOOL_0049,Basic_Info,boolean,2,"sample7 장비의 Ethernet0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample7, if=Ethernet0/0, type=DEVICE_IF → false",sample7.xml
+INTERFACE_MOP_XENABLED_BOOL_0050,Basic_Info,boolean,2,"sample7 장비의 Ethernet0/0.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample7, if=Ethernet0/0.100, type=DEVICE_IF → false",sample7.xml
+INTERFACE_MOP_XENABLED_BOOL_0051,Basic_Info,boolean,2,"sample7 장비의 Ethernet0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample7, if=Ethernet0/1, type=DEVICE_IF → false",sample7.xml
+INTERFACE_MOP_XENABLED_BOOL_0052,Basic_Info,boolean,2,"sample7 장비의 Ethernet0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample7, if=Ethernet0/2, type=DEVICE_IF → false",sample7.xml
+INTERFACE_MOP_XENABLED_BOOL_0053,Basic_Info,boolean,2,"sample7 장비의 Ethernet0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample7, if=Ethernet0/3, type=DEVICE_IF → false",sample7.xml
+INTERFACE_MOP_XENABLED_BOOL_0054,Basic_Info,boolean,2,"sample7 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample7, if=GigabitEthernet0/0/0/0, type=DEVICE_IF → false",sample7.xml
+INTERFACE_MOP_XENABLED_BOOL_0055,Basic_Info,boolean,2,"sample7 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample7, if=GigabitEthernet0/0/0/0.1, type=DEVICE_IF → false",sample7.xml
+INTERFACE_MOP_XENABLED_BOOL_0056,Basic_Info,boolean,2,"sample7 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample7, if=GigabitEthernet0/0/0/1, type=DEVICE_IF → false",sample7.xml
+INTERFACE_MOP_XENABLED_BOOL_0057,Basic_Info,boolean,2,"sample7 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample7, if=GigabitEthernet0/0/0/1.100, type=DEVICE_IF → false",sample7.xml
+INTERFACE_MOP_XENABLED_BOOL_0058,Basic_Info,boolean,2,"sample7 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample7, if=GigabitEthernet0/0/0/1.200, type=DEVICE_IF → false",sample7.xml
+INTERFACE_MOP_XENABLED_BOOL_0059,Basic_Info,boolean,2,"sample7 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample7, if=GigabitEthernet0/0/0/1.300, type=DEVICE_IF → false",sample7.xml
+INTERFACE_MOP_XENABLED_BOOL_0060,Basic_Info,boolean,2,"sample7 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample7, if=GigabitEthernet0/0/0/1.400, type=DEVICE_IF → false",sample7.xml
+INTERFACE_MOP_XENABLED_BOOL_0061,Basic_Info,boolean,2,"sample7 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample7, if=GigabitEthernet0/0/0/2, type=DEVICE_IF → false",sample7.xml
+INTERFACE_MOP_XENABLED_BOOL_0062,Basic_Info,boolean,2,"sample7 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample7, if=GigabitEthernet0/0/0/3, type=DEVICE_IF → false",sample7.xml
+INTERFACE_MOP_XENABLED_BOOL_0063,Basic_Info,boolean,2,"sample7 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample7, if=Loopback0, type=DEVICE_IF → false",sample7.xml
+INTERFACE_MOP_XENABLED_BOOL_0064,Basic_Info,boolean,2,"sample7 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample7, if=MgmtEth0/RP0/CPU0/0, type=DEVICE_IF → false",sample7.xml
+INTERFACE_MOP_XENABLED_BOOL_0065,Basic_Info,boolean,2,"sample8 장비의 Ethernet0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample8, if=Ethernet0/0, type=DEVICE_IF → false",sample8.xml
+INTERFACE_MOP_XENABLED_BOOL_0066,Basic_Info,boolean,2,"sample8 장비의 Ethernet0/0.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample8, if=Ethernet0/0.100, type=DEVICE_IF → false",sample8.xml
+INTERFACE_MOP_XENABLED_BOOL_0067,Basic_Info,boolean,2,"sample8 장비의 Ethernet0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample8, if=Ethernet0/1, type=DEVICE_IF → false",sample8.xml
+INTERFACE_MOP_XENABLED_BOOL_0068,Basic_Info,boolean,2,"sample8 장비의 Ethernet0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample8, if=Ethernet0/2, type=DEVICE_IF → false",sample8.xml
+INTERFACE_MOP_XENABLED_BOOL_0069,Basic_Info,boolean,2,"sample8 장비의 Ethernet0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample8, if=Ethernet0/3, type=DEVICE_IF → false",sample8.xml
+INTERFACE_MOP_XENABLED_BOOL_0070,Basic_Info,boolean,2,"sample8 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample8, if=GigabitEthernet0/0/0/0, type=DEVICE_IF → false",sample8.xml
+INTERFACE_MOP_XENABLED_BOOL_0071,Basic_Info,boolean,2,"sample8 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample8, if=GigabitEthernet0/0/0/0.1, type=DEVICE_IF → false",sample8.xml
+INTERFACE_MOP_XENABLED_BOOL_0072,Basic_Info,boolean,2,"sample8 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample8, if=GigabitEthernet0/0/0/1, type=DEVICE_IF → false",sample8.xml
+INTERFACE_MOP_XENABLED_BOOL_0073,Basic_Info,boolean,2,"sample8 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample8, if=GigabitEthernet0/0/0/1.100, type=DEVICE_IF → false",sample8.xml
+INTERFACE_MOP_XENABLED_BOOL_0074,Basic_Info,boolean,2,"sample8 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample8, if=GigabitEthernet0/0/0/1.200, type=DEVICE_IF → false",sample8.xml
+INTERFACE_MOP_XENABLED_BOOL_0075,Basic_Info,boolean,2,"sample8 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample8, if=GigabitEthernet0/0/0/1.300, type=DEVICE_IF → false",sample8.xml
+INTERFACE_MOP_XENABLED_BOOL_0076,Basic_Info,boolean,2,"sample8 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample8, if=GigabitEthernet0/0/0/1.400, type=DEVICE_IF → false",sample8.xml
+INTERFACE_MOP_XENABLED_BOOL_0077,Basic_Info,boolean,2,"sample8 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample8, if=GigabitEthernet0/0/0/2, type=DEVICE_IF → false",sample8.xml
+INTERFACE_MOP_XENABLED_BOOL_0078,Basic_Info,boolean,2,"sample8 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample8, if=GigabitEthernet0/0/0/3, type=DEVICE_IF → false",sample8.xml
+INTERFACE_MOP_XENABLED_BOOL_0079,Basic_Info,boolean,2,"sample8 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample8, if=Loopback0, type=DEVICE_IF → false",sample8.xml
+INTERFACE_MOP_XENABLED_BOOL_0080,Basic_Info,boolean,2,"sample8 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample8, if=MgmtEth0/RP0/CPU0/0, type=DEVICE_IF → false",sample8.xml
+INTERFACE_MOP_XENABLED_BOOL_0081,Basic_Info,boolean,2,"sample9 장비의 Ethernet0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample9, if=Ethernet0/0, type=DEVICE_IF → false",sample9.xml
+INTERFACE_MOP_XENABLED_BOOL_0082,Basic_Info,boolean,2,"sample9 장비의 Ethernet0/0.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample9, if=Ethernet0/0.100, type=DEVICE_IF → false",sample9.xml
+INTERFACE_MOP_XENABLED_BOOL_0083,Basic_Info,boolean,2,"sample9 장비의 Ethernet0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample9, if=Ethernet0/1, type=DEVICE_IF → false",sample9.xml
+INTERFACE_MOP_XENABLED_BOOL_0084,Basic_Info,boolean,2,"sample9 장비의 Ethernet0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample9, if=Ethernet0/2, type=DEVICE_IF → false",sample9.xml
+INTERFACE_MOP_XENABLED_BOOL_0085,Basic_Info,boolean,2,"sample9 장비의 Ethernet0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample9, if=Ethernet0/3, type=DEVICE_IF → false",sample9.xml
+INTERFACE_MOP_XENABLED_BOOL_0086,Basic_Info,boolean,2,"sample9 장비의 GigabitEthernet0/0/0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample9, if=GigabitEthernet0/0/0/0, type=DEVICE_IF → false",sample9.xml
+INTERFACE_MOP_XENABLED_BOOL_0087,Basic_Info,boolean,2,"sample9 장비의 GigabitEthernet0/0/0/0.1 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample9, if=GigabitEthernet0/0/0/0.1, type=DEVICE_IF → false",sample9.xml
+INTERFACE_MOP_XENABLED_BOOL_0088,Basic_Info,boolean,2,"sample9 장비의 GigabitEthernet0/0/0/1 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample9, if=GigabitEthernet0/0/0/1, type=DEVICE_IF → false",sample9.xml
+INTERFACE_MOP_XENABLED_BOOL_0089,Basic_Info,boolean,2,"sample9 장비의 GigabitEthernet0/0/0/1.100 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample9, if=GigabitEthernet0/0/0/1.100, type=DEVICE_IF → false",sample9.xml
+INTERFACE_MOP_XENABLED_BOOL_0090,Basic_Info,boolean,2,"sample9 장비의 GigabitEthernet0/0/0/1.200 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample9, if=GigabitEthernet0/0/0/1.200, type=DEVICE_IF → false",sample9.xml
+INTERFACE_MOP_XENABLED_BOOL_0091,Basic_Info,boolean,2,"sample9 장비의 GigabitEthernet0/0/0/1.300 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample9, if=GigabitEthernet0/0/0/1.300, type=DEVICE_IF → false",sample9.xml
+INTERFACE_MOP_XENABLED_BOOL_0092,Basic_Info,boolean,2,"sample9 장비의 GigabitEthernet0/0/0/1.400 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample9, if=GigabitEthernet0/0/0/1.400, type=DEVICE_IF → false",sample9.xml
+INTERFACE_MOP_XENABLED_BOOL_0093,Basic_Info,boolean,2,"sample9 장비의 GigabitEthernet0/0/0/2 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample9, if=GigabitEthernet0/0/0/2, type=DEVICE_IF → false",sample9.xml
+INTERFACE_MOP_XENABLED_BOOL_0094,Basic_Info,boolean,2,"sample9 장비의 GigabitEthernet0/0/0/3 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample9, if=GigabitEthernet0/0/0/3, type=DEVICE_IF → false",sample9.xml
+INTERFACE_MOP_XENABLED_BOOL_0095,Basic_Info,boolean,2,"sample9 장비의 Loopback0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample9, if=Loopback0, type=DEVICE_IF → false",sample9.xml
+INTERFACE_MOP_XENABLED_BOOL_0096,Basic_Info,boolean,2,"sample9 장비의 MgmtEth0/RP0/CPU0/0 인터페이스에 MOP xenabled가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `interface_mop_xenabled_bool` on host=sample9, if=MgmtEth0/RP0/CPU0/0, type=DEVICE_IF → false",sample9.xml
+IOS_CONFIG_REGISTER_TEXT_0001,Basic_Info,text,1,"CE1 장비의 config-register 값은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",0x0,"metric `ios_config_register_text` on host=CE1, type=DEVICE → 0x0",ce1.xml
+IOS_CONFIG_REGISTER_TEXT_0002,Basic_Info,text,1,"CE2 장비의 config-register 값은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",0x0,"metric `ios_config_register_text` on host=CE2, type=DEVICE → 0x0",ce2.xml
+IOS_CONFIG_REGISTER_TEXT_0003,Basic_Info,text,1,"sample10 장비의 config-register 값은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `ios_config_register_text` on host=sample10, type=DEVICE → 정보 없음",sample10.xml
+IOS_CONFIG_REGISTER_TEXT_0004,Basic_Info,text,1,"sample7 장비의 config-register 값은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `ios_config_register_text` on host=sample7, type=DEVICE → 정보 없음",sample7.xml
+IOS_CONFIG_REGISTER_TEXT_0005,Basic_Info,text,1,"sample8 장비의 config-register 값은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `ios_config_register_text` on host=sample8, type=DEVICE → 정보 없음",sample8.xml
+IOS_CONFIG_REGISTER_TEXT_0006,Basic_Info,text,1,"sample9 장비의 config-register 값은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `ios_config_register_text` on host=sample9, type=DEVICE → 정보 없음",sample9.xml
+IP_CEF_ENABLED_BOOL_0001,Basic_Info,boolean,1,"CE1 장비에서 IP CEF가 활성화되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",true,"metric `ip_cef_enabled_bool` on host=CE1, type=DEVICE → true",ce1.xml
+IP_CEF_ENABLED_BOOL_0002,Basic_Info,boolean,1,"CE2 장비에서 IP CEF가 활성화되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",true,"metric `ip_cef_enabled_bool` on host=CE2, type=DEVICE → true",ce2.xml
+IP_CEF_ENABLED_BOOL_0003,Basic_Info,boolean,1,"sample10 장비에서 IP CEF가 활성화되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `ip_cef_enabled_bool` on host=sample10, type=DEVICE → false",sample10.xml
+IP_CEF_ENABLED_BOOL_0004,Basic_Info,boolean,1,"sample7 장비에서 IP CEF가 활성화되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `ip_cef_enabled_bool` on host=sample7, type=DEVICE → false",sample7.xml
+IP_CEF_ENABLED_BOOL_0005,Basic_Info,boolean,1,"sample8 장비에서 IP CEF가 활성화되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `ip_cef_enabled_bool` on host=sample8, type=DEVICE → false",sample8.xml
+IP_CEF_ENABLED_BOOL_0006,Basic_Info,boolean,1,"sample9 장비에서 IP CEF가 활성화되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `ip_cef_enabled_bool` on host=sample9, type=DEVICE → false",sample9.xml
+IP_FORWARD_PROTOCOL_ND_BOOL_0001,Basic_Info,boolean,1,"CE1 장비에서 ip forward-protocol nd가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",true,"metric `ip_forward_protocol_nd_bool` on host=CE1, type=DEVICE → true",ce1.xml
+IP_FORWARD_PROTOCOL_ND_BOOL_0002,Basic_Info,boolean,1,"CE2 장비에서 ip forward-protocol nd가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",true,"metric `ip_forward_protocol_nd_bool` on host=CE2, type=DEVICE → true",ce2.xml
+IP_FORWARD_PROTOCOL_ND_BOOL_0003,Basic_Info,boolean,1,"sample10 장비에서 ip forward-protocol nd가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `ip_forward_protocol_nd_bool` on host=sample10, type=DEVICE → false",sample10.xml
+IP_FORWARD_PROTOCOL_ND_BOOL_0004,Basic_Info,boolean,1,"sample7 장비에서 ip forward-protocol nd가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `ip_forward_protocol_nd_bool` on host=sample7, type=DEVICE → false",sample7.xml
+IP_FORWARD_PROTOCOL_ND_BOOL_0005,Basic_Info,boolean,1,"sample8 장비에서 ip forward-protocol nd가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `ip_forward_protocol_nd_bool` on host=sample8, type=DEVICE → false",sample8.xml
+IP_FORWARD_PROTOCOL_ND_BOOL_0006,Basic_Info,boolean,1,"sample9 장비에서 ip forward-protocol nd가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `ip_forward_protocol_nd_bool` on host=sample9, type=DEVICE → false",sample9.xml
+LOGGING_BUFFERED_SEVERITY_TEXT_0001,Basic_Info,text,1,"CE1 장비에서 logging buffered의 severity-level은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",debugging,"metric `logging_buffered_severity_text` on host=CE1, type=DEVICE → debugging",ce1.xml
+LOGGING_BUFFERED_SEVERITY_TEXT_0002,Basic_Info,text,1,"CE2 장비에서 logging buffered의 severity-level은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",debugging,"metric `logging_buffered_severity_text` on host=CE2, type=DEVICE → debugging",ce2.xml
+LOGGING_BUFFERED_SEVERITY_TEXT_0003,Basic_Info,text,1,"sample10 장비에서 logging buffered의 severity-level은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `logging_buffered_severity_text` on host=sample10, type=DEVICE → 정보 없음",sample10.xml
+LOGGING_BUFFERED_SEVERITY_TEXT_0004,Basic_Info,text,1,"sample7 장비에서 logging buffered의 severity-level은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `logging_buffered_severity_text` on host=sample7, type=DEVICE → 정보 없음",sample7.xml
+LOGGING_BUFFERED_SEVERITY_TEXT_0005,Basic_Info,text,1,"sample8 장비에서 logging buffered의 severity-level은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `logging_buffered_severity_text` on host=sample8, type=DEVICE → 정보 없음",sample8.xml
+LOGGING_BUFFERED_SEVERITY_TEXT_0006,Basic_Info,text,1,"sample9 장비에서 logging buffered의 severity-level은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `logging_buffered_severity_text` on host=sample9, type=DEVICE → 정보 없음",sample9.xml
+SYSTEM_HOSTNAME_TEXT_0001,Basic_Info,text,1,"CE1 장비의 호스트네임은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",CE1,"metric `system_hostname_text` on host=CE1, type=DEVICE → CE1",ce1.xml
+SYSTEM_HOSTNAME_TEXT_0002,Basic_Info,text,1,"CE2 장비의 호스트네임은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",CE2,"metric `system_hostname_text` on host=CE2, type=DEVICE → CE2",ce2.xml
+SYSTEM_HOSTNAME_TEXT_0003,Basic_Info,text,1,"sample10 장비의 호스트네임은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",sample10,"metric `system_hostname_text` on host=sample10, type=DEVICE → sample10",sample10.xml
+SYSTEM_HOSTNAME_TEXT_0004,Basic_Info,text,1,"sample7 장비의 호스트네임은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",sample7,"metric `system_hostname_text` on host=sample7, type=DEVICE → sample7",sample7.xml
+SYSTEM_HOSTNAME_TEXT_0005,Basic_Info,text,1,"sample8 장비의 호스트네임은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",sample8,"metric `system_hostname_text` on host=sample8, type=DEVICE → sample8",sample8.xml
+SYSTEM_HOSTNAME_TEXT_0006,Basic_Info,text,1,"sample9 장비의 호스트네임은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",sample9,"metric `system_hostname_text` on host=sample9, type=DEVICE → sample9",sample9.xml
+SYSTEM_MGMT_ADDRESS_TEXT_0001,Basic_Info,text,1,"CE1 장비의 관리용 IP 주소는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",172.16.1.40,"metric `system_mgmt_address_text` on host=CE1, type=DEVICE → 172.16.1.40",ce1.xml
+SYSTEM_MGMT_ADDRESS_TEXT_0002,Basic_Info,text,1,"CE2 장비의 관리용 IP 주소는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",172.16.1.41,"metric `system_mgmt_address_text` on host=CE2, type=DEVICE → 172.16.1.41",ce2.xml
+SYSTEM_MGMT_ADDRESS_TEXT_0003,Basic_Info,text,1,"sample10 장비의 관리용 IP 주소는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",172.16.1.133,"metric `system_mgmt_address_text` on host=sample10, type=DEVICE → 172.16.1.133",sample10.xml
+SYSTEM_MGMT_ADDRESS_TEXT_0004,Basic_Info,text,1,"sample7 장비의 관리용 IP 주소는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",172.16.1.130,"metric `system_mgmt_address_text` on host=sample7, type=DEVICE → 172.16.1.130",sample7.xml
+SYSTEM_MGMT_ADDRESS_TEXT_0005,Basic_Info,text,1,"sample8 장비의 관리용 IP 주소는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",172.16.1.131,"metric `system_mgmt_address_text` on host=sample8, type=DEVICE → 172.16.1.131",sample8.xml
+SYSTEM_MGMT_ADDRESS_TEXT_0006,Basic_Info,text,1,"sample9 장비의 관리용 IP 주소는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",172.16.1.132,"metric `system_mgmt_address_text` on host=sample9, type=DEVICE → 172.16.1.132",sample9.xml
+SYSTEM_USERS_DETAIL_MAP_0001,Basic_Info,map,1,"CE1 장비의 사용자 상세 정보(UID/GID/password/ssh_keydir/homedir 등)를 알려주세요.
+[답변 형식: 키=값 형식 목록 (없으면 '없음')]","nso={'privilege': '15', 'secret_type': '5', 'secret': '$1$ou/O$Fc2FfZtj0B5/97GkzArNj/'}","metric `system_users_detail_map` on host=CE1, type=DEVICE → nso={'privilege': '15', 'secret_type': '5', 'secret': '$1$ou/O$Fc2FfZtj0B5/97GkzArNj/'}",ce1.xml
+SYSTEM_USERS_DETAIL_MAP_0002,Basic_Info,map,1,"CE2 장비의 사용자 상세 정보(UID/GID/password/ssh_keydir/homedir 등)를 알려주세요.
+[답변 형식: 키=값 형식 목록 (없으면 '없음')]","nso={'privilege': '15', 'secret_type': '5', 'secret': '$1$ou/O$Fc2FfZtj0B5/97GkzArNj/'}","metric `system_users_detail_map` on host=CE2, type=DEVICE → nso={'privilege': '15', 'secret_type': '5', 'secret': '$1$ou/O$Fc2FfZtj0B5/97GkzArNj/'}",ce2.xml
+SYSTEM_USERS_DETAIL_MAP_0003,Basic_Info,map,1,"sample10 장비의 사용자 상세 정보(UID/GID/password/ssh_keydir/homedir 등)를 알려주세요.
+[답변 형식: 키=값 형식 목록 (없으면 '없음')]","nso={'uid': '9000', 'gid': '100', 'password': '$1$4OXc$YKd36/09DZDXOk1MZ7r9r.', 'ssh_keydir': '/var/confd/homes/nso/.ssh', 'homedir': '/var/confd/homes/nso'}","metric `system_users_detail_map` on host=sample10, type=DEVICE → nso={'uid': '9000', 'gid': '100', 'password': '$1$4OXc$YKd36/09DZDXOk1MZ7r9r.', 'ssh_keydir': '/var/confd/homes/nso/.ssh', 'homedir': '/var/confd/homes/nso'}",sample10.xml
+SYSTEM_USERS_DETAIL_MAP_0004,Basic_Info,map,1,"sample7 장비의 사용자 상세 정보(UID/GID/password/ssh_keydir/homedir 등)를 알려주세요.
+[답변 형식: 키=값 형식 목록 (없으면 '없음')]","nso={'uid': '9000', 'gid': '100', 'password': '$1$mUZJ$QPpVX3QwNEtq0gZBajM8T1', 'ssh_keydir': '/var/confd/homes/nso/.ssh', 'homedir': '/var/confd/homes/nso'}","metric `system_users_detail_map` on host=sample7, type=DEVICE → nso={'uid': '9000', 'gid': '100', 'password': '$1$mUZJ$QPpVX3QwNEtq0gZBajM8T1', 'ssh_keydir': '/var/confd/homes/nso/.ssh', 'homedir': '/var/confd/homes/nso'}",sample7.xml
+SYSTEM_USERS_DETAIL_MAP_0005,Basic_Info,map,1,"sample8 장비의 사용자 상세 정보(UID/GID/password/ssh_keydir/homedir 등)를 알려주세요.
+[답변 형식: 키=값 형식 목록 (없으면 '없음')]","nso={'uid': '9000', 'gid': '100', 'password': '$1$b7Ry$jRnK9Vkv2I9SxP2L2ElCU.', 'ssh_keydir': '/var/confd/homes/nso/.ssh', 'homedir': '/var/confd/homes/nso'}","metric `system_users_detail_map` on host=sample8, type=DEVICE → nso={'uid': '9000', 'gid': '100', 'password': '$1$b7Ry$jRnK9Vkv2I9SxP2L2ElCU.', 'ssh_keydir': '/var/confd/homes/nso/.ssh', 'homedir': '/var/confd/homes/nso'}",sample8.xml
+SYSTEM_USERS_DETAIL_MAP_0006,Basic_Info,map,1,"sample9 장비의 사용자 상세 정보(UID/GID/password/ssh_keydir/homedir 등)를 알려주세요.
+[답변 형식: 키=값 형식 목록 (없으면 '없음')]","nso={'uid': '9000', 'gid': '100', 'password': '$1$YTSP$KsBQUPBU.LLpYLlRcBiV9/', 'ssh_keydir': '/var/confd/homes/nso/.ssh', 'homedir': '/var/confd/homes/nso'}","metric `system_users_detail_map` on host=sample9, type=DEVICE → nso={'uid': '9000', 'gid': '100', 'password': '$1$YTSP$KsBQUPBU.LLpYLlRcBiV9/', 'ssh_keydir': '/var/confd/homes/nso/.ssh', 'homedir': '/var/confd/homes/nso'}",sample9.xml
+SYSTEM_VERSION_TEXT_0001,Basic_Info,text,1,"CE1 장비의 운영체제(OS) 버전은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",15.4,"metric `system_version_text` on host=CE1, type=DEVICE → 15.4",ce1.xml
+SYSTEM_VERSION_TEXT_0002,Basic_Info,text,1,"CE2 장비의 운영체제(OS) 버전은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",15.4,"metric `system_version_text` on host=CE2, type=DEVICE → 15.4",ce2.xml
+SYSTEM_VERSION_TEXT_0003,Basic_Info,text,1,"sample10 장비의 운영체제(OS) 버전은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `system_version_text` on host=sample10, type=DEVICE → 정보 없음",sample10.xml
+SYSTEM_VERSION_TEXT_0004,Basic_Info,text,1,"sample7 장비의 운영체제(OS) 버전은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `system_version_text` on host=sample7, type=DEVICE → 정보 없음",sample7.xml
+SYSTEM_VERSION_TEXT_0005,Basic_Info,text,1,"sample8 장비의 운영체제(OS) 버전은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `system_version_text` on host=sample8, type=DEVICE → 정보 없음",sample8.xml
+SYSTEM_VERSION_TEXT_0006,Basic_Info,text,1,"sample9 장비의 운영체제(OS) 버전은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `system_version_text` on host=sample9, type=DEVICE → 정보 없음",sample9.xml
+VTY_FIRST_LAST_TEXT_0001,Basic_Info,text,1,"CE1 장비의 VTY 라인 번호 범위는 어떻게 됩니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",0 4,"metric `vty_first_last_text` on host=CE1, type=DEVICE → 0 4",ce1.xml
+VTY_FIRST_LAST_TEXT_0002,Basic_Info,text,1,"CE2 장비의 VTY 라인 번호 범위는 어떻게 됩니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",0 4,"metric `vty_first_last_text` on host=CE2, type=DEVICE → 0 4",ce2.xml
+VTY_FIRST_LAST_TEXT_0003,Basic_Info,text,1,"sample10 장비의 VTY 라인 번호 범위는 어떻게 됩니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `vty_first_last_text` on host=sample10, type=DEVICE → 정보 없음",sample10.xml
+VTY_FIRST_LAST_TEXT_0004,Basic_Info,text,1,"sample7 장비의 VTY 라인 번호 범위는 어떻게 됩니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `vty_first_last_text` on host=sample7, type=DEVICE → 정보 없음",sample7.xml
+VTY_FIRST_LAST_TEXT_0005,Basic_Info,text,1,"sample8 장비의 VTY 라인 번호 범위는 어떻게 됩니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `vty_first_last_text` on host=sample8, type=DEVICE → 정보 없음",sample8.xml
+VTY_FIRST_LAST_TEXT_0006,Basic_Info,text,1,"sample9 장비의 VTY 라인 번호 범위는 어떻게 됩니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `vty_first_last_text` on host=sample9, type=DEVICE → 정보 없음",sample9.xml
+VTY_LOGIN_MODE_TEXT_0001,Basic_Info,text,1,"CE1 장비의 VTY line 로그인 방식은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",local,"metric `vty_login_mode_text` on host=CE1, type=DEVICE → local",ce1.xml
+VTY_LOGIN_MODE_TEXT_0002,Basic_Info,text,1,"CE2 장비의 VTY line 로그인 방식은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",local,"metric `vty_login_mode_text` on host=CE2, type=DEVICE → local",ce2.xml
+VTY_LOGIN_MODE_TEXT_0003,Basic_Info,text,1,"sample10 장비의 VTY line 로그인 방식은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `vty_login_mode_text` on host=sample10, type=DEVICE → 정보 없음",sample10.xml
+VTY_LOGIN_MODE_TEXT_0004,Basic_Info,text,1,"sample7 장비의 VTY line 로그인 방식은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `vty_login_mode_text` on host=sample7, type=DEVICE → 정보 없음",sample7.xml
+VTY_LOGIN_MODE_TEXT_0005,Basic_Info,text,1,"sample8 장비의 VTY line 로그인 방식은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `vty_login_mode_text` on host=sample8, type=DEVICE → 정보 없음",sample8.xml
+VTY_LOGIN_MODE_TEXT_0006,Basic_Info,text,1,"sample9 장비의 VTY line 로그인 방식은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `vty_login_mode_text` on host=sample9, type=DEVICE → 정보 없음",sample9.xml
+VTY_PASSWORD_SECRET_TEXT_0001,Basic_Info,text,1,"CE1 장비의 VTY password secret 값은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",12345678,"metric `vty_password_secret_text` on host=CE1, type=DEVICE → 12345678",ce1.xml
+VTY_PASSWORD_SECRET_TEXT_0002,Basic_Info,text,1,"CE2 장비의 VTY password secret 값은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",12345678,"metric `vty_password_secret_text` on host=CE2, type=DEVICE → 12345678",ce2.xml
+VTY_PASSWORD_SECRET_TEXT_0003,Basic_Info,text,1,"sample10 장비의 VTY password secret 값은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `vty_password_secret_text` on host=sample10, type=DEVICE → 정보 없음",sample10.xml
+VTY_PASSWORD_SECRET_TEXT_0004,Basic_Info,text,1,"sample7 장비의 VTY password secret 값은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `vty_password_secret_text` on host=sample7, type=DEVICE → 정보 없음",sample7.xml
+VTY_PASSWORD_SECRET_TEXT_0005,Basic_Info,text,1,"sample8 장비의 VTY password secret 값은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `vty_password_secret_text` on host=sample8, type=DEVICE → 정보 없음",sample8.xml
+VTY_PASSWORD_SECRET_TEXT_0006,Basic_Info,text,1,"sample9 장비의 VTY password secret 값은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `vty_password_secret_text` on host=sample9, type=DEVICE → 정보 없음",sample9.xml
+VTY_TRANSPORT_INPUT_TEXT_0001,Basic_Info,text,1,"CE1 장비의 VTY transport input 설정은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",ssh,"metric `vty_transport_input_text` on host=CE1, type=DEVICE → ssh",ce1.xml
+VTY_TRANSPORT_INPUT_TEXT_0002,Basic_Info,text,1,"CE2 장비의 VTY transport input 설정은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",ssh,"metric `vty_transport_input_text` on host=CE2, type=DEVICE → ssh",ce2.xml
+VTY_TRANSPORT_INPUT_TEXT_0003,Basic_Info,text,1,"sample10 장비의 VTY transport input 설정은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `vty_transport_input_text` on host=sample10, type=DEVICE → 정보 없음",sample10.xml
+VTY_TRANSPORT_INPUT_TEXT_0004,Basic_Info,text,1,"sample7 장비의 VTY transport input 설정은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `vty_transport_input_text` on host=sample7, type=DEVICE → 정보 없음",sample7.xml
+VTY_TRANSPORT_INPUT_TEXT_0005,Basic_Info,text,1,"sample8 장비의 VTY transport input 설정은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `vty_transport_input_text` on host=sample8, type=DEVICE → 정보 없음",sample8.xml
+VTY_TRANSPORT_INPUT_TEXT_0006,Basic_Info,text,1,"sample9 장비의 VTY transport input 설정은 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `vty_transport_input_text` on host=sample9, type=DEVICE → 정보 없음",sample9.xml
+CMD_CREATE_VRF_AND_ASSIGN_0001,Command_Generation,text,2,"CE1 장비에서 CUSTOMER_A VRF를 생성하고 Ethernet0/0 인터페이스에 할당하는 명령어 시퀀스는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]","vrf definition CUSTOMER_A
+ address-family ipv4 unicast
+ exit
+interface Ethernet0/0
+ vrf forwarding CUSTOMER_A","metric `cmd_create_vrf_and_assign` on host=CE1, interface=Ethernet0/0, type=GLOBAL, vrf_name=CUSTOMER_A → vrf definition CUSTOMER_A
+ address-family ipv4 unicast
+ exit
+interface Ethernet0/0
+ vrf forwarding CUSTOMER_A",ce1.xml
+CMD_SET_BGP_ROUTEMAP_0001,Command_Generation,text,2,"CE1 장비에서 BGP AS 65001의 192.168.1.10 이웃에 RM_OUT 라우트맵을 outbound로 적용하는 명령어는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]","router bgp 65001
+ neighbor 192.168.1.10 route-map RM_OUT out","metric `cmd_set_bgp_routemap` on asn=65001, host=CE1, map_name=RM_OUT, neighbor_ip=192.168.1.10, type=GLOBAL → router bgp 65001
+ neighbor 192.168.1.10 route-map RM_OUT out",ce1.xml
+CMD_SET_HOSTNAME_0001,Command_Generation,text,2,"CE1 장비의 호스트네임을 CE1-NEW(으)로 변경하는 명령어는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",hostname CE1-NEW,"metric `cmd_set_hostname` on host=CE1, new_hostname=CE1-NEW, type=GLOBAL → hostname CE1-NEW",ce1.xml
+CMD_SET_INTERFACE_DESCRIPTION_0001,Command_Generation,text,2,"CE1 장비에서 Ethernet0/0 인터페이스에 'Uplink to core' 설명을 설정하는 명령어는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]","interface Ethernet0/0
+ description Uplink to core","metric `cmd_set_interface_description` on description=Uplink to core, host=CE1, interface=Ethernet0/0, type=GLOBAL → interface Ethernet0/0
+ description Uplink to core",ce1.xml
+CMD_SET_OSPF_COST_0001,Command_Generation,text,2,"CE1 장비에서 OSPF 프로세스 1의 Ethernet0/0 인터페이스 비용을 100으로 설정하는 명령어는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]","router ospf 1
+ interface Ethernet0/0
+ cost 100","metric `cmd_set_ospf_cost` on cost=100, host=CE1, interface=Ethernet0/0, process_id=1, type=GLOBAL → router ospf 1
+ interface Ethernet0/0
+ cost 100",ce1.xml
+CMD_SET_STATIC_ROUTE_0001,Command_Generation,text,2,"CE1 장비에서 192.0.2.0/255.255.255.0 네트워크로 가는 정적 경로를 10.0.0.1 다음 홉으로 설정하는 명령어는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",ip route 192.0.2.0 255.255.255.0 10.0.0.1,"metric `cmd_set_static_route` on host=CE1, mask=255.255.255.0, next_hop=10.0.0.1, prefix=192.0.2.0, type=GLOBAL → ip route 192.0.2.0 255.255.255.0 10.0.0.1",ce1.xml
+CMD_SET_VTY_ACL_0001,Command_Generation,text,2,"CE1 장비의 VTY 라인에 SSH_ONLY ACL을 inbound로 적용하는 명령어는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]","line vty 0 4
+ access-class SSH_ONLY in","metric `cmd_set_vty_acl` on acl_name=SSH_ONLY, host=CE1, type=GLOBAL → line vty 0 4
+ access-class SSH_ONLY in",ce1.xml
+CMD_SHOW_BGP_SUMMARY_0001,Command_Generation,text,1,"CE1 장비에서 BGP 피어 상태를 요약해서 확인하는 명령어는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",show bgp summary,"metric `cmd_show_bgp_summary` on host=CE1, type=GLOBAL → show bgp summary",ce1.xml
+CMD_SHOW_IP_INTERFACE_BRIEF_0001,Command_Generation,text,1,"CE1 장비의 인터페이스 IP 상태를 간단히 확인하는 명령어는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",show ip interface brief,"metric `cmd_show_ip_interface_brief` on host=CE1, type=GLOBAL → show ip interface brief",ce1.xml
+CMD_SHOW_IP_OSPF_NEIGHBOR_0001,Command_Generation,text,1,"CE1 장비에서 OSPF 이웃 상태를 조회하는 명령어는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",show ip ospf neighbor,"metric `cmd_show_ip_ospf_neighbor` on host=CE1, type=GLOBAL → show ip ospf neighbor",ce1.xml
+CMD_SHOW_IP_ROUTE_OSPF_0001,Command_Generation,text,1,"CE1 장비에서 OSPF로 학습된 라우팅 정보를 확인하는 명령어는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",show ip route ospf,"metric `cmd_show_ip_route_ospf` on host=CE1, type=GLOBAL → show ip route ospf",ce1.xml
+CMD_SHOW_L2VPN_VC_0001,Command_Generation,text,1,"CE1 장비에서 L2VPN 가상회선 상태를 확인하는 명령어는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",show l2vpn vc,"metric `cmd_show_l2vpn_vc` on host=CE1, type=GLOBAL → show l2vpn vc",ce1.xml
+CMD_SHOW_LOGGING_0001,Command_Generation,text,1,"CE1 장비의 로그 버퍼를 확인하는 명령어는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",show logging,"metric `cmd_show_logging` on host=CE1, type=GLOBAL → show logging",ce1.xml
+CMD_SHOW_PROCESSES_CPU_0001,Command_Generation,text,1,"CE1 장비에서 CPU 사용률 순으로 프로세스를 확인하는 명령어는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",show processes cpu,"metric `cmd_show_processes_cpu` on host=CE1, type=GLOBAL → show processes cpu",ce1.xml
+CMD_SHOW_USERS_0001,Command_Generation,text,1,"CE1 장비에 현재 접속한 사용자 목록을 확인하는 명령어는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",show users,"metric `cmd_show_users` on host=CE1, type=GLOBAL → show users",ce1.xml
+CMD_SSH_DIRECT_ACCESS_0001,Command_Generation,text,1,"admin 계정으로 CE1 장비에 직접 SSH 접속하는 명령어는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",ssh admin@172.16.1.40,"metric `cmd_ssh_direct_access` on host=172.16.1.40, hosts=[""CE1""], type=GLOBAL, user=admin → ssh admin@172.16.1.40",ce1.xml
+CMD_SSH_DIRECT_ACCESS_0002,Command_Generation,text,1,"admin 계정으로 CE2 장비에 직접 SSH 접속하는 명령어는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",ssh admin@172.16.1.41,"metric `cmd_ssh_direct_access` on host=172.16.1.41, hosts=[""CE2""], type=GLOBAL, user=admin → ssh admin@172.16.1.41",ce2.xml
+CMD_SSH_DIRECT_ACCESS_0003,Command_Generation,text,1,"admin 계정으로 sample10 장비에 직접 SSH 접속하는 명령어는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",ssh admin@172.16.1.133,"metric `cmd_ssh_direct_access` on host=172.16.1.133, hosts=[""sample10""], type=GLOBAL, user=admin → ssh admin@172.16.1.133",sample10.xml
+CMD_SSH_DIRECT_ACCESS_0004,Command_Generation,text,1,"admin 계정으로 sample7 장비에 직접 SSH 접속하는 명령어는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",ssh admin@172.16.1.130,"metric `cmd_ssh_direct_access` on host=172.16.1.130, hosts=[""sample7""], type=GLOBAL, user=admin → ssh admin@172.16.1.130",sample7.xml
+CMD_SSH_DIRECT_ACCESS_0005,Command_Generation,text,1,"admin 계정으로 sample8 장비에 직접 SSH 접속하는 명령어는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",ssh admin@172.16.1.131,"metric `cmd_ssh_direct_access` on host=172.16.1.131, hosts=[""sample8""], type=GLOBAL, user=admin → ssh admin@172.16.1.131",sample8.xml
+CMD_SSH_DIRECT_ACCESS_0006,Command_Generation,text,1,"admin 계정으로 sample9 장비에 직접 SSH 접속하는 명령어는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",ssh admin@172.16.1.132,"metric `cmd_ssh_direct_access` on host=172.16.1.132, hosts=[""sample9""], type=GLOBAL, user=admin → ssh admin@172.16.1.132",sample9.xml
+CMD_SSH_PROXY_JUMP_0001,Command_Generation,text,2,"admin 계정으로 CE1를 거쳐 CE2 장비에 SSH 접속하는 명령어는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",ssh -J admin@172.16.1.40 admin@172.16.1.41,"metric `cmd_ssh_proxy_jump` on destination_host=172.16.1.41, hosts=[""CE1"", ""CE2""], jump_host=172.16.1.40, type=GLOBAL, user=admin → ssh -J admin@172.16.1.40 admin@172.16.1.41","ce1.xml, ce2.xml"
+CMD_SSH_PROXY_JUMP_0002,Command_Generation,text,2,"admin 계정으로 CE2를 거쳐 sample10 장비에 SSH 접속하는 명령어는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",ssh -J admin@172.16.1.41 admin@172.16.1.133,"metric `cmd_ssh_proxy_jump` on destination_host=172.16.1.133, hosts=[""CE2"", ""sample10""], jump_host=172.16.1.41, type=GLOBAL, user=admin → ssh -J admin@172.16.1.41 admin@172.16.1.133","ce2.xml, sample10.xml"
+CMD_SSH_PROXY_JUMP_0003,Command_Generation,text,2,"admin 계정으로 sample10를 거쳐 sample7 장비에 SSH 접속하는 명령어는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",ssh -J admin@172.16.1.133 admin@172.16.1.130,"metric `cmd_ssh_proxy_jump` on destination_host=172.16.1.130, hosts=[""sample10"", ""sample7""], jump_host=172.16.1.133, type=GLOBAL, user=admin → ssh -J admin@172.16.1.133 admin@172.16.1.130","sample10.xml, sample7.xml"
+CMD_SSH_PROXY_JUMP_0004,Command_Generation,text,2,"admin 계정으로 sample7를 거쳐 sample8 장비에 SSH 접속하는 명령어는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",ssh -J admin@172.16.1.130 admin@172.16.1.131,"metric `cmd_ssh_proxy_jump` on destination_host=172.16.1.131, hosts=[""sample7"", ""sample8""], jump_host=172.16.1.130, type=GLOBAL, user=admin → ssh -J admin@172.16.1.130 admin@172.16.1.131","sample7.xml, sample8.xml"
+CMD_SSH_PROXY_JUMP_0005,Command_Generation,text,2,"admin 계정으로 sample8를 거쳐 sample9 장비에 SSH 접속하는 명령어는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",ssh -J admin@172.16.1.131 admin@172.16.1.132,"metric `cmd_ssh_proxy_jump` on destination_host=172.16.1.132, hosts=[""sample8"", ""sample9""], jump_host=172.16.1.131, type=GLOBAL, user=admin → ssh -J admin@172.16.1.131 admin@172.16.1.132","sample8.xml, sample9.xml"
+INTERFACE_COUNT_0001,Interface_Inventory,numeric,1,"CE1 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",5,"metric `interface_count` on host=CE1, type=DEVICE → 5",ce1.xml
+INTERFACE_COUNT_0002,Interface_Inventory,numeric,1,"CE2 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",5,"metric `interface_count` on host=CE2, type=DEVICE → 5",ce2.xml
+INTERFACE_COUNT_0003,Interface_Inventory,numeric,1,"sample10 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",7,"metric `interface_count` on host=sample10, type=DEVICE → 7",sample10.xml
+INTERFACE_COUNT_0004,Interface_Inventory,numeric,1,"sample7 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",7,"metric `interface_count` on host=sample7, type=DEVICE → 7",sample7.xml
+INTERFACE_COUNT_0005,Interface_Inventory,numeric,1,"sample8 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",6,"metric `interface_count` on host=sample8, type=DEVICE → 6",sample8.xml
+INTERFACE_COUNT_0006,Interface_Inventory,numeric,1,"sample9 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",7,"metric `interface_count` on host=sample9, type=DEVICE → 7",sample9.xml
+INTERFACE_IP_MAP_0001,Interface_Inventory,map,1,"CE1 장비의 각 인터페이스에 할당된 IP 주소를 알려주세요.
+[답변 형식: 키=값 형식 목록 (없으면 '없음')]","Ethernet0/0=, Ethernet0/0.100=192.168.1.11/255.255.255.0, Ethernet0/1=192.168.10.1/255.255.255.0, Ethernet0/2=172.16.1.41/255.255.255.0, Ethernet0/3=","metric `interface_ip_map` on host=CE1, type=DEVICE → Ethernet0/0=, Ethernet0/0.100=192.168.1.11/255.255.255.0, Ethernet0/1=192.168.10.1/255.255.255.0, Ethernet0/2=172.16.1.41/255.255.255.0, Ethernet0/3=",ce1.xml
+INTERFACE_IP_MAP_0002,Interface_Inventory,map,1,"CE2 장비의 각 인터페이스에 할당된 IP 주소를 알려주세요.
+[답변 형식: 키=값 형식 목록 (없으면 '없음')]","Ethernet0/0=, Ethernet0/0.100=192.168.3.11/255.255.255.0, Ethernet0/1=192.168.30.1/255.255.255.0, Ethernet0/2=172.16.1.41/255.255.255.0, Ethernet0/3=","metric `interface_ip_map` on host=CE2, type=DEVICE → Ethernet0/0=, Ethernet0/0.100=192.168.3.11/255.255.255.0, Ethernet0/1=192.168.30.1/255.255.255.0, Ethernet0/2=172.16.1.41/255.255.255.0, Ethernet0/3=",ce2.xml
+INTERFACE_IP_MAP_0003,Interface_Inventory,map,1,"sample10 장비의 각 인터페이스에 할당된 IP 주소를 알려주세요.
+[답변 형식: 키=값 형식 목록 (없으면 '없음')]","GigabitEthernet0/0/0/0=10.1.31.2/255.255.255.0, GigabitEthernet0/0/0/1=, GigabitEthernet0/0/0/1.400=192.168.4.10/255.255.255.0, GigabitEthernet0/0/0/2=10.1.15.2/255.255.255.0, GigabitEthernet0/0/0/3=, Loopback0=4.4.4.4/255.255.255.255, MgmtEth0/RP0/CPU0/0=172.16.1.133/255.255.255.0","metric `interface_ip_map` on host=sample10, type=DEVICE → GigabitEthernet0/0/0/0=10.1.31.2/255.255.255.0, GigabitEthernet0/0/0/1=, GigabitEthernet0/0/0/1.400=192.168.4.10/255.255.255.0, GigabitEthernet0/0/0/2=10.1.15.2/255.255.255.0, GigabitEthernet0/0/0/3=, Loopback0=4.4.4.4/255.255.255.255, MgmtEth0/RP0/CPU0/0=172.16.1.133/255.255.255.0",sample10.xml
+INTERFACE_IP_MAP_0004,Interface_Inventory,map,1,"sample7 장비의 각 인터페이스에 할당된 IP 주소를 알려주세요.
+[답변 형식: 키=값 형식 목록 (없으면 '없음')]","GigabitEthernet0/0/0/0=10.1.13.1/255.255.255.0, GigabitEthernet0/0/0/0.1=, GigabitEthernet0/0/0/1.100=192.168.1.10/255.255.255.0, GigabitEthernet0/0/0/2=10.1.15.1/255.255.255.0, GigabitEthernet0/0/0/3=, Loopback0=1.1.1.1/255.255.255.255, MgmtEth0/RP0/CPU0/0=172.16.1.130/255.255.255.0","metric `interface_ip_map` on host=sample7, type=DEVICE → GigabitEthernet0/0/0/0=10.1.13.1/255.255.255.0, GigabitEthernet0/0/0/0.1=, GigabitEthernet0/0/0/1.100=192.168.1.10/255.255.255.0, GigabitEthernet0/0/0/2=10.1.15.1/255.255.255.0, GigabitEthernet0/0/0/3=, Loopback0=1.1.1.1/255.255.255.255, MgmtEth0/RP0/CPU0/0=172.16.1.130/255.255.255.0",sample7.xml
+INTERFACE_IP_MAP_0005,Interface_Inventory,map,1,"sample8 장비의 각 인터페이스에 할당된 IP 주소를 알려주세요.
+[답변 형식: 키=값 형식 목록 (없으면 '없음')]","GigabitEthernet0/0/0/0=10.1.13.2/255.255.255.0, GigabitEthernet0/0/0/1.200=192.168.2.10/255.255.255.0, GigabitEthernet0/0/0/2=10.1.27.1/255.255.255.0, GigabitEthernet0/0/0/3=, Loopback0=2.2.2.2/255.255.255.255, MgmtEth0/RP0/CPU0/0=172.16.1.131/255.255.255.0","metric `interface_ip_map` on host=sample8, type=DEVICE → GigabitEthernet0/0/0/0=10.1.13.2/255.255.255.0, GigabitEthernet0/0/0/1.200=192.168.2.10/255.255.255.0, GigabitEthernet0/0/0/2=10.1.27.1/255.255.255.0, GigabitEthernet0/0/0/3=, Loopback0=2.2.2.2/255.255.255.255, MgmtEth0/RP0/CPU0/0=172.16.1.131/255.255.255.0",sample8.xml
+INTERFACE_IP_MAP_0006,Interface_Inventory,map,1,"sample9 장비의 각 인터페이스에 할당된 IP 주소를 알려주세요.
+[답변 형식: 키=값 형식 목록 (없으면 '없음')]","GigabitEthernet0/0/0/0=, GigabitEthernet0/0/0/0.1=, GigabitEthernet0/0/0/1.300=192.168.3.10/255.255.255.0, GigabitEthernet0/0/0/2=10.1.27.2/255.255.255.0, GigabitEthernet0/0/0/3=, Loopback0=3.3.3.3/255.255.255.255, MgmtEth0/RP0/CPU0/0=172.16.1.132/255.255.255.0","metric `interface_ip_map` on host=sample9, type=DEVICE → GigabitEthernet0/0/0/0=, GigabitEthernet0/0/0/0.1=, GigabitEthernet0/0/0/1.300=192.168.3.10/255.255.255.0, GigabitEthernet0/0/0/2=10.1.27.2/255.255.255.0, GigabitEthernet0/0/0/3=, Loopback0=3.3.3.3/255.255.255.255, MgmtEth0/RP0/CPU0/0=172.16.1.132/255.255.255.0",sample9.xml
+INTERFACE_VLAN_SET_0001,Interface_Inventory,set,1,"CE1 장비에 설정된 VLAN 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",100,"metric `interface_vlan_set` on host=CE1, type=DEVICE → 100",ce1.xml
+INTERFACE_VLAN_SET_0002,Interface_Inventory,set,1,"CE2 장비에 설정된 VLAN 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",300,"metric `interface_vlan_set` on host=CE2, type=DEVICE → 300",ce2.xml
+INTERFACE_VLAN_SET_0003,Interface_Inventory,set,1,"sample10 장비에 설정된 VLAN 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",400,"metric `interface_vlan_set` on host=sample10, type=DEVICE → 400",sample10.xml
+INTERFACE_VLAN_SET_0004,Interface_Inventory,set,1,"sample7 장비에 설정된 VLAN 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",100,"metric `interface_vlan_set` on host=sample7, type=DEVICE → 100",sample7.xml
+INTERFACE_VLAN_SET_0005,Interface_Inventory,set,1,"sample8 장비에 설정된 VLAN 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",200,"metric `interface_vlan_set` on host=sample8, type=DEVICE → 200",sample8.xml
+INTERFACE_VLAN_SET_0006,Interface_Inventory,set,1,"sample9 장비에 설정된 VLAN 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",300,"metric `interface_vlan_set` on host=sample9, type=DEVICE → 300",sample9.xml
+SUBINTERFACE_COUNT_0001,Interface_Inventory,numeric,1,"CE1 장비에 설정된 서브인터페이스는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",1,"metric `subinterface_count` on host=CE1, type=DEVICE → 1",ce1.xml
+SUBINTERFACE_COUNT_0002,Interface_Inventory,numeric,1,"CE2 장비에 설정된 서브인터페이스는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",1,"metric `subinterface_count` on host=CE2, type=DEVICE → 1",ce2.xml
+SUBINTERFACE_COUNT_0003,Interface_Inventory,numeric,1,"sample10 장비에 설정된 서브인터페이스는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",1,"metric `subinterface_count` on host=sample10, type=DEVICE → 1",sample10.xml
+SUBINTERFACE_COUNT_0004,Interface_Inventory,numeric,1,"sample7 장비에 설정된 서브인터페이스는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",2,"metric `subinterface_count` on host=sample7, type=DEVICE → 2",sample7.xml
+SUBINTERFACE_COUNT_0005,Interface_Inventory,numeric,1,"sample8 장비에 설정된 서브인터페이스는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",1,"metric `subinterface_count` on host=sample8, type=DEVICE → 1",sample8.xml
+SUBINTERFACE_COUNT_0006,Interface_Inventory,numeric,1,"sample9 장비에 설정된 서브인터페이스는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",2,"metric `subinterface_count` on host=sample9, type=DEVICE → 2",sample9.xml
+VRF_BIND_MAP_0001,Interface_Inventory,map,1,"CE1 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요.
+[답변 형식: 키=값 형식 목록 (없으면 '없음')]","Ethernet0/0=, Ethernet0/0.100=, Ethernet0/1=, Ethernet0/2=, Ethernet0/3=","metric `vrf_bind_map` on host=CE1, type=DEVICE → Ethernet0/0=, Ethernet0/0.100=, Ethernet0/1=, Ethernet0/2=, Ethernet0/3=",ce1.xml
+VRF_BIND_MAP_0002,Interface_Inventory,map,1,"CE2 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요.
+[답변 형식: 키=값 형식 목록 (없으면 '없음')]","Ethernet0/0=, Ethernet0/0.100=, Ethernet0/1=, Ethernet0/2=, Ethernet0/3=","metric `vrf_bind_map` on host=CE2, type=DEVICE → Ethernet0/0=, Ethernet0/0.100=, Ethernet0/1=, Ethernet0/2=, Ethernet0/3=",ce2.xml
+VRF_BIND_MAP_0003,Interface_Inventory,map,1,"sample10 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요.
+[답변 형식: 키=값 형식 목록 (없으면 '없음')]","GigabitEthernet0/0/0/0=, GigabitEthernet0/0/0/1=, GigabitEthernet0/0/0/1.400=exam-l3vpn, GigabitEthernet0/0/0/2=, GigabitEthernet0/0/0/3=, Loopback0=, MgmtEth0/RP0/CPU0/0=","metric `vrf_bind_map` on host=sample10, type=DEVICE → GigabitEthernet0/0/0/0=, GigabitEthernet0/0/0/1=, GigabitEthernet0/0/0/1.400=exam-l3vpn, GigabitEthernet0/0/0/2=, GigabitEthernet0/0/0/3=, Loopback0=, MgmtEth0/RP0/CPU0/0=",sample10.xml
+VRF_BIND_MAP_0004,Interface_Inventory,map,1,"sample7 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요.
+[답변 형식: 키=값 형식 목록 (없으면 '없음')]","GigabitEthernet0/0/0/0=, GigabitEthernet0/0/0/0.1=, GigabitEthernet0/0/0/1.100=exam-l3vpn, GigabitEthernet0/0/0/2=, GigabitEthernet0/0/0/3=, Loopback0=, MgmtEth0/RP0/CPU0/0=","metric `vrf_bind_map` on host=sample7, type=DEVICE → GigabitEthernet0/0/0/0=, GigabitEthernet0/0/0/0.1=, GigabitEthernet0/0/0/1.100=exam-l3vpn, GigabitEthernet0/0/0/2=, GigabitEthernet0/0/0/3=, Loopback0=, MgmtEth0/RP0/CPU0/0=",sample7.xml
+VRF_BIND_MAP_0005,Interface_Inventory,map,1,"sample8 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요.
+[답변 형식: 키=값 형식 목록 (없으면 '없음')]","GigabitEthernet0/0/0/0=, GigabitEthernet0/0/0/1.200=exam-l3vpn, GigabitEthernet0/0/0/2=, GigabitEthernet0/0/0/3=, Loopback0=, MgmtEth0/RP0/CPU0/0=","metric `vrf_bind_map` on host=sample8, type=DEVICE → GigabitEthernet0/0/0/0=, GigabitEthernet0/0/0/1.200=exam-l3vpn, GigabitEthernet0/0/0/2=, GigabitEthernet0/0/0/3=, Loopback0=, MgmtEth0/RP0/CPU0/0=",sample8.xml
+VRF_BIND_MAP_0006,Interface_Inventory,map,1,"sample9 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요.
+[답변 형식: 키=값 형식 목록 (없으면 '없음')]","GigabitEthernet0/0/0/0=, GigabitEthernet0/0/0/0.1=, GigabitEthernet0/0/0/1.300=exam-l3vpn, GigabitEthernet0/0/0/2=, GigabitEthernet0/0/0/3=, Loopback0=, MgmtEth0/RP0/CPU0/0=","metric `vrf_bind_map` on host=sample9, type=DEVICE → GigabitEthernet0/0/0/0=, GigabitEthernet0/0/0/0.1=, GigabitEthernet0/0/0/1.300=exam-l3vpn, GigabitEthernet0/0/0/2=, GigabitEthernet0/0/0/3=, Loopback0=, MgmtEth0/RP0/CPU0/0=",sample9.xml
+L2VPN_MISMATCH_COUNT_0001,L2VPN_Consistency,numeric,2,"PW-ID 불일치 또는 단방향 L2VPN 회선은 총 몇 개입니까?
+[답변 형식: 정수 숫자]",2,metric `l2vpn_mismatch_count` on type=GLOBAL → 2,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+L2VPN_PAIRS_0001,L2VPN_Consistency,set,1,"구성된 L2VPN pseudowire 회선(장비쌍) 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]","sample7<->sample9, sample9<->sample7","metric `l2vpn_pairs` on type=GLOBAL → sample7<->sample9, sample9<->sample7","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+L2VPN_PWID_MISMATCH_PAIRS_0001,L2VPN_Consistency,set,2,"PW-ID가 불일치하는 L2VPN 회선(장비쌍) 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]","sample7<->sample9, sample9<->sample7","metric `l2vpn_pwid_mismatch_pairs` on type=GLOBAL → sample7<->sample9, sample9<->sample7","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+L2VPN_UNIDIR_COUNT_0001,L2VPN_Consistency,numeric,2,"단방향으로만 설정된 L2VPN 회선은 총 몇 개입니까?
+[답변 형식: 정수 숫자]",0,metric `l2vpn_unidir_count` on type=GLOBAL → 0,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+L2VPN_UNIDIRECTIONAL_PAIRS_0001,L2VPN_Consistency,set,2,"단방향으로만 설정된 L2VPN 회선(장비쌍) 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,metric `l2vpn_unidirectional_pairs` on type=GLOBAL → 없음,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+OSPF_AREA0_IF_COUNT_0001,OSPF_Consistency,numeric,1,"CE1 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",0,"metric `ospf_area0_if_count` on host=CE1, type=DEVICE → 0",ce1.xml
+OSPF_AREA0_IF_COUNT_0002,OSPF_Consistency,numeric,1,"CE2 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",0,"metric `ospf_area0_if_count` on host=CE2, type=DEVICE → 0",ce2.xml
+OSPF_AREA0_IF_COUNT_0003,OSPF_Consistency,numeric,1,"sample10 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",3,"metric `ospf_area0_if_count` on host=sample10, type=DEVICE → 3",sample10.xml
+OSPF_AREA0_IF_COUNT_0004,OSPF_Consistency,numeric,1,"sample7 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",3,"metric `ospf_area0_if_count` on host=sample7, type=DEVICE → 3",sample7.xml
+OSPF_AREA0_IF_COUNT_0005,OSPF_Consistency,numeric,1,"sample8 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",3,"metric `ospf_area0_if_count` on host=sample8, type=DEVICE → 3",sample8.xml
+OSPF_AREA0_IF_COUNT_0006,OSPF_Consistency,numeric,1,"sample9 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",3,"metric `ospf_area0_if_count` on host=sample9, type=DEVICE → 3",sample9.xml
+OSPF_AREA0_IF_LIST_0001,OSPF_Consistency,set,1,"CE1 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,"metric `ospf_area0_if_list` on host=CE1, type=DEVICE → 없음",ce1.xml
+OSPF_AREA0_IF_LIST_0002,OSPF_Consistency,set,1,"CE2 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,"metric `ospf_area0_if_list` on host=CE2, type=DEVICE → 없음",ce2.xml
+OSPF_AREA0_IF_LIST_0003,OSPF_Consistency,set,1,"sample10 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]","GigabitEthernet0/0/0/0, GigabitEthernet0/0/0/2, Loopback0","metric `ospf_area0_if_list` on host=sample10, type=DEVICE → GigabitEthernet0/0/0/0, GigabitEthernet0/0/0/2, Loopback0",sample10.xml
+OSPF_AREA0_IF_LIST_0004,OSPF_Consistency,set,1,"sample7 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]","GigabitEthernet0/0/0/0, GigabitEthernet0/0/0/2, Loopback0","metric `ospf_area0_if_list` on host=sample7, type=DEVICE → GigabitEthernet0/0/0/0, GigabitEthernet0/0/0/2, Loopback0",sample7.xml
+OSPF_AREA0_IF_LIST_0005,OSPF_Consistency,set,1,"sample8 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]","GigabitEthernet0/0/0/0, GigabitEthernet0/0/0/2, Loopback0","metric `ospf_area0_if_list` on host=sample8, type=DEVICE → GigabitEthernet0/0/0/0, GigabitEthernet0/0/0/2, Loopback0",sample8.xml
+OSPF_AREA0_IF_LIST_0006,OSPF_Consistency,set,1,"sample9 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]","GigabitEthernet0/0/0/0, GigabitEthernet0/0/0/2, Loopback0","metric `ospf_area0_if_list` on host=sample9, type=DEVICE → GigabitEthernet0/0/0/0, GigabitEthernet0/0/0/2, Loopback0",sample9.xml
+OSPF_PROC_IDS_0001,OSPF_Consistency,text,1,"sample10 장비에 설정된 첫 번째 OSPF 프로세스 ID는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",1,"metric `ospf_proc_ids` on host=sample10, type=DEVICE → 1",sample10.xml
+OSPF_PROC_IDS_0002,OSPF_Consistency,text,1,"sample7 장비에 설정된 첫 번째 OSPF 프로세스 ID는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",1,"metric `ospf_proc_ids` on host=sample7, type=DEVICE → 1",sample7.xml
+OSPF_PROC_IDS_0003,OSPF_Consistency,text,1,"sample8 장비에 설정된 첫 번째 OSPF 프로세스 ID는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",1,"metric `ospf_proc_ids` on host=sample8, type=DEVICE → 1",sample8.xml
+OSPF_PROC_IDS_0004,OSPF_Consistency,text,1,"sample9 장비에 설정된 첫 번째 OSPF 프로세스 ID는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",1,"metric `ospf_proc_ids` on host=sample9, type=DEVICE → 1",sample9.xml
+BGP_LOCAL_AS_NUMERIC_0001,Routing_Inventory,numeric,1,"CE1 장비의 BGP Local-AS 번호는 무엇입니까?
+[답변 형식: 정수 숫자]",65001,"metric `bgp_local_as_numeric` on host=CE1, type=DEVICE → 65001",ce1.xml
+BGP_LOCAL_AS_NUMERIC_0002,Routing_Inventory,numeric,1,"CE2 장비의 BGP Local-AS 번호는 무엇입니까?
+[답변 형식: 정수 숫자]",65003,"metric `bgp_local_as_numeric` on host=CE2, type=DEVICE → 65003",ce2.xml
+BGP_LOCAL_AS_NUMERIC_0003,Routing_Inventory,numeric,1,"sample10 장비의 BGP Local-AS 번호는 무엇입니까?
+[답변 형식: 정수 숫자]",65000,"metric `bgp_local_as_numeric` on host=sample10, type=DEVICE → 65000",sample10.xml
+BGP_LOCAL_AS_NUMERIC_0004,Routing_Inventory,numeric,1,"sample7 장비의 BGP Local-AS 번호는 무엇입니까?
+[답변 형식: 정수 숫자]",65000,"metric `bgp_local_as_numeric` on host=sample7, type=DEVICE → 65000",sample7.xml
+BGP_LOCAL_AS_NUMERIC_0005,Routing_Inventory,numeric,1,"sample8 장비의 BGP Local-AS 번호는 무엇입니까?
+[답변 형식: 정수 숫자]",65000,"metric `bgp_local_as_numeric` on host=sample8, type=DEVICE → 65000",sample8.xml
+BGP_LOCAL_AS_NUMERIC_0006,Routing_Inventory,numeric,1,"sample9 장비의 BGP Local-AS 번호는 무엇입니까?
+[답변 형식: 정수 숫자]",65000,"metric `bgp_local_as_numeric` on host=sample9, type=DEVICE → 65000",sample9.xml
+BGP_NEIGHBOR_COUNT_0001,Routing_Inventory,numeric,1,"CE1 장비의 BGP 피어(이웃)는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",1,"metric `bgp_neighbor_count` on host=CE1, type=DEVICE → 1",ce1.xml
+BGP_NEIGHBOR_COUNT_0002,Routing_Inventory,numeric,1,"CE2 장비의 BGP 피어(이웃)는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",1,"metric `bgp_neighbor_count` on host=CE2, type=DEVICE → 1",ce2.xml
+BGP_NEIGHBOR_COUNT_0003,Routing_Inventory,numeric,1,"sample10 장비의 BGP 피어(이웃)는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",4,"metric `bgp_neighbor_count` on host=sample10, type=DEVICE → 4",sample10.xml
+BGP_NEIGHBOR_COUNT_0004,Routing_Inventory,numeric,1,"sample7 장비의 BGP 피어(이웃)는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",4,"metric `bgp_neighbor_count` on host=sample7, type=DEVICE → 4",sample7.xml
+BGP_NEIGHBOR_COUNT_0005,Routing_Inventory,numeric,1,"sample8 장비의 BGP 피어(이웃)는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",4,"metric `bgp_neighbor_count` on host=sample8, type=DEVICE → 4",sample8.xml
+BGP_NEIGHBOR_COUNT_0006,Routing_Inventory,numeric,1,"sample9 장비의 BGP 피어(이웃)는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",4,"metric `bgp_neighbor_count` on host=sample9, type=DEVICE → 4",sample9.xml
+OSPF_AREA_SET_0001,Routing_Inventory,set,1,"CE1 장비가 참여하는 OSPF Area 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,"metric `ospf_area_set` on host=CE1, type=DEVICE → 없음",ce1.xml
+OSPF_AREA_SET_0002,Routing_Inventory,set,1,"CE2 장비가 참여하는 OSPF Area 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,"metric `ospf_area_set` on host=CE2, type=DEVICE → 없음",ce2.xml
+OSPF_AREA_SET_0003,Routing_Inventory,set,1,"sample10 장비가 참여하는 OSPF Area 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",0,"metric `ospf_area_set` on host=sample10, type=DEVICE → 0",sample10.xml
+OSPF_AREA_SET_0004,Routing_Inventory,set,1,"sample7 장비가 참여하는 OSPF Area 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",0,"metric `ospf_area_set` on host=sample7, type=DEVICE → 0",sample7.xml
+OSPF_AREA_SET_0005,Routing_Inventory,set,1,"sample8 장비가 참여하는 OSPF Area 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",0,"metric `ospf_area_set` on host=sample8, type=DEVICE → 0",sample8.xml
+OSPF_AREA_SET_0006,Routing_Inventory,set,1,"sample9 장비가 참여하는 OSPF Area 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",0,"metric `ospf_area_set` on host=sample9, type=DEVICE → 0",sample9.xml
+OSPF_PROCESS_IDS_SET_0001,Routing_Inventory,set,1,"CE1 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,"metric `ospf_process_ids_set` on host=CE1, type=DEVICE → 없음",ce1.xml
+OSPF_PROCESS_IDS_SET_0002,Routing_Inventory,set,1,"CE2 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,"metric `ospf_process_ids_set` on host=CE2, type=DEVICE → 없음",ce2.xml
+OSPF_PROCESS_IDS_SET_0003,Routing_Inventory,set,1,"sample10 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",1,"metric `ospf_process_ids_set` on host=sample10, type=DEVICE → 1",sample10.xml
+OSPF_PROCESS_IDS_SET_0004,Routing_Inventory,set,1,"sample7 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",1,"metric `ospf_process_ids_set` on host=sample7, type=DEVICE → 1",sample7.xml
+OSPF_PROCESS_IDS_SET_0005,Routing_Inventory,set,1,"sample8 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",1,"metric `ospf_process_ids_set` on host=sample8, type=DEVICE → 1",sample8.xml
+OSPF_PROCESS_IDS_SET_0006,Routing_Inventory,set,1,"sample9 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",1,"metric `ospf_process_ids_set` on host=sample9, type=DEVICE → 1",sample9.xml
+AAA_PRESENT_BOOL_0001,Security_Inventory,boolean,1,"CE1 장비에 AAA 기능이 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `aaa_present_bool` on host=CE1, type=DEVICE → false",ce1.xml
+AAA_PRESENT_BOOL_0002,Security_Inventory,boolean,1,"CE2 장비에 AAA 기능이 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `aaa_present_bool` on host=CE2, type=DEVICE → false",ce2.xml
+AAA_PRESENT_BOOL_0003,Security_Inventory,boolean,1,"sample10 장비에 AAA 기능이 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",true,"metric `aaa_present_bool` on host=sample10, type=DEVICE → true",sample10.xml
+AAA_PRESENT_BOOL_0004,Security_Inventory,boolean,1,"sample7 장비에 AAA 기능이 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",true,"metric `aaa_present_bool` on host=sample7, type=DEVICE → true",sample7.xml
+AAA_PRESENT_BOOL_0005,Security_Inventory,boolean,1,"sample8 장비에 AAA 기능이 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",true,"metric `aaa_present_bool` on host=sample8, type=DEVICE → true",sample8.xml
+AAA_PRESENT_BOOL_0006,Security_Inventory,boolean,1,"sample9 장비에 AAA 기능이 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",true,"metric `aaa_present_bool` on host=sample9, type=DEVICE → true",sample9.xml
+PASSWORD_POLICY_PRESENT_BOOL_0001,Security_Inventory,boolean,1,"CE1 장비에 패스워드 정책이 적용되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `password_policy_present_bool` on host=CE1, type=DEVICE → false",ce1.xml
+PASSWORD_POLICY_PRESENT_BOOL_0002,Security_Inventory,boolean,1,"CE2 장비에 패스워드 정책이 적용되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `password_policy_present_bool` on host=CE2, type=DEVICE → false",ce2.xml
+PASSWORD_POLICY_PRESENT_BOOL_0003,Security_Inventory,boolean,1,"sample10 장비에 패스워드 정책이 적용되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `password_policy_present_bool` on host=sample10, type=DEVICE → false",sample10.xml
+PASSWORD_POLICY_PRESENT_BOOL_0004,Security_Inventory,boolean,1,"sample7 장비에 패스워드 정책이 적용되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `password_policy_present_bool` on host=sample7, type=DEVICE → false",sample7.xml
+PASSWORD_POLICY_PRESENT_BOOL_0005,Security_Inventory,boolean,1,"sample8 장비에 패스워드 정책이 적용되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `password_policy_present_bool` on host=sample8, type=DEVICE → false",sample8.xml
+PASSWORD_POLICY_PRESENT_BOOL_0006,Security_Inventory,boolean,1,"sample9 장비에 패스워드 정책이 적용되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `password_policy_present_bool` on host=sample9, type=DEVICE → false",sample9.xml
+SSH_PRESENT_BOOL_0001,Security_Inventory,boolean,1,"CE1 장비에 SSH가 활성화되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",true,"metric `ssh_present_bool` on host=CE1, type=DEVICE → true",ce1.xml
+SSH_PRESENT_BOOL_0002,Security_Inventory,boolean,1,"CE2 장비에 SSH가 활성화되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",true,"metric `ssh_present_bool` on host=CE2, type=DEVICE → true",ce2.xml
+SSH_PRESENT_BOOL_0003,Security_Inventory,boolean,1,"sample10 장비에 SSH가 활성화되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",true,"metric `ssh_present_bool` on host=sample10, type=DEVICE → true",sample10.xml
+SSH_PRESENT_BOOL_0004,Security_Inventory,boolean,1,"sample7 장비에 SSH가 활성화되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",true,"metric `ssh_present_bool` on host=sample7, type=DEVICE → true",sample7.xml
+SSH_PRESENT_BOOL_0005,Security_Inventory,boolean,1,"sample8 장비에 SSH가 활성화되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",true,"metric `ssh_present_bool` on host=sample8, type=DEVICE → true",sample8.xml
+SSH_PRESENT_BOOL_0006,Security_Inventory,boolean,1,"sample9 장비에 SSH가 활성화되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",true,"metric `ssh_present_bool` on host=sample9, type=DEVICE → true",sample9.xml
+SSH_VERSION_TEXT_0001,Security_Inventory,text,1,"ssh_version_text에 대한 질문을 자연스럽게 작성해주세요.
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",2,"metric `ssh_version_text` on host=CE1, type=DEVICE → 2",ce1.xml
+AAA_ENABLED_DEVICES_0001,Security_Policy,set,1,"AAA 기능이 활성화된 장비 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]","sample10, sample7, sample8, sample9","metric `aaa_enabled_devices` on host=CE1, type=DEVICE → sample10, sample7, sample8, sample9",ce1.xml
+AAA_MISSING_DEVICES_0001,Security_Policy,set,2,"AAA 기능이 비활성화된 장비 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]","CE1, CE2","metric `aaa_missing_devices` on type=GLOBAL → CE1, CE2","ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+SSH_ENABLED_DEVICES_0001,Security_Policy,set,1,"SSH 접속이 가능한 장비 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]","CE1, CE2, sample10, sample7, sample8, sample9","metric `ssh_enabled_devices` on host=CE1, type=DEVICE → CE1, CE2, sample10, sample7, sample8, sample9",ce1.xml
+SSH_MISSING_COUNT_0001,Security_Policy,numeric,2,"SSH 접속이 불가능한 장비는 총 몇 대입니까?
+[답변 형식: 정수 숫자]",0,metric `ssh_missing_count` on type=GLOBAL → 0,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+SSH_MISSING_DEVICES_0001,Security_Policy,set,1,"SSH 접속이 불가능한 장비 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,"metric `ssh_missing_devices` on host=CE1, type=DEVICE → 없음",ce1.xml
+L2VPN_PW_ID_SET_0001,Services_Inventory,set,1,"CE1 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,"metric `l2vpn_pw_id_set` on host=CE1, type=DEVICE → 없음",ce1.xml
+L2VPN_PW_ID_SET_0002,Services_Inventory,set,1,"CE2 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,"metric `l2vpn_pw_id_set` on host=CE2, type=DEVICE → 없음",ce2.xml
+L2VPN_PW_ID_SET_0003,Services_Inventory,set,1,"sample10 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,"metric `l2vpn_pw_id_set` on host=sample10, type=DEVICE → 없음",sample10.xml
+L2VPN_PW_ID_SET_0004,Services_Inventory,set,1,"sample7 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",13,"metric `l2vpn_pw_id_set` on host=sample7, type=DEVICE → 13",sample7.xml
+L2VPN_PW_ID_SET_0005,Services_Inventory,set,1,"sample8 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,"metric `l2vpn_pw_id_set` on host=sample8, type=DEVICE → 없음",sample8.xml
+L2VPN_PW_ID_SET_0006,Services_Inventory,set,1,"sample9 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",31,"metric `l2vpn_pw_id_set` on host=sample9, type=DEVICE → 31",sample9.xml
+MPLS_LDP_PRESENT_BOOL_0001,Services_Inventory,boolean,1,"CE1 장비에서 MPLS LDP가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `mpls_ldp_present_bool` on host=CE1, type=DEVICE → false",ce1.xml
+MPLS_LDP_PRESENT_BOOL_0002,Services_Inventory,boolean,1,"CE2 장비에서 MPLS LDP가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",false,"metric `mpls_ldp_present_bool` on host=CE2, type=DEVICE → false",ce2.xml
+MPLS_LDP_PRESENT_BOOL_0003,Services_Inventory,boolean,1,"sample10 장비에서 MPLS LDP가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",true,"metric `mpls_ldp_present_bool` on host=sample10, type=DEVICE → true",sample10.xml
+MPLS_LDP_PRESENT_BOOL_0004,Services_Inventory,boolean,1,"sample7 장비에서 MPLS LDP가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",true,"metric `mpls_ldp_present_bool` on host=sample7, type=DEVICE → true",sample7.xml
+MPLS_LDP_PRESENT_BOOL_0005,Services_Inventory,boolean,1,"sample8 장비에서 MPLS LDP가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",true,"metric `mpls_ldp_present_bool` on host=sample8, type=DEVICE → true",sample8.xml
+MPLS_LDP_PRESENT_BOOL_0006,Services_Inventory,boolean,1,"sample9 장비에서 MPLS LDP가 설정되어 있습니까? (true/false)
+[답변 형식: true/false (소문자)]",true,"metric `mpls_ldp_present_bool` on host=sample9, type=DEVICE → true",sample9.xml
+RT_EXPORT_COUNT_0001,Services_Inventory,numeric,1,"CE1 장비의 Route Target Export 설정은 총 몇 개입니까?
+[답변 형식: 정수 숫자]",0,"metric `rt_export_count` on host=CE1, type=DEVICE → 0",ce1.xml
+RT_EXPORT_COUNT_0002,Services_Inventory,numeric,1,"CE2 장비의 Route Target Export 설정은 총 몇 개입니까?
+[답변 형식: 정수 숫자]",0,"metric `rt_export_count` on host=CE2, type=DEVICE → 0",ce2.xml
+RT_EXPORT_COUNT_0003,Services_Inventory,numeric,1,"sample10 장비의 Route Target Export 설정은 총 몇 개입니까?
+[답변 형식: 정수 숫자]",1,"metric `rt_export_count` on host=sample10, type=DEVICE → 1",sample10.xml
+RT_EXPORT_COUNT_0004,Services_Inventory,numeric,1,"sample7 장비의 Route Target Export 설정은 총 몇 개입니까?
+[답변 형식: 정수 숫자]",1,"metric `rt_export_count` on host=sample7, type=DEVICE → 1",sample7.xml
+RT_EXPORT_COUNT_0005,Services_Inventory,numeric,1,"sample8 장비의 Route Target Export 설정은 총 몇 개입니까?
+[답변 형식: 정수 숫자]",1,"metric `rt_export_count` on host=sample8, type=DEVICE → 1",sample8.xml
+RT_EXPORT_COUNT_0006,Services_Inventory,numeric,1,"sample9 장비의 Route Target Export 설정은 총 몇 개입니까?
+[답변 형식: 정수 숫자]",1,"metric `rt_export_count` on host=sample9, type=DEVICE → 1",sample9.xml
+RT_IMPORT_COUNT_0001,Services_Inventory,numeric,1,"CE1 장비의 Route Target Import 설정은 총 몇 개입니까?
+[답변 형식: 정수 숫자]",0,"metric `rt_import_count` on host=CE1, type=DEVICE → 0",ce1.xml
+RT_IMPORT_COUNT_0002,Services_Inventory,numeric,1,"CE2 장비의 Route Target Import 설정은 총 몇 개입니까?
+[답변 형식: 정수 숫자]",0,"metric `rt_import_count` on host=CE2, type=DEVICE → 0",ce2.xml
+RT_IMPORT_COUNT_0003,Services_Inventory,numeric,1,"sample10 장비의 Route Target Import 설정은 총 몇 개입니까?
+[답변 형식: 정수 숫자]",1,"metric `rt_import_count` on host=sample10, type=DEVICE → 1",sample10.xml
+RT_IMPORT_COUNT_0004,Services_Inventory,numeric,1,"sample7 장비의 Route Target Import 설정은 총 몇 개입니까?
+[답변 형식: 정수 숫자]",1,"metric `rt_import_count` on host=sample7, type=DEVICE → 1",sample7.xml
+RT_IMPORT_COUNT_0005,Services_Inventory,numeric,1,"sample8 장비의 Route Target Import 설정은 총 몇 개입니까?
+[답변 형식: 정수 숫자]",1,"metric `rt_import_count` on host=sample8, type=DEVICE → 1",sample8.xml
+RT_IMPORT_COUNT_0006,Services_Inventory,numeric,1,"sample9 장비의 Route Target Import 설정은 총 몇 개입니까?
+[답변 형식: 정수 숫자]",1,"metric `rt_import_count` on host=sample9, type=DEVICE → 1",sample9.xml
+VRF_COUNT_0001,Services_Inventory,numeric,1,"CE1 장비에 설정된 VRF는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",0,"metric `vrf_count` on host=CE1, type=DEVICE → 0",ce1.xml
+VRF_COUNT_0002,Services_Inventory,numeric,1,"CE2 장비에 설정된 VRF는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",0,"metric `vrf_count` on host=CE2, type=DEVICE → 0",ce2.xml
+VRF_COUNT_0003,Services_Inventory,numeric,1,"sample10 장비에 설정된 VRF는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",1,"metric `vrf_count` on host=sample10, type=DEVICE → 1",sample10.xml
+VRF_COUNT_0004,Services_Inventory,numeric,1,"sample7 장비에 설정된 VRF는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",1,"metric `vrf_count` on host=sample7, type=DEVICE → 1",sample7.xml
+VRF_COUNT_0005,Services_Inventory,numeric,1,"sample8 장비에 설정된 VRF는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",1,"metric `vrf_count` on host=sample8, type=DEVICE → 1",sample8.xml
+VRF_COUNT_0006,Services_Inventory,numeric,1,"sample9 장비에 설정된 VRF는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",1,"metric `vrf_count` on host=sample9, type=DEVICE → 1",sample9.xml
+VRF_NAMES_SET_0001,Services_Inventory,set,1,"CE1 장비에 설정된 VRF 이름 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,"metric `vrf_names_set` on host=CE1, type=DEVICE → 없음",ce1.xml
+VRF_NAMES_SET_0002,Services_Inventory,set,1,"CE2 장비에 설정된 VRF 이름 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,"metric `vrf_names_set` on host=CE2, type=DEVICE → 없음",ce2.xml
+VRF_NAMES_SET_0003,Services_Inventory,set,1,"sample10 장비에 설정된 VRF 이름 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",exam-l3vpn,"metric `vrf_names_set` on host=sample10, type=DEVICE → exam-l3vpn",sample10.xml
+VRF_NAMES_SET_0004,Services_Inventory,set,1,"sample7 장비에 설정된 VRF 이름 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",exam-l3vpn,"metric `vrf_names_set` on host=sample7, type=DEVICE → exam-l3vpn",sample7.xml
+VRF_NAMES_SET_0005,Services_Inventory,set,1,"sample8 장비에 설정된 VRF 이름 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",exam-l3vpn,"metric `vrf_names_set` on host=sample8, type=DEVICE → exam-l3vpn",sample8.xml
+VRF_NAMES_SET_0006,Services_Inventory,set,1,"sample9 장비에 설정된 VRF 이름 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",exam-l3vpn,"metric `vrf_names_set` on host=sample9, type=DEVICE → exam-l3vpn",sample9.xml
+VRF_RD_MAP_0001,Services_Inventory,map,1,"CE1 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요.
+[답변 형식: 키=값 형식 목록 (없으면 '없음')]",없음,"metric `vrf_rd_map` on host=CE1, type=DEVICE → 없음",ce1.xml
+VRF_RD_MAP_0002,Services_Inventory,map,1,"CE2 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요.
+[답변 형식: 키=값 형식 목록 (없으면 '없음')]",없음,"metric `vrf_rd_map` on host=CE2, type=DEVICE → 없음",ce2.xml
+VRF_RD_MAP_0003,Services_Inventory,map,1,"sample10 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요.
+[답변 형식: 키=값 형식 목록 (없으면 '없음')]",exam-l3vpn=65000:1000,"metric `vrf_rd_map` on host=sample10, type=DEVICE → exam-l3vpn=65000:1000",sample10.xml
+VRF_RD_MAP_0004,Services_Inventory,map,1,"sample7 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요.
+[답변 형식: 키=값 형식 목록 (없으면 '없음')]",exam-l3vpn=65000:1000,"metric `vrf_rd_map` on host=sample7, type=DEVICE → exam-l3vpn=65000:1000",sample7.xml
+VRF_RD_MAP_0005,Services_Inventory,map,1,"sample8 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요.
+[답변 형식: 키=값 형식 목록 (없으면 '없음')]",exam-l3vpn=65000:1000,"metric `vrf_rd_map` on host=sample8, type=DEVICE → exam-l3vpn=65000:1000",sample8.xml
+VRF_RD_MAP_0006,Services_Inventory,map,1,"sample9 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요.
+[답변 형식: 키=값 형식 목록 (없으면 '없음')]",exam-l3vpn=65000:1000,"metric `vrf_rd_map` on host=sample9, type=DEVICE → exam-l3vpn=65000:1000",sample9.xml
+SYSTEM_TIMEZONE_TEXT_0001,System_Inventory,text,1,"CE1 장비의 시간대(Timezone)는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",KST,"metric `system_timezone_text` on host=CE1, type=DEVICE → KST",ce1.xml
+SYSTEM_TIMEZONE_TEXT_0002,System_Inventory,text,1,"CE2 장비의 시간대(Timezone)는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",KST,"metric `system_timezone_text` on host=CE2, type=DEVICE → KST",ce2.xml
+SYSTEM_TIMEZONE_TEXT_0003,System_Inventory,text,1,"sample10 장비의 시간대(Timezone)는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `system_timezone_text` on host=sample10, type=DEVICE → 정보 없음",sample10.xml
+SYSTEM_TIMEZONE_TEXT_0004,System_Inventory,text,1,"sample7 장비의 시간대(Timezone)는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `system_timezone_text` on host=sample7, type=DEVICE → 정보 없음",sample7.xml
+SYSTEM_TIMEZONE_TEXT_0005,System_Inventory,text,1,"sample8 장비의 시간대(Timezone)는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `system_timezone_text` on host=sample8, type=DEVICE → 정보 없음",sample8.xml
+SYSTEM_TIMEZONE_TEXT_0006,System_Inventory,text,1,"sample9 장비의 시간대(Timezone)는 무엇입니까?
+[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",정보 없음,"metric `system_timezone_text` on host=sample9, type=DEVICE → 정보 없음",sample9.xml
+SYSTEM_USER_COUNT_0001,System_Inventory,numeric,1,"CE1 장비에 등록된 로컬 사용자는 총 몇 명입니까?
+[답변 형식: 정수 숫자]",1,"metric `system_user_count` on host=CE1, type=DEVICE → 1",ce1.xml
+SYSTEM_USER_COUNT_0002,System_Inventory,numeric,1,"CE2 장비에 등록된 로컬 사용자는 총 몇 명입니까?
+[답변 형식: 정수 숫자]",1,"metric `system_user_count` on host=CE2, type=DEVICE → 1",ce2.xml
+SYSTEM_USER_COUNT_0003,System_Inventory,numeric,1,"sample10 장비에 등록된 로컬 사용자는 총 몇 명입니까?
+[답변 형식: 정수 숫자]",1,"metric `system_user_count` on host=sample10, type=DEVICE → 1",sample10.xml
+SYSTEM_USER_COUNT_0004,System_Inventory,numeric,1,"sample7 장비에 등록된 로컬 사용자는 총 몇 명입니까?
+[답변 형식: 정수 숫자]",1,"metric `system_user_count` on host=sample7, type=DEVICE → 1",sample7.xml
+SYSTEM_USER_COUNT_0005,System_Inventory,numeric,1,"sample8 장비에 등록된 로컬 사용자는 총 몇 명입니까?
+[답변 형식: 정수 숫자]",1,"metric `system_user_count` on host=sample8, type=DEVICE → 1",sample8.xml
+SYSTEM_USER_COUNT_0006,System_Inventory,numeric,1,"sample9 장비에 등록된 로컬 사용자는 총 몇 명입니까?
+[답변 형식: 정수 숫자]",1,"metric `system_user_count` on host=sample9, type=DEVICE → 1",sample9.xml
+SYSTEM_USER_LIST_0001,System_Inventory,set,1,"CE1 장비에 등록된 로컬 사용자 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",nso,"metric `system_user_list` on host=CE1, type=DEVICE → nso",ce1.xml
+SYSTEM_USER_LIST_0002,System_Inventory,set,1,"CE2 장비에 등록된 로컬 사용자 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",nso,"metric `system_user_list` on host=CE2, type=DEVICE → nso",ce2.xml
+SYSTEM_USER_LIST_0003,System_Inventory,set,1,"sample10 장비에 등록된 로컬 사용자 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",nso,"metric `system_user_list` on host=sample10, type=DEVICE → nso",sample10.xml
+SYSTEM_USER_LIST_0004,System_Inventory,set,1,"sample7 장비에 등록된 로컬 사용자 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",nso,"metric `system_user_list` on host=sample7, type=DEVICE → nso",sample7.xml
+SYSTEM_USER_LIST_0005,System_Inventory,set,1,"sample8 장비에 등록된 로컬 사용자 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",nso,"metric `system_user_list` on host=sample8, type=DEVICE → nso",sample8.xml
+SYSTEM_USER_LIST_0006,System_Inventory,set,1,"sample9 장비에 등록된 로컬 사용자 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",nso,"metric `system_user_list` on host=sample9, type=DEVICE → nso",sample9.xml
+VRF_INTERFACE_BIND_COUNT_0001,VRF_Consistency,numeric,2,"CE1 장비의 exam-l3vpn VRF에 바인딩된 인터페이스는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",0,"metric `vrf_interface_bind_count` on host=CE1, type=DEVICE_VRF, vrf=exam-l3vpn → 0",ce1.xml
+VRF_INTERFACE_BIND_COUNT_0002,VRF_Consistency,numeric,2,"CE2 장비의 exam-l3vpn VRF에 바인딩된 인터페이스는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",0,"metric `vrf_interface_bind_count` on host=CE2, type=DEVICE_VRF, vrf=exam-l3vpn → 0",ce2.xml
+VRF_INTERFACE_BIND_COUNT_0003,VRF_Consistency,numeric,2,"sample10 장비의 exam-l3vpn VRF에 바인딩된 인터페이스는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",1,"metric `vrf_interface_bind_count` on host=sample10, type=DEVICE_VRF, vrf=exam-l3vpn → 1",sample10.xml
+VRF_INTERFACE_BIND_COUNT_0004,VRF_Consistency,numeric,2,"sample7 장비의 exam-l3vpn VRF에 바인딩된 인터페이스는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",1,"metric `vrf_interface_bind_count` on host=sample7, type=DEVICE_VRF, vrf=exam-l3vpn → 1",sample7.xml
+VRF_INTERFACE_BIND_COUNT_0005,VRF_Consistency,numeric,2,"sample8 장비의 exam-l3vpn VRF에 바인딩된 인터페이스는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",1,"metric `vrf_interface_bind_count` on host=sample8, type=DEVICE_VRF, vrf=exam-l3vpn → 1",sample8.xml
+VRF_INTERFACE_BIND_COUNT_0006,VRF_Consistency,numeric,2,"sample9 장비의 exam-l3vpn VRF에 바인딩된 인터페이스는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",1,"metric `vrf_interface_bind_count` on host=sample9, type=DEVICE_VRF, vrf=exam-l3vpn → 1",sample9.xml
+VRF_RD_FORMAT_INVALID_SET_0001,VRF_Consistency,set,2,"RD 형식이 잘못된 VRF 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,metric `vrf_rd_format_invalid_set` on type=GLOBAL → 없음,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+VRF_RD_MAP_0008,VRF_Consistency,map,2,"ce1, ce2, sample10, sample7, sample8, sample9 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요.
+[답변 형식: 키=값 형식 목록 (없으면 '없음')]",없음,metric `vrf_rd_map` on type=GLOBAL → 없음,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+VRF_RD_MAP_0007,VRF_Consistency,map,1,"sample10, sample7, sample8, sample9 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요.
+[답변 형식: 키=값 형식 목록 (없으면 '없음')]",없음,"metric `vrf_rd_map` on type=VRF, vrf=exam-l3vpn → 없음","sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+VRF_RT_LIST_PER_DEVICE_0001,VRF_Consistency,set,1,"CE1 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,"metric `vrf_rt_list_per_device` on host=CE1, type=DEVICE_VRF, vrf=exam-l3vpn → 없음",ce1.xml
+VRF_RT_LIST_PER_DEVICE_0002,VRF_Consistency,set,1,"CE2 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,"metric `vrf_rt_list_per_device` on host=CE2, type=DEVICE_VRF, vrf=exam-l3vpn → 없음",ce2.xml
+VRF_RT_LIST_PER_DEVICE_0003,VRF_Consistency,set,1,"sample10 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",65000:1000,"metric `vrf_rt_list_per_device` on host=sample10, type=DEVICE_VRF, vrf=exam-l3vpn → 65000:1000",sample10.xml
+VRF_RT_LIST_PER_DEVICE_0007,VRF_Consistency,set,1,"sample10, sample7, sample8, sample9 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,"metric `vrf_rt_list_per_device` on type=VRF, vrf=exam-l3vpn → 없음","sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+VRF_RT_LIST_PER_DEVICE_0004,VRF_Consistency,set,1,"sample7 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",65000:1000,"metric `vrf_rt_list_per_device` on host=sample7, type=DEVICE_VRF, vrf=exam-l3vpn → 65000:1000",sample7.xml
+VRF_RT_LIST_PER_DEVICE_0005,VRF_Consistency,set,1,"sample8 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",65000:1000,"metric `vrf_rt_list_per_device` on host=sample8, type=DEVICE_VRF, vrf=exam-l3vpn → 65000:1000",sample8.xml
+VRF_RT_LIST_PER_DEVICE_0006,VRF_Consistency,set,1,"sample9 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",65000:1000,"metric `vrf_rt_list_per_device` on host=sample9, type=DEVICE_VRF, vrf=exam-l3vpn → 65000:1000",sample9.xml
+VRF_WITHOUT_RT_COUNT_0001,VRF_Consistency,numeric,2,"route-target이 없는 VRF(장비/VRF)는 총 몇 개입니까?
+[답변 형식: 정수 숫자]",0,metric `vrf_without_rt_count` on type=GLOBAL → 0,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"
+VRF_WITHOUT_RT_PAIRS_0001,VRF_Consistency,set,2,"route-target이 없는 VRF(장비/VRF) 목록을 알려주세요.
+[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,metric `vrf_without_rt_pairs` on type=GLOBAL → 없음,"ce1.xml, ce2.xml, sample10.xml, sample7.xml, sample8.xml, sample9.xml"

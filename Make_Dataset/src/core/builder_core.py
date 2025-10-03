@@ -53,19 +53,14 @@ class BuilderCore:
         if value is None:
             return False
         at = (answer_type or "").lower()
-        if at in ("set","list"):
-            try:
-                return len(value) > 0
-            except Exception:
-                return False
-        if at in ("map","dict"):
-            try:
-                return len(value.keys() if hasattr(value, "keys") else value) > 0
-            except Exception:
-                return False
+        if at in ("set", "list"):
+            return isinstance(value, (list, set, tuple))
+        if at in ("map", "dict"):
+            return isinstance(value, dict)
         if at == "text":
             try:
-                return str(value).strip() != ""
+                str(value)
+                return True
             except Exception:
                 return False
         return True
@@ -223,8 +218,22 @@ class BuilderCore:
         pre["qos_policer_applied_interfaces_map"] = qos_policer_map
 
         # Security
-        pre["ssh_enabled"] = set([ (d.get("system",{}).get("hostname") or d.get("file")) for d in self.devices if self._ssh_on(d)])
-        pre["ssh_missing"] = set([ (d.get("system",{}).get("hostname") or d.get("file")) for d in self.devices if not self._ssh_on(d)])
+        pre["ssh_enabled"] = set([
+            (d.get("system",{}).get("hostname") or d.get("file"))
+            for d in self.devices if self._ssh_on(d)
+        ])
+        pre["ssh_missing"] = set([
+            (d.get("system",{}).get("hostname") or d.get("file"))
+            for d in self.devices if not self._ssh_on(d)
+        ])
+        pre["aaa_enabled"] = set([
+            (d.get("system",{}).get("hostname") or d.get("file"))
+            for d in self.devices if self._aaa_on(d)
+        ])
+        pre["aaa_missing"] = set([
+            (d.get("system",{}).get("hostname") or d.get("file"))
+            for d in self.devices if not self._aaa_on(d)
+        ])
         return pre
 
     def calculate_metric(self, metric: str, params: Dict[str, Any] | None = None) -> tuple[Any, List[str]]:
@@ -626,6 +635,15 @@ class BuilderCore:
                 val = bool(((d.get("security") or {}).get("password_policy") or {}).get("present"))
                 return "boolean", val
             return "boolean", False
+        elif metric == "mpls_ldp_present_bool":
+            host = scope.get("host")
+            for d in self.devices:
+                if host and self._hostname(d) != host:
+                    continue
+                mpls = ((d.get("services") or {}).get("mpls") or {})
+                val = bool(mpls.get("ldp")) or bool(mpls.get("ldp_interfaces")) or bool(mpls.get("ldp_enabled"))
+                return "boolean", val
+            return "boolean", False
 
         elif metric == "interface_count":
             host = scope.get("host")
@@ -675,7 +693,8 @@ class BuilderCore:
                 for i in d.get("interfaces") or []:
                     name=i.get("name") or i.get("id") or ""
                     vrf = i.get("vrf") or i.get("l3vrf")
-                    if name: mp[name]=vrf or ""
+                    if name:
+                        mp[name] = vrf if vrf else "default"
                 return "map", mp
             return "map", {}
 
@@ -976,6 +995,10 @@ class BuilderCore:
             return "numeric", len(pre["ssh_missing"])
         elif metric == "ssh_all_enabled_bool":
             return "boolean", (len(pre["ssh_missing"]) == 0)
+        elif metric == "aaa_enabled_devices":
+            return "set", sorted(list(pre["aaa_enabled"]))
+        elif metric == "aaa_missing_devices":
+            return "set", sorted(list(pre["aaa_missing"]))
         elif metric == "ssh_acl_applied_check":
             host = scope.get("host")
             return "boolean", bool(pre.get("ssh_acl_applied_map", {}).get(host))
@@ -991,6 +1014,87 @@ class BuilderCore:
                 path = self.find_alternative_path((dl[0], dl[1]))
                 return "list", path
             return "list", []
+
+        elif metric == "cmd_show_bgp_summary":
+            return "text", "show bgp summary"
+        elif metric == "cmd_show_ip_interface_brief":
+            return "text", "show ip interface brief"
+        elif metric == "cmd_show_ip_route_ospf":
+            return "text", "show ip route ospf"
+        elif metric == "cmd_show_processes_cpu":
+            return "text", "show processes cpu"
+        elif metric == "cmd_show_l2vpn_vc":
+            return "text", "show l2vpn vc"
+        elif metric == "cmd_show_ip_ospf_neighbor":
+            return "text", "show ip ospf neighbor"
+        elif metric == "cmd_show_users":
+            return "text", "show users"
+        elif metric == "cmd_show_logging":
+            return "text", "show logging"
+        elif metric == "cmd_ssh_direct_access":
+            user = scope.get("user") or "admin"
+            host = scope.get("host") or scope.get("destination_host") or scope.get("mgmt")
+            return "text", f"ssh {user}@{host}".strip()
+        elif metric == "cmd_ssh_proxy_jump":
+            user = scope.get("user") or "admin"
+            jump = scope.get("jump_host") or scope.get("proxy")
+            dest = scope.get("destination_host") or scope.get("target")
+            cmd = f"ssh -J {user}@{jump} {user}@{dest}".strip()
+            return "text", cmd
+        elif metric == "cmd_set_static_route":
+            prefix = scope.get("prefix") or "0.0.0.0"
+            mask = scope.get("mask") or "0.0.0.0"
+            next_hop = scope.get("next_hop") or "0.0.0.0"
+            cmd = f"ip route {prefix} {mask} {next_hop}".strip()
+            return "text", cmd
+        elif metric == "cmd_set_bgp_routemap":
+            asn = scope.get("asn") or scope.get("as_number") or "65000"
+            neighbor_ip = scope.get("neighbor_ip") or scope.get("neighbor") or "0.0.0.0"
+            map_name = scope.get("map_name") or "ROUTE_MAP"
+            lines = [
+                f"router bgp {asn}",
+                f" neighbor {neighbor_ip} route-map {map_name} out"
+            ]
+            return "text", "\n".join(lines)
+        elif metric == "cmd_set_interface_description":
+            interface = scope.get("interface") or scope.get("if") or "GigabitEthernet0/0/0/0"
+            description = scope.get("description") or "Interface description"
+            lines = [
+                f"interface {interface}",
+                f" description {description}"
+            ]
+            return "text", "\n".join(lines)
+        elif metric == "cmd_create_vrf_and_assign":
+            vrf_name = scope.get("vrf_name") or scope.get("vrf") or "VRF1"
+            interface = scope.get("interface") or scope.get("if") or "GigabitEthernet0/0/0/0"
+            lines = [
+                f"vrf definition {vrf_name}",
+                " address-family ipv4 unicast",
+                " exit",
+                f"interface {interface}",
+                f" vrf forwarding {vrf_name}"
+            ]
+            return "text", "\n".join(lines)
+        elif metric == "cmd_set_ospf_cost":
+            process_id = scope.get("process_id") or 1
+            interface = scope.get("interface") or scope.get("if") or "GigabitEthernet0/0/0/0"
+            cost = scope.get("cost") or 1
+            lines = [
+                f"router ospf {process_id}",
+                f" interface {interface}",
+                f" cost {cost}"
+            ]
+            return "text", "\n".join(lines)
+        elif metric == "cmd_set_vty_acl":
+            acl_name = scope.get("acl_name") or "ACL"
+            lines = [
+                "line vty 0 4",
+                f" access-class {acl_name} in"
+            ]
+            return "text", "\n".join(lines)
+        elif metric == "cmd_set_hostname":
+            new_hostname = scope.get("new_hostname") or scope.get("hostname") or "device-new"
+            return "text", f"hostname {new_hostname}"
 
         return "text", None
 
@@ -1043,28 +1147,35 @@ class BuilderCore:
         for t in dsl:
             cat = t["category"]; out.setdefault(cat, [])
             patt = t.get("pattern")
+            if patt is None:
+                patt = t.get("question")
             metric = t.get("intent",{}).get("metric")
             scope = t.get("intent",{}).get("scope", {"type":"GLOBAL"})
             level = t.get("level")
             origin = t.get("origin")
 
+            params_ctx = (t.get("intent") or {}).get("params")
             for sc in iter_scopes(scope):
-                atype, val = self._answer_for_metric(metric, sc, pre)
+                ctx = dict(sc) if isinstance(sc, dict) else {"value": sc}
+                if isinstance(params_ctx, dict):
+                    for k, v in params_ctx.items():
+                        ctx.setdefault(k, v)
+                atype, val = self._answer_for_metric(metric, ctx, pre)
                 if not self._is_supported_answer(atype, val):
                     continue
                 try:
-                    q = patt.format(**sc) if isinstance(patt, str) else str(patt)
+                    q = patt.format(**ctx) if isinstance(patt, str) else str(patt)
                 except Exception:
                     q = str(patt)
                 out[cat].append({
-                    "test_id": f"DSL-{(metric or 'METRIC').upper()}-{hash(str(sc)) & 0xffff}",
+                    "test_id": f"DSL-{(metric or 'METRIC').upper()}-{hash(str(ctx)) & 0xffff}",
                     "category": cat,
                     "answer_type": atype,
                     "question": q,
                     "expected_answer": {"value": val},
                     "evaluation_method": "exact_match",
-                    "evidence_hint": {"scope": sc, "metric": metric},
-                    "source_files": self._files_for_scope(sc),
+                    "evidence_hint": {"scope": ctx, "metric": metric},
+                    "source_files": self._files_for_scope(ctx),
                     "level": level,
                     "origin": origin
                 })
@@ -1072,9 +1183,23 @@ class BuilderCore:
 
     def _files_for_scope(self, sc: dict) -> List[str]:
         st = (sc.get("type") or "GLOBAL").upper()
+        host_param = sc.get("host")
+        hosts_list = sc.get("hosts") if isinstance(sc.get("hosts"), (list, set, tuple)) else None
+        candidates: Set[str] = set()
+        if isinstance(host_param, str):
+            candidates.add(host_param)
+        if hosts_list:
+            candidates.update(str(h) for h in hosts_list)
+        for key in ("jump_host", "destination_host", "target", "mgmt"):
+            val = sc.get(key)
+            if isinstance(val, str):
+                candidates.add(val)
+        def file_for(host: str) -> List[str]:
+            dev = self.host_index.get(host)
+            return [dev.get("file") or ""] if dev and dev.get("file") else []
+
         if st == "DEVICE":
-            d = self.host_index.get(sc.get("host"))
-            return [d.get("file") or ""] if d and d.get("file") else []
+            return file_for(sc.get("host"))
         if st == "AS":
             files = []
             for d in self.devices:
@@ -1094,11 +1219,15 @@ class BuilderCore:
                         break
             return files
         if st == "DEVICE_VRF":
-            d = self.host_index.get(sc.get("host"))
-            return [d.get("file") or ""] if d and d.get("file") else []
+            return file_for(sc.get("host"))
         if st == "DEVICE_IF":
-            d = self.host_index.get(sc.get("host"))
-            return [d.get("file") or ""] if d and d.get("file") else []
+            return file_for(sc.get("host"))
+        if candidates:
+            files: List[str] = []
+            for host in candidates:
+                files.extend(file_for(host))
+            if files:
+                return sorted(set(files))
         return [d.get("file") or "" for d in self.devices if d.get("file")]
 
 SUPPORTED_METRICS: List[str] = [
@@ -1122,6 +1251,8 @@ SUPPORTED_METRICS: List[str] = [
     "ssh_present_bool",
     "ssh_version_text",
     "aaa_present_bool",
+    "aaa_enabled_devices",
+    "aaa_missing_devices",
     "password_policy_present_bool",
     "interface_count",
     "interface_ip_map",
@@ -1163,10 +1294,28 @@ SUPPORTED_METRICS: List[str] = [
     "ssh_missing_devices",
     "ssh_missing_count",
     "ssh_all_enabled_bool",
+    "mpls_ldp_present_bool",
     "ssh_acl_applied_check",
     "bgp_advertised_prefixes_list",
     "qos_policer_applied_interfaces_list",
     "find_alternative_path",
+    "cmd_show_bgp_summary",
+    "cmd_show_ip_interface_brief",
+    "cmd_show_ip_route_ospf",
+    "cmd_show_processes_cpu",
+    "cmd_show_l2vpn_vc",
+    "cmd_show_ip_ospf_neighbor",
+    "cmd_show_users",
+    "cmd_show_logging",
+    "cmd_set_static_route",
+    "cmd_set_bgp_routemap",
+    "cmd_set_interface_description",
+    "cmd_create_vrf_and_assign",
+    "cmd_set_ospf_cost",
+    "cmd_set_vty_acl",
+    "cmd_set_hostname",
+    "cmd_ssh_direct_access",
+    "cmd_ssh_proxy_jump",
 ]
 
 

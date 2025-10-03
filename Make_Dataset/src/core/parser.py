@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Dict, Any, List
 import xml.etree.ElementTree as ET
 
-from .vendor import xr_facts_parser
+from . import vendor_xr_parser
 
 class UniversalParser:
     """
@@ -18,4 +18,4 @@ class UniversalParser:
         base = Path(xml_dir)
         xmls: List[Path] = sorted([p for p in base.iterdir() if p.suffix.lower() == ".xml"], key=lambda x: x.name)
         # 간단: XR 파서로 통일 처리
-        return xr_facts_parser.parse_files(xmls) 
+        return vendor_xr_parser.parse_files(xmls)

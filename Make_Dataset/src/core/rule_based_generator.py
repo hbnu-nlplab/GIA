@@ -548,6 +548,8 @@ class RuleBasedGenerator:
             cat = pol["category"]
             if cat not in categories:
                 continue
+            if cat == "Command_Generation":
+                continue
             levels = pol.get("levels", {})
             if isinstance(levels, list):
                 levels = {"2": levels}
@@ -593,9 +595,7 @@ class RuleBasedGenerator:
                                 },
                                 "origin": "Universal"
                             })
-        budget = self.defaults.get(
-            "mix", {"boolean": 1, "set": 1, "numeric": 1, "map": 1})
-        dsl = fix_coverage_budget(dsl, budget)
+        # 커버리지 보정(mix) 제거: 정책에 정의된 항목만 사용
 
         # 얕은 중복 제거
         import json as _json
@@ -756,12 +756,12 @@ class RuleBasedGenerator:
                 })
                 # 직접 접속(Direct)
                 q_direct = default_patterns("cmd_ssh_direct_access").format(
-                    user="admin", host=d_mgmt)
+                    user="admin", host=d_host)
                 cmd_items.append({
                     "test_id": f"CMD_SSH_DIRECT_ACCESS_{d_host.upper()}",
                     "category": "Command_Generation",
                     "question": q_direct,
-                    "intent": {"metric": "cmd_ssh_direct_access", "params": {"user": "admin", "host": d_mgmt}},
+                    "intent": {"metric": "cmd_ssh_direct_access", "params": {"user": "admin", "host": d_mgmt, "hosts": [d_host]}},
                     "level": level_map.get("cmd_ssh_direct_access", 1),
                     "source_files": [d_file] if d_file else [],
                 })
@@ -775,13 +775,21 @@ class RuleBasedGenerator:
                 if j["mgmt"] == k["mgmt"]:
                     continue
                 q_jump = default_patterns("cmd_ssh_proxy_jump").format(
-                    user="admin", jump_host=j["mgmt"], destination_host=k["mgmt"])
+                    user="admin", jump_host=j["hostname"], destination_host=k["hostname"])
                 src_files = [f for f in [j.get("file"), k.get("file")] if f]
                 cmd_items.append({
                     "test_id": f"CMD_SSH_PROXY_JUMP_{j['hostname'].upper()}_TO_{k['hostname'].upper()}",
                     "category": "Command_Generation",
                     "question": q_jump,
-                    "intent": {"metric": "cmd_ssh_proxy_jump", "params": {"user": "admin", "jump_host": j["mgmt"], "destination_host": k["mgmt"]}},
+                    "intent": {
+                        "metric": "cmd_ssh_proxy_jump",
+                        "params": {
+                            "user": "admin",
+                            "jump_host": j["mgmt"],
+                            "destination_host": k["mgmt"],
+                            "hosts": [j["hostname"], k["hostname"]]
+                        }
+                    },
                     "level": level_map.get("cmd_ssh_proxy_jump", 2),
                     "source_files": src_files,
                 })
