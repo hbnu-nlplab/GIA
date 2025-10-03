@@ -1,0 +1,63 @@
+{
+  "results": [
+    {
+      "question": "SSH 접속이 가능한 장비 목록을 알려주세요.",
+      "task_type": "1. Simple Lookup Tasks",
+      "final_answer": "[GROUND_TRUTH]\nCE1, sample9, CE2, sample8, sample7, sample10\n\n[EXPLANATION]\n제공된 XML 구성 파일에서 SSH 접속이 가능한 장비는 다음과 같습니다:\n\n1. **CE1**: IP 주소 172.16.1.40에서 SSH 포트 22가 설정되어 있습니다.\n2. **sample9**: IP 주소 172.16.1.132에서 SSH 포트 22가 설정되어 있습니다.\n3. **CE2**: IP 주소 172.16.1.41에서 SSH 포트 22가 설정되어 있습니다.\n4. **sample8**: IP 주소 172.16.1.131에서 SSH 포트 22가 설정되어 있습니다.\n5. **sample7**: IP 주소 172.16.1.130에서 SSH 포트 22가 설정되어 있습니다.\n6. **sample10**: IP 주소 172.16.1.133에서 SSH 포트 22가 설정되어 있습니다.\n\n모든 장비는 SSH 프로토콜을 사용하여 원격 접속이 가능하도록 설정되어 있으며, SSH 호스트 키와 관련된 정보도 포함되어 있습니다. 각 장비의 SSH 설정은 `<ssh>` 태그 내에 정의되어 있으며, 포트 번호는 `<port>` 태그로 명시되어 있습니다.",
+      "processing_time": 6.87,
+      "method": "non_rag_all_xml",
+      "xml_files_used": 6
+    },
+    {
+      "question": "SSH 접속이 불가능한 장비는 총 몇 대입니까?",
+      "task_type": "Simple Lookup Tasks",
+      "final_answer": "[GROUND_TRUTH]\n3\n\n[EXPLANATION]\n제공된 XML 구성 파일을 분석한 결과, SSH 접속이 불가능한 장비는 다음과 같습니다:\n\n1. **sample8**: 이 장비의 SSH 설정에서 `transport` 입력이 명시되어 있지 않거나, SSH 관련 설정이 비활성화된 경우가 있을 수 있습니다.\n2. **sample9**: 이 장비의 SSH 설정에서 `transport` 입력이 명시되어 있지 않거나, SSH 관련 설정이 비활성화된 경우가 있을 수 있습니다.\n3. **sample10**: 이 장비의 SSH 설정에서 `transport` 입력이 명시되어 있지 않거나, SSH 관련 설정이 비활성화된 경우가 있을 수 있습니다.\n\n이 외에도, `CE1`, `CE2` 장비는 SSH 설정이 명확하게 되어 있어 SSH 접속이 가능합니다. 따라서, SSH 접속이 불가능한 장비는 총 3대입니다.",
+      "processing_time": 5.61,
+      "method": "non_rag_all_xml",
+      "xml_files_used": 6
+    },
+    {
+      "question": "sample10 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.",
+      "task_type": "Simple Lookup Tasks",
+      "final_answer": "[GROUND_TRUTH]\n1.1.1.1\n2.2.2.2\n3.3.3.3\n192.168.4.11\n\n[EXPLANATION]\nsample10 장비의 BGP 설정을 살펴보면, iBGP 피어로 연결된 이웃 장비들의 IP 주소가 정의되어 있습니다. BGP 설정 내에서 `neighbor` 태그를 통해 이웃 장비의 IP 주소와 원격 AS 번호가 명시되어 있습니다. \n\n- `1.1.1.1` (원격 AS: 65000)\n- `2.2.2.2` (원격 AS: 65000)\n- `3.3.3.3` (원격 AS: 65000)\n- `192.168.4.11` (원격 AS: 65004, VRF: exam-l3vpn)\n\n이 IP 주소들은 sample10 장비와 iBGP로 연결된 피어들의 주소입니다. BGP는 이웃 장비와의 경로 정보를 교환하기 위해 이러한 IP 주소를 사용하여 연결을 설정합니다.",
+      "processing_time": 4.99,
+      "method": "non_rag_all_xml",
+      "xml_files_used": 6
+    }
+  ],
+  "evaluation": {
+    "overall": {
+      "exact_match": 0.0,
+      "f1_score": 0.31746031746031744,
+      "total_questions": 3
+    },
+    "rule_based": {
+      "exact_match": 0.0,
+      "f1_score": 0.31746031746031744,
+      "question_count": 3
+    },
+    "enhanced_llm": {
+      "ground_truth": {
+        "exact_match": 0.0,
+        "f1_score": 0.0
+      },
+      "explanation": {
+        "bert_f1": 0.0,
+        "bert_precision": 0.0,
+        "bert_recall": 0.0,
+        "rouge_1_f1": 0.0,
+        "rouge_2_f1": 0.0,
+        "rouge_l_f1": 0.0,
+        "valid_count": 0,
+        "total_count": 0
+      },
+      "question_count": 0
+    }
+  },
+  "config": {
+    "method": "non_rag",
+    "use_embedding": false,
+    "chunk_size": 50000,
+    "model": "gpt-4o-mini"
+  }
+}

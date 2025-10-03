@@ -1,0 +1,27 @@
+{
+  "total_calls": 27,
+  "call_types": [
+    "task_classification",
+    "initial_draft",
+    "final_optimization"
+  ],
+  "statistics": {
+    "task_classification": {
+      "count": 9,
+      "total_prompt_length": 3075,
+      "total_response_length": 198
+    },
+    "initial_draft": {
+      "count": 9,
+      "total_prompt_length": 3570,
+      "total_response_length": 11301
+    },
+    "final_optimization": {
+      "count": 9,
+      "total_prompt_length": 14862,
+      "total_response_length": 6060
+    }
+  },
+  "first_call": "2025-09-08T11:26:19.042736",
+  "last_call": "2025-09-08T11:28:35.458990"
+}

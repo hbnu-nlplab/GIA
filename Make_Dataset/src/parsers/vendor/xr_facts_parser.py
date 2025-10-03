@@ -12,14 +12,18 @@ NS = {
     "ios": "urn:ios"  # ← 추가
 }
 
+
 def ln(tag: str) -> str:
     return tag.split('}', 1)[1] if '}' in tag else tag
+
 
 def find(root: ET.Element, path: str):
     return root.find(path, NS)
 
+
 def findall(root: ET.Element, path: str):
     return root.findall(path, NS)
+
 
 def text(el) -> Optional[str]:
     return el.text.strip() if (el is not None and el.text) else None
@@ -44,7 +48,7 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
 
     # -------- Vendor Auto-detection --------
     ned_id = text(find(dev, "ncs:device-type/ncs:cli/ncs:ned-id")) \
-          or text(find(dev, "ncs:device-type/ncs:netconf/ncs:ned-id")) or ""
+        or text(find(dev, "ncs:device-type/ncs:netconf/ncs:ned-id")) or ""
 
     if ("ios-xr" in (ned_id or "").lower()) or (find(dev, "ncs:config/xr:router") is not None):
         facts["vendor"] = "ios-xr"
@@ -52,11 +56,12 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
         facts["vendor"] = "ios"
     else:
         # 최후의 수단: 네임스페이스 존재로 추정
-        facts["vendor"] = "ios" if find(dev, "ncs:config/ios:hostname") is not None else "ios-xr"
+        facts["vendor"] = "ios" if find(
+            dev, "ncs:config/ios:hostname") is not None else "ios-xr"
 
     # -------- System --------
     hostname = text(find(dev, "ncs:name"))
-    mgmt_ip  = text(find(dev, "ncs:address"))
+    mgmt_ip = text(find(dev, "ncs:address"))
     mgmt_port = text(find(dev, "ncs:port"))  # mgmt 포트 확인
     facts["system"] = {"hostname": hostname, "mgmt_address": mgmt_ip}
 
@@ -69,10 +74,12 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
     # (2) NSO 인벤토리 기반 SSH(mgmt)
     #    - <ncs:device><ncs:ssh> 가 있거나
     #    - mgmt 포트가 22면 SSH 접속 관리로 간주
-    nso_mgmt_ssh_present = (find(dev, "ncs:ssh") is not None) or (mgmt_port == "22")
+    nso_mgmt_ssh_present = (find(dev, "ncs:ssh")
+                            is not None) or (mgmt_port == "22")
 
     # (3) XR admin 영역의 AAA
-    aaa_present = (find(admin, "xr:aaa") is not None) if admin is not None else False
+    aaa_present = (find(admin, "xr:aaa")
+                   is not None) if admin is not None else False
 
     # 최종 반영: xr_ssh OR nso_mgmt_ssh 둘 중 하나라도 True면 present=True
     facts["security"] = {
@@ -86,7 +93,7 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
             dsk = find(admin, "xr:disk_status_config")
             if dsk is not None:
                 facts["system"].setdefault("disk_status_config", {})
-                for key in ("minor","severe","critical"):
+                for key in ("minor", "severe", "critical"):
                     v = text(find(dsk, f"xr:{key}"))
                     if v is not None:
                         try:
@@ -96,24 +103,27 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
             mem = find(admin, "xr:memory_status_config")
             if mem is not None:
                 facts["system"].setdefault("memory_status_config", {})
-                for key in ("minor","severe","critical"):
+                for key in ("minor", "severe", "critical"):
                     v = text(find(mem, f"xr:{key}"))
                     if v is not None:
                         try:
-                            facts["system"]["memory_status_config"][key] = int(v)
+                            facts["system"]["memory_status_config"][key] = int(
+                                v)
                         except Exception:
                             pass
                 rec = text(find(mem, "xr:recovery_enabled"))
                 if rec is not None:
                     facts["system"].setdefault("memory_status_config", {})
-                    facts["system"]["memory_status_config"]["recovery_enabled"] = (rec.lower() == "true")
+                    facts["system"]["memory_status_config"]["recovery_enabled"] = (
+                        rec.lower() == "true")
     except Exception:
         pass
 
     # XR admin: AAA 사용자 상세를 system.users로 누적
     try:
         sys_users: List[Dict[str, Any]] = []
-        users_root = find(admin, "xr:aaa/xr:authentication/xr:users") if admin is not None else None
+        users_root = find(
+            admin, "xr:aaa/xr:authentication/xr:users") if admin is not None else None
         for u in (findall(users_root, "xr:user") if users_root is not None else []):
             sys_users.append({
                 "name": text(find(u, "xr:name")),
@@ -149,9 +159,11 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
         http_srv = text(find(dev, "ncs:config/ios:ip/ios:http/ios:server"))
         if http_srv is not None:
             facts.setdefault("security", {}).setdefault("http", {})
-            facts["security"]["http"]["server_enabled"] = (http_srv.lower() == "true")
+            facts["security"]["http"]["server_enabled"] = (
+                http_srv.lower() == "true")
         # ip forward-protocol nd
-        fwd_nd_present = find(dev, "ncs:config/ios:ip/ios:forward-protocol/ios:nd") is not None
+        fwd_nd_present = find(
+            dev, "ncs:config/ios:ip/ios:forward-protocol/ios:nd") is not None
         if fwd_nd_present:
             facts.setdefault("services", {}).setdefault("ip", {})
             facts["services"]["ip"]["forward_protocol_nd"] = True
@@ -161,11 +173,14 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
             or root.find(".//ios:ip/ios:cef", NS) is not None
         )
 
-        facts.setdefault("services", {}).setdefault("ip", {})["cef_enabled"] = bool(cef_present)
-        facts.setdefault("ip", {}).setdefault("cef-conf", {})["cef"] = bool(cef_present)
+        facts.setdefault("services", {}).setdefault("ip", {})[
+            "cef_enabled"] = bool(cef_present)
+        facts.setdefault("ip", {}).setdefault(
+            "cef-conf", {})["cef"] = bool(cef_present)
 
         # Logging
-        log_buf = text(find(dev, "ncs:config/ios:logging/ios:buffered/ios:severity-level"))
+        log_buf = text(
+            find(dev, "ncs:config/ios:logging/ios:buffered/ios:severity-level"))
         if log_buf:
             facts.setdefault("logging", {})["buffered_severity"] = log_buf
 
@@ -174,9 +189,11 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
         if vty is not None:
             facts.setdefault("line", {}).setdefault("vty", {})
             first = text(find(vty, "ios:first"))
-            last  = text(find(vty, "ios:last"))
-            facts["line"]["vty"]["first"] = int(first) if (first and first.isdigit()) else None
-            facts["line"]["vty"]["last"]  = int(last) if (last and last.isdigit()) else None
+            last = text(find(vty, "ios:last"))
+            facts["line"]["vty"]["first"] = int(first) if (
+                first and first.isdigit()) else None
+            facts["line"]["vty"]["last"] = int(last) if (
+                last and last.isdigit()) else None
             if find(vty, "ios:login/ios:local") is not None:
                 facts["line"]["vty"]["login_mode"] = "local"
             pw = text(find(vty, "ios:password/ios:secret"))
@@ -205,10 +222,13 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
             for eth in findall(iface_root_ios, "ios:Ethernet"):
                 nm = text(find(eth, "ios:name"))
                 if_name = f"Ethernet{nm}" if nm else "Ethernet"
-                ip = text(find(eth, "ios:ip/ios:address/ios:primary/ios:address"))
-                mask = text(find(eth, "ios:ip/ios:address/ios:primary/ios:mask"))
+                ip = text(
+                    find(eth, "ios:ip/ios:address/ios:primary/ios:address"))
+                mask = text(
+                    find(eth, "ios:ip/ios:address/ios:primary/ios:mask"))
                 ipv4 = f"{ip}/{mask}" if (ip and mask) else (ip or None)
-                vlan = text(find(eth, "ios:encapsulation/ios:dot1Q/ios:vlan-id"))
+                vlan = text(
+                    find(eth, "ios:encapsulation/ios:dot1Q/ios:vlan-id"))
                 mop_x = text(find(eth, "ios:mop/ios:xenabled"))
                 mop_enabled = (mop_x is not None and mop_x.lower() == "true")
                 facts["interfaces"].append({
@@ -228,32 +248,34 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
             if tag in ("Loopback", "MgmtEth", "GigabitEthernet"):
                 if_id = text(find(ch, "xr:id"))
                 name = f"{tag}{if_id}" if if_id else tag
-                ip   = text(find(ch, "xr:ipv4/xr:address/xr:ip"))
+                ip = text(find(ch, "xr:ipv4/xr:address/xr:ip"))
                 mask = text(find(ch, "xr:ipv4/xr:address/xr:mask"))
-                vrf  = (
+                vrf = (
                     text(find(ch, "xr:vrf//xr:name")) or
-                    text(find(ch, "xr:vrf-name"))     or
-                    text(find(ch, "xr:vrf"))          or
+                    text(find(ch, "xr:vrf-name")) or
+                    text(find(ch, "xr:vrf")) or
                     ""
                 )
                 ipv4 = f"{ip}/{mask}" if (ip and mask) else (ip or None)
-                facts["interfaces"].append({"name": name, "ipv4": ipv4, "vlan": None, "vrf": vrf or None})
+                facts["interfaces"].append(
+                    {"name": name, "ipv4": ipv4, "vlan": None, "vrf": vrf or None})
         sub = find(iface_root, "xr:GigabitEthernet-subinterface")
         if sub is not None:
             for gig in findall(sub, "xr:GigabitEthernet"):
-                gid  = text(find(gig, "xr:id"))
+                gid = text(find(gig, "xr:id"))
                 name = f"GigabitEthernet{gid}" if gid else "GigabitEthernet"
-                ip   = text(find(gig, "xr:ipv4/xr:address/xr:ip"))
+                ip = text(find(gig, "xr:ipv4/xr:address/xr:ip"))
                 mask = text(find(gig, "xr:ipv4/xr:address/xr:mask"))
                 vlan = text(find(gig, "xr:encapsulation/xr:dot1q/xr:vlan-id"))
                 ipv4 = f"{ip}/{mask}" if (ip and mask) else (ip or None)
-                vrf  = (
+                vrf = (
                     text(find(gig, "xr:vrf//xr:name")) or
-                    text(find(gig, "xr:vrf-name"))     or
-                    text(find(gig, "xr:vrf"))          or
+                    text(find(gig, "xr:vrf-name")) or
+                    text(find(gig, "xr:vrf")) or
                     ""
                 )
-                facts["interfaces"].append({"name": name, "ipv4": ipv4, "vlan": vlan, "vrf": vrf or None})
+                facts["interfaces"].append(
+                    {"name": name, "ipv4": ipv4, "vlan": vlan, "vrf": vrf or None})
     facts["num_interfaces"] = len(facts["interfaces"])
 
     # -------- Services (VRF/L2VPN/MPLS/SNMP) --------
@@ -264,16 +286,19 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
         for addr in findall(v, ".//xr:route-target//xr:address-list/xr:name"):
             if text(addr):
                 rts.append(text(addr))
-        vrfs.append({"name": vname, "rd": None, "route_targets": sorted(set(rts))})
+        vrfs.append({"name": vname, "rd": None,
+                    "route_targets": sorted(set(rts))})
     l2vpns = []
     for p2p in findall(dev, "ncs:config/xr:l2vpn/xr:xconnect/xr:group/xr:p2p"):
-        ifn   = text(find(p2p, "xr:interface/xr:name"))
+        ifn = text(find(p2p, "xr:interface/xr:name"))
         neigh = text(find(p2p, "xr:neighbor/xr:address"))
-        pwid  = text(find(p2p, "xr:neighbor/xr:pw-id"))
+        pwid = text(find(p2p, "xr:neighbor/xr:pw-id"))
         l2vpns.append({"interface": ifn, "neighbor": neigh, "pw_id": pwid})
-    ldp_ifs = [text(e) for e in findall(dev, "ncs:config/xr:mpls/xr:ldp/xr:interface/xr:name")]
+    ldp_ifs = [text(e) for e in findall(
+        dev, "ncs:config/xr:mpls/xr:ldp/xr:interface/xr:name")]
     snmp_present = admin is not None and (
-        find(admin, "xr:SNMP-COMMUNITY-MIB") is not None or find(admin, "xr:SNMPv2-MIB") is not None
+        find(admin, "xr:SNMP-COMMUNITY-MIB") is not None or find(admin,
+                                                                 "xr:SNMPv2-MIB") is not None
     )
     facts.setdefault("services", {})
     facts["services"].update({
@@ -283,29 +308,48 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
         "snmp": {"present": snmp_present},
     })
 
-
     # -------- Routing: BGP / OSPF --------
     bgp = {"local_as": None, "neighbors": [], "vrfs": []}
     bgp_ni = find(dev, "ncs:config/xr:router/xr:bgp/xr:bgp-no-instance")
     if bgp_ni is not None:
         bgp["local_as"] = text(find(bgp_ni, "xr:id"))
         las = bgp["local_as"]
+        # Helper function for parsing update-source
+
+        def _upd_src(n):
+            us = find(n, "xr:update-source")
+            if us is None:
+                return None
+            # 첫 자식 태그 이름 + 값(Loopback0 같은 형식)
+            kids = list(us)
+            if kids:
+                return f"{ln(kids[0].tag)}{(kids[0].text or '').strip()}"
+            return None
+
         for n in findall(bgp_ni, "xr:neighbor"):
             rid = text(find(n, "xr:id"))
             ras = text(find(n, "xr:remote-as"))
             typ = "ibgp" if (ras and las and ras == las) else "ebgp"
-            bgp["neighbors"].append({"id": rid, "remote_as": ras, "type": typ})
+            upd = _upd_src(n)
+            nei = {"id": rid, "remote_as": ras, "type": typ}
+            if upd:
+                nei["update_source"] = upd
+            bgp["neighbors"].append(nei)
         for v in findall(bgp_ni, "xr:vrf"):
             vname = text(find(v, "xr:name"))
-            rd    = text(find(v, "xr:rd"))
+            rd = text(find(v, "xr:rd"))
             vneis = []
             las = bgp["local_as"]
             for n in findall(v, "xr:neighbor"):
                 rid = text(find(n, "xr:id"))
                 ras = text(find(n, "xr:remote-as"))
                 typ = "ibgp" if (ras and las and ras == las) else "ebgp"
-                vneis.append({"id": rid, "remote_as": ras, "type": typ})
-            
+                upd = _upd_src(n)
+                nei = {"id": rid, "remote_as": ras, "type": typ}
+                if upd:
+                    nei["update_source"] = upd
+                vneis.append(nei)
+
             # BGP VRF 처리 직후 XR VRF 설정에서 import/export RT 추출
             vrf_dict = {"name": vname, "rd": rd, "neighbors": vneis}
 
@@ -317,7 +361,7 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
                     break
 
             def _rt_names(root, path):
-                return sorted({ text(a) for a in findall(root, path) if text(a) })
+                return sorted({text(a) for a in findall(root, path) if text(a)})
 
             if vrf_cfg is not None:
                 rt_imp = _rt_names(
@@ -328,8 +372,10 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
                     vrf_cfg,
                     ".//xr:ipv4/xr:unicast/xr:export//xr:route-target//xr:address-list/xr:name"
                 )
-                vrf_dict["rt_import"] = rt_imp
-                vrf_dict["rt_export"] = rt_exp
+                if rt_imp:
+                    vrf_dict["rt_import"] = rt_imp
+                if rt_exp:
+                    vrf_dict["rt_export"] = rt_exp
 
             bgp["vrfs"].append(vrf_dict)
     # IOS BGP (optional)
@@ -374,7 +420,8 @@ def parse_files(xml_files: List[Path]) -> Dict[str, Any]:
             raw = p.read_text(encoding="utf-8", errors="ignore")
             try:
                 ios_ssh = bool(re.search(r"\bip\s+ssh\b", raw, re.IGNORECASE)) or \
-                          bool(re.search(r"line\s+vty[\s\S]*transport\s+input\s+ssh", raw, re.IGNORECASE))
+                    bool(
+                        re.search(r"line\s+vty[\s\S]*transport\s+input\s+ssh", raw, re.IGNORECASE))
                 if ios_ssh:
                     f.setdefault("security", {}).setdefault("ssh", {})
                     if not f["security"]["ssh"].get("present", False):
@@ -396,11 +443,13 @@ def main():
     args = ap.parse_args()
 
     in_dir = Path(args.in_dir)
-    xmls = sorted([p for p in in_dir.iterdir() if p.suffix.lower() == ".xml"], key=lambda x: x.name)
+    xmls = sorted([p for p in in_dir.iterdir() if p.suffix.lower()
+                  == ".xml"], key=lambda x: x.name)
     result = parse_files(xmls)
-    Path(args.out).write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
+    Path(args.out).write_text(json.dumps(
+        result, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"Wrote {args.out} (devices={len(result.get('devices', []))})")
 
 
 if __name__ == "__main__":
-    main() 
+    main()

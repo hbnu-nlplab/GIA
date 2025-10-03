@@ -1,0 +1,16 @@
+{
+  "timestamp": "2025-09-08T17:56:43.929581",
+  "call_type": "task_classification",
+  "model": "gpt-4o-mini",
+  "prompt": "system: You are an expert network engineering assistant with deep knowledge of network configurations, troubleshooting, and security best practices.\nuser: Question: 장비 'Router4'에서 VRF 설정이 누락된 것으로 보입니다. 이를 확인하기 위해 어떤 CLI 명령어를 순서대로 실행해야 합니까?\n\nInstruction: \n    You are an excellent network engineering assistant. Classify the question into ONE of these categories:\n\n    1. Simple Lookup Tasks\n    2. Other Tasks\n\n    IMPORTANT: Return ONLY the exact category name.\n    ",
+  "response": "1. Simple Lookup Tasks",
+  "metadata": {
+    "model": "gpt-4o-mini",
+    "temperature": 0.05,
+    "prompt_tokens": 67,
+    "response_tokens": 4,
+    "multi_key_mode": true,
+    "total_api_calls": 800
+  },
+  "question_id": 800
+}

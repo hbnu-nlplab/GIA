@@ -1,0 +1,16 @@
+{
+  "timestamp": "2025-09-08T17:34:18.830661",
+  "call_type": "task_classification",
+  "model": "gpt-4o-mini",
+  "prompt": "system: You are an expert network engineering assistant with deep knowledge of network configurations, troubleshooting, and security best practices.\nuser: Question: sample10 장비의 관리용 IP 주소는 무엇입니까?\n\nInstruction: \n    You are an excellent network engineering assistant. Classify the question into ONE of these categories:\n\n    1. Simple Lookup Tasks\n    2. Other Tasks\n\n    IMPORTANT: Return ONLY the exact category name.\n    ",
+  "response": "Simple Lookup Tasks",
+  "metadata": {
+    "model": "gpt-4o-mini",
+    "temperature": 0.05,
+    "prompt_tokens": 57,
+    "response_tokens": 3,
+    "multi_key_mode": true,
+    "total_api_calls": 646
+  },
+  "question_id": 646
+}

@@ -1,0 +1,16 @@
+{
+  "timestamp": "2025-09-08T12:16:31.270779",
+  "call_type": "task_classification",
+  "model": "gpt-4o-mini",
+  "prompt": "system: You are an expert network engineering assistant with deep knowledge of network configurations, troubleshooting, and security best practices.\nuser: Question: sample7 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?\n\nInstruction: \n    You are an excellent network engineering assistant. Classify the question into ONE of these categories:\n\n    1. Simple Lookup Tasks\n    2. Other Tasks\n\n    IMPORTANT: Return ONLY the exact category name.\n    ",
+  "response": "Simple Lookup Tasks",
+  "metadata": {
+    "model": "gpt-4o-mini",
+    "temperature": 0.05,
+    "prompt_tokens": 61,
+    "response_tokens": 3,
+    "multi_key_mode": true,
+    "total_api_calls": 107
+  },
+  "question_id": 107
+}

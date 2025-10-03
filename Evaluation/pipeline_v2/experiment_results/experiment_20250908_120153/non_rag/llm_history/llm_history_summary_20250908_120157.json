@@ -1,0 +1,15 @@
+{
+  "total_calls": 568,
+  "call_types": [
+    "task_classification"
+  ],
+  "statistics": {
+    "task_classification": {
+      "count": 568,
+      "total_prompt_length": 247308,
+      "total_response_length": 10836
+    }
+  },
+  "first_call": "2025-09-08T12:01:58.486655",
+  "last_call": "2025-09-08T13:23:19.826862"
+}

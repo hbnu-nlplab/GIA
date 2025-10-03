@@ -1,0 +1,12 @@
+{
+  "experiment_name": "non_rag_experiment",
+  "timestamp": "20250908_105208",
+  "total_llm_calls": 3,
+  "directories": {
+    "base": "Network-Management-System-main/pipeline_v2/experiment_results/experiment_20250908_105204/non_rag",
+    "logs": "Network-Management-System-main/pipeline_v2/experiment_results/experiment_20250908_105204/non_rag/logs",
+    "results": "Network-Management-System-main/pipeline_v2/experiment_results/experiment_20250908_105204/non_rag/results",
+    "llm_history": "Network-Management-System-main/pipeline_v2/experiment_results/experiment_20250908_105204/non_rag/llm_history",
+    "console": "Network-Management-System-main/pipeline_v2/experiment_results/experiment_20250908_105204/non_rag/console_output"
+  }
+}

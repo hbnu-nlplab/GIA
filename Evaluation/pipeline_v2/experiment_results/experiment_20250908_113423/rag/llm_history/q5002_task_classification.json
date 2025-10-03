@@ -1,0 +1,16 @@
+{
+  "timestamp": "2025-09-08T11:48:21.653269",
+  "call_type": "task_classification",
+  "model": "gpt-4o-mini",
+  "prompt": "system: You are an expert network engineering assistant with deep knowledge of network configurations, troubleshooting, and security best practices.\nuser: Question: SSH 접속이 불가능한 장비는 총 몇 대입니까?\nInstruction: \n    Classify the question into ONE category:\n    1) Simple Lookup Tasks\n    2) Other Tasks\n    Return only the category name.\n    ",
+  "response": "1) Simple Lookup Tasks",
+  "metadata": {
+    "model": "gpt-4o-mini",
+    "temperature": 0.05,
+    "prompt_tokens": 47,
+    "response_tokens": 4,
+    "multi_key_mode": true,
+    "total_api_calls": 12
+  },
+  "question_id": 5002
+}
