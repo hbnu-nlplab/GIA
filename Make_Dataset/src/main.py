@@ -156,9 +156,15 @@ def main():
         help='train/val/test 분할 시 항목을 무작위로 섞습니다 (기본: 정렬 순서 유지)'
     )
 
-    # 생성 옵션 (참고: 향상 수는 현재 무의미. 전부 규칙 기반 동일 로직으로 생성)
+    # 생성 옵션
     parser.add_argument('--basic-per-category', type=int, default=0, help='카테고리당 최대 질문 수 제한(0=무제한)')
     parser.add_argument('--verbose', action='store_true', help='상세 출력')
+    
+    # L1 샘플링 옵션
+    parser.add_argument('--l1-sample-ratio', type=float, default=0.3,
+        help='L1 메트릭에서 샘플링할 장비 비율 (0.0-1.0, 기본: 0.3)')
+    parser.add_argument('--seed', type=int, default=42,
+        help='랜덤 시드 (재현성 보장, 기본: 42)')
 
     args = parser.parse_args()
 
@@ -169,9 +175,11 @@ def main():
     print("=" * 70)
     print("🚀 네트워크 Q&A 데이터셋 생성 (규칙 기반)")
     print("=" * 70)
-    print(f"  • XML 디렉토리: {args.xml_dir}")
-    print(f"  • 카테고리: {', '.join(target_categories)}")
-    print(f"  • 출력 디렉토리: {args.output_dir}")
+    print(f"  * XML directory: {args.xml_dir}")
+    print(f"  * Categories: {', '.join(target_categories)}")
+    print(f"  * Output directory: {args.output_dir}")
+    print(f"  * L1 sample ratio: {args.l1_sample_ratio}")
+    print(f"  * Random seed: {args.seed}")
     print("-" * 70)
 
     try:
@@ -200,7 +208,14 @@ def main():
 
         # 3) DSL → 질문/정답 확장 (BuilderCore)
         core = BuilderCore(facts.get("devices", []))
-        by_cat = core.expand_from_dsl(dsl)
+        by_cat = core.expand_from_dsl(
+            dsl, 
+            l1_sample_ratio=args.l1_sample_ratio,
+            seed=args.seed
+        )
+        if args.verbose:
+            print(f"[DEBUG] L1 sample ratio: {args.l1_sample_ratio}")
+            print(f"[DEBUG] Random seed: {args.seed}")
 
         # 4) 후처리: ground_truth/explanation/id 재구성
         per_cat: Dict[str, List[Dict[str, Any]]] = {}

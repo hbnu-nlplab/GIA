@@ -1,5 +1,13 @@
 {
-    "version": "1.1",
+    "version": "2.0",
+    "description": "네트워크 설정 검증 메트릭 정책 - L1~L5 레벨 체계",
+    "level_definitions": {
+        "L1": "단일 장비 설정값 조회 (Single Device Query)",
+        "L2": "복수 장비 설정값 집계 (Multi-Device Aggregation)",
+        "L3": "복수 장비 + 계산/검증 (Multi-Device + Computation)",
+        "L4": "네트워크 흐름 도달성 - Batfish (Reachability Analysis)",
+        "L5": "What-If / Differential 분석 - Batfish (Impact Analysis)"
+    },
     "defaults": {
         "scenarios": [
             "보안 설정 점검",
@@ -7,234 +15,125 @@
             "VRF/RT 구성 확인",
             "L2VPN 일관성 확인",
             "OSPF 영역/이웃 가시성 확인",
-            "시스템/접속 기본 정보 점검",
-            "명령어 사용/생성 학습"
-        ],
-        "min_per_category": 15
+            "시스템/접속 기본 정보 점검"
+        ]
+
     },
     "policies": [
         {
-            "category": "Security_Policy",
-            "levels": {
-                "1": [
-                    {
-                        "goal": "validity",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "ssh_enabled_devices"
-                    },
-                    {
-                        "goal": "visibility",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "aaa_enabled_devices"
-                    }
-                ],
-                "2": [
-                    {
-                        "goal": "completeness",
-                        "targets": [
-                            "GLOBAL"
-                        ],
-                        "primary_metric": "ssh_missing_devices"
-                    },
-                    {
-                        "goal": "compliance",
-                        "targets": [
-                            "GLOBAL"
-                        ],
-                        "conditions": {
-                            "ssh.present": true
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "category": "BGP_Consistency",
-            "levels": {
-                "1": [
-                    {
-                        "goal": "visibility",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "neighbor_list_ibgp"
-                    }
-                ],
-                "2": [
-                    {
-                        "goal": "consistency",
-                        "targets": [
-                            "AS"
-                        ],
-                        "primary_metric": "ibgp_missing_pairs"
-                    },
-                    {
-                        "goal": "completeness",
-                        "targets": [
-                            "AS"
-                        ]
-                    }
-                ]
-            }
-        },
-        {
-            "category": "VRF_Consistency",
-            "levels": {
-                "1": [
-                    {
-                        "goal": "visibility",
-                        "targets": [
-                            "VRF"
-                        ],
-                        "primary_metric": "vrf_rd_map"
-                    }
-                ],
-                "2": [
-                    {
-                        "goal": "completeness",
-                        "targets": [
-                            "GLOBAL"
-                        ],
-                        "primary_metric": "vrf_without_rt_pairs"
-                    },
-                    {
-                        "goal": "consistency",
-                        "targets": [
-                            "DEVICE_VRF"
-                        ]
-                    }
-                ]
-            }
-        },
-        {
-            "category": "L2VPN_Consistency",
-            "levels": {
-                "1": [
-                    {
-                        "goal": "visibility",
-                        "targets": [
-                            "GLOBAL"
-                        ],
-                        "primary_metric": "l2vpn_pairs"
-                    }
-                ],
-                "2": [
-                    {
-                        "goal": "consistency",
-                        "targets": [
-                            "GLOBAL"
-                        ],
-                        "primary_metric": "l2vpn_unidirectional_pairs"
-                    }
-                ]
-            }
-        },
-        {
-            "category": "OSPF_Consistency",
-            "levels": {
-                "1": [
-                    {
-                        "goal": "visibility",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "ospf_area0_if_list"
-                    }
-                ],
-                "2": [
-                    {
-                        "goal": "consistency",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "ospf_area0_if_count"
-                    }
-                ]
-            }
-        },
-        {
             "category": "System_Inventory",
+            "description": "시스템 기본 정보 조회",
             "levels": {
-                "1": [
+                "L1": [
                     {
                         "goal": "extraction",
-                        "targets": [
-                            "DEVICE"
-                        ],
+                        "targets": ["DEVICE"],
                         "primary_metric": "system_hostname_text"
                     },
                     {
                         "goal": "extraction",
-                        "targets": [
-                            "DEVICE"
-                        ],
+                        "targets": ["DEVICE"],
                         "primary_metric": "system_version_text"
                     },
                     {
                         "goal": "extraction",
-                        "targets": [
-                            "DEVICE"
-                        ],
+                        "targets": ["DEVICE"],
+                        "primary_metric": "system_timezone_text"
+                    },
+                    {
+                        "goal": "extraction",
+                        "targets": ["DEVICE"],
+                        "primary_metric": "system_user_list"
+                    },
+                    {
+                        "goal": "extraction",
+                        "targets": ["DEVICE"],
                         "primary_metric": "system_user_count"
+                    },
+                    {
+                        "goal": "extraction",
+                        "targets": ["DEVICE"],
+                        "primary_metric": "logging_buffered_severity_text"
+                    },
+                    {
+                        "goal": "extraction",
+                        "targets": ["DEVICE"],
+                        "primary_metric": "ntp_server_list",
+                        "notes": "NTP 서버 설정 확인"
+                    },
+                    {
+                        "goal": "extraction",
+                        "targets": ["DEVICE"],
+                        "primary_metric": "snmp_community_list",
+                        "notes": "SNMP 커뮤니티 목록"
+                    },
+                    {
+                        "goal": "extraction",
+                        "targets": ["DEVICE"],
+                        "primary_metric": "syslog_server_list",
+                        "notes": "Syslog 서버 목록"
                     }
                 ]
             }
         },
         {
             "category": "Security_Inventory",
+            "description": "보안 설정 정보 조회",
             "levels": {
-                "1": [
+                "L1": [
                     {
                         "goal": "extraction",
-                        "targets": [
-                            "DEVICE"
-                        ],
+                        "targets": ["DEVICE"],
                         "primary_metric": "ssh_present_bool"
                     },
                     {
                         "goal": "extraction",
-                        "targets": [
-                            "DEVICE"
-                        ],
+                        "targets": ["DEVICE"],
                         "primary_metric": "ssh_version_text"
                     },
                     {
                         "goal": "extraction",
-                        "targets": [
-                            "DEVICE"
-                        ],
+                        "targets": ["DEVICE"],
                         "primary_metric": "aaa_present_bool"
+                    },
+                    {
+                        "goal": "extraction",
+                        "targets": ["DEVICE"],
+                        "primary_metric": "vty_transport_input_text",
+                        "notes": "VTY 접속 프로토콜 확인 (SSH/Telnet)"
+                    },
+                    {
+                        "goal": "extraction",
+                        "targets": ["DEVICE"],
+                        "primary_metric": "vty_login_mode_text",
+                        "notes": "VTY 인증 방식 확인"
                     }
                 ]
             }
         },
         {
             "category": "Interface_Inventory",
+            "description": "인터페이스 정보 조회",
             "levels": {
-                "1": [
+                "L1": [
                     {
                         "goal": "extraction",
-                        "targets": [
-                            "DEVICE"
-                        ],
+                        "targets": ["DEVICE"],
                         "primary_metric": "interface_count"
                     },
                     {
                         "goal": "extraction",
-                        "targets": [
-                            "DEVICE"
-                        ],
+                        "targets": ["DEVICE"],
                         "primary_metric": "interface_ip_map"
                     },
                     {
                         "goal": "extraction",
-                        "targets": [
-                            "DEVICE"
-                        ],
+                        "targets": ["DEVICE"],
+                        "primary_metric": "subinterface_count"
+                    },
+                    {
+                        "goal": "extraction",
+                        "targets": ["DEVICE"],
                         "primary_metric": "vrf_bind_map"
                     }
                 ]
@@ -242,529 +141,348 @@
         },
         {
             "category": "Routing_Inventory",
+            "description": "라우팅 정보 조회",
             "levels": {
-                "1": [
+                "L1": [
                     {
                         "goal": "extraction",
-                        "targets": [
-                            "DEVICE"
-                        ],
+                        "targets": ["DEVICE"],
                         "primary_metric": "bgp_local_as_numeric"
                     },
                     {
                         "goal": "extraction",
-                        "targets": [
-                            "DEVICE"
-                        ],
+                        "targets": ["DEVICE"],
                         "primary_metric": "bgp_neighbor_count"
                     },
                     {
                         "goal": "extraction",
-                        "targets": [
-                            "DEVICE"
-                        ],
+                        "targets": ["DEVICE"],
+                        "primary_metric": "neighbor_list_ibgp"
+                    },
+                    {
+                        "goal": "extraction",
+                        "targets": ["DEVICE"],
+                        "primary_metric": "neighbor_list_ebgp"
+                    },
+                    {
+                        "goal": "extraction",
+                        "targets": ["DEVICE"],
                         "primary_metric": "ospf_process_ids_set"
+                    },
+                    {
+                        "goal": "extraction",
+                        "targets": ["DEVICE"],
+                        "primary_metric": "ospf_area_set"
+                    },
+                    {
+                        "goal": "extraction",
+                        "targets": ["DEVICE"],
+                        "primary_metric": "ospf_area0_if_list"
                     }
                 ]
             }
         },
         {
             "category": "Services_Inventory",
+            "description": "서비스 설정 정보 조회",
             "levels": {
-                "1": [
+                "L1": [
                     {
                         "goal": "extraction",
-                        "targets": [
-                            "DEVICE"
-                        ],
+                        "targets": ["DEVICE"],
                         "primary_metric": "vrf_names_set"
                     },
                     {
                         "goal": "extraction",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "vrf_rd_map"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "mpls_ldp_present_bool"
-                    }
-                ]
-            }
-        },
-        {
-            "category": "Security_Policy",
-            "levels": {
-                "2": [
-                    {
-                        "goal": "completeness",
-                        "targets": [
-                            "GLOBAL"
-                        ],
-                        "primary_metric": "ssh_missing_count"
-                    },
-                    {
-                        "goal": "compliance",
-                        "targets": [
-                            "GLOBAL"
-                        ],
-                        "primary_metric": "aaa_missing_devices"
-                    }
-                ]
-            }
-        },
-        {
-            "category": "BGP_Consistency",
-            "levels": {
-                "1": [
-                    {
-                        "goal": "visibility",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "neighbor_list_ebgp"
-                    }
-                ],
-                "2": [
-                    {
-                        "goal": "consistency",
-                        "targets": [
-                            "AS"
-                        ],
-                        "primary_metric": "ibgp_under_peered_devices"
-                    }
-                ]
-            }
-        },
-        {
-            "category": "VRF_Consistency",
-            "levels": {
-                "1": [
-                    {
-                        "goal": "visibility",
-                        "targets": [
-                            "DEVICE_VRF"
-                        ],
-                        "primary_metric": "vrf_rt_list_per_device"
-                    }
-                ],
-                "2": [
-                    {
-                        "goal": "consistency",
-                        "targets": [
-                            "DEVICE_VRF"
-                        ],
-                        "primary_metric": "vrf_interface_bind_count"
-                    },
-                    {
-                        "goal": "consistency",
-                        "targets": [
-                            "GLOBAL"
-                        ],
-                        "primary_metric": "vrf_rd_format_invalid_set"
-                    }
-                ]
-            }
-        },
-        {
-            "category": "L2VPN_Consistency",
-            "levels": {
-                "2": [
-                    {
-                        "goal": "consistency",
-                        "targets": [
-                            "GLOBAL"
-                        ],
-                        "primary_metric": "l2vpn_pwid_mismatch_pairs"
-                    },
-                    {
-                        "goal": "consistency",
-                        "targets": [
-                            "GLOBAL"
-                        ],
-                        "primary_metric": "l2vpn_mismatch_count"
-                    },
-                    {
-                        "goal": "consistency",
-                        "targets": [
-                            "GLOBAL"
-                        ],
-                        "primary_metric": "l2vpn_unidir_count"
-                    }
-                ]
-            }
-        },
-        {
-            "category": "OSPF_Consistency",
-            "levels": {
-                "1": [
-                    {
-                        "goal": "visibility",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "ospf_proc_ids"
-                    }
-                ]
-            }
-        },
-        {
-            "category": "System_Inventory",
-            "levels": {
-                "1": [
-                    {
-                        "goal": "extraction",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "system_user_list"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "system_timezone_text"
-                    }
-                ]
-            }
-        },
-        {
-            "category": "Security_Inventory",
-            "levels": {
-                "1": [
-                    {
-                        "goal": "extraction",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "password_policy_present_bool"
-                    }
-                ]
-            }
-        },
-        {
-            "category": "Interface_Inventory",
-            "levels": {
-                "1": [
-                    {
-                        "goal": "extraction",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "interface_vlan_set"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "subinterface_count"
-                    }
-                ]
-            }
-        },
-        {
-            "category": "Routing_Inventory",
-            "levels": {
-                "1": [
-                    {
-                        "goal": "extraction",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "ospf_area_set"
-                    }
-                ]
-            }
-        },
-        {
-            "category": "Services_Inventory",
-            "levels": {
-                "1": [
-                    {
-                        "goal": "extraction",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "rt_import_count"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "rt_export_count"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": [
-                            "DEVICE"
-                        ],
+                        "targets": ["DEVICE"],
                         "primary_metric": "vrf_count"
                     },
                     {
                         "goal": "extraction",
-                        "targets": [
-                            "DEVICE"
-                        ],
+                        "targets": ["DEVICE"],
+                        "primary_metric": "vrf_rd_map"
+                    },
+                    {
+                        "goal": "extraction",
+                        "targets": ["DEVICE"],
+                        "primary_metric": "rt_import_count"
+                    },
+                    {
+                        "goal": "extraction",
+                        "targets": ["DEVICE"],
+                        "primary_metric": "rt_export_count"
+                    },
+                    {
+                        "goal": "extraction",
+                        "targets": ["DEVICE"],
+                        "primary_metric": "mpls_ldp_present_bool"
+                    },
+                    {
+                        "goal": "extraction",
+                        "targets": ["DEVICE"],
                         "primary_metric": "l2vpn_pw_id_set"
                     }
                 ]
             }
         },
         {
-            "category": "Basic_Info",
+            "category": "Security_Policy",
+            "description": "보안 정책 준수 검증",
             "levels": {
-                "1": [
+                "L2": [
                     {
-                        "goal": "sanity",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "system_hostname_text"
+                        "goal": "compliance",
+                        "targets": ["GLOBAL"],
+                        "primary_metric": "ssh_enabled_devices"
                     },
                     {
-                        "goal": "sanity",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "system_mgmt_address_text"
+                        "goal": "compliance",
+                        "targets": ["GLOBAL"],
+                        "primary_metric": "ssh_missing_devices"
                     },
                     {
-                        "goal": "sanity",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "system_version_text"
+                        "goal": "compliance",
+                        "targets": ["GLOBAL"],
+                        "primary_metric": "ssh_missing_count"
                     },
                     {
-                        "goal": "sanity",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "ios_config_register_text"
+                        "goal": "compliance",
+                        "targets": ["GLOBAL"],
+                        "primary_metric": "aaa_enabled_devices"
                     },
                     {
-                        "goal": "sanity",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "logging_buffered_severity_text"
+                        "goal": "compliance",
+                        "targets": ["GLOBAL"],
+                        "primary_metric": "aaa_missing_devices"
                     },
                     {
-                        "goal": "sanity",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "http_server_enabled_bool"
-                    },
-                    {
-                        "goal": "sanity",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "ip_forward_protocol_nd_bool"
-                    },
-                    {
-                        "goal": "sanity",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "ip_cef_enabled_bool"
-                    },
-                    {
-                        "goal": "sanity",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "vty_first_last_text"
-                    },
-                    {
-                        "goal": "sanity",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "vty_login_mode_text"
-                    },
-                    {
-                        "goal": "sanity",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "vty_password_secret_text"
-                    },
-                    {
-                        "goal": "sanity",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "vty_transport_input_text"
-                    },
-                    {
-                        "goal": "sanity",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "system_users_detail_map"
-                    }
-                ],
-                "2": [
-                    {
-                        "goal": "interface",
-                        "targets": [
-                            "DEVICE_IF"
-                        ],
-                        "primary_metric": "interface_mop_xenabled_bool"
+                        "goal": "compliance",
+                        "targets": ["GLOBAL"],
+                        "primary_metric": "devices_with_same_vrf",
+                        "notes": "동일 VRF를 사용하는 장비 그룹"
                     }
                 ]
             }
         },
         {
-            "category": "Command_Generation",
+            "category": "OSPF_Consistency",
+            "description": "OSPF 구성 일관성 검증",
             "levels": {
-                "1": [
+                "L2": [
                     {
-                        "goal": "show_commands",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "cmd_show_bgp_summary",
-                        "notes": "BGP 상태 확인 명령어"
+                        "goal": "consistency",
+                        "targets": ["GLOBAL"],
+                        "primary_metric": "ospf_area_membership",
+                        "notes": "특정 OSPF Area에 속한 장비 목록"
                     },
                     {
-                        "goal": "show_commands",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "cmd_show_ip_interface_brief",
-                        "notes": "인터페이스 상태 확인 명령어"
+                        "goal": "consistency",
+                        "targets": ["DEVICE"],
+                        "primary_metric": "ospf_area0_if_count"
+                    }
+                ]
+            }
+        },
+        {
+            "category": "BGP_Consistency",
+            "description": "BGP 구성 일관성 검증",
+            "levels": {
+                "L3": [
+                    {
+                        "goal": "consistency",
+                        "targets": ["AS"],
+                        "primary_metric": "ibgp_fullmesh_ok"
                     },
                     {
-                        "goal": "show_commands",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "cmd_show_ip_route_ospf",
-                        "notes": "OSPF 라우팅 정보 확인 명령어"
+                        "goal": "consistency",
+                        "targets": ["AS"],
+                        "primary_metric": "ibgp_missing_pairs"
                     },
                     {
-                        "goal": "show_commands",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "cmd_show_ip_ospf_neighbor",
-                        "notes": "OSPF 이웃 상태 확인 명령어"
+                        "goal": "consistency",
+                        "targets": ["AS"],
+                        "primary_metric": "ibgp_missing_pairs_count"
                     },
                     {
-                        "goal": "show_commands",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "cmd_show_users",
-                        "notes": "접속 사용자 확인 명령어"
+                        "goal": "consistency",
+                        "targets": ["AS"],
+                        "primary_metric": "ibgp_under_peered_devices"
                     },
                     {
-                        "goal": "show_commands",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "cmd_show_logging",
-                        "notes": "로그 확인 명령어"
+                        "goal": "consistency",
+                        "targets": ["AS"],
+                        "primary_metric": "ibgp_under_peered_count"
+                    }
+                ]
+            }
+        },
+        {
+            "category": "VRF_Consistency",
+            "description": "VRF 구성 일관성 검증",
+            "levels": {
+                "L3": [
+                    {
+                        "goal": "consistency",
+                        "targets": ["GLOBAL"],
+                        "primary_metric": "vrf_without_rt_pairs"
+                    },
+                    {
+                        "goal": "consistency",
+                        "targets": ["GLOBAL"],
+                        "primary_metric": "vrf_without_rt_count"
+                    },
+                    {
+                        "goal": "consistency",
+                        "targets": ["DEVICE_VRF"],
+                        "primary_metric": "vrf_interface_bind_count"
+                    },
+                    {
+                        "goal": "consistency",
+                        "targets": ["DEVICE"],
+                        "primary_metric": "vrf_rt_list_per_device"
+                    }
+                ]
+            }
+        },
+        {
+            "category": "L2VPN_Consistency",
+            "description": "L2VPN 구성 일관성 검증",
+            "levels": {
+                "L2": [
+                    {
+                        "goal": "visibility",
+                        "targets": ["GLOBAL"],
+                        "primary_metric": "l2vpn_pairs"
                     }
                 ],
-                "2": [
+                "L3": [
                     {
-                        "goal": "config_commands",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "cmd_set_static_route",
-                        "notes": "정적 라우팅 설정 명령어"
+                        "goal": "consistency",
+                        "targets": ["GLOBAL"],
+                        "primary_metric": "l2vpn_unidirectional_pairs"
                     },
                     {
-                        "goal": "config_commands",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "cmd_set_bgp_routemap",
-                        "notes": "BGP 라우트맵 설정 명령어"
+                        "goal": "consistency",
+                        "targets": ["GLOBAL"],
+                        "primary_metric": "l2vpn_unidir_count"
                     },
                     {
-                        "goal": "config_commands",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "cmd_set_interface_description",
-                        "notes": "인터페이스 설명 설정 명령어"
+                        "goal": "consistency",
+                        "targets": ["GLOBAL"],
+                        "primary_metric": "l2vpn_pwid_mismatch_pairs"
                     },
                     {
-                        "goal": "config_commands",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "cmd_create_vrf_and_assign",
-                        "notes": "VRF 생성 및 할당 명령어"
+                        "goal": "consistency",
+                        "targets": ["GLOBAL"],
+                        "primary_metric": "l2vpn_mismatch_count"
+                    }
+                ]
+            }
+        },
+        {
+            "category": "Comparison_Analysis",
+            "description": "장비 간 설정 비교 분석",
+            "levels": {
+                "L3": [
+                    {
+                        "goal": "comparison",
+                        "targets": ["DEVICE_PAIR"],
+                        "primary_metric": "compare_bgp_neighbor_count",
+                        "notes": "두 장비의 BGP 피어 수 비교"
                     },
                     {
-                        "goal": "config_commands",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "cmd_set_ospf_cost",
-                        "notes": "OSPF 비용 설정 명령어"
+                        "goal": "comparison",
+                        "targets": ["DEVICE_PAIR"],
+                        "primary_metric": "compare_interface_count",
+                        "notes": "두 장비의 인터페이스 수 비교"
                     },
                     {
-                        "goal": "config_commands",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "cmd_set_vty_acl",
-                        "notes": "VTY ACL 설정 명령어"
+                        "goal": "comparison",
+                        "targets": ["DEVICE_PAIR"],
+                        "primary_metric": "compare_vrf_count",
+                        "notes": "두 장비의 VRF 수 비교"
                     },
                     {
-                        "goal": "config_commands",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "cmd_set_hostname",
-                        "notes": "호스트네임 설정 명령어"
+                        "goal": "comparison",
+                        "targets": ["DEVICE_PAIR"],
+                        "primary_metric": "compare_bgp_as",
+                        "notes": "두 장비가 같은 AS에 속하는지 확인"
                     },
                     {
-                        "goal": "show_commands",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "cmd_show_processes_cpu",
-                        "notes": "CPU 프로세스 확인 명령어"
+                        "goal": "comparison",
+                        "targets": ["DEVICE_PAIR"],
+                        "primary_metric": "compare_ospf_areas",
+                        "notes": "두 장비의 OSPF Area 참여 비교"
                     },
                     {
-                        "goal": "show_commands",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "cmd_show_l2vpn_vc",
-                        "notes": "L2VPN VC 상태 확인 명령어"
+                        "goal": "aggregation",
+                        "targets": ["GLOBAL"],
+                        "primary_metric": "max_interface_device",
+                        "notes": "인터페이스 수가 가장 많은 장비"
                     },
                     {
-                        "goal": "ssh_commands",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "cmd_ssh_direct_access",
-                        "notes": "SSH 직접 접속 명령어"
+                        "goal": "aggregation",
+                        "targets": ["GLOBAL"],
+                        "primary_metric": "max_bgp_peer_device",
+                        "notes": "BGP 피어가 가장 많은 장비"
                     },
                     {
-                        "goal": "ssh_commands",
-                        "targets": [
-                            "DEVICE"
-                        ],
-                        "primary_metric": "cmd_ssh_proxy_jump",
-                        "notes": "SSH 프록시 점프 명령어"
+                        "goal": "aggregation",
+                        "targets": ["GLOBAL"],
+                        "primary_metric": "all_devices_same_as",
+                        "notes": "모든 장비가 같은 AS에 속하는지 확인"
+                    }
+                ]
+            }
+        },
+        {
+            "category": "Reachability_Analysis",
+            "description": "네트워크 도달성 분석 (Batfish 필요)",
+            "levels": {
+                "L4": [
+                    {
+                        "goal": "reachability",
+                        "targets": ["FLOW"],
+                        "primary_metric": "traceroute_path",
+                        "notes": "Batfish bf.q.traceroute() 사용"
+                    },
+                    {
+                        "goal": "reachability",
+                        "targets": ["FLOW"],
+                        "primary_metric": "reachability_status",
+                        "notes": "Batfish bf.q.reachability() 사용"
+                    },
+                    {
+                        "goal": "reachability",
+                        "targets": ["FLOW"],
+                        "primary_metric": "acl_blocking_point",
+                        "notes": "ACL에 의한 트래픽 차단 지점 식별"
+                    }
+                ]
+            }
+        },
+        {
+            "category": "What_If_Analysis",
+            "description": "What-If / Differential 분석 (Batfish 필요)",
+            "levels": {
+                "L5": [
+                    {
+                        "goal": "what_if",
+                        "targets": ["LINK_FAILURE"],
+                        "primary_metric": "link_failure_impact",
+                        "notes": "Batfish differentialReachability 사용"
+                    },
+                    {
+                        "goal": "differential",
+                        "targets": ["CONFIG_CHANGE"],
+                        "primary_metric": "config_change_impact",
+                        "notes": "설정 변경 전후 비교 분석"
+                    },
+                    {
+                        "goal": "compliance",
+                        "targets": ["POLICY"],
+                        "primary_metric": "policy_compliance_check",
+                        "notes": "네트워크 정책 준수 검증"
                     }
                 ]
             }
