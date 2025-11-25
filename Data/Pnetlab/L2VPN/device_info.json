@@ -1,0 +1,24 @@
+{
+    "global_settings": {
+        "pnetlab_vm_ip": "100.66.240.82",
+        "gateway_ip": "10.10.10.1",
+        "enable_password": "123",
+        "admin_password": "123",
+        "domain_name": "mylab.local",
+        "nso_authgroup": "L2VPN",
+        "nso_ned_id": "cisco-ios-cli-6.110",
+        "batfish_output_dir": "./pnetlab_snapshot"
+    },
+    "devices": [
+        {
+            "name": "CE01",
+            "oob_ip": "10.10.10.101",
+            "telnet_port": 30031
+        },
+        {
+            "name": "CE02",
+            "oob_ip": "10.10.10.102",
+            "telnet_port": 30032
+        }
+    ]
+}
