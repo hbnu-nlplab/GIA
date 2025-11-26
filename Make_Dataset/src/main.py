@@ -20,6 +20,13 @@ from core.parser import UniversalParser
 from core.rule_based_generator import RuleBasedGenerator, RuleBasedGeneratorConfig
 from core.builder_core import BuilderCore
 
+# Batfish 엔진 (선택적)
+try:
+    from core.batfish_builder import BatfishBuilder, BATFISH_AVAILABLE
+except ImportError:
+    BATFISH_AVAILABLE = False
+    BatfishBuilder = None
+
 
 def _get_all_categories(policies_path: str) -> List[str]:
     """policies.json에서 모든 카테고리 추출"""
@@ -143,12 +150,12 @@ def main():
     )
 
     # 기본 인자
-    parser.add_argument('--xml-dir', default='data/raw/XML_Data', help='네트워크 설정 XML 파일 디렉토리')
+    parser.add_argument('--xml-dir', default='Data/Pnetlab/L2VPN/xml', help='네트워크 설정 XML 파일 디렉토리')
     # 스크립트 위치 기준 기본 경로 설정
     default_policies = str((Path(__file__).resolve().parents[1] / 'policies.json'))
     parser.add_argument('--policies', default=default_policies, help='정책 파일 경로 (JSON)')
     parser.add_argument('--categories', nargs='+', help='생성할 카테고리 목록 (미지정 시 policies.json 전체)')
-    parser.add_argument('--output-dir', default='output/logic_only', help='출력 디렉토리')
+    parser.add_argument('--output-dir', default=f'output/logic_only_{datetime.now().strftime("%Y%m%d_%H%M%S")}', help='출력 디렉토리')
     parser.add_argument('--no-split', action='store_true', help='train/val/test 분할 없이 단일 리스트로 저장')
     parser.add_argument(
         '--shuffle',
@@ -161,10 +168,18 @@ def main():
     parser.add_argument('--verbose', action='store_true', help='상세 출력')
     
     # L1 샘플링 옵션
-    parser.add_argument('--l1-sample-ratio', type=float, default=0.3,
-        help='L1 메트릭에서 샘플링할 장비 비율 (0.0-1.0, 기본: 0.3)')
+    parser.add_argument('--l1-sample-ratio', type=float, default=0.9,
+        help='L1 메트릭에서 샘플링할 장비 비율 (0.0-1.0, 기본: 0.9)')
     parser.add_argument('--seed', type=int, default=42,
         help='랜덤 시드 (재현성 보장, 기본: 42)')
+    
+    # Batfish 엔진 옵션 (L4/L5)
+    parser.add_argument('--enable-batfish', action='store_true',
+        help='Batfish 엔진 활성화 (L4/L5 문제 생성)')
+    parser.add_argument('--batfish-host', default='localhost',
+        help='Batfish 서버 호스트 (기본: localhost)')
+    parser.add_argument('--snapshot-path', default='',
+        help='Batfish 스냅샷 경로 (configs/ 폴더 포함)')
 
     args = parser.parse_args()
 
@@ -173,13 +188,18 @@ def main():
     target_categories = args.categories or all_categories
 
     print("=" * 70)
-    print("🚀 네트워크 Q&A 데이터셋 생성 (규칙 기반)")
+    print("[START] Network Q&A Dataset Generation (Rule-based)")
     print("=" * 70)
     print(f"  * XML directory: {args.xml_dir}")
     print(f"  * Categories: {', '.join(target_categories)}")
     print(f"  * Output directory: {args.output_dir}")
     print(f"  * L1 sample ratio: {args.l1_sample_ratio}")
     print(f"  * Random seed: {args.seed}")
+    if args.enable_batfish:
+        print(f"  * Batfish: ENABLED (host={args.batfish_host})")
+        print(f"  * Snapshot path: {args.snapshot_path or 'auto-detect'}")
+    else:
+        print(f"  * Batfish: disabled (L4/L5 skipped)")
     print("-" * 70)
 
     try:
@@ -283,6 +303,60 @@ def main():
                 keep = keep[: args.basic_per_category]
             per_cat[cat] = keep
 
+        # 4.5) Batfish L4/L5 문제 생성 (옵션)
+        batfish_questions: List[Dict[str, Any]] = []
+        if args.enable_batfish:
+            if not BATFISH_AVAILABLE:
+                print("[WARNING] pybatfish not installed. Skipping L4/L5 generation.")
+            else:
+                snapshot_path = args.snapshot_path
+                if not snapshot_path:
+                    # XML 디렉토리에서 스냅샷 경로 추론
+                    xml_parent = Path(args.xml_dir).parent
+                    possible_paths = [
+                        xml_parent / "configs",
+                        xml_parent / "snapshot",
+                        xml_parent.parent / "pnetlab_snapshot"
+                    ]
+                    for p in possible_paths:
+                        if p.exists():
+                            snapshot_path = str(p.parent if p.name == "configs" else p)
+                            break
+                
+                if snapshot_path:
+                    print(f"\n[Batfish] Initializing with snapshot: {snapshot_path}")
+                    try:
+                        bf_builder = BatfishBuilder(
+                            snapshot_path=snapshot_path,
+                            batfish_host=args.batfish_host
+                        )
+                        if bf_builder.initialize():
+                            print(f"[Batfish] Connected. Nodes: {bf_builder.nodes}")
+                            
+                            # L4 문제 생성
+                            l4_qs = bf_builder.generate_l4_questions()
+                            print(f"[Batfish] Generated {len(l4_qs)} L4 questions")
+                            
+                            # L5 문제 생성
+                            l5_qs = bf_builder.generate_l5_questions()
+                            print(f"[Batfish] Generated {len(l5_qs)} L5 questions")
+                            
+                            batfish_questions.extend(l4_qs)
+                            batfish_questions.extend(l5_qs)
+                            
+                            # per_cat에 추가
+                            for q in batfish_questions:
+                                cat = q.get("category", "Reachability_Analysis")
+                                if cat not in per_cat:
+                                    per_cat[cat] = []
+                                per_cat[cat].append(q)
+                        else:
+                            print("[Batfish] Failed to initialize. Check if Batfish server is running.")
+                    except Exception as e:
+                        print(f"[Batfish] Error: {e}")
+                else:
+                    print("[Batfish] No snapshot path found. Skipping L4/L5 generation.")
+
         # 5) 전체 플랫리스트로 통합 후 정렬 및 전역 중복 제거
         all_items: List[Dict[str, Any]] = []
         for cat in sorted(per_cat.keys()):
@@ -347,7 +421,7 @@ def main():
 
         # 요약 출력
         print("\n" + "=" * 70)
-        print("✅ 완료!")
+        print("[OK] Done!")
         print("=" * 70)
         print(f"  • 총 질문 수: {total_samples}개")
         if not args.no_split and isinstance(final_dataset, dict):

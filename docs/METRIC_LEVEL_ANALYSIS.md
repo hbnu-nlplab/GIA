@@ -150,23 +150,34 @@
 
 ---
 
-### 🔹 L4: 네트워크 도달성 분석 (Batfish) - 3개
+### 🔹 L4: 네트워크 도달성 분석 (Batfish) - 8개
 
-| 메트릭 | 타입 | 설명 | Batfish API |
-|--------|------|------|-------------|
-| `traceroute_path` | set | 네트워크 경로 | `bf.q.traceroute()` |
-| `reachability_status` | boolean | 도달 가능 여부 | `bf.q.reachability()` |
-| `acl_blocking_point` | text | ACL 차단 지점 | `bf.q.reachability()` |
+> **학술적 근거**: HSA (NSDI'12), VeriFlow (NSDI'13), Minesweeper (SIGCOMM'17), Config2Spec (NSDI'20)
+
+| 메트릭 | 타입 | 설명 | Batfish API | 출처 논문 |
+|--------|------|------|-------------|----------|
+| `traceroute_path` | set | 네트워크 경로 추적 | `bf.q.traceroute()` | Batfish |
+| `reachability_status` | boolean | A→B 도달 가능 여부 | `bf.q.reachability()` | HSA, VeriFlow |
+| `acl_blocking_point` | text | ACL 차단 지점 | `bf.q.reachability()` | HSA |
+| `loop_detection` | set | 포워딩 루프 탐지 | `bf.q.detectLoops()` | HSA, VeriFlow |
+| `blackhole_detection` | set | 블랙홀 탐지 | `bf.q.reachability()` | HSA, Minesweeper |
+| `waypoint_check` | boolean | 웨이포인트 통과 검증 | `bf.q.reachability()` + PathConstraints | Minesweeper, Config2Spec |
+| `bounded_path_length` | boolean | 경로 홉 수 제한 검증 | `bf.q.traceroute()` | Minesweeper |
+| `isolation_check` | boolean | VRF/테넌트 격리 검증 | `bf.q.routes()` | HSA, Config2Spec |
 
 ---
 
-### 🔹 L5: What-If / Differential 분석 (Batfish) - 3개
+### 🔹 L5: What-If / Differential 분석 (Batfish) - 5개
 
-| 메트릭 | 타입 | 설명 | Batfish API |
-|--------|------|------|-------------|
-| `link_failure_impact` | boolean | 링크 장애 영향 | `bf.q.differentialReachability()` |
-| `config_change_impact` | boolean | 설정 변경 영향 | `bf.q.differentialReachability()` |
-| `policy_compliance_check` | boolean | 정책 준수 검증 | `bf.q.searchFilters()` |
+> **학술적 근거**: DNA (NSDI'22), Minesweeper (SIGCOMM'17), Trailblazer (FM'23)
+
+| 메트릭 | 타입 | 설명 | Batfish API | 출처 논문 |
+|--------|------|------|-------------|----------|
+| `link_failure_impact` | boolean | 단일 링크 장애 영향 | `bf.q.differentialReachability()` | DNA, Minesweeper |
+| `k_failure_tolerance` | boolean | k개 장애 내성 검증 | `bf.q.traceroute()` + 다중경로 분석 | Minesweeper, Trailblazer |
+| `config_change_impact` | set | 설정 변경 영향 | `bf.q.differentialReachability()` | DNA |
+| `differential_reachability` | map | 변경 전후 도달성 차이 | `bf.q.differentialReachability()` | DNA |
+| `policy_compliance_check` | boolean | 정책 준수 검증 | `bf.q.reachability()` + PathConstraints | Config2Spec |
 
 ---
 

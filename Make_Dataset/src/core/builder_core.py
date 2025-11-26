@@ -897,10 +897,11 @@ class BuilderCore:
             d1 = self.host_index.get(host1)
             d2 = self.host_index.get(host2)
             if not d1 or not d2:
-                return "boolean", False
+                return "text", f"{host1}: 정보 없음, {host2}: 정보 없음, 차이: 계산 불가"
             cnt1 = len(self._bgp_neighbors(d1))
             cnt2 = len(self._bgp_neighbors(d2))
-            return "boolean", (cnt1 == cnt2)
+            diff = abs(cnt1 - cnt2)
+            return "text", f"{host1}: {cnt1}개, {host2}: {cnt2}개, 차이: {diff}개"
         
         elif metric == "compare_interface_count":
             host1 = scope.get("host1")
@@ -908,10 +909,11 @@ class BuilderCore:
             d1 = self.host_index.get(host1)
             d2 = self.host_index.get(host2)
             if not d1 or not d2:
-                return "boolean", False
+                return "text", f"{host1}: 정보 없음, {host2}: 정보 없음, 차이: 계산 불가"
             cnt1 = len(d1.get("interfaces") or [])
             cnt2 = len(d2.get("interfaces") or [])
-            return "boolean", (cnt1 == cnt2)
+            diff = abs(cnt1 - cnt2)
+            return "text", f"{host1}: {cnt1}개, {host2}: {cnt2}개, 차이: {diff}개"
         
         elif metric == "compare_vrf_count":
             host1 = scope.get("host1")
@@ -919,10 +921,11 @@ class BuilderCore:
             d1 = self.host_index.get(host1)
             d2 = self.host_index.get(host2)
             if not d1 or not d2:
-                return "boolean", False
+                return "text", f"{host1}: 정보 없음, {host2}: 정보 없음, 차이: 계산 불가"
             cnt1 = len(self._bgp_vrfs(d1))
             cnt2 = len(self._bgp_vrfs(d2))
-            return "boolean", (cnt1 == cnt2)
+            diff = abs(cnt1 - cnt2)
+            return "text", f"{host1}: {cnt1}개, {host2}: {cnt2}개, 차이: {diff}개"
         
         elif metric == "compare_bgp_as":
             host1 = scope.get("host1")
@@ -973,6 +976,116 @@ class BuilderCore:
                 if las is not None:
                     as_set.add(las)
             return "boolean", (len(as_set) == 1)
+
+        # ---- New L1 metrics ----
+        elif metric == "interface_status_map":
+            host = scope.get("host")
+            for d in self.devices:
+                if host and self._hostname(d) != host: continue
+                status_map = {}
+                for i in d.get("interfaces") or []:
+                    name = i.get("name") or i.get("id") or ""
+                    status = i.get("status") or i.get("state") or "unknown"
+                    if name:
+                        status_map[name] = status
+                return "map", status_map
+            return "map", {}
+
+        elif metric == "routing_table_entry_count":
+            host = scope.get("host")
+            for d in self.devices:
+                if host and self._hostname(d) != host: continue
+                routing = d.get("routing", {})
+                total_entries = 0
+
+                # BGP routes
+                bgp = routing.get("bgp", {})
+                for vrf in bgp.get("vrfs", []):
+                    total_entries += len(vrf.get("rib", []))
+                total_entries += len(bgp.get("rib", []))
+
+                # OSPF routes
+                ospf = routing.get("ospf", {})
+                for area in ospf.get("areas", {}).values():
+                    if isinstance(area, dict):
+                        total_entries += len(area.get("rib", []))
+
+                # Connected routes
+                interfaces = d.get("interfaces", [])
+                total_entries += len(interfaces)  # connected routes
+
+                return "number", total_entries
+            return "number", 0
+
+        # ---- New L2 metrics ----
+        elif metric == "devices_in_as":
+            asn = scope.get("asn")
+            if not asn:
+                return "set", []
+            devices_in_as = set()
+            for d in self.devices:
+                las = self._bgp_local_as(d)
+                if las == asn:
+                    devices_in_as.add(self._hostname(d))
+            return "set", sorted(devices_in_as)
+
+        elif metric == "interfaces_in_vrf":
+            vrf_name = scope.get("vrf")
+            if not vrf_name:
+                return "number", 0
+            count = 0
+            for d in self.devices:
+                for iface in d.get("interfaces", []):
+                    if iface.get("vrf") == vrf_name or iface.get("l3vrf") == vrf_name:
+                        count += 1
+            return "number", count
+
+        elif metric == "ospf_neighbor_count_per_area":
+            area_id = scope.get("area")
+            if area_id is None:
+                return "number", 0
+            total_neighbors = 0
+            for d in self.devices:
+                ospf = self._ospf(d)
+                areas = ospf.get("areas", {})
+                if isinstance(areas, dict):
+                    area_data = areas.get(str(area_id)) or areas.get(area_id)
+                    if area_data and isinstance(area_data, dict):
+                        total_neighbors += len(area_data.get("neighbors", []))
+                elif isinstance(areas, list):
+                    for area in areas:
+                        if isinstance(area, dict) and (area.get("id") == area_id or area.get("area") == area_id):
+                            total_neighbors += len(area.get("neighbors", []))
+                            break
+            return "number", total_neighbors
+
+        # ---- New L3 metrics ----
+        elif metric == "min_interface_device":
+            min_count = float('inf')
+            min_host = None
+            for d in self.devices:
+                cnt = len(d.get("interfaces") or [])
+                if cnt > 0 and cnt < min_count:
+                    min_count = cnt
+                    min_host = self._hostname(d)
+            return "text", min_host or ""
+
+        elif metric == "bgp_as_distribution":
+            as_counts = {}
+            for d in self.devices:
+                las = self._bgp_local_as(d)
+                if las is not None:
+                    as_counts[las] = as_counts.get(las, 0) + 1
+            return "map", as_counts
+
+        elif metric == "vrf_usage_statistics":
+            vrf_stats = {}
+            for d in self.devices:
+                host = self._hostname(d)
+                vrf_count = len(self._bgp_vrfs(d))
+                if vrf_count > 0:
+                    vrf_stats[host] = vrf_count
+            return "map", vrf_stats
 
         return "text", None
 

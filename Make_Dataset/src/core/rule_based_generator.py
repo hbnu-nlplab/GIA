@@ -19,7 +19,8 @@ ALLOWED_METRICS = {
     "System_Inventory": [
         "system_hostname_text", "system_version_text", "system_timezone_text",
         "system_user_list", "system_user_count", "logging_buffered_severity_text",
-        "ntp_server_list", "snmp_community_list", "syslog_server_list"
+        "ntp_server_list", "snmp_community_list", "syslog_server_list",
+        "interface_status_map", "routing_table_entry_count"
     ],
     "Security_Inventory": [
         "ssh_present_bool", "ssh_version_text", "aaa_present_bool",
@@ -36,14 +37,14 @@ ALLOWED_METRICS = {
         "vrf_names_set", "vrf_count", "vrf_rd_map", "rt_import_count", "rt_export_count",
         "mpls_ldp_present_bool", "l2vpn_pw_id_set"
     ],
-    
+
     # === L2: 복수 장비 설정값 집계 ===
     "Security_Policy": [
         "ssh_enabled_devices", "ssh_missing_devices", "ssh_missing_count",
         "aaa_enabled_devices", "aaa_missing_devices", "devices_with_same_vrf"
     ],
     "OSPF_Consistency": [
-        "ospf_area_membership", "ospf_area0_if_count"
+        "ospf_area_membership", "ospf_area0_if_count", "ospf_neighbor_count_per_area"
     ],
     "L2VPN_Consistency": [
         "l2vpn_pairs", "l2vpn_unidirectional_pairs", "l2vpn_unidir_count",
@@ -64,7 +65,8 @@ ALLOWED_METRICS = {
     "Comparison_Analysis": [
         "compare_bgp_neighbor_count", "compare_interface_count", "compare_vrf_count",
         "compare_bgp_as", "max_interface_device", "max_bgp_peer_device",
-        "all_devices_same_as", "compare_ospf_areas"
+        "all_devices_same_as", "compare_ospf_areas",
+        "min_interface_device", "bgp_as_distribution", "vrf_usage_statistics"
     ],
     
     # === L4/L5: Batfish 기반 (placeholder) ===
@@ -90,6 +92,8 @@ def default_patterns(metric: str) -> str:
         "ntp_server_list": "{host} 장비에 설정된 NTP 서버 목록을 알려주세요.",
         "snmp_community_list": "{host} 장비에 설정된 SNMP 커뮤니티 목록을 알려주세요.",
         "syslog_server_list": "{host} 장비에 설정된 Syslog 서버 목록을 알려주세요.",
+        "interface_status_map": "{host} 장비의 각 인터페이스 상태를 알려주세요.",
+        "routing_table_entry_count": "{host} 장비의 라우팅 테이블 엔트리는 총 몇 개입니까?",
         
         # === Security_Inventory (L1) ===
         "ssh_present_bool": "{host} 장비에 SSH가 활성화되어 있습니까? (true/false)",
@@ -133,6 +137,7 @@ def default_patterns(metric: str) -> str:
         # === OSPF_Consistency (L2) ===
         "ospf_area_membership": "OSPF Area {area}에 속한 장비 목록을 알려주세요.",
         "ospf_area0_if_count": "{host} 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?",
+        "ospf_neighbor_count_per_area": "OSPF Area {area}의 이웃 관계는 총 몇 개입니까?",
         
         # === L2VPN_Consistency (L2/L3) ===
         "l2vpn_pairs": "구성된 L2VPN pseudowire 회선(장비쌍) 목록을 알려주세요.",
@@ -165,14 +170,17 @@ def default_patterns(metric: str) -> str:
         "policy_compliance_check": "네트워크 정책 '{policy_name}'을 준수하고 있습니까?",
         
         # === Comparison_Analysis (L3) ===
-        "compare_bgp_neighbor_count": "{host1}과 {host2}의 BGP 피어 수가 같습니까?",
-        "compare_interface_count": "{host1}과 {host2}의 인터페이스 수가 같습니까?",
-        "compare_vrf_count": "{host1}과 {host2}의 VRF 수가 같습니까?",
+        "compare_bgp_neighbor_count": "{host1}과 {host2}의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까?",
+        "compare_interface_count": "{host1}과 {host2}의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까?",
+        "compare_vrf_count": "{host1}과 {host2}의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까?",
         "compare_bgp_as": "{host1}과 {host2}가 같은 BGP AS에 속해 있습니까?",
         "compare_ospf_areas": "{host1}과 {host2}가 참여하는 OSPF Area가 동일합니까?",
         "max_interface_device": "인터페이스 수가 가장 많은 장비는 무엇입니까?",
         "max_bgp_peer_device": "BGP 피어가 가장 많은 장비는 무엇입니까?",
-        "all_devices_same_as": "모든 장비가 같은 BGP AS에 속해 있습니까?"
+        "all_devices_same_as": "모든 장비가 같은 BGP AS에 속해 있습니까?",
+        "min_interface_device": "인터페이스 수가 가장 적은 장비는 무엇입니까?",
+        "bgp_as_distribution": "각 AS별 장비 수 분포를 알려주세요.",
+        "vrf_usage_statistics": "각 장비별 VRF 사용 수 통계를 알려주세요."
     }
     return table.get(metric, f"{metric}에 대한 질문을 자연스럽게 작성해주세요.")
 
@@ -281,6 +289,8 @@ METRIC_AGG = {
     "ntp_server_list": "set",
     "snmp_community_list": "set",
     "syslog_server_list": "set",
+    "interface_status_map": "map",
+    "routing_table_entry_count": "number",
     "ssh_present_bool": "boolean",
     "ssh_version_text": "text",
     "aaa_present_bool": "boolean",
@@ -314,6 +324,9 @@ METRIC_AGG = {
     "devices_with_same_vrf": "set",
     "ospf_area_membership": "set",
     "ospf_area0_if_count": "numeric",
+    "devices_in_as": "set",
+    "interfaces_in_vrf": "number",
+    "ospf_neighbor_count_per_area": "number",
     "l2vpn_pairs": "set",
     
     # === L3 metrics ===
@@ -332,14 +345,17 @@ METRIC_AGG = {
     "l2vpn_mismatch_count": "numeric",
     
     # === L3 comparison metrics ===
-    "compare_bgp_neighbor_count": "boolean",
-    "compare_interface_count": "boolean",
-    "compare_vrf_count": "boolean",
+    "compare_bgp_neighbor_count": "text",
+    "compare_interface_count": "text",
+    "compare_vrf_count": "text",
     "compare_bgp_as": "boolean",
     "compare_ospf_areas": "boolean",
     "max_interface_device": "text",
     "max_bgp_peer_device": "text",
     "all_devices_same_as": "boolean",
+    "min_interface_device": "text",
+    "bgp_as_distribution": "map",
+    "vrf_usage_statistics": "map",
     
     # === L4/L5 metrics (Batfish) ===
     "traceroute_path": "set",
