@@ -72,6 +72,18 @@
                         "targets": ["DEVICE"],
                         "primary_metric": "syslog_server_list",
                         "notes": "Syslog 서버 목록"
+                    },
+                    {
+                        "goal": "extraction",
+                        "targets": ["DEVICE"],
+                        "primary_metric": "interface_status_map",
+                        "notes": "인터페이스 상태 맵"
+                    },
+                    {
+                        "goal": "extraction",
+                        "targets": ["DEVICE"],
+                        "primary_metric": "routing_table_entry_count",
+                        "notes": "라우팅 테이블 엔트리 수"
                     }
                 ]
             }
@@ -279,6 +291,12 @@
                         "goal": "consistency",
                         "targets": ["DEVICE"],
                         "primary_metric": "ospf_area0_if_count"
+                    },
+                    {
+                        "goal": "consistency",
+                        "targets": ["OSPF_AREA"],
+                        "primary_metric": "ospf_neighbor_count_per_area",
+                        "notes": "OSPF Area별 이웃 관계 수"
                     }
                 ]
             }
@@ -388,19 +406,19 @@
                         "goal": "comparison",
                         "targets": ["DEVICE_PAIR"],
                         "primary_metric": "compare_bgp_neighbor_count",
-                        "notes": "두 장비의 BGP 피어 수 비교"
+                        "notes": "두 장비의 BGP 피어 수 차이"
                     },
                     {
                         "goal": "comparison",
                         "targets": ["DEVICE_PAIR"],
                         "primary_metric": "compare_interface_count",
-                        "notes": "두 장비의 인터페이스 수 비교"
+                        "notes": "두 장비의 인터페이스 수 차이"
                     },
                     {
                         "goal": "comparison",
                         "targets": ["DEVICE_PAIR"],
                         "primary_metric": "compare_vrf_count",
-                        "notes": "두 장비의 VRF 수 비교"
+                        "notes": "두 장비의 VRF 수 차이"
                     },
                     {
                         "goal": "comparison",
@@ -431,58 +449,131 @@
                         "targets": ["GLOBAL"],
                         "primary_metric": "all_devices_same_as",
                         "notes": "모든 장비가 같은 AS에 속하는지 확인"
+                    },
+                    {
+                        "goal": "aggregation",
+                        "targets": ["GLOBAL"],
+                        "primary_metric": "min_interface_device",
+                        "notes": "인터페이스 수가 가장 적은 장비"
+                    },
+                    {
+                        "goal": "aggregation",
+                        "targets": ["GLOBAL"],
+                        "primary_metric": "bgp_as_distribution",
+                        "notes": "각 AS별 장비 수 분포"
+                    },
+                    {
+                        "goal": "aggregation",
+                        "targets": ["GLOBAL"],
+                        "primary_metric": "vrf_usage_statistics",
+                        "notes": "장비별 VRF 사용 통계"
                     }
                 ]
             }
         },
         {
             "category": "Reachability_Analysis",
-            "description": "네트워크 도달성 분석 (Batfish 필요)",
+            "description": "네트워크 도달성 분석 (Batfish 필요) - 학술적 근거: HSA(NSDI'12), VeriFlow(NSDI'13), Minesweeper(SIGCOMM'17)",
             "levels": {
                 "L4": [
                     {
                         "goal": "reachability",
                         "targets": ["FLOW"],
                         "primary_metric": "traceroute_path",
-                        "notes": "Batfish bf.q.traceroute() 사용"
+                        "notes": "Batfish bf.q.traceroute() 사용",
+                        "academic_reference": "Batfish (NSDI'15)"
                     },
                     {
                         "goal": "reachability",
                         "targets": ["FLOW"],
                         "primary_metric": "reachability_status",
-                        "notes": "Batfish bf.q.reachability() 사용"
+                        "notes": "A→B 도달 가능 여부 확인",
+                        "academic_reference": "HSA (NSDI'12), VeriFlow (NSDI'13)"
                     },
                     {
                         "goal": "reachability",
                         "targets": ["FLOW"],
                         "primary_metric": "acl_blocking_point",
-                        "notes": "ACL에 의한 트래픽 차단 지점 식별"
+                        "notes": "ACL에 의한 트래픽 차단 지점 식별",
+                        "academic_reference": "HSA (NSDI'12)"
+                    },
+                    {
+                        "goal": "invariant",
+                        "targets": ["GLOBAL"],
+                        "primary_metric": "loop_detection",
+                        "notes": "포워딩 루프 탐지 - loop-free invariant",
+                        "academic_reference": "HSA (NSDI'12), VeriFlow (NSDI'13)"
+                    },
+                    {
+                        "goal": "invariant",
+                        "targets": ["GLOBAL"],
+                        "primary_metric": "blackhole_detection",
+                        "notes": "블랙홀 탐지 - 패킷 드랍 지점",
+                        "academic_reference": "HSA (NSDI'12), Minesweeper (SIGCOMM'17)"
+                    },
+                    {
+                        "goal": "policy",
+                        "targets": ["FLOW"],
+                        "primary_metric": "waypoint_check",
+                        "notes": "웨이포인트 통과 검증 (FW, IDS 등)",
+                        "academic_reference": "Minesweeper (SIGCOMM'17), Config2Spec (NSDI'20)"
+                    },
+                    {
+                        "goal": "policy",
+                        "targets": ["FLOW"],
+                        "primary_metric": "bounded_path_length",
+                        "notes": "경로 홉 수 제한 검증",
+                        "academic_reference": "Minesweeper (SIGCOMM'17)"
+                    },
+                    {
+                        "goal": "isolation",
+                        "targets": ["VRF_PAIR"],
+                        "primary_metric": "isolation_check",
+                        "notes": "VRF/테넌트 간 격리 검증",
+                        "academic_reference": "HSA (NSDI'12), Config2Spec (NSDI'20)"
                     }
                 ]
             }
         },
         {
             "category": "What_If_Analysis",
-            "description": "What-If / Differential 분석 (Batfish 필요)",
+            "description": "What-If / Differential 분석 (Batfish 필요) - 학술적 근거: DNA(NSDI'22), Minesweeper(SIGCOMM'17)",
             "levels": {
                 "L5": [
                     {
                         "goal": "what_if",
                         "targets": ["LINK_FAILURE"],
                         "primary_metric": "link_failure_impact",
-                        "notes": "Batfish differentialReachability 사용"
+                        "notes": "단일 링크 장애 영향 분석",
+                        "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
+                    },
+                    {
+                        "goal": "fault_tolerance",
+                        "targets": ["NODE_PAIR"],
+                        "primary_metric": "k_failure_tolerance",
+                        "notes": "k개 장애 내성 검증 (1-failure tolerance)",
+                        "academic_reference": "Minesweeper (SIGCOMM'17), Trailblazer (FM'23)"
                     },
                     {
                         "goal": "differential",
                         "targets": ["CONFIG_CHANGE"],
                         "primary_metric": "config_change_impact",
-                        "notes": "설정 변경 전후 비교 분석"
+                        "notes": "설정 변경 전후 비교 분석",
+                        "academic_reference": "DNA (NSDI'22)"
+                    },
+                    {
+                        "goal": "differential",
+                        "targets": ["FLOW"],
+                        "primary_metric": "differential_reachability",
+                        "notes": "변경 전후 도달성 차이 분석",
+                        "academic_reference": "DNA (NSDI'22)"
                     },
                     {
                         "goal": "compliance",
                         "targets": ["POLICY"],
                         "primary_metric": "policy_compliance_check",
-                        "notes": "네트워크 정책 준수 검증"
+                        "notes": "네트워크 정책 준수 검증 (waypoint 등)",
+                        "academic_reference": "Config2Spec (NSDI'20)"
                     }
                 ]
             }

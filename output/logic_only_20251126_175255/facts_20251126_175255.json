@@ -1,0 +1,946 @@
+{
+  "devices": [
+    {
+      "vendor": "ios",
+      "system": {
+        "hostname": "CE01",
+        "mgmt_address": "10.10.10.101",
+        "version": "15.4",
+        "timezone": "EET",
+        "config_register": "0x0",
+        "users": [
+          {
+            "name": "admin",
+            "privilege": "15",
+            "secret_type": "5",
+            "secret": "$1$noEM$g5oSEeDRbbng3VLVztX.E."
+          },
+          {
+            "name": "nso",
+            "privilege": null,
+            "secret_type": "5",
+            "secret": "$1$AZdy$M0TPjH0OxpqR.DaYZi9Hz."
+          },
+          {
+            "name": "root",
+            "privilege": "15",
+            "secret_type": "5",
+            "secret": "$1$TShs$vu6DvMbteEUJJL3.e8lAf1"
+          }
+        ]
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": false
+        },
+        "http": {
+          "server_enabled": false
+        }
+      },
+      "interfaces": [
+        {
+          "name": "Ethernet0/0",
+          "ipv4": "10.10.10.101/255.255.255.0",
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/1",
+          "ipv4": "172.16.1.1/255.255.255.0",
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/2",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/3",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        }
+      ],
+      "num_interfaces": 4,
+      "routing": {
+        "bgp": {
+          "local_as": null,
+          "neighbors": [],
+          "vrfs": []
+        },
+        "ospf": {
+          "process_ids": [],
+          "areas": {}
+        }
+      },
+      "services": {
+        "ip": {
+          "forward_protocol_nd": true,
+          "cef_enabled": true
+        },
+        "vrf": [],
+        "l2vpn": [],
+        "mpls": {
+          "ldp_interfaces": []
+        },
+        "snmp": {
+          "present": false
+        }
+      },
+      "file": "CE01.xml",
+      "ip": {
+        "cef-conf": {
+          "cef": true
+        }
+      },
+      "logging": {
+        "buffered_severity": "debugging"
+      },
+      "line": {
+        "vty": {
+          "first": 0,
+          "last": 4,
+          "login_mode": "local",
+          "transport_input": "ssh"
+        }
+      }
+    },
+    {
+      "vendor": "ios",
+      "system": {
+        "hostname": "CE02",
+        "mgmt_address": "10.10.10.102",
+        "version": "15.4",
+        "timezone": "EET",
+        "config_register": "0x0",
+        "users": [
+          {
+            "name": "admin",
+            "privilege": "15",
+            "secret_type": "5",
+            "secret": "$1$nGz4$abDoD7eQpF74SJciP3hnP/"
+          },
+          {
+            "name": "nso",
+            "privilege": null,
+            "secret_type": "5",
+            "secret": "$1$gqAU$j4y8k.t5OYGK3QSqD4KyU/"
+          }
+        ]
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": false
+        },
+        "http": {
+          "server_enabled": false
+        }
+      },
+      "interfaces": [
+        {
+          "name": "Ethernet0/0",
+          "ipv4": "10.10.10.102/255.255.255.0",
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/1",
+          "ipv4": "172.16.1.2/255.255.255.0",
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/2",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/3",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        }
+      ],
+      "num_interfaces": 4,
+      "routing": {
+        "bgp": {
+          "local_as": null,
+          "neighbors": [],
+          "vrfs": []
+        },
+        "ospf": {
+          "process_ids": [],
+          "areas": {}
+        }
+      },
+      "services": {
+        "ip": {
+          "forward_protocol_nd": true,
+          "cef_enabled": true
+        },
+        "vrf": [],
+        "l2vpn": [],
+        "mpls": {
+          "ldp_interfaces": []
+        },
+        "snmp": {
+          "present": false
+        }
+      },
+      "file": "CE02.xml",
+      "ip": {
+        "cef-conf": {
+          "cef": true
+        }
+      },
+      "logging": {
+        "buffered_severity": "debugging"
+      },
+      "line": {
+        "vty": {
+          "first": 0,
+          "last": 4,
+          "login_mode": "local",
+          "transport_input": "ssh"
+        }
+      }
+    },
+    {
+      "vendor": "ios",
+      "system": {
+        "hostname": "CE03",
+        "mgmt_address": "10.10.10.103",
+        "version": "15.4",
+        "timezone": "EET",
+        "config_register": "0x0",
+        "users": [
+          {
+            "name": "admin",
+            "privilege": "15",
+            "secret_type": "5",
+            "secret": "$1$23NF$/HmAKM1pU3Aa/zrZC6l1x1"
+          },
+          {
+            "name": "nso",
+            "privilege": null,
+            "secret_type": "5",
+            "secret": "$1$kXAQ$NpbIv4PebXyDQH79LPwZt."
+          }
+        ]
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": false
+        },
+        "http": {
+          "server_enabled": false
+        }
+      },
+      "interfaces": [
+        {
+          "name": "Ethernet0/0",
+          "ipv4": "10.10.10.103/255.255.255.0",
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/1",
+          "ipv4": "172.16.1.3/255.255.255.0",
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/2",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/3",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        }
+      ],
+      "num_interfaces": 4,
+      "routing": {
+        "bgp": {
+          "local_as": null,
+          "neighbors": [],
+          "vrfs": []
+        },
+        "ospf": {
+          "process_ids": [],
+          "areas": {}
+        }
+      },
+      "services": {
+        "ip": {
+          "forward_protocol_nd": true,
+          "cef_enabled": true
+        },
+        "vrf": [],
+        "l2vpn": [],
+        "mpls": {
+          "ldp_interfaces": []
+        },
+        "snmp": {
+          "present": false
+        }
+      },
+      "file": "CE03.xml",
+      "ip": {
+        "cef-conf": {
+          "cef": true
+        }
+      },
+      "logging": {
+        "buffered_severity": "debugging"
+      },
+      "line": {
+        "vty": {
+          "first": 0,
+          "last": 4,
+          "login_mode": "local",
+          "transport_input": "ssh"
+        }
+      }
+    },
+    {
+      "vendor": "ios",
+      "system": {
+        "hostname": "CE04",
+        "mgmt_address": "10.10.10.104",
+        "version": "15.4",
+        "timezone": "EET",
+        "config_register": "0x0",
+        "users": [
+          {
+            "name": "admin",
+            "privilege": "15",
+            "secret_type": "5",
+            "secret": "$1$S2C5$SDR913I2XszQvbTRKN29c."
+          },
+          {
+            "name": "nso",
+            "privilege": null,
+            "secret_type": "5",
+            "secret": "$1$6Lie$hs/DI5AgPte.8KfD30Wwg/"
+          }
+        ]
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": false
+        },
+        "http": {
+          "server_enabled": false
+        }
+      },
+      "interfaces": [
+        {
+          "name": "Ethernet0/0",
+          "ipv4": "10.10.10.104/255.255.255.0",
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/1",
+          "ipv4": "172.16.1.4/255.255.255.0",
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/2",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/3",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        }
+      ],
+      "num_interfaces": 4,
+      "routing": {
+        "bgp": {
+          "local_as": null,
+          "neighbors": [],
+          "vrfs": []
+        },
+        "ospf": {
+          "process_ids": [],
+          "areas": {}
+        }
+      },
+      "services": {
+        "ip": {
+          "forward_protocol_nd": true,
+          "cef_enabled": true
+        },
+        "vrf": [],
+        "l2vpn": [],
+        "mpls": {
+          "ldp_interfaces": []
+        },
+        "snmp": {
+          "present": false
+        }
+      },
+      "file": "CE04.xml",
+      "ip": {
+        "cef-conf": {
+          "cef": true
+        }
+      },
+      "logging": {
+        "buffered_severity": "debugging"
+      },
+      "line": {
+        "vty": {
+          "first": 0,
+          "last": 4,
+          "login_mode": "local",
+          "transport_input": "ssh"
+        }
+      }
+    },
+    {
+      "vendor": "ios",
+      "system": {
+        "hostname": "P01",
+        "mgmt_address": "10.10.10.5",
+        "version": "15.4",
+        "timezone": "EET",
+        "config_register": "0x0",
+        "users": [
+          {
+            "name": "admin",
+            "privilege": "15",
+            "secret_type": "5",
+            "secret": "$1$etCt$rJ6Ga9lxzPDtw7L7wZzvq."
+          },
+          {
+            "name": "nso",
+            "privilege": null,
+            "secret_type": "5",
+            "secret": "$1$eGDk$0JuuNyde0QtXA6G1AoFIp1"
+          }
+        ]
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": false
+        },
+        "http": {
+          "server_enabled": false
+        }
+      },
+      "interfaces": [
+        {
+          "name": "Ethernet0/0",
+          "ipv4": "10.10.10.5/255.255.255.0",
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/1",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/2",
+          "ipv4": "10.1.13.1/255.255.255.0",
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/3",
+          "ipv4": "10.1.12.1/255.255.255.0",
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet1/0",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet1/1",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet1/2",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet1/3",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        }
+      ],
+      "num_interfaces": 8,
+      "routing": {
+        "bgp": {
+          "local_as": null,
+          "neighbors": [],
+          "vrfs": []
+        },
+        "ospf": {
+          "process_ids": [],
+          "areas": {}
+        }
+      },
+      "services": {
+        "ip": {
+          "forward_protocol_nd": true,
+          "cef_enabled": true
+        },
+        "vrf": [],
+        "l2vpn": [],
+        "mpls": {
+          "ldp_interfaces": []
+        },
+        "snmp": {
+          "present": false
+        }
+      },
+      "file": "P01.xml",
+      "ip": {
+        "cef-conf": {
+          "cef": true
+        }
+      },
+      "logging": {
+        "buffered_severity": "debugging"
+      },
+      "line": {
+        "vty": {
+          "first": 0,
+          "last": 4,
+          "login_mode": "local",
+          "transport_input": "ssh"
+        }
+      }
+    },
+    {
+      "vendor": "ios",
+      "system": {
+        "hostname": "P04",
+        "mgmt_address": "10.10.10.4",
+        "version": "15.4",
+        "timezone": "EET",
+        "config_register": "0x0",
+        "users": [
+          {
+            "name": "admin",
+            "privilege": "15",
+            "secret_type": "5",
+            "secret": "$1$pz70$hxfnDXS9pPp/J4PQWGQqC/"
+          },
+          {
+            "name": "nso",
+            "privilege": null,
+            "secret_type": "5",
+            "secret": "$1$ugjV$M2Puw0DWY.PSktVLKZhg60"
+          }
+        ]
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": false
+        },
+        "http": {
+          "server_enabled": false
+        }
+      },
+      "interfaces": [
+        {
+          "name": "Ethernet0/0",
+          "ipv4": "10.10.10.4/255.255.255.0",
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/1",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/2",
+          "ipv4": "10.1.24.4/255.255.255.0",
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/3",
+          "ipv4": "10.1.34.4/255.255.255.0",
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet1/0",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet1/1",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet1/2",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet1/3",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        }
+      ],
+      "num_interfaces": 8,
+      "routing": {
+        "bgp": {
+          "local_as": null,
+          "neighbors": [],
+          "vrfs": []
+        },
+        "ospf": {
+          "process_ids": [],
+          "areas": {}
+        }
+      },
+      "services": {
+        "ip": {
+          "forward_protocol_nd": true,
+          "cef_enabled": true
+        },
+        "vrf": [],
+        "l2vpn": [],
+        "mpls": {
+          "ldp_interfaces": []
+        },
+        "snmp": {
+          "present": false
+        }
+      },
+      "file": "P04.xml",
+      "ip": {
+        "cef-conf": {
+          "cef": true
+        }
+      },
+      "logging": {
+        "buffered_severity": "debugging"
+      },
+      "line": {
+        "vty": {
+          "first": 0,
+          "last": 4,
+          "login_mode": "local",
+          "transport_input": "ssh"
+        }
+      }
+    },
+    {
+      "vendor": "ios",
+      "system": {
+        "hostname": "PE02",
+        "mgmt_address": "10.10.10.2",
+        "version": "15.4",
+        "timezone": "EET",
+        "config_register": "0x0",
+        "users": [
+          {
+            "name": "admin",
+            "privilege": "15",
+            "secret_type": "5",
+            "secret": "$1$yTNj$nJ4/y1PDwJfqWMyFkWtDw0"
+          },
+          {
+            "name": "nso",
+            "privilege": null,
+            "secret_type": "5",
+            "secret": "$1$yLtm$.68KkPmXrCy.yNwawTzq0."
+          }
+        ]
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": false
+        },
+        "http": {
+          "server_enabled": false
+        }
+      },
+      "interfaces": [
+        {
+          "name": "Ethernet0/0",
+          "ipv4": "10.10.10.2/255.255.255.0",
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/1",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/2",
+          "ipv4": "10.1.24.2/255.255.255.0",
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/3",
+          "ipv4": "10.1.12.2/255.255.255.0",
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet1/0",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet1/1",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet1/2",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet1/3",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        }
+      ],
+      "num_interfaces": 8,
+      "routing": {
+        "bgp": {
+          "local_as": null,
+          "neighbors": [],
+          "vrfs": []
+        },
+        "ospf": {
+          "process_ids": [],
+          "areas": {}
+        }
+      },
+      "services": {
+        "ip": {
+          "forward_protocol_nd": true,
+          "cef_enabled": true
+        },
+        "vrf": [],
+        "l2vpn": [],
+        "mpls": {
+          "ldp_interfaces": []
+        },
+        "snmp": {
+          "present": false
+        }
+      },
+      "file": "PE02.xml",
+      "ip": {
+        "cef-conf": {
+          "cef": true
+        }
+      },
+      "logging": {
+        "buffered_severity": "debugging"
+      },
+      "line": {
+        "vty": {
+          "first": 0,
+          "last": 4,
+          "login_mode": "local",
+          "transport_input": "ssh"
+        }
+      }
+    },
+    {
+      "vendor": "ios",
+      "system": {
+        "hostname": "PE03",
+        "mgmt_address": "10.10.10.3",
+        "version": "15.4",
+        "timezone": "EET",
+        "config_register": "0x0",
+        "users": [
+          {
+            "name": "admin",
+            "privilege": "15",
+            "secret_type": "5",
+            "secret": "$1$3IlD$XiJYCCZ82ET4an8o0aZSp0"
+          },
+          {
+            "name": "nso",
+            "privilege": null,
+            "secret_type": "5",
+            "secret": "$1$R6bb$/.Dql0r.Jkl4kFqs8aFae1"
+          }
+        ]
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": false
+        },
+        "http": {
+          "server_enabled": false
+        }
+      },
+      "interfaces": [
+        {
+          "name": "Ethernet0/0",
+          "ipv4": "10.10.10.3/255.255.255.0",
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/1",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/2",
+          "ipv4": "10.1.13.3/255.255.255.0",
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet0/3",
+          "ipv4": "10.1.34.3/255.255.255.0",
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet1/0",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet1/1",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet1/2",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        },
+        {
+          "name": "Ethernet1/3",
+          "ipv4": null,
+          "vlan": null,
+          "mop_xenabled": false
+        }
+      ],
+      "num_interfaces": 8,
+      "routing": {
+        "bgp": {
+          "local_as": null,
+          "neighbors": [],
+          "vrfs": []
+        },
+        "ospf": {
+          "process_ids": [],
+          "areas": {}
+        }
+      },
+      "services": {
+        "ip": {
+          "forward_protocol_nd": true,
+          "cef_enabled": true
+        },
+        "vrf": [],
+        "l2vpn": [],
+        "mpls": {
+          "ldp_interfaces": []
+        },
+        "snmp": {
+          "present": false
+        }
+      },
+      "file": "PE03.xml",
+      "ip": {
+        "cef-conf": {
+          "cef": true
+        }
+      },
+      "logging": {
+        "buffered_severity": "debugging"
+      },
+      "line": {
+        "vty": {
+          "first": 0,
+          "last": 4,
+          "login_mode": "local",
+          "transport_input": "ssh"
+        }
+      }
+    }
+  ]
+}
