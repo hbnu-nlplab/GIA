@@ -428,7 +428,7 @@ class BatfishBuilder:
             return "set", []
         
         try:
-            # 도달 불가능한 목적지 탐색 (actions는 문자열로 전달)
+            # 도달 불가능한 목적지 탐색
             result = self.bf.q.reachability(
                 headers=HeaderConstraints(dstIps=dst_prefix)
             ).answer().frame()
@@ -436,18 +436,26 @@ class BatfishBuilder:
             if result.empty:
                 return "set", []
             
-            # 방어 코드: Batfish 버전에 따라 컬럼명이 다를 수 있음
-            if "Disposition" not in result.columns:
-                logger.warning("reachability() result has no Disposition column. Available: %s", list(result.columns))
-                return "set", []
-            
             blackholes = []
-            for _, row in result.iterrows():
-                disposition = str(row.get('Disposition', ''))
-                # DROP, NULL_ROUTED, NO_ROUTE 등을 블랙홀로 간주
-                if any(d in disposition.upper() for d in ['DROP', 'NULL', 'NO_ROUTE', 'DENIED']):
-                    dst = row.get('DstIp', '')
-                    blackholes.append(f"{dst} ({disposition})")
+            
+            # Disposition 컬럼이 있으면 사용
+            if "Disposition" in result.columns:
+                for _, row in result.iterrows():
+                    disposition = str(row.get('Disposition', ''))
+                    # DROP, NULL_ROUTED, NO_ROUTE 등을 블랙홀로 간주
+                    if any(d in disposition.upper() for d in ['DROP', 'NULL', 'NO_ROUTE', 'DENIED']):
+                        dst = row.get('DstIp', '')
+                        blackholes.append(f"{dst} ({disposition})")
+            else:
+                # Disposition 컬럼이 없으면 Traces에서 분석
+                # TraceCount가 0이면 도달 불가 (블랙홀 가능성)
+                logger.debug("Using TraceCount for blackhole detection (no Disposition column)")
+                for _, row in result.iterrows():
+                    trace_count = row.get('TraceCount', 0)
+                    if trace_count == 0:
+                        flow = row.get('Flow', {})
+                        dst = getattr(flow, 'dstIp', '') if hasattr(flow, 'dstIp') else str(flow)
+                        blackholes.append(f"{dst} (NO_TRACE)")
             
             return "set", list(set(blackholes))
             
@@ -645,6 +653,329 @@ class BatfishBuilder:
             return "set", []
     
     # =========================================================================
+    # 현업 실무 메트릭 (Operational Metrics)
+    # =========================================================================
+    
+    def asymmetric_path_check(self,
+                              node1: str,
+                              node2: str) -> Tuple[str, bool, str]:
+        """
+        L4: 비대칭 경로(Asymmetric Routing) 검사
+        
+        질문 예시: "A에서 B로 가는 경로와 B에서 A로 돌아오는 경로가 대칭입니까?"
+        
+        현업 중요도: 매우 높음
+        - 비대칭 경로는 방화벽에서 상태 추적(Stateful) 실패 → 패킷 드랍
+        - 갈 때 A경로, 올 때 B경로면 TCP 세션 불가
+        
+        Returns:
+            (answer_type, is_symmetric, description)
+        """
+        if not self._initialized:
+            return "boolean", False, "정보 없음"
+        
+        try:
+            # node1 → node2 경로
+            node1_ips = self.node_ips.get(node1, [])
+            node2_ips = self.node_ips.get(node2, [])
+            
+            if not node1_ips or not node2_ips:
+                return "boolean", False, "IP 정보 없음"
+            
+            # 정방향 경로 (node1 → node2)
+            forward_result = self.bf.q.traceroute(
+                startLocation=node1,
+                headers=HeaderConstraints(dstIps=node2_ips[0])
+            ).answer().frame()
+            
+            # 역방향 경로 (node2 → node1)
+            reverse_result = self.bf.q.traceroute(
+                startLocation=node2,
+                headers=HeaderConstraints(dstIps=node1_ips[0])
+            ).answer().frame()
+            
+            # 경로 노드 추출
+            forward_nodes = []
+            reverse_nodes = []
+            
+            if not forward_result.empty:
+                traces = forward_result['Traces'].iloc[0]
+                if traces:
+                    for hop in getattr(traces[0], 'hops', []):
+                        node = getattr(hop, 'node', None)
+                        if node:
+                            forward_nodes.append(getattr(node, 'hostname', str(node)))
+            
+            if not reverse_result.empty:
+                traces = reverse_result['Traces'].iloc[0]
+                if traces:
+                    for hop in getattr(traces[0], 'hops', []):
+                        node = getattr(hop, 'node', None)
+                        if node:
+                            reverse_nodes.append(getattr(node, 'hostname', str(node)))
+            
+            # 대칭 여부 판단 (역순으로 비교)
+            reverse_nodes_reversed = list(reversed(reverse_nodes))
+            is_symmetric = forward_nodes == reverse_nodes_reversed
+            
+            forward_path = " -> ".join(forward_nodes) if forward_nodes else "경로 없음"
+            reverse_path = " -> ".join(reverse_nodes) if reverse_nodes else "경로 없음"
+            
+            if is_symmetric:
+                desc = f"대칭 경로: {forward_path}"
+            else:
+                desc = f"비대칭! 정방향: {forward_path}, 역방향: {reverse_path}"
+            
+            return "boolean", is_symmetric, desc
+            
+        except Exception as e:
+            logger.warning(f"asymmetric_path_check error: {e}")
+            return "boolean", False, f"분석 오류: {e}"
+    
+    def mtu_mismatch_check(self) -> Tuple[str, List[str]]:
+        """
+        L1/L2: MTU 불일치 검사
+        
+        질문 예시: "양쪽 링크의 MTU 사이즈가 서로 다른 구간이 있습니까?"
+        
+        현업 중요도: 높음
+        - MTU 불일치 → OSPF Neighbor 불안정, 큰 패킷만 드랍
+        - 찾기 가장 귀찮은 유령 장애(Ghost issue)
+        
+        Returns:
+            (answer_type, mismatch_list)
+        """
+        if not self._initialized:
+            return "set", []
+        
+        try:
+            # 인터페이스 속성 조회
+            interfaces = self.bf.q.interfaceProperties().answer().frame()
+            
+            if interfaces.empty:
+                return "set", []
+            
+            # 연결된 인터페이스 쌍 찾기 (Layer3 Edges)
+            edges = self.bf.q.layer3Edges().answer().frame()
+            
+            mismatches = []
+            
+            if not edges.empty:
+                for _, edge in edges.iterrows():
+                    # 인터페이스 정보 추출
+                    src_iface = edge.get('Interface', {})
+                    dst_iface = edge.get('Remote_Interface', {})
+                    
+                    src_hostname = getattr(src_iface, 'hostname', '') if hasattr(src_iface, 'hostname') else str(src_iface)
+                    dst_hostname = getattr(dst_iface, 'hostname', '') if hasattr(dst_iface, 'hostname') else str(dst_iface)
+                    
+                    # MTU 비교 (인터페이스 속성에서)
+                    src_mtu = None
+                    dst_mtu = None
+                    
+                    for _, iface in interfaces.iterrows():
+                        iface_obj = iface.get('Interface', {})
+                        hostname = getattr(iface_obj, 'hostname', '') if hasattr(iface_obj, 'hostname') else ''
+                        
+                        if hostname == src_hostname:
+                            src_mtu = iface.get('MTU', None)
+                        elif hostname == dst_hostname:
+                            dst_mtu = iface.get('MTU', None)
+                    
+                    if src_mtu and dst_mtu and src_mtu != dst_mtu:
+                        mismatches.append(f"{src_hostname}(MTU:{src_mtu}) <-> {dst_hostname}(MTU:{dst_mtu})")
+            
+            return "set", mismatches
+            
+        except Exception as e:
+            logger.warning(f"mtu_mismatch_check error: {e}")
+            return "set", []
+    
+    def spof_detection(self) -> Tuple[str, List[str]]:
+        """
+        L5: 단일 장애점(SPOF) 탐지 (최적화 버전)
+        
+        질문 예시: "단일 장비 장애 시 통신이 두절되는 구간(SPOF)이 존재합니까?"
+        
+        현업 중요도: 매우 높음
+        - 관리자가 제일 무서워하는 것
+        - 이중화 되어 있다고 믿었는데 실제로는 SPOF인 경우 많음
+        
+        최적화: 기존 traceroute 캐시 활용, 쿼리 수 최소화
+        
+        Returns:
+            (answer_type, spof_list)
+        """
+        if not self._initialized:
+            return "set", []
+        
+        try:
+            spof_nodes = []
+            
+            # 캐시된 경로 정보 활용 (traceroute 쿼리 최소화)
+            # 대표 경로 1개만 조회하여 분석
+            if len(self.nodes) < 3:
+                return "set", []
+            
+            # 가장 멀리 떨어진 노드 쌍 선택 (CE 끼리)
+            ce_nodes = [n for n in self.nodes if 'ce' in n.lower()]
+            if len(ce_nodes) >= 2:
+                src, dst = ce_nodes[0], ce_nodes[-1]
+            else:
+                src, dst = self.nodes[0], self.nodes[-1]
+            
+            src_ips = self.node_ips.get(src, [])
+            dst_ips = self.node_ips.get(dst, [])
+            
+            if not src_ips or not dst_ips:
+                return "set", []
+            
+            # 단일 traceroute로 경로 분석
+            traceroute = self.bf.q.traceroute(
+                startLocation=src,
+                headers=HeaderConstraints(dstIps=dst_ips[0])
+            ).answer().frame()
+            
+            if traceroute.empty:
+                return "set", []
+            
+            traces = traceroute['Traces'].iloc[0]
+            if not traces:
+                return "set", []
+            
+            # 경로 상의 노드들 추출
+            path_nodes = set()
+            for trace in traces:
+                hops = getattr(trace, 'hops', [])
+                for hop in hops:
+                    node = getattr(hop, 'node', None)
+                    if node:
+                        node_name = getattr(node, 'hostname', str(node))
+                        path_nodes.add(node_name)
+            
+            # 경로 상의 노드 중 단일 경로만 있으면 SPOF 후보
+            # (단, 출발지/목적지는 제외)
+            total_paths = len(traces)
+            if total_paths == 1:
+                # 단일 경로면 모든 중간 노드가 SPOF
+                for node in path_nodes:
+                    if node.lower() != src.lower() and node.lower() != dst.lower():
+                        spof_nodes.append(f"{node} (영향: {src} <-> {dst})")
+            
+            return "set", list(set(spof_nodes))
+            
+        except Exception as e:
+            logger.warning(f"spof_detection error: {e}")
+            return "set", []
+    
+    def acl_rule_blocking(self,
+                         src_ip: str,
+                         dst_ip: str,
+                         dst_port: int = 80,
+                         protocol: str = "TCP") -> Tuple[str, str]:
+        """
+        L4: ACL 차단 규칙 상세 분석
+        
+        질문 예시: "A에서 B로의 접속이 차단되는 정확한 ACL 규칙명과 줄 번호는?"
+        
+        현업 중요도: 최고
+        - 운영자가 제일 좋아하는 정보
+        - "어디서 막혔어?"에 대한 즉각적인 답변
+        
+        Returns:
+            (answer_type, blocking_rule_info)
+        """
+        if not self._initialized:
+            return "text", "정보 없음"
+        
+        try:
+            # 필터 분석
+            filter_result = self.bf.q.testFilters(
+                headers=HeaderConstraints(
+                    srcIps=src_ip,
+                    dstIps=dst_ip,
+                    dstPorts=[str(dst_port)],
+                    ipProtocols=[protocol]
+                )
+            ).answer().frame()
+            
+            if filter_result.empty:
+                return "text", "차단 없음 (필터 미적용)"
+            
+            blocking_info = []
+            for _, row in filter_result.iterrows():
+                action = row.get('Action', '')
+                filter_name = row.get('FilterName', '')
+                node = row.get('Node', '')
+                line = row.get('Line', '')
+                
+                if 'DENY' in str(action).upper() or 'REJECT' in str(action).upper():
+                    if line:
+                        blocking_info.append(f"{node}:{filter_name}:Line{line}")
+                    else:
+                        blocking_info.append(f"{node}:{filter_name}")
+            
+            if blocking_info:
+                return "text", ", ".join(blocking_info)
+            else:
+                return "text", "차단 없음 (모두 허용)"
+            
+        except Exception as e:
+            logger.warning(f"acl_rule_blocking error: {e}")
+            return "text", f"분석 오류: {e}"
+    
+    def ip_conflict_check(self) -> Tuple[str, List[str]]:
+        """
+        L1: IP 충돌 검사
+        
+        질문 예시: "동일한 IP가 서로 다른 장비에 중복 할당된 곳이 있습니까?"
+        
+        현업 중요도: 높음
+        - 찾기 가장 귀찮은 문제 중 하나
+        - 간헐적 통신 장애의 주요 원인
+        
+        Returns:
+            (answer_type, conflict_list)
+        """
+        if not self._initialized:
+            return "set", []
+        
+        try:
+            # 모든 인터페이스의 IP 수집
+            interfaces = self.bf.q.interfaceProperties().answer().frame()
+            
+            if interfaces.empty:
+                return "set", []
+            
+            ip_to_devices = {}  # IP -> [(device, interface), ...]
+            
+            for _, row in interfaces.iterrows():
+                iface = row.get('Interface', {})
+                hostname = getattr(iface, 'hostname', '') if hasattr(iface, 'hostname') else ''
+                iface_name = getattr(iface, 'interface', '') if hasattr(iface, 'interface') else ''
+                
+                addresses = row.get('AllAddresses', [])
+                if addresses:
+                    for addr in addresses:
+                        if '/' in str(addr):
+                            ip = str(addr).split('/')[0]
+                            if ip not in ip_to_devices:
+                                ip_to_devices[ip] = []
+                            ip_to_devices[ip].append(f"{hostname}:{iface_name}")
+            
+            # 중복 IP 찾기
+            conflicts = []
+            for ip, devices in ip_to_devices.items():
+                if len(devices) > 1:
+                    conflicts.append(f"{ip} -> {', '.join(devices)}")
+            
+            return "set", conflicts
+            
+        except Exception as e:
+            logger.warning(f"ip_conflict_check error: {e}")
+            return "set", []
+    
+    # =========================================================================
     # L5 메트릭 구현
     # =========================================================================
     
@@ -652,21 +983,24 @@ class BatfishBuilder:
                            node1: str,
                            node2: str,
                            test_src: str,
-                           test_dst: str) -> Tuple[str, str]:
+                           test_dst: str) -> Tuple[str, str, str]:
         """
-        L5: 링크 장애 영향 설명
+        L5: 링크 장애 영향 분류 (채점 용이성 개선)
 
-        질문 예시: "PE1과 P1 사이의 링크가 다운되었을 때, Host A에서 Host B로의 트래픽 영향은 어떻게 되나요?"
+        질문 예시: "PE1과 P1 사이의 링크가 다운되었을 때, Host A에서 Host B로의 트래픽 영향은?"
 
         학술적 근거:
         - Minesweeper의 k-failure tolerance 검증
         - DNA의 differential reachability 분석
 
         Returns:
-            (answer_type, impact_description) - 영향 설명 텍스트
+            (answer_type, ground_truth, explanation_text)
+            - answer_type: "selection"
+            - ground_truth: "영향 없음" | "경로 변경" | "통신 단절"
+            - explanation_text: 상세 분석 결과
         """
         if not self._initialized:
-            return "text", "정보 없음"
+            return "selection", "정보 없음", "정보 없음"
 
         try:
             # 출발지/목적지 IP 찾기
@@ -674,7 +1008,7 @@ class BatfishBuilder:
             dst_ips = self.node_ips.get(test_dst, [])
             
             if not src_ips or not dst_ips:
-                return "text", f"IP 정보 없음 - {test_src}: {len(src_ips)}개, {test_dst}: {len(dst_ips)}개 IP"
+                return "selection", "정보 없음", f"IP 정보 없음 - {test_src}: {len(src_ips)}개, {test_dst}: {len(dst_ips)}개 IP"
 
             test_src_ip = src_ips[0]
             test_dst_ip = dst_ips[0]
@@ -686,7 +1020,7 @@ class BatfishBuilder:
             ).answer().frame()
 
             if path_result.empty:
-                return "text", f"경로 없음: {test_src}에서 {test_dst}로 현재 도달 불가"
+                return "selection", "통신 단절", f"경로 없음: {test_src}에서 {test_dst}로 현재 도달 불가"
 
             # 경로 분석
             traces = path_result['Traces'].iloc[0] if not path_result.empty else []
@@ -721,23 +1055,30 @@ class BatfishBuilder:
                     if not current_path_nodes:
                         current_path_nodes = path_nodes
 
-            # 상세 영향 분석 결과 생성
+            # 3. 결과 분류 (Classification)
             path_str = " -> ".join(current_path_nodes) if current_path_nodes else "경로 정보 없음"
-            hop_count = len(current_path_nodes)
-            
+
             if paths_through_link == 0:
-                # 해당 링크를 사용하지 않음
-                return "text", f"영향 없음. 현재 경로: {path_str} ({hop_count}홉). 이유: {node1}-{node2} 링크를 경유하지 않음"
+                # Case A: 영향 없음
+                status = "영향 없음"
+                desc = f"현재 경로({path_str})가 장애 링크({node1}-{node2})를 경유하지 않음."
+
             elif paths_avoiding_link > 0:
-                # 대체 경로 존재
-                return "text", f"부분 영향. 현재 경로: {path_str}. {total_paths}개 경로 중 {paths_through_link}개가 해당 링크 사용, 대체 경로 {paths_avoiding_link}개로 우회 가능"
+                # Case B: 경로 변경 (우회 가능)
+                status = "경로 변경"
+                desc = f"기존 경로가 장애 링크를 사용하지만, {paths_avoiding_link}개의 대체 경로가 존재함. (기존: {path_str})"
+
             else:
-                # 모든 경로가 해당 링크 사용
-                return "text", f"도달 불가. 현재 경로: {path_str}. 이유: 모든 {total_paths}개 경로가 {node1}-{node2} 링크를 사용하며 대체 경로 없음"
+                # Case C: 통신 단절
+                status = "통신 단절"
+                desc = f"모든 경로가 장애 링크를 사용하며 대체 경로 없음. (기존: {path_str})"
+
+            # 반환값: (답변타입, 정답(키워드), 상세설명)
+            return "selection", status, desc
 
         except Exception as e:
             logger.warning(f"link_failure_impact error: {e}")
-            return "text", f"분석 오류: {str(e)}"
+            return "selection", "오류", f"분석 오류: {str(e)}"
     
     def config_change_impact(self,
                             before_snapshot: str,
@@ -1144,6 +1485,95 @@ class BatfishBuilder:
         else:
             logger.info("[L4] No VRF detected. Skipping isolation check questions.")
         
+        # =========================================================================
+        # 8. 현업 실무 질문 추가 (Operational Questions)
+        # =========================================================================
+        
+        # 8-1. 비대칭 경로 검사 (Asymmetric Routing)
+        # 성능 최적화: 5개 쌍만 검사 (각 쌍당 2번 traceroute 호출)
+        all_pairs_asymmetric = self.get_node_pairs()
+        random.shuffle(all_pairs_asymmetric)
+        for src_node, dst_node in all_pairs_asymmetric[:5]:  # 5개 쌍으로 제한
+            _, is_symmetric, desc = self.asymmetric_path_check(src_node, dst_node)
+            
+            questions.append({
+                "id": f"ASYMMETRIC_{src_node}_{dst_node}",
+                "category": "Reachability_Analysis",
+                "level": "L4",
+                "answer_type": "boolean",
+                "question": f"{src_node}과 {dst_node} 사이의 통신 경로가 대칭(양방향 동일 경로)입니까?\n[답변 형식: true/false (소문자)]",
+                "ground_truth": str(is_symmetric).lower(),
+                "explanation": desc,
+                "evidence_hint": {
+                    "scope": {"type": "NODE_PAIR", "src": src_node, "dst": dst_node},
+                    "metric": "asymmetric_path_check"
+                },
+                "academic_reference": "현업: 비대칭 경로 → 방화벽 상태 추적 실패 → 패킷 드랍"
+            })
+        
+        # 8-2. MTU 불일치 검사
+        _, mtu_mismatches = self.mtu_mismatch_check()
+        questions.append({
+            "id": "MTU_MISMATCH_GLOBAL",
+            "category": "Interface_Inventory",
+            "level": "L2",
+            "answer_type": "set",
+            "question": "양쪽 링크의 MTU 사이즈가 서로 다른 구간이 있습니까?\n[답변 형식: 불일치 구간 목록 또는 '없음']",
+            "ground_truth": ", ".join(mtu_mismatches) if mtu_mismatches else "없음",
+            "explanation": f"metric `mtu_mismatch_check` found {len(mtu_mismatches)} mismatches",
+            "evidence_hint": {
+                "scope": {"type": "GLOBAL"},
+                "metric": "mtu_mismatch_check"
+            },
+            "academic_reference": "현업: MTU 불일치 → OSPF Neighbor 불안정, 큰 패킷 드랍"
+        })
+        
+        # 8-3. IP 충돌 검사
+        _, ip_conflicts = self.ip_conflict_check()
+        questions.append({
+            "id": "IP_CONFLICT_GLOBAL",
+            "category": "Interface_Inventory",
+            "level": "L1",
+            "answer_type": "set",
+            "question": "동일한 IP가 서로 다른 장비에 중복 할당된 곳이 있습니까?\n[답변 형식: 충돌 IP 목록 또는 '없음']",
+            "ground_truth": ", ".join(ip_conflicts) if ip_conflicts else "없음",
+            "explanation": f"metric `ip_conflict_check` found {len(ip_conflicts)} conflicts",
+            "evidence_hint": {
+                "scope": {"type": "GLOBAL"},
+                "metric": "ip_conflict_check"
+            },
+            "academic_reference": "현업: IP 충돌 → 간헐적 통신 장애의 주요 원인"
+        })
+        
+        # 8-4. Waypoint 경유 여부 (방화벽 통과 확인) - 개선된 형식
+        if pe_nodes and len(ce_nodes) >= 2:
+            for waypoint in pe_nodes[:2]:  # PE 2개까지
+                for src_ce in ce_nodes[:2]:
+                    for dst_ce in ce_nodes[2:4]:
+                        if src_ce == dst_ce:
+                            continue
+                        src_ips = self.node_ips.get(src_ce, [])
+                        dst_ips = self.node_ips.get(dst_ce, [])
+                        
+                        if src_ips and dst_ips:
+                            _, path_nodes = self.waypoint_check(src_ips[0], dst_ips[0], waypoint)
+                            passes_waypoint = waypoint in [n.lower() for n in path_nodes]
+                            
+                            questions.append({
+                                "id": f"WAYPOINT_PASS_{src_ce}_{dst_ce}_{waypoint}",
+                                "category": "Reachability_Analysis",
+                                "level": "L4",
+                                "answer_type": "boolean",
+                                "question": f"{src_ce}에서 {dst_ce}로 가는 트래픽이 {waypoint}(백본 장비)를 경유합니까?\n[답변 형식: true/false (소문자)]",
+                                "ground_truth": str(passes_waypoint).lower(),
+                                "explanation": f"경로: {' -> '.join(path_nodes) if path_nodes else '없음'}",
+                                "evidence_hint": {
+                                    "scope": {"type": "WAYPOINT", "src": src_ce, "dst": dst_ce, "waypoint": waypoint},
+                                    "metric": "waypoint_check"
+                                },
+                                "academic_reference": "현업: 보안 정책 - 모든 트래픽이 방화벽/IDS 경유 필수"
+                            })
+        
         return questions
     
     def generate_l5_questions(self) -> List[Dict[str, Any]]:
@@ -1189,20 +1619,27 @@ class BatfishBuilder:
                 if test_src == node1 or test_src == node2 or test_dst == node1 or test_dst == node2:
                     continue  # 링크 노드 자체가 출발/도착점이면 스킵
                 
-                _, impact_description = self.link_failure_impact(
+                # 수정된 메서드 호출 (3개 반환값)
+                _, impact_status, impact_desc = self.link_failure_impact(
                     node1, node2, test_src, test_dst
                 )
-                
-                if "정보 없음" in impact_description or "오류" in impact_description:
+
+                if "정보 없음" in impact_status or "오류" in impact_status:
                     continue
 
                 questions.append({
                     "id": f"LINK_FAIL_{node1}_{node2}_{test_src}_{test_dst}",
                     "category": "What_If_Analysis",
                     "level": "L5",
-                    "answer_type": "text",
-                    "question": f"{node1}과 {node2} 사이의 링크가 다운되었을 때, {test_src}에서 {test_dst}로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-                    "ground_truth": impact_description,
+                    "answer_type": "selection",  # text -> selection 변경
+                    # 질문에 명확한 가이드라인 추가
+                    "question": (
+                        f"{node1}과 {node2} 사이의 링크가 다운되었을 때, "
+                        f"{test_src}에서 {test_dst}로의 트래픽 영향은 어떻게 됩니까?\n"
+                        "[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]"
+                    ),
+                    "ground_truth": impact_status,  # 예: "영향 없음"
+                    "explanation": impact_desc,     # 예: "현재 경로(...)가 장애 링크를 경유하지 않음"
                     "explanation": f"metric `link_failure_impact` on link={node1}-{node2}, flow={test_src}->{test_dst}",
                     "evidence_hint": {
                         "scope": {"type": "LINK_FAILURE", "node1": node1, "node2": node2},
@@ -1308,6 +1745,71 @@ class BatfishBuilder:
             },
             "academic_reference": "RFC 2328: OSPF backbone must be contiguous"
         })
+        
+        # =========================================================================
+        # 6. 현업 실무 L5 질문 추가 (Operational L5 Questions)
+        # =========================================================================
+        
+        # 6-1. SPOF(단일 장애점) 탐지 - 관리자가 제일 무서워하는 것
+        _, spof_nodes = self.spof_detection()
+        questions.append({
+            "id": "SPOF_DETECTION_GLOBAL",
+            "category": "What_If_Analysis",
+            "level": "L5",
+            "answer_type": "set",
+            "question": "단일 장비 장애 시 통신이 두절되는 구간(SPOF: Single Point of Failure)이 존재합니까?\n[답변 형식: SPOF 장비 목록 또는 '없음']",
+            "ground_truth": ", ".join(spof_nodes) if spof_nodes else "없음",
+            "explanation": f"metric `spof_detection` found {len(spof_nodes)} SPOF nodes",
+            "evidence_hint": {
+                "scope": {"type": "GLOBAL"},
+                "metric": "spof_detection"
+            },
+            "academic_reference": "현업: SPOF 탐지 → 이중화 설계 검증, 장애 사전 예방"
+        })
+        
+        # 6-2. ACL 차단 규칙 상세 분석 - 운영자가 제일 좋아하는 정보
+        # ⚠️ ACL/필터가 설정된 토폴로지에서만 동작 (testFilters API 사용)
+        # ACL이 없는 토폴로지에서는 500 에러 발생하므로 조건부 실행
+        has_acl = False
+        try:
+            # ACL 존재 여부 확인 (간단한 테스트)
+            test_flow = self.get_representative_flows()[:1]
+            if test_flow:
+                test_result = self.bf.q.testFilters(
+                    headers=HeaderConstraints(
+                        srcIps=test_flow[0].src_ip,
+                        dstIps=test_flow[0].dst_ip
+                    )
+                ).answer().frame()
+                has_acl = not test_result.empty
+        except Exception as e:
+            logger.info(f"[L5] ACL not detected or testFilters not supported: {e}")
+            has_acl = False
+        
+        if has_acl:
+            logger.info("[L5] ACL detected. Generating ACL blocking questions.")
+            for flow in self.get_representative_flows()[:10]:
+                _, blocking_info = self.acl_rule_blocking(
+                    flow.src_ip, flow.dst_ip, flow.dst_port, flow.protocol
+                )
+                
+                if blocking_info != "차단 없음 (모두 허용)" and blocking_info != "차단 없음 (필터 미적용)" and "오류" not in blocking_info:
+                    questions.append({
+                        "id": f"ACL_BLOCK_{flow.src_location}_{flow.dst_location}_{flow.dst_port}",
+                        "category": "Security_Policy",
+                        "level": "L4",
+                        "answer_type": "text",
+                        "question": f"{flow.src_location}에서 {flow.dst_location}로의 {flow.protocol}/{flow.dst_port} 접속이 차단되는 정확한 ACL 규칙명과 줄 번호는 무엇입니까?\n[답변 형식: 장비명:ACL명:Line번호 또는 '차단 없음']",
+                        "ground_truth": blocking_info,
+                        "explanation": f"metric `acl_rule_blocking` on {flow.src_ip}->{flow.dst_ip}:{flow.dst_port}",
+                        "evidence_hint": {
+                            "scope": {"type": "FLOW", "src_ip": flow.src_ip, "dst_ip": flow.dst_ip},
+                            "metric": "acl_rule_blocking"
+                        },
+                        "academic_reference": "현업: ACL 차단 원인 분석 → 트러블슈팅 시간 단축"
+                    })
+        else:
+            logger.info("[L5] No ACL detected. Skipping ACL blocking questions.")
         
         return questions
     

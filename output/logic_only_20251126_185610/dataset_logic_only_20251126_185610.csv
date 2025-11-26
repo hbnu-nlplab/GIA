@@ -319,6 +319,10 @@ INTERFACE_IP_MAP_0006,Interface_Inventory,map,L1,"PE02 장비의 각 인터페�
 [답변 형식: 키=값 형식 목록 (없으면 '없음')]","Ethernet0/0=10.10.10.2/255.255.255.0, Ethernet0/1=, Ethernet0/2=10.1.24.2/255.255.255.0, Ethernet0/3=10.1.12.2/255.255.255.0, Ethernet1/0=, Ethernet1/1=, Ethernet1/2=, Ethernet1/3=","metric `interface_ip_map` on host=PE02, type=DEVICE → Ethernet0/0=10.10.10.2/255.255.255.0, Ethernet0/1=, Ethernet0/2=10.1.24.2/255.255.255.0, Ethernet0/3=10.1.12.2/255.255.255.0, Ethernet1/0=, Ethernet1/1=, Ethernet1/2=, Ethernet1/3=",PE02.xml
 INTERFACE_IP_MAP_0007,Interface_Inventory,map,L1,"PE03 장비의 각 인터페이스에 할당된 IP 주소를 알려주세요.
 [답변 형식: 키=값 형식 목록 (없으면 '없음')]","Ethernet0/0=10.10.10.3/255.255.255.0, Ethernet0/1=, Ethernet0/2=10.1.13.3/255.255.255.0, Ethernet0/3=10.1.34.3/255.255.255.0, Ethernet1/0=, Ethernet1/1=, Ethernet1/2=, Ethernet1/3=","metric `interface_ip_map` on host=PE03, type=DEVICE → Ethernet0/0=10.10.10.3/255.255.255.0, Ethernet0/1=, Ethernet0/2=10.1.13.3/255.255.255.0, Ethernet0/3=10.1.34.3/255.255.255.0, Ethernet1/0=, Ethernet1/1=, Ethernet1/2=, Ethernet1/3=",PE03.xml
+IP_CONFLICT_GLOBAL,Interface_Inventory,set,L1,"동일한 IP가 서로 다른 장비에 중복 할당된 곳이 있습니까?
+[답변 형식: 충돌 IP 목록 또는 '없음']",없음,metric `ip_conflict_check` found 0 conflicts,
+MTU_MISMATCH_GLOBAL,Interface_Inventory,set,L2,"양쪽 링크의 MTU 사이즈가 서로 다른 구간이 있습니까?
+[답변 형식: 불일치 구간 목록 또는 '없음']",없음,metric `mtu_mismatch_check` found 0 mismatches,
 SUBINTERFACE_COUNT_0001,Interface_Inventory,numeric,L1,"CE01 장비에 설정된 서브인터페이스는 총 몇 개입니까?
 [답변 형식: 정수 숫자]",0,"metric `subinterface_count` on host=CE01, type=DEVICE → 0",CE01.xml
 SUBINTERFACE_COUNT_0002,Interface_Inventory,numeric,L1,"CE02 장비에 설정된 서브인터페이스는 총 몇 개입니까?
@@ -378,38 +382,74 @@ OSPF_AREA0_IF_COUNT_0008,OSPF_Consistency,numeric,L2,"PE03 장비의 OSPF Area 0
 OSPF_AREA_MEMBERSHIP_0001,OSPF_Consistency,set,L2,"OSPF Area {area}에 속한 장비 목록을 알려주세요.
 [답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,metric `ospf_area_membership` on type=GLOBAL → 없음,"CE01.xml, CE02.xml, CE03.xml, CE04.xml, P01.xml, P04.xml, PE02.xml, PE03.xml"
 OSPF_NEIGHBOR_COUNT_PER_AREA_0001,OSPF_Consistency,number,L2,OSPF Area {area}의 이웃 관계는 총 몇 개입니까?,0,"metric `ospf_neighbor_count_per_area` on area={area}, type=OSPF_AREA → 0","CE01.xml, CE02.xml, CE03.xml, CE04.xml, P01.xml, P04.xml, PE02.xml, PE03.xml"
+ASYMMETRIC_ce01_pe03,Reachability_Analysis,boolean,L4,"ce01과 pe03 사이의 통신 경로가 대칭(양방향 동일 경로)입니까?
+[답변 형식: true/false (소문자)]",true,대칭 경로: ce01 -> pe03,
+ASYMMETRIC_ce02_ce01,Reachability_Analysis,boolean,L4,"ce02과 ce01 사이의 통신 경로가 대칭(양방향 동일 경로)입니까?
+[답변 형식: true/false (소문자)]",true,대칭 경로: ce02 -> ce01,
+ASYMMETRIC_ce02_pe02,Reachability_Analysis,boolean,L4,"ce02과 pe02 사이의 통신 경로가 대칭(양방향 동일 경로)입니까?
+[답변 형식: true/false (소문자)]",true,대칭 경로: ce02 -> pe02,
+ASYMMETRIC_p01_ce01,Reachability_Analysis,boolean,L4,"p01과 ce01 사이의 통신 경로가 대칭(양방향 동일 경로)입니까?
+[답변 형식: true/false (소문자)]",true,대칭 경로: p01 -> ce01,
+ASYMMETRIC_pe02_ce03,Reachability_Analysis,boolean,L4,"pe02과 ce03 사이의 통신 경로가 대칭(양방향 동일 경로)입니까?
+[답변 형식: true/false (소문자)]",true,대칭 경로: pe02 -> ce03,
 BLACKHOLE_DETECTION_GLOBAL,Reachability_Analysis,boolean,L4,"네트워크에 패킷이 드랍되는 블랙홀이 존재합니까?
 [답변 형식: true/false (소문자)]",false,metric `blackhole_detection` found 0 blackholes,
+BOUNDED_PATH_ce01_ce03,Reachability_Analysis,number,L4,"ce01에서 ce03로 가는 경로의 홉 수는 몇 개입니까?
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on ce01->ce03, actual_hops=2",
+BOUNDED_PATH_ce01_pe03,Reachability_Analysis,number,L4,"ce01에서 pe03로 가는 경로의 홉 수는 몇 개입니까?
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on ce01->pe03, actual_hops=2",
 BOUNDED_PATH_ce02_ce01,Reachability_Analysis,number,L4,"ce02에서 ce01로 가는 경로의 홉 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `bounded_path_length` on ce02->ce01, actual_hops=0",
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on ce02->ce01, actual_hops=2",
 BOUNDED_PATH_ce02_ce03,Reachability_Analysis,number,L4,"ce02에서 ce03로 가는 경로의 홉 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `bounded_path_length` on ce02->ce03, actual_hops=0",
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on ce02->ce03, actual_hops=2",
 BOUNDED_PATH_ce02_ce04,Reachability_Analysis,number,L4,"ce02에서 ce04로 가는 경로의 홉 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `bounded_path_length` on ce02->ce04, actual_hops=0",
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on ce02->ce04, actual_hops=2",
 BOUNDED_PATH_ce02_p04,Reachability_Analysis,number,L4,"ce02에서 p04로 가는 경로의 홉 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `bounded_path_length` on ce02->p04, actual_hops=0",
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on ce02->p04, actual_hops=2",
 BOUNDED_PATH_ce02_pe02,Reachability_Analysis,number,L4,"ce02에서 pe02로 가는 경로의 홉 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `bounded_path_length` on ce02->pe02, actual_hops=0",
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on ce02->pe02, actual_hops=2",
 BOUNDED_PATH_ce02_pe03,Reachability_Analysis,number,L4,"ce02에서 pe03로 가는 경로의 홉 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `bounded_path_length` on ce02->pe03, actual_hops=0",
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on ce02->pe03, actual_hops=2",
+BOUNDED_PATH_ce03_pe03,Reachability_Analysis,number,L4,"ce03에서 pe03로 가는 경로의 홉 수는 몇 개입니까?
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on ce03->pe03, actual_hops=2",
+BOUNDED_PATH_ce04_ce01,Reachability_Analysis,number,L4,"ce04에서 ce01로 가는 경로의 홉 수는 몇 개입니까?
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on ce04->ce01, actual_hops=2",
+BOUNDED_PATH_ce04_ce03,Reachability_Analysis,number,L4,"ce04에서 ce03로 가는 경로의 홉 수는 몇 개입니까?
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on ce04->ce03, actual_hops=2",
+BOUNDED_PATH_ce04_p04,Reachability_Analysis,number,L4,"ce04에서 p04로 가는 경로의 홉 수는 몇 개입니까?
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on ce04->p04, actual_hops=2",
+BOUNDED_PATH_ce04_pe03,Reachability_Analysis,number,L4,"ce04에서 pe03로 가는 경로의 홉 수는 몇 개입니까?
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on ce04->pe03, actual_hops=2",
 BOUNDED_PATH_p01_ce01,Reachability_Analysis,number,L4,"p01에서 ce01로 가는 경로의 홉 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `bounded_path_length` on p01->ce01, actual_hops=0",
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on p01->ce01, actual_hops=2",
 BOUNDED_PATH_p01_ce02,Reachability_Analysis,number,L4,"p01에서 ce02로 가는 경로의 홉 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `bounded_path_length` on p01->ce02, actual_hops=0",
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on p01->ce02, actual_hops=2",
 BOUNDED_PATH_p01_ce03,Reachability_Analysis,number,L4,"p01에서 ce03로 가는 경로의 홉 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `bounded_path_length` on p01->ce03, actual_hops=0",
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on p01->ce03, actual_hops=2",
 BOUNDED_PATH_p01_ce04,Reachability_Analysis,number,L4,"p01에서 ce04로 가는 경로의 홉 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `bounded_path_length` on p01->ce04, actual_hops=0",
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on p01->ce04, actual_hops=2",
 BOUNDED_PATH_p01_p04,Reachability_Analysis,number,L4,"p01에서 p04로 가는 경로의 홉 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `bounded_path_length` on p01->p04, actual_hops=0",
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on p01->p04, actual_hops=2",
 BOUNDED_PATH_p01_pe02,Reachability_Analysis,number,L4,"p01에서 pe02로 가는 경로의 홉 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `bounded_path_length` on p01->pe02, actual_hops=0",
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on p01->pe02, actual_hops=2",
 BOUNDED_PATH_p01_pe03,Reachability_Analysis,number,L4,"p01에서 pe03로 가는 경로의 홉 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `bounded_path_length` on p01->pe03, actual_hops=0",
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on p01->pe03, actual_hops=2",
+BOUNDED_PATH_p04_ce01,Reachability_Analysis,number,L4,"p04에서 ce01로 가는 경로의 홉 수는 몇 개입니까?
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on p04->ce01, actual_hops=2",
+BOUNDED_PATH_p04_ce03,Reachability_Analysis,number,L4,"p04에서 ce03로 가는 경로의 홉 수는 몇 개입니까?
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on p04->ce03, actual_hops=2",
+BOUNDED_PATH_p04_pe03,Reachability_Analysis,number,L4,"p04에서 pe03로 가는 경로의 홉 수는 몇 개입니까?
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on p04->pe03, actual_hops=2",
+BOUNDED_PATH_pe02_ce01,Reachability_Analysis,number,L4,"pe02에서 ce01로 가는 경로의 홉 수는 몇 개입니까?
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on pe02->ce01, actual_hops=2",
+BOUNDED_PATH_pe02_ce03,Reachability_Analysis,number,L4,"pe02에서 ce03로 가는 경로의 홉 수는 몇 개입니까?
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on pe02->ce03, actual_hops=2",
 BOUNDED_PATH_pe02_ce04,Reachability_Analysis,number,L4,"pe02에서 ce04로 가는 경로의 홉 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `bounded_path_length` on pe02->ce04, actual_hops=0",
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on pe02->ce04, actual_hops=2",
 BOUNDED_PATH_pe02_p04,Reachability_Analysis,number,L4,"pe02에서 p04로 가는 경로의 홉 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `bounded_path_length` on pe02->p04, actual_hops=0",
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on pe02->p04, actual_hops=2",
+BOUNDED_PATH_pe02_pe03,Reachability_Analysis,number,L4,"pe02에서 pe03로 가는 경로의 홉 수는 몇 개입니까?
+[답변 형식: 숫자]",2,"metric `bounded_path_length` on pe02->pe03, actual_hops=2",
 LOOP_DETECTION_GLOBAL,Reachability_Analysis,boolean,L4,"네트워크에 포워딩 루프가 존재합니까?
 [답변 형식: true/false (소문자)]",false,metric `loop_detection` found 0 loops,
 REACH_ce02_ce01_ICMP,Reachability_Analysis,boolean,L4,"ce02(10.10.10.102)에서 ce01(10.10.10.101)로의 ICMP 트래픽이 도달 가능합니까?
@@ -472,52 +512,84 @@ REACH_pe02_p04_ICMP,Reachability_Analysis,boolean,L4,"pe02(10.10.10.2)에서 p04
 [답변 형식: true/false (소문자)]",true,"metric `reachability_status` on src=10.10.10.2, dst=10.10.10.4",
 REACH_pe02_p04_TCP,Reachability_Analysis,boolean,L4,"pe02(10.10.10.2)에서 p04(10.10.10.4:22)로의 TCP 트래픽이 도달 가능합니까?
 [답변 형식: true/false (소문자)]",true,"metric `reachability_status` on src=10.10.10.2, dst=10.10.10.4",
+TRACEROUTE_ce01_ce03,Reachability_Analysis,set,L4,"ce01에서 ce03(10.10.10.103)로 가는 패킷의 네트워크 경로를 알려주세요.
+[답변 형식: 쉼표로 구분된 장비 목록]","ce01, ce03","metric `traceroute_path` on src=ce01, dst=10.10.10.103",
+TRACEROUTE_ce01_pe03,Reachability_Analysis,set,L4,"ce01에서 pe03(10.10.10.3)로 가는 패킷의 네트워크 경로를 알려주세요.
+[답변 형식: 쉼표로 구분된 장비 목록]","ce01, pe03","metric `traceroute_path` on src=ce01, dst=10.10.10.3",
 TRACEROUTE_ce02_ce01,Reachability_Analysis,set,L4,"ce02에서 ce01(10.10.10.101)로 가는 패킷의 네트워크 경로를 알려주세요.
-[답변 형식: 쉼표로 구분된 장비 목록]",경로 없음,"metric `traceroute_path` on src=ce02, dst=10.10.10.101",
+[답변 형식: 쉼표로 구분된 장비 목록]","ce02, ce01","metric `traceroute_path` on src=ce02, dst=10.10.10.101",
 TRACEROUTE_ce02_ce03,Reachability_Analysis,set,L4,"ce02에서 ce03(10.10.10.103)로 가는 패킷의 네트워크 경로를 알려주세요.
-[답변 형식: 쉼표로 구분된 장비 목록]",경로 없음,"metric `traceroute_path` on src=ce02, dst=10.10.10.103",
+[답변 형식: 쉼표로 구분된 장비 목록]","ce02, ce03","metric `traceroute_path` on src=ce02, dst=10.10.10.103",
 TRACEROUTE_ce02_ce04,Reachability_Analysis,set,L4,"ce02에서 ce04(10.10.10.104)로 가는 패킷의 네트워크 경로를 알려주세요.
-[답변 형식: 쉼표로 구분된 장비 목록]",경로 없음,"metric `traceroute_path` on src=ce02, dst=10.10.10.104",
+[답변 형식: 쉼표로 구분된 장비 목록]","ce02, ce04","metric `traceroute_path` on src=ce02, dst=10.10.10.104",
 TRACEROUTE_ce02_p04,Reachability_Analysis,set,L4,"ce02에서 p04(10.10.10.4)로 가는 패킷의 네트워크 경로를 알려주세요.
-[답변 형식: 쉼표로 구분된 장비 목록]",경로 없음,"metric `traceroute_path` on src=ce02, dst=10.10.10.4",
+[답변 형식: 쉼표로 구분된 장비 목록]","ce02, p04","metric `traceroute_path` on src=ce02, dst=10.10.10.4",
 TRACEROUTE_ce02_pe02,Reachability_Analysis,set,L4,"ce02에서 pe02(10.10.10.2)로 가는 패킷의 네트워크 경로를 알려주세요.
-[답변 형식: 쉼표로 구분된 장비 목록]",경로 없음,"metric `traceroute_path` on src=ce02, dst=10.10.10.2",
+[답변 형식: 쉼표로 구분된 장비 목록]","ce02, pe02","metric `traceroute_path` on src=ce02, dst=10.10.10.2",
 TRACEROUTE_ce02_pe03,Reachability_Analysis,set,L4,"ce02에서 pe03(10.10.10.3)로 가는 패킷의 네트워크 경로를 알려주세요.
-[답변 형식: 쉼표로 구분된 장비 목록]",경로 없음,"metric `traceroute_path` on src=ce02, dst=10.10.10.3",
+[답변 형식: 쉼표로 구분된 장비 목록]","ce02, pe03","metric `traceroute_path` on src=ce02, dst=10.10.10.3",
+TRACEROUTE_ce03_pe03,Reachability_Analysis,set,L4,"ce03에서 pe03(10.10.10.3)로 가는 패킷의 네트워크 경로를 알려주세요.
+[답변 형식: 쉼표로 구분된 장비 목록]","ce03, pe03","metric `traceroute_path` on src=ce03, dst=10.10.10.3",
 TRACEROUTE_ce04_ce01,Reachability_Analysis,set,L4,"ce04에서 ce01(10.10.10.101)로 가는 패킷의 네트워크 경로를 알려주세요.
-[답변 형식: 쉼표로 구분된 장비 목록]",경로 없음,"metric `traceroute_path` on src=ce04, dst=10.10.10.101",
+[답변 형식: 쉼표로 구분된 장비 목록]","ce04, ce01","metric `traceroute_path` on src=ce04, dst=10.10.10.101",
+TRACEROUTE_ce04_ce03,Reachability_Analysis,set,L4,"ce04에서 ce03(10.10.10.103)로 가는 패킷의 네트워크 경로를 알려주세요.
+[답변 형식: 쉼표로 구분된 장비 목록]","ce04, ce03","metric `traceroute_path` on src=ce04, dst=10.10.10.103",
 TRACEROUTE_ce04_p04,Reachability_Analysis,set,L4,"ce04에서 p04(10.10.10.4)로 가는 패킷의 네트워크 경로를 알려주세요.
-[답변 형식: 쉼표로 구분된 장비 목록]",경로 없음,"metric `traceroute_path` on src=ce04, dst=10.10.10.4",
+[답변 형식: 쉼표로 구분된 장비 목록]","ce04, p04","metric `traceroute_path` on src=ce04, dst=10.10.10.4",
+TRACEROUTE_ce04_pe03,Reachability_Analysis,set,L4,"ce04에서 pe03(10.10.10.3)로 가는 패킷의 네트워크 경로를 알려주세요.
+[답변 형식: 쉼표로 구분된 장비 목록]","ce04, pe03","metric `traceroute_path` on src=ce04, dst=10.10.10.3",
 TRACEROUTE_p01_ce01,Reachability_Analysis,set,L4,"p01에서 ce01(10.10.10.101)로 가는 패킷의 네트워크 경로를 알려주세요.
-[답변 형식: 쉼표로 구분된 장비 목록]",경로 없음,"metric `traceroute_path` on src=p01, dst=10.10.10.101",
+[답변 형식: 쉼표로 구분된 장비 목록]","p01, ce01","metric `traceroute_path` on src=p01, dst=10.10.10.101",
 TRACEROUTE_p01_ce02,Reachability_Analysis,set,L4,"p01에서 ce02(10.10.10.102)로 가는 패킷의 네트워크 경로를 알려주세요.
-[답변 형식: 쉼표로 구분된 장비 목록]",경로 없음,"metric `traceroute_path` on src=p01, dst=10.10.10.102",
+[답변 형식: 쉼표로 구분된 장비 목록]","p01, ce02","metric `traceroute_path` on src=p01, dst=10.10.10.102",
 TRACEROUTE_p01_ce03,Reachability_Analysis,set,L4,"p01에서 ce03(10.10.10.103)로 가는 패킷의 네트워크 경로를 알려주세요.
-[답변 형식: 쉼표로 구분된 장비 목록]",경로 없음,"metric `traceroute_path` on src=p01, dst=10.10.10.103",
+[답변 형식: 쉼표로 구분된 장비 목록]","p01, ce03","metric `traceroute_path` on src=p01, dst=10.10.10.103",
 TRACEROUTE_p01_ce04,Reachability_Analysis,set,L4,"p01에서 ce04(10.10.10.104)로 가는 패킷의 네트워크 경로를 알려주세요.
-[답변 형식: 쉼표로 구분된 장비 목록]",경로 없음,"metric `traceroute_path` on src=p01, dst=10.10.10.104",
+[답변 형식: 쉼표로 구분된 장비 목록]","p01, ce04","metric `traceroute_path` on src=p01, dst=10.10.10.104",
 TRACEROUTE_p01_p04,Reachability_Analysis,set,L4,"p01에서 p04(10.10.10.4)로 가는 패킷의 네트워크 경로를 알려주세요.
-[답변 형식: 쉼표로 구분된 장비 목록]",경로 없음,"metric `traceroute_path` on src=p01, dst=10.10.10.4",
+[답변 형식: 쉼표로 구분된 장비 목록]","p01, p04","metric `traceroute_path` on src=p01, dst=10.10.10.4",
 TRACEROUTE_p01_pe02,Reachability_Analysis,set,L4,"p01에서 pe02(10.10.10.2)로 가는 패킷의 네트워크 경로를 알려주세요.
-[답변 형식: 쉼표로 구분된 장비 목록]",경로 없음,"metric `traceroute_path` on src=p01, dst=10.10.10.2",
+[답변 형식: 쉼표로 구분된 장비 목록]","p01, pe02","metric `traceroute_path` on src=p01, dst=10.10.10.2",
 TRACEROUTE_p01_pe03,Reachability_Analysis,set,L4,"p01에서 pe03(10.10.10.3)로 가는 패킷의 네트워크 경로를 알려주세요.
-[답변 형식: 쉼표로 구분된 장비 목록]",경로 없음,"metric `traceroute_path` on src=p01, dst=10.10.10.3",
+[답변 형식: 쉼표로 구분된 장비 목록]","p01, pe03","metric `traceroute_path` on src=p01, dst=10.10.10.3",
+TRACEROUTE_p04_ce01,Reachability_Analysis,set,L4,"p04에서 ce01(10.10.10.101)로 가는 패킷의 네트워크 경로를 알려주세요.
+[답변 형식: 쉼표로 구분된 장비 목록]","p04, ce01","metric `traceroute_path` on src=p04, dst=10.10.10.101",
+TRACEROUTE_p04_ce03,Reachability_Analysis,set,L4,"p04에서 ce03(10.10.10.103)로 가는 패킷의 네트워크 경로를 알려주세요.
+[답변 형식: 쉼표로 구분된 장비 목록]","p04, ce03","metric `traceroute_path` on src=p04, dst=10.10.10.103",
+TRACEROUTE_p04_pe03,Reachability_Analysis,set,L4,"p04에서 pe03(10.10.10.3)로 가는 패킷의 네트워크 경로를 알려주세요.
+[답변 형식: 쉼표로 구분된 장비 목록]","p04, pe03","metric `traceroute_path` on src=p04, dst=10.10.10.3",
 TRACEROUTE_pe02_ce01,Reachability_Analysis,set,L4,"pe02에서 ce01(10.10.10.101)로 가는 패킷의 네트워크 경로를 알려주세요.
-[답변 형식: 쉼표로 구분된 장비 목록]",경로 없음,"metric `traceroute_path` on src=pe02, dst=10.10.10.101",
+[답변 형식: 쉼표로 구분된 장비 목록]","pe02, ce01","metric `traceroute_path` on src=pe02, dst=10.10.10.101",
 TRACEROUTE_pe02_ce03,Reachability_Analysis,set,L4,"pe02에서 ce03(10.10.10.103)로 가는 패킷의 네트워크 경로를 알려주세요.
-[답변 형식: 쉼표로 구분된 장비 목록]",경로 없음,"metric `traceroute_path` on src=pe02, dst=10.10.10.103",
+[답변 형식: 쉼표로 구분된 장비 목록]","pe02, ce03","metric `traceroute_path` on src=pe02, dst=10.10.10.103",
 TRACEROUTE_pe02_ce04,Reachability_Analysis,set,L4,"pe02에서 ce04(10.10.10.104)로 가는 패킷의 네트워크 경로를 알려주세요.
-[답변 형식: 쉼표로 구분된 장비 목록]",경로 없음,"metric `traceroute_path` on src=pe02, dst=10.10.10.104",
+[답변 형식: 쉼표로 구분된 장비 목록]","pe02, ce04","metric `traceroute_path` on src=pe02, dst=10.10.10.104",
 TRACEROUTE_pe02_p04,Reachability_Analysis,set,L4,"pe02에서 p04(10.10.10.4)로 가는 패킷의 네트워크 경로를 알려주세요.
-[답변 형식: 쉼표로 구분된 장비 목록]",경로 없음,"metric `traceroute_path` on src=pe02, dst=10.10.10.4",
+[답변 형식: 쉼표로 구분된 장비 목록]","pe02, p04","metric `traceroute_path` on src=pe02, dst=10.10.10.4",
 TRACEROUTE_pe02_pe03,Reachability_Analysis,set,L4,"pe02에서 pe03(10.10.10.3)로 가는 패킷의 네트워크 경로를 알려주세요.
-[답변 형식: 쉼표로 구분된 장비 목록]",경로 없음,"metric `traceroute_path` on src=pe02, dst=10.10.10.3",
+[답변 형식: 쉼표로 구분된 장비 목록]","pe02, pe03","metric `traceroute_path` on src=pe02, dst=10.10.10.3",
+WAYPOINT_PASS_ce02_ce01_pe02,Reachability_Analysis,boolean,L4,"ce02에서 ce01로 가는 트래픽이 pe02(백본 장비)를 경유합니까?
+[답변 형식: true/false (소문자)]",false,경로: ce02 -> ce01,
+WAYPOINT_PASS_ce02_ce01_pe03,Reachability_Analysis,boolean,L4,"ce02에서 ce01로 가는 트래픽이 pe03(백본 장비)를 경유합니까?
+[답변 형식: true/false (소문자)]",false,경로: ce02 -> ce01,
 WAYPOINT_ce02_ce01_pe02,Reachability_Analysis,set,L4,"ce02에서 ce01로 가는 트래픽이 경유하는 노드들은 무엇입니까?
-[답변 형식: 쉼표로 구분된 노드 목록]",없음,"metric `waypoint_check` on ce02->ce01, path_nodes=[]",
+[답변 형식: 쉼표로 구분된 노드 목록]","ce02, ce01","metric `waypoint_check` on ce02->ce01, path_nodes=['ce02', 'ce01']",
+WAYPOINT_PASS_ce02_ce03_pe02,Reachability_Analysis,boolean,L4,"ce02에서 ce03로 가는 트래픽이 pe02(백본 장비)를 경유합니까?
+[답변 형식: true/false (소문자)]",false,경로: ce02 -> ce03,
+WAYPOINT_PASS_ce02_ce03_pe03,Reachability_Analysis,boolean,L4,"ce02에서 ce03로 가는 트래픽이 pe03(백본 장비)를 경유합니까?
+[답변 형식: true/false (소문자)]",false,경로: ce02 -> ce03,
 WAYPOINT_ce02_ce04_pe02,Reachability_Analysis,set,L4,"ce02에서 ce04로 가는 트래픽이 경유하는 노드들은 무엇입니까?
-[답변 형식: 쉼표로 구분된 노드 목록]",없음,"metric `waypoint_check` on ce02->ce04, path_nodes=[]",
+[답변 형식: 쉼표로 구분된 노드 목록]","ce02, ce04","metric `waypoint_check` on ce02->ce04, path_nodes=['ce02', 'ce04']",
+WAYPOINT_PASS_ce04_ce01_pe02,Reachability_Analysis,boolean,L4,"ce04에서 ce01로 가는 트래픽이 pe02(백본 장비)를 경유합니까?
+[답변 형식: true/false (소문자)]",false,경로: ce04 -> ce01,
+WAYPOINT_PASS_ce04_ce01_pe03,Reachability_Analysis,boolean,L4,"ce04에서 ce01로 가는 트래픽이 pe03(백본 장비)를 경유합니까?
+[답변 형식: true/false (소문자)]",false,경로: ce04 -> ce01,
 WAYPOINT_ce04_ce01_pe02,Reachability_Analysis,set,L4,"ce04에서 ce01로 가는 트래픽이 경유하는 노드들은 무엇입니까?
-[답변 형식: 쉼표로 구분된 노드 목록]",없음,"metric `waypoint_check` on ce04->ce01, path_nodes=[]",
+[답변 형식: 쉼표로 구분된 노드 목록]","ce04, ce01","metric `waypoint_check` on ce04->ce01, path_nodes=['ce04', 'ce01']",
+WAYPOINT_PASS_ce04_ce03_pe02,Reachability_Analysis,boolean,L4,"ce04에서 ce03로 가는 트래픽이 pe02(백본 장비)를 경유합니까?
+[답변 형식: true/false (소문자)]",false,경로: ce04 -> ce03,
+WAYPOINT_PASS_ce04_ce03_pe03,Reachability_Analysis,boolean,L4,"ce04에서 ce03로 가는 트래픽이 pe03(백본 장비)를 경유합니까?
+[답변 형식: true/false (소문자)]",false,경로: ce04 -> ce03,
 BGP_LOCAL_AS_NUMERIC_0001,Routing_Inventory,numeric,L1,"CE01 장비의 BGP Local-AS 번호는 무엇입니까?
 [답변 형식: 정수 숫자]",0,"metric `bgp_local_as_numeric` on host=CE01, type=DEVICE → 0",CE01.xml
 BGP_LOCAL_AS_NUMERIC_0002,Routing_Inventory,numeric,L1,"CE02 장비의 BGP Local-AS 번호는 무엇입니까?
@@ -985,57 +1057,125 @@ VRF_WITHOUT_RT_PAIRS_0001,VRF_Consistency,set,L3,"route-target이 없는 VRF(장
 [답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",없음,metric `vrf_without_rt_pairs` on type=GLOBAL → 없음,"CE01.xml, CE02.xml, CE03.xml, CE04.xml, P01.xml, P04.xml, PE02.xml, PE03.xml"
 BACKBONE_CONTINUITY,What_If_Analysis,boolean,L5,"OSPF Area 0(백본)이 끊어지지 않고 연속적으로 연결되어 있습니까?
 [답변 형식: true/false (소문자)]",true,metric `backbone_continuity` - OSPF Area 0 connectivity,
-DIFF_REACH_ce02_ce04,What_If_Analysis,text,L5,"설정 변경 없이 현재 상태에서 ce02에서 ce04로의 도달성 상태는 어떻게 되나요?
-[답변 형식: 상태 설명 텍스트]",상태 분석 실패,metric `differential_reachability` on ce02->ce04,
-DIFF_REACH_ce02_p04,What_If_Analysis,text,L5,"설정 변경 없이 현재 상태에서 ce02에서 p04로의 도달성 상태는 어떻게 되나요?
-[답변 형식: 상태 설명 텍스트]",상태 분석 실패,metric `differential_reachability` on ce02->p04,
-DIFF_REACH_ce02_pe02,What_If_Analysis,text,L5,"설정 변경 없이 현재 상태에서 ce02에서 pe02로의 도달성 상태는 어떻게 되나요?
-[답변 형식: 상태 설명 텍스트]",상태 분석 실패,metric `differential_reachability` on ce02->pe02,
-DIFF_REACH_p01_ce01,What_If_Analysis,text,L5,"설정 변경 없이 현재 상태에서 p01에서 ce01로의 도달성 상태는 어떻게 되나요?
-[답변 형식: 상태 설명 텍스트]",상태 분석 실패,metric `differential_reachability` on p01->ce01,
-DIFF_REACH_p01_ce02,What_If_Analysis,text,L5,"설정 변경 없이 현재 상태에서 p01에서 ce02로의 도달성 상태는 어떻게 되나요?
-[답변 형식: 상태 설명 텍스트]",상태 분석 실패,metric `differential_reachability` on p01->ce02,
-DIFF_REACH_p01_ce03,What_If_Analysis,text,L5,"설정 변경 없이 현재 상태에서 p01에서 ce03로의 도달성 상태는 어떻게 되나요?
-[답변 형식: 상태 설명 텍스트]",상태 분석 실패,metric `differential_reachability` on p01->ce03,
-DIFF_REACH_p01_ce04,What_If_Analysis,text,L5,"설정 변경 없이 현재 상태에서 p01에서 ce04로의 도달성 상태는 어떻게 되나요?
-[답변 형식: 상태 설명 텍스트]",상태 분석 실패,metric `differential_reachability` on p01->ce04,
-DIFF_REACH_p01_p04,What_If_Analysis,text,L5,"설정 변경 없이 현재 상태에서 p01에서 p04로의 도달성 상태는 어떻게 되나요?
-[답변 형식: 상태 설명 텍스트]",상태 분석 실패,metric `differential_reachability` on p01->p04,
-DIFF_REACH_p01_pe02,What_If_Analysis,text,L5,"설정 변경 없이 현재 상태에서 p01에서 pe02로의 도달성 상태는 어떻게 되나요?
-[답변 형식: 상태 설명 텍스트]",상태 분석 실패,metric `differential_reachability` on p01->pe02,
-DIFF_REACH_p01_pe03,What_If_Analysis,text,L5,"설정 변경 없이 현재 상태에서 p01에서 pe03로의 도달성 상태는 어떻게 되나요?
-[답변 형식: 상태 설명 텍스트]",상태 분석 실패,metric `differential_reachability` on p01->pe03,
-K_FAIL_TOL_ce02_ce01,What_If_Analysis,number,L5,"ce02에서 ce01로 가는 대체 경로의 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `k_failure_tolerance` on ce02->ce01, alternative_paths=0",
-K_FAIL_TOL_ce02_ce03,What_If_Analysis,number,L5,"ce02에서 ce03로 가는 대체 경로의 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `k_failure_tolerance` on ce02->ce03, alternative_paths=0",
-K_FAIL_TOL_ce02_ce04,What_If_Analysis,number,L5,"ce02에서 ce04로 가는 대체 경로의 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `k_failure_tolerance` on ce02->ce04, alternative_paths=0",
-K_FAIL_TOL_ce02_p04,What_If_Analysis,number,L5,"ce02에서 p04로 가는 대체 경로의 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `k_failure_tolerance` on ce02->p04, alternative_paths=0",
-K_FAIL_TOL_ce02_pe02,What_If_Analysis,number,L5,"ce02에서 pe02로 가는 대체 경로의 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `k_failure_tolerance` on ce02->pe02, alternative_paths=0",
-K_FAIL_TOL_ce02_pe03,What_If_Analysis,number,L5,"ce02에서 pe03로 가는 대체 경로의 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `k_failure_tolerance` on ce02->pe03, alternative_paths=0",
-K_FAIL_TOL_p01_ce01,What_If_Analysis,number,L5,"p01에서 ce01로 가는 대체 경로의 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `k_failure_tolerance` on p01->ce01, alternative_paths=0",
-K_FAIL_TOL_p01_ce02,What_If_Analysis,number,L5,"p01에서 ce02로 가는 대체 경로의 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `k_failure_tolerance` on p01->ce02, alternative_paths=0",
-K_FAIL_TOL_p01_ce03,What_If_Analysis,number,L5,"p01에서 ce03로 가는 대체 경로의 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `k_failure_tolerance` on p01->ce03, alternative_paths=0",
-K_FAIL_TOL_p01_ce04,What_If_Analysis,number,L5,"p01에서 ce04로 가는 대체 경로의 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `k_failure_tolerance` on p01->ce04, alternative_paths=0",
-K_FAIL_TOL_p01_p04,What_If_Analysis,number,L5,"p01에서 p04로 가는 대체 경로의 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `k_failure_tolerance` on p01->p04, alternative_paths=0",
-K_FAIL_TOL_p01_pe02,What_If_Analysis,number,L5,"p01에서 pe02로 가는 대체 경로의 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `k_failure_tolerance` on p01->pe02, alternative_paths=0",
-K_FAIL_TOL_p01_pe03,What_If_Analysis,number,L5,"p01에서 pe03로 가는 대체 경로의 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `k_failure_tolerance` on p01->pe03, alternative_paths=0",
-K_FAIL_TOL_pe02_ce04,What_If_Analysis,number,L5,"pe02에서 ce04로 가는 대체 경로의 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `k_failure_tolerance` on pe02->ce04, alternative_paths=0",
-K_FAIL_TOL_pe02_p04,What_If_Analysis,number,L5,"pe02에서 p04로 가는 대체 경로의 수는 몇 개입니까?
-[답변 형식: 숫자]",0,"metric `k_failure_tolerance` on pe02->p04, alternative_paths=0",
+LINK_FAIL_ce02_ce04_ce01_ce03,What_If_Analysis,text,L5,"ce02과 ce04 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> ce03 (2홉). 이유: ce02-ce04 링크를 경유하지 않음,"metric `link_failure_impact` on link=ce02-ce04, flow=ce01->ce03",
+LINK_FAIL_ce02_p04_ce01_ce03,What_If_Analysis,text,L5,"ce02과 p04 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> ce03 (2홉). 이유: ce02-p04 링크를 경유하지 않음,"metric `link_failure_impact` on link=ce02-p04, flow=ce01->ce03",
+LINK_FAIL_ce02_p04_ce01_ce04,What_If_Analysis,text,L5,"ce02과 p04 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> ce04 (2홉). 이유: ce02-p04 링크를 경유하지 않음,"metric `link_failure_impact` on link=ce02-p04, flow=ce01->ce04",
+LINK_FAIL_ce02_p04_ce01_p01,What_If_Analysis,text,L5,"ce02과 p04 사이의 링크가 다운되었을 때, ce01에서 p01로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> p01 (2홉). 이유: ce02-p04 링크를 경유하지 않음,"metric `link_failure_impact` on link=ce02-p04, flow=ce01->p01",
+LINK_FAIL_ce03_pe03_ce01_ce02,What_If_Analysis,text,L5,"ce03과 pe03 사이의 링크가 다운되었을 때, ce01에서 ce02로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> ce02 (2홉). 이유: ce03-pe03 링크를 경유하지 않음,"metric `link_failure_impact` on link=ce03-pe03, flow=ce01->ce02",
+LINK_FAIL_ce03_pe03_ce01_ce04,What_If_Analysis,text,L5,"ce03과 pe03 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> ce04 (2홉). 이유: ce03-pe03 링크를 경유하지 않음,"metric `link_failure_impact` on link=ce03-pe03, flow=ce01->ce04",
+LINK_FAIL_ce03_pe03_ce01_p01,What_If_Analysis,text,L5,"ce03과 pe03 사이의 링크가 다운되었을 때, ce01에서 p01로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> p01 (2홉). 이유: ce03-pe03 링크를 경유하지 않음,"metric `link_failure_impact` on link=ce03-pe03, flow=ce01->p01",
+LINK_FAIL_ce03_pe03_ce01_p04,What_If_Analysis,text,L5,"ce03과 pe03 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> p04 (2홉). 이유: ce03-pe03 링크를 경유하지 않음,"metric `link_failure_impact` on link=ce03-pe03, flow=ce01->p04",
+LINK_FAIL_p01_ce03_ce01_ce02,What_If_Analysis,text,L5,"p01과 ce03 사이의 링크가 다운되었을 때, ce01에서 ce02로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> ce02 (2홉). 이유: p01-ce03 링크를 경유하지 않음,"metric `link_failure_impact` on link=p01-ce03, flow=ce01->ce02",
+LINK_FAIL_p01_ce03_ce01_ce04,What_If_Analysis,text,L5,"p01과 ce03 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> ce04 (2홉). 이유: p01-ce03 링크를 경유하지 않음,"metric `link_failure_impact` on link=p01-ce03, flow=ce01->ce04",
+LINK_FAIL_p01_ce03_ce01_p04,What_If_Analysis,text,L5,"p01과 ce03 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> p04 (2홉). 이유: p01-ce03 링크를 경유하지 않음,"metric `link_failure_impact` on link=p01-ce03, flow=ce01->p04",
+LINK_FAIL_p01_ce04_ce01_ce02,What_If_Analysis,text,L5,"p01과 ce04 사이의 링크가 다운되었을 때, ce01에서 ce02로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> ce02 (2홉). 이유: p01-ce04 링크를 경유하지 않음,"metric `link_failure_impact` on link=p01-ce04, flow=ce01->ce02",
+LINK_FAIL_p01_ce04_ce01_ce03,What_If_Analysis,text,L5,"p01과 ce04 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> ce03 (2홉). 이유: p01-ce04 링크를 경유하지 않음,"metric `link_failure_impact` on link=p01-ce04, flow=ce01->ce03",
+LINK_FAIL_p01_ce04_ce01_p04,What_If_Analysis,text,L5,"p01과 ce04 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> p04 (2홉). 이유: p01-ce04 링크를 경유하지 않음,"metric `link_failure_impact` on link=p01-ce04, flow=ce01->p04",
+LINK_FAIL_p01_pe02_ce01_ce02,What_If_Analysis,text,L5,"p01과 pe02 사이의 링크가 다운되었을 때, ce01에서 ce02로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> ce02 (2홉). 이유: p01-pe02 링크를 경유하지 않음,"metric `link_failure_impact` on link=p01-pe02, flow=ce01->ce02",
+LINK_FAIL_p01_pe02_ce01_ce03,What_If_Analysis,text,L5,"p01과 pe02 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> ce03 (2홉). 이유: p01-pe02 링크를 경유하지 않음,"metric `link_failure_impact` on link=p01-pe02, flow=ce01->ce03",
+LINK_FAIL_p01_pe02_ce01_ce04,What_If_Analysis,text,L5,"p01과 pe02 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> ce04 (2홉). 이유: p01-pe02 링크를 경유하지 않음,"metric `link_failure_impact` on link=p01-pe02, flow=ce01->ce04",
+LINK_FAIL_p01_pe02_ce01_p04,What_If_Analysis,text,L5,"p01과 pe02 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> p04 (2홉). 이유: p01-pe02 링크를 경유하지 않음,"metric `link_failure_impact` on link=p01-pe02, flow=ce01->p04",
+LINK_FAIL_p01_pe03_ce01_ce02,What_If_Analysis,text,L5,"p01과 pe03 사이의 링크가 다운되었을 때, ce01에서 ce02로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> ce02 (2홉). 이유: p01-pe03 링크를 경유하지 않음,"metric `link_failure_impact` on link=p01-pe03, flow=ce01->ce02",
+LINK_FAIL_p01_pe03_ce01_ce03,What_If_Analysis,text,L5,"p01과 pe03 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> ce03 (2홉). 이유: p01-pe03 링크를 경유하지 않음,"metric `link_failure_impact` on link=p01-pe03, flow=ce01->ce03",
+LINK_FAIL_p01_pe03_ce01_ce04,What_If_Analysis,text,L5,"p01과 pe03 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> ce04 (2홉). 이유: p01-pe03 링크를 경유하지 않음,"metric `link_failure_impact` on link=p01-pe03, flow=ce01->ce04",
+LINK_FAIL_p01_pe03_ce01_p04,What_If_Analysis,text,L5,"p01과 pe03 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> p04 (2홉). 이유: p01-pe03 링크를 경유하지 않음,"metric `link_failure_impact` on link=p01-pe03, flow=ce01->p04",
+LINK_FAIL_p04_ce03_ce01_ce02,What_If_Analysis,text,L5,"p04과 ce03 사이의 링크가 다운되었을 때, ce01에서 ce02로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> ce02 (2홉). 이유: p04-ce03 링크를 경유하지 않음,"metric `link_failure_impact` on link=p04-ce03, flow=ce01->ce02",
+LINK_FAIL_p04_ce03_ce01_ce04,What_If_Analysis,text,L5,"p04과 ce03 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> ce04 (2홉). 이유: p04-ce03 링크를 경유하지 않음,"metric `link_failure_impact` on link=p04-ce03, flow=ce01->ce04",
+LINK_FAIL_p04_ce03_ce01_p01,What_If_Analysis,text,L5,"p04과 ce03 사이의 링크가 다운되었을 때, ce01에서 p01로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> p01 (2홉). 이유: p04-ce03 링크를 경유하지 않음,"metric `link_failure_impact` on link=p04-ce03, flow=ce01->p01",
+LINK_FAIL_pe02_pe03_ce01_ce02,What_If_Analysis,text,L5,"pe02과 pe03 사이의 링크가 다운되었을 때, ce01에서 ce02로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> ce02 (2홉). 이유: pe02-pe03 링크를 경유하지 않음,"metric `link_failure_impact` on link=pe02-pe03, flow=ce01->ce02",
+LINK_FAIL_pe02_pe03_ce01_ce03,What_If_Analysis,text,L5,"pe02과 pe03 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> ce03 (2홉). 이유: pe02-pe03 링크를 경유하지 않음,"metric `link_failure_impact` on link=pe02-pe03, flow=ce01->ce03",
+LINK_FAIL_pe02_pe03_ce01_ce04,What_If_Analysis,text,L5,"pe02과 pe03 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> ce04 (2홉). 이유: pe02-pe03 링크를 경유하지 않음,"metric `link_failure_impact` on link=pe02-pe03, flow=ce01->ce04",
+LINK_FAIL_pe02_pe03_ce01_p01,What_If_Analysis,text,L5,"pe02과 pe03 사이의 링크가 다운되었을 때, ce01에서 p01로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> p01 (2홉). 이유: pe02-pe03 링크를 경유하지 않음,"metric `link_failure_impact` on link=pe02-pe03, flow=ce01->p01",
+LINK_FAIL_pe02_pe03_ce01_p04,What_If_Analysis,text,L5,"pe02과 pe03 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 되나요?
+[답변 형식: 영향 설명 텍스트]",영향 없음. 현재 경로: ce01 -> p04 (2홉). 이유: pe02-pe03 링크를 경유하지 않음,"metric `link_failure_impact` on link=pe02-pe03, flow=ce01->p04",
+PATH_COUNT_ce01_ce03,What_If_Analysis,number,L5,"ce01에서 ce03로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on ce01->ce03, total_paths=1",
+PATH_COUNT_ce01_pe03,What_If_Analysis,number,L5,"ce01에서 pe03로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on ce01->pe03, total_paths=1",
+PATH_COUNT_ce02_ce01,What_If_Analysis,number,L5,"ce02에서 ce01로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on ce02->ce01, total_paths=1",
+PATH_COUNT_ce02_ce03,What_If_Analysis,number,L5,"ce02에서 ce03로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on ce02->ce03, total_paths=1",
+PATH_COUNT_ce02_ce04,What_If_Analysis,number,L5,"ce02에서 ce04로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on ce02->ce04, total_paths=1",
+PATH_COUNT_ce02_p04,What_If_Analysis,number,L5,"ce02에서 p04로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on ce02->p04, total_paths=1",
+PATH_COUNT_ce02_pe02,What_If_Analysis,number,L5,"ce02에서 pe02로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on ce02->pe02, total_paths=1",
+PATH_COUNT_ce02_pe03,What_If_Analysis,number,L5,"ce02에서 pe03로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on ce02->pe03, total_paths=1",
+PATH_COUNT_ce03_pe03,What_If_Analysis,number,L5,"ce03에서 pe03로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on ce03->pe03, total_paths=1",
+PATH_COUNT_ce04_ce01,What_If_Analysis,number,L5,"ce04에서 ce01로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on ce04->ce01, total_paths=1",
+PATH_COUNT_ce04_ce03,What_If_Analysis,number,L5,"ce04에서 ce03로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on ce04->ce03, total_paths=1",
+PATH_COUNT_ce04_p04,What_If_Analysis,number,L5,"ce04에서 p04로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on ce04->p04, total_paths=1",
+PATH_COUNT_ce04_pe03,What_If_Analysis,number,L5,"ce04에서 pe03로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on ce04->pe03, total_paths=1",
+PATH_COUNT_p01_ce01,What_If_Analysis,number,L5,"p01에서 ce01로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on p01->ce01, total_paths=1",
+PATH_COUNT_p01_ce02,What_If_Analysis,number,L5,"p01에서 ce02로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on p01->ce02, total_paths=1",
+PATH_COUNT_p01_ce03,What_If_Analysis,number,L5,"p01에서 ce03로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on p01->ce03, total_paths=1",
+PATH_COUNT_p01_ce04,What_If_Analysis,number,L5,"p01에서 ce04로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on p01->ce04, total_paths=1",
+PATH_COUNT_p01_p04,What_If_Analysis,number,L5,"p01에서 p04로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on p01->p04, total_paths=1",
+PATH_COUNT_p01_pe02,What_If_Analysis,number,L5,"p01에서 pe02로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on p01->pe02, total_paths=1",
+PATH_COUNT_p01_pe03,What_If_Analysis,number,L5,"p01에서 pe03로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on p01->pe03, total_paths=1",
+PATH_COUNT_p04_ce01,What_If_Analysis,number,L5,"p04에서 ce01로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on p04->ce01, total_paths=1",
+PATH_COUNT_p04_ce03,What_If_Analysis,number,L5,"p04에서 ce03로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on p04->ce03, total_paths=1",
+PATH_COUNT_p04_pe03,What_If_Analysis,number,L5,"p04에서 pe03로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on p04->pe03, total_paths=1",
+PATH_COUNT_pe02_ce01,What_If_Analysis,number,L5,"pe02에서 ce01로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on pe02->ce01, total_paths=1",
+PATH_COUNT_pe02_ce03,What_If_Analysis,number,L5,"pe02에서 ce03로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on pe02->ce03, total_paths=1",
+PATH_COUNT_pe02_ce04,What_If_Analysis,number,L5,"pe02에서 ce04로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on pe02->ce04, total_paths=1",
+PATH_COUNT_pe02_p04,What_If_Analysis,number,L5,"pe02에서 p04로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on pe02->p04, total_paths=1",
+PATH_COUNT_pe02_pe03,What_If_Analysis,number,L5,"pe02에서 pe03로 가는 경로는 총 몇 개입니까?
+[답변 형식: 숫자]",1,"metric `path_count` on pe02->pe03, total_paths=1",
 POLICY_WAYPOINT_pe02,What_If_Analysis,boolean,L5,"네트워크가 '모든 CE 간 트래픽은 pe02를 통과해야 한다'는 정책을 준수하고 있습니까?
 [답변 형식: true/false (소문자)]",true,metric `policy_compliance_check` waypoint=pe02,
 POLICY_WAYPOINT_pe03,What_If_Analysis,boolean,L5,"네트워크가 '모든 CE 간 트래픽은 pe03를 통과해야 한다'는 정책을 준수하고 있습니까?
 [답변 형식: true/false (소문자)]",true,metric `policy_compliance_check` waypoint=pe03,
+SPOF_DETECTION_GLOBAL,What_If_Analysis,set,L5,"단일 장비 장애 시 통신이 두절되는 구간(SPOF: Single Point of Failure)이 존재합니까?
+[답변 형식: SPOF 장비 목록 또는 '없음']",없음,metric `spof_detection` found 0 SPOF nodes,
