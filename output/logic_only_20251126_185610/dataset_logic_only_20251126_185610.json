@@ -4568,6 +4568,38 @@
       "id": "INTERFACE_IP_MAP_0007"
     },
     {
+      "id": "IP_CONFLICT_GLOBAL",
+      "category": "Interface_Inventory",
+      "level": "L1",
+      "answer_type": "set",
+      "question": "동일한 IP가 서로 다른 장비에 중복 할당된 곳이 있습니까?\n[답변 형식: 충돌 IP 목록 또는 '없음']",
+      "ground_truth": "없음",
+      "explanation": "metric `ip_conflict_check` found 0 conflicts",
+      "evidence_hint": {
+        "scope": {
+          "type": "GLOBAL"
+        },
+        "metric": "ip_conflict_check"
+      },
+      "academic_reference": "현업: IP 충돌 → 간헐적 통신 장애의 주요 원인"
+    },
+    {
+      "id": "MTU_MISMATCH_GLOBAL",
+      "category": "Interface_Inventory",
+      "level": "L2",
+      "answer_type": "set",
+      "question": "양쪽 링크의 MTU 사이즈가 서로 다른 구간이 있습니까?\n[답변 형식: 불일치 구간 목록 또는 '없음']",
+      "ground_truth": "없음",
+      "explanation": "metric `mtu_mismatch_check` found 0 mismatches",
+      "evidence_hint": {
+        "scope": {
+          "type": "GLOBAL"
+        },
+        "metric": "mtu_mismatch_check"
+      },
+      "academic_reference": "현업: MTU 불일치 → OSPF Neighbor 불안정, 큰 패킷 드랍"
+    },
+    {
       "category": "Interface_Inventory",
       "answer_type": "numeric",
       "question": "CE01 장비에 설정된 서브인터페이스는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
@@ -5296,6 +5328,96 @@
       "ground_truth": "0",
       "explanation": "metric `ospf_neighbor_count_per_area` on area={area}, type=OSPF_AREA → 0",
       "id": "OSPF_NEIGHBOR_COUNT_PER_AREA_0001"
+    },
+    {
+      "id": "ASYMMETRIC_ce01_pe03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "boolean",
+      "question": "ce01과 pe03 사이의 통신 경로가 대칭(양방향 동일 경로)입니까?\n[답변 형식: true/false (소문자)]",
+      "ground_truth": "true",
+      "explanation": "대칭 경로: ce01 -> pe03",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce01",
+          "dst": "pe03"
+        },
+        "metric": "asymmetric_path_check"
+      },
+      "academic_reference": "현업: 비대칭 경로 → 방화벽 상태 추적 실패 → 패킷 드랍"
+    },
+    {
+      "id": "ASYMMETRIC_ce02_ce01",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "boolean",
+      "question": "ce02과 ce01 사이의 통신 경로가 대칭(양방향 동일 경로)입니까?\n[답변 형식: true/false (소문자)]",
+      "ground_truth": "true",
+      "explanation": "대칭 경로: ce02 -> ce01",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce02",
+          "dst": "ce01"
+        },
+        "metric": "asymmetric_path_check"
+      },
+      "academic_reference": "현업: 비대칭 경로 → 방화벽 상태 추적 실패 → 패킷 드랍"
+    },
+    {
+      "id": "ASYMMETRIC_ce02_pe02",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "boolean",
+      "question": "ce02과 pe02 사이의 통신 경로가 대칭(양방향 동일 경로)입니까?\n[답변 형식: true/false (소문자)]",
+      "ground_truth": "true",
+      "explanation": "대칭 경로: ce02 -> pe02",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce02",
+          "dst": "pe02"
+        },
+        "metric": "asymmetric_path_check"
+      },
+      "academic_reference": "현업: 비대칭 경로 → 방화벽 상태 추적 실패 → 패킷 드랍"
+    },
+    {
+      "id": "ASYMMETRIC_p01_ce01",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "boolean",
+      "question": "p01과 ce01 사이의 통신 경로가 대칭(양방향 동일 경로)입니까?\n[답변 형식: true/false (소문자)]",
+      "ground_truth": "true",
+      "explanation": "대칭 경로: p01 -> ce01",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "p01",
+          "dst": "ce01"
+        },
+        "metric": "asymmetric_path_check"
+      },
+      "academic_reference": "현업: 비대칭 경로 → 방화벽 상태 추적 실패 → 패킷 드랍"
+    },
+    {
+      "id": "ASYMMETRIC_pe02_ce03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "boolean",
+      "question": "pe02과 ce03 사이의 통신 경로가 대칭(양방향 동일 경로)입니까?\n[답변 형식: true/false (소문자)]",
+      "ground_truth": "true",
+      "explanation": "대칭 경로: pe02 -> ce03",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "pe02",
+          "dst": "ce03"
+        },
+        "metric": "asymmetric_path_check"
+      },
+      "academic_reference": "현업: 비대칭 경로 → 방화벽 상태 추적 실패 → 패킷 드랍"
     },
     {
       "id": "BLACKHOLE_DETECTION_GLOBAL",
@@ -6850,6 +6972,44 @@
       }
     },
     {
+      "id": "WAYPOINT_PASS_ce02_ce01_pe02",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "boolean",
+      "question": "ce02에서 ce01로 가는 트래픽이 pe02(백본 장비)를 경유합니까?\n[답변 형식: true/false (소문자)]",
+      "ground_truth": "false",
+      "explanation": "경로: ce02 -> ce01",
+      "evidence_hint": {
+        "scope": {
+          "type": "WAYPOINT",
+          "src": "ce02",
+          "dst": "ce01",
+          "waypoint": "pe02"
+        },
+        "metric": "waypoint_check"
+      },
+      "academic_reference": "현업: 보안 정책 - 모든 트래픽이 방화벽/IDS 경유 필수"
+    },
+    {
+      "id": "WAYPOINT_PASS_ce02_ce01_pe03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "boolean",
+      "question": "ce02에서 ce01로 가는 트래픽이 pe03(백본 장비)를 경유합니까?\n[답변 형식: true/false (소문자)]",
+      "ground_truth": "false",
+      "explanation": "경로: ce02 -> ce01",
+      "evidence_hint": {
+        "scope": {
+          "type": "WAYPOINT",
+          "src": "ce02",
+          "dst": "ce01",
+          "waypoint": "pe03"
+        },
+        "metric": "waypoint_check"
+      },
+      "academic_reference": "현업: 보안 정책 - 모든 트래픽이 방화벽/IDS 경유 필수"
+    },
+    {
       "id": "WAYPOINT_ce02_ce01_pe02",
       "category": "Reachability_Analysis",
       "level": "L4",
@@ -6867,6 +7027,44 @@
         "metric": "waypoint_check"
       },
       "academic_reference": "Minesweeper (SIGCOMM'17), Config2Spec (NSDI'20): waypointing"
+    },
+    {
+      "id": "WAYPOINT_PASS_ce02_ce03_pe02",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "boolean",
+      "question": "ce02에서 ce03로 가는 트래픽이 pe02(백본 장비)를 경유합니까?\n[답변 형식: true/false (소문자)]",
+      "ground_truth": "false",
+      "explanation": "경로: ce02 -> ce03",
+      "evidence_hint": {
+        "scope": {
+          "type": "WAYPOINT",
+          "src": "ce02",
+          "dst": "ce03",
+          "waypoint": "pe02"
+        },
+        "metric": "waypoint_check"
+      },
+      "academic_reference": "현업: 보안 정책 - 모든 트래픽이 방화벽/IDS 경유 필수"
+    },
+    {
+      "id": "WAYPOINT_PASS_ce02_ce03_pe03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "boolean",
+      "question": "ce02에서 ce03로 가는 트래픽이 pe03(백본 장비)를 경유합니까?\n[답변 형식: true/false (소문자)]",
+      "ground_truth": "false",
+      "explanation": "경로: ce02 -> ce03",
+      "evidence_hint": {
+        "scope": {
+          "type": "WAYPOINT",
+          "src": "ce02",
+          "dst": "ce03",
+          "waypoint": "pe03"
+        },
+        "metric": "waypoint_check"
+      },
+      "academic_reference": "현업: 보안 정책 - 모든 트래픽이 방화벽/IDS 경유 필수"
     },
     {
       "id": "WAYPOINT_ce02_ce04_pe02",
@@ -6888,6 +7086,44 @@
       "academic_reference": "Minesweeper (SIGCOMM'17), Config2Spec (NSDI'20): waypointing"
     },
     {
+      "id": "WAYPOINT_PASS_ce04_ce01_pe02",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "boolean",
+      "question": "ce04에서 ce01로 가는 트래픽이 pe02(백본 장비)를 경유합니까?\n[답변 형식: true/false (소문자)]",
+      "ground_truth": "false",
+      "explanation": "경로: ce04 -> ce01",
+      "evidence_hint": {
+        "scope": {
+          "type": "WAYPOINT",
+          "src": "ce04",
+          "dst": "ce01",
+          "waypoint": "pe02"
+        },
+        "metric": "waypoint_check"
+      },
+      "academic_reference": "현업: 보안 정책 - 모든 트래픽이 방화벽/IDS 경유 필수"
+    },
+    {
+      "id": "WAYPOINT_PASS_ce04_ce01_pe03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "boolean",
+      "question": "ce04에서 ce01로 가는 트래픽이 pe03(백본 장비)를 경유합니까?\n[답변 형식: true/false (소문자)]",
+      "ground_truth": "false",
+      "explanation": "경로: ce04 -> ce01",
+      "evidence_hint": {
+        "scope": {
+          "type": "WAYPOINT",
+          "src": "ce04",
+          "dst": "ce01",
+          "waypoint": "pe03"
+        },
+        "metric": "waypoint_check"
+      },
+      "academic_reference": "현업: 보안 정책 - 모든 트래픽이 방화벽/IDS 경유 필수"
+    },
+    {
       "id": "WAYPOINT_ce04_ce01_pe02",
       "category": "Reachability_Analysis",
       "level": "L4",
@@ -6905,6 +7141,44 @@
         "metric": "waypoint_check"
       },
       "academic_reference": "Minesweeper (SIGCOMM'17), Config2Spec (NSDI'20): waypointing"
+    },
+    {
+      "id": "WAYPOINT_PASS_ce04_ce03_pe02",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "boolean",
+      "question": "ce04에서 ce03로 가는 트래픽이 pe02(백본 장비)를 경유합니까?\n[답변 형식: true/false (소문자)]",
+      "ground_truth": "false",
+      "explanation": "경로: ce04 -> ce03",
+      "evidence_hint": {
+        "scope": {
+          "type": "WAYPOINT",
+          "src": "ce04",
+          "dst": "ce03",
+          "waypoint": "pe02"
+        },
+        "metric": "waypoint_check"
+      },
+      "academic_reference": "현업: 보안 정책 - 모든 트래픽이 방화벽/IDS 경유 필수"
+    },
+    {
+      "id": "WAYPOINT_PASS_ce04_ce03_pe03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "boolean",
+      "question": "ce04에서 ce03로 가는 트래픽이 pe03(백본 장비)를 경유합니까?\n[답변 형식: true/false (소문자)]",
+      "ground_truth": "false",
+      "explanation": "경로: ce04 -> ce03",
+      "evidence_hint": {
+        "scope": {
+          "type": "WAYPOINT",
+          "src": "ce04",
+          "dst": "ce03",
+          "waypoint": "pe03"
+        },
+        "metric": "waypoint_check"
+      },
+      "academic_reference": "현업: 보안 정책 - 모든 트래픽이 방화벽/IDS 경유 필수"
     },
     {
       "category": "Routing_Inventory",
@@ -10769,7 +11043,9 @@
       "ground_truth": "없음",
       "explanation": "metric `syslog_server_list` on host=P04, type=DEVICE → 없음",
       "id": "SYSLOG_SERVER_LIST_0005"
-    },
+    }
+  ],
+  "validation": [
     {
       "category": "System_Inventory",
       "answer_type": "set",
@@ -10811,9 +11087,7 @@
       "ground_truth": "없음",
       "explanation": "metric `syslog_server_list` on host=PE03, type=DEVICE → 없음",
       "id": "SYSLOG_SERVER_LIST_0007"
-    }
-  ],
-  "validation": [
+    },
     {
       "category": "System_Inventory",
       "answer_type": "text",
@@ -12032,62 +12306,6 @@
       "academic_reference": "RFC 2328: OSPF backbone must be contiguous"
     },
     {
-      "id": "LINK_FAIL_ce02_ce03_ce01_ce04",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "ce02과 ce03 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음. 현재 경로: ce01 -> ce04 (2홉). 이유: ce02-ce03 링크를 경유하지 않음",
-      "explanation": "metric `link_failure_impact` on link=ce02-ce03, flow=ce01->ce04",
-      "evidence_hint": {
-        "scope": {
-          "type": "LINK_FAILURE",
-          "node1": "ce02",
-          "node2": "ce03"
-        },
-        "metric": "link_failure_impact"
-      },
-      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
-    }
-  ],
-  "test": [
-    {
-      "id": "LINK_FAIL_ce02_ce03_ce01_p01",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "ce02과 ce03 사이의 링크가 다운되었을 때, ce01에서 p01로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음. 현재 경로: ce01 -> p01 (2홉). 이유: ce02-ce03 링크를 경유하지 않음",
-      "explanation": "metric `link_failure_impact` on link=ce02-ce03, flow=ce01->p01",
-      "evidence_hint": {
-        "scope": {
-          "type": "LINK_FAILURE",
-          "node1": "ce02",
-          "node2": "ce03"
-        },
-        "metric": "link_failure_impact"
-      },
-      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
-    },
-    {
-      "id": "LINK_FAIL_ce02_ce03_ce01_p04",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "ce02과 ce03 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음. 현재 경로: ce01 -> p04 (2홉). 이유: ce02-ce03 링크를 경유하지 않음",
-      "explanation": "metric `link_failure_impact` on link=ce02-ce03, flow=ce01->p04",
-      "evidence_hint": {
-        "scope": {
-          "type": "LINK_FAILURE",
-          "node1": "ce02",
-          "node2": "ce03"
-        },
-        "metric": "link_failure_impact"
-      },
-      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
-    },
-    {
       "id": "LINK_FAIL_ce02_ce04_ce01_ce03",
       "category": "What_If_Analysis",
       "level": "L5",
@@ -12104,43 +12322,9 @@
         "metric": "link_failure_impact"
       },
       "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
-    },
-    {
-      "id": "LINK_FAIL_ce02_ce04_ce01_p01",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "ce02과 ce04 사이의 링크가 다운되었을 때, ce01에서 p01로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음. 현재 경로: ce01 -> p01 (2홉). 이유: ce02-ce04 링크를 경유하지 않음",
-      "explanation": "metric `link_failure_impact` on link=ce02-ce04, flow=ce01->p01",
-      "evidence_hint": {
-        "scope": {
-          "type": "LINK_FAILURE",
-          "node1": "ce02",
-          "node2": "ce04"
-        },
-        "metric": "link_failure_impact"
-      },
-      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
-    },
-    {
-      "id": "LINK_FAIL_ce02_ce04_ce01_p04",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "ce02과 ce04 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음. 현재 경로: ce01 -> p04 (2홉). 이유: ce02-ce04 링크를 경유하지 않음",
-      "explanation": "metric `link_failure_impact` on link=ce02-ce04, flow=ce01->p04",
-      "evidence_hint": {
-        "scope": {
-          "type": "LINK_FAILURE",
-          "node1": "ce02",
-          "node2": "ce04"
-        },
-        "metric": "link_failure_impact"
-      },
-      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
-    },
+    }
+  ],
+  "test": [
     {
       "id": "LINK_FAIL_ce02_p04_ce01_ce03",
       "category": "What_If_Analysis",
@@ -12196,126 +12380,72 @@
       "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
     },
     {
-      "id": "LINK_FAIL_ce02_pe02_ce01_ce03",
+      "id": "LINK_FAIL_ce03_pe03_ce01_ce02",
       "category": "What_If_Analysis",
       "level": "L5",
       "answer_type": "text",
-      "question": "ce02과 pe02 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음. 현재 경로: ce01 -> ce03 (2홉). 이유: ce02-pe02 링크를 경유하지 않음",
-      "explanation": "metric `link_failure_impact` on link=ce02-pe02, flow=ce01->ce03",
+      "question": "ce03과 pe03 사이의 링크가 다운되었을 때, ce01에서 ce02로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
+      "ground_truth": "영향 없음. 현재 경로: ce01 -> ce02 (2홉). 이유: ce03-pe03 링크를 경유하지 않음",
+      "explanation": "metric `link_failure_impact` on link=ce03-pe03, flow=ce01->ce02",
       "evidence_hint": {
         "scope": {
           "type": "LINK_FAILURE",
-          "node1": "ce02",
-          "node2": "pe02"
+          "node1": "ce03",
+          "node2": "pe03"
         },
         "metric": "link_failure_impact"
       },
       "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
     },
     {
-      "id": "LINK_FAIL_ce02_pe02_ce01_ce04",
+      "id": "LINK_FAIL_ce03_pe03_ce01_ce04",
       "category": "What_If_Analysis",
       "level": "L5",
       "answer_type": "text",
-      "question": "ce02과 pe02 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음. 현재 경로: ce01 -> ce04 (2홉). 이유: ce02-pe02 링크를 경유하지 않음",
-      "explanation": "metric `link_failure_impact` on link=ce02-pe02, flow=ce01->ce04",
+      "question": "ce03과 pe03 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
+      "ground_truth": "영향 없음. 현재 경로: ce01 -> ce04 (2홉). 이유: ce03-pe03 링크를 경유하지 않음",
+      "explanation": "metric `link_failure_impact` on link=ce03-pe03, flow=ce01->ce04",
       "evidence_hint": {
         "scope": {
           "type": "LINK_FAILURE",
-          "node1": "ce02",
-          "node2": "pe02"
+          "node1": "ce03",
+          "node2": "pe03"
         },
         "metric": "link_failure_impact"
       },
       "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
     },
     {
-      "id": "LINK_FAIL_ce02_pe02_ce01_p01",
+      "id": "LINK_FAIL_ce03_pe03_ce01_p01",
       "category": "What_If_Analysis",
       "level": "L5",
       "answer_type": "text",
-      "question": "ce02과 pe02 사이의 링크가 다운되었을 때, ce01에서 p01로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음. 현재 경로: ce01 -> p01 (2홉). 이유: ce02-pe02 링크를 경유하지 않음",
-      "explanation": "metric `link_failure_impact` on link=ce02-pe02, flow=ce01->p01",
+      "question": "ce03과 pe03 사이의 링크가 다운되었을 때, ce01에서 p01로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
+      "ground_truth": "영향 없음. 현재 경로: ce01 -> p01 (2홉). 이유: ce03-pe03 링크를 경유하지 않음",
+      "explanation": "metric `link_failure_impact` on link=ce03-pe03, flow=ce01->p01",
       "evidence_hint": {
         "scope": {
           "type": "LINK_FAILURE",
-          "node1": "ce02",
-          "node2": "pe02"
+          "node1": "ce03",
+          "node2": "pe03"
         },
         "metric": "link_failure_impact"
       },
       "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
     },
     {
-      "id": "LINK_FAIL_ce02_pe02_ce01_p04",
+      "id": "LINK_FAIL_ce03_pe03_ce01_p04",
       "category": "What_If_Analysis",
       "level": "L5",
       "answer_type": "text",
-      "question": "ce02과 pe02 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음. 현재 경로: ce01 -> p04 (2홉). 이유: ce02-pe02 링크를 경유하지 않음",
-      "explanation": "metric `link_failure_impact` on link=ce02-pe02, flow=ce01->p04",
+      "question": "ce03과 pe03 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
+      "ground_truth": "영향 없음. 현재 경로: ce01 -> p04 (2홉). 이유: ce03-pe03 링크를 경유하지 않음",
+      "explanation": "metric `link_failure_impact` on link=ce03-pe03, flow=ce01->p04",
       "evidence_hint": {
         "scope": {
           "type": "LINK_FAILURE",
-          "node1": "ce02",
-          "node2": "pe02"
-        },
-        "metric": "link_failure_impact"
-      },
-      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
-    },
-    {
-      "id": "LINK_FAIL_p01_ce02_ce01_ce03",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "p01과 ce02 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음. 현재 경로: ce01 -> ce03 (2홉). 이유: p01-ce02 링크를 경유하지 않음",
-      "explanation": "metric `link_failure_impact` on link=p01-ce02, flow=ce01->ce03",
-      "evidence_hint": {
-        "scope": {
-          "type": "LINK_FAILURE",
-          "node1": "p01",
-          "node2": "ce02"
-        },
-        "metric": "link_failure_impact"
-      },
-      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
-    },
-    {
-      "id": "LINK_FAIL_p01_ce02_ce01_ce04",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "p01과 ce02 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음. 현재 경로: ce01 -> ce04 (2홉). 이유: p01-ce02 링크를 경유하지 않음",
-      "explanation": "metric `link_failure_impact` on link=p01-ce02, flow=ce01->ce04",
-      "evidence_hint": {
-        "scope": {
-          "type": "LINK_FAILURE",
-          "node1": "p01",
-          "node2": "ce02"
-        },
-        "metric": "link_failure_impact"
-      },
-      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
-    },
-    {
-      "id": "LINK_FAIL_p01_ce02_ce01_p04",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "p01과 ce02 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음. 현재 경로: ce01 -> p04 (2홉). 이유: p01-ce02 링크를 경유하지 않음",
-      "explanation": "metric `link_failure_impact` on link=p01-ce02, flow=ce01->p04",
-      "evidence_hint": {
-        "scope": {
-          "type": "LINK_FAILURE",
-          "node1": "p01",
-          "node2": "ce02"
+          "node1": "ce03",
+          "node2": "pe03"
         },
         "metric": "link_failure_impact"
       },
@@ -12376,54 +12506,198 @@
       "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
     },
     {
-      "id": "LINK_FAIL_p01_p04_ce01_ce02",
+      "id": "LINK_FAIL_p01_ce04_ce01_ce02",
       "category": "What_If_Analysis",
       "level": "L5",
       "answer_type": "text",
-      "question": "p01과 p04 사이의 링크가 다운되었을 때, ce01에서 ce02로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음. 현재 경로: ce01 -> ce02 (2홉). 이유: p01-p04 링크를 경유하지 않음",
-      "explanation": "metric `link_failure_impact` on link=p01-p04, flow=ce01->ce02",
+      "question": "p01과 ce04 사이의 링크가 다운되었을 때, ce01에서 ce02로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
+      "ground_truth": "영향 없음. 현재 경로: ce01 -> ce02 (2홉). 이유: p01-ce04 링크를 경유하지 않음",
+      "explanation": "metric `link_failure_impact` on link=p01-ce04, flow=ce01->ce02",
       "evidence_hint": {
         "scope": {
           "type": "LINK_FAILURE",
           "node1": "p01",
-          "node2": "p04"
+          "node2": "ce04"
         },
         "metric": "link_failure_impact"
       },
       "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
     },
     {
-      "id": "LINK_FAIL_p01_p04_ce01_ce03",
+      "id": "LINK_FAIL_p01_ce04_ce01_ce03",
       "category": "What_If_Analysis",
       "level": "L5",
       "answer_type": "text",
-      "question": "p01과 p04 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음. 현재 경로: ce01 -> ce03 (2홉). 이유: p01-p04 링크를 경유하지 않음",
-      "explanation": "metric `link_failure_impact` on link=p01-p04, flow=ce01->ce03",
+      "question": "p01과 ce04 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
+      "ground_truth": "영향 없음. 현재 경로: ce01 -> ce03 (2홉). 이유: p01-ce04 링크를 경유하지 않음",
+      "explanation": "metric `link_failure_impact` on link=p01-ce04, flow=ce01->ce03",
       "evidence_hint": {
         "scope": {
           "type": "LINK_FAILURE",
           "node1": "p01",
-          "node2": "p04"
+          "node2": "ce04"
         },
         "metric": "link_failure_impact"
       },
       "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
     },
     {
-      "id": "LINK_FAIL_p01_p04_ce01_ce04",
+      "id": "LINK_FAIL_p01_ce04_ce01_p04",
       "category": "What_If_Analysis",
       "level": "L5",
       "answer_type": "text",
-      "question": "p01과 p04 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음. 현재 경로: ce01 -> ce04 (2홉). 이유: p01-p04 링크를 경유하지 않음",
-      "explanation": "metric `link_failure_impact` on link=p01-p04, flow=ce01->ce04",
+      "question": "p01과 ce04 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
+      "ground_truth": "영향 없음. 현재 경로: ce01 -> p04 (2홉). 이유: p01-ce04 링크를 경유하지 않음",
+      "explanation": "metric `link_failure_impact` on link=p01-ce04, flow=ce01->p04",
       "evidence_hint": {
         "scope": {
           "type": "LINK_FAILURE",
           "node1": "p01",
-          "node2": "p04"
+          "node2": "ce04"
+        },
+        "metric": "link_failure_impact"
+      },
+      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
+    },
+    {
+      "id": "LINK_FAIL_p01_pe02_ce01_ce02",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "text",
+      "question": "p01과 pe02 사이의 링크가 다운되었을 때, ce01에서 ce02로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
+      "ground_truth": "영향 없음. 현재 경로: ce01 -> ce02 (2홉). 이유: p01-pe02 링크를 경유하지 않음",
+      "explanation": "metric `link_failure_impact` on link=p01-pe02, flow=ce01->ce02",
+      "evidence_hint": {
+        "scope": {
+          "type": "LINK_FAILURE",
+          "node1": "p01",
+          "node2": "pe02"
+        },
+        "metric": "link_failure_impact"
+      },
+      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
+    },
+    {
+      "id": "LINK_FAIL_p01_pe02_ce01_ce03",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "text",
+      "question": "p01과 pe02 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
+      "ground_truth": "영향 없음. 현재 경로: ce01 -> ce03 (2홉). 이유: p01-pe02 링크를 경유하지 않음",
+      "explanation": "metric `link_failure_impact` on link=p01-pe02, flow=ce01->ce03",
+      "evidence_hint": {
+        "scope": {
+          "type": "LINK_FAILURE",
+          "node1": "p01",
+          "node2": "pe02"
+        },
+        "metric": "link_failure_impact"
+      },
+      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
+    },
+    {
+      "id": "LINK_FAIL_p01_pe02_ce01_ce04",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "text",
+      "question": "p01과 pe02 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
+      "ground_truth": "영향 없음. 현재 경로: ce01 -> ce04 (2홉). 이유: p01-pe02 링크를 경유하지 않음",
+      "explanation": "metric `link_failure_impact` on link=p01-pe02, flow=ce01->ce04",
+      "evidence_hint": {
+        "scope": {
+          "type": "LINK_FAILURE",
+          "node1": "p01",
+          "node2": "pe02"
+        },
+        "metric": "link_failure_impact"
+      },
+      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
+    },
+    {
+      "id": "LINK_FAIL_p01_pe02_ce01_p04",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "text",
+      "question": "p01과 pe02 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
+      "ground_truth": "영향 없음. 현재 경로: ce01 -> p04 (2홉). 이유: p01-pe02 링크를 경유하지 않음",
+      "explanation": "metric `link_failure_impact` on link=p01-pe02, flow=ce01->p04",
+      "evidence_hint": {
+        "scope": {
+          "type": "LINK_FAILURE",
+          "node1": "p01",
+          "node2": "pe02"
+        },
+        "metric": "link_failure_impact"
+      },
+      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
+    },
+    {
+      "id": "LINK_FAIL_p01_pe03_ce01_ce02",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "text",
+      "question": "p01과 pe03 사이의 링크가 다운되었을 때, ce01에서 ce02로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
+      "ground_truth": "영향 없음. 현재 경로: ce01 -> ce02 (2홉). 이유: p01-pe03 링크를 경유하지 않음",
+      "explanation": "metric `link_failure_impact` on link=p01-pe03, flow=ce01->ce02",
+      "evidence_hint": {
+        "scope": {
+          "type": "LINK_FAILURE",
+          "node1": "p01",
+          "node2": "pe03"
+        },
+        "metric": "link_failure_impact"
+      },
+      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
+    },
+    {
+      "id": "LINK_FAIL_p01_pe03_ce01_ce03",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "text",
+      "question": "p01과 pe03 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
+      "ground_truth": "영향 없음. 현재 경로: ce01 -> ce03 (2홉). 이유: p01-pe03 링크를 경유하지 않음",
+      "explanation": "metric `link_failure_impact` on link=p01-pe03, flow=ce01->ce03",
+      "evidence_hint": {
+        "scope": {
+          "type": "LINK_FAILURE",
+          "node1": "p01",
+          "node2": "pe03"
+        },
+        "metric": "link_failure_impact"
+      },
+      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
+    },
+    {
+      "id": "LINK_FAIL_p01_pe03_ce01_ce04",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "text",
+      "question": "p01과 pe03 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
+      "ground_truth": "영향 없음. 현재 경로: ce01 -> ce04 (2홉). 이유: p01-pe03 링크를 경유하지 않음",
+      "explanation": "metric `link_failure_impact` on link=p01-pe03, flow=ce01->ce04",
+      "evidence_hint": {
+        "scope": {
+          "type": "LINK_FAILURE",
+          "node1": "p01",
+          "node2": "pe03"
+        },
+        "metric": "link_failure_impact"
+      },
+      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
+    },
+    {
+      "id": "LINK_FAIL_p01_pe03_ce01_p04",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "text",
+      "question": "p01과 pe03 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
+      "ground_truth": "영향 없음. 현재 경로: ce01 -> p04 (2홉). 이유: p01-pe03 링크를 경유하지 않음",
+      "explanation": "metric `link_failure_impact` on link=p01-pe03, flow=ce01->p04",
+      "evidence_hint": {
+        "scope": {
+          "type": "LINK_FAILURE",
+          "node1": "p01",
+          "node2": "pe03"
         },
         "metric": "link_failure_impact"
       },
@@ -12484,78 +12758,6 @@
       "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
     },
     {
-      "id": "LINK_FAIL_p04_pe03_ce01_ce02",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "p04과 pe03 사이의 링크가 다운되었을 때, ce01에서 ce02로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음. 현재 경로: ce01 -> ce02 (2홉). 이유: p04-pe03 링크를 경유하지 않음",
-      "explanation": "metric `link_failure_impact` on link=p04-pe03, flow=ce01->ce02",
-      "evidence_hint": {
-        "scope": {
-          "type": "LINK_FAILURE",
-          "node1": "p04",
-          "node2": "pe03"
-        },
-        "metric": "link_failure_impact"
-      },
-      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
-    },
-    {
-      "id": "LINK_FAIL_p04_pe03_ce01_ce03",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "p04과 pe03 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음. 현재 경로: ce01 -> ce03 (2홉). 이유: p04-pe03 링크를 경유하지 않음",
-      "explanation": "metric `link_failure_impact` on link=p04-pe03, flow=ce01->ce03",
-      "evidence_hint": {
-        "scope": {
-          "type": "LINK_FAILURE",
-          "node1": "p04",
-          "node2": "pe03"
-        },
-        "metric": "link_failure_impact"
-      },
-      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
-    },
-    {
-      "id": "LINK_FAIL_p04_pe03_ce01_ce04",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "p04과 pe03 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음. 현재 경로: ce01 -> ce04 (2홉). 이유: p04-pe03 링크를 경유하지 않음",
-      "explanation": "metric `link_failure_impact` on link=p04-pe03, flow=ce01->ce04",
-      "evidence_hint": {
-        "scope": {
-          "type": "LINK_FAILURE",
-          "node1": "p04",
-          "node2": "pe03"
-        },
-        "metric": "link_failure_impact"
-      },
-      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
-    },
-    {
-      "id": "LINK_FAIL_p04_pe03_ce01_p01",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "p04과 pe03 사이의 링크가 다운되었을 때, ce01에서 p01로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음. 현재 경로: ce01 -> p01 (2홉). 이유: p04-pe03 링크를 경유하지 않음",
-      "explanation": "metric `link_failure_impact` on link=p04-pe03, flow=ce01->p01",
-      "evidence_hint": {
-        "scope": {
-          "type": "LINK_FAILURE",
-          "node1": "p04",
-          "node2": "pe03"
-        },
-        "metric": "link_failure_impact"
-      },
-      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
-    },
-    {
       "id": "LINK_FAIL_pe02_pe03_ce01_ce02",
       "category": "What_If_Analysis",
       "level": "L5",
@@ -12563,6 +12765,78 @@
       "question": "pe02과 pe03 사이의 링크가 다운되었을 때, ce01에서 ce02로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
       "ground_truth": "영향 없음. 현재 경로: ce01 -> ce02 (2홉). 이유: pe02-pe03 링크를 경유하지 않음",
       "explanation": "metric `link_failure_impact` on link=pe02-pe03, flow=ce01->ce02",
+      "evidence_hint": {
+        "scope": {
+          "type": "LINK_FAILURE",
+          "node1": "pe02",
+          "node2": "pe03"
+        },
+        "metric": "link_failure_impact"
+      },
+      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
+    },
+    {
+      "id": "LINK_FAIL_pe02_pe03_ce01_ce03",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "text",
+      "question": "pe02과 pe03 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
+      "ground_truth": "영향 없음. 현재 경로: ce01 -> ce03 (2홉). 이유: pe02-pe03 링크를 경유하지 않음",
+      "explanation": "metric `link_failure_impact` on link=pe02-pe03, flow=ce01->ce03",
+      "evidence_hint": {
+        "scope": {
+          "type": "LINK_FAILURE",
+          "node1": "pe02",
+          "node2": "pe03"
+        },
+        "metric": "link_failure_impact"
+      },
+      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
+    },
+    {
+      "id": "LINK_FAIL_pe02_pe03_ce01_ce04",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "text",
+      "question": "pe02과 pe03 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
+      "ground_truth": "영향 없음. 현재 경로: ce01 -> ce04 (2홉). 이유: pe02-pe03 링크를 경유하지 않음",
+      "explanation": "metric `link_failure_impact` on link=pe02-pe03, flow=ce01->ce04",
+      "evidence_hint": {
+        "scope": {
+          "type": "LINK_FAILURE",
+          "node1": "pe02",
+          "node2": "pe03"
+        },
+        "metric": "link_failure_impact"
+      },
+      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
+    },
+    {
+      "id": "LINK_FAIL_pe02_pe03_ce01_p01",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "text",
+      "question": "pe02과 pe03 사이의 링크가 다운되었을 때, ce01에서 p01로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
+      "ground_truth": "영향 없음. 현재 경로: ce01 -> p01 (2홉). 이유: pe02-pe03 링크를 경유하지 않음",
+      "explanation": "metric `link_failure_impact` on link=pe02-pe03, flow=ce01->p01",
+      "evidence_hint": {
+        "scope": {
+          "type": "LINK_FAILURE",
+          "node1": "pe02",
+          "node2": "pe03"
+        },
+        "metric": "link_failure_impact"
+      },
+      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
+    },
+    {
+      "id": "LINK_FAIL_pe02_pe03_ce01_p04",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "text",
+      "question": "pe02과 pe03 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
+      "ground_truth": "영향 없음. 현재 경로: ce01 -> p04 (2홉). 이유: pe02-pe03 링크를 경유하지 않음",
+      "explanation": "metric `link_failure_impact` on link=pe02-pe03, flow=ce01->p04",
       "evidence_hint": {
         "scope": {
           "type": "LINK_FAILURE",
@@ -13112,6 +13386,22 @@
         "metric": "policy_compliance_check"
       },
       "academic_reference": "Config2Spec (NSDI'20): policy compliance"
+    },
+    {
+      "id": "SPOF_DETECTION_GLOBAL",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "set",
+      "question": "단일 장비 장애 시 통신이 두절되는 구간(SPOF: Single Point of Failure)이 존재합니까?\n[답변 형식: SPOF 장비 목록 또는 '없음']",
+      "ground_truth": "없음",
+      "explanation": "metric `spof_detection` found 0 SPOF nodes",
+      "evidence_hint": {
+        "scope": {
+          "type": "GLOBAL"
+        },
+        "metric": "spof_detection"
+      },
+      "academic_reference": "현업: SPOF 탐지 → 이중화 설계 검증, 장애 사전 예방"
     }
   ]
 }

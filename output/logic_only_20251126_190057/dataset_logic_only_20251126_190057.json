@@ -4568,6 +4568,38 @@
       "id": "INTERFACE_IP_MAP_0007"
     },
     {
+      "id": "IP_CONFLICT_GLOBAL",
+      "category": "Interface_Inventory",
+      "level": "L1",
+      "answer_type": "set",
+      "question": "동일한 IP가 서로 다른 장비에 중복 할당된 곳이 있습니까?\n[답변 형식: 충돌 IP 목록 또는 '없음']",
+      "ground_truth": "없음",
+      "explanation": "metric `ip_conflict_check` found 0 conflicts",
+      "evidence_hint": {
+        "scope": {
+          "type": "GLOBAL"
+        },
+        "metric": "ip_conflict_check"
+      },
+      "academic_reference": "현업: IP 충돌 → 간헐적 통신 장애의 주요 원인"
+    },
+    {
+      "id": "MTU_MISMATCH_GLOBAL",
+      "category": "Interface_Inventory",
+      "level": "L2",
+      "answer_type": "set",
+      "question": "양쪽 링크의 MTU 사이즈가 서로 다른 구간이 있습니까?\n[답변 형식: 불일치 구간 목록 또는 '없음']",
+      "ground_truth": "없음",
+      "explanation": "metric `mtu_mismatch_check` found 0 mismatches",
+      "evidence_hint": {
+        "scope": {
+          "type": "GLOBAL"
+        },
+        "metric": "mtu_mismatch_check"
+      },
+      "academic_reference": "현업: MTU 불일치 → OSPF Neighbor 불안정, 큰 패킷 드랍"
+    },
+    {
       "category": "Interface_Inventory",
       "answer_type": "numeric",
       "question": "CE01 장비에 설정된 서브인터페이스는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
@@ -5298,6 +5330,96 @@
       "id": "OSPF_NEIGHBOR_COUNT_PER_AREA_0001"
     },
     {
+      "id": "ASYMMETRIC_ce01_ce03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "boolean",
+      "question": "ce01과 ce03 사이의 통신 경로가 대칭(양방향 동일 경로)입니까?\n[답변 형식: true/false (소문자)]",
+      "ground_truth": "true",
+      "explanation": "대칭 경로: ce01 -> ce03",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce01",
+          "dst": "ce03"
+        },
+        "metric": "asymmetric_path_check"
+      },
+      "academic_reference": "현업: 비대칭 경로 → 방화벽 상태 추적 실패 → 패킷 드랍"
+    },
+    {
+      "id": "ASYMMETRIC_ce01_pe03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "boolean",
+      "question": "ce01과 pe03 사이의 통신 경로가 대칭(양방향 동일 경로)입니까?\n[답변 형식: true/false (소문자)]",
+      "ground_truth": "true",
+      "explanation": "대칭 경로: ce01 -> pe03",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce01",
+          "dst": "pe03"
+        },
+        "metric": "asymmetric_path_check"
+      },
+      "academic_reference": "현업: 비대칭 경로 → 방화벽 상태 추적 실패 → 패킷 드랍"
+    },
+    {
+      "id": "ASYMMETRIC_ce02_ce04",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "boolean",
+      "question": "ce02과 ce04 사이의 통신 경로가 대칭(양방향 동일 경로)입니까?\n[답변 형식: true/false (소문자)]",
+      "ground_truth": "true",
+      "explanation": "대칭 경로: ce02 -> ce04",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce02",
+          "dst": "ce04"
+        },
+        "metric": "asymmetric_path_check"
+      },
+      "academic_reference": "현업: 비대칭 경로 → 방화벽 상태 추적 실패 → 패킷 드랍"
+    },
+    {
+      "id": "ASYMMETRIC_p04_ce03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "boolean",
+      "question": "p04과 ce03 사이의 통신 경로가 대칭(양방향 동일 경로)입니까?\n[답변 형식: true/false (소문자)]",
+      "ground_truth": "true",
+      "explanation": "대칭 경로: p04 -> ce03",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "p04",
+          "dst": "ce03"
+        },
+        "metric": "asymmetric_path_check"
+      },
+      "academic_reference": "현업: 비대칭 경로 → 방화벽 상태 추적 실패 → 패킷 드랍"
+    },
+    {
+      "id": "ASYMMETRIC_p04_pe03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "boolean",
+      "question": "p04과 pe03 사이의 통신 경로가 대칭(양방향 동일 경로)입니까?\n[답변 형식: true/false (소문자)]",
+      "ground_truth": "true",
+      "explanation": "대칭 경로: p04 -> pe03",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "p04",
+          "dst": "pe03"
+        },
+        "metric": "asymmetric_path_check"
+      },
+      "academic_reference": "현업: 비대칭 경로 → 방화벽 상태 추적 실패 → 패킷 드랍"
+    },
+    {
       "id": "BLACKHOLE_DETECTION_GLOBAL",
       "category": "Reachability_Analysis",
       "level": "L4",
@@ -5312,6 +5434,42 @@
         "metric": "blackhole_detection"
       },
       "academic_reference": "HSA (NSDI'12), Minesweeper (SIGCOMM'17): blackhole detection"
+    },
+    {
+      "id": "BOUNDED_PATH_ce01_ce03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "number",
+      "question": "ce01에서 ce03로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "2",
+      "explanation": "metric `bounded_path_length` on ce01->ce03, actual_hops=2",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce01",
+          "dst": "ce03"
+        },
+        "metric": "bounded_path_length"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): bounded path length"
+    },
+    {
+      "id": "BOUNDED_PATH_ce01_pe03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "number",
+      "question": "ce01에서 pe03로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "2",
+      "explanation": "metric `bounded_path_length` on ce01->pe03, actual_hops=2",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce01",
+          "dst": "pe03"
+        },
+        "metric": "bounded_path_length"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): bounded path length"
     },
     {
       "id": "BOUNDED_PATH_ce02_ce01",
@@ -5415,6 +5573,96 @@
         "scope": {
           "type": "NODE_PAIR",
           "src": "ce02",
+          "dst": "pe03"
+        },
+        "metric": "bounded_path_length"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): bounded path length"
+    },
+    {
+      "id": "BOUNDED_PATH_ce03_pe03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "number",
+      "question": "ce03에서 pe03로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "2",
+      "explanation": "metric `bounded_path_length` on ce03->pe03, actual_hops=2",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce03",
+          "dst": "pe03"
+        },
+        "metric": "bounded_path_length"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): bounded path length"
+    },
+    {
+      "id": "BOUNDED_PATH_ce04_ce01",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "number",
+      "question": "ce04에서 ce01로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "2",
+      "explanation": "metric `bounded_path_length` on ce04->ce01, actual_hops=2",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce04",
+          "dst": "ce01"
+        },
+        "metric": "bounded_path_length"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): bounded path length"
+    },
+    {
+      "id": "BOUNDED_PATH_ce04_ce03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "number",
+      "question": "ce04에서 ce03로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "2",
+      "explanation": "metric `bounded_path_length` on ce04->ce03, actual_hops=2",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce04",
+          "dst": "ce03"
+        },
+        "metric": "bounded_path_length"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): bounded path length"
+    },
+    {
+      "id": "BOUNDED_PATH_ce04_p04",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "number",
+      "question": "ce04에서 p04로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "2",
+      "explanation": "metric `bounded_path_length` on ce04->p04, actual_hops=2",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce04",
+          "dst": "p04"
+        },
+        "metric": "bounded_path_length"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): bounded path length"
+    },
+    {
+      "id": "BOUNDED_PATH_ce04_pe03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "number",
+      "question": "ce04에서 pe03로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "2",
+      "explanation": "metric `bounded_path_length` on ce04->pe03, actual_hops=2",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce04",
           "dst": "pe03"
         },
         "metric": "bounded_path_length"
@@ -5548,6 +5796,96 @@
       "academic_reference": "Minesweeper (SIGCOMM'17): bounded path length"
     },
     {
+      "id": "BOUNDED_PATH_p04_ce01",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "number",
+      "question": "p04에서 ce01로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "2",
+      "explanation": "metric `bounded_path_length` on p04->ce01, actual_hops=2",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "p04",
+          "dst": "ce01"
+        },
+        "metric": "bounded_path_length"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): bounded path length"
+    },
+    {
+      "id": "BOUNDED_PATH_p04_ce03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "number",
+      "question": "p04에서 ce03로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "2",
+      "explanation": "metric `bounded_path_length` on p04->ce03, actual_hops=2",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "p04",
+          "dst": "ce03"
+        },
+        "metric": "bounded_path_length"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): bounded path length"
+    },
+    {
+      "id": "BOUNDED_PATH_p04_pe03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "number",
+      "question": "p04에서 pe03로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "2",
+      "explanation": "metric `bounded_path_length` on p04->pe03, actual_hops=2",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "p04",
+          "dst": "pe03"
+        },
+        "metric": "bounded_path_length"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): bounded path length"
+    },
+    {
+      "id": "BOUNDED_PATH_pe02_ce01",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "number",
+      "question": "pe02에서 ce01로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "2",
+      "explanation": "metric `bounded_path_length` on pe02->ce01, actual_hops=2",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "pe02",
+          "dst": "ce01"
+        },
+        "metric": "bounded_path_length"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): bounded path length"
+    },
+    {
+      "id": "BOUNDED_PATH_pe02_ce03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "number",
+      "question": "pe02에서 ce03로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "2",
+      "explanation": "metric `bounded_path_length` on pe02->ce03, actual_hops=2",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "pe02",
+          "dst": "ce03"
+        },
+        "metric": "bounded_path_length"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): bounded path length"
+    },
+    {
       "id": "BOUNDED_PATH_pe02_ce04",
       "category": "Reachability_Analysis",
       "level": "L4",
@@ -5584,148 +5922,22 @@
       "academic_reference": "Minesweeper (SIGCOMM'17): bounded path length"
     },
     {
-      "id": "ISOLATION_ce01_p01",
+      "id": "BOUNDED_PATH_pe02_pe03",
       "category": "Reachability_Analysis",
       "level": "L4",
-      "answer_type": "set",
-      "question": "ce01(고객 장비)와 p01(백본 장비) 사이에 누수된 prefix들은 무엇입니까?\n[답변 형식: 쉼표로 구분된 prefix 목록 또는 '없음']",
-      "ground_truth": "없음",
-      "explanation": "metric `isolation_check` between ce01 and p01, leaked_prefixes=[]",
+      "answer_type": "number",
+      "question": "pe02에서 pe03로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "2",
+      "explanation": "metric `bounded_path_length` on pe02->pe03, actual_hops=2",
       "evidence_hint": {
         "scope": {
-          "type": "ISOLATION",
-          "node1": "ce01",
-          "node2": "p01"
+          "type": "NODE_PAIR",
+          "src": "pe02",
+          "dst": "pe03"
         },
-        "metric": "isolation_check"
+        "metric": "bounded_path_length"
       },
-      "academic_reference": "HSA (NSDI'12), Config2Spec (NSDI'20): isolation"
-    },
-    {
-      "id": "ISOLATION_ce01_p04",
-      "category": "Reachability_Analysis",
-      "level": "L4",
-      "answer_type": "set",
-      "question": "ce01(고객 장비)와 p04(백본 장비) 사이에 누수된 prefix들은 무엇입니까?\n[답변 형식: 쉼표로 구분된 prefix 목록 또는 '없음']",
-      "ground_truth": "없음",
-      "explanation": "metric `isolation_check` between ce01 and p04, leaked_prefixes=[]",
-      "evidence_hint": {
-        "scope": {
-          "type": "ISOLATION",
-          "node1": "ce01",
-          "node2": "p04"
-        },
-        "metric": "isolation_check"
-      },
-      "academic_reference": "HSA (NSDI'12), Config2Spec (NSDI'20): isolation"
-    },
-    {
-      "id": "ISOLATION_ce02_p01",
-      "category": "Reachability_Analysis",
-      "level": "L4",
-      "answer_type": "set",
-      "question": "ce02(고객 장비)와 p01(백본 장비) 사이에 누수된 prefix들은 무엇입니까?\n[답변 형식: 쉼표로 구분된 prefix 목록 또는 '없음']",
-      "ground_truth": "없음",
-      "explanation": "metric `isolation_check` between ce02 and p01, leaked_prefixes=[]",
-      "evidence_hint": {
-        "scope": {
-          "type": "ISOLATION",
-          "node1": "ce02",
-          "node2": "p01"
-        },
-        "metric": "isolation_check"
-      },
-      "academic_reference": "HSA (NSDI'12), Config2Spec (NSDI'20): isolation"
-    },
-    {
-      "id": "ISOLATION_ce02_p04",
-      "category": "Reachability_Analysis",
-      "level": "L4",
-      "answer_type": "set",
-      "question": "ce02(고객 장비)와 p04(백본 장비) 사이에 누수된 prefix들은 무엇입니까?\n[답변 형식: 쉼표로 구분된 prefix 목록 또는 '없음']",
-      "ground_truth": "없음",
-      "explanation": "metric `isolation_check` between ce02 and p04, leaked_prefixes=[]",
-      "evidence_hint": {
-        "scope": {
-          "type": "ISOLATION",
-          "node1": "ce02",
-          "node2": "p04"
-        },
-        "metric": "isolation_check"
-      },
-      "academic_reference": "HSA (NSDI'12), Config2Spec (NSDI'20): isolation"
-    },
-    {
-      "id": "ISOLATION_ce03_p01",
-      "category": "Reachability_Analysis",
-      "level": "L4",
-      "answer_type": "set",
-      "question": "ce03(고객 장비)와 p01(백본 장비) 사이에 누수된 prefix들은 무엇입니까?\n[답변 형식: 쉼표로 구분된 prefix 목록 또는 '없음']",
-      "ground_truth": "없음",
-      "explanation": "metric `isolation_check` between ce03 and p01, leaked_prefixes=[]",
-      "evidence_hint": {
-        "scope": {
-          "type": "ISOLATION",
-          "node1": "ce03",
-          "node2": "p01"
-        },
-        "metric": "isolation_check"
-      },
-      "academic_reference": "HSA (NSDI'12), Config2Spec (NSDI'20): isolation"
-    },
-    {
-      "id": "ISOLATION_ce03_p04",
-      "category": "Reachability_Analysis",
-      "level": "L4",
-      "answer_type": "set",
-      "question": "ce03(고객 장비)와 p04(백본 장비) 사이에 누수된 prefix들은 무엇입니까?\n[답변 형식: 쉼표로 구분된 prefix 목록 또는 '없음']",
-      "ground_truth": "없음",
-      "explanation": "metric `isolation_check` between ce03 and p04, leaked_prefixes=[]",
-      "evidence_hint": {
-        "scope": {
-          "type": "ISOLATION",
-          "node1": "ce03",
-          "node2": "p04"
-        },
-        "metric": "isolation_check"
-      },
-      "academic_reference": "HSA (NSDI'12), Config2Spec (NSDI'20): isolation"
-    },
-    {
-      "id": "ISOLATION_ce04_p01",
-      "category": "Reachability_Analysis",
-      "level": "L4",
-      "answer_type": "set",
-      "question": "ce04(고객 장비)와 p01(백본 장비) 사이에 누수된 prefix들은 무엇입니까?\n[답변 형식: 쉼표로 구분된 prefix 목록 또는 '없음']",
-      "ground_truth": "없음",
-      "explanation": "metric `isolation_check` between ce04 and p01, leaked_prefixes=[]",
-      "evidence_hint": {
-        "scope": {
-          "type": "ISOLATION",
-          "node1": "ce04",
-          "node2": "p01"
-        },
-        "metric": "isolation_check"
-      },
-      "academic_reference": "HSA (NSDI'12), Config2Spec (NSDI'20): isolation"
-    },
-    {
-      "id": "ISOLATION_ce04_p04",
-      "category": "Reachability_Analysis",
-      "level": "L4",
-      "answer_type": "set",
-      "question": "ce04(고객 장비)와 p04(백본 장비) 사이에 누수된 prefix들은 무엇입니까?\n[답변 형식: 쉼표로 구분된 prefix 목록 또는 '없음']",
-      "ground_truth": "없음",
-      "explanation": "metric `isolation_check` between ce04 and p04, leaked_prefixes=[]",
-      "evidence_hint": {
-        "scope": {
-          "type": "ISOLATION",
-          "node1": "ce04",
-          "node2": "p04"
-        },
-        "metric": "isolation_check"
-      },
-      "academic_reference": "HSA (NSDI'12), Config2Spec (NSDI'20): isolation"
+      "academic_reference": "Minesweeper (SIGCOMM'17): bounded path length"
     },
     {
       "id": "LOOP_DETECTION_GLOBAL",
@@ -6284,6 +6496,40 @@
       "academic_reference": "HSA (NSDI'12), VeriFlow (NSDI'13), Batfish (NSDI'15)"
     },
     {
+      "id": "TRACEROUTE_ce01_ce03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "set",
+      "question": "ce01에서 ce03(10.10.10.103)로 가는 패킷의 네트워크 경로를 알려주세요.\n[답변 형식: 쉼표로 구분된 장비 목록]",
+      "ground_truth": "ce01, ce03",
+      "explanation": "metric `traceroute_path` on src=ce01, dst=10.10.10.103",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce01",
+          "dst": "ce03"
+        },
+        "metric": "traceroute_path"
+      }
+    },
+    {
+      "id": "TRACEROUTE_ce01_pe03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "set",
+      "question": "ce01에서 pe03(10.10.10.3)로 가는 패킷의 네트워크 경로를 알려주세요.\n[답변 형식: 쉼표로 구분된 장비 목록]",
+      "ground_truth": "ce01, pe03",
+      "explanation": "metric `traceroute_path` on src=ce01, dst=10.10.10.3",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce01",
+          "dst": "pe03"
+        },
+        "metric": "traceroute_path"
+      }
+    },
+    {
       "id": "TRACEROUTE_ce02_ce01",
       "category": "Reachability_Analysis",
       "level": "L4",
@@ -6386,6 +6632,23 @@
       }
     },
     {
+      "id": "TRACEROUTE_ce03_pe03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "set",
+      "question": "ce03에서 pe03(10.10.10.3)로 가는 패킷의 네트워크 경로를 알려주세요.\n[답변 형식: 쉼표로 구분된 장비 목록]",
+      "ground_truth": "ce03, pe03",
+      "explanation": "metric `traceroute_path` on src=ce03, dst=10.10.10.3",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce03",
+          "dst": "pe03"
+        },
+        "metric": "traceroute_path"
+      }
+    },
+    {
       "id": "TRACEROUTE_ce04_ce01",
       "category": "Reachability_Analysis",
       "level": "L4",
@@ -6403,6 +6666,23 @@
       }
     },
     {
+      "id": "TRACEROUTE_ce04_ce03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "set",
+      "question": "ce04에서 ce03(10.10.10.103)로 가는 패킷의 네트워크 경로를 알려주세요.\n[답변 형식: 쉼표로 구분된 장비 목록]",
+      "ground_truth": "ce04, ce03",
+      "explanation": "metric `traceroute_path` on src=ce04, dst=10.10.10.103",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce04",
+          "dst": "ce03"
+        },
+        "metric": "traceroute_path"
+      }
+    },
+    {
       "id": "TRACEROUTE_ce04_p04",
       "category": "Reachability_Analysis",
       "level": "L4",
@@ -6415,6 +6695,23 @@
           "type": "NODE_PAIR",
           "src": "ce04",
           "dst": "p04"
+        },
+        "metric": "traceroute_path"
+      }
+    },
+    {
+      "id": "TRACEROUTE_ce04_pe03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "set",
+      "question": "ce04에서 pe03(10.10.10.3)로 가는 패킷의 네트워크 경로를 알려주세요.\n[답변 형식: 쉼표로 구분된 장비 목록]",
+      "ground_truth": "ce04, pe03",
+      "explanation": "metric `traceroute_path` on src=ce04, dst=10.10.10.3",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce04",
+          "dst": "pe03"
         },
         "metric": "traceroute_path"
       }
@@ -6539,6 +6836,57 @@
       }
     },
     {
+      "id": "TRACEROUTE_p04_ce01",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "set",
+      "question": "p04에서 ce01(10.10.10.101)로 가는 패킷의 네트워크 경로를 알려주세요.\n[답변 형식: 쉼표로 구분된 장비 목록]",
+      "ground_truth": "p04, ce01",
+      "explanation": "metric `traceroute_path` on src=p04, dst=10.10.10.101",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "p04",
+          "dst": "ce01"
+        },
+        "metric": "traceroute_path"
+      }
+    },
+    {
+      "id": "TRACEROUTE_p04_ce03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "set",
+      "question": "p04에서 ce03(10.10.10.103)로 가는 패킷의 네트워크 경로를 알려주세요.\n[답변 형식: 쉼표로 구분된 장비 목록]",
+      "ground_truth": "p04, ce03",
+      "explanation": "metric `traceroute_path` on src=p04, dst=10.10.10.103",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "p04",
+          "dst": "ce03"
+        },
+        "metric": "traceroute_path"
+      }
+    },
+    {
+      "id": "TRACEROUTE_p04_pe03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "set",
+      "question": "p04에서 pe03(10.10.10.3)로 가는 패킷의 네트워크 경로를 알려주세요.\n[답변 형식: 쉼표로 구분된 장비 목록]",
+      "ground_truth": "p04, pe03",
+      "explanation": "metric `traceroute_path` on src=p04, dst=10.10.10.3",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "p04",
+          "dst": "pe03"
+        },
+        "metric": "traceroute_path"
+      }
+    },
+    {
       "id": "TRACEROUTE_pe02_ce01",
       "category": "Reachability_Analysis",
       "level": "L4",
@@ -6624,6 +6972,44 @@
       }
     },
     {
+      "id": "WAYPOINT_PASS_ce02_ce01_pe02",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "boolean",
+      "question": "ce02에서 ce01로 가는 트래픽이 pe02(백본 장비)를 경유합니까?\n[답변 형식: true/false (소문자)]",
+      "ground_truth": "false",
+      "explanation": "경로: ce02 -> ce01",
+      "evidence_hint": {
+        "scope": {
+          "type": "WAYPOINT",
+          "src": "ce02",
+          "dst": "ce01",
+          "waypoint": "pe02"
+        },
+        "metric": "waypoint_check"
+      },
+      "academic_reference": "현업: 보안 정책 - 모든 트래픽이 방화벽/IDS 경유 필수"
+    },
+    {
+      "id": "WAYPOINT_PASS_ce02_ce01_pe03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "boolean",
+      "question": "ce02에서 ce01로 가는 트래픽이 pe03(백본 장비)를 경유합니까?\n[답변 형식: true/false (소문자)]",
+      "ground_truth": "false",
+      "explanation": "경로: ce02 -> ce01",
+      "evidence_hint": {
+        "scope": {
+          "type": "WAYPOINT",
+          "src": "ce02",
+          "dst": "ce01",
+          "waypoint": "pe03"
+        },
+        "metric": "waypoint_check"
+      },
+      "academic_reference": "현업: 보안 정책 - 모든 트래픽이 방화벽/IDS 경유 필수"
+    },
+    {
       "id": "WAYPOINT_ce02_ce01_pe02",
       "category": "Reachability_Analysis",
       "level": "L4",
@@ -6641,6 +7027,44 @@
         "metric": "waypoint_check"
       },
       "academic_reference": "Minesweeper (SIGCOMM'17), Config2Spec (NSDI'20): waypointing"
+    },
+    {
+      "id": "WAYPOINT_PASS_ce02_ce03_pe02",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "boolean",
+      "question": "ce02에서 ce03로 가는 트래픽이 pe02(백본 장비)를 경유합니까?\n[답변 형식: true/false (소문자)]",
+      "ground_truth": "false",
+      "explanation": "경로: ce02 -> ce03",
+      "evidence_hint": {
+        "scope": {
+          "type": "WAYPOINT",
+          "src": "ce02",
+          "dst": "ce03",
+          "waypoint": "pe02"
+        },
+        "metric": "waypoint_check"
+      },
+      "academic_reference": "현업: 보안 정책 - 모든 트래픽이 방화벽/IDS 경유 필수"
+    },
+    {
+      "id": "WAYPOINT_PASS_ce02_ce03_pe03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "boolean",
+      "question": "ce02에서 ce03로 가는 트래픽이 pe03(백본 장비)를 경유합니까?\n[답변 형식: true/false (소문자)]",
+      "ground_truth": "false",
+      "explanation": "경로: ce02 -> ce03",
+      "evidence_hint": {
+        "scope": {
+          "type": "WAYPOINT",
+          "src": "ce02",
+          "dst": "ce03",
+          "waypoint": "pe03"
+        },
+        "metric": "waypoint_check"
+      },
+      "academic_reference": "현업: 보안 정책 - 모든 트래픽이 방화벽/IDS 경유 필수"
     },
     {
       "id": "WAYPOINT_ce02_ce04_pe02",
@@ -6662,6 +7086,44 @@
       "academic_reference": "Minesweeper (SIGCOMM'17), Config2Spec (NSDI'20): waypointing"
     },
     {
+      "id": "WAYPOINT_PASS_ce04_ce01_pe02",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "boolean",
+      "question": "ce04에서 ce01로 가는 트래픽이 pe02(백본 장비)를 경유합니까?\n[답변 형식: true/false (소문자)]",
+      "ground_truth": "false",
+      "explanation": "경로: ce04 -> ce01",
+      "evidence_hint": {
+        "scope": {
+          "type": "WAYPOINT",
+          "src": "ce04",
+          "dst": "ce01",
+          "waypoint": "pe02"
+        },
+        "metric": "waypoint_check"
+      },
+      "academic_reference": "현업: 보안 정책 - 모든 트래픽이 방화벽/IDS 경유 필수"
+    },
+    {
+      "id": "WAYPOINT_PASS_ce04_ce01_pe03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "boolean",
+      "question": "ce04에서 ce01로 가는 트래픽이 pe03(백본 장비)를 경유합니까?\n[답변 형식: true/false (소문자)]",
+      "ground_truth": "false",
+      "explanation": "경로: ce04 -> ce01",
+      "evidence_hint": {
+        "scope": {
+          "type": "WAYPOINT",
+          "src": "ce04",
+          "dst": "ce01",
+          "waypoint": "pe03"
+        },
+        "metric": "waypoint_check"
+      },
+      "academic_reference": "현업: 보안 정책 - 모든 트래픽이 방화벽/IDS 경유 필수"
+    },
+    {
       "id": "WAYPOINT_ce04_ce01_pe02",
       "category": "Reachability_Analysis",
       "level": "L4",
@@ -6679,6 +7141,44 @@
         "metric": "waypoint_check"
       },
       "academic_reference": "Minesweeper (SIGCOMM'17), Config2Spec (NSDI'20): waypointing"
+    },
+    {
+      "id": "WAYPOINT_PASS_ce04_ce03_pe02",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "boolean",
+      "question": "ce04에서 ce03로 가는 트래픽이 pe02(백본 장비)를 경유합니까?\n[답변 형식: true/false (소문자)]",
+      "ground_truth": "false",
+      "explanation": "경로: ce04 -> ce03",
+      "evidence_hint": {
+        "scope": {
+          "type": "WAYPOINT",
+          "src": "ce04",
+          "dst": "ce03",
+          "waypoint": "pe02"
+        },
+        "metric": "waypoint_check"
+      },
+      "academic_reference": "현업: 보안 정책 - 모든 트래픽이 방화벽/IDS 경유 필수"
+    },
+    {
+      "id": "WAYPOINT_PASS_ce04_ce03_pe03",
+      "category": "Reachability_Analysis",
+      "level": "L4",
+      "answer_type": "boolean",
+      "question": "ce04에서 ce03로 가는 트래픽이 pe03(백본 장비)를 경유합니까?\n[답변 형식: true/false (소문자)]",
+      "ground_truth": "false",
+      "explanation": "경로: ce04 -> ce03",
+      "evidence_hint": {
+        "scope": {
+          "type": "WAYPOINT",
+          "src": "ce04",
+          "dst": "ce03",
+          "waypoint": "pe03"
+        },
+        "metric": "waypoint_check"
+      },
+      "academic_reference": "현업: 보안 정책 - 모든 트래픽이 방화벽/IDS 경유 필수"
     },
     {
       "category": "Routing_Inventory",
@@ -10543,7 +11043,9 @@
       "ground_truth": "없음",
       "explanation": "metric `syslog_server_list` on host=P04, type=DEVICE → 없음",
       "id": "SYSLOG_SERVER_LIST_0005"
-    },
+    }
+  ],
+  "validation": [
     {
       "category": "System_Inventory",
       "answer_type": "set",
@@ -10585,9 +11087,7 @@
       "ground_truth": "없음",
       "explanation": "metric `syslog_server_list` on host=PE03, type=DEVICE → 없음",
       "id": "SYSLOG_SERVER_LIST_0007"
-    }
-  ],
-  "validation": [
+    },
     {
       "category": "System_Inventory",
       "answer_type": "text",
@@ -11804,520 +12304,14 @@
         "metric": "backbone_continuity"
       },
       "academic_reference": "RFC 2328: OSPF backbone must be contiguous"
-    }
-  ],
-  "test": [
-    {
-      "id": "DIFF_REACH_ce02_ce04",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "설정 변경 없이 현재 상태에서 ce02에서 ce04로의 도달성 상태는 어떻게 되나요?\n[답변 형식: 상태 설명 텍스트]",
-      "ground_truth": "도달 가능 (2홉)",
-      "explanation": "metric `differential_reachability` on ce02->ce04",
-      "evidence_hint": {
-        "scope": {
-          "type": "DIFFERENTIAL",
-          "src": "ce02",
-          "dst": "ce04"
-        },
-        "metric": "differential_reachability"
-      },
-      "academic_reference": "DNA (NSDI'22): differential reachability"
-    },
-    {
-      "id": "DIFF_REACH_ce02_p04",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "설정 변경 없이 현재 상태에서 ce02에서 p04로의 도달성 상태는 어떻게 되나요?\n[답변 형식: 상태 설명 텍스트]",
-      "ground_truth": "도달 가능 (2홉)",
-      "explanation": "metric `differential_reachability` on ce02->p04",
-      "evidence_hint": {
-        "scope": {
-          "type": "DIFFERENTIAL",
-          "src": "ce02",
-          "dst": "p04"
-        },
-        "metric": "differential_reachability"
-      },
-      "academic_reference": "DNA (NSDI'22): differential reachability"
-    },
-    {
-      "id": "DIFF_REACH_ce02_pe02",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "설정 변경 없이 현재 상태에서 ce02에서 pe02로의 도달성 상태는 어떻게 되나요?\n[답변 형식: 상태 설명 텍스트]",
-      "ground_truth": "도달 가능 (2홉)",
-      "explanation": "metric `differential_reachability` on ce02->pe02",
-      "evidence_hint": {
-        "scope": {
-          "type": "DIFFERENTIAL",
-          "src": "ce02",
-          "dst": "pe02"
-        },
-        "metric": "differential_reachability"
-      },
-      "academic_reference": "DNA (NSDI'22): differential reachability"
-    },
-    {
-      "id": "DIFF_REACH_p01_ce01",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "설정 변경 없이 현재 상태에서 p01에서 ce01로의 도달성 상태는 어떻게 되나요?\n[답변 형식: 상태 설명 텍스트]",
-      "ground_truth": "도달 가능 (2홉)",
-      "explanation": "metric `differential_reachability` on p01->ce01",
-      "evidence_hint": {
-        "scope": {
-          "type": "DIFFERENTIAL",
-          "src": "p01",
-          "dst": "ce01"
-        },
-        "metric": "differential_reachability"
-      },
-      "academic_reference": "DNA (NSDI'22): differential reachability"
-    },
-    {
-      "id": "DIFF_REACH_p01_ce02",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "설정 변경 없이 현재 상태에서 p01에서 ce02로의 도달성 상태는 어떻게 되나요?\n[답변 형식: 상태 설명 텍스트]",
-      "ground_truth": "도달 가능 (2홉)",
-      "explanation": "metric `differential_reachability` on p01->ce02",
-      "evidence_hint": {
-        "scope": {
-          "type": "DIFFERENTIAL",
-          "src": "p01",
-          "dst": "ce02"
-        },
-        "metric": "differential_reachability"
-      },
-      "academic_reference": "DNA (NSDI'22): differential reachability"
-    },
-    {
-      "id": "DIFF_REACH_p01_ce03",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "설정 변경 없이 현재 상태에서 p01에서 ce03로의 도달성 상태는 어떻게 되나요?\n[답변 형식: 상태 설명 텍스트]",
-      "ground_truth": "도달 가능 (2홉)",
-      "explanation": "metric `differential_reachability` on p01->ce03",
-      "evidence_hint": {
-        "scope": {
-          "type": "DIFFERENTIAL",
-          "src": "p01",
-          "dst": "ce03"
-        },
-        "metric": "differential_reachability"
-      },
-      "academic_reference": "DNA (NSDI'22): differential reachability"
-    },
-    {
-      "id": "DIFF_REACH_p01_ce04",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "설정 변경 없이 현재 상태에서 p01에서 ce04로의 도달성 상태는 어떻게 되나요?\n[답변 형식: 상태 설명 텍스트]",
-      "ground_truth": "도달 가능 (2홉)",
-      "explanation": "metric `differential_reachability` on p01->ce04",
-      "evidence_hint": {
-        "scope": {
-          "type": "DIFFERENTIAL",
-          "src": "p01",
-          "dst": "ce04"
-        },
-        "metric": "differential_reachability"
-      },
-      "academic_reference": "DNA (NSDI'22): differential reachability"
-    },
-    {
-      "id": "DIFF_REACH_p01_p04",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "설정 변경 없이 현재 상태에서 p01에서 p04로의 도달성 상태는 어떻게 되나요?\n[답변 형식: 상태 설명 텍스트]",
-      "ground_truth": "도달 가능 (2홉)",
-      "explanation": "metric `differential_reachability` on p01->p04",
-      "evidence_hint": {
-        "scope": {
-          "type": "DIFFERENTIAL",
-          "src": "p01",
-          "dst": "p04"
-        },
-        "metric": "differential_reachability"
-      },
-      "academic_reference": "DNA (NSDI'22): differential reachability"
-    },
-    {
-      "id": "DIFF_REACH_p01_pe02",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "설정 변경 없이 현재 상태에서 p01에서 pe02로의 도달성 상태는 어떻게 되나요?\n[답변 형식: 상태 설명 텍스트]",
-      "ground_truth": "도달 가능 (2홉)",
-      "explanation": "metric `differential_reachability` on p01->pe02",
-      "evidence_hint": {
-        "scope": {
-          "type": "DIFFERENTIAL",
-          "src": "p01",
-          "dst": "pe02"
-        },
-        "metric": "differential_reachability"
-      },
-      "academic_reference": "DNA (NSDI'22): differential reachability"
-    },
-    {
-      "id": "DIFF_REACH_p01_pe03",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "설정 변경 없이 현재 상태에서 p01에서 pe03로의 도달성 상태는 어떻게 되나요?\n[답변 형식: 상태 설명 텍스트]",
-      "ground_truth": "도달 가능 (2홉)",
-      "explanation": "metric `differential_reachability` on p01->pe03",
-      "evidence_hint": {
-        "scope": {
-          "type": "DIFFERENTIAL",
-          "src": "p01",
-          "dst": "pe03"
-        },
-        "metric": "differential_reachability"
-      },
-      "academic_reference": "DNA (NSDI'22): differential reachability"
-    },
-    {
-      "id": "K_FAIL_TOL_ce02_ce01",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "number",
-      "question": "ce02에서 ce01로 가는 대체 경로의 수는 몇 개입니까?\n[답변 형식: 숫자]",
-      "ground_truth": "1",
-      "explanation": "metric `k_failure_tolerance` on ce02->ce01, alternative_paths=1",
-      "evidence_hint": {
-        "scope": {
-          "type": "NODE_PAIR",
-          "src": "ce02",
-          "dst": "ce01"
-        },
-        "metric": "k_failure_tolerance"
-      },
-      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
-    },
-    {
-      "id": "K_FAIL_TOL_ce02_ce03",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "number",
-      "question": "ce02에서 ce03로 가는 대체 경로의 수는 몇 개입니까?\n[답변 형식: 숫자]",
-      "ground_truth": "1",
-      "explanation": "metric `k_failure_tolerance` on ce02->ce03, alternative_paths=1",
-      "evidence_hint": {
-        "scope": {
-          "type": "NODE_PAIR",
-          "src": "ce02",
-          "dst": "ce03"
-        },
-        "metric": "k_failure_tolerance"
-      },
-      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
-    },
-    {
-      "id": "K_FAIL_TOL_ce02_ce04",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "number",
-      "question": "ce02에서 ce04로 가는 대체 경로의 수는 몇 개입니까?\n[답변 형식: 숫자]",
-      "ground_truth": "1",
-      "explanation": "metric `k_failure_tolerance` on ce02->ce04, alternative_paths=1",
-      "evidence_hint": {
-        "scope": {
-          "type": "NODE_PAIR",
-          "src": "ce02",
-          "dst": "ce04"
-        },
-        "metric": "k_failure_tolerance"
-      },
-      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
-    },
-    {
-      "id": "K_FAIL_TOL_ce02_p04",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "number",
-      "question": "ce02에서 p04로 가는 대체 경로의 수는 몇 개입니까?\n[답변 형식: 숫자]",
-      "ground_truth": "1",
-      "explanation": "metric `k_failure_tolerance` on ce02->p04, alternative_paths=1",
-      "evidence_hint": {
-        "scope": {
-          "type": "NODE_PAIR",
-          "src": "ce02",
-          "dst": "p04"
-        },
-        "metric": "k_failure_tolerance"
-      },
-      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
-    },
-    {
-      "id": "K_FAIL_TOL_ce02_pe02",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "number",
-      "question": "ce02에서 pe02로 가는 대체 경로의 수는 몇 개입니까?\n[답변 형식: 숫자]",
-      "ground_truth": "1",
-      "explanation": "metric `k_failure_tolerance` on ce02->pe02, alternative_paths=1",
-      "evidence_hint": {
-        "scope": {
-          "type": "NODE_PAIR",
-          "src": "ce02",
-          "dst": "pe02"
-        },
-        "metric": "k_failure_tolerance"
-      },
-      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
-    },
-    {
-      "id": "K_FAIL_TOL_ce02_pe03",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "number",
-      "question": "ce02에서 pe03로 가는 대체 경로의 수는 몇 개입니까?\n[답변 형식: 숫자]",
-      "ground_truth": "1",
-      "explanation": "metric `k_failure_tolerance` on ce02->pe03, alternative_paths=1",
-      "evidence_hint": {
-        "scope": {
-          "type": "NODE_PAIR",
-          "src": "ce02",
-          "dst": "pe03"
-        },
-        "metric": "k_failure_tolerance"
-      },
-      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
-    },
-    {
-      "id": "K_FAIL_TOL_p01_ce01",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "number",
-      "question": "p01에서 ce01로 가는 대체 경로의 수는 몇 개입니까?\n[답변 형식: 숫자]",
-      "ground_truth": "1",
-      "explanation": "metric `k_failure_tolerance` on p01->ce01, alternative_paths=1",
-      "evidence_hint": {
-        "scope": {
-          "type": "NODE_PAIR",
-          "src": "p01",
-          "dst": "ce01"
-        },
-        "metric": "k_failure_tolerance"
-      },
-      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
-    },
-    {
-      "id": "K_FAIL_TOL_p01_ce02",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "number",
-      "question": "p01에서 ce02로 가는 대체 경로의 수는 몇 개입니까?\n[답변 형식: 숫자]",
-      "ground_truth": "1",
-      "explanation": "metric `k_failure_tolerance` on p01->ce02, alternative_paths=1",
-      "evidence_hint": {
-        "scope": {
-          "type": "NODE_PAIR",
-          "src": "p01",
-          "dst": "ce02"
-        },
-        "metric": "k_failure_tolerance"
-      },
-      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
-    },
-    {
-      "id": "K_FAIL_TOL_p01_ce03",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "number",
-      "question": "p01에서 ce03로 가는 대체 경로의 수는 몇 개입니까?\n[답변 형식: 숫자]",
-      "ground_truth": "1",
-      "explanation": "metric `k_failure_tolerance` on p01->ce03, alternative_paths=1",
-      "evidence_hint": {
-        "scope": {
-          "type": "NODE_PAIR",
-          "src": "p01",
-          "dst": "ce03"
-        },
-        "metric": "k_failure_tolerance"
-      },
-      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
-    },
-    {
-      "id": "K_FAIL_TOL_p01_ce04",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "number",
-      "question": "p01에서 ce04로 가는 대체 경로의 수는 몇 개입니까?\n[답변 형식: 숫자]",
-      "ground_truth": "1",
-      "explanation": "metric `k_failure_tolerance` on p01->ce04, alternative_paths=1",
-      "evidence_hint": {
-        "scope": {
-          "type": "NODE_PAIR",
-          "src": "p01",
-          "dst": "ce04"
-        },
-        "metric": "k_failure_tolerance"
-      },
-      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
-    },
-    {
-      "id": "K_FAIL_TOL_p01_p04",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "number",
-      "question": "p01에서 p04로 가는 대체 경로의 수는 몇 개입니까?\n[답변 형식: 숫자]",
-      "ground_truth": "1",
-      "explanation": "metric `k_failure_tolerance` on p01->p04, alternative_paths=1",
-      "evidence_hint": {
-        "scope": {
-          "type": "NODE_PAIR",
-          "src": "p01",
-          "dst": "p04"
-        },
-        "metric": "k_failure_tolerance"
-      },
-      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
-    },
-    {
-      "id": "K_FAIL_TOL_p01_pe02",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "number",
-      "question": "p01에서 pe02로 가는 대체 경로의 수는 몇 개입니까?\n[답변 형식: 숫자]",
-      "ground_truth": "1",
-      "explanation": "metric `k_failure_tolerance` on p01->pe02, alternative_paths=1",
-      "evidence_hint": {
-        "scope": {
-          "type": "NODE_PAIR",
-          "src": "p01",
-          "dst": "pe02"
-        },
-        "metric": "k_failure_tolerance"
-      },
-      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
-    },
-    {
-      "id": "K_FAIL_TOL_p01_pe03",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "number",
-      "question": "p01에서 pe03로 가는 대체 경로의 수는 몇 개입니까?\n[답변 형식: 숫자]",
-      "ground_truth": "1",
-      "explanation": "metric `k_failure_tolerance` on p01->pe03, alternative_paths=1",
-      "evidence_hint": {
-        "scope": {
-          "type": "NODE_PAIR",
-          "src": "p01",
-          "dst": "pe03"
-        },
-        "metric": "k_failure_tolerance"
-      },
-      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
-    },
-    {
-      "id": "K_FAIL_TOL_pe02_ce04",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "number",
-      "question": "pe02에서 ce04로 가는 대체 경로의 수는 몇 개입니까?\n[답변 형식: 숫자]",
-      "ground_truth": "1",
-      "explanation": "metric `k_failure_tolerance` on pe02->ce04, alternative_paths=1",
-      "evidence_hint": {
-        "scope": {
-          "type": "NODE_PAIR",
-          "src": "pe02",
-          "dst": "ce04"
-        },
-        "metric": "k_failure_tolerance"
-      },
-      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
-    },
-    {
-      "id": "K_FAIL_TOL_pe02_p04",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "number",
-      "question": "pe02에서 p04로 가는 대체 경로의 수는 몇 개입니까?\n[답변 형식: 숫자]",
-      "ground_truth": "1",
-      "explanation": "metric `k_failure_tolerance` on pe02->p04, alternative_paths=1",
-      "evidence_hint": {
-        "scope": {
-          "type": "NODE_PAIR",
-          "src": "pe02",
-          "dst": "p04"
-        },
-        "metric": "k_failure_tolerance"
-      },
-      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
-    },
-    {
-      "id": "LINK_FAIL_ce02_ce04_ce01_ce03",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "ce02과 ce04 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> ce03)가 ce02-ce04 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
-      "explanation": "metric `link_failure_impact` on link=ce02-ce04, flow=ce01->ce03",
-      "evidence_hint": {
-        "scope": {
-          "type": "LINK_FAILURE",
-          "node1": "ce02",
-          "node2": "ce04"
-        },
-        "metric": "link_failure_impact"
-      },
-      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
-    },
-    {
-      "id": "LINK_FAIL_ce02_ce04_ce01_p01",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "ce02과 ce04 사이의 링크가 다운되었을 때, ce01에서 p01로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> p01)가 ce02-ce04 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
-      "explanation": "metric `link_failure_impact` on link=ce02-ce04, flow=ce01->p01",
-      "evidence_hint": {
-        "scope": {
-          "type": "LINK_FAILURE",
-          "node1": "ce02",
-          "node2": "ce04"
-        },
-        "metric": "link_failure_impact"
-      },
-      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
-    },
-    {
-      "id": "LINK_FAIL_ce02_ce04_ce01_p04",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "ce02과 ce04 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> p04)가 ce02-ce04 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
-      "explanation": "metric `link_failure_impact` on link=ce02-ce04, flow=ce01->p04",
-      "evidence_hint": {
-        "scope": {
-          "type": "LINK_FAILURE",
-          "node1": "ce02",
-          "node2": "ce04"
-        },
-        "metric": "link_failure_impact"
-      },
-      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
     },
     {
       "id": "LINK_FAIL_ce02_p04_ce01_ce03",
       "category": "What_If_Analysis",
       "level": "L5",
-      "answer_type": "text",
-      "question": "ce02과 p04 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> ce03)가 ce02-p04 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
+      "answer_type": "selection",
+      "question": "ce02과 p04 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
       "explanation": "metric `link_failure_impact` on link=ce02-p04, flow=ce01->ce03",
       "evidence_hint": {
         "scope": {
@@ -12328,14 +12322,16 @@
         "metric": "link_failure_impact"
       },
       "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
-    },
+    }
+  ],
+  "test": [
     {
       "id": "LINK_FAIL_ce02_p04_ce01_ce04",
       "category": "What_If_Analysis",
       "level": "L5",
-      "answer_type": "text",
-      "question": "ce02과 p04 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> ce04)가 ce02-p04 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
+      "answer_type": "selection",
+      "question": "ce02과 p04 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
       "explanation": "metric `link_failure_impact` on link=ce02-p04, flow=ce01->ce04",
       "evidence_hint": {
         "scope": {
@@ -12351,9 +12347,9 @@
       "id": "LINK_FAIL_ce02_p04_ce01_p01",
       "category": "What_If_Analysis",
       "level": "L5",
-      "answer_type": "text",
-      "question": "ce02과 p04 사이의 링크가 다운되었을 때, ce01에서 p01로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> p01)가 ce02-p04 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
+      "answer_type": "selection",
+      "question": "ce02과 p04 사이의 링크가 다운되었을 때, ce01에서 p01로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
       "explanation": "metric `link_failure_impact` on link=ce02-p04, flow=ce01->p01",
       "evidence_hint": {
         "scope": {
@@ -12369,9 +12365,9 @@
       "id": "LINK_FAIL_ce02_pe02_ce01_ce03",
       "category": "What_If_Analysis",
       "level": "L5",
-      "answer_type": "text",
-      "question": "ce02과 pe02 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> ce03)가 ce02-pe02 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
+      "answer_type": "selection",
+      "question": "ce02과 pe02 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
       "explanation": "metric `link_failure_impact` on link=ce02-pe02, flow=ce01->ce03",
       "evidence_hint": {
         "scope": {
@@ -12387,9 +12383,9 @@
       "id": "LINK_FAIL_ce02_pe02_ce01_ce04",
       "category": "What_If_Analysis",
       "level": "L5",
-      "answer_type": "text",
-      "question": "ce02과 pe02 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> ce04)가 ce02-pe02 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
+      "answer_type": "selection",
+      "question": "ce02과 pe02 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
       "explanation": "metric `link_failure_impact` on link=ce02-pe02, flow=ce01->ce04",
       "evidence_hint": {
         "scope": {
@@ -12405,9 +12401,9 @@
       "id": "LINK_FAIL_ce02_pe02_ce01_p01",
       "category": "What_If_Analysis",
       "level": "L5",
-      "answer_type": "text",
-      "question": "ce02과 pe02 사이의 링크가 다운되었을 때, ce01에서 p01로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> p01)가 ce02-pe02 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
+      "answer_type": "selection",
+      "question": "ce02과 pe02 사이의 링크가 다운되었을 때, ce01에서 p01로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
       "explanation": "metric `link_failure_impact` on link=ce02-pe02, flow=ce01->p01",
       "evidence_hint": {
         "scope": {
@@ -12423,9 +12419,9 @@
       "id": "LINK_FAIL_ce02_pe02_ce01_p04",
       "category": "What_If_Analysis",
       "level": "L5",
-      "answer_type": "text",
-      "question": "ce02과 pe02 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> p04)가 ce02-pe02 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
+      "answer_type": "selection",
+      "question": "ce02과 pe02 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
       "explanation": "metric `link_failure_impact` on link=ce02-pe02, flow=ce01->p04",
       "evidence_hint": {
         "scope": {
@@ -12438,54 +12434,144 @@
       "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
     },
     {
-      "id": "LINK_FAIL_p01_ce02_ce01_ce03",
+      "id": "LINK_FAIL_ce04_ce03_ce01_ce02",
       "category": "What_If_Analysis",
       "level": "L5",
-      "answer_type": "text",
-      "question": "p01과 ce02 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> ce03)가 p01-ce02 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
-      "explanation": "metric `link_failure_impact` on link=p01-ce02, flow=ce01->ce03",
+      "answer_type": "selection",
+      "question": "ce04과 ce03 사이의 링크가 다운되었을 때, ce01에서 ce02로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
+      "explanation": "metric `link_failure_impact` on link=ce04-ce03, flow=ce01->ce02",
       "evidence_hint": {
         "scope": {
           "type": "LINK_FAILURE",
-          "node1": "p01",
-          "node2": "ce02"
+          "node1": "ce04",
+          "node2": "ce03"
         },
         "metric": "link_failure_impact"
       },
       "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
     },
     {
-      "id": "LINK_FAIL_p01_ce02_ce01_ce04",
+      "id": "LINK_FAIL_ce04_ce03_ce01_p01",
       "category": "What_If_Analysis",
       "level": "L5",
-      "answer_type": "text",
-      "question": "p01과 ce02 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> ce04)가 p01-ce02 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
-      "explanation": "metric `link_failure_impact` on link=p01-ce02, flow=ce01->ce04",
+      "answer_type": "selection",
+      "question": "ce04과 ce03 사이의 링크가 다운되었을 때, ce01에서 p01로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
+      "explanation": "metric `link_failure_impact` on link=ce04-ce03, flow=ce01->p01",
       "evidence_hint": {
         "scope": {
           "type": "LINK_FAILURE",
-          "node1": "p01",
-          "node2": "ce02"
+          "node1": "ce04",
+          "node2": "ce03"
         },
         "metric": "link_failure_impact"
       },
       "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
     },
     {
-      "id": "LINK_FAIL_p01_ce02_ce01_p04",
+      "id": "LINK_FAIL_ce04_ce03_ce01_p04",
       "category": "What_If_Analysis",
       "level": "L5",
-      "answer_type": "text",
-      "question": "p01과 ce02 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> p04)가 p01-ce02 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
-      "explanation": "metric `link_failure_impact` on link=p01-ce02, flow=ce01->p04",
+      "answer_type": "selection",
+      "question": "ce04과 ce03 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
+      "explanation": "metric `link_failure_impact` on link=ce04-ce03, flow=ce01->p04",
       "evidence_hint": {
         "scope": {
           "type": "LINK_FAILURE",
-          "node1": "p01",
-          "node2": "ce02"
+          "node1": "ce04",
+          "node2": "ce03"
+        },
+        "metric": "link_failure_impact"
+      },
+      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
+    },
+    {
+      "id": "LINK_FAIL_ce04_p04_ce01_ce02",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "selection",
+      "question": "ce04과 p04 사이의 링크가 다운되었을 때, ce01에서 ce02로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
+      "explanation": "metric `link_failure_impact` on link=ce04-p04, flow=ce01->ce02",
+      "evidence_hint": {
+        "scope": {
+          "type": "LINK_FAILURE",
+          "node1": "ce04",
+          "node2": "p04"
+        },
+        "metric": "link_failure_impact"
+      },
+      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
+    },
+    {
+      "id": "LINK_FAIL_ce04_pe03_ce01_ce02",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "selection",
+      "question": "ce04과 pe03 사이의 링크가 다운되었을 때, ce01에서 ce02로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
+      "explanation": "metric `link_failure_impact` on link=ce04-pe03, flow=ce01->ce02",
+      "evidence_hint": {
+        "scope": {
+          "type": "LINK_FAILURE",
+          "node1": "ce04",
+          "node2": "pe03"
+        },
+        "metric": "link_failure_impact"
+      },
+      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
+    },
+    {
+      "id": "LINK_FAIL_ce04_pe03_ce01_ce03",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "selection",
+      "question": "ce04과 pe03 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
+      "explanation": "metric `link_failure_impact` on link=ce04-pe03, flow=ce01->ce03",
+      "evidence_hint": {
+        "scope": {
+          "type": "LINK_FAILURE",
+          "node1": "ce04",
+          "node2": "pe03"
+        },
+        "metric": "link_failure_impact"
+      },
+      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
+    },
+    {
+      "id": "LINK_FAIL_ce04_pe03_ce01_p01",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "selection",
+      "question": "ce04과 pe03 사이의 링크가 다운되었을 때, ce01에서 p01로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
+      "explanation": "metric `link_failure_impact` on link=ce04-pe03, flow=ce01->p01",
+      "evidence_hint": {
+        "scope": {
+          "type": "LINK_FAILURE",
+          "node1": "ce04",
+          "node2": "pe03"
+        },
+        "metric": "link_failure_impact"
+      },
+      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
+    },
+    {
+      "id": "LINK_FAIL_ce04_pe03_ce01_p04",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "selection",
+      "question": "ce04과 pe03 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
+      "explanation": "metric `link_failure_impact` on link=ce04-pe03, flow=ce01->p04",
+      "evidence_hint": {
+        "scope": {
+          "type": "LINK_FAILURE",
+          "node1": "ce04",
+          "node2": "pe03"
         },
         "metric": "link_failure_impact"
       },
@@ -12495,9 +12581,9 @@
       "id": "LINK_FAIL_p01_ce03_ce01_ce02",
       "category": "What_If_Analysis",
       "level": "L5",
-      "answer_type": "text",
-      "question": "p01과 ce03 사이의 링크가 다운되었을 때, ce01에서 ce02로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> ce02)가 p01-ce03 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
+      "answer_type": "selection",
+      "question": "p01과 ce03 사이의 링크가 다운되었을 때, ce01에서 ce02로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
       "explanation": "metric `link_failure_impact` on link=p01-ce03, flow=ce01->ce02",
       "evidence_hint": {
         "scope": {
@@ -12513,9 +12599,9 @@
       "id": "LINK_FAIL_p01_ce03_ce01_ce04",
       "category": "What_If_Analysis",
       "level": "L5",
-      "answer_type": "text",
-      "question": "p01과 ce03 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> ce04)가 p01-ce03 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
+      "answer_type": "selection",
+      "question": "p01과 ce03 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
       "explanation": "metric `link_failure_impact` on link=p01-ce03, flow=ce01->ce04",
       "evidence_hint": {
         "scope": {
@@ -12531,9 +12617,9 @@
       "id": "LINK_FAIL_p01_ce03_ce01_p04",
       "category": "What_If_Analysis",
       "level": "L5",
-      "answer_type": "text",
-      "question": "p01과 ce03 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> p04)가 p01-ce03 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
+      "answer_type": "selection",
+      "question": "p01과 ce03 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
       "explanation": "metric `link_failure_impact` on link=p01-ce03, flow=ce01->p04",
       "evidence_hint": {
         "scope": {
@@ -12549,9 +12635,9 @@
       "id": "LINK_FAIL_p01_ce04_ce01_ce02",
       "category": "What_If_Analysis",
       "level": "L5",
-      "answer_type": "text",
-      "question": "p01과 ce04 사이의 링크가 다운되었을 때, ce01에서 ce02로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> ce02)가 p01-ce04 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
+      "answer_type": "selection",
+      "question": "p01과 ce04 사이의 링크가 다운되었을 때, ce01에서 ce02로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
       "explanation": "metric `link_failure_impact` on link=p01-ce04, flow=ce01->ce02",
       "evidence_hint": {
         "scope": {
@@ -12567,9 +12653,9 @@
       "id": "LINK_FAIL_p01_ce04_ce01_ce03",
       "category": "What_If_Analysis",
       "level": "L5",
-      "answer_type": "text",
-      "question": "p01과 ce04 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> ce03)가 p01-ce04 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
+      "answer_type": "selection",
+      "question": "p01과 ce04 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
       "explanation": "metric `link_failure_impact` on link=p01-ce04, flow=ce01->ce03",
       "evidence_hint": {
         "scope": {
@@ -12585,9 +12671,9 @@
       "id": "LINK_FAIL_p01_ce04_ce01_p04",
       "category": "What_If_Analysis",
       "level": "L5",
-      "answer_type": "text",
-      "question": "p01과 ce04 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> p04)가 p01-ce04 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
+      "answer_type": "selection",
+      "question": "p01과 ce04 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
       "explanation": "metric `link_failure_impact` on link=p01-ce04, flow=ce01->p04",
       "evidence_hint": {
         "scope": {
@@ -12600,17 +12686,17 @@
       "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
     },
     {
-      "id": "LINK_FAIL_p01_p04_ce01_ce02",
+      "id": "LINK_FAIL_pe02_p04_ce01_ce02",
       "category": "What_If_Analysis",
       "level": "L5",
-      "answer_type": "text",
-      "question": "p01과 p04 사이의 링크가 다운되었을 때, ce01에서 ce02로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> ce02)가 p01-p04 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
-      "explanation": "metric `link_failure_impact` on link=p01-p04, flow=ce01->ce02",
+      "answer_type": "selection",
+      "question": "pe02과 p04 사이의 링크가 다운되었을 때, ce01에서 ce02로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
+      "explanation": "metric `link_failure_impact` on link=pe02-p04, flow=ce01->ce02",
       "evidence_hint": {
         "scope": {
           "type": "LINK_FAILURE",
-          "node1": "p01",
+          "node1": "pe02",
           "node2": "p04"
         },
         "metric": "link_failure_impact"
@@ -12618,17 +12704,17 @@
       "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
     },
     {
-      "id": "LINK_FAIL_p01_p04_ce01_ce03",
+      "id": "LINK_FAIL_pe02_p04_ce01_ce03",
       "category": "What_If_Analysis",
       "level": "L5",
-      "answer_type": "text",
-      "question": "p01과 p04 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> ce03)가 p01-p04 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
-      "explanation": "metric `link_failure_impact` on link=p01-p04, flow=ce01->ce03",
+      "answer_type": "selection",
+      "question": "pe02과 p04 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
+      "explanation": "metric `link_failure_impact` on link=pe02-p04, flow=ce01->ce03",
       "evidence_hint": {
         "scope": {
           "type": "LINK_FAILURE",
-          "node1": "p01",
+          "node1": "pe02",
           "node2": "p04"
         },
         "metric": "link_failure_impact"
@@ -12636,17 +12722,17 @@
       "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
     },
     {
-      "id": "LINK_FAIL_p01_p04_ce01_ce04",
+      "id": "LINK_FAIL_pe02_p04_ce01_ce04",
       "category": "What_If_Analysis",
       "level": "L5",
-      "answer_type": "text",
-      "question": "p01과 p04 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> ce04)가 p01-p04 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
-      "explanation": "metric `link_failure_impact` on link=p01-p04, flow=ce01->ce04",
+      "answer_type": "selection",
+      "question": "pe02과 p04 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
+      "explanation": "metric `link_failure_impact` on link=pe02-p04, flow=ce01->ce04",
       "evidence_hint": {
         "scope": {
           "type": "LINK_FAILURE",
-          "node1": "p01",
+          "node1": "pe02",
           "node2": "p04"
         },
         "metric": "link_failure_impact"
@@ -12654,89 +12740,35 @@
       "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
     },
     {
-      "id": "LINK_FAIL_p01_pe02_ce01_ce02",
+      "id": "LINK_FAIL_pe02_p04_ce01_p01",
       "category": "What_If_Analysis",
       "level": "L5",
-      "answer_type": "text",
-      "question": "p01과 pe02 사이의 링크가 다운되었을 때, ce01에서 ce02로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> ce02)가 p01-pe02 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
-      "explanation": "metric `link_failure_impact` on link=p01-pe02, flow=ce01->ce02",
+      "answer_type": "selection",
+      "question": "pe02과 p04 사이의 링크가 다운되었을 때, ce01에서 p01로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
+      "explanation": "metric `link_failure_impact` on link=pe02-p04, flow=ce01->p01",
       "evidence_hint": {
         "scope": {
           "type": "LINK_FAILURE",
-          "node1": "p01",
-          "node2": "pe02"
+          "node1": "pe02",
+          "node2": "p04"
         },
         "metric": "link_failure_impact"
       },
       "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
     },
     {
-      "id": "LINK_FAIL_p01_pe02_ce01_ce03",
+      "id": "LINK_FAIL_pe02_pe03_ce01_ce02",
       "category": "What_If_Analysis",
       "level": "L5",
-      "answer_type": "text",
-      "question": "p01과 pe02 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> ce03)가 p01-pe02 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
-      "explanation": "metric `link_failure_impact` on link=p01-pe02, flow=ce01->ce03",
+      "answer_type": "selection",
+      "question": "pe02과 pe03 사이의 링크가 다운되었을 때, ce01에서 ce02로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
+      "explanation": "metric `link_failure_impact` on link=pe02-pe03, flow=ce01->ce02",
       "evidence_hint": {
         "scope": {
           "type": "LINK_FAILURE",
-          "node1": "p01",
-          "node2": "pe02"
-        },
-        "metric": "link_failure_impact"
-      },
-      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
-    },
-    {
-      "id": "LINK_FAIL_p01_pe02_ce01_ce04",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "p01과 pe02 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> ce04)가 p01-pe02 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
-      "explanation": "metric `link_failure_impact` on link=p01-pe02, flow=ce01->ce04",
-      "evidence_hint": {
-        "scope": {
-          "type": "LINK_FAILURE",
-          "node1": "p01",
-          "node2": "pe02"
-        },
-        "metric": "link_failure_impact"
-      },
-      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
-    },
-    {
-      "id": "LINK_FAIL_p01_pe02_ce01_p04",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "p01과 pe02 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> p04)가 p01-pe02 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
-      "explanation": "metric `link_failure_impact` on link=p01-pe02, flow=ce01->p04",
-      "evidence_hint": {
-        "scope": {
-          "type": "LINK_FAILURE",
-          "node1": "p01",
-          "node2": "pe02"
-        },
-        "metric": "link_failure_impact"
-      },
-      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
-    },
-    {
-      "id": "LINK_FAIL_p01_pe03_ce01_ce02",
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "answer_type": "text",
-      "question": "p01과 pe03 사이의 링크가 다운되었을 때, ce01에서 ce02로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> ce02)가 p01-pe03 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
-      "explanation": "metric `link_failure_impact` on link=p01-pe03, flow=ce01->ce02",
-      "evidence_hint": {
-        "scope": {
-          "type": "LINK_FAILURE",
-          "node1": "p01",
+          "node1": "pe02",
           "node2": "pe03"
         },
         "metric": "link_failure_impact"
@@ -12744,17 +12776,17 @@
       "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
     },
     {
-      "id": "LINK_FAIL_p01_pe03_ce01_ce03",
+      "id": "LINK_FAIL_pe02_pe03_ce01_ce03",
       "category": "What_If_Analysis",
       "level": "L5",
-      "answer_type": "text",
-      "question": "p01과 pe03 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> ce03)가 p01-pe03 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
-      "explanation": "metric `link_failure_impact` on link=p01-pe03, flow=ce01->ce03",
+      "answer_type": "selection",
+      "question": "pe02과 pe03 사이의 링크가 다운되었을 때, ce01에서 ce03로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
+      "explanation": "metric `link_failure_impact` on link=pe02-pe03, flow=ce01->ce03",
       "evidence_hint": {
         "scope": {
           "type": "LINK_FAILURE",
-          "node1": "p01",
+          "node1": "pe02",
           "node2": "pe03"
         },
         "metric": "link_failure_impact"
@@ -12762,17 +12794,17 @@
       "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
     },
     {
-      "id": "LINK_FAIL_p01_pe03_ce01_ce04",
+      "id": "LINK_FAIL_pe02_pe03_ce01_ce04",
       "category": "What_If_Analysis",
       "level": "L5",
-      "answer_type": "text",
-      "question": "p01과 pe03 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> ce04)가 p01-pe03 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
-      "explanation": "metric `link_failure_impact` on link=p01-pe03, flow=ce01->ce04",
+      "answer_type": "selection",
+      "question": "pe02과 pe03 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
+      "explanation": "metric `link_failure_impact` on link=pe02-pe03, flow=ce01->ce04",
       "evidence_hint": {
         "scope": {
           "type": "LINK_FAILURE",
-          "node1": "p01",
+          "node1": "pe02",
           "node2": "pe03"
         },
         "metric": "link_failure_impact"
@@ -12780,22 +12812,544 @@
       "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
     },
     {
-      "id": "LINK_FAIL_p01_pe03_ce01_p04",
+      "id": "LINK_FAIL_pe02_pe03_ce01_p01",
       "category": "What_If_Analysis",
       "level": "L5",
-      "answer_type": "text",
-      "question": "p01과 pe03 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 되나요?\n[답변 형식: 영향 설명 텍스트]",
-      "ground_truth": "영향 없음: 현재 경로(ce01 -> p04)가 p01-pe03 링크를 사용하지 않음. 총 1개 경로 중 0개가 해당 링크 사용",
-      "explanation": "metric `link_failure_impact` on link=p01-pe03, flow=ce01->p04",
+      "answer_type": "selection",
+      "question": "pe02과 pe03 사이의 링크가 다운되었을 때, ce01에서 p01로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
+      "explanation": "metric `link_failure_impact` on link=pe02-pe03, flow=ce01->p01",
       "evidence_hint": {
         "scope": {
           "type": "LINK_FAILURE",
-          "node1": "p01",
+          "node1": "pe02",
           "node2": "pe03"
         },
         "metric": "link_failure_impact"
       },
       "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
+    },
+    {
+      "id": "LINK_FAIL_pe02_pe03_ce01_p04",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "selection",
+      "question": "pe02과 pe03 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]",
+      "ground_truth": "영향 없음",
+      "explanation": "metric `link_failure_impact` on link=pe02-pe03, flow=ce01->p04",
+      "evidence_hint": {
+        "scope": {
+          "type": "LINK_FAILURE",
+          "node1": "pe02",
+          "node2": "pe03"
+        },
+        "metric": "link_failure_impact"
+      },
+      "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
+    },
+    {
+      "id": "PATH_COUNT_ce01_ce03",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "ce01에서 ce03로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on ce01->ce03, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce01",
+          "dst": "ce03"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+    },
+    {
+      "id": "PATH_COUNT_ce01_pe03",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "ce01에서 pe03로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on ce01->pe03, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce01",
+          "dst": "pe03"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+    },
+    {
+      "id": "PATH_COUNT_ce02_ce01",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "ce02에서 ce01로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on ce02->ce01, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce02",
+          "dst": "ce01"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+    },
+    {
+      "id": "PATH_COUNT_ce02_ce03",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "ce02에서 ce03로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on ce02->ce03, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce02",
+          "dst": "ce03"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+    },
+    {
+      "id": "PATH_COUNT_ce02_ce04",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "ce02에서 ce04로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on ce02->ce04, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce02",
+          "dst": "ce04"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+    },
+    {
+      "id": "PATH_COUNT_ce02_p04",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "ce02에서 p04로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on ce02->p04, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce02",
+          "dst": "p04"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+    },
+    {
+      "id": "PATH_COUNT_ce02_pe02",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "ce02에서 pe02로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on ce02->pe02, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce02",
+          "dst": "pe02"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+    },
+    {
+      "id": "PATH_COUNT_ce02_pe03",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "ce02에서 pe03로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on ce02->pe03, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce02",
+          "dst": "pe03"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+    },
+    {
+      "id": "PATH_COUNT_ce03_pe03",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "ce03에서 pe03로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on ce03->pe03, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce03",
+          "dst": "pe03"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+    },
+    {
+      "id": "PATH_COUNT_ce04_ce01",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "ce04에서 ce01로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on ce04->ce01, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce04",
+          "dst": "ce01"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+    },
+    {
+      "id": "PATH_COUNT_ce04_ce03",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "ce04에서 ce03로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on ce04->ce03, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce04",
+          "dst": "ce03"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+    },
+    {
+      "id": "PATH_COUNT_ce04_p04",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "ce04에서 p04로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on ce04->p04, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce04",
+          "dst": "p04"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+    },
+    {
+      "id": "PATH_COUNT_ce04_pe03",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "ce04에서 pe03로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on ce04->pe03, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "ce04",
+          "dst": "pe03"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+    },
+    {
+      "id": "PATH_COUNT_p01_ce01",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "p01에서 ce01로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on p01->ce01, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "p01",
+          "dst": "ce01"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+    },
+    {
+      "id": "PATH_COUNT_p01_ce02",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "p01에서 ce02로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on p01->ce02, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "p01",
+          "dst": "ce02"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+    },
+    {
+      "id": "PATH_COUNT_p01_ce03",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "p01에서 ce03로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on p01->ce03, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "p01",
+          "dst": "ce03"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+    },
+    {
+      "id": "PATH_COUNT_p01_ce04",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "p01에서 ce04로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on p01->ce04, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "p01",
+          "dst": "ce04"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+    },
+    {
+      "id": "PATH_COUNT_p01_p04",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "p01에서 p04로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on p01->p04, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "p01",
+          "dst": "p04"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+    },
+    {
+      "id": "PATH_COUNT_p01_pe02",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "p01에서 pe02로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on p01->pe02, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "p01",
+          "dst": "pe02"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+    },
+    {
+      "id": "PATH_COUNT_p01_pe03",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "p01에서 pe03로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on p01->pe03, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "p01",
+          "dst": "pe03"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+    },
+    {
+      "id": "PATH_COUNT_p04_ce01",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "p04에서 ce01로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on p04->ce01, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "p04",
+          "dst": "ce01"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+    },
+    {
+      "id": "PATH_COUNT_p04_ce03",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "p04에서 ce03로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on p04->ce03, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "p04",
+          "dst": "ce03"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+    },
+    {
+      "id": "PATH_COUNT_p04_pe03",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "p04에서 pe03로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on p04->pe03, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "p04",
+          "dst": "pe03"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+    },
+    {
+      "id": "PATH_COUNT_pe02_ce01",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "pe02에서 ce01로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on pe02->ce01, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "pe02",
+          "dst": "ce01"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+    },
+    {
+      "id": "PATH_COUNT_pe02_ce03",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "pe02에서 ce03로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on pe02->ce03, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "pe02",
+          "dst": "ce03"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+    },
+    {
+      "id": "PATH_COUNT_pe02_ce04",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "pe02에서 ce04로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on pe02->ce04, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "pe02",
+          "dst": "ce04"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+    },
+    {
+      "id": "PATH_COUNT_pe02_p04",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "pe02에서 p04로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on pe02->p04, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "pe02",
+          "dst": "p04"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+    },
+    {
+      "id": "PATH_COUNT_pe02_pe03",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "number",
+      "question": "pe02에서 pe03로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
+      "ground_truth": "1",
+      "explanation": "metric `path_count` on pe02->pe03, total_paths=1",
+      "evidence_hint": {
+        "scope": {
+          "type": "NODE_PAIR",
+          "src": "pe02",
+          "dst": "pe03"
+        },
+        "metric": "path_count"
+      },
+      "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
     },
     {
       "id": "POLICY_WAYPOINT_pe02",
@@ -12832,6 +13386,22 @@
         "metric": "policy_compliance_check"
       },
       "academic_reference": "Config2Spec (NSDI'20): policy compliance"
+    },
+    {
+      "id": "SPOF_DETECTION_GLOBAL",
+      "category": "What_If_Analysis",
+      "level": "L5",
+      "answer_type": "set",
+      "question": "단일 장비 장애 시 통신이 두절되는 구간(SPOF: Single Point of Failure)이 존재합니까?\n[답변 형식: SPOF 장비 목록 또는 '없음']",
+      "ground_truth": "없음",
+      "explanation": "metric `spof_detection` found 0 SPOF nodes",
+      "evidence_hint": {
+        "scope": {
+          "type": "GLOBAL"
+        },
+        "metric": "spof_detection"
+      },
+      "academic_reference": "현업: SPOF 탐지 → 이중화 설계 검증, 장애 사전 예방"
     }
   ]
 }
