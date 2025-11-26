@@ -49,16 +49,52 @@ def run_nso_cmd(cmd_input):
     """
     NSO CLI 명령어를 Docker 컨테이너 내부에서 실행하고 결과를 반환하는 함수
     """
-    full_cmd = f'docker exec {CONTAINER_NAME} bash -c "cd ~/ncs-instance && source ~/nso-6.6/ncsrc && echo \\"{cmd_input}\\" | ncs_cli -C -u admin"'
+    # Windows에서 파이프가 올바르게 전달되도록 bash 스크립트 형식 사용
+    bash_cmd = f'cd ~/ncs-instance && source ~/nso-6.6/ncsrc && echo "{cmd_input}" | ncs_cli -C -u admin'
+    # PowerShell의 특수문자 처리를 위해 인자로 전달
+    full_cmd = ['docker', 'exec', CONTAINER_NAME, 'bash', '-c', bash_cmd]
     print(f"  [DEBUG] 실행 명령: {cmd_input[:80]}...")
     try:
-        result = subprocess.run(full_cmd, shell=True, capture_output=True, text=True, encoding='utf-8')
+        result = subprocess.run(full_cmd, capture_output=True, text=False)
         print(f"  [DEBUG] Return code: {result.returncode}")
+
+        # 바이트 데이터를 적절한 인코딩으로 디코딩
+        stdout_text = ""
+        stderr_text = ""
+
+        if result.stdout:
+            try:
+                # UTF-8로 먼저 시도
+                stdout_text = result.stdout.decode('utf-8')
+            except UnicodeDecodeError:
+                try:
+                    # UTF-8 실패시 CP949 (한글 Windows)로 시도
+                    stdout_text = result.stdout.decode('cp949')
+                except UnicodeDecodeError:
+                    # 그래도 실패하면 에러 무시하고 빈 문자열
+                    stdout_text = result.stdout.decode('utf-8', errors='ignore')
+                    print(f"  [WARNING] stdout 디코딩 경고 - 일부 문자가 손실될 수 있습니다.")
+
+        if result.stderr:
+            try:
+                stderr_text = result.stderr.decode('utf-8')
+            except UnicodeDecodeError:
+                try:
+                    stderr_text = result.stderr.decode('cp949')
+                except UnicodeDecodeError:
+                    stderr_text = result.stderr.decode('utf-8', errors='ignore')
+                    print(f"  [WARNING] stderr 디코딩 경고 - 일부 문자가 손실될 수 있습니다.")
+
         if result.returncode != 0:
-            print(f"  [WARNING] Stderr: {result.stderr[:200]}")
-        return result.stdout
+            print(f"  [WARNING] Return code: {result.returncode}")
+            if stderr_text:
+                print(f"  [WARNING] Stderr: {stderr_text[:200]}")
+
+        return stdout_text
     except Exception as e:
         print(f"[Error] Docker 명령어 실행 실패: {e}")
+        import traceback
+        print(f"[DEBUG] 상세 오류:\n{traceback.format_exc()}")
         sys.exit(1)
 
 def get_all_devices():
@@ -108,6 +144,29 @@ def clean_config(raw_config):
     result = "\n".join(cleaned_lines)
     print(f"  [DEBUG] 정제 완료 (정제 후 길이: {len(result)} bytes, {len(cleaned_lines)} lines)")
     return result
+
+def clean_xml_output(raw_output):
+    """
+    NSO XML 출력에서 프롬프트 및 불필요한 부분을 제거합니다.
+    """
+    lines = raw_output.splitlines()
+    xml_lines = []
+    in_xml = False
+    
+    for line in lines:
+        # NSO 프롬프트 라인 스킵
+        if "admin@ncs#" in line or "admin@ncs%" in line:
+            continue
+        # show 명령어 라인 스킵
+        if line.strip().startswith("show "):
+            continue
+        # XML 시작 태그 감지
+        if line.strip().startswith("<") and not in_xml:
+            in_xml = True
+        if in_xml:
+            xml_lines.append(line)
+    
+    return "\n".join(xml_lines)
 
 def main():
     print("\n" + "="*60)
@@ -182,27 +241,25 @@ def main():
              print(f"  ✗ [CFG Fail] 파일 쓰기 실패: {e}")
              continue
         
-        # 3-2. XML 형식 (show running-config | display xml)
+        # 3-2. XML 형식 (NSO에서 직접 XML로 가져오기)
         print(f"  [XML] 설정 다운로드 중...")
-        cmd_xml = f"devices device {device} live-status exec show running-config | display xml"
+        cmd_xml = f"show running-config devices device {device} | display xml"
         raw_output_xml = run_nso_cmd(cmd_xml)
         
         print(f"  [DEBUG] XML 출력 길이: {len(raw_output_xml)} bytes")
         
-        if "syntax error" in raw_output_xml or "Error" in raw_output_xml:
-             print(f"  ✗ [XML Fail] 설정을 가져오지 못했습니다.")
-             print(f"  [DEBUG] 출력 내용: {raw_output_xml[:200]}")
-             # CFG는 성공했으므로 계속 진행
-        else:
-            # XML 파일 저장 (정제 없이 그대로 저장)
-            xml_path = os.path.join(xml_dir, f"{device}.xml")
-            try:
-                with open(xml_path, "w", encoding="utf-8") as f:
-                    f.write(raw_output_xml)
-                print(f"  ✓ [XML Success] 저장 완료: {xml_path}")
-                print(f"    파일 크기: {len(raw_output_xml)} bytes")
-            except IOError as e:
-                 print(f"  ✗ [XML Fail] 파일 쓰기 실패: {e}")
+        # NSO 프롬프트 및 불필요한 부분 제거
+        xml_content = clean_xml_output(raw_output_xml)
+        
+        # XML 파일 저장
+        xml_path = os.path.join(xml_dir, f"{device}.xml")
+        try:
+            with open(xml_path, "w", encoding="utf-8") as f:
+                f.write(xml_content)
+            print(f"  ✓ [XML Success] 저장 완료: {xml_path}")
+            print(f"    파일 크기: {len(xml_content)} bytes")
+        except IOError as e:
+            print(f"  ✗ [XML Fail] 파일 쓰기 실패: {e}")
         
         success_count += 1
         print(f"  ✓ {device} 처리 완료!")
