@@ -1,0 +1,200 @@
+<config xmlns="http://tail-f.com/ns/config/1.0">
+  <devices xmlns="http://tail-f.com/ns/ncs">
+    <device>
+      <name>CE01</name>
+      <address>10.10.10.101</address>
+      <port>22</port>
+      <ssh>
+        <host-key>
+          <algorithm>ssh-rsa</algorithm>
+          <key-data>AAAAB3NzaC1yc2EAAAADAQABAAAAgQDNoFEb80sw5pZ0MnuHJfkh9naHss21oUTieubvvjLO
+ag1lX0R+nhDiJ7J5aDJCV4S39541irpX6GuWY4vAApD+j2rQ6Ww29etxWc6Bgx/z4wXdgzCh
+8IuJ7qLO5Y7iRSGRQ1xZQw0XX24OyP681QPFtJM8WomhOtusB6IWOU3ucw==</key-data>
+        </host-key>
+      </ssh>
+      <authgroup>L2VPN</authgroup>
+      <device-type>
+        <cli>
+          <ned-id xmlns:cisco-ios-cli-6.110="http://tail-f.com/ns/ned-id/cisco-ios-cli-6.110">cisco-ios-cli-6.110:cisco-ios-cli-6.110</ned-id>
+        </cli>
+      </device-type>
+      <ssh-algorithms>
+        <public-key>ssh-rsa</public-key>
+        <kex>diffie-hellman-group14-sha1</kex>
+        <mac>hmac-sha1</mac>
+        <cipher>aes256-cbc</cipher>
+        <cipher>aes128-cbc</cipher>
+        <cipher>3des-cbc</cipher>
+      </ssh-algorithms>
+      <state>
+        <admin-state>unlocked</admin-state>
+      </state>
+      <config>
+        <hostname xmlns="urn:ios">CE01</hostname>
+        <tailfned xmlns="urn:ios">
+          <police>cirmode</police>
+        </tailfned>
+        <version xmlns="urn:ios">15.4</version>
+        <service xmlns="urn:ios">
+          <timestamps>
+            <debug>
+              <datetime>
+                <msec/>
+              </datetime>
+            </debug>
+            <log>
+              <datetime>
+                <msec/>
+              </datetime>
+            </log>
+          </timestamps>
+        </service>
+        <aqm-register-fnf xmlns="urn:ios"/>
+        <enable xmlns="urn:ios">
+          <secret>
+            <type>5</type>
+            <secret>$1$84n0$3YtqOCLXa9dUCFatoL3EE/</secret>
+          </secret>
+        </enable>
+        <clock xmlns="urn:ios">
+          <timezone>
+            <zone>EET</zone>
+            <hours>2</hours>
+            <minutes>0</minutes>
+          </timezone>
+        </clock>
+        <ip xmlns="urn:ios">
+          <cef-conf>
+            <cef/>
+          </cef-conf>
+          <domain>
+            <lookup-conf>
+              <lookup>false</lookup>
+            </lookup-conf>
+            <name>mylab.local</name>
+          </domain>
+          <ssh>
+            <version>2</version>
+          </ssh>
+          <forward-protocol>
+            <nd/>
+          </forward-protocol>
+          <http>
+            <server>false</server>
+            <secure-server>false</secure-server>
+          </http>
+          <route>
+            <ip-route-forwarding-list>
+              <prefix>0.0.0.0</prefix>
+              <mask>0.0.0.0</mask>
+              <forwarding-address>10.10.10.1</forwarding-address>
+            </ip-route-forwarding-list>
+          </route>
+        </ip>
+        <multilink xmlns="urn:ios">
+          <bundle-name>authenticated</bundle-name>
+        </multilink>
+        <username xmlns="urn:ios">
+          <name>admin</name>
+          <privilege>15</privilege>
+          <secret>
+            <type>5</type>
+            <secret>$1$noEM$g5oSEeDRbbng3VLVztX.E.</secret>
+          </secret>
+        </username>
+        <username xmlns="urn:ios">
+          <name>nso</name>
+          <secret>
+            <type>5</type>
+            <secret>$1$AZdy$M0TPjH0OxpqR.DaYZi9Hz.</secret>
+          </secret>
+        </username>
+        <username xmlns="urn:ios">
+          <name>root</name>
+          <privilege>15</privilege>
+          <secret>
+            <type>5</type>
+            <secret>$1$TShs$vu6DvMbteEUJJL3.e8lAf1</secret>
+          </secret>
+        </username>
+        <redundancy xmlns="urn:ios"/>
+        <interface xmlns="urn:ios">
+          <Ethernet>
+            <name>0/0</name>
+            <ip>
+              <address>
+                <primary>
+                  <address>10.10.10.101</address>
+                  <mask>255.255.255.0</mask>
+                </primary>
+              </address>
+            </ip>
+          </Ethernet>
+          <Ethernet>
+            <name>0/1</name>
+            <ip>
+              <address>
+                <primary>
+                  <address>172.16.1.1</address>
+                  <mask>255.255.255.0</mask>
+                </primary>
+              </address>
+            </ip>
+          </Ethernet>
+          <Ethernet>
+            <name>0/2</name>
+            <ip>
+              <no-address>
+                <address>false</address>
+              </no-address>
+            </ip>
+            <shutdown/>
+          </Ethernet>
+          <Ethernet>
+            <name>0/3</name>
+            <ip>
+              <no-address>
+                <address>false</address>
+              </no-address>
+            </ip>
+            <shutdown/>
+          </Ethernet>
+        </interface>
+        <control-plane xmlns="urn:ios"/>
+        <config-register xmlns="urn:ios">0x0</config-register>
+        <line xmlns="urn:ios">
+          <console>
+            <first>0</first>
+            <logging>
+              <synchronous/>
+            </logging>
+          </console>
+          <aux>
+            <first>0</first>
+          </aux>
+          <vty>
+            <first>0</first>
+            <last>4</last>
+            <login>
+              <local/>
+            </login>
+            <transport>
+              <input>ssh</input>
+            </transport>
+          </vty>
+        </line>
+        <logging xmlns="urn:ios">
+          <buffered>
+            <severity-level>debugging</severity-level>
+          </buffered>
+          <console>
+            <severity-level>debugging</severity-level>
+          </console>
+          <monitor>
+            <severity-level>debugging</severity-level>
+          </monitor>
+        </logging>
+      </config>
+    </device>
+  </devices>
+</config>
