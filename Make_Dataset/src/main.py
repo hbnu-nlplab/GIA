@@ -149,13 +149,19 @@ def main():
         description='네트워크 Q&A 데이터셋 생성 (규칙 기반, LLM 비사용)'
     )
 
-    # 기본 인자
-    parser.add_argument('--xml-dir', default='Data/Pnetlab/L2VPN/xml', help='네트워크 설정 XML 파일 디렉토리')
+    # ===== 통합 경로 인자 =====
+    parser.add_argument('--lab-path', default='Data/Pnetlab/L2VPN', 
+        help='실험실 상위 경로 (예: Data/Pnetlab/L2VPN). 하위의 xml/, configs/ 폴더를 자동 탐색')
+    
+    # 레거시 호환용 (deprecated)
+    parser.add_argument('--xml-dir', default='', help='[DEPRECATED] --lab-path 사용 권장')
+    parser.add_argument('--snapshot-path', default='', help='[DEPRECATED] --lab-path 사용 권장')
+    
     # 스크립트 위치 기준 기본 경로 설정
     default_policies = str((Path(__file__).resolve().parents[1] / 'policies.json'))
     parser.add_argument('--policies', default=default_policies, help='정책 파일 경로 (JSON)')
     parser.add_argument('--categories', nargs='+', help='생성할 카테고리 목록 (미지정 시 policies.json 전체)')
-    parser.add_argument('--output-dir', default=f'output/logic_only_{datetime.now().strftime("%Y%m%d_%H%M%S")}', help='출력 디렉토리')
+    parser.add_argument('--output-dir', default='', help='출력 디렉토리 (미지정 시 lab-path/Dataset/)')
     parser.add_argument('--no-split', action='store_true', help='train/val/test 분할 없이 단일 리스트로 저장')
     parser.add_argument(
         '--shuffle',
@@ -178,10 +184,44 @@ def main():
         help='Batfish 엔진 활성화 (L4/L5 문제 생성)')
     parser.add_argument('--batfish-host', default='localhost',
         help='Batfish 서버 호스트 (기본: localhost)')
-    parser.add_argument('--snapshot-path', default='',
-        help='Batfish 스냅샷 경로 (configs/ 폴더 포함)')
 
     args = parser.parse_args()
+
+    # ===== 경로 자동 탐색 로직 =====
+    lab_path = Path(args.lab_path)
+    lab_name = lab_path.name  # 예: "L2VPN"
+    
+    # XML 디렉토리 결정
+    if args.xml_dir:
+        # 레거시 호환: --xml-dir 직접 지정된 경우
+        xml_dir = Path(args.xml_dir)
+    else:
+        # 자동 탐색: lab_path/xml 또는 lab_path 자체
+        possible_xml = [lab_path / "xml", lab_path / "XML", lab_path]
+        xml_dir = next((p for p in possible_xml if p.exists() and any(p.glob("*.xml"))), lab_path / "xml")
+    
+    # 스냅샷 경로 결정 (Batfish용)
+    if args.snapshot_path:
+        # 레거시 호환: --snapshot-path 직접 지정된 경우
+        snapshot_path = args.snapshot_path
+    else:
+        # 자동 탐색: lab_path (configs/ 포함) 또는 lab_path/configs
+        snapshot_path = str(lab_path)
+        possible_snap = [lab_path, lab_path / "configs", lab_path / "snapshot"]
+        for p in possible_snap:
+            configs_dir = p / "configs" if p.name != "configs" else p
+            if configs_dir.exists():
+                snapshot_path = str(p if p.name != "configs" else p.parent)
+                break
+    
+    # 출력 디렉토리 결정
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    if args.output_dir:
+        out_dir = Path(args.output_dir)
+    else:
+        # 기본: lab_path/Dataset/
+        out_dir = lab_path / "Dataset"
+    out_dir.mkdir(parents=True, exist_ok=True)
 
     # 카테고리 결정
     all_categories = _get_all_categories(args.policies)
@@ -190,14 +230,16 @@ def main():
     print("=" * 70)
     print("[START] Network Q&A Dataset Generation (Rule-based)")
     print("=" * 70)
-    print(f"  * XML directory: {args.xml_dir}")
+    print(f"  * Lab name: {lab_name}")
+    print(f"  * Lab path: {lab_path}")
+    print(f"  * XML directory: {xml_dir}")
     print(f"  * Categories: {', '.join(target_categories)}")
-    print(f"  * Output directory: {args.output_dir}")
+    print(f"  * Output directory: {out_dir}")
     print(f"  * L1 sample ratio: {args.l1_sample_ratio}")
     print(f"  * Random seed: {args.seed}")
     if args.enable_batfish:
         print(f"  * Batfish: ENABLED (host={args.batfish_host})")
-        print(f"  * Snapshot path: {args.snapshot_path or 'auto-detect'}")
+        print(f"  * Snapshot path: {snapshot_path}")
     else:
         print(f"  * Batfish: disabled (L4/L5 skipped)")
     print("-" * 70)
@@ -205,15 +247,12 @@ def main():
     try:
         # 1) XML → Facts 로드
         parser_u = UniversalParser()
-        facts = parser_u.parse_dir(args.xml_dir)
+        facts = parser_u.parse_dir(str(xml_dir))
         if args.verbose:
             print(f"[DEBUG] Loaded devices: {len(facts.get('devices', []))}")
 
-        # 1-1) Facts 저장
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        out_dir = Path(args.output_dir)
-        out_dir.mkdir(parents=True, exist_ok=True)
-        facts_file = out_dir / f"facts_{timestamp}.json"
+        # 1-1) Facts 저장 (실험실명 포함)
+        facts_file = out_dir / f"{lab_name}_facts_{timestamp}.json"
         with open(facts_file, 'w', encoding='utf-8') as f:
             json.dump(facts, f, ensure_ascii=False, indent=2)
         if args.verbose:
@@ -308,22 +347,7 @@ def main():
         if args.enable_batfish:
             if not BATFISH_AVAILABLE:
                 print("[WARNING] pybatfish not installed. Skipping L4/L5 generation.")
-            else:
-                snapshot_path = args.snapshot_path
-                if not snapshot_path:
-                    # XML 디렉토리에서 스냅샷 경로 추론
-                    xml_parent = Path(args.xml_dir).parent
-                    possible_paths = [
-                        xml_parent / "configs",
-                        xml_parent / "snapshot",
-                        xml_parent.parent / "pnetlab_snapshot"
-                    ]
-                    for p in possible_paths:
-                        if p.exists():
-                            snapshot_path = str(p.parent if p.name == "configs" else p)
-                            break
-                
-                if snapshot_path:
+            elif snapshot_path:
                     print(f"\n[Batfish] Initializing with snapshot: {snapshot_path}")
                     try:
                         bf_builder = BatfishBuilder(
@@ -354,8 +378,8 @@ def main():
                             print("[Batfish] Failed to initialize. Check if Batfish server is running.")
                     except Exception as e:
                         print(f"[Batfish] Error: {e}")
-                else:
-                    print("[Batfish] No snapshot path found. Skipping L4/L5 generation.")
+            else:
+                print("[Batfish] No snapshot path found. Skipping L4/L5 generation.")
 
         # 5) 전체 플랫리스트로 통합 후 정렬 및 전역 중복 제거
         all_items: List[Dict[str, Any]] = []
@@ -378,17 +402,17 @@ def main():
             filtered_items.append(it)
         all_items = filtered_items
 
-        # 분할 옵션 처리 및 저장
+        # 분할 옵션 처리 및 저장 (파일명에 실험실명 포함)
         if args.no_split:
             final_dataset: Any = all_items
-            dataset_file = out_dir / f"dataset_logic_only_single_{timestamp}.json"
+            dataset_file = out_dir / f"{lab_name}_dataset_{timestamp}.json"
             with open(dataset_file, 'w', encoding='utf-8') as f:
                 json.dump(final_dataset, f, ensure_ascii=False, indent=2)
             total_samples = len(all_items)
         else:
             # 기본은 정렬된 순서를 유지하지만, 필요 시 --shuffle 옵션으로 랜덤 분할 가능
             final_dataset = _split_dataset(all_items, shuffle=args.shuffle)
-            dataset_file = out_dir / f"dataset_logic_only_{timestamp}.json"
+            dataset_file = out_dir / f"{lab_name}_dataset_{timestamp}.json"
             with open(dataset_file, 'w', encoding='utf-8') as f:
                 json.dump(final_dataset, f, ensure_ascii=False, indent=2)
             total_samples = sum(len(final_dataset.get(split, [])) for split in ("train", "validation", "test"))
@@ -416,7 +440,7 @@ def main():
                 })
             return rows
 
-        csv_file = out_dir / f"dataset_logic_only_{timestamp}.csv"
+        csv_file = out_dir / f"{lab_name}_dataset_{timestamp}.csv"
         _write_csv(_iter_rows(final_dataset), csv_file)
 
         # 요약 출력

@@ -219,6 +219,25 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
         # IOS interfaces
         iface_root_ios = find(dev, "ncs:config/ios:interface")
         if iface_root_ios is not None:
+            # Loopback 인터페이스 파싱
+            for loopback in findall(iface_root_ios, "ios:Loopback"):
+                nm = text(find(loopback, "ios:name"))
+                if_name = f"Loopback{nm}" if nm else "Loopback"
+                ip = text(
+                    find(loopback, "ios:ip/ios:address/ios:primary/ios:address"))
+                mask = text(
+                    find(loopback, "ios:ip/ios:address/ios:primary/ios:mask"))
+                ipv4 = f"{ip}/{mask}" if (ip and mask) else (ip or None)
+                status = "down" if find(loopback, "ios:shutdown") is not None else "up"
+                facts["interfaces"].append({
+                    "name": if_name,
+                    "ipv4": ipv4,
+                    "vlan": None,
+                    "vrf": None,
+                    "status": status,
+                })
+
+            # Ethernet 인터페이스 파싱
             for eth in findall(iface_root_ios, "ios:Ethernet"):
                 nm = text(find(eth, "ios:name"))
                 if_name = f"Ethernet{nm}" if nm else "Ethernet"
@@ -231,11 +250,13 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
                     find(eth, "ios:encapsulation/ios:dot1Q/ios:vlan-id"))
                 mop_x = text(find(eth, "ios:mop/ios:xenabled"))
                 mop_enabled = (mop_x is not None and mop_x.lower() == "true")
+                status = "down" if find(eth, "ios:shutdown") is not None else "up"
                 facts["interfaces"].append({
                     "name": if_name,
                     "ipv4": ipv4,
                     "vlan": vlan,
                     "mop_xenabled": mop_enabled,
+                    "status": status,
                 })
     except Exception:
         pass
@@ -257,8 +278,9 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
                     ""
                 )
                 ipv4 = f"{ip}/{mask}" if (ip and mask) else (ip or None)
+                status = "down" if find(ch, "xr:shutdown") is not None else "up"
                 facts["interfaces"].append(
-                    {"name": name, "ipv4": ipv4, "vlan": None, "vrf": vrf or None})
+                    {"name": name, "ipv4": ipv4, "vlan": None, "vrf": vrf or None, "status": status})
         sub = find(iface_root, "xr:GigabitEthernet-subinterface")
         if sub is not None:
             for gig in findall(sub, "xr:GigabitEthernet"):
@@ -274,8 +296,9 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
                     text(find(gig, "xr:vrf")) or
                     ""
                 )
+                status = "down" if find(gig, "xr:shutdown") is not None else "up"
                 facts["interfaces"].append(
-                    {"name": name, "ipv4": ipv4, "vlan": vlan, "vrf": vrf or None})
+                    {"name": name, "ipv4": ipv4, "vlan": vlan, "vrf": vrf or None, "status": status})
     facts["num_interfaces"] = len(facts["interfaces"])
 
     # -------- Services (VRF/L2VPN/MPLS/SNMP) --------

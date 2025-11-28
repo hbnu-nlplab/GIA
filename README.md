@@ -4,40 +4,21 @@
 
 네트워크 장비 설정(XML)으로부터 **Q&A 데이터셋을 자동 생성**하고, **Batfish 기반 네트워크 검증 질문**을 포함한 다층 레벨(L1-L5) 데이터셋을 구축하는 연구 프로젝트입니다.
 
----
 
-## 주요 특징
-
-- **L1-L3**: XML 설정 파싱 기반 질문 (단일/복수 장비, 비교 분석)
-- **L4-L5**: Batfish 기반 네트워크 검증 질문 (도달성, What-If 분석)
-- **학술적 근거**: HSA, VeriFlow, Minesweeper, Config2Spec, DNA 논문 기반 설계
-- **현업 실무 질문**: 비대칭 경로, SPOF 탐지, ACL 차단 분석 등
-
----
 
 ## 빠른 시작
 
-### 기본 실행 (L1-L3)
+### 실행 (L1-L3)
+
 ```bash
-python Make_Dataset/src/main.py \
-  --xml-dir Data/Pnetlab/L2VPN/xml \
-  --output-dir output/dataset
-```
-
-### Batfish 포함 실행 (L1-L5)
-```bash
-# Batfish 서버 실행 (Docker)
-docker run -d -p 9996:9996 -p 9997:9997 batfish/allinone
-
-# 데이터셋 생성
-python Make_Dataset/src/main.py \
-  --xml-dir Data/Pnetlab/L2VPN/xml \
-  --output-dir output/dataset \
-  --enable-batfish \
-  --snapshot-path Data/Pnetlab/L2VPN
-```
-
+python main.py --lab-path Data/Pnetlab/[실험실 이름] --enable-batfish
 ---
+
+
+
+- 제일 우선 `device_info.json` 을 작성하여서 실험실 장비들의 정보를 준비해야합니다.
+- [실험실 이름] 하위 디렉토리에는 `xml/`, `cfg/` 폴더가 준비되어야합니다.
+- 
 
 ## 레벨 체계
 
