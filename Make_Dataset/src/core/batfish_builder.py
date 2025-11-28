@@ -221,17 +221,17 @@ class BatfishBuilder:
     # L4 메트릭 구현
     # =========================================================================
     
-    def traceroute_path(self, src_location: str, dst_ip: str) -> Tuple[str, List[str]]:
+    def traceroute_path(self, src_location: str, dst_ip: str) -> Tuple[str, str]:
         """
         L4: 네트워크 경로 추적
         
         질문 예시: "PE1에서 CE2(172.16.1.2)로 가는 패킷의 경로를 알려주세요."
         
         Returns:
-            (answer_type, path_list)
+            (answer_type, path_string) - 형식: "장비1 → 장비2 → 장비3"
         """
         if not self._initialized:
-            return "set", []
+            return "text", "정보없음"
         
         try:
             result = self.bf.q.traceroute(
@@ -240,7 +240,7 @@ class BatfishBuilder:
             ).answer().frame()
             
             if result.empty:
-                return "set", []
+                return "text", "경로없음"
             
             # 경로 추출 (pybatfish Trace 객체 처리)
             path = []
@@ -257,33 +257,51 @@ class BatfishBuilder:
                         if node_name and node_name not in path:
                             path.append(node_name)
             
-            return "set", path
+            # 형식: "장비1 → 장비2 → 장비3"
+            if path:
+                return "text", " → ".join(path)
+            return "text", "경로없음"
             
         except Exception as e:
             logger.warning(f"traceroute_path error: {e}")
-            return "set", []
+            return "text", "정보없음"
     
     def reachability_status(self, 
                            src_ip: str, 
                            dst_ip: str,
                            dst_port: int = 0,
-                           protocol: str = "TCP") -> Tuple[str, bool]:
+                           protocol: str = "TCP") -> Tuple[str, str]:
         """
-        L4: 도달 가능 여부 확인
+        L4: 도달 가능 여부 확인 (경로 포함)
         
-        질문 예시: "Host A(192.168.1.10)에서 CE1(10.0.0.1)로의 TCP/22 트래픽이 도달 가능한가요?"
+        질문 예시: "Host A(192.168.1.10)에서 CE1(10.0.0.1)로의 TCP/22 트래픽 경로와 도달 여부를 알려주세요."
         
         학술적 근거: 
         - HSA의 reachability failure 탐지
         - Batfish의 기본 도달성 분석
         
         Returns:
-            (answer_type, is_reachable)
+            (answer_type, result) - 형식: "text", "경로: A → B → C, 도달: 가능/불가"
         """
         if not self._initialized:
-            return "boolean", False
+            return "text", "경로: Batfish 미연결, 도달: 불가"
         
         try:
+            # src_ip에서 해당 노드 이름 찾기
+            src_node = None
+            for node, ips in self.node_ips.items():
+                if src_ip in ips:
+                    src_node = node
+                    break
+            
+            if not src_node:
+                # IP로 노드를 찾지 못하면 첫 번째 노드 사용 (fallback)
+                src_node = self.nodes[0] if self.nodes else None
+                logger.warning(f"Could not find node for IP {src_ip}, using fallback: {src_node}")
+            
+            if not src_node:
+                return "text", "경로: 출발노드 없음, 도달: 불가"
+            
             headers = HeaderConstraints(
                 srcIps=src_ip,
                 dstIps=dst_ip
@@ -303,25 +321,37 @@ class BatfishBuilder:
                     ipProtocols=["ICMP"]
                 )
             
-            result = self.bf.q.reachability(
+            # traceroute로 경로 추출 - 노드 이름 사용 (IP 대신)
+            trace_result = self.bf.q.traceroute(
+                startLocation=src_node,
                 headers=headers
             ).answer().frame()
             
-            # 도달 가능한 흐름이 있는지 확인
-            if result.empty:
-                return "boolean", False
+            path = []
+            is_reachable = False
             
-            # TraceCount > 0 이면 도달 가능
-            if 'TraceCount' in result.columns:
-                is_reachable = any(result['TraceCount'] > 0)
-            else:
-                # TraceCount 컬럼이 없으면 결과가 있다는 것 자체가 도달 가능
-                is_reachable = True
-            return "boolean", is_reachable
+            if not trace_result.empty:
+                traces = trace_result.iloc[0].get('Traces', [])
+                for trace in traces:
+                    hops = getattr(trace, 'hops', []) if hasattr(trace, 'hops') else []
+                    for hop in hops:
+                        node = getattr(hop, 'node', None)
+                        if node:
+                            node_name = getattr(node, 'hostname', str(node))
+                            if node_name and node_name not in path:
+                                path.append(node_name)
+                    # 도달 여부 확인
+                    disposition = getattr(trace, 'disposition', '')
+                    if 'ACCEPTED' in str(disposition).upper():
+                        is_reachable = True
+            
+            path_str = " → ".join(path) if path else "없음"
+            reach_str = "가능" if is_reachable else "불가"
+            return "text", f"경로: {path_str}, 도달: {reach_str}"
             
         except Exception as e:
             logger.warning(f"reachability_status error: {e}")
-            return "boolean", False
+            return "text", "경로: 분석실패, 도달: 불가"
     
     def acl_blocking_point(self, 
                           src_ip: str, 
@@ -337,10 +367,10 @@ class BatfishBuilder:
         - VeriFlow의 invariant violation 탐지
         
         Returns:
-            (answer_type, blocking_description)
+            (answer_type, blocking_description) - 형식: "차단지점: X, ACL규칙: Y" 또는 "허용"
         """
         if not self._initialized:
-            return "text", "정보 없음"
+            return "text", "정보없음"
         
         try:
             result = self.bf.q.reachability(
@@ -353,7 +383,7 @@ class BatfishBuilder:
             ).answer().frame()
             
             if result.empty:
-                return "text", "경로 없음"
+                return "text", "경로없음"
             
             # 차단된 경우 정보 추출
             for _, row in result.iterrows():
@@ -362,54 +392,65 @@ class BatfishBuilder:
                     if 'DENIED' in str(disposition).upper():
                         # 차단 위치 정보 추출
                         traces = row.get('Traces', [])
+                        blocking_node = "알수없음"
                         if traces:
-                            last_hop = traces[-1] if isinstance(traces, list) else None
-                            if last_hop:
-                                return "text", f"차단됨: {last_hop}"
-                        return "text", "ACL에 의해 차단됨"
+                            trace = traces[0] if traces else None
+                            if trace:
+                                hops = getattr(trace, 'hops', []) if hasattr(trace, 'hops') else []
+                                if hops:
+                                    last_hop = hops[-1]
+                                    node = getattr(last_hop, 'node', None)
+                                    if node:
+                                        blocking_node = getattr(node, 'hostname', str(node))
+                        return "text", f"차단지점: {blocking_node}, ACL에 의해 차단됨"
             
-            return "text", "차단 없음 (도달 가능)"
+            return "text", "허용"
             
         except Exception as e:
             logger.warning(f"acl_blocking_point error: {e}")
-            return "text", "정보 없음"
+            return "text", "정보없음"
     
-    def loop_detection(self) -> Tuple[str, List[Dict[str, Any]]]:
+    def loop_detection(self) -> Tuple[str, str]:
         """
-        L4: 포워딩 루프 탐지
-        
-        질문 예시: "네트워크에 포워딩 루프가 존재합니까? 존재한다면 어느 경로입니까?"
-        
+        L4: 포워딩 루프 탐지 - 루프 경로 포함
+
+        질문 예시: "네트워크에 포워딩 루프가 존재합니까?"
+
         학술적 근거:
         - HSA (NSDI 2012): "loop-free" as core invariant
         - VeriFlow (NSDI 2013): real-time loop detection
-        
+
         Returns:
-            (answer_type, loops_list)
+            (answer_type, result_text) - 형식: "text", "없음" 또는 "발견: A→B→C→A"
         """
         if not self._initialized:
-            return "set", []
-        
+            return "text", "분석 불가"
+
         try:
             # Batfish의 detectLoops 쿼리 사용
             result = self.bf.q.detectLoops().answer().frame()
-            
+
             if result.empty:
-                return "set", []
-            
-            loops = []
-            for _, row in result.iterrows():
-                loop_info = {
-                    "flow": str(row.get('Flow', '')),
-                    "loop_path": str(row.get('Loop', ''))
-                }
-                loops.append(loop_info)
-            
-            return "set", loops
-            
+                return "text", "없음"
+
+            # 루프 경로 추출 (최대 3개)
+            loop_paths = []
+            for _, row in result.iterrows()[:3]:  # 최대 3개 루프만 표시
+                loop_path = str(row.get('Loop', ''))
+                if loop_path:
+                    loop_paths.append(loop_path)
+
+            if loop_paths:
+                loops_str = ", ".join(loop_paths)
+                if len(result) > 3:
+                    loops_str += f" 외 {len(result) - 3}개"
+                return "text", f"발견: {loops_str}"
+            else:
+                return "text", "없음"
+
         except Exception as e:
             logger.warning(f"loop_detection error: {e}")
-            return "set", []
+            return "text", "분석 오류"
     
     def blackhole_detection(self, dst_prefix: str = "0.0.0.0/0") -> Tuple[str, List[str]]:
         """
@@ -466,26 +507,23 @@ class BatfishBuilder:
     def waypoint_check(self,
                       src_ip: str,
                       dst_ip: str,
-                      waypoint_node: str) -> Tuple[str, List[str]]:
+                      waypoint_node: str) -> Tuple[str, str, List[str]]:
         """
-        L4: 웨이포인트 경유 노드 목록 추출
+        L4: 웨이포인트 경유 여부와 경로 정보
 
-        질문 예시: "CE1에서 CE2로 가는 트래픽이 경유하는 노드들은 무엇입니까?"
+        질문 예시: "ce02에서 ce01로 가는 트래픽이 pe02를 경유합니까?"
 
         학술적 근거:
         - Minesweeper (SIGCOMM 2017): waypointing as core property
         - Config2Spec (NSDI 2020): waypoint policy mining
 
         Returns:
-            (answer_type, path_nodes) - 경유 노드 목록
+            (answer_type, result_text, path_nodes) - 형식: ("text", "경유함 (경로: A→PE02→B)", ["A", "PE02", "B"]) 또는 ("text", "경유 안함 (경로: A→B)", ["A", "B"])
         """
         if not self._initialized:
-            return "set", []
+            return "text", "분석 불가", []
 
         try:
-            # traceroute를 사용해서 경로를 먼저 구하고, waypoint가 포함되어 있는지 확인
-            # (PathConstraints의 forbiddenLocations가 500 에러를 일으키므로 대안 방식 사용)
-
             # 출발지 노드 찾기
             src_node = None
             for node, ips in self.node_ips.items():
@@ -502,7 +540,7 @@ class BatfishBuilder:
             ).answer().frame()
 
             if result.empty:
-                return "set", []
+                return "text", "경유 안함 (경로 없음)"
 
             # 경로에서 모든 노드 추출
             path_nodes = []
@@ -517,11 +555,18 @@ class BatfishBuilder:
                             if node_name not in path_nodes:  # 중복 제거
                                 path_nodes.append(node_name)
 
-            return "set", path_nodes
+            # waypoint 경유 여부 확인
+            passes_waypoint = waypoint_node.lower() in [n.lower() for n in path_nodes]
+
+            path_str = " → ".join(path_nodes) if path_nodes else "없음"
+            if passes_waypoint:
+                return "text", f"경유함 (경로: {path_str})", path_nodes
+            else:
+                return "text", f"경유 안함 (경로: {path_str})", path_nodes
 
         except Exception as e:
             logger.warning(f"waypoint_check error: {e}")
-            return "set", []
+            return "text", "분석 오류"
     
     def bounded_path_length(self,
                            src_location: str,
@@ -658,46 +703,46 @@ class BatfishBuilder:
     
     def asymmetric_path_check(self,
                               node1: str,
-                              node2: str) -> Tuple[str, bool, str]:
+                              node2: str) -> Tuple[str, str]:
         """
-        L4: 비대칭 경로(Asymmetric Routing) 검사
-        
-        질문 예시: "A에서 B로 가는 경로와 B에서 A로 돌아오는 경로가 대칭입니까?"
-        
+        L4: 비대칭 경로(Asymmetric Routing) 검사 - 경로 정보 포함
+
+        질문 예시: "ce01과 ce03 사이의 통신 경로가 대칭(양방향 동일 경로)입니까?"
+
         현업 중요도: 매우 높음
         - 비대칭 경로는 방화벽에서 상태 추적(Stateful) 실패 → 패킷 드랍
         - 갈 때 A경로, 올 때 B경로면 TCP 세션 불가
-        
+
         Returns:
-            (answer_type, is_symmetric, description)
+            (answer_type, result_text) - 형식: "text", "대칭 (경로: A→B→C)" 또는 "비대칭 (정방향: A→B, 역방향: A→C→B)"
         """
         if not self._initialized:
-            return "boolean", False, "정보 없음"
-        
+            return "text", "정보 없음"
+
         try:
             # node1 → node2 경로
             node1_ips = self.node_ips.get(node1, [])
             node2_ips = self.node_ips.get(node2, [])
-            
+
             if not node1_ips or not node2_ips:
-                return "boolean", False, "IP 정보 없음"
-            
+                return "text", "IP 정보 없음"
+
             # 정방향 경로 (node1 → node2)
             forward_result = self.bf.q.traceroute(
                 startLocation=node1,
                 headers=HeaderConstraints(dstIps=node2_ips[0])
             ).answer().frame()
-            
+
             # 역방향 경로 (node2 → node1)
             reverse_result = self.bf.q.traceroute(
                 startLocation=node2,
                 headers=HeaderConstraints(dstIps=node1_ips[0])
             ).answer().frame()
-            
+
             # 경로 노드 추출
             forward_nodes = []
             reverse_nodes = []
-            
+
             if not forward_result.empty:
                 traces = forward_result['Traces'].iloc[0]
                 if traces:
@@ -705,7 +750,7 @@ class BatfishBuilder:
                         node = getattr(hop, 'node', None)
                         if node:
                             forward_nodes.append(getattr(node, 'hostname', str(node)))
-            
+
             if not reverse_result.empty:
                 traces = reverse_result['Traces'].iloc[0]
                 if traces:
@@ -713,24 +758,24 @@ class BatfishBuilder:
                         node = getattr(hop, 'node', None)
                         if node:
                             reverse_nodes.append(getattr(node, 'hostname', str(node)))
-            
+
             # 대칭 여부 판단 (역순으로 비교)
             reverse_nodes_reversed = list(reversed(reverse_nodes))
             is_symmetric = forward_nodes == reverse_nodes_reversed
-            
-            forward_path = " -> ".join(forward_nodes) if forward_nodes else "경로 없음"
-            reverse_path = " -> ".join(reverse_nodes) if reverse_nodes else "경로 없음"
-            
+
+            forward_path = " → ".join(forward_nodes) if forward_nodes else "없음"
+            reverse_path = " → ".join(reverse_nodes) if reverse_nodes else "없음"
+
             if is_symmetric:
-                desc = f"대칭 경로: {forward_path}"
+                result_text = f"대칭 (경로: {forward_path})"
             else:
-                desc = f"비대칭! 정방향: {forward_path}, 역방향: {reverse_path}"
-            
-            return "boolean", is_symmetric, desc
-            
+                result_text = f"비대칭 (정방향: {forward_path}, 역방향: {reverse_path})"
+
+            return "text", result_text
+
         except Exception as e:
             logger.warning(f"asymmetric_path_check error: {e}")
-            return "boolean", False, f"분석 오류: {e}"
+            return "text", "분석 오류"
     
     def mtu_mismatch_check(self) -> Tuple[str, List[str]]:
         """
@@ -995,12 +1040,12 @@ class BatfishBuilder:
 
         Returns:
             (answer_type, ground_truth, explanation_text)
-            - answer_type: "selection"
+            - answer_type: "text"
             - ground_truth: "영향 없음" | "경로 변경" | "통신 단절"
             - explanation_text: 상세 분석 결과
         """
         if not self._initialized:
-            return "selection", "정보 없음", "정보 없음"
+            return "text", "정보 없음", "정보없음"
 
         try:
             # 출발지/목적지 IP 찾기
@@ -1008,7 +1053,7 @@ class BatfishBuilder:
             dst_ips = self.node_ips.get(test_dst, [])
             
             if not src_ips or not dst_ips:
-                return "selection", "정보 없음", f"IP 정보 없음 - {test_src}: {len(src_ips)}개, {test_dst}: {len(dst_ips)}개 IP"
+                return "text", "정보 없음", f"IP 정보 없음 - {test_src}: {len(src_ips)}개, {test_dst}: {len(dst_ips)}개 IP"
 
             test_src_ip = src_ips[0]
             test_dst_ip = dst_ips[0]
@@ -1020,11 +1065,12 @@ class BatfishBuilder:
             ).answer().frame()
 
             if path_result.empty:
-                return "selection", "통신 단절", f"경로 없음: {test_src}에서 {test_dst}로 현재 도달 불가"
+                return "text", "통신 단절", f"경로 없음: {test_src}에서 {test_dst}로 현재 도달 불가"
 
             # 경로 분석
             traces = path_result['Traces'].iloc[0] if not path_result.empty else []
             current_path_nodes = []
+            alternate_path_nodes = []
             total_paths = len(traces) if traces else 0
             paths_through_link = 0
             paths_avoiding_link = 0
@@ -1049,40 +1095,53 @@ class BatfishBuilder:
                     
                     if uses_link:
                         paths_through_link += 1
+                        if not current_path_nodes:
+                            current_path_nodes = path_nodes
                     else:
                         paths_avoiding_link += 1
+                        if not alternate_path_nodes:
+                            alternate_path_nodes = path_nodes
                     
                     if not current_path_nodes:
                         current_path_nodes = path_nodes
 
-            # 3. 결과 분류 (Classification)
-            path_str = " -> ".join(current_path_nodes) if current_path_nodes else "경로 정보 없음"
+            # 3. 결과 분류 (Classification) - 단순 카테고리로 반환
+            current_path_str = " → ".join(current_path_nodes) if current_path_nodes else "정보없음"
+            alternate_path_str = " → ".join(alternate_path_nodes) if alternate_path_nodes else "없음"
 
             if paths_through_link == 0:
-                # Case A: 영향 없음
-                status = "영향 없음"
-                desc = f"현재 경로({path_str})가 장애 링크({node1}-{node2})를 경유하지 않음."
+                # Case A: 영향 없음 - 현재 경로가 장애 링크를 사용하지 않음
+                result = "영향 없음"
+                desc = f"현재 경로({current_path_str})가 장애 링크({node1}-{node2})를 경유하지 않음."
 
             elif paths_avoiding_link > 0:
                 # Case B: 경로 변경 (우회 가능)
-                status = "경로 변경"
-                desc = f"기존 경로가 장애 링크를 사용하지만, {paths_avoiding_link}개의 대체 경로가 존재함. (기존: {path_str})"
+                result = "경로 변경"
+                desc = f"기존 경로({current_path_str})가 장애 링크를 사용하지만, 대체 경로({alternate_path_str}) 존재."
 
             else:
                 # Case C: 통신 단절
-                status = "통신 단절"
-                desc = f"모든 경로가 장애 링크를 사용하며 대체 경로 없음. (기존: {path_str})"
+                result = "통신 단절"
+                desc = f"모든 경로({current_path_str})가 장애 링크를 사용하며 대체 경로 없음."
 
-            # 반환값: (답변타입, 정답(키워드), 상세설명)
-            return "selection", status, desc
+            # 반환값: (답변타입, 결합된 텍스트)
+            if result == "영향 없음":
+                combined_text = f"영향 없음 (현재경로: {current_path_str}가 장애링크 미경유)"
+            elif result == "경로 변경":
+                combined_text = f"경로 변경 (현재경로: {current_path_str}, 대체경로: {alternate_path_str})"
+            else:  # 통신 단절
+                combined_text = f"통신 단절 (현재경로: {current_path_str}, 대체경로 없음)"
+            return "text", combined_text
 
         except Exception as e:
             logger.warning(f"link_failure_impact error: {e}")
-            return "selection", "오류", f"분석 오류: {str(e)}"
+            return "text", "분석 오류"
     
     def config_change_impact(self,
                             before_snapshot: str,
-                            after_snapshot: str) -> Tuple[str, List[str]]:
+                            after_snapshot: str,
+                            src_node: str = "",
+                            dst_node: str = "") -> Tuple[str, str]:
         """
         L5: 설정 변경 영향 분석
         
@@ -1093,10 +1152,10 @@ class BatfishBuilder:
         - Batfish의 differentialReachability query
         
         Returns:
-            (answer_type, affected_flows_list)
+            (answer_type, change_description) - 형식: "text", "변경됨: A→B, B→C" 또는 "변경 없음"
         """
         if not self._initialized:
-            return "set", []
+            return "text", "분석 불가"
         
         try:
             # 두 스냅샷 간 차이 분석
@@ -1106,26 +1165,35 @@ class BatfishBuilder:
             ).answer().frame()
             
             if diff_result.empty:
-                return "set", []
+                return "text", "변경 없음"
             
             # 영향받는 흐름 추출
             affected_flows = []
             for _, row in diff_result.iterrows():
-                flow_desc = f"{row.get('SrcIp', '?')} -> {row.get('DstIp', '?')}"
-                if row.get('DstPort'):
-                    flow_desc += f":{row.get('DstPort')}"
-                affected_flows.append(flow_desc)
+                src = row.get('Flow', {})
+                src_ip = getattr(src, 'srcIp', '') if hasattr(src, 'srcIp') else ''
+                dst_ip = getattr(src, 'dstIp', '') if hasattr(src, 'dstIp') else ''
+                if src_ip and dst_ip:
+                    affected_flows.append(f"{src_ip}→{dst_ip}")
             
-            return "set", affected_flows
+            if affected_flows:
+                # 최대 5개 흐름만 표시
+                flows_str = ", ".join(affected_flows[:5])
+                if len(affected_flows) > 5:
+                    flows_str += f" 외 {len(affected_flows) - 5}개"
+                return "text", f"변경됨: {flows_str}"
+            else:
+                return "text", f"변경됨: {len(diff_result)}개 흐름 영향"
             
         except Exception as e:
             logger.warning(f"config_change_impact error: {e}")
-            return "set", []
+            return "text", "분석 오류"
     
     def policy_compliance_check(self,
                                policy_type: str = "waypoint",
                                waypoint_node: str = "",
-                               dst_ports: List[str] = None) -> Tuple[str, bool]:
+                               dst_ports: List[str] = None,
+                               policy_name: str = "") -> Tuple[str, str]:
         """
         L5: 정책 준수 검증
         
@@ -1136,10 +1204,10 @@ class BatfishBuilder:
         - Epinoia의 intent-driven verification
         
         Returns:
-            (answer_type, is_compliant)
+            (answer_type, compliance_result) - 형식: "text", "준수" 또는 "위반: A→B, C→D"
         """
         if not self._initialized:
-            return "boolean", True
+            return "text", "분석 불가"
         
         if dst_ports is None:
             dst_ports = ["80", "443"]
@@ -1158,23 +1226,41 @@ class BatfishBuilder:
                 ).answer().frame()
                 
                 # 위반 트래픽이 없으면 정책 준수
-                is_compliant = violations.empty
-                return "boolean", is_compliant
+                if violations.empty:
+                    return "text", "준수"
+                
+                # 위반 트래픽 상세 추출
+                violation_flows = []
+                for _, row in violations.iterrows():
+                    flow = row.get('Flow', {})
+                    src_ip = getattr(flow, 'srcIp', '') if hasattr(flow, 'srcIp') else ''
+                    dst_ip = getattr(flow, 'dstIp', '') if hasattr(flow, 'dstIp') else ''
+                    if src_ip and dst_ip:
+                        violation_flows.append(f"{src_ip}→{dst_ip}")
+                
+                if violation_flows:
+                    # 최대 3개 위반만 표시
+                    flows_str = ", ".join(violation_flows[:3])
+                    if len(violation_flows) > 3:
+                        flows_str += f" 외 {len(violation_flows) - 3}개"
+                    return "text", f"위반: {flows_str}"
+                else:
+                    return "text", f"위반: {len(violations)}개 흐름"
             
-            return "boolean", True
+            return "text", "준수"
             
         except Exception as e:
             logger.warning(f"policy_compliance_check error: {e}")
-            return "boolean", True
+            return "text", "분석 오류"
     
     def k_failure_tolerance(self,
                            src_node: str,
                            dst_ip: str,
-                           k: int = 1) -> Tuple[str, int]:
+                           k: int = 1) -> Tuple[str, str]:
         """
-        L5: k-failure tolerance 경로 수 계산
+        L5: k-failure tolerance 경로 수와 경로 목록
 
-        질문 예시: "CE1에서 CE2로 가는 대체 경로의 수는 몇 개입니까?"
+        질문 예시: "ce01에서 pe03로 가는 경로는 총 몇 개입니까?"
 
         학술적 근거:
         - Minesweeper (SIGCOMM 2017): k-failure tolerance
@@ -1189,10 +1275,10 @@ class BatfishBuilder:
             k: 장애 허용 수 (기본 1)
 
         Returns:
-            (answer_type, alternative_paths_count) - 대체 경로 수
+            (answer_type, result_text) - 형식: "text", "N개 (경로1: A→B, 경로2: A→C→B)"
         """
         if not self._initialized:
-            return "number", 0
+            return "text", "분석 불가"
 
         try:
             # 출발 노드의 IP 찾기
@@ -1201,7 +1287,7 @@ class BatfishBuilder:
 
             if not src_ip:
                 logger.warning(f"k_failure_tolerance: No IP found for node {src_node}")
-                return "number", 0
+                return "text", "정보 없음"
 
             # 기본 도달성 확인
             baseline = self.bf.q.reachability(
@@ -1209,7 +1295,7 @@ class BatfishBuilder:
             ).answer().frame()
 
             if baseline.empty:
-                return "number", 0  # 기본 도달성 없음
+                return "text", "0개 (도달 불가)"  # 기본 도달성 없음
 
             # 경로 추출하여 대체 경로 수 계산
             # startLocation은 노드 이름 사용
@@ -1219,16 +1305,37 @@ class BatfishBuilder:
             ).answer().frame()
 
             if traceroute.empty:
-                return "number", 0
+                return "text", "0개 (경로 없음)"
 
             traces = traceroute['Traces'].iloc[0]
+            if not traces:
+                return "text", "0개 (경로 없음)"
 
-            # 다중 경로 수 반환
-            return "number", len(traces) if traces else 0
+            # 경로 추출 (최대 3개)
+            paths = []
+            for i, trace in enumerate(traces[:3]):
+                hops = getattr(trace, 'hops', []) if hasattr(trace, 'hops') else []
+                nodes = []
+                for hop in hops:
+                    node = getattr(hop, 'node', None)
+                    if node:
+                        node_name = getattr(node, 'hostname', str(node))
+                        nodes.append(node_name)
+                if nodes:
+                    paths.append(f"경로{i+1}: {' → '.join(nodes)}")
+
+            path_count = len(traces)
+            if paths:
+                paths_str = ", ".join(paths)
+                if path_count > 3:
+                    paths_str += f" 외 {path_count - 3}개"
+                return "text", f"{path_count}개 ({paths_str})"
+            else:
+                return "text", f"{path_count}개"
 
         except Exception as e:
             logger.warning(f"k_failure_tolerance error: {e}")
-            return "number", 0
+            return "text", "분석 오류"
     
     def differential_reachability(self,
                                   src_ip: str,
@@ -1311,15 +1418,15 @@ class BatfishBuilder:
         for src_node, dst_node in all_pairs:  # 모든 쌍 사용
             dst_ips = self.node_ips.get(dst_node, [])
             if dst_ips:
-                _, path = self.traceroute_path(src_node, dst_ips[0])
+                _, path_str = self.traceroute_path(src_node, dst_ips[0])
                 
                 questions.append({
                     "id": f"TRACEROUTE_{src_node}_{dst_node}",
                     "category": "Reachability_Analysis",
                     "level": "L4",
-                    "answer_type": "set",
-                    "question": f"{src_node}에서 {dst_node}({dst_ips[0]})로 가는 패킷의 네트워크 경로를 알려주세요.\n[답변 형식: 쉼표로 구분된 장비 목록]",
-                    "ground_truth": ", ".join(path) if path else "경로 없음",
+                    "answer_type": "text",
+                    "question": f"{src_node}에서 {dst_node}({dst_ips[0]})로 가는 패킷의 네트워크 경로를 알려주세요.\n[답변 형식: 화살표(→)로 구분된 장비 목록]",
+                    "ground_truth": path_str if path_str else "경로 없음",
                     "explanation": f"metric `traceroute_path` on src={src_node}, dst={dst_ips[0]}",
                     "evidence_hint": {
                         "scope": {"type": "NODE_PAIR", "src": src_node, "dst": dst_node},
@@ -1329,7 +1436,7 @@ class BatfishBuilder:
         
         # 2. Reachability 문제
         for flow in self.get_representative_flows()[:30]:  # 상위 30개 흐름
-            _, is_reachable = self.reachability_status(
+            _, result_text = self.reachability_status(
                 flow.src_ip, flow.dst_ip, flow.dst_port, flow.protocol
             )
             
@@ -1338,9 +1445,9 @@ class BatfishBuilder:
                 "id": f"REACH_{flow.src_location}_{flow.dst_location}_{flow.protocol}",
                 "category": "Reachability_Analysis",
                 "level": "L4",
-                "answer_type": "boolean",
-                "question": f"{flow.src_location}({flow.src_ip})에서 {flow.dst_location}({flow.dst_ip}{port_desc})로의 {flow.protocol} 트래픽이 도달 가능합니까?\n[답변 형식: true/false (소문자)]",
-                "ground_truth": str(is_reachable).lower(),
+                "answer_type": "text",
+                "question": f"{flow.src_location}({flow.src_ip})에서 {flow.dst_location}({flow.dst_ip}{port_desc})로의 {flow.protocol} 트래픽 경로와 도달 여부를 알려주세요.\n[답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: 없음, 도달: 불가']",
+                "ground_truth": result_text,
                 "explanation": f"metric `reachability_status` on src={flow.src_ip}, dst={flow.dst_ip}",
                 "evidence_hint": {
                     "scope": {"type": "FLOW", "src_ip": flow.src_ip, "dst_ip": flow.dst_ip},
@@ -1350,15 +1457,15 @@ class BatfishBuilder:
             })
         
         # 3. Loop Detection 문제 (HSA, VeriFlow)
-        _, loops = self.loop_detection()
+        _, result_text = self.loop_detection()
         questions.append({
             "id": "LOOP_DETECTION_GLOBAL",
             "category": "Reachability_Analysis",
             "level": "L4",
-            "answer_type": "boolean",
-            "question": "네트워크에 포워딩 루프가 존재합니까?\n[답변 형식: true/false (소문자)]",
-            "ground_truth": str(len(loops) > 0).lower(),
-            "explanation": f"metric `loop_detection` found {len(loops)} loops",
+            "answer_type": "text",
+            "question": "네트워크에 포워딩 루프가 존재합니까?\n[답변 형식: '없음' 또는 '발견: A→B→C→A']",
+            "ground_truth": result_text,
+            "explanation": f"metric `loop_detection` analysis result",
             "evidence_hint": {
                 "scope": {"type": "GLOBAL"},
                 "metric": "loop_detection"
@@ -1427,7 +1534,7 @@ class BatfishBuilder:
                     
                     if src_ips and dst_ips:
                         try:
-                            _, path_nodes = self.waypoint_check(src_ips[0], dst_ips[0], waypoint)
+                            _, result_text, path_nodes = self.waypoint_check(src_ips[0], dst_ips[0], waypoint)
 
                             questions.append({
                                 "id": f"WAYPOINT_{src_ce}_{dst_ce}_{waypoint}",
@@ -1494,16 +1601,16 @@ class BatfishBuilder:
         all_pairs_asymmetric = self.get_node_pairs()
         random.shuffle(all_pairs_asymmetric)
         for src_node, dst_node in all_pairs_asymmetric[:5]:  # 5개 쌍으로 제한
-            _, is_symmetric, desc = self.asymmetric_path_check(src_node, dst_node)
-            
+            _, result_text = self.asymmetric_path_check(src_node, dst_node)
+
             questions.append({
                 "id": f"ASYMMETRIC_{src_node}_{dst_node}",
                 "category": "Reachability_Analysis",
                 "level": "L4",
-                "answer_type": "boolean",
-                "question": f"{src_node}과 {dst_node} 사이의 통신 경로가 대칭(양방향 동일 경로)입니까?\n[답변 형식: true/false (소문자)]",
-                "ground_truth": str(is_symmetric).lower(),
-                "explanation": desc,
+                "answer_type": "text",
+                "question": f"{src_node}과 {dst_node} 사이의 통신 경로가 대칭(양방향 동일 경로)입니까?\n[답변 형식: '대칭 (경로: A→B→C)' 또는 '비대칭 (정방향: A→B, 역방향: A→C→B)']",
+                "ground_truth": result_text,
+                "explanation": f"metric `asymmetric_path_check` on {src_node}<->{dst_node}",
                 "evidence_hint": {
                     "scope": {"type": "NODE_PAIR", "src": src_node, "dst": dst_node},
                     "metric": "asymmetric_path_check"
@@ -1556,17 +1663,16 @@ class BatfishBuilder:
                         dst_ips = self.node_ips.get(dst_ce, [])
                         
                         if src_ips and dst_ips:
-                            _, path_nodes = self.waypoint_check(src_ips[0], dst_ips[0], waypoint)
-                            passes_waypoint = waypoint in [n.lower() for n in path_nodes]
-                            
+                            _, result_text, _ = self.waypoint_check(src_ips[0], dst_ips[0], waypoint)
+
                             questions.append({
                                 "id": f"WAYPOINT_PASS_{src_ce}_{dst_ce}_{waypoint}",
                                 "category": "Reachability_Analysis",
                                 "level": "L4",
-                                "answer_type": "boolean",
-                                "question": f"{src_ce}에서 {dst_ce}로 가는 트래픽이 {waypoint}(백본 장비)를 경유합니까?\n[답변 형식: true/false (소문자)]",
-                                "ground_truth": str(passes_waypoint).lower(),
-                                "explanation": f"경로: {' -> '.join(path_nodes) if path_nodes else '없음'}",
+                                "answer_type": "text",
+                                "question": f"{src_ce}에서 {dst_ce}로 가는 트래픽이 {waypoint}(백본 장비)를 경유합니까?\n[답변 형식: '경유함 (경로: A→PE02→B)' 또는 '경유 안함 (경로: A→B)']",
+                                "ground_truth": result_text,
+                                "explanation": f"metric `waypoint_check` on {src_ce}->{dst_ce} via {waypoint}",
                                 "evidence_hint": {
                                     "scope": {"type": "WAYPOINT", "src": src_ce, "dst": dst_ce, "waypoint": waypoint},
                                     "metric": "waypoint_check"
@@ -1619,27 +1725,29 @@ class BatfishBuilder:
                 if test_src == node1 or test_src == node2 or test_dst == node1 or test_dst == node2:
                     continue  # 링크 노드 자체가 출발/도착점이면 스킵
                 
-                # 수정된 메서드 호출 (3개 반환값)
-                _, impact_status, impact_desc = self.link_failure_impact(
+                # 수정된 메서드 호출 (2개 반환값: answer_type, result_text)
+                _, result_text = self.link_failure_impact(
                     node1, node2, test_src, test_dst
                 )
 
-                if "정보 없음" in impact_status or "오류" in impact_status:
+                if "분석 오류" in result_text or "정보 없음" in result_text:
                     continue
+
+                # 결과에서 상태 추출 (예: "영향 없음 (현재경로: ...)" -> "영향 없음")
+                impact_status = result_text.split(" (")[0] if " (" in result_text else result_text
 
                 questions.append({
                     "id": f"LINK_FAIL_{node1}_{node2}_{test_src}_{test_dst}",
                     "category": "What_If_Analysis",
                     "level": "L5",
-                    "answer_type": "selection",  # text -> selection 변경
+                    "answer_type": "text",
                     # 질문에 명확한 가이드라인 추가
                     "question": (
                         f"{node1}과 {node2} 사이의 링크가 다운되었을 때, "
                         f"{test_src}에서 {test_dst}로의 트래픽 영향은 어떻게 됩니까?\n"
-                        "[답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나만 선택]"
+                        "[답변 형식: '영향 없음 (현재경로: A→B→C가 장애링크 미경유)' / '경로 변경 (현재경로: A→B, 대체경로: A→C→B)' / '통신 단절 (현재경로: A→B, 대체경로 없음)']"
                     ),
-                    "ground_truth": impact_status,  # 예: "영향 없음"
-                    "explanation": impact_desc,     # 예: "현재 경로(...)가 장애 링크를 경유하지 않음"
+                    "ground_truth": result_text,
                     "explanation": f"metric `link_failure_impact` on link={node1}-{node2}, flow={test_src}->{test_dst}",
                     "evidence_hint": {
                         "scope": {"type": "LINK_FAILURE", "node1": node1, "node2": node2},
@@ -1662,19 +1770,19 @@ class BatfishBuilder:
             
             if dst_ips:
                 # src_node는 노드 이름, dst_ips[0]는 목적지 IP
-                _, total_paths = self.k_failure_tolerance(src_node, dst_ips[0], k=1)
+                _, result_text = self.k_failure_tolerance(src_node, dst_ips[0], k=1)
 
                 questions.append({
                     "id": f"PATH_COUNT_{src_node}_{dst_node}",
                     "category": "What_If_Analysis",
                     "level": "L5",
-                    "answer_type": "number",
-                    "question": f"{src_node}에서 {dst_node}로 가는 경로는 총 몇 개입니까?\n[답변 형식: 숫자]",
-                    "ground_truth": str(total_paths),
-                    "explanation": f"metric `path_count` on {src_node}->{dst_node}, total_paths={total_paths}",
+                    "answer_type": "text",
+                    "question": f"{src_node}에서 {dst_node}로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
+                    "ground_truth": result_text,
+                    "explanation": f"metric `k_failure_tolerance` on {src_node}->{dst_node}",
                     "evidence_hint": {
                         "scope": {"type": "NODE_PAIR", "src": src_node, "dst": dst_node},
-                        "metric": "path_count"
+                        "metric": "k_failure_tolerance"
                     },
                     "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
                 })

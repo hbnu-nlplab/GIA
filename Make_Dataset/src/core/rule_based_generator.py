@@ -96,9 +96,9 @@ def default_patterns(metric: str) -> str:
         "routing_table_entry_count": "{host} 장비의 라우팅 테이블 엔트리는 총 몇 개입니까?",
         
         # === Security_Inventory (L1) ===
-        "ssh_present_bool": "{host} 장비에 SSH가 활성화되어 있습니까? (true/false)",
+        "ssh_present_bool": "{host} 장비의 SSH 버전과 활성화 상태를 알려주세요. [답변 형식: 'SSHv1' / 'SSHv2' / '비활성화']",
         "ssh_version_text": "{host} 장비의 SSH 버전은 무엇입니까?",
-        "aaa_present_bool": "{host} 장비에 AAA 기능이 설정되어 있습니까? (true/false)",
+        "aaa_present_bool": "{host} 장비의 AAA 인증 방식을 알려주세요. [답변 형식: 'TACACS+' / 'RADIUS' / 'Local' / '미설정']",
         "vty_transport_input_text": "{host} 장비의 VTY transport input 설정은 무엇입니까?",
         "vty_login_mode_text": "{host} 장비의 VTY line 로그인 방식은 무엇입니까?",
         
@@ -123,7 +123,7 @@ def default_patterns(metric: str) -> str:
         "vrf_rd_map": "{host} 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요.",
         "rt_import_count": "{host} 장비의 Route Target Import 설정은 총 몇 개입니까?",
         "rt_export_count": "{host} 장비의 Route Target Export 설정은 총 몇 개입니까?",
-        "mpls_ldp_present_bool": "{host} 장비에서 MPLS LDP가 설정되어 있습니까? (true/false)",
+        "mpls_ldp_present_bool": "{host} 장비의 MPLS LDP Router-ID를 알려주세요. [답변 형식: 'Router-ID: X.X.X.X' 또는 '미설정']",
         "l2vpn_pw_id_set": "{host} 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.",
         
         # === Security_Policy (L2) ===
@@ -147,7 +147,7 @@ def default_patterns(metric: str) -> str:
         "l2vpn_mismatch_count": "PW-ID 불일치 또는 단방향 L2VPN 회선은 총 몇 개입니까?",
         
         # === BGP_Consistency (L3) ===
-        "ibgp_fullmesh_ok": "AS {asn}의 iBGP Full-Mesh 구성은 완벽합니까? (true/false)",
+        "ibgp_fullmesh_ok": "AS {asn}의 iBGP Full-Mesh 상태와 누락된 피어링을 알려주세요. [답변 형식: '완전' 또는 '누락: A↔B, C↔D']",
         "ibgp_missing_pairs": "AS {asn}의 iBGP Full-Mesh에서 누락된 장비쌍 목록을 알려주세요.",
         "ibgp_missing_pairs_count": "AS {asn}의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까?",
         "ibgp_under_peered_devices": "AS {asn}에서 iBGP 피어 수가 부족한 장비 목록을 알려주세요.",
@@ -160,27 +160,27 @@ def default_patterns(metric: str) -> str:
         "vrf_rt_list_per_device": "{host} 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요.",
         
         # === Reachability_Analysis (L4) ===
-        "traceroute_path": "{src_ip}에서 {dst_ip}까지의 네트워크 경로를 알려주세요.",
-        "reachability_status": "{src_ip}에서 {dst_ip}:{dst_port}/{protocol}로 접근 가능합니까?",
-        "acl_blocking_point": "{src_ip}에서 {dst_ip}로의 트래픽이 차단되는 지점은 어디입니까?",
+        "traceroute_path": "{src_ip}에서 {dst_ip}까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비 목록]",
+        "reachability_status": "{src_ip}에서 {dst_ip}:{dst_port}/{protocol}로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: 없음, 도달: 불가']",
+        "acl_blocking_point": "{src_ip}에서 {dst_ip}로 트래픽이 차단된다면 차단 지점을 알려주세요. [답변 형식: 차단 지점 장비명 또는 '허용']",
         
         # === What_If_Analysis (L5) ===
-        "link_failure_impact": "{link}가 다운되면 {src}에서 {dst}까지 도달 가능합니까?",
-        "config_change_impact": "설정 변경 후 {src}에서 {dst}까지의 경로가 변경됩니까?",
-        "policy_compliance_check": "네트워크 정책 '{policy_name}'을 준수하고 있습니까?",
+        "link_failure_impact": "{link} 다운 시 {src}에서 {dst}까지의 트래픽 영향을 알려주세요. [답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나]",
+        "config_change_impact": "설정 변경 후 {src}에서 {dst}까지의 경로 변경 여부와 영향받는 흐름을 알려주세요. [답변 형식: '변경됨: A→B, B→C' 또는 '변경 없음']",
+        "policy_compliance_check": "'{policy_name}' 정책 준수 여부와 위반 사례를 알려주세요. [답변 형식: '준수' 또는 '위반: A→B, C→D']",
         
         # === Comparison_Analysis (L3) ===
-        "compare_bgp_neighbor_count": "{host1}과 {host2}의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까?",
-        "compare_interface_count": "{host1}과 {host2}의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까?",
-        "compare_vrf_count": "{host1}과 {host2}의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까?",
-        "compare_bgp_as": "{host1}과 {host2}가 같은 BGP AS에 속해 있습니까?",
-        "compare_ospf_areas": "{host1}과 {host2}가 참여하는 OSPF Area가 동일합니까?",
-        "max_interface_device": "인터페이스 수가 가장 많은 장비는 무엇입니까?",
-        "max_bgp_peer_device": "BGP 피어가 가장 많은 장비는 무엇입니까?",
-        "all_devices_same_as": "모든 장비가 같은 BGP AS에 속해 있습니까?",
-        "min_interface_device": "인터페이스 수가 가장 적은 장비는 무엇입니까?",
-        "bgp_as_distribution": "각 AS별 장비 수 분포를 알려주세요.",
-        "vrf_usage_statistics": "각 장비별 VRF 사용 수 통계를 알려주세요."
+        "compare_bgp_neighbor_count": "{host1}과 {host2}의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: '{host1}: N개, {host2}: M개, 차이: K개']",
+        "compare_interface_count": "{host1}과 {host2}의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: '{host1}: N개, {host2}: M개, 차이: K개']",
+        "compare_vrf_count": "{host1}과 {host2}의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: '{host1}: N개, {host2}: M개, 차이: K개']",
+        "compare_bgp_as": "{host1}과 {host2}의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: '{host1}: AS X, {host2}: AS Y']",
+        "compare_ospf_areas": "{host1}과 {host2}가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: '{host1}: Area 0, 1, {host2}: Area 0, 2']",
+        "max_interface_device": "인터페이스 수가 가장 많은 장비와 그 개수를 알려주세요. [답변 형식: '장비명: N개']",
+        "max_bgp_peer_device": "BGP 피어가 가장 많은 장비와 그 개수를 알려주세요. [답변 형식: '장비명: N개']",
+        "all_devices_same_as": "모든 장비의 BGP AS 번호를 나열해주세요. [답변 형식: '장비1: AS X, 장비2: AS Y, 장비3: AS Z']",
+        "min_interface_device": "인터페이스 수가 가장 적은 장비와 그 개수를 알려주세요. [답변 형식: '장비명: N개']",
+        "bgp_as_distribution": "각 AS별 장비 수 분포를 알려주세요. [답변 형식: 'AS X: N대, AS Y: M대']",
+        "vrf_usage_statistics": "각 장비별 VRF 사용 수 통계를 알려주세요. [답변 형식: '장비1: N개, 장비2: M개']"
     }
     return table.get(metric, f"{metric}에 대한 질문을 자연스럽게 작성해주세요.")
 
@@ -291,9 +291,9 @@ METRIC_AGG = {
     "syslog_server_list": "set",
     "interface_status_map": "map",
     "routing_table_entry_count": "number",
-    "ssh_present_bool": "boolean",
+    "ssh_present_bool": "text",  # SSHv1/SSHv2/비활성화 (Boolean 피함)
     "ssh_version_text": "text",
-    "aaa_present_bool": "boolean",
+    "aaa_present_bool": "text",  # TACACS+/RADIUS/Local/미설정 (Boolean 피함)
     "vty_transport_input_text": "text",
     "vty_login_mode_text": "text",
     "interface_count": "numeric",
@@ -312,7 +312,7 @@ METRIC_AGG = {
     "vrf_rd_map": "map",
     "rt_import_count": "numeric",
     "rt_export_count": "numeric",
-    "mpls_ldp_present_bool": "boolean",
+    "mpls_ldp_present_bool": "text",  # Router-ID: X.X.X.X / 미설정 (Boolean 피함)
     "l2vpn_pw_id_set": "set",
     
     # === L2 metrics ===
@@ -330,7 +330,7 @@ METRIC_AGG = {
     "l2vpn_pairs": "set",
     
     # === L3 metrics ===
-    "ibgp_fullmesh_ok": "boolean",
+    "ibgp_fullmesh_ok": "text",  # 완전 / 누락: A↔B, C↔D (Boolean 피함)
     "ibgp_missing_pairs": "set",
     "ibgp_missing_pairs_count": "numeric",
     "ibgp_under_peered_devices": "set",
@@ -348,22 +348,22 @@ METRIC_AGG = {
     "compare_bgp_neighbor_count": "text",
     "compare_interface_count": "text",
     "compare_vrf_count": "text",
-    "compare_bgp_as": "boolean",
-    "compare_ospf_areas": "boolean",
+    "compare_bgp_as": "text",
+    "compare_ospf_areas": "text",
     "max_interface_device": "text",
     "max_bgp_peer_device": "text",
-    "all_devices_same_as": "boolean",
+    "all_devices_same_as": "text",
     "min_interface_device": "text",
-    "bgp_as_distribution": "map",
-    "vrf_usage_statistics": "map",
+    "bgp_as_distribution": "text",
+    "vrf_usage_statistics": "text",
     
     # === L4/L5 metrics (Batfish) ===
-    "traceroute_path": "set",
-    "reachability_status": "boolean",
+    "traceroute_path": "text",
+    "reachability_status": "text",  # 경로 + 도달 여부 (Boolean 피함)
     "acl_blocking_point": "text",
-    "link_failure_impact": "boolean",
-    "config_change_impact": "boolean",
-    "policy_compliance_check": "boolean"
+    "link_failure_impact": "text",
+    "config_change_impact": "text",  # 변경된 흐름 상세 (Boolean 피함)
+    "policy_compliance_check": "text"  # 위반 사례 상세 (Boolean 피함)
 }
 
 CANDIDATES = {
@@ -373,7 +373,7 @@ CANDIDATES = {
         ("ntp_server_list", "set"),
     ],
     "Security_Inventory": [
-        ("ssh_present_bool", "boolean"),
+        ("ssh_present_bool", "text"),
         ("ssh_version_text", "text"),
     ],
     "Interface_Inventory": [
@@ -387,7 +387,7 @@ CANDIDATES = {
     "Services_Inventory": [
         ("vrf_names_set", "set"),
         ("vrf_rd_map", "map"),
-        ("mpls_ldp_present_bool", "boolean"),
+        ("mpls_ldp_present_bool", "text"),
     ],
     "Security_Policy": [
         ("ssh_missing_count", "numeric"),
@@ -398,7 +398,7 @@ CANDIDATES = {
         ("ospf_area_membership", "set"),
     ],
     "BGP_Consistency": [
-        ("ibgp_fullmesh_ok", "boolean"),
+        ("ibgp_fullmesh_ok", "text"),
         ("ibgp_missing_pairs", "set"),
         ("ibgp_missing_pairs_count", "numeric"),
     ],

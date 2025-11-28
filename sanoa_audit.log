@@ -1,0 +1,25 @@
+2025-11-28 01:57:01,503 - [SANOA] - INFO - SanoaConnector Initialized (Complete Edition).
+2025-11-28 01:58:04,207 - [SANOA] - INFO - SanoaConnector Initialized (Complete Edition).
+2025-11-28 01:58:04,252 - [SANOA] - INFO - API Call Success: GET tailf-ncs:devices/device?fields=name
+2025-11-28 01:58:38,027 - [SANOA] - INFO - SanoaConnector Initialized (Complete Edition).
+2025-11-28 01:58:38,078 - [SANOA] - INFO - API Call Success: GET tailf-ncs:devices/device?fields=name
+2025-11-28 01:59:09,563 - [SANOA] - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-28 01:59:09,611 - [SANOA] - WARNING - Resource Not Found: tailf-ncs:devices/device=R1/config/router/bgp
+2025-11-28 01:59:09,615 - [SANOA] - WARNING - Resource Not Found: tailf-ncs:devices/device=R2/config/router/bgp
+2025-11-28 01:59:22,319 - [SANOA] - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-28 01:59:49,219 - [SANOA] - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-28 01:59:49,266 - [SANOA] - WARNING - Resource Not Found: tailf-ncs:devices/device=CE01/config/router/bgp
+2025-11-28 01:59:49,270 - [SANOA] - WARNING - Resource Not Found: tailf-ncs:devices/device=CE02/config/router/bgp
+2025-11-28 02:00:00,051 - [SANOA] - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-28 02:00:17,718 - [SANOA] - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-28 02:00:17,862 - [SANOA] - INFO - API Call Success: GET tailf-ncs:devices/device=CE01/config
+2025-11-28 02:00:24,500 - [SANOA] - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-28 02:00:24,524 - [SANOA] - ERROR - API Connection Error: 400 Client Error: Bad Request for url: http://localhost:8080/restconf/data/devices/device=PE01/live-status/tailf-ned-cisco-ios-stats:exec/any
+2025-11-28 02:00:24,551 - [SANOA] - ERROR - API Connection Error: 400 Client Error: Bad Request for url: http://localhost:8080/restconf/data/devices/device=PE01/live-status/tailf-ned-cisco-ios-stats:exec/any
+2025-11-28 02:00:31,622 - [SANOA] - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-28 02:00:31,684 - [SANOA] - ERROR - API Connection Error: 400 Client Error: Bad Request for url: http://localhost:8080/restconf/data/devices/device=PE01/live-status/tailf-ned-cisco-ios-stats:exec/any
+2025-11-28 02:00:54,355 - [SANOA] - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-28 02:02:22,052 - [SANOA] - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-11-28 02:02:22,179 - [SANOA] - INFO - API Call Success: GET tailf-ncs:devices/device=CE03/config
+2025-11-28 02:02:22,337 - [SANOA] - INFO - API Call Success: GET tailf-ncs:devices/device=PE03/config
+2025-11-28 02:02:38,307 - [SANOA] - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"

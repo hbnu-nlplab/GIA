@@ -3,3 +3,6 @@ Paper/
 *.pyc
 __pycache__/
 .vscode/
+.idea/
+*.env
+.cursor/
