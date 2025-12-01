@@ -1,3 +1,7 @@
+"""note 
+CSV 로드, 섹션 파싱, 토큰 계산
+"""
+
 from __future__ import annotations
 
 from typing import Tuple, List, Dict

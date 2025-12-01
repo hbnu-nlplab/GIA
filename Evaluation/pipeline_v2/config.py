@@ -24,9 +24,9 @@ def _load_env_file():
     """프로젝트 루트의 .env 파일을 자동으로 로드"""
     # 현재 파일 기준으로 프로젝트 루트 찾기
     current_dir = Path(__file__).parent
-    project_root = current_dir.parent.parent  # pipeline_v2 -> Network-Management-System-main -> GIA
-    env_file = project_root / ".env"
-    
+    # project_root = current_dir.parent.parent  # pipeline_v2 -> Network-Management-System-main -> GIA
+    # env_file = project_root / ".env"
+    env_file = current_dir / "openai_key.env"
     if env_file.exists():
         print(f"📁 .env 파일 로드 중: {env_file}")
         loaded_keys = 0

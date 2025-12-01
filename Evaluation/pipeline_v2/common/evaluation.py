@@ -1,3 +1,7 @@
+"""note 
+EM/F1(+옵션: BERT/ROUGE) 평가
+"""
+
 from __future__ import annotations
 
 from typing import Dict, List
