@@ -10,6 +10,30 @@ BATCH_SIZE = 4
 MAX_INPUT_TOKENS = 4096
 MAX_NEW_TOKENS = 128
 
+OUTPUT_DIR = "../data/qwen_answer"
+
+
+def load_telequad(raw_path):
+    with open(raw_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    qna_list = []
+    for doc in data.get("data", []):
+        for para in doc.get("paragraphs", []):
+            context = para.get("context", "")
+            for qa in para.get("qas", []):
+                gold = qa.get("answers", [{}])[0].get("text", "")
+                if not gold.strip():
+                    continue
+
+                qna_list.append({
+                    "type": "telequad",
+                    "question": qa.get("question", ""),
+                    "context": context,
+                    "gold_answer": gold
+                })
+    return qna_list
+
 
 def load_teleqna(raw_path):
     with open(raw_path, "r", encoding="utf-8") as f:
@@ -43,32 +67,24 @@ def load_teleqna(raw_path):
     return qna_list
 
 
-
-def load_telequad(raw_path):
+def load_netbench(raw_path):
     with open(raw_path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
     qna_list = []
-    for doc in data.get("data", []):
-        for para in doc.get("paragraphs", []):
-            context = para.get("context", "")
-            for qa in para.get("qas", []):
-                gold = qa.get("answers", [{}])[0].get("text", "")
-                if not gold.strip():
-                    continue
+    for item in data:
+        qna_list.append({
+            "type": "netbench",
+            "question": item.get("Question", ""),
+            "context": item.get("Context", ""),
+            "gold_answer": item.get("Answer", "")
+        })
 
-                qna_list.append({
-                    "type": "telequad",
-                    "question": qa.get("question", ""),
-                    "context": context,
-                    "gold_answer": gold
-                })
     return qna_list
 
 
-
 def build_prompt(item):
-    if item["type"] == "telequad":
+    if item["type"] in ["telequad"]:
         return f"""### Role
 You are a Senior Network Specification Engineer. Your task is to extract technical parameters from the provided text with extreme precision.
 
@@ -87,6 +103,27 @@ Question: "What is the SCS?"
 Answer: "Normal: 15kHz, Ext: 30kHz"
 
 ---
+### Context
+{item["context"]}
+
+### Question
+{item["question"]}
+
+Answer:
+"""
+    if item["type"] in ["netbench"]:
+        return f"""### Role
+You are a Senior Network Specification Engineer. Your task is to extract technical parameters from the provided text with extreme precision.
+
+### Rules
+1. **Source of Truth:** Base your answer on the provided context.
+2. **Format:** Output raw technical values, units, or states. Do not use full sentences.
+
+### Examples
+Context: "BGP Policy: Requirement is to prevent transit AS functionality for AS65000. Routes learned from Peer ISP_A should not be advertised to Peer ISP_B."
+Question: "What common BGP filtering technique is used on AS65000's routers to prevent advertising routes learned from ISP_A to ISP_B?
+Answer: "A common technique is using an AS_PATH filter list or route map. On the outbound policy towards ISP_B, implement a filter that denies any route whose AS_PATH contains the ASN of ISP_A. This prevents AS65000 from becoming a transit AS between ISP_A and ISP_B."
+
 ### Context
 {item["context"]}
 
@@ -124,8 +161,8 @@ Answer:
 """
 
 
-def run_local_llm(qna_list, output_dir):
-    os.makedirs(output_dir, exist_ok=True)
+def run_single_dataset(qna_list, output_path):
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
     tokenizer = AutoTokenizer.from_pretrained(
         MODEL_NAME,
@@ -140,8 +177,7 @@ def run_local_llm(qna_list, output_dir):
     )
     model.eval()
 
-    telequad_results = []
-    teleqna_results = []
+    results = []
 
     for i in tqdm(range(0, len(qna_list), BATCH_SIZE)):
         batch = qna_list[i:i + BATCH_SIZE]
@@ -169,38 +205,37 @@ def run_local_llm(qna_list, output_dir):
         )
 
         for item, ans in zip(batch, answers):
-            record = {
+            results.append({
                 "question": item["question"],
                 "gold_answer": item["gold_answer"],
                 "model_answer": ans.strip()
-            }
-
-            if item["type"] == "telequad":
-                telequad_results.append(record)
-            else:
-                teleqna_results.append(record)
+            })
 
         torch.cuda.empty_cache()
 
-    with open(os.path.join(output_dir, "telequad.json"), "w", encoding="utf-8") as f:
-        json.dump(telequad_results, f, ensure_ascii=False, indent=2)
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(results, f, ensure_ascii=False, indent=2)
 
-    with open(os.path.join(output_dir, "teleqna.json"), "w", encoding="utf-8") as f:
-        json.dump(teleqna_results, f, ensure_ascii=False, indent=2)
+    print(f"[+] 생성 완료: {output_path} ({len(results)}개)")
 
-    print("[+] 저장 완료")
-    print(f"  - telequad: {len(telequad_results)}")
-    print(f"  - teleqna : {len(teleqna_results)}")
-        
-        
-        
+
+
 if __name__ == "__main__":
     telequad = load_telequad("../data/telequad/TeleQuAD-v4-full.json")
     teleqna = load_teleqna("../data/teleQnA/TeleQnA.json")
+    netbench = load_netbench("../data/netbench/netbench.json")
 
-    all_data = telequad + teleqna
+    run_single_dataset(
+        telequad,
+        os.path.join(OUTPUT_DIR, "telequad.json")
+    )
 
-    run_local_llm(
-        all_data,
-        "../data/qwen_answer"
+    run_single_dataset(
+        teleqna,
+        os.path.join(OUTPUT_DIR, "teleqna.json")
+    )
+
+    run_single_dataset(
+        netbench,
+        os.path.join(OUTPUT_DIR, "netbench.json")
     )
