@@ -4,7 +4,7 @@ import torch
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-MODEL_NAME = "Qwen/Qwen3-32B"
+MODEL_NAME = "Qwen/Qwen2.5-3B-Instruct"
 
 BATCH_SIZE = 4
 MAX_INPUT_TOKENS = 4096
@@ -88,10 +88,10 @@ Answer: "Normal: 15kHz, Ext: 30kHz"
 
 ---
 ### Context
-{context}
+{item["context"]}
 
 ### Question
-{question}
+{item["question"]}
 
 Answer:
 """
@@ -115,10 +115,10 @@ Answer: "option 3: Only devices capable of sending it"
 
 ---
 ### Question
-{question}
+{item["question"]}
 
 ### Options
-{options}
+{item["options"]}
 
 Answer:
 """
