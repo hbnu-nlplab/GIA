@@ -8,7 +8,7 @@ import json
 # ==========================================
 
 # 설정 파일 경로
-CONFIG_FILE = r"c:\Users\Yujin\CodeSpace\GIA\Data\Pnetlab\L2VPN\device_info.json"
+CONFIG_FILE = r"c:\Users\Yujin\CodeSpace\GIA\Data\Pnetlab\Research_Institute_Internal_DC\device_info.json"
 
 def load_config(filepath):
     print(f"[DEBUG] 설정 파일 로드 중: {filepath}")
@@ -122,24 +122,48 @@ def clean_config(raw_config):
     lines = raw_config.splitlines()
     cleaned_lines = []
     skip_until_config = True
+    in_banner = False
+    banner_delimiter = ""
 
     for line in lines:
+        # NSO Command Echo 및 프롬프트 제거
         if "admin@ncs#" in line or "admin@ncs%" in line:
             continue
         if "live-status exec" in line or "devices device" in line:
             continue
-        if line.strip().startswith("result"):
-            skip_until_config = False
-            continue
         if line.strip().endswith("#") and len(line.strip().split()) == 1:
             continue
-        if skip_until_config and not line.strip():
+
+        # CLI 출력 노이즈 제거
+        if "Building configuration" in line or "Current configuration" in line:
             continue
-        if line.strip() and (line.startswith("!") or "version" in line or "Building configuration" in line or "Current configuration" in line):
-            skip_until_config = False
+        if line.strip().startswith("result"):
+            # result 라인은 스킵하되, 이후부터 설정이 나올 수 있음 (하지만 보통 그 뒤에 Building config 등이 나옴)
+            continue
+
+        # 설정 시작 지점 찾기 (! 또는 version)
+        # 설정 시작 지점 찾기 (! 또는 version)
+        if skip_until_config:
+            if line.strip() and (line.strip().startswith("!") or line.strip().startswith("version")):
+                skip_until_config = False
+                cleaned_lines.append(line)
+            continue
         
-        if not skip_until_config:
-            cleaned_lines.append(line)
+        # Banner 제거 로직
+        if line.strip().startswith("banner "):
+            # banner 명령 시작 (예: banner exec ^C)
+            # 종료 구분자 추출 (마지막 글자)
+            banner_delimiter = line.strip()[-1]
+            in_banner = True
+            continue # 배너 시작 라인 스킵
+        
+        if in_banner:
+            # 배너 내용 중 종료 구분자로 끝나는지 확인
+            if line.strip().endswith(banner_delimiter):
+                in_banner = False
+            continue # 배너 내용 스킵
+
+        cleaned_lines.append(line)
 
     result = "\n".join(cleaned_lines)
     print(f"  [DEBUG] 정제 완료 (정제 후 길이: {len(result)} bytes, {len(cleaned_lines)} lines)")
@@ -147,11 +171,12 @@ def clean_config(raw_config):
 
 def clean_xml_output(raw_output):
     """
-    NSO XML 출력에서 프롬프트 및 불필요한 부분을 제거합니다.
+    NSO XML 출력에서 프롬프트, 불필요한 부분 및 배너를 제거합니다.
     """
     lines = raw_output.splitlines()
     xml_lines = []
     in_xml = False
+    in_banner_xml = False
     
     for line in lines:
         # NSO 프롬프트 라인 스킵
@@ -160,10 +185,21 @@ def clean_xml_output(raw_output):
         # show 명령어 라인 스킵
         if line.strip().startswith("show "):
             continue
+        
         # XML 시작 태그 감지
         if line.strip().startswith("<") and not in_xml:
             in_xml = True
+        
         if in_xml:
+            # Banner 태그 감지 및 제거
+            if "<banner" in line:
+                in_banner_xml = True
+            
+            if in_banner_xml:
+                if "</banner>" in line:
+                    in_banner_xml = False
+                continue
+
             xml_lines.append(line)
     
     return "\n".join(xml_lines)
