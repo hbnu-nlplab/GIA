@@ -7,7 +7,7 @@
         "domain_name": "mylab.local",
         "nso_authgroup": "L2VPN",
         "nso_ned_id": "cisco-ios-cli-6.110",
-        "batfish_output_dir": "Data/Pnetlab/L2VPN"
+        "batfish_output_dir": "Data/Pnetlab/Research_Lab"
     },
     "devices": [
         {

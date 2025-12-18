@@ -150,7 +150,7 @@ def main():
     )
 
     # ===== 통합 경로 인자 =====
-    parser.add_argument('--lab-path', default='Data/Pnetlab/L2VPN', 
+    parser.add_argument('--lab-path', default='Data/Pnetlab/Research_Institute_Internal_DC', 
         help='실험실 상위 경로 (예: Data/Pnetlab/L2VPN). 하위의 xml/, configs/ 폴더를 자동 탐색')
     
     # 레거시 호환용 (deprecated)
