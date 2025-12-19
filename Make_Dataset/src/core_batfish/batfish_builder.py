@@ -50,9 +50,129 @@ import os
 import json
 import logging
 import random
+import time
 from typing import Dict, List, Any, Optional, Tuple, Set
 from itertools import combinations
 from dataclasses import dataclass
+from typing import NamedTuple
+from datetime import datetime
+
+
+# ============================================================================
+# NetConfigQA 벤치마크 파이프라인 - Phase 1: 기반 구조
+# ============================================================================
+
+class CanonicalizationError(Exception):
+    """정규화(Canonicalization) 과정에서 발생하는 오류"""
+    pass
+
+
+class AnswerResult(NamedTuple):
+    """
+    벤치마크 정답 결과 구조체
+    
+    Attributes:
+        status: 정답 상태 (OK, NOT_CONFIGURED, NOT_APPLICABLE, UNKNOWN)
+        value: 정답 값 (Python object: list, dict, str, int, bool, None)
+        answer_type: 정답 데이터 타입 (set_str, edge_set, map_str_int, path, enum, scalar_str, scalar_int, bool)
+        evidence: 정답 생성 근거 (JSON 직렬화 가능한 dict)
+        unknown_reason: UNKNOWN 상태의 원인 코드 (OK일 경우 빈 문자열)
+    """
+    status: str           # "OK" | "NOT_CONFIGURED" | "NOT_APPLICABLE" | "UNKNOWN"
+    value: Any            # Python object
+    answer_type: str      # "set_str" | "edge_set" | "map_str_int" | "path" | ...
+    evidence: Dict        # {"query": "...", "params": {...}, "snapshot": "..."}
+    unknown_reason: str   # "" | "SCHEMA_VIOLATION" | "BATFISH_QUERY_ERROR" | ...
+
+
+# 각 프로토콜의 "Configured" 판정 기준
+CONFIGURED_RULES = {
+    "OSPF": "router ospf 프로세스 존재 여부 (via ospfProcessConfiguration)",
+    "BGP": "router bgp 프로세스 존재 여부 (via bgpProcessConfiguration)",
+    "VRF": "vrf definition 정의 존재 여부 (via vrfProperties)",
+    "MPLS": "인터페이스에 mpls ip 명령 존재 여부 (via mplsInterfaces)",
+    "ACL": "ip access-list 정의 존재 여부 (via ipAccessLists)",
+    "NTP": "ntp server 또는 ntp peer 명령 존재 여부 (via ntpServers)",
+    "SYSLOG": "logging host 명령 존재 여부 (via syslogServers)",
+}
+
+# UNKNOWN 상태의 원인 코드
+UNKNOWN_REASONS = {
+    "SCHEMA_VIOLATION": "정답 값이 JSON Schema를 위반함",
+    "BATFISH_QUERY_ERROR": "Batfish 쿼리 실행 중 예외 발생",
+    "BATFISH_EMPTY_RESULT": "Batfish 쿼리가 예상치 못한 빈 결과 반환",
+    "CANONICALIZE_ERROR": "정규화(canonicalize) 과정에서 오류 발생",
+    "TYPE_MISMATCH": "반환 값의 타입이 answer_type과 불일치",
+    "PARSE_ERROR": "Configuration 파싱 실패",
+}
+
+
+def _build_evidence(query_name: str, params: Dict, snapshot_name: str = "") -> Dict:
+    """
+    재현 가능한 증거 메타데이터 생성
+    
+    Args:
+        query_name: Batfish 쿼리 이름 (예: "ospfSessionCompatibility")
+        params: 쿼리 파라미터 (예: {"nodes": "leaf1"})
+        snapshot_name: 스냅샷 이름
+    
+    Returns:
+        JSON 직렬화 가능한 evidence 딕셔너리
+    """
+    return {
+        "query": query_name,
+        "params": params,
+        "snapshot": snapshot_name,
+        "timestamp": datetime.now().isoformat()
+    }
+
+
+def _canonicalize(value: Any, answer_type: str) -> Any:
+    """
+    정답 값을 정규화하여 비교 안정성 확보
+    
+    Args:
+        value: 정규화할 값
+        answer_type: 정답 타입
+    
+    Returns:
+        정규화된 값
+    
+    Raises:
+        CanonicalizationError: 정규화 실패 시
+    """
+    if value is None:
+        return None
+    
+    try:
+        if answer_type == "set_str":
+            # 중복 제거 + 알파벳순 정렬
+            return sorted(list(set(value)))
+        
+        elif answer_type == "edge_set":
+            # 각 edge를 정렬(무방향 통일) + edge 목록 정렬
+            normalized = [tuple(sorted(edge)) for edge in value]
+            return sorted([list(e) for e in set(normalized)])
+        
+        elif answer_type in ("map_str_int", "map_str_str"):
+            # 키 정렬된 딕셔너리
+            return dict(sorted(value.items()))
+        
+        elif answer_type == "path":
+            # 경로는 순서가 중요하므로 정렬하지 않음
+            return list(value) if not isinstance(value, list) else value
+        
+        elif answer_type in ("scalar_str", "scalar_int", "bool", "enum"):
+            # 스칼라 값은 그대로 반환
+            return value
+        
+        else:
+            # 알 수 없는 타입은 그대로 반환
+            return value
+    
+    except Exception as e:
+        raise CanonicalizationError(f"정규화 실패 (type={answer_type}): {e}")
+
 
 try:
     from pybatfish.client.session import Session
@@ -216,6 +336,58 @@ class BatfishBuilder:
                 ))
         
         return flows
+    
+    def get_layer3_edges(self) -> List[Dict]:
+        """
+        L3 링크(Edges) 목록 반환
+        Target: LINK_FAILURE 시나리오용
+        """
+        if not self._initialized: return []
+        try:
+            edges_df = self.bf.q.layer3Edges().answer().frame()
+            edges = []
+            if not edges_df.empty:
+                for _, row in edges_df.iterrows():
+                    # Interface 객체의 hostname 속성 처리
+                    iface = row['Interface']
+                    remote_iface = row['Remote_Interface']
+                    
+                    n1 = getattr(iface, 'hostname', str(iface).split('[')[0])
+                    n2 = getattr(remote_iface, 'hostname', str(remote_iface).split('[')[0])
+                    
+                    edges.append({
+                        "node1": n1,
+                        "node2": n2,
+                        "interface1": str(iface),
+                        "interface2": str(remote_iface)
+                    })
+            return edges
+        except Exception as e:
+            logger.warning(f"get_layer3_edges error: {e}")
+            return []
+
+    def get_vrfs(self) -> List[str]:
+        """VRF 목록 반환"""
+        if not self._initialized: return []
+        try:
+            # nodeProperties에서 VRF 정보 추출하거나 routes에서 확인
+            vrfs = set()
+            # 간단하게 routes() 쿼리로 확인 (시간이 좀 걸릴 수 있음)
+            # 대안: interfaceProperties에서 vrf 컬럼 확인
+            ifaces_df = self.bf.q.interfaceProperties().answer().frame()
+            if 'VRF' in ifaces_df.columns:
+                unique_vrfs = ifaces_df['VRF'].dropna().unique()
+                for v in unique_vrfs:
+                    if v.lower() not in ['default', 'management']:
+                        vrfs.add(v)
+            return list(vrfs)
+        except Exception as e:
+            logger.warning(f"get_vrfs error: {e}")
+            return []
+            
+    def get_pe_nodes(self) -> List[str]:
+        """PE 장비(Edge Router) 목록 반환 (이름 기반)"""
+        return [n for n in self.nodes if 'pe' in n.lower()]
     
     # =========================================================================
     # L4 메트릭 구현
@@ -643,8 +815,9 @@ class BatfishBuilder:
 
         try:
             # VRF1과 VRF2의 인터페이스 IP 수집
-            vrf1_interfaces = self.bf.q.interfaceProperties(vrfs=vrf1).answer().frame()
-            vrf2_interfaces = self.bf.q.interfaceProperties(vrfs=vrf2).answer().frame()
+            df_props = self.bf.q.interfaceProperties().answer().frame()
+            vrf1_interfaces = df_props[df_props['VRF'] == vrf1]
+            vrf2_interfaces = df_props[df_props['VRF'] == vrf2]
 
             if vrf1_interfaces.empty or vrf2_interfaces.empty:
                 return "set", []  # 인터페이스 정보 없음
@@ -1048,13 +1221,12 @@ class BatfishBuilder:
         - DNA의 differential reachability 분석
 
         Returns:
-            (answer_type, ground_truth, explanation_text)
+            (answer_type, combined_text)
             - answer_type: "text"
-            - ground_truth: "영향 없음" | "경로 변경" | "통신 단절"
-            - explanation_text: 상세 분석 결과
+            - combined_text: 상세 분석 결과 포함 텍스트
         """
         if not self._initialized:
-            return "text", "정보 없음", "정보없음"
+            return "text", "정보 없음 (초기화 안됨)"
 
         try:
             # 출발지/목적지 IP 찾기
@@ -1062,84 +1234,93 @@ class BatfishBuilder:
             dst_ips = self.node_ips.get(test_dst, [])
             
             if not src_ips or not dst_ips:
-                return "text", "정보 없음", f"IP 정보 없음 - {test_src}: {len(src_ips)}개, {test_dst}: {len(dst_ips)}개 IP"
+                return "text", f"정보 없음 (IP 미발견: {test_src}={len(src_ips)}개, {test_dst}={len(dst_ips)}개IP)"
 
             test_src_ip = src_ips[0]
             test_dst_ip = dst_ips[0]
 
-            # 1. 현재 경로 분석
-            path_result = self.bf.q.traceroute(
+            # 1. Base Reachability (초기 상태)
+            base_traces = self.bf.q.traceroute(
                 startLocation=test_src,
                 headers=HeaderConstraints(dstIps=test_dst_ip)
             ).answer().frame()
+            
+            if base_traces.empty:
+                return "text", f"통신 단절 (초기 상태에서 {test_src} -> {test_dst} 도달 불가)"
 
-            if path_result.empty:
-                return "text", "통신 단절", f"경로 없음: {test_src}에서 {test_dst}로 현재 도달 불가"
-
-            # 경로 분석
-            traces = path_result['Traces'].iloc[0] if not path_result.empty else []
-            current_path_nodes = []
-            alternate_path_nodes = []
-            total_paths = len(traces) if traces else 0
-            paths_through_link = 0
-            paths_avoiding_link = 0
-
-            if traces:
-                for trace in traces:
-                    hops = getattr(trace, 'hops', []) if hasattr(trace, 'hops') else []
-                    path_nodes = []
-                    for hop in hops:
-                        node = getattr(hop, 'node', None)
-                        if node:
-                            node_name = getattr(node, 'hostname', str(node)) if hasattr(node, 'hostname') else str(node)
-                            path_nodes.append(node_name)
-                    
-                    # 이 경로가 node1-node2 링크를 사용하는지 확인
-                    uses_link = False
-                    for i in range(len(path_nodes) - 1):
-                        if (node1.lower() in path_nodes[i].lower() and node2.lower() in path_nodes[i+1].lower()) or \
-                           (node2.lower() in path_nodes[i].lower() and node1.lower() in path_nodes[i+1].lower()):
-                            uses_link = True
-                            break
-                    
-                    if uses_link:
-                        paths_through_link += 1
-                        if not current_path_nodes:
-                            current_path_nodes = path_nodes
-                    else:
-                        paths_avoiding_link += 1
-                        if not alternate_path_nodes:
-                            alternate_path_nodes = path_nodes
-                    
-                    if not current_path_nodes:
-                        current_path_nodes = path_nodes
-
-            # 3. 결과 분류 (Classification) - 단순 카테고리로 반환
-            current_path_str = " → ".join(current_path_nodes) if current_path_nodes else "정보없음"
-            alternate_path_str = " → ".join(alternate_path_nodes) if alternate_path_nodes else "없음"
-
-            if paths_through_link == 0:
-                # Case A: 영향 없음 - 현재 경로가 장애 링크를 사용하지 않음
-                result = "영향 없음"
-                desc = f"현재 경로({current_path_str})가 장애 링크({node1}-{node2})를 경유하지 않음."
-
-            elif paths_avoiding_link > 0:
-                # Case B: 경로 변경 (우회 가능)
-                result = "경로 변경"
-                desc = f"기존 경로({current_path_str})가 장애 링크를 사용하지만, 대체 경로({alternate_path_str}) 존재."
-
-            else:
-                # Case C: 통신 단절
+            # 초기 경로 추출 (표시용)
+            base_trace_obj = base_traces['Traces'].iloc[0][0] # First trace
+            base_path_nodes = []
+            for hop in base_trace_obj.hops:
+                 node = getattr(hop, 'node', None)
+                 if node:
+                     base_path_nodes.append(getattr(node, 'hostname', str(node)))
+            base_path_str = " → ".join(base_path_nodes)
+            
+            # 2. 장애 시뮬레이션을 위한 Snapshot Fork
+            # 링크를 구성하는 인터페이스 찾기 (node1 -> node2 쪽 인터페이스)
+            # 여기서는 간단히 node1의 모든 인터페이스 중 node2와 연결된 것을 찾거나,
+            # Topology 정보를 이용해야 함. Batfish edges API 활용.
+            
+            edges = self.bf.q.layer3Edges(nodes=node1, remoteNodes=node2).answer().frame()
+            if edges.empty:
+                 # 반대 방향 시도
+                 edges = self.bf.q.layer3Edges(nodes=node2, remoteNodes=node1).answer().frame()
+                 if edges.empty:
+                     return "text", f"영향 없음 (링크 {node1}-{node2} 발견 실패: 이미 다운되었거나 연결 없음)"
+            
+            # 비활성화할 인터페이스 목록
+            deactivate_list = []
+            for _, row in edges.iterrows():
+                intf = row.get('Interface')
+                remote_intf = row.get('Remote_Interface')
+                if intf: deactivate_list.append(intf)
+                if remote_intf: deactivate_list.append(remote_intf)
+            
+            failure_snapshot_name = f"failure_{node1}_{node2}_{int(time.time())}"
+            self.bf.fork_snapshot(
+                base_name=self.bf.snapshot,
+                name=failure_snapshot_name,
+                deactivate_interfaces=deactivate_list,
+                overwrite=True
+            )
+            
+            # 3. 장애 상태에서 Reachability (Differential 아님, 그냥 reachability로도 충분)
+            # DifferentialReachability가 더 정확하지만 overhead가 클 수 있음.
+            # 여기서는 "도달 가능성"과 "경로 변경"만 보면 되므로 traceroute 사용.
+            
+            fail_traces = self.bf.q.traceroute(
+                startLocation=test_src,
+                headers=HeaderConstraints(dstIps=test_dst_ip)
+            ).answer(snapshot=failure_snapshot_name).frame()
+            
+            # 4. 결과 분석
+            if fail_traces.empty:
                 result = "통신 단절"
-                desc = f"모든 경로({current_path_str})가 장애 링크를 사용하며 대체 경로 없음."
+                desc = f"초기 경로({base_path_str}) 도달 가능했으나, 장애 시 도달 불가."
+                combined_text = f"통신 단절 (초기경로: {base_path_str}, 장애 시 경로 없음)"
+            else:
+                # 경로가 있는지 확인
+                fail_trace_obj = fail_traces['Traces'].iloc[0][0]
+                fail_path_nodes = []
+                for hop in fail_trace_obj.hops:
+                     node = getattr(hop, 'node', None)
+                     if node:
+                         fail_path_nodes.append(getattr(node, 'hostname', str(node)))
+                fail_path_str = " → ".join(fail_path_nodes)
 
-            # 반환값: (답변타입, 결합된 텍스트)
-            if result == "영향 없음":
-                combined_text = f"영향 없음 (현재경로: {current_path_str}가 장애링크 미경유)"
-            elif result == "경로 변경":
-                combined_text = f"경로 변경 (현재경로: {current_path_str}, 대체경로: {alternate_path_str})"
-            else:  # 통신 단절
-                combined_text = f"통신 단절 (현재경로: {current_path_str}, 대체경로 없음)"
+                if base_path_nodes == fail_path_nodes:
+                     result = "영향 없음"
+                     desc = f"초기 경로와 장애 시 경로가 동일함 ({base_path_str})."
+                     combined_text = f"영향 없음 (경로 유지: {base_path_str})"
+                else:
+                     result = "경로 변경"
+                     desc = f"초기 경로({base_path_str})에서 새로운 경로({fail_path_str})로 우회."
+                     combined_text = f"경로 변경 (초기: {base_path_str} → 변경: {fail_path_str})"
+
+            # Snapshot cleanup (Optional - Batfish normally handles cleanup but good practice)
+            # self.bf.delete_snapshot(failure_snapshot_name) 
+
             return "text", combined_text
 
         except Exception as e:
@@ -1345,6 +1526,84 @@ class BatfishBuilder:
         except Exception as e:
             logger.warning(f"k_failure_tolerance error: {e}")
             return "text", "분석 오류"
+
+    def ospf_backbone_contiguity(self) -> Tuple[str, str]:
+        """
+        L5/Hard: OSPF 백본 연속성(Backbone Contiguity) 검사
+        
+        질문 예시: "OSPF 백본 영역(Area 0)이 끊김 없이 하나로 연결되어 있는지 확인해주세요."
+        
+        학술적 근거:
+        - RFC 2328: Backbone must be contiguous
+        - Batfish: Check for partitioned backbone
+        
+        Returns:
+            (answer_type, result_text) - "정상" or "분리됨(분리된 라우터 목록)"
+        """
+        if not self._initialized:
+            return "text", "분석 불가"
+            
+        try:
+            # 1. OSPF Area 0에 속한 인터페이스/라우터 찾기
+            ospf_config = self.bf.q.ospfAreaConfiguration().answer().frame()
+            if ospf_config.empty:
+                 return "text", "정보 없음 (OSPF 미설정)"
+
+            # Area 컬럼이 존재하는지 확인하고 필터링
+            if 'Area' in ospf_config.columns:
+                ospf_config = ospf_config[ospf_config['Area'].astype(str) == "0"]
+            
+            if ospf_config.empty:
+                 return "text", "정보 없음 (Area 0 미설정)"
+            
+            backbone_nodes = set(ospf_config['Node'].unique())
+            if len(backbone_nodes) < 2:
+                 return "text", "정상 (백본 라우터 1개 이하)"
+            
+            # 2. OSPF Edges (Adjacency) 찾기
+            ospf_edges = self.bf.q.ospfEdges().answer().frame()
+            
+            # Area 0 내의 엣지만 필터링 (양쪽 모두 Area 0 인터페이스여야 함 - 하지만 ospfEdges는 이미 맺어진 것)
+            # Area 0 노드들 간의 연결성을 Graph로 구성
+            
+            adj_list = {node: set() for node in backbone_nodes}
+            
+            if not ospf_edges.empty:
+                for _, row in ospf_edges.iterrows():
+                    # Interface 구체정보를 통해 Area를 확인하면 더 정확하지만,
+                    # 여기서는 Backbone Node들끼리의 연결이면 Backbone Link로 간주 (단순화)
+                    n1 = row['Interface'].hostname
+                    n2 = row['Remote_Interface'].hostname
+                    
+                    if n1 in backbone_nodes and n2 in backbone_nodes:
+                        adj_list[n1].add(n2)
+                        adj_list[n2].add(n1)
+            
+            # 3. BFS/DFS로 연결성 확인
+            start_node = next(iter(backbone_nodes))
+            visited = set()
+            queue = [start_node]
+            visited.add(start_node)
+            
+            while queue:
+                curr = queue.pop(0)
+                for neighbor in adj_list[curr]:
+                    if neighbor not in visited:
+                        visited.add(neighbor)
+                        queue.append(neighbor)
+            
+            # 4. 결과 판정
+            if len(visited) == len(backbone_nodes):
+                return "text", "정상 (모두 연결됨)"
+            else:
+                isolated = backbone_nodes - visited
+                isolated_str = ", ".join(sorted(isolated))
+                return "text", f"분리됨 (격리된 라우터: {isolated_str})"
+                
+        except Exception as e:
+            logger.warning(f"ospf_backbone_contiguity error: {e}")
+            return "text", "분석 오류"
+
     
     def differential_reachability(self,
                                   src_ip: str,
