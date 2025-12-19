@@ -2196,6 +2196,271 @@ class BatfishBuilder:
             "What_If_Analysis": self.generate_l5_questions()
         }
 
+    # =========================================================================
+    # NetConfigQA 벤치마크 파이프라인 - Phase 2: AnswerResult 반환 메서드
+    # =========================================================================
+    
+    def _make_evidence(self, query_name: str, params: dict) -> dict:
+        """BatfishBuilder 내부용 evidence 생성 헬퍼"""
+        return _build_evidence(query_name, params, getattr(self, 'snapshot_name', 'baseline'))
+    
+    def get_vrfs_benchmark(self, node: str = None) -> AnswerResult:
+        """
+        [벤치마크용] VRF 목록 반환
+        
+        Args:
+            node: 특정 노드만 조회 (None이면 전체)
+        
+        Returns:
+            AnswerResult with set_str type
+        """
+        evidence = self._make_evidence("interfaceProperties", {"nodes": node or "all"})
+        
+        if not self._initialized:
+            return AnswerResult("UNKNOWN", [], "set_str", evidence, "BATFISH_QUERY_ERROR")
+        
+        try:
+            ifaces_df = self.bf.q.interfaceProperties(nodes=node).answer().frame() if node else self.bf.q.interfaceProperties().answer().frame()
+            
+            if ifaces_df.empty or 'VRF' not in ifaces_df.columns:
+                # VRF 설정 자체가 없음
+                return AnswerResult("NOT_CONFIGURED", [], "set_str", evidence, "")
+            
+            unique_vrfs = ifaces_df['VRF'].dropna().unique().tolist()
+            # default, management 제외
+            vrfs = [v for v in unique_vrfs if v.lower() not in ['default', 'management']]
+            
+            if not vrfs:
+                # VRF는 조회되었으나 사용자 정의 VRF가 없음
+                return AnswerResult("NOT_CONFIGURED", [], "set_str", evidence, "")
+            
+            return AnswerResult("OK", _canonicalize(vrfs, "set_str"), "set_str", evidence, "")
+            
+        except Exception as e:
+            logger.warning(f"get_vrfs_benchmark error: {e}")
+            return AnswerResult("UNKNOWN", None, "set_str", evidence, "BATFISH_QUERY_ERROR")
+    
+    def get_ospf_neighbors_benchmark(self, node: str) -> AnswerResult:
+        """
+        [벤치마크용] 특정 노드의 OSPF Neighbor 목록 반환
+        
+        Args:
+            node: 노드 이름
+        
+        Returns:
+            AnswerResult with set_str type
+            - NOT_CONFIGURED: OSPF 프로세스가 없음
+            - OK + []: OSPF는 있으나 Neighbor가 없음
+            - OK + ["pe1", ...]: Neighbor 목록
+        """
+        evidence = self._make_evidence("ospfProcessConfiguration", {"nodes": node})
+        
+        if not self._initialized:
+            return AnswerResult("UNKNOWN", [], "set_str", evidence, "BATFISH_QUERY_ERROR")
+        
+        try:
+            # 1. OSPF 프로세스 존재 확인
+            ospf_config = self.bf.q.ospfProcessConfiguration(nodes=node).answer().frame()
+            
+            if ospf_config.empty:
+                return AnswerResult("NOT_CONFIGURED", [], "set_str", evidence, "")
+            
+            # 2. OSPF Neighbor 조회
+            evidence = self._make_evidence("ospfSessionCompatibility", {"nodes": node})
+            neighbors = self.bf.q.ospfSessionCompatibility(nodes=node).answer().frame()
+            
+            if neighbors.empty:
+                # OSPF는 있으나 Neighbor가 없음
+                return AnswerResult("OK", [], "set_str", evidence, "")
+            
+            # 3. Neighbor 목록 추출
+            if 'Remote_Node' in neighbors.columns:
+                neighbor_list = neighbors['Remote_Node'].unique().tolist()
+            else:
+                neighbor_list = []
+            
+            return AnswerResult("OK", _canonicalize(neighbor_list, "set_str"), "set_str", evidence, "")
+            
+        except CanonicalizationError as e:
+            return AnswerResult("UNKNOWN", None, "set_str", evidence, "CANONICALIZE_ERROR")
+        except Exception as e:
+            logger.warning(f"get_ospf_neighbors_benchmark error: {e}")
+            return AnswerResult("UNKNOWN", None, "set_str", evidence, "BATFISH_QUERY_ERROR")
+    
+    def get_bgp_neighbors_benchmark(self, node: str) -> AnswerResult:
+        """
+        [벤치마크용] 특정 노드의 BGP Neighbor 목록 반환
+        
+        Args:
+            node: 노드 이름
+        
+        Returns:
+            AnswerResult with set_str type
+        """
+        evidence = self._make_evidence("bgpProcessConfiguration", {"nodes": node})
+        
+        if not self._initialized:
+            return AnswerResult("UNKNOWN", [], "set_str", evidence, "BATFISH_QUERY_ERROR")
+        
+        try:
+            # 1. BGP 프로세스 존재 확인
+            bgp_config = self.bf.q.bgpProcessConfiguration(nodes=node).answer().frame()
+            
+            if bgp_config.empty:
+                return AnswerResult("NOT_CONFIGURED", [], "set_str", evidence, "")
+            
+            # 2. BGP Neighbor 조회
+            evidence = self._make_evidence("bgpPeerConfiguration", {"nodes": node})
+            peers = self.bf.q.bgpPeerConfiguration(nodes=node).answer().frame()
+            
+            if peers.empty:
+                return AnswerResult("OK", [], "set_str", evidence, "")
+            
+            # 3. Peer IP 목록 추출
+            if 'Remote_IP' in peers.columns:
+                peer_list = peers['Remote_IP'].astype(str).unique().tolist()
+            elif 'Peer_Address' in peers.columns:
+                peer_list = peers['Peer_Address'].astype(str).unique().tolist()
+            else:
+                peer_list = []
+            
+            return AnswerResult("OK", _canonicalize(peer_list, "set_str"), "set_str", evidence, "")
+            
+        except CanonicalizationError as e:
+            return AnswerResult("UNKNOWN", None, "set_str", evidence, "CANONICALIZE_ERROR")
+        except Exception as e:
+            logger.warning(f"get_bgp_neighbors_benchmark error: {e}")
+            return AnswerResult("UNKNOWN", None, "set_str", evidence, "BATFISH_QUERY_ERROR")
+    
+    def get_interface_status_benchmark(self, node: str) -> AnswerResult:
+        """
+        [벤치마크용] 특정 노드의 인터페이스 상태(UP/DOWN) 반환
+        
+        Args:
+            node: 노드 이름
+        
+        Returns:
+            AnswerResult with map_str_str type
+        """
+        evidence = self._make_evidence("interfaceProperties", {"nodes": node})
+        
+        if not self._initialized:
+            return AnswerResult("UNKNOWN", {}, "map_str_str", evidence, "BATFISH_QUERY_ERROR")
+        
+        try:
+            ifaces_df = self.bf.q.interfaceProperties(nodes=node).answer().frame()
+            
+            if ifaces_df.empty:
+                return AnswerResult("NOT_CONFIGURED", {}, "map_str_str", evidence, "")
+            
+            # 인터페이스별 상태 매핑
+            status_map = {}
+            for _, row in ifaces_df.iterrows():
+                iface_name = row.get('Interface', '')
+                if isinstance(iface_name, str):
+                    # Interface 형식: node[iface] -> iface만 추출
+                    if '[' in iface_name and ']' in iface_name:
+                        iface_name = iface_name.split('[')[1].rstrip(']')
+                    active = row.get('Active', False)
+                    status_map[iface_name] = "up" if active else "down"
+            
+            return AnswerResult("OK", _canonicalize(status_map, "map_str_str"), "map_str_str", evidence, "")
+            
+        except CanonicalizationError as e:
+            return AnswerResult("UNKNOWN", None, "map_str_str", evidence, "CANONICALIZE_ERROR")
+        except Exception as e:
+            logger.warning(f"get_interface_status_benchmark error: {e}")
+            return AnswerResult("UNKNOWN", None, "map_str_str", evidence, "BATFISH_QUERY_ERROR")
+    
+    def traceroute_benchmark(self, src_location: str, dst_ip: str, target_name: str = "") -> AnswerResult:
+        """
+        [벤치마크용] 경로 추적 (L4)
+        
+        Args:
+            src_location: 출발지 노드
+            dst_ip: 목적지 IP
+            target_name: 목적지 노드 이름 (선택)
+        
+        Returns:
+            AnswerResult with path type
+        """
+        evidence = self._make_evidence("traceroute", {"startLocation": src_location, "dst": dst_ip})
+        
+        if not self._initialized:
+            return AnswerResult("UNKNOWN", [], "path", evidence, "BATFISH_QUERY_ERROR")
+        
+        try:
+            result = self.bf.q.traceroute(
+                startLocation=src_location,
+                headers=HeaderConstraints(dstIps=dst_ip)
+            ).answer().frame()
+            
+            if result.empty:
+                return AnswerResult("NOT_APPLICABLE", None, "path", evidence, "")
+            
+            # 첫 번째 trace의 경로 추출
+            traces = result['Traces'].iloc[0]
+            if not traces:
+                return AnswerResult("OK", [], "path", evidence, "")
+            
+            path_nodes = []
+            for trace in traces:
+                for hop in trace.hops:
+                    node_name = hop.node
+                    if node_name and node_name not in path_nodes:
+                        path_nodes.append(node_name)
+            
+            # 목적지 추가
+            if target_name and target_name not in path_nodes:
+                path_nodes.append(target_name)
+            
+            return AnswerResult("OK", path_nodes, "path", evidence, "")
+            
+        except Exception as e:
+            logger.warning(f"traceroute_benchmark error: {e}")
+            return AnswerResult("UNKNOWN", None, "path", evidence, "BATFISH_QUERY_ERROR")
+    
+    def link_exists_benchmark(self, node1: str, node2: str) -> AnswerResult:
+        """
+        [벤치마크용] 두 노드 간 링크 존재 여부 확인
+        
+        Args:
+            node1: 첫 번째 노드
+            node2: 두 번째 노드
+        
+        Returns:
+            AnswerResult with bool type
+        """
+        evidence = self._make_evidence("layer3Edges", {"nodes": f"{node1},{node2}"})
+        
+        if not self._initialized:
+            return AnswerResult("UNKNOWN", None, "bool", evidence, "BATFISH_QUERY_ERROR")
+        
+        try:
+            edges = self.bf.q.layer3Edges().answer().frame()
+            
+            if edges.empty:
+                return AnswerResult("OK", False, "bool", evidence, "")
+            
+            # 양방향 확인
+            for _, row in edges.iterrows():
+                n1 = row.get('Interface', {})
+                n2 = row.get('Remote_Interface', {})
+                
+                # Interface 객체에서 hostname 추출
+                hostname1 = getattr(n1, 'hostname', '') if hasattr(n1, 'hostname') else str(n1).split('[')[0] if '[' in str(n1) else ''
+                hostname2 = getattr(n2, 'hostname', '') if hasattr(n2, 'hostname') else str(n2).split('[')[0] if '[' in str(n2) else ''
+                
+                if (hostname1.lower() == node1.lower() and hostname2.lower() == node2.lower()) or \
+                   (hostname1.lower() == node2.lower() and hostname2.lower() == node1.lower()):
+                    return AnswerResult("OK", True, "bool", evidence, "")
+            
+            return AnswerResult("OK", False, "bool", evidence, "")
+            
+        except Exception as e:
+            logger.warning(f"link_exists_benchmark error: {e}")
+            return AnswerResult("UNKNOWN", None, "bool", evidence, "BATFISH_QUERY_ERROR")
+
 
 def test_batfish_connection(host: str = "localhost") -> bool:
     """Batfish 연결 테스트"""
