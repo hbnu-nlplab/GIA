@@ -507,31 +507,76 @@ def main():
                     q_text = q_text.replace(f"{{{k}}}", str(v))
             
             a_val = res["value"]
+            
+            # ================================================================
+            # NetConfigQA 벤치마크 파이프라인 - Phase 3: CSV 컬럼 확장
+            # ================================================================
+            
+            # 정답 직렬화 (JSON 형식 유지)
             if isinstance(a_val, (list, set, tuple)):
-                a_str = ", ".join(sorted(map(str, a_val)))
+                # set_str, edge_set, path 등
+                a_val_list = list(a_val)
+                if a_val_list:
+                    # 첫 번째 요소가 문자열이면 정렬
+                    if a_val_list and isinstance(a_val_list[0], str):
+                        a_json = json.dumps(sorted(a_val_list), ensure_ascii=False)
+                    else:
+                        a_json = json.dumps(a_val_list, ensure_ascii=False)
+                else:
+                    a_json = "[]"
             elif isinstance(a_val, dict):
-                a_str = str(a_val)
+                # map_str_int, map_str_str 등
+                a_json = json.dumps(dict(sorted(a_val.items())), ensure_ascii=False)
+            elif isinstance(a_val, bool):
+                a_json = json.dumps(a_val)
+            elif a_val is None:
+                a_json = "null"
             else:
-                a_str = str(a_val)
-            if not a_str: a_str = "정보없음"
+                a_json = json.dumps(str(a_val), ensure_ascii=False)
+            
+            if not a_json or a_json == '""':
+                a_json = "정보없음"
+            
+            # 기본값 설정 (기존 호환성)
+            answer_status = "OK"
+            unknown_reason = ""
+            evidence_str = "{}"
+            
+            # AnswerResult를 반환하는 새 메서드 결과인 경우
+            if isinstance(res, AnswerResult):
+                answer_status = res.status
+                unknown_reason = res.unknown_reason
+                evidence_str = json.dumps(res.evidence, ensure_ascii=False) if res.evidence else "{}"
+                a_json = json.dumps(res.value, ensure_ascii=False, sort_keys=True) if res.value is not None else "null"
             
             qa_list.append({
                 "id": str(dsl["id"]),
                 "category": dsl["category"],
-                "question": q_text,
-                "answer": a_str,
-                "type": res["answer_type"],
                 "level": level,
-                "files": str(res.get("files", []))
+                "question": q_text,
+                "answer_status": answer_status,
+                "answer_type": res["answer_type"] if isinstance(res, dict) else res.answer_type,
+                "answer": a_json,
+                "unknown_reason": unknown_reason,
+                "evidence": evidence_str,
+                "pipeline_version": PIPELINE_VERSION,
+                "files": str(res.get("files", []) if isinstance(res, dict) else [])
             })
 
     csv_path = out_dir / f"{lab_path.name}_dataset_batfish_{timestamp}.csv"
     if qa_list:
         df = pd.DataFrame(qa_list)
+        # 컬럼 순서 정렬
+        column_order = ["id", "category", "level", "question", "answer_status", "answer_type", "answer", "unknown_reason", "evidence", "pipeline_version", "files"]
+        df = df[[c for c in column_order if c in df.columns]]
         df.to_csv(csv_path, index=False, encoding="utf-8-sig")
         print(f"[Done] Generated {len(qa_list)} Q&A pairs at {csv_path}")
+        
+        # 품질 리포트 출력
+        print_quality_report(qa_list)
     else:
         print("[Done] No questions generated.")
 
 if __name__ == "__main__":
     main()
+
