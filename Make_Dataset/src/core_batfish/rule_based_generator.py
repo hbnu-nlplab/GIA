@@ -71,118 +71,140 @@ ALLOWED_METRICS = {
     
     # === L4/L5: Batfish 기반 (placeholder) ===
     "Reachability_Analysis": [
-        "traceroute_path", "reachability_status", "acl_blocking_point"
+        "traceroute_path", "reachability_status", "acl_blocking_point",
+        "loop_detection", "blackhole_detection", "waypoint_check", 
+        "bounded_path_length", "isolation_check"
     ],
     "What_If_Analysis": [
-        "link_failure_impact", "config_change_impact", "policy_compliance_check"
+        "link_failure_impact", "config_change_impact", "policy_compliance_check",
+        "k_failure_tolerance",
+        "ospf_backbone_contiguity"
     ]
 }
 
 
 def default_patterns(metric: str) -> str:
-    """메트릭별 기본 질문 패턴"""
+    """
+    메트릭별 기본 질문 패턴
+    
+    [NetConfigQA 벤치마크] Phase 4: JSON 출력 형식 명시
+    - 리스트 반환: JSON 배열 형식 지시 (예: ["a", "b"])
+    - 맵 반환: JSON 객체 형식 지시 (예: {"key": "value"})
+    - Yes/No: JSON boolean 형식 지시 (true/false)
+    - 없음 응답: 빈 배열([]) 또는 빈 객체({}) 반환 지시
+    """
     table = {
         # === System_Inventory (L1) ===
         "system_hostname_text": "{host} 장비의 호스트네임은 무엇입니까?",
         "system_version_text": "{host} 장비의 운영체제(OS) 버전은 무엇입니까?",
         "system_timezone_text": "{host} 장비의 시간대(Timezone)는 무엇입니까?",
-        "system_user_list": "{host} 장비에 등록된 로컬 사용자 목록을 알려주세요.",
+        "system_user_list": '{host} 장비에 등록된 로컬 사용자 목록을 JSON 배열로 알려주세요. 예: ["admin", "operator"]. 없으면 빈 배열 []을 반환하세요.',
         "system_user_count": "{host} 장비에 등록된 로컬 사용자는 총 몇 명입니까?",
         "logging_buffered_severity_text": "{host} 장비에서 logging buffered의 severity-level은 무엇입니까?",
-        "ntp_server_list": "{host} 장비에 설정된 NTP 서버 목록을 알려주세요.",
-        "snmp_community_list": "{host} 장비에 설정된 SNMP 커뮤니티 목록을 알려주세요.",
-        "syslog_server_list": "{host} 장비에 설정된 Syslog 서버 목록을 알려주세요.",
-        "interface_status_map": "{host} 장비의 각 인터페이스 상태를 알려주세요.",
+        "ntp_server_list": '{host} 장비에 설정된 NTP 서버 목록을 JSON 배열로 알려주세요. 예: ["10.0.0.1", "10.0.0.2"]. 없으면 빈 배열 []을 반환하세요.',
+        "snmp_community_list": '{host} 장비에 설정된 SNMP 커뮤니티 목록을 JSON 배열로 알려주세요. 예: ["public", "private"]. 없으면 빈 배열 []을 반환하세요.',
+        "syslog_server_list": '{host} 장비에 설정된 Syslog 서버 목록을 JSON 배열로 알려주세요. 예: ["192.168.1.10"]. 없으면 빈 배열 []을 반환하세요.',
+        "interface_status_map": '{host} 장비의 각 인터페이스 상태를 JSON 객체로 알려주세요. 예: {{"GigabitEthernet0/0": "up", "GigabitEthernet0/1": "down"}}. 없으면 빈 객체 {{}}를 반환하세요.',
         "routing_table_entry_count": "{host} 장비의 라우팅 테이블 엔트리는 총 몇 개입니까?",
         
         # === Security_Inventory (L1) ===
-        "ssh_present_bool": "{host} 장비의 SSH 버전과 활성화 상태를 알려주세요. [답변 형식: 'SSHv1' / 'SSHv2' / '비활성화']",
+        "ssh_present_bool": '{host} 장비에 SSH가 활성화되어 있습니까? JSON 형식 {{"enabled": true}} 또는 {{"enabled": false}}로 답하세요.',
         "ssh_version_text": "{host} 장비의 SSH 버전은 무엇입니까?",
-        "aaa_present_bool": "{host} 장비의 AAA 인증 방식을 알려주세요. [답변 형식: 'TACACS+' / 'RADIUS' / 'Local' / '미설정']",
+        "aaa_present_bool": '{host} 장비에 AAA 인증이 설정되어 있습니까? JSON 형식 {{"enabled": true}} 또는 {{"enabled": false}}로 답하세요.',
         "vty_transport_input_text": "{host} 장비의 VTY transport input 설정은 무엇입니까?",
         "vty_login_mode_text": "{host} 장비의 VTY line 로그인 방식은 무엇입니까?",
         
         # === Interface_Inventory (L1) ===
         "interface_count": "{host} 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?",
-        "interface_ip_map": "{host} 장비의 각 인터페이스에 할당된 IP 주소를 알려주세요.",
+        "interface_ip_map": '{host} 장비의 각 인터페이스에 할당된 IP 주소를 JSON 객체로 알려주세요. 예: {{"GigabitEthernet0/0": "10.0.0.1/24"}}. 없으면 빈 객체 {{}}를 반환하세요.',
         "subinterface_count": "{host} 장비에 설정된 서브인터페이스는 총 몇 개입니까?",
-        "vrf_bind_map": "{host} 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요.",
+        "vrf_bind_map": '{host} 장비의 각 인터페이스별 VRF 바인딩 현황을 JSON 객체로 알려주세요. 예: {{"GigabitEthernet0/0": "VRF_A"}}. 없으면 빈 객체 {{}}를 반환하세요.',
         
         # === Routing_Inventory (L1) ===
         "bgp_local_as_numeric": "{host} 장비의 BGP Local-AS 번호는 무엇입니까?",
         "bgp_neighbor_count": "{host} 장비의 BGP 피어(이웃)는 총 몇 개입니까?",
-        "neighbor_list_ibgp": "{host} 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.",
-        "neighbor_list_ebgp": "{host} 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.",
-        "ospf_process_ids_set": "{host} 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.",
-        "ospf_area_set": "{host} 장비가 참여하는 OSPF Area 목록을 알려주세요.",
-        "ospf_area0_if_list": "{host} 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.",
+        "neighbor_list_ibgp": '{host} 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 JSON 배열로 알려주세요. 예: ["10.0.0.1", "10.0.0.2"]. 없으면 빈 배열 []을 반환하세요.',
+        "neighbor_list_ebgp": '{host} 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 JSON 배열로 알려주세요. 예: ["192.168.1.1"]. 없으면 빈 배열 []을 반환하세요.',
+        "ospf_process_ids_set": '{host} 장비에 설정된 OSPF 프로세스 ID 목록을 JSON 배열로 알려주세요. 예: [1, 100]. 없으면 빈 배열 []을 반환하세요.',
+        "ospf_area_set": '{host} 장비가 참여하는 OSPF Area 목록을 JSON 배열로 알려주세요. 예: ["0", "1", "2"]. 없으면 빈 배열 []을 반환하세요.',
+        "ospf_area0_if_list": '{host} 장비의 OSPF Area 0에 연결된 인터페이스 목록을 JSON 배열로 알려주세요. 예: ["GigabitEthernet0/0"]. 없으면 빈 배열 []을 반환하세요.',
         
         # === Services_Inventory (L1) ===
-        "vrf_names_set": "{host} 장비에 설정된 VRF 이름 목록을 알려주세요.",
+        "vrf_names_set": '{host} 장비에 설정된 VRF 이름 목록을 JSON 배열로 알려주세요. 예: ["VRF_A", "VRF_B"]. 없으면 빈 배열 []을 반환하세요.',
         "vrf_count": "{host} 장비에 설정된 VRF는 총 몇 개입니까?",
-        "vrf_rd_map": "{host} 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요.",
+        "vrf_rd_map": '{host} 장비에 설정된 VRF들의 이름과 RD 값을 JSON 객체로 알려주세요. 예: {{"VRF_A": "65000:100"}}. 없으면 빈 객체 {{}}를 반환하세요.',
         "rt_import_count": "{host} 장비의 Route Target Import 설정은 총 몇 개입니까?",
         "rt_export_count": "{host} 장비의 Route Target Export 설정은 총 몇 개입니까?",
-        "mpls_ldp_present_bool": "{host} 장비의 MPLS LDP Router-ID를 알려주세요. [답변 형식: 'Router-ID: X.X.X.X' 또는 '미설정']",
-        "l2vpn_pw_id_set": "{host} 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.",
+        "mpls_ldp_present_bool": '{host} 장비에 MPLS LDP가 설정되어 있습니까? JSON 형식 {{"enabled": true, "router_id": "X.X.X.X"}} 또는 {{"enabled": false}}로 답하세요.',
+        "l2vpn_pw_id_set": '{host} 장비에 설정된 L2VPN Pseudowire ID 목록을 JSON 배열로 알려주세요. 예: [100, 200]. 없으면 빈 배열 []을 반환하세요.',
         
         # === Security_Policy (L2) ===
-        "ssh_enabled_devices": "SSH 접속이 가능한 장비 목록을 알려주세요.",
-        "ssh_missing_devices": "SSH 접속이 불가능한 장비 목록을 알려주세요.",
+        "ssh_enabled_devices": 'SSH 접속이 가능한 장비 목록을 JSON 배열로 알려주세요. 예: ["R1", "R2"]. 없으면 빈 배열 []을 반환하세요.',
+        "ssh_missing_devices": 'SSH 접속이 불가능한 장비 목록을 JSON 배열로 알려주세요. 예: ["R3"]. 없으면 빈 배열 []을 반환하세요.',
         "ssh_missing_count": "SSH 접속이 불가능한 장비는 총 몇 대입니까?",
-        "aaa_enabled_devices": "AAA 기능이 활성화된 장비 목록을 알려주세요.",
-        "aaa_missing_devices": "AAA 기능이 비활성화된 장비 목록을 알려주세요.",
-        "devices_with_same_vrf": "{vrf} VRF를 사용하는 장비 목록을 알려주세요.",
+        "aaa_enabled_devices": 'AAA 기능이 활성화된 장비 목록을 JSON 배열로 알려주세요. 예: ["R1", "R2"]. 없으면 빈 배열 []을 반환하세요.',
+        "aaa_missing_devices": 'AAA 기능이 비활성화된 장비 목록을 JSON 배열로 알려주세요. 예: ["R3"]. 없으면 빈 배열 []을 반환하세요.',
+        "devices_with_same_vrf": '{{vrf}} VRF를 사용하는 장비 목록을 JSON 배열로 알려주세요. 예: ["PE1", "PE2"]. 없으면 빈 배열 []을 반환하세요.',
         
         # === OSPF_Consistency (L2) ===
-        "ospf_area_membership": "OSPF Area {area}에 속한 장비 목록을 알려주세요.",
+        "ospf_area_membership": 'OSPF Area {{area}}에 속한 장비 목록을 JSON 배열로 알려주세요. 예: ["R1", "R2"]. 없으면 빈 배열 []을 반환하세요.',
         "ospf_area0_if_count": "{host} 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?",
-        "ospf_neighbor_count_per_area": "OSPF Area {area}의 이웃 관계는 총 몇 개입니까?",
+        "ospf_neighbor_count_per_area": "OSPF Area {{area}}의 이웃 관계는 총 몇 개입니까?",
         
         # === L2VPN_Consistency (L2/L3) ===
-        "l2vpn_pairs": "구성된 L2VPN pseudowire 회선(장비쌍) 목록을 알려주세요.",
-        "l2vpn_unidirectional_pairs": "단방향으로만 설정된 L2VPN 회선(장비쌍) 목록을 알려주세요.",
+        "l2vpn_pairs": 'L2VPN pseudowire 회선(장비쌍) 목록을 JSON 배열로 알려주세요. 예: [["PE1", "PE2"], ["PE2", "PE3"]]. 없으면 빈 배열 []을 반환하세요.',
+        "l2vpn_unidirectional_pairs": '단방향으로만 설정된 L2VPN 회선(장비쌍) 목록을 JSON 배열로 알려주세요. 예: [["PE1", "PE2"]]. 없으면 빈 배열 []을 반환하세요.',
         "l2vpn_unidir_count": "단방향으로만 설정된 L2VPN 회선은 총 몇 개입니까?",
-        "l2vpn_pwid_mismatch_pairs": "PW-ID가 불일치하는 L2VPN 회선(장비쌍) 목록을 알려주세요.",
+        "l2vpn_pwid_mismatch_pairs": 'PW-ID가 불일치하는 L2VPN 회선(장비쌍) 목록을 JSON 배열로 알려주세요. 예: [["PE1", "PE2"]]. 없으면 빈 배열 []을 반환하세요.',
         "l2vpn_mismatch_count": "PW-ID 불일치 또는 단방향 L2VPN 회선은 총 몇 개입니까?",
         
         # === BGP_Consistency (L3) ===
-        "ibgp_fullmesh_ok": "AS {asn}의 iBGP Full-Mesh 상태와 누락된 피어링을 알려주세요. [답변 형식: '완전' 또는 '누락: A↔B, C↔D']",
-        "ibgp_missing_pairs": "AS {asn}의 iBGP Full-Mesh에서 누락된 장비쌍 목록을 알려주세요.",
-        "ibgp_missing_pairs_count": "AS {asn}의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까?",
-        "ibgp_under_peered_devices": "AS {asn}에서 iBGP 피어 수가 부족한 장비 목록을 알려주세요.",
-        "ibgp_under_peered_count": "AS {asn}에서 iBGP 피어 수가 부족한 장비는 총 몇 대입니까?",
+        "ibgp_fullmesh_ok": 'AS {{asn}}의 iBGP Full-Mesh가 완전합니까? JSON 형식 {{"complete": true}} 또는 {{"complete": false, "missing_pairs": [["R1", "R2"]]}}로 답하세요.',
+        "ibgp_missing_pairs": 'AS {{asn}}의 iBGP Full-Mesh에서 누락된 장비쌍 목록을 JSON 배열로 알려주세요. 예: [["R1", "R2"], ["R2", "R3"]]. 없으면 빈 배열 []을 반환하세요.',
+        "ibgp_missing_pairs_count": "AS {{asn}}의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까?",
+        "ibgp_under_peered_devices": 'AS {{asn}}에서 iBGP 피어 수가 부족한 장비 목록을 JSON 배열로 알려주세요. 예: ["R1", "R2"]. 없으면 빈 배열 []을 반환하세요.',
+        "ibgp_under_peered_count": "AS {{asn}}에서 iBGP 피어 수가 부족한 장비는 총 몇 대입니까?",
         
         # === VRF_Consistency (L3) ===
-        "vrf_without_rt_pairs": "route-target이 없는 VRF(장비/VRF) 목록을 알려주세요.",
+        "vrf_without_rt_pairs": 'route-target이 없는 VRF 목록을 JSON 배열로 알려주세요. 예: [["PE1", "VRF_A"], ["PE2", "VRF_B"]]. 없으면 빈 배열 []을 반환하세요.',
         "vrf_without_rt_count": "route-target이 없는 VRF(장비/VRF)는 총 몇 개입니까?",
-        "vrf_interface_bind_count": "{host} 장비의 {vrf} VRF에 바인딩된 인터페이스는 총 몇 개입니까?",
-        "vrf_rt_list_per_device": "{host} 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요.",
+        "vrf_interface_bind_count": "{host} 장비의 {{vrf}} VRF에 바인딩된 인터페이스는 총 몇 개입니까?",
+        "vrf_rt_list_per_device": '{host} 장비에 설정된 route-target 전체 목록을 JSON 배열로 알려주세요. 예: ["65000:100", "65000:200"]. 없으면 빈 배열 []을 반환하세요.',
         
         # === Reachability_Analysis (L4) ===
-        "traceroute_path": "{src_ip}에서 {dst_ip}까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비 목록]",
-        "reachability_status": "{src_ip}에서 {dst_ip}:{dst_port}/{protocol}로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: 없음, 도달: 불가']",
-        "acl_blocking_point": "{src_ip}에서 {dst_ip}로 트래픽이 차단된다면 차단 지점을 알려주세요. [답변 형식: 차단 지점 장비명 또는 '허용']",
+        "traceroute_path": '{src_ip}에서 {dst_ip}까지의 네트워크 경로를 JSON 배열로 알려주세요. 예: ["R1", "R2", "R3"]. 경로가 없으면 빈 배열 []을 반환하세요.',
+        "reachability_status": '{src_ip}에서 {dst_ip}:{dst_port}/{protocol}로 도달 가능합니까? JSON 형식 {{"reachable": true, "path": ["R1", "R2"]}} 또는 {{"reachable": false}}로 답하세요.',
+        "acl_blocking_point": '{src_ip}에서 {dst_ip}로 트래픽이 차단된다면 차단 지점을 알려주세요. JSON 형식 {{"blocked": true, "device": "R2"}} 또는 {{"blocked": false}}로 답하세요.',
         
         # === What_If_Analysis (L5) ===
-        "link_failure_impact": "{link} 다운 시 {src}에서 {dst}까지의 트래픽 영향을 알려주세요. [답변 형식: 영향 없음 / 경로 변경 / 통신 단절 중 하나]",
-        "config_change_impact": "설정 변경 후 {src}에서 {dst}까지의 경로 변경 여부와 영향받는 흐름을 알려주세요. [답변 형식: '변경됨: A→B, B→C' 또는 '변경 없음']",
-        "policy_compliance_check": "'{policy_name}' 정책 준수 여부와 위반 사례를 알려주세요. [답변 형식: '준수' 또는 '위반: A→B, C→D']",
+        "link_failure_impact": '{link} 링크가 다운되었을 때 {src}에서 {dst}로의 통신에 영향이 있습니까? JSON 형식 {{"impact": "none"}} / {{"impact": "path_change", "new_path": ["R1", "R3"]}} / {{"impact": "disconnected"}}로 답하세요.',
+        "config_change_impact": '설정 변경 후 {src}에서 {dst}로의 경로가 변경되었습니까? JSON 형식 {{"changed": true, "before": ["R1", "R2"], "after": ["R1", "R3"]}} 또는 {{"changed": false}}로 답하세요.',
+        "policy_compliance_check": "'{policy_name}' 정책이 준수되고 있습니까? JSON 형식 {{\"compliant\": true}} 또는 {{\"compliant\": false, \"violations\": [\"항목1\", \"항목2\"]}}로 답하세요.",
+
+        "loop_detection": '네트워크에서 라우팅 루프가 감지됩니까? JSON 형식 {{"detected": false}} 또는 {{"detected": true, "loops": [["R1", "R2", "R1"]]}}로 답하세요.',
+        "blackhole_detection": '네트워크에 블랙홀 구간이 존재합니까? JSON 형식 {{"detected": false}} 또는 {{"detected": true, "segments": ["R1->R2"]}}로 답하세요.',
+        "waypoint_check": '{src_host}에서 {dst_host}로 가는 트래픽이 {waypoint}를 경유합니까? JSON 형식 {{"passes_through": true}} 또는 {{"passes_through": false}}로 답하세요.',
+        "bounded_path_length": '{src_host}에서 {dst_host}까지의 경로 홉 수는? JSON 형식 {{"hops": 3, "within_limit": true}}로 답하세요.',
+        "isolation_check": '{vrf1}과 {vrf2} VRF 간 트래픽이 격리되어 있습니까? JSON 형식 {{"isolated": true}} 또는 {{"isolated": false, "leak_points": ["R1"]}}로 답하세요.',
+        "k_failure_tolerance": '{host1}과 {host2} 사이 통신이 단일 장애에 내성이 있습니까? JSON 형식 {{"redundant": true, "path_count": 2}} 또는 {{"redundant": false}}로 답하세요.',
+        "ospf_backbone_contiguity": 'OSPF Area 0이 연결되어 있습니까? JSON 형식 {{"contiguous": true}} 또는 {{"contiguous": false, "isolated_routers": ["R1", "R2"]}}로 답하세요.',
         
         # === Comparison_Analysis (L3) ===
-        "compare_bgp_neighbor_count": "{host1}과 {host2}의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: '{host1}: N개, {host2}: M개, 차이: K개']",
-        "compare_interface_count": "{host1}과 {host2}의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: '{host1}: N개, {host2}: M개, 차이: K개']",
-        "compare_vrf_count": "{host1}과 {host2}의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: '{host1}: N개, {host2}: M개, 차이: K개']",
-        "compare_bgp_as": "{host1}과 {host2}의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: '{host1}: AS X, {host2}: AS Y']",
-        "compare_ospf_areas": "{host1}과 {host2}가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: '{host1}: Area 0, 1, {host2}: Area 0, 2']",
-        "max_interface_device": "인터페이스 수가 가장 많은 장비와 그 개수를 알려주세요. [답변 형식: '장비명: N개']",
-        "max_bgp_peer_device": "BGP 피어가 가장 많은 장비와 그 개수를 알려주세요. [답변 형식: '장비명: N개']",
-        "all_devices_same_as": "모든 장비의 BGP AS 번호를 나열해주세요. [답변 형식: '장비1: AS X, 장비2: AS Y, 장비3: AS Z']",
-        "min_interface_device": "인터페이스 수가 가장 적은 장비와 그 개수를 알려주세요. [답변 형식: '장비명: N개']",
-        "bgp_as_distribution": "각 AS별 장비 수 분포를 알려주세요. [답변 형식: 'AS X: N대, AS Y: M대']",
-        "vrf_usage_statistics": "각 장비별 VRF 사용 수 통계를 알려주세요. [답변 형식: '장비1: N개, 장비2: M개']"
+        "compare_bgp_neighbor_count": '{host1}과 {host2}의 BGP 피어 수를 JSON 형식 {{"{host1}": 3, "{host2}": 2, "difference": 1}}로 알려주세요.',
+        "compare_interface_count": '{host1}과 {host2}의 인터페이스 수를 JSON 형식 {{"{host1}": 5, "{host2}": 4, "difference": 1}}로 알려주세요.',
+        "compare_vrf_count": '{host1}과 {host2}의 VRF 수를 JSON 형식 {{"{host1}": 2, "{host2}": 3, "difference": 1}}로 알려주세요.',
+        "compare_bgp_as": '{host1}과 {host2}의 BGP Local AS 번호를 JSON 형식 {{"{host1}": 65001, "{host2}": 65002}}로 알려주세요.',
+        "compare_ospf_areas": '{host1}과 {host2}가 참여하는 OSPF Area 목록을 JSON 형식 {{"{host1}": ["0", "1"], "{host2}": ["0", "2"]}}로 알려주세요.',
+        "max_interface_device": '인터페이스가 가장 많은 장비를 JSON 형식 {{"device": "R1", "count": 10}}로 알려주세요.',
+        "max_bgp_peer_device": 'BGP 피어가 가장 많은 장비를 JSON 형식 {{"device": "R1", "count": 5}}로 알려주세요.',
+        "all_devices_same_as": '모든 장비의 BGP AS 번호를 JSON 형식 {{"R1": 65001, "R2": 65001}}로 알려주세요.',
+        "min_interface_device": '인터페이스가 가장 적은 장비를 JSON 형식 {{"device": "R3", "count": 2}}로 알려주세요.',
+        "bgp_as_distribution": '각 AS별 장비 수를 JSON 형식 {{"65001": 3, "65002": 2}}로 알려주세요.',
+        "vrf_usage_statistics": '각 장비별 VRF 수를 JSON 형식 {{"R1": 2, "R2": 3}}로 알려주세요.'
     }
-    return table.get(metric, f"{metric}에 대한 질문을 자연스럽게 작성해주세요.")
+    return table.get(metric, f"{metric}에 대한 질문을 JSON 형식으로 자연스럽게 작성해주세요.")
+
+
 
 
 GOAL2METRICS = {
@@ -272,10 +294,12 @@ SCOPE_HINT = {
     "DEVICE_IF":   ({"type": "DEVICE_IF", "host": "{host}", "if": "{if}"}, ["host", "if"]),
     "DEVICE_PAIR": ({"type": "DEVICE_PAIR", "host1": "{host1}", "host2": "{host2}"}, ["host1", "host2"]),
     "OSPF_AREA":   ({"type": "OSPF_AREA", "area": "{area}"}, ["area"]),
-    "FLOW":        ({"type": "FLOW", "src_ip": "{src_ip}", "dst_ip": "{dst_ip}"}, ["src_ip", "dst_ip"]),
+    "FLOW":        ({"type": "FLOW", "src_ip": "{src_ip}", "dst_ip": "{dst_ip}", "waypoint": "{waypoint}"}, ["src_ip", "dst_ip", "waypoint"]),
     "LINK_FAILURE": ({"type": "LINK_FAILURE", "link": "{link}"}, ["link"]),
     "CONFIG_CHANGE": ({"type": "CONFIG_CHANGE"}, []),
-    "POLICY":      ({"type": "POLICY", "policy_name": "{policy_name}"}, ["policy_name"])
+    "POLICY":      ({"type": "POLICY", "policy_name": "{policy_name}"}, ["policy_name"]),
+    "VRF_PAIR":    ({"type": "VRF_PAIR", "vrf1": "{vrf1}", "vrf2": "{vrf2}"}, ["vrf1", "vrf2"]),
+    "NODE_PAIR":   ({"type": "DEVICE_PAIR", "host1": "{host1}", "host2": "{host2}"}, ["host1", "host2"])
 }
 
 METRIC_AGG = {
@@ -363,7 +387,14 @@ METRIC_AGG = {
     "acl_blocking_point": "text",
     "link_failure_impact": "text",
     "config_change_impact": "text",  # 변경된 흐름 상세 (Boolean 피함)
-    "policy_compliance_check": "text"  # 위반 사례 상세 (Boolean 피함)
+    "policy_compliance_check": "text",  # 위반 사례 상세 (Boolean 피함)
+    "loop_detection": "text",
+    "blackhole_detection": "text",
+    "waypoint_check": "text",
+    "bounded_path_length": "text",
+    "isolation_check": "text",
+    "k_failure_tolerance": "text",
+    "ospf_backbone_contiguity": "text"
 }
 
 CANDIDATES = {
