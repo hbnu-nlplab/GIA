@@ -1,49 +1,22 @@
 """
-Batfish 기반 L4/L5 메트릭 계산 엔진
+Batfish 기반 L4/L5 문제 생성기 (통합 Facade)
 
-L4: 네트워크 도달성 분석 (Reachability Analysis)
-L5: What-If / Differential 분석 (Impact Analysis)
+이 파일은 리팩토링된 모듈들을 통합하는 Facade 클래스입니다.
+실제 구현은 다음 파일들에 분리되어 있습니다:
+
+- models.py: 데이터 클래스 (AnswerResult, FlowSpec 등)
+- batfish_base.py: BatfishBase 클래스 (초기화, 스냅샷 관리)
+- l4_analyzer.py: L4AnalyzerMixin (도달성 분석 메트릭)
+- l5_analyzer.py: L5AnalyzerMixin (What-If 분석 메트릭)
 
 === 학술적 근거 (Golden 6 Papers) ===
 
-1. HSA (Header Space Analysis) - NSDI 2012, 1000+ citations
-   - Reachability, Loop-freedom, Isolation 정의
-   
-2. VeriFlow - NSDI 2013, 1300+ citations
-   - 실시간 Network-wide Invariant 검증
-   
-3. Batfish - NSDI 2015, 400+ citations
-   - Config → Data Plane 분석 파이프라인
-   - Multipath/Failure/Destination Consistency
-   
-4. Minesweeper - SIGCOMM 2017, 300+ citations
-   - 8가지 핵심 속성: reachability, isolation, waypointing,
-     black holes, bounded path length, load-balancing,
-     functional equivalence, fault-tolerance
-     
-5. Config2Spec - NSDI 2020, 70+ citations
-   - 정책 기반 Specification: Reachability, Isolation, Waypoint
-   
-6. DNA (Differential Network Analysis) - NSDI 2022, 50+ citations
-   - Differential Reachability, What-If 분석
-
-=== 구현된 인바리언트 ===
-
-L4 Invariants:
-- reachability_status: A→B 도달 가능 여부 (HSA, VeriFlow, Batfish)
-- loop_detection: 포워딩 루프 탐지 (HSA, VeriFlow)
-- blackhole_detection: 블랙홀 탐지 (HSA, Minesweeper)
-- waypoint_check: 웨이포인트 통과 검증 (Minesweeper, Config2Spec)
-- bounded_path_length: 경로 홉 수 제한 (Minesweeper)
-- traceroute_path: 경로 추적 (Batfish)
-- acl_blocking_point: ACL 차단 지점 (HSA)
-
-L5 Invariants:
-- link_failure_impact: 단일 링크 장애 영향 (DNA, Minesweeper)
-- k_failure_tolerance: k개 장애 내성 검증 (Minesweeper)
-- config_change_impact: 설정 변경 영향 (DNA)
-- differential_reachability: 변경 전후 도달성 차이 (DNA)
-- policy_compliance_check: 정책 준수 검증 (Config2Spec)
+1. HSA (Header Space Analysis) - NSDI 2012
+2. VeriFlow - NSDI 2013
+3. Batfish - NSDI 2015
+4. Minesweeper - SIGCOMM 2017
+5. Config2Spec - NSDI 2020
+6. DNA (Differential Network Analysis) - NSDI 2022
 """
 
 import os
@@ -54,1622 +27,60 @@ import time
 from typing import Dict, List, Any, Optional, Tuple, Set
 from itertools import combinations
 from dataclasses import dataclass
-from typing import NamedTuple
 from datetime import datetime
 
+# 리팩토링된 모듈 임포트
+from .models import (
+    AnswerResult, FlowSpec, L4Result, L5Result,
+    CanonicalizationError, CONFIGURED_RULES, UNKNOWN_REASONS,
+    build_evidence, canonicalize, _build_evidence, _canonicalize
+)
+from .batfish_base import BatfishBase, BATFISH_AVAILABLE
+from .l4_analyzer import L4AnalyzerMixin
+from .l5_analyzer import L5AnalyzerMixin
 
-# ============================================================================
-# NetConfigQA 벤치마크 파이프라인 - Phase 1: 기반 구조
-# ============================================================================
-
-class CanonicalizationError(Exception):
-    """정규화(Canonicalization) 과정에서 발생하는 오류"""
-    pass
-
-
-class AnswerResult(NamedTuple):
-    """
-    벤치마크 정답 결과 구조체
-    
-    Attributes:
-        status: 정답 상태 (OK, NOT_CONFIGURED, NOT_APPLICABLE, UNKNOWN)
-        value: 정답 값 (Python object: list, dict, str, int, bool, None)
-        answer_type: 정답 데이터 타입 (set_str, edge_set, map_str_int, path, enum, scalar_str, scalar_int, bool)
-        evidence: 정답 생성 근거 (JSON 직렬화 가능한 dict)
-        unknown_reason: UNKNOWN 상태의 원인 코드 (OK일 경우 빈 문자열)
-    """
-    status: str           # "OK" | "NOT_CONFIGURED" | "NOT_APPLICABLE" | "UNKNOWN"
-    value: Any            # Python object
-    answer_type: str      # "set_str" | "edge_set" | "map_str_int" | "path" | ...
-    evidence: Dict        # {"query": "...", "params": {...}, "snapshot": "..."}
-    unknown_reason: str   # "" | "SCHEMA_VIOLATION" | "BATFISH_QUERY_ERROR" | ...
-
-
-# 각 프로토콜의 "Configured" 판정 기준
-CONFIGURED_RULES = {
-    "OSPF": "router ospf 프로세스 존재 여부 (via ospfProcessConfiguration)",
-    "BGP": "router bgp 프로세스 존재 여부 (via bgpProcessConfiguration)",
-    "VRF": "vrf definition 정의 존재 여부 (via vrfProperties)",
-    "MPLS": "인터페이스에 mpls ip 명령 존재 여부 (via mplsInterfaces)",
-    "ACL": "ip access-list 정의 존재 여부 (via ipAccessLists)",
-    "NTP": "ntp server 또는 ntp peer 명령 존재 여부 (via ntpServers)",
-    "SYSLOG": "logging host 명령 존재 여부 (via syslogServers)",
-}
-
-# UNKNOWN 상태의 원인 코드
-UNKNOWN_REASONS = {
-    "SCHEMA_VIOLATION": "정답 값이 JSON Schema를 위반함",
-    "BATFISH_QUERY_ERROR": "Batfish 쿼리 실행 중 예외 발생",
-    "BATFISH_EMPTY_RESULT": "Batfish 쿼리가 예상치 못한 빈 결과 반환",
-    "CANONICALIZE_ERROR": "정규화(canonicalize) 과정에서 오류 발생",
-    "TYPE_MISMATCH": "반환 값의 타입이 answer_type과 불일치",
-    "PARSE_ERROR": "Configuration 파싱 실패",
-}
-
-
-def _build_evidence(query_name: str, params: Dict, snapshot_name: str = "") -> Dict:
-    """
-    재현 가능한 증거 메타데이터 생성
-    
-    Args:
-        query_name: Batfish 쿼리 이름 (예: "ospfSessionCompatibility")
-        params: 쿼리 파라미터 (예: {"nodes": "leaf1"})
-        snapshot_name: 스냅샷 이름
-    
-    Returns:
-        JSON 직렬화 가능한 evidence 딕셔너리
-    """
-    return {
-        "query": query_name,
-        "params": params,
-        "snapshot": snapshot_name,
-        "timestamp": datetime.now().isoformat()
-    }
-
-
-def _canonicalize(value: Any, answer_type: str) -> Any:
-    """
-    정답 값을 정규화하여 비교 안정성 확보
-    
-    Args:
-        value: 정규화할 값
-        answer_type: 정답 타입
-    
-    Returns:
-        정규화된 값
-    
-    Raises:
-        CanonicalizationError: 정규화 실패 시
-    """
-    if value is None:
-        return None
-    
-    try:
-        if answer_type == "set_str":
-            # 중복 제거 + 알파벳순 정렬
-            return sorted(list(set(value)))
-        
-        elif answer_type == "edge_set":
-            # 각 edge를 정렬(무방향 통일) + edge 목록 정렬
-            normalized = [tuple(sorted(edge)) for edge in value]
-            return sorted([list(e) for e in set(normalized)])
-        
-        elif answer_type in ("map_str_int", "map_str_str"):
-            # 키 정렬된 딕셔너리
-            return dict(sorted(value.items()))
-        
-        elif answer_type == "path":
-            # 경로는 순서가 중요하므로 정렬하지 않음
-            return list(value) if not isinstance(value, list) else value
-        
-        elif answer_type in ("scalar_str", "scalar_int", "bool", "enum"):
-            # 스칼라 값은 그대로 반환
-            return value
-        
-        else:
-            # 알 수 없는 타입은 그대로 반환
-            return value
-    
-    except Exception as e:
-        raise CanonicalizationError(f"정규화 실패 (type={answer_type}): {e}")
-
-
+# Batfish 로드 (선택적)
 try:
     from pybatfish.client.session import Session
     from pybatfish.datamodel.flow import HeaderConstraints, PathConstraints
-    BATFISH_AVAILABLE = True
 except ImportError:
-    BATFISH_AVAILABLE = False
-    logging.warning("pybatfish not installed. L4/L5 metrics will be unavailable.")
+    Session = None
+    HeaderConstraints = None
+    PathConstraints = None
 
 logger = logging.getLogger(__name__)
 
 
-@dataclass
-class FlowSpec:
-    """트래픽 흐름 정의"""
-    src_ip: str
-    dst_ip: str
-    dst_port: int = 0
-    protocol: str = "TCP"
-    src_location: str = ""
-    dst_location: str = ""
-
-
-@dataclass 
-class L4Result:
-    """L4 메트릭 결과"""
-    reachable: bool
-    path: List[str]
-    blocking_point: Optional[str] = None
-    blocking_reason: Optional[str] = None
-
-
-@dataclass
-class L5Result:
-    """L5 메트릭 결과"""
-    has_impact: bool
-    affected_flows: List[str]
-    description: str = ""
-
-
-class BatfishBuilder:
+class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
     """
     Batfish 기반 L4/L5 문제 생성기
+    
+    Multiple Inheritance (Mixin 패턴)를 사용하여 기능을 모듈화:
+    - BatfishBase: 초기화, 스냅샷 관리, 기본 쿼리
+    - L4AnalyzerMixin: 도달성 분석 (Traceroute, ACL, Loop 등)
+    - L5AnalyzerMixin: What-If 분석 (Link Failure, RCA 등)
     
     L4 메트릭:
     - traceroute_path: 네트워크 경로 추적
     - reachability_status: 도달 가능 여부
     - acl_blocking_point: ACL 차단 지점
+    - loop_detection: 포워딩 루프 탐지
+    - blackhole_detection: 블랙홀 탐지
+    - waypoint_check: 웨이포인트 경유 여부
+    - ospf_compatibility_check: OSPF 호환성 검사 (Advanced)
+    - security_policy_bypass_check: 보안 정책 우회 탐지 (Advanced)
     
     L5 메트릭:
     - link_failure_impact: 링크 장애 영향 분석
     - config_change_impact: 설정 변경 영향 분석
-    - policy_compliance_check: 정책 준수 검증
+    - spof_detection: 단일 장애점 탐지
+    - root_cause_analysis: 장애 근본 원인 분석 (Advanced)
+    - blast_radius_estimation: 장애 영향 범위 추정 (Advanced)
+    - multi_link_failure_analysis: 다중 링크 장애 분석 (Advanced)
     """
     
-    def __init__(self, 
-                 snapshot_path: str,
-                 batfish_host: str = "localhost",
-                 network_name: str = "netconfig_qa"):
-        """
-        Args:
-            snapshot_path: Batfish 스냅샷 경로 (configs/ 폴더 포함)
-            batfish_host: Batfish 서버 호스트
-            network_name: 네트워크 이름
-        """
-        if not BATFISH_AVAILABLE:
-            raise RuntimeError("pybatfish is not installed. Run: pip install pybatfish")
-        
-        self.snapshot_path = snapshot_path
-        self.batfish_host = batfish_host
-        self.network_name = network_name
-        
-        self.bf: Optional[Session] = None
-        self.nodes: List[str] = []
-        self.interfaces: Dict[str, List[Dict]] = {}
-        self.node_ips: Dict[str, List[str]] = {}
-        
-        self._initialized = False
-    
-    def initialize(self) -> bool:
-        """Batfish 세션 초기화 및 스냅샷 로드"""
-        try:
-            logger.info(f"Connecting to Batfish at {self.batfish_host}...")
-            self.bf = Session(host=self.batfish_host)
-            
-            logger.info(f"Setting network: {self.network_name}")
-            self.bf.set_network(self.network_name)
-            
-            logger.info(f"Loading snapshot from: {self.snapshot_path}")
-            self.bf.init_snapshot(self.snapshot_path, name='baseline', overwrite=True)
-            
-            # 노드 정보 수집
-            self._collect_node_info()
-            
-            self._initialized = True
-            logger.info(f"Batfish initialized. Found {len(self.nodes)} nodes.")
-            return True
-            
-        except Exception as e:
-            logger.error(f"Failed to initialize Batfish: {e}")
-            return False
-    
-    def _collect_node_info(self):
-        """노드 및 인터페이스 정보 수집"""
-        # 노드 목록
-        nodes_df = self.bf.q.nodeProperties().answer().frame()
-        self.nodes = nodes_df['Node'].tolist()
-        
-        # 인터페이스 정보
-        ifaces_df = self.bf.q.interfaceProperties().answer().frame()
-        for _, row in ifaces_df.iterrows():
-            node = row['Interface'].hostname
-            if node not in self.interfaces:
-                self.interfaces[node] = []
-                self.node_ips[node] = []
-            
-            iface_info = {
-                'name': str(row['Interface']),
-                'active': row.get('Active', False),
-                'primary_address': row.get('Primary_Address', '')
-            }
-            self.interfaces[node].append(iface_info)
-            
-            # IP 주소 수집
-            if iface_info['primary_address']:
-                ip = str(iface_info['primary_address']).split('/')[0]
-                if ip and ip != 'None':
-                    self.node_ips[node].append(ip)
-    
-    def get_node_pairs(self) -> List[Tuple[str, str]]:
-        """모든 노드 쌍 반환 (도달성 테스트용)"""
-        return list(combinations(self.nodes, 2))
-    
-    def get_representative_flows(self) -> List[FlowSpec]:
-        """대표적인 트래픽 흐름 생성"""
-        flows = []
-        
-        for src_node, dst_node in self.get_node_pairs():
-            src_ips = self.node_ips.get(src_node, [])
-            dst_ips = self.node_ips.get(dst_node, [])
-            
-            if src_ips and dst_ips:
-                # SSH 트래픽
-                flows.append(FlowSpec(
-                    src_ip=src_ips[0],
-                    dst_ip=dst_ips[0],
-                    dst_port=22,
-                    protocol="TCP",
-                    src_location=src_node,
-                    dst_location=dst_node
-                ))
-                
-                # ICMP 트래픽
-                flows.append(FlowSpec(
-                    src_ip=src_ips[0],
-                    dst_ip=dst_ips[0],
-                    dst_port=0,
-                    protocol="ICMP",
-                    src_location=src_node,
-                    dst_location=dst_node
-                ))
-        
-        return flows
-    
-    def get_layer3_edges(self) -> List[Dict]:
-        """
-        L3 링크(Edges) 목록 반환
-        Target: LINK_FAILURE 시나리오용
-        """
-        if not self._initialized: return []
-        try:
-            edges_df = self.bf.q.layer3Edges().answer().frame()
-            edges = []
-            if not edges_df.empty:
-                for _, row in edges_df.iterrows():
-                    # Interface 객체의 hostname 속성 처리
-                    iface = row['Interface']
-                    remote_iface = row['Remote_Interface']
-                    
-                    n1 = getattr(iface, 'hostname', str(iface).split('[')[0])
-                    n2 = getattr(remote_iface, 'hostname', str(remote_iface).split('[')[0])
-                    
-                    edges.append({
-                        "node1": n1,
-                        "node2": n2,
-                        "interface1": str(iface),
-                        "interface2": str(remote_iface)
-                    })
-            return edges
-        except Exception as e:
-            logger.warning(f"get_layer3_edges error: {e}")
-            return []
-
-    def get_vrfs(self) -> List[str]:
-        """VRF 목록 반환"""
-        if not self._initialized: return []
-        try:
-            # nodeProperties에서 VRF 정보 추출하거나 routes에서 확인
-            vrfs = set()
-            # 간단하게 routes() 쿼리로 확인 (시간이 좀 걸릴 수 있음)
-            # 대안: interfaceProperties에서 vrf 컬럼 확인
-            ifaces_df = self.bf.q.interfaceProperties().answer().frame()
-            if 'VRF' in ifaces_df.columns:
-                unique_vrfs = ifaces_df['VRF'].dropna().unique()
-                for v in unique_vrfs:
-                    if v.lower() not in ['default', 'management']:
-                        vrfs.add(v)
-            return list(vrfs)
-        except Exception as e:
-            logger.warning(f"get_vrfs error: {e}")
-            return []
-            
-    def get_pe_nodes(self) -> List[str]:
-        """PE 장비(Edge Router) 목록 반환 (이름 기반)"""
-        return [n for n in self.nodes if 'pe' in n.lower()]
-    
     # =========================================================================
-    # L4 메트릭 구현
-    # =========================================================================
-    
-    def traceroute_path(self, src_location: str, dst_ip: str, target_name: str = "") -> Tuple[str, str]:
-        """
-        L4: 네트워크 경로 추적
-        
-        질문 예시: "PE1에서 CE2(172.16.1.2)로 가는 패킷의 경로를 알려주세요."
-        
-        Returns:
-            (answer_type, path_string) - 형식: "장비1 → 장비2 → 장비3"
-        """
-        if not self._initialized:
-            return "text", "정보없음"
-        
-        try:
-            result = self.bf.q.traceroute(
-                startLocation=src_location,
-                headers=HeaderConstraints(dstIps=dst_ip)
-            ).answer().frame()
-            
-            if result.empty:
-                return "text", "경로없음"
-            
-            # 경로 추출 (pybatfish Trace 객체 처리)
-            path = []
-            traces = result['Traces'].iloc[0]
-            if traces and len(traces) > 0:
-                trace = traces[0]
-                # Trace 객체는 .hops 속성으로 접근
-                hops = getattr(trace, 'hops', []) if hasattr(trace, 'hops') else []
-                for hop in hops:
-                    # Hop 객체에서 node 추출
-                    node = getattr(hop, 'node', None)
-                    if node:
-                        node_name = getattr(node, 'hostname', str(node))
-                        if node_name and node_name not in path:
-                            path.append(node_name)
-            
-            # 형식: "장비1 → 장비2 → 장비3"
-            if path:
-                # 마지막 홉이 결과적으로 target_name(목적지)에 도달했는지 확인
-                # DISPOSITION이 DELIVERED_TO_SUBNET, ACCEPTED, EXITS_NETWORK 등이면 도달로 간주
-                # 단, 마지막 홉이 이미 target_name과 같으면 추가하지 않음
-                disposition = getattr(trace, 'disposition', 'UNKNOWN')
-                if target_name and path[-1] != target_name:
-                    if disposition in ['DELIVERED_TO_SUBNET', 'ACCEPTED', 'EXITS_NETWORK', 'INSUFFICIENT_INFO']:
-                        # INSUFFICIENT_INFO는 보통 edge에서 성공적으로 나갔을 때 발생 (외부망/호스트로)
-                        path.append(target_name)
-                
-                return "text", " → ".join(path)
-            return "text", "경로없음"
-            
-        except Exception as e:
-            logger.warning(f"traceroute_path error: {e}")
-            return "text", "정보없음"
-    
-    def reachability_status(self, 
-                           src_ip: str, 
-                           dst_ip: str,
-                           dst_port: int = 0,
-                           protocol: str = "TCP") -> Tuple[str, str]:
-        """
-        L4: 도달 가능 여부 확인 (경로 포함)
-        
-        질문 예시: "Host A(192.168.1.10)에서 CE1(10.0.0.1)로의 TCP/22 트래픽 경로와 도달 여부를 알려주세요."
-        
-        학술적 근거: 
-        - HSA의 reachability failure 탐지
-        - Batfish의 기본 도달성 분석
-        
-        Returns:
-            (answer_type, result) - 형식: "text", "경로: A → B → C, 도달: 가능/불가"
-        """
-        if not self._initialized:
-            return "text", "경로: Batfish 미연결, 도달: 불가"
-        
-        try:
-            # src_ip에서 해당 노드 이름 찾기
-            src_node = None
-            for node, ips in self.node_ips.items():
-                if src_ip in ips:
-                    src_node = node
-                    break
-            
-            if not src_node:
-                # IP로 노드를 찾지 못하면 첫 번째 노드 사용 (fallback)
-                src_node = self.nodes[0] if self.nodes else None
-                logger.warning(f"Could not find node for IP {src_ip}, using fallback: {src_node}")
-            
-            if not src_node:
-                return "text", "경로: 출발노드 없음, 도달: 불가"
-            
-            headers = HeaderConstraints(
-                srcIps=src_ip,
-                dstIps=dst_ip
-            )
-            
-            if protocol == "TCP" and dst_port > 0:
-                headers = HeaderConstraints(
-                    srcIps=src_ip,
-                    dstIps=dst_ip,
-                    ipProtocols=["TCP"],
-                    dstPorts=[str(dst_port)]
-                )
-            elif protocol == "ICMP":
-                headers = HeaderConstraints(
-                    srcIps=src_ip,
-                    dstIps=dst_ip,
-                    ipProtocols=["ICMP"]
-                )
-            
-            # traceroute로 경로 추출 - 노드 이름 사용 (IP 대신)
-            trace_result = self.bf.q.traceroute(
-                startLocation=src_node,
-                headers=headers
-            ).answer().frame()
-            
-            path = []
-            is_reachable = False
-            
-            if not trace_result.empty:
-                traces = trace_result.iloc[0].get('Traces', [])
-                for trace in traces:
-                    hops = getattr(trace, 'hops', []) if hasattr(trace, 'hops') else []
-                    for hop in hops:
-                        node = getattr(hop, 'node', None)
-                        if node:
-                            node_name = getattr(node, 'hostname', str(node))
-                            if node_name and node_name not in path:
-                                path.append(node_name)
-                    # 도달 여부 확인
-                    disposition = getattr(trace, 'disposition', '')
-                    if 'ACCEPTED' in str(disposition).upper():
-                        is_reachable = True
-            
-            path_str = " → ".join(path) if path else "없음"
-            reach_str = "가능" if is_reachable else "불가"
-            return "text", f"경로: {path_str}, 도달: {reach_str}"
-            
-        except Exception as e:
-            logger.warning(f"reachability_status error: {e}")
-            return "text", "경로: 분석실패, 도달: 불가"
-    
-    def acl_blocking_point(self, 
-                          src_ip: str, 
-                          dst_ip: str,
-                          dst_port: int = 80) -> Tuple[str, str]:
-        """
-        L4: ACL 차단 지점 분석
-        
-        질문 예시: "Host A에서 Web Server(192.168.2.100:80)로의 HTTP 트래픽이 차단되는 지점을 알려주세요."
-        
-        학술적 근거:
-        - HSA의 traffic isolation/leakage 탐지
-        - VeriFlow의 invariant violation 탐지
-        
-        Returns:
-            (answer_type, blocking_description) - 형식: "차단지점: X, ACL규칙: Y" 또는 "허용"
-        """
-        if not self._initialized:
-            return "text", "정보없음"
-        
-        try:
-            result = self.bf.q.reachability(
-                headers=HeaderConstraints(
-                    srcIps=src_ip,
-                    dstIps=dst_ip,
-                    dstPorts=[str(dst_port)],
-                    ipProtocols=["TCP"]
-                )
-            ).answer().frame()
-            
-            if result.empty:
-                return "text", "경로없음"
-            
-            # 차단된 경우 정보 추출
-            for _, row in result.iterrows():
-                if 'Disposition' in result.columns:
-                    disposition = row.get('Disposition', '')
-                    if 'DENIED' in str(disposition).upper():
-                        # 차단 위치 정보 추출
-                        traces = row.get('Traces', [])
-                        blocking_node = "알수없음"
-                        if traces:
-                            trace = traces[0] if traces else None
-                            if trace:
-                                hops = getattr(trace, 'hops', []) if hasattr(trace, 'hops') else []
-                                if hops:
-                                    last_hop = hops[-1]
-                                    node = getattr(last_hop, 'node', None)
-                                    if node:
-                                        blocking_node = getattr(node, 'hostname', str(node))
-                        return "text", f"차단지점: {blocking_node}, ACL에 의해 차단됨"
-            
-            return "text", "허용"
-            
-        except Exception as e:
-            logger.warning(f"acl_blocking_point error: {e}")
-            return "text", "정보없음"
-    
-    def loop_detection(self) -> Tuple[str, str]:
-        """
-        L4: 포워딩 루프 탐지 - 루프 경로 포함
-
-        질문 예시: "네트워크에 포워딩 루프가 존재합니까?"
-
-        학술적 근거:
-        - HSA (NSDI 2012): "loop-free" as core invariant
-        - VeriFlow (NSDI 2013): real-time loop detection
-
-        Returns:
-            (answer_type, result_text) - 형식: "text", "없음" 또는 "발견: A→B→C→A"
-        """
-        if not self._initialized:
-            return "text", "분석 불가"
-
-        try:
-            # Batfish의 detectLoops 쿼리 사용
-            result = self.bf.q.detectLoops().answer().frame()
-
-            if result.empty:
-                return "text", "없음"
-
-            # 루프 경로 추출 (최대 3개)
-            loop_paths = []
-            for _, row in result.iterrows()[:3]:  # 최대 3개 루프만 표시
-                loop_path = str(row.get('Loop', ''))
-                if loop_path:
-                    loop_paths.append(loop_path)
-
-            if loop_paths:
-                loops_str = ", ".join(loop_paths)
-                if len(result) > 3:
-                    loops_str += f" 외 {len(result) - 3}개"
-                return "text", f"발견: {loops_str}"
-            else:
-                return "text", "없음"
-
-        except Exception as e:
-            logger.warning(f"loop_detection error: {e}")
-            return "text", "분석 오류"
-    
-    def blackhole_detection(self, dst_prefix: str = "0.0.0.0/0") -> Tuple[str, List[str]]:
-        """
-        L4: 블랙홀 탐지 (패킷이 드랍되는 목적지)
-        
-        질문 예시: "네트워크에서 패킷이 드랍되는 블랙홀이 존재합니까?"
-        
-        학술적 근거:
-        - HSA (NSDI 2012): blackhole as reachability failure
-        - Minesweeper (SIGCOMM 2017): blackhole detection
-        
-        Returns:
-            (answer_type, blackhole_destinations)
-        """
-        if not self._initialized:
-            return "set", []
-        
-        try:
-            # 도달 불가능한 목적지 탐색
-            result = self.bf.q.reachability(
-                headers=HeaderConstraints(dstIps=dst_prefix)
-            ).answer().frame()
-            
-            if result.empty:
-                return "set", []
-            
-            blackholes = []
-            
-            # Disposition 컬럼이 있으면 사용
-            if "Disposition" in result.columns:
-                for _, row in result.iterrows():
-                    disposition = str(row.get('Disposition', ''))
-                    # DROP, NULL_ROUTED, NO_ROUTE 등을 블랙홀로 간주
-                    if any(d in disposition.upper() for d in ['DROP', 'NULL', 'NO_ROUTE', 'DENIED']):
-                        dst = row.get('DstIp', '')
-                        blackholes.append(f"{dst} ({disposition})")
-            else:
-                # Disposition 컬럼이 없으면 Traces에서 분석
-                # TraceCount가 0이면 도달 불가 (블랙홀 가능성)
-                logger.debug("Using TraceCount for blackhole detection (no Disposition column)")
-                for _, row in result.iterrows():
-                    trace_count = row.get('TraceCount', 0)
-                    if trace_count == 0:
-                        flow = row.get('Flow', {})
-                        dst = getattr(flow, 'dstIp', '') if hasattr(flow, 'dstIp') else str(flow)
-                        blackholes.append(f"{dst} (NO_TRACE)")
-            
-            return "set", list(set(blackholes))
-            
-        except Exception as e:
-            logger.warning(f"blackhole_detection error: {e}")
-            return "set", []
-    
-    def waypoint_check(self,
-                      src_ip: str,
-                      dst_ip: str,
-                      waypoint_node: str) -> Tuple[str, str, List[str]]:
-        """
-        L4: 웨이포인트 경유 여부와 경로 정보
-
-        질문 예시: "ce02에서 ce01로 가는 트래픽이 pe02를 경유합니까?"
-
-        학술적 근거:
-        - Minesweeper (SIGCOMM 2017): waypointing as core property
-        - Config2Spec (NSDI 2020): waypoint policy mining
-
-        Returns:
-            (answer_type, result_text, path_nodes) - 형식: ("text", "경유함 (경로: A→PE02→B)", ["A", "PE02", "B"]) 또는 ("text", "경유 안함 (경로: A→B)", ["A", "B"])
-        """
-        if not self._initialized:
-            return "text", "분석 불가", []
-
-        try:
-            # 출발지 노드 찾기
-            src_node = None
-            for node, ips in self.node_ips.items():
-                if src_ip in ips:
-                    src_node = node
-                    break
-
-            if not src_node:
-                src_node = self.nodes[0]  # fallback
-
-            result = self.bf.q.traceroute(
-                startLocation=src_node,
-                headers=HeaderConstraints(dstIps=dst_ip)
-            ).answer().frame()
-
-            if result.empty:
-                return "text", "경유 안함 (경로 없음)"
-
-            # 경로에서 모든 노드 추출
-            path_nodes = []
-            traces = result['Traces'].iloc[0]
-            if traces:
-                for trace in traces:
-                    hops = getattr(trace, 'hops', []) if hasattr(trace, 'hops') else []
-                    for hop in hops:
-                        node = getattr(hop, 'node', None)
-                        if node:
-                            node_name = getattr(node, 'hostname', str(node)) if hasattr(node, 'hostname') else str(node)
-                            if node_name not in path_nodes:  # 중복 제거
-                                path_nodes.append(node_name)
-
-            # waypoint 경유 여부 확인
-            passes_waypoint = waypoint_node.lower() in [n.lower() for n in path_nodes]
-
-            path_str = " → ".join(path_nodes) if path_nodes else "없음"
-            if passes_waypoint:
-                return "text", f"경유함 (경로: {path_str})", path_nodes
-            else:
-                return "text", f"경유 안함 (경로: {path_str})", path_nodes
-
-        except Exception as e:
-            logger.warning(f"waypoint_check error: {e}")
-            return "text", "분석 오류"
-    
-    def bounded_path_length(self,
-                           src_location: str,
-                           dst_ip: str,
-                           max_hops: int = 5) -> Tuple[str, int]:
-        """
-        L4: 경로 홉 수 계산
-
-        질문 예시: "CE1에서 Server(10.0.0.100)로 가는 경로의 홉 수는 몇 개입니까?"
-
-        학술적 근거:
-        - Minesweeper (SIGCOMM 2017): "bounded path length" as property
-
-        Returns:
-            (answer_type, hop_count) - 실제 홉 수 반환
-        """
-        if not self._initialized:
-            return "number", 0
-
-        try:
-            result = self.bf.q.traceroute(
-                startLocation=src_location,
-                headers=HeaderConstraints(dstIps=dst_ip)
-            ).answer().frame()
-
-            if result.empty:
-                return "number", 0
-
-            # 경로 길이 확인 (pybatfish Trace 객체 처리)
-            traces = result['Traces'].iloc[0]
-            if traces and len(traces) > 0:
-                trace = traces[0]
-                hops = getattr(trace, 'hops', []) if hasattr(trace, 'hops') else []
-                hop_count = len(hops)
-                return "number", hop_count
-
-            return "number", 0
-
-        except Exception as e:
-            logger.warning(f"bounded_path_length error: {e}")
-            return "number", 0
-    
-    def isolation_check(self,
-                       vrf1: str,
-                       vrf2: str) -> Tuple[str, List[str]]:
-        """
-        L4: VRF/테넌트 격리 누수 prefix 목록 추출
-
-        질문 예시: "VRF 'CUSTOMER_A'와 'CUSTOMER_B' 사이에 누수된 prefix들은 무엇입니까?"
-
-        학술적 근거:
-        - HSA (NSDI 2012): "slice isolation" as core invariant
-        - Minesweeper (SIGCOMM 2017): isolation property
-        - Config2Spec (NSDI 2020): isolation policy
-
-        개선사항: 단순 prefix 겹침 대신 실제 reachability 검증
-        - VRF1의 IP에서 VRF2의 IP로 도달 가능한지 확인
-        - Route leaking이 있더라도 ACL 등으로 막힐 수 있으므로 실제 도달성 확인
-
-        Returns:
-            (answer_type, leaked_prefixes) - 누수된 prefix 목록 또는 빈 리스트
-        """
-        if not self._initialized:
-            return "set", []
-
-        try:
-            # VRF1과 VRF2의 인터페이스 IP 수집
-            df_props = self.bf.q.interfaceProperties().answer().frame()
-            vrf1_interfaces = df_props[df_props['VRF'] == vrf1]
-            vrf2_interfaces = df_props[df_props['VRF'] == vrf2]
-
-            if vrf1_interfaces.empty or vrf2_interfaces.empty:
-                return "set", []  # 인터페이스 정보 없음
-
-            # VRF1의 IP 주소 목록 (connected IP만)
-            vrf1_ips = []
-            for _, row in vrf1_interfaces.iterrows():
-                if 'AllAddresses' in row and row['AllAddresses']:
-                    for addr in row['AllAddresses']:
-                        if '/' in addr:  # IP/prefix 형식
-                            ip = addr.split('/')[0]
-                            vrf1_ips.append(ip)
-
-            # VRF2의 IP 주소 목록
-            vrf2_ips = []
-            for _, row in vrf2_interfaces.iterrows():
-                if 'AllAddresses' in row and row['AllAddresses']:
-                    for addr in row['AllAddresses']:
-                        if '/' in addr:
-                            ip = addr.split('/')[0]
-                            vrf2_ips.append(ip)
-
-            if not vrf1_ips or not vrf2_ips:
-                return "set", []
-
-            # VRF1 → VRF2 도달성 확인 (샘플링: 최대 5개씩)
-            leaked_prefixes = []
-            vrf1_sample = vrf1_ips[:5]  # 최대 5개 IP 샘플링
-            vrf2_sample = vrf2_ips[:5]
-
-            for src_ip in vrf1_sample:
-                for dst_ip in vrf2_sample:
-                    try:
-                        # 실제 도달성 확인 (reachability 쿼리)
-                        reach_result = self.bf.q.reachability(
-                            headers=HeaderConstraints(srcIps=src_ip, dstIps=dst_ip)
-                        ).answer().frame()
-
-                        # 도달 가능하면 누수
-                        if not reach_result.empty:
-                            if 'TraceCount' in reach_result.columns:
-                                if any(reach_result['TraceCount'] > 0):
-                                    # 도달 가능한 dst_ip의 prefix 추출
-                                    prefix = f"{dst_ip}/32"  # 기본적으로 /32
-                                    if prefix not in leaked_prefixes:
-                                        leaked_prefixes.append(prefix)
-                            else:
-                                # TraceCount 컬럼 없어도 결과가 있으면 도달 가능
-                                prefix = f"{dst_ip}/32"
-                                if prefix not in leaked_prefixes:
-                                    leaked_prefixes.append(prefix)
-                    except Exception as e:
-                        logger.debug(f"Reachability check failed {src_ip}->{dst_ip}: {e}")
-                        continue
-
-            return "set", leaked_prefixes
-
-        except Exception as e:
-            logger.warning(f"isolation_check error: {e}")
-            return "set", []
-    
-    # =========================================================================
-    # 현업 실무 메트릭 (Operational Metrics)
-    # =========================================================================
-    
-    def asymmetric_path_check(self,
-                              node1: str,
-                              node2: str) -> Tuple[str, str]:
-        """
-        L4: 비대칭 경로(Asymmetric Routing) 검사 - 경로 정보 포함
-
-        질문 예시: "ce01과 ce03 사이의 통신 경로가 대칭(양방향 동일 경로)입니까?"
-
-        현업 중요도: 매우 높음
-        - 비대칭 경로는 방화벽에서 상태 추적(Stateful) 실패 → 패킷 드랍
-        - 갈 때 A경로, 올 때 B경로면 TCP 세션 불가
-
-        Returns:
-            (answer_type, result_text) - 형식: "text", "대칭 (경로: A→B→C)" 또는 "비대칭 (정방향: A→B, 역방향: A→C→B)"
-        """
-        if not self._initialized:
-            return "text", "정보 없음"
-
-        try:
-            # node1 → node2 경로
-            node1_ips = self.node_ips.get(node1, [])
-            node2_ips = self.node_ips.get(node2, [])
-
-            if not node1_ips or not node2_ips:
-                return "text", "IP 정보 없음"
-
-            # 정방향 경로 (node1 → node2)
-            forward_result = self.bf.q.traceroute(
-                startLocation=node1,
-                headers=HeaderConstraints(dstIps=node2_ips[0])
-            ).answer().frame()
-
-            # 역방향 경로 (node2 → node1)
-            reverse_result = self.bf.q.traceroute(
-                startLocation=node2,
-                headers=HeaderConstraints(dstIps=node1_ips[0])
-            ).answer().frame()
-
-            # 경로 노드 추출
-            forward_nodes = []
-            reverse_nodes = []
-
-            if not forward_result.empty:
-                traces = forward_result['Traces'].iloc[0]
-                if traces:
-                    for hop in getattr(traces[0], 'hops', []):
-                        node = getattr(hop, 'node', None)
-                        if node:
-                            forward_nodes.append(getattr(node, 'hostname', str(node)))
-
-            if not reverse_result.empty:
-                traces = reverse_result['Traces'].iloc[0]
-                if traces:
-                    for hop in getattr(traces[0], 'hops', []):
-                        node = getattr(hop, 'node', None)
-                        if node:
-                            reverse_nodes.append(getattr(node, 'hostname', str(node)))
-
-            # 대칭 여부 판단 (역순으로 비교)
-            reverse_nodes_reversed = list(reversed(reverse_nodes))
-            is_symmetric = forward_nodes == reverse_nodes_reversed
-
-            forward_path = " → ".join(forward_nodes) if forward_nodes else "없음"
-            reverse_path = " → ".join(reverse_nodes) if reverse_nodes else "없음"
-
-            if is_symmetric:
-                result_text = f"대칭 (경로: {forward_path})"
-            else:
-                result_text = f"비대칭 (정방향: {forward_path}, 역방향: {reverse_path})"
-
-            return "text", result_text
-
-        except Exception as e:
-            logger.warning(f"asymmetric_path_check error: {e}")
-            return "text", "분석 오류"
-    
-    def mtu_mismatch_check(self) -> Tuple[str, List[str]]:
-        """
-        L1/L2: MTU 불일치 검사
-        
-        질문 예시: "양쪽 링크의 MTU 사이즈가 서로 다른 구간이 있습니까?"
-        
-        현업 중요도: 높음
-        - MTU 불일치 → OSPF Neighbor 불안정, 큰 패킷만 드랍
-        - 찾기 가장 귀찮은 유령 장애(Ghost issue)
-        
-        Returns:
-            (answer_type, mismatch_list)
-        """
-        if not self._initialized:
-            return "set", []
-        
-        try:
-            # 인터페이스 속성 조회
-            interfaces = self.bf.q.interfaceProperties().answer().frame()
-            
-            if interfaces.empty:
-                return "set", []
-            
-            # 연결된 인터페이스 쌍 찾기 (Layer3 Edges)
-            edges = self.bf.q.layer3Edges().answer().frame()
-            
-            mismatches = []
-            
-            if not edges.empty:
-                for _, edge in edges.iterrows():
-                    # 인터페이스 정보 추출
-                    src_iface = edge.get('Interface', {})
-                    dst_iface = edge.get('Remote_Interface', {})
-                    
-                    src_hostname = getattr(src_iface, 'hostname', '') if hasattr(src_iface, 'hostname') else str(src_iface)
-                    dst_hostname = getattr(dst_iface, 'hostname', '') if hasattr(dst_iface, 'hostname') else str(dst_iface)
-                    
-                    # MTU 비교 (인터페이스 속성에서)
-                    src_mtu = None
-                    dst_mtu = None
-                    
-                    for _, iface in interfaces.iterrows():
-                        iface_obj = iface.get('Interface', {})
-                        hostname = getattr(iface_obj, 'hostname', '') if hasattr(iface_obj, 'hostname') else ''
-                        
-                        if hostname == src_hostname:
-                            src_mtu = iface.get('MTU', None)
-                        elif hostname == dst_hostname:
-                            dst_mtu = iface.get('MTU', None)
-                    
-                    if src_mtu and dst_mtu and src_mtu != dst_mtu:
-                        mismatches.append(f"{src_hostname}(MTU:{src_mtu}) <-> {dst_hostname}(MTU:{dst_mtu})")
-            
-            return "set", mismatches
-            
-        except Exception as e:
-            logger.warning(f"mtu_mismatch_check error: {e}")
-            return "set", []
-    
-    def spof_detection(self) -> Tuple[str, List[str]]:
-        """
-        L5: 단일 장애점(SPOF) 탐지 (최적화 버전)
-        
-        질문 예시: "단일 장비 장애 시 통신이 두절되는 구간(SPOF)이 존재합니까?"
-        
-        현업 중요도: 매우 높음
-        - 관리자가 제일 무서워하는 것
-        - 이중화 되어 있다고 믿었는데 실제로는 SPOF인 경우 많음
-        
-        최적화: 기존 traceroute 캐시 활용, 쿼리 수 최소화
-        
-        Returns:
-            (answer_type, spof_list)
-        """
-        if not self._initialized:
-            return "set", []
-        
-        try:
-            spof_nodes = []
-            
-            # 캐시된 경로 정보 활용 (traceroute 쿼리 최소화)
-            # 대표 경로 1개만 조회하여 분석
-            if len(self.nodes) < 3:
-                return "set", []
-            
-            # 가장 멀리 떨어진 노드 쌍 선택 (CE 끼리)
-            ce_nodes = [n for n in self.nodes if 'ce' in n.lower()]
-            if len(ce_nodes) >= 2:
-                src, dst = ce_nodes[0], ce_nodes[-1]
-            else:
-                src, dst = self.nodes[0], self.nodes[-1]
-            
-            src_ips = self.node_ips.get(src, [])
-            dst_ips = self.node_ips.get(dst, [])
-            
-            if not src_ips or not dst_ips:
-                return "set", []
-            
-            # 단일 traceroute로 경로 분석
-            traceroute = self.bf.q.traceroute(
-                startLocation=src,
-                headers=HeaderConstraints(dstIps=dst_ips[0])
-            ).answer().frame()
-            
-            if traceroute.empty:
-                return "set", []
-            
-            traces = traceroute['Traces'].iloc[0]
-            if not traces:
-                return "set", []
-            
-            # 경로 상의 노드들 추출
-            path_nodes = set()
-            for trace in traces:
-                hops = getattr(trace, 'hops', [])
-                for hop in hops:
-                    node = getattr(hop, 'node', None)
-                    if node:
-                        node_name = getattr(node, 'hostname', str(node))
-                        path_nodes.add(node_name)
-            
-            # 경로 상의 노드 중 단일 경로만 있으면 SPOF 후보
-            # (단, 출발지/목적지는 제외)
-            total_paths = len(traces)
-            if total_paths == 1:
-                # 단일 경로면 모든 중간 노드가 SPOF
-                for node in path_nodes:
-                    if node.lower() != src.lower() and node.lower() != dst.lower():
-                        spof_nodes.append(f"{node} (영향: {src} <-> {dst})")
-            
-            return "set", list(set(spof_nodes))
-            
-        except Exception as e:
-            logger.warning(f"spof_detection error: {e}")
-            return "set", []
-    
-    def acl_rule_blocking(self,
-                         src_ip: str,
-                         dst_ip: str,
-                         dst_port: int = 80,
-                         protocol: str = "TCP") -> Tuple[str, str]:
-        """
-        L4: ACL 차단 규칙 상세 분석
-        
-        질문 예시: "A에서 B로의 접속이 차단되는 정확한 ACL 규칙명과 줄 번호는?"
-        
-        현업 중요도: 최고
-        - 운영자가 제일 좋아하는 정보
-        - "어디서 막혔어?"에 대한 즉각적인 답변
-        
-        Returns:
-            (answer_type, blocking_rule_info)
-        """
-        if not self._initialized:
-            return "text", "정보 없음"
-        
-        try:
-            # 필터 분석
-            filter_result = self.bf.q.testFilters(
-                headers=HeaderConstraints(
-                    srcIps=src_ip,
-                    dstIps=dst_ip,
-                    dstPorts=[str(dst_port)],
-                    ipProtocols=[protocol]
-                )
-            ).answer().frame()
-            
-            if filter_result.empty:
-                return "text", "차단 없음 (필터 미적용)"
-            
-            blocking_info = []
-            for _, row in filter_result.iterrows():
-                action = row.get('Action', '')
-                filter_name = row.get('FilterName', '')
-                node = row.get('Node', '')
-                line = row.get('Line', '')
-                
-                if 'DENY' in str(action).upper() or 'REJECT' in str(action).upper():
-                    if line:
-                        blocking_info.append(f"{node}:{filter_name}:Line{line}")
-                    else:
-                        blocking_info.append(f"{node}:{filter_name}")
-            
-            if blocking_info:
-                return "text", ", ".join(blocking_info)
-            else:
-                return "text", "차단 없음 (모두 허용)"
-            
-        except Exception as e:
-            logger.warning(f"acl_rule_blocking error: {e}")
-            return "text", f"분석 오류: {e}"
-    
-    def ip_conflict_check(self) -> Tuple[str, List[str]]:
-        """
-        L1: IP 충돌 검사
-        
-        질문 예시: "동일한 IP가 서로 다른 장비에 중복 할당된 곳이 있습니까?"
-        
-        현업 중요도: 높음
-        - 찾기 가장 귀찮은 문제 중 하나
-        - 간헐적 통신 장애의 주요 원인
-        
-        Returns:
-            (answer_type, conflict_list)
-        """
-        if not self._initialized:
-            return "set", []
-        
-        try:
-            # 모든 인터페이스의 IP 수집
-            interfaces = self.bf.q.interfaceProperties().answer().frame()
-            
-            if interfaces.empty:
-                return "set", []
-            
-            ip_to_devices = {}  # IP -> [(device, interface), ...]
-            
-            for _, row in interfaces.iterrows():
-                iface = row.get('Interface', {})
-                hostname = getattr(iface, 'hostname', '') if hasattr(iface, 'hostname') else ''
-                iface_name = getattr(iface, 'interface', '') if hasattr(iface, 'interface') else ''
-                
-                addresses = row.get('AllAddresses', [])
-                if addresses:
-                    for addr in addresses:
-                        if '/' in str(addr):
-                            ip = str(addr).split('/')[0]
-                            if ip not in ip_to_devices:
-                                ip_to_devices[ip] = []
-                            ip_to_devices[ip].append(f"{hostname}:{iface_name}")
-            
-            # 중복 IP 찾기
-            conflicts = []
-            for ip, devices in ip_to_devices.items():
-                if len(devices) > 1:
-                    conflicts.append(f"{ip} -> {', '.join(devices)}")
-            
-            return "set", conflicts
-            
-        except Exception as e:
-            logger.warning(f"ip_conflict_check error: {e}")
-            return "set", []
-    
-    # =========================================================================
-    # L5 메트릭 구현
-    # =========================================================================
-    
-    def link_failure_impact(self,
-                           node1: str,
-                           node2: str,
-                           test_src: str,
-                           test_dst: str) -> Tuple[str, str, str]:
-        """
-        L5: 링크 장애 영향 분류 (채점 용이성 개선)
-
-        질문 예시: "PE1과 P1 사이의 링크가 다운되었을 때, Host A에서 Host B로의 트래픽 영향은?"
-
-        학술적 근거:
-        - Minesweeper의 k-failure tolerance 검증
-        - DNA의 differential reachability 분석
-
-        Returns:
-            (answer_type, combined_text)
-            - answer_type: "text"
-            - combined_text: 상세 분석 결과 포함 텍스트
-        """
-        if not self._initialized:
-            return "text", "정보 없음 (초기화 안됨)"
-
-        try:
-            # 출발지/목적지 IP 찾기
-            src_ips = self.node_ips.get(test_src, [])
-            dst_ips = self.node_ips.get(test_dst, [])
-            
-            if not src_ips or not dst_ips:
-                return "text", f"정보 없음 (IP 미발견: {test_src}={len(src_ips)}개, {test_dst}={len(dst_ips)}개IP)"
-
-            test_src_ip = src_ips[0]
-            test_dst_ip = dst_ips[0]
-
-            # 1. Base Reachability (초기 상태)
-            base_traces = self.bf.q.traceroute(
-                startLocation=test_src,
-                headers=HeaderConstraints(dstIps=test_dst_ip)
-            ).answer().frame()
-            
-            if base_traces.empty:
-                return "text", f"통신 단절 (초기 상태에서 {test_src} -> {test_dst} 도달 불가)"
-
-            # 초기 경로 추출 (표시용)
-            base_trace_obj = base_traces['Traces'].iloc[0][0] # First trace
-            base_path_nodes = []
-            for hop in base_trace_obj.hops:
-                 node = getattr(hop, 'node', None)
-                 if node:
-                     base_path_nodes.append(getattr(node, 'hostname', str(node)))
-            base_path_str = " → ".join(base_path_nodes)
-            
-            # 2. 장애 시뮬레이션을 위한 Snapshot Fork
-            # 링크를 구성하는 인터페이스 찾기 (node1 -> node2 쪽 인터페이스)
-            # 여기서는 간단히 node1의 모든 인터페이스 중 node2와 연결된 것을 찾거나,
-            # Topology 정보를 이용해야 함. Batfish edges API 활용.
-            
-            edges = self.bf.q.layer3Edges(nodes=node1, remoteNodes=node2).answer().frame()
-            if edges.empty:
-                 # 반대 방향 시도
-                 edges = self.bf.q.layer3Edges(nodes=node2, remoteNodes=node1).answer().frame()
-                 if edges.empty:
-                     return "text", f"영향 없음 (링크 {node1}-{node2} 발견 실패: 이미 다운되었거나 연결 없음)"
-            
-            # 비활성화할 인터페이스 목록
-            deactivate_list = []
-            for _, row in edges.iterrows():
-                intf = row.get('Interface')
-                remote_intf = row.get('Remote_Interface')
-                if intf: deactivate_list.append(intf)
-                if remote_intf: deactivate_list.append(remote_intf)
-            
-            failure_snapshot_name = f"failure_{node1}_{node2}_{int(time.time())}"
-            self.bf.fork_snapshot(
-                base_name=self.bf.snapshot,
-                name=failure_snapshot_name,
-                deactivate_interfaces=deactivate_list,
-                overwrite=True
-            )
-            
-            # 3. 장애 상태에서 Reachability (Differential 아님, 그냥 reachability로도 충분)
-            # DifferentialReachability가 더 정확하지만 overhead가 클 수 있음.
-            # 여기서는 "도달 가능성"과 "경로 변경"만 보면 되므로 traceroute 사용.
-            
-            fail_traces = self.bf.q.traceroute(
-                startLocation=test_src,
-                headers=HeaderConstraints(dstIps=test_dst_ip)
-            ).answer(snapshot=failure_snapshot_name).frame()
-            
-            # 4. 결과 분석
-            if fail_traces.empty:
-                result = "통신 단절"
-                desc = f"초기 경로({base_path_str}) 도달 가능했으나, 장애 시 도달 불가."
-                combined_text = f"통신 단절 (초기경로: {base_path_str}, 장애 시 경로 없음)"
-            else:
-                # 경로가 있는지 확인
-                fail_trace_obj = fail_traces['Traces'].iloc[0][0]
-                fail_path_nodes = []
-                for hop in fail_trace_obj.hops:
-                     node = getattr(hop, 'node', None)
-                     if node:
-                         fail_path_nodes.append(getattr(node, 'hostname', str(node)))
-                fail_path_str = " → ".join(fail_path_nodes)
-
-                if base_path_nodes == fail_path_nodes:
-                     result = "영향 없음"
-                     desc = f"초기 경로와 장애 시 경로가 동일함 ({base_path_str})."
-                     combined_text = f"영향 없음 (경로 유지: {base_path_str})"
-                else:
-                     result = "경로 변경"
-                     desc = f"초기 경로({base_path_str})에서 새로운 경로({fail_path_str})로 우회."
-                     combined_text = f"경로 변경 (초기: {base_path_str} → 변경: {fail_path_str})"
-
-            # Snapshot cleanup (Optional - Batfish normally handles cleanup but good practice)
-            # self.bf.delete_snapshot(failure_snapshot_name) 
-
-            return "text", combined_text
-
-        except Exception as e:
-            logger.warning(f"link_failure_impact error: {e}")
-            return "text", "분석 오류"
-    
-    def config_change_impact(self,
-                            before_snapshot: str,
-                            after_snapshot: str,
-                            src_node: str = "",
-                            dst_node: str = "") -> Tuple[str, str]:
-        """
-        L5: 설정 변경 영향 분석
-        
-        질문 예시: "Router R1에 새로운 ACL 규칙을 추가했을 때, 어떤 트래픽 흐름에 영향이 있나요?"
-        
-        학술적 근거:
-        - DNA의 differential reachability
-        - Batfish의 differentialReachability query
-        
-        Returns:
-            (answer_type, change_description) - 형식: "text", "변경됨: A→B, B→C" 또는 "변경 없음"
-        """
-        if not self._initialized:
-            return "text", "분석 불가"
-        
-        try:
-            # 두 스냅샷 간 차이 분석
-            diff_result = self.bf.q.differentialReachability(
-                snapshot=after_snapshot,
-                reference_snapshot=before_snapshot
-            ).answer().frame()
-            
-            if diff_result.empty:
-                return "text", "변경 없음"
-            
-            # 영향받는 흐름 추출
-            affected_flows = []
-            for _, row in diff_result.iterrows():
-                src = row.get('Flow', {})
-                src_ip = getattr(src, 'srcIp', '') if hasattr(src, 'srcIp') else ''
-                dst_ip = getattr(src, 'dstIp', '') if hasattr(src, 'dstIp') else ''
-                if src_ip and dst_ip:
-                    affected_flows.append(f"{src_ip}→{dst_ip}")
-            
-            if affected_flows:
-                # 최대 5개 흐름만 표시
-                flows_str = ", ".join(affected_flows[:5])
-                if len(affected_flows) > 5:
-                    flows_str += f" 외 {len(affected_flows) - 5}개"
-                return "text", f"변경됨: {flows_str}"
-            else:
-                return "text", f"변경됨: {len(diff_result)}개 흐름 영향"
-            
-        except Exception as e:
-            logger.warning(f"config_change_impact error: {e}")
-            return "text", "분석 오류"
-    
-    def policy_compliance_check(self,
-                               policy_type: str = "waypoint",
-                               waypoint_node: str = "",
-                               dst_ports: List[str] = None,
-                               policy_name: str = "") -> Tuple[str, str]:
-        """
-        L5: 정책 준수 검증
-        
-        질문 예시: "네트워크가 '모든 웹 트래픽은 방화벽을 통과해야 한다'는 정책을 준수하고 있나요?"
-        
-        학술적 근거:
-        - Config2Spec의 waypoint 정책 검증
-        - Epinoia의 intent-driven verification
-        
-        Returns:
-            (answer_type, compliance_result) - 형식: "text", "준수" 또는 "위반: A→B, C→D"
-        """
-        if not self._initialized:
-            return "text", "분석 불가"
-        
-        if dst_ports is None:
-            dst_ports = ["80", "443"]
-        
-        try:
-            if policy_type == "waypoint" and waypoint_node:
-                # 웨이포인트를 우회하는 트래픽 탐지
-                violations = self.bf.q.reachability(
-                    headers=HeaderConstraints(
-                        dstPorts=dst_ports,
-                        ipProtocols=["TCP"]
-                    ),
-                    pathConstraints=PathConstraints(
-                        forbiddenLocations=[waypoint_node]
-                    )
-                ).answer().frame()
-                
-                # 위반 트래픽이 없으면 정책 준수
-                if violations.empty:
-                    return "text", "준수"
-                
-                # 위반 트래픽 상세 추출
-                violation_flows = []
-                for _, row in violations.iterrows():
-                    flow = row.get('Flow', {})
-                    src_ip = getattr(flow, 'srcIp', '') if hasattr(flow, 'srcIp') else ''
-                    dst_ip = getattr(flow, 'dstIp', '') if hasattr(flow, 'dstIp') else ''
-                    if src_ip and dst_ip:
-                        violation_flows.append(f"{src_ip}→{dst_ip}")
-                
-                if violation_flows:
-                    # 최대 3개 위반만 표시
-                    flows_str = ", ".join(violation_flows[:3])
-                    if len(violation_flows) > 3:
-                        flows_str += f" 외 {len(violation_flows) - 3}개"
-                    return "text", f"위반: {flows_str}"
-                else:
-                    return "text", f"위반: {len(violations)}개 흐름"
-            
-            return "text", "준수"
-            
-        except Exception as e:
-            logger.warning(f"policy_compliance_check error: {e}")
-            return "text", "분석 오류"
-    
-    def k_failure_tolerance(self,
-                           src_node: str,
-                           dst_ip: str,
-                           k: int = 1) -> Tuple[str, str]:
-        """
-        L5: k-failure tolerance 경로 수와 경로 목록
-
-        질문 예시: "ce01에서 pe03로 가는 경로는 총 몇 개입니까?"
-
-        학술적 근거:
-        - Minesweeper (SIGCOMM 2017): k-failure tolerance
-        - Trailblazer (FM 2023): SMT-based failure tolerance verification
-
-        Note: 완전한 k-failure 검증은 모든 k-조합을 테스트해야 하므로
-              여기서는 간소화된 버전(대표 링크 테스트)을 구현
-
-        Args:
-            src_node: 출발 노드 이름 (예: "p01", "ce01")
-            dst_ip: 목적지 IP 주소
-            k: 장애 허용 수 (기본 1)
-
-        Returns:
-            (answer_type, result_text) - 형식: "text", "N개 (경로1: A→B, 경로2: A→C→B)"
-        """
-        if not self._initialized:
-            return "text", "분석 불가"
-
-        try:
-            # 출발 노드의 IP 찾기
-            src_ips = self.node_ips.get(src_node, [])
-            src_ip = src_ips[0] if src_ips else None
-
-            if not src_ip:
-                logger.warning(f"k_failure_tolerance: No IP found for node {src_node}")
-                return "text", "정보 없음"
-
-            # 기본 도달성 확인
-            baseline = self.bf.q.reachability(
-                headers=HeaderConstraints(srcIps=src_ip, dstIps=dst_ip)
-            ).answer().frame()
-
-            if baseline.empty:
-                return "text", "0개 (도달 불가)"  # 기본 도달성 없음
-
-            # 경로 추출하여 대체 경로 수 계산
-            # startLocation은 노드 이름 사용
-            traceroute = self.bf.q.traceroute(
-                startLocation=src_node,
-                headers=HeaderConstraints(dstIps=dst_ip)
-            ).answer().frame()
-
-            if traceroute.empty:
-                return "text", "0개 (경로 없음)"
-
-            traces = traceroute['Traces'].iloc[0]
-            if not traces:
-                return "text", "0개 (경로 없음)"
-
-            # 경로 추출 (최대 3개)
-            paths = []
-            for i, trace in enumerate(traces[:3]):
-                hops = getattr(trace, 'hops', []) if hasattr(trace, 'hops') else []
-                nodes = []
-                for hop in hops:
-                    node = getattr(hop, 'node', None)
-                    if node:
-                        node_name = getattr(node, 'hostname', str(node))
-                        nodes.append(node_name)
-                if nodes:
-                    paths.append(f"경로{i+1}: {' → '.join(nodes)}")
-
-            path_count = len(traces)
-            if paths:
-                paths_str = ", ".join(paths)
-                if path_count > 3:
-                    paths_str += f" 외 {path_count - 3}개"
-                return "text", f"{path_count}개 ({paths_str})"
-            else:
-                return "text", f"{path_count}개"
-
-        except Exception as e:
-            logger.warning(f"k_failure_tolerance error: {e}")
-            return "text", "분석 오류"
-
-    def ospf_backbone_contiguity(self) -> Tuple[str, str]:
-        """
-        L5/Hard: OSPF 백본 연속성(Backbone Contiguity) 검사
-        
-        질문 예시: "OSPF 백본 영역(Area 0)이 끊김 없이 하나로 연결되어 있는지 확인해주세요."
-        
-        학술적 근거:
-        - RFC 2328: Backbone must be contiguous
-        - Batfish: Check for partitioned backbone
-        
-        Returns:
-            (answer_type, result_text) - "정상" or "분리됨(분리된 라우터 목록)"
-        """
-        if not self._initialized:
-            return "text", "분석 불가"
-            
-        try:
-            # 1. OSPF Area 0에 속한 인터페이스/라우터 찾기
-            ospf_config = self.bf.q.ospfAreaConfiguration().answer().frame()
-            if ospf_config.empty:
-                 return "text", "정보 없음 (OSPF 미설정)"
-
-            # Area 컬럼이 존재하는지 확인하고 필터링
-            if 'Area' in ospf_config.columns:
-                ospf_config = ospf_config[ospf_config['Area'].astype(str) == "0"]
-            
-            if ospf_config.empty:
-                 return "text", "정보 없음 (Area 0 미설정)"
-            
-            backbone_nodes = set(ospf_config['Node'].unique())
-            if len(backbone_nodes) < 2:
-                 return "text", "정상 (백본 라우터 1개 이하)"
-            
-            # 2. OSPF Edges (Adjacency) 찾기
-            ospf_edges = self.bf.q.ospfEdges().answer().frame()
-            
-            # Area 0 내의 엣지만 필터링 (양쪽 모두 Area 0 인터페이스여야 함 - 하지만 ospfEdges는 이미 맺어진 것)
-            # Area 0 노드들 간의 연결성을 Graph로 구성
-            
-            adj_list = {node: set() for node in backbone_nodes}
-            
-            if not ospf_edges.empty:
-                for _, row in ospf_edges.iterrows():
-                    # Interface 구체정보를 통해 Area를 확인하면 더 정확하지만,
-                    # 여기서는 Backbone Node들끼리의 연결이면 Backbone Link로 간주 (단순화)
-                    n1 = row['Interface'].hostname
-                    n2 = row['Remote_Interface'].hostname
-                    
-                    if n1 in backbone_nodes and n2 in backbone_nodes:
-                        adj_list[n1].add(n2)
-                        adj_list[n2].add(n1)
-            
-            # 3. BFS/DFS로 연결성 확인
-            start_node = next(iter(backbone_nodes))
-            visited = set()
-            queue = [start_node]
-            visited.add(start_node)
-            
-            while queue:
-                curr = queue.pop(0)
-                for neighbor in adj_list[curr]:
-                    if neighbor not in visited:
-                        visited.add(neighbor)
-                        queue.append(neighbor)
-            
-            # 4. 결과 판정
-            if len(visited) == len(backbone_nodes):
-                return "text", "정상 (모두 연결됨)"
-            else:
-                isolated = backbone_nodes - visited
-                isolated_str = ", ".join(sorted(isolated))
-                return "text", f"분리됨 (격리된 라우터: {isolated_str})"
-                
-        except Exception as e:
-            logger.warning(f"ospf_backbone_contiguity error: {e}")
-            return "text", "분석 오류"
-
-    
-    def differential_reachability(self,
-                                  src_ip: str,
-                                  dst_ip: str,
-                                  scenario_snapshot: str = "") -> Tuple[str, str]:
-        """
-        L5: Differential Reachability 상태 설명
-
-        질문 예시: "설정 변경 후 CE1에서 CE2로의 도달성 상태는 어떻게 되나요?"
-
-        학술적 근거:
-        - DNA (NSDI 2022): Differential Network Analysis
-        - Batfish: differentialReachability query
-
-        Returns:
-            (answer_type, status_description) - 도달성 상태 설명 텍스트
-        """
-        if not self._initialized:
-            return "text", "정보 없음"
-
-        try:
-            if not scenario_snapshot:
-                # 시나리오 스냅샷이 없으면 현재 상태만 확인
-                current = self.bf.q.reachability(
-                    headers=HeaderConstraints(srcIps=src_ip, dstIps=dst_ip)
-                ).answer().frame()
-
-                reachable = not current.empty
-                if 'TraceCount' in current.columns and not current.empty:
-                    reachable = any(current['TraceCount'] > 0)
-
-                hop_count = 0
-                if reachable:
-                    # 경로 길이 확인
-                    traceroute = self.bf.q.traceroute(
-                        startLocation=self.nodes[0],  # fallback
-                        headers=HeaderConstraints(dstIps=dst_ip)
-                    ).answer().frame()
-
-                    if not traceroute.empty:
-                        traces = traceroute['Traces'].iloc[0]
-                        if traces:
-                            trace = traces[0]
-                            hops = getattr(trace, 'hops', []) if hasattr(trace, 'hops') else []
-                            hop_count = len(hops)
-
-                return "text", f"도달 가능 ({hop_count}홉)" if reachable else "도달 불가"
-
-            # 두 스냅샷 비교
-            diff = self.bf.q.differentialReachability(
-                snapshot=scenario_snapshot,
-                reference_snapshot='baseline',
-                headers=HeaderConstraints(srcIps=src_ip, dstIps=dst_ip)
-            ).answer().frame()
-
-            if diff.empty:
-                return "text", "변화 없음 - 도달성 유지"
-            else:
-                return "text", f"도달성 변화 있음 ({len(diff)}개 흐름 영향)"
-
-        except Exception as e:
-            logger.warning(f"differential_reachability error: {e}")
-            return "text", "상태 분석 실패"
-    
-    # =========================================================================
-    # 문제 생성
+    # 문제 생성 메서드
     # =========================================================================
     
     def generate_l4_questions(self) -> List[Dict[str, Any]]:
@@ -1682,11 +93,12 @@ class BatfishBuilder:
         
         # 1. Traceroute 문제
         all_pairs = self.get_node_pairs()
-        random.shuffle(all_pairs)  # 랜덤 셔플 (순서만 섞기)
-        for src_node, dst_node in all_pairs:  # 모든 쌍 사용
+        random.shuffle(all_pairs)
+        for src_node, dst_node in all_pairs:
             dst_ips = self.node_ips.get(dst_node, [])
             if dst_ips:
-                _, path_str = self.traceroute_path(src_node, dst_ips[0], target_name=dst_node)
+                tr_result = self.traceroute_path(src_node, dst_ips[0], target_name=dst_node)
+                path_str = " → ".join(tr_result.value) if tr_result.status == "OK" and tr_result.value else "경로 없음"
                 
                 questions.append({
                     "id": f"TRACEROUTE_{src_node}_{dst_node}",
@@ -1694,7 +106,7 @@ class BatfishBuilder:
                     "level": "L4",
                     "answer_type": "text",
                     "question": f"{src_node}에서 {dst_node}({dst_ips[0]})로 가는 패킷의 네트워크 경로를 알려주세요.\n[답변 형식: 화살표(→)로 구분된 장비 목록]",
-                    "ground_truth": path_str if path_str else "경로 없음",
+                    "ground_truth": path_str,
                     "explanation": f"metric `traceroute_path` on src={src_node}, dst={dst_ips[0]}",
                     "evidence_hint": {
                         "scope": {"type": "NODE_PAIR", "src": src_node, "dst": dst_node},
@@ -1703,10 +115,16 @@ class BatfishBuilder:
                 })
         
         # 2. Reachability 문제
-        for flow in self.get_representative_flows()[:30]:  # 상위 30개 흐름
-            _, result_text = self.reachability_status(
-                flow.src_ip, flow.dst_ip, flow.dst_port, flow.protocol
-            )
+        for flow in self.get_representative_flows()[:30]:
+            res = self.reachability_status(flow.src_ip, flow.dst_ip, flow.dst_port, flow.protocol)
+            
+            if res.status != "OK":
+                continue
+                
+            reachable = res.value.get("reachable", False)
+            path_list = res.value.get("path", [])
+            path_str = " → ".join(path_list) if path_list else "없음"
+            result_text = f"경로: {path_str}, 도달: {'가능' if reachable else '불가'}"
             
             port_desc = f":{flow.dst_port}" if flow.dst_port else ""
             questions.append({
@@ -1724,468 +142,273 @@ class BatfishBuilder:
                 "academic_reference": "HSA (NSDI'12), VeriFlow (NSDI'13), Batfish (NSDI'15)"
             })
         
-        # 3. Loop Detection 문제 (HSA, VeriFlow)
-        _, result_text = self.loop_detection()
-        questions.append({
-            "id": "LOOP_DETECTION_GLOBAL",
-            "category": "Reachability_Analysis",
-            "level": "L4",
-            "answer_type": "text",
-            "question": "네트워크에 포워딩 루프가 존재합니까?\n[답변 형식: '없음' 또는 '발견: A→B→C→A']",
-            "ground_truth": result_text,
-            "explanation": f"metric `loop_detection` analysis result",
-            "evidence_hint": {
-                "scope": {"type": "GLOBAL"},
-                "metric": "loop_detection"
-            },
-            "academic_reference": "HSA (NSDI'12): loop-free as core invariant"
-        })
-        
-        # 4. Bounded Path Length 문제 (Minesweeper)
-        all_pairs_bounded = self.get_node_pairs()
-        random.shuffle(all_pairs_bounded)
-        for src_node, dst_node in all_pairs_bounded:  # 모든 쌍 사용
-            dst_ips = self.node_ips.get(dst_node, [])
-            if dst_ips:
-                _, hop_count = self.bounded_path_length(src_node, dst_ips[0], max_hops=5)
-
-                questions.append({
-                    "id": f"BOUNDED_PATH_{src_node}_{dst_node}",
-                    "category": "Reachability_Analysis",
-                    "level": "L4",
-                    "answer_type": "number",
-                    "question": f"{src_node}에서 {dst_node}로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
-                    "ground_truth": str(hop_count),
-                    "explanation": f"metric `bounded_path_length` on {src_node}->{dst_node}, actual_hops={hop_count}",
-                    "evidence_hint": {
-                        "scope": {"type": "NODE_PAIR", "src": src_node, "dst": dst_node},
-                        "metric": "bounded_path_length"
-                    },
-                    "academic_reference": "Minesweeper (SIGCOMM'17): bounded path length"
-                })
-        
-        # 5. Blackhole Detection 문제 (HSA, Minesweeper)
-        _, blackholes = self.blackhole_detection()
-        questions.append({
-            "id": "BLACKHOLE_DETECTION_GLOBAL",
-            "category": "Reachability_Analysis",
-            "level": "L4",
-            "answer_type": "boolean",
-            "question": "네트워크에 패킷이 드랍되는 블랙홀이 존재합니까?\n[답변 형식: true/false (소문자)]",
-            "ground_truth": str(len(blackholes) > 0).lower(),
-            "explanation": f"metric `blackhole_detection` found {len(blackholes)} blackholes",
-            "evidence_hint": {
-                "scope": {"type": "GLOBAL"},
-                "metric": "blackhole_detection"
-            },
-            "academic_reference": "HSA (NSDI'12), Minesweeper (SIGCOMM'17): blackhole detection"
-        })
-        
-        # 6. Waypoint Check 문제 (Minesweeper, Config2Spec)
-        # PE 장비를 웨이포인트로 가정하고 CE→CE 트래픽이 PE를 통과하는지 확인
-        pe_nodes = [n for n in self.nodes if 'pe' in n.lower()]
-        ce_nodes = [n for n in self.nodes if 'ce' in n.lower()]
-        
-        if pe_nodes and len(ce_nodes) >= 2:
-            waypoint = pe_nodes[0]
-            waypoint_count = 0
-            max_waypoint_questions = 10  # 최대 10개로 확장
+        # 3. Loop Detection
+        loop_res = self.loop_detection()
+        if loop_res.status == "OK":
+            has_loop = loop_res.value.get("detected", False)
+            loops = loop_res.value.get("loops", [])
             
-            for i, src_ce in enumerate(ce_nodes[:2]):
-                if waypoint_count >= max_waypoint_questions:
-                    break
-                for dst_ce in ce_nodes[i+1:3]:
-                    if waypoint_count >= max_waypoint_questions:
-                        break
-                    src_ips = self.node_ips.get(src_ce, [])
-                    dst_ips = self.node_ips.get(dst_ce, [])
-                    
-                    if src_ips and dst_ips:
-                        try:
-                            _, result_text, path_nodes = self.waypoint_check(src_ips[0], dst_ips[0], waypoint)
-
-                            questions.append({
-                                "id": f"WAYPOINT_{src_ce}_{dst_ce}_{waypoint}",
-                                "category": "Reachability_Analysis",
-                                "level": "L4",
-                                "answer_type": "set",
-                                "question": f"{src_ce}에서 {dst_ce}로 가는 트래픽이 경유하는 노드들은 무엇입니까?\n[답변 형식: 쉼표로 구분된 노드 목록]",
-                                "ground_truth": ", ".join(path_nodes) if path_nodes else "없음",
-                                "explanation": f"metric `waypoint_check` on {src_ce}->{dst_ce}, path_nodes={path_nodes}",
-                                "evidence_hint": {
-                                    "scope": {"type": "WAYPOINT", "src": src_ce, "dst": dst_ce, "waypoint": waypoint},
-                                    "metric": "waypoint_check"
-                                },
-                                "academic_reference": "Minesweeper (SIGCOMM'17), Config2Spec (NSDI'20): waypointing"
-                            })
-                            waypoint_count += 1
-                        except Exception as e:
-                            logger.warning(f"Skipping waypoint question {src_ce}->{dst_ce}: {e}")
-        
-        # 7. Isolation Check 문제 (HSA, Config2Spec)
-        # ⚠️ VRF 기반 격리 검증: VRF가 있는 토폴로지에서만 의미 있음
-        # VRF가 없는 단순 L3/OSPF/BGP 토폴로지에서는 빈 결과만 나옴
-        p_nodes = [n for n in self.nodes if n.lower().startswith('p') and 'pe' not in n.lower()]
-        
-        # VRF 존재 여부 확인 (Batfish routes 쿼리로 VRF 확인)
-        has_vrf = False
-        try:
-            routes = self.bf.q.routes().answer().frame()
-            if not routes.empty and 'VRF' in routes.columns:
-                unique_vrfs = routes['VRF'].unique()
-                # default VRF 외에 다른 VRF가 있으면 VRF 사용 중
-                has_vrf = any(vrf.lower() not in ['default', ''] for vrf in unique_vrfs)
-        except Exception as e:
-            logger.warning(f"VRF check failed: {e}")
-        
-        if has_vrf and ce_nodes and p_nodes:
-            logger.info("[L4] VRF detected. Generating isolation check questions.")
-            for ce in ce_nodes[:4]:  # CE 4개까지
-                for p in p_nodes[:2]:  # P 2개까지
-                    _, leaked_prefixes = self.isolation_check(ce, p)
-                    questions.append({
-                        "id": f"ISOLATION_{ce}_{p}",
-                        "category": "Reachability_Analysis",
-                        "level": "L4",
-                        "answer_type": "set",
-                        "question": f"{ce}(고객 장비)와 {p}(백본 장비) 사이에 누수된 prefix들은 무엇입니까?\n[답변 형식: 쉼표로 구분된 prefix 목록 또는 '없음']",
-                        "ground_truth": ", ".join(leaked_prefixes) if leaked_prefixes else "없음",
-                        "explanation": f"metric `isolation_check` between {ce} and {p}, leaked_prefixes={leaked_prefixes}",
-                        "evidence_hint": {
-                            "scope": {"type": "ISOLATION", "node1": ce, "node2": p},
-                            "metric": "isolation_check"
-                        },
-                        "academic_reference": "HSA (NSDI'12), Config2Spec (NSDI'20): isolation"
-                    })
-        else:
-            logger.info("[L4] No VRF detected. Skipping isolation check questions.")
-        
-        # =========================================================================
-        # 8. 현업 실무 질문 추가 (Operational Questions)
-        # =========================================================================
-        
-        # 8-1. 비대칭 경로 검사 (Asymmetric Routing)
-        # 성능 최적화: 20개 쌍만 검사 (다양성 확보를 위해 증가)
-        all_pairs_asymmetric = self.get_node_pairs()
-        random.shuffle(all_pairs_asymmetric)
-        for src_node, dst_node in all_pairs_asymmetric[:20]:  # 20개 쌍으로 증가
-            _, result_text = self.asymmetric_path_check(src_node, dst_node)
+            result_text = f"발견: {loops[0] if loops else 'Loop detected'}" if has_loop else "없음"
 
             questions.append({
-                "id": f"ASYMMETRIC_{src_node}_{dst_node}",
+                "id": "LOOP_DETECTION_GLOBAL",
                 "category": "Reachability_Analysis",
                 "level": "L4",
                 "answer_type": "text",
-                "question": f"{src_node}과 {dst_node} 사이의 통신 경로가 대칭(양방향 동일 경로)입니까?\n[답변 형식: '대칭 (경로: A→B→C)' 또는 '비대칭 (정방향: A→B, 역방향: A→C→B)']",
+                "question": "네트워크에 포워딩 루프가 존재합니까?\n[답변 형식: '없음' 또는 '발견: A→B→C→A']",
                 "ground_truth": result_text,
-                "explanation": f"metric `asymmetric_path_check` on {src_node}<->{dst_node}",
-                "evidence_hint": {
-                    "scope": {"type": "NODE_PAIR", "src": src_node, "dst": dst_node},
-                    "metric": "asymmetric_path_check"
-                },
-                "academic_reference": "현업: 비대칭 경로 → 방화벽 상태 추적 실패 → 패킷 드랍"
+                "explanation": "metric `loop_detection` analysis result",
+                "evidence_hint": {"scope": {"type": "GLOBAL"}, "metric": "loop_detection"},
+                "academic_reference": "HSA (NSDI'12): loop-free as core invariant"
             })
         
-        # 8-2. MTU 불일치 검사
-        _, mtu_mismatches = self.mtu_mismatch_check()
-        questions.append({
-            "id": "MTU_MISMATCH_GLOBAL",
-            "category": "Interface_Inventory",
-            "level": "L2",
-            "answer_type": "set",
-            "question": "양쪽 링크의 MTU 사이즈가 서로 다른 구간이 있습니까?\n[답변 형식: 불일치 구간 목록 또는 '없음']",
-            "ground_truth": ", ".join(mtu_mismatches) if mtu_mismatches else "없음",
-            "explanation": f"metric `mtu_mismatch_check` found {len(mtu_mismatches)} mismatches",
-            "evidence_hint": {
-                "scope": {"type": "GLOBAL"},
-                "metric": "mtu_mismatch_check"
-            },
-            "academic_reference": "현업: MTU 불일치 → OSPF Neighbor 불안정, 큰 패킷 드랍"
-        })
+        # 4. Bounded Path Length
+        all_pairs_bounded = self.get_node_pairs()
+        random.shuffle(all_pairs_bounded)
+        for src_node, dst_node in all_pairs_bounded:
+            dst_ips = self.node_ips.get(dst_node, [])
+            if dst_ips:
+                bound_res = self.bounded_path_length(src_node, dst_ips[0], max_hops=5)
+                if bound_res.status == "OK":
+                    hop_count = bound_res.value.get("hops", -1)
+                    questions.append({
+                        "id": f"BOUNDED_PATH_{src_node}_{dst_node}",
+                        "category": "Reachability_Analysis",
+                        "level": "L4",
+                        "answer_type": "number",
+                        "question": f"{src_node}에서 {dst_node}로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
+                        "ground_truth": str(hop_count),
+                        "explanation": f"metric `bounded_path_length` on {src_node}->{dst_node}",
+                        "evidence_hint": {"scope": {"type": "NODE_PAIR", "src": src_node, "dst": dst_node}, "metric": "bounded_path_length"},
+                        "academic_reference": "Minesweeper (SIGCOMM'17): bounded path length"
+                    })
         
-        # 8-3. IP 충돌 검사
-        _, ip_conflicts = self.ip_conflict_check()
-        questions.append({
-            "id": "IP_CONFLICT_GLOBAL",
-            "category": "Interface_Inventory",
-            "level": "L1",
-            "answer_type": "set",
-            "question": "동일한 IP가 서로 다른 장비에 중복 할당된 곳이 있습니까?\n[답변 형식: 충돌 IP 목록 또는 '없음']",
-            "ground_truth": ", ".join(ip_conflicts) if ip_conflicts else "없음",
-            "explanation": f"metric `ip_conflict_check` found {len(ip_conflicts)} conflicts",
-            "evidence_hint": {
-                "scope": {"type": "GLOBAL"},
-                "metric": "ip_conflict_check"
-            },
-            "academic_reference": "현업: IP 충돌 → 간헐적 통신 장애의 주요 원인"
-        })
+        # 5. Blackhole Detection
+        bh_res = self.blackhole_detection()
+        if bh_res.status == "OK":
+            blackholes = bh_res.value.get("blackholes", [])
+            questions.append({
+                "id": "BLACKHOLE_DETECTION_GLOBAL",
+                "category": "Reachability_Analysis",
+                "level": "L4",
+                "answer_type": "boolean",
+                "question": "네트워크에 패킷이 드랍되는 블랙홀이 존재합니까?\n[답변 형식: true/false (소문자)]",
+                "ground_truth": str(len(blackholes) > 0).lower(),
+                "explanation": f"metric `blackhole_detection` found {len(blackholes)} blackholes",
+                "evidence_hint": {"scope": {"type": "GLOBAL"}, "metric": "blackhole_detection"},
+                "academic_reference": "HSA (NSDI'12), Minesweeper (SIGCOMM'17): blackhole detection"
+            })
         
-        # 8-4. Waypoint 경유 여부 (방화벽 통과 확인) - 개선된 형식
-        if pe_nodes and len(ce_nodes) >= 2:
-            for waypoint in pe_nodes[:2]:  # PE 2개까지
-                for src_ce in ce_nodes[:2]:
-                    for dst_ce in ce_nodes[2:4]:
-                        if src_ce == dst_ce:
+        # 6. Advanced: OSPF Compatibility Check
+        ospf_pairs = self.get_node_pairs()
+        random.shuffle(ospf_pairs)
+        ospf_q_count = 0
+        for node1, node2 in ospf_pairs[:30]:
+            compat_res = self.ospf_compatibility_check(node1, node2)
+            if compat_res.status == "OK":
+                issues = compat_res.value.get("issues", [])
+                compatible = compat_res.value.get("compatible", True)
+                
+                if issues:
+                    questions.append({
+                        "id": f"OSPF_COMPAT_{node1}_{node2}",
+                        "category": "Routing_Consistency",
+                        "level": "L4",
+                        "answer_type": "json",
+                        "question": f"{node1}과 {node2} 사이에 OSPF 네이버가 형성되지 않는 경우, 가능한 원인들을 분석하세요.\n[답변 형식: JSON {{\"issues\": [\"issue1\", \"issue2\"], \"recommendation\": \"...\"}}]",
+                        "ground_truth": f'{{"issues": {issues}, "compatible": {str(compatible).lower()}}}',
+                        "explanation": f"metric `ospf_compatibility_check` on {node1}-{node2}",
+                        "evidence_hint": {"scope": {"type": "NODE_PAIR", "node1": node1, "node2": node2}, "metric": "ospf_compatibility_check"},
+                        "academic_reference": "RFC 2328, 현업: OSPF 트러블슈팅"
+                    })
+                    ospf_q_count += 1
+                    if ospf_q_count >= 15:
+                        break
+        
+        # 7. Advanced: Security Policy Bypass Check
+        spine_nodes = [n for n in self.nodes if 'spine' in n.lower() or 'pe' in n.lower()]
+        leaf_nodes = [n for n in self.nodes if 'leaf' in n.lower() or 'ce' in n.lower()]
+        
+        if spine_nodes and len(leaf_nodes) >= 2:
+            bypass_q_count = 0
+            for required_wp in spine_nodes[:2]:
+                for src_leaf in leaf_nodes[:3]:
+                    for dst_leaf in leaf_nodes[3:6]:
+                        if src_leaf == dst_leaf:
                             continue
-                        src_ips = self.node_ips.get(src_ce, [])
-                        dst_ips = self.node_ips.get(dst_ce, [])
-                        
-                        if src_ips and dst_ips:
-                            _, result_text, _ = self.waypoint_check(src_ips[0], dst_ips[0], waypoint)
-
+                        bypass_res = self.security_policy_bypass_check(src_leaf, dst_leaf, required_wp)
+                        if bypass_res.status == "OK":
+                            bypass_exists = bypass_res.value.get("bypass_exists", False)
+                            bypass_path = bypass_res.value.get("bypass_path", [])
+                            
+                            path_str = " → ".join(bypass_path) if bypass_path else "없음"
+                            result_text = f"우회 경로 존재: {path_str}" if bypass_exists else "우회 경로 없음 (정책 준수)"
+                            
                             questions.append({
-                                "id": f"WAYPOINT_PASS_{src_ce}_{dst_ce}_{waypoint}",
-                                "category": "Reachability_Analysis",
+                                "id": f"SEC_BYPASS_{src_leaf}_{dst_leaf}_{required_wp}",
+                                "category": "Security_Policy",
                                 "level": "L4",
                                 "answer_type": "text",
-                                "question": f"{src_ce}에서 {dst_ce}로 가는 트래픽이 {waypoint}(백본 장비)를 경유합니까?\n[답변 형식: '경유함 (경로: A→PE02→B)' 또는 '경유 안함 (경로: A→B)']",
+                                "question": f"'{src_leaf}→{dst_leaf}' 트래픽이 보안 장비 '{required_wp}'를 거치지 않고 도달 가능한 우회 경로가 있습니까?\n[답변 형식: '우회 경로 존재: A→B→C' 또는 '우회 경로 없음 (정책 준수)']",
                                 "ground_truth": result_text,
-                                "explanation": f"metric `waypoint_check` on {src_ce}->{dst_ce} via {waypoint}",
-                                "evidence_hint": {
-                                    "scope": {"type": "WAYPOINT", "src": src_ce, "dst": dst_ce, "waypoint": waypoint},
-                                    "metric": "waypoint_check"
-                                },
-                                "academic_reference": "현업: 보안 정책 - 모든 트래픽이 방화벽/IDS 경유 필수"
+                                "explanation": f"metric `security_policy_bypass_check` waypoint={required_wp}",
+                                "evidence_hint": {"scope": {"type": "SECURITY_POLICY", "src": src_leaf, "dst": dst_leaf, "waypoint": required_wp}, "metric": "security_policy_bypass_check"},
+                                "academic_reference": "Config2Spec (NSDI'20)"
                             })
+                            bypass_q_count += 1
+                            if bypass_q_count >= 20:
+                                break
+                    if bypass_q_count >= 20:
+                        break
+                if bypass_q_count >= 20:
+                    break
         
         return questions
     
     def generate_l5_questions(self) -> List[Dict[str, Any]]:
-        """
-        L5 레벨 문제 생성
-        
-        ⚠️ v1 제한사항:
-        L5(What-If / Differential Analysis)를 완전히 구현하려면 
-        **스냅샷 2개(변경 전/후)**가 필요합니다.
-        
-        현재 버전에서는:
-        - link_failure_impact: 경로 분석 기반 추정 (실제 장애 시뮬레이션 X)
-        - k_failure_tolerance: 대체 경로 수 확인
-        - policy_compliance_check: 정책 준수 여부 확인
-        
-        향후 확장:
-        - differential_reachability: 변경 전/후 스냅샷 비교 필요
-        - config_change_impact: 변경 전/후 스냅샷 비교 필요
-        """
+        """L5 레벨 문제 생성"""
         questions = []
         
         if not self._initialized:
             logger.warning("Batfish not initialized. Skipping L5 question generation.")
             return questions
         
-        logger.info("[L5] Note: Full What-If analysis requires dual snapshots. "
-                   "Current implementation uses single-snapshot path analysis.")
-        
-        # 1. 링크 장애 영향 분석 문제 (DNA, Minesweeper)
-        # ⚠️ 현재는 경로에 해당 링크가 포함되는지만 확인 (실제 장애 시뮬레이션 X)
-        node_pairs = self.get_node_pairs()  # 모든 쌍 사용
-        random.shuffle(node_pairs)  # 랜덤 셔플
-        nodes = list(self.node_ips.keys())
-        
-        # 다양한 출발지-목적지 조합 생성
-        import itertools
-        all_flows = [(s, d) for s, d in itertools.permutations(nodes, 2) if s != d]
-        
-        question_count = 0
-        for (node1, node2) in node_pairs:
-            # 해당 링크와 관련 없는 출발지-목적지 쌍 선택 (더 의미 있는 질문)
-            for test_src, test_dst in all_flows[:5]:  # 각 링크당 최대 5개 flow 테스트
-                if test_src == node1 or test_src == node2 or test_dst == node1 or test_dst == node2:
-                    continue  # 링크 노드 자체가 출발/도착점이면 스킵
-                
-                # 수정된 메서드 호출 (2개 반환값: answer_type, result_text)
-                _, result_text = self.link_failure_impact(
-                    node1, node2, test_src, test_dst
-                )
-
-                if "분석 오류" in result_text or "정보 없음" in result_text:
-                    continue
-
-                # 결과에서 상태 추출 (예: "영향 없음 (현재경로: ...)" -> "영향 없음")
-                impact_status = result_text.split(" (")[0] if " (" in result_text else result_text
-
-                questions.append({
-                    "id": f"LINK_FAIL_{node1}_{node2}_{test_src}_{test_dst}",
-                    "category": "What_If_Analysis",
-                    "level": "L5",
-                    "answer_type": "text",
-                    # 질문에 명확한 가이드라인 추가
-                    "question": (
-                        f"{node1}과 {node2} 사이의 링크가 다운되었을 때, "
-                        f"{test_src}에서 {test_dst}로의 트래픽 영향은 어떻게 됩니까?\n"
-                        "[답변 형식: '영향 없음 (현재경로: A→B→C가 장애링크 미경유)' / '경로 변경 (현재경로: A→B, 대체경로: A→C→B)' / '통신 단절 (현재경로: A→B, 대체경로 없음)']"
-                    ),
-                    "ground_truth": result_text,
-                    "explanation": f"metric `link_failure_impact` on link={node1}-{node2}, flow={test_src}->{test_dst}",
-                    "evidence_hint": {
-                        "scope": {"type": "LINK_FAILURE", "node1": node1, "node2": node2},
-                        "metric": "link_failure_impact"
-                    },
-                    "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
-                })
-                
-                question_count += 1
-                if question_count >= 30:  # 최대 30개 링크 장애 문제
-                    break
-            if question_count >= 30:
-                break
-        
-        # 2. k-Failure Tolerance 문제 (Minesweeper, Trailblazer)
-        all_pairs_bounded = self.get_node_pairs()
-        random.shuffle(all_pairs_bounded)
-        for src_node, dst_node in all_pairs_bounded:  # 모든 쌍 사용
-            dst_ips = self.node_ips.get(dst_node, [])
-            
-            if dst_ips:
-                # src_node는 노드 이름, dst_ips[0]는 목적지 IP
-                _, result_text = self.k_failure_tolerance(src_node, dst_ips[0], k=1)
-
-                questions.append({
-                    "id": f"PATH_COUNT_{src_node}_{dst_node}",
-                    "category": "What_If_Analysis",
-                    "level": "L5",
-                    "answer_type": "text",
-                    "question": f"{src_node}에서 {dst_node}로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
-                    "ground_truth": result_text,
-                    "explanation": f"metric `k_failure_tolerance` on {src_node}->{dst_node}",
-                    "evidence_hint": {
-                        "scope": {"type": "NODE_PAIR", "src": src_node, "dst": dst_node},
-                        "metric": "k_failure_tolerance"
-                    },
-                    "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
-                })
-        
-        # 3. Policy Compliance 문제 (Config2Spec)
-        # PE 장비를 통해 모든 CE 트래픽이 지나가는지 확인 (웨이포인트 정책)
-        pe_nodes = [n for n in self.nodes if 'pe' in n.lower()]
+        # 1. Link Failure Impact
+        edges = self.get_layer3_edges()
         ce_nodes = [n for n in self.nodes if 'ce' in n.lower()]
+        pe_nodes = [n for n in self.nodes if 'pe' in n.lower()]
         
-        if pe_nodes and len(ce_nodes) >= 2:
-            # 모든 PE에 대해 정책 준수 문제 생성
-            for waypoint in pe_nodes:
-                questions.append({
-                    "id": f"POLICY_WAYPOINT_{waypoint}",
-                    "category": "What_If_Analysis",
-                    "level": "L5",
-                    "answer_type": "boolean",
-                    "question": f"네트워크가 '모든 CE 간 트래픽은 {waypoint}를 통과해야 한다'는 정책을 준수하고 있습니까?\n[답변 형식: true/false (소문자)]",
-                    "ground_truth": "true",  # MPLS 백본에서는 일반적으로 PE를 통과
-                    "explanation": f"metric `policy_compliance_check` waypoint={waypoint}",
-                    "evidence_hint": {
-                        "scope": {"type": "POLICY", "policy_type": "waypoint", "waypoint": waypoint},
-                        "metric": "policy_compliance_check"
-                    },
-                    "academic_reference": "Config2Spec (NSDI'20): policy compliance"
-                })
-        
-        # 4. Differential Reachability 문제 (DNA)
-        # 현재 스냅샷 기준 도달성 상태 질문
-        all_pairs_hop = self.get_node_pairs()
-        random.shuffle(all_pairs_hop)
-        for src_node, dst_node in all_pairs_hop:  # 모든 쌍 사용
-            src_ips = self.node_ips.get(src_node, [])
-            dst_ips = self.node_ips.get(dst_node, [])
-            
-            if src_ips and dst_ips:
-                # 홉 수 계산
-                _, hop_count = self.bounded_path_length(src_node, dst_ips[0])
-
-                questions.append({
-                    "id": f"HOP_COUNT_{src_node}_{dst_node}",
-                    "category": "What_If_Analysis",
-                    "level": "L5",
-                    "answer_type": "number",
-                    "question": f"{src_node}에서 {dst_node}로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
-                    "ground_truth": str(hop_count),
-                    "explanation": f"metric `hop_count` on {src_node}->{dst_node}, hops={hop_count}",
-                    "evidence_hint": {
-                        "scope": {"type": "NODE_PAIR", "src": src_node, "dst": dst_node},
-                        "metric": "hop_count"
-                    },
-                    "academic_reference": "Minesweeper (SIGCOMM'17): bounded path length"
-                })
-        
-        # 5. 백본 연속성 검증 (RFC 2328 - OSPF)
-        # OSPF Area 0이 분리되지 않았는지 확인
-        questions.append({
-            "id": "BACKBONE_CONTINUITY",
-            "category": "What_If_Analysis",
-            "level": "L5",
-            "answer_type": "boolean",
-            "question": "OSPF Area 0(백본)이 끊어지지 않고 연속적으로 연결되어 있습니까?\n[답변 형식: true/false (소문자)]",
-            "ground_truth": "true",  # 정상 네트워크에서는 연속적
-            "explanation": "metric `backbone_continuity` - OSPF Area 0 connectivity",
-            "evidence_hint": {
-                "scope": {"type": "GLOBAL"},
-                "metric": "backbone_continuity"
-            },
-            "academic_reference": "RFC 2328: OSPF backbone must be contiguous"
-        })
-        
-        # =========================================================================
-        # 6. 현업 실무 L5 질문 추가 (Operational L5 Questions)
-        # =========================================================================
-        
-        # 6-1. SPOF(단일 장애점) 탐지 - 관리자가 제일 무서워하는 것
-        _, spof_nodes = self.spof_detection()
-        questions.append({
-            "id": "SPOF_DETECTION_GLOBAL",
-            "category": "What_If_Analysis",
-            "level": "L5",
-            "answer_type": "set",
-            "question": "단일 장비 장애 시 통신이 두절되는 구간(SPOF: Single Point of Failure)이 존재합니까?\n[답변 형식: SPOF 장비 목록 또는 '없음']",
-            "ground_truth": ", ".join(spof_nodes) if spof_nodes else "없음",
-            "explanation": f"metric `spof_detection` found {len(spof_nodes)} SPOF nodes",
-            "evidence_hint": {
-                "scope": {"type": "GLOBAL"},
-                "metric": "spof_detection"
-            },
-            "academic_reference": "현업: SPOF 탐지 → 이중화 설계 검증, 장애 사전 예방"
-        })
-        
-        # 6-2. ACL 차단 규칙 상세 분석 - 운영자가 제일 좋아하는 정보
-        # ⚠️ ACL/필터가 설정된 토폴로지에서만 동작 (testFilters API 사용)
-        # ACL이 없는 토폴로지에서는 500 에러 발생하므로 조건부 실행
-        has_acl = False
-        try:
-            # ACL 존재 여부 확인 (간단한 테스트)
-            test_flow = self.get_representative_flows()[:1]
-            if test_flow:
-                test_result = self.bf.q.testFilters(
-                    headers=HeaderConstraints(
-                        srcIps=test_flow[0].src_ip,
-                        dstIps=test_flow[0].dst_ip
-                    )
-                ).answer().frame()
-                has_acl = not test_result.empty
-        except Exception as e:
-            logger.info(f"[L5] ACL not detected or testFilters not supported: {e}")
-            has_acl = False
-        
-        if has_acl:
-            logger.info("[L5] ACL detected. Generating ACL blocking questions.")
-            for flow in self.get_representative_flows()[:10]:
-                _, blocking_info = self.acl_rule_blocking(
-                    flow.src_ip, flow.dst_ip, flow.dst_port, flow.protocol
-                )
+        if edges and len(ce_nodes) >= 2:
+            link_count = 0
+            for edge in edges[:50]:
+                if link_count >= 50:
+                    break
+                node1, node2 = edge["node1"], edge["node2"]
+                src = ce_nodes[0]
+                dst = ce_nodes[-1] if len(ce_nodes) > 1 else ce_nodes[0]
                 
-                if blocking_info != "차단 없음 (모두 허용)" and blocking_info != "차단 없음 (필터 미적용)" and "오류" not in blocking_info:
+                link_res = self.link_failure_impact(node1, node2, src, dst)
+                if link_res.status == "OK":
+                    impact = link_res.value.get("impact", "NONE")
+                    desc = link_res.value.get("description", "")
+                    
                     questions.append({
-                        "id": f"ACL_BLOCK_{flow.src_location}_{flow.dst_location}_{flow.dst_port}",
-                        "category": "Security_Policy",
-                        "level": "L4",
+                        "id": f"LINK_FAILURE_{node1}_{node2}",
+                        "category": "What_If_Analysis",
+                        "level": "L5",
                         "answer_type": "text",
-                        "question": f"{flow.src_location}에서 {flow.dst_location}로의 {flow.protocol}/{flow.dst_port} 접속이 차단되는 정확한 ACL 규칙명과 줄 번호는 무엇입니까?\n[답변 형식: 장비명:ACL명:Line번호 또는 '차단 없음']",
-                        "ground_truth": blocking_info,
-                        "explanation": f"metric `acl_rule_blocking` on {flow.src_ip}->{flow.dst_ip}:{flow.dst_port}",
-                        "evidence_hint": {
-                            "scope": {"type": "FLOW", "src_ip": flow.src_ip, "dst_ip": flow.dst_ip},
-                            "metric": "acl_rule_blocking"
-                        },
-                        "academic_reference": "현업: ACL 차단 원인 분석 → 트러블슈팅 시간 단축"
+                        "question": f"'{node1}-{node2}' 링크가 다운될 경우, '{src}→{dst}' 트래픽에 어떤 영향이 발생합니까?\n[답변 형식: 'NONE:영향없음', 'REROUTED:새경로...', 'DISCONNECTED:통신두절']",
+                        "ground_truth": f"{impact}:{desc}" if desc else impact,
+                        "explanation": f"metric `link_failure_impact` on {node1}-{node2}->({src}->{dst})",
+                        "evidence_hint": {"scope": {"type": "LINK_FAILURE", "link": f"{node1}-{node2}"}, "metric": "link_failure_impact"},
+                        "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
                     })
-        else:
-            logger.info("[L5] No ACL detected. Skipping ACL blocking questions.")
+                    link_count += 1
+        
+        # 2. SPOF Detection
+        spof_res = self.spof_detection()
+        if spof_res.status == "OK":
+            spof_nodes = spof_res.value.get("spof_nodes", [])
+            questions.append({
+                "id": "SPOF_DETECTION_GLOBAL",
+                "category": "What_If_Analysis",
+                "level": "L5",
+                "answer_type": "set",
+                "question": "단일 장비 장애 시 통신이 두절되는 구간(SPOF: Single Point of Failure)이 존재합니까?\n[답변 형식: SPOF 장비 목록 또는 '없음']",
+                "ground_truth": ", ".join(spof_nodes) if spof_nodes else "없음",
+                "explanation": f"metric `spof_detection` found {len(spof_nodes)} SPOF nodes",
+                "evidence_hint": {"scope": {"type": "GLOBAL"}, "metric": "spof_detection"},
+                "academic_reference": "현업: SPOF 탐지 → 이중화 설계 검증"
+            })
+        
+        # 3. Advanced: Root Cause Analysis
+        all_pairs_rca = self.get_node_pairs()
+        random.shuffle(all_pairs_rca)
+        rca_q_count = 0
+        for src_node, dst_node in all_pairs_rca[:50]:
+            rca_res = self.root_cause_analysis(src_node, dst_node)
+            if rca_res.status == "OK":
+                reachable = rca_res.value.get("reachable", True)
+                root_cause = rca_res.value.get("root_cause", "NONE")
+                blocking_point = rca_res.value.get("blocking_point", "")
+                
+                if not reachable and root_cause != "NONE":
+                    questions.append({
+                        "id": f"ROOT_CAUSE_{src_node}_{dst_node}",
+                        "category": "What_If_Analysis",
+                        "level": "L5",
+                        "answer_type": "json",
+                        "question": f"{src_node}에서 {dst_node}로의 통신이 실패합니다. 근본 원인과 차단 지점을 분석하세요.\n[답변 형식: JSON {{\"root_cause\": \"...\", \"blocking_point\": \"노드명\"}}]",
+                        "ground_truth": f'{{"root_cause": "{root_cause}", "blocking_point": "{blocking_point}"}}',
+                        "explanation": f"metric `root_cause_analysis` on {src_node}->{dst_node}",
+                        "evidence_hint": {"scope": {"type": "NODE_PAIR", "src": src_node, "dst": dst_node}, "metric": "root_cause_analysis"},
+                        "academic_reference": "현업: 장애 근본 원인 분석"
+                    })
+                    rca_q_count += 1
+                    if rca_q_count >= 30:
+                        break
+        
+        # 4. Advanced: Blast Radius Estimation
+        for node in self.nodes[:10]:
+            br_res = self.blast_radius_estimation(node)
+            if br_res.status == "OK":
+                affected_nodes = br_res.value.get("affected_nodes", [])
+                affected_count = br_res.value.get("affected_count", 0)
+                severity = br_res.value.get("severity", "UNKNOWN")
+                
+                questions.append({
+                    "id": f"BLAST_RADIUS_{node}",
+                    "category": "What_If_Analysis",
+                    "level": "L5",
+                    "answer_type": "json",
+                    "question": f"'{node}' 장비가 다운될 경우, 직접 영향을 받는 노드들과 심각도를 추정하세요.\n[답변 형식: JSON {{\"affected_nodes\": [...], \"severity\": \"CRITICAL|HIGH|MEDIUM|LOW\"}}]",
+                    "ground_truth": f'{{"affected_nodes": {affected_nodes}, "affected_count": {affected_count}, "severity": "{severity}"}}',
+                    "explanation": f"metric `blast_radius_estimation` on {node}",
+                    "evidence_hint": {"scope": {"type": "NODE", "node": node}, "metric": "blast_radius_estimation"},
+                    "academic_reference": "현업: 장애 영향 범위 사전 분석"
+                })
+        
+        # 5. Advanced: Multi-Link Failure Analysis
+        if len(edges) >= 4:
+            edge_pairs = list(combinations(edges[:10], 2))
+            random.shuffle(edge_pairs)
+            
+            mlf_q_count = 0
+            for (edge1, edge2) in edge_pairs[:20]:  # 20개 조합 제한
+                link_nodes = {edge1['node1'].lower(), edge1['node2'].lower(), edge2['node1'].lower(), edge2['node2'].lower()}
+                test_candidates = [n for n in self.nodes if n.lower() not in link_nodes]
+                
+                if len(test_candidates) >= 2:
+                    test_src = test_candidates[0]
+                    test_dst = test_candidates[-1]
+                    
+                    mlf_res = self.multi_link_failure_analysis(
+                        edge1['node1'], edge1['node2'],
+                        edge2['node1'], edge2['node2'],
+                        test_src, test_dst
+                    )
+                    
+                    if mlf_res.status == "OK":
+                        isolated = mlf_res.value.get("isolated", False)
+                        new_path = mlf_res.value.get("new_path", [])
+                        
+                        path_str = " → ".join(new_path) if new_path else "없음"
+                        result_text = "고립됨 (대체 경로 없음)" if isolated else f"대체 경로: {path_str}"
+                        
+                        questions.append({
+                            "id": f"MULTI_FAIL_{edge1['node1']}_{edge1['node2']}_{edge2['node1']}_{edge2['node2']}",
+                            "category": "What_If_Analysis",
+                            "level": "L5",
+                            "answer_type": "text",
+                            "question": f"'{edge1['node1']}-{edge1['node2']}' 링크와 '{edge2['node1']}-{edge2['node2']}' 링크가 동시에 다운될 경우,\n{test_src}에서 {test_dst}로의 통신이 가능합니까?\n[답변 형식: '고립됨 (대체 경로 없음)' 또는 '대체 경로: A→B→C']",
+                            "ground_truth": result_text,
+                            "explanation": f"metric `multi_link_failure_analysis`",
+                            "evidence_hint": {"scope": {"type": "MULTI_LINK_FAILURE", "link1": f"{edge1['node1']}-{edge1['node2']}", "link2": f"{edge2['node1']}-{edge2['node2']}"}, "metric": "multi_link_failure_analysis"},
+                            "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+                        })
+                        mlf_q_count += 1
+                        if mlf_q_count >= 20:
+                            break
         
         return questions
     
@@ -2196,326 +419,24 @@ class BatfishBuilder:
             "What_If_Analysis": self.generate_l5_questions()
         }
 
-    # =========================================================================
-    # NetConfigQA 벤치마크 파이프라인 - Phase 2: AnswerResult 반환 메서드
-    # =========================================================================
-    
-    def _make_evidence(self, query_name: str, params: dict) -> dict:
-        """BatfishBuilder 내부용 evidence 생성 헬퍼"""
-        return _build_evidence(query_name, params, getattr(self, 'snapshot_name', 'baseline'))
-    
-    def get_vrfs_benchmark(self, node: str = None) -> AnswerResult:
-        """
-        [벤치마크용] VRF 목록 반환
-        
-        Args:
-            node: 특정 노드만 조회 (None이면 전체)
-        
-        Returns:
-            AnswerResult with set_str type
-        """
-        evidence = self._make_evidence("interfaceProperties", {"nodes": node or "all"})
-        
-        if not self._initialized:
-            return AnswerResult("UNKNOWN", [], "set_str", evidence, "BATFISH_QUERY_ERROR")
-        
-        try:
-            ifaces_df = self.bf.q.interfaceProperties(nodes=node).answer().frame() if node else self.bf.q.interfaceProperties().answer().frame()
-            
-            if ifaces_df.empty or 'VRF' not in ifaces_df.columns:
-                # VRF 설정 자체가 없음
-                return AnswerResult("NOT_CONFIGURED", [], "set_str", evidence, "")
-            
-            unique_vrfs = ifaces_df['VRF'].dropna().unique().tolist()
-            # default, management 제외
-            vrfs = [v for v in unique_vrfs if v.lower() not in ['default', 'management']]
-            
-            if not vrfs:
-                # VRF는 조회되었으나 사용자 정의 VRF가 없음
-                return AnswerResult("NOT_CONFIGURED", [], "set_str", evidence, "")
-            
-            return AnswerResult("OK", _canonicalize(vrfs, "set_str"), "set_str", evidence, "")
-            
-        except Exception as e:
-            logger.warning(f"get_vrfs_benchmark error: {e}")
-            return AnswerResult("UNKNOWN", None, "set_str", evidence, "BATFISH_QUERY_ERROR")
-    
-    def get_ospf_neighbors_benchmark(self, node: str) -> AnswerResult:
-        """
-        [벤치마크용] 특정 노드의 OSPF Neighbor 목록 반환
-        
-        Args:
-            node: 노드 이름
-        
-        Returns:
-            AnswerResult with set_str type
-            - NOT_CONFIGURED: OSPF 프로세스가 없음
-            - OK + []: OSPF는 있으나 Neighbor가 없음
-            - OK + ["pe1", ...]: Neighbor 목록
-        """
-        evidence = self._make_evidence("ospfProcessConfiguration", {"nodes": node})
-        
-        if not self._initialized:
-            return AnswerResult("UNKNOWN", [], "set_str", evidence, "BATFISH_QUERY_ERROR")
-        
-        try:
-            # 1. OSPF 프로세스 존재 확인
-            ospf_config = self.bf.q.ospfProcessConfiguration(nodes=node).answer().frame()
-            
-            if ospf_config.empty:
-                return AnswerResult("NOT_CONFIGURED", [], "set_str", evidence, "")
-            
-            # 2. OSPF Neighbor 조회
-            evidence = self._make_evidence("ospfSessionCompatibility", {"nodes": node})
-            neighbors = self.bf.q.ospfSessionCompatibility(nodes=node).answer().frame()
-            
-            if neighbors.empty:
-                # OSPF는 있으나 Neighbor가 없음
-                return AnswerResult("OK", [], "set_str", evidence, "")
-            
-            # 3. Neighbor 목록 추출
-            if 'Remote_Node' in neighbors.columns:
-                neighbor_list = neighbors['Remote_Node'].unique().tolist()
-            else:
-                neighbor_list = []
-            
-            return AnswerResult("OK", _canonicalize(neighbor_list, "set_str"), "set_str", evidence, "")
-            
-        except CanonicalizationError as e:
-            return AnswerResult("UNKNOWN", None, "set_str", evidence, "CANONICALIZE_ERROR")
-        except Exception as e:
-            logger.warning(f"get_ospf_neighbors_benchmark error: {e}")
-            return AnswerResult("UNKNOWN", None, "set_str", evidence, "BATFISH_QUERY_ERROR")
-    
-    def get_bgp_neighbors_benchmark(self, node: str) -> AnswerResult:
-        """
-        [벤치마크용] 특정 노드의 BGP Neighbor 목록 반환
-        
-        Args:
-            node: 노드 이름
-        
-        Returns:
-            AnswerResult with set_str type
-        """
-        evidence = self._make_evidence("bgpProcessConfiguration", {"nodes": node})
-        
-        if not self._initialized:
-            return AnswerResult("UNKNOWN", [], "set_str", evidence, "BATFISH_QUERY_ERROR")
-        
-        try:
-            # 1. BGP 프로세스 존재 확인
-            bgp_config = self.bf.q.bgpProcessConfiguration(nodes=node).answer().frame()
-            
-            if bgp_config.empty:
-                return AnswerResult("NOT_CONFIGURED", [], "set_str", evidence, "")
-            
-            # 2. BGP Neighbor 조회
-            evidence = self._make_evidence("bgpPeerConfiguration", {"nodes": node})
-            peers = self.bf.q.bgpPeerConfiguration(nodes=node).answer().frame()
-            
-            if peers.empty:
-                return AnswerResult("OK", [], "set_str", evidence, "")
-            
-            # 3. Peer IP 목록 추출
-            if 'Remote_IP' in peers.columns:
-                peer_list = peers['Remote_IP'].astype(str).unique().tolist()
-            elif 'Peer_Address' in peers.columns:
-                peer_list = peers['Peer_Address'].astype(str).unique().tolist()
-            else:
-                peer_list = []
-            
-            return AnswerResult("OK", _canonicalize(peer_list, "set_str"), "set_str", evidence, "")
-            
-        except CanonicalizationError as e:
-            return AnswerResult("UNKNOWN", None, "set_str", evidence, "CANONICALIZE_ERROR")
-        except Exception as e:
-            logger.warning(f"get_bgp_neighbors_benchmark error: {e}")
-            return AnswerResult("UNKNOWN", None, "set_str", evidence, "BATFISH_QUERY_ERROR")
-    
-    def get_interface_status_benchmark(self, node: str) -> AnswerResult:
-        """
-        [벤치마크용] 특정 노드의 인터페이스 상태(UP/DOWN) 반환
-        
-        Args:
-            node: 노드 이름
-        
-        Returns:
-            AnswerResult with map_str_str type
-        """
-        evidence = self._make_evidence("interfaceProperties", {"nodes": node})
-        
-        if not self._initialized:
-            return AnswerResult("UNKNOWN", {}, "map_str_str", evidence, "BATFISH_QUERY_ERROR")
-        
-        try:
-            ifaces_df = self.bf.q.interfaceProperties(nodes=node).answer().frame()
-            
-            if ifaces_df.empty:
-                return AnswerResult("NOT_CONFIGURED", {}, "map_str_str", evidence, "")
-            
-            # 인터페이스별 상태 매핑
-            status_map = {}
-            for _, row in ifaces_df.iterrows():
-                iface_name = row.get('Interface', '')
-                if isinstance(iface_name, str):
-                    # Interface 형식: node[iface] -> iface만 추출
-                    if '[' in iface_name and ']' in iface_name:
-                        iface_name = iface_name.split('[')[1].rstrip(']')
-                    active = row.get('Active', False)
-                    status_map[iface_name] = "up" if active else "down"
-            
-            return AnswerResult("OK", _canonicalize(status_map, "map_str_str"), "map_str_str", evidence, "")
-            
-        except CanonicalizationError as e:
-            return AnswerResult("UNKNOWN", None, "map_str_str", evidence, "CANONICALIZE_ERROR")
-        except Exception as e:
-            logger.warning(f"get_interface_status_benchmark error: {e}")
-            return AnswerResult("UNKNOWN", None, "map_str_str", evidence, "BATFISH_QUERY_ERROR")
-    
-    def traceroute_benchmark(self, src_location: str, dst_ip: str, target_name: str = "") -> AnswerResult:
-        """
-        [벤치마크용] 경로 추적 (L4)
-        
-        Args:
-            src_location: 출발지 노드
-            dst_ip: 목적지 IP
-            target_name: 목적지 노드 이름 (선택)
-        
-        Returns:
-            AnswerResult with path type
-        """
-        evidence = self._make_evidence("traceroute", {"startLocation": src_location, "dst": dst_ip})
-        
-        if not self._initialized:
-            return AnswerResult("UNKNOWN", [], "path", evidence, "BATFISH_QUERY_ERROR")
-        
-        try:
-            result = self.bf.q.traceroute(
-                startLocation=src_location,
-                headers=HeaderConstraints(dstIps=dst_ip)
-            ).answer().frame()
-            
-            if result.empty:
-                return AnswerResult("NOT_APPLICABLE", None, "path", evidence, "")
-            
-            # 첫 번째 trace의 경로 추출
-            traces = result['Traces'].iloc[0]
-            if not traces:
-                return AnswerResult("OK", [], "path", evidence, "")
-            
-            path_nodes = []
-            for trace in traces:
-                for hop in trace.hops:
-                    node_name = hop.node
-                    if node_name and node_name not in path_nodes:
-                        path_nodes.append(node_name)
-            
-            # 목적지 추가
-            if target_name and target_name not in path_nodes:
-                path_nodes.append(target_name)
-            
-            return AnswerResult("OK", path_nodes, "path", evidence, "")
-            
-        except Exception as e:
-            logger.warning(f"traceroute_benchmark error: {e}")
-            return AnswerResult("UNKNOWN", None, "path", evidence, "BATFISH_QUERY_ERROR")
-    
-    def link_exists_benchmark(self, node1: str, node2: str) -> AnswerResult:
-        """
-        [벤치마크용] 두 노드 간 링크 존재 여부 확인
-        
-        Args:
-            node1: 첫 번째 노드
-            node2: 두 번째 노드
-        
-        Returns:
-            AnswerResult with bool type
-        """
-        evidence = self._make_evidence("layer3Edges", {"nodes": f"{node1},{node2}"})
-        
-        if not self._initialized:
-            return AnswerResult("UNKNOWN", None, "bool", evidence, "BATFISH_QUERY_ERROR")
-        
-        try:
-            edges = self.bf.q.layer3Edges().answer().frame()
-            
-            if edges.empty:
-                return AnswerResult("OK", False, "bool", evidence, "")
-            
-            # 양방향 확인
-            for _, row in edges.iterrows():
-                n1 = row.get('Interface', {})
-                n2 = row.get('Remote_Interface', {})
-                
-                # Interface 객체에서 hostname 추출
-                hostname1 = getattr(n1, 'hostname', '') if hasattr(n1, 'hostname') else str(n1).split('[')[0] if '[' in str(n1) else ''
-                hostname2 = getattr(n2, 'hostname', '') if hasattr(n2, 'hostname') else str(n2).split('[')[0] if '[' in str(n2) else ''
-                
-                if (hostname1.lower() == node1.lower() and hostname2.lower() == node2.lower()) or \
-                   (hostname1.lower() == node2.lower() and hostname2.lower() == node1.lower()):
-                    return AnswerResult("OK", True, "bool", evidence, "")
-            
-            return AnswerResult("OK", False, "bool", evidence, "")
-            
-        except Exception as e:
-            logger.warning(f"link_exists_benchmark error: {e}")
-            return AnswerResult("UNKNOWN", None, "bool", evidence, "BATFISH_QUERY_ERROR")
 
+# =========================================================================
+# 하위 호환성을 위한 re-export
+# =========================================================================
 
-def test_batfish_connection(host: str = "localhost") -> bool:
-    """Batfish 연결 테스트"""
-    if not BATFISH_AVAILABLE:
-        print("[ERROR] pybatfish not installed")
-        return False
-    
-    try:
-        bf = Session(host=host)
-        print(f"[OK] Connected to Batfish at {host}")
-        return True
-    except Exception as e:
-        print(f"[FAIL] Cannot connect to Batfish: {e}")
-        return False
-
-
-if __name__ == "__main__":
-    # 테스트
-    import sys
-    
-    if len(sys.argv) > 1:
-        snapshot_path = sys.argv[1]
-    else:
-        snapshot_path = "./pnetlab_snapshot"
-    
-    print("=== Batfish Builder Test ===\n")
-    
-    # 연결 테스트
-    if not test_batfish_connection():
-        print("\nBatfish 서버가 실행 중인지 확인하세요:")
-        print("  docker run -d -p 9996:9996 -p 9997:9997 batfish/allinone")
-        sys.exit(1)
-    
-    # 빌더 초기화
-    builder = BatfishBuilder(snapshot_path)
-    if not builder.initialize():
-        print("Failed to initialize BatfishBuilder")
-        sys.exit(1)
-    
-    print(f"\nNodes: {builder.nodes}")
-    print(f"Node IPs: {builder.node_ips}")
-    
-    # L4 문제 생성
-    print("\n=== L4 Questions ===")
-    l4_questions = builder.generate_l4_questions()
-    for q in l4_questions[:3]:
-        print(f"  [{q['id']}] {q['question'][:50]}...")
-        print(f"    Answer: {q['ground_truth']}")
-    
-    # L5 문제 생성
-    print("\n=== L5 Questions ===")
-    l5_questions = builder.generate_l5_questions()
-    for q in l5_questions[:3]:
-        print(f"  [{q['id']}] {q['question'][:50]}...")
-        print(f"    Answer: {q['ground_truth']}")
-    
-    print(f"\nTotal: L4={len(l4_questions)}, L5={len(l5_questions)}")
-
+# models.py에서
+__all__ = [
+    'BatfishBuilder',
+    'AnswerResult',
+    'FlowSpec',
+    'L4Result',
+    'L5Result',
+    'CanonicalizationError',
+    'CONFIGURED_RULES',
+    'UNKNOWN_REASONS',
+    'build_evidence',
+    'canonicalize',
+    '_build_evidence',
+    '_canonicalize',
+    'BATFISH_AVAILABLE'
+]

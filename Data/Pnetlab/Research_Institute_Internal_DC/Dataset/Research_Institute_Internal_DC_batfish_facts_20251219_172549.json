@@ -379,7 +379,7 @@
             "1"
           ],
           "areas": {
-            "None": [
+            "0": [
               "Loopback0",
               "GigabitEthernet0/1",
               "GigabitEthernet0/0"
@@ -474,7 +474,7 @@
             "1"
           ],
           "areas": {
-            "None": [
+            "0": [
               "Loopback0",
               "GigabitEthernet0/0",
               "GigabitEthernet0/1",
@@ -570,7 +570,7 @@
             "1"
           ],
           "areas": {
-            "None": [
+            "0": [
               "Loopback0",
               "GigabitEthernet0/0",
               "GigabitEthernet0/2",
@@ -666,7 +666,7 @@
             "1"
           ],
           "areas": {
-            "None": [
+            "0": [
               "GigabitEthernet0/0",
               "Loopback0",
               "GigabitEthernet0/1"
@@ -878,7 +878,7 @@
             "1"
           ],
           "areas": {
-            "None": [
+            "0": [
               "GigabitEthernet0/0",
               "Loopback0"
             ]
@@ -1204,7 +1204,7 @@
             "1"
           ],
           "areas": {
-            "None": [
+            "0": [
               "GigabitEthernet0/0",
               "Loopback0"
             ]

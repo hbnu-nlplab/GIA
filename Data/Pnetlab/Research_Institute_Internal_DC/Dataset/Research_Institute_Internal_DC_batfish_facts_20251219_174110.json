@@ -378,7 +378,13 @@
           "process_ids": [
             "1"
           ],
-          "areas": {}
+          "areas": {
+            "0": [
+              "Loopback0",
+              "GigabitEthernet0/1",
+              "GigabitEthernet0/0"
+            ]
+          }
         }
       },
       "services": {
@@ -467,7 +473,14 @@
           "process_ids": [
             "1"
           ],
-          "areas": {}
+          "areas": {
+            "0": [
+              "Loopback0",
+              "GigabitEthernet0/0",
+              "GigabitEthernet0/1",
+              "GigabitEthernet0/2"
+            ]
+          }
         }
       },
       "services": {
@@ -556,7 +569,14 @@
           "process_ids": [
             "1"
           ],
-          "areas": {}
+          "areas": {
+            "0": [
+              "Loopback0",
+              "GigabitEthernet0/0",
+              "GigabitEthernet0/2",
+              "GigabitEthernet0/1"
+            ]
+          }
         }
       },
       "services": {
@@ -645,7 +665,13 @@
           "process_ids": [
             "1"
           ],
-          "areas": {}
+          "areas": {
+            "0": [
+              "GigabitEthernet0/0",
+              "Loopback0",
+              "GigabitEthernet0/1"
+            ]
+          }
         }
       },
       "services": {
@@ -851,7 +877,12 @@
           "process_ids": [
             "1"
           ],
-          "areas": {}
+          "areas": {
+            "0": [
+              "GigabitEthernet0/0",
+              "Loopback0"
+            ]
+          }
         }
       },
       "services": {
@@ -1172,7 +1203,12 @@
           "process_ids": [
             "1"
           ],
-          "areas": {}
+          "areas": {
+            "0": [
+              "GigabitEthernet0/0",
+              "Loopback0"
+            ]
+          }
         }
       },
       "services": {

@@ -395,31 +395,25 @@ def main():
                         dst_ip = inst.get("dst_ip")
                         dst_host = inst.get("dst_host")
                         if src and dst_ip:
-                            atype, val = bf_builder.traceroute_path(src, dst_ip, target_name=dst_host or "")
-                            res = {"answer_type": atype, "value": val, "files": []}
+                            res = bf_builder.traceroute_path(src, dst_ip, target_name=dst_host or "")
                             
                     elif metric == "reachability_status":
                         src_ip = inst.get("src_ip")
                         dst_ip = inst.get("dst_ip")
                         if src_ip and dst_ip:
-                            atype, val = bf_builder.reachability_status(src_ip, dst_ip)
-                            res = {"answer_type": atype, "value": val, "files": []}
+                            res = bf_builder.reachability_status(src_ip, dst_ip)
 
                     elif metric == "loop_detection":
-                        atype, val = bf_builder.loop_detection()
-                        res = {"answer_type": atype, "value": val, "files": []}
+                        res = bf_builder.loop_detection()
                         
                     elif metric == "blackhole_detection":
-                        atype, val = bf_builder.blackhole_detection()
-                        val_str = ", ".join(val) if val else "없음"
-                        res = {"answer_type": atype, "value": val_str, "files": []}
+                        res = bf_builder.blackhole_detection()
                         
                     elif metric == "acl_blocking_point":
                         src_ip = inst.get("src_ip")
                         dst_ip = inst.get("dst_ip")
                         if src_ip and dst_ip:
-                            atype, val = bf_builder.acl_blocking_point(src_ip, dst_ip)
-                            res = {"answer_type": atype, "value": val, "files": []}
+                            res = bf_builder.acl_blocking_point(src_ip, dst_ip)
                             
                     elif metric == "waypoint_check":
                          src_ip = inst.get("src_ip")
@@ -433,8 +427,7 @@ def main():
                                  inst["waypoint"] = waypoint  # Update instance for question generation
                          
                          if src_ip and dst_ip and waypoint:
-                             atype, val, _ = bf_builder.waypoint_check(src_ip, dst_ip, waypoint)
-                             res = {"answer_type": atype, "value": val, "files": []}
+                             res = bf_builder.waypoint_check(src_ip, dst_ip, waypoint)
                          else:
                              print(f"[DEBUG] waypoint_check missing params: {inst}, wp={waypoint}")
 
@@ -442,8 +435,7 @@ def main():
                          src = inst.get("src_host")
                          dst_ip = inst.get("dst_ip")
                          if src and dst_ip:
-                             atype, val = bf_builder.bounded_path_length(src, dst_ip)
-                             res = {"answer_type": atype, "value": val, "files": []}
+                             res = bf_builder.bounded_path_length(src, dst_ip)
                          else:
                              print(f"[DEBUG] bounded_path_length missing params: {inst}")
 
@@ -451,9 +443,7 @@ def main():
                          v1 = inst.get("vrf1")
                          v2 = inst.get("vrf2")
                          if v1 and v2:
-                             atype, val = bf_builder.isolation_check(v1, v2)
-                             val_str = ", ".join(val) if val else "없음"
-                             res = {"answer_type": atype, "value": val_str, "files": []}
+                             res = bf_builder.isolation_check(v1, v2)
                          else:
                              print(f"[DEBUG] isolation_check missing vrf1/vrf2: {inst}")
 
@@ -463,8 +453,7 @@ def main():
                          ts = inst.get("test_src")
                          td = inst.get("test_dst")
                          if n1 and n2 and ts and td:
-                             atype, val = bf_builder.link_failure_impact(n1, n2, ts, td)
-                             res = {"answer_type": atype, "value": val, "files": []}
+                             res = bf_builder.link_failure_impact(n1, n2, ts, td)
 
                     elif metric == "k_failure_tolerance":
                          src = inst.get("src_host") or inst.get("host1")
@@ -474,19 +463,15 @@ def main():
                              dst_ip = host_ips[inst.get("host2")][0]
                              
                          if src and dst_ip:
-                             atype, val = bf_builder.k_failure_tolerance(src, dst_ip)
-                             res = {"answer_type": atype, "value": val, "files": []}
+                             res = bf_builder.k_failure_tolerance(src, dst_ip)
                          else:
                              print(f"[DEBUG] k_failure_tolerance missing params: {inst}")
 
                     elif metric == "policy_compliance_check":
-                         # Default check
-                         atype, val = bf_builder.policy_compliance_check()
-                         res = {"answer_type": atype, "value": val, "files": []}
+                         res = bf_builder.policy_compliance_check()
 
                     elif metric == "ospf_backbone_contiguity":
-                         atype, val = bf_builder.ospf_backbone_contiguity()
-                         res = {"answer_type": atype, "value": val, "files": []}
+                         res = bf_builder.ospf_backbone_contiguity()
 
                     else:
                         continue
@@ -498,56 +483,87 @@ def main():
             else:
                 res = builder.compute(intent)
             
-            if not res or res["answer_type"] == "error":
+            if not res:
                 continue
+            
+            if isinstance(res, dict):
+                if res.get("answer_type") == "error":
+                    continue
+            # AnswerResult does not use "error" type for skip, it has status
+
 
             q_text = dsl["pattern"]
             for k, v in inst.items():
                 if isinstance(v, (str, int, float)):
                     q_text = q_text.replace(f"{{{k}}}", str(v))
             
-            a_val = res["value"]
+            if isinstance(res, dict):
+                a_val = res["value"]
+                # res is dict
+            else:
+                # res is AnswerResult
+                a_val = res.value
             
             # ================================================================
             # NetConfigQA 벤치마크 파이프라인 - Phase 3: CSV 컬럼 확장
             # ================================================================
             
             # 정답 직렬화 (JSON 형식 유지)
-            if isinstance(a_val, (list, set, tuple)):
+            # AnswerResult인 경우와 dict인 경우를 통합 관리
+            if isinstance(res, AnswerResult):
+                a_val = res.value
+                answer_status = res.status
+                unknown_reason = res.unknown_reason
+                evidence_dict = res.evidence or {}
+            else:
+                a_val = res["value"]
+                answer_status = "OK"  
+                unknown_reason = ""
+                evidence_dict = {}
+
+            # 값이 빈 문자열("")인 경우 None(NOT_CONFIGURED)으로 취급
+            if a_val == "":
+                a_val = None
+
+            # Evidence 자동 채우기 (기존 정보 보존하며 병합)
+            default_evidence = {
+                "snapshot": lab_path.name,
+                "metric": metric_name,
+                "scope": scope_template
+            }
+            # 기존 evidence_dict에 default_evidence 병합 (기존 내용 우선)
+            # 단, 기존에 없으면 채워넣기 위해 default_evidence를 base로 하고 update
+            final_evidence = default_evidence.copy()
+            if evidence_dict:
+                final_evidence.update(evidence_dict)
+            
+            evidence_str = json.dumps(final_evidence, ensure_ascii=False)
+
+            # 값 직렬화 및 Status 최종 보정
+            if a_val is None:
+                a_json = "null"
+                # 명시적으로 OK로 되어있다면 NOT_CONFIGURED로 변경
+                if answer_status == "OK":
+                    answer_status = "NOT_CONFIGURED"
+            elif isinstance(a_val, (list, set, tuple)):
                 # set_str, edge_set, path 등
                 a_val_list = list(a_val)
-                if a_val_list:
-                    # 첫 번째 요소가 문자열이면 정렬
-                    if a_val_list and isinstance(a_val_list[0], str):
-                        a_json = json.dumps(sorted(a_val_list), ensure_ascii=False)
-                    else:
-                        a_json = json.dumps(a_val_list, ensure_ascii=False)
+                if a_val_list and isinstance(a_val_list[0], str):
+                    a_json = json.dumps(sorted(a_val_list), ensure_ascii=False)
                 else:
-                    a_json = "[]"
+                    a_json = json.dumps(a_val_list, ensure_ascii=False)
             elif isinstance(a_val, dict):
                 # map_str_int, map_str_str 등
                 a_json = json.dumps(dict(sorted(a_val.items())), ensure_ascii=False)
             elif isinstance(a_val, bool):
                 a_json = json.dumps(a_val)
-            elif a_val is None:
-                a_json = "null"
+            elif isinstance(a_val, (int, float)):
+                a_json = json.dumps(a_val)
             else:
+                # 문자열 등
                 a_json = json.dumps(str(a_val), ensure_ascii=False)
             
-            if not a_json or a_json == '""':
-                a_json = "정보없음"
-            
-            # 기본값 설정 (기존 호환성)
-            answer_status = "OK"
-            unknown_reason = ""
-            evidence_str = "{}"
-            
-            # AnswerResult를 반환하는 새 메서드 결과인 경우
-            if isinstance(res, AnswerResult):
-                answer_status = res.status
-                unknown_reason = res.unknown_reason
-                evidence_str = json.dumps(res.evidence, ensure_ascii=False) if res.evidence else "{}"
-                a_json = json.dumps(res.value, ensure_ascii=False, sort_keys=True) if res.value is not None else "null"
+            # Legacy "정보없음" fallback 제거됨 (a_json은 항상 유효한 JSON 문자열)
             
             qa_list.append({
                 "id": str(dsl["id"]),
@@ -562,6 +578,65 @@ def main():
                 "pipeline_version": PIPELINE_VERSION,
                 "files": str(res.get("files", []) if isinstance(res, dict) else [])
             })
+
+    # =========================================================================
+    # L4/L5 추가 질문 생성 (BatfishBuilder 자체 생성 함수 활용)
+    # =========================================================================
+    if bf_active:
+        print("[3.5] Generating additional L4/L5 questions via BatfishBuilder...")
+        
+        # Helper function to process builder questions
+        def process_builder_questions(questions, level):
+            for q in questions:
+                # 1. Update evidence with snapshot info if missing
+                evidence = q.get("evidence_hint", {})
+                if "snapshot" not in evidence:
+                    evidence["snapshot"] = lab_path.name
+                
+                # 2. Handle numeric types in ground_truth
+                answer_val = q["ground_truth"]
+                if q["answer_type"] in ["number", "numeric", "int", "float"]:
+                    try:
+                         # If it's a string, try to convert to number
+                         if isinstance(answer_val, str):
+                             if '.' in answer_val:
+                                 answer_val = float(answer_val)
+                                 # If it's an integer stored as float (e.g. 4.0), convert to int
+                                 if answer_val.is_integer():
+                                     answer_val = int(answer_val)
+                             else:
+                                 answer_val = int(answer_val)
+                    except ValueError:
+                        pass # Keep as is if conversion fails
+                
+                qa_list.append({
+                    "id": str(q["id"]),
+                    "category": q["category"],
+                    "level": q["level"],
+                    "question": q["question"],
+                    "answer_status": "OK",
+                    "answer_type": q["answer_type"],
+                    "answer": json.dumps(answer_val, ensure_ascii=False),
+                    "unknown_reason": "",
+                    "evidence": json.dumps(evidence, ensure_ascii=False),
+                    "pipeline_version": PIPELINE_VERSION,
+                    "files": "[]"
+                })
+
+        # L4 질문 생성
+        print("[3.5.1] Generating L4 questions (Reachability, Traceroute, Advanced)...")
+        l4_questions = bf_builder.generate_l4_questions()
+        process_builder_questions(l4_questions, "L4")
+        print(f"  -> Generated {len(l4_questions)} L4 questions.")
+            
+        # L5 질문 생성
+        print("[3.5.2] Generating L5 questions (What-If, Multi-Failure, RCA)...")
+        l5_questions = bf_builder.generate_l5_questions()
+        process_builder_questions(l5_questions, "L5")
+        print(f"  -> Generated {len(l5_questions)} L5 questions.")
+            
+        print(f"  -> Total Added: {len(l4_questions)} L4 + {len(l5_questions)} L5 questions")
+
 
     csv_path = out_dir / f"{lab_path.name}_dataset_batfish_{timestamp}.csv"
     if qa_list:

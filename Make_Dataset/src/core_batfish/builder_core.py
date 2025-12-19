@@ -522,13 +522,9 @@ class BuilderCore:
                 if host and self._hostname(d) != host: continue
                 ssh_info = (d.get("security") or {}).get("ssh") or {}
                 is_present = bool(ssh_info.get("present"))
-                if is_present:
-                    version = ssh_info.get("version")
-                    if version:
-                        return "text", f"SSHv{version}"
-                    return "text", "SSHv2"  # 기본값
-                return "text", "비활성화"
-            return "text", "비활성화"
+            if is_present:
+                return "boolean", True
+            return "boolean", False
 
         elif metric == "ssh_version_text":
             host = scope.get("host")
@@ -544,18 +540,9 @@ class BuilderCore:
                 if host and self._hostname(d) != host: continue
                 aaa_info = (d.get("security") or {}).get("aaa") or {}
                 is_present = bool(aaa_info.get("present"))
-                if is_present:
-                    # AAA 방식 추출 (TACACS+, RADIUS, Local 등)
-                    auth_method = aaa_info.get("authentication") or aaa_info.get("method") or ""
-                    if "tacacs" in str(auth_method).lower():
-                        return "text", "TACACS+"
-                    elif "radius" in str(auth_method).lower():
-                        return "text", "RADIUS"
-                    elif "local" in str(auth_method).lower():
-                        return "text", "Local"
-                    return "text", "Local"  # 기본값
-                return "text", "미설정"
-            return "text", "미설정"
+            if is_present:
+                return "boolean", True
+            return "boolean", False
 
         elif metric == "mpls_ldp_present_bool":
             host = scope.get("host")
@@ -565,13 +552,9 @@ class BuilderCore:
                 mpls = ((d.get("services") or {}).get("mpls") or {})
                 ldp_info = mpls.get("ldp") or {}
                 is_present = bool(ldp_info) or bool(mpls.get("ldp_interfaces")) or bool(mpls.get("ldp_enabled"))
-                if is_present:
-                    router_id = ldp_info.get("router_id") or ldp_info.get("router-id") or ""
-                    if router_id:
-                        return "text", f"Router-ID: {router_id}"
-                    return "text", "활성화 (Router-ID 미지정)"
-                return "text", "미설정"
-            return "text", "미설정"
+            if is_present:
+                return "boolean", True
+            return "boolean", False
 
         elif metric == "interface_count":
             host = scope.get("host")
@@ -775,14 +758,14 @@ class BuilderCore:
             asn = scope.get("asn")
             miss = pre["bgp_missing_pairs_by_as"].get(asn, set())
             if len(miss) == 0:
-                return "text", "완전"
+                return "text", "OK"
             else:
                 # 누락된 피어링 목록 표시 (최대 5개)
                 miss_list = sorted(list(miss))[:5]
                 miss_str = ", ".join(miss_list)
                 if len(miss) > 5:
-                    miss_str += f" 외 {len(miss) - 5}개"
-                return "text", f"누락: {miss_str}"
+                    miss_str += f" and {len(miss) - 5} more"
+                return "text", f"Missing: {miss_str}"
         elif metric == "ibgp_missing_pairs":
             asn = scope.get("asn")
             miss = sorted(list(pre["bgp_missing_pairs_by_as"].get(asn, set())))
@@ -928,11 +911,11 @@ class BuilderCore:
             d1 = self.host_index.get(host1)
             d2 = self.host_index.get(host2)
             if not d1 or not d2:
-                return "text", f"{host1}: 정보 없음, {host2}: 정보 없음, 차이: 계산 불가"
+                return "text", f"{host1}: Not found, {host2}: Not found, diff: N/A"
             cnt1 = len(self._bgp_neighbors(d1))
             cnt2 = len(self._bgp_neighbors(d2))
             diff = abs(cnt1 - cnt2)
-            return "text", f"{host1}: {cnt1}개, {host2}: {cnt2}개, 차이: {diff}개"
+            return "text", f"{host1}: {cnt1}, {host2}: {cnt2}, diff: {diff}"
         
         elif metric == "compare_interface_count":
             host1 = scope.get("host1")
@@ -940,11 +923,11 @@ class BuilderCore:
             d1 = self.host_index.get(host1)
             d2 = self.host_index.get(host2)
             if not d1 or not d2:
-                return "text", f"{host1}: 정보 없음, {host2}: 정보 없음, 차이: 계산 불가"
+                return "text", f"{host1}: Not found, {host2}: Not found, diff: N/A"
             cnt1 = len(d1.get("interfaces") or [])
             cnt2 = len(d2.get("interfaces") or [])
             diff = abs(cnt1 - cnt2)
-            return "text", f"{host1}: {cnt1}개, {host2}: {cnt2}개, 차이: {diff}개"
+            return "text", f"{host1}: {cnt1}, {host2}: {cnt2}, diff: {diff}"
         
         elif metric == "compare_vrf_count":
             host1 = scope.get("host1")
@@ -952,11 +935,11 @@ class BuilderCore:
             d1 = self.host_index.get(host1)
             d2 = self.host_index.get(host2)
             if not d1 or not d2:
-                return "text", f"{host1}: 정보 없음, {host2}: 정보 없음, 차이: 계산 불가"
+                return "text", f"{host1}: Not found, {host2}: Not found, diff: N/A"
             cnt1 = len(self._bgp_vrfs(d1))
             cnt2 = len(self._bgp_vrfs(d2))
             diff = abs(cnt1 - cnt2)
-            return "text", f"{host1}: {cnt1}개, {host2}: {cnt2}개, 차이: {diff}개"
+            return "text", f"{host1}: {cnt1}, {host2}: {cnt2}, diff: {diff}"
         
         elif metric == "compare_bgp_as":
             host1 = scope.get("host1")
@@ -964,11 +947,11 @@ class BuilderCore:
             d1 = self.host_index.get(host1)
             d2 = self.host_index.get(host2)
             if not d1 or not d2:
-                return "text", f"{host1}: 정보없음, {host2}: 정보없음"
+                return "text", f"{host1}: No Info, {host2}: No Info"
             as1 = self._bgp_local_as(d1)
             as2 = self._bgp_local_as(d2)
-            as1_str = str(as1) if as1 is not None else "없음"
-            as2_str = str(as2) if as2 is not None else "없음"
+            as1_str = str(as1) if as1 is not None else "None"
+            as2_str = str(as2) if as2 is not None else "None"
             return "text", f"{host1}: AS {as1_str}, {host2}: AS {as2_str}"
         
         elif metric == "compare_ospf_areas":
@@ -977,11 +960,11 @@ class BuilderCore:
             d1 = self.host_index.get(host1)
             d2 = self.host_index.get(host2)
             if not d1 or not d2:
-                return "text", f"{host1}: 정보없음, {host2}: 정보없음"
+                return "text", f"{host1}: No Info, {host2}: No Info"
             areas1 = set((self._ospf(d1).get("areas") or {}).keys())
             areas2 = set((self._ospf(d2).get("areas") or {}).keys())
-            areas1_str = ", ".join(sorted(str(a) for a in areas1)) if areas1 else "없음"
-            areas2_str = ", ".join(sorted(str(a) for a in areas2)) if areas2 else "없음"
+            areas1_str = ", ".join(sorted(str(a) for a in areas1)) if areas1 else "None"
+            areas2_str = ", ".join(sorted(str(a) for a in areas2)) if areas2 else "None"
             return "text", f"{host1}: Area {areas1_str}, {host2}: Area {areas2_str}"
         
         elif metric == "max_interface_device":
@@ -993,8 +976,8 @@ class BuilderCore:
                     max_count = cnt
                     max_host = self._hostname(d)
             if max_host:
-                return "text", f"{max_host}: {max_count}개"
-            return "text", "정보없음"
+                return "text", f"{max_host}: {max_count}"
+            return "text", "No Info"
         
         elif metric == "max_bgp_peer_device":
             max_count = -1
@@ -1005,8 +988,8 @@ class BuilderCore:
                     max_count = cnt
                     max_host = self._hostname(d)
             if max_host:
-                return "text", f"{max_host}: {max_count}개"
-            return "text", "정보없음"
+                return "text", f"{max_host}: {max_count}"
+            return "text", "No Info"
         
         elif metric == "all_devices_same_as":
             as_info = []
@@ -1015,7 +998,7 @@ class BuilderCore:
                 las = self._bgp_local_as(d)
                 if las is not None:
                     as_info.append(f"{host}: AS {las}")
-            info_str = ", ".join(as_info) if as_info else "정보없음"
+            info_str = ", ".join(as_info) if as_info else "No Info"
             return "text", info_str
 
         # ---- New L1 metrics ----
@@ -1110,8 +1093,8 @@ class BuilderCore:
                     min_count = cnt
                     min_host = self._hostname(d)
             if min_host:
-                return "text", f"{min_host}: {min_count}개"
-            return "text", "정보없음"
+                return "text", f"{min_host}: {min_count}"
+            return "text", "No Info"
 
         elif metric == "bgp_as_distribution":
             as_counts = {}
@@ -1120,8 +1103,8 @@ class BuilderCore:
                 if las is not None:
                     as_counts[las] = as_counts.get(las, 0) + 1
             # 형식: 'AS X: N대, AS Y: M대'
-            dist_parts = [f"AS {asn}: {cnt}대" for asn, cnt in sorted(as_counts.items())]
-            return "text", ", ".join(dist_parts) if dist_parts else "정보없음"
+            dist_parts = [f"AS {asn}: {cnt} devices" for asn, cnt in sorted(as_counts.items())]
+            return "text", ", ".join(dist_parts) if dist_parts else "No Info"
 
         elif metric == "vrf_usage_statistics":
             vrf_stats = {}
@@ -1131,8 +1114,8 @@ class BuilderCore:
                 if vrf_count > 0:
                     vrf_stats[host] = vrf_count
             # 형식: '장비1: N개, 장비2: M개'
-            stats_parts = [f"{host}: {cnt}개" for host, cnt in sorted(vrf_stats.items())]
-            return "text", ", ".join(stats_parts) if stats_parts else "정보없음"
+            stats_parts = [f"{host}: {cnt}" for host, cnt in sorted(vrf_stats.items())]
+            return "text", ", ".join(stats_parts) if stats_parts else "No Info"
 
         return "text", None
 
@@ -1212,6 +1195,37 @@ class BuilderCore:
                 # 모든 장비 쌍 조합 (CE-PE 포함)
                 for h1, h2 in combinations(hosts, 2):
                     s=dict(scope); s["host1"]=h1; s["host2"]=h2; yield s
+            elif st == "LINK_FAILURE":
+                # BGP Neighbor 기반으로 링크 추론
+                links = set()
+                for d in self.devices:
+                    h1 = self._hostname(d)
+                    for n in self._bgp_neighbors(d):
+                        peer_ip = n.get("ip") or n.get("id")
+                        h2_name = self.loop_ip_index.get(peer_ip)
+                        if h2_name and h1 != h2_name:
+                            links.add(tuple(sorted((h1, h2_name))))
+                
+                # 링크별 테스트 시나리오 생성
+                for l_src, l_dst in sorted(list(links)):
+                    # 테스트 트래픽: 임의의 두 장비 (장애 링크와 무관할 수도 있음)
+                    # CE 장비 우선 선택 (실제 트래픽 흐름 모사)
+                    ce_hosts = [h for h in hosts if "ce" in h.lower()]
+                    candidates = ce_hosts if len(ce_hosts) >= 2 else hosts
+                    if len(candidates) >= 2:
+                        fs, fd = rng.sample(candidates, 2)
+                    else:
+                        fs, fd = h1, h2_name if h2_name else h1 # fallback
+                    
+                    s = dict(scope)
+                    s["link"] = f"{l_src}-{l_dst}"
+                    s["node1"] = l_src
+                    s["node2"] = l_dst
+                    s["test_src"] = fs
+                    s["test_dst"] = fd
+                    s["src"] = fs
+                    s["dst"] = fd
+                    yield s
             else:
                 yield scope
 

@@ -531,6 +531,13 @@
                         "primary_metric": "isolation_check",
                         "notes": "VRF/테넌트 간 격리 검증",
                         "academic_reference": "HSA (NSDI'12), Config2Spec (NSDI'20)"
+                    },
+                    {
+                        "goal": "consistency",
+                        "targets": ["NODE_PAIR"],
+                        "primary_metric": "asymmetric_path_check",
+                        "notes": "비대칭 경로(Asymmetric Routing) 검사",
+                        "academic_reference": "Operational Best Practice"
                     }
                 ]
             }
@@ -574,6 +581,20 @@
                         "primary_metric": "policy_compliance_check",
                         "notes": "네트워크 정책 준수 검증 (waypoint 등)",
                         "academic_reference": "Config2Spec (NSDI'20)"
+                    },
+                    {
+                        "goal": "invariant",
+                        "targets": ["GLOBAL"],
+                        "primary_metric": "ospf_backbone_contiguity",
+                        "notes": "OSPF 백본 연속성 검증",
+                        "academic_reference": "RFC 2328, Batfish"
+                    },
+                    {
+                        "goal": "fault_tolerance",
+                        "targets": ["GLOBAL"],
+                        "primary_metric": "spof_detection",
+                        "notes": "단일 장애점(SPOF) 탐지",
+                        "academic_reference": "Operational Best Practice"
                     }
                 ]
             }
