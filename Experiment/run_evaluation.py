@@ -31,7 +31,8 @@ class Config:
     DATA_PATHS = {
         "telequad": os.path.join(DATA_DIR, "TeleQuAD", "TeleQuAD-v4-full.json"),
         "teleqna": os.path.join(DATA_DIR, "TeleQnA", "TeleQnA.json"),
-        "netbench": os.path.join(DATA_DIR, "NetBench", "T-NetEval.csv")
+        "netbench": os.path.join(DATA_DIR, "NetBench", "T-NetEval.csv"), 
+        "netconfigqa2": os.path.join(DATA_DIR, "NetConfigQA2", "NetConfigQA2.json"), 
     }
 
 # === Logger ===
