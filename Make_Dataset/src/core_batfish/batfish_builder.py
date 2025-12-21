@@ -63,7 +63,10 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
     """
 
     def __init__(self, network_name: str, snapshot_path: str, policies_path: str = None):
-        super().__init__(network_name, snapshot_path)
+        # Fix: Pass arguments by keyword to avoid mismatch with BatfishBase signature
+        # BatfishBase.__init__(snapshot_path, batfish_host="localhost", network_name="...")
+        super().__init__(snapshot_path=snapshot_path, network_name=network_name)
+        
         self.metrics_metadata = {}
         if policies_path:
             try:
