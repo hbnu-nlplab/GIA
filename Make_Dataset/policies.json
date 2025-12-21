@@ -1,6 +1,6 @@
 {
-    "version": "2.0",
-    "description": "네트워크 설정 검증 메트릭 정책 - L1~L5 레벨 체계",
+    "version": "3.0",
+    "description": "NetConfigQA Metric Definitions (Data-Driven Schema)",
     "level_definitions": {
         "L1": "단일 장비 설정값 조회 (Single Device Query)",
         "L2": "복수 장비 설정값 집계 (Multi-Device Aggregation)",
@@ -8,596 +8,811 @@
         "L4": "네트워크 흐름 도달성 - Batfish (Reachability Analysis)",
         "L5": "What-If / Differential 분석 - Batfish (Impact Analysis)"
     },
-    "defaults": {
-        "scenarios": [
-            "보안 설정 점검",
-            "라우팅 구성 검증",
-            "VRF/RT 구성 확인",
-            "L2VPN 일관성 확인",
-            "OSPF 영역/이웃 가시성 확인",
-            "시스템/접속 기본 정보 점검"
-        ]
-
+    "metrics_metadata": {
+        "system_hostname_text": {
+            "level": "L1",
+            "category": "System_Inventory",
+            "answer_type": "text",
+            "template": "{host} 장비의 호스트네임은 무엇입니까?",
+            "description": "장비 식별자(Hostname) 조회",
+            "verification": "Config 파일 최상단의 'hostname <NAME>' 라인을 확인합니다. XML의 경우 /device/name 경로의 값입니다.",
+            "logic_ref": "facts.devices[host].system.hostname"
+        },
+        "system_version_text": {
+            "level": "L1",
+            "category": "System_Inventory",
+            "answer_type": "text",
+            "template": "{host} 장비의 운영체제(OS) 버전은 무엇입니까?",
+            "description": "장비 OS 버전 조회",
+            "verification": "Config 상단의 'version <VER>' 또는 show version 결과를 확인합니다.",
+            "logic_ref": "facts.devices[host].system.version"
+        },
+        "system_timezone_text": {
+            "level": "L1",
+            "category": "System_Inventory",
+            "answer_type": "text",
+            "template": "{host} 장비의 시간대(Timezone)는 무엇입니까?",
+            "description": "시스템 시간대 설정 조회",
+            "verification": "'clock timezone <NAME> <OFFSET>' 설정을 확인합니다.",
+            "logic_ref": "facts.devices[host].system.timezone"
+        },
+        "system_user_list": {
+            "level": "L1",
+            "category": "System_Inventory",
+            "answer_type": "set_str",
+            "template": "{host} 장비에 등록된 로컬 사용자 목록을 알려주세요. [답변 형식: 리스트]",
+            "description": "로컬 사용자 계정 목록 조회",
+            "verification": "'username <USER> ...' 라인들의 사용자명을 확인합니다.",
+            "logic_ref": "facts.devices[host].system.users"
+        },
+        "system_user_count": {
+            "level": "L1",
+            "category": "System_Inventory",
+            "answer_type": "scalar_int",
+            "template": "{host} 장비에 등록된 로컬 사용자는 총 몇 명입니까? [답변 형식: 숫자]",
+            "description": "로컬 사용자 수 집계",
+            "verification": "'username ...' 라인의 개수를 셉니다.",
+            "logic_ref": "count(facts.devices[host].system.users)"
+        },
+        "logging_buffered_severity_text": {
+            "level": "L1",
+            "category": "System_Inventory",
+            "answer_type": "text",
+            "template": "{host} 장비에서 logging buffered의 severity-level은 무엇입니까?",
+            "description": "버퍼 로깅 레벨 조회",
+            "verification": "'logging buffered <SIZE> <LEVEL>' 설정을 확인합니다.",
+            "logic_ref": "facts.devices[host].logging.buffered_severity"
+        },
+        "ntp_server_list": {
+            "level": "L1",
+            "category": "System_Inventory",
+            "answer_type": "set_str",
+            "template": "{host} 장비에 설정된 NTP 서버 목록을 알려주세요. [답변 형식: 리스트]",
+            "description": "NTP 서버 IP/Hostname 목록 조회",
+            "verification": "'ntp server <IP>' 설정 라인들을 확인합니다.",
+            "logic_ref": "facts.devices[host].ntp.servers"
+        },
+        "snmp_community_list": {
+            "level": "L1",
+            "category": "System_Inventory",
+            "answer_type": "set_str",
+            "template": "{host} 장비에 설정된 SNMP 커뮤니티 목록을 알려주세요. [답변 형식: 리스트]",
+            "description": "SNMP 커뮤니티 문자열 조회",
+            "verification": "'snmp-server community <STRING>' 설정 라인들을 확인합니다.",
+            "logic_ref": "facts.devices[host].snmp.communities"
+        },
+        "syslog_server_list": {
+            "level": "L1",
+            "category": "System_Inventory",
+            "answer_type": "set_str",
+            "template": "{host} 장비에 설정된 Syslog 서버 목록을 알려주세요. [답변 형식: 리스트]",
+            "description": "Syslog 서버 IP 목록 조회",
+            "verification": "'logging host <IP>' 또는 'logging <IP>' 설정 라인들을 확인합니다.",
+            "logic_ref": "facts.devices[host].logging.hosts"
+        },
+        "interface_status_map": {
+            "level": "L1",
+            "category": "System_Inventory",
+            "answer_type": "map_str_str",
+            "template": "{host} 장비의 각 인터페이스 상태를 알려주세요. [답변 형식: {'인터페이스명': '상태'}]",
+            "description": "인터페이스별 상태(up/down) 조회",
+            "verification": "'interface <NAME>' 블록 내의 'shutdown' 여부를 확인합니다. (기본값: up)",
+            "logic_ref": "facts.devices[host].interfaces.status"
+        },
+        "routing_table_entry_count": {
+            "level": "L1",
+            "category": "System_Inventory",
+            "answer_type": "scalar_int",
+            "template": "{host} 장비의 라우팅 테이블 엔트리는 총 몇 개입니까? [답변 형식: 숫자]",
+            "description": "라우팅 테이블 항목 수 (정적 분석 추정치)",
+            "verification": "'ip route ...' 설정 라인 및 연결된 인터페이스 네트워크 수를 합산합니다.",
+            "logic_ref": "count(facts.devices[host].routing.static + connected)"
+        },
+        "ssh_present_bool": {
+            "level": "L1",
+            "category": "Security_Inventory",
+            "answer_type": "bool",
+            "template": "{host} 장비의 SSH 서비스가 활성화되어 있습니까? [답변 형식: true 또는 false]",
+            "description": "SSH 활성화 여부 확인",
+            "verification": "'ip ssh version ...' 설정이 있거나 Crypto Key가 생성되어 있는지 확인합니다.",
+            "logic_ref": "facts.devices[host].ssh.present"
+        },
+        "ssh_version_text": {
+            "level": "L1",
+            "category": "Security_Inventory",
+            "answer_type": "text",
+            "template": "{host} 장비의 SSH 버전은 무엇입니까?",
+            "description": "SSH 프로토콜 버전 조회",
+            "verification": "'ip ssh version <VER>' 설정을 확인합니다. (기본값: 1)",
+            "logic_ref": "facts.devices[host].ssh.version"
+        },
+        "aaa_present_bool": {
+            "level": "L1",
+            "category": "Security_Inventory",
+            "answer_type": "bool",
+            "template": "{host} 장비의 AAA 서비스가 활성화되어 있습니까? [답변 형식: true 또는 false]",
+            "description": "AAA 활성화 여부 확인",
+            "verification": "'aaa new-model' 설정 라인이 있는지 확인합니다.",
+            "logic_ref": "facts.devices[host].aaa.present"
+        },
+        "vty_transport_input_text": {
+            "level": "L1",
+            "category": "Security_Inventory",
+            "answer_type": "text",
+            "template": "{host} 장비의 VTY transport input 설정은 무엇입니까?",
+            "description": "VTY 라인 접속 프로토콜 조회",
+            "verification": "'line vty ...' 블록 내의 'transport input <PROTO>' 설정을 확인합니다.",
+            "logic_ref": "facts.devices[host].vty.transport_input"
+        },
+        "vty_login_mode_text": {
+            "level": "L1",
+            "category": "Security_Inventory",
+            "answer_type": "text",
+            "template": "{host} 장비의 VTY line 로그인 방식은 무엇입니까?",
+            "description": "VTY 라인 인증 방식 조회",
+            "verification": "'line vty ...' 블록 내의 'login local', 'login authentication ...' 설정을 확인합니다.",
+            "logic_ref": "facts.devices[host].vty.login_mode"
+        },
+        "interface_count": {
+            "level": "L1",
+            "category": "Interface_Inventory",
+            "answer_type": "scalar_int",
+            "template": "{host} 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까? [답변 형식: 숫자]",
+            "description": "활성 인터페이스 수 집계",
+            "verification": "'interface ...' 블록의 총 개수를 셉니다.",
+            "logic_ref": "count(facts.devices[host].interfaces)"
+        },
+        "interface_ip_map": {
+            "level": "L1",
+            "category": "Interface_Inventory",
+            "answer_type": "map_str_str",
+            "template": "{host} 장비의 각 인터페이스에 할당된 IP 주소를 알려주세요. [답변 형식: {'인터페이스': 'IP'}]",
+            "description": "인터페이스별 IP 주소 매핑 조회",
+            "verification": "각 'interface ...' 블록 내의 'ip address <IP> <MASK>' 설정을 확인합니다.",
+            "logic_ref": "facts.devices[host].interfaces.ip"
+        },
+        "subinterface_count": {
+            "level": "L1",
+            "category": "Interface_Inventory",
+            "answer_type": "scalar_int",
+            "template": "{host} 장비에 설정된 서브인터페이스는 총 몇 개입니까? [답변 형식: 숫자]",
+            "description": "서브인터페이스(예: Gi0/0.10) 개수 집계",
+            "verification": "인터페이스 이름에 점(.)이 포함된 'interface ...' 블록 수를 셉니다.",
+            "logic_ref": "count(subinterfaces)"
+        },
+        "vrf_bind_map": {
+            "level": "L1",
+            "category": "Interface_Inventory",
+            "answer_type": "map_str_str",
+            "template": "{host} 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요. [답변 형식: {'인터페이스': 'VRF'}]",
+            "description": "인터페이스-VRF 바인딩 조회",
+            "verification": "각 'interface ...' 블록 내의 'ip vrf forwarding <VRF>' 설정을 확인합니다.",
+            "logic_ref": "facts.devices[host].interfaces.vrf"
+        },
+        "bgp_local_as_numeric": {
+            "level": "L1",
+            "category": "Routing_Inventory",
+            "answer_type": "scalar_int",
+            "template": "{host} 장비의 BGP Local-AS 번호는 무엇입니까? [답변 형식: 숫자]",
+            "description": "BGP Local AS 번호 조회",
+            "verification": "'router bgp <ASN>' 설정 라인을 확인합니다.",
+            "logic_ref": "facts.devices[host].bgp.local_as"
+        },
+        "bgp_neighbor_count": {
+            "level": "L1",
+            "category": "Routing_Inventory",
+            "answer_type": "scalar_int",
+            "template": "{host} 장비의 BGP 피어(이웃)는 총 몇 개입니까? [답변 형식: 숫자]",
+            "description": "BGP Neighbor 수 집계",
+            "verification": "'router bgp ...' 블록 내의 'neighbor ... remote-as' 라인 수를 셉니다.",
+            "logic_ref": "count(facts.devices[host].bgp.neighbors)"
+        },
+        "neighbor_list_ibgp": {
+            "level": "L1",
+            "category": "Routing_Inventory",
+            "answer_type": "set_str",
+            "template": "{host} 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트]",
+            "description": "iBGP Neighbor IP 목록 조회",
+            "verification": "'router bgp <ASN>' 블록 내에서 remote-as가 <ASN>과 같은 neighbor IP들을 확인합니다.",
+            "logic_ref": "facts.devices[host].bgp.ibgp_neighbors"
+        },
+        "neighbor_list_ebgp": {
+            "level": "L1",
+            "category": "Routing_Inventory",
+            "answer_type": "set_str",
+            "template": "{host} 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트]",
+            "description": "eBGP Neighbor IP 목록 조회",
+            "verification": "'router bgp <ASN>' 블록 내에서 remote-as가 <ASN>과 다른 neighbor IP들을 확인합니다.",
+            "logic_ref": "facts.devices[host].bgp.ebgp_neighbors"
+        },
+        "ospf_process_ids_set": {
+            "level": "L1",
+            "category": "Routing_Inventory",
+            "answer_type": "set_str",
+            "template": "{host} 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요. [답변 형식: 리스트]",
+            "description": "OSPF Process ID 목록 조회",
+            "verification": "'router ospf <PID>' 라인들의 PID를 확인합니다.",
+            "logic_ref": "facts.devices[host].ospf.process_ids"
+        },
+        "ospf_area_set": {
+            "level": "L1",
+            "category": "Routing_Inventory",
+            "answer_type": "set_str",
+            "template": "{host} 장비가 참여하는 OSPF Area 목록을 알려주세요. [답변 형식: 리스트]",
+            "description": "설정된 OSPF Area ID 목록 조회",
+            "verification": "'network <NET> area <AREA>' 명령에 포함된 모든 Area ID를 확인합니다.",
+            "logic_ref": "facts.devices[host].ospf.areas"
+        },
+        "ospf_area0_if_list": {
+            "level": "L1",
+            "category": "Routing_Inventory",
+            "answer_type": "set_str",
+            "template": "{host} 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요. [답변 형식: 리스트]",
+            "description": "Backbone Area (Area 0) 인터페이스 목록",
+            "verification": "'network ... area 0'에 포함된 네트워크 대역을 가진 인터페이스를 찾습니다.",
+            "logic_ref": "facts.devices[host].ospf.area0_interfaces"
+        },
+        "vrf_names_set": {
+            "level": "L1",
+            "category": "Services_Inventory",
+            "answer_type": "set_str",
+            "template": "{host} 장비에 설정된 VRF 이름 목록을 알려주세요. [답변 형식: 리스트]",
+            "description": "VRF 이름 목록 조회",
+            "verification": "'ip vrf <NAME>' 설정 라인들을 확인합니다.",
+            "logic_ref": "facts.devices[host].vrfs.names"
+        },
+        "vrf_count": {
+            "level": "L1",
+            "category": "Services_Inventory",
+            "answer_type": "scalar_int",
+            "template": "{host} 장비에 설정된 VRF는 총 몇 개입니까? [답변 형식: 숫자]",
+            "description": "설정된 VRF 개수 집계",
+            "verification": "'ip vrf ...' 설정 라인 수를 셉니다.",
+            "logic_ref": "count(facts.devices[host].vrfs)"
+        },
+        "vrf_rd_map": {
+            "level": "L1",
+            "category": "Services_Inventory",
+            "answer_type": "map_str_str",
+            "template": "{host} 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요. [답변 형식: {'VRF': 'RD'}]",
+            "description": "VRF별 Route Distinguisher 값 매핑",
+            "verification": "'ip vrf <NAME>' 블록 내의 'rd <VALUE>' 설정을 확인합니다.",
+            "logic_ref": "facts.devices[host].vrfs.rd"
+        },
+        "rt_import_count": {
+            "level": "L1",
+            "category": "Services_Inventory",
+            "answer_type": "scalar_int",
+            "template": "{host} 장비의 Route Target Import 설정은 총 몇 개입니까? [답변 형식: 숫자]",
+            "description": "VRF Route-Target Import 설정 수",
+            "verification": "모든 VRF 설정 내의 'route-target import ...' 라인 수를 합산합니다.",
+            "logic_ref": "count(facts.devices[host].vrfs.rt_import)"
+        },
+        "rt_export_count": {
+            "level": "L1",
+            "category": "Services_Inventory",
+            "answer_type": "scalar_int",
+            "template": "{host} 장비의 Route Target Export 설정은 총 몇 개입니까? [답변 형식: 숫자]",
+            "description": "VRF Route-Target Export 설정 수",
+            "verification": "모든 VRF 설정 내의 'route-target export ...' 라인 수를 합산합니다.",
+            "logic_ref": "count(facts.devices[host].vrfs.rt_export)"
+        },
+        "mpls_ldp_present_bool": {
+            "level": "L1",
+            "category": "Services_Inventory",
+            "answer_type": "bool",
+            "template": "{host} 장비의 MPLS LDP가 활성화되어 있습니까? [답변 형식: true 또는 false]",
+            "description": "MPLS LDP 활성화 여부 확인",
+            "verification": "Global Config에 'mpls ip' 또는 Interface Config에 'mpls ip' 설정이 있는지 확인합니다.",
+            "logic_ref": "facts.devices[host].mpls.ldp_present"
+        },
+        "l2vpn_pw_id_set": {
+            "level": "L1",
+            "category": "Services_Inventory",
+            "answer_type": "set_str",
+            "template": "{host} 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요. [답변 형식: 리스트]",
+            "description": "L2VPN PW-ID 목록 조회",
+            "verification": "'xconnect <IP> <PWID> encapsulation mpls' 라인들의 PWID를 확인합니다.",
+            "logic_ref": "facts.devices[host].l2vpn.pw_ids"
+        },
+        "ssh_enabled_devices": {
+            "level": "L2",
+            "category": "Security_Policy",
+            "answer_type": "set_str",
+            "template": "SSH 접속이 가능한 장비 목록을 알려주세요. [답변 형식: 리스트]",
+            "description": "SSH가 활성화된 모든 장비 식별",
+            "verification": "모든 장비의 Config 중 'ip ssh ...' 또는 Crypto Key가 있는 장비들을 찾습니다.",
+            "logic_ref": "filter(ssh_present_bool == True)"
+        },
+        "ssh_missing_devices": {
+            "level": "L2",
+            "category": "Security_Policy",
+            "answer_type": "set_str",
+            "template": "SSH 접속이 불가능한 장비 목록을 알려주세요. [답변 형식: 리스트]",
+            "description": "SSH가 설정되지 않은 장비 식별 (보안 위협)",
+            "verification": "SSH 설정이 누락된 장비들을 찾습니다.",
+            "logic_ref": "filter(ssh_present_bool == False)"
+        },
+        "ssh_missing_count": {
+            "level": "L2",
+            "category": "Security_Policy",
+            "answer_type": "scalar_int",
+            "template": "SSH 접속이 불가능한 장비는 총 몇 대입니까? [답변 형식: 숫자]",
+            "description": "SSH 미설정 장비 수 집계",
+            "verification": "SSH 설정이 누락된 장비의 수를 셉니다.",
+            "logic_ref": "count(ssh_missing_devices)"
+        },
+        "aaa_enabled_devices": {
+            "level": "L2",
+            "category": "Security_Policy",
+            "answer_type": "set_str",
+            "template": "AAA 기능이 활성화된 장비 목록을 알려주세요. [답변 형식: 리스트]",
+            "description": "AAA 설정이 있는 장비 식별",
+            "verification": "'aaa new-model' 설정이 있는 장비들을 찾습니다.",
+            "logic_ref": "filter(aaa_present_bool == True)"
+        },
+        "aaa_missing_devices": {
+            "level": "L2",
+            "category": "Security_Policy",
+            "answer_type": "set_str",
+            "template": "AAA 기능이 비활성화된 장비 목록을 알려주세요. [답변 형식: 리스트]",
+            "description": "AAA 미설정 장비 식별",
+            "verification": "'aaa new-model' 설정이 없는 장비들을 찾습니다.",
+            "logic_ref": "filter(aaa_present_bool == False)"
+        },
+        "devices_with_same_vrf": {
+            "level": "L2",
+            "category": "Security_Policy",
+            "answer_type": "set_str",
+            "template": "{vrf} VRF를 사용하는 장비 목록을 알려주세요. [답변 형식: 리스트]",
+            "description": "특정 VRF를 가진 장비 그룹 식별",
+            "verification": "'ip vrf {vrf}' 설정이 있는 장비들을 찾습니다.",
+            "logic_ref": "filter(has_vrf({vrf}))"
+        },
+        "ospf_area_membership": {
+            "level": "L2",
+            "category": "OSPF_Consistency",
+            "answer_type": "set_str",
+            "template": "OSPF Area {area}에 속한 장비 목록을 알려주세요. [답변 형식: 리스트]",
+            "description": "특정 OSPF Area 소속 장비 식별",
+            "verification": "'router ospf' 설정 내 'network ... area {area}' 명령이 있는 장비들을 찾습니다.",
+            "logic_ref": "filter(has_ospf_area({area}))"
+        },
+        "ospf_area0_if_count": {
+            "level": "L2",
+            "category": "OSPF_Consistency",
+            "answer_type": "scalar_int",
+            "template": "{host} 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까? [답변 형식: 숫자]",
+            "description": "Area 0 인터페이스 수 집계",
+            "verification": "'network ... area 0' 범위에 포함된 인터페이스 수를 셉니다.",
+            "logic_ref": "count(ospf_area0_if_list)"
+        },
+        "ospf_neighbor_count_per_area": {
+            "level": "L2",
+            "category": "OSPF_Consistency",
+            "answer_type": "scalar_int",
+            "template": "OSPF Area {area}의 이웃 관계는 총 몇 개입니까? [답변 형식: 숫자]",
+            "description": "특정 Area 내의 총 OSPF Neighbor 수 (추정)",
+            "verification": "해당 Area에 속한 인터페이스 수와 토폴로지 연결성을 기반으로 추정합니다.",
+            "logic_ref": "sum(neighbors_in_area({area}))"
+        },
+        "l2vpn_pairs": {
+            "level": "L2",
+            "category": "L2VPN_Consistency",
+            "answer_type": "edge_set",
+            "template": "구성된 L2VPN pseudowire 회선(장비쌍) 목록을 알려주세요. [답변 형식: ['A<->B', ...]]",
+            "description": "L2VPN Pseudowire 연결 장비쌍 목록",
+            "verification": "'xconnect <PEER_IP>' 설정을 보고, PEER_IP가 가리키는 장비와 자신을 짝짓습니다.",
+            "logic_ref": "calculate_l2vpn_topology()"
+        },
+        "l2vpn_unidirectional_pairs": {
+            "level": "L3",
+            "category": "L2VPN_Consistency",
+            "answer_type": "set_str",
+            "template": "단방향으로만 설정된 L2VPN 회선(장비쌍) 목록을 알려주세요. [답변 형식: 리스트]",
+            "description": "양방향 미설정 L2VPN 오류 탐지",
+            "verification": "자신은 xconnect를 건너편으로 설정했지만, 건너편에서는 자신에게 설정하지 않은 경우를 찾습니다.",
+            "logic_ref": "check_unidirectional_l2vpn()"
+        },
+        "l2vpn_unidir_count": {
+            "level": "L3",
+            "category": "L2VPN_Consistency",
+            "answer_type": "scalar_int",
+            "template": "단방향으로만 설정된 L2VPN 회선은 총 몇 개입니까? [답변 형식: 숫자]",
+            "description": "단방향 L2VPN 오류 개수",
+            "verification": "l2vpn_unidirectional_pairs의 개수입니다.",
+            "logic_ref": "count(l2vpn_unidirectional_pairs)"
+        },
+        "l2vpn_pwid_mismatch_pairs": {
+            "level": "L3",
+            "category": "L2VPN_Consistency",
+            "answer_type": "set_str",
+            "template": "PW-ID가 불일치하는 L2VPN 회선(장비쌍) 목록을 알려주세요. [답변 형식: 리스트]",
+            "description": "양 끝단 PW-ID 불일치 오류 탐지",
+            "verification": "서로 xconnect를 맺고 있지만, 설정된 PW-ID 값이 다른 쌍을 찾습니다.",
+            "logic_ref": "check_pwid_mismatch()"
+        },
+        "l2vpn_mismatch_count": {
+            "level": "L3",
+            "category": "L2VPN_Consistency",
+            "answer_type": "scalar_int",
+            "template": "PW-ID 불일치 또는 단방향 L2VPN 회선은 총 몇 개입니까? [답변 형식: 숫자]",
+            "description": "L2VPN 구성 오류 총계",
+            "verification": "단방향 오류와 PW-ID 불일치 오류의 합집합 개수입니다.",
+            "logic_ref": "count(l2vpn_errors)"
+        },
+        "ibgp_fullmesh_ok": {
+            "level": "L3",
+            "category": "BGP_Consistency",
+            "answer_type": "text",
+            "template": "AS {asn}의 iBGP Full-Mesh 상태와 누락된 피어링을 알려주세요. [답변 형식: 'OK' 또는 'Missing: A<->B, C<->D']",
+            "description": "iBGP Full Mesh 구성 검증",
+            "verification": "AS 내부의 모든 iBGP 라우터들이 서로 Peer 관계인지 확인합니다. (Route Reflector가 없는 경우 가정)",
+            "logic_ref": "check_full_mesh({asn})"
+        },
+        "ibgp_missing_pairs": {
+            "level": "L3",
+            "category": "BGP_Consistency",
+            "answer_type": "set_str",
+            "template": "AS {asn}의 iBGP Full-Mesh에서 누락된 장비쌍 목록을 알려주세요. [답변 형식: 리스트]",
+            "description": "Full Mesh 누락 링크 목록",
+            "verification": "iBGP Peering이 맺어지지 않은 장비 쌍을 나열합니다.",
+            "logic_ref": "get_missing_ibgp_pairs({asn})"
+        },
+        "ibgp_missing_pairs_count": {
+            "level": "L3",
+            "category": "BGP_Consistency",
+            "answer_type": "scalar_int",
+            "template": "AS {asn}의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까? [답변 형식: 숫자]",
+            "description": "Full Mesh 누락 링크 수",
+            "verification": "누락된 Peering 쌍의 개수입니다.",
+            "logic_ref": "count(ibgp_missing_pairs)"
+        },
+        "ibgp_under_peered_devices": {
+            "level": "L3",
+            "category": "BGP_Consistency",
+            "answer_type": "set_str",
+            "template": "AS {asn}에서 iBGP 피어 수가 부족한 장비 목록을 알려주세요. [답변 형식: 리스트]",
+            "description": "Peer 수가 (N-1)개 미만인 장비 식별",
+            "verification": "AS 내 총 iBGP 라우터 수보다 적은 Neighbor를 가진 장비를 찾습니다.",
+            "logic_ref": "check_under_peered({asn})"
+        },
+        "ibgp_under_peered_count": {
+            "level": "L3",
+            "category": "BGP_Consistency",
+            "answer_type": "scalar_int",
+            "template": "AS {asn}에서 iBGP 피어 수가 부족한 장비는 총 몇 대입니까? [답변 형식: 숫자]",
+            "description": "Peer 부족 장비 수",
+            "verification": "Peer 수가 부족한 장비의 개수입니다.",
+            "logic_ref": "count(ibgp_under_peered_devices)"
+        },
+        "vrf_without_rt_pairs": {
+            "level": "L3",
+            "category": "VRF_Consistency",
+            "answer_type": "set_str",
+            "template": "route-target이 없는 VRF(장비/VRF) 목록을 알려주세요. [답변 형식: 리스트]",
+            "description": "Route-Target 미설정 VRF 식별 (통신 불가)",
+            "verification": "VRF 설정은 있지만 'route-target' 명령이 없는 경우를 찾습니다.",
+            "logic_ref": "check_vrf_missing_rt()"
+        },
+        "vrf_without_rt_count": {
+            "level": "L3",
+            "category": "VRF_Consistency",
+            "answer_type": "scalar_int",
+            "template": "route-target이 없는 VRF(장비/VRF)는 총 몇 개입니까? [답변 형식: 숫자]",
+            "description": "RT 미설정 VRF 개수",
+            "verification": "RT가 없는 VRF 인스턴스의 개수입니다.",
+            "logic_ref": "count(vrf_without_rt_pairs)"
+        },
+        "vrf_interface_bind_count": {
+            "level": "L3",
+            "category": "VRF_Consistency",
+            "answer_type": "scalar_int",
+            "template": "{host} 장비의 {vrf} VRF에 바인딩된 인터페이스는 총 몇 개입니까? [답변 형식: 숫자]",
+            "description": "특정 VRF에 소속된 인터페이스 수",
+            "verification": "'ip vrf forwarding {vrf}'가 설정된 인터페이스 수를 셉니다.",
+            "logic_ref": "count(interfaces_in_vrf({host}, {vrf}))"
+        },
+        "vrf_rt_list_per_device": {
+            "level": "L3",
+            "category": "VRF_Consistency",
+            "answer_type": "set_str",
+            "template": "{host} 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요. [답변 형식: 리스트]",
+            "description": "장비 내 전체 Route-Target 목록",
+            "verification": "장비 내 모든 VRF의 Route-Target 값을 수집하여 중복을 제거합니다.",
+            "logic_ref": "collect_unique_rts({host})"
+        },
+        "compare_bgp_neighbor_count": {
+            "level": "L3",
+            "category": "Comparison_Analysis",
+            "answer_type": "text",
+            "template": "{host1}과 {host2}의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: '{host1}: N개, {host2}: M개, 차이: K개']",
+            "description": "두 장비의 BGP Peer 수 비교",
+            "verification": "두 장비의 'router bgp' neighbor 수를 각각 세어 차이를 계산합니다.",
+            "logic_ref": "compare_counts(bgp_neighbors, {host1}, {host2})"
+        },
+        "compare_interface_count": {
+            "level": "L3",
+            "category": "Comparison_Analysis",
+            "answer_type": "text",
+            "template": "{host1}과 {host2}의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: '{host1}: N개, {host2}: M개, 차이: K개']",
+            "description": "두 장비의 인터페이스 수 비교",
+            "verification": "두 장비의 활성 인터페이스 수를 각각 세어 차이를 계산합니다.",
+            "logic_ref": "compare_counts(interfaces, {host1}, {host2})"
+        },
+        "compare_vrf_count": {
+            "level": "L3",
+            "category": "Comparison_Analysis",
+            "answer_type": "text",
+            "template": "{host1}과 {host2}의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: '{host1}: N개, {host2}: M개, 차이: K개']",
+            "description": "두 장비의 VRF 수 비교",
+            "verification": "두 장비의 VRF 설정 개수를 각각 세어 차이를 계산합니다.",
+            "logic_ref": "compare_counts(vrfs, {host1}, {host2})"
+        },
+        "compare_bgp_as": {
+            "level": "L3",
+            "category": "Comparison_Analysis",
+            "answer_type": "text",
+            "template": "{host1}과 {host2}의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: '{host1}: AS X, {host2}: AS Y']",
+            "description": "두 장비의 AS 번호 비교",
+            "verification": "두 장비의 'router bgp <ASN>'을 확인하여 비교합니다.",
+            "logic_ref": "compare_values(local_as, {host1}, {host2})"
+        },
+        "compare_ospf_areas": {
+            "level": "L3",
+            "category": "Comparison_Analysis",
+            "answer_type": "text",
+            "template": "{host1}과 {host2}가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: '{host1}: Area 0, 1, {host2}: Area 0, 2']",
+            "description": "두 장비의 OSPF Area 구성 비교",
+            "verification": "두 장비의 OSPF Area 목록을 각각 나열하여 비교합니다.",
+            "logic_ref": "compare_sets(ospf_areas, {host1}, {host2})"
+        },
+        "max_interface_device": {
+            "level": "L3",
+            "category": "Comparison_Analysis",
+            "answer_type": "text",
+            "template": "인터페이스 수가 가장 많은 장비와 그 개수를 알려주세요. [답변 형식: '장비명: N개']",
+            "description": "최대 인터페이스 보유 장비 탐색",
+            "verification": "모든 장비의 인터페이스 수를 집계하여 최댓값을 가진 장비를 찾습니다.",
+            "logic_ref": "max(device.interfaces.count)"
+        },
+        "max_bgp_peer_device": {
+            "level": "L3",
+            "category": "Comparison_Analysis",
+            "answer_type": "text",
+            "template": "BGP 피어가 가장 많은 장비와 그 개수를 알려주세요. [답변 형식: '장비명: N개']",
+            "description": "최다 BGP Peer 보유 장비 탐색",
+            "verification": "모든 장비의 BGP Neighbor 수를 집계하여 최댓값을 가진 장비를 찾습니다.",
+            "logic_ref": "max(device.bgp.neighbors.count)"
+        },
+        "all_devices_same_as": {
+            "level": "L3",
+            "category": "Comparison_Analysis",
+            "answer_type": "text",
+            "template": "모든 장비의 BGP AS 번호를 나열해주세요. [답변 형식: '장비1: AS X, 장비2: AS Y, ...']",
+            "description": "전체 장비 AS 번호 현황",
+            "verification": "모든 장비의 Local AS 번호를 나열합니다.",
+            "logic_ref": "map(device.local_as)"
+        },
+        "min_interface_device": {
+            "level": "L3",
+            "category": "Comparison_Analysis",
+            "answer_type": "text",
+            "template": "인터페이스 수가 가장 적은 장비와 그 개수를 알려주세요. [답변 형식: '장비명: N개']",
+            "description": "최소 인터페이스 보유 장비 탐색",
+            "verification": "모든 장비의 인터페이스 수를 집계하여 최솟값을 가진 장비를 찾습니다.",
+            "logic_ref": "min(device.interfaces.count)"
+        },
+        "bgp_as_distribution": {
+            "level": "L3",
+            "category": "Comparison_Analysis",
+            "answer_type": "text",
+            "template": "각 AS별 장비 수 분포를 알려주세요. [답변 형식: 'AS X: N대, AS Y: M대']",
+            "description": "AS별 장비 수 통계",
+            "verification": "AS 번호별로 소속된 장비의 수를 카운트합니다.",
+            "logic_ref": "groupby(local_as).count()"
+        },
+        "vrf_usage_statistics": {
+            "level": "L3",
+            "category": "Comparison_Analysis",
+            "answer_type": "text",
+            "template": "각 장비별 VRF 사용 수 통계를 알려주세요. [답변 형식: '장비1: N개, 장비2: M개']",
+            "description": "장비별 VRF 구성 수 비교",
+            "verification": "모든 장비의 VRF 개수를 각각 나열합니다.",
+            "logic_ref": "map(device.vrfs.count)"
+        },
+        "traceroute_path": {
+            "level": "L4",
+            "category": "Reachability_Analysis",
+            "answer_type": "text",
+            "template": "{src_ip}에서 {dst_ip}까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비 목록]",
+            "description": "Batfish Traceroute 경로 추적",
+            "verification": "Batfish의 'traceroute' 질문 결과에서 홉(Hop) 순서를 확인합니다.",
+            "logic_ref": "batfish.traceroute(src, dst)",
+            "troubleshooting_hint": "경로가 없으면 '경로 없음' 또는 빈 값으로 처리될 수 있습니다."
+        },
+        "reachability_status": {
+            "level": "L4",
+            "category": "Reachability_Analysis",
+            "answer_type": "text",
+            "template": "{src_ip}에서 {dst_ip}({dst_port}/{protocol})로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: 없음, 도달: 불가']",
+            "description": "End-to-End 도달 가능성 확인",
+            "verification": "Batfish의 'reachability' 분석 결과를 확인하여 도달 여부(Success/Fail)와 경로를 판별합니다.",
+            "logic_ref": "batfish.reachability(src, dst, port)"
+        },
+        "acl_blocking_point": {
+            "level": "L4",
+            "category": "Reachability_Analysis",
+            "answer_type": "text",
+            "template": "{src_ip}에서 {dst_ip}로 트래픽이 차단된다면 차단 지점을 알려주세요. [답변 형식: 차단 지점 장비명 또는 '허용']",
+            "description": "ACL 차단 지점 분석",
+            "verification": "Batfish Traceroute 결과에서 'Denied' 상태가 되는 홉(Hop)과 적용된 ACL 이름을 확인합니다.",
+            "logic_ref": "batfish.find_denied_flow(src, dst)"
+        },
+        "loop_detection": {
+            "level": "L4",
+            "category": "Reachability_Analysis",
+            "answer_type": "text",
+            "template": "네트워크에 포워딩 루프가 존재합니까? [답변 형식: '없음' 또는 '발견: A→B→C→A']",
+            "description": "포워딩 루프 탐지",
+            "verification": "Batfish의 'loop detection' 분석 기능을 사용하여 순환 경로가 있는지 확인합니다.",
+            "logic_ref": "batfish.detect_loops()"
+        },
+        "blackhole_detection": {
+            "level": "L4",
+            "category": "Reachability_Analysis",
+            "answer_type": "bool",
+            "template": "네트워크에 패킷이 드랍되는 블랙홀이 존재합니까? [답변 형식: true 또는 false]",
+            "description": "블랙홀(Null Route 등) 탐지",
+            "verification": "트래픽이 목적지 없이 드랍되는 지점(Blackhole)이 있는지 분석합니다.",
+            "logic_ref": "batfish.detect_blackholes()"
+        },
+        "waypoint_check": {
+            "level": "L4",
+            "category": "Reachability_Analysis",
+            "answer_type": "bool",
+            "template": "{src_ip}에서 {dst_ip}로 가는 트래픽이 {waypoint}를 경유합니까? [답변 형식: true 또는 false]",
+            "description": "경유지(Waypoint) 통과 여부 검증",
+            "verification": "경로상에 특정 장비(방화벽 등)가 포함되어 있는지 Traceroute 결과로 확인합니다.",
+            "logic_ref": "batfish.traceroute(src, dst).contains(waypoint)"
+        },
+        "bounded_path_length": {
+            "level": "L4",
+            "category": "Reachability_Analysis",
+            "answer_type": "scalar_int",
+            "template": "{src_host}에서 {dst_ip}로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자]",
+            "description": "경로 길이(Hop Count) 확인",
+            "verification": "Traceroute 결과의 홉 수를 셉니다.",
+            "logic_ref": "len(batfish.traceroute(src, dst).hops)"
+        },
+        "isolation_check": {
+            "level": "L4",
+            "category": "Reachability_Analysis",
+            "answer_type": "bool",
+            "template": "{vrf1}과 {vrf2} 사이의 통신이 격리되어 있습니까? [답변 형식: true 또는 false]",
+            "description": "네트워크 분리(Isolation) 검증",
+            "verification": "두 영역 간에 도달 가능한 경로가 전혀 없는지 확인합니다.",
+            "logic_ref": "!batfish.reachability(vrf1, vrf2)"
+        },
+        "asymmetric_path_check": {
+            "level": "L4",
+            "category": "Reachability_Analysis",
+            "answer_type": "bool",
+            "template": "{host1}과 {host2} 사이의 경로가 비대칭입니까? [답변 형식: true 또는 false]",
+            "description": "비대칭 라우팅(Asymmetric Routing) 탐지",
+            "verification": "A->B 경로와 B->A 경로가 다른지 비교합니다.",
+            "logic_ref": "path(A,B) != reverse(path(B,A))"
+        },
+        "link_failure_impact": {
+            "level": "L5",
+            "category": "What_If_Analysis",
+            "answer_type": "text",
+            "template": "'{link}' 링크가 다운될 경우, '{src}→{dst}' 트래픽에 어떤 영향이 발생합니까? [답변 형식: 'NONE', 'REROUTED', 'DISCONNECTED']",
+            "description": "링크 장애 시 영향도 분석 (What-If)",
+            "verification": "해당 링크를 끄고 Batfish 시뮬레이션을 다시 돌려 경로 변화를 확인합니다.",
+            "logic_ref": "batfish.fail_link(link).diff_reachability(src, dst)"
+        },
+        "k_failure_tolerance": {
+            "level": "L5",
+            "category": "What_If_Analysis",
+            "answer_type": "bool",
+            "template": "{src_host}와 {dst_ip} 통신은 단일 링크 장애에 안전합니까? (k=1 내성) [답변 형식: true 또는 false]",
+            "description": "단일 장애 내성(Redundancy) 검증",
+            "verification": "경로상의 어느 한 링크가 끊겨도 우회 경로가 있는지 확인합니다.",
+            "logic_ref": "batfish.analysis.k_failure(k=1)"
+        },
+        "config_change_impact": {
+            "level": "L5",
+            "category": "What_If_Analysis",
+            "answer_type": "text",
+            "template": "설정 변경 후 {src}에서 {dst}까지의 경로 변경 여부와 영향받는 흐름을 알려주세요. [답변 형식: 변경 내역 요약]",
+            "description": "설정 변경 전후 영향 분석 (Differential)",
+            "verification": "변경 전/후 스냅샷의 도달성을 비교(Differential Reachability)합니다.",
+            "logic_ref": "batfish.diff(snapshot_base, snapshot_new)"
+        },
+        "policy_compliance_check": {
+            "level": "L5",
+            "category": "What_If_Analysis",
+            "answer_type": "text",
+            "template": "'{policy_name}' 정책 준수 여부와 위반 사례를 알려주세요. [답변 형식: '준수' 또는 위반 내역]",
+            "description": "사용자 정의 정책 위반 검사",
+            "verification": "정의된 Invariant(예: 루프 없음, 차단 정책 등) 위반 여부를 검사합니다.",
+            "logic_ref": "batfish.validate_policies()"
+        },
+        "ospf_backbone_contiguity": {
+            "level": "L5",
+            "category": "What_If_Analysis",
+            "answer_type": "bool",
+            "template": "OSPF Backbone Area(Area 0)가 끊어짐 없이 연결되어 있습니까? [답변 형식: true 또는 false]",
+            "description": "OSPF 백본 연속성 검증",
+            "verification": "Area 0 장비들이 하나의 연결된 그래프를 형성하는지 확인합니다.",
+            "logic_ref": "graph.is_connected(area0_nodes)"
+        },
+        "spof_detection": {
+            "level": "L5",
+            "category": "What_If_Analysis",
+            "answer_type": "set_str",
+            "template": "단일 장비 장애 시 통신이 두절되는 구간(SPOF: Single Point of Failure)이 존재합니까? [답변 형식: SPOF 장비 목록 또는 '없음']",
+            "description": "단일 장애점(SPOF) 장비 탐지",
+            "verification": "특정 장비 다운 시 전체 네트워크 분할이나 주요 통신 단절이 발생하는지 시뮬레이션합니다.",
+            "logic_ref": "batfish.find_spof_nodes()"
+        },
+        "differential_reachability": {
+            "level": "L5",
+            "category": "What_If_Analysis",
+            "answer_type": "text",
+            "template": "변경 전후 {src}에서 {dst}로의 도달성에 차이가 있습니까? [답변 형식: '차이 없음' 또는 차이 상세]",
+            "description": "도달성 변화 상세 분석",
+            "verification": "Batfish Differential Analysis 결과를 요약합니다.",
+            "logic_ref": "batfish.differential_reachability()"
+         },
+         "root_cause_analysis": {
+            "level": "L5",
+            "category": "What_If_Analysis",
+            "answer_type": "json",
+            "template": "{src_node}에서 {dst_node}로의 통신이 실패합니다. 근본 원인과 차단 지점을 분석하세요. [답변 형식: JSON {\"root_cause\": \"...\", \"blocking_point\": \"노드명\"}]",
+            "description": "장애 근본 원인 분석 (RCA)",
+            "verification": "통신 실패 흐름에 대해 ACL, 라우팅 누락 등 원인을 역추적합니다.",
+            "logic_ref": "batfish.explain_failure(src, dst)"
+         },
+         "blast_radius_estimation": {
+            "level": "L5",
+            "category": "What_If_Analysis",
+            "answer_type": "json",
+            "template": "'{node}' 장비가 다운될 경우, 직접 영향을 받는 노드들과 심각도를 추정하세요. [답변 형식: JSON {\"affected_nodes\": [...], \"severity\": \"...\"}]",
+            "description": "장애 영향 범위(Blast Radius) 추정",
+            "verification": "특정 장비 장애 시 도달 불가능해지는 목적지/이웃 장비를 식별합니다.",
+            "logic_ref": "batfish.estimate_blast_radius(node)"
+         },
+         "multi_link_failure_analysis": {
+            "level": "L5",
+            "category": "What_If_Analysis",
+            "answer_type": "text",
+            "template": "'{link1}' 링크와 '{link2}' 링크가 동시에 다운될 경우, {test_src}에서 {test_dst}로의 통신이 가능합니까? [답변 형식: '고립됨' 또는 '대체 경로: ...']",
+            "description": "다중 링크(k>=2) 동시 장애 분석",
+            "verification": "두 개의 링크를 동시에 끄고 도달성을 재계산합니다.",
+            "logic_ref": "batfish.fail_links([l1, l2]).reachability(s, d)"
+         },
+         "ospf_compatibility_check": {
+            "level": "L4",
+            "category": "Routing_Consistency",
+            "answer_type": "json",
+            "template": "{node1}과 {node2} 사이에 OSPF 네이버가 형성되지 않는 경우, 가능한 원인들을 분석하세요. [답변 형식: JSON {\"issues\": [...]}]",
+            "description": "OSPF 네이버 미형성 원인 분석",
+            "verification": "Area ID, MTU, Hello/Dead Timer 등 OSPF 파라미터 불일치를 검사합니다.",
+            "logic_ref": "batfish.check_ospf_compatibility(n1, n2)"
+         },
+         "security_policy_bypass_check": {
+            "level": "L4",
+            "category": "Security_Policy",
+            "answer_type": "text",
+            "template": "'{src}→{dst}' 트래픽이 보안 장비 '{waypoint}'를 거치지 않고 도달 가능한 우회 경로가 있습니까? [답변 형식: '우회 경로 존재: ...' 또는 '우회 경로 없음']",
+            "description": "보안 장비 우회 경로 탐지",
+            "verification": "Start->End 도달 가능 경로 중 Waypoint를 거치지 않는 경로가 있는지 확인합니다.",
+            "logic_ref": "batfish.find_bypath(src, dst, !waypoint)"
+         }
     },
     "policies": [
-        {
-            "category": "System_Inventory",
-            "description": "시스템 기본 정보 조회",
-            "levels": {
-                "L1": [
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "system_hostname_text"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "system_version_text"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "system_timezone_text"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "system_user_list"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "system_user_count"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "logging_buffered_severity_text"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "ntp_server_list",
-                        "notes": "NTP 서버 설정 확인"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "snmp_community_list",
-                        "notes": "SNMP 커뮤니티 목록"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "syslog_server_list",
-                        "notes": "Syslog 서버 목록"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "interface_status_map",
-                        "notes": "인터페이스 상태 맵"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "routing_table_entry_count",
-                        "notes": "라우팅 테이블 엔트리 수"
-                    }
-                ]
-            }
-        },
-        {
-            "category": "Security_Inventory",
-            "description": "보안 설정 정보 조회",
-            "levels": {
-                "L1": [
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "ssh_present_bool"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "ssh_version_text"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "aaa_present_bool"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "vty_transport_input_text",
-                        "notes": "VTY 접속 프로토콜 확인 (SSH/Telnet)"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "vty_login_mode_text",
-                        "notes": "VTY 인증 방식 확인"
-                    }
-                ]
-            }
-        },
-        {
-            "category": "Interface_Inventory",
-            "description": "인터페이스 정보 조회",
-            "levels": {
-                "L1": [
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "interface_count"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "interface_ip_map"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "subinterface_count"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "vrf_bind_map"
-                    }
-                ]
-            }
-        },
-        {
-            "category": "Routing_Inventory",
-            "description": "라우팅 정보 조회",
-            "levels": {
-                "L1": [
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "bgp_local_as_numeric"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "bgp_neighbor_count"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "neighbor_list_ibgp"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "neighbor_list_ebgp"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "ospf_process_ids_set"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "ospf_area_set"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "ospf_area0_if_list"
-                    }
-                ]
-            }
-        },
-        {
-            "category": "Services_Inventory",
-            "description": "서비스 설정 정보 조회",
-            "levels": {
-                "L1": [
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "vrf_names_set"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "vrf_count"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "vrf_rd_map"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "rt_import_count"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "rt_export_count"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "mpls_ldp_present_bool"
-                    },
-                    {
-                        "goal": "extraction",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "l2vpn_pw_id_set"
-                    }
-                ]
-            }
-        },
-        {
-            "category": "Security_Policy",
-            "description": "보안 정책 준수 검증",
-            "levels": {
-                "L2": [
-                    {
-                        "goal": "compliance",
-                        "targets": ["GLOBAL"],
-                        "primary_metric": "ssh_enabled_devices"
-                    },
-                    {
-                        "goal": "compliance",
-                        "targets": ["GLOBAL"],
-                        "primary_metric": "ssh_missing_devices"
-                    },
-                    {
-                        "goal": "compliance",
-                        "targets": ["GLOBAL"],
-                        "primary_metric": "ssh_missing_count"
-                    },
-                    {
-                        "goal": "compliance",
-                        "targets": ["GLOBAL"],
-                        "primary_metric": "aaa_enabled_devices"
-                    },
-                    {
-                        "goal": "compliance",
-                        "targets": ["GLOBAL"],
-                        "primary_metric": "aaa_missing_devices"
-                    },
-                    {
-                        "goal": "compliance",
-                        "targets": ["GLOBAL"],
-                        "primary_metric": "devices_with_same_vrf",
-                        "notes": "동일 VRF를 사용하는 장비 그룹"
-                    }
-                ]
-            }
-        },
-        {
-            "category": "OSPF_Consistency",
-            "description": "OSPF 구성 일관성 검증",
-            "levels": {
-                "L2": [
-                    {
-                        "goal": "consistency",
-                        "targets": ["GLOBAL"],
-                        "primary_metric": "ospf_area_membership",
-                        "notes": "특정 OSPF Area에 속한 장비 목록"
-                    },
-                    {
-                        "goal": "consistency",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "ospf_area0_if_count"
-                    },
-                    {
-                        "goal": "consistency",
-                        "targets": ["OSPF_AREA"],
-                        "primary_metric": "ospf_neighbor_count_per_area",
-                        "notes": "OSPF Area별 이웃 관계 수"
-                    }
-                ]
-            }
-        },
-        {
-            "category": "BGP_Consistency",
-            "description": "BGP 구성 일관성 검증",
-            "levels": {
-                "L3": [
-                    {
-                        "goal": "consistency",
-                        "targets": ["AS"],
-                        "primary_metric": "ibgp_fullmesh_ok"
-                    },
-                    {
-                        "goal": "consistency",
-                        "targets": ["AS"],
-                        "primary_metric": "ibgp_missing_pairs"
-                    },
-                    {
-                        "goal": "consistency",
-                        "targets": ["AS"],
-                        "primary_metric": "ibgp_missing_pairs_count"
-                    },
-                    {
-                        "goal": "consistency",
-                        "targets": ["AS"],
-                        "primary_metric": "ibgp_under_peered_devices"
-                    },
-                    {
-                        "goal": "consistency",
-                        "targets": ["AS"],
-                        "primary_metric": "ibgp_under_peered_count"
-                    }
-                ]
-            }
-        },
-        {
-            "category": "VRF_Consistency",
-            "description": "VRF 구성 일관성 검증",
-            "levels": {
-                "L3": [
-                    {
-                        "goal": "consistency",
-                        "targets": ["GLOBAL"],
-                        "primary_metric": "vrf_without_rt_pairs"
-                    },
-                    {
-                        "goal": "consistency",
-                        "targets": ["GLOBAL"],
-                        "primary_metric": "vrf_without_rt_count"
-                    },
-                    {
-                        "goal": "consistency",
-                        "targets": ["DEVICE_VRF"],
-                        "primary_metric": "vrf_interface_bind_count"
-                    },
-                    {
-                        "goal": "consistency",
-                        "targets": ["DEVICE"],
-                        "primary_metric": "vrf_rt_list_per_device"
-                    }
-                ]
-            }
-        },
-        {
-            "category": "L2VPN_Consistency",
-            "description": "L2VPN 구성 일관성 검증",
-            "levels": {
-                "L2": [
-                    {
-                        "goal": "visibility",
-                        "targets": ["GLOBAL"],
-                        "primary_metric": "l2vpn_pairs"
-                    }
-                ],
-                "L3": [
-                    {
-                        "goal": "consistency",
-                        "targets": ["GLOBAL"],
-                        "primary_metric": "l2vpn_unidirectional_pairs"
-                    },
-                    {
-                        "goal": "consistency",
-                        "targets": ["GLOBAL"],
-                        "primary_metric": "l2vpn_unidir_count"
-                    },
-                    {
-                        "goal": "consistency",
-                        "targets": ["GLOBAL"],
-                        "primary_metric": "l2vpn_pwid_mismatch_pairs"
-                    },
-                    {
-                        "goal": "consistency",
-                        "targets": ["GLOBAL"],
-                        "primary_metric": "l2vpn_mismatch_count"
-                    }
-                ]
-            }
-        },
-        {
-            "category": "Comparison_Analysis",
-            "description": "장비 간 설정 비교 분석",
-            "levels": {
-                "L3": [
-                    {
-                        "goal": "comparison",
-                        "targets": ["DEVICE_PAIR"],
-                        "primary_metric": "compare_bgp_neighbor_count",
-                        "notes": "두 장비의 BGP 피어 수 차이"
-                    },
-                    {
-                        "goal": "comparison",
-                        "targets": ["DEVICE_PAIR"],
-                        "primary_metric": "compare_interface_count",
-                        "notes": "두 장비의 인터페이스 수 차이"
-                    },
-                    {
-                        "goal": "comparison",
-                        "targets": ["DEVICE_PAIR"],
-                        "primary_metric": "compare_vrf_count",
-                        "notes": "두 장비의 VRF 수 차이"
-                    },
-                    {
-                        "goal": "comparison",
-                        "targets": ["DEVICE_PAIR"],
-                        "primary_metric": "compare_bgp_as",
-                        "notes": "두 장비가 같은 AS에 속하는지 확인"
-                    },
-                    {
-                        "goal": "comparison",
-                        "targets": ["DEVICE_PAIR"],
-                        "primary_metric": "compare_ospf_areas",
-                        "notes": "두 장비의 OSPF Area 참여 비교"
-                    },
-                    {
-                        "goal": "aggregation",
-                        "targets": ["GLOBAL"],
-                        "primary_metric": "max_interface_device",
-                        "notes": "인터페이스 수가 가장 많은 장비"
-                    },
-                    {
-                        "goal": "aggregation",
-                        "targets": ["GLOBAL"],
-                        "primary_metric": "max_bgp_peer_device",
-                        "notes": "BGP 피어가 가장 많은 장비"
-                    },
-                    {
-                        "goal": "aggregation",
-                        "targets": ["GLOBAL"],
-                        "primary_metric": "all_devices_same_as",
-                        "notes": "모든 장비가 같은 AS에 속하는지 확인"
-                    },
-                    {
-                        "goal": "aggregation",
-                        "targets": ["GLOBAL"],
-                        "primary_metric": "min_interface_device",
-                        "notes": "인터페이스 수가 가장 적은 장비"
-                    },
-                    {
-                        "goal": "aggregation",
-                        "targets": ["GLOBAL"],
-                        "primary_metric": "bgp_as_distribution",
-                        "notes": "각 AS별 장비 수 분포"
-                    },
-                    {
-                        "goal": "aggregation",
-                        "targets": ["GLOBAL"],
-                        "primary_metric": "vrf_usage_statistics",
-                        "notes": "장비별 VRF 사용 통계"
-                    }
-                ]
-            }
-        },
-        {
-            "category": "Reachability_Analysis",
-            "description": "네트워크 도달성 분석 (Batfish 필요) - 학술적 근거: HSA(NSDI'12), VeriFlow(NSDI'13), Minesweeper(SIGCOMM'17)",
-            "levels": {
-                "L4": [
-                    {
-                        "goal": "reachability",
-                        "targets": ["FLOW"],
-                        "primary_metric": "traceroute_path",
-                        "notes": "Batfish bf.q.traceroute() 사용",
-                        "academic_reference": "Batfish (NSDI'15)"
-                    },
-                    {
-                        "goal": "reachability",
-                        "targets": ["FLOW"],
-                        "primary_metric": "reachability_status",
-                        "notes": "A→B 도달 가능 여부 확인",
-                        "academic_reference": "HSA (NSDI'12), VeriFlow (NSDI'13)"
-                    },
-                    {
-                        "goal": "reachability",
-                        "targets": ["FLOW"],
-                        "primary_metric": "acl_blocking_point",
-                        "notes": "ACL에 의한 트래픽 차단 지점 식별",
-                        "academic_reference": "HSA (NSDI'12)"
-                    },
-                    {
-                        "goal": "invariant",
-                        "targets": ["GLOBAL"],
-                        "primary_metric": "loop_detection",
-                        "notes": "포워딩 루프 탐지 - loop-free invariant",
-                        "academic_reference": "HSA (NSDI'12), VeriFlow (NSDI'13)"
-                    },
-                    {
-                        "goal": "invariant",
-                        "targets": ["GLOBAL"],
-                        "primary_metric": "blackhole_detection",
-                        "notes": "블랙홀 탐지 - 패킷 드랍 지점",
-                        "academic_reference": "HSA (NSDI'12), Minesweeper (SIGCOMM'17)"
-                    },
-                    {
-                        "goal": "policy",
-                        "targets": ["FLOW"],
-                        "primary_metric": "waypoint_check",
-                        "notes": "웨이포인트 통과 검증 (FW, IDS 등)",
-                        "academic_reference": "Minesweeper (SIGCOMM'17), Config2Spec (NSDI'20)"
-                    },
-                    {
-                        "goal": "policy",
-                        "targets": ["FLOW"],
-                        "primary_metric": "bounded_path_length",
-                        "notes": "경로 홉 수 제한 검증",
-                        "academic_reference": "Minesweeper (SIGCOMM'17)"
-                    },
-                    {
-                        "goal": "isolation",
-                        "targets": ["VRF_PAIR"],
-                        "primary_metric": "isolation_check",
-                        "notes": "VRF/테넌트 간 격리 검증",
-                        "academic_reference": "HSA (NSDI'12), Config2Spec (NSDI'20)"
-                    },
-                    {
-                        "goal": "consistency",
-                        "targets": ["NODE_PAIR"],
-                        "primary_metric": "asymmetric_path_check",
-                        "notes": "비대칭 경로(Asymmetric Routing) 검사",
-                        "academic_reference": "Operational Best Practice"
-                    }
-                ]
-            }
-        },
-        {
-            "category": "What_If_Analysis",
-            "description": "What-If / Differential 분석 (Batfish 필요) - 학술적 근거: DNA(NSDI'22), Minesweeper(SIGCOMM'17)",
-            "levels": {
-                "L5": [
-                    {
-                        "goal": "what_if",
-                        "targets": ["LINK_FAILURE"],
-                        "primary_metric": "link_failure_impact",
-                        "notes": "단일 링크 장애 영향 분석",
-                        "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
-                    },
-                    {
-                        "goal": "fault_tolerance",
-                        "targets": ["NODE_PAIR"],
-                        "primary_metric": "k_failure_tolerance",
-                        "notes": "k개 장애 내성 검증 (1-failure tolerance)",
-                        "academic_reference": "Minesweeper (SIGCOMM'17), Trailblazer (FM'23)"
-                    },
-                    {
-                        "goal": "differential",
-                        "targets": ["CONFIG_CHANGE"],
-                        "primary_metric": "config_change_impact",
-                        "notes": "설정 변경 전후 비교 분석",
-                        "academic_reference": "DNA (NSDI'22)"
-                    },
-                    {
-                        "goal": "differential",
-                        "targets": ["FLOW"],
-                        "primary_metric": "differential_reachability",
-                        "notes": "변경 전후 도달성 차이 분석",
-                        "academic_reference": "DNA (NSDI'22)"
-                    },
-                    {
-                        "goal": "compliance",
-                        "targets": ["POLICY"],
-                        "primary_metric": "policy_compliance_check",
-                        "notes": "네트워크 정책 준수 검증 (waypoint 등)",
-                        "academic_reference": "Config2Spec (NSDI'20)"
-                    },
-                    {
-                        "goal": "invariant",
-                        "targets": ["GLOBAL"],
-                        "primary_metric": "ospf_backbone_contiguity",
-                        "notes": "OSPF 백본 연속성 검증",
-                        "academic_reference": "RFC 2328, Batfish"
-                    },
-                    {
-                        "goal": "fault_tolerance",
-                        "targets": ["GLOBAL"],
-                        "primary_metric": "spof_detection",
-                        "notes": "단일 장애점(SPOF) 탐지",
-                        "academic_reference": "Operational Best Practice"
-                    }
-                ]
-            }
-        }
+        "__comment__: This section is kept for backward compatibility if needed, but the generator now uses metrics_metadata directly."
     ]
 }
