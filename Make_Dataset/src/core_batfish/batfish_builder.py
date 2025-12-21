@@ -28,6 +28,7 @@ from typing import Dict, List, Any, Optional, Tuple, Set
 from itertools import combinations
 from dataclasses import dataclass
 from datetime import datetime
+from pathlib import Path
 
 # 리팩토링된 모듈 임포트
 from .models import (
@@ -59,25 +60,24 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
     - BatfishBase: 초기화, 스냅샷 관리, 기본 쿼리
     - L4AnalyzerMixin: 도달성 분석 (Traceroute, ACL, Loop 등)
     - L5AnalyzerMixin: What-If 분석 (Link Failure, RCA 등)
-    
-    L4 메트릭:
-    - traceroute_path: 네트워크 경로 추적
-    - reachability_status: 도달 가능 여부
-    - acl_blocking_point: ACL 차단 지점
-    - loop_detection: 포워딩 루프 탐지
-    - blackhole_detection: 블랙홀 탐지
-    - waypoint_check: 웨이포인트 경유 여부
-    - ospf_compatibility_check: OSPF 호환성 검사 (Advanced)
-    - security_policy_bypass_check: 보안 정책 우회 탐지 (Advanced)
-    
-    L5 메트릭:
-    - link_failure_impact: 링크 장애 영향 분석
-    - config_change_impact: 설정 변경 영향 분석
-    - spof_detection: 단일 장애점 탐지
-    - root_cause_analysis: 장애 근본 원인 분석 (Advanced)
-    - blast_radius_estimation: 장애 영향 범위 추정 (Advanced)
-    - multi_link_failure_analysis: 다중 링크 장애 분석 (Advanced)
     """
+
+    def __init__(self, network_name: str, snapshot_path: str, policies_path: str = None):
+        super().__init__(network_name, snapshot_path)
+        self.metrics_metadata = {}
+        if policies_path:
+            try:
+                policy_text = Path(policies_path).read_text(encoding="utf-8")
+                policy_data = json.loads(policy_text)
+                self.metrics_metadata = policy_data.get("metrics_metadata", {})
+            except Exception as e:
+                logger.error(f"Failed to load policies from {policies_path}: {e}")
+
+    def _get_template(self, metric: str, default: str) -> str:
+        """Get template from metadata or return default."""
+        if metric in self.metrics_metadata:
+            return self.metrics_metadata[metric].get("template", default)
+        return default
     
     # =========================================================================
     # 문제 생성 메서드
@@ -100,17 +100,21 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
                 tr_result = self.traceroute_path(src_node, dst_ips[0], target_name=dst_node)
                 path_str = " → ".join(tr_result.value) if tr_result.status == "OK" and tr_result.value else "경로 없음"
                 
+                metric = "traceroute_path"
+                template = self._get_template(metric, "{src_node}에서 {dst_node}({dst_ip})로 가는 패킷의 네트워크 경로를 알려주세요.\n[답변 형식: 화살표(→)로 구분된 장비 목록]")
+                q_text = template.format(src_ip=src_node, dst_ip=dst_ips[0], src_node=src_node, dst_node=dst_node)
+
                 questions.append({
                     "id": f"TRACEROUTE_{src_node}_{dst_node}",
                     "category": "Reachability_Analysis",
                     "level": "L4",
                     "answer_type": "text",
-                    "question": f"{src_node}에서 {dst_node}({dst_ips[0]})로 가는 패킷의 네트워크 경로를 알려주세요.\n[답변 형식: 화살표(→)로 구분된 장비 목록]",
+                    "question": q_text,
                     "ground_truth": path_str,
-                    "explanation": f"metric `traceroute_path` on src={src_node}, dst={dst_ips[0]}",
+                    "explanation": f"metric `{metric}` on src={src_node}, dst={dst_ips[0]}",
                     "evidence_hint": {
                         "scope": {"type": "NODE_PAIR", "src": src_node, "dst": dst_node},
-                        "metric": "traceroute_path"
+                        "metric": metric
                     }
                 })
         
@@ -127,17 +131,22 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
             result_text = f"경로: {path_str}, 도달: {'가능' if reachable else '불가'}"
             
             port_desc = f":{flow.dst_port}" if flow.dst_port else ""
+            
+            metric = "reachability_status"
+            template = self._get_template(metric, "{src_ip}에서 {dst_ip}({dst_port}/{protocol})로의 트래픽 경로와 도달 여부를 알려주세요.\n[답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: 없음, 도달: 불가']")
+            q_text = template.format(src_ip=flow.src_ip, dst_ip=flow.dst_ip, dst_port=flow.dst_port, protocol=flow.protocol, src_location=flow.src_location, dst_location=flow.dst_location)
+
             questions.append({
                 "id": f"REACH_{flow.src_location}_{flow.dst_location}_{flow.protocol}",
                 "category": "Reachability_Analysis",
                 "level": "L4",
                 "answer_type": "text",
-                "question": f"{flow.src_location}({flow.src_ip})에서 {flow.dst_location}({flow.dst_ip}{port_desc})로의 {flow.protocol} 트래픽 경로와 도달 여부를 알려주세요.\n[답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: 없음, 도달: 불가']",
+                "question": q_text,
                 "ground_truth": result_text,
-                "explanation": f"metric `reachability_status` on src={flow.src_ip}, dst={flow.dst_ip}",
+                "explanation": f"metric `{metric}` on src={flow.src_ip}, dst={flow.dst_ip}",
                 "evidence_hint": {
                     "scope": {"type": "FLOW", "src_ip": flow.src_ip, "dst_ip": flow.dst_ip},
-                    "metric": "reachability_status"
+                    "metric": metric
                 },
                 "academic_reference": "HSA (NSDI'12), VeriFlow (NSDI'13), Batfish (NSDI'15)"
             })
@@ -149,16 +158,19 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
             loops = loop_res.value.get("loops", [])
             
             result_text = f"발견: {loops[0] if loops else 'Loop detected'}" if has_loop else "없음"
-
+            
+            metric = "loop_detection"
+            template = self._get_template(metric, "네트워크에 포워딩 루프가 존재합니까?\n[답변 형식: '없음' 또는 '발견: A→B→C→A']")
+            
             questions.append({
                 "id": "LOOP_DETECTION_GLOBAL",
                 "category": "Reachability_Analysis",
                 "level": "L4",
                 "answer_type": "text",
-                "question": "네트워크에 포워딩 루프가 존재합니까?\n[답변 형식: '없음' 또는 '발견: A→B→C→A']",
+                "question": template,
                 "ground_truth": result_text,
                 "explanation": "metric `loop_detection` analysis result",
-                "evidence_hint": {"scope": {"type": "GLOBAL"}, "metric": "loop_detection"},
+                "evidence_hint": {"scope": {"type": "GLOBAL"}, "metric": metric},
                 "academic_reference": "HSA (NSDI'12): loop-free as core invariant"
             })
         
@@ -171,15 +183,20 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
                 bound_res = self.bounded_path_length(src_node, dst_ips[0], max_hops=5)
                 if bound_res.status == "OK":
                     hop_count = bound_res.value.get("hops", -1)
+                    
+                    metric = "bounded_path_length"
+                    template = self._get_template(metric, "{src_host}에서 {dst_ip}로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]")
+                    q_text = template.format(src_host=src_node, dst_ip=dst_ips[0], src_node=src_node, dst_node=dst_node)
+
                     questions.append({
                         "id": f"BOUNDED_PATH_{src_node}_{dst_node}",
                         "category": "Reachability_Analysis",
                         "level": "L4",
                         "answer_type": "number",
-                        "question": f"{src_node}에서 {dst_node}로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
+                        "question": q_text,
                         "ground_truth": str(hop_count),
-                        "explanation": f"metric `bounded_path_length` on {src_node}->{dst_node}",
-                        "evidence_hint": {"scope": {"type": "NODE_PAIR", "src": src_node, "dst": dst_node}, "metric": "bounded_path_length"},
+                        "explanation": f"metric `{metric}` on {src_node}->{dst_node}",
+                        "evidence_hint": {"scope": {"type": "NODE_PAIR", "src": src_node, "dst": dst_node}, "metric": metric},
                         "academic_reference": "Minesweeper (SIGCOMM'17): bounded path length"
                     })
         
@@ -187,15 +204,19 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
         bh_res = self.blackhole_detection()
         if bh_res.status == "OK":
             blackholes = bh_res.value.get("blackholes", [])
+            
+            metric = "blackhole_detection"
+            template = self._get_template(metric, "네트워크에 패킷이 드랍되는 블랙홀이 존재합니까?\n[답변 형식: true/false]")
+            
             questions.append({
                 "id": "BLACKHOLE_DETECTION_GLOBAL",
                 "category": "Reachability_Analysis",
                 "level": "L4",
                 "answer_type": "boolean",
-                "question": "네트워크에 패킷이 드랍되는 블랙홀이 존재합니까?\n[답변 형식: true/false (소문자)]",
+                "question": template,
                 "ground_truth": str(len(blackholes) > 0).lower(),
-                "explanation": f"metric `blackhole_detection` found {len(blackholes)} blackholes",
-                "evidence_hint": {"scope": {"type": "GLOBAL"}, "metric": "blackhole_detection"},
+                "explanation": f"metric `{metric}` found {len(blackholes)} blackholes",
+                "evidence_hint": {"scope": {"type": "GLOBAL"}, "metric": metric},
                 "academic_reference": "HSA (NSDI'12), Minesweeper (SIGCOMM'17): blackhole detection"
             })
         
@@ -210,15 +231,19 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
                 compatible = compat_res.value.get("compatible", True)
                 
                 if issues:
+                    metric = "ospf_compatibility_check"
+                    template = self._get_template(metric, "{node1}과 {node2} 사이에 OSPF 네이버가 형성되지 않는 경우, 가능한 원인들을 분석하세요.\n[답변 형식: JSON {{\"issues\": [...]}}]")
+                    q_text = template.format(node1=node1, node2=node2)
+
                     questions.append({
                         "id": f"OSPF_COMPAT_{node1}_{node2}",
                         "category": "Routing_Consistency",
                         "level": "L4",
                         "answer_type": "json",
-                        "question": f"{node1}과 {node2} 사이에 OSPF 네이버가 형성되지 않는 경우, 가능한 원인들을 분석하세요.\n[답변 형식: JSON {{\"issues\": [\"issue1\", \"issue2\"], \"recommendation\": \"...\"}}]",
+                        "question": q_text,
                         "ground_truth": f'{{"issues": {issues}, "compatible": {str(compatible).lower()}}}',
-                        "explanation": f"metric `ospf_compatibility_check` on {node1}-{node2}",
-                        "evidence_hint": {"scope": {"type": "NODE_PAIR", "node1": node1, "node2": node2}, "metric": "ospf_compatibility_check"},
+                        "explanation": f"metric `{metric}` on {node1}-{node2}",
+                        "evidence_hint": {"scope": {"type": "NODE_PAIR", "node1": node1, "node2": node2}, "metric": metric},
                         "academic_reference": "RFC 2328, 현업: OSPF 트러블슈팅"
                     })
                     ospf_q_count += 1
@@ -244,15 +269,19 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
                             path_str = " → ".join(bypass_path) if bypass_path else "없음"
                             result_text = f"우회 경로 존재: {path_str}" if bypass_exists else "우회 경로 없음 (정책 준수)"
                             
+                            metric = "security_policy_bypass_check"
+                            template = self._get_template(metric, "'{src}→{dst}' 트래픽이 보안 장비 '{waypoint}'를 거치지 않고 도달 가능한 우회 경로가 있습니까?\n[답변 형식: '우회 경로 존재: ...' 또는 '우회 경로 없음']")
+                            q_text = template.format(src=src_leaf, dst=dst_leaf, waypoint=required_wp)
+                            
                             questions.append({
                                 "id": f"SEC_BYPASS_{src_leaf}_{dst_leaf}_{required_wp}",
                                 "category": "Security_Policy",
                                 "level": "L4",
                                 "answer_type": "text",
-                                "question": f"'{src_leaf}→{dst_leaf}' 트래픽이 보안 장비 '{required_wp}'를 거치지 않고 도달 가능한 우회 경로가 있습니까?\n[답변 형식: '우회 경로 존재: A→B→C' 또는 '우회 경로 없음 (정책 준수)']",
+                                "question": q_text,
                                 "ground_truth": result_text,
-                                "explanation": f"metric `security_policy_bypass_check` waypoint={required_wp}",
-                                "evidence_hint": {"scope": {"type": "SECURITY_POLICY", "src": src_leaf, "dst": dst_leaf, "waypoint": required_wp}, "metric": "security_policy_bypass_check"},
+                                "explanation": f"metric `{metric}` waypoint={required_wp}",
+                                "evidence_hint": {"scope": {"type": "SECURITY_POLICY", "src": src_leaf, "dst": dst_leaf, "waypoint": required_wp}, "metric": metric},
                                 "academic_reference": "Config2Spec (NSDI'20)"
                             })
                             bypass_q_count += 1
@@ -292,15 +321,19 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
                     impact = link_res.value.get("impact", "NONE")
                     desc = link_res.value.get("description", "")
                     
+                    metric = "link_failure_impact"
+                    template = self._get_template(metric, "'{link}' 링크가 다운될 경우, '{src}→{dst}' 트래픽에 어떤 영향이 발생합니까?\n[답변 형식: 'NONE', 'REROUTED', 'DISCONNECTED']")
+                    q_text = template.format(link=f"{node1}-{node2}", src=src, dst=dst)
+
                     questions.append({
                         "id": f"LINK_FAILURE_{node1}_{node2}",
                         "category": "What_If_Analysis",
                         "level": "L5",
                         "answer_type": "text",
-                        "question": f"'{node1}-{node2}' 링크가 다운될 경우, '{src}→{dst}' 트래픽에 어떤 영향이 발생합니까?\n[답변 형식: 'NONE:영향없음', 'REROUTED:새경로...', 'DISCONNECTED:통신두절']",
+                        "question": q_text,
                         "ground_truth": f"{impact}:{desc}" if desc else impact,
-                        "explanation": f"metric `link_failure_impact` on {node1}-{node2}->({src}->{dst})",
-                        "evidence_hint": {"scope": {"type": "LINK_FAILURE", "link": f"{node1}-{node2}"}, "metric": "link_failure_impact"},
+                        "explanation": f"metric `{metric}` on {node1}-{node2}->({src}->{dst})",
+                        "evidence_hint": {"scope": {"type": "LINK_FAILURE", "link": f"{node1}-{node2}"}, "metric": metric},
                         "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
                     })
                     link_count += 1
@@ -309,15 +342,19 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
         spof_res = self.spof_detection()
         if spof_res.status == "OK":
             spof_nodes = spof_res.value.get("spof_nodes", [])
+            
+            metric = "spof_detection"
+            template = self._get_template(metric, "단일 장비 장애 시 통신이 두절되는 구간(SPOF: Single Point of Failure)이 존재합니까?\n[답변 형식: SPOF 장비 목록 또는 '없음']")
+
             questions.append({
                 "id": "SPOF_DETECTION_GLOBAL",
                 "category": "What_If_Analysis",
                 "level": "L5",
                 "answer_type": "set",
-                "question": "단일 장비 장애 시 통신이 두절되는 구간(SPOF: Single Point of Failure)이 존재합니까?\n[답변 형식: SPOF 장비 목록 또는 '없음']",
+                "question": template,
                 "ground_truth": ", ".join(spof_nodes) if spof_nodes else "없음",
-                "explanation": f"metric `spof_detection` found {len(spof_nodes)} SPOF nodes",
-                "evidence_hint": {"scope": {"type": "GLOBAL"}, "metric": "spof_detection"},
+                "explanation": f"metric `{metric}` found {len(spof_nodes)} SPOF nodes",
+                "evidence_hint": {"scope": {"type": "GLOBAL"}, "metric": metric},
                 "academic_reference": "현업: SPOF 탐지 → 이중화 설계 검증"
             })
         
@@ -333,15 +370,19 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
                 blocking_point = rca_res.value.get("blocking_point", "")
                 
                 if not reachable and root_cause != "NONE":
+                    metric = "root_cause_analysis"
+                    template = self._get_template(metric, "{src_node}에서 {dst_node}로의 통신이 실패합니다. 근본 원인과 차단 지점을 분석하세요.\n[답변 형식: JSON {{\"root_cause\": \"...\", \"blocking_point\": \"노드명\"}}]")
+                    q_text = template.format(src_node=src_node, dst_node=dst_node)
+
                     questions.append({
                         "id": f"ROOT_CAUSE_{src_node}_{dst_node}",
                         "category": "What_If_Analysis",
                         "level": "L5",
                         "answer_type": "json",
-                        "question": f"{src_node}에서 {dst_node}로의 통신이 실패합니다. 근본 원인과 차단 지점을 분석하세요.\n[답변 형식: JSON {{\"root_cause\": \"...\", \"blocking_point\": \"노드명\"}}]",
+                        "question": q_text,
                         "ground_truth": f'{{"root_cause": "{root_cause}", "blocking_point": "{blocking_point}"}}',
-                        "explanation": f"metric `root_cause_analysis` on {src_node}->{dst_node}",
-                        "evidence_hint": {"scope": {"type": "NODE_PAIR", "src": src_node, "dst": dst_node}, "metric": "root_cause_analysis"},
+                        "explanation": f"metric `{metric}` on {src_node}->{dst_node}",
+                        "evidence_hint": {"scope": {"type": "NODE_PAIR", "src": src_node, "dst": dst_node}, "metric": metric},
                         "academic_reference": "현업: 장애 근본 원인 분석"
                     })
                     rca_q_count += 1
@@ -356,15 +397,19 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
                 affected_count = br_res.value.get("affected_count", 0)
                 severity = br_res.value.get("severity", "UNKNOWN")
                 
+                metric = "blast_radius_estimation"
+                template = self._get_template(metric, "'{node}' 장비가 다운될 경우, 직접 영향을 받는 노드들과 심각도를 추정하세요.\n[답변 형식: JSON {{\"affected_nodes\": [...], \"severity\": \"...\"}}]")
+                q_text = template.format(node=node)
+
                 questions.append({
                     "id": f"BLAST_RADIUS_{node}",
                     "category": "What_If_Analysis",
                     "level": "L5",
                     "answer_type": "json",
-                    "question": f"'{node}' 장비가 다운될 경우, 직접 영향을 받는 노드들과 심각도를 추정하세요.\n[답변 형식: JSON {{\"affected_nodes\": [...], \"severity\": \"CRITICAL|HIGH|MEDIUM|LOW\"}}]",
+                    "question": q_text,
                     "ground_truth": f'{{"affected_nodes": {affected_nodes}, "affected_count": {affected_count}, "severity": "{severity}"}}',
-                    "explanation": f"metric `blast_radius_estimation` on {node}",
-                    "evidence_hint": {"scope": {"type": "NODE", "node": node}, "metric": "blast_radius_estimation"},
+                    "explanation": f"metric `{metric}` on {node}",
+                    "evidence_hint": {"scope": {"type": "NODE", "node": node}, "metric": metric},
                     "academic_reference": "현업: 장애 영향 범위 사전 분석"
                 })
         
@@ -395,14 +440,18 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
                         path_str = " → ".join(new_path) if new_path else "없음"
                         result_text = "고립됨 (대체 경로 없음)" if isolated else f"대체 경로: {path_str}"
                         
+                        metric = "multi_link_failure_analysis"
+                        template = self._get_template(metric, "'{link1}' 링크와 '{link2}' 링크가 동시에 다운될 경우, {test_src}에서 {test_dst}로의 통신이 가능합니까?\n[답변 형식: '고립됨' 또는 '대체 경로: ...']")
+                        q_text = template.format(link1=f"{edge1['node1']}-{edge1['node2']}", link2=f"{edge2['node1']}-{edge2['node2']}", test_src=test_src, test_dst=test_dst)
+
                         questions.append({
                             "id": f"MULTI_FAIL_{edge1['node1']}_{edge1['node2']}_{edge2['node1']}_{edge2['node2']}",
                             "category": "What_If_Analysis",
                             "level": "L5",
                             "answer_type": "text",
-                            "question": f"'{edge1['node1']}-{edge1['node2']}' 링크와 '{edge2['node1']}-{edge2['node2']}' 링크가 동시에 다운될 경우,\n{test_src}에서 {test_dst}로의 통신이 가능합니까?\n[답변 형식: '고립됨 (대체 경로 없음)' 또는 '대체 경로: A→B→C']",
+                            "question": q_text,
                             "ground_truth": result_text,
-                            "explanation": f"metric `multi_link_failure_analysis`",
+                            "explanation": f"metric `{metric}`",
                             "evidence_hint": {"scope": {"type": "MULTI_LINK_FAILURE", "link1": f"{edge1['node1']}-{edge1['node2']}", "link2": f"{edge2['node1']}-{edge2['node2']}"}, "metric": "multi_link_failure_analysis"},
                             "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
                         })
