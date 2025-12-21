@@ -219,17 +219,11 @@ def main():
     facts_out.write_text(json.dumps(facts, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"    -> Saved facts to {facts_out}")
 
-    # 3. Batfish Dynamic Engine 초기화 (for L4/L5)
-    print(f"[1.5] Initializing Batfish Simulation Engine...")
-    bf_builder = BatfishBuilder(snapshot_path=str(lab_path), network_name=lab_path.name)
-    bf_active = bf_builder.initialize()
-    if bf_active:
-        print(f"    -> Batfish Engine Ready (Nodes: {len(bf_builder.nodes)})")
-    else:
-        print(f"    -> [Warning] Batfish Engine failed to initialize. L4/L5 questions will be skipped.")
-
-    # 4. 질문 생성 (Rule Based)
-    print(f"[2] Generating questions using policies: {args.policies}")
+    # 3. Batfish Dynamic Engine 초기화 (for L4/L5) & Policy 로드
+    print(f"[1.5] Initializing Batfish Simulation Engine and Resolving Policies...")
+    
+    # Policy Resolution (Moved UP)
+    print(f"      Resolving policies from: {args.policies}")
     if args.policies == "policies.json":
         policy_path = Path(__file__).parent.parent / "policies.json"
     else:
@@ -238,6 +232,22 @@ def main():
     if not policy_path.exists():
         print(f"[Error] Policy file not found: {policy_path.resolve()}")
         return
+
+    # Batfish Init with policies_path
+    bf_builder = BatfishBuilder(
+        snapshot_path=str(lab_path), 
+        network_name=lab_path.name,
+        policies_path=str(policy_path)
+    )
+    bf_active = bf_builder.initialize()
+    if bf_active:
+        print(f"    -> Batfish Engine Ready (Nodes: {len(bf_builder.nodes)})")
+    else:
+        print(f"    -> [Warning] Batfish Engine failed to initialize. L4/L5 questions will be skipped.")
+
+    # 4. 질문 생성 (Rule Based)
+    print(f"[2] Generating questions using policies: {policy_path}")
+    # (policy_path is already resolved)
         
     cfg = RuleBasedGeneratorConfig(policies_path=str(policy_path), min_per_cat=args.min_per_cat)
     gen = RuleBasedGenerator(cfg)
@@ -654,4 +664,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
