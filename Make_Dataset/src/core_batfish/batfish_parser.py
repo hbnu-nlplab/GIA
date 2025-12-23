@@ -27,96 +27,188 @@ def parse_text_config(config_path: Path) -> Dict[str, Any]:
     """
     text_facts = {
         "ssh": {"version": None, "enabled": False},
-        "aaa": {"new_model": False, "protocol": "local"}, # Default local
+        "aaa": {"new_model": False, "protocol": "local"},
         "logging": {"hosts": []},
         "ntp": {"servers": []},
         "users": [],
-        "domain_name": None
+        "domain_name": None,
+        # New L1 Fields
+        "service_password_encryption": False,
+        "enable_secret": "None",
+        "line_console_password": "None",
+        "exec_timeout": "None",
+        "banner_motd": "None",
+        "banner_login": "None",
+        "http_server": False, # Basic check
+        "cdp": True, # Default enabled on Cisco
+        "ip_source_route": True, # Default enabled
+        "snmp_communities": [],
+        "loopback_interfaces": [],
+        "name_servers": [],
+        "ospf_processes": [],
+        "bgp_as": [],
+        "mpls_ldp": False,
+        "default_route": [],
+        "static_routes_count": 0,
+        "acls_count": 0,
+        "acl_interfaces": [],
+        "prefix_lists_count": 0,
+        "route_maps_count": 0,
+        "class_maps": [],
+        "netflow_monitors": [],
+        "missing_descriptions_count": 0,
+        "eigrp_as": [],
+        "rip_enabled": False,
+        "fhrp_groups": [],
+        "multicast_enabled": False,
+        "vrfs": []
     }
     
     try:
         content = config_path.read_text(encoding="utf-8")
         
         # 1. SSH
-        # ip ssh version 2
         ssh_ver_match = re.search(r"ip ssh version (\d)", content)
         if ssh_ver_match:
             text_facts["ssh"]["version"] = ssh_ver_match.group(1)
             text_facts["ssh"]["enabled"] = True
-        
-        # transport input ssh (Interface line or line vty) - Simplified check
         if "transport input ssh" in content:
              text_facts["ssh"]["enabled"] = True
 
         # 2. AAA
-        # aaa new-model or no aaa new-model
         if re.search(r"^aaa new-model", content, re.MULTILINE):
             text_facts["aaa"]["new_model"] = True
-            # Check protocol (simplified)
             if "tacacs" in content.lower():
                 text_facts["aaa"]["protocol"] = "TACACS+"
             elif "radius" in content.lower():
                 text_facts["aaa"]["protocol"] = "RADIUS"
-        else:
-            text_facts["aaa"]["new_model"] = False
-
-        # 3. Logging
-        # logging host 1.2.3.4
-        logging_hosts = re.findall(r"^logging host (\S+)", content, re.MULTILINE)
-        text_facts["logging"]["hosts"] = logging_hosts
-
-        # 4. NTP
-        # ntp server 1.2.3.4
-        ntp_servers = re.findall(r"^ntp server (\S+)", content, re.MULTILINE)
-        text_facts["ntp"]["servers"] = ntp_servers
-
-        # 5. Users
-        # username admin ...
-        users = re.findall(r"^username (\S+)", content, re.MULTILINE)
-        text_facts["users"] = users
-
-        # 6. Domain Name
-        domain_match = re.search(r"^ip domain name (\S+)", content, re.MULTILINE) # underscore in command usually 'ip domain-name' on some generic Cisco, but IOS usually 'ip domain name'
-        # Try both 'ip domain name' and 'ip domain-name'
+        
+        # 3. Logging & NTP & Users & Domain
+        text_facts["logging"]["hosts"] = re.findall(r"^logging host (\S+)", content, re.MULTILINE)
+        text_facts["ntp"]["servers"] = re.findall(r"^ntp server (\S+)", content, re.MULTILINE)
+        text_facts["users"] = re.findall(r"^username (\S+)", content, re.MULTILINE)
+        
+        domain_match = re.search(r"^ip domain[ -]name (\S+)", content, re.MULTILINE)
         if domain_match:
             text_facts["domain_name"] = domain_match.group(1)
-        else:
-             domain_dash = re.search(r"^ip domain-name (\S+)", content, re.MULTILINE)
-             if domain_dash:
-                 text_facts["domain_name"] = domain_dash.group(1)
 
-        # 7. MPLS LDP Router-ID
-        # mpls ldp router-id Loopback0 force
+        # --- New L1 Metrics Parsing ---
+
+        # Security
+        if re.search(r"^service password-encryption", content, re.MULTILINE):
+            text_facts["service_password_encryption"] = True
+            
+        enable_secret_match = re.search(r"^enable secret (\d) ", content, re.MULTILINE)
+        if enable_secret_match:
+            text_facts["enable_secret"] = enable_secret_match.group(1) # '5' etc.
+        elif re.search(r"^enable secret ", content, re.MULTILINE):
+             text_facts["enable_secret"] = "Unknown Type"
+
+        # Line Console Password
+        # Simplified: Look for 'line console 0' then 'password ...' nearby? 
+        # For simplicity in regex without lookahead complex:
+        if re.search(r"line console 0[\s\S]{0,100}password \S+", content):
+             pass_match = re.search(r"line console 0[\s\S]{0,100}password (\S+)", content)
+             if pass_match: text_facts["line_console_password"] = pass_match.group(1)
+
+        # Exec Timeout (check anywhere for now, usually under line vty/con)
+        exec_match = re.search(r"exec-timeout (\d+ \d+)", content)
+        if exec_match:
+            text_facts["exec_timeout"] = exec_match.group(1)
+
+        # Banners
+        motd_match = re.search(r"banner motd \^C(.*?)\^C", content, re.DOTALL)
+        if motd_match: text_facts["banner_motd"] = motd_match.group(1).strip()
+        
+        login_match = re.search(r"banner login \^C(.*?)\^C", content, re.DOTALL)
+        if login_match: text_facts["banner_login"] = login_match.group(1).strip()
+
+        # HTTP Server
+        if re.search(r"^no ip http server", content, re.MULTILINE):
+            text_facts["http_server"] = False
+        elif re.search(r"^ip http server", content, re.MULTILINE):
+            text_facts["http_server"] = True
+            
+        # CDP
+        if re.search(r"^no cdp run", content, re.MULTILINE):
+            text_facts["cdp"] = False
+
+        # IP Source Route
+        if re.search(r"^no ip source-route", content, re.MULTILINE):
+            text_facts["ip_source_route"] = False
+
+        # Operational & Routing Lists
+        text_facts["snmp_communities"] = re.findall(r"^snmp-server community (\S+)", content, re.MULTILINE)
+        
+        # Loopback Interfaces (checking names in `interface ...` block)
+        text_facts["loopback_interfaces"] = re.findall(r"^interface (Loopback\d+)", content, re.MULTILINE)
+        
+        text_facts["name_servers"] = re.findall(r"^ip name-server (\S+)", content, re.MULTILINE)
+        
+        text_facts["ospf_processes"] = re.findall(r"^router ospf (\d+)", content, re.MULTILINE)
+        
+        text_facts["bgp_as"] = re.findall(r"^router bgp (\d+)", content, re.MULTILINE)
+        
+        if re.search(r"^mpls ip", content, re.MULTILINE) or re.search(r"^mpls ldp router-id", content, re.MULTILINE):
+            text_facts["mpls_ldp"] = True
+            
         mpls_ldp_match = re.search(r"^mpls ldp router-id (\S+)", content, re.MULTILINE)
-        if mpls_ldp_match:
-            text_facts["mpls_ldp_rid"] = mpls_ldp_match.group(1)
-        else:
-            text_facts["mpls_ldp_rid"] = None
+        text_facts["mpls_ldp_rid"] = mpls_ldp_match.group(1) if mpls_ldp_match else None
 
-        # 8. System Version
+        text_facts["default_route"] = re.findall(r"^ip route 0\.0\.0\.0 0\.0\.0\.0 (\S+)", content, re.MULTILINE)
+        
+        text_facts["static_routes_count"] = len(re.findall(r"^ip route ", content, re.MULTILINE))
+
+        # ACLs & Advanced
+        text_facts["acls_count"] = len(re.findall(r"^access-list |^ip access-list ", content, re.MULTILINE))
+        
+        # ACL applied interfaces
+        # Look for 'ip access-group ... in' or 'out' under interfaces
+        # Simplified: Find all access-group lines, assumes they are under some interface
+        text_facts["acl_interfaces"] = [] # To be populated by complex parsing if needed, or simplied count
+        # Let's try to extract interface names that have access-group
+        # Regex to find interface blocks and check content
+        iface_blocks = re.finditer(r'^interface\s+(\S+)([\s\S]*?)(?=^interface|^!|^router)', content, re.MULTILINE)
+        for match in iface_blocks:
+            ifname = match.group(1)
+            block = match.group(2)
+            if "ip access-group" in block:
+                text_facts["acl_interfaces"].append(ifname)
+            if "description" not in block:
+                text_facts["missing_descriptions_count"] += 1
+                
+        text_facts["prefix_lists_count"] = len(re.findall(r"^ip prefix-list ", content, re.MULTILINE))
+        text_facts["route_maps_count"] = len(re.findall(r"^route-map ", content, re.MULTILINE))
+        
+        text_facts["class_maps"] = re.findall(r"^class-map (?:match-\w+ )?(\S+)", content, re.MULTILINE)
+        text_facts["netflow_monitors"] = re.findall(r"^flow monitor (\S+)", content, re.MULTILINE)
+        
+        text_facts["eigrp_as"] = re.findall(r"^router eigrp (\d+)", content, re.MULTILINE)
+        
+        if re.search(r"^router rip", content, re.MULTILINE):
+            text_facts["rip_enabled"] = True
+            
+        text_facts["fhrp_groups"] = re.findall(r"^\s*(?:standby|vrrp) (\d+) ", content, re.MULTILINE)
+        
+        if re.search(r"^ip multicast-routing", content, re.MULTILINE):
+            text_facts["multicast_enabled"] = True
+
+        # System Version
         version_match = re.search(r'^version\s+([^\s]+)', content, re.MULTILINE)
         text_facts["version"] = version_match.group(1) if version_match else "15.0"
 
-        # 9. VRF Details (RD, RT)
+        # VRF Details
         vrfs = []
-        # Find all 'vrf definition <name>' blocks
         vrf_blocks = re.finditer(r'^vrf definition\s+(?P<name>\S+)(?P<content>[\s\S]*?)(?=^vrf definition|^!|^interface|^router)', content, re.MULTILINE)
-        
         for match in vrf_blocks:
             vrf_name = match.group("name")
             content_bk = match.group("content")
-            
             rd_match = re.search(r'^\s*rd\s+(\S+)', content_bk, re.MULTILINE)
             rd = rd_match.group(1) if rd_match else None
-            
             rt_imports = re.findall(r'^\s*route-target import\s+(\S+)', content_bk, re.MULTILINE)
             rt_exports = re.findall(r'^\s*route-target export\s+(\S+)', content_bk, re.MULTILINE)
-            
             vrfs.append({
-                "name": vrf_name,
-                "rd": rd,
-                "import_rts": rt_imports,
-                "export_rts": rt_exports,
+                "name": vrf_name, "rd": rd, "import_rts": rt_imports, "export_rts": rt_exports,
                 "route_targets": list(set(rt_imports + rt_exports))
             })
         text_facts["vrfs"] = vrfs
@@ -208,6 +300,46 @@ def parse_batfish_datamodel(configs_dir: Path) -> Dict[str, Any]:
                 "ntp": text_info["ntp"],
                 "vrf": [],
                 "mpls": {"ldp_interfaces": [], "ldp": {}} # LDP info here
+            },
+            # New L1 Configuration Dictionary
+            "configuration": {
+                "security": {
+                    "password_encryption": text_info["service_password_encryption"],
+                    "enable_secret": text_info["enable_secret"],
+                    "console_password": text_info["line_console_password"],
+                    "exec_timeout": text_info["exec_timeout"],
+                    "banner_motd": text_info["banner_motd"],
+                    "banner_login": text_info["banner_login"],
+                    "http_server": text_info["http_server"],
+                    "cdp": text_info["cdp"],
+                    "ip_source_route": text_info["ip_source_route"]
+                },
+                "operational": {
+                    "snmp_communities": text_info["snmp_communities"],
+                    "loopback_interfaces": text_info["loopback_interfaces"],
+                    "name_servers": text_info["name_servers"]
+                },
+                "routing": {
+                    "ospf_processes": text_info["ospf_processes"],
+                    "bgp_as": text_info["bgp_as"],
+                    "mpls_ldp_enabled": text_info["mpls_ldp"],
+                    "mpls_ldp_rid": text_info.get("mpls_ldp_rid"),
+                    "default_route_next_hops": text_info["default_route"],
+                    "static_routes_count": text_info["static_routes_count"]
+                },
+                "advanced": {
+                    "acls_count": text_info["acls_count"],
+                    "acl_interfaces": text_info["acl_interfaces"],
+                    "prefix_lists_count": text_info["prefix_lists_count"],
+                    "route_maps_count": text_info["route_maps_count"],
+                    "class_maps": text_info["class_maps"],
+                    "netflow_monitors": text_info["netflow_monitors"],
+                    "missing_descriptions_count": text_info["missing_descriptions_count"],
+                    "eigrp_as": text_info["eigrp_as"],
+                    "rip_enabled": text_info["rip_enabled"],
+                    "fhrp_groups": text_info["fhrp_groups"],
+                    "multicast_enabled": text_info["multicast_enabled"]
+                }
             },
             "file": f"{hostname}.cfg" 
         }

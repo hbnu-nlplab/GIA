@@ -23,6 +23,7 @@ import os
 import json
 import logging
 import random
+import re
 import time
 from typing import Dict, List, Any, Optional, Tuple, Set
 from itertools import combinations
@@ -122,7 +123,10 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
                 })
         
         # 2. Reachability 문제
-        for flow in self.get_representative_flows()[:30]:
+        all_flows = self.get_representative_flows()
+        random.shuffle(all_flows)  # Shuffle flows for diversity
+        
+        for flow in all_flows[:30]:  # Limit to 30 diverse flows
             res = self.reachability_status(flow.src_ip, flow.dst_ip, flow.dst_port, flow.protocol)
             
             if res.status != "OK":
@@ -130,13 +134,21 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
                 
             reachable = res.value.get("reachable", False)
             path_list = res.value.get("path", [])
+            disposition = res.value.get("disposition", "UNKNOWN")
+            
             path_str = " → ".join(path_list) if path_list else "없음"
-            result_text = f"경로: {path_str}, 도달: {'가능' if reachable else '불가'}"
+            
+            # Formulate the answer with the mapped disposition
+            if reachable:
+                result_text = f"경로: {path_str}, 도달: 가능 ({disposition})"
+            else:
+                result_text = f"경로: {path_str}, 도달: 불가 (원인: {disposition})"
             
             port_desc = f":{flow.dst_port}" if flow.dst_port else ""
             
             metric = "reachability_status"
-            template = self._get_template(metric, "{src_ip}에서 {dst_ip}({dst_port}/{protocol})로의 트래픽 경로와 도달 여부를 알려주세요.\n[답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: 없음, 도달: 불가']")
+            # Updated template with explicit classification options for LLM evaluation
+            template = self._get_template(metric, "{src_ip}에서 {dst_ip}({dst_port}/{protocol})로의 트래픽 경로와 도달 여부를 알려주세요.\n[답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']")
             q_text = template.format(src_ip=flow.src_ip, dst_ip=flow.dst_ip, dst_port=flow.dst_port, protocol=flow.protocol, src_location=flow.src_location, dst_location=flow.dst_location)
 
             questions.append({
@@ -312,8 +324,8 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
         
         if edges and len(ce_nodes) >= 2:
             link_count = 0
-            for edge in edges[:50]:
-                if link_count >= 50:
+            for edge in edges[:80]:
+                if link_count >= 80:
                     break
                 node1, node2 = edge["node1"], edge["node2"]
                 src = ce_nodes[0]
@@ -365,65 +377,201 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
         all_pairs_rca = self.get_node_pairs()
         random.shuffle(all_pairs_rca)
         rca_q_count = 0
-        for src_node, dst_node in all_pairs_rca[:50]:
+        for src_node, dst_node in all_pairs_rca[:80]:
             rca_res = self.root_cause_analysis(src_node, dst_node)
             if rca_res.status == "OK":
                 reachable = rca_res.value.get("reachable", True)
-                root_cause = rca_res.value.get("root_cause", "NONE")
                 blocking_point = rca_res.value.get("blocking_point", "")
                 
-                if not reachable and root_cause != "NONE":
+                if not reachable and blocking_point:
                     metric = "root_cause_analysis"
-                    template = self._get_template(metric, "{src_node}에서 {dst_node}로의 통신이 실패합니다. 근본 원인과 차단 지점을 분석하세요.\n[답변 형식: JSON {{\"root_cause\": \"...\", \"blocking_point\": \"노드명\"}}]")
+                    template = self._get_template(metric, "{src_node}에서 {dst_node}로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]")
                     q_text = template.format(src_node=src_node, dst_node=dst_node)
 
                     questions.append({
                         "id": f"ROOT_CAUSE_{src_node}_{dst_node}",
                         "category": "What_If_Analysis",
                         "level": "L5",
-                        "answer_type": "json",
+                        "answer_type": "text",
                         "question": q_text,
-                        "ground_truth": f'{{"root_cause": "{root_cause}", "blocking_point": "{blocking_point}"}}',
+                        "ground_truth": blocking_point,
                         "explanation": f"metric `{metric}` on {src_node}->{dst_node}",
                         "evidence_hint": {"scope": {"type": "NODE_PAIR", "src": src_node, "dst": dst_node}, "metric": metric},
                         "academic_reference": "현업: 장애 근본 원인 분석"
                     })
                     rca_q_count += 1
-                    if rca_q_count >= 30:
+                    if rca_q_count >= 50:
                         break
         
-        # 4. Advanced: Blast Radius Estimation
+        # 4. Advanced: Node Failure Impact Analysis (Objective)
         for node in self.nodes[:10]:
             br_res = self.blast_radius_estimation(node)
             if br_res.status == "OK":
-                affected_nodes = br_res.value.get("affected_nodes", [])
                 affected_count = br_res.value.get("affected_count", 0)
-                severity = br_res.value.get("severity", "UNKNOWN")
-                
-                metric = "blast_radius_estimation"
-                template = self._get_template(metric, "'{node}' 장비가 다운될 경우, 직접 영향을 받는 노드들과 심각도를 추정하세요.\n[답변 형식: JSON {{\"affected_nodes\": [...], \"severity\": \"...\"}}]")
+
+                metric = "node_failure_impact"
+                template = self._get_template(metric, "'{node}' 장비가 다운되면 몇 개의 트래픽 흐름이 새로 차단됩니까? [답변 형식: 숫자]")
                 q_text = template.format(node=node)
 
                 questions.append({
-                    "id": f"BLAST_RADIUS_{node}",
+                    "id": f"NODE_FAILURE_{node}",
                     "category": "What_If_Analysis",
                     "level": "L5",
-                    "answer_type": "json",
+                    "answer_type": "number",
                     "question": q_text,
-                    "ground_truth": f'{{"affected_nodes": {affected_nodes}, "affected_count": {affected_count}, "severity": "{severity}"}}',
+                    "ground_truth": str(affected_count),
                     "explanation": f"metric `{metric}` on {node}",
                     "evidence_hint": {"scope": {"type": "NODE", "node": node}, "metric": metric},
-                    "academic_reference": "현업: 장애 영향 범위 사전 분석"
+                    "academic_reference": "현업: 장애 영향 범위 사전 분석 (Objective)"
                 })
+
+        # 5. Advanced: Redundancy Verification (Dual Failure)
+        # Find potential HA pairs (same prefix, sequential numbers)
+        node_groups = {}
+        for node in self.nodes:
+            match = re.match(r"([a-zA-Z\-_]+)(\d+)", node)
+            if match:
+                prefix, num = match.groups()
+                if prefix not in node_groups:
+                    node_groups[prefix] = []
+                node_groups[prefix].append((int(num), node))
         
-        # 5. Advanced: Multi-Link Failure Analysis
+        redundancy_metric = "redundancy_verification"
+        for prefix, items in node_groups.items():
+            if len(items) >= 2:
+                items.sort()
+                for i in range(0, len(items)-1, 2):
+                    n1 = items[i][1]
+                    n2 = items[i+1][1]
+                    
+                    if items[i+1][0] == items[i][0] + 1: 
+                        res = self.redundancy_verification(n1, n2)
+                        
+                        if res.status == "OK":
+                            isolated_count = res.value.get("isolated_flow_count", 0)
+                            
+                            # 간결한 정답 포맷
+                            if isolated_count == 0:
+                                gt_text = "없음"
+                            else:
+                                gt_text = f"{isolated_count}개"
+                            
+                            tmpl = self._get_template(redundancy_metric, "'{node1}'과 '{node2}'가 동시에 다운되면 고립되는 흐름이 있습니까? 몇 개입니까? [답변 형식: '없음' 또는 'N개']")
+                            q_text_red = tmpl.format(node1=n1, node2=n2)
+                            
+                            questions.append({
+                                "id": f"DUAL_FAILURE_{n1}_{n2}",
+                                "category": "What_If_Analysis",
+                                "level": "L5",
+                                "answer_type": "text",
+                                "question": q_text_red,
+                                "ground_truth": gt_text,
+                                "explanation": f"metric `{redundancy_metric}` on {n1}, {n2}",
+                                "evidence_hint": {"scope": {"type": "NODE_PAIR", "src": n1, "dst": n2}, "metric": redundancy_metric},
+                                "academic_reference": "현업: 이중화(HA) 구조 검증"
+                            })
+
+        # 6. Advanced: Triple Node Failure (Extreme Resilience)
+        triple_metric = "triple_node_failure"
+        if len(self.nodes) >= 3:
+            triplet = None
+            for prefix, items in node_groups.items():
+                 if len(items) >= 3:
+                     items.sort()
+                     triplet = [items[0][1], items[1][1], items[2][1]]
+                     break
+            
+            if not triplet and len(self.nodes) >= 3:
+                triplet = self.nodes[:3]
+
+            if triplet:
+                n1, n2, n3 = triplet
+                res_triple = self.triple_node_failure(n1, n2, n3)
+                if res_triple.status == "OK":
+                    iso_cnt = res_triple.value.get("isolated_flow_count", 0)
+                    
+                    # 간결한 텍스트 정답
+                    if iso_cnt == 0:
+                        gt_triple = "예, 완전 분리"
+                    else:
+                        gt_triple = f"아니오, {iso_cnt}개 흐름만 영향"
+
+                    tmpl_triple = self._get_template(triple_metric, "'{node1}', '{node2}', '{node3}'가 동시에 다운되면 네트워크가 완전히 분리됩니까? [답변 형식: '예, 완전 분리' 또는 '아니오, N개 흐름만 영향']")
+                    q_text_triple = tmpl_triple.format(node1=n1, node2=n2, node3=n3)
+                    
+                    questions.append({
+                        "id": f"TRIPLE_FAILURE_{n1}_{n2}_{n3}",
+                        "category": "What_If_Analysis",
+                        "level": "L5",
+                        "answer_type": "text",
+                        "question": q_text_triple,
+                        "ground_truth": gt_triple,
+                        "explanation": f"metric `{triple_metric}` on {n1}, {n2}, {n3}",
+                        "evidence_hint": {"scope": {"type": "NODE_TRIPLET", "nodes": [n1, n2, n3]}, "metric": triple_metric},
+                        "academic_reference": "극한 장애 시나리오 (DR Testing)"
+                    })
+
+        # 7. Advanced: Worst Case Failure Analysis (SPOF Search)
+        worst_metric = "worst_case_failure_analysis"
+        candidates = self.nodes[:10]
+        res_worst = self.find_worst_failure_node(candidates)
+        if res_worst.status == "OK":
+            w_node = res_worst.value.get("worst_node", "NONE")
+            b_count = res_worst.value.get("blocked_flow_count", 0)
+            
+            # 간결한 텍스트 정답: "장비명 (N개)"
+            gt_worst = f"{w_node} ({b_count}개)"
+            
+            tmpl_worst = self._get_template(worst_metric, "단일 장비 장애 시 가장 큰 영향을 주는 장비는? [답변 형식: '장비명 (N개)']")
+            
+            questions.append({
+                "id": "WORST_CASE_FAILURE",
+                "category": "What_If_Analysis",
+                "level": "L5",
+                "answer_type": "text",
+                "question": tmpl_worst,
+                "ground_truth": gt_worst,
+                "explanation": f"metric `{worst_metric}` analyzed {len(candidates)} nodes",
+                "evidence_hint": {"scope": {"type": "GLOBAL"}, "metric": worst_metric},
+                "academic_reference": "Critical Node Identification"
+            })
+
+        # 8. Negative Testing: Non-existent Node Check (고난도 버전)
+        neg_metric = "non_existent_node_check"
+        fake_node = "non_existent_router_999"
+        
+        # 존재하지 않는 장비이므로 영향은 0
+        tmpl_neg = self._get_template(neg_metric, "'{fake_node}' 장비가 다운되면 몇 개의 트래픽 흐름이 차단됩니까? [답변 형식: 숫자]")
+        q_text_neg = tmpl_neg.format(fake_node=fake_node)
+        
+        questions.append({
+            "id": "NEGATIVE_TEST_FAKE_NODE",
+            "category": "What_If_Analysis",
+            "level": "L5",
+            "answer_type": "number",
+            "question": q_text_neg,
+            "ground_truth": "0",
+            "explanation": f"Negative test for `{neg_metric}` - node does not exist, so impact is 0",
+            "evidence_hint": {"scope": {"type": "FAKE_NODE", "node": fake_node}, "metric": neg_metric},
+            "academic_reference": "AI Hallucination Check"
+        })
+        
+        # 9. Advanced: Multi-Link Failure Analysis (bool 버전)
         if len(edges) >= 4:
-            edge_pairs = list(combinations(edges[:10], 2))
-            random.shuffle(edge_pairs)
+            valid_edge_pairs = []
+            for edge1, edge2 in combinations(edges[:30], 2):
+                n1_1, n1_2 = edge1["node1"], edge1["node2"]
+                n2_1, n2_2 = edge2["node1"], edge2["node2"]
+                unique_nodes = {n1_1.lower(), n1_2.lower(), n2_1.lower(), n2_2.lower()}
+                if len(unique_nodes) == 4:
+                    valid_edge_pairs.append((edge1, edge2))
+            
+            random.shuffle(valid_edge_pairs)
             
             mlf_q_count = 0
-            for (edge1, edge2) in edge_pairs[:20]:  # 20개 조합 제한
-                link_nodes = {edge1['node1'].lower(), edge1['node2'].lower(), edge2['node1'].lower(), edge2['node2'].lower()}
+            for (edge1, edge2) in valid_edge_pairs[:50]:
+                link_nodes = {edge1['node1'].lower(), edge1['node2'].lower(), 
+                             edge2['node1'].lower(), edge2['node2'].lower()}
                 test_candidates = [n for n in self.nodes if n.lower() not in link_nodes]
                 
                 if len(test_candidates) >= 2:
@@ -438,28 +586,32 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
                     
                     if mlf_res.status == "OK":
                         isolated = mlf_res.value.get("isolated", False)
-                        new_path = mlf_res.value.get("new_path", [])
                         
-                        path_str = " → ".join(new_path) if new_path else "없음"
-                        result_text = "고립됨 (대체 경로 없음)" if isolated else f"대체 경로: {path_str}"
+                        # Reverted to boolean with explanation
+                        if isolated:
+                            gt_text = "false"
+                            reason = f"Isolated due to link failures on {edge1['node1']}-{edge1['node2']} and {edge2['node1']}-{edge2['node2']}"
+                        else:
+                            gt_text = "true"
+                            reason = "Communication possible via alternate path"
                         
                         metric = "multi_link_failure_analysis"
-                        template = self._get_template(metric, "'{link1}' 링크와 '{link2}' 링크가 동시에 다운될 경우, {test_src}에서 {test_dst}로의 통신이 가능합니까?\n[답변 형식: '고립됨' 또는 '대체 경로: ...']")
+                        template = self._get_template(metric, "'{link1}'과 '{link2}'가 동시에 다운되면 '{test_src}'에서 '{test_dst}'로의 통신이 가능합니까? [답변 형식: true 또는 false]")
                         q_text = template.format(link1=f"{edge1['node1']}-{edge1['node2']}", link2=f"{edge2['node1']}-{edge2['node2']}", test_src=test_src, test_dst=test_dst)
 
                         questions.append({
                             "id": f"MULTI_FAIL_{edge1['node1']}_{edge1['node2']}_{edge2['node1']}_{edge2['node2']}",
                             "category": "What_If_Analysis",
                             "level": "L5",
-                            "answer_type": "text",
+                            "answer_type": "boolean",
                             "question": q_text,
-                            "ground_truth": result_text,
-                            "explanation": f"metric `{metric}`",
-                            "evidence_hint": {"scope": {"type": "MULTI_LINK_FAILURE", "link1": f"{edge1['node1']}-{edge1['node2']}", "link2": f"{edge2['node1']}-{edge2['node2']}"}, "metric": "multi_link_failure_analysis"},
+                            "ground_truth": gt_text,
+                            "explanation": f"metric `{metric}` result: {gt_text}. Reason: {reason}",
+                            "evidence_hint": {"scope": {"type": "MULTI_LINK_FAILURE", "link1": f"{edge1['node1']}-{edge1['node2']}", "link2": f"{edge2['node1']}-{edge2['node2']}"}, "metric": "multi_link_failure_analysis", "reason": reason},
                             "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
                         })
                         mlf_q_count += 1
-                        if mlf_q_count >= 20:
+                        if mlf_q_count >= 50:
                             break
         
         return questions

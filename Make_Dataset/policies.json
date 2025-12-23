@@ -635,7 +635,7 @@
             "level": "L4",
             "category": "Reachability_Analysis",
             "answer_type": "text",
-            "template": "{src_ip}에서 {dst_ip}({dst_port}/{protocol})로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: 없음, 도달: 불가']",
+            "template": "{src_ip}에서 {dst_ip}({dst_port}/{protocol})로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']",
             "description": "Batfish를 사용하여 특정 출발지에서 목적지로의 End-to-End 도달 가능성을 확인합니다. 단순히 '도달 가능/불가'만이 아니라, 어떤 경로로 가는지도 함께 확인합니다. ACL, 라우팅 테이블, 방화벽 정책 등 모든 요소를 고려한 종합 분석입니다. 프로토콜과 포트 번호로 트래픽 종류를 지정할 수 있습니다(예: SSH 포트 22/TCP).",
             "verification": "검증 방법: 1) Batfish 'reachability' 분석을 실행하여 헤더 제약 조건(출발지/목적지 IP, 포트)을 설정합니다. 2) 결과에서 'Flow' 객체의 Disposition을 확인합니다(ACCEPTED/DENIED). 3) Trace 결과에서 경로(홀 목록)를 추출합니다. 4) '경로: A → B → C, 도달: 가능' 형식으로 결과를 양식화합니다. 5) 도달 불가 시 차단 지점과 이유를 포함합니다.",
             "logic_ref": "batfish.reachability(src, dst, port)"
@@ -769,29 +769,65 @@
          "root_cause_analysis": {
             "level": "L5",
             "category": "What_If_Analysis",
-            "answer_type": "json",
-            "template": "{src_node}에서 {dst_node}로의 통신이 실패합니다. 근본 원인과 차단 지점을 분석하세요. [답변 형식: JSON {{\"root_cause\": \"...\", \"blocking_point\": \"노드명\"}}]",
-            "description": "통신 불량이 발생한 지점뿐만 아니라, 그 현상을 초래한 '진짜 이유(Root Cause)'를 논리적으로 추론합니다. 예를 들어, 통신은 A 장비에서 끊겼지만 원인은 B 장비의 OSPF Metric 설정 오류로 인해 A가 잘못된 경로를 가졌기 때문일 수 있습니다. '현상'과 '원인'을 구분하여 해결책을 제시합니다.",
-            "verification": "검증 방법: 1) 실패한 트래픽 흐름에 대해 Batfish 'traceroute'를 실행합니다. 2) 마지막 홉의 Disposition 정보(예: NO_ROUTE, DENIED)를 확인합니다. 3) 해당 장비의 특정 설정을 역추적하여, 차단 정책 때문인지 혹은 동적 라우팅 프로토콜을 통해 경로를 전달받지 못했는지 분석합니다. 4) 분석 결과를 root_cause 필드에 담아 JSON 형식으로 반환합니다.",
-            "logic_ref": "batfish.explain_failure(src, dst)"
+            "answer_type": "text",
+            "template": "{src_node}에서 {dst_node}로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]",
+            "description": "통신 불량이 발생한 지점뿐만 아니라, 그 현상을 초래한 '진짜 이유(Root Cause)'를 논리적으로 추론합니다. 정답은 차단이 발생하는 장비명(예: pe1)입니다.",
+            "verification": "검증 방법: 1) 실패한 트래픽 흐름에 대해 Batfish 'traceroute'를 실행합니다. 2) 마지막 홉의 Disposition 정보를 확인하여 차단 장비를 식별합니다.",
+            "logic_ref": "batfish.traceroute(src, dst).blocking_node"
          },
-         "blast_radius_estimation": {
+         "node_failure_impact": {
             "level": "L5",
             "category": "What_If_Analysis",
-            "answer_type": "json",
-            "template": "'{node}' 장비가 다운될 경우, 직접 영향을 받는 노드들과 심각도를 추정하세요. [답변 형식: JSON {{\"affected_nodes\": [...], \"severity\": \"...\"}}]",
-            "description": "특정 장비(Node)가 완전히 가동 불능 상태가 되었을 때, 그 여파가 네트워크 어디까지 퍼지는지 '폭발 반경(Blast Radius)'을 측정합니다. 영향받는 인접 노드 목록과 상실되는 서비스 대역을 분석하여 장애 심각도(Criticality)를 등급별로 산정합니다. 비상 대응 우선순위 결정에 활용됩니다.",
-            "verification": "검증 방법: 1) {node}를 제외하고 시뮬레이션을 돌려 도달성 변화를 전수 조사합니다. 2) 통신이 끊기는 모든 목적지 장비와 서비스를 식별합니다. 3) 영향받는 노드의 수와 서비스의 중요도를 결합하여 심각도(High/Medium/Low)를 판정합니다. 4) 영향받는 노드 리스트와 심각도를 JSON으로 반환합니다.",
-            "logic_ref": "batfish.estimate_blast_radius(node)"
+            "answer_type": "number",
+            "template": "'{node}' 장비가 다운되면 몇 개의 트래픽 흐름이 새로 차단됩니까? [답변 형식: 숫자]",
+            "description": "특정 장비(Node)가 가동 불능 상태(Down)가 되었을 때, 네트워크 도달성에 미치는 영향을 분석합니다. Fork Snapshot으로 장비를 비활성화한 후 Differential Reachability로 차단된 흐름 수를 계산합니다.",
+            "verification": "검증 방법: 1) {node}를 비활성화한 Fork Snapshot을 생성합니다. 2) Differential Reachability 분석으로 차단된 흐름 수를 반환합니다.",
+            "logic_ref": "batfish.fork_snapshot(deactivate=[node]).differential_reachability().count()"
+         },
+         "redundancy_verification": {
+            "level": "L5",
+            "category": "What_If_Analysis",
+            "answer_type": "text",
+            "template": "'{node1}'과 '{node2}'가 동시에 다운되면 고립되는 흐름이 있습니까? 몇 개입니까? [답변 형식: '없음' 또는 'N개']",
+            "description": "네트워크 이중화(Redundancy) 구조의 견고성을 검증하기 위해, 두 대의 장비가 동시에 고장 나는 최악의 시나리오(Dual Failure)를 시뮬레이션합니다.",
+            "verification": "검증 방법: 1) {node1}과 {node2}를 동시에 비활성화한 Fork Snapshot을 생성합니다. 2) Differential Reachability로 고립되는 흐름 수를 반환합니다.",
+            "logic_ref": "batfish.fork_snapshot(deactivate=[n1, n2]).differential_reachability().count()"
+         },
+         "triple_node_failure": {
+            "level": "L5",
+            "category": "What_If_Analysis",
+            "answer_type": "text",
+            "template": "'{node1}', '{node2}', '{node3}'가 동시에 다운되면 네트워크가 완전히 분리됩니까? [답변 형식: '예, 완전 분리' 또는 '아니오, N개 흐름만 영향']",
+            "description": "네트워크의 극한 생존성을 테스트하기 위해 3개의 주요 장비가 동시에 불능 상태가 되는 시나리오를 시뮬레이션합니다.",
+            "verification": "검증 방법: 1) 세 개의 노드를 비활성화한 스냅샷 생성. 2) Differential Reachability 분석. 3) 고립된 트래픽 통계 반환.",
+            "logic_ref": "batfish.fork_snapshot(deactivate=[n1, n2, n3]).differential_reachability()"
+         },
+         "worst_case_failure_analysis": {
+            "level": "L5",
+            "category": "What_If_Analysis",
+            "answer_type": "text",
+            "template": "단일 장비 장애 시 가장 큰 영향을 주는 장비는? [답변 형식: '장비명 (N개)']",
+            "description": "네트워크 내의 모든 주요 장비에 대해 각각 장애 시뮬레이션을 수행하고, 그중 가장 파급력(Impact)이 큰 장비를 식별합니다.",
+            "verification": "검증 방법: 1) 후보군 장비 각각에 대해 Node Failure Impact 분석 수행. 2) affected_count가 가장 높은 장비를 선정.",
+            "logic_ref": "max(batfish.node_failure_impact(all_nodes), key=affected_count)"
+         },
+         "non_existent_node_check": {
+            "level": "L5",
+            "category": "What_If_Analysis",
+            "answer_type": "number",
+            "template": "'{fake_node}' 장비가 다운되면 몇 개의 트래픽 흐름이 차단됩니까? [답변 형식: 숫자]",
+            "description": "존재하지 않는 장비에 대한 장애 영향을 질문합니다. LLM은 해당 장비가 네트워크에 없음을 인지하고 '0'을 답해야 합니다. (Negative Testing)",
+            "verification": "검증 방법: 1) 토폴로지에 없는 장비명으로 질문 생성. 2) 존재하지 않으므로 영향 0을 반환.",
+            "logic_ref": "if node not in nodes: return 0"
          },
          "multi_link_failure_analysis": {
             "level": "L5",
             "category": "What_If_Analysis",
-            "answer_type": "text",
-            "template": "'{link1}' 링크와 '{link2}' 링크가 동시에 다운될 경우, {test_src}에서 {test_dst}로의 통신이 가능합니까? [답변 형식: '고립됨' 또는 '대체 경로: ...']",
-            "description": "두 개 이상의 링크가 동시에 고장 나는 '복합 장애' 상황에서의 통신 유무를 분석합니다. 단일 장애(k=1)는 방어하더라도 특정 링크 조합(k=2)이 무너졌을 때 네트워크가 고립되는 특이 케이스를 찾아내어 최고 수준의 가용성을 확보하는 데 목적이 있습니다.",
-            "verification": "검증 방법: 1) 스냅샷에서 {link1}과 {link2}를 동시에 다운 처리합니다. 2) 해당 상태에서 {test_src}→{test_dst} 도달성 시뮬레이션을 수행합니다. 3) 도달 불가능하면 '고립됨'을 반환하고, 도달 가능하면 그때 사용하는 새로운 '대체 경로'를 홉 순서대로 나열하여 반환합니다.",
-            "logic_ref": "batfish.fail_links([l1, l2]).reachability(s, d)"
+            "answer_type": "bool",
+            "template": "'{link1}'과 '{link2}'가 동시에 다운되면 '{test_src}'에서 '{test_dst}'로의 통신이 가능합니까? [답변 형식: true 또는 false]",
+            "description": "두 개 이상의 링크가 동시에 고장 나는 '복합 장애' 상황에서의 통신 가능 여부를 분석합니다.",
+            "verification": "검증 방법: 1) 두 링크를 다운 처리한 상태에서 도달성 시뮬레이션. 2) 도달 가능하면 true, 불가능하면 false.",
+            "logic_ref": "batfish.fail_links([l1, l2]).is_reachable(s, d)"
          },
          "ospf_compatibility_check": {
             "level": "L4",
@@ -810,6 +846,312 @@
             "description": "중요 트래픽이 보안 통제 지점(방화벽 등)인 {waypoint}를 거치지 않고 목적지에 도달할 수 있는 '뒷길(Backdoor)'이 존재하는지 탐지합니다. 이는 네트워크 설계상의 허점으로 인해 보안 정책이 무력화되는 시나리오를 방어하는 데 필수적입니다. 우회 경로가 발견되면 해당 경로는 보안 취약점으로 간주됩니다.",
             "verification": "검증 방법: 1) {src}에서 {dst}로의 모든 가능한 도달 경로를 Batfish로 분석합니다. 2) 발견된 모든 경로 중, 경로상의 장비 목록에 {waypoint}가 포함되지 않은 경로가 하나라도 있는지 확인합니다. 3) {waypoint}를 거치지 않는 경로가 있다면 '우회 경로 존재'와 함께 해당 경로를 반환하고, 모든 경로가 {waypoint}를 거친다면 '우회 경로 없음'을 반환합니다.",
             "logic_ref": "batfish.find_bypath(src, dst, !waypoint)"
+         },
+         "password_encryption_config": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "text",
+            "template": "'{node}' 장비의 Password Encryption 기능 설정값은 무엇입니까? [답변 형식: Enabled/Disabled]",
+            "description": "Cisco 'service password-encryption' 설정 여부를 확인합니다.",
+            "verification": "검증 방법: Config 파일에서 'service password-encryption' 문장 유무 확인.",
+            "logic_ref": "parse_config(node).service_password_encryption"
+         },
+         "enable_secret_type": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "text",
+            "template": "'{node}' 장비의 Enable Secret 설정 상태는? [답변 형식: 5(MD5)/Scrypt/None]",
+            "description": "Privileged Exec 모드 접근을 위한 암호 설정 방식을 확인합니다.",
+            "verification": "검증 방법: 'enable secret' 설정 확인.",
+            "logic_ref": "parse_config(node).enable_secret"
+         },
+         "console_password_val": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "text",
+            "template": "'{node}' 장비의 Console Password는 무엇으로 설정되어 있습니까? [답변 형식: 암호값 또는 None]",
+            "description": "Console 포트 접근 제어 비밀번호를 확인합니다.",
+            "verification": "검증 방법: 'line console 0' 하위의 'password' 설정 확인.",
+            "logic_ref": "parse_config(node).line_console_password"
+         },
+         "exec_timeout_val": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "text",
+            "template": "'{node}' 장비의 VTY/Console Exec Timeout 설정값은? [답변 형식: '분 초' 또는 None]",
+            "description": "유휴 세션 자동 종료 시간 설정을 확인합니다.",
+            "verification": "검증 방법: 'exec-timeout' 설정값 확인.",
+            "logic_ref": "parse_config(node).exec_timeout"
+         },
+         "banner_motd_content": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "text",
+            "template": "'{node}' 장비의 MOTD(Message of the Day) 배너 내용은? [답변 형식: 내용 또는 None]",
+            "description": "시스템 접속 시 표시되는 법적 고지사항(Banner) 내용을 확인합니다.",
+            "verification": "검증 방법: 'banner motd' 설정 확인.",
+            "logic_ref": "parse_config(node).banner_motd"
+         },
+         "banner_login_content": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "text",
+            "template": "'{node}' 장비의 Login 배너 내용은? [답변 형식: 내용 또는 None]",
+            "description": "로그인 프롬프트 전 표시되는 배너 내용을 확인합니다.",
+            "verification": "검증 방법: 'banner login' 설정 확인.",
+            "logic_ref": "parse_config(node).banner_login"
+         },
+         "http_server_config": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "text",
+            "template": "'{node}' 장비의 HTTP Server 활성화 상태는? [답변 형식: Enabled/Disabled]",
+            "description": "보안 취약점이 될 수 있는 HTTP 관리 서버 활성화 여부를 확인합니다.",
+            "verification": "검증 방법: 'ip http server' 설정 유무.",
+            "logic_ref": "parse_config(node).http_server"
+         },
+         "cdp_config": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "text",
+            "template": "'{node}' 장비의 CDP(Cisco Discovery Protocol) 활성화 상태는? [답변 형식: Enabled/Disabled]",
+            "description": "인접 장비 정보를 교환하는 CDP 프로토콜 활성화 여부를 확인합니다.",
+            "verification": "검증 방법: 'no cdp run' 설정 유무.",
+            "logic_ref": "parse_config(node).cdp"
+         },
+         "ip_source_route_config": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "text",
+            "template": "'{node}' 장비의 IP Source Route 기능 활성화 상태는? [답변 형식: Enabled/Disabled]",
+            "description": "소스 라우팅(Source Routing) 허용 여부를 확인합니다 (보안상 Disabled 권장).",
+            "verification": "검증 방법: 'no ip source-route' 설정 유무.",
+            "logic_ref": "parse_config(node).ip_source_route"
+         },
+         "ntp_servers_list": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "set_str",
+            "template": "'{node}' 장비에 설정된 NTP 서버 목록은? [답변 형식: IP 리스트]",
+            "description": "시간 동기화를 위한 NTP 서버 IP 목록을 확인합니다.",
+            "verification": "검증 방법: 'ntp server' 구문으로 설정된 IP 추출.",
+            "logic_ref": "parse_config(node).ntp_servers"
+         },
+         "syslog_servers_list": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "set_str",
+            "template": "'{node}' 장비에 설정된 Syslog 서버 목록은? [답변 형식: IP 리스트]",
+            "description": "로그 전송을 위한 Syslog 서버 목록을 확인합니다.",
+            "verification": "검증 방법: 'logging host' 설정 확인.",
+            "logic_ref": "parse_config(node).logging_hosts"
+         },
+         "snmp_server_communities": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "set_str",
+            "template": "'{node}' 장비에 설정된 SNMP Community 목록은? [답변 형식: 문자열 리스트]",
+            "description": "SNMP 모니터링을 위한 커뮤니티 문자열을 확인합니다.",
+            "verification": "검증 방법: 'snmp-server community' 설정 확인.",
+            "logic_ref": "parse_config(node).snmp_communities"
+         },
+         "loopback_interfaces_list": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "set_str",
+            "template": "'{node}' 장비에 설정된 Loopback 인터페이스 목록은? [답변 형식: 인터페이스명 리스트]",
+            "description": "관리 및 라우팅 ID용 Loopback 인터페이스 존재 여부를 확인합니다.",
+            "verification": "검증 방법: 인터페이스 목록 중 'Loopback'으로 시작하는 항목 추출.",
+            "logic_ref": "parse_config(node).loopback_interfaces"
+         },
+         "dns_servers_list": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "set_str",
+            "template": "'{node}' 장비에 설정된 DNS 서버(Name Server) 목록은? [답변 형식: IP 리스트]",
+            "description": "도메인 이름 해석을 위한 DNS 서버 설정을 확인합니다.",
+            "verification": "검증 방법: 'ip name-server' 설정 확인.",
+            "logic_ref": "parse_config(node).name_servers"
+         },
+         "active_ospf_processes": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "set_str",
+            "template": "'{node}' 장비에서 활성화된 OSPF 프로세스 ID 목록은? [답변 형식: ID 리스트]",
+            "description": "라우팅 프로토콜 OSPF의 활성화 상태를 확인합니다.",
+            "verification": "검증 방법: 'router ospf' 설정 확인.",
+            "logic_ref": "parse_config(node).ospf_processes"
+         },
+         "configured_bgp_as_numbers": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "set_str",
+            "template": "'{node}' 장비에 설정된 BGP AS 번호는? [답변 형식: AS번호 리스트]",
+            "description": "라우팅 프로토콜 BGP의 설정 상태를 확인합니다.",
+            "verification": "검증 방법: 'router bgp' 설정 확인.",
+            "logic_ref": "parse_config(node).bgp_as"
+         },
+         "mpls_ldp_config": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "text",
+            "template": "'{node}' 장비의 MPLS LDP 활성화 상태는? [답변 형식: Enabled/Disabled]",
+            "description": "MPLS Label Distribution Protocol 활성화 여부를 확인합니다.",
+            "verification": "검증 방법: 'mpls ip' 또는 'mpls ldp properties' 등의 설정.",
+            "logic_ref": "parse_config(node).mpls_ldp"
+         },
+         "default_route_next_hops": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "set_str",
+            "template": "'{node}' 장비에 설정된 Default Route(0.0.0.0/0)의 Next Hop 목록은? [답변 형식: IP 리스트]",
+            "description": "기본 라우팅 경로의 구성 상태를 확인합니다.",
+            "verification": "검증 방법: 'ip route 0.0.0.0 0.0.0.0' 설정 확인.",
+            "logic_ref": "parse_config(node).default_route"
+         },
+         "static_route_count": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "number",
+            "template": "'{node}' 장비에 설정된 정적 경로(Static Route)의 총 개수는? [답변 형식: 숫자]",
+            "description": "설정된 정적 라우팅의 복잡도를 확인합니다.",
+            "verification": "검증 방법: 'ip route' 구문의 총 라인 수 카운트.",
+            "logic_ref": "count_static_routes(node)"
+         },
+         "acl_configured_count": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "number",
+            "template": "'{node}' 장비에 정의된 ACL(Access Control List)의 개수는? [답변 형식: 숫자]",
+            "description": "보안 정책 객체(ACL)의 정의 개수를 확인합니다.",
+            "verification": "검증 방법: 'access-list' 또는 'ip access-list' 정의 수 확인.",
+            "logic_ref": "count_acls(node)"
+         },
+         "acl_applied_interfaces_list": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "set_str",
+            "template": "'{node}' 장비에서 ACL이 적용된 인터페이스 목록은? [답변 형식: 인터페이스명 리스트]",
+            "description": "보안 정책이 실제로 적용된 인터페이스를 식별합니다.",
+            "verification": "검증 방법: 인터페이스 하위 'ip access-group' 설정 확인.",
+            "logic_ref": "get_acl_interfaces(node)"
+         },
+         "prefix_list_count": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "number",
+            "template": "'{node}' 장비에 정의된 Prefix-List 개수는? [답변 형식: 숫자]",
+            "description": "라우팅 필터링 객체의 정의 상태를 확인합니다.",
+            "verification": "검증 방법: 'ip prefix-list' 정의 수 확인.",
+            "logic_ref": "count_prefix_lists(node)"
+         },
+         "route_map_count": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "number",
+            "template": "'{node}' 장비에 정의된 Route-Map 개수는? [답변 형식: 숫자]",
+            "description": "라우팅 정책 제어 객체(Route-Map)의 정의 상태를 확인합니다.",
+            "verification": "검증 방법: 'route-map' 정의 수 확인.",
+            "logic_ref": "count_route_maps(node)"
+         },
+         "qos_class_maps_list": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "set_str",
+            "template": "'{node}' 장비에 정의된 QoS Class-Map 목록은? [답변 형식: 이름 리스트]",
+            "description": "QoS 트래픽 분류 설정 존재 여부를 확인합니다.",
+            "verification": "검증 방법: 'class-map' 정의 확인.",
+            "logic_ref": "get_class_maps(node)"
+         },
+         "netflow_monitors_list": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "set_str",
+            "template": "'{node}' 장비에 정의된 NetFlow Monitor 목록은? [답변 형식: 이름 리스트]",
+            "description": "트래픽 모니터링 설정(NetFlow) 확인.",
+            "verification": "검증 방법: 'flow monitor' 정의 확인.",
+            "logic_ref": "get_netflow_monitors(node)"
+         },
+         "interfaces_missing_description_count": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "number",
+            "template": "'{node}' 장비에서 설명(Description)이 누락된 인터페이스 개수는? [답변 형식: 숫자]",
+            "description": "관리 편의성을 위한 인터페이스 설명 설정 준수율을 확인합니다.",
+            "verification": "검증 방법: 각 인터페이스 블록 내 'description' 구문 유무 확인.",
+            "logic_ref": "count_missing_descriptions(node)"
+         },
+         "eigrp_as_numbers": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "set_str",
+            "template": "'{node}' 장비에 설정된 EIGRP AS 번호 목록은? [답변 형식: AS번호 리스트]",
+            "description": "EIGRP 라우팅 프로토콜 설정 확인.",
+            "verification": "검증 방법: 'router eigrp' 설정 확인.",
+            "logic_ref": "get_eigrp_as(node)"
+         },
+         "rip_processes": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "text",
+            "template": "'{node}' 장비의 RIP 프로토콜 활성화 상태는? [답변 형식: Enabled/Disabled]",
+            "description": "RIP 라우팅 프로토콜 설정 확인.",
+            "verification": "검증 방법: 'router rip' 설정 확인.",
+            "logic_ref": "check_rip_enabled(node)"
+         },
+         "hsrp_groups_list": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "set_str",
+            "template": "'{node}' 장비에 설정된 HSRP/VRRP 그룹 ID 목록은? [답변 형식: ID 리스트]",
+            "description": "게이트웨이 이중화 프로토콜(FHRP) 설정 확인.",
+            "verification": "검증 방법: 인터페이스 하위 'standby' 또는 'vrrp' 설정 확인.",
+            "logic_ref": "get_fhrp_groups(node)"
+         },
+         "multicast_routing_config": {
+            "level": "L1",
+            "category": "Configuration_Check",
+            "answer_type": "text",
+            "template": "'{node}' 장비의 Multicast Routing 활성화 상태는? [답변 형식: Enabled/Disabled]",
+            "description": "멀티캐스트 라우팅 기능 활성화 여부 확인.",
+            "verification": "검증 방법: 'ip multicast-routing' 설정 확인.",
+            "logic_ref": "check_multicast_enabled(node)"
+         },
+         "serial_interface_devices": {
+            "level": "L1",
+            "category": "Hardware_Inventory",
+            "answer_type": "set_str",
+            "template": "네트워크 전체에서 Serial 인터페이스를 보유한 장비 목록은? [답변 형식: 장비명 리스트]",
+            "description": "구형 WAN 연결 등에 사용되는 Serial 인터페이스 보유 장비를 파악합니다.",
+            "verification": "검증 방법: 모든 장비의 인터페이스 목록 검색.",
+            "logic_ref": "find_devices_with_interface_type('Serial')"
+         },
+         "tunnel_interface_devices": {
+            "level": "L1",
+            "category": "Hardware_Inventory",
+            "answer_type": "set_str",
+            "template": "네트워크 전체에서 Tunnel 인터페이스를 보유한 장비 목록은? [답변 형식: 장비명 리스트]",
+            "description": "VPN 또는 오버레이 네트워크용 Tunnel 인터페이스 보유 장비를 파악합니다.",
+            "verification": "검증 방법: 모든 장비의 인터페이스 목록 검색.",
+            "logic_ref": "find_devices_with_interface_type('Tunnel')"
+         },
+         "port_channel_devices": {
+            "level": "L1",
+            "category": "Hardware_Inventory",
+            "answer_type": "set_str",
+            "template": "네트워크 전체에서 Port-Channel(EtherChannel) 인터페이스를 보유한 장비 목록은? [답변 형식: 장비명 리스트]",
+            "description": "링크 결합(Aggregation) 기술이 적용된 장비를 파악합니다.",
+            "verification": "검증 방법: 모든 장비의 인터페이스 목록 검색.",
+            "logic_ref": "find_devices_with_interface_type('Port-channel')"
+         },
+         "vlan_interface_devices": {
+            "level": "L1",
+            "category": "Hardware_Inventory",
+            "answer_type": "set_str",
+            "template": "네트워크 전체에서 VLAN 인터페이스(SVI)를 보유한 장비 목록은? [답변 형식: 장비명 리스트]",
+            "description": "L3 스위칭 또는 라우팅용 VLAN 인터페이스 보유 장비를 파악합니다.",
+            "verification": "검증 방법: 모든 장비의 인터페이스 목록 검색.",
+            "logic_ref": "find_devices_with_interface_type('Vlan')"
          }
     },
     "policies": [
