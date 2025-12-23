@@ -42,6 +42,90 @@ class L5AnalyzerMixin:
         """BatfishBuilder 내부용 evidence 생성 헬퍼"""
         return build_evidence(query_name, params, getattr(self, 'snapshot_name', ''))
     
+
+    
+    def _analyze_routing_failure(self, src_node: str, dst_ip: str) -> dict:
+        """
+        라우팅 실패 원인 상세 분석 (범용적)
+        
+        Returns:
+            dict: {
+                "has_route": bool,
+                "active_protocols": List[str],
+                "diagnosis": str
+            }
+        """
+        result = {
+            "has_route": False,
+            "active_protocols": [],
+            "diagnosis": "UNKNOWN"
+        }
+        
+        try:
+            # 1. 라우팅 테이블에 경로 존재 확인
+            try:
+                routes = self.bf.q.routes(nodes=src_node, network=dst_ip).answer().frame()
+                result["has_route"] = not routes.empty
+                
+                if result["has_route"]:
+                    # 경로는 있지만 차단됨 → ACL 또는 interface down
+                    result["diagnosis"] = "ROUTE_EXISTS_BUT_BLOCKED"
+                    return result
+            except Exception as e:
+                logger.debug(f"Routes query failed: {e}")
+            
+            # 2. 활성 라우팅 프로토콜 확인
+            # BGP 확인
+            try:
+                bgp_proc = self.bf.q.bgpProcessConfiguration(nodes=src_node).answer().frame()
+                if not bgp_proc.empty:
+                    result["active_protocols"].append("BGP")
+                    
+                    # BGP neighbor 확인
+                    bgp_peers = self.bf.q.bgpPeerConfiguration(nodes=src_node).answer().frame()
+                    if bgp_peers.empty:
+                        result["diagnosis"] = "NO_BGP_NEIGHBORS"
+                        return result
+            except Exception as e:
+                logger.debug(f"BGP query failed: {e}")
+            
+            # OSPF 확인
+            try:
+                ospf_proc = self.bf.q.ospfProcessConfiguration(nodes=src_node).answer().frame()
+                if not ospf_proc.empty:
+                    result["active_protocols"].append("OSPF")
+            except Exception as e:
+                logger.debug(f"OSPF query failed: {e}")
+            
+            # Static route 확인
+            try:
+                all_routes = self.bf.q.routes(nodes=src_node).answer().frame()
+                if not all_routes.empty:
+                    static_routes = all_routes[all_routes['Protocol'] == 'static']
+                    if not static_routes.empty:
+                        result["active_protocols"].append("STATIC")
+            except Exception as e:
+                logger.debug(f"Static routes query failed: {e}")
+            
+            # 3. 진단 결정
+            if not result["active_protocols"]:
+                result["diagnosis"] = "NO_ROUTING_PROTOCOL"
+            elif "BGP" in result["active_protocols"] and not result["has_route"]:
+                result["diagnosis"] = "BGP_ROUTE_NOT_RECEIVED"
+            elif "OSPF" in result["active_protocols"] and not result["has_route"]:
+                result["diagnosis"] = "OSPF_ROUTE_NOT_ADVERTISED"
+            elif "STATIC" in result["active_protocols"] and not result["has_route"]:
+                result["diagnosis"] = "STATIC_ROUTE_MISMATCH"
+            else:
+                result["diagnosis"] = "ROUTING_TABLE_EMPTY"
+            
+            return result
+            
+        except Exception as e:
+            logger.warning(f"Routing failure analysis error: {e}")
+            result["diagnosis"] = "ANALYSIS_ERROR"
+            return result
+    
     # =========================================================================
     # 기본 L5 메트릭
     # =========================================================================
@@ -347,106 +431,215 @@ class L5AnalyzerMixin:
     
     def root_cause_analysis(self, src_node: str, dst_node: str) -> AnswerResult:
         """
-        L5 고급: 도달 불가 시 근본 원인 분석
-        traceroute 결과를 분석하여 차단/실패 원인 추론
+        L5 고급: 도달 불가 시 근본 원인 분석 (개선 버전)
         
-        Returns: AnswerResult(value={"reachable": bool, "root_cause": str, "blocking_point": str}, type="root_cause_result")
+        Traceroute 결과 + 라우팅 상태 종합 분석으로 정확한 원인 진단
+        
+        Returns: AnswerResult(value={
+            "reachable": bool,
+            "root_cause": str,  # 구체적 원인 (BGP_ROUTE_NOT_RECEIVED 등)
+            "blocking_point": str,
+            "details": str  # 추가 진단 정보
+        }, type="root_cause_result")
         """
         evidence = self._make_evidence("traceroute", {"src": src_node, "dst": dst_node})
         
         if not self._initialized:
-            return AnswerResult("NOT_CONFIGURED", {"reachable": False, "root_cause": "NOT_INITIALIZED", "blocking_point": ""}, "root_cause_result", evidence, "BATFISH_NOT_INITIALIZED")
+            return AnswerResult("NOT_CONFIGURED", {
+                "reachable": False,
+                "root_cause": "NOT_INITIALIZED",
+                "blocking_point": "",
+                "details": ""
+            }, "root_cause_result", evidence, "BATFISH_NOT_INITIALIZED")
         
         try:
             dst_ips = self.node_ips.get(dst_node, [])
             if not dst_ips:
-                return AnswerResult("NOT_CONFIGURED", {"reachable": False, "root_cause": "NO_DST_IP", "blocking_point": ""}, "root_cause_result", evidence, "")
+                return AnswerResult("NOT_CONFIGURED", {
+                    "reachable": False,
+                    "root_cause": "DESTINATION_IP_UNKNOWN",
+                    "blocking_point": dst_node,
+                    "details": "No IP addresses found for destination node"
+                }, "root_cause_result", evidence, "")
             
+            # Traceroute 수행
             traceroute = self.bf.q.traceroute(
                 startLocation=src_node,
                 headers=HeaderConstraints(dstIps=dst_ips[0])
             ).answer().frame()
             
+            # Traceroute 결과가 없으면 라우팅 실패
             if traceroute.empty:
-                return AnswerResult("OK", {"reachable": False, "root_cause": "NO_ROUTE", "blocking_point": src_node}, "root_cause_result", evidence, "")
+                routing_info = self._analyze_routing_failure(src_node, dst_ips[0])
+                protocols = ', '.join(routing_info['active_protocols']) if routing_info['active_protocols'] else 'None'
+                
+                return AnswerResult("OK", {
+                    "reachable": False,
+                    "root_cause": routing_info["diagnosis"],
+                    "blocking_point": src_node,
+                    "details": f"Active protocols: {protocols}"
+                }, "root_cause_result", evidence, "")
             
             traces = traceroute['Traces'].iloc[0]
             if not traces:
-                return AnswerResult("OK", {"reachable": False, "root_cause": "EMPTY_TRACE", "blocking_point": src_node}, "root_cause_result", evidence, "")
+                return AnswerResult("OK", {
+                    "reachable": False,
+                    "root_cause": "EMPTY_TRACE",
+                    "blocking_point": src_node,
+                    "details": "Traceroute returned empty trace"
+                }, "root_cause_result", evidence, "")
             
             trace = traces[0]
             disposition = getattr(trace, 'disposition', 'UNKNOWN')
             
+            # 도달 성공
             if disposition == 'ACCEPTED':
-                return AnswerResult("OK", {"reachable": True, "root_cause": "NONE", "blocking_point": ""}, "root_cause_result", evidence, "")
+                return AnswerResult("OK", {
+                    "reachable": True,
+                    "root_cause": "NONE",
+                    "blocking_point": "",
+                    "details": "Traffic successfully reaches destination"
+                }, "root_cause_result", evidence, "")
             
+            # Blocking point 찾기
             hops = getattr(trace, 'hops', [])
-            last_hop_node = ""
+            last_hop_node = src_node
             for hop in hops:
                 node = getattr(hop, 'node', None)
                 if node:
                     last_hop_node = getattr(node, 'hostname', str(node))
             
-            root_cause_map = {
-                'DENIED_IN': 'ACL_BLOCKED_INBOUND',
-                'DENIED_OUT': 'ACL_BLOCKED_OUTBOUND',
-                'NO_ROUTE': 'ROUTING_FAILURE',
-                'NULL_ROUTED': 'NULL_ROUTE_CONFIGURED',
-                'LOOP': 'FORWARDING_LOOP',
-                'UNREACHABLE': 'DESTINATION_UNREACHABLE'
-            }
+            # Disposition 기반 원인 분석 + 라우팅 상세 분석 조합
+            root_cause = ""
+            details = ""
             
-            root_cause = root_cause_map.get(disposition, f'UNKNOWN_{disposition}')
+            if disposition == 'NO_ROUTE':
+                # 라우팅 실패 상세 분석
+                routing_info = self._analyze_routing_failure(last_hop_node, dst_ips[0])
+                root_cause = routing_info["diagnosis"]
+                protocols = ', '.join(routing_info['active_protocols']) if routing_info['active_protocols'] else 'None'
+                details = f"No route at {last_hop_node}. Active protocols: {protocols}"
+                
+            elif disposition in ['DENIED_IN', 'DENIED_OUT']:
+                direction = disposition.split('_')[1]
+                root_cause = f"ACL_BLOCKED_{direction}"
+                details = f"Traffic blocked by ACL at {last_hop_node} ({disposition})"
+                
+            elif disposition == 'NULL_ROUTED':
+                root_cause = "NULL_ROUTE_CONFIGURED"
+                details = f"Traffic null-routed at {last_hop_node}"
+                
+            elif disposition == 'LOOP':
+                root_cause = "FORWARDING_LOOP"
+                details = "Forwarding loop detected in path"
+                
+            elif disposition == 'UNREACHABLE':
+                root_cause = "DESTINATION_UNREACHABLE"
+                details = f"Destination unreachable from {last_hop_node}"
+                
+            elif disposition == 'NEIGHBOR_UNREACHABLE':
+                root_cause = "NEIGHBOR_UNREACHABLE"
+                details = f"Next-hop neighbor unreachable at {last_hop_node}"
+                
+            else:
+                root_cause = f"UNKNOWN_{disposition}"
+                details = f"Unknown disposition: {disposition}"
             
-            return AnswerResult("OK", {"reachable": False, "root_cause": root_cause, "blocking_point": last_hop_node}, "root_cause_result", evidence, "")
+            return AnswerResult("OK", {
+                "reachable": False,
+                "root_cause": root_cause,
+                "blocking_point": last_hop_node,
+                "details": details
+            }, "root_cause_result", evidence, "")
             
         except Exception as e:
             logger.warning(f"root_cause_analysis error: {e}")
-            return AnswerResult("UNKNOWN", {"reachable": False, "root_cause": "ERROR", "blocking_point": ""}, "root_cause_result", evidence, "BATFISH_QUERY_ERROR")
+            return AnswerResult("UNKNOWN", {
+                "reachable": False,
+                "root_cause": "ERROR",
+                "blocking_point": "",
+                "details": str(e)
+            }, "root_cause_result", evidence, "BATFISH_QUERY_ERROR")
     
     def blast_radius_estimation(self, failed_node: str) -> AnswerResult:
         """
-        L5 고급: 노드 장애 시 영향 범위(Blast Radius) 추정
-        특정 노드가 다운될 경우 영향받는 다른 노드들을 분석
+        L5 고급: 노드 장애 영향 분석 (Fork Snapshot & Differential Reachability)
         
-        Returns: AnswerResult(value={"affected_nodes": List[str], "affected_count": int, "severity": str}, type="blast_radius_result")
+        특정 노드를 비활성화한 Snapshot을 생성하고, 원본과 비교하여
+        새로 차단되는 트래픽 흐름(Impact)을 객관적으로 분석함.
+        
+        Returns: AnswerResult(value={
+            "affected_count": int,
+            "newly_blocked_flows": List[str],
+            "still_reachable_count": int
+        }, type="node_failure_result")
         """
-        evidence = self._make_evidence("layer3Edges", {"failed_node": failed_node})
+        evidence = self._make_evidence("differentialReachability", {"failed_node": failed_node})
         
         if not self._initialized:
-            return AnswerResult("NOT_CONFIGURED", {"affected_nodes": [], "affected_count": 0, "severity": "UNKNOWN"}, "blast_radius_result", evidence, "BATFISH_NOT_INITIALIZED")
+            return AnswerResult("NOT_CONFIGURED", {
+                "affected_count": 0,
+                "newly_blocked_flows": [],
+                "still_reachable_count": 0
+            }, "node_failure_result", evidence, "BATFISH_NOT_INITIALIZED")
         
         try:
-            edges = self.bf.q.layer3Edges(nodes=failed_node).answer().frame()
+            # 1. Fork Snapshot: 노드 비활성화
+            failure_snapshot = f"failure_{failed_node}_{int(time.time())}"
+            try:
+                self.bf.fork_snapshot(
+                    base_name=self.snapshot_name,
+                    name=failure_snapshot,
+                    deactivate_nodes=[failed_node],
+                    overwrite=True
+                )
+            except Exception as e:
+                 print(f"DEBUG ERROR in fork_snapshot (blast_radius): {e}")
+                 logger.warning(f"Fork snapshot failed: {e}")
+                 return AnswerResult("UNKNOWN", {}, "node_failure_result", evidence, f"FORK_FAILED: {e}")
+
+            # 2. Differential Reachability
+            # 변경 전(self.snapshot_name) -> 변경 후(failure_snapshot)
+            # reference_snapshot (basis) -> snapshot (new)
+            # We want to find flows that were accepted in reference but dropped/unreachable in snapshot.
             
-            directly_connected = set()
-            if not edges.empty:
-                for _, edge in edges.iterrows():
-                    remote_iface = edge.get('Remote_Interface', {})
-                    remote_node = getattr(remote_iface, 'hostname', '') if hasattr(remote_iface, 'hostname') else ''
-                    if remote_node and remote_node.lower() != failed_node.lower():
-                        directly_connected.add(remote_node)
+            diff_q = self.bf.q.differentialReachability()
+            diff_result = diff_q.answer(
+                snapshot=failure_snapshot,
+                reference_snapshot=self.snapshot_name
+            ).frame()
             
-            affected_nodes = list(directly_connected)
-            affected_count = len(affected_nodes)
+            newly_blocked = []
             
-            total_nodes = len(self.nodes)
-            impact_ratio = affected_count / total_nodes if total_nodes > 0 else 0
+            if not diff_result.empty:
+                # 'Flow' column contains the flow details
+                for _, row in diff_result.iterrows():
+                    flow = row.get('Flow')
+                    if flow:
+                        src_ip = getattr(flow, 'srcIp', 'unknown')
+                        dst_ip = getattr(flow, 'dstIp', 'unknown')
+                        ip_prot = getattr(flow, 'ipProtocol', 'unknown')
+                        newly_blocked.append(f"{src_ip} -> {dst_ip} ({ip_prot})")
             
-            if impact_ratio >= 0.5:
-                severity = "CRITICAL"
-            elif impact_ratio >= 0.25:
-                severity = "HIGH"
-            elif impact_ratio >= 0.1:
-                severity = "MEDIUM"
-            else:
-                severity = "LOW"
+            # Limit results
+            # Remove duplicated strings if any
+            newly_blocked = list(set(newly_blocked))
+            affected_count = len(newly_blocked)
+            display_flows = newly_blocked[:15] # Top 15
             
-            return AnswerResult("OK", {"affected_nodes": affected_nodes, "affected_count": affected_count, "severity": severity}, "blast_radius_result", evidence, "")
+            return AnswerResult("OK", {
+                "affected_count": affected_count,
+                "newly_blocked_flows": display_flows,
+                "still_reachable_count": -1 # Not calculated for performance
+            }, "node_failure_result", evidence, "")
             
         except Exception as e:
+            print(f"DEBUG ERROR in blast_radius_estimation: {e}")
             logger.warning(f"blast_radius_estimation error: {e}")
-            return AnswerResult("UNKNOWN", {"affected_nodes": [], "affected_count": 0, "severity": "UNKNOWN"}, "blast_radius_result", evidence, "BATFISH_QUERY_ERROR")
+            return AnswerResult("UNKNOWN", {
+                "affected_count": 0,
+                "newly_blocked_flows": [],
+            }, "node_failure_result", evidence, "BATFISH_QUERY_ERROR")
     
     def multi_link_failure_analysis(self, link1_node1: str, link1_node2: str, link2_node1: str, link2_node2: str, test_src: str, test_dst: str) -> AnswerResult:
         """
@@ -517,15 +710,193 @@ class L5AnalyzerMixin:
             logger.warning(f"multi_link_failure_analysis error: {e}")
             return AnswerResult("UNKNOWN", {"isolated": False, "new_path": [], "path_change": "ERROR"}, "multi_failure_result", evidence, "BATFISH_QUERY_ERROR")
     
+        """
+        L4: ACL 차단 규칙 상세 분석
+        Returns: AnswerResult(value={"blocked": bool, "rules": List[str]}, type="acl_rule_result")
+        """
+        # ... logic ...
+        pass # The previous code ended abruptly in the view, but assumed acl_rule_blocking exists below.
+        # Actually I need to insert the NEW method before the end of the class or in a suitable place. 
+        # I will insert it after multi_link_failure_analysis.
+
+    def redundancy_verification(self, node1: str, node2: str) -> AnswerResult:
+        """
+        L5 고급: 이중 장비 장애(Dual Failure) 시뮬레이션
+        
+        node1과 node2를 동시에 비활성화한 후, Differential Reachability를 통해
+        고립되는 트래픽 흐름을 분석하여 이중화 구조의 안전성을 검증함.
+        
+        Returns: AnswerResult(value={
+            "isolated_flow_count": int,
+            "isolated_flows": List[str]
+        }, type="dual_failure_result")
+        """
+        evidence = self._make_evidence("differentialReachability", {"failed_nodes": f"{node1}, {node2}"})
+        
+        if not self._initialized:
+            return AnswerResult("NOT_CONFIGURED", {
+                "isolated_flow_count": 0,
+                "isolated_flows": []
+            }, "dual_failure_result", evidence, "BATFISH_NOT_INITIALIZED")
+            
+        try:
+            # 1. Fork Snapshot (두 노드 동시 비활성화)
+            failure_snapshot = f"dual_fail_{node1}_{node2}_{int(time.time())}"
+            try:
+                self.bf.fork_snapshot(
+                    base_name=self.snapshot_name,
+                    name=failure_snapshot,
+                    deactivate_nodes=[node1, node2],
+                    overwrite=True
+                )
+            except Exception as e:
+                 print(f"DEBUG ERROR in fork_snapshot (dual): {e}")
+                 logger.warning(f"Fork snapshot (dual) failed: {e}")
+                 return AnswerResult("UNKNOWN", {}, "dual_failure_result", evidence, f"FORK_FAILED: {e}")
+
+            # 2. Differential Reachability
+            # Reference(Base) -> Snapshot(Dual Fail) 비교
+            diff_q = self.bf.q.differentialReachability()
+            diff_result = diff_q.answer(
+                snapshot=failure_snapshot,
+                reference_snapshot=self.snapshot_name
+            ).frame()
+            
+            isolated_flows = []
+            if not diff_result.empty:
+                for _, row in diff_result.iterrows():
+                    flow = row.get('Flow')
+                    if flow:
+                        src_ip = getattr(flow, 'srcIp', 'unknown')
+                        dst_ip = getattr(flow, 'dstIp', 'unknown')
+                        ip_prot = getattr(flow, 'ipProtocol', 'unknown')
+                        isolated_flows.append(f"{src_ip} -> {dst_ip} ({ip_prot})")
+            
+            isolated_flows = list(set(isolated_flows))
+            
+            return AnswerResult("OK", {
+                "isolated_flow_count": len(isolated_flows),
+                "isolated_flows": isolated_flows[:15] # Top 15
+            }, "dual_failure_result", evidence, "")
+            
+        except Exception as e:
+            print(f"DEBUG ERROR in redundancy_verification: {e}")
+            logger.warning(f"redundancy_verification error: {e}")
+            return AnswerResult("UNKNOWN", {
+                "isolated_flow_count": 0,
+                "isolated_flows": []
+            }, "dual_failure_result", evidence, "BATFISH_QUERY_ERROR")
+
     # =========================================================================
     # 추가 메트릭 (L4/L5 혼합)
     # =========================================================================
     
+    def acl_rule_blocking(self, src_ip, dst_ip, dst_port, protocol="tcp"):
+         # ... (existing content, simplified for brevity in replacement) ...
+         pass 
+
+    def triple_node_failure(self, node1: str, node2: str, node3: str) -> AnswerResult:
+        """
+        L5 Advanced: Triple Node Failure Simulation
+        """
+        evidence = self._make_evidence("differentialReachability", {"failed_nodes": f"{node1}, {node2}, {node3}"})
+        
+        if not self._initialized:
+            return AnswerResult("NOT_CONFIGURED", {}, "triple_failure_result", evidence, "BATFISH_NOT_INITIALIZED")
+            
+        try:
+            # 1. Fork Snapshot (세 노드 동시 비활성화)
+            failure_snapshot = f"triple_fail_{node1}_{node2}_{node3}_{int(time.time())}"
+            try:
+                self.bf.fork_snapshot(
+                    base_name=self.snapshot_name,
+                    name=failure_snapshot,
+                    deactivate_nodes=[node1, node2, node3],
+                    overwrite=True
+                )
+            except Exception as e:
+                 logger.warning(f"Fork snapshot (triple) failed: {e}")
+                 return AnswerResult("UNKNOWN", {}, "triple_failure_result", evidence, f"FORK_FAILED: {e}")
+
+            # 2. Differential Reachability
+            diff_q = self.bf.q.differentialReachability()
+            diff_result = diff_q.answer(
+                snapshot=failure_snapshot,
+                reference_snapshot=self.snapshot_name
+            ).frame()
+            
+            isolated_flows = []
+            if not diff_result.empty:
+                for _, row in diff_result.iterrows():
+                    flow = row.get('Flow')
+                    if flow:
+                        src_ip = getattr(flow, 'srcIp', 'unknown')
+                        dst_ip = getattr(flow, 'dstIp', 'unknown')
+                        ip_prot = getattr(flow, 'ipProtocol', 'unknown')
+                        isolated_flows.append(f"{src_ip} -> {dst_ip} ({ip_prot})")
+            
+            isolated_flows = list(set(isolated_flows))
+            
+            return AnswerResult("OK", {
+                "isolated_flow_count": len(isolated_flows),
+                "isolated_flows": isolated_flows[:15]
+            }, "triple_failure_result", evidence, "")
+            
+        except Exception as e:
+            logger.warning(f"triple_node_failure error: {e}")
+            return AnswerResult("UNKNOWN", {}, "triple_failure_result", evidence, "BATFISH_QUERY_ERROR")
+
+    def check_non_existent_node(self, node_name: str) -> AnswerResult:
+        """
+        L5 Negative Testing: Check system response for non-existent node
+        """
+        evidence = self._make_evidence("check_node", {"target_node": node_name})
+        
+        if node_name in self.nodes:
+            # 존재하면 오히려 테스트 실패 (의도는 없는 노드를 넣는 것)
+            return AnswerResult("OK", {"status": "EXISTS", "message": "Node exists"}, "negative_test_result", evidence, "")
+        else:
+            # 존재하지 않음을 정확히 감지해야 성공
+            return AnswerResult("OK", {
+                "status": "NOT_FOUND", 
+                "message": f"Batfish knows that '{node_name}' does not exist."
+            }, "negative_test_result", evidence, "CORRECTLY_IDENTIFIED_MISSING_NODE")
+
+    def find_worst_failure_node(self, candidate_nodes: List[str]) -> AnswerResult:
+        """
+        L5 Analysis: Find the single node that causes the most blocked flows
+        """
+        evidence = self._make_evidence("multi_simulation", {"candidates": len(candidate_nodes)})
+        
+        max_affected = -1
+        worst_node = None
+        
+        # Analyze each candidate
+        # This is expensive, so candidates should be limited
+        try:
+            for node in candidate_nodes:
+                # Use the existing method name 'blast_radius_estimation'
+                res = self.blast_radius_estimation(node) 
+                
+                if res.status == "OK":
+                    count = res.value.get("affected_count", 0)
+                    if count > max_affected:
+                        max_affected = count
+                        worst_node = node
+            
+            return AnswerResult("OK", {
+                "worst_node": worst_node,
+                "blocked_flow_count": max_affected
+            }, "worst_case_result", evidence, "")
+            
+        except Exception as e:
+            logger.warning(f"find_worst_failure_node error: {e}")
+            return AnswerResult("UNKNOWN", {}, "worst_case_result", evidence, str(e))
     def acl_rule_blocking(self,
-                         src_ip: str,
-                         dst_ip: str,
-                         dst_port: int = 80,
-                         protocol: str = "TCP") -> AnswerResult:
+                          src_ip: str,
+                          dst_ip: str,
+                          dst_port: int = 80,
+                          protocol: str = "TCP") -> AnswerResult:
         """
         L4: ACL 차단 규칙 상세 분석
         Returns: AnswerResult(value={"blocked": bool, "rules": List[str]}, type="acl_rule_result")

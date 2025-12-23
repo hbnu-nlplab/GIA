@@ -1117,6 +1117,217 @@ class BuilderCore:
             stats_parts = [f"{host}: {cnt}" for host, cnt in sorted(vrf_stats.items())]
             return "text", ", ".join(stats_parts) if stats_parts else "No Info"
 
+        # =========================================================
+        # NEW L1 Configuration Metrics (Extracted from Text)
+        # =========================================================
+        
+        # --- Security ---
+        elif metric == "password_encryption_config":
+            host = scope.get("host")
+            val = ((self.host_index.get(host, {}).get("configuration") or {}).get("security") or {}).get("password_encryption")
+            return "text", "Enabled" if val else "Disabled"
+            
+        elif metric == "enable_secret_type":
+            host = scope.get("host")
+            val = ((self.host_index.get(host, {}).get("configuration") or {}).get("security") or {}).get("enable_secret")
+            return "text", str(val) if val else "Not Configured"
+
+        elif metric == "console_password_config":
+            host = scope.get("host")
+            val = ((self.host_index.get(host, {}).get("configuration") or {}).get("security") or {}).get("console_password")
+            return "text", str(val) if val and val != "None" else "Not Configured"
+
+        elif metric == "exec_timeout_config":
+            host = scope.get("host")
+            val = ((self.host_index.get(host, {}).get("configuration") or {}).get("security") or {}).get("exec_timeout")
+            return "text", str(val) if val and val != "None" else "Not Configured"
+
+        elif metric == "banner_motd_config":
+            host = scope.get("host")
+            val = ((self.host_index.get(host, {}).get("configuration") or {}).get("security") or {}).get("banner_motd")
+            return "text", "Configured" if val and val != "None" else "Not Configured"
+
+        elif metric == "banner_login_config":
+            host = scope.get("host")
+            val = ((self.host_index.get(host, {}).get("configuration") or {}).get("security") or {}).get("banner_login")
+            return "text", "Configured" if val and val != "None" else "Not Configured"
+
+        elif metric == "http_server_config":
+            host = scope.get("host")
+            val = ((self.host_index.get(host, {}).get("configuration") or {}).get("security") or {}).get("http_server")
+            return "text", "Enabled" if val else "Disabled"
+
+        elif metric == "cdp_config":
+            host = scope.get("host")
+            val = ((self.host_index.get(host, {}).get("configuration") or {}).get("security") or {}).get("cdp")
+            return "text", "Enabled" if val else "Disabled"
+
+        elif metric == "source_route_config":
+            host = scope.get("host")
+            val = ((self.host_index.get(host, {}).get("configuration") or {}).get("security") or {}).get("ip_source_route")
+            return "text", "Enabled" if val else "Disabled"
+
+        # --- Operational ---
+        elif metric == "ntp_servers_list": # Replaces/augments old ntp_server_list
+            host = scope.get("host")
+            d = self.host_index.get(host, {})
+            # Prefer parsed text config first
+            servers = ((d.get("services") or {}).get("ntp") or {}).get("servers") or []
+            # Normalize list of strings
+            result = sorted(list(set(str(s) for s in servers)))
+            return "set", result
+
+        elif metric == "syslog_servers_list":
+            host = scope.get("host")
+            d = self.host_index.get(host, {})
+            servers = (d.get("logging") or {}).get("hosts") or []
+            result = sorted(list(set(str(s) for s in servers)))
+            return "set", result
+
+        elif metric == "snmp_communities_list":
+            host = scope.get("host")
+            val = ((self.host_index.get(host, {}).get("configuration") or {}).get("operational") or {}).get("snmp_communities") or []
+            return "set", sorted(list(set(str(s) for s in val)))
+
+        elif metric == "loopback_interfaces_list":
+            host = scope.get("host")
+            val = ((self.host_index.get(host, {}).get("configuration") or {}).get("operational") or {}).get("loopback_interfaces") or []
+            # Extract just number or full name? Question asks for list.
+            # val is list of strings like "Loopback0"
+            result = [re.search(r"Loopback(\d+)", s).group(0) for s in val if re.search(r"Loopback(\d+)", s)]
+            return "set", sorted(list(set(result))) if result else []
+
+        elif metric == "name_servers_list":
+            host = scope.get("host")
+            val = ((self.host_index.get(host, {}).get("configuration") or {}).get("operational") or {}).get("name_servers") or []
+            return "set", sorted(list(set(str(s) for s in val)))
+            
+        # --- Routing ---
+        elif metric == "ospf_processes_list":
+            host = scope.get("host")
+            val = ((self.host_index.get(host, {}).get("configuration") or {}).get("routing") or {}).get("ospf_processes") or []
+            return "set", sorted(list(set(str(s) for s in val)))
+
+        elif metric == "bgp_as_config":
+            host = scope.get("host")
+            # Prefer batfish parsed first for accuracy, fallback to text
+            d = self.host_index.get(host, {})
+            las = self._bgp_local_as(d)
+            if las:
+                return "text", str(las)
+            val = ((d.get("configuration") or {}).get("routing") or {}).get("bgp_as")
+            return "text", str(val[0]) if val else "Not Configured"
+
+        elif metric == "mpls_ldp_config":
+            host = scope.get("host")
+            val = ((self.host_index.get(host, {}).get("configuration") or {}).get("routing") or {}).get("mpls_ldp_enabled")
+            return "text", "Enabled" if val else "Disabled"
+
+        elif metric == "mpls_ldp_router_id":
+            host = scope.get("host")
+            val = ((self.host_index.get(host, {}).get("configuration") or {}).get("routing") or {}).get("mpls_ldp_rid")
+            return "text", str(val) if val else "Not Configured"
+
+        elif metric == "default_route_next_hops":
+            host = scope.get("host")
+            val = ((self.host_index.get(host, {}).get("configuration") or {}).get("routing") or {}).get("default_route_next_hops") or []
+            return "set", sorted(list(set(str(s) for s in val)))
+
+        elif metric == "static_route_count":
+            host = scope.get("host")
+            val = ((self.host_index.get(host, {}).get("configuration") or {}).get("routing") or {}).get("static_routes_count")
+            return "number", val if val is not None else 0
+
+        # --- Advanced / ACL ---
+        elif metric == "acl_configured_count":
+            host = scope.get("host")
+            val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("acls_count")
+            return "number", val if val is not None else 0
+
+        elif metric == "acl_interfaces_list":
+            host = scope.get("host")
+            val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("acl_interfaces") or []
+            return "set", sorted(list(set(str(s) for s in val)))
+
+        elif metric == "prefix_list_configured_count":
+            host = scope.get("host")
+            val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("prefix_lists_count")
+            return "number", val if val is not None else 0
+
+        elif metric == "route_map_configured_count":
+            host = scope.get("host")
+            val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("route_maps_count")
+            return "number", val if val is not None else 0
+
+        elif metric == "class_map_list":
+            host = scope.get("host")
+            val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("class_maps") or []
+            return "set", sorted(list(set(str(s) for s in val)))
+
+        elif metric == "netflow_monitor_list":
+            host = scope.get("host")
+            val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("netflow_monitors") or []
+            return "set", sorted(list(set(str(s) for s in val)))
+
+        elif metric == "missing_description_count":
+            host = scope.get("host")
+            val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("missing_descriptions_count")
+            return "number", val if val is not None else 0
+
+        elif metric == "eigrp_as_config":
+            host = scope.get("host")
+            val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("eigrp_as")
+            return "text", str(val[0]) if val else "Not Configured"
+
+        elif metric == "rip_config":
+             host = scope.get("host")
+             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("rip_enabled")
+             return "text", "Enabled" if val else "Disabled"
+             
+        elif metric == "fhrp_group_list":
+            host = scope.get("host")
+            val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("fhrp_groups") or []
+            return "set", sorted(list(set(str(s) for s in val)))
+            
+        elif metric == "multicast_config":
+             host = scope.get("host")
+             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("multicast_enabled")
+             return "text", "Enabled" if val else "Disabled"
+
+        # --- Hardware / Interface Inventory (Global) ---
+        elif metric == "serial_interface_devices":
+            hosts = set()
+            for d in self.devices:
+                for i in (d.get("interfaces") or []):
+                    if "Serial" in i.get("name", ""):
+                        hosts.add(self._hostname(d))
+            return "set", sorted(list(hosts))
+
+        elif metric == "gigabit_interface_devices":
+            hosts = set()
+            for d in self.devices:
+                for i in (d.get("interfaces") or []):
+                    if "GigabitEthernet" in i.get("name", ""):
+                        hosts.add(self._hostname(d))
+            return "set", sorted(list(hosts))
+            
+        elif metric == "ten_gigabit_interface_devices":
+            hosts = set()
+            for d in self.devices:
+                for i in (d.get("interfaces") or []):
+                    name = i.get("name", "")
+                    if "TenGigabit" in name or "Te" in name: # Approximate check
+                         hosts.add(self._hostname(d))
+            return "set", sorted(list(hosts))
+
+        elif metric == "vlan_interface_devices":
+            hosts = set()
+            for d in self.devices:
+                for i in (d.get("interfaces") or []):
+                    if "Vlan" in i.get("name", ""):
+                        hosts.add(self._hostname(d))
+            return "set", sorted(list(hosts))
+
         return "text", None
 
     # ---------- DSL → 테스트 인스턴스 확장 ----------

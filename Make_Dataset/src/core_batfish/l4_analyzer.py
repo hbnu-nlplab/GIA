@@ -133,6 +133,10 @@ class L4AnalyzerMixin:
             path = []
             is_reachable = False
             
+            
+            # disposition이 없을 경우를 대비해 초기화
+            final_disposition = "UNKNOWN"
+            
             if not trace_result.empty:
                 traces = trace_result.iloc[0].get('Traces', [])
                 for trace in traces:
@@ -145,16 +149,30 @@ class L4AnalyzerMixin:
                             if node_name and node_name not in current_path:
                                 current_path.append(node_name)
                     
-                    disposition = getattr(trace, 'disposition', '')
-                    if 'ACCEPTED' in str(disposition).upper():
+                    disposition_str = str(getattr(trace, 'disposition', 'UNKNOWN'))
+                    
+                    # Disposition Mapping Logic for LLM Evaluation / Classification
+                    # Success Cases
+                    if 'ACCEPTED' in disposition_str.upper() or 'DELIVERED' in disposition_str.upper():
                         is_reachable = True
                         path = current_path
+                        final_disposition = "ACCEPTED"
                         break
+                    
+                    # Failure Cases Mapping
+                    if 'NO_ROUTE' in disposition_str or 'NULL_ROUTED' in disposition_str:
+                        final_disposition = 'NO_ROUTE'
+                    elif 'DENIED' in disposition_str or 'BLOCK' in disposition_str: # Includes ACL_DENIED, BLOCKED, etc.
+                        final_disposition = 'ACL_DENY' 
+                    elif 'INSUFFICIENT_INFO' in disposition_str or 'EXITS_NETWORK' in disposition_str or 'NEIGHBOR_UNREACHABLE' in disposition_str:
+                        final_disposition = 'EXTERNAL'
+                    else:
+                        final_disposition = disposition_str
                     
                     if not path:
                         path = current_path
             
-            value = {"reachable": is_reachable, "path": path}
+            value = {"reachable": is_reachable, "path": path, "disposition": final_disposition}
             return AnswerResult("OK", value, "l4_result", evidence, "")
             
         except Exception as e:

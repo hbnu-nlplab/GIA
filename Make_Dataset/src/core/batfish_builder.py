@@ -1905,7 +1905,7 @@ class BatfishBuilder:
         
         if has_acl:
             logger.info("[L5] ACL detected. Generating ACL blocking questions.")
-            for flow in self.get_representative_flows()[:10]:
+            for flow in self.get_representative_flows()[:20]:
                 _, blocking_info = self.acl_rule_blocking(
                     flow.src_ip, flow.dst_ip, flow.dst_port, flow.protocol
                 )
