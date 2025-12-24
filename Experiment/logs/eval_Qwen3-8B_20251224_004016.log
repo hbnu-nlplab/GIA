@@ -1,0 +1,10 @@
+2025-12-24 00:40:16,141 | INFO | Initializing VLLM Evaluator...
+2025-12-24 00:40:16,142 | INFO | Model: Qwen3-8B (Qwen/Qwen3-8B)
+2025-12-24 00:40:16,143 | INFO | Config Dir: /content/drive/Othercomputers/내 노트북 (1)/CodeSpace/GIA/Data/Pnetlab/Research_Institute_Internal_DC/configs
+2025-12-24 00:43:11,587 | INFO | Loaded 10 configuration files.
+2025-12-24 00:43:11,588 | INFO | Loading dataset from /content/drive/Othercomputers/내 노트북 (1)/CodeSpace/GIA/Data/Pnetlab/Research_Institute_Internal_DC/Dataset/Research_Institute_Internal_DC_dataset_batfish_20251224_012740.csv
+2025-12-24 00:43:12,279 | INFO | Generating prompts...
+2025-12-24 00:43:12,376 | INFO | Starting batch generation for 720 samples...
+2025-12-24 01:20:30,549 | INFO | Inference Time: 2238.17s | Throughput: 0.3 req/s
+2025-12-24 01:20:30,880 | INFO | Inference Complete. Raw results saved to /content/drive/Othercomputers/내 노트북 (1)/CodeSpace/GIA/Experiment/results/Qwen3-8B/results_raw_20251224_004016.json
+2025-12-24 01:20:30,880 | INFO | Run 'python reanalyze_results.py "/content/drive/Othercomputers/내 노트북 (1)/CodeSpace/GIA/Experiment/results/Qwen3-8B/results_raw_20251224_004016.json"' to score and visualize.
