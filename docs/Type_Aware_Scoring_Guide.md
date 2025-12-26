@@ -1,314 +1,534 @@
-# NetConfigQA Type-Aware Scoring 가이드
+# NetConfigQA Type-Aware Scoring 완전 가이드
 
-> 왜 일반적인 NLP 메트릭(EM, F1, BERTScore, ROUGE)을 사용하지 않고 Type-Aware Scoring을 사용하는지 설명합니다.
-
-## 1. 문제 정의
-
-네트워크 설정 데이터는 **구조화된 데이터**입니다. 일반적인 텍스트와 다르게:
-
-- 값의 **정확성**이 중요 (IP 주소 한 자리 차이 = 완전히 다른 장비)
-- **순서가 무관한** 데이터 존재 (집합, JSON)
-- **형식 차이**가 있지만 **의미는 동일**한 경우 많음
+> **이 문서의 목적**: 왜 EM/F1/BERTScore/ROUGE 대신 Type-Aware Scoring을 사용하는지, 각 타입별 비교 로직이 어떻게 동작하는지 완벽히 이해하기
 
 ---
 
-## 2. 일반 메트릭의 한계
+## 1. 핵심 개념: 왜 Type-Aware인가?
 
-### 2.1 Exact Match (EM)
+### 1.1 네트워크 설정 데이터의 특성
 
-**정의**: 예측값과 정답이 완전히 일치하면 1, 아니면 0
+네트워크 설정 데이터는 **자유 형식 텍스트가 아니라 구조화된 정형 데이터**입니다:
 
-**문제점**:
+| 특성   | 자연어 텍스트                          | 네트워크 설정 데이터                       |
+| ------ | -------------------------------------- | ------------------------------------------ |
+| 유연성 | "서울", "Seoul", "수도" → 다 정답 가능 | `10.0.0.1` ≠ `10.0.0.2` (완전히 다른 장비) |
+| 순서   | 문장 순서 중요                         | JSON 키 순서 무관                          |
+| 형식   | 동의어/표현 다양                       | `true` = `True` = `yes` (같은 의미)        |
+| 정확성 | 의미만 맞으면 OK                       | **한 글자 차이가 치명적 오류**             |
 
-| Gold | Prediction | EM | 실제로는? |
-|------|------------|:--:|----------|
-| `"leaf1"` | `leaf1` | ❌ 0 | ✅ 같은 값 (따옴표 차이) |
-| `15.7` | `"15.7"` | ❌ 0 | ✅ 같은 숫자 |
-| `["a", "b"]` | `["b", "a"]` | ❌ 0 | ✅ 같은 집합 |
-| `true` | `True` | ❌ 0 | ✅ 같은 불리언 |
+### 1.2 기존 메트릭의 치명적 문제
 
-→ **형식 차이에 너무 민감**
+```
+질문: "PE1 장비의 관리 IP 주소는?"
+정답: 10.0.0.1
+예측: 10.0.0.2  ← 완전히 다른 장비를 가리킴!
+
+각 메트릭의 점수:
+┌─────────────┬────────┬─────────────────────────────────┐
+│ 메트릭       │ 점수    │ 문제점                          │
+├─────────────┼────────┼─────────────────────────────────┤
+│ Exact Match │ 0%     │ ✓ 정확히 0점 (올바름)             │
+│ Token F1    │ 85.7%  │ ✗ 6/7 토큰 일치 → 높은 점수!      │
+│ BERTScore   │ ~90%   │ ✗ 둘 다 "IP 주소"라서 유사하다고 판단 │
+│ ROUGE-L     │ ~86%   │ ✗ 문자열 유사도 높음             │
+│ Type-Aware  │ 0%     │ ✓ 숫자가 다르면 0점 (올바름)     │
+└─────────────┴────────┴─────────────────────────────────┘
+```
+
+**결론**: Token F1, BERTScore, ROUGE는 **네트워크에서 치명적인 오류를 정답으로 처리**합니다.
 
 ---
 
-### 2.2 Token-level F1
+## 2. Type-Aware Scoring 상세 설명
 
-**정의**: 예측과 정답의 토큰 겹침으로 Precision, Recall, F1 계산
+### 2.1 핵심 원리
 
-**문제점**:
+> **"Answer Type에 따라 적절한 비교 방식을 선택한다"**
 
 ```
-질문: "PE1 장비의 Loopback0 IP 주소는?"
-
-Gold: 10.255.0.1
-Pred: 10.255.0.2
-
-토큰 분리: 
-  Gold = ["10", ".", "255", ".", "0", ".", "1"]
-  Pred = ["10", ".", "255", ".", "0", ".", "2"]
-
-겹치는 토큰: 6개 / 전체: 7개
-F1 = 85.7%  ← 완전히 다른 IP인데 높은 점수!
+데이터셋 구조:
+┌──────────────────────────────────────────────────────────────┐
+│ question: "P3 장비의 SSH 서비스가 활성화되어 있습니까?"        │
+│ answer: "true"                                               │
+│ answer_type: "boolean"  ← 이 타입을 보고 비교 방식 결정!      │
+└──────────────────────────────────────────────────────────────┘
 ```
 
-→ **네트워크에서 IP 한 자리 차이는 치명적인 오류**
+### 2.2 지원하는 5가지 Answer Type
+
+| Answer Type | 의미            | 예시 정답                          |
+| ----------- | --------------- | ---------------------------------- |
+| `boolean`   | 참/거짓         | `true`, `false`                    |
+| `numeric`   | 숫자            | `5`, `15.7`, `0`                   |
+| `set`       | 순서 없는 집합  | `["a", "b", "c"]`                  |
+| `map`       | 키-값 쌍 (JSON) | `{"key1": "val1", "key2": "val2"}` |
+| `text`      | 일반 텍스트     | `"leaf1"`, `"GigabitEthernet0/0"`  |
 
 ---
 
-### 2.3 BERTScore
+## 3. 각 타입별 비교 로직 상세
 
-**정의**: BERT 임베딩으로 의미적 유사도 측정
+### 3.1 Boolean Type (참/거짓)
 
-**문제점**:
+#### 왜 특별한 처리가 필요한가?
 
-```
-질문: "PE1의 관리 IP는?"
+LLM은 불리언 값을 다양한 형태로 출력합니다:
 
-Gold: 10.0.0.1
-Pred: 192.168.1.1
+- `true`, `True`, `TRUE`
+- `yes`, `Yes`, `YES`
+- `enabled`, `on`, `1`
 
-BERTScore ≈ 0.85+
-```
+모두 **같은 의미**이므로 정답으로 처리해야 합니다.
 
-둘 다 "IP 주소"라는 의미적 유사성 때문에 높은 점수!
+#### 비교 알고리즘
 
-→ **의미적 유사성 ≠ 정확한 값 일치**
+```python
+def score_boolean(pred: str, gold: str) -> float:
+    # Step 1: 정규화 (대소문자 무시, 동의어 통일)
+    TRUE_VALUES = {'true', 'yes', 'on', 'enabled', '1'}
+    FALSE_VALUES = {'false', 'no', 'off', 'disabled', '0'}
 
----
+    pred_lower = pred.strip().lower()
+    gold_lower = gold.strip().lower()
 
-### 2.4 ROUGE-1, ROUGE-L
+    # Step 2: True/False로 변환
+    pred_bool = pred_lower in TRUE_VALUES
+    gold_bool = gold_lower in TRUE_VALUES
 
-**정의**: n-gram 오버랩 기반 (텍스트 요약용)
-
-**문제점**:
-
-```
-질문: "Leaf1의 인터페이스 상태는?"
-
-Gold: {"Gi0/0": "up", "Gi0/1": "down"}
-Pred: {"Gi0/1": "down", "Gi0/0": "up"}
-
-ROUGE-L ≈ 0.6  ← 순서가 달라서 낮은 점수
-실제로는 완전히 동일한 JSON!
+    # Step 3: 비교
+    return 1.0 if pred_bool == gold_bool else 0.0
 ```
 
-→ **순서 무관한 구조화 데이터에 부적합**
-
----
-
-## 3. Type-Aware Scoring 설명
-
-### 핵심 아이디어
-
-> **Answer Type에 따라 적절한 비교 방식을 적용한다**
-
-| Answer Type | 비교 방식 | 이유 |
-|-------------|-----------|------|
-| `boolean` | 정규화 후 Exact Match | true/yes/enabled = 동일 의미 |
-| `numeric` | 숫자 추출 후 비교 | "15.7" = 15.7 = 15.70 |
-| `number` | 정수 추출 후 비교 | "5개" → 5 |
-| `set` | 집합 F1 Score | 순서 무관, 부분 정답 인정 |
-| `map` | Key-Value 매칭 | JSON 키 순서 무관 |
-| `text` | 대소문자 무시 Exact Match | "Leaf1" = "leaf1" |
-
----
-
-## 4. 실제 예시로 이해하기
-
-### 4.1 Boolean Type
+#### 예시
 
 ```
 질문: "P3 장비의 SSH 서비스가 활성화되어 있습니까?"
-정답: true
+정답(Gold): true
+
+┌────────────┬─────────────┬───────────────┬───────────┐
+│ LLM 예측    │ Exact Match │ Type-Aware   │ 이유       │
+├────────────┼─────────────┼───────────────┼───────────┤
+│ true       │ ✓ 1.0       │ ✓ 1.0         │ 완전 일치  │
+│ True       │ ✗ 0.0       │ ✓ 1.0         │ 대소문자   │
+│ yes        │ ✗ 0.0       │ ✓ 1.0         │ 동의어    │
+│ enabled    │ ✗ 0.0       │ ✓ 1.0         │ 동의어    │
+│ 1          │ ✗ 0.0       │ ✓ 1.0         │ 숫자형    │
+│ false      │ ✗ 0.0       │ ✗ 0.0         │ 실제 오답 │
+└────────────┴─────────────┴───────────────┴───────────┘
 ```
-
-| LLM 예측 | 일반 EM | Type-Aware | 설명 |
-|----------|:-------:|:----------:|------|
-| `true` | ✅ 1.0 | ✅ 1.0 | 완전 일치 |
-| `True` | ❌ 0.0 | ✅ 1.0 | 대소문자 정규화 |
-| `yes` | ❌ 0.0 | ✅ 1.0 | 동의어 인식 |
-| `enabled` | ❌ 0.0 | ✅ 1.0 | 동의어 인식 |
-| `1` | ❌ 0.0 | ✅ 1.0 | 불리언 변환 |
-| `false` | ❌ 0.0 | ❌ 0.0 | 오답 |
-
-**정규화 규칙**:
-- `true`, `yes`, `on`, `enabled`, `1` → **True**
-- `false`, `no`, `off`, `disabled`, `0` → **False**
 
 ---
 
-### 4.2 Numeric Type
+### 3.2 Numeric Type (숫자)
+
+#### 왜 특별한 처리가 필요한가?
+
+LLM은 숫자를 다양한 형식으로 출력합니다:
+
+- `5` vs `"5"` vs `5.0` → 같은 숫자
+- `15.7` vs `15.70` → 같은 숫자
+- `3명` vs `3` → 숫자 추출 필요
+
+#### 비교 알고리즘
+
+```python
+import re
+
+def extract_number(val: str) -> float:
+    """문자열에서 숫자만 추출"""
+    # 정규식: 음수, 정수, 소수 모두 매칭
+    match = re.search(r'-?\d+(\.\d+)?', val)
+    if match:
+        return float(match.group())
+    return None  # 숫자가 없으면 None
+
+def score_numeric(pred: str, gold: str) -> float:
+    # Step 1: 숫자 추출
+    pred_num = extract_number(pred)  # "5명" → 5.0
+    gold_num = extract_number(gold)  # "5" → 5.0
+
+    # Step 2: 둘 다 숫자면 비교
+    if pred_num is not None and gold_num is not None:
+        return 1.0 if pred_num == gold_num else 0.0
+
+    # Step 3: 숫자 추출 실패시 문자열 비교
+    return 1.0 if pred.lower() == gold.lower() else 0.0
+```
+
+#### 예시
 
 ```
 질문: "P4에 등록된 로컬 사용자는 몇 명입니까?"
-정답: 1
-```
+정답(Gold): 1
 
-| LLM 예측 | 일반 EM | Type-Aware | 설명 |
-|----------|:-------:|:----------:|------|
-| `1` | ✅ 1.0 | ✅ 1.0 | 완전 일치 |
-| `"1"` | ❌ 0.0 | ✅ 1.0 | 따옴표 제거 |
-| `1.0` | ❌ 0.0 | ✅ 1.0 | 동일 숫자 |
-| `1명` | ❌ 0.0 | ✅ 1.0 | 숫자 추출 |
-| `2` | ❌ 0.0 | ❌ 0.0 | 오답 |
-
-**처리 방식**:
-```python
-def _extract_number(val: str) -> float:
-    match = re.search(r'-?\d+(\.\d+)?', val)
-    return float(match.group()) if match else None
+┌────────────┬─────────────┬───────────────┬─────────────────┐
+│ LLM 예측    │ Exact Match │ Type-Aware   │ 이유            │
+├────────────┼─────────────┼───────────────┼─────────────────┤
+│ 1          │ ✓ 1.0       │ ✓ 1.0         │ 완전 일치       │
+│ "1"        │ ✗ 0.0       │ ✓ 1.0         │ 따옴표 제거 후 1 │
+│ 1.0        │ ✗ 0.0       │ ✓ 1.0         │ 1.0 == 1       │
+│ 1명        │ ✗ 0.0       │ ✓ 1.0         │ 숫자 추출 → 1   │
+│ one        │ ✗ 0.0       │ ✗ 0.0         │ 숫자 없음      │
+│ 2          │ ✗ 0.0       │ ✗ 0.0         │ 실제 오답      │
+└────────────┴─────────────┴───────────────┴─────────────────┘
 ```
 
 ---
 
-### 4.3 Set Type
+### 3.3 Set Type (집합) - F1 Score 사용
+
+#### 왜 특별한 처리가 필요한가?
+
+집합의 핵심 특성:
+
+1. **순서가 없음**: `["a", "b"]` = `["b", "a"]`
+2. **부분 정답 가능**: 4개 중 2개 맞추면 0점이 아님
+3. **다양한 형식**: `["a"]`, `['a']`, `a` 모두 같은 의미
+
+#### 비교 알고리즘: F1 Score
 
 ```
-질문: "P3에 등록된 로컬 사용자 이름을 알려주세요. [답변 형식: 리스트]"
-정답: ["admin"]
+F1 Score = 2 × (Precision × Recall) / (Precision + Recall)
+
+Precision = (맞춘 요소 수) / (예측한 요소 수)  → "예측 중 얼마나 맞았나?"
+Recall    = (맞춘 요소 수) / (정답 요소 수)    → "정답 중 얼마나 맞췄나?"
 ```
 
-| LLM 예측 | 일반 EM | Type-Aware | 설명 |
-|----------|:-------:|:----------:|------|
-| `["admin"]` | ✅ 1.0 | ✅ 1.0 | 완전 일치 |
-| `['admin']` | ❌ 0.0 | ✅ 1.0 | 따옴표 스타일 차이 |
-| `["Admin"]` | ❌ 0.0 | ✅ 1.0 | 대소문자 정규화 |
-| `admin` | ❌ 0.0 | ✅ 1.0 | 단일 값 → 집합 변환 |
-
-**더 복잡한 예시**:
-
-```
-질문: "PE1 장비의 활성화된 인터페이스 목록은?"
-정답: ["Gi0/0", "Gi0/1", "Gi0/2", "Loopback0"]
-```
-
-| LLM 예측 | F1 Score | 설명 |
-|----------|:--------:|------|
-| `["Gi0/0", "Gi0/1", "Gi0/2", "Loopback0"]` | 1.0 | 완전 일치 |
-| `["Loopback0", "Gi0/2", "Gi0/1", "Gi0/0"]` | 1.0 | **순서 무관!** |
-| `["Gi0/0", "Gi0/1"]` | 0.57 | 부분 정답 (2/4) |
-| `["Gi0/0", "Gi0/1", "Gi0/2", "Loopback0", "Gi0/3"]` | 0.89 | 오답 포함 |
-| `["Gi0/3"]` | 0.0 | 완전 오답 |
-
-**F1 Score 계산**:
 ```python
-def _score_set(pred: str, gold: str) -> float:
-    p_set = parse_set(pred)  # {"gi0/0", "gi0/1"}
-    g_set = parse_set(gold)  # {"gi0/0", "gi0/1", "gi0/2", "loopback0"}
-    
-    intersection = len(p_set & g_set)  # 겹치는 요소 수
-    precision = intersection / len(p_set)  # 2/2 = 1.0
-    recall = intersection / len(g_set)     # 2/4 = 0.5
-    f1 = 2 * precision * recall / (precision + recall)  # 0.67
-    
+import json
+
+def parse_set(val: str) -> set:
+    """문자열을 집합으로 변환"""
+    val = val.strip()
+
+    # JSON 배열 형식 시도
+    try:
+        val = val.replace("'", '"')  # 작은따옴표 → 큰따옴표
+        if val.startswith('[') and val.endswith(']'):
+            items = json.loads(val)
+            return set(str(i).strip().lower() for i in items)
+    except:
+        pass
+
+    # 쉼표로 분리
+    if val:
+        return set(i.strip().lower() for i in val.split(','))
+
+    return set()
+
+def score_set(pred: str, gold: str) -> float:
+    # Step 1: 집합으로 변환
+    pred_set = parse_set(pred)  # {"gi0/0", "gi0/1"}
+    gold_set = parse_set(gold)  # {"gi0/0", "gi0/1", "gi0/2", "loopback0"}
+
+    # Step 2: 빈 집합 처리
+    if not gold_set and not pred_set:
+        return 1.0  # 둘 다 비었으면 정답
+
+    # Step 3: F1 계산
+    intersection = len(pred_set & gold_set)  # 교집합 크기
+
+    precision = intersection / len(pred_set) if pred_set else 0.0
+    recall = intersection / len(gold_set) if gold_set else 0.0
+
+    if precision + recall == 0:
+        return 0.0
+
+    f1 = 2 * precision * recall / (precision + recall)
     return f1
 ```
 
+#### 예시 1: 순서 무관
+
+```
+질문: "PE1의 활성화된 인터페이스 목록은?"
+정답(Gold): ["Gi0/0", "Gi0/1", "Loopback0"]
+
+┌─────────────────────────────────────┬───────────────┬─────────────────────┐
+│ LLM 예측                             │ Exact Match  │ Type-Aware (F1)     │
+├─────────────────────────────────────┼───────────────┼─────────────────────┤
+│ ["Gi0/0", "Gi0/1", "Loopback0"]     │ ✓ 1.0         │ ✓ 1.0               │
+│ ["Loopback0", "Gi0/1", "Gi0/0"]     │ ✗ 0.0         │ ✓ 1.0 (순서 무관!)   │
+│ ['gi0/0', 'gi0/1', 'loopback0']     │ ✗ 0.0         │ ✓ 1.0 (대소문자 무시) │
+└─────────────────────────────────────┴───────────────┴─────────────────────┘
+```
+
+#### 예시 2: 부분 점수
+
+```
+질문: "PE1의 활성화된 인터페이스 목록은?"
+정답(Gold): ["Gi0/0", "Gi0/1", "Gi0/2", "Loopback0"]  (4개)
+
+┌─────────────────────────────────┬────────────────────────────────────────┐
+│ LLM 예측                         │ F1 Score 계산                          │
+├─────────────────────────────────┼────────────────────────────────────────┤
+│ ["Gi0/0", "Gi0/1"]              │ 교집합: 2                              │
+│ (2개 예측)                       │ Precision: 2/2 = 1.0                   │
+│                                 │ Recall: 2/4 = 0.5                      │
+│                                 │ F1 = 2×1.0×0.5/(1.0+0.5) = 0.67 (67%)  │
+├─────────────────────────────────┼────────────────────────────────────────┤
+│ ["Gi0/0", "Gi0/1", "Gi0/2",     │ 교집합: 4                              │
+│  "Loopback0", "Gi0/3"]          │ Precision: 4/5 = 0.8 (1개 오답 포함)    │
+│ (5개 예측, 1개 틀림)              │ Recall: 4/4 = 1.0                      │
+│                                 │ F1 = 2×0.8×1.0/(0.8+1.0) = 0.89 (89%)  │
+├─────────────────────────────────┼────────────────────────────────────────┤
+│ ["Gi0/3"]                       │ 교집합: 0                              │
+│ (완전히 틀린 답)                  │ F1 = 0.0 (0%)                          │
+└─────────────────────────────────┴────────────────────────────────────────┘
+```
+
 ---
 
-### 4.4 Map Type (JSON)
+### 3.4 Map Type (JSON/Dictionary)
+
+#### 왜 특별한 처리가 필요한가?
+
+JSON의 핵심 특성:
+
+1. **키 순서 무관**: `{"a":1, "b":2}` = `{"b":2, "a":1}`
+2. **키와 값 모두 중요**: 키만 맞고 값이 틀리면 부분 점수
+3. **따옴표 스타일**: `{"a": "1"}` = `{'a': '1'}`
+
+#### 비교 알고리즘
 
 ```
-질문: "Leaf4 장비의 각 인터페이스 상태를 알려주세요."
-정답: {"GigabitEthernet0/0": "up", "GigabitEthernet0/1": "down", 
-       "GigabitEthernet0/2": "up", "GigabitEthernet0/3": "down"}
+점수 = (키 일치 점수 × 0.5) + (값 일치 점수 × 0.5)
+
+키 일치 점수 = (공통 키 수) / (전체 키 수)
+값 일치 점수 = (값도 일치하는 키 수) / (공통 키 수)
 ```
 
-| LLM 예측 | 일반 EM | Type-Aware | 설명 |
-|----------|:-------:|:----------:|------|
-| 정답과 동일 | ✅ 1.0 | ✅ 1.0 | 완전 일치 |
-| 키 순서만 다름 | ❌ 0.0 | ✅ 1.0 | **JSON 순서 무관!** |
-| 3개 키 일치, 1개 누락 | ❌ 0.0 | 0.75 | 부분 점수 |
-| 값 1개 틀림 | ❌ 0.0 | 0.875 | 부분 점수 |
-
-**점수 계산**:
 ```python
-def _score_map(pred: dict, gold: dict) -> float:
-    common_keys = set(pred.keys()) & set(gold.keys())
-    all_keys = set(pred.keys()) | set(gold.keys())
-    
+import json
+
+def score_map(pred: str, gold: str) -> float:
+    # Step 1: JSON 파싱
+    try:
+        pred_obj = json.loads(pred.replace("'", '"'))
+        gold_obj = json.loads(gold.replace("'", '"'))
+    except:
+        # 파싱 실패시 문자열 비교
+        return 1.0 if pred.lower() == gold.lower() else 0.0
+
+    # Step 2: 딕셔너리 확인
+    if not isinstance(pred_obj, dict) or not isinstance(gold_obj, dict):
+        return 1.0 if str(pred_obj) == str(gold_obj) else 0.0
+
+    # Step 3: 키 분석
+    pred_keys = set(pred_obj.keys())
+    gold_keys = set(gold_obj.keys())
+    common_keys = pred_keys & gold_keys  # 교집합
+    all_keys = pred_keys | gold_keys     # 합집합
+
+    if not all_keys:
+        return 1.0  # 둘 다 빈 딕셔너리
+
+    # Step 4: 점수 계산
+    # 키 일치 점수 (50%)
     key_score = len(common_keys) / len(all_keys) * 0.5
-    value_matches = sum(1 for k in common_keys if pred[k] == gold[k])
-    value_score = value_matches / len(common_keys) * 0.5
-    
+
+    # 값 일치 점수 (50%)
+    if common_keys:
+        value_matches = sum(
+            1 for k in common_keys
+            if str(pred_obj[k]).lower() == str(gold_obj[k]).lower()
+        )
+        value_score = value_matches / len(common_keys) * 0.5
+    else:
+        value_score = 0
+
     return key_score + value_score
 ```
 
----
-
-### 4.5 Text Type
+#### 예시
 
 ```
-질문: "Leaf1 장비의 호스트네임은 무엇입니까?"
-정답: "leaf1"
-```
+질문: "Leaf4 장비의 각 인터페이스 상태를 알려주세요."
+정답(Gold): {"Gi0/0": "up", "Gi0/1": "down", "Gi0/2": "up", "Gi0/3": "down"}
 
-| LLM 예측 | 일반 EM | Type-Aware | 설명 |
-|----------|:-------:|:----------:|------|
-| `"leaf1"` | ✅ 1.0 | ✅ 1.0 | 완전 일치 |
-| `leaf1` | ❌ 0.0 | ✅ 1.0 | 따옴표 제거 |
-| `Leaf1` | ❌ 0.0 | ✅ 1.0 | 대소문자 무시 |
-| `LEAF1` | ❌ 0.0 | ✅ 1.0 | 대소문자 무시 |
-| `leaf2` | ❌ 0.0 | ❌ 0.0 | 오답 |
+┌─────────────────────────────────────────────┬───────────────┬─────────────┐
+│ LLM 예측                                     │ Exact Match  │ Type-Aware  │
+├─────────────────────────────────────────────┼───────────────┼─────────────┤
+│ {"Gi0/0":"up","Gi0/1":"down",               │ ✓ 1.0         │ ✓ 1.0       │
+│  "Gi0/2":"up","Gi0/3":"down"}               │               │             │
+├─────────────────────────────────────────────┼───────────────┼─────────────┤
+│ {"Gi0/3":"down","Gi0/2":"up",               │ ✗ 0.0         │ ✓ 1.0       │
+│  "Gi0/1":"down","Gi0/0":"up"}               │ (키 순서 다름) │ (순서 무관!) │
+├─────────────────────────────────────────────┼───────────────┼─────────────┤
+│ {"Gi0/0":"up","Gi0/1":"down","Gi0/2":"up"}  │ ✗ 0.0         │ 0.875       │
+│ (키 1개 누락)                                │               │ 공통키 3/4  │
+│                                             │               │ = 37.5%     │
+│                                             │               │ 값일치 3/3  │
+│                                             │               │ = 50%       │
+├─────────────────────────────────────────────┼───────────────┼─────────────┤
+│ {"Gi0/0":"down","Gi0/1":"down",             │ ✗ 0.0         │ 0.625       │
+│  "Gi0/2":"up","Gi0/3":"down"}               │               │ 키 4/4=50%  │
+│ (값 1개 틀림: Gi0/0)                         │               │ 값 3/4=37.5%│
+└─────────────────────────────────────────────┴───────────────┴─────────────┘
+```
 
 ---
 
-## 5. Negative Testing (NOT_CONFIGURED)
+### 3.5 Text Type (일반 텍스트)
+
+#### 왜 특별한 처리가 필요한가?
+
+단순하지만 중요한 처리:
+
+1. **대소문자 무시**: `"Leaf1"` = `"leaf1"` = `"LEAF1"`
+2. **따옴표 제거**: `"leaf1"` → `leaf1`
+3. **공백 정리**: `" leaf1 "` → `leaf1`
+
+#### 비교 알고리즘
+
+```python
+def score_text(pred: str, gold: str) -> float:
+    # Step 1: 정규화
+    pred_clean = pred.strip().lower()
+    gold_clean = gold.strip().lower()
+
+    # Step 2: 따옴표 제거
+    for quote in ['"', "'"]:
+        if pred_clean.startswith(quote) and pred_clean.endswith(quote):
+            pred_clean = pred_clean[1:-1]
+        if gold_clean.startswith(quote) and gold_clean.endswith(quote):
+            gold_clean = gold_clean[1:-1]
+
+    # Step 3: 비교
+    return 1.0 if pred_clean == gold_clean else 0.0
+```
+
+#### 예시
+
+```
+질문: "Leaf1 장비의 호스트네임은?"
+정답(Gold): "leaf1"
+
+┌────────────┬─────────────┬───────────────┬─────────────────┐
+│ LLM 예측    │ Exact Match │ Type-Aware   │ 이유            │
+├────────────┼─────────────┼───────────────┼─────────────────┤
+│ "leaf1"    │ ✓ 1.0       │ ✓ 1.0         │ 완전 일치       │
+│ leaf1      │ ✗ 0.0       │ ✓ 1.0         │ 따옴표 없어도 OK │
+│ Leaf1      │ ✗ 0.0       │ ✓ 1.0         │ 대소문자 무시   │
+│ LEAF1      │ ✗ 0.0       │ ✓ 1.0         │ 대소문자 무시   │
+│ " leaf1 "  │ ✗ 0.0       │ ✓ 1.0         │ 공백 제거       │
+│ leaf2      │ ✗ 0.0       │ ✗ 0.0         │ 실제 오답       │
+└────────────┴─────────────┴───────────────┴─────────────────┘
+```
+
+---
+
+## 4. Negative Testing (할루시네이션 탐지)
+
+### 4.1 개념
+
+**Negative Testing**은 **설정되지 않은 값**에 대한 질문입니다:
 
 ```
 질문: "Leaf1 장비의 Timezone은 무엇입니까?"
-정답: "" (빈 값 - 설정되지 않음)
+정답: ""  (빈 값)
 상태: NOT_CONFIGURED
 ```
 
-| LLM 예측 | Type-Aware | 설명 |
-|----------|:----------:|------|
-| `""` | ✅ 1.0 | 정확히 "없음" 표현 |
-| `null` | ✅ 1.0 | null도 "없음" |
-| `None` | ✅ 1.0 | None도 "없음" |
-| `not configured` | ✅ 1.0 | 명시적 표현 |
-| `n/a` | ✅ 1.0 | 약어도 인식 |
-| `UTC` | ❌ 0.0 | **할루시네이션!** |
+목적: **LLM이 없는 정보를 만들어내는지(할루시네이션) 테스트**
 
-**Negative Testing의 의미**:
-- 모델이 "정보가 없다"를 정확히 인식하는지 평가
-- 없는 정보를 만들어내면 (할루시네이션) **False Positive**
+### 4.2 비교 로직
+
+"없음"을 나타내는 다양한 표현을 정답으로 인정:
+
+```python
+EMPTY_VALUES = {'', 'null', 'none', 'n/a', 'not configured', 'not found'}
+
+def is_empty(val: str) -> bool:
+    return val.strip().lower() in EMPTY_VALUES
+```
+
+### 4.3 예시
+
+```
+질문: "Leaf1 장비의 Timezone은?"
+정답(Gold): "" (설정 안 됨)
+
+┌──────────────────┬───────────────┬─────────────────────────────┐
+│ LLM 예측          │ Type-Aware   │ 해석                        │
+├──────────────────┼───────────────┼─────────────────────────────┤
+│ ""               │ ✓ 1.0         │ 정확히 "없음" 표현           │
+│ null             │ ✓ 1.0         │ "없음" 인식                  │
+│ None             │ ✓ 1.0         │ "없음" 인식                  │
+│ not configured   │ ✓ 1.0         │ 명시적 "없음" 표현           │
+│ n/a              │ ✓ 1.0         │ 약어도 인식                  │
+│ UTC              │ ✗ 0.0         │ 🚨 할루시네이션! (없는 정보 생성) │
+│ Asia/Seoul       │ ✗ 0.0         │ 🚨 할루시네이션!               │
+└──────────────────┴───────────────┴─────────────────────────────┘
+```
 
 ---
 
-## 6. 요약 비교표
+## 5. 전체 흐름 정리
 
-| 상황 | Exact Match | Token F1 | BERTScore | Type-Aware |
-|------|:-----------:|:--------:|:---------:|:----------:|
-| `"leaf1"` vs `leaf1` | ❌ | ~0.7 | ~0.9 | ✅ |
-| `true` vs `True` | ❌ | ❌ | ~0.95 | ✅ |
-| `["a","b"]` vs `["b","a"]` | ❌ | 1.0 | ~0.95 | ✅ |
-| `10.0.0.1` vs `10.0.0.2` | ❌ | 0.86 | ~0.9 | ❌ |
-| `{}` (JSON 순서) | ❌ | ~0.8 | ~0.9 | ✅ |
-| 부분 정답 (집합) | ❌ | 부분 | ~0.7 | F1 |
-| 빈 값 vs `null` | ❌ | ❌ | ~0.5 | ✅ |
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                        Scoring Pipeline                             │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  1. 입력 정리 (공통)                                                │
+│     ├─ <think>...</think> 태그 제거                                 │
+│     ├─ 따옴표 정규화                                                │
+│     └─ 공백/개행 정리                                               │
+│                                                                     │
+│  2. Answer Type 확인                                                │
+│     │                                                               │
+│     ├─ boolean  → 동의어 정규화 후 True/False 비교                  │
+│     ├─ numeric  → 숫자 추출 후 수치 비교                            │
+│     ├─ set      → 집합 변환 후 F1 Score 계산                        │
+│     ├─ map      → JSON 파싱 후 Key-Value 매칭                       │
+│     └─ text     → 대소문자 무시 Exact Match                         │
+│                                                                     │
+│  3. 점수 반환 (0.0 ~ 1.0)                                           │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
-## 7. 결론
+## 6. 관련 연구 / 인용 근거
 
-### Type-Aware Scoring의 장점
+교수님께 관련 연구로 언급할 수 있는 것들:
 
-1. **도메인 특화**: 네트워크 설정 데이터의 특성 반영
-2. **형식 불변성**: 따옴표, 대소문자, 순서 차이 처리
-3. **의미적 동등성**: 표현이 달라도 의미가 같으면 정답
-4. **부분 점수**: 집합/맵에서 완전 오답 vs 부분 정답 구분
-5. **Negative Testing**: 할루시네이션 탐지 가능
+### 6.1 유사한 접근을 사용하는 벤치마크
 
-### 언제 사용해야 하는가?
+| 벤치마크              | 도메인       | 평가 방식          | 이유                                   |
+| --------------------- | ------------ | ------------------ | -------------------------------------- |
+| **Spider**            | Text-to-SQL  | Execution Accuracy | SQL 결과가 같으면 정답 (문자열 비교 X) |
+| **KILT**              | Knowledge QA | Normalized EM      | 정규화 후 Exact Match                  |
+| **TriviaQA**          | QA           | Normalized EM      | 대소문자/공백 등 정규화                |
+| **Natural Questions** | QA           | Token-level F1     | 하지만 구조화 데이터엔 부적합          |
 
-✅ **Type-Aware Scoring 권장**:
-- 구조화된 데이터 (JSON, 리스트, 숫자)
-- 정확한 값이 중요한 도메인 (네트워크, 설정, 데이터베이스)
-- Negative Testing이 필요한 경우
+### 6.2 핵심 인용 문구
 
-❌ **일반 메트릭 권장**:
-- 자유 형식 텍스트 생성 (요약, 번역, 대화)
-- 의미적 유사성이 중요한 경우
-- 창의적 답변이 허용되는 경우
+> "For structured data extraction tasks, token-level metrics like F1 or ROUGE are insufficient because they fail to capture semantic equivalence of structured outputs."
+> — 관련 연구들의 공통 주장
 
+> "In network configuration domain, a single character difference in IP address represents a completely different device, making partial match metrics inappropriate."
+> — NetConfigQA의 Type-Aware Scoring 정당화
+
+---
+
+## 7. 결론: 교수님께 설명할 때
+
+### 한 문장 요약
+
+> "EM/F1/BERT/ROUGE는 **자연어 텍스트용**이고, 저희 데이터는 **구조화된 정형 데이터**라서 **데이터 타입별 정확성 비교**를 사용했습니다."
+
+### 3가지 핵심 근거
+
+1. **Token F1의 한계**: IP 주소 `10.0.0.1` vs `10.0.0.2`가 85% 정답으로 처리됨 → 네트워크에서 치명적 오류
+2. **순서 불변성 필요**: JSON `{"a":1, "b":2}` = `{"b":2, "a":1}`이지만 ROUGE는 다르게 처리
+3. **형식 불변성 필요**: `true` = `True` = `yes`이지만 EM은 다 다르게 처리
+
+### 관련 연구
+
+- Spider (Text-to-SQL): **Execution Accuracy** 사용
+- KILT: **Normalized Exact Match** 사용
+- 둘 다 구조화된 답변에 단순 문자열 비교가 부적합하다는 문제의식에서 출발

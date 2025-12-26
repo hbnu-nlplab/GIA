@@ -1,0 +1,10 @@
+2025-12-26 17:18:05,549 | INFO | Initializing VLLM Evaluator...
+2025-12-26 17:18:05,550 | INFO | Model: Mistral3-8B (mistralai/Ministral-3-8B-Instruct-2512)
+2025-12-26 17:18:05,551 | INFO | Config Dir: /content/drive/Othercomputers/내 노트북 (1)/CodeSpace/GIA/Data/Pnetlab/Research_Institute_Internal_DC/configs
+2025-12-26 17:19:50,590 | INFO | Loaded 10 configuration files.
+2025-12-26 17:19:50,592 | INFO | Loading dataset from /content/drive/Othercomputers/내 노트북 (1)/CodeSpace/GIA/Data/Pnetlab/Research_Institute_Internal_DC/Dataset/Research_Institute_Internal_DC_dataset_batfish_20251224_012740.csv
+2025-12-26 17:19:50,601 | INFO | Generating prompts...
+2025-12-26 17:19:57,725 | INFO | Starting batch generation for 720 samples...
+2025-12-26 17:29:11,859 | INFO | Inference Time: 554.13s | Throughput: 1.3 req/s
+2025-12-26 17:29:11,878 | INFO | Inference Complete. Raw results saved to /content/drive/Othercomputers/내 노트북 (1)/CodeSpace/GIA/Experiment/results/Mistral3-8B/results_raw_20251226_171805.json
+2025-12-26 17:29:11,878 | INFO | Run 'python reanalyze_results.py "/content/drive/Othercomputers/내 노트북 (1)/CodeSpace/GIA/Experiment/results/Mistral3-8B/results_raw_20251226_171805.json"' to score and visualize.

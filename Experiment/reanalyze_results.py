@@ -1,11 +1,13 @@
 """
-NetConfigQA Result Analyzer
+NetConfigQA Result Analyzer (Scoring Only)
 
 이 스크립트는 run_netconfigqa_eval_vllm.py의 raw 결과를 분석합니다:
 - 예측 전처리 (think 태그 제거, 정규화)
 - 점수 계산 (answer_type별)
 - 통계 분석
-- 시각화 (Figure 생성)
+- Markdown/JSON 채점표 생성
+
+시각화는 별도로 Figure.py에서 수행합니다.
 """
 
 import json
@@ -15,18 +17,7 @@ import argparse
 from pathlib import Path
 from typing import Dict, List, Set
 from collections import defaultdict
-
-import numpy as np
-import pandas as pd
-
-# Optional Visualization
-try:
-    import matplotlib.pyplot as plt
-    import matplotlib.patches as mpatches
-    VISUALIZATION_AVAILABLE = True
-except ImportError:
-    VISUALIZATION_AVAILABLE = False
-    print("Warning: matplotlib not found. Visualization will be skipped.")
+from datetime import datetime
 
 
 # ==================== Scorer ====================
@@ -171,228 +162,87 @@ class NetConfigQAScorer:
         return {"score": 1.0 if pred.lower() == gold.lower() else 0.0}
 
 
-# ==================== Visualizer ====================
+# ==================== Markdown Report Generator ====================
 
-class ResultVisualizer:
-    """Generates academic figures from evaluation results."""
+class ScorecardGenerator:
+    """Generates Markdown scorecard from analysis results."""
     
-    # 색상 팔레트 (논문용)
-    COLORS = {
-        'primary': '#2E86AB',
-        'secondary': '#A23B72', 
-        'accent': '#F18F01',
-        'neutral': '#6C757D',
-        'levels': ['#1a9850', '#91cf60', '#fee08b', '#fc8d59', '#d73027'],  # L1-L5
-    }
-    
-    def __init__(self, output_dir: str):
-        self.output_dir = Path(output_dir)
-        self.output_dir.mkdir(parents=True, exist_ok=True)
+    def generate(self, stats: dict, meta: dict, error_samples: list = None) -> str:
+        """Generate a comprehensive Markdown scorecard."""
+        lines = []
         
-        # 논문용 스타일 설정
-        plt.style.use('seaborn-v0_8-whitegrid')
-        plt.rcParams.update({
-            'font.size': 11,
-            'axes.titlesize': 13,
-            'axes.labelsize': 11,
-            'xtick.labelsize': 10,
-            'ytick.labelsize': 10,
-            'legend.fontsize': 10,
-            'figure.dpi': 150,
-            'savefig.dpi': 300,
-            'savefig.bbox': 'tight',
-        })
-    
-    def plot_accuracy_by_level(self, stats: dict, ax=None):
-        """Figure 1: 난이도 레벨별 정확도"""
-        if ax is None:
-            fig, ax = plt.subplots(figsize=(8, 5))
+        # Header
+        model_name = meta.get("model", "Unknown Model")
+        lines.append(f"# NetConfigQA Evaluation Scorecard\n")
+        lines.append(f"> **Model**: `{model_name}`  ")
+        lines.append(f"> **Date**: {meta.get('date', datetime.now().isoformat())}  ")
+        lines.append(f"> **Dataset**: `{meta.get('dataset', 'Unknown')}`\n")
         
-        levels = ['L1', 'L2', 'L3', 'L4', 'L5']
+        # Overall Score
+        lines.append("## 📊 Overall Performance\n")
+        lines.append("| Metric | Value |")
+        lines.append("|--------|-------|")
+        lines.append(f"| **Overall Accuracy** | **{stats['accuracy']*100:.2f}%** |")
+        lines.append(f"| Total Samples | {stats['total_samples']} |")
+        lines.append(f"| Inference Time | {meta.get('duration', 0):.1f}s |")
+        lines.append("")
+        
+        # By Level
+        lines.append("## 📈 Accuracy by Difficulty Level\n")
+        lines.append("| Level | Description | Accuracy | Status |")
+        lines.append("|-------|-------------|----------|--------|")
         level_desc = {
-            'L1': 'Single Device\nExtraction',
-            'L2': 'Multi-Device\nAggregation', 
-            'L3': 'Cross-Device\nComparison',
-            'L4': 'Reachability\nAnalysis',
-            'L5': 'What-If\nAnalysis'
+            'L1': 'Single Device Extraction',
+            'L2': 'Multi-Device Aggregation',
+            'L3': 'Cross-Device Comparison',
+            'L4': 'Reachability Analysis',
+            'L5': 'What-If Analysis'
         }
+        for level in ['L1', 'L2', 'L3', 'L4', 'L5']:
+            acc = stats['by_level'].get(level, 0) * 100
+            desc = level_desc.get(level, '')
+            status = "✅" if acc >= 70 else "⚠️" if acc >= 40 else "❌"
+            lines.append(f"| {level} | {desc} | {acc:.1f}% | {status} |")
+        lines.append("")
         
-        accuracies = [stats['by_level'].get(l, 0) * 100 for l in levels]
-        bars = ax.bar(levels, accuracies, color=self.COLORS['levels'], edgecolor='black', linewidth=0.5)
+        # By Answer Type
+        lines.append("## 📝 Accuracy by Answer Type\n")
+        lines.append("| Type | Accuracy |")
+        lines.append("|------|----------|")
+        for atype, acc in sorted(stats['by_type'].items(), key=lambda x: x[1], reverse=True):
+            lines.append(f"| {atype} | {acc*100:.1f}% |")
+        lines.append("")
         
-        for bar, acc in zip(bars, accuracies):
-            height = bar.get_height()
-            ax.annotate(f'{acc:.1f}%',
-                        xy=(bar.get_x() + bar.get_width() / 2, height),
-                        xytext=(0, 3), textcoords="offset points",
-                        ha='center', va='bottom', fontsize=10, fontweight='bold')
+        # By Status (Positive/Negative Testing)
+        lines.append("## 🔬 Positive vs Negative Testing\n")
+        lines.append("| Test Type | Accuracy |")
+        lines.append("|-----------|----------|")
+        for status, acc in sorted(stats['by_status'].items()):
+            label = "Positive (OK)" if status == "OK" else "Negative (NOT_CONFIGURED)"
+            lines.append(f"| {label} | {acc*100:.1f}% |")
+        lines.append("")
         
-        ax.set_xlabel('Difficulty Level', fontweight='bold')
-        ax.set_ylabel('Accuracy (%)', fontweight='bold')
-        ax.set_title('Accuracy by Question Difficulty Level', fontweight='bold', pad=10)
-        ax.set_ylim(0, 100)
-        ax.set_xticks(range(len(levels)))
-        ax.set_xticklabels([f'{l}\n{level_desc[l]}' for l in levels], fontsize=9)
+        # Error Analysis (if provided)
+        if error_samples:
+            lines.append("## ❌ Sample Errors\n")
+            lines.append("| ID | Type | Gold | Pred | Score |")
+            lines.append("|----|------|------|------|-------|")
+            for e in error_samples[:15]:
+                gold_short = e['gold'][:25] + "..." if len(e['gold']) > 25 else e['gold']
+                pred_short = e['pred'][:25] + "..." if len(e['pred']) > 25 else e['pred']
+                lines.append(f"| {e['id']} | {e['type']} | `{gold_short}` | `{pred_short}` | {e['score']:.2f} |")
+            lines.append("")
         
-        avg_acc = np.mean(accuracies)
-        ax.axhline(y=avg_acc, color=self.COLORS['neutral'], linestyle='--', linewidth=1.5, 
-                   label=f'Average: {avg_acc:.1f}%')
-        ax.legend(loc='upper right')
-        ax.spines['top'].set_visible(False)
-        ax.spines['right'].set_visible(False)
+        # Footer
+        lines.append("---")
+        lines.append(f"*Generated by NetConfigQA Analyzer on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}*")
         
-        return ax
-
-    def plot_accuracy_by_type(self, stats: dict, ax=None):
-        """Figure 2: 답변 타입별 정확도 (수평 막대)"""
-        if ax is None:
-            fig, ax = plt.subplots(figsize=(8, 5))
-        
-        types = list(stats['by_type'].keys())
-        accuracies = [stats['by_type'][t] * 100 for t in types]
-        
-        sorted_data = sorted(zip(types, accuracies), key=lambda x: x[1], reverse=True)
-        types, accuracies = zip(*sorted_data)
-        
-        colors = plt.cm.RdYlGn(np.array(accuracies) / 100)
-        bars = ax.barh(types, accuracies, color=colors, edgecolor='black', linewidth=0.5)
-        
-        for bar, acc in zip(bars, accuracies):
-            width = bar.get_width()
-            ax.annotate(f'{acc:.1f}%',
-                        xy=(width, bar.get_y() + bar.get_height() / 2),
-                        xytext=(3, 0), textcoords="offset points",
-                        ha='left', va='center', fontsize=10, fontweight='bold')
-        
-        ax.set_xlabel('Accuracy (%)', fontweight='bold')
-        ax.set_ylabel('Answer Type', fontweight='bold')
-        ax.set_title('Accuracy by Answer Type', fontweight='bold', pad=10)
-        ax.set_xlim(0, 110)
-        ax.spines['top'].set_visible(False)
-        ax.spines['right'].set_visible(False)
-        
-        return ax
-
-    def plot_positive_negative(self, stats: dict, ax=None):
-        """Figure 3: Positive vs Negative Testing 비교"""
-        if ax is None:
-            fig, ax = plt.subplots(figsize=(6, 5))
-        
-        labels = ['Positive\n(OK)', 'Negative\n(NOT_CONFIGURED)']
-        values = [
-            stats['by_status'].get('OK', 0) * 100,
-            stats['by_status'].get('NOT_CONFIGURED', 0) * 100
-        ]
-        
-        colors = [self.COLORS['primary'], self.COLORS['secondary']]
-        bars = ax.bar(labels, values, color=colors, edgecolor='black', linewidth=0.5, width=0.6)
-        
-        for bar, val in zip(bars, values):
-            height = bar.get_height()
-            ax.annotate(f'{val:.1f}%',
-                        xy=(bar.get_x() + bar.get_width() / 2, height),
-                        xytext=(0, 3), textcoords="offset points",
-                        ha='center', va='bottom', fontsize=12, fontweight='bold')
-        
-        ax.set_ylabel('Accuracy (%)', fontweight='bold')
-        ax.set_title('Positive vs Negative Testing', fontweight='bold', pad=10)
-        ax.set_ylim(0, 100)
-        ax.spines['top'].set_visible(False)
-        ax.spines['right'].set_visible(False)
-        
-        return ax
-
-    def plot_heatmap(self, results: list, ax=None):
-        """Figure 4: 레벨 x 카테고리 Heatmap"""
-        if ax is None:
-            fig, ax = plt.subplots(figsize=(14, 6))
-        
-        df = pd.DataFrame(results)
-        pivot = df.pivot_table(
-            values='score', 
-            index='level', 
-            columns='category', 
-            aggfunc='mean'
-        ).fillna(0) * 100
-        
-        level_order = ['L1', 'L2', 'L3', 'L4', 'L5']
-        pivot = pivot.reindex([l for l in level_order if l in pivot.index])
-        
-        im = ax.imshow(pivot.values, cmap='RdYlGn', aspect='auto', vmin=0, vmax=100)
-        
-        ax.set_xticks(range(len(pivot.columns)))
-        ax.set_xticklabels([c.replace('_', '\n') for c in pivot.columns], rotation=45, ha='right', fontsize=8)
-        ax.set_yticks(range(len(pivot.index)))
-        ax.set_yticklabels(pivot.index)
-        
-        for i in range(len(pivot.index)):
-            for j in range(len(pivot.columns)):
-                val = pivot.values[i, j]
-                color = 'white' if val < 50 else 'black'
-                ax.text(j, i, f'{val:.0f}', ha='center', va='center', color=color, fontsize=8, fontweight='bold')
-        
-        ax.set_xlabel('Category', fontweight='bold')
-        ax.set_ylabel('Level', fontweight='bold')
-        ax.set_title('Accuracy Heatmap: Level x Category', fontweight='bold', pad=10)
-        
-        cbar = plt.colorbar(im, ax=ax, shrink=0.8)
-        cbar.set_label('Accuracy (%)', fontweight='bold')
-        
-        return ax
-
-    def create_summary_figure(self, stats: dict, results: list, model_name: str):
-        """종합 Figure 생성 (2x2 레이아웃)"""
-        fig, axes = plt.subplots(2, 2, figsize=(14, 12))
-        fig.suptitle(f"NetConfigQA Evaluation Results: {model_name}", 
-                     fontsize=16, fontweight='bold', y=1.02)
-        
-        self.plot_accuracy_by_level(stats, axes[0, 0])
-        self.plot_accuracy_by_type(stats, axes[0, 1])
-        self.plot_positive_negative(stats, axes[1, 0])
-        
-        # 4번째 칸에 통계 요약 텍스트
-        ax = axes[1, 1]
-        ax.axis('off')
-        summary_text = f"""
-Overall Accuracy: {stats['accuracy']*100:.2f}%
-Total Samples: {stats['total_samples']}
-
-By Level:
-{chr(10).join(f"  {k}: {v*100:.1f}%" for k, v in sorted(stats['by_level'].items()))}
-
-By Status:
-{chr(10).join(f"  {k}: {v*100:.1f}%" for k, v in sorted(stats['by_status'].items()))}
-"""
-        ax.text(0.1, 0.9, summary_text, transform=ax.transAxes, fontsize=11,
-                verticalalignment='top', fontfamily='monospace',
-                bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
-        
-        plt.tight_layout()
-        
-        output_path = self.output_dir / "summary.png"
-        plt.savefig(output_path, dpi=300, bbox_inches='tight', facecolor='white')
-        plt.savefig(str(output_path).replace('.png', '.pdf'), facecolor='white')
-        plt.close()
-        
-        print(f"   Saved: {output_path}")
-
-    def create_heatmap_figure(self, results: list):
-        """Heatmap Figure 별도 생성"""
-        fig, ax = plt.subplots(figsize=(14, 6))
-        self.plot_heatmap(results, ax)
-        
-        plt.tight_layout()
-        output_path = self.output_dir / "heatmap.png"
-        plt.savefig(output_path, dpi=300, bbox_inches='tight', facecolor='white')
-        plt.savefig(str(output_path).replace('.png', '.pdf'), facecolor='white')
-        plt.close()
-        
-        print(f"   Saved: {output_path}")
+        return "\n".join(lines)
 
 
 # ==================== Main Analyzer ====================
 
-def analyze_results(json_file: str, verbose: bool = False, visualize: bool = True):
+def analyze_results(json_file: str, verbose: bool = False):
     """메인 분석 함수"""
     
     with open(json_file, 'r', encoding='utf-8') as f:
@@ -503,13 +353,14 @@ def analyze_results(json_file: str, verbose: bool = False, visualize: bool = Tru
             print(f"       Gold: {e['gold']}")
             print(f"       Pred: {e['pred']}")
 
-    # 결과 저장
+    # 결과 저장 (JSON)
     output_file = json_file.replace(".json", "_analyzed.json")
     if "_raw_" in json_file:
         output_file = json_file.replace("_raw_", "_analyzed_")
     
+    meta = data.get("meta", {})
     output_data = {
-        "meta": data.get("meta", {}),
+        "meta": meta,
         "stats": stats,
         "results": results
     }
@@ -519,17 +370,16 @@ def analyze_results(json_file: str, verbose: bool = False, visualize: bool = Tru
     
     print(f"\n[OK] Saved analyzed results to: {output_file}")
     
-    # 시각화
-    if visualize and VISUALIZATION_AVAILABLE:
-        print("\n[Generating Figures...]")
-        model_name = data.get("meta", {}).get("model", "Unknown")
-        output_dir = Path(output_file).parent / "figures"
-        
-        visualizer = ResultVisualizer(str(output_dir))
-        visualizer.create_summary_figure(stats, results, model_name)
-        visualizer.create_heatmap_figure(results)
-        
-        print(f"\n[OK] Figures saved to: {output_dir}")
+    # Markdown 채점표 저장
+    scorecard_file = output_file.replace(".json", "_scorecard.md")
+    scorecard_gen = ScorecardGenerator()
+    scorecard_md = scorecard_gen.generate(stats, meta, error_samples)
+    
+    with open(scorecard_file, 'w', encoding='utf-8') as f:
+        f.write(scorecard_md)
+    
+    print(f"[OK] Saved scorecard to: {scorecard_file}")
+    print(f"\n[TIP] Run 'python Figure.py \"{output_file}\"' to generate visualizations.")
     
     return stats, results
 
@@ -538,10 +388,9 @@ def main():
     parser = argparse.ArgumentParser(description="Analyze NetConfigQA evaluation results")
     parser.add_argument("json_file", help="Path to results json (raw or already analyzed)")
     parser.add_argument("--verbose", "-v", action="store_true", help="Show detailed error analysis")
-    parser.add_argument("--no-visualize", action="store_true", help="Skip figure generation")
     args = parser.parse_args()
 
-    analyze_results(args.json_file, args.verbose, not args.no_visualize)
+    analyze_results(args.json_file, args.verbose)
 
 
 if __name__ == "__main__":
