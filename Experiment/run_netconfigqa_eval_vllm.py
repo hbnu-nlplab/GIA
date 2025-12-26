@@ -41,7 +41,7 @@ class Config:
         "Mistral3-8B": "mistralai/Ministral-3-8B-Instruct-2512",
         "Qwen3-8B": "Qwen/Qwen3-8B",
         "GPT-OSS-20B": "openai/gpt-oss-20b",
-        "LLlama-4-Scout-17B": "meta-llama/Llama-4-Scout-17B-16E-Instruct",
+        "LLlama-3.1-8B": "meta-llama/Llama-3.1-8B-Instruct",
     }
 
 # === Logger ===
@@ -125,7 +125,7 @@ class VLLMEvaluator:
                 model=self.model_path,
                 tensor_parallel_size=torch.cuda.device_count(), # Utilize all visible GPUs
                 gpu_memory_utilization=self.gpu_util,
-                max_model_len=8192,
+                max_model_len=16384,
                 trust_remote_code=True,
                 enforce_eager=False,
                 quantization="awq" if "AWQ" in self.model_path else None
@@ -270,13 +270,35 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dataset", default=Config.DEFAULT_DATASET_PATH)
     parser.add_argument("--config_dir", default=Config.DEFAULT_CONFIG_DIR)
-    parser.add_argument("--model", required=True)
+    parser.add_argument("--model", nargs='+', required=True, help="하나 이상의 모델 지정 (예: --model Qwen3-8B Mistral3-8B)")
     parser.add_argument("--gpu_util", type=float, default=0.9)
     parser.add_argument("--sample", type=int, default=None)
     args = parser.parse_args()
     
-    evaluator = VLLMEvaluator(args.model, args.config_dir, args.gpu_util)
-    evaluator.run(args.dataset, args.sample)
+    # 여러 모델 순차 실행
+    total_models = len(args.model)
+    for idx, model_key in enumerate(args.model, 1):
+        print(f"\n{'='*60}")
+        print(f"[{idx}/{total_models}] Starting evaluation for: {model_key}")
+        print(f"{'='*60}\n")
+        
+        try:
+            evaluator = VLLMEvaluator(model_key, args.config_dir, args.gpu_util)
+            evaluator.run(args.dataset, args.sample)
+            
+            # 메모리 정리 (중요!)
+            del evaluator
+            torch.cuda.empty_cache()
+            print(f"[{idx}/{total_models}] Completed: {model_key} - GPU memory cleared.\n")
+            
+        except Exception as e:
+            print(f"[{idx}/{total_models}] ERROR with model {model_key}: {e}")
+            torch.cuda.empty_cache()  # 에러 발생해도 메모리 정리
+            continue  # 하나 실패해도 다음 모델 계속 진행
+    
+    print(f"\n{'='*60}")
+    print(f"All {total_models} model(s) evaluation completed.")
+    print(f"{'='*60}")
 
 if __name__ == "__main__":
     main()
