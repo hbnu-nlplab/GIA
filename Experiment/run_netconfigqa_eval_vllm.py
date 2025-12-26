@@ -138,7 +138,7 @@ class VLLMEvaluator:
         self.config_manager = ConfigManager([config_dir])
         self.sampling_params = SamplingParams(
             temperature=0.0,
-            max_tokens=16384,  # Increased to handle complex L4/L5 questions
+            max_tokens=32768,  # INCREASED: was 16384, now 32768 to prevent truncation during <think>
             stop=["<|eot_id|>", "Question:", "User:", "=== QUESTION ==="]
             # NOTE: Do NOT add "</think>" as stop token - it cuts off the answer
         )
@@ -149,12 +149,13 @@ class VLLMEvaluator:
 
     def prepare_prompt(self, question: str, answer_type: str, configs: str) -> str:
         # Prompt Template logic
-        system_msg = """You are a Network Engineer. Answer ONLY with the final value.
+        system_msg = """You are an expert Network Engineer. Your task is to analyze network configurations and provide precise answers.
 
-CRITICAL RULES:
-1. NO <think> tags. NO reasoning. NO explanation. ONLY the answer.
-2. Output the answer value DIRECTLY in the requested format.
-3. Do NOT explain your thought process.
+WORKFLOW (CRITICAL):
+1. Use <think>...</think> tags to reason about the network structure, device connections, and configurations.
+2. Inside <think> tags: Analyze the configuration, trace the connections, identify key information.
+3. After closing </think>, IMMEDIATELY provide ONLY the final answer in the exact format requested.
+4. Do NOT include any explanation, preamble, or additional text after the answer.
 
 Output Format:
 - boolean: true or false
@@ -163,14 +164,14 @@ Output Format:
 - map/dict: JSON object {"key": "value"}
 - text: Exact value string only
 
-If information is missing:
+If information is missing or NOT_CONFIGURED:
 - boolean: false
 - numeric: 0
 - set: []
 - map: {}
 - text: null
 
-IMPORTANT: Start your response with the answer immediately. No preamble."""
+CRITICAL: Provide the answer on the FIRST line after </think> with NO other text."""
 
         user_msg = f"""=== DEVICE CONFIGURATIONS ===
 {configs}
@@ -181,7 +182,12 @@ IMPORTANT: Start your response with the answer immediately. No preamble."""
 === EXPECTED ANSWER TYPE ===
 {answer_type}
 
-=== ANSWER ===
+=== YOUR RESPONSE ===
+<think>
+[Analyze the network configuration, trace connections, identify the answer]
+</think>
+
+[ANSWER ON FIRST LINE - No other text]
 """
         messages = [
             {"role": "system", "content": system_msg},
