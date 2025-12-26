@@ -83,21 +83,42 @@ class BuilderCore:
         missing_by_as: Dict[str, Set[str]] = {}
         under_by_as: Dict[str, Set[str]] = {}
         for asn, group in self._as_groups().items():
+            # AS 내의 장비가 2대 미만이면 Full-Mesh 검증 불필요
+            if len(group) < 2:
+                missing_by_as[asn] = set()
+                under_by_as[asn] = set()
+                continue
+            
             loop_of = { (d.get("system",{}).get("hostname") or d.get("file")): self._loop_ip(d) for d in group }
             host_peers: Dict[str, Set[str]] = {}
             for d in group:
                 host = d.get("system",{}).get("hostname") or d.get("file")
                 peers = { (n.get("id") or n.get("ip")) for n in self._bgp_neighbors(d) if (n.get("id") or n.get("ip")) }
                 host_peers[host] = peers
+            
             miss: Set[str] = set()
             hosts = list(host_peers.keys())
+            
+            # Full-Mesh 검증: 모든 장비 쌍 확인
             for i in range(len(hosts)):
                 for j in range(i+1, len(hosts)):
-                    a,b = hosts[i], hosts[j]
-                    a2b = loop_of.get(b); b2a = loop_of.get(a)
-                    a_has = (a2b in host_peers[a]) if a2b else False
-                    b_has = (b2a in host_peers[b]) if b2a else False
-                    if not (a_has and b_has):
+                    a, b = hosts[i], hosts[j]
+                    a_loop = loop_of.get(a)
+                    b_loop = loop_of.get(b)
+                    
+                    # 양쪽 모두 loopback이 있어야 검증 가능
+                    if not a_loop or not b_loop:
+                        # loopback이 없으면 피어링이 불가능하므로 누락으로 판단
+                        miss.add(f"{a}<->{b}")
+                        continue
+                    
+                    # a가 b의 loopback을 neighbor로 가지는지
+                    a_has_b = b_loop in host_peers.get(a, set())
+                    # b가 a의 loopback을 neighbor로 가지는지
+                    b_has_a = a_loop in host_peers.get(b, set())
+                    
+                    # 양방향 피어링이 모두 있어야 OK
+                    if not (a_has_b and b_has_a):
                         miss.add(f"{a}<->{b}")
             missing_by_as[asn] = miss
             loop_set = { self._loop_ip(e) for e in group if self._loop_ip(e) }

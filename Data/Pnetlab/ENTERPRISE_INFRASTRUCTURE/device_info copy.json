@@ -1,0 +1,28 @@
+{
+    "global_settings": {
+        "pnetlab_vm_ip": "100.66.240.82",
+        "gateway_ip": "10.10.10.1",
+        "enable_password": "",
+        "admin_password": "admin",
+        "domain_name": "mylab.local",
+        "nso_authgroup": "ENTERPRISE_INFRASTRUCTURE",
+        "nso_ned_id": "cisco-ios-cli-6.110",
+        "nso_username": "admin",
+        "nso_password": "admin",
+        "batfish_output_dir": "Data/Pnetlab/ENTERPRISE_INFRASTRUCTURE"
+    },
+    "devices": [
+        { "name": "P1",    "oob_ip": "10.10.10.11", "GigabitEthernet": "0/2", "oob_intf": "GigabitEthernet0/2", "device_group": "RI_Internal_DC", "telnet_port": 30037 },
+        { "name": "P2",    "oob_ip": "10.10.10.12", "GigabitEthernet": "0/3", "oob_intf": "GigabitEthernet0/3", "device_group": "RI_Internal_DC", "telnet_port": 30038 },
+        { "name": "P3",    "oob_ip": "10.10.10.13", "GigabitEthernet": "0/3", "oob_intf": "GigabitEthernet0/3", "device_group": "RI_Internal_DC", "telnet_port": 30039 },
+        { "name": "P4",    "oob_ip": "10.10.10.14", "GigabitEthernet": "0/2", "oob_intf": "GigabitEthernet0/2", "device_group": "RI_Internal_DC", "telnet_port": 30040 },
+
+        { "name": "PE1",   "oob_ip": "10.10.10.21", "GigabitEthernet": "0/3", "oob_intf": "GigabitEthernet0/3", "device_group": "RI_Internal_DC", "telnet_port": 30041 },
+        { "name": "PE2",   "oob_ip": "10.10.10.22", "GigabitEthernet": "0/3", "oob_intf": "GigabitEthernet0/3", "device_group": "RI_Internal_DC", "telnet_port": 30042 },
+
+        { "name": "Leaf1", "oob_ip": "10.10.10.31", "GigabitEthernet": "0/3", "oob_intf": "GigabitEthernet0/3", "device_group": "RI_Internal_DC", "telnet_port": 30043 },
+        { "name": "Leaf2", "oob_ip": "10.10.10.32", "GigabitEthernet": "0/3", "oob_intf": "GigabitEthernet0/3", "device_group": "RI_Internal_DC", "telnet_port": 30044 },
+        { "name": "Leaf3", "oob_ip": "10.10.10.33", "GigabitEthernet": "0/2", "oob_intf": "GigabitEthernet0/2", "device_group": "RI_Internal_DC", "telnet_port": 30045 },
+        { "name": "Leaf4", "oob_ip": "10.10.10.34", "GigabitEthernet": "0/2", "oob_intf": "GigabitEthernet0/2", "device_group": "RI_Internal_DC", "telnet_port": 30046 }
+    ]
+}
