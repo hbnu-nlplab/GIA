@@ -18,6 +18,7 @@ L5 Metrics (What-If Analysis):
 
 import logging
 import time
+import random
 from typing import Dict, List, Any
 
 from .models import AnswerResult, build_evidence
@@ -719,74 +720,117 @@ class L5AnalyzerMixin:
                 "newly_blocked_flows": [],
             }, "node_failure_result", evidence, "BATFISH_QUERY_ERROR")
     
-    def multi_link_failure_analysis(self, link1_node1: str, link1_node2: str, link2_node1: str, link2_node2: str, test_src: str, test_dst: str) -> AnswerResult:
+    def multi_link_failure_analysis(self, 
+                                    link1_iface1: str, link1_iface2: str,
+                                    link2_iface1: str, link2_iface2: str,
+                                    test_src: str, test_dst: str) -> AnswerResult:
         """
-        L5 고급: 동시 다중 링크 장애 분석
-        2개 링크가 동시에 다운될 경우 test_src→test_dst 경로 변화 분석
+        L5 고급: 동시 다중 링크 장애 분석 (Dynamic Simulation)
+        2개 링크(4개 인터페이스)를 실제로 비활성화 후 시뮬레이션
         
-        Returns: AnswerResult(value={"isolated": bool, "new_path": List[str], "path_change": str}, type="multi_failure_result")
+        Returns: AnswerResult(value={"isolated": bool, "new_path": List[str], "path_change": str, "failure_reason": str}, type="multi_failure_result")
         """
+        link1_desc = f"{link1_iface1}<->{link1_iface2}"
+        link2_desc = f"{link2_iface1}<->{link2_iface2}"
+        
         evidence = self._make_evidence("traceroute", {
-            "link1": f"{link1_node1}-{link1_node2}",
-            "link2": f"{link2_node1}-{link2_node2}",
-            "src": test_src, "dst": test_dst
+            "link1": link1_desc,
+            "link2": link2_desc,
+            "src": test_src, "dst": test_dst,
+            "simulation": "dynamic_snapshot_fork"
         })
         
         if not self._initialized:
             return AnswerResult("NOT_CONFIGURED", {"isolated": False, "new_path": [], "path_change": "UNKNOWN"}, "multi_failure_result", evidence, "BATFISH_NOT_INITIALIZED")
         
+        # 임시 스냅샷 이름
+        failure_snapshot = f"multi_fail_{int(time.time()*1000)}_{random.randint(0,9999)}"
+        
         try:
             dst_ips = self.node_ips.get(test_dst, [])
             if not dst_ips:
-                return AnswerResult("NOT_CONFIGURED", {"isolated": False, "new_path": [], "path_change": "UNKNOWN"}, "multi_failure_result", evidence, "")
+                return AnswerResult("NOT_CONFIGURED", {"isolated": False, "new_path": [], "path_change": "UNKNOWN"}, "multi_failure_result", evidence, "NO_DST_IP")
             
-            traceroute = self.bf.q.traceroute(
+            # 1. 스냅샷 복제 및 인터페이스 비활성화 (Fork)
+            # 입력받은 인터페이스들은 "hostname[interface]" 형식이거나 Batfish가 인식 가능한 형식이어야 함
+            # edges 정보에서 이미 올바른 형식으로 온다고 가정
+            interfaces_to_deactivate = [link1_iface1, link1_iface2, link2_iface1, link2_iface2]
+            
+            # 유효성 검사 (인터페이스 형식이 맞는지)
+            # 여기서는 API 호출 시 에러가 나면 catch하도록 처리
+            
+            self.bf.fork_snapshot(
+                base_name=self.snapshot_name,
+                name=failure_snapshot,
+                deactivate_interfaces=interfaces_to_deactivate,
+                overwrite=True
+            )
+            
+            # 2. 장애 상황에서 Traceroute 실행
+            trace_res = self.bf.q.traceroute(
                 startLocation=test_src,
                 headers=HeaderConstraints(dstIps=dst_ips[0])
-            ).answer().frame()
+            ).answer(snapshot=failure_snapshot).frame()
             
-            if traceroute.empty:
-                return AnswerResult("OK", {"isolated": True, "new_path": [], "path_change": "NO_BASELINE_PATH"}, "multi_failure_result", evidence, "")
+            # 3. 결과 분석
+            if trace_res.empty:
+                 # Trace 자체가 없으면 시뮬레이션 실패 혹은 완전 차단
+                 return AnswerResult("OK", {"isolated": True, "new_path": [], "path_change": "ISOLATED", "failure_reason": "NO_TRACE_GENERATED"}, "multi_failure_result", evidence, "")
+
+            traces = trace_res['Traces'].iloc[0]
+            accepted_paths = []
+            failure_reasons = set()
+            blocking_node = "Unknown"
             
-            traces = traceroute['Traces'].iloc[0]
-            
-            current_paths = []
             for trace in traces:
-                disposition = getattr(trace, 'disposition', '')
-                if disposition != 'ACCEPTED':
-                    continue
-                    
+                disposition = getattr(trace, 'disposition', 'UNKNOWN')
+                
+                # 경로 추출
                 hops = getattr(trace, 'hops', [])
                 path_nodes = []
-                uses_failed_links = False
-                
-                for i, hop in enumerate(hops):
+                for hop in hops:
                     node = getattr(hop, 'node', None)
                     if node:
                         node_name = getattr(node, 'hostname', str(node))
                         path_nodes.append(node_name)
-                        
-                        if i > 0:
-                            prev_node = path_nodes[-2]
-                            curr_node = node_name
-                            if (prev_node.lower() in [link1_node1.lower(), link1_node2.lower()] and 
-                                curr_node.lower() in [link1_node1.lower(), link1_node2.lower()]):
-                                uses_failed_links = True
-                            if (prev_node.lower() in [link2_node1.lower(), link2_node2.lower()] and 
-                                curr_node.lower() in [link2_node1.lower(), link2_node2.lower()]):
-                                uses_failed_links = True
                 
-                if not uses_failed_links and path_nodes:
-                    current_paths.append(path_nodes)
+                if disposition == 'ACCEPTED':
+                    accepted_paths.append(path_nodes)
+                else:
+                    # 실패 원인 분석
+                    failure_reasons.add(disposition)
+                    if path_nodes:
+                        blocking_node = path_nodes[-1]
             
-            if current_paths:
-                return AnswerResult("OK", {"isolated": False, "new_path": current_paths[0], "path_change": "ALTERNATE_PATH_AVAILABLE"}, "multi_failure_result", evidence, "")
+            # 4. 종합 판정
+            if accepted_paths:
+                # 우회 성공
+                # 최단 경로 선택 (홉 수 기준)
+                accepted_paths.sort(key=len)
+                best_path = accepted_paths[0]
+                return AnswerResult("OK", {
+                    "isolated": False, 
+                    "new_path": best_path, 
+                    "path_change": "REROUTED",
+                    "failure_reason": ""
+                }, "multi_failure_result", evidence, "")
             else:
-                return AnswerResult("OK", {"isolated": True, "new_path": [], "path_change": "ISOLATED"}, "multi_failure_result", evidence, "")
+                # 전면 차단
+                reason_str = ", ".join(list(failure_reasons))
+                detailed_reason = f"{blocking_node}에서 {reason_str}"
+                return AnswerResult("OK", {
+                    "isolated": True, 
+                    "new_path": [], 
+                    "path_change": "ISOLATED",
+                    "failure_reason": detailed_reason
+                }, "multi_failure_result", evidence, "")
             
         except Exception as e:
-            logger.warning(f"multi_link_failure_analysis error: {e}")
-            return AnswerResult("UNKNOWN", {"isolated": False, "new_path": [], "path_change": "ERROR"}, "multi_failure_result", evidence, "BATFISH_QUERY_ERROR")
+            logger.warning(f"multi_link_failure_analysis (dynamic) error: {e}")
+            return AnswerResult("UNKNOWN", {"isolated": False, "new_path": [], "path_change": "ERROR"}, "multi_failure_result", evidence, f"SIMULATION_ERROR: {e}")
+        finally:
+            # 스냅샷 정리는 Batfish 설정에 따름 (일단 유지하거나 추후 자동정리)
+            pass
     
         """
         L4: ACL 차단 규칙 상세 분석

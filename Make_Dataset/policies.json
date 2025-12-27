@@ -815,7 +815,7 @@
             "level": "L5",
             "category": "What_If_Analysis",
             "answer_type": "text",
-            "template": "'{link1}'과 '{link2}'가 동시에 다운되면 '{test_src}'에서 '{test_dst}'로의 통신 상태는 어떻게 됩니까? [답변 형식: '가능 (대체경로: A→B→C)' 또는 '불가능']",
+            "template": "'{link1}'과 '{link2}'가 동시에 다운될 경우, '{test_src}'에서 '{test_dst}'로 트래픽 전달이 가능합니까? [답변 형식: '가능 (대체경로: A->B->C)' 또는 '불가능 (원인: A 장비에서 원인 )' - 예: '불가능 (원인: PE1에서 ACL 차단)']",
             "description": "두 개 이상의 링크가 동시에 고장 나는 '복합 장애' 상황에서의 통신 가능 여부와 대체 경로를 분석합니다. 통신이 가능한 경우 대체 경로를 함께 제시합니다.",
             "verification": "검증 방법: 1) 두 링크를 다운 처리한 상태에서 도달성 시뮬레이션을 수행합니다. 2) 도달 가능하면 '가능'과 함께 대체 경로를 반환합니다. 3) 도달 불가능하면 '불가능'을 반환합니다.",
             "logic_ref": "batfish.fail_links([l1, l2]).reachability_with_path(s, d)"

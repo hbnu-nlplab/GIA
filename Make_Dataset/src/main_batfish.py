@@ -253,6 +253,7 @@ def main():
     gen = RuleBasedGenerator(cfg)
     
     categories = [
+        "Configuration_Check", "Hardware_Inventory",
         "System_Inventory", "Security_Inventory", "Interface_Inventory", 
         "Routing_Inventory", "Services_Inventory", "Security_Policy",
         "OSPF_Consistency", "BGP_Consistency", "VRF_Consistency", 
