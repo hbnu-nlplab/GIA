@@ -235,7 +235,113 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
                 "academic_reference": "HSA (NSDI'12), Minesweeper (SIGCOMM'17): blackhole detection"
             })
         
-        # 6. Advanced: OSPF Compatibility Check
+        # 6. Waypoint Traversal Path
+        spine_or_pe = [n for n in self.nodes if 'spine' in n.lower() or 'pe' in n.lower() or 'p' in n.lower()]
+        if len(self.nodes) >= 3 and spine_or_pe:
+            waypoint_count = 0
+            for waypoint in spine_or_pe[:5]:
+                test_pairs = [(self.nodes[0], self.nodes[-1])]
+                for src_node, dst_node in test_pairs:
+                    src_ips = self.node_ips.get(src_node, [])
+                    dst_ips = self.node_ips.get(dst_node, [])
+                    if src_ips and dst_ips:
+                        wp_res = self.waypoint_check(src_ips[0], dst_ips[0], waypoint)
+                        if wp_res.status == "OK":
+                            passes = wp_res.value.get("passes_through", False)
+                            path = wp_res.value.get("path", [])
+                            path_str = " → ".join(path) if path else "경로 정보 없음"
+                            ground_truth = path_str if passes else "경유하지 않음"
+                            
+                            metric = "waypoint_traversal_path"
+                            template = self._get_template(metric, f"{{src_ip}}에서 {{dst_ip}}로의 트래픽이 {{waypoint}} 장비를 경유하는 경로를 알려주세요.\\n[답변 형식: 'A → B → C' 또는 '경유하지 않음']")
+                            q_text = template.format(src_ip=src_ips[0], dst_ip=dst_ips[0], waypoint=waypoint)
+                            
+                            questions.append({
+                                "id": f"WAYPOINT_{src_node}_{dst_node}_{waypoint}",
+                                "category": "Reachability_Analysis",
+                                "level": "L4",
+                                "answer_type": "text",
+                                "question": q_text,
+                                "ground_truth": ground_truth,
+                                "explanation": f"metric `{metric}` for waypoint {waypoint}",
+                                "evidence_hint": {"scope": {"type": "WAYPOINT", "src": src_ips[0], "dst": dst_ips[0], "waypoint": waypoint}, "metric": metric},
+                                "academic_reference": "Waypoint enforcement verification"
+                            })
+                            waypoint_count += 1
+                if waypoint_count >= 10:
+                    break
+        
+        # 7. VRF Isolation - Leaked Prefixes List
+        try:
+            # Query VRFs from Batfish
+            vrf_query = self.bf.q.nodeProperties(properties="VRFs").answer().frame()
+            vrf_names = set()
+            if not vrf_query.empty and 'VRFs' in vrf_query.columns:
+                for vrfs_list in vrf_query['VRFs']:
+                    if vrfs_list:
+                        vrf_names.update(vrfs_list)
+            
+            vrf_list = list(vrf_names)
+            if len(vrf_list) >= 2:
+                for i, vrf1 in enumerate(vrf_list[:3]):
+                    for vrf2 in vrf_list[i+1:4]:
+                        iso_res = self.isolation_check(vrf1, vrf2)
+                        if iso_res.status == "OK":
+                            leaked = iso_res.value.get("leaked_prefixes", [])
+                            
+                            metric = "leaked_prefixes_list"
+                            template = self._get_template(metric, f"{{vrf1}}과 {{vrf2}} VRF 사이에 누수된 prefix 목록을 알려주세요.\\n[답변 형식: prefix 리스트 또는 빈 리스트 []]")
+                            q_text = template.format(vrf1=vrf1, vrf2=vrf2)
+                            
+                            questions.append({
+                                "id": f"ISOLATION_{vrf1}_{vrf2}",
+                                "category": "Security_Analysis",
+                                "level": "L4",
+                                "answer_type": "set",
+                                "question": q_text,
+                                "ground_truth": leaked if leaked else [],
+                                "explanation": f"metric `{metric}` between {vrf1} and {vrf2}",
+                                "evidence_hint": {"scope": {"type": "VRF_PAIR", "vrf1": vrf1, "vrf2": vrf2}, "metric": metric},
+                                "academic_reference": "VRF isolation verification"
+                            })
+        except Exception as e:
+            logger.warning(f"VRF isolation check failed: {e}")
+        
+        # 8. Asymmetric Path Comparison
+        node_pairs = self.get_node_pairs()
+        random.shuffle(node_pairs)
+        asym_count = 0
+        for node1, node2 in node_pairs[:15]:
+            asym_res = self.asymmetric_path_check(node1, node2)
+            if asym_res.status == "OK":
+                symmetric = asym_res.value.get("symmetric", True)
+                fwd_path = asym_res.value.get("path_forward", [])
+                rev_path = asym_res.value.get("path_reverse", [])
+                
+                fwd_str = " → ".join(fwd_path) if fwd_path else "경로 없음"
+                rev_str = " → ".join(rev_path) if rev_path else "경로 없음"
+                ground_truth = f"Forward: {fwd_str}, Reverse: {rev_str}"
+                
+                metric = "asymmetric_path_comparison"
+                template = self._get_template(metric, f"{{host1}}과 {{host2}} 사이의 Forward 경로와 Reverse 경로를 비교해주세요.\\n[답변 형식: 'Forward: A→B, Reverse: B→A']")
+                q_text = template.format(host1=node1, host2=node2)
+                
+                questions.append({
+                    "id": f"ASYMMETRIC_{node1}_{node2}",
+                    "category": "Routing_Analysis",
+                    "level": "L4",
+                    "answer_type": "text",
+                    "question": q_text,
+                    "ground_truth": ground_truth,
+                    "explanation": f"metric `{metric}` for {node1}-{node2}",
+                    "evidence_hint": {"scope": {"type": "NODE_PAIR", "node1": node1, "node2": node2}, "metric": metric},
+                    "academic_reference": "Asymmetric routing detection"
+                })
+                asym_count += 1
+                if asym_count >= 10:
+                    break
+        
+        # 9. Advanced: OSPF Compatibility Check
         ospf_pairs = self.get_node_pairs()
         random.shuffle(ospf_pairs)
         ospf_q_count = 0
@@ -373,7 +479,94 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
                 "academic_reference": "현업: SPOF 탐지 → 이중화 설계 검증"
             })
         
-        # 3. Advanced: Root Cause Analysis
+        # 3. OSPF Backbone Area 0 Routers List
+        backbone_res = self.ospf_backbone_contiguity()
+        if backbone_res.status == "OK":
+            details = backbone_res.value.get("details", "")
+            # Extract router names from details string "Backbone Routers: N (r1, r2, r3...)"
+            import re
+            match = re.search(r'Backbone Routers: \d+ \(([^)]+)\)', details)
+            if match:
+                routers_str = match.group(1)
+                # Remove "..." if present and split
+                routers_str = routers_str.replace("...", "").strip()
+                backbone_routers = [r.strip() for r in routers_str.split(',') if r.strip()]
+            else:
+                backbone_routers = []
+            
+            metric = "ospf_area0_routers"
+            template = self._get_template(metric, "OSPF Area 0(Backbone Area)에 참여하는 라우터 목록을 알려주세요.\\n[답변 형식: 라우터 목록 또는 빈 리스트 []]")
+            
+            questions.append({
+                "id": "OSPF_AREA0_ROUTERS_GLOBAL",
+                "category": "What_If_Analysis",
+                "level": "L5",
+                "answer_type": "set",
+                "question": template,
+                "ground_truth": backbone_routers if backbone_routers else [],
+                "explanation": f"metric `{metric}` found {len(backbone_routers)} backbone routers",
+                "evidence_hint": {"scope": {"type": "GLOBAL"}, "metric": metric},
+                "academic_reference": "OSPF Area 0 verification"
+            })
+        
+        # 4. K-Failure Tolerance - Redundant Paths List
+        # Sample a few source-destination pairs and analyze their path redundancy
+        test_pairs = []
+        ce_or_leaf = [n for n in self.nodes if 'ce' in n.lower() or 'leaf' in n.lower()]
+        if len(ce_or_leaf) >= 2:
+            test_pairs = [(ce_or_leaf[0], ce_or_leaf[-1])]
+        elif len(self.nodes) >= 2:
+            test_pairs = [(self.nodes[0], self.nodes[-1])]
+        
+        for src_node, dst_node in test_pairs[:5]:
+            src_ips = self.node_ips.get(src_node, [])
+            dst_ips = self.node_ips.get(dst_node, [])
+            
+            if src_ips and dst_ips:
+                # Analyze redundancy by checking traceroutes
+                try:
+                    traces_result = self.bf.q.traceroute(
+                        startLocation=src_node,
+                        headers=HeaderConstraints(dstIps=dst_ips[0])
+                    ).answer().frame()
+                    
+                    redundant_paths = []
+                    if not traces_result.empty:
+                        traces = traces_result['Traces'].iloc[0]
+                        if traces:
+                            for trace in traces[:3]:  # Limit to first 3 paths
+                                path_nodes = []
+                                hops = getattr(trace, 'hops', []) if hasattr(trace, 'hops') else []
+                                for hop in hops:
+                                    node = getattr(hop, 'node', None)
+                                    if node:
+                                        node_name = getattr(node, 'hostname', str(node)) if hasattr(node, 'hostname') else str(node)
+                                        if node_name not in path_nodes:
+                                            path_nodes.append(node_name)
+                                if path_nodes:
+                                    path_str = " → ".join(path_nodes)
+                                    if path_str not in redundant_paths:
+                                        redundant_paths.append(path_str)
+                    
+                    metric = "redundant_paths_list"
+                    template = self._get_template(metric, f"{{src_node}}에서 {{dst_node}}로의 중복 경로(redundant paths) 목록을 알려주세요.\\n[답변 형식: ['경로1', '경로2'] 형식의 경로 리스트]")
+                    q_text = template.format(src_host=src_node, dst_ip=dst_ips[0])
+                    
+                    questions.append({
+                        "id": f"K_FAILURE_{src_node}_{dst_node}",
+                        "category": "What_If_Analysis",
+                        "level": "L5",
+                        "answer_type": "set",
+                        "question": q_text,
+                        "ground_truth": redundant_paths if redundant_paths else [],
+                        "explanation": f"metric `{metric}` found {len(redundant_paths)} redundant paths",
+                        "evidence_hint": {"scope": {"type": "NODE_PAIR", "src": src_node, "dst": dst_node}, "metric": metric},
+                        "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
+                    })
+                except Exception as e:
+                    logger.warning(f"Redundant path analysis failed for {src_node}-{dst_node}: {e}")
+        
+        # 5. Advanced: Root Cause Analysis
         all_pairs_rca = self.get_node_pairs()
         random.shuffle(all_pairs_rca)
         rca_q_count = 0
@@ -578,25 +771,30 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
                     test_src = test_candidates[0]
                     test_dst = test_candidates[-1]
                     
+                    # Pass interface names ("hostname[interface]") for True Simulation
                     mlf_res = self.multi_link_failure_analysis(
-                        edge1['node1'], edge1['node2'],
-                        edge2['node1'], edge2['node2'],
+                        edge1['interface1'], edge1['interface2'],
+                        edge2['interface1'], edge2['interface2'],
                         test_src, test_dst
                     )
                     
                     if mlf_res.status == "OK":
                         isolated = mlf_res.value.get("isolated", False)
                         new_path = mlf_res.value.get("new_path", [])
+                        failure_reason = mlf_res.value.get("failure_reason", "")
                         
-                        # Descriptive text answer instead of boolean
+                        # Descriptive text answer
                         if isolated:
-                            gt_text = "불가능"
+                            if failure_reason:
+                                gt_text = f"불가능 (원인: {failure_reason})"
+                            else:
+                                gt_text = "불가능 (원인: 알 수 없음)"
                         else:
                             path_str = " → ".join(new_path) if new_path else "대체경로 존재"
                             gt_text = f"가능 (대체경로: {path_str})"
                         
                         metric = "multi_link_failure_reachability"
-                        template = self._get_template(metric, "'{link1}'과 '{link2}'가 동시에 다운되면 '{test_src}'에서 '{test_dst}'로의 통신 상태는 어떻게 됩니까? [답변 형식: '가능 (대체경로: A→B→C)' 또는 '불가능']")
+                        template = self._get_template(metric, "'{link1}'과 '{link2}'가 동시에 다운되면 '{test_src}'에서 '{test_dst}'로의 통신 상태는 어떻게 됩니까? [답변 형식: '가능 (대체경로: A→B→C)' 또는 '불가능 (원인: ...)']")
                         q_text = template.format(link1=f"{edge1['node1']}-{edge1['node2']}", link2=f"{edge2['node1']}-{edge2['node2']}", test_src=test_src, test_dst=test_dst)
 
                         questions.append({
