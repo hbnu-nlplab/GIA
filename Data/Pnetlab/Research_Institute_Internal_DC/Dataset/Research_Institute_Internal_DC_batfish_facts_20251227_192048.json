@@ -116,6 +116,12 @@
           "multicast_enabled": false
         }
       },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
+        }
+      },
       "file": "leaf1.cfg",
       "num_interfaces": 4
     },
@@ -233,6 +239,12 @@
           "rip_enabled": false,
           "fhrp_groups": [],
           "multicast_enabled": false
+        }
+      },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
         }
       },
       "file": "leaf2.cfg",
@@ -354,6 +366,12 @@
           "multicast_enabled": false
         }
       },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
+        }
+      },
       "file": "leaf3.cfg",
       "num_interfaces": 4
     },
@@ -471,6 +489,12 @@
           "rip_enabled": false,
           "fhrp_groups": [],
           "multicast_enabled": false
+        }
+      },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
         }
       },
       "file": "leaf4.cfg",
@@ -611,6 +635,12 @@
           "rip_enabled": false,
           "fhrp_groups": [],
           "multicast_enabled": false
+        }
+      },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
         }
       },
       "file": "p1.cfg",
@@ -754,6 +784,12 @@
           "multicast_enabled": false
         }
       },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
+        }
+      },
       "file": "p2.cfg",
       "num_interfaces": 5
     },
@@ -895,6 +931,12 @@
           "multicast_enabled": false
         }
       },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
+        }
+      },
       "file": "p3.cfg",
       "num_interfaces": 5
     },
@@ -1030,6 +1072,12 @@
           "rip_enabled": false,
           "fhrp_groups": [],
           "multicast_enabled": false
+        }
+      },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
         }
       },
       "file": "p4.cfg",
@@ -1405,6 +1453,12 @@
           "multicast_enabled": false
         }
       },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
+        }
+      },
       "file": "pe1.cfg",
       "num_interfaces": 5
     },
@@ -1776,6 +1830,12 @@
           "rip_enabled": false,
           "fhrp_groups": [],
           "multicast_enabled": false
+        }
+      },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
         }
       },
       "file": "pe2.cfg",

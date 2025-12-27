@@ -215,21 +215,21 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
                         "academic_reference": "Minesweeper (SIGCOMM'17): bounded path length"
                     })
         
-        # 5. Blackhole Detection
+        # 5. Blackhole Detection - Now returns destination list instead of boolean
         bh_res = self.blackhole_detection()
         if bh_res.status == "OK":
             blackholes = bh_res.value.get("blackholes", [])
             
-            metric = "blackhole_detection"
-            template = self._get_template(metric, "네트워크에 패킷이 드랍되는 블랙홀이 존재합니까?\n[답변 형식: true/false]")
+            metric = "blackhole_destination_list"
+            template = self._get_template(metric, "네트워크에서 블랙홀이 발생하는 목적지 prefix 목록을 알려주세요.\n[답변 형식: prefix 목록 (예: [\"10.0.0.0/8\"]) 또는 빈 목록 []]")
             
             questions.append({
                 "id": "BLACKHOLE_DETECTION_GLOBAL",
                 "category": "Reachability_Analysis",
                 "level": "L4",
-                "answer_type": "boolean",
+                "answer_type": "set",
                 "question": template,
-                "ground_truth": str(len(blackholes) > 0).lower(),
+                "ground_truth": blackholes if blackholes else [],
                 "explanation": f"metric `{metric}` found {len(blackholes)} blackholes",
                 "evidence_hint": {"scope": {"type": "GLOBAL"}, "metric": metric},
                 "academic_reference": "HSA (NSDI'12), Minesweeper (SIGCOMM'17): blackhole detection"
@@ -556,7 +556,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
             "academic_reference": "AI Hallucination Check"
         })
         
-        # 9. Advanced: Multi-Link Failure Analysis (bool 버전)
+        # 9. Advanced: Multi-Link Failure Analysis (descriptive text version)
         if len(edges) >= 4:
             valid_edge_pairs = []
             for edge1, edge2 in combinations(edges[:30], 2):
@@ -586,28 +586,28 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
                     
                     if mlf_res.status == "OK":
                         isolated = mlf_res.value.get("isolated", False)
+                        new_path = mlf_res.value.get("new_path", [])
                         
-                        # Reverted to boolean with explanation
+                        # Descriptive text answer instead of boolean
                         if isolated:
-                            gt_text = "false"
-                            reason = f"Isolated due to link failures on {edge1['node1']}-{edge1['node2']} and {edge2['node1']}-{edge2['node2']}"
+                            gt_text = "불가능"
                         else:
-                            gt_text = "true"
-                            reason = "Communication possible via alternate path"
+                            path_str = " → ".join(new_path) if new_path else "대체경로 존재"
+                            gt_text = f"가능 (대체경로: {path_str})"
                         
-                        metric = "multi_link_failure_analysis"
-                        template = self._get_template(metric, "'{link1}'과 '{link2}'가 동시에 다운되면 '{test_src}'에서 '{test_dst}'로의 통신이 가능합니까? [답변 형식: true 또는 false]")
+                        metric = "multi_link_failure_reachability"
+                        template = self._get_template(metric, "'{link1}'과 '{link2}'가 동시에 다운되면 '{test_src}'에서 '{test_dst}'로의 통신 상태는 어떻게 됩니까? [답변 형식: '가능 (대체경로: A→B→C)' 또는 '불가능']")
                         q_text = template.format(link1=f"{edge1['node1']}-{edge1['node2']}", link2=f"{edge2['node1']}-{edge2['node2']}", test_src=test_src, test_dst=test_dst)
 
                         questions.append({
                             "id": f"MULTI_FAIL_{edge1['node1']}_{edge1['node2']}_{edge2['node1']}_{edge2['node2']}",
                             "category": "What_If_Analysis",
                             "level": "L5",
-                            "answer_type": "boolean",
+                            "answer_type": "text",
                             "question": q_text,
                             "ground_truth": gt_text,
-                            "explanation": f"metric `{metric}` result: {gt_text}. Reason: {reason}",
-                            "evidence_hint": {"scope": {"type": "MULTI_LINK_FAILURE", "link1": f"{edge1['node1']}-{edge1['node2']}", "link2": f"{edge2['node1']}-{edge2['node2']}"}, "metric": "multi_link_failure_analysis", "reason": reason},
+                            "explanation": f"metric `{metric}` result: {gt_text}",
+                            "evidence_hint": {"scope": {"type": "MULTI_LINK_FAILURE", "link1": f"{edge1['node1']}-{edge1['node2']}", "link2": f"{edge2['node1']}-{edge2['node2']}"}, "metric": metric},
                             "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
                         })
                         mlf_q_count += 1

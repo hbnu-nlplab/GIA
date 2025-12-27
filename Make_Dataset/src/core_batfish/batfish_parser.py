@@ -75,6 +75,22 @@ def parse_text_config(config_path: Path) -> Dict[str, Any]:
         if "transport input ssh" in content:
              text_facts["ssh"]["enabled"] = True
 
+        # 1.5 VTY Line Configuration (transport_input and login_mode)
+        text_facts["line"] = {"vty": {"transport_input": "", "login_mode": ""}}
+        
+        # Find VTY block and extract transport input
+        vty_block_match = re.search(r'line vty \d+ \d+([\s\S]*?)(?=^line |^!|^end)', content, re.MULTILINE)
+        if vty_block_match:
+            vty_block = vty_block_match.group(1)
+            # Extract transport input (ssh, telnet, all, none)
+            transport_match = re.search(r'transport input (\S+)', vty_block)
+            if transport_match:
+                text_facts["line"]["vty"]["transport_input"] = transport_match.group(1)
+            # Extract login mode (local, line, etc.)
+            login_match = re.search(r'login (\S+)', vty_block)
+            if login_match:
+                text_facts["line"]["vty"]["login_mode"] = login_match.group(1)
+
         # 2. AAA
         if re.search(r"^aaa new-model", content, re.MULTILINE):
             text_facts["aaa"]["new_model"] = True
@@ -341,6 +357,7 @@ def parse_batfish_datamodel(configs_dir: Path) -> Dict[str, Any]:
                     "multicast_enabled": text_info["multicast_enabled"]
                 }
             },
+            "line": text_info.get("line", {"vty": {"transport_input": "", "login_mode": ""}}),
             "file": f"{hostname}.cfg" 
         }
         

@@ -488,6 +488,255 @@ class BuilderCore:
                 vty = ((d.get("line") or {}).get("vty") or {})
                 return "text", (vty.get("transport_input") or "")
             return "text", ""
+
+        # --- Additional L1 Metrics (Implemented in Phase 3) ---
+        elif metric == "banner_motd_content":
+            host = scope.get("host")
+            for d in self.devices:
+                if host and self._hostname(d) != host: continue
+                val = d.get("configuration", {}).get("security", {}).get("banner_motd")
+                return "text", val or ""
+            return "text", ""
+        
+        elif metric == "banner_login_content":
+            host = scope.get("host")
+            for d in self.devices:
+                if host and self._hostname(d) != host: continue
+                val = d.get("configuration", {}).get("security", {}).get("banner_login")
+                return "text", val or ""
+            return "text", ""
+
+        elif metric == "enable_secret_type":
+             host = scope.get("host")
+             for d in self.devices:
+                 if host and self._hostname(d) != host: continue
+                 val = d.get("configuration", {}).get("security", {}).get("enable_secret")
+                 return "text", val or ""
+             return "text", ""
+
+        elif metric == "console_password_val":
+             host = scope.get("host")
+             for d in self.devices:
+                 if host and self._hostname(d) != host: continue
+                 val = d.get("configuration", {}).get("security", {}).get("console_password")
+                 return "text", val or ""
+             return "text", ""
+
+        elif metric == "exec_timeout_val":
+             host = scope.get("host")
+             for d in self.devices:
+                 if host and self._hostname(d) != host: continue
+                 val = d.get("configuration", {}).get("security", {}).get("exec_timeout")
+                 return "text", val or ""
+             return "text", ""
+
+        elif metric == "password_encryption_config":
+             host = scope.get("host")
+             for d in self.devices:
+                 if host and self._hostname(d) != host: continue
+                 val = d.get("configuration", {}).get("security", {}).get("password_encryption")
+                 return "text", "Enabled" if val else "Disabled"
+             return "text", "Disabled"
+
+        elif metric == "http_server_config":
+             host = scope.get("host")
+             for d in self.devices:
+                 if host and self._hostname(d) != host: continue
+                 val = d.get("configuration", {}).get("security", {}).get("http_server")
+                 return "text", "Enabled" if val else "Disabled"
+             return "text", "Disabled"
+             
+        elif metric == "cdp_config":
+             host = scope.get("host")
+             for d in self.devices:
+                 if host and self._hostname(d) != host: continue
+                 val = d.get("configuration", {}).get("security", {}).get("cdp")
+                 return "text", "Enabled" if val else "Disabled"
+             return "text", "Disabled"
+
+        elif metric == "ip_source_route_config":
+             host = scope.get("host")
+             for d in self.devices:
+                 if host and self._hostname(d) != host: continue
+                 val = d.get("configuration", {}).get("security", {}).get("ip_source_route")
+                 return "text", "Enabled" if val else "Disabled"
+             return "text", "Disabled"
+             
+        elif metric == "mpls_ldp_config":
+             host = scope.get("host")
+             for d in self.devices:
+                 if host and self._hostname(d) != host: continue
+                 val = d.get("configuration", {}).get("routing", {}).get("mpls_ldp_enabled")
+                 return "text", "Enabled" if val else "Disabled"
+             return "text", "Disabled"
+
+        elif metric == "multicast_routing_config":
+             host = scope.get("host")
+             for d in self.devices:
+                 if host and self._hostname(d) != host: continue
+                 val = d.get("configuration", {}).get("advanced", {}).get("multicast_enabled")
+                 return "text", "Enabled" if val else "Disabled"
+             return "text", "Disabled"
+
+        elif metric == "snmp_server_communities":
+             host = scope.get("host")
+             for d in self.devices:
+                 if host and self._hostname(d) != host: continue
+                 val = d.get("configuration", {}).get("operational", {}).get("snmp_communities")
+                 return "set", sorted(val) if isinstance(val, list) else []
+             return "set", []
+
+        elif metric == "loopback_interfaces_list":
+             host = scope.get("host")
+             for d in self.devices:
+                 if host and self._hostname(d) != host: continue
+                 val = d.get("configuration", {}).get("operational", {}).get("loopback_interfaces")
+                 return "set", sorted(val) if isinstance(val, list) else []
+             return "set", []
+
+        elif metric == "dns_servers_list":
+             host = scope.get("host")
+             for d in self.devices:
+                 if host and self._hostname(d) != host: continue
+                 val = d.get("configuration", {}).get("operational", {}).get("name_servers")
+                 return "set", sorted(val) if isinstance(val, list) else []
+             return "set", []
+        
+        elif metric == "netflow_monitors_list":
+             host = scope.get("host")
+             for d in self.devices:
+                 if host and self._hostname(d) != host: continue
+                 val = d.get("configuration", {}).get("advanced", {}).get("netflow_monitors")
+                 return "set", sorted(val) if isinstance(val, list) else []
+             return "set", []
+
+        elif metric == "qos_class_maps_list":
+             host = scope.get("host")
+             for d in self.devices:
+                 if host and self._hostname(d) != host: continue
+                 val = d.get("configuration", {}).get("advanced", {}).get("class_maps")
+                 return "set", sorted(val) if isinstance(val, list) else []
+             return "set", []
+
+        elif metric == "static_route_count":
+             host = scope.get("host")
+             for d in self.devices:
+                 if host and self._hostname(d) != host: continue
+                 val = d.get("configuration", {}).get("routing", {}).get("static_routes_count")
+                 return "numeric", int(val) if val is not None else 0
+             return "numeric", 0
+
+        elif metric == "default_route_next_hops":
+             host = scope.get("host")
+             for d in self.devices:
+                 if host and self._hostname(d) != host: continue
+                 val = d.get("configuration", {}).get("routing", {}).get("default_route_next_hops")
+                 return "set", sorted(val) if isinstance(val, list) else []
+             return "set", []
+
+        elif metric == "acl_configured_count":
+             host = scope.get("host")
+             for d in self.devices:
+                 if host and self._hostname(d) != host: continue
+                 val = d.get("configuration", {}).get("advanced", {}).get("acls_count")
+                 return "numeric", int(val) if val is not None else 0
+             return "numeric", 0
+             
+        elif metric == "acl_applied_interfaces_list":
+             host = scope.get("host")
+             for d in self.devices:
+                 if host and self._hostname(d) != host: continue
+                 val = d.get("configuration", {}).get("advanced", {}).get("acl_interfaces")
+                 return "set", sorted(val) if isinstance(val, list) else []
+             return "set", []
+
+        elif metric == "prefix_list_count":
+             host = scope.get("host")
+             for d in self.devices:
+                 if host and self._hostname(d) != host: continue
+                 val = d.get("configuration", {}).get("advanced", {}).get("prefix_lists_count")
+                 return "numeric", int(val) if val is not None else 0
+             return "numeric", 0
+
+        elif metric == "route_map_count":
+             host = scope.get("host")
+             for d in self.devices:
+                 if host and self._hostname(d) != host: continue
+                 val = d.get("configuration", {}).get("advanced", {}).get("route_maps_count")
+                 return "numeric", int(val) if val is not None else 0
+             return "numeric", 0
+
+        elif metric == "interfaces_missing_description_count":
+             host = scope.get("host")
+             for d in self.devices:
+                 if host and self._hostname(d) != host: continue
+                 val = d.get("configuration", {}).get("advanced", {}).get("missing_descriptions_count")
+                 return "numeric", int(val) if val is not None else 0
+             return "numeric", 0
+
+        elif metric == "configured_bgp_as_numbers":
+             host = scope.get("host")
+             for d in self.devices:
+                 if host and self._hostname(d) != host: continue
+                 val = d.get("configuration", {}).get("routing", {}).get("bgp_as")
+                 return "set", sorted([str(x) for x in val]) if isinstance(val, list) else []
+             return "set", []
+
+        elif metric == "eigrp_as_numbers":
+             host = scope.get("host")
+             for d in self.devices:
+                 if host and self._hostname(d) != host: continue
+                 val = d.get("configuration", {}).get("advanced", {}).get("eigrp_as")
+                 return "set", sorted([str(x) for x in val]) if isinstance(val, list) else []
+             return "set", []
+
+        elif metric == "rip_processes":
+             host = scope.get("host")
+             for d in self.devices:
+                 if host and self._hostname(d) != host: continue
+                 val = d.get("configuration", {}).get("advanced", {}).get("rip_enabled")
+                 return "set", ["rip"] if val else []
+             return "set", []
+
+        elif metric == "active_ospf_processes":
+             host = scope.get("host")
+             for d in self.devices:
+                 if host and self._hostname(d) != host: continue
+                 val = d.get("configuration", {}).get("routing", {}).get("ospf_processes")
+                 return "set", sorted([str(x) for x in val]) if isinstance(val, list) else []
+             return "set", []
+
+        elif metric == "port_channel_devices":
+            host = scope.get("host")
+            for d in self.devices:
+                if host and self._hostname(d) != host: continue
+                val = [i.get("name") for i in d.get("interfaces", []) if "Port-Channel" in i.get("name", "")]
+                return "set", sorted(val)
+            return "set", []
+
+        elif metric == "tunnel_interface_devices":
+            host = scope.get("host")
+            for d in self.devices:
+                if host and self._hostname(d) != host: continue
+                val = [i.get("name") for i in d.get("interfaces", []) if "Tunnel" in i.get("name", "")]
+                return "set", sorted(val)
+            return "set", []
+        
+        elif metric == "serial_interface_devices":
+            host = scope.get("host")
+            for d in self.devices:
+                if host and self._hostname(d) != host: continue
+                val = [i.get("name") for i in d.get("interfaces", []) if "Serial" in i.get("name", "")]
+                return "set", sorted(val)
+            return "set", []
+
+        elif metric == "vlan_interface_devices":
+            host = scope.get("host")
+            for d in self.devices:
+                if host and self._hostname(d) != host: continue
+                val = [i.get("name") for i in d.get("interfaces", []) if "Vlan" in i.get("name", "")]
+                return "set", sorted(val)
+            return "set", []
         elif metric == "system_version_text":
             host = scope.get("host")
             for d in self.devices:
@@ -537,45 +786,47 @@ class BuilderCore:
                 return "numeric", len([n for n in names if n])
             return "numeric", 0
 
-        elif metric == "ssh_present_bool":
-            host = scope.get("host")
-            for d in self.devices:
-                if host and self._hostname(d) != host: continue
-                ssh_info = (d.get("security") or {}).get("ssh") or {}
-                is_present = bool(ssh_info.get("present"))
-            if is_present:
-                return "boolean", True
-            return "boolean", False
-
         elif metric == "ssh_version_text":
             host = scope.get("host")
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
                 val = ((d.get("security") or {}).get("ssh") or {}).get("version")
-                return "text", str(val) if val is not None else ""
-            return "text", ""
+                return "text", str(val) if val is not None else "미설정"
+            return "text", "미설정"
 
-        elif metric == "aaa_present_bool":
+        elif metric == "aaa_authentication_method":
             host = scope.get("host")
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
                 aaa_info = (d.get("security") or {}).get("aaa") or {}
-                is_present = bool(aaa_info.get("present"))
-            if is_present:
-                return "boolean", True
-            return "boolean", False
+                # Extract authentication method (local, tacacs+, radius, etc.)
+                method = aaa_info.get("method") or aaa_info.get("authentication_method")
+                if not method and aaa_info.get("present"):
+                    method = "local"  # Default to local if AAA is present but method not specified
+                return "text", method if method else "미설정"
+            return "text", "미설정"
 
-        elif metric == "mpls_ldp_present_bool":
+        elif metric == "mpls_ldp_router_id":
             host = scope.get("host")
             for d in self.devices:
                 if host and self._hostname(d) != host:
                     continue
                 mpls = ((d.get("services") or {}).get("mpls") or {})
                 ldp_info = mpls.get("ldp") or {}
-                is_present = bool(ldp_info) or bool(mpls.get("ldp_interfaces")) or bool(mpls.get("ldp_enabled"))
-            if is_present:
-                return "boolean", True
-            return "boolean", False
+                # Extract router-id from LDP configuration
+                router_id = ldp_info.get("router_id") or mpls.get("ldp_router_id")
+                if router_id:
+                    return "text", str(router_id)
+                # If no explicit router-id, check if LDP is enabled and return loopback IP
+                if ldp_info or mpls.get("ldp_interfaces") or mpls.get("ldp_enabled"):
+                    # Try to get loopback0 IP as fallback
+                    for iface in d.get("interfaces", []):
+                        if iface.get("name", "").lower().startswith("loopback0"):
+                            ip = iface.get("ipv4") or iface.get("ip")
+                            if ip:
+                                return "text", ip.split("/")[0]  # Remove CIDR notation
+                return "text", "미설정"
+            return "text", "미설정"
 
         elif metric == "interface_count":
             host = scope.get("host")
@@ -1597,6 +1848,19 @@ SUPPORTED_METRICS: List[str] = [
     "aaa_enabled_devices",
     "aaa_missing_devices",
     "devices_with_same_vrf",
+
+    # --- New Metrics Added Phase 3 ---
+    "banner_motd_content", "banner_login_content", "enable_secret_type", 
+    "console_password_val", "exec_timeout_val", "password_encryption_config",
+    "http_server_config", "cdp_config", "ip_source_route_config",
+    "snmp_server_communities", "loopback_interfaces_list", "dns_servers_list",
+    "netflow_monitors_list", "qos_class_maps_list", "static_route_count",
+    "default_route_next_hops", "acl_configured_count", "acl_applied_interfaces_list",
+    "prefix_list_count", "route_map_count", "interfaces_missing_description_count",
+    "configured_bgp_as_numbers", "eigrp_as_numbers", "rip_processes",
+    "active_ospf_processes", "port_channel_devices", "tunnel_interface_devices",
+    "serial_interface_devices", "vlan_interface_devices", "mpls_ldp_config", "multicast_routing_config",
+
     
     # === L2: OSPF Consistency ===
     "ospf_area_membership",
