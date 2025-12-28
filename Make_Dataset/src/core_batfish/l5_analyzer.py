@@ -18,6 +18,7 @@ L5 Metrics (What-If Analysis):
 
 import logging
 import time
+import re
 import random
 from typing import Dict, List, Any
 
@@ -32,6 +33,11 @@ except ImportError:
     HeaderConstraints = None
     PathConstraints = None
 
+try:
+    from pybatfish.datamodel import Interface as NodeInterfacePair
+except ImportError:
+    NodeInterfacePair = None
+
 
 class L5AnalyzerMixin:
     """
@@ -40,6 +46,22 @@ class L5AnalyzerMixin:
     이 Mixin은 BatfishBase를 상속한 클래스에서 사용해야 합니다.
     필요한 속성: bf, _initialized, nodes, node_ips, interfaces, snapshot_name
     """
+    
+    # Batfish Disposition 우선순위 (낮을수록 더 중요한 실패 원인)
+    DISPOSITION_PRIORITY = {
+        'NO_ROUTE': 1,              # 최우선: 명확한 라우팅 실패
+        'NULL_ROUTED': 2,           # 의도적으로 버림 (Null0)
+        'ACL_IN_DENIED': 3,         # ACL 차단 (Ingress)
+        'ACL_OUT_DENIED': 3,        # ACL 차단 (Egress)
+        'DENIED': 3,                # 일반 ACL 차단
+        'DENIED_IN': 3,             # ACL 차단 변형
+        'DENIED_OUT': 3,            # ACL 차단 변형
+        'NEIGHBOR_UNREACHABLE': 4,  # 이웃 도달 불가
+        'LOOP': 5,                  # 라우팅 루프
+        'EXITS_NETWORK': 6,         # 낮은 우선순위: 네트워크를 벗어남 (성공일 수도 있음)
+        'INSUFFICIENT_INFO': 6,     # 낮은 우선순위: 정보 불충분 (성공일 수도 있음)
+        'UNKNOWN': 7                # 알 수 없는 상태
+    }
     
     def _make_evidence(self, query_name: str, params: dict) -> dict:
         """BatfishBuilder 내부용 evidence 생성 헬퍼"""
@@ -752,12 +774,15 @@ class L5AnalyzerMixin:
                 return AnswerResult("NOT_CONFIGURED", {"isolated": False, "new_path": [], "path_change": "UNKNOWN"}, "multi_failure_result", evidence, "NO_DST_IP")
             
             # 1. 스냅샷 복제 및 인터페이스 비활성화 (Fork)
-            # 입력받은 인터페이스들은 "hostname[interface]" 형식이거나 Batfish가 인식 가능한 형식이어야 함
-            # edges 정보에서 이미 올바른 형식으로 온다고 가정
-            interfaces_to_deactivate = [link1_iface1, link1_iface2, link2_iface1, link2_iface2]
-            
-            # 유효성 검사 (인터페이스 형식이 맞는지)
-            # 여기서는 API 호출 시 에러가 나면 catch하도록 처리
+            # 입력받은 인터페이스들은 "hostname[interface]" 형식이므로 NodeInterfacePair 객체로 변환
+            interfaces_to_deactivate = []
+            for iface_str in [link1_iface1, link1_iface2, link2_iface1, link2_iface2]:
+                match = re.match(r"([^\[]+)\[([^\]]+)\]", iface_str)
+                if match:
+                    node, iface = match.groups()
+                    interfaces_to_deactivate.append(NodeInterfacePair(node, iface))
+                else:
+                    logger.warning(f"Invalid interface format: {iface_str}")
             
             self.bf.fork_snapshot(
                 base_name=self.snapshot_name,
@@ -779,8 +804,7 @@ class L5AnalyzerMixin:
 
             traces = trace_res['Traces'].iloc[0]
             accepted_paths = []
-            failure_reasons = set()
-            blocking_node = "Unknown"
+            failure_reasons = []  # (priority, disposition, blocking_node) 튜플 리스트
             
             for trace in traces:
                 disposition = getattr(trace, 'disposition', 'UNKNOWN')
@@ -797,10 +821,10 @@ class L5AnalyzerMixin:
                 if disposition == 'ACCEPTED':
                     accepted_paths.append(path_nodes)
                 else:
-                    # 실패 원인 분석
-                    failure_reasons.add(disposition)
-                    if path_nodes:
-                        blocking_node = path_nodes[-1]
+                    # 실패 원인 분석 - 우선순위와 함께 저장
+                    priority = self.DISPOSITION_PRIORITY.get(disposition, 99)  # 정의되지 않은 disposition은 99
+                    blocking_node = path_nodes[-1] if path_nodes else "Unknown"
+                    failure_reasons.append((priority, disposition, blocking_node))
             
             # 4. 종합 판정
             if accepted_paths:
@@ -815,9 +839,15 @@ class L5AnalyzerMixin:
                     "failure_reason": ""
                 }, "multi_failure_result", evidence, "")
             else:
-                # 전면 차단
-                reason_str = ", ".join(list(failure_reasons))
-                detailed_reason = f"{blocking_node}에서 {reason_str}"
+                # 전면 차단 - 가장 중요한 실패 원인만 선택 (우선순위가 가장 높은 것)
+                if failure_reasons:
+                    failure_reasons.sort(key=lambda x: x[0])  # 우선순위 오름차순 정렬
+                    most_important = failure_reasons[0]  # 가장 높은 우선순위 (가장 낮은 숫자)
+                    _, disposition, blocking_node = most_important
+                    detailed_reason = f"{blocking_node}에서 {disposition}"
+                else:
+                    detailed_reason = "Unknown에서 UNKNOWN"
+                
                 return AnswerResult("OK", {
                     "isolated": True, 
                     "new_path": [], 

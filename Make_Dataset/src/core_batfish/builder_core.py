@@ -1456,7 +1456,7 @@ class BuilderCore:
             result = sorted(list(set(str(s) for s in servers)))
             return "set", result
 
-        elif metric == "snmp_communities_list":
+        elif metric == "snmp_server_communities":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("operational") or {}).get("snmp_communities") or []
             return "set", sorted(list(set(str(s) for s in val)))
@@ -1475,12 +1475,12 @@ class BuilderCore:
             return "set", sorted(list(set(str(s) for s in val)))
             
         # --- Routing ---
-        elif metric == "ospf_processes_list":
+        elif metric == "active_ospf_processes":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("routing") or {}).get("ospf_processes") or []
             return "set", sorted(list(set(str(s) for s in val)))
 
-        elif metric == "bgp_as_config":
+        elif metric == "configured_bgp_as_numbers":
             host = scope.get("host")
             # Prefer batfish parsed first for accuracy, fallback to text
             d = self.host_index.get(host, {})
@@ -1516,52 +1516,52 @@ class BuilderCore:
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("acls_count")
             return "number", val if val is not None else 0
 
-        elif metric == "acl_interfaces_list":
+        elif metric == "acl_applied_interfaces_list":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("acl_interfaces") or []
             return "set", sorted(list(set(str(s) for s in val)))
 
-        elif metric == "prefix_list_configured_count":
+        elif metric == "prefix_list_count":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("prefix_lists_count")
             return "number", val if val is not None else 0
 
-        elif metric == "route_map_configured_count":
+        elif metric == "route_map_count":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("route_maps_count")
             return "number", val if val is not None else 0
 
-        elif metric == "class_map_list":
+        elif metric == "qos_class_maps_list":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("class_maps") or []
             return "set", sorted(list(set(str(s) for s in val)))
 
-        elif metric == "netflow_monitor_list":
+        elif metric == "netflow_monitors_list":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("netflow_monitors") or []
             return "set", sorted(list(set(str(s) for s in val)))
 
-        elif metric == "missing_description_count":
+        elif metric == "interfaces_missing_description_count":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("missing_descriptions_count")
             return "number", val if val is not None else 0
 
-        elif metric == "eigrp_as_config":
+        elif metric == "eigrp_as_numbers":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("eigrp_as")
             return "text", str(val[0]) if val else "Not Configured"
 
-        elif metric == "rip_config":
+        elif metric == "rip_processes":
              host = scope.get("host")
              val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("rip_enabled")
              return "text", "Enabled" if val else "Disabled"
              
-        elif metric == "fhrp_group_list":
+        elif metric == "hsrp_groups_list":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("fhrp_groups") or []
             return "set", sorted(list(set(str(s) for s in val)))
             
-        elif metric == "multicast_config":
+        elif metric == "multicast_routing_config":
              host = scope.get("host")
              val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("multicast_enabled")
              return "text", "Enabled" if val else "Disabled"
@@ -1581,6 +1581,24 @@ class BuilderCore:
                 for i in (d.get("interfaces") or []):
                     if "GigabitEthernet" in i.get("name", ""):
                         hosts.add(self._hostname(d))
+            return "set", sorted(list(hosts))
+            
+        elif metric == "tunnel_interface_devices":
+            hosts = set()
+            for d in self.devices:
+                for i in (d.get("interfaces") or []):
+                    name = i.get("name", "")
+                    if "Tunnel" in name or "Tu" in name: 
+                         hosts.add(self._hostname(d))
+            return "set", sorted(list(hosts))
+            
+        elif metric == "port_channel_devices":
+            hosts = set()
+            for d in self.devices:
+                for i in (d.get("interfaces") or []):
+                    name = i.get("name", "")
+                    if "Port-channel" in name or "Po" in name: 
+                         hosts.add(self._hostname(d))
             return "set", sorted(list(hosts))
             
         elif metric == "ten_gigabit_interface_devices":

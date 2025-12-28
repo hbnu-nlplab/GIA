@@ -387,11 +387,15 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
                             bypass_exists = bypass_res.value.get("bypass_exists", False)
                             bypass_path = bypass_res.value.get("bypass_path", [])
                             
-                            path_str = " → ".join(bypass_path) if bypass_path else "없음"
-                            result_text = f"우회 경로 존재: {path_str}" if bypass_exists else "우회 경로 없음 (정책 준수)"
+                            # Clear text answer with explicit format guidance
+                            if bypass_exists:
+                                path_str = " → ".join(bypass_path) if bypass_path else "직접 경로"
+                                gt_text = f"우회 경로 존재 (경로: {path_str})"
+                            else:
+                                gt_text = "우회 경로 없음 (정책 준수)"
                             
                             metric = "security_policy_bypass_check"
-                            template = self._get_template(metric, "'{src}→{dst}' 트래픽이 보안 장비 '{waypoint}'를 거치지 않고 도달 가능한 우회 경로가 있습니까?\n[답변 형식: '우회 경로 존재: ...' 또는 '우회 경로 없음']")
+                            template = self._get_template(metric, "**보안 정책**: 네트워크 설계상 '{src}'에서 '{dst}'로 가는 모든 트래픽은 보안 검사(방화벽/IPS)를 위해 반드시 '{waypoint}' 장비를 경유해야 합니다.\n\n**질문**: 현재 네트워크 구성에서 이 보안 정책을 우회하는 직접 경로가 존재합니까?\n\n**답변 형식** (반드시 아래 형식 중 하나로만 답변):\n- 우회 경로가 있는 경우: \"우회 경로 존재 (경로: 장비1→장비2→장비3)\"\n- 우회 경로가 없는 경우: \"우회 경로 없음 (정책 준수)\"")
                             q_text = template.format(src=src_leaf, dst=dst_leaf, waypoint=required_wp)
                             
                             questions.append({
@@ -400,7 +404,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
                                 "level": "L4",
                                 "answer_type": "text",
                                 "question": q_text,
-                                "ground_truth": result_text,
+                                "ground_truth": gt_text,
                                 "explanation": f"metric `{metric}` waypoint={required_wp}",
                                 "evidence_hint": {"scope": {"type": "SECURITY_POLICY", "src": src_leaf, "dst": dst_leaf, "waypoint": required_wp}, "metric": metric},
                                 "academic_reference": "Config2Spec (NSDI'20)"
@@ -783,18 +787,16 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
                         new_path = mlf_res.value.get("new_path", [])
                         failure_reason = mlf_res.value.get("failure_reason", "")
                         
-                        # Descriptive text answer
+                        # Clear text answer with explicit format guidance
                         if isolated:
-                            if failure_reason:
-                                gt_text = f"불가능 (원인: {failure_reason})"
-                            else:
-                                gt_text = "불가능 (원인: 알 수 없음)"
+                            failure_detail = failure_reason if failure_reason else "알 수 없음"
+                            gt_text = f"불가능 (원인: {failure_detail})"
                         else:
                             path_str = " → ".join(new_path) if new_path else "대체경로 존재"
                             gt_text = f"가능 (대체경로: {path_str})"
                         
                         metric = "multi_link_failure_reachability"
-                        template = self._get_template(metric, "'{link1}'과 '{link2}'가 동시에 다운되면 '{test_src}'에서 '{test_dst}'로의 통신 상태는 어떻게 됩니까? [답변 형식: '가능 (대체경로: A→B→C)' 또는 '불가능 (원인: ...)']")
+                        template = self._get_template(metric, "**시나리오**: '{link1}' 링크와 '{link2}' 링크가 동시에 장애로 다운되었습니다.\n\n**질문**: 이 상황에서 '{test_src}'에서 '{test_dst}'로의 트래픽 전달이 가능합니까?\n\n**답변 형식** (반드시 아래 형식 중 하나로만 답변):\n- 가능한 경우: \"가능 (대체경로: 장비1→장비2→장비3)\"\n- 불가능한 경우: \"불가능 (원인: 차단장비에서 차단사유)\"")
                         q_text = template.format(link1=f"{edge1['node1']}-{edge1['node2']}", link2=f"{edge2['node1']}-{edge2['node2']}", test_src=test_src, test_dst=test_dst)
 
                         questions.append({
