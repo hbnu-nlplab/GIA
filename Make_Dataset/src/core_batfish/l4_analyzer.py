@@ -38,6 +38,22 @@ class L4AnalyzerMixin:
     필요한 속성: bf, _initialized, nodes, node_ips, interfaces, snapshot_name
     """
     
+    # Batfish Disposition 우선순위 (낮을수록 더 중요한 실패 원인)
+    DISPOSITION_PRIORITY = {
+        'NO_ROUTE': 1,              # 최우선: 명확한 라우팅 실패
+        'NULL_ROUTED': 2,           # 의도적으로 버림 (Null0)
+        'ACL_IN_DENIED': 3,         # ACL 차단 (Ingress)
+        'ACL_OUT_DENIED': 3,        # ACL 차단 (Egress)
+        'DENIED': 3,                # 일반 ACL 차단
+        'DENIED_IN': 3,             # ACL 차단 변형
+        'DENIED_OUT': 3,            # ACL 차단 변형
+        'NEIGHBOR_UNREACHABLE': 4,  # 이웃 도달 불가
+        'LOOP': 5,                  # 라우팅 루프
+        'EXITS_NETWORK': 6,         # 낮은 우선순위: 네트워크를 벗어남 (성공일 수도 있음)
+        'INSUFFICIENT_INFO': 6,     # 낮은 우선순위: 정보 불충분 (성공일 수도 있음)
+        'UNKNOWN': 7                # 알 수 없는 상태
+    }
+    
     def _make_evidence(self, query_name: str, params: dict) -> dict:
         """BatfishBuilder 내부용 evidence 생성 헬퍼"""
         return build_evidence(query_name, params, getattr(self, 'snapshot_name', ''))
@@ -132,10 +148,8 @@ class L4AnalyzerMixin:
             
             path = []
             is_reachable = False
-            
-            
-            # disposition이 없을 경우를 대비해 초기화
             final_disposition = "UNKNOWN"
+            failure_candidates = []  # (priority, disposition, path) 튜플 리스트
             
             if not trace_result.empty:
                 traces = trace_result.iloc[0].get('Traces', [])
@@ -151,26 +165,34 @@ class L4AnalyzerMixin:
                     
                     disposition_str = str(getattr(trace, 'disposition', 'UNKNOWN'))
                     
-                    # Disposition Mapping Logic for LLM Evaluation / Classification
-                    # Success Cases
+                    # Success Cases - 즉시 성공으로 반환
                     if 'ACCEPTED' in disposition_str.upper() or 'DELIVERED' in disposition_str.upper():
                         is_reachable = True
                         path = current_path
                         final_disposition = "ACCEPTED"
                         break
                     
-                    # Failure Cases Mapping
+                    # Failure Cases - 우선순위와 함께 수집
+                    # Disposition 정규화 및 우선순위 계산
+                    normalized_disposition = disposition_str
                     if 'NO_ROUTE' in disposition_str or 'NULL_ROUTED' in disposition_str:
-                        final_disposition = 'NO_ROUTE'
-                    elif 'DENIED' in disposition_str or 'BLOCK' in disposition_str: # Includes ACL_DENIED, BLOCKED, etc.
-                        final_disposition = 'ACL_DENY' 
-                    elif 'INSUFFICIENT_INFO' in disposition_str or 'EXITS_NETWORK' in disposition_str or 'NEIGHBOR_UNREACHABLE' in disposition_str:
-                        final_disposition = 'EXTERNAL'
-                    else:
-                        final_disposition = disposition_str
+                        normalized_disposition = 'NO_ROUTE'
+                    elif 'DENIED' in disposition_str or 'BLOCK' in disposition_str:
+                        normalized_disposition = 'ACL_DENY'
+                    elif 'INSUFFICIENT_INFO' in disposition_str:
+                        normalized_disposition = 'INSUFFICIENT_INFO'
+                    elif 'EXITS_NETWORK' in disposition_str:
+                        normalized_disposition = 'EXITS_NETWORK'
+                    elif 'NEIGHBOR_UNREACHABLE' in disposition_str:
+                        normalized_disposition = 'NEIGHBOR_UNREACHABLE'
                     
-                    if not path:
-                        path = current_path
+                    priority = self.DISPOSITION_PRIORITY.get(normalized_disposition, 99)
+                    failure_candidates.append((priority, normalized_disposition, current_path))
+                
+                # 성공하지 못한 경우, 가장 중요한 실패 원인 선택
+                if not is_reachable and failure_candidates:
+                    failure_candidates.sort(key=lambda x: x[0])  # 우선순위 오름차순 정렬
+                    _, final_disposition, path = failure_candidates[0]
             
             value = {"reachable": is_reachable, "path": path, "disposition": final_disposition}
             return AnswerResult("OK", value, "l4_result", evidence, "")

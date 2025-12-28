@@ -556,23 +556,43 @@ def main():
                 # 명시적으로 OK로 되어있다면 NOT_CONFIGURED로 변경
                 if answer_status == "OK":
                     answer_status = "NOT_CONFIGURED"
-            elif isinstance(a_val, (list, set, tuple)):
-                # set_str, edge_set, path 등
-                a_val_list = list(a_val)
-                if a_val_list and isinstance(a_val_list[0], str):
-                    a_json = json.dumps(sorted(a_val_list), ensure_ascii=False)
-                else:
-                    a_json = json.dumps(a_val_list, ensure_ascii=False)
-            elif isinstance(a_val, dict):
-                # map_str_int, map_str_str 등
-                a_json = json.dumps(dict(sorted(a_val.items())), ensure_ascii=False)
-            elif isinstance(a_val, bool):
-                a_json = json.dumps(a_val)
-            elif isinstance(a_val, (int, float)):
-                a_json = json.dumps(a_val)
             else:
-                # 문자열 등
-                a_json = json.dumps(str(a_val), ensure_ascii=False)
+                # L1/L2 Inventory 및 Configuration_Check 카테고리에 대한 NOT_CONFIGURED 로직 강화
+                # 빈 리스트, 0, "Disabled", "Not Configured" 등을 NOT_CONFIGURED로 처리
+                target_categories = ["Inventory", "Configuration_Check"]
+                is_target_cat = any(cat in dsl["category"] for cat in target_categories)
+                is_target_level = level in ["L1", "L2"]
+                
+                if is_target_level and is_target_cat and answer_status == "OK":
+                    is_empty = False
+                    if isinstance(a_val, (list, set, tuple, dict)) and len(a_val) == 0:
+                        is_empty = True
+                    elif isinstance(a_val, str) and a_val in ["Disabled", "Not Configured", "None", ""]:
+                        is_empty = True
+                    elif isinstance(a_val, (int, float)) and a_val == 0:
+                        # 0이어도 유효한 경우가 있을 수 있으나, Inventory/Check에서는 '없음'을 의미하므로 NOT_CONFIGURED 처리
+                        is_empty = True
+                    
+                    if is_empty:
+                        answer_status = "NOT_CONFIGURED"
+
+                if isinstance(a_val, (list, set, tuple)):
+                    # set_str, edge_set, path 등
+                    a_val_list = list(a_val)
+                    if a_val_list and isinstance(a_val_list[0], str):
+                        a_json = json.dumps(sorted(a_val_list), ensure_ascii=False)
+                    else:
+                        a_json = json.dumps(a_val_list, ensure_ascii=False)
+                elif isinstance(a_val, dict):
+                    # map_str_int, map_str_str 등
+                    a_json = json.dumps(dict(sorted(a_val.items())), ensure_ascii=False)
+                elif isinstance(a_val, bool):
+                    a_json = json.dumps(a_val)
+                elif isinstance(a_val, (int, float)):
+                    a_json = json.dumps(a_val)
+                else:
+                    # 문자열 등
+                    a_json = json.dumps(str(a_val), ensure_ascii=False)
             
             # Legacy "정보없음" fallback 제거됨 (a_json은 항상 유효한 JSON 문자열)
             
