@@ -117,7 +117,6 @@ You are a Senior Network Specification Engineer. Your task is to extract technic
 
 ### Rules
 1. **Source of Truth:** Base your answer on the provided context.
-2. **Format:** Output raw technical values, units, or states. Do not use full sentences.
 
 ### Examples
 Context: "BGP Policy: Requirement is to prevent transit AS functionality for AS65000. Routes learned from Peer ISP_A should not be advertised to Peer ISP_B."
