@@ -3,8 +3,8 @@ from rouge import Rouge
 from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
 from bert_score import score
 
-DATA_PATH = "../data/llm_answer_revised/llm_answer_merged.json"
-MODEL_TO_EVAL = "gpt-5-mini"  # 평가할 모델
+DATA_PATH = "../data/llm_answer_revised/llm_answer__tabular_gpt4o-mini.json"
+MODEL_TO_EVAL = "gpt-4o-mini"  # 평가할 모델
 
 def load_data():
     with open(DATA_PATH, "r", encoding="utf-8") as f:
