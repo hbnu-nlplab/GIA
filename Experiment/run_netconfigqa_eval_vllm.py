@@ -33,7 +33,7 @@ class Config:
     RESULT_DIR = os.path.join(BASE_DIR, "results")
     
     # Defaults
-    DEFAULT_DATASET_PATH = os.path.join(DATA_DIR, "Pnetlab/Research_Institute_Internal_DC/Dataset/Research_Institute_Internal_DC_dataset_batfish_20251224_012740.csv").replace("/", os.sep)
+    DEFAULT_DATASET_PATH = os.path.join(DATA_DIR, "Pnetlab/Research_Institute_Internal_DC/Dataset/Research_Institute_Internal_DC_dataset_batfish_20251229_014317.csv").replace("/", os.sep)
     DEFAULT_CONFIG_DIR = os.path.join(DATA_DIR, "Pnetlab/Research_Institute_Internal_DC/configs").replace("/", os.sep)
     
     # Model Dictionary (AWQ optimized)
@@ -68,6 +68,94 @@ def setup_logger(model_name: str):
 logger = logging.getLogger("NetConfigQA_VLLM") # Global placeholder
 
 # --- Core Logic Reuse ---
+
+def extract_answer_from_raw(raw_text: str, answer_type: str) -> str:
+    """
+    GPT-OSS-20B와 같이 불필요한 텍스트를 출력하는 모델의 응답에서 답만 추출
+    
+    전략:
+    1. </think> 태그 이후의 첫 번째 유의미한 라인 추출
+    2. "The answer is", "Based on", "Analysis" 등의 설명 텍스트 제거
+    3. JSON 형식 답변 파싱 시도
+    """
+    import re
+    import json
+    
+    # 1. </think> 태그 이후 텍스트 추출
+    if '</think>' in raw_text:
+        after_think = raw_text.split('</think>', 1)[-1].strip()
+    else:
+        after_think = raw_text.strip()
+    
+    # 2. 불필요한 프리픽스 제거
+    prefixes_to_remove = [
+        r'^analysis\s*',
+        r'^we need to\s*',
+        r'^based on\s*',
+        r'^the answer is\s*',
+        r'^answer:\s*',
+        r'^result:\s*',
+        r'^\**answer\**:\s*',
+    ]
+    
+    cleaned = after_think
+    for prefix in prefixes_to_remove:
+        cleaned = re.sub(prefix, '', cleaned, flags=re.IGNORECASE)
+    
+    # 3. 첫 번째 라인만 추출 (여러 줄 설명이 있을 경우)
+    lines = [l.strip() for l in cleaned.split('\n') if l.strip()]
+    if not lines:
+        return "null"
+    
+    first_line = lines[0]
+    
+    # 4. 타입별 특수 처리
+    if answer_type == "set":
+        # JSON 배열 파싱 시도
+        match = re.search(r'\[.*?\]', first_line)
+        if match:
+            try:
+                parsed = json.loads(match.group(0))
+                return json.dumps(parsed)
+            except:
+                pass
+        return "[]"
+    
+    elif answer_type == "map":
+        # JSON 객체 파싱 시도
+        match = re.search(r'\{.*?\}', first_line)
+        if match:
+            try:
+                parsed = json.loads(match.group(0))
+                return json.dumps(parsed)
+            except:
+                pass
+        return "{}"
+    
+    elif answer_type in ["number", "numeric"]:
+        # 숫자만 추출
+        match = re.search(r'-?\d+\.?\d*', first_line)
+        if match:
+            return match.group(0)
+        return "0"
+    
+    elif answer_type == "boolean":
+        # true/false 추출
+        lower = first_line.lower()
+        if 'true' in lower or 'yes' in lower:
+            return "true"
+        elif 'false' in lower or 'no' in lower:
+            return "false"
+        return "false"
+    
+    else:  # text
+        # 따옴표나 불필요한 문장 제거
+        text = first_line.strip('"\'')
+        # 문장 형태면 첫 단어/구문만 추출
+        if len(text.split()) > 5:
+            # 너무 긴 설명이면 첫 단어만
+            text = text.split()[0]
+        return text
 
 class ConfigManager:
     """Manages loading and caching of network device configuration files."""
@@ -138,9 +226,18 @@ class VLLMEvaluator:
         self.config_manager = ConfigManager([config_dir])
         self.sampling_params = SamplingParams(
             temperature=0.0,
-            max_tokens=32768,  # INCREASED: was 16384, now 32768 to prevent truncation during <think>
-            stop=["<|eot_id|>", "Question:", "User:", "=== QUESTION ==="]
-            # NOTE: Do NOT add "</think>" as stop token - it cuts off the answer
+            max_tokens=32768,  # Keep high for long reasoning chains
+            stop=[
+                "<|eot_id|>", 
+                "Question:", 
+                "User:", 
+                "=== QUESTION ===",
+                "\n\nExample",  # Stop if model starts generating examples
+                "\n\nQuestion:",  # Stop if model starts new question
+                "\nBased on the analysis",  # Common verbose pattern
+                "\nIn summary",  # Common verbose pattern
+                "\nThe answer is",  # Common verbose pattern
+            ]
         )
         
         # Result Dir Setup
@@ -148,47 +245,54 @@ class VLLMEvaluator:
         os.makedirs(self.res_dir, exist_ok=True)
 
     def prepare_prompt(self, question: str, answer_type: str, configs: str) -> str:
-        # Prompt Template logic
-        system_msg = """You are an expert Network Engineer. Your task is to analyze network configurations and provide precise answers.
+        # Prompt Template - Direct and Clear
+        system_msg = """You are an expert Network Engineer analyzing network configurations.
 
-WORKFLOW (CRITICAL):
-1. Use <think>...</think> tags to reason about the network structure, device connections, and configurations.
-2. Inside <think> tags: Analyze the configuration, trace the connections, identify key information.
-3. After closing </think>, IMMEDIATELY provide ONLY the final answer in the exact format requested.
-4. Do NOT include any explanation, preamble, or additional text after the answer.
+OUTPUT FORMAT RULES (CRITICAL - MUST FOLLOW EXACTLY):
 
-Output Format:
-- boolean: true or false
-- numeric: Number only (e.g., 5)
-- set/list: JSON array ["item1", "item2"]
-- map/dict: JSON object {"key": "value"}
-- text: Exact value string only
+1. First, use <think>...</think> tags to analyze:
+   - Search relevant configuration sections
+   - Trace network paths and connections
+   - Identify the answer
 
-If information is missing or NOT_CONFIGURED:
-- boolean: false
-- numeric: 0
-- set: []
-- map: {}
-- text: null
+2. After </think>, output ONLY the raw answer value in ONE line:
+   - text type: Just the text value (e.g., "R1" or "10.0.0.1")
+   - numeric/number type: Just the number (e.g., 5 or 10.5)
+   - set type: JSON array format (e.g., ["item1", "item2"])
+   - map type: JSON object format (e.g., {"key": "value"})
+   - boolean type: true or false
 
-CRITICAL: Provide the answer on the FIRST line after </think> with NO other text."""
+3. FORBIDDEN after </think>:
+   ❌ "The answer is..."
+   ❌ "Based on the analysis..."
+   ❌ "We need to..."
+   ❌ "Looking at the configuration..."
+   ❌ Any explanatory sentences
+   ❌ Multiple lines or paragraphs
+   
+4. If NOT_CONFIGURED or information missing:
+   - text: null
+   - numeric: 0
+   - set: []
+   - map: {}
+   - boolean: false
 
-        user_msg = f"""=== DEVICE CONFIGURATIONS ===
+REMEMBER: After </think>, output ONLY the answer value on ONE line. Nothing else."""
+
+        user_msg = f"""=== NETWORK CONFIGURATIONS ===
 {configs}
 
 === QUESTION ===
 {question}
 
-=== EXPECTED ANSWER TYPE ===
+=== ANSWER TYPE ===
 {answer_type}
 
 === YOUR RESPONSE ===
 <think>
-[Analyze the network configuration, trace connections, identify the answer]
+[Your analysis here]
 </think>
-
-[ANSWER ON FIRST LINE - No other text]
-"""
+[ANSWER VALUE ONLY - ONE LINE]"""
         messages = [
             {"role": "system", "content": system_msg},
             {"role": "user", "content": user_msg}
@@ -229,17 +333,21 @@ CRITICAL: Provide the answer on the FIRST line after </think> with NO other text
         duration = time.time() - start_time
         logger.info(f"Inference Time: {duration:.2f}s | Throughput: {len(prompts)/duration:.1f} req/s")
         
-        # Collect Results (RAW only - no preprocessing or scoring)
+        # Collect Results (RAW + Cleaned prediction)
         results = []
         for i, output in enumerate(outputs):
             row = data[i]
             raw_pred = output.outputs[0].text
             
+            # Extract clean answer from raw output
+            cleaned_pred = extract_answer_from_raw(raw_pred, row['answer_type'])
+            
             res_entry = {
                 "question_id": row.get('question_id', str(i)),
                 "question": row['question'],
                 "gold": row['answer'],
-                "raw_pred": raw_pred,  # Raw prediction only
+                "raw_pred": raw_pred,  # Raw prediction (for debugging)
+                "pred": cleaned_pred,  # Cleaned prediction (for scoring)
                 "level": row.get('level', 'L1'),
                 "category": row.get('category', 'General'),
                 "answer_type": row['answer_type'],

@@ -529,8 +529,11 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
             if src_ips and dst_ips:
                 # Analyze redundancy by checking traceroutes
                 try:
+                    # VRF 문제 방지: [Loopback0] 추가
+                    src_node_fixed = self._fix_start_location(src_node)
+                    
                     traces_result = self.bf.q.traceroute(
-                        startLocation=src_node,
+                        startLocation=src_node_fixed,
                         headers=HeaderConstraints(dstIps=dst_ips[0])
                     ).answer().frame()
                     
