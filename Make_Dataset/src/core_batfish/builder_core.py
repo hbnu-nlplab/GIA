@@ -1382,11 +1382,14 @@ class BuilderCore:
             vrf_stats = {}
             for d in self.devices:
                 host = self._hostname(d)
-                vrf_count = len(self._bgp_vrfs(d))
-                if vrf_count > 0:
-                    vrf_stats[host] = vrf_count
-            # 형식: '장비1: N개, 장비2: M개'
-            stats_parts = [f"{host}: {cnt}" for host, cnt in sorted(vrf_stats.items())]
+                # VRF 중복 제거: 동일한 name을 가진 VRF는 1개로 카운트
+                vrf_list = self._bgp_vrfs(d)
+                unique_vrfs = set([v.get('name') for v in vrf_list if v.get('name')])
+                vrf_count = len(unique_vrfs)
+                # policies.json: "VRF가 하나도 없는 장비도 '0개'로 명시하여 포함"
+                vrf_stats[host] = vrf_count  # 0개도 포함
+            # 형식: '장비1: N개, 장비2: M개' (policies.json 예시와 일치)
+            stats_parts = [f"{host}: {cnt}개" for host, cnt in sorted(vrf_stats.items())]
             return "text", ", ".join(stats_parts) if stats_parts else "No Info"
 
         # =========================================================

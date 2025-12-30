@@ -258,6 +258,9 @@ class L5AnalyzerMixin:
             if not src_ips or not dst_ips:
                  return AnswerResult("OK", {"detected": False, "spof_nodes": []}, "spof_result", evidence, "")
             
+            # VRF 문제 방지: [Loopback0] 추가
+            src = self._fix_start_location(src)
+            
             traceroute = self.bf.q.traceroute(
                 startLocation=src,
                 headers=HeaderConstraints(dstIps=dst_ips[0])
@@ -303,6 +306,9 @@ class L5AnalyzerMixin:
             return AnswerResult("NOT_CONFIGURED", {"impact": "UNKNOWN", "description": "Batfish not initialized"}, "link_failure_result", evidence, "BATFISH_NOT_INITIALIZED")
 
         try:
+            # VRF 문제 방지: [Loopback0] 추가
+            test_src = self._fix_start_location(test_src)
+            
             test_dst_ips = self.node_ips.get(test_dst, [])
             if not test_dst_ips:
                  return AnswerResult("UNKNOWN", {"impact": "UNKNOWN", "description": "Dst IP Not Found"}, "link_failure_result", evidence, "DST_IP_NOT_FOUND")
@@ -493,6 +499,9 @@ class L5AnalyzerMixin:
             if baseline.empty:
                 return AnswerResult("OK", {"path_count": 0, "paths": []}, "measure_k_failure", evidence, "")
 
+            # VRF 문제 방지: [Loopback0] 추가
+            src_node = self._fix_start_location(src_node)
+            
             trace_result = self.bf.q.traceroute(
                 startLocation=src_node,
                 headers=HeaderConstraints(dstIps=dst_ip)
@@ -562,6 +571,9 @@ class L5AnalyzerMixin:
                     "blocking_point": dst_node,
                     "details": "No IP addresses found for destination node"
                 }, "root_cause_result", evidence, "")
+            
+            # VRF 문제 방지: [Loopback0] 추가
+            src_node = self._fix_start_location(src_node)
             
             # Traceroute 수행
             traceroute = self.bf.q.traceroute(
@@ -769,6 +781,9 @@ class L5AnalyzerMixin:
         failure_snapshot = f"multi_fail_{int(time.time()*1000)}_{random.randint(0,9999)}"
         
         try:
+            # VRF 문제 방지: [Loopback0] 추가
+            test_src = self._fix_start_location(test_src)
+            
             dst_ips = self.node_ips.get(test_dst, [])
             if not dst_ips:
                 return AnswerResult("NOT_CONFIGURED", {"isolated": False, "new_path": [], "path_change": "UNKNOWN"}, "multi_failure_result", evidence, "NO_DST_IP")

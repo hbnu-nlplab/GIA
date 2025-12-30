@@ -182,9 +182,7 @@ class NetConfigQAScorer:
         gold = self.clean_gold(gold)
 
         try:
-            if answer_type == "boolean":
-                return self._score_boolean(pred, gold)
-            elif answer_type in ["numeric", "scalar_int", "number"]:
+            if answer_type in ["numeric", "scalar_int", "number"]:
                 return self._score_numeric(pred, gold)
             elif answer_type in ["set", "set_str", "list"]:
                 return self._score_set(pred, gold)
@@ -194,15 +192,6 @@ class NetConfigQAScorer:
                 return self._score_text(pred, gold)
         except Exception as e:
             return {"score": 0.0, "error": str(e)}
-
-    def _clean_bool(self, val: str) -> bool:
-        val = val.lower()
-        if val in ['true', 'yes', 'on', 'enabled', '1']:
-            return True
-        return False
-
-    def _score_boolean(self, pred: str, gold: str) -> Dict[str, float]:
-        return {"score": 1.0 if self._clean_bool(pred) == self._clean_bool(gold) else 0.0}
 
     def _extract_number(self, val: str) -> float:
         try:
@@ -219,14 +208,38 @@ class NetConfigQAScorer:
         return {"score": 1.0 if p_num == g_num else 0.0}
 
     def _parse_set(self, val: str) -> Set[str]:
+        """
+        Parse set from various formats:
+        - JSON array: ["item1", "item2"]
+        - Set notation: {"item1", "item2"}
+        - Tuple: ("item1", "item2")
+        - Comma-separated: item1, item2
+        """
+        val = val.strip()
+        
         try:
-            val = val.replace("'", '"')
-            if val.startswith('[') and val.endswith(']'):
-                items = json.loads(val)
+            # 1. JSON 형식 파싱 시도 (대괄호, 중괄호, 소괄호 모두 지원)
+            val_normalized = val.replace("'", '"')
+            if (val_normalized.startswith('[') and val_normalized.endswith(']')) or \
+               (val_normalized.startswith('{') and val_normalized.endswith('}')) or \
+               (val_normalized.startswith('(') and val_normalized.endswith(')')):
+                # 중괄호/소괄호를 대괄호로 변환 (JSON은 array만 지원)
+                val_normalized = val_normalized.replace('{', '[').replace('}', ']')
+                val_normalized = val_normalized.replace('(', '[').replace(')', ']')
+                items = json.loads(val_normalized)
                 return set(str(i).strip().lower() for i in items)
         except:
             pass
-        return set(i.strip().lower() for i in val.split(',')) if val else set()
+        
+        # 2. Fallback: 쉼표 구분 파싱
+        # 괄호 제거 후 쉼표로 split
+        val_cleaned = val.strip('[]{}()"\' ').strip()
+        if ',' in val_cleaned:
+            return set(i.strip().lower() for i in val_cleaned.split(',') if i.strip())
+        elif val_cleaned:
+            return {val_cleaned.lower()}
+        
+        return set()
 
     def _score_set(self, pred: str, gold: str) -> Dict[str, float]:
         p_set = self._parse_set(pred)
@@ -366,12 +379,12 @@ class ScorecardGenerator:
         
         # Metric Comparison by Answer Type
         lines.append("## 📊 Metric Comparison by Answer Type\n")
-        lines.append("| Metric | Boolean | Numeric | Set | Map | Text | **Overall** |")
-        lines.append("|--------|---------|---------|-----|-----|------|-------------|")
+        lines.append("| Metric | Number | Numeric | Set | Map | Text | **Overall** |")
+        lines.append("|--------|--------|---------|-----|-----|------|-------------|")
         
         # Type-Aware row
         ta_row = "| **Type-Aware** |"
-        for atype in ['boolean', 'numeric', 'set', 'map', 'text']:
+        for atype in ['number', 'numeric', 'set', 'map', 'text']:
             ta_row += f" {stats['by_type'].get(atype, 0)*100:.1f}% |"
         ta_row += f" **{stats['accuracy']*100:.1f}%** |"
         lines.append(ta_row)
@@ -385,7 +398,7 @@ class ScorecardGenerator:
             ('rougeL', 'ROUGE-L')
         ]:
             row = f"| {metric_label} |"
-            for atype in ['boolean', 'numeric', 'set', 'map', 'text']:
+            for atype in ['number', 'numeric', 'set', 'map', 'text']:
                 val = trad_by_type.get(atype, {}).get(metric_name, 0) * 100
                 row += f" {val:.1f}% |"
             overall_val = trad_metrics.get(metric_name, 0) * 100

@@ -669,14 +669,36 @@ def main():
         print(f"  -> Total Added: {len(l4_questions)} L4 + {len(l5_questions)} L5 questions")
 
 
-    csv_path = out_dir / f"{lab_path.name}_dataset_batfish_{timestamp}.csv"
+    # 결과 저장 (CSV + JSON)
+    base_filename = f"{lab_path.name}_dataset_batfish_{timestamp}"
+    csv_path = out_dir / f"{base_filename}.csv"
+    json_path = out_dir / f"{base_filename}.json"
+    
     if qa_list:
         df = pd.DataFrame(qa_list)
         # 컬럼 순서 정렬
         column_order = ["id", "category", "level", "question", "answer_status", "answer_type", "answer", "unknown_reason", "evidence", "pipeline_version", "files"]
         df = df[[c for c in column_order if c in df.columns]]
+        
+        # CSV 저장
         df.to_csv(csv_path, index=False, encoding="utf-8-sig")
-        print(f"[Done] Generated {len(qa_list)} Q&A pairs at {csv_path}")
+        print(f"[Done] CSV saved: {csv_path}")
+        
+        # JSON 저장 (더 구조화된 형식)
+        json_output = {
+            "meta": {
+                "lab_name": lab_path.name,
+                "timestamp": timestamp,
+                "total_questions": len(qa_list),
+                "pipeline_version": PIPELINE_VERSION,
+                "policies_file": str(policy_path) if policy_path else None
+            },
+            "questions": qa_list
+        }
+        
+        with open(json_path, 'w', encoding='utf-8') as f:
+            json.dump(json_output, f, indent=2, ensure_ascii=False)
+        print(f"[Done] JSON saved: {json_path}")
         
         # 품질 리포트 출력
         print_quality_report(qa_list)

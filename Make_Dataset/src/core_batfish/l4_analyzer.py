@@ -66,6 +66,10 @@ class L4AnalyzerMixin:
         """
         L4: 네트워크 경로 추적
         Returns: AnswerResult(value=List[str], type="path")
+        
+        Note: VRF 환경에서는 startLocation을 노드 이름만 지정하면 첫 번째 VRF를 사용하여
+        잘못된 라우팅 테이블을 참조할 수 있습니다. Loopback0을 명시하여 global routing table을
+        사용하도록 합니다.
         """
         evidence = self._make_evidence("traceroute", {"startLocation": src_location, "dstIps": dst_ip})
         
@@ -73,6 +77,13 @@ class L4AnalyzerMixin:
             return AnswerResult("NOT_CONFIGURED", [], "path", evidence, "BATFISH_NOT_INITIALIZED")
         
         try:
+            # VRF 문제 해결: 노드 이름만 지정된 경우 [Loopback0] 추가
+            # 이렇게 하면 global routing table (default VRF)을 사용합니다.
+            if '[' not in src_location:
+                src_location_fixed = f"{src_location}[Loopback0]"
+                logger.debug(f"traceroute_path: Fixed src_location from '{src_location}' to '{src_location_fixed}'")
+                src_location = src_location_fixed
+            
             result = self.bf.q.traceroute(
                 startLocation=src_location,
                 headers=HeaderConstraints(dstIps=dst_ip)
@@ -87,11 +98,17 @@ class L4AnalyzerMixin:
             if traces and len(traces) > 0:
                 trace = traces[0]
                 hops = getattr(trace, 'hops', []) if hasattr(trace, 'hops') else []
+                
+                # 디버깅: Trace disposition 확인
+                disposition = getattr(trace, 'disposition', 'UNKNOWN')
+                logger.debug(f"traceroute_path: src={src_location}, dst={dst_ip}, disposition={disposition}, hops={len(hops)}")
+                
                 for hop in hops:
                     node = getattr(hop, 'node', None)
                     if node:
                         node_name = getattr(node, 'hostname', str(node))
-                        if node_name and node_name not in path:
+                        # 대소문자 무시하고 중복 제거
+                        if node_name and node_name.lower() not in [n.lower() for n in path]:
                             path.append(node_name)
             
             # 목적지 노드 추가 로직
@@ -144,6 +161,8 @@ class L4AnalyzerMixin:
             else:
                 headers = HeaderConstraints(srcIps=src_ip, dstIps=dst_ip)
             
+            # VRF 문제 방지: [Loopback0] 추가
+            src_node = self._fix_start_location(src_node)
             trace_result = self.bf.q.traceroute(startLocation=src_node, headers=headers).answer().frame()
             
             path = []
@@ -346,6 +365,9 @@ class L4AnalyzerMixin:
             if not src_node:
                  return AnswerResult("UNKNOWN", {"passes_through": False, "path": []}, "waypoint_result", evidence, "NODE_NOT_FOUND")
 
+            # VRF 문제 방지: [Loopback0] 추가
+            src_node = self._fix_start_location(src_node)
+            
             result = self.bf.q.traceroute(
                 startLocation=src_node,
                 headers=HeaderConstraints(dstIps=dst_ip)
@@ -388,6 +410,9 @@ class L4AnalyzerMixin:
             return AnswerResult("NOT_CONFIGURED", {"hops": 0}, "hop_count", evidence, "BATFISH_NOT_INITIALIZED")
             
         try:
+            # VRF 문제 방지: [Loopback0] 추가
+            src_location = self._fix_start_location(src_location)
+            
             result = self.bf.q.traceroute(
                 startLocation=src_location,
                 headers=HeaderConstraints(dstIps=dst_ip)
@@ -496,6 +521,10 @@ class L4AnalyzerMixin:
 
             if not node1_ips or not node2_ips:
                  return AnswerResult("UNKNOWN", {"symmetric": True, "path_forward": [], "path_reverse": []}, "asymmetric_result", evidence, "NO_IPS_FOR_NODE")
+
+            # VRF 문제 방지: [Loopback0] 추가
+            node1 = self._fix_start_location(node1)
+            node2 = self._fix_start_location(node2)
 
             forward_result = self.bf.q.traceroute(
                 startLocation=node1,
@@ -655,6 +684,9 @@ class L4AnalyzerMixin:
             dst_ips = self.node_ips.get(dst_node, [])
             if not dst_ips:
                 return AnswerResult("NOT_CONFIGURED", {"bypass_exists": False, "bypass_path": []}, "security_bypass_result", evidence, "")
+            
+            # VRF 문제 방지: [Loopback0] 추가
+            src_node = self._fix_start_location(src_node)
             
             traceroute = self.bf.q.traceroute(
                 startLocation=src_node,

@@ -59,6 +59,124 @@ class BatfishBase:
         # 스냅샷 이름 관리
         self.snapshot_name = "baseline"
         self._initialized = False
+        
+        # Loopback0 존재 여부 캐시 (성능 최적화)
+        self._loopback_cache: Dict[str, bool] = {}
+    
+    def _populate_loopback_cache(self):
+        """
+        모든 노드의 Loopback0 존재 여부를 한 번에 수집 (Batch Loading)
+        
+        성능 최적화: 노드별 개별 쿼리 대신 전체 노드를 한 번에 조회.
+        - Before: 8개 노드 × 3초 = 24초
+        - After: 1번 쿼리 = 3초
+        """
+        if not self._initialized or not self.bf:
+            print("[DEBUG] _populate_loopback_cache: Batfish not initialized")
+            logger.debug("_populate_loopback_cache: Batfish not initialized")
+            return
+        
+        try:
+            print(f"[DEBUG] _populate_loopback_cache: Starting batch query for all {len(self.nodes)} nodes...")
+            logger.debug("_populate_loopback_cache: Querying all nodes at once...")
+            
+            import time
+            t_start = time.time()
+            
+            # 전체 노드의 인터페이스 정보를 한 번에 조회 (파라미터 생략 = 전체 조회)
+            print("[DEBUG] _populate_loopback_cache: Calling bf.q.interfaceProperties()...")
+            iface_props = self.bf.q.interfaceProperties().answer().frame()
+            
+            elapsed = time.time() - t_start
+            print(f"[DEBUG] _populate_loopback_cache: Query completed in {elapsed:.2f}s")
+            print(f"[DEBUG] _populate_loopback_cache: Got {len(iface_props)} interface records")
+            
+            # 모든 노드를 False로 초기화
+            print("[DEBUG] _populate_loopback_cache: Initializing cache...")
+            for node in self.nodes:
+                self._loopback_cache[node] = False
+            
+            # Loopback0이 있는 노드만 True로 변경
+            print("[DEBUG] _populate_loopback_cache: Scanning for Loopback0...")
+            loopback_count = 0
+            if not iface_props.empty:
+                for _, row in iface_props.iterrows():
+                    iface = row.get('Interface', {})
+                    node_name = getattr(iface, 'hostname', '')
+                    iface_name = getattr(iface, 'interface', '')
+                    if iface_name.lower() == 'loopback0':
+                        self._loopback_cache[node_name] = True
+                        loopback_count += 1
+                        print(f"[DEBUG] _populate_loopback_cache: Found Loopback0 on {node_name}")
+                        logger.debug(f"_populate_loopback_cache: Found Loopback0 on {node_name}")
+            
+            print(f"[DEBUG] _populate_loopback_cache: Completed! Cached {len(self._loopback_cache)} nodes ({loopback_count} with Loopback0)")
+            logger.debug(f"_populate_loopback_cache: Cached {len(self._loopback_cache)} nodes")
+            
+        except Exception as e:
+            print(f"[DEBUG] _populate_loopback_cache: ERROR: {e}")
+            logger.debug(f"_populate_loopback_cache: Error: {e}")
+            import traceback
+            traceback.print_exc()
+            # 에러 발생 시 모든 노드를 False로 설정 (안전한 fallback)
+            for node in self.nodes:
+                self._loopback_cache[node] = False
+    
+    def _has_loopback0(self, node_name: str) -> bool:
+        """
+        노드에 Loopback0이 있는지 확인 (캐시 사용)
+        
+        첫 호출 시 모든 노드의 정보를 한 번에 수집 (Lazy Batch Loading).
+        이후 호출은 캐시에서 즉시 반환.
+        
+        Args:
+            node_name: 확인할 노드 이름
+            
+        Returns:
+            True if Loopback0 exists, False otherwise
+        """
+        # 캐시가 비어있으면 한 번만 전체 노드 정보 수집
+        if not self._loopback_cache:
+            print(f"[DEBUG] _has_loopback0: Cache is empty, triggering batch loading...")
+            logger.debug("_has_loopback0: Cache empty, populating...")
+            self._populate_loopback_cache()
+            print(f"[DEBUG] _has_loopback0: Batch loading completed")
+        
+        # 캐시에서 조회 (즉시 반환)
+        result = self._loopback_cache.get(node_name, False)
+        print(f"[DEBUG] _has_loopback0: {node_name} = {result} (from cache)")
+        logger.debug(f"_has_loopback0: {node_name} = {result} (from cache)")
+        return result
+    
+    def _fix_start_location(self, location: str) -> str:
+        """
+        VRF 문제 방지: Loopback0이 있는 노드만 [Loopback0] 추가
+        
+        VRF 환경에서 PE/P 라우터는 Loopback0을 명시하여 global routing table 사용.
+        Leaf 등 Access layer 장비는 Loopback이 없으므로 노드 이름만 사용.
+        
+        일반성: 모든 네트워크 토폴로지에 자동 적용 (명명 규칙 무관)
+        확장성: 새로운 장비 타입 추가 시 코드 수정 불필요
+        안정성: 캐싱으로 성능 최적화, 에러 시 안전한 fallback
+        
+        Args:
+            location: 노드 이름 또는 "노드[인터페이스]" 형식
+            
+        Returns:
+            Loopback0 있으면: "노드[Loopback0]"
+            Loopback0 없으면: "노드" (첫 번째 활성 인터페이스를 Batfish가 자동 선택)
+            이미 인터페이스 명시: 그대로 반환
+        """
+        if '[' not in location:
+            # 해당 노드에 Loopback0이 있는지 확인 (캐시 사용)
+            if self._has_loopback0(location):
+                logger.debug(f"_fix_start_location: {location} -> {location}[Loopback0]")
+                return f"{location}[Loopback0]"
+            else:
+                logger.debug(f"_fix_start_location: {location} -> {location} (no Loopback0)")
+                return location
+        
+        return location
     
     def initialize(self) -> bool:
         """Batfish 세션 초기화 및 스냅샷 로드"""
