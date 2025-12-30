@@ -28,26 +28,20 @@ def load_qna():
         data = json.load(f)
 
     qna_list = []
-    
-    # data가 리스트인지 딕셔너리인지 확인하여 반복자 설정
     iterator = data.values() if isinstance(data, dict) else data
 
     for item in iterator:
-        # [핵심 수정] item이 딕셔너리가 아니면(예: "version": "v4" 같은 문자열 메타데이터) 건너뜀
         if not isinstance(item, dict):
             continue
         
-        # 질문 데이터가 맞는지 확인 ("question" 키가 없으면 건너뜀)
         if "question" not in item:
             continue
 
         question = item.get("question", "")
         gold_answer = item.get("answer", "")
         
-        # 옵션 추출 (option 1, option 2...)
         raw_options = {k: v for k, v in item.items() if k.startswith("option")}
         
-        # 옵션 정렬 (숫자 기준 정렬: option 1 -> option 2 -> option 10)
         sorted_keys = sorted(
             raw_options.keys(), 
             key=lambda x: int(x.split()[-1]) if x.split()[-1].isdigit() else 999
