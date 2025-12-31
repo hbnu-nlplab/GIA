@@ -1,58 +1,89 @@
-# Policies & Categories Guide
+# Policies & Metric Definitions Guide (SSOT)
 
-`Make_Dataset/policies.json`은 어떤 카테고리의 질문을 얼마나, 어떤 메트릭으로 생성할지를 정의하는 핵심 설정 파일입니다. 이 문서는 정책 구조를 이해하고, 안전하게 수정하는 방법을 정리합니다.
+`Make_Dataset/policies.json`은 NetConfigQA의 **Single Source of Truth (SSOT)**로서, 모든 메트릭의 정의, 질문 템플릿, 답변 형식, 검증 로직을 중앙에서 관리합니다.
 
-## 1. 파일 구조
+## 1. 철학: Data-Driven Architecture
+
+기존의 하드코딩된 규칙(Python 리스트/딕셔너리)을 제거하고, JSON 설정 파일만 수정하면 새로운 질문 유형을 추가할 수 있도록 설계되었습니다.
+
+- **RuleBasedGenerator**: `policies.json`을 읽어 L1~L3 질문(설정 조회, 정합성 검사)을 생성
+- **BatfishBuilder**: `policies.json`을 읽어 L4(Reachability), L5(What-If) 질문을 생성
+
+## 2. 파일 구조 (`metrics_metadata`)
+
+`metrics_metadata` 객체 안에 각 메트릭의 ID가 키(Key)로 정의됩니다.
+
 ```json
 {
-  "defaults": {
-    "scenarios": [...],
-    "min_per_category": 15
-  },
-  "policies": [
-    {
-      "category": "BGP_Consistency",
-      "levels": {
-        "1": [
-          {"goal": "visibility", "targets": ["DEVICE"], "primary_metric": "neighbor_list_ibgp"}
-        ],
-        "2": [...]
-      }
+  "version": "3.0",
+  "metrics_metadata": {
+    "system_hostname_text": {
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "text",
+      "template": "{host} 장비의 호스트네임은 무엇입니까?",
+      "description": "장비 식별자(Hostname) 조회",
+      "verification": "Config 파일 최상단의 'hostname <NAME>' 라인 확인",
+      "logic_ref": "facts.devices[host].system.hostname"
     },
-    ...
-  ]
+    "traceroute_path": {
+      "level": "L4",
+      "category": "Reachability_Analysis",
+      "answer_type": "text",
+      "template": "{src_node}에서 {dst_node}({dst_ip})로 가는 패킷의 네트워크 경로를 알려주세요.\n[답변 형식: 화살표(→)로 구분된 장비 목록]",
+      "description": "경로 추적 (Traceroute)",
+      "verification": "Batfish traceroute 결과와 비교",
+      "logic_ref": "batfish.traceroute"
+    }
+  }
 }
 ```
-- `defaults.scenarios`: 질문 시나리오 레이블 (출력 데이터에는 크게 영향 없음)
-- `defaults.min_per_category`: 참고용 기본값 (현재 파이프라인은 직접 사용하지 않음)
-- `policies`: 카테고리별 정책 목록
 
-## 2. 항목별 주요 키 설명
-| 키 | 설명 |
-| --- | --- |
-| `category` | 질문 묶음 이름 (예: `BGP_Consistency`, `Command_Generation` 등)
-| `levels` | 난이도별 항목 묶음. key는 문자열(“1”,”2”…), value는 정책 리스트 |
-| `goal` | 생성 목적(가시성, 완전성, 일관성 등). 내부적으로 관련 메트릭 그룹을 가져올 때 사용 |
-| `targets` | 질문이 적용될 스코프. `GLOBAL`, `AS`, `DEVICE`, `VRF`, `DEVICE_VRF`, `DEVICE_IF` 등 |
-| `primary_metric` | 꼭 포함할 핵심 메트릭. 없으면 `goal`과 연계된 메트릭 목록만 사용 |
-| `notes` | 추가 문서용 메모 (필수 아님) |
+## 3. 항목별 상세 설명
 
-> 현재 파이프라인은 정책에 정의된 모든 메트릭을 `utils/builder_core.py`에서 계산할 수 있도록 구현되어 있습니다.
+| 필드           | 설명                                                   | 예시                                                   |
+| -------------- | ------------------------------------------------------ | ------------------------------------------------------ |
+| **Key**        | 고유 메트릭 ID (Python 코드 내 참조 키)                | `bgp_neighbor_count`, `link_failure_impact`            |
+| `level`        | 질문 난이도 레벨 (L1~L5)                               | `L1` (단일장비), `L4` (Reachability)                   |
+| `category`     | 질문 카테고리                                          | `Routing_Inventory`, `What_If_Analysis`                |
+| `answer_type`  | 정답 데이터 타입 (스키마 검증용)                       | `text`, `numeric`, `boolean`, `set_str`, `map_str_int` |
+| `template`     | 질문 생성 템플릿. 변수는 `{host}`, `{asn}` 등으로 표기 | `"{host}의 관리자 수는?"`                              |
+| `description`  | 메트릭에 대한 간략한 설명 (사람용)                     | `"BGP Neighbor 개수 확인"`                             |
+| `verification` | 정답 검증 가이드 (QC용)                                | `"show ip bgp summary 결과 비교"`                      |
+| `logic_ref`    | 내부 로직 매핑 또는 구현 위치 힌트                     | `"facts.routing.bgp"`, `"batfish.loop_detection"`      |
 
-## 3. 정책 수정 시 팁
-1. **메트릭 확인**: 새로운 메트릭을 추가하려면 `BuilderCore._answer_for_metric`에 계산 로직이 있는지 반드시 확인하세요.
-2. **스코프 적절성**: 예를 들어 `DEVICE_IF`를 사용하면 모든 장비-인터페이스 조합으로 질문이 급증할 수 있으니 주의합니다.
-3. **Command_Generation 주의**: 해당 카테고리는 DSL이 아닌 전용 로직(명령어 템플릿)으로 생성됩니다. 정책에서 수정할 필요는 거의 없습니다.
-4. **카테고리 제한**: 실험 시 특정 카테고리만 필요하면 CLI의 `--categories` 또는 `--basic-per-category`로 제한하세요.
-5. **시나리오 레이블**: 보고서나 발표자료에는 시나리오명을 활용하지만, 실제 생성 로직에는 영향이 없습니다.
+### 지원되는 Template 변수
 
-## 4. 자주 묻는 질문
-- **정책에만 있고 결과에 없는 메트릭이 있나요?** → 현재는 없습니다. 모든 메트릭이 질문으로 생성됩니다.
-- **카테고리 하나만 테스트하고 싶어요.** → `--categories BGP_Consistency` 등으로 실행하세요.
-- **메트릭 결과가 0/없음 등 빈 값일 때는?** → 파이프라인이 자동으로 `ground_truth_raw`와 문자열 `ground_truth`를 함께 저장합니다. 빈 목록은 “없음”으로, 텍스트는 “정보 없음”으로 표시됩니다.
+- **L1~L3**: `{host}`, `{asn}`, `{vrf}`, `{area}`, `{host1}`, `{host2}`
+- **L4/L5**: `{src_ip}`, `{dst_ip}`, `{src_node}`, `{dst_node}`, `{link}`, `{policy_name}`
 
-## 5. 더 알아보기
-- 데이터 생성 파이프라인 전체: `README.md`
-- 실행 옵션: [Getting Started](Getting_Started.md)
-- 메트릭 설명: [Metrics Reference](Metrics.md)
-- 출력 데이터 구조: [Dataset Format](Dataset_Format.md)
+## 4. 메트릭 추가 방법 (Workflow)
+
+새로운 메트릭을 추가하려면 다음 2단계만 수행하면 됩니다.
+
+1. **`policies.json`에 메트릭 정의 추가**
+
+   - 레벨, 카테고리, 템플릿, 답변 형식을 정의합니다.
+   - 메트릭 이름(Key)은 유니크해야 합니다.
+
+2. **메트릭 계산 로직 구현 (필요 시)**
+   - **L1~L3**: `src/core_batfish/builder_core.py`의 `_answer_for_metric` 메서드에 계산 로직 추가
+   - **L4/L5**: `src/core_batfish/batfish_builder.py` (또는 Mixin) 내에 해당 메트릭 메서드 구현 (`generate_l4_questions` 등에서 호출 확인)
+
+## 5. Answer Type 정의
+
+데이터 품질 관리를 위해 다음 타입들을 엄격하게 준수합니다.
+
+- `text`: 일반 텍스트 (줄바꿈 포함 가능)
+- `numeric`: 정수 또는 실수
+- `boolean`: JSON `true` / `false`
+- `set_str`: 중복 없는 문자열 리스트 (JSON Array)
+- `map_str_int`: 키-값 쌍 (문자열: 숫자)
+- `map_str_str`: 키-값 쌍 (문자열: 문자열)
+- `json`: 복잡한 구조체 (What-If 분석 결과 등)
+
+## 6. 주의사항
+
+- **NOT_CONFIGURED**: 해당 장비에 기능이 설정되지 않은 경우, 값은 `null`이 되며 Status는 `NOT_CONFIGURED`가 됩니다. (코드 레벨 자동 처리)
+- **템플릿 수정**: 질문 템플릿을 수정하면 즉시 생성되는 질문에 반영됩니다. 재컴파일이 필요 없습니다.
+- **[답변 형식]**: 템플릿 끝에 `[답변 형식: ...]` 가이드를 포함하여 LLM이 답변 형식을 인지하도록 돕는 것을 권장합니다.

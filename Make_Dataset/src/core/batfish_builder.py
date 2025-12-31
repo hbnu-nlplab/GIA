@@ -221,7 +221,7 @@ class BatfishBuilder:
     # L4 메트릭 구현
     # =========================================================================
     
-    def traceroute_path(self, src_location: str, dst_ip: str) -> Tuple[str, str]:
+    def traceroute_path(self, src_location: str, dst_ip: str, target_name: str = "") -> Tuple[str, str]:
         """
         L4: 네트워크 경로 추적
         
@@ -259,6 +259,15 @@ class BatfishBuilder:
             
             # 형식: "장비1 → 장비2 → 장비3"
             if path:
+                # 마지막 홉이 결과적으로 target_name(목적지)에 도달했는지 확인
+                # DISPOSITION이 DELIVERED_TO_SUBNET, ACCEPTED, EXITS_NETWORK 등이면 도달로 간주
+                # 단, 마지막 홉이 이미 target_name과 같으면 추가하지 않음
+                disposition = getattr(trace, 'disposition', 'UNKNOWN')
+                if target_name and path[-1] != target_name:
+                    if disposition in ['DELIVERED_TO_SUBNET', 'ACCEPTED', 'EXITS_NETWORK', 'INSUFFICIENT_INFO']:
+                        # INSUFFICIENT_INFO는 보통 edge에서 성공적으로 나갔을 때 발생 (외부망/호스트로)
+                        path.append(target_name)
+                
                 return "text", " → ".join(path)
             return "text", "경로없음"
             
@@ -1418,7 +1427,7 @@ class BatfishBuilder:
         for src_node, dst_node in all_pairs:  # 모든 쌍 사용
             dst_ips = self.node_ips.get(dst_node, [])
             if dst_ips:
-                _, path_str = self.traceroute_path(src_node, dst_ips[0])
+                _, path_str = self.traceroute_path(src_node, dst_ips[0], target_name=dst_node)
                 
                 questions.append({
                     "id": f"TRACEROUTE_{src_node}_{dst_node}",
@@ -1597,10 +1606,10 @@ class BatfishBuilder:
         # =========================================================================
         
         # 8-1. 비대칭 경로 검사 (Asymmetric Routing)
-        # 성능 최적화: 5개 쌍만 검사 (각 쌍당 2번 traceroute 호출)
+        # 성능 최적화: 20개 쌍만 검사 (다양성 확보를 위해 증가)
         all_pairs_asymmetric = self.get_node_pairs()
         random.shuffle(all_pairs_asymmetric)
-        for src_node, dst_node in all_pairs_asymmetric[:5]:  # 5개 쌍으로 제한
+        for src_node, dst_node in all_pairs_asymmetric[:20]:  # 20개 쌍으로 증가
             _, result_text = self.asymmetric_path_check(src_node, dst_node)
 
             questions.append({
@@ -1896,7 +1905,7 @@ class BatfishBuilder:
         
         if has_acl:
             logger.info("[L5] ACL detected. Generating ACL blocking questions.")
-            for flow in self.get_representative_flows()[:10]:
+            for flow in self.get_representative_flows()[:20]:
                 _, blocking_info = self.acl_rule_blocking(
                     flow.src_ip, flow.dst_ip, flow.dst_port, flow.protocol
                 )

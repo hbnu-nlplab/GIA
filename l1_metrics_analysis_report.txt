@@ -1,0 +1,83 @@
+Total metrics in metrics_metadata: 126
+
+Total L1 metrics: 67
+
+=== 28개 메트릭 중 policies.json에 정의된 것 ===
+  ✓ banner_motd_content (category: Configuration_Check)
+  ✓ banner_login_content (category: Configuration_Check)
+  ✓ enable_secret_type (category: Configuration_Check)
+  ✓ console_password_val (category: Configuration_Check)
+  ✓ exec_timeout_val (category: Configuration_Check)
+  ✓ password_encryption_config (category: Configuration_Check)
+  ✓ http_server_config (category: Configuration_Check)
+  ✓ cdp_config (category: Configuration_Check)
+  ✓ ip_source_route_config (category: Configuration_Check)
+  ✓ mpls_ldp_config (category: Configuration_Check)
+  ✓ multicast_routing_config (category: Configuration_Check)
+  ✓ snmp_server_communities (category: Configuration_Check)
+  ✓ loopback_interfaces_list (category: Configuration_Check)
+  ✓ dns_servers_list (category: Configuration_Check)
+  ✓ netflow_monitors_list (category: Configuration_Check)
+  ✓ qos_class_maps_list (category: Configuration_Check)
+  ✓ static_route_count (category: Configuration_Check)
+  ✓ acl_configured_count (category: Configuration_Check)
+  ✓ prefix_list_count (category: Configuration_Check)
+  ✓ route_map_count (category: Configuration_Check)
+  ✓ interfaces_missing_description_count (category: Configuration_Check)
+  ✓ port_channel_devices (category: Hardware_Inventory)
+  ✓ tunnel_interface_devices (category: Hardware_Inventory)
+  ✓ serial_interface_devices (category: Hardware_Inventory)
+  ✓ vlan_interface_devices (category: Hardware_Inventory)
+
+Found: 25/25
+Missing: 0/25
+
+=== 28개 메트릭의 카테고리 분포 ===
+  Configuration_Check: 21
+  Hardware_Inventory: 4
+
+=== 카테고리 매칭 분석 ===
+main_batfish.py에서 사용하는 카테고리:
+  - System_Inventory
+  - Security_Inventory
+  - Interface_Inventory
+  - Routing_Inventory
+  - Services_Inventory
+  - Security_Policy
+  - OSPF_Consistency
+  - BGP_Consistency
+  - VRF_Consistency
+  - L2VPN_Consistency
+  - Comparison_Analysis
+  - Reachability_Analysis
+  - What_If_Analysis
+
+28개 메트릭의 카테고리가 위 리스트에 포함되는지 확인:
+  ⚠ banner_motd_content: category 'Configuration_Check' NOT in expected list!
+  ⚠ banner_login_content: category 'Configuration_Check' NOT in expected list!
+  ⚠ enable_secret_type: category 'Configuration_Check' NOT in expected list!
+  ⚠ console_password_val: category 'Configuration_Check' NOT in expected list!
+  ⚠ exec_timeout_val: category 'Configuration_Check' NOT in expected list!
+  ⚠ password_encryption_config: category 'Configuration_Check' NOT in expected list!
+  ⚠ http_server_config: category 'Configuration_Check' NOT in expected list!
+  ⚠ cdp_config: category 'Configuration_Check' NOT in expected list!
+  ⚠ ip_source_route_config: category 'Configuration_Check' NOT in expected list!
+  ⚠ mpls_ldp_config: category 'Configuration_Check' NOT in expected list!
+  ⚠ multicast_routing_config: category 'Configuration_Check' NOT in expected list!
+  ⚠ snmp_server_communities: category 'Configuration_Check' NOT in expected list!
+  ⚠ loopback_interfaces_list: category 'Configuration_Check' NOT in expected list!
+  ⚠ dns_servers_list: category 'Configuration_Check' NOT in expected list!
+  ⚠ netflow_monitors_list: category 'Configuration_Check' NOT in expected list!
+  ⚠ qos_class_maps_list: category 'Configuration_Check' NOT in expected list!
+  ⚠ static_route_count: category 'Configuration_Check' NOT in expected list!
+  ⚠ acl_configured_count: category 'Configuration_Check' NOT in expected list!
+  ⚠ prefix_list_count: category 'Configuration_Check' NOT in expected list!
+  ⚠ route_map_count: category 'Configuration_Check' NOT in expected list!
+  ⚠ interfaces_missing_description_count: category 'Configuration_Check' NOT in expected list!
+  ⚠ port_channel_devices: category 'Hardware_Inventory' NOT in expected list!
+  ⚠ tunnel_interface_devices: category 'Hardware_Inventory' NOT in expected list!
+  ⚠ serial_interface_devices: category 'Hardware_Inventory' NOT in expected list!
+  ⚠ vlan_interface_devices: category 'Hardware_Inventory' NOT in expected list!
+
+⚠ Matched: 0, Unmatched: 25
+⚠ Unmatched categories: ['Configuration_Check', 'Hardware_Inventory']

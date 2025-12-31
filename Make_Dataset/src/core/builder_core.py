@@ -41,11 +41,11 @@ class BuilderCore:
                 if ip: return ip
         return None
 
-    def _bgp(self, d):  return d.get("routing",{}).get("bgp",{}) or {}
-    def _bgp_neighbors(self, d):  return self._bgp(d).get("neighbors",[]) or []
-    def _bgp_vrfs(self, d):  return self._bgp(d).get("vrfs",[]) or []
-    def _bgp_local_as(self, d):  return self._bgp(d).get("local_as")
-    def _ospf(self, d): return d.get("routing",{}).get("ospf",{}) or {}
+    def _bgp(self, d):  return d.get("routing",{}).get("bgp") # Return None if missing
+    def _bgp_neighbors(self, d):  return (self._bgp(d) or {}).get("neighbors",[]) or []
+    def _bgp_vrfs(self, d):  return (self._bgp(d) or {}).get("vrfs",[]) or []
+    def _bgp_local_as(self, d):  return (self._bgp(d) or {}).get("local_as")
+    def _ospf(self, d): return d.get("routing",{}).get("ospf") # Return None if missing
     def _ssh_on(self,d): return d.get("security",{}).get("ssh",{}).get("present",False)
     def _aaa_on(self,d): return d.get("security",{}).get("aaa",{}).get("present",False)
     def _services_vrf(self, d): return d.get("services",{}).get("vrf",[]) or []
@@ -391,15 +391,16 @@ class BuilderCore:
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
                 return "text", self._hostname(d)
-            return "text", ""
+            return "text", None
 
         elif metric == "logging_buffered_severity_text":
             host = scope.get("host")
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
+                if host and self._hostname(d) != host: continue
                 val = ((d.get("logging") or {}).get("buffered_severity"))
-                return "text", val or ""
-            return "text", ""
+                return "text", val # Can be None
+            return "text", None
         
         # ---- New L1 metrics: NTP, SNMP, Syslog ----
         elif metric == "ntp_server_list":
@@ -407,19 +408,21 @@ class BuilderCore:
             for d in self.devices:
                 if host and self._hostname(d) != host:
                     continue
-                ntp = (d.get("services") or {}).get("ntp") or {}
+                ntp = (d.get("services") or {}).get("ntp")
+                if ntp is None: return "set", None # Feature missing
                 servers = ntp.get("servers") or []
                 if isinstance(servers, list):
                     return "set", sorted([str(s.get("address") if isinstance(s, dict) else s) for s in servers if s])
                 return "set", []
-            return "set", []
+            return "set", None
         
         elif metric == "snmp_community_list":
             host = scope.get("host")
             for d in self.devices:
                 if host and self._hostname(d) != host:
                     continue
-                snmp = (d.get("services") or {}).get("snmp") or {}
+                snmp = (d.get("services") or {}).get("snmp")
+                if snmp is None: return "set", None # Feature missing
                 communities = snmp.get("communities") or []
                 if isinstance(communities, list):
                     result = []
@@ -432,14 +435,15 @@ class BuilderCore:
                             result.append(c)
                     return "set", sorted(set(result))
                 return "set", []
-            return "set", []
+            return "set", None
         
         elif metric == "syslog_server_list":
             host = scope.get("host")
             for d in self.devices:
                 if host and self._hostname(d) != host:
                     continue
-                logging_cfg = d.get("logging") or {}
+                logging_cfg = d.get("logging")
+                if logging_cfg is None: return "set", None # Feature missing
                 servers = logging_cfg.get("hosts") or logging_cfg.get("servers") or []
                 if isinstance(servers, list):
                     result = []
@@ -452,36 +456,38 @@ class BuilderCore:
                             result.append(s)
                     return "set", sorted(set(result))
                 return "set", []
-            return "set", []
+            return "set", None
         elif metric == "vty_login_mode_text":
             host = scope.get("host")
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
-                vty = ((d.get("line") or {}).get("vty") or {})
-                return "text", (vty.get("login_mode") or "")
-            return "text", ""
+                vty = ((d.get("line") or {}).get("vty"))
+                if vty is None: return "text", None
+                return "text", (vty.get("login_mode")) # Can be None
+            return "text", None
         elif metric == "vty_transport_input_text":
             host = scope.get("host")
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
-                vty = ((d.get("line") or {}).get("vty") or {})
-                return "text", (vty.get("transport_input") or "")
-            return "text", ""
+                vty = ((d.get("line") or {}).get("vty"))
+                if vty is None: return "text", None
+                return "text", (vty.get("transport_input")) # Can be None
+            return "text", None
         elif metric == "system_version_text":
             host = scope.get("host")
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
-                val = (d.get("system") or {}).get("version") or ""
-                return "text", val
-            return "text", ""
+                val = (d.get("system") or {}).get("version")
+                return "text", val # Can be None
+            return "text", None
 
         elif metric == "system_timezone_text":
             host = scope.get("host")
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
-                val = (d.get("system") or {}).get("timezone") or ""
-                return "text", val
-            return "text", ""
+                val = (d.get("system") or {}).get("timezone")
+                return "text", val # Can be None
+            return "text", None
 
         elif metric == "system_user_list":
             host = scope.get("host")
@@ -522,21 +528,17 @@ class BuilderCore:
                 if host and self._hostname(d) != host: continue
                 ssh_info = (d.get("security") or {}).get("ssh") or {}
                 is_present = bool(ssh_info.get("present"))
-                if is_present:
-                    version = ssh_info.get("version")
-                    if version:
-                        return "text", f"SSHv{version}"
-                    return "text", "SSHv2"  # 기본값
-                return "text", "비활성화"
-            return "text", "비활성화"
+            if is_present:
+                return "boolean", True
+            return "boolean", False
 
         elif metric == "ssh_version_text":
             host = scope.get("host")
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
                 val = ((d.get("security") or {}).get("ssh") or {}).get("version")
-                return "text", str(val) if val is not None else ""
-            return "text", ""
+                return "text", str(val) if val is not None else None
+            return "text", None
 
         elif metric == "aaa_present_bool":
             host = scope.get("host")
@@ -544,18 +546,9 @@ class BuilderCore:
                 if host and self._hostname(d) != host: continue
                 aaa_info = (d.get("security") or {}).get("aaa") or {}
                 is_present = bool(aaa_info.get("present"))
-                if is_present:
-                    # AAA 방식 추출 (TACACS+, RADIUS, Local 등)
-                    auth_method = aaa_info.get("authentication") or aaa_info.get("method") or ""
-                    if "tacacs" in str(auth_method).lower():
-                        return "text", "TACACS+"
-                    elif "radius" in str(auth_method).lower():
-                        return "text", "RADIUS"
-                    elif "local" in str(auth_method).lower():
-                        return "text", "Local"
-                    return "text", "Local"  # 기본값
-                return "text", "미설정"
-            return "text", "미설정"
+            if is_present:
+                return "boolean", True
+            return "boolean", False
 
         elif metric == "mpls_ldp_present_bool":
             host = scope.get("host")
@@ -565,13 +558,9 @@ class BuilderCore:
                 mpls = ((d.get("services") or {}).get("mpls") or {})
                 ldp_info = mpls.get("ldp") or {}
                 is_present = bool(ldp_info) or bool(mpls.get("ldp_interfaces")) or bool(mpls.get("ldp_enabled"))
-                if is_present:
-                    router_id = ldp_info.get("router_id") or ldp_info.get("router-id") or ""
-                    if router_id:
-                        return "text", f"Router-ID: {router_id}"
-                    return "text", "활성화 (Router-ID 미지정)"
-                return "text", "미설정"
-            return "text", "미설정"
+            if is_present:
+                return "boolean", True
+            return "boolean", False
 
         elif metric == "interface_count":
             host = scope.get("host")
@@ -775,14 +764,14 @@ class BuilderCore:
             asn = scope.get("asn")
             miss = pre["bgp_missing_pairs_by_as"].get(asn, set())
             if len(miss) == 0:
-                return "text", "완전"
+                return "text", "OK"
             else:
                 # 누락된 피어링 목록 표시 (최대 5개)
                 miss_list = sorted(list(miss))[:5]
                 miss_str = ", ".join(miss_list)
                 if len(miss) > 5:
-                    miss_str += f" 외 {len(miss) - 5}개"
-                return "text", f"누락: {miss_str}"
+                    miss_str += f" and {len(miss) - 5} more"
+                return "text", f"Missing: {miss_str}"
         elif metric == "ibgp_missing_pairs":
             asn = scope.get("asn")
             miss = sorted(list(pre["bgp_missing_pairs_by_as"].get(asn, set())))
