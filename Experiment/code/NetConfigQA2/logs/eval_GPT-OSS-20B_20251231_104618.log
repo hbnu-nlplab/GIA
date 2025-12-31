@@ -1,0 +1,10 @@
+2025-12-31 10:46:18,868 | INFO | Initializing VLLM Evaluator...
+2025-12-31 10:46:18,870 | INFO | Model: GPT-OSS-20B (openai/gpt-oss-20b)
+2025-12-31 10:46:18,872 | INFO | Config Dir: /content/drive/Othercomputers/내 노트북 (1)/CodeSpace/GIA/Data/Pnetlab/Research_Institute_Internal_DC/configs
+2025-12-31 10:51:23,700 | INFO | Loaded 10 configuration files.
+2025-12-31 10:51:23,702 | INFO | Loading dataset from /content/drive/Othercomputers/내 노트북 (1)/CodeSpace/GIA/Data/Pnetlab/Research_Institute_Internal_DC/Dataset/Research_Institute_Internal_DC_dataset_batfish_20251230_125613.csv
+2025-12-31 10:51:23,715 | INFO | Generating prompts...
+2025-12-31 10:51:23,829 | INFO | Starting batch generation for 762 samples...
+2025-12-31 11:18:52,709 | INFO | Inference Time: 1648.88s | Throughput: 0.5 req/s
+2025-12-31 11:18:52,968 | INFO | Inference Complete. Raw results saved to /content/drive/Othercomputers/내 노트북 (1)/CodeSpace/GIA/Experiment/code/NetConfigQA2/results/GPT-OSS-20B/results_raw_20251231_104618.json
+2025-12-31 11:18:52,968 | INFO | Run 'python reanalyze_results.py "/content/drive/Othercomputers/내 노트북 (1)/CodeSpace/GIA/Experiment/code/NetConfigQA2/results/GPT-OSS-20B/results_raw_20251231_104618.json"' to score and visualize.

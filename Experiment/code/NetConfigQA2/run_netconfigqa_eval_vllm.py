@@ -28,12 +28,14 @@ except ImportError:
 # === Configuration ===
 class Config:
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    DATA_DIR = os.path.join(os.path.dirname(BASE_DIR), "Data") 
+    # 프로젝트 루트(GIA) 폴더를 찾기 위해 3단계 위로 이동
+    ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(BASE_DIR)))
+    DATA_DIR = os.path.join(ROOT_DIR, "Data") 
     LOG_DIR = os.path.join(BASE_DIR, "logs")
     RESULT_DIR = os.path.join(BASE_DIR, "results")
     
     # Defaults
-    DEFAULT_DATASET_PATH = os.path.join(DATA_DIR, "Pnetlab/Research_Institute_Internal_DC/Dataset/Research_Institute_Internal_DC_dataset_batfish_20251229_014317.csv").replace("/", os.sep)
+    DEFAULT_DATASET_PATH = os.path.join(DATA_DIR, "Pnetlab/Research_Institute_Internal_DC/Dataset/Research_Institute_Internal_DC_dataset_batfish_20251230_125613.csv").replace("/", os.sep)
     DEFAULT_CONFIG_DIR = os.path.join(DATA_DIR, "Pnetlab/Research_Institute_Internal_DC/configs").replace("/", os.sep)
     
     # Model Dictionary (AWQ optimized)
