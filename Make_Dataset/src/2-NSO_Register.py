@@ -5,7 +5,7 @@ import sys
 import os
 
 # 설정 파일 경로
-SUCCESSFUL_DEVICES_FILE = r"c:\Users\Yujin\CodeSpace\GIA\Data\Pnetlab\L2VPN\successful_devices.json"
+SUCCESSFUL_DEVICES_FILE = r"c:\Users\Yujin\CodeSpace\GIA\Data\Pnetlab\Research_Institute_Internal_DC\device_info.json"
 
 class NSORegistrar:
     def __init__(self, successful_devices_file):
@@ -26,17 +26,100 @@ class NSORegistrar:
 
     def run_nso_cmd(self, cmd_input):
         """NSO CLI 단일 명령어 실행"""
-        full_cmd = f'docker exec cisco-nso-dev bash -c "cd ~/ncs-instance && source ~/nso-6.6/ncsrc && echo \\"{cmd_input}\\" | ncs_cli -C -u admin"'
-        result = subprocess.run(full_cmd, shell=True, capture_output=True, text=True)
+        bash_script = f'cd ~/ncs-instance && source ~/nso-6.6/ncsrc && echo "{cmd_input}" | ncs_cli -C -u admin'
+        print(f"  [DEBUG] bash_script: {bash_script[:100]}...")
+        result = subprocess.run(
+            ["docker", "exec", "cisco-nso-dev", "bash", "-c", bash_script],
+            capture_output=True, text=True
+        )
         return result
 
     def run_nso_cmds(self, cmds):
         """NSO CLI 여러 명령어를 하나의 세션에서 실행"""
         # 모든 명령어를 줄바꿈으로 연결
-        combined_cmds = "\\n".join(cmds)
-        full_cmd = f'docker exec cisco-nso-dev bash -c "cd ~/ncs-instance && source ~/nso-6.6/ncsrc && echo -e \\"{combined_cmds}\\" | ncs_cli -C -u admin"'
-        result = subprocess.run(full_cmd, shell=True, capture_output=True, text=True)
+        combined_cmds = "\n".join(cmds)
+        bash_script = f'cd ~/ncs-instance && source ~/nso-6.6/ncsrc && echo -e "{combined_cmds}" | ncs_cli -C -u admin'
+        result = subprocess.run(
+            ["docker", "exec", "cisco-nso-dev", "bash", "-c", bash_script],
+            capture_output=True, text=True
+        )
         return result
+
+    def start_ncs(self):
+        """NSO 데몬(ncs) 시작"""
+        print("\n" + "="*60)
+        print("=== NSO 데몬(ncs) 시작 ===" )
+        print("="*60)
+        
+        # 1. ncs 상태 확인
+        print("\n[1/3] ncs 상태 확인 중...")
+        check_script = "cd ~/ncs-instance && source ~/nso-6.6/ncsrc && ncs --status"
+        result = subprocess.run(
+            ["docker", "exec", "cisco-nso-dev", "bash", "-c", check_script],
+            capture_output=True, text=True
+        )
+        
+        if "running" in result.stdout.lower():
+            print("  [OK] ncs가 이미 실행 중입니다.")
+            return True
+        
+        print("  [INFO] ncs가 실행 중이 아닙니다. 시작합니다...")
+        
+        # 2. ncs 시작
+        print("\n[2/3] ncs 시작 중...")
+        start_script = "cd ~/ncs-instance && source ~/nso-6.6/ncsrc && ncs"
+        result = subprocess.run(
+            ["docker", "exec", "cisco-nso-dev", "bash", "-c", start_script],
+            capture_output=True, text=True
+        )
+        
+        if result.returncode == 0:
+            print("  [OK] ncs 시작 명령 실행 성공")
+        else:
+            print(f"  [WARNING] ncs 시작 명령 실행 중 경고: {result.stderr[:200]}")
+        
+        # 3. ncs가 완전히 시작될 때까지 대기
+        print("\n[3/3] ncs 초기화 대기 중...")
+        max_retries = 10
+        for i in range(max_retries):
+            time.sleep(2)
+            result = subprocess.run(
+                ["docker", "exec", "cisco-nso-dev", "bash", "-c", check_script],
+                capture_output=True, text=True
+            )
+            if "running" in result.stdout.lower():
+                print(f"  [OK] ncs가 성공적으로 시작되었습니다! (시도 {i+1}/{max_retries})")
+                return True
+            print(f"  [INFO] ncs 시작 대기 중... ({i+1}/{max_retries})")
+        
+        print("  [ERROR] ncs 시작 시간 초과")
+        return False
+
+    def create_authgroup(self):
+        """NSO authgroup 생성"""
+        authgroup = self.global_settings['nso_authgroup']
+        # JSON에서 인증 정보 읽기 (없으면 기본값 사용)
+        username = self.global_settings.get('nso_username', 'admin')
+        password = self.global_settings.get('nso_password', 'admin')
+        
+        print(f"\n[AUTH] authgroup '{authgroup}' 생성 중...")
+        
+        # authgroup 생성 명령
+        cmds = [
+            "config",
+            f"devices authgroups group {authgroup} default-map remote-name {username}",
+            f"devices authgroups group {authgroup} default-map remote-password {password}",
+            "commit",
+            "exit"
+        ]
+        
+        res = self.run_nso_cmds(cmds)
+        if "Commit complete" in res.stdout or "No modifications" in res.stdout:
+            print(f"  [OK] authgroup '{authgroup}' 생성 완료")
+            return True
+        else:
+            print(f"  [INFO] authgroup 설정 결과: {res.stdout[:200]}")
+            return True  # 이미 존재할 수 있음
 
     def register_to_nso(self, device):
         """NSO에 장비 등록 및 동기화"""
@@ -67,12 +150,22 @@ class NSORegistrar:
             f"devices device {name} ssh-algorithms cipher aes128-cbc",
             f"devices device {name} ssh-algorithms cipher 3des-cbc",
             f"devices device {name} ssh-algorithms cipher aes256-cbc",
-            f"devices device {name} ssh-algorithms kex diffie-hellman-group14-sha1",
+            f"devices device {name} ssh-algorithms cipher aes128-ctr",
+            f"devices device {name} ssh-algorithms cipher aes192-ctr",
+            f"devices device {name} ssh-algorithms cipher aes256-ctr",
+            f"devices device {name} ssh-algorithms kex diffie-hellman-group-exchange-sha1",
+            f"devices device {name} ssh-algorithms mac hmac-sha1",
             f"devices device {name} ssh-algorithms mac hmac-sha1",
             f"devices device {name} ssh-algorithms public-key ssh-rsa",
             "commit",
             "exit"
         ]
+
+        # 디바이스 그룹 설정 (있는 경우)
+        if 'device_group' in device:
+            group = device['device_group']
+            print(f"  [INFO] Device Group: {group}")
+            cmds.insert(-2, f"devices device-group {group} device-name {name}")
 
         print(f"\n[1/3] NSO 설정 적용 중... ({len(cmds)}개 명령)")
         res = self.run_nso_cmds(cmds)
@@ -102,6 +195,7 @@ class NSORegistrar:
             print(f"  [OK] SSH 키 이미 존재함 (변경 없음)")
         else:
             print(f"  [FAIL] SSH 키 가져오기 실패")
+            print(f"    - Stdout: {res.stdout}") # 전체 출력 확인
             if res.stderr:
                 print(f"    - Stderr: {res.stderr[:200]}")
 
@@ -124,6 +218,14 @@ class NSORegistrar:
         print("\n" + "="*60)
         print("=== NSO 장비 등록 시작 ===")
         print("="*60)
+
+        # NSO 데몬 시작
+        if not self.start_ncs():
+            print("\n[ERROR] NSO 데몬(ncs)을 시작할 수 없습니다. 스크립트를 종료합니다.")
+            return 0
+
+        # Authgroup 생성
+        self.create_authgroup()
 
         successful_registrations = 0
 

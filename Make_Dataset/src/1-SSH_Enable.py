@@ -7,7 +7,7 @@ import os
 
 # 설정 파일 경로 (사용자 환경에 맞게 수정 필요)
 # 실제 경로를 확인해주세요. 예: ./device_info.json
-CONFIG_FILE = r"c:\Users\Yujin\CodeSpace\GIA\Data\Pnetlab\L2VPN\device_info.json"
+CONFIG_FILE = r"c:\Users\Yujin\CodeSpace\GIA\Data\Pnetlab\Research_Institute_Internal_DC\device_info.json"
 
 class SSHEnabler:
     def __init__(self, config_file):
@@ -92,7 +92,7 @@ class SSHEnabler:
 
             # 5. OOB 인터페이스 설정
             print(f"[5/11] OOB 인터페이스 설정...")
-            await send_cmd("interface Ethernet0/0", debug_msg="Interface Eth0/0")
+            await send_cmd(f"interface {device['oob_intf']}", debug_msg=f"Interface {device['oob_intf']}")
             await send_cmd(f"ip address {device['oob_ip']} 255.255.255.0", debug_msg="IP Address")
             await send_cmd("no shutdown", debug_msg="No Shutdown", sleep_time=2.0) # 인터페이스 켜지는 시간 대기
             await send_cmd("exit", debug_msg="Exit Interface")
@@ -115,7 +115,7 @@ class SSHEnabler:
             await asyncio.sleep(1)
             
             # 키 생성 명령
-            writer.write("crypto key generate rsa general-keys modulus 1024\r\n")
+            writer.write("crypto key generate rsa general-keys modulus 2048\r\n")
             print("  [WAIT] 키 생성 중... (10초 대기)")
             await asyncio.sleep(10) # 넉넉하게 대기
 
@@ -138,7 +138,7 @@ class SSHEnabler:
             # 11. 저장
             print(f"[11/11] 설정 저장...")
             await send_cmd("end", debug_msg="End Config")
-            await send_cmd("write memory", debug_msg="Write Memory", sleep_time=5.0) # 저장 시간 대기
+            await send_cmd("write memory", debug_msg="Write Memory", sleep_time=10.0) # 저장 시간 대기
 
             print(f"\n[SUCCESS] {device['name']} 설정 완료. 연결 종료.")
             writer.close()

@@ -258,6 +258,23 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
                     "mop_xenabled": mop_enabled,
                     "status": status,
                 })
+
+            # GigabitEthernet 인터페이스 파싱
+            for gig in findall(iface_root_ios, "ios:GigabitEthernet"):
+                nm = text(find(gig, "ios:name"))
+                if_name = f"GigabitEthernet{nm}" if nm else "GigabitEthernet"
+                ip = text(find(gig, "ios:ip/ios:address/ios:primary/ios:address"))
+                mask = text(find(gig, "ios:ip/ios:address/ios:primary/ios:mask"))
+                ipv4 = f"{ip}/{mask}" if (ip and mask) else (ip or None)
+                vlan = text(find(gig, "ios:encapsulation/ios:dot1Q/ios:vlan-id"))
+                status = "down" if find(gig, "ios:shutdown") is not None else "up"
+                facts["interfaces"].append({
+                    "name": if_name,
+                    "ipv4": ipv4,
+                    "vlan": vlan,
+                    "vrf": None,
+                    "status": status,
+                })
     except Exception:
         pass
 
@@ -415,6 +432,7 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
     facts["routing"].setdefault("bgp", bgp)
 
     ospf = {"process_ids": [], "areas": {}}
+    # XR OSPF
     ospf_root = find(dev, "ncs:config/xr:router/xr:ospf")
     if ospf_root is not None:
         pid = text(find(ospf_root, "xr:name"))
@@ -426,6 +444,60 @@ def parse_xr_device(tree: ET.ElementTree) -> Dict[str, Any]:
                 continue
             if_list = [text(e) for e in findall(area, "xr:interface/xr:name")]
             ospf["areas"][aid] = [x for x in if_list if x]
+
+    # IOS OSPF
+    ospf_root_ios = find(dev, "ncs:config/ios:router/ios:ospf")
+    if ospf_root_ios is not None:
+        pid = text(find(ospf_root_ios, "ios:id"))
+        if pid:
+            ospf["process_ids"].append(pid)
+        
+        def _ip_to_int(ip_str):
+            try:
+                parts = [int(x) for x in ip_str.split('.')]
+                return (parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3]
+            except Exception:
+                return 0
+
+        def _match_network(if_ip, if_mask, net_ip, net_wildcard):
+            try:
+                if not (if_ip and if_mask and net_ip and net_wildcard):
+                    return False
+                
+                if_val = _ip_to_int(if_ip)
+                net_val = _ip_to_int(net_ip)
+                wc_val = _ip_to_int(net_wildcard)
+                
+                inverted_wc = ~wc_val & 0xFFFFFFFF
+                return (if_val & inverted_wc) == (net_val & inverted_wc)
+            except Exception:
+                return False
+
+        # Collect configured networks
+        networks = []
+        for net in findall(ospf_root_ios, "ios:network"):
+            networks.append({
+                "ip": text(find(net, "ios:ip")),
+                "mask": text(find(net, "ios:mask")), 
+                "area": text(find(net, "ios:area"))
+            })
+            
+        # Map interfaces to areas
+        for iface in facts["interfaces"]:
+            if not iface.get("ipv4"):
+                continue
+            try:
+                ip_part, mask_part = iface["ipv4"].split('/')
+                for net in networks:
+                    if _match_network(ip_part, mask_part, net["ip"], net["mask"]):
+                        aid = net["area"]
+                        if aid not in ospf["areas"]:
+                            ospf["areas"][aid] = []
+                        if iface["name"] not in ospf["areas"][aid]:
+                            ospf["areas"][aid].append(iface["name"])
+            except Exception:
+                pass
+
     facts["routing"]["ospf"] = ospf
 
     return facts

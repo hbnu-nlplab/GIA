@@ -96,9 +96,9 @@ def default_patterns(metric: str) -> str:
         "routing_table_entry_count": "{host} 장비의 라우팅 테이블 엔트리는 총 몇 개입니까?",
         
         # === Security_Inventory (L1) ===
-        "ssh_present_bool": "{host} 장비의 SSH 버전과 활성화 상태를 알려주세요. [답변 형식: 'SSHv1' / 'SSHv2' / '비활성화']",
+        "ssh_present_bool": "{host} 장비의 SSH 서비스가 활성화되어 있습니까? [답변 형식: true 또는 false]",
         "ssh_version_text": "{host} 장비의 SSH 버전은 무엇입니까?",
-        "aaa_present_bool": "{host} 장비의 AAA 인증 방식을 알려주세요. [답변 형식: 'TACACS+' / 'RADIUS' / 'Local' / '미설정']",
+        "aaa_present_bool": "{host} 장비의 AAA 서비스가 활성화되어 있습니까? [답변 형식: true 또는 false]",
         "vty_transport_input_text": "{host} 장비의 VTY transport input 설정은 무엇입니까?",
         "vty_login_mode_text": "{host} 장비의 VTY line 로그인 방식은 무엇입니까?",
         
@@ -123,7 +123,7 @@ def default_patterns(metric: str) -> str:
         "vrf_rd_map": "{host} 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요.",
         "rt_import_count": "{host} 장비의 Route Target Import 설정은 총 몇 개입니까?",
         "rt_export_count": "{host} 장비의 Route Target Export 설정은 총 몇 개입니까?",
-        "mpls_ldp_present_bool": "{host} 장비의 MPLS LDP Router-ID를 알려주세요. [답변 형식: 'Router-ID: X.X.X.X' 또는 '미설정']",
+        "mpls_ldp_present_bool": "{host} 장비의 MPLS LDP가 활성화되어 있습니까? [답변 형식: true 또는 false]",
         "l2vpn_pw_id_set": "{host} 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.",
         
         # === Security_Policy (L2) ===
@@ -147,7 +147,7 @@ def default_patterns(metric: str) -> str:
         "l2vpn_mismatch_count": "PW-ID 불일치 또는 단방향 L2VPN 회선은 총 몇 개입니까?",
         
         # === BGP_Consistency (L3) ===
-        "ibgp_fullmesh_ok": "AS {asn}의 iBGP Full-Mesh 상태와 누락된 피어링을 알려주세요. [답변 형식: '완전' 또는 '누락: A↔B, C↔D']",
+        "ibgp_fullmesh_ok": "AS {asn}의 iBGP Full-Mesh 상태와 누락된 피어링을 알려주세요. [답변 형식: 'OK' 또는 'Missing: A<->B, C<->D']",
         "ibgp_missing_pairs": "AS {asn}의 iBGP Full-Mesh에서 누락된 장비쌍 목록을 알려주세요.",
         "ibgp_missing_pairs_count": "AS {asn}의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까?",
         "ibgp_under_peered_devices": "AS {asn}에서 iBGP 피어 수가 부족한 장비 목록을 알려주세요.",
@@ -291,9 +291,9 @@ METRIC_AGG = {
     "syslog_server_list": "set",
     "interface_status_map": "map",
     "routing_table_entry_count": "number",
-    "ssh_present_bool": "text",  # SSHv1/SSHv2/비활성화 (Boolean 피함)
+    "ssh_present_bool": "boolean",
     "ssh_version_text": "text",
-    "aaa_present_bool": "text",  # TACACS+/RADIUS/Local/미설정 (Boolean 피함)
+    "aaa_present_bool": "boolean",
     "vty_transport_input_text": "text",
     "vty_login_mode_text": "text",
     "interface_count": "numeric",
@@ -312,7 +312,7 @@ METRIC_AGG = {
     "vrf_rd_map": "map",
     "rt_import_count": "numeric",
     "rt_export_count": "numeric",
-    "mpls_ldp_present_bool": "text",  # Router-ID: X.X.X.X / 미설정 (Boolean 피함)
+    "mpls_ldp_present_bool": "boolean",
     "l2vpn_pw_id_set": "set",
     
     # === L2 metrics ===
@@ -330,7 +330,7 @@ METRIC_AGG = {
     "l2vpn_pairs": "set",
     
     # === L3 metrics ===
-    "ibgp_fullmesh_ok": "text",  # 완전 / 누락: A↔B, C↔D (Boolean 피함)
+    "ibgp_fullmesh_ok": "text",  # OK / Missing: ...
     "ibgp_missing_pairs": "set",
     "ibgp_missing_pairs_count": "numeric",
     "ibgp_under_peered_devices": "set",
