@@ -9,10 +9,10 @@ from openai import OpenAI
 # ---------------------------------------------------------
 RAW_DATA_PATH = "../data/teleQnA/TeleQnA.json"
 DATA_PATH = "../data/llm_answer_teleqna/"
-FINAL_JSON = os.path.join(DATA_PATH, "llm_answer_gpt4o.json")
+FINAL_JSON = os.path.join(DATA_PATH, "llm_answer_gpt4o-mini.json")
 
 # 사용할 모델명 (OpenAI Batch API 지원 모델)
-MODELS = ["gpt-4o"]
+MODELS = ["gpt-4o-mini"]
 
 # API 키 로드
 load_dotenv("openai_key.env")
@@ -77,16 +77,6 @@ You are a Senior Network Specification Engineer. Your task is to select the corr
 ### Rules
 1. **Knowledge Base:** Use your internal knowledge to identify the correct option. Pay close attention to the specific standard version mentioned (e.g., [3GPP Release 18]).
 2. **Format:** Output the answer as "option [num]: [Content]".
-3. **Brevity:** If the content is long, summarize it to capture the key technical meaning within 50 characters.
-
-### Example
-Question: "When are devices required to send the GTS Request command? [IEEE 802.15.4]"
-Options:
-option 1: Only devices without a short address
-option 2: Only devices using extended addressing
-option 3: Only devices capable of sending it
-option 4: All devices
-Answer: "option 3: Only devices capable of sending it"
 
 ---
 ### Question
@@ -104,14 +94,13 @@ Answer:
             
             # API 요청 객체 생성
             entry = {
-                "custom_id": f"{idx}", # 나중에 순서 맞출 때 사용
+                "custom_id": f"{idx}",
                 "method": "POST",
                 "url": "/v1/chat/completions",
                 "body": {
                     "model": model,
                     "messages": [{"role": "user", "content": prompt}],
-                    "temperature": 0.0, # 객관식 문제이므로 일관성을 위해 0.0 권장
-                    "max_tokens": 100
+                    "temperature": 0
                 }
             }
             f.write(json.dumps(entry, ensure_ascii=False) + "\n")

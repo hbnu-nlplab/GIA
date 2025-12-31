@@ -1,0 +1,1392 @@
+[
+  {
+    "question": "What is the maximum end-to-end latency specified for a UK Home?",
+    "gold_answer": "200ms",
+    "gpt-4o-mini": "200ms"
+  },
+  {
+    "question": "How many PIN Elements are there in the service area for the UK Home use case?",
+    "gold_answer": "31",
+    "gpt-4o-mini": "31"
+  },
+  {
+    "question": "What is the maximum allowed inaccuracy for a boundary clock (BC) as per IEC 61850-9-3?",
+    "gold_answer": "Answer: <200ns",
+    "gpt-4o-mini": "< 200ns"
+  },
+  {
+    "question": "What is the estimated typical power load in the CBD for High growth rate scenario in 2020?",
+    "gold_answer": "1043 MW",
+    "gpt-4o-mini": "1043 MW"
+  },
+  {
+    "question": "What is the estimated typical power load in the CBD for the Middle growth rate scenario in 2030?",
+    "gold_answer": "1348 MW",
+    "gpt-4o-mini": "1348 MW"
+  },
+  {
+    "question": "What is the power load density in the CBD for the Low growth rate scenario in 2020?",
+    "gold_answer": "18.91 MW/km2",
+    "gpt-4o-mini": "18.91 MW/km²"
+  },
+  {
+    "question": "What is the estimated power load density in the CBD for the High growth rate scenario in 2030?",
+    "gold_answer": "28.89 MW/km2",
+    "gpt-4o-mini": "28.89 MW/km²"
+  },
+  {
+    "question": "What is the maximum message size allowed for high-speed current differential protection with a service bitrate of 1.2 Mbit/s and a maximum end-to-end latency of 15 ms?",
+    "gold_answer": "<245 bytes",
+    "gpt-4o-mini": "< 245 byte"
+  },
+  {
+    "question": "What is the number of UEs allowed for high-speed current differential protection with a service bitrate of 1.2 Mbit/s and an end-to-end latency of 10 ms?",
+    "gold_answer": "≤100/km2",
+    "gpt-4o-mini": "<= 100/km2"
+  },
+  {
+    "question": "What is the reporting rate corresponding to a reporting period of 10 milliseconds according to IEEE Std C37.118™-2011?",
+    "gold_answer": "100",
+    "gpt-4o-mini": "100 Hz"
+  },
+  {
+    "question": "What is the reporting period for a reporting rate of 25 Hz according to IEEE Std C37.118™-2011?",
+    "gold_answer": "40 ms",
+    "gpt-4o-mini": "40 ms"
+  },
+  {
+    "question": "What is the maximum end-to-end communication latency for a P Class PMU reporting rate of 25",
+    "gold_answer": "40 ms",
+    "gpt-4o-mini": "40 ms"
+  },
+  {
+    "question": "What is the maximum end-to-end communication latency for an M Class PMU reporting rate of 100?",
+    "gold_answer": "40 ms",
+    "gpt-4o-mini": "33.3 ms"
+  },
+  {
+    "question": "What field indicates whether the UE is authorized to use the multicast MBS service?",
+    "gold_answer": "MBS allowed",
+    "gpt-4o-mini": "MBS allowed"
+  },
+  {
+    "question": "What field identifies the MBS Session(s) that the UE is allowed to join?",
+    "gold_answer": "Allowed MBS Session ID(s)",
+    "gpt-4o-mini": "Allowed MBS Session ID(s)"
+  },
+  {
+    "question": "What field indicates that the UE is preferred to be kept connected when the related MBS session the UE joined is active?",
+    "gold_answer": "MBS assistance information",
+    "gpt-4o-mini": "MBS assistance information"
+  },
+  {
+    "question": "What NF services are provided by NEF?",
+    "gold_answer": "Nnef_Authentication",
+    "gpt-4o-mini": "Nnef_Authentication"
+  },
+  {
+    "question": "What QCI value is utilized for EPS unicast bearers in Urgent real-time mode for MCVideo?",
+    "gold_answer": "67",
+    "gpt-4o-mini": "67"
+  },
+  {
+    "question": "What QCI value is utilized for EPS unicast bearers in Non real-time mode for MCVideo?",
+    "gold_answer": "4",
+    "gpt-4o-mini": "4"
+  },
+  {
+    "question": "What is the source of the Charging Data Request message?",
+    "gold_answer": "AMF",
+    "gpt-4o-mini": "AMF"
+  },
+  {
+    "question": "What is the destination of the Charging Data Request message?",
+    "gold_answer": "CHF",
+    "gpt-4o-mini": "CHF"
+  },
+  {
+    "question": "What is the destination of the Charging Data Response message?",
+    "gold_answer": "AMF",
+    "gpt-4o-mini": "CHF"
+  },
+  {
+    "question": "What is the Type/Reference for the Transaction identifier Information Element?",
+    "gold_answer": "Transaction identifier",
+    "gpt-4o-mini": "Transaction identifier: 3.3"
+  },
+  {
+    "question": "What is the Presence of the Facility Message type Information Element?",
+    "gold_answer": "M",
+    "gpt-4o-mini": "M"
+  },
+  {
+    "question": "What is the Format of the Facility Message type Information Element?",
+    "gold_answer": "V",
+    "gpt-4o-mini": "V"
+  },
+  {
+    "question": "What is the Length range for the Transaction identifier Information Element?",
+    "gold_answer": "1/2",
+    "gpt-4o-mini": "1/2"
+  },
+  {
+    "question": "What is the default priority level associated with PQI value 33?",
+    "gold_answer": "3",
+    "gpt-4o-mini": "3"
+  },
+  {
+    "question": "What is the packet delay budget for PQI value 34?",
+    "gold_answer": "600ms",
+    "gpt-4o-mini": "600 ms"
+  },
+  {
+    "question": "What resource type is associated with PQI value 24?",
+    "gold_answer": "GBR",
+    "gpt-4o-mini": "GBR"
+  },
+  {
+    "question": "What is the default averaging window for PQI value 33?",
+    "gold_answer": "2000ms",
+    "gpt-4o-mini": "2000 ms"
+  },
+  {
+    "question": "What is the packet error rate for PQI value 26?",
+    "gold_answer": "10^-3",
+    "gpt-4o-mini": "10-3"
+  },
+  {
+    "question": "What is the default maximum data burst volume for PQI value 92?",
+    "gold_answer": "20000 bytes",
+    "gpt-4o-mini": "20000 bytes"
+  },
+  {
+    "question": "What is the access right for IP Multicast Addressing information related to TV Channel 1 for SUPI for 5G-RG 1?",
+    "gold_answer": "Fully Allowed",
+    "gpt-4o-mini": "Fully allowed"
+  },
+  {
+    "question": "What access right is enabled for IP Multicast Addressing information related to TV Channel 3 for SUPI for 5G-RG 1?",
+    "gold_answer": "Preview Allowed",
+    "gpt-4o-mini": "Preview allowed"
+  },
+  {
+    "question": "For SUPI for 5G-RG 2, what is the access status for IP Multicast Addressing information related to TV Channel 3?",
+    "gold_answer": "Not Allowed",
+    "gpt-4o-mini": "Not allowed"
+  },
+  {
+    "question": "For SUPI for 5G-RG 3, what is the access status for IP Multicast Addressing information related to TV Channel 2?",
+    "gold_answer": "Preview Allowed",
+    "gpt-4o-mini": "Not allowed"
+  },
+  {
+    "question": "What is the description of the Functional alias Information Element?",
+    "gold_answer": "The functional alias of the calling party",
+    "gpt-4o-mini": "The functional alias of the calling party"
+  },
+  {
+    "question": "What is the status of the MCPTT ID Information Element?",
+    "gold_answer": "M",
+    "gpt-4o-mini": "M"
+  },
+  {
+    "question": "What is the TIN value to be set by the UE when receiving an Attach Accept via E-UTRAN message?",
+    "gold_answer": "GUTI",
+    "gpt-4o-mini": "GUTI"
+  },
+  {
+    "question": "What is the TIN value to be set by the UE when receiving a RAU Accept message not indicating ISR Activated?",
+    "gold_answer": "P-TMSI",
+    "gpt-4o-mini": "P-TMSI"
+  },
+  {
+    "question": "What is the operation semantics for the Sdd_ DataStorage_Creation API?",
+    "gold_answer": "Request/Response",
+    "gpt-4o-mini": "Request/Response"
+  },
+  {
+    "question": "Who is a consumer for the Sdd_ DataStorage_Query operation?",
+    "gold_answer": "SEALDD client, VAL server, other SEALDD server",
+    "gpt-4o-mini": "SEALDD client, VAL server, other SEALDD server"
+  },
+  {
+    "question": "What API operations are associated with the Sdd_DataStorage_Delivery_Subscription API?",
+    "gold_answer": "Request",
+    "gpt-4o-mini": "Request"
+  },
+  {
+    "question": "What is the description of the UNREACHABLE_SMS_SC application error?",
+    "gold_answer": "The delivery of the MO short message failed because the response is timeout.",
+    "gpt-4o-mini": "The delivery of the MO short message failed because the response is timeout."
+  },
+  {
+    "question": "What HTTP status code is associated with the SMS_PAYLOAD_MISSING application error?",
+    "gold_answer": "400 Bad Request",
+    "gpt-4o-mini": "400 Bad Request"
+  },
+  {
+    "question": "What is the description of the HTTP status code 504 Gateway Timeout?",
+    "gold_answer": "The delivery of the MO short message failed because the response is timeout.",
+    "gpt-4o-mini": "The delivery of the MO short message failed because the response is timeout."
+  },
+  {
+    "question": "What is the mapping server entity for the Ml3g service based interface?",
+    "gold_answer": "Legacy 3GPP Message Gateway",
+    "gpt-4o-mini": "Legacy 3GPP Message Gateway"
+  },
+  {
+    "question": "What application function entity corresponds to the Mbg service based interface?",
+    "gold_answer": "Broadcast Message Gateway function",
+    "gpt-4o-mini": "Broadcast Message Gateway function"
+  },
+  {
+    "question": "What is the mapping server entity for the Mn3g service based interface?",
+    "gold_answer": "Non-3GPP Message Gateway",
+    "gpt-4o-mini": "Non-3GPP Message Gateway"
+  },
+  {
+    "question": "What is the typical original spatial resolution for the Basic H.264/AVC operation point?",
+    "gold_answer": "Up to 4k",
+    "gpt-4o-mini": "Up to 4k"
+  },
+  {
+    "question": "What is the frame rate for the Flexible H.265/HEVC operation point?",
+    "gold_answer": "Up to 120 Hz",
+    "gpt-4o-mini": "Up to 120 Hz"
+  },
+  {
+    "question": "What is the transfer characteristic for the Main 8K H.265/HEVC operation point?",
+    "gold_answer": "BT.709, BT.2020, BT.2100 PQ, BT.2100 HLG",
+    "gpt-4o-mini": "BT.709, BT.2100 PQ, BT.2100 HLG"
+  },
+  {
+    "question": "What is the bit depth for the Main 8K H.265/HEVC operation point?",
+    "gold_answer": "10",
+    "gpt-4o-mini": "10"
+  },
+  {
+    "question": "What is the sample entry used for the Basic Video media profile?",
+    "gold_answer": "resv, avc1",
+    "gpt-4o-mini": "resv; avc1"
+  },
+  {
+    "question": "Which operation point is associated with the Main Video media profile?",
+    "gold_answer": "Main H.265/HEVC or Main 8K H.265/HEVC",
+    "gpt-4o-mini": "Main H.265/HEVC or Main 8K H.265/HEVC"
+  },
+  {
+    "question": "What is the DASH integration for the Basic Video media profile?",
+    "gold_answer": "Single Adaptation Set, Single Representation streaming",
+    "gpt-4o-mini": "Single Adaptation Set; Single Representation streaming"
+  },
+  {
+    "question": "What is the MIME type for MPEG-H Audio LC Profile Level 1?",
+    "gold_answer": "audio/mp4",
+    "gpt-4o-mini": "audio/mp4"
+  },
+  {
+    "question": "What is the codecs parameter for MPEG-H Audio LC Profile Level 2?",
+    "gold_answer": "mhm1.0x0C",
+    "gpt-4o-mini": "mhm1.0x0C"
+  },
+  {
+    "question": "What ISO BMFF Encapsulation is associated with MPEG-H Audio LC Profile Level 3?",
+    "gold_answer": "ISO/IEC 23008-3",
+    "gpt-4o-mini": "ISO/IEC 23008-3"
+  },
+  {
+    "question": "What is the profile associated with MPEG-H Audio LC Profile Level 1 codec?",
+    "gold_answer": "oabl",
+    "gpt-4o-mini": "'oabl'"
+  },
+  {
+    "question": "What is the permitted frame rate for a spatial resolution per eye of 3072 × 1536?",
+    "gold_answer": "24; 25; 30; 50; 60; 90; 100",
+    "gpt-4o-mini": "24; 25; 30; 50; 60; 90; 100"
+  },
+  {
+    "question": "Which spatial resolution per eye supports a frame rate of 120 Hz?",
+    "gold_answer": "2880 × 1440, 2048 × 1024",
+    "gpt-4o-mini": "2880 x 1440; 2048 x 1024"
+  },
+  {
+    "question": "What is the face label for face index 2?",
+    "gold_answer": "PY",
+    "gpt-4o-mini": "PY"
+  },
+  {
+    "question": "Which face label corresponds to the back face with a negative X axis value?",
+    "gold_answer": "NX",
+    "gpt-4o-mini": "NX"
+  },
+  {
+    "question": "Which face index corresponds to the back face with a negative X axis value?",
+    "gold_answer": "1",
+    "gpt-4o-mini": "1"
+  },
+  {
+    "question": "What is the note associated with face index 4?",
+    "gold_answer": "Top face with positive Z axis value",
+    "gpt-4o-mini": "Top face with positive Z axis value"
+  },
+  {
+    "question": "Which face index is labeled as NZ?",
+    "gold_answer": "5",
+    "gpt-4o-mini": "5"
+  },
+  {
+    "question": "What is the accuracy for Electrical Signal Power levels greater than or equal to -50 dBm?",
+    "gold_answer": "± 0.2 dB",
+    "gpt-4o-mini": "±0.2 dB for levels ≥ -50 dBm"
+  },
+  {
+    "question": "What is the accuracy for Electrical Signal Power levels <-50 dBm?",
+    "gold_answer": "± 0.4 dB",
+    "gpt-4o-mini": "± 0.4 dB"
+  },
+  {
+    "question": "What is the accuracy for Sound pressure measurements?",
+    "gold_answer": "± 0.7 dB",
+    "gpt-4o-mini": "±0.7 dB"
+  },
+  {
+    "question": "What is the accuracy for Time measurements?",
+    "gold_answer": "± 5%",
+    "gpt-4o-mini": "+- 5%"
+  },
+  {
+    "question": "What is the accuracy for Sound pressure level at MRP from 200 Hz to 8 kHz?",
+    "gold_answer": "± 1 dB",
+    "gpt-4o-mini": "+- 1 dB"
+  },
+  {
+    "question": "What is the accuracy for Mouth simulator equalization in the 1/3rd octave bands from 100 Hz to 200 Hz?",
+    "gold_answer": "± 1 dB",
+    "gpt-4o-mini": "± 1 dB"
+  },
+  {
+    "question": "In which frequency range is the accuracy for Sound pressure level at MRP ± 3 dB?",
+    "gold_answer": "100 Hz to 200 Hz",
+    "gpt-4o-mini": "100 Hz to 200 Hz"
+  },
+  {
+    "question": "What is the octave band pressure level at a center frequency of 250 Hz?",
+    "gold_answer": "-65 dBPa",
+    "gpt-4o-mini": "-65 dBPa"
+  },
+  {
+    "question": "At which center frequency is the octave band pressure level -60 dBPa?",
+    "gold_answer": "125 Hz",
+    "gpt-4o-mini": "125 Hz"
+  },
+  {
+    "question": "What is the duration (D) for category B?",
+    "gold_answer": "D < 25 ms",
+    "gpt-4o-mini": "D < 25 ms"
+  },
+  {
+    "question": "What is the level difference (ΔL) range for category A2?",
+    "gold_answer": "-15 dB ≤ ΔL < -4 dB",
+    "gpt-4o-mini": "-15 dB <= ΔL < -4 dB"
+  },
+  {
+    "question": "What is the description for category E?",
+    "gold_answer": "Very short residual echo",
+    "gpt-4o-mini": "Very short residual echo"
+  },
+  {
+    "question": "What is the duration (D) for category C?",
+    "gold_answer": "25 ms ≤ D < 150 ms",
+    "gpt-4o-mini": "25 ms <= D < 150 ms"
+  },
+  {
+    "question": "What is the description for category A1?",
+    "gold_answer": "Full-duplex and full transparency",
+    "gpt-4o-mini": "Full-duplex and full transparency"
+  },
+  {
+    "question": "What is the file name associated with the noise recording in a cafeteria?",
+    "gold_answer": "Mensa_binaural",
+    "gpt-4o-mini": "Mensa_binaural"
+  },
+  {
+    "question": "What is the duration of the recording at the pavement titled Outside_Traffic_Road_binaural?",
+    "gold_answer": "30s",
+    "gpt-4o-mini": "30 s"
+  },
+  {
+    "question": "What is the noise level on the L channel for the recording at the drivers' position?",
+    "gold_answer": "L: 69.1 dB(A)",
+    "gpt-4o-mini": "L: 69,1 dB(A)"
+  },
+  {
+    "question": "What is the type for the recording at the sales counter?",
+    "gold_answer": "Binaural",
+    "gpt-4o-mini": "Binaural"
+  },
+  {
+    "question": "What is the description for Crossroadnoise?",
+    "gold_answer": "HATS and microphone array standing outside near a crossroad",
+    "gpt-4o-mini": "HATS & mic array outside near crossroad"
+  },
+  {
+    "question": "What is the length of the noise recording for the condition Cafeteria?",
+    "gold_answer": "30s",
+    "gpt-4o-mini": "30 s"
+  },
+  {
+    "question": "What is the binaural L level for the Sales Counter?",
+    "gold_answer": "66.7 dB",
+    "gpt-4o-mini": "66.7 dB"
+  },
+  {
+    "question": "What are the binaural L and R levels for the Sales Counter?",
+    "gold_answer": "Binaural L: 66.7 dB, Binaural R: 66.6 dB",
+    "gpt-4o-mini": "Binaural L: 66.7 dB; Binaural R: 66.6 dB"
+  },
+  {
+    "question": "What are the hands-free levels for the noise condition Callcenter 2?",
+    "gold_answer": "1: 59.3dB, 2: 59.3dB, 3: 59.5dB, 4: 59.6dB, 5: 59.4dB, 6: 59.3dB, 7: 59.3dB, 8: 59.5dB",
+    "gpt-4o-mini": "1: 59.3 dB; 2: 59.3 dB; 3: 59.5 dB; 4: 59.6 dB; 5: 59.4 dB; 6: 59.3 dB; 7: 59.3 dB; 8: 59.5 dB"
+  },
+  {
+    "question": "Which feature is associated with the procedure definition clause 6.2.3 for uplink media streaming?",
+    "gold_answer": "Content publishing",
+    "gpt-4o-mini": "Content publishing"
+  },
+  {
+    "question": "Which feature is associated with the procedure definition clause 8?",
+    "gold_answer": "Edge processing",
+    "gpt-4o-mini": "Edge processing"
+  },
+  {
+    "question": "What is the procedure definition clause for content publishing in the context of uplink media streaming?",
+    "gold_answer": "6.2.3",
+    "gpt-4o-mini": "6.2.3"
+  },
+  {
+    "question": "What is the data type of the Location HTTP response header?",
+    "gold_answer": "string",
+    "gpt-4o-mini": "string"
+  },
+  {
+    "question": "What is the cardinality of the Location header?",
+    "gold_answer": "1",
+    "gpt-4o-mini": "M, 1"
+  },
+  {
+    "question": "What are the valid values for the Access-Control-Allow-Methods?",
+    "gold_answer": "POST, PUT, DELETE",
+    "gpt-4o-mini": "POST, PUT, DELETE"
+  },
+  {
+    "question": "For the Media Access Function User Plane (Media Client), which device serves this function in Type 3a?",
+    "gold_answer": "Tethering device",
+    "gpt-4o-mini": "Tethering device"
+  },
+  {
+    "question": "In Type 3b, which device serves as the Media Access Function Control Plane (Media Session Handler)?",
+    "gold_answer": "Tethering device",
+    "gpt-4o-mini": "Tethering device"
+  },
+  {
+    "question": "How is Media Processing handled for Type 3b?",
+    "gold_answer": "Either done on the Glasses device or it is split with the network.",
+    "gpt-4o-mini": "Either done on Glasses or split with network."
+  },
+  {
+    "question": "In Type 3b, which device serves as the Media Access Function User Plane (Media Client)?",
+    "gold_answer": "AR Glass",
+    "gpt-4o-mini": "AR Glass"
+  },
+  {
+    "question": "What is the average number of PIN Elements per square meter of the service area for a US home?",
+    "gold_answer": "0.7 elements per sq m (150/214)",
+    "gpt-4o-mini": "0.70 PIN Elements/sq m"
+  },
+  {
+    "question": "Is the maximum end to end latency for a US home and a UK home the same?",
+    "gold_answer": "Yes. Both are 200ms",
+    "gpt-4o-mini": "Yes, 200ms for both US and UK homes."
+  },
+  {
+    "question": "What is the combined number of sockets and light bulbs in the UK home?",
+    "gold_answer": "43 (31 sockets and 12 lightbulbs)",
+    "gpt-4o-mini": "43"
+  },
+  {
+    "question": "What is the average number of sockets and bulbs per room in a UK home?",
+    "gold_answer": "4.3 (43 sockets and bulbs and 10 rooms)",
+    "gpt-4o-mini": "Average: 31 sockets + 12 bulbs = 43 total; 43/8 rooms = 5.375"
+  },
+  {
+    "question": "What is the average number of PIN Elements per square meter of the service area for a UK home?",
+    "gold_answer": "0.34 elements per sq m (31/90)",
+    "gpt-4o-mini": "0.34 PIN Elements/sq m"
+  },
+  {
+    "question": "How does the total estimated power load in the CBD change from 2020 to 2030 under the high growth rate scenario?",
+    "gold_answer": "411 MW (1454 - 1043)",
+    "gpt-4o-mini": "Increase: 411 MW (from 1043 MW to 1454 MW)"
+  },
+  {
+    "question": "How does the total estimated power load in the CBD change from 2020 to 2030 under the low growth rate scenario?",
+    "gold_answer": "325 MW (1277 - 952)",
+    "gpt-4o-mini": "Change: 325 MW (1277 MW - 952 MW)"
+  },
+  {
+    "question": "In which growth rate scenario is the power load density projected to be the highest in 2030??",
+    "gold_answer": "High growth rate",
+    "gpt-4o-mini": "High growth rate: 28.89 MW/km²"
+  },
+  {
+    "question": "Is the QCI values of the urgent real-time mode and the non real-time mode different?",
+    "gold_answer": "Yes. 67 for real-time mode and 4 for non real-time mode",
+    "gpt-4o-mini": "Yes, QCI values are different: 67 (urgent) vs 4 (non-real-time)."
+  },
+  {
+    "question": "Is the QCI values of the urgent real-time mode and the non urgent real-time mode same?",
+    "gold_answer": "Yes. Both are the same (67)",
+    "gpt-4o-mini": "Yes, QCI values are the same (67)."
+  },
+  {
+    "question": "What is the maximum allowed end-to-end latency across all communication services?",
+    "gold_answer": "< 1 s",
+    "gpt-4o-mini": "Not specified in the provided context."
+  },
+  {
+    "question": "Give sample of an event with requirement of communication service with a mean time between failures to be 1 day and a maximum allowed end-to-end latency of less than 8 ms",
+    "gold_answer": "Mobile Operation Panel: Emergency stop",
+    "gpt-4o-mini": "MTBF: 1 day; Max latency: < 8 ms"
+  },
+  {
+    "question": "Does the communication service for Distributed Energy Resources (DERs) and micro-grids have a lower maximum allowed end-to-end latency than that for bi-directional transmission for Augmented reality?",
+    "gold_answer": "Yes. (DER and micro-grids have < 3ms latency while augmented reality has < 10 ms)",
+    "gpt-4o-mini": "Yes, DERs and micro-grids have lower max latency than AR."
+  },
+  {
+    "question": "Is there any communication service with a service area larger than 1 kmsq and a maximum allowed end-to-end latency of less than 3 ms?",
+    "gold_answer": "No. (Service area coverage of Wired-2-wireless is few msq and is the only service which requires < 3 ms end-to-end latency)",
+    "gpt-4o-mini": "No, none specified."
+  },
+  {
+    "question": "Does the communication service for Distributed Energy Resources (DERs) and micro-grids have a higher maximum allowed end-to-end latency than that for bi-directional transmission for Augmented reality?",
+    "gold_answer": "No. (DER and micro-grids have < 3ms latency while augmented reality has < 10 ms)",
+    "gpt-4o-mini": "Yes, DERs and micro-grids have higher max latency than AR."
+  },
+  {
+    "question": "Does the dense urban scenario have a lower overall user density than the Indoor hotspot scenario?",
+    "gold_answer": "No. Both have same user density (25000/km2)",
+    "gpt-4o-mini": "Yes, dense urban: 25,000/km2 < indoor hotspot: 250,000/km2."
+  },
+  {
+    "question": "What is the average experienced data rate for DL across all scenarios?",
+    "gold_answer": "196 Mbps (average of all DL experienced data rate)",
+    "gpt-4o-mini": "Average DL: 50 Mbit/s"
+  },
+  {
+    "question": "Does the Dense urban scenario have a higher overall user density than the Indoor hotspot scenario?",
+    "gold_answer": "No. Both have same user density (25000/km2)",
+    "gpt-4o-mini": "Yes, Dense urban: 25,000/km²; Indoor hotspot: 250,000/km²."
+  },
+  {
+    "question": "Identify the scenarios with a coverage of Full network",
+    "gold_answer": "Urban macro, rural macro and Broadcast-like services",
+    "gpt-4o-mini": "Urban macro, Rural macro, Dense urban, Broadcast-like services"
+  },
+  {
+    "question": "How many scenarios have a coverage of Full network",
+    "gold_answer": "3 (Urban macro, rural macro and Broadcast-like services)",
+    "gpt-4o-mini": "3 scenarios"
+  },
+  {
+    "question": "Does the High-speed train scenario have a lower activity factor than the Airplanes connectivity scenario?",
+    "gold_answer": "No. (30% activity factor for high-speed train and 20% activity factor for airplanes connectivity)",
+    "gpt-4o-mini": "Yes, High-speed train: 30% < Airplanes connectivity: 20%"
+  },
+  {
+    "question": "Does the High-speed train scenario have a higher activity factor than the Airplanes connectivity scenario?",
+    "gold_answer": "Yes. (30% activity factor for high-speed train and 20% activity factor for airplanes connectivity)",
+    "gpt-4o-mini": "No, both have 30%."
+  },
+  {
+    "question": "Is there any scenario with a higher experienced data rate in UL compared to downlink DL?",
+    "gold_answer": "Broadband access in a crowd scenario (UL requires 50 Mbps and DL requires 25 Mbps)",
+    "gpt-4o-mini": "No, all UL rates are ≤ DL rates."
+  },
+  {
+    "question": "What is the total approximate output data size for all candidate split points?",
+    "gold_answer": "0.61 MByte (0.15 + 0.27 + 0.17 + 0.02)",
+    "gpt-4o-mini": "Total output data size: 0.15 + 0.27 + 0.17 + 0.02 + 0.6 + 3 + 1.5 + 0.8 + 0.5 + 0.1 = 6.1 MByte"
+  },
+  {
+    "question": "What is the average required UL data rate for all candidate split points?",
+    "gold_answer": "36.7 Mbps ((36+65+41+4.8)/4)",
+    "gpt-4o-mini": "Average UL data rate:  145.4 Mbit/s"
+  },
+  {
+    "question": "What is the maximum approximate output data size among all candidate split points?",
+    "gold_answer": "0.27 MByte",
+    "gpt-4o-mini": "3 MByte"
+  },
+  {
+    "question": "What is the total number of user applications listed in the table?",
+    "gold_answer": "7",
+    "gpt-4o-mini": "6"
+  },
+  {
+    "question": "What is the total range of end-to-end latency across all user applications?",
+    "gold_answer": "7 ms to several seconds",
+    "gpt-4o-mini": "Several seconds, 10~100ms"
+  },
+  {
+    "question": "What is the max end-to-end latency for all user applications?",
+    "gold_answer": "Several seconds",
+    "gpt-4o-mini": "Several seconds"
+  },
+  {
+    "question": "Identify the user applications with an image recognition latency of less than 5ms.",
+    "gold_answer": "AR display gaming, remote driving, remote-controlled robotics",
+    "gpt-4o-mini": "None"
+  },
+  {
+    "question": "How many user applications have an image recognition latency of less than 5ms.",
+    "gold_answer": "3",
+    "gpt-4o-mini": "0"
+  },
+  {
+    "question": "How many user applications have an image recognition latency of more than 5ms.",
+    "gold_answer": "4",
+    "gpt-4o-mini": "5 user applications"
+  },
+  {
+    "question": "Which user applications have a user experienced UL data rate range of 80Mbit/s to 1.08Gbit/s when using AlexNet?",
+    "gold_answer": "AR display gaming, remote driving, remote-controlled robotics",
+    "gpt-4o-mini": "AR display/gaming, Remote driving, Remote-controlled robotics"
+  },
+  {
+    "question": "Which model has a lower model weight size for upsampling, CAR 4x or SR-GAN 4x?",
+    "gold_answer": "SR-GAN 4x (6MB for SR-GAN 4x and 170 MB for CAR 4x)",
+    "gpt-4o-mini": "SR-GAN 4x: ~6MB (CAR 4x: ~170MB)"
+  },
+  {
+    "question": "Which model has a larger model weight size for upsampling, CAR 4x or SR-GAN 4x?",
+    "gold_answer": "CAR 4x (6MB for SR-GAN 4x and 170 MB for CAR 4x)",
+    "gpt-4o-mini": "CAR 4x: ~170MB; SR-GAN 4x: ~6MB. Larger: CAR 4x."
+  },
+  {
+    "question": "Which models have a bicubic downsampling model weight size?",
+    "gold_answer": "SR-GAN 4x and SRResNet 4x",
+    "gpt-4o-mini": "SR-GAN 4x, SRResNet 4x: N/A (bicubic)"
+  },
+  {
+    "question": "How many models have the downsampling model weight size bicubic?",
+    "gold_answer": "2 (SR-GAN 4x and SRResNet 4x)",
+    "gpt-4o-mini": "2 models"
+  },
+  {
+    "question": "Which models do not have a bicubic downsampling model weight size?",
+    "gold_answer": "CAR 4x",
+    "gpt-4o-mini": "CAR 4x"
+  },
+  {
+    "question": "What is the total size of model weights for downsampling and upsampling of CAR 4x?",
+    "gold_answer": "210 MB",
+    "gpt-4o-mini": "Total size: 40MB (downsampling) + 170MB (upsampling) = 210MB"
+  },
+  {
+    "question": "What is the max size of model weights for downsampling and upsampling?",
+    "gold_answer": "170 MB",
+    "gpt-4o-mini": "Downsampling: N/A; Upsampling: 170MB"
+  },
+  {
+    "question": "Is the maximum delay requirement for video lower than that for audio?",
+    "gold_answer": "No (400 ms for video and 150 ms for audio)",
+    "gpt-4o-mini": "Yes, max delay for video (<= 400 ms) > audio (<= 150 ms)."
+  },
+  {
+    "question": "Is the throughput requirement for video lower than that for haptics?",
+    "gold_answer": "No. (Minimum 2500 kbps for video, maximum 1024 kbps for haptics)",
+    "gpt-4o-mini": "No, video throughput (2500-40000 kbit/s) > haptics (512-1024 kbit/s)."
+  },
+  {
+    "question": "What is the minimum jitter requirement across all modalities?",
+    "gold_answer": "Less than 2 ms",
+    "gpt-4o-mini": "<= 2 ms"
+  },
+  {
+    "question": "Is the maximum delay requirement for video greater than that for audio?",
+    "gold_answer": "Yes (400 ms for video and 150 ms for audio)",
+    "gpt-4o-mini": "Yes, max delay for video: <= 400 ms; audio: <= 150 ms."
+  },
+  {
+    "question": "Is the throughput requirement for video higher than that for haptics?",
+    "gold_answer": "Yes. (Minimum 2500 kbps for video, maximum 1024 kbps for haptics)",
+    "gpt-4o-mini": "Yes, video throughput (2500-40000 kbit/s) > haptics (512-1024 kbit/s)."
+  },
+  {
+    "question": "What is the maximum acceptable jitter across all modalities?",
+    "gold_answer": "30 ms",
+    "gpt-4o-mini": "<= 30 ms"
+  },
+  {
+    "question": "What is the maximum acceptable packet loss across all modalities?",
+    "gold_answer": "10 %",
+    "gpt-4o-mini": "10%"
+  },
+  {
+    "question": "How many modalities have a delay requirement of less than 200 ms?",
+    "gold_answer": "2 (Haptics and Audio)",
+    "gpt-4o-mini": "3 modalities (Haptics, Audio, Video)"
+  },
+  {
+    "question": "Which timing service types provide granularity up to seconds?",
+    "gold_answer": "Commercial and regular timing services",
+    "gpt-4o-mini": "Commercial, Regular"
+  },
+  {
+    "question": "How many timing service types provide granularity up to seconds?",
+    "gold_answer": "2",
+    "gpt-4o-mini": "3"
+  },
+  {
+    "question": "Which timing service provides clock granularity of nano seconds or micro seconds",
+    "gold_answer": "Premium timing service",
+    "gpt-4o-mini": "Premium timing service"
+  },
+  {
+    "question": "How many distinct formats exist for the SGsAP-DOWNLINK-UNITDATA message content?",
+    "gold_answer": "2 (V and TLV)",
+    "gpt-4o-mini": "3"
+  },
+  {
+    "question": "How many distinct information elements exist for the SGsAP-DOWNLINK-UNITDATA message content?",
+    "gold_answer": "3",
+    "gpt-4o-mini": "3"
+  },
+  {
+    "question": "List the distinct information elements present for the SGsAP-DOWNLINK-UNITDATA message content?",
+    "gold_answer": "Message type, IMSI, NAS message container",
+    "gpt-4o-mini": "Message type, IMSI, NAS message container"
+  },
+  {
+    "question": "What is the max length of the SGsAP-DOWNLINK-UNITDATA  message content?",
+    "gold_answer": "253",
+    "gpt-4o-mini": "253 bytes"
+  },
+  {
+    "question": "What is the min length of the SGsAP-DOWNLINK-UNITDATA  message content?",
+    "gold_answer": "1",
+    "gpt-4o-mini": "11 bytes"
+  },
+  {
+    "question": "What is the information element associated with the max length of the SGsAP-DOWNLINK-UNITDATA message content?",
+    "gold_answer": "NAS message container",
+    "gpt-4o-mini": "NAS message container; 4-253"
+  },
+  {
+    "question": "What is the range of length with IMSI information element of the SGsAP-DOWNLINK-UNITDATA message content?",
+    "gold_answer": "6-10",
+    "gpt-4o-mini": "6-10"
+  },
+  {
+    "question": "How many distinct formats exist for the SGsAP-ALERT-REJECT message content?",
+    "gold_answer": "2",
+    "gpt-4o-mini": "3 formats (V, TLV, TLV)"
+  },
+  {
+    "question": "How many distinct information elements exist for the SGsAP-ALERT-REJECT message content?",
+    "gold_answer": "3",
+    "gpt-4o-mini": "3"
+  },
+  {
+    "question": "List the distinct information elements present for the SGsAP-ALERT-REJECT message content?",
+    "gold_answer": "Message type, IMSI, SGs cause",
+    "gpt-4o-mini": "Message type, IMSI, SGs Cause"
+  },
+  {
+    "question": "What is the min length of the SGsAP-ALERT-REJECT message content?",
+    "gold_answer": "1",
+    "gpt-4o-mini": "10 bytes"
+  },
+  {
+    "question": "What is the max length of the SGsAP-ALERT-REJECT message content?",
+    "gold_answer": "10",
+    "gpt-4o-mini": "10 bytes"
+  },
+  {
+    "question": "What is the information element associated with the max length of the SGsAP-ALERT-REJECT message content?",
+    "gold_answer": "IMSI",
+    "gpt-4o-mini": "IMSI; 6-10"
+  },
+  {
+    "question": "What is the range of length of IMSI in the SGsAP-ALERT-REJECT message content?",
+    "gold_answer": "6-10",
+    "gpt-4o-mini": "6-10"
+  },
+  {
+    "question": "How many distinct formats exist for the SGsAP-ALERT-REQUEST message content?",
+    "gold_answer": "2",
+    "gpt-4o-mini": "2 formats (V, TLV)"
+  },
+  {
+    "question": "How many distinct information elements exist for the SGsAP-ALERT-REQUEST message content?",
+    "gold_answer": "2",
+    "gpt-4o-mini": "2"
+  },
+  {
+    "question": "List the distinct information elements present for the SGsAP-ALERT-REQUEST message content?",
+    "gold_answer": "Message type, IMSI",
+    "gpt-4o-mini": "Message type, IMSI"
+  },
+  {
+    "question": "What is the min length of the SGsAP-ALERT-REQUEST message content?",
+    "gold_answer": "1",
+    "gpt-4o-mini": "6 bytes"
+  },
+  {
+    "question": "What is the max length of the SGsAP-ALERT-REQUEST message content?",
+    "gold_answer": "10",
+    "gpt-4o-mini": "10 bytes"
+  },
+  {
+    "question": "What is the information element associated with the max length of the SGsAP-ALERT-REQUEST message content?",
+    "gold_answer": "IMSI",
+    "gpt-4o-mini": "IMSI; Length: 6-10"
+  },
+  {
+    "question": "What is the range of length of IMSI for the SGsAP-ALERT-REQUEST message content?",
+    "gold_answer": "6-10",
+    "gpt-4o-mini": "6-10"
+  },
+  {
+    "question": "What is the max length of the SGsAP-EPS-DETACH-INDICATION message content?",
+    "gold_answer": "57",
+    "gpt-4o-mini": "10 bytes"
+  },
+  {
+    "question": "What is the information element associated with the max length of the SGsAP-EPS-DETACH-INDICATION message content?",
+    "gold_answer": "MME name",
+    "gpt-4o-mini": "IMSI; Length: 6-10"
+  },
+  {
+    "question": "What is the range of length of the SGsAP-EPS-DETACH-INDICATION message content?",
+    "gold_answer": "1 to 57",
+    "gpt-4o-mini": "6-10, 57, 3"
+  },
+  {
+    "question": "What is the min length of the SGsAP-EPS-DETACH-INDICATION message content?",
+    "gold_answer": "1",
+    "gpt-4o-mini": "6 bytes"
+  },
+  {
+    "question": "How many distinct formats exist for the SGsAP-EPS-DETACH-INDICATION message content?",
+    "gold_answer": "2",
+    "gpt-4o-mini": "4 distinct formats"
+  },
+  {
+    "question": "How many distinct information elements exist for the SGsAP-EPS-DETACH-INDICATION message content?",
+    "gold_answer": "4",
+    "gpt-4o-mini": "4"
+  },
+  {
+    "question": "List the distinct information elements present for the SGsAP-EPS-DETACH-INDICATION message content?",
+    "gold_answer": "Message type, IMSI, MME name, IMSI detach from EPS service type",
+    "gpt-4o-mini": "Message type, IMSI, MME name, IMSI detach from EPS service type"
+  },
+  {
+    "question": "What is the max length of the SGsAP-IMSI-DETACH-INDICATION message content?",
+    "gold_answer": "57",
+    "gpt-4o-mini": "10 bytes"
+  },
+  {
+    "question": "What is the information element associated with the max length of the SGsAP-IMSI-DETACH-INDICATION message content?",
+    "gold_answer": "MME name",
+    "gpt-4o-mini": "IMSI; Length: 10"
+  },
+  {
+    "question": "What is the range of length of the SGsAP-IMSI-DETACH-INDICATION message content?",
+    "gold_answer": "1 to 57",
+    "gpt-4o-mini": "6-10, 57, 3"
+  },
+  {
+    "question": "What is the min length of the SGsAP-IMSI-DETACH-INDICATION message content?",
+    "gold_answer": "1",
+    "gpt-4o-mini": "6 bytes"
+  },
+  {
+    "question": "How many distinct formats exist for the SGsAP-IMSI-DETACH-INDICATION message content?",
+    "gold_answer": "2",
+    "gpt-4o-mini": "4 distinct formats"
+  },
+  {
+    "question": "How many distinct information elements exist for the SGsAP-IMSI-DETACH-INDICATION message content?",
+    "gold_answer": "4",
+    "gpt-4o-mini": "4"
+  },
+  {
+    "question": "List the distinct information elements present for the SGsAP-IMSI-DETACH-INDICATION message content?",
+    "gold_answer": "Message type, IMSI, MME name, IMSI detach from non-EPS service type",
+    "gpt-4o-mini": "Message type, IMSI, MME name, IMSI Detach from non-EPS service type"
+  },
+  {
+    "question": "What is the max length of the SGsAP-LOCATION-UPDATE-REQUEST message content?",
+    "gold_answer": "57",
+    "gpt-4o-mini": "70 bytes"
+  },
+  {
+    "question": "What is the information element associated with the max length of the SGsAP-LOCATION-UPDATE-REQUEST message content?",
+    "gold_answer": "MME name",
+    "gpt-4o-mini": "MME name; Length: 57"
+  },
+  {
+    "question": "What is the range of length of the SGsAP-LOCATION-UPDATE-REQUEST message content?",
+    "gold_answer": "1 to 57",
+    "gpt-4o-mini": "6-10, 57, 3, 7, 7, 3, 10, 7, 9, 4, 5"
+  },
+  {
+    "question": "How many distinct formats exist for the SGsAP-LOCATION-UPDATE-REQUEST message content?",
+    "gold_answer": "2",
+    "gpt-4o-mini": "3 formats: V, TLV, and O."
+  },
+  {
+    "question": "How many distinct information elements exist for the SGsAP-LOCATION-UPDATE-REQUEST message content?",
+    "gold_answer": "12",
+    "gpt-4o-mini": "11"
+  },
+  {
+    "question": "List the distinct information elements present for the SGsAP-LOCATION-UPDATE-REQUEST message content?",
+    "gold_answer": "Message type, IMSI, MME name, EPS location update type, New location area identifier, Old location area identifier, TMSI status, IMEISV, TAI, E-CGI, TMSI based NRI container, Selected CS domain operator.",
+    "gpt-4o-mini": "Message type, IMSI, MME name, EPS location update type, New location area identifier, Old location area identifier, TMSI status, IMEISV, TAI, E-CGI, TMSI based NRI container, Selected CS domain operator."
+  },
+  {
+    "question": "In the Definition of the TimeWindow data type, how many attributes names are present?",
+    "gold_answer": "2",
+    "gpt-4o-mini": "2"
+  },
+  {
+    "question": "In the Definition of the TimeWindow data type, how many Data types are present?",
+    "gold_answer": "1",
+    "gpt-4o-mini": "2 Data types (DateTime)"
+  },
+  {
+    "question": "In the Definition of the TimeWindow data type, list all attribute names",
+    "gold_answer": "startTime, stopTime",
+    "gpt-4o-mini": "startTime, stopTime"
+  },
+  {
+    "question": "In the Definition of the TimeWindow data type, list all cardinality",
+    "gold_answer": "1",
+    "gpt-4o-mini": "1, 1"
+  },
+  {
+    "question": "In the Definition of the TimeWindow data type, list all Data type",
+    "gold_answer": "DateTime",
+    "gpt-4o-mini": "DateTime, DateTime"
+  },
+  {
+    "question": "In the Definition of the TimeWindow data type, which attribute names have the same cardinality?",
+    "gold_answer": "startTime and stopTime",
+    "gpt-4o-mini": "startTime, stopTime: 1"
+  },
+  {
+    "question": "In the Definition of the TimeWindow data type, how many attribute names have the same cardinality?",
+    "gold_answer": "2",
+    "gpt-4o-mini": "2"
+  },
+  {
+    "question": "In the Definition of the TimeWindow data type, which attribute names have the same Data type?",
+    "gold_answer": "startTime and stopTime",
+    "gpt-4o-mini": "startTime, stopTime: DateTime"
+  },
+  {
+    "question": "In the Definition of the AccumulatedUsage data type, how many attributes names are present?",
+    "gold_answer": "4",
+    "gpt-4o-mini": "4"
+  },
+  {
+    "question": "In the Definition of the AccumulatedUsage data type, how many Data types are present?",
+    "gold_answer": "2",
+    "gpt-4o-mini": "4 Data types"
+  },
+  {
+    "question": "In the Definition of the AccumulatedUsage data type, list all attribute names",
+    "gold_answer": "Duration, totalVolume, downlinkVolume, uplinkVolume",
+    "gpt-4o-mini": "duration, totalVolume, downlinkVolume, uplinkVolume"
+  },
+  {
+    "question": "In the Definition of the AccumulatedUsage data type, list all cardinality",
+    "gold_answer": "0..1",
+    "gpt-4o-mini": "0..1, 0..1, 0..1, 0..1"
+  },
+  {
+    "question": "In the Definition of the AccumulatedUsage data type, list all Data type",
+    "gold_answer": "DurationSec, Volume",
+    "gpt-4o-mini": "DurationSec, Volume"
+  },
+  {
+    "question": "In the Definition of the AccumulatedUsage data type, which attribute names have the same cardinality?",
+    "gold_answer": "Duration, totalVolume, downlinkVolume, uplinkVolume",
+    "gpt-4o-mini": "duration, totalVolume, downlinkVolume, uplinkVolume (0..1)"
+  },
+  {
+    "question": "In the Definition of the AccumulatedUsage data type, how many attribute names have the same cardinality?",
+    "gold_answer": "4",
+    "gpt-4o-mini": "4"
+  },
+  {
+    "question": "In the Definition of the AccumulatedUsage data type, which attribute names have the same Data type?",
+    "gold_answer": "totalVolume, downlinkVolume, uplinkVolume",
+    "gpt-4o-mini": "totalVolume, downlinkVolume, uplinkVolume: Volume"
+  },
+  {
+    "question": "In the Definition of the ProblemDetails data type, how many attributes names are present?",
+    "gold_answer": "8",
+    "gpt-4o-mini": "10"
+  },
+  {
+    "question": "In the Definition of the ProblemDetails data type, how many Data types are present?",
+    "gold_answer": "5",
+    "gpt-4o-mini": "6"
+  },
+  {
+    "question": "In the Definition of the ProblemDetails data type, how many cardinality are present?",
+    "gold_answer": "2",
+    "gpt-4o-mini": "10 cardinalities present."
+  },
+  {
+    "question": "In the Definition of the ProblemDetails data type, list all attribute names",
+    "gold_answer": "Type, title, status, detail, instance, cause, invalidParams, supportedFeatures",
+    "gpt-4o-mini": "type, title, status, detail, instance, cause, invalidParams, supportedFeatures"
+  },
+  {
+    "question": "In the Definition of the ProblemDetails data type, list all cardinality",
+    "gold_answer": "0..1 and 0..N",
+    "gpt-4o-mini": "0..1, 0..1, 0..1, 0..1, 0..1, 0..1, 0..N, 0..1"
+  },
+  {
+    "question": "In the Definition of the ProblemDetails data type, list all Data type",
+    "gold_answer": "Uri, string, integer, array(invalidParam), SupportedFeatures",
+    "gpt-4o-mini": "Uri, string, integer, array(InvalidParam), SupportedFeatures"
+  },
+  {
+    "question": "In the Definition of the ProblemDetails data type, which attribute names have the same cardinality?",
+    "gold_answer": "Type, title, status, detail, instance, cause, supportedFeatures",
+    "gpt-4o-mini": "type, title, status, detail, instance, cause, invalidParams, supportedFeatures (0..1)"
+  },
+  {
+    "question": "In the Definition of the ProblemDetails data type, how many attribute names have the same cardinality?",
+    "gold_answer": "7",
+    "gpt-4o-mini": "6 attributes have cardinality 0..1."
+  },
+  {
+    "question": "In the Definition of the ProblemDetails data type, which attribute names have the same Data type?",
+    "gold_answer": "Type and instance have Uri data type. Title, detail and cause have string data type.",
+    "gpt-4o-mini": "type, instance (Uri)  \ntitle, detail, cause (string)  \nstatus (integer)  \ninvalidParams (array(InvalidParam))  \nsupportedFeatures (SupportedFeatures)  "
+  },
+  {
+    "question": "How many unique response status codes are listed for service creation?",
+    "gold_answer": "4",
+    "gpt-4o-mini": "4"
+  },
+  {
+    "question": "List all unique response status codes for service creation",
+    "gold_answer": "201 created, 401 unauthorized, 403 forbidden, 412 precondition failed",
+    "gpt-4o-mini": "201, 401, 403, 412"
+  },
+  {
+    "question": "List all the messages associated with the corresponding response status codes.",
+    "gold_answer": "201 created - service created successfully. 401 unauthorized - request requires user authenticaion. 403 forbidden - request cannot be fulfilled. 412 precondition failed - request cannot be fulfilled.",
+    "gpt-4o-mini": "201 Created: Service created successfully  \n401 Unauthorized: Request requires user authentication  \n403 Forbidden: Request cannot be fulfilled  \n412 Precondition Failed: Request cannot be fulfilled  "
+  },
+  {
+    "question": "In the MO data request, list all Information Element Name",
+    "gold_answer": "User Identity, EPS Bearer Identity, Non IP data, Supported Features, MO Exception Data Counter.",
+    "gpt-4o-mini": "User Identity, EPS Bearer Identity, Non IP data, Supported Features, MO Exception Data Counter"
+  },
+  {
+    "question": "In the MO data request, list all Mapping to Diameter AVP",
+    "gold_answer": "User-Identifier, Bearer-Identifier, Non-IP-Data, Supported-Features, RRC-Cause-Counter.",
+    "gpt-4o-mini": "User-Identifier, Bearer-Identifier, Non-IP-Data, Supported-Features, RRC-Cause-Counter"
+  },
+  {
+    "question": "In the MT Data Request, list all Information Element Name",
+    "gold_answer": "User Identity, EPS Bearer Identity, Non IP data, SCEF Wait Time, Maximum Retransmission Time, Supported Features.",
+    "gpt-4o-mini": "User Identity, EPS Bearer Identity, Non-IP Data, SCEF Wait Time, Maximum Retransmission Time, Supported Features"
+  },
+  {
+    "question": "In the MT Data Request, list all Mapping to Diameter AVP",
+    "gold_answer": "User-Identifier, Bearer-Identifier, Non-IP-Data, SCEF-Wait-Time, Maximum-Retransmission-Time, Supported-Features.",
+    "gpt-4o-mini": "User-Identifier, Bearer-Identifier, Non-IP-Data, SCEF-Wait-Time, Maximum-Retransmission-Time, Supported-Features"
+  },
+  {
+    "question": "In Command-Code values, list all Command-Names for SLg interface application",
+    "gold_answer": "Provide-Location-Request, Provide-Location -Answer, Location-Report-Request, Location-Report-Answer.",
+    "gpt-4o-mini": "Provide-Location-Request, Provide-Location-Answer, Location-Report-Request, Location-Report-Answer"
+  },
+  {
+    "question": "In Command-Code values, list all abbreviations for SLg interface application",
+    "gold_answer": "PLR, PLA, LRR, LRA.",
+    "gpt-4o-mini": "PLR, PLA, LRR, LRA"
+  },
+  {
+    "question": "In Command-Code values, list all codes for SLg interface application",
+    "gold_answer": "8388620, 8388621",
+    "gpt-4o-mini": "8388620, 8388621"
+  },
+  {
+    "question": "How many learning methods are mentioned in management and orchestration of group services?",
+    "gold_answer": "4",
+    "gpt-4o-mini": "4 learning methods"
+  },
+  {
+    "question": "What is the count of learning methods associated with regression (numeric)  in management and orchestration layer ?",
+    "gold_answer": "2",
+    "gpt-4o-mini": "2"
+  },
+  {
+    "question": "How many learning methods are associated with labelled data in management and orchestration layer ?",
+    "gold_answer": "2",
+    "gpt-4o-mini": "2"
+  },
+  {
+    "question": "How many types of training data are mentioned in management and orchestration layer for the comparision of learning methods?",
+    "gold_answer": "4",
+    "gpt-4o-mini": "3 types: labelled, unlabelled, not pre-defined."
+  },
+  {
+    "question": "List all the types of learning methods mentioned in management and orchestration layer",
+    "gold_answer": "Supervised learning, semi-supervised learning, unsupervised learning, reinforcement learning.",
+    "gpt-4o-mini": "Supervised, Semi-supervised, Unsupervised, Reinforcement"
+  },
+  {
+    "question": "List all the types of training data mentioned in the comparision of learning methods?",
+    "gold_answer": "Labelled data, unlabelled data, not pre-defined data, combination of labelled data and unlabelled data.",
+    "gpt-4o-mini": "Labelled data, unlabelled data"
+  },
+  {
+    "question": "What is the highest default priority level among all the Standardized 5QI values listed?",
+    "gold_answer": "90",
+    "gpt-4o-mini": "90"
+  },
+  {
+    "question": "How many different packet error rates are mentioned for the Non-GBR resource type?",
+    "gold_answer": "3",
+    "gpt-4o-mini": "2 (10^-6, 10^-3)"
+  },
+  {
+    "question": "What is the minimum packet delay budget amongst all the GBR resource types listed?",
+    "gold_answer": "50 ms",
+    "gpt-4o-mini": "10 ms"
+  },
+  {
+    "question": "What is the lowest default priority level among all the 5QI values listed?",
+    "gold_answer": "5",
+    "gpt-4o-mini": "5"
+  },
+  {
+    "question": "How many different resource types are specified in the table?",
+    "gold_answer": "3",
+    "gpt-4o-mini": "6"
+  },
+  {
+    "question": "List the standardised 5QI values for discrete automation along with their priority levels.",
+    "gold_answer": "82 5QI with default priority level 19 and 83 5QI with default priority level 22.",
+    "gpt-4o-mini": "82: 19, 83: 22, 84: 24, 85: 21"
+  },
+  {
+    "question": "Which standardised 5QI values have a default priority level of 20?",
+    "gold_answer": "1, 66.",
+    "gpt-4o-mini": "5QI: 1, 66"
+  },
+  {
+    "question": "Which 5QI values are associated with Mission Critical services?",
+    "gold_answer": "65, 67, 69, 70",
+    "gpt-4o-mini": "65, 67, 69, 70, 79"
+  },
+  {
+    "question": "How many XR device types have the XR Engine Localization as External?",
+    "gold_answer": "4",
+    "gpt-4o-mini": "3"
+  },
+  {
+    "question": "How many XR device types have a wireless tethering option available?",
+    "gold_answer": "4",
+    "gpt-4o-mini": "5 XR device types have a wireless tethering option."
+  },
+  {
+    "question": "How many XR device types have internal power supply?",
+    "gold_answer": "8",
+    "gpt-4o-mini": "5 XR device types have internal power supply."
+  },
+  {
+    "question": "Which XR device type requires the highest range of typical max avail power?",
+    "gold_answer": "VR HMD Standalone and Smart AR HMD see-through standalone",
+    "gpt-4o-mini": "XR5G-V4; 3-7 W"
+  },
+  {
+    "question": "How many Q-trace or quality trace fields have semantics related to video in XR services?",
+    "gold_answer": "10",
+    "gpt-4o-mini": "6"
+  },
+  {
+    "question": "How many Q-trace fields have semantics related to audio in XR services?",
+    "gold_answer": "2",
+    "gpt-4o-mini": "1"
+  },
+  {
+    "question": "How many Q-Trace format fields have type as DOUBLE PRECISION in XR services",
+    "gold_answer": "12",
+    "gpt-4o-mini": "10"
+  },
+  {
+    "question": "How many Q-Trace format fields use BIG INT types in XR services",
+    "gold_answer": "4",
+    "gpt-4o-mini": "2 BIGINT fields"
+  },
+  {
+    "question": "What is the maximum bit rate among all the SDI interfaces in typical uplink A/V streaming for professional production content?",
+    "gold_answer": "24 Gbps",
+    "gpt-4o-mini": "24 Gbit/s"
+  },
+  {
+    "question": "How many different bit rates are mentioned for SD-SDI in typical uplink A/V streaming for professional production content??",
+    "gold_answer": "4",
+    "gpt-4o-mini": "4"
+  },
+  {
+    "question": "What is the minimum bit rate among all the SDI interfaces mentioned in typical uplink A/V streaming for professional production content?",
+    "gold_answer": "143 Mbps",
+    "gpt-4o-mini": "143 Mbit/s"
+  },
+  {
+    "question": "How many different SDI interface standards are listed in typical uplink A/V streaming for professional production content?",
+    "gold_answer": "8",
+    "gpt-4o-mini": "8"
+  },
+  {
+    "question": "Which SDI interfaces support the 1080p60 video format in typical uplink A/V streaming for professional production content??",
+    "gold_answer": "Dual Link HD-SDI, 3G-SDI",
+    "gpt-4o-mini": "SMPTE 372M, SMPTE 424M"
+  },
+  {
+    "question": "List the SDI interface names in typical uplink A/V streaming for professional production content?.",
+    "gold_answer": "SD-SDI, ED-SDI, HD-SDI, Dual Link HD-SDI, 3G-SDI, 6G-SDI, 12G-SDI, 24G-SDI",
+    "gpt-4o-mini": "SD-SDI, ED-SDI, HD-SDI, Dual Link HD-SDI, 3G-SDI, 6G-SDI, 12G-SDI, 24G-SDI"
+  },
+  {
+    "question": "Provide the name of the SDI interface with the highest bit rate and its corresponding standard in typical uplink A/V streaming for professional production content?.",
+    "gold_answer": "24G-SDI corresponds to SMPTE ST-2083 standard.",
+    "gpt-4o-mini": "24G-SDI, SMPTE ST-2083"
+  },
+  {
+    "question": "What is the count of Center frequencies which correspond to -65dBPa Octave band pressure level?",
+    "gold_answer": "6",
+    "gpt-4o-mini": "5"
+  },
+  {
+    "question": "What is the count of distinct Octave band pressure levels?",
+    "gold_answer": "3",
+    "gpt-4o-mini": "8"
+  },
+  {
+    "question": "What are the Center frequencies which correspond to -65dBPa Octave band pressure level?",
+    "gold_answer": "250, 500, 1000, 2000, 4000, 8000",
+    "gpt-4o-mini": "250 Hz, 500 Hz, 1,000 Hz, 2,000 Hz, 4,000 Hz, 8,000 Hz"
+  },
+  {
+    "question": "What is the count of Categories for echo canceller performance classification?",
+    "gold_answer": "8",
+    "gpt-4o-mini": "8"
+  },
+  {
+    "question": "In the categories for echo canceller performance classification, which categories have echo bursts?",
+    "gold_answer": "Category F",
+    "gpt-4o-mini": "F, G"
+  },
+  {
+    "question": "In the categories for echo canceller performance classification, which categories have clipping?",
+    "gold_answer": "Category B, C and D.",
+    "gpt-4o-mini": "B, C, D"
+  },
+  {
+    "question": "In the categories for echo canceller performance classification, which categories have Duration (D) <150?",
+    "gold_answer": "Category C and F",
+    "gpt-4o-mini": "A1, B, C, E, F"
+  },
+  {
+    "question": "In the categories for echo canceller performance classification, which categories have Level difference < -15db?",
+    "gold_answer": "Category B, C and D",
+    "gpt-4o-mini": "B, C, D"
+  },
+  {
+    "question": "In the categories for echo canceller performance classification, which categories have Level difference > 4db?",
+    "gold_answer": "Category E, F and G",
+    "gpt-4o-mini": "E, F, G"
+  },
+  {
+    "question": "How many UE data domains have 5G System (MNO) as its owner?",
+    "gold_answer": "5",
+    "gpt-4o-mini": "5 UE data domains"
+  },
+  {
+    "question": "What UE data domains have 5G System (MNO) as its owner?",
+    "gold_answer": "Service experience, UE location, communication, performance, planned trips.",
+    "gpt-4o-mini": "Service Experience, UE Location, Communication, Performance, Planned Trips"
+  },
+  {
+    "question": "How many sampling frequencies associated with the AMR speech, EVS mono, and AMR-WB+ operation points?",
+    "gold_answer": "4",
+    "gpt-4o-mini": "AMR speech: 1; EVS mono: 4; AMR-WB+: 4"
+  },
+  {
+    "question": "How many operation points have a sampling frequency of 16 kHz?",
+    "gold_answer": "3",
+    "gpt-4o-mini": "2"
+  },
+  {
+    "question": "How many operation points are listed in the table?",
+    "gold_answer": "6",
+    "gpt-4o-mini": "6 operation points"
+  },
+  {
+    "question": "What is the total number of different sampling frequencies across all operation points?",
+    "gold_answer": "5",
+    "gpt-4o-mini": "8"
+  },
+  {
+    "question": "How many different decoding and encoding capabilities are mentioned in the table?",
+    "gold_answer": "6",
+    "gpt-4o-mini": "6"
+  },
+  {
+    "question": "What are the sampling frequencies associated with the AMR speech, EVS mono, and AMR-WB+ operation points?",
+    "gold_answer": "8, 16, 32, 48 kHz",
+    "gpt-4o-mini": "8 kHz, 8/16/32/48 kHz, 8/16/32/48 kHz"
+  },
+  {
+    "question": "Which operation points have a sampling frequency of 16 kHz?",
+    "gold_answer": "AMR-WB speech, EVS mono, AMR-WB+",
+    "gpt-4o-mini": "AMR-WB speech, AMR-WB+, EVS mono"
+  },
+  {
+    "question": "How many service operations are supported by the Namf_Communication service?",
+    "gold_answer": "4",
+    "gpt-4o-mini": "4 service operations"
+  },
+  {
+    "question": "How many service operations have Subscribe/Notify operation semantics?",
+    "gold_answer": "3",
+    "gpt-4o-mini": "3"
+  },
+  {
+    "question": "Which service operations are supported by the Namf_Communication service?",
+    "gold_answer": "NonUeN2MessageTransfer, NonUeN2InfoSubscribe, NonUeN2InfoUnSubscribe, NonUeN2InfoNotify",
+    "gpt-4o-mini": "NonUeN2MessageTransfer, NonUeN2InfoSubscribe, NonUeN2InfoUnSubscribe, NonUeN2InfoNotify"
+  },
+  {
+    "question": "Which service operations have Subscribe/Notify semantics?",
+    "gold_answer": "NonUeN2InfoSubscribe, NonUeN2InfoUnSubscribe, NonUeN2InfoNotify",
+    "gpt-4o-mini": "NonUeN2InfoSubscribe, NonUeN2InfoUnSubscribe, NonUeN2InfoNotify"
+  }
+]

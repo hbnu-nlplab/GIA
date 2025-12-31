@@ -1,0 +1,12 @@
+{
+  "experiment_name": "non_rag_experiment",
+  "timestamp": "20251114_183039",
+  "total_llm_calls": 0,
+  "directories": {
+    "base": "../experiment_results/non_rag_run",
+    "logs": "../experiment_results/non_rag_run/logs",
+    "results": "../experiment_results/non_rag_run/results",
+    "llm_history": "../experiment_results/non_rag_run/llm_history",
+    "console": "../experiment_results/non_rag_run/console_output"
+  }
+}
