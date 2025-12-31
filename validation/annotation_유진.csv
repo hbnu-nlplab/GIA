@@ -1,0 +1,468 @@
+﻿sample_id,original_row,level,category,answer_type,question,provided_answer,evidence_summary,annotator_answer,is_correct,error_type,confidence,notes
+S0001,732,L5,What_If_Analysis,text,"(시나리오)'leaf1-pe2' 링크와 'leaf3-p1' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf2'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",metric: multi_link_failure_reachability,,,,,
+S0002,168,L1,Interface_Inventory,map,p3 장비의 각 인터페이스에 할당된 IP 주소를 알려주세요. [답변 형식: {{'인터페이스': 'IP'}}],"{""GigabitEthernet0/0"": ""10.0.0.3/31"", ""GigabitEthernet0/1"": ""10.0.0.4/31"", ""GigabitEthernet0/2"": ""10.0.1.2/31"", ""GigabitEthernet0/3"": ""10.10.10.13/24"", ""Loopback0"": ""10.255.0.3/32""}",metric: interface_ip_map,,,,,
+S0003,182,L1,Interface_Inventory,map,leaf3 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요. [답변 형식: {{'인터페이스': 'VRF'}}],"{""GigabitEthernet0/0"": ""default"", ""GigabitEthernet0/1"": ""default"", ""GigabitEthernet0/2"": ""default"", ""GigabitEthernet0/3"": ""default""}",metric: vrf_bind_map,,,,,
+S0004,420,L3,Comparison_Analysis,text,"leaf4과 pe2의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf4: N개, pe2: M개, 차이: K개']","""leaf4: 0, pe2: 6, diff: 6""",metric: compare_vrf_count,,,,,
+S0005,754,L5,What_If_Analysis,text,"(시나리오)'leaf1-leaf3' 링크와 'leaf2-p2' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf4'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe2에서 NO_ROUTE)""",metric: multi_link_failure_reachability,,,,,
+S0006,343,L2,OSPF_Consistency,numeric,leaf2 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까? [답변 형식: 숫자],0,metric: ospf_area0_if_count,,,,,
+S0007,490,L1,Configuration_Check,set,'{node}' 장비에 설정된 Syslog 서버 목록은? [답변 형식: IP 리스트],[],metric: syslog_servers_list,,,,,
+S0008,683,L5,What_If_Analysis,text,"leaf1에서 p2로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe1""",metric: root_cause_analysis,,,,,
+S0009,642,L4,Security_Analysis,set,"VRF_AI과 VRF_HPC 사이에 누수된 prefix 목록은 무엇입니까? [답변 형식: prefix 목록 (예: [""10.10.10.0/24""]) 또는 빈 목록 []]",[],metric: leaked_prefixes_list,,,,,
+S0010,393,L3,Comparison_Analysis,text,"p2과 pe2의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p2: N개, pe2: M개, 차이: K개']","""p2: 0, pe2: 1, diff: 1""",metric: compare_bgp_neighbor_count,,,,,
+S0011,474,L3,Comparison_Analysis,text,인터페이스 수가 가장 많은 장비와 그 개수를 알려주세요. [답변 형식: '장비명: N개'],"""p1: 5""",metric: max_interface_device,,,,,
+S0012,198,L1,Routing_Inventory,numeric,p3 장비의 BGP Local-AS 번호는 무엇입니까? [답변 형식: 숫자],0,metric: bgp_local_as_numeric,,,,,
+S0013,100,L1,System_Inventory,map,leaf4 장비의 각 인터페이스 상태를 알려주세요. [답변 형식: {{'인터페이스명': '상태'}}],"{""GigabitEthernet0/0"": ""up"", ""GigabitEthernet0/1"": ""down"", ""GigabitEthernet0/2"": ""up"", ""GigabitEthernet0/3"": ""down""}",metric: interface_status_map,,,,,
+S0014,659,L4,Security_Policy,text,"**보안 정책**: 네트워크 설계상 'leaf4'에서 'leaf3'로 가는 모든 트래픽은 보안 검사(방화벽/IPS)를 위해 반드시 'pe2' 장비를 경유해야 합니다.
+
+**질문**: 현재 네트워크 구성에서 이 보안 정책을 우회하는 직접 경로가 존재합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 우회 경로가 있는 경우: ""우회 경로 존재 (경로: 장비1→장비2→장비3)""
+- 우회 경로가 없는 경우: ""우회 경로 없음 (정책 준수)""
+
+**예시**:
+- ""우회 경로 존재 (경로: leaf1→leaf2→leaf3)""
+- ""우회 경로 없음 (정책 준수)""","""우회 경로 없음 (정책 준수)""",metric: security_policy_bypass_check,,,,,
+S0015,711,L5,What_If_Analysis,text,"'leaf1', 'leaf2', 'leaf3'가 동시에 다운되면 네트워크가 완전히 분리됩니까? [답변 형식: '예, 완전 분리' 또는 '아니오, N개 흐름만 영향']","""아니오, 15개 흐름만 영향""",metric: triple_node_failure,,,,,
+S0016,582,L4,Reachability_Analysis,text,"10.0.1.1에서 172.16.3.2(22/TCP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: pe1, 도달: 불가 (원인: INSUFFICIENT_INFO)""",metric: reachability_status,,,,,
+S0017,542,L4,Reachability_Analysis,text,leaf4에서 10.0.1.3까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",metric: traceroute_path,,,,,
+S0018,440,L3,Comparison_Analysis,text,"p3과 p4의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'p3: AS X, p4: AS Y']","""p3: AS None, p4: AS None""",metric: compare_bgp_as,,,,,
+S0019,209,L1,Routing_Inventory,numeric,p2 장비의 BGP 피어(이웃)는 총 몇 개입니까? [답변 형식: 숫자],0,metric: bgp_neighbor_count,,,,,
+S0020,203,L1,Routing_Inventory,numeric,pe1 장비의 BGP 피어(이웃)는 총 몇 개입니까? [답변 형식: 숫자],1,metric: bgp_neighbor_count,,,,,
+S0021,273,L1,Services_Inventory,numeric,leaf4 장비에 설정된 VRF는 총 몇 개입니까? [답변 형식: 숫자],0,metric: vrf_count,,,,,
+S0022,593,L4,Reachability_Analysis,number,leaf4에서 172.16.3.2로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,metric: bounded_path_length,,,,,
+S0023,340,L2,OSPF_Consistency,set,OSPF Area 0에 속한 장비 목록을 알려주세요. [답변 형식: 리스트],"[""p1"", ""p2"", ""p3"", ""p4"", ""pe1"", ""pe2""]",metric: ospf_area_membership,,,,,
+S0024,392,L3,Comparison_Analysis,text,"p2과 p4의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p2: N개, p4: M개, 차이: K개']","""p2: 0, p4: 0, diff: 0""",metric: compare_bgp_neighbor_count,,,,,
+S0025,202,L1,Routing_Inventory,numeric,leaf4 장비의 BGP 피어(이웃)는 총 몇 개입니까? [답변 형식: 숫자],0,metric: bgp_neighbor_count,,,,,
+S0026,89,L1,System_Inventory,set,p3 장비에 설정된 Syslog 서버 목록을 알려주세요. [답변 형식: 리스트],[],metric: syslog_server_list,,,,,
+S0027,49,L1,System_Inventory,numeric,leaf4 장비에 등록된 로컬 사용자는 총 몇 명입니까? [답변 형식: 숫자],1,metric: system_user_count,,,,,
+S0028,571,L4,Reachability_Analysis,text,"172.16.1.2에서 172.16.4.2(22/TCP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf1 → pe1, 도달: 불가 (원인: NO_ROUTE)""",metric: reachability_status,,,,,
+S0029,242,L1,Routing_Inventory,set,p4 장비가 참여하는 OSPF Area 목록을 알려주세요. [답변 형식: 리스트],"[""0""]",metric: ospf_area_set,,,,,
+S0030,398,L3,Comparison_Analysis,text,"leaf1과 leaf2의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf1: N개, leaf2: M개, 차이: K개']","""leaf1: 4, leaf2: 4, diff: 0""",metric: compare_interface_count,,,,,
+S0031,196,L1,Routing_Inventory,numeric,p2 장비의 BGP Local-AS 번호는 무엇입니까? [답변 형식: 숫자],0,metric: bgp_local_as_numeric,,,,,
+S0032,419,L3,Comparison_Analysis,text,"leaf1과 p4의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf1: N개, p4: M개, 차이: K개']","""leaf1: 0, p4: 0, diff: 0""",metric: compare_vrf_count,,,,,
+S0033,491,L1,Configuration_Check,set,'{node}' 장비에 설정된 SNMP Community 목록은? [답변 형식: 문자열 리스트],[],metric: snmp_server_communities,,,,,
+S0034,583,L4,Reachability_Analysis,text,"172.16.1.2에서 10.0.0.0(0/ICMP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf1 → pe1, 도달: 불가 (원인: NO_ROUTE)""",metric: reachability_status,,,,,
+S0035,251,L1,Routing_Inventory,set,leaf1 장비가 참여하는 OSPF Area 목록을 알려주세요. [답변 형식: 리스트],[],metric: ospf_area_set,,,,,
+S0036,37,L1,System_Inventory,set,p1 장비에 등록된 로컬 사용자 목록을 알려주세요. [답변 형식: 리스트],"[""admin""]",metric: system_user_list,,,,,
+S0037,265,L1,Services_Inventory,set,pe1 장비에 설정된 VRF 이름 목록을 알려주세요. [답변 형식: 리스트],"[""VRF_AI"", ""VRF_BIO"", ""VRF_HPC""]",metric: vrf_names_set,,,,,
+S0038,645,L4,Security_Analysis,set,"default과 VRF_BIO 사이에 누수된 prefix 목록은 무엇입니까? [답변 형식: prefix 목록 (예: [""10.10.10.0/24""]) 또는 빈 목록 []]",[],metric: leaked_prefixes_list,,,,,
+S0039,507,L1,Configuration_Check,set,'{node}' 장비의 RIP 프로토콜 활성화 상태는? [답변 형식: Enabled/Disabled],[],metric: rip_processes,,,,,
+S0040,759,L5,What_If_Analysis,text,"(시나리오)'leaf2-p2' 링크와 'leaf3-p1' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf1'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",metric: multi_link_failure_reachability,,,,,
+S0041,625,L4,Reachability_Analysis,number,pe2에서 10.0.1.1로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],4,metric: bounded_path_length,,,,,
+S0042,584,L4,Reachability_Analysis,text,"172.16.4.2에서 10.0.0.1(22/TCP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf4 → pe2, 도달: 불가 (원인: NO_ROUTE)""",metric: reachability_status,,,,,
+S0043,169,L1,Interface_Inventory,map,p4 장비의 각 인터페이스에 할당된 IP 주소를 알려주세요. [답변 형식: {{'인터페이스': 'IP'}}],"{""GigabitEthernet0/0"": ""10.0.0.5/31"", ""GigabitEthernet0/1"": ""10.0.0.6/31"", ""GigabitEthernet0/2"": ""10.10.10.14/24"", ""GigabitEthernet0/3"": """", ""Loopback0"": ""10.255.0.4/32""}",metric: interface_ip_map,,,,,
+S0044,110,L1,System_Inventory,number,p4 장비의 라우팅 테이블 엔트리는 총 몇 개입니까? [답변 형식: 숫자],5,metric: routing_table_entry_count,,,,,
+S0045,51,L1,System_Inventory,numeric,p4 장비에 등록된 로컬 사용자는 총 몇 명입니까? [답변 형식: 숫자],1,metric: system_user_count,,,,,
+S0046,165,L1,Interface_Inventory,map,pe2 장비의 각 인터페이스에 할당된 IP 주소를 알려주세요. [답변 형식: {{'인터페이스': 'IP'}}],"{""GigabitEthernet0/0"": ""10.0.1.3/31"", ""GigabitEthernet0/1"": ""172.16.3.1/24"", ""GigabitEthernet0/2"": ""172.16.4.1/24"", ""GigabitEthernet0/3"": ""10.10.10.22/24"", ""Loopback0"": ""10.255.0.12/32""}",metric: interface_ip_map,,,,,
+S0047,473,L3,Comparison_Analysis,text,"leaf4과 p1가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'leaf4: Area 0, 1, p1: Area 0, 2']","""leaf4: Area None, p1: Area 0""",metric: compare_ospf_areas,,,,,
+S0048,215,L1,Routing_Inventory,set,p3 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트],[],metric: neighbor_list_ibgp,,,,,
+S0049,30,L1,System_Inventory,text,leaf4 장비의 시간대(Timezone)는 무엇입니까? [답변 형식: 설정값 또는 null],null,metric: system_timezone_text,,,,,
+S0050,411,L3,Comparison_Analysis,text,"leaf4과 p3의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf4: N개, p3: M개, 차이: K개']","""leaf4: 4, p3: 5, diff: 1""",metric: compare_interface_count,,,,,
+S0051,690,L5,What_If_Analysis,text,"leaf2에서 p2로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe1""",metric: root_cause_analysis,,,,,
+S0052,269,L1,Services_Inventory,set,pe2 장비에 설정된 VRF 이름 목록을 알려주세요. [답변 형식: 리스트],"[""VRF_AI"", ""VRF_BIO"", ""VRF_HPC""]",metric: vrf_names_set,,,,,
+S0053,366,L3,VRF_Consistency,set,p4 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요. [답변 형식: 리스트],[],metric: vrf_rt_list_per_device,,,,,
+S0054,342,L2,OSPF_Consistency,numeric,p1 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까? [답변 형식: 숫자],3,metric: ospf_area0_if_count,,,,,
+S0055,701,L5,What_If_Analysis,number,'pe2' 장비가 다운되면 몇 개의 트래픽 흐름이 새로 차단됩니까? [답변 형식: 숫자],18,metric: node_failure_impact,,,,,
+S0056,359,L3,BGP_Consistency,numeric,AS 65000의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까? [답변 형식: 숫자],0,metric: ibgp_missing_pairs_count,,,,,
+S0057,317,L1,Services_Inventory,text,p4 장비의 MPLS LDP Router-ID는 무엇입니까? [답변 형식: IP 주소 (예: 10.255.0.1) 또는 '미설정'],"""미설정""",metric: mpls_ldp_router_id,,,,,
+S0058,309,L1,Services_Inventory,numeric,pe2 장비의 Route Target Export 설정은 총 몇 개입니까? [답변 형식: 숫자],6,metric: rt_export_count,,,,,
+S0059,657,L4,Security_Policy,text,"**보안 정책**: 네트워크 설계상 'leaf1'에서 'leaf3'로 가는 모든 트래픽은 보안 검사(방화벽/IPS)를 위해 반드시 'pe2' 장비를 경유해야 합니다.
+
+**질문**: 현재 네트워크 구성에서 이 보안 정책을 우회하는 직접 경로가 존재합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 우회 경로가 있는 경우: ""우회 경로 존재 (경로: 장비1→장비2→장비3)""
+- 우회 경로가 없는 경우: ""우회 경로 없음 (정책 준수)""
+
+**예시**:
+- ""우회 경로 존재 (경로: leaf1→leaf2→leaf3)""
+- ""우회 경로 없음 (정책 준수)""","""우회 경로 없음 (정책 준수)""",metric: security_policy_bypass_check,,,,,
+S0060,217,L1,Routing_Inventory,set,p4 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트],[],metric: neighbor_list_ibgp,,,,,
+S0061,386,L3,Comparison_Analysis,text,"p1과 pe1의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p1: N개, pe1: M개, 차이: K개']","""p1: 0, pe1: 1, diff: 1""",metric: compare_bgp_neighbor_count,,,,,
+S0062,115,L1,Security_Inventory,text,p4 장비의 SSH 버전은 무엇입니까? [답변 형식: 정확한 값만],"""2""",metric: ssh_version_text,,,,,
+S0063,553,L4,Reachability_Analysis,text,leaf2에서 10.0.0.5까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",metric: traceroute_path,,,,,
+S0064,697,L5,What_If_Analysis,number,'leaf2' 장비가 다운되면 몇 개의 트래픽 흐름이 새로 차단됩니까? [답변 형식: 숫자],17,metric: node_failure_impact,,,,,
+S0065,689,L5,What_If_Analysis,text,"leaf1에서 p3로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe1""",metric: root_cause_analysis,,,,,
+S0066,15,L1,System_Inventory,text,pe1 장비의 운영체제(OS) 버전은 무엇입니까? [답변 형식: 정확한 값만],"""15.7""",metric: system_version_text,,,,,
+S0067,79,L1,System_Inventory,set,leaf4 장비에 설정된 SNMP 커뮤니티 목록을 알려주세요. [답변 형식: 리스트],[],metric: snmp_community_list,,,,,
+S0068,193,L1,Routing_Inventory,numeric,p4 장비의 BGP Local-AS 번호는 무엇입니까? [답변 형식: 숫자],0,metric: bgp_local_as_numeric,,,,,
+S0069,230,L1,Routing_Inventory,set,leaf3 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트],[],metric: neighbor_list_ebgp,,,,,
+S0070,480,L1,Configuration_Check,text,'{node}' 장비의 Password Encryption 기능 설정값은 무엇입니까? [답변 형식: Enabled/Disabled],"""Disabled""",metric: password_encryption_config,,,,,
+S0071,605,L4,Reachability_Analysis,number,leaf2에서 10.0.1.3로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,metric: bounded_path_length,,,,,
+S0072,450,L3,Comparison_Analysis,text,"leaf3과 p2의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf3: AS X, p2: AS Y']","""leaf3: AS None, p2: AS None""",metric: compare_bgp_as,,,,,
+S0073,406,L3,Comparison_Analysis,text,"p2과 p3의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p2: N개, p3: M개, 차이: K개']","""p2: 5, p3: 5, diff: 0""",metric: compare_interface_count,,,,,
+S0074,736,L5,What_If_Analysis,text,"(시나리오)'leaf1-p2' 링크와 'leaf2-pe2' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf4'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe2에서 NO_ROUTE)""",metric: multi_link_failure_reachability,,,,,
+S0075,330,L1,Services_Inventory,set,p4 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요. [답변 형식: 리스트],[],metric: l2vpn_pw_id_set,,,,,
+S0076,252,L1,Routing_Inventory,set,p1 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요. [답변 형식: 리스트],"[""GigabitEthernet0/0"", ""GigabitEthernet0/1"", ""Loopback0""]",metric: ospf_area0_if_list,,,,,
+S0077,403,L3,Comparison_Analysis,text,"p3과 pe1의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p3: N개, pe1: M개, 차이: K개']","""p3: 5, pe1: 5, diff: 0""",metric: compare_interface_count,,,,,
+S0078,486,L1,Configuration_Check,text,'{node}' 장비의 HTTP Server 활성화 상태는? [답변 형식: Enabled/Disabled],"""Disabled""",metric: http_server_config,,,,,
+S0079,627,L4,Reachability_Analysis,number,p1에서 10.0.0.3로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],3,metric: bounded_path_length,,,,,
+S0080,720,L5,What_If_Analysis,text,"(시나리오)'leaf1-pe1' 링크와 'leaf3-pe2' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf2'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",metric: multi_link_failure_reachability,,,,,
+S0081,678,L5,What_If_Analysis,text,"leaf4에서 p2로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe2""",metric: root_cause_analysis,,,,,
+S0082,159,L1,Interface_Inventory,numeric,leaf3 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까? [답변 형식: 숫자],4,metric: interface_count,,,,,
+S0083,180,L1,Interface_Inventory,numeric,p4 장비에 설정된 서브인터페이스는 총 몇 개입니까? [답변 형식: 숫자],0,metric: subinterface_count,,,,,
+S0084,395,L3,Comparison_Analysis,text,"p4과 pe2의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p4: N개, pe2: M개, 차이: K개']","""p4: 5, pe2: 5, diff: 0""",metric: compare_interface_count,,,,,
+S0085,155,L1,Interface_Inventory,numeric,pe1 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까? [답변 형식: 숫자],5,metric: interface_count,,,,,
+S0086,565,L4,Reachability_Analysis,text,"10.0.0.0에서 172.16.3.2(0/ICMP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: p1, 도달: 불가 (원인: INSUFFICIENT_INFO)""",metric: reachability_status,,,,,
+S0087,64,L1,System_Inventory,set,leaf2 장비에 설정된 NTP 서버 목록을 알려주세요. [답변 형식: 리스트],[],metric: ntp_server_list,,,,,
+S0088,311,L1,Services_Inventory,numeric,leaf1 장비의 Route Target Export 설정은 총 몇 개입니까? [답변 형식: 숫자],0,metric: rt_export_count,,,,,
+S0089,484,L1,Configuration_Check,text,'{node}' 장비의 MOTD(Message of the Day) 배너 내용은? [답변 형식: 내용 또는 None],"""None""",metric: banner_motd_content,,,,,
+S0090,46,L1,System_Inventory,numeric,p1 장비에 등록된 로컬 사용자는 총 몇 명입니까? [답변 형식: 숫자],1,metric: system_user_count,,,,,
+S0091,143,L1,Security_Inventory,text,p4 장비의 VTY line 로그인 방식은 무엇입니까? [답변 형식: 설정값 또는 null],"""local""",metric: vty_login_mode_text,,,,,
+S0092,570,L4,Reachability_Analysis,text,"172.16.3.2에서 10.0.0.1(0/ICMP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf3 → pe2, 도달: 불가 (원인: NO_ROUTE)""",metric: reachability_status,,,,,
+S0093,703,L5,What_If_Analysis,number,'leaf3' 장비가 다운되면 몇 개의 트래픽 흐름이 새로 차단됩니까? [답변 형식: 숫자],18,metric: node_failure_impact,,,,,
+S0094,108,L1,System_Inventory,number,leaf3 장비의 라우팅 테이블 엔트리는 총 몇 개입니까? [답변 형식: 숫자],4,metric: routing_table_entry_count,,,,,
+S0095,207,L1,Routing_Inventory,numeric,leaf3 장비의 BGP 피어(이웃)는 총 몇 개입니까? [답변 형식: 숫자],0,metric: bgp_neighbor_count,,,,,
+S0096,387,L3,Comparison_Analysis,text,"p3과 pe2의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p3: N개, pe2: M개, 차이: K개']","""p3: 0, pe2: 1, diff: 1""",metric: compare_bgp_neighbor_count,,,,,
+S0097,338,L2,Security_Policy,set,VRF_BIO VRF를 사용하는 장비 목록을 알려주세요. [답변 형식: 리스트],"[""pe1"", ""pe2""]",metric: devices_with_same_vrf,,,,,
+S0098,516,L4,Reachability_Analysis,text,leaf3에서 10.0.0.1까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",metric: traceroute_path,,,,,
+S0099,665,L5,What_If_Analysis,set,"leaf1에서 172.16.3.2로 가는 대체 경로들을 모두 나열해주세요. [답변 형식: 경로 목록 (예: [""A→B→C"", ""A→D→C""])]","[""leaf1 → pe1"", ""leaf1""]",metric: redundant_paths_list,,,,,
+S0100,351,L2,OSPF_Consistency,number,OSPF Area 0의 이웃 관계는 총 몇 개입니까? [답변 형식: 숫자],0,metric: ospf_neighbor_count_per_area,,,,,
+S0101,319,L1,Services_Inventory,text,leaf3 장비의 MPLS LDP Router-ID는 무엇입니까? [답변 형식: IP 주소 (예: 10.255.0.1) 또는 '미설정'],"""미설정""",metric: mpls_ldp_router_id,,,,,
+S0102,380,L3,Comparison_Analysis,text,"leaf1과 p4의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf1: N개, p4: M개, 차이: K개']","""leaf1: 0, p4: 0, diff: 0""",metric: compare_bgp_neighbor_count,,,,,
+S0103,470,L3,Comparison_Analysis,text,"leaf4과 p2가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'leaf4: Area 0, 1, p2: Area 0, 2']","""leaf4: Area None, p2: Area 0""",metric: compare_ospf_areas,,,,,
+S0104,216,L1,Routing_Inventory,set,p1 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트],[],metric: neighbor_list_ibgp,,,,,
+S0105,362,L3,VRF_Consistency,set,route-target이 없는 VRF(장비/VRF) 목록을 알려주세요. [답변 형식: 리스트],[],metric: vrf_without_rt_pairs,,,,,
+S0106,672,L5,What_If_Analysis,text,"leaf4에서 p1로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe2""",metric: root_cause_analysis,,,,,
+S0107,249,L1,Routing_Inventory,set,p1 장비가 참여하는 OSPF Area 목록을 알려주세요. [답변 형식: 리스트],"[""0""]",metric: ospf_area_set,,,,,
+S0108,681,L5,What_If_Analysis,text,"leaf4에서 pe1로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe2""",metric: root_cause_analysis,,,,,
+S0109,53,L1,System_Inventory,text,leaf3 장비에서 logging buffered의 severity-level은 무엇입니까? [답변 형식: 설정값 또는 null],null,metric: logging_buffered_severity_text,,,,,
+S0110,321,L1,Services_Inventory,text,pe2 장비의 MPLS LDP Router-ID는 무엇입니까? [답변 형식: IP 주소 (예: 10.255.0.1) 또는 '미설정'],"""미설정""",metric: mpls_ldp_router_id,,,,,
+S0111,729,L5,What_If_Analysis,text,"(시나리오)'leaf2-pe1' 링크와 'leaf3-p3' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf1'에서 'p2'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",metric: multi_link_failure_reachability,,,,,
+S0112,412,L3,Comparison_Analysis,text,"leaf3과 p2의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf3: N개, p2: M개, 차이: K개']","""leaf3: 4, p2: 5, diff: 1""",metric: compare_interface_count,,,,,
+S0113,580,L4,Reachability_Analysis,text,"172.16.1.2에서 10.0.1.3(0/ICMP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf1 → pe1, 도달: 불가 (원인: NO_ROUTE)""",metric: reachability_status,,,,,
+S0114,331,L1,Services_Inventory,set,pe1 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요. [답변 형식: 리스트],[],metric: l2vpn_pw_id_set,,,,,
+S0115,590,L4,Reachability_Analysis,number,p4에서 10.0.1.3로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],3,metric: bounded_path_length,,,,,
+S0116,283,L1,Services_Inventory,map,leaf2 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요. [답변 형식: {{'VRF': 'RD'}}],{},metric: vrf_rd_map,,,,,
+S0117,57,L1,System_Inventory,text,leaf4 장비에서 logging buffered의 severity-level은 무엇입니까? [답변 형식: 설정값 또는 null],null,metric: logging_buffered_severity_text,,,,,
+S0118,431,L3,Comparison_Analysis,text,"leaf1과 p1의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf1: N개, p1: M개, 차이: K개']","""leaf1: 0, p1: 0, diff: 0""",metric: compare_vrf_count,,,,,
+S0119,136,L1,Security_Inventory,text,leaf3 장비의 VTY transport input 설정은 무엇입니까? [답변 형식: 설정값 또는 null],"""ssh""",metric: vty_transport_input_text,,,,,
+S0120,287,L1,Services_Inventory,map,p4 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요. [답변 형식: {{'VRF': 'RD'}}],{},metric: vrf_rd_map,,,,,
+S0121,281,L1,Services_Inventory,numeric,p2 장비에 설정된 VRF는 총 몇 개입니까? [답변 형식: 숫자],0,metric: vrf_count,,,,,
+S0122,633,L4,Reachability_Analysis,number,pe2에서 10.0.0.1로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],3,metric: bounded_path_length,,,,,
+S0123,104,L1,System_Inventory,number,leaf4 장비의 라우팅 테이블 엔트리는 총 몇 개입니까? [답변 형식: 숫자],4,metric: routing_table_entry_count,,,,,
+S0124,318,L1,Services_Inventory,text,leaf2 장비의 MPLS LDP Router-ID는 무엇입니까? [답변 형식: IP 주소 (예: 10.255.0.1) 또는 '미설정'],"""미설정""",metric: mpls_ldp_router_id,,,,,
+S0125,611,L4,Reachability_Analysis,number,leaf1에서 10.0.0.3로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,metric: bounded_path_length,,,,,
+S0126,16,L1,System_Inventory,text,p1 장비의 운영체제(OS) 버전은 무엇입니까? [답변 형식: 정확한 값만],"""15.7""",metric: system_version_text,,,,,
+S0127,500,L1,Configuration_Check,set,'{node}' 장비에서 ACL이 적용된 인터페이스 목록은? [답변 형식: 인터페이스명 리스트],[],metric: acl_applied_interfaces_list,,,,,
+S0128,758,L5,What_If_Analysis,text,"(시나리오)'leaf1-p3' 링크와 'leaf2-pe2' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf4'에서 'p2'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe2에서 NO_ROUTE)""",metric: multi_link_failure_reachability,,,,,
+S0129,185,L1,Interface_Inventory,map,leaf4 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요. [답변 형식: {{'인터페이스': 'VRF'}}],"{""GigabitEthernet0/0"": ""default"", ""GigabitEthernet0/1"": ""default"", ""GigabitEthernet0/2"": ""default"", ""GigabitEthernet0/3"": ""default""}",metric: vrf_bind_map,,,,,
+S0130,220,L1,Routing_Inventory,set,leaf2 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트],[],metric: neighbor_list_ibgp,,,,,
+S0131,762,L5,What_If_Analysis,text,"(시나리오)'leaf1-p2' 링크와 'leaf3-pe1' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf2'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",metric: multi_link_failure_reachability,,,,,
+S0132,731,L5,What_If_Analysis,text,"(시나리오)'leaf1-leaf3' 링크와 'leaf2-p4' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf4'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe2에서 NO_ROUTE)""",metric: multi_link_failure_reachability,,,,,
+S0133,704,L5,What_If_Analysis,number,'p2' 장비가 다운되면 몇 개의 트래픽 흐름이 새로 차단됩니까? [답변 형식: 숫자],19,metric: node_failure_impact,,,,,
+S0134,756,L5,What_If_Analysis,text,"(시나리오)'leaf1-pe1' 링크와 'leaf2-p2' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf4'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe2에서 NO_ROUTE)""",metric: multi_link_failure_reachability,,,,,
+S0135,13,L1,System_Inventory,text,leaf2 장비의 운영체제(OS) 버전은 무엇입니까? [답변 형식: 정확한 값만],"""15.7""",metric: system_version_text,,,,,
+S0136,489,L1,Configuration_Check,set,'{node}' 장비에 설정된 NTP 서버 목록은? [답변 형식: IP 리스트],[],metric: ntp_servers_list,,,,,
+S0137,673,L5,What_If_Analysis,text,"p1에서 leaf3로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""p1""",metric: root_cause_analysis,,,,,
+S0138,27,L1,System_Inventory,text,leaf3 장비의 시간대(Timezone)는 무엇입니까? [답변 형식: 설정값 또는 null],null,metric: system_timezone_text,,,,,
+S0139,126,L1,Security_Inventory,text,"p2 장비의 AAA 인증 방식은 무엇입니까? [답변 형식: local, tacacs+, radius 중 하나 또는 '미설정']","""미설정""",metric: aaa_authentication_method,,,,,
+S0140,40,L1,System_Inventory,set,leaf3 장비에 등록된 로컬 사용자 목록을 알려주세요. [답변 형식: 리스트],"[""admin""]",metric: system_user_list,,,,,
+S0141,339,L2,Security_Policy,set,VRF_HPC VRF를 사용하는 장비 목록을 알려주세요. [답변 형식: 리스트],"[""pe1"", ""pe2""]",metric: devices_with_same_vrf,,,,,
+S0142,530,L4,Reachability_Analysis,text,leaf2에서 10.0.0.1까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",metric: traceroute_path,,,,,
+S0143,529,L4,Reachability_Analysis,text,p1에서 10.0.0.5까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""p1 → p4""",metric: traceroute_path,,,,,
+S0144,637,L4,Reachability_Analysis,text,172.16.1.2에서 10.0.0.3로 가는 트래픽이 p4를 경유할 때의 전체 경로는 무엇입니까? [답변 형식: 'A → B → C' 형식 또는 '경유하지 않음'],"""경유하지 않음""",metric: waypoint_traversal_path,,,,,
+S0145,502,L1,Configuration_Check,numeric,'{node}' 장비에 정의된 Route-Map 개수는? [답변 형식: 숫자],0,metric: route_map_count,,,,,
+S0146,67,L1,System_Inventory,set,p4 장비에 설정된 NTP 서버 목록을 알려주세요. [답변 형식: 리스트],[],metric: ntp_server_list,,,,,
+S0147,476,L3,Comparison_Analysis,text,"모든 장비의 BGP AS 번호를 나열해주세요. [답변 형식: '장비1: AS X, 장비2: AS Y, ...']","""pe1: AS 65000, pe2: AS 65000""",metric: all_devices_same_as,,,,,
+S0148,327,L1,Services_Inventory,set,leaf4 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요. [답변 형식: 리스트],[],metric: l2vpn_pw_id_set,,,,,
+S0149,761,L5,What_If_Analysis,text,"(시나리오)'leaf2-pe2' 링크와 'leaf3-p1' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf1'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",metric: multi_link_failure_reachability,,,,,
+S0150,447,L3,Comparison_Analysis,text,"pe1과 pe2의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'pe1: AS X, pe2: AS Y']","""pe1: AS 65000, pe2: AS 65000""",metric: compare_bgp_as,,,,,
+S0151,129,L1,Security_Inventory,text,"pe2 장비의 AAA 인증 방식은 무엇입니까? [답변 형식: local, tacacs+, radius 중 하나 또는 '미설정']","""미설정""",metric: aaa_authentication_method,,,,,
+S0152,2,L1,System_Inventory,text,p2 장비의 호스트네임은 무엇입니까? [답변 형식: 정확한 값만],"""p2""",metric: system_hostname_text,,,,,
+S0153,435,L3,Comparison_Analysis,text,"leaf4과 pe1의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf4: AS X, pe1: AS Y']","""leaf4: AS None, pe1: AS 65000""",metric: compare_bgp_as,,,,,
+S0154,71,L1,System_Inventory,set,leaf3 장비에 설정된 NTP 서버 목록을 알려주세요. [답변 형식: 리스트],[],metric: ntp_server_list,,,,,
+S0155,487,L1,Configuration_Check,text,'{node}' 장비의 CDP(Cisco Discovery Protocol) 활성화 상태는? [답변 형식: Enabled/Disabled],"""Enabled""",metric: cdp_config,,,,,
+S0156,644,L4,Security_Analysis,set,"default과 VRF_HPC 사이에 누수된 prefix 목록은 무엇입니까? [답변 형식: prefix 목록 (예: [""10.10.10.0/24""]) 또는 빈 목록 []]",[],metric: leaked_prefixes_list,,,,,
+S0157,356,L3,L2VPN_Consistency,numeric,PW-ID 불일치 또는 단방향 L2VPN 회선은 총 몇 개입니까? [답변 형식: 숫자],0,metric: l2vpn_mismatch_count,,,,,
+S0158,524,L4,Reachability_Analysis,text,leaf1에서 172.16.4.2까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",metric: traceroute_path,,,,,
+S0159,592,L4,Reachability_Analysis,number,p1에서 10.0.1.1로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],3,metric: bounded_path_length,,,,,
+S0160,453,L3,Comparison_Analysis,text,"leaf2과 p2의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf2: AS X, p2: AS Y']","""leaf2: AS None, p2: AS None""",metric: compare_bgp_as,,,,,
+S0161,172,L1,Interface_Inventory,numeric,leaf4 장비에 설정된 서브인터페이스는 총 몇 개입니까? [답변 형식: 숫자],0,metric: subinterface_count,,,,,
+S0162,363,L3,VRF_Consistency,numeric,route-target이 없는 VRF(장비/VRF)는 총 몇 개입니까? [답변 형식: 숫자],0,metric: vrf_without_rt_count,,,,,
+S0163,167,L1,Interface_Inventory,map,leaf3 장비의 각 인터페이스에 할당된 IP 주소를 알려주세요. [답변 형식: {{'인터페이스': 'IP'}}],"{""GigabitEthernet0/0"": ""172.16.3.2/24"", ""GigabitEthernet0/1"": """", ""GigabitEthernet0/2"": ""10.10.10.33/24"", ""GigabitEthernet0/3"": """"}",metric: interface_ip_map,,,,,
+S0164,628,L4,Reachability_Analysis,number,leaf4에서 10.0.1.3로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,metric: bounded_path_length,,,,,
+S0165,328,L1,Services_Inventory,set,pe2 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요. [답변 형식: 리스트],[],metric: l2vpn_pw_id_set,,,,,
+S0166,181,L1,Interface_Inventory,numeric,p1 장비에 설정된 서브인터페이스는 총 몇 개입니까? [답변 형식: 숫자],0,metric: subinterface_count,,,,,
+S0167,76,L1,System_Inventory,set,leaf3 장비에 설정된 SNMP 커뮤니티 목록을 알려주세요. [답변 형식: 리스트],[],metric: snmp_community_list,,,,,
+S0168,604,L4,Reachability_Analysis,number,leaf1에서 10.0.0.1로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,metric: bounded_path_length,,,,,
+S0169,210,L1,Routing_Inventory,numeric,p4 장비의 BGP 피어(이웃)는 총 몇 개입니까? [답변 형식: 숫자],0,metric: bgp_neighbor_count,,,,,
+S0170,655,L4,Routing_Analysis,text,"pe2과 p3 사이의 Forward/Reverse 경로를 비교해주세요. [답변 형식: 'Forward: A→B→C, Reverse: C→D→A' 형식]","""Forward: pe2 → p3, Reverse: p3 → pe2""",metric: asymmetric_path_comparison,,,,,
+S0171,664,L5,What_If_Analysis,set,"OSPF Backbone Area(Area 0)에 속한 라우터 목록은 무엇입니까? [답변 형식: 라우터 이름 목록 (예: [""spine1"", ""spine2"", ""p1""])]","[""p1"", ""p2"", ""p3"", ""p4"", ""pe1""]",metric: ospf_area0_routers,,,,,
+S0172,346,L2,OSPF_Consistency,numeric,pe1 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까? [답변 형식: 숫자],2,metric: ospf_area0_if_count,,,,,
+S0173,503,L1,Configuration_Check,set,'{node}' 장비에 정의된 QoS Class-Map 목록은? [답변 형식: 이름 리스트],[],metric: qos_class_maps_list,,,,,
+S0174,371,L3,VRF_Consistency,set,leaf3 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요. [답변 형식: 리스트],[],metric: vrf_rt_list_per_device,,,,,
+S0175,661,L4,Security_Policy,text,"**보안 정책**: 네트워크 설계상 'leaf2'에서 'leaf3'로 가는 모든 트래픽은 보안 검사(방화벽/IPS)를 위해 반드시 'pe1' 장비를 경유해야 합니다.
+
+**질문**: 현재 네트워크 구성에서 이 보안 정책을 우회하는 직접 경로가 존재합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 우회 경로가 있는 경우: ""우회 경로 존재 (경로: 장비1→장비2→장비3)""
+- 우회 경로가 없는 경우: ""우회 경로 없음 (정책 준수)""
+
+**예시**:
+- ""우회 경로 존재 (경로: leaf1→leaf2→leaf3)""
+- ""우회 경로 없음 (정책 준수)""","""우회 경로 없음 (정책 준수)""",metric: security_policy_bypass_check,,,,,
+S0176,125,L1,Security_Inventory,text,"leaf2 장비의 AAA 인증 방식은 무엇입니까? [답변 형식: local, tacacs+, radius 중 하나 또는 '미설정']","""미설정""",metric: aaa_authentication_method,,,,,
+S0177,539,L4,Reachability_Analysis,text,leaf1에서 10.0.0.3까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",metric: traceroute_path,,,,,
+S0178,468,L3,Comparison_Analysis,text,"p1과 p2가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'p1: Area 0, 1, p2: Area 0, 2']","""p1: Area 0, p2: Area 0""",metric: compare_ospf_areas,,,,,
+S0179,576,L4,Reachability_Analysis,text,"172.16.4.2에서 10.0.1.1(0/ICMP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf4 → pe2, 도달: 불가 (원인: NO_ROUTE)""",metric: reachability_status,,,,,
+S0180,5,L1,System_Inventory,text,p4 장비의 호스트네임은 무엇입니까? [답변 형식: 정확한 값만],"""p4""",metric: system_hostname_text,,,,,
+S0181,31,L1,System_Inventory,text,p2 장비의 시간대(Timezone)는 무엇입니까? [답변 형식: 설정값 또는 null],null,metric: system_timezone_text,,,,,
+S0182,535,L4,Reachability_Analysis,text,p4에서 10.0.1.1까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""p4 → p3 → p2 → pe1""",metric: traceroute_path,,,,,
+S0183,111,L1,System_Inventory,number,p1 장비의 라우팅 테이블 엔트리는 총 몇 개입니까? [답변 형식: 숫자],5,metric: routing_table_entry_count,,,,,
+S0184,208,L1,Routing_Inventory,numeric,pe2 장비의 BGP 피어(이웃)는 총 몇 개입니까? [답변 형식: 숫자],1,metric: bgp_neighbor_count,,,,,
+S0185,442,L3,Comparison_Analysis,text,"leaf2과 p1의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf2: AS X, p1: AS Y']","""leaf2: AS None, p1: AS None""",metric: compare_bgp_as,,,,,
+S0186,581,L4,Reachability_Analysis,text,"172.16.2.2에서 10.0.1.1(22/TCP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf2 → pe1, 도달: 불가 (원인: NO_ROUTE)""",metric: reachability_status,,,,,
+S0187,243,L1,Routing_Inventory,set,p2 장비가 참여하는 OSPF Area 목록을 알려주세요. [답변 형식: 리스트],"[""0""]",metric: ospf_area_set,,,,,
+S0188,280,L1,Services_Inventory,numeric,pe1 장비에 설정된 VRF는 총 몇 개입니까? [답변 형식: 숫자],3,metric: vrf_count,,,,,
+S0189,746,L5,What_If_Analysis,text,"(시나리오)'leaf1-leaf2' 링크와 'leaf3-leaf4' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'p1'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""가능 (대체경로: p1 → p2 → p3)""",metric: multi_link_failure_reachability,,,,,
+S0190,245,L1,Routing_Inventory,set,leaf3 장비가 참여하는 OSPF Area 목록을 알려주세요. [답변 형식: 리스트],[],metric: ospf_area_set,,,,,
+S0191,541,L4,Reachability_Analysis,text,p1에서 10.0.1.3까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""p1 → p2 → p3 → pe2""",metric: traceroute_path,,,,,
+S0192,722,L5,What_If_Analysis,text,"(시나리오)'leaf1-p2' 링크와 'leaf3-p3' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf2'에서 'pe1'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",metric: multi_link_failure_reachability,,,,,
+S0193,375,L3,Comparison_Analysis,text,"p1과 p2의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p1: N개, p2: M개, 차이: K개']","""p1: 0, p2: 0, diff: 0""",metric: compare_bgp_neighbor_count,,,,,
+S0194,240,L1,Routing_Inventory,set,p3 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요. [답변 형식: 리스트],"[""1""]",metric: ospf_process_ids_set,,,,,
+S0195,256,L1,Routing_Inventory,set,leaf3 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요. [답변 형식: 리스트],[],metric: ospf_area0_if_list,,,,,
+S0196,641,L4,Security_Analysis,set,"VRF_AI과 default 사이에 누수된 prefix 목록은 무엇입니까? [답변 형식: prefix 목록 (예: [""10.10.10.0/24""]) 또는 빈 목록 []]",[],metric: leaked_prefixes_list,,,,,
+S0197,368,L3,VRF_Consistency,set,pe1 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요. [답변 형식: 리스트],"[""65000:1"", ""65000:2"", ""65000:3""]",metric: vrf_rt_list_per_device,,,,,
+S0198,410,L3,Comparison_Analysis,text,"p4과 pe1의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p4: N개, pe1: M개, 차이: K개']","""p4: 5, pe1: 5, diff: 0""",metric: compare_interface_count,,,,,
+S0199,598,L4,Reachability_Analysis,number,p1에서 10.0.0.1로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,metric: bounded_path_length,,,,,
+S0200,449,L3,Comparison_Analysis,text,"leaf1과 pe1의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf1: AS X, pe1: AS Y']","""leaf1: AS None, pe1: AS 65000""",metric: compare_bgp_as,,,,,
+S0201,187,L1,Interface_Inventory,map,leaf1 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요. [답변 형식: {{'인터페이스': 'VRF'}}],"{""GigabitEthernet0/0"": ""default"", ""GigabitEthernet0/1"": ""default"", ""GigabitEthernet0/2"": ""default"", ""GigabitEthernet0/3"": ""default""}",metric: vrf_bind_map,,,,,
+S0202,594,L4,Reachability_Analysis,number,pe2에서 172.16.3.2로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],1,metric: bounded_path_length,,,,,
+S0203,454,L3,Comparison_Analysis,text,"p4과 pe2가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'p4: Area 0, 1, pe2: Area 0, 2']","""p4: Area 0, pe2: Area 0""",metric: compare_ospf_areas,,,,,
+S0204,141,L1,Security_Inventory,text,pe2 장비의 VTY transport input 설정은 무엇입니까? [답변 형식: 설정값 또는 null],"""ssh""",metric: vty_transport_input_text,,,,,
+S0205,634,L4,Reachability_Analysis,number,p2에서 10.0.0.3로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,metric: bounded_path_length,,,,,
+S0206,663,L5,What_If_Analysis,set,단일 장비 장애 시 통신이 두절되는 구간(SPOF: Single Point of Failure)이 존재합니까? [답변 형식: SPOF 장비 목록 또는 '없음'],"""없음""",metric: spof_detection,,,,,
+S0207,262,L1,Services_Inventory,set,leaf2 장비에 설정된 VRF 이름 목록을 알려주세요. [답변 형식: 리스트],[],metric: vrf_names_set,,,,,
+S0208,428,L3,Comparison_Analysis,text,"p1과 pe1의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p1: N개, pe1: M개, 차이: K개']","""p1: 0, pe1: 6, diff: 6""",metric: compare_vrf_count,,,,,
+S0209,695,L5,What_If_Analysis,text,"leaf3에서 p2로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe2""",metric: root_cause_analysis,,,,,
+S0210,278,L1,Services_Inventory,numeric,p4 장비에 설정된 VRF는 총 몇 개입니까? [답변 형식: 숫자],0,metric: vrf_count,,,,,
+S0211,218,L1,Routing_Inventory,set,leaf1 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트],[],metric: neighbor_list_ibgp,,,,,
+S0212,479,L3,Comparison_Analysis,text,"VRF 사용중인 장비 중에서 각 장비별 VRF 사용 수를 알려주세요. [답변 형식: '장비1: N, 장비2: M']","""leaf1: 0개, leaf2: 0개, leaf3: 0개, leaf4: 0개, p1: 0개, p2: 0개, p3: 0개, p4: 0개, pe1: 3개, pe2: 3개""",metric: vrf_usage_statistics,,,,,
+S0213,632,L4,Reachability_Analysis,number,p4에서 10.0.0.3로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,metric: bounded_path_length,,,,,
+S0214,437,L3,Comparison_Analysis,text,"p1과 pe1의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'p1: AS X, pe1: AS Y']","""p1: AS None, pe1: AS 65000""",metric: compare_bgp_as,,,,,
+S0215,29,L1,System_Inventory,text,p4 장비의 시간대(Timezone)는 무엇입니까? [답변 형식: 설정값 또는 null],null,metric: system_timezone_text,,,,,
+S0216,696,L5,What_If_Analysis,number,'leaf1' 장비가 다운되면 몇 개의 트래픽 흐름이 새로 차단됩니까? [답변 형식: 숫자],16,metric: node_failure_impact,,,,,
+S0217,149,L1,Security_Inventory,text,leaf2 장비의 VTY line 로그인 방식은 무엇입니까? [답변 형식: 설정값 또는 null],"""local""",metric: vty_login_mode_text,,,,,
+S0218,341,L2,OSPF_Consistency,numeric,leaf1 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까? [답변 형식: 숫자],0,metric: ospf_area0_if_count,,,,,
+S0219,643,L4,Security_Analysis,set,"VRF_AI과 VRF_BIO 사이에 누수된 prefix 목록은 무엇입니까? [답변 형식: prefix 목록 (예: [""10.10.10.0/24""]) 또는 빈 목록 []]",[],metric: leaked_prefixes_list,,,,,
+S0220,63,L1,System_Inventory,set,pe2 장비에 설정된 NTP 서버 목록을 알려주세요. [답변 형식: 리스트],[],metric: ntp_server_list,,,,,
+S0221,367,L3,VRF_Consistency,set,pe2 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요. [답변 형식: 리스트],"[""65000:1"", ""65000:2"", ""65000:3""]",metric: vrf_rt_list_per_device,,,,,
+S0222,630,L4,Reachability_Analysis,number,leaf1에서 172.16.3.2로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,metric: bounded_path_length,,,,,
+S0223,350,L2,OSPF_Consistency,numeric,p4 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까? [답변 형식: 숫자],3,metric: ospf_area0_if_count,,,,,
+S0224,335,L2,Security_Policy,set,AAA 기능이 활성화된 장비 목록을 알려주세요. [답변 형식: 리스트],[],metric: aaa_enabled_devices,,,,,
+S0225,465,L3,Comparison_Analysis,text,"p1과 p4가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'p1: Area 0, 1, p4: Area 0, 2']","""p1: Area 0, p4: Area 0""",metric: compare_ospf_areas,,,,,
+S0226,147,L1,Security_Inventory,text,p2 장비의 VTY line 로그인 방식은 무엇입니까? [답변 형식: 설정값 또는 null],"""local""",metric: vty_login_mode_text,,,,,
+S0227,737,L5,What_If_Analysis,text,"(시나리오)'leaf1-p2' 링크와 'leaf3-leaf4' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf2'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",metric: multi_link_failure_reachability,,,,,
+S0228,178,L1,Interface_Inventory,numeric,leaf1 장비에 설정된 서브인터페이스는 총 몇 개입니까? [답변 형식: 숫자],0,metric: subinterface_count,,,,,
+S0229,547,L4,Reachability_Analysis,text,leaf1에서 172.16.3.2까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",metric: traceroute_path,,,,,
+S0230,488,L1,Configuration_Check,text,'{node}' 장비의 IP Source Route 기능 활성화 상태는? [답변 형식: Enabled/Disabled],"""Enabled""",metric: ip_source_route_config,,,,,
+S0231,354,L3,L2VPN_Consistency,numeric,단방향으로만 설정된 L2VPN 회선은 총 몇 개입니까? [답변 형식: 숫자],0,metric: l2vpn_unidir_count,,,,,
+S0232,574,L4,Reachability_Analysis,text,"172.16.1.2에서 10.0.0.1(22/TCP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf1 → pe1, 도달: 불가 (원인: NO_ROUTE)""",metric: reachability_status,,,,,
+S0233,357,L3,BGP_Consistency,text,"AS 65000의 iBGP Full-Mesh 상태와 누락된 피어링을 알려주세요. [답변 형식: 'OK' 또는 'Missing: A<->B, C<->D']","""OK""",metric: ibgp_fullmesh_ok,,,,,
+S0234,6,L1,System_Inventory,text,leaf3 장비의 호스트네임은 무엇입니까? [답변 형식: 정확한 값만],"""leaf3""",metric: system_hostname_text,,,,,
+S0235,62,L1,System_Inventory,set,p2 장비에 설정된 NTP 서버 목록을 알려주세요. [답변 형식: 리스트],[],metric: ntp_server_list,,,,,
+S0236,253,L1,Routing_Inventory,set,p3 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요. [답변 형식: 리스트],"[""GigabitEthernet0/0"", ""GigabitEthernet0/1"", ""GigabitEthernet0/2"", ""Loopback0""]",metric: ospf_area0_if_list,,,,,
+S0237,325,L1,Services_Inventory,set,leaf2 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요. [답변 형식: 리스트],[],metric: l2vpn_pw_id_set,,,,,
+S0238,65,L1,System_Inventory,set,leaf4 장비에 설정된 NTP 서버 목록을 알려주세요. [답변 형식: 리스트],[],metric: ntp_server_list,,,,,
+S0239,332,L2,Security_Policy,set,SSH 접속이 가능한 장비 목록을 알려주세요. [답변 형식: 리스트],"[""leaf1"", ""leaf2"", ""leaf3"", ""leaf4"", ""p1"", ""p2"", ""p3"", ""p4"", ""pe1"", ""pe2""]",metric: ssh_enabled_devices,,,,,
+S0240,522,L4,Reachability_Analysis,text,leaf3에서 10.0.0.3까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",metric: traceroute_path,,,,,
+S0241,414,L3,Comparison_Analysis,text,"leaf3과 p4의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf3: N개, p4: M개, 차이: K개']","""leaf3: 0, p4: 0, diff: 0""",metric: compare_vrf_count,,,,,
+S0242,361,L3,BGP_Consistency,numeric,AS 65000에서 iBGP 피어 수가 부족한 장비는 총 몇 대입니까? [답변 형식: 숫자],0,metric: ibgp_under_peered_count,,,,,
+S0243,670,L5,What_If_Analysis,text,"leaf1에서 p4로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe1""",metric: root_cause_analysis,,,,,
+S0244,650,L4,Routing_Analysis,text,"pe1과 p2 사이의 Forward/Reverse 경로를 비교해주세요. [답변 형식: 'Forward: A→B→C, Reverse: C→D→A' 형식]","""Forward: pe1 → p2, Reverse: p2 → pe1""",metric: asymmetric_path_comparison,,,,,
+S0245,586,L4,Reachability_Analysis,text,"172.16.2.2에서 10.0.0.3(0/ICMP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf2 → pe1, 도달: 불가 (원인: NO_ROUTE)""",metric: reachability_status,,,,,
+S0246,191,L1,Interface_Inventory,map,p3 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요. [답변 형식: {{'인터페이스': 'VRF'}}],"{""GigabitEthernet0/0"": ""default"", ""GigabitEthernet0/1"": ""default"", ""GigabitEthernet0/2"": ""default"", ""GigabitEthernet0/3"": ""default"", ""Loopback0"": ""default""}",metric: vrf_bind_map,,,,,
+S0247,87,L1,System_Inventory,set,p1 장비에 설정된 Syslog 서버 목록을 알려주세요. [답변 형식: 리스트],[],metric: syslog_server_list,,,,,
+S0248,284,L1,Services_Inventory,map,leaf3 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요. [답변 형식: {{'VRF': 'RD'}}],{},metric: vrf_rd_map,,,,,
+S0249,707,L5,What_If_Analysis,text,'leaf3'과 'leaf4'가 동시에 다운되면 고립되는 흐름이 있습니까? 몇 개입니까? [답변 형식: '없음' 또는 'N개'],"""18개""",metric: redundancy_verification,,,,,
+S0250,561,L4,Reachability_Analysis,text,"172.16.2.2에서 172.16.4.2(22/TCP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf2 → pe1, 도달: 불가 (원인: NO_ROUTE)""",metric: reachability_status,,,,,
+S0251,760,L5,What_If_Analysis,text,"(시나리오)'leaf1-p4' 링크와 'leaf3-pe2' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf2'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",metric: multi_link_failure_reachability,,,,,
+S0252,81,L1,System_Inventory,set,p2 장비에 설정된 SNMP 커뮤니티 목록을 알려주세요. [답변 형식: 리스트],[],metric: snmp_community_list,,,,,
+S0253,297,L1,Services_Inventory,numeric,p3 장비의 Route Target Import 설정은 총 몇 개입니까? [답변 형식: 숫자],0,metric: rt_import_count,,,,,
+S0254,734,L5,What_If_Analysis,text,"(시나리오)'leaf2-p3' 링크와 'leaf3-p1' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf1'에서 'p2'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",metric: multi_link_failure_reachability,,,,,
+S0255,313,L1,Services_Inventory,text,leaf4 장비의 MPLS LDP Router-ID는 무엇입니까? [답변 형식: IP 주소 (예: 10.255.0.1) 또는 '미설정'],"""미설정""",metric: mpls_ldp_router_id,,,,,
+S0256,568,L4,Reachability_Analysis,text,"172.16.3.2에서 10.0.0.1(22/TCP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf3 → pe2, 도달: 불가 (원인: NO_ROUTE)""",metric: reachability_status,,,,,
+S0257,173,L1,Interface_Inventory,numeric,leaf3 장비에 설정된 서브인터페이스는 총 몇 개입니까? [답변 형식: 숫자],0,metric: subinterface_count,,,,,
+S0258,22,L1,System_Inventory,text,pe2 장비의 시간대(Timezone)는 무엇입니까? [답변 형식: 설정값 또는 null],null,metric: system_timezone_text,,,,,
+S0259,545,L4,Reachability_Analysis,text,leaf4에서 10.0.0.5까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",metric: traceroute_path,,,,,
+S0260,101,L1,System_Inventory,map,p4 장비의 각 인터페이스 상태를 알려주세요. [답변 형식: {{'인터페이스명': '상태'}}],"{""GigabitEthernet0/0"": ""up"", ""GigabitEthernet0/1"": ""up"", ""GigabitEthernet0/2"": ""up"", ""GigabitEthernet0/3"": ""down"", ""Loopback0"": ""up""}",metric: interface_status_map,,,,,
+S0261,728,L5,What_If_Analysis,text,"(시나리오)'leaf1-p3' 링크와 'leaf2-pe1' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf4'에서 'p2'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe2에서 NO_ROUTE)""",metric: multi_link_failure_reachability,,,,,
+S0262,679,L5,What_If_Analysis,text,"leaf4에서 p3로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe2""",metric: root_cause_analysis,,,,,
+S0263,557,L4,Reachability_Analysis,text,leaf2에서 10.0.0.3까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",metric: traceroute_path,,,,,
+S0264,300,L1,Services_Inventory,numeric,leaf3 장비의 Route Target Import 설정은 총 몇 개입니까? [답변 형식: 숫자],0,metric: rt_import_count,,,,,
+S0265,103,L1,System_Inventory,number,leaf1 장비의 라우팅 테이블 엔트리는 총 몇 개입니까? [답변 형식: 숫자],4,metric: routing_table_entry_count,,,,,
+S0266,85,L1,System_Inventory,set,leaf3 장비에 설정된 Syslog 서버 목록을 알려주세요. [답변 형식: 리스트],[],metric: syslog_server_list,,,,,
+S0267,19,L1,System_Inventory,text,pe2 장비의 운영체제(OS) 버전은 무엇입니까? [답변 형식: 정확한 값만],"""15.7""",metric: system_version_text,,,,,

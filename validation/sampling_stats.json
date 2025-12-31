@@ -1,0 +1,94 @@
+{
+  "population": 762,
+  "sample_size": 267,
+  "confidence_level": "95%",
+  "margin_of_error": "±5%",
+  "seed": 42,
+  "strata": {
+    "L1_text": {
+      "population": 101,
+      "sampled": 33,
+      "proportion": "13.3%"
+    },
+    "L1_set": {
+      "population": 128,
+      "sampled": 43,
+      "proportion": "16.8%"
+    },
+    "L1_numeric": {
+      "population": 85,
+      "sampled": 28,
+      "proportion": "11.2%"
+    },
+    "L1_map": {
+      "population": 40,
+      "sampled": 13,
+      "proportion": "5.2%"
+    },
+    "L1_number": {
+      "population": 10,
+      "sampled": 5,
+      "proportion": "1.3%"
+    },
+    "L2_set": {
+      "population": 9,
+      "sampled": 5,
+      "proportion": "1.2%"
+    },
+    "L2_numeric": {
+      "population": 11,
+      "sampled": 5,
+      "proportion": "1.4%"
+    },
+    "L2_number": {
+      "population": 1,
+      "sampled": 1,
+      "proportion": "0.1%"
+    },
+    "L3_set": {
+      "population": 15,
+      "sampled": 5,
+      "proportion": "2.0%"
+    },
+    "L3_numeric": {
+      "population": 5,
+      "sampled": 5,
+      "proportion": "0.7%"
+    },
+    "L3_text": {
+      "population": 107,
+      "sampled": 35,
+      "proportion": "14.0%"
+    },
+    "L4_text": {
+      "population": 97,
+      "sampled": 32,
+      "proportion": "12.7%"
+    },
+    "L4_number": {
+      "population": 45,
+      "sampled": 15,
+      "proportion": "5.9%"
+    },
+    "L4_set": {
+      "population": 7,
+      "sampled": 5,
+      "proportion": "0.9%"
+    },
+    "L5_set": {
+      "population": 3,
+      "sampled": 3,
+      "proportion": "0.4%"
+    },
+    "L5_text": {
+      "population": 87,
+      "sampled": 29,
+      "proportion": "11.4%"
+    },
+    "L5_number": {
+      "population": 11,
+      "sampled": 5,
+      "proportion": "1.4%"
+    }
+  }
+}
