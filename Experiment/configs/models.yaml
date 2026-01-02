@@ -4,13 +4,6 @@
 # - 모델별 context length, GPU 설정 등
 # =============================================================================
 
-
-"Mistral3-8B": "mistralai/Ministral-3-8B-Instruct-2512",
-        "Qwen3-8B": "Qwen/Qwen3-8B",
-        "GPT-OSS-20B": "openai/gpt-oss-20b",
-        "LLlama-3.1": "meta-llama/Meta-Llama-3.1-8B-Instruct",
-    
-
 # vLLM 모델 (로컬 GPU)
 vllm_models:
   Mistral3-8B:
@@ -27,13 +20,13 @@ vllm_models:
     
   Llama-3.1-8B:
     path: "meta-llama/Meta-Llama-3.1-8B-Instruct"
-    context_length: 32786
+    context_length: 32768
     gpu_memory_utilization: 0.85
     tensor_parallel_size: 1
     
   GPT-OSS-20B:
-    path: openai/gpt-oss-20b"
-    context_length: 32786
+    path: "openai/gpt-oss-20b"
+    context_length: 32768
     gpu_memory_utilization: 0.85
     tensor_parallel_size: 1
 

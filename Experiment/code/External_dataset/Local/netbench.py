@@ -34,7 +34,7 @@ class NetBenchDataset(BaseDataset):
     sampling_config = SamplingConfig(
         temperature=0.0,
         top_p=1.0,
-        max_tokens=512,       # 답변이 길 수 있음 (설명 + 예시)
+        max_tokens=16384,      # 토큰 제약 대폭 완화 (Qwen3 등 Reasoning 모델 대응)
         stop=["---", "###", "\n\nQuestion:", "\n\nContext:"],
         # 주의: stop을 너무 강하게 걸면 설명이 잘림
         use_structured_output=False,  # 자유형 답변이므로 structured output 불필요
@@ -63,22 +63,20 @@ class NetBenchDataset(BaseDataset):
         return items
     
     def get_system_prompt(self) -> str:
-        """NetBench 시스템 프롬프트"""
+        """NetBench 시스템 프롬프트 (Few-shot + 정답 강제)"""
         return """You are a Senior Network Engineer with expertise across routing, switching, security, and telecom.
 
 TASK: Answer the question based on the given context.
 
 RULES:
-1. Provide expert-level technical answers.
-2. Include relevant reasoning and best practices.
-3. If the answer involves configurations:
-   - Output the exact config commands/syntax
-   - Use proper formatting (CLI commands, YAML, JSON as appropriate)
-4. Reference standards and protocols when relevant (BGP, OSPF, MPLS, etc.).
-5. Be concise but complete - cover the key technical points."""
+1. Provide a complete technical answer in 1-2 sentences that includes both the direct answer and the technical reasoning.
+2. Output ONLY your answer. Do NOT include any meta-commentary like "analysis:", "thought:", or "reasoning:".
+3. If the answer involves configurations, include the exact syntax (CLI, YAML, etc.) along with a brief explanation.
+4. Match the expert-level depth and completeness expected in professional network engineering documentation.
+5. Start your response immediately with the technical answer."""
     
     def build_user_prompt(self, item: DataItem) -> str:
-        """NetBench 사용자 프롬프트"""
+        """NetBench 사용자 프롬프트 (Local 버전)"""
         return f"""Context:
 {item.context}
 
@@ -98,15 +96,23 @@ Answer:"""
         
         response = response.strip()
         
-        # <think> 태그 제거 (Qwen3 등)
+        # 1. <think> 태그 제거 (Qwen3 등)
         response = re.sub(r'<think>.*?</think>', '', response, flags=re.DOTALL).strip()
+        
+        # 2. Reasoning 모델의 특수 키워드 처리 (Mistral, GPT-OSS 등)
+        # "assistant", "final", "analysis", "thought" 등의 키워드 이후의 내용만 취함
+        for marker in ["assistant", "final", "Answer:", "Result:"]:
+            if marker.lower() in response.lower():
+                # 마지막 발생 지점 이후를 답변으로 간주
+                parts = re.split(re.escape(marker), response, flags=re.IGNORECASE)
+                if len(parts) > 1:
+                    response = parts[-1].strip()
+        
+        # "analysis", "thought" 등으로 시작하는 경우 해당 문구 제거
+        response = re.sub(r'^(?:analysis|thought|reasoning)[:\s]*', '', response, flags=re.IGNORECASE).strip()
         
         # === 핵심: 코드블록 있으면 텍스트 + 코드블록 모두 보존 ===
         # 코드블록 삭제하면 안 됨! (답이 config로 나올 수 있음)
-        
-        # verbose 마커만 제거
-        response = re.sub(r'^analysis[:\s]*', '', response, flags=re.IGNORECASE).strip()
-        response = re.sub(r'^assistantfinal[:\s]*', '', response, flags=re.IGNORECASE).strip()
         
         # "Answer:" 접두사 제거 (있다면)
         match = re.match(r'^(?:Answer|A)[:\s]+', response, re.IGNORECASE)

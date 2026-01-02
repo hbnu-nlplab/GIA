@@ -1,0 +1,318 @@
+2025-12-31 15:24:30,146 | INFO | ================================================================================
+2025-12-31 15:24:30,146 | INFO | 🚀 External Dataset Evaluation Runner
+2025-12-31 15:24:30,146 | INFO | ================================================================================
+2025-12-31 15:24:30,646 | INFO | 
+📋 Datasets: teleqna, telequad, netbench
+2025-12-31 15:24:30,646 | INFO | 📋 Models: Mistral3-8B, Qwen3-8B, Llama-3.1-8B, GPT-OSS-20B
+2025-12-31 15:24:30,646 | INFO | 
+================================================================================
+2025-12-31 15:24:30,646 | INFO | 🤖 Model: Mistral3-8B
+2025-12-31 15:24:30,646 | INFO | ================================================================================
+2025-12-31 15:24:30,814 | INFO | 
+📂 Loaded 30 items from teleqna
+2025-12-31 15:24:33,894 | INFO | ⏳ Loading model: Mistral3-8B
+2025-12-31 15:24:33,895 | INFO |    Path: mistralai/Ministral-3-8B-Instruct-2512
+2025-12-31 15:25:03,103 | INFO |    ✓ Model loaded successfully
+2025-12-31 15:25:03,103 | INFO | 
+================================================================================
+2025-12-31 15:25:03,103 | INFO | 📦 Dataset: TELEQNA
+2025-12-31 15:25:03,103 | INFO |    Total items: 30
+2025-12-31 15:25:03,104 | INFO |    Primary Metric: Accuracy
+2025-12-31 15:25:03,104 | INFO | ================================================================================
+
+2025-12-31 15:25:03,104 | INFO |    Sampling: temp=0.0, max_tokens=8192, stop=['---', '###', 'Question:', 'Explanation:']
+2025-12-31 15:25:03,104 | INFO | ⏳ Building prompts...
+2025-12-31 15:25:03,130 | INFO |    ✓ Built 30 prompts (truncated: 0)
+2025-12-31 15:25:03,131 | INFO | 🔄 Running inference...
+2025-12-31 15:25:04,194 | INFO |    ✓ Inference completed
+2025-12-31 15:25:04,197 | INFO | 💾 Results saved:
+2025-12-31 15:25:04,197 | INFO |    Latest: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/teleqna/Mistral3-8B/latest.json
+2025-12-31 15:25:04,197 | INFO |    Backup: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/teleqna/Mistral3-8B/run_20251231_152504.json
+2025-12-31 15:25:04,198 | INFO | 
+📊 Metrics (Accuracy is primary):
+2025-12-31 15:25:04,198 | INFO |    Accuracy    :  73.33%
+2025-12-31 15:25:04,198 | INFO |    EM          :  73.33%
+2025-12-31 15:25:04,198 | INFO |    F1          :  82.56%
+2025-12-31 15:25:04,198 | INFO |    Correct     : 22
+2025-12-31 15:25:04,198 | INFO |    Total       : 30
+2025-12-31 15:25:04,227 | INFO | 
+📂 Loaded 30 items from telequad
+2025-12-31 15:25:04,228 | INFO | 
+================================================================================
+2025-12-31 15:25:04,228 | INFO | 📦 Dataset: TELEQUAD
+2025-12-31 15:25:04,228 | INFO |    Total items: 30
+2025-12-31 15:25:04,228 | INFO |    Primary Metric: F1
+2025-12-31 15:25:04,228 | INFO | ================================================================================
+
+2025-12-31 15:25:04,228 | INFO |    Sampling: temp=0.0, max_tokens=8192, stop=['---', '###', 'Question:', 'Context:']
+2025-12-31 15:25:04,228 | INFO | ⏳ Building prompts...
+2025-12-31 15:25:04,276 | INFO |    ✓ Built 30 prompts (truncated: 0)
+2025-12-31 15:25:04,276 | INFO | 🔄 Running inference...
+2025-12-31 15:25:08,912 | INFO |    ✓ Inference completed
+2025-12-31 15:25:08,918 | INFO | 💾 Results saved:
+2025-12-31 15:25:08,918 | INFO |    Latest: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/telequad/Mistral3-8B/latest.json
+2025-12-31 15:25:08,918 | INFO |    Backup: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/telequad/Mistral3-8B/run_20251231_152508.json
+2025-12-31 15:25:08,918 | INFO | 
+📊 Metrics (F1 is primary):
+2025-12-31 15:25:08,918 | INFO |    F1          :  57.26%
+2025-12-31 15:25:08,918 | INFO |    EM          :  23.33%
+2025-12-31 15:25:08,918 | INFO |    Total       : 30
+2025-12-31 15:25:09,148 | INFO | 
+📂 Loaded 30 items from netbench
+2025-12-31 15:25:09,148 | INFO | 
+================================================================================
+2025-12-31 15:25:09,148 | INFO | 📦 Dataset: NETBENCH
+2025-12-31 15:25:09,148 | INFO |    Total items: 30
+2025-12-31 15:25:09,148 | INFO |    Primary Metric: F1
+2025-12-31 15:25:09,148 | INFO | ================================================================================
+
+2025-12-31 15:25:09,148 | INFO |    Sampling: temp=0.0, max_tokens=16384, stop=['---', '###', '\n\nQuestion:', '\n\nContext:']
+2025-12-31 15:25:09,148 | INFO | ⏳ Building prompts...
+2025-12-31 15:25:09,164 | INFO |    ✓ Built 30 prompts (truncated: 0)
+2025-12-31 15:25:09,164 | INFO | 🔄 Running inference...
+2025-12-31 15:25:25,602 | INFO |    ✓ Inference completed
+2025-12-31 15:25:25,610 | INFO | 💾 Results saved:
+2025-12-31 15:25:25,610 | INFO |    Latest: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/netbench/Mistral3-8B/latest.json
+2025-12-31 15:25:25,610 | INFO |    Backup: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/netbench/Mistral3-8B/run_20251231_152525.json
+2025-12-31 15:25:25,610 | INFO | 
+📊 Metrics (F1 is primary):
+2025-12-31 15:25:25,610 | INFO |    F1          :  22.09%
+2025-12-31 15:25:25,610 | INFO |    EM          :   0.00%
+2025-12-31 15:25:25,610 | INFO |    Total       : 30
+2025-12-31 15:25:25,611 | INFO | 🧹 Cleaning up GPU memory...
+2025-12-31 15:25:28,529 | INFO |    ✓ Cleanup completed
+2025-12-31 15:25:28,529 | INFO | 
+================================================================================
+2025-12-31 15:25:28,529 | INFO | 🤖 Model: Qwen3-8B
+2025-12-31 15:25:28,529 | INFO | ================================================================================
+2025-12-31 15:25:28,612 | INFO | 
+📂 Loaded 30 items from teleqna
+2025-12-31 15:25:28,613 | INFO | ⏳ Loading model: Qwen3-8B
+2025-12-31 15:25:28,613 | INFO |    Path: Qwen/Qwen3-8B
+2025-12-31 15:26:02,147 | INFO |    ✓ Model loaded successfully
+2025-12-31 15:26:02,148 | INFO | 
+================================================================================
+2025-12-31 15:26:02,148 | INFO | 📦 Dataset: TELEQNA
+2025-12-31 15:26:02,148 | INFO |    Total items: 30
+2025-12-31 15:26:02,148 | INFO |    Primary Metric: Accuracy
+2025-12-31 15:26:02,148 | INFO | ================================================================================
+
+2025-12-31 15:26:02,148 | INFO |    Sampling: temp=0.0, max_tokens=8192, stop=['---', '###', 'Question:', 'Explanation:']
+2025-12-31 15:26:02,148 | INFO | ⏳ Building prompts...
+2025-12-31 15:26:02,197 | INFO |    ✓ Built 30 prompts (truncated: 0)
+2025-12-31 15:26:02,197 | INFO | 🔄 Running inference...
+2025-12-31 15:26:49,634 | INFO |    ✓ Inference completed
+2025-12-31 15:26:49,639 | INFO | 💾 Results saved:
+2025-12-31 15:26:49,639 | INFO |    Latest: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/teleqna/Qwen3-8B/latest.json
+2025-12-31 15:26:49,639 | INFO |    Backup: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/teleqna/Qwen3-8B/run_20251231_152649.json
+2025-12-31 15:26:49,640 | INFO | 
+📊 Metrics (Accuracy is primary):
+2025-12-31 15:26:49,640 | INFO |    Accuracy    :  73.33%
+2025-12-31 15:26:49,640 | INFO |    EM          :  73.33%
+2025-12-31 15:26:49,640 | INFO |    F1          :  82.92%
+2025-12-31 15:26:49,640 | INFO |    Correct     : 22
+2025-12-31 15:26:49,640 | INFO |    Total       : 30
+2025-12-31 15:26:49,664 | INFO | 
+📂 Loaded 30 items from telequad
+2025-12-31 15:26:49,664 | INFO | 
+================================================================================
+2025-12-31 15:26:49,664 | INFO | 📦 Dataset: TELEQUAD
+2025-12-31 15:26:49,664 | INFO |    Total items: 30
+2025-12-31 15:26:49,665 | INFO |    Primary Metric: F1
+2025-12-31 15:26:49,665 | INFO | ================================================================================
+
+2025-12-31 15:26:49,665 | INFO |    Sampling: temp=0.0, max_tokens=8192, stop=['---', '###', 'Question:', 'Context:']
+2025-12-31 15:26:49,665 | INFO | ⏳ Building prompts...
+2025-12-31 15:26:49,707 | INFO |    ✓ Built 30 prompts (truncated: 0)
+2025-12-31 15:26:49,707 | INFO | 🔄 Running inference...
+2025-12-31 15:30:24,508 | INFO |    ✓ Inference completed
+2025-12-31 15:30:24,512 | INFO | 💾 Results saved:
+2025-12-31 15:30:24,512 | INFO |    Latest: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/telequad/Qwen3-8B/latest.json
+2025-12-31 15:30:24,512 | INFO |    Backup: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/telequad/Qwen3-8B/run_20251231_153024.json
+2025-12-31 15:30:24,512 | INFO | 
+📊 Metrics (F1 is primary):
+2025-12-31 15:30:24,512 | INFO |    F1          :  73.71%
+2025-12-31 15:30:24,512 | INFO |    EM          :  23.33%
+2025-12-31 15:30:24,513 | INFO |    Total       : 30
+2025-12-31 15:30:24,719 | INFO | 
+📂 Loaded 30 items from netbench
+2025-12-31 15:30:24,719 | INFO | 
+================================================================================
+2025-12-31 15:30:24,719 | INFO | 📦 Dataset: NETBENCH
+2025-12-31 15:30:24,719 | INFO |    Total items: 30
+2025-12-31 15:30:24,719 | INFO |    Primary Metric: F1
+2025-12-31 15:30:24,719 | INFO | ================================================================================
+
+2025-12-31 15:30:24,719 | INFO |    Sampling: temp=0.0, max_tokens=16384, stop=['---', '###', '\n\nQuestion:', '\n\nContext:']
+2025-12-31 15:30:24,719 | INFO | ⏳ Building prompts...
+2025-12-31 15:30:24,734 | INFO |    ✓ Built 30 prompts (truncated: 0)
+2025-12-31 15:30:24,734 | INFO | 🔄 Running inference...
+2025-12-31 15:40:05,660 | INFO |    ✓ Inference completed
+2025-12-31 15:40:05,682 | INFO | 💾 Results saved:
+2025-12-31 15:40:05,682 | INFO |    Latest: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/netbench/Qwen3-8B/latest.json
+2025-12-31 15:40:05,682 | INFO |    Backup: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/netbench/Qwen3-8B/run_20251231_154005.json
+2025-12-31 15:40:05,682 | INFO | 
+📊 Metrics (F1 is primary):
+2025-12-31 15:40:05,682 | INFO |    F1          :  28.44%
+2025-12-31 15:40:05,682 | INFO |    EM          :   0.00%
+2025-12-31 15:40:05,682 | INFO |    Total       : 30
+2025-12-31 15:40:05,682 | INFO | 🧹 Cleaning up GPU memory...
+2025-12-31 15:40:08,630 | INFO |    ✓ Cleanup completed
+2025-12-31 15:40:08,630 | INFO | 
+================================================================================
+2025-12-31 15:40:08,631 | INFO | 🤖 Model: Llama-3.1-8B
+2025-12-31 15:40:08,631 | INFO | ================================================================================
+2025-12-31 15:40:08,700 | INFO | 
+📂 Loaded 30 items from teleqna
+2025-12-31 15:40:08,700 | INFO | ⏳ Loading model: Llama-3.1-8B
+2025-12-31 15:40:08,700 | INFO |    Path: meta-llama/Meta-Llama-3.1-8B-Instruct
+2025-12-31 15:40:43,980 | INFO |    ✓ Model loaded successfully
+2025-12-31 15:40:43,980 | INFO | 
+================================================================================
+2025-12-31 15:40:43,980 | INFO | 📦 Dataset: TELEQNA
+2025-12-31 15:40:43,981 | INFO |    Total items: 30
+2025-12-31 15:40:43,981 | INFO |    Primary Metric: Accuracy
+2025-12-31 15:40:43,981 | INFO | ================================================================================
+
+2025-12-31 15:40:43,981 | INFO |    Sampling: temp=0.0, max_tokens=8192, stop=['---', '###', 'Question:', 'Explanation:']
+2025-12-31 15:40:43,981 | INFO | ⏳ Building prompts...
+2025-12-31 15:40:44,002 | INFO |    ✓ Built 30 prompts (truncated: 0)
+2025-12-31 15:40:44,002 | INFO | 🔄 Running inference...
+2025-12-31 15:40:45,223 | INFO |    ✓ Inference completed
+2025-12-31 15:40:45,226 | INFO | 💾 Results saved:
+2025-12-31 15:40:45,226 | INFO |    Latest: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/teleqna/Llama-3.1-8B/latest.json
+2025-12-31 15:40:45,226 | INFO |    Backup: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/teleqna/Llama-3.1-8B/run_20251231_154045.json
+2025-12-31 15:40:45,226 | INFO | 
+📊 Metrics (Accuracy is primary):
+2025-12-31 15:40:45,226 | INFO |    Accuracy    :  63.33%
+2025-12-31 15:40:45,226 | INFO |    EM          :  63.33%
+2025-12-31 15:40:45,227 | INFO |    F1          :  76.85%
+2025-12-31 15:40:45,227 | INFO |    Correct     : 19
+2025-12-31 15:40:45,227 | INFO |    Total       : 30
+2025-12-31 15:40:45,255 | INFO | 
+📂 Loaded 30 items from telequad
+2025-12-31 15:40:45,256 | INFO | 
+================================================================================
+2025-12-31 15:40:45,256 | INFO | 📦 Dataset: TELEQUAD
+2025-12-31 15:40:45,256 | INFO |    Total items: 30
+2025-12-31 15:40:45,256 | INFO |    Primary Metric: F1
+2025-12-31 15:40:45,256 | INFO | ================================================================================
+
+2025-12-31 15:40:45,256 | INFO |    Sampling: temp=0.0, max_tokens=8192, stop=['---', '###', 'Question:', 'Context:']
+2025-12-31 15:40:45,256 | INFO | ⏳ Building prompts...
+2025-12-31 15:40:45,293 | INFO |    ✓ Built 30 prompts (truncated: 0)
+2025-12-31 15:40:45,293 | INFO | 🔄 Running inference...
+2025-12-31 15:40:48,438 | INFO |    ✓ Inference completed
+2025-12-31 15:40:48,442 | INFO | 💾 Results saved:
+2025-12-31 15:40:48,442 | INFO |    Latest: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/telequad/Llama-3.1-8B/latest.json
+2025-12-31 15:40:48,442 | INFO |    Backup: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/telequad/Llama-3.1-8B/run_20251231_154048.json
+2025-12-31 15:40:48,442 | INFO | 
+📊 Metrics (F1 is primary):
+2025-12-31 15:40:48,442 | INFO |    F1          :  65.93%
+2025-12-31 15:40:48,442 | INFO |    EM          :  23.33%
+2025-12-31 15:40:48,442 | INFO |    Total       : 30
+2025-12-31 15:40:48,647 | INFO | 
+📂 Loaded 30 items from netbench
+2025-12-31 15:40:48,647 | INFO | 
+================================================================================
+2025-12-31 15:40:48,647 | INFO | 📦 Dataset: NETBENCH
+2025-12-31 15:40:48,647 | INFO |    Total items: 30
+2025-12-31 15:40:48,647 | INFO |    Primary Metric: F1
+2025-12-31 15:40:48,647 | INFO | ================================================================================
+
+2025-12-31 15:40:48,647 | INFO |    Sampling: temp=0.0, max_tokens=16384, stop=['---', '###', '\n\nQuestion:', '\n\nContext:']
+2025-12-31 15:40:48,647 | INFO | ⏳ Building prompts...
+2025-12-31 15:40:48,660 | INFO |    ✓ Built 30 prompts (truncated: 0)
+2025-12-31 15:40:48,660 | INFO | 🔄 Running inference...
+2025-12-31 15:40:58,040 | INFO |    ✓ Inference completed
+2025-12-31 15:40:58,046 | INFO | 💾 Results saved:
+2025-12-31 15:40:58,046 | INFO |    Latest: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/netbench/Llama-3.1-8B/latest.json
+2025-12-31 15:40:58,046 | INFO |    Backup: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/netbench/Llama-3.1-8B/run_20251231_154058.json
+2025-12-31 15:40:58,046 | INFO | 
+📊 Metrics (F1 is primary):
+2025-12-31 15:40:58,046 | INFO |    F1          :  25.05%
+2025-12-31 15:40:58,046 | INFO |    EM          :   0.00%
+2025-12-31 15:40:58,046 | INFO |    Total       : 30
+2025-12-31 15:40:58,046 | INFO | 🧹 Cleaning up GPU memory...
+2025-12-31 15:41:01,033 | INFO |    ✓ Cleanup completed
+2025-12-31 15:41:01,033 | INFO | 
+================================================================================
+2025-12-31 15:41:01,033 | INFO | 🤖 Model: GPT-OSS-20B
+2025-12-31 15:41:01,033 | INFO | ================================================================================
+2025-12-31 15:41:01,113 | INFO | 
+📂 Loaded 30 items from teleqna
+2025-12-31 15:41:01,113 | INFO | ⏳ Loading model: GPT-OSS-20B
+2025-12-31 15:41:01,113 | INFO |    Path: openai/gpt-oss-20b
+2025-12-31 15:41:38,615 | INFO |    ✓ Model loaded successfully
+2025-12-31 15:41:38,615 | INFO | 
+================================================================================
+2025-12-31 15:41:38,615 | INFO | 📦 Dataset: TELEQNA
+2025-12-31 15:41:38,615 | INFO |    Total items: 30
+2025-12-31 15:41:38,615 | INFO |    Primary Metric: Accuracy
+2025-12-31 15:41:38,615 | INFO | ================================================================================
+
+2025-12-31 15:41:38,615 | INFO |    Sampling: temp=0.0, max_tokens=8192, stop=['---', '###', 'Question:', 'Explanation:']
+2025-12-31 15:41:38,616 | INFO | ⏳ Building prompts...
+2025-12-31 15:41:38,691 | INFO |    ✓ Built 30 prompts (truncated: 0)
+2025-12-31 15:41:38,691 | INFO | 🔄 Running inference...
+2025-12-31 15:41:53,087 | INFO |    ✓ Inference completed
+2025-12-31 15:41:53,091 | INFO | 💾 Results saved:
+2025-12-31 15:41:53,091 | INFO |    Latest: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/teleqna/GPT-OSS-20B/latest.json
+2025-12-31 15:41:53,091 | INFO |    Backup: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/teleqna/GPT-OSS-20B/run_20251231_154153.json
+2025-12-31 15:41:53,091 | INFO | 
+📊 Metrics (Accuracy is primary):
+2025-12-31 15:41:53,091 | INFO |    Accuracy    :  80.00%
+2025-12-31 15:41:53,091 | INFO |    EM          :  80.00%
+2025-12-31 15:41:53,091 | INFO |    F1          :  88.52%
+2025-12-31 15:41:53,091 | INFO |    Correct     : 24
+2025-12-31 15:41:53,091 | INFO |    Total       : 30
+2025-12-31 15:41:53,120 | INFO | 
+📂 Loaded 30 items from telequad
+2025-12-31 15:41:53,120 | INFO | 
+================================================================================
+2025-12-31 15:41:53,121 | INFO | 📦 Dataset: TELEQUAD
+2025-12-31 15:41:53,121 | INFO |    Total items: 30
+2025-12-31 15:41:53,121 | INFO |    Primary Metric: F1
+2025-12-31 15:41:53,121 | INFO | ================================================================================
+
+2025-12-31 15:41:53,121 | INFO |    Sampling: temp=0.0, max_tokens=8192, stop=['---', '###', 'Question:', 'Context:']
+2025-12-31 15:41:53,121 | INFO | ⏳ Building prompts...
+2025-12-31 15:41:53,159 | INFO |    ✓ Built 30 prompts (truncated: 0)
+2025-12-31 15:41:53,159 | INFO | 🔄 Running inference...
+2025-12-31 15:42:11,491 | INFO |    ✓ Inference completed
+2025-12-31 15:42:11,497 | INFO | 💾 Results saved:
+2025-12-31 15:42:11,497 | INFO |    Latest: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/telequad/GPT-OSS-20B/latest.json
+2025-12-31 15:42:11,497 | INFO |    Backup: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/telequad/GPT-OSS-20B/run_20251231_154211.json
+2025-12-31 15:42:11,497 | INFO | 
+📊 Metrics (F1 is primary):
+2025-12-31 15:42:11,497 | INFO |    F1          :  73.89%
+2025-12-31 15:42:11,497 | INFO |    EM          :  26.67%
+2025-12-31 15:42:11,497 | INFO |    Total       : 30
+2025-12-31 15:42:11,730 | INFO | 
+📂 Loaded 30 items from netbench
+2025-12-31 15:42:11,730 | INFO | 
+================================================================================
+2025-12-31 15:42:11,730 | INFO | 📦 Dataset: NETBENCH
+2025-12-31 15:42:11,730 | INFO |    Total items: 30
+2025-12-31 15:42:11,730 | INFO |    Primary Metric: F1
+2025-12-31 15:42:11,730 | INFO | ================================================================================
+
+2025-12-31 15:42:11,731 | INFO |    Sampling: temp=0.0, max_tokens=16384, stop=['---', '###', '\n\nQuestion:', '\n\nContext:']
+2025-12-31 15:42:11,731 | INFO | ⏳ Building prompts...
+2025-12-31 15:42:11,746 | INFO |    ✓ Built 30 prompts (truncated: 0)
+2025-12-31 15:42:11,746 | INFO | 🔄 Running inference...
+2025-12-31 15:42:31,123 | INFO |    ✓ Inference completed
+2025-12-31 15:42:31,133 | INFO | 💾 Results saved:
+2025-12-31 15:42:31,133 | INFO |    Latest: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/netbench/GPT-OSS-20B/latest.json
+2025-12-31 15:42:31,133 | INFO |    Backup: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/netbench/GPT-OSS-20B/run_20251231_154231.json
+2025-12-31 15:42:31,133 | INFO | 
+📊 Metrics (F1 is primary):
+2025-12-31 15:42:31,133 | INFO |    F1          :  25.90%
+2025-12-31 15:42:31,133 | INFO |    EM          :   0.00%
+2025-12-31 15:42:31,133 | INFO |    Total       : 30
+2025-12-31 15:42:31,133 | INFO | 🧹 Cleaning up GPU memory...
+2025-12-31 15:42:34,078 | INFO |    ✓ Cleanup completed
+2025-12-31 15:42:34,078 | INFO | 
+================================================================================
+2025-12-31 15:42:34,078 | INFO | 🎉 All evaluations completed!
+2025-12-31 15:42:34,078 | INFO | ================================================================================

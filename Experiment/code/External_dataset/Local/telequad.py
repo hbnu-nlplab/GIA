@@ -46,13 +46,13 @@ class TeleQuADDataset(BaseDataset):
     # 대표 메트릭: Token F1 (SQuAD 스타일)
     primary_metric = "F1"
     
-    # 샘플링 설정: 짧은 추출형 답변
+    # 샘플링 설정: 추출형 답변을 위해 토큰 상향
     sampling_config = SamplingConfig(
         temperature=0.0,
         top_p=1.0,
-        max_tokens=128,       # SHORT 타입은 짧지만 LONG도 있으므로 여유있게
-        stop=["\n\n", "---", "###", "Question:", "Context:"],
-        use_structured_output=False,  # 추출형은 structured output 불필요
+        max_tokens=8192,      # 추론 모델을 위해 충분한 공간 확보
+        stop=["---", "###", "Question:", "Context:"], # \n\n 제거 (Reasoning 모델 대응)
+        use_structured_output=False,
     )
     
     def load(self, path: str) -> List[DataItem]:
@@ -109,19 +109,18 @@ class TeleQuADDataset(BaseDataset):
         return items
     
     def get_system_prompt(self) -> str:
-        """TeleQuAD 시스템 프롬프트"""
+        """TeleQuAD 시스템 프롬프트 (Few-shot + 정답 강제)"""
         return """You are a Telecommunications Expert. Extract the answer from the given context.
 
 RULES:
-1. Read the context carefully.
-2. Find the exact answer span in the context.
-3. Output ONLY the extracted text - no explanations.
-4. Keep answers concise: technical values, parameters, or short phrases.
-5. If asked about numbers with units, include both (e.g., "100 Mbps").
-6. Do NOT paraphrase - use exact wording from context when possible."""
+1. Find the exact answer span in the context.
+2. Output ONLY the extracted text - no explanations, no reasoning, no thoughts.
+3. Do NOT paraphrase - use exact wording from context.
+4. If the answer is a value with a unit, include both.
+5. Start your response immediately with the answer."""
     
     def build_user_prompt(self, item: DataItem) -> str:
-        """TeleQuAD 사용자 프롬프트"""
+        """TeleQuAD 사용자 프롬프트 (Local 버전)"""
         return f"""Context:
 {item.context}
 
@@ -141,10 +140,22 @@ Answer:"""
         
         response = response.strip()
         
-        # <think> 태그 제거 (Qwen3 등)
+        # 1. <think> 태그 제거 (Qwen3 등)
         response = re.sub(r'<think>.*?</think>', '', response, flags=re.DOTALL).strip()
         
-        # 코드 블록 내용 추출 (있다면)
+        # 2. Reasoning 모델의 특수 키워드 처리 (Mistral, GPT-OSS 등)
+        # "assistant", "final", "analysis", "thought" 등의 키워드 이후의 내용만 취함
+        for marker in ["assistant", "final", "Answer:", "Result:"]:
+            if marker.lower() in response.lower():
+                # 마지막 발생 지점 이후를 답변으로 간주
+                parts = re.split(re.escape(marker), response, flags=re.IGNORECASE)
+                if len(parts) > 1:
+                    response = parts[-1].strip()
+        
+        # "analysis", "thought" 등으로 시작하는 경우 해당 문구 제거
+        response = re.sub(r'^(?:analysis|thought|reasoning)[:\s]*', '', response, flags=re.IGNORECASE).strip()
+        
+        # 3. 코드 블록 내용 추출 (있다면)
         code_match = re.search(r'```(?:\w+)?\s*(.*?)```', response, flags=re.DOTALL)
         if code_match:
             return code_match.group(1).strip()
@@ -171,6 +182,9 @@ Answer:"""
                 return shortest.strip()
         
         # Pattern 4: 첫 문장만 추출 (마침표 기준)
+        # 단, "So answer:" 같은 문구로 시작하면 그 뒤를 취함
+        response = re.sub(r'^.*?(?:so\s+)?answer[:\s]+', '', response, flags=re.IGNORECASE).strip()
+        
         first_sentence = re.split(r'[.!?]\s+', response)[0]
         if len(first_sentence) < 200:
             return first_sentence.strip()

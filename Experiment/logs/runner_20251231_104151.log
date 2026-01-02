@@ -1,0 +1,154 @@
+2025-12-31 10:41:51,508 | INFO | ================================================================================
+2025-12-31 10:41:51,508 | INFO | 🚀 External Dataset Evaluation Runner
+2025-12-31 10:41:51,508 | INFO | ================================================================================
+2025-12-31 10:41:52,000 | INFO | 
+📋 Datasets: teleqna, telequad, netbench
+2025-12-31 10:41:52,000 | INFO | 📋 Models: Mistral3-8B, Qwen3-8B, Llama-3.1-8B, GPT-OSS-20B
+2025-12-31 10:41:52,000 | INFO | 
+================================================================================
+2025-12-31 10:41:52,000 | INFO | 🤖 Model: Mistral3-8B
+2025-12-31 10:41:52,000 | INFO | ================================================================================
+2025-12-31 10:41:52,170 | INFO | 
+📂 Loaded 30 items from teleqna
+2025-12-31 10:41:52,172 | INFO | 💾 Results saved:
+2025-12-31 10:41:52,172 | INFO |    Latest: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/teleqna/Mistral3-8B/latest.json
+2025-12-31 10:41:52,172 | INFO |    Backup: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/teleqna/Mistral3-8B/run_20251231_104152.json
+2025-12-31 10:41:52,172 | INFO | 
+📊 Metrics (Accuracy is primary):
+2025-12-31 10:41:52,172 | INFO |    Accuracy    :  20.00%
+2025-12-31 10:41:52,172 | INFO |    EM          :  20.00%
+2025-12-31 10:41:52,172 | INFO |    F1          :  30.77%
+2025-12-31 10:41:52,172 | INFO |    Correct     : 6
+2025-12-31 10:41:52,172 | INFO |    Total       : 30
+2025-12-31 10:41:52,189 | INFO | 
+📂 Loaded 30 items from telequad
+2025-12-31 10:41:52,190 | INFO | 💾 Results saved:
+2025-12-31 10:41:52,190 | INFO |    Latest: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/telequad/Mistral3-8B/latest.json
+2025-12-31 10:41:52,190 | INFO |    Backup: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/telequad/Mistral3-8B/run_20251231_104152.json
+2025-12-31 10:41:52,190 | INFO | 
+📊 Metrics (F1 is primary):
+2025-12-31 10:41:52,190 | INFO |    F1          :   0.00%
+2025-12-31 10:41:52,190 | INFO |    EM          :   0.00%
+2025-12-31 10:41:52,190 | INFO |    Total       : 30
+2025-12-31 10:41:52,393 | INFO | 
+📂 Loaded 30 items from netbench
+2025-12-31 10:41:52,395 | INFO | 💾 Results saved:
+2025-12-31 10:41:52,395 | INFO |    Latest: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/netbench/Mistral3-8B/latest.json
+2025-12-31 10:41:52,395 | INFO |    Backup: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/netbench/Mistral3-8B/run_20251231_104152.json
+2025-12-31 10:41:52,395 | INFO | 
+📊 Metrics (F1 is primary):
+2025-12-31 10:41:52,395 | INFO |    F1          :   0.10%
+2025-12-31 10:41:52,395 | INFO |    EM          :   0.00%
+2025-12-31 10:41:52,395 | INFO |    Total       : 30
+2025-12-31 10:41:52,395 | INFO | 
+================================================================================
+2025-12-31 10:41:52,395 | INFO | 🤖 Model: Qwen3-8B
+2025-12-31 10:41:52,395 | INFO | ================================================================================
+2025-12-31 10:41:52,529 | INFO | 
+📂 Loaded 30 items from teleqna
+2025-12-31 10:41:52,531 | INFO | 💾 Results saved:
+2025-12-31 10:41:52,531 | INFO |    Latest: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/teleqna/Qwen3-8B/latest.json
+2025-12-31 10:41:52,531 | INFO |    Backup: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/teleqna/Qwen3-8B/run_20251231_104152.json
+2025-12-31 10:41:52,531 | INFO | 
+📊 Metrics (Accuracy is primary):
+2025-12-31 10:41:52,531 | INFO |    Accuracy    :  20.00%
+2025-12-31 10:41:52,531 | INFO |    EM          :  20.00%
+2025-12-31 10:41:52,531 | INFO |    F1          :  30.77%
+2025-12-31 10:41:52,531 | INFO |    Correct     : 6
+2025-12-31 10:41:52,531 | INFO |    Total       : 30
+2025-12-31 10:41:52,548 | INFO | 
+📂 Loaded 30 items from telequad
+2025-12-31 10:41:52,549 | INFO | 💾 Results saved:
+2025-12-31 10:41:52,549 | INFO |    Latest: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/telequad/Qwen3-8B/latest.json
+2025-12-31 10:41:52,549 | INFO |    Backup: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/telequad/Qwen3-8B/run_20251231_104152.json
+2025-12-31 10:41:52,549 | INFO | 
+📊 Metrics (F1 is primary):
+2025-12-31 10:41:52,549 | INFO |    F1          :   0.00%
+2025-12-31 10:41:52,549 | INFO |    EM          :   0.00%
+2025-12-31 10:41:52,549 | INFO |    Total       : 30
+2025-12-31 10:41:52,749 | INFO | 
+📂 Loaded 30 items from netbench
+2025-12-31 10:41:52,751 | INFO | 💾 Results saved:
+2025-12-31 10:41:52,751 | INFO |    Latest: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/netbench/Qwen3-8B/latest.json
+2025-12-31 10:41:52,751 | INFO |    Backup: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/netbench/Qwen3-8B/run_20251231_104152.json
+2025-12-31 10:41:52,751 | INFO | 
+📊 Metrics (F1 is primary):
+2025-12-31 10:41:52,751 | INFO |    F1          :   0.10%
+2025-12-31 10:41:52,751 | INFO |    EM          :   0.00%
+2025-12-31 10:41:52,751 | INFO |    Total       : 30
+2025-12-31 10:41:52,751 | INFO | 
+================================================================================
+2025-12-31 10:41:52,751 | INFO | 🤖 Model: Llama-3.1-8B
+2025-12-31 10:41:52,751 | INFO | ================================================================================
+2025-12-31 10:41:52,873 | INFO | 
+📂 Loaded 30 items from teleqna
+2025-12-31 10:41:52,875 | INFO | 💾 Results saved:
+2025-12-31 10:41:52,875 | INFO |    Latest: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/teleqna/Llama-3.1-8B/latest.json
+2025-12-31 10:41:52,875 | INFO |    Backup: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/teleqna/Llama-3.1-8B/run_20251231_104152.json
+2025-12-31 10:41:52,875 | INFO | 
+📊 Metrics (Accuracy is primary):
+2025-12-31 10:41:52,875 | INFO |    Accuracy    :  20.00%
+2025-12-31 10:41:52,875 | INFO |    EM          :  20.00%
+2025-12-31 10:41:52,875 | INFO |    F1          :  30.77%
+2025-12-31 10:41:52,875 | INFO |    Correct     : 6
+2025-12-31 10:41:52,875 | INFO |    Total       : 30
+2025-12-31 10:41:52,891 | INFO | 
+📂 Loaded 30 items from telequad
+2025-12-31 10:41:52,892 | INFO | 💾 Results saved:
+2025-12-31 10:41:52,893 | INFO |    Latest: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/telequad/Llama-3.1-8B/latest.json
+2025-12-31 10:41:52,893 | INFO |    Backup: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/telequad/Llama-3.1-8B/run_20251231_104152.json
+2025-12-31 10:41:52,893 | INFO | 
+📊 Metrics (F1 is primary):
+2025-12-31 10:41:52,893 | INFO |    F1          :   0.00%
+2025-12-31 10:41:52,893 | INFO |    EM          :   0.00%
+2025-12-31 10:41:52,893 | INFO |    Total       : 30
+2025-12-31 10:41:53,105 | INFO | 
+📂 Loaded 30 items from netbench
+2025-12-31 10:41:53,108 | INFO | 💾 Results saved:
+2025-12-31 10:41:53,108 | INFO |    Latest: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/netbench/Llama-3.1-8B/latest.json
+2025-12-31 10:41:53,108 | INFO |    Backup: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/netbench/Llama-3.1-8B/run_20251231_104153.json
+2025-12-31 10:41:53,108 | INFO | 
+📊 Metrics (F1 is primary):
+2025-12-31 10:41:53,108 | INFO |    F1          :   0.10%
+2025-12-31 10:41:53,108 | INFO |    EM          :   0.00%
+2025-12-31 10:41:53,108 | INFO |    Total       : 30
+2025-12-31 10:41:53,108 | INFO | 
+================================================================================
+2025-12-31 10:41:53,108 | INFO | 🤖 Model: GPT-OSS-20B
+2025-12-31 10:41:53,108 | INFO | ================================================================================
+2025-12-31 10:41:53,234 | INFO | 
+📂 Loaded 30 items from teleqna
+2025-12-31 10:41:53,236 | INFO | 💾 Results saved:
+2025-12-31 10:41:53,236 | INFO |    Latest: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/teleqna/GPT-OSS-20B/latest.json
+2025-12-31 10:41:53,236 | INFO |    Backup: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/teleqna/GPT-OSS-20B/run_20251231_104153.json
+2025-12-31 10:41:53,236 | INFO | 
+📊 Metrics (Accuracy is primary):
+2025-12-31 10:41:53,236 | INFO |    Accuracy    :  20.00%
+2025-12-31 10:41:53,236 | INFO |    EM          :  20.00%
+2025-12-31 10:41:53,236 | INFO |    F1          :  30.77%
+2025-12-31 10:41:53,236 | INFO |    Correct     : 6
+2025-12-31 10:41:53,236 | INFO |    Total       : 30
+2025-12-31 10:41:53,252 | INFO | 
+📂 Loaded 30 items from telequad
+2025-12-31 10:41:53,253 | INFO | 💾 Results saved:
+2025-12-31 10:41:53,253 | INFO |    Latest: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/telequad/GPT-OSS-20B/latest.json
+2025-12-31 10:41:53,253 | INFO |    Backup: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/telequad/GPT-OSS-20B/run_20251231_104153.json
+2025-12-31 10:41:53,253 | INFO | 
+📊 Metrics (F1 is primary):
+2025-12-31 10:41:53,253 | INFO |    F1          :   0.00%
+2025-12-31 10:41:53,253 | INFO |    EM          :   0.00%
+2025-12-31 10:41:53,253 | INFO |    Total       : 30
+2025-12-31 10:41:53,454 | INFO | 
+📂 Loaded 30 items from netbench
+2025-12-31 10:41:53,457 | INFO | 💾 Results saved:
+2025-12-31 10:41:53,457 | INFO |    Latest: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/netbench/GPT-OSS-20B/latest.json
+2025-12-31 10:41:53,457 | INFO |    Backup: /home/kilab_pyj/codespace/GIA/Experiment/Result/external_dataset/netbench/GPT-OSS-20B/run_20251231_104153.json
+2025-12-31 10:41:53,457 | INFO | 
+📊 Metrics (F1 is primary):
+2025-12-31 10:41:53,457 | INFO |    F1          :   0.10%
+2025-12-31 10:41:53,457 | INFO |    EM          :   0.00%
+2025-12-31 10:41:53,457 | INFO |    Total       : 30
+2025-12-31 10:41:53,457 | INFO | 
+================================================================================
+2025-12-31 10:41:53,457 | INFO | 🎉 All evaluations completed!
+2025-12-31 10:41:53,457 | INFO | ================================================================================
