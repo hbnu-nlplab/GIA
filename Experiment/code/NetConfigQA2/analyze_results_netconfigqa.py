@@ -125,37 +125,112 @@ class TraditionalMetricsCalculator:
 class NetConfigQAScorer:
     """Handles scoring based on answer types."""
     
-    def clean_prediction(self, pred: str) -> str:
+    def clean_prediction(self, pred: str, answer_type: str = None) -> str:
         """
         Clean model prediction by removing thinking tags and normalizing format.
         
         Handles:
-        - Complete <think>...</think> blocks
-        - Incomplete <think>... (truncated output without closing tag)
+        - Complete <think>...</think> blocks (takes text AFTER </think>)
+        - Incomplete <think>... (takes text BEFORE <think>)
+        - Multiple assistantfinal delimiters
         - Markdown code blocks
         - Quoted strings
         - Null values
         """
         if not pred:
             return ""
-            
-        # 1. Strip <think>...</think> blocks
-        # Case 1: Complete tags
-        pred = re.sub(r"<think>.*?</think>", "", pred, flags=re.DOTALL).strip()
-        # Case 2: Incomplete/truncated <think>... (no closing tag)
-        pred = re.sub(r"<think>.*$", "", pred, flags=re.DOTALL).strip()
         
-        # 2. Strip standard Markdown code blocks if present
+        original_pred = pred  # Keep original for fallback extraction
+            
+        # 1. Handle <think> tags and common delimiters
+        # If </think> exists, we only care about what's AFTER it.
+        if '</think>' in pred:
+            pred = pred.split('</think>')[-1].strip()
+        # GPT-OSS-20B specific delimiter
+        elif 'assistantfinal' in pred:
+            # Handle multiple assistantfinal delimiters - take the LAST one
+            parts = pred.split('assistantfinal')
+            pred = parts[-1].strip()
+            
+            # Handle 'assistantfinal think' pattern where think block appears after delimiter
+            if pred.startswith('think'):
+                # Check if there's a valid answer in the think block
+                pred = pred[5:].strip()  # Remove 'think'
+                
+                # If pred is now a long explanation without structured answer,
+                # fall back to extracting from original text
+                if len(pred) > 80 and not any(pred.strip().startswith(c) for c in ['{', '[', '"']):
+                    # Try to extract last valid JSON/set/map from original text
+                    import re as re_local
+                    
+                    # For numeric/number types, try to extract numbers from text
+                    if answer_type in ['numeric', 'number']:
+                        num = self._extract_number(pred)
+                        if num is not None:
+                            pred = str(int(num))
+                        else:
+                            # Try to find number in original
+                            num = self._extract_number(original_pred)
+                            if num is not None:
+                                pred = str(int(num))
+                    else:
+                        # Look for last JSON object
+                        json_matches = list(re_local.finditer(r'\{[^{}]+:[^{}]+\}', original_pred))
+                        if json_matches:
+                            pred = json_matches[-1].group(0)
+                        # Look for last JSON array
+                        elif re_local.search(r'\[[^\[\]]+\]', original_pred):
+                            array_matches = list(re_local.finditer(r'\[[^\[\]]+\]', original_pred))
+                            pred = array_matches[-1].group(0)
+                        # Look for numbers in the last sentence
+                        elif len(pred) > 100:
+                            sentences = pred.split('.')
+                            if sentences:
+                                last_sent = sentences[-1].strip()
+                                num_match = re_local.search(r'\b(\d+)\b', last_sent)
+                                if num_match:
+                                    pred = num_match.group(1)
+        # If only <think> exists (truncated), remove everything from <think> onwards
+        elif '<think>' in pred:
+            pred = pred.split('<think>')[0].strip()
+        
+        # 2. Strip common prefixes that might appear
+        prefixes_to_remove = [
+            r'^analysis\s*',
+            r'^we need to\s*',
+            r'^based on\s*',
+            r'^the answer is\s*',
+            r'^answer:\s*',
+            r'^result:\s*',
+            r'^\**answer\**:\s*',
+            r'^json\s*',
+            r'^set\s*',
+            r'^map\s*',
+            r'^text\s*',
+        ]
+        for prefix in prefixes_to_remove:
+            pred = re.sub(prefix, '', pred, flags=re.IGNORECASE | re.MULTILINE).strip()
+
+        # 3. Strip standard Markdown code blocks if present
         pred = re.sub(r"```.*?```", "", pred, flags=re.DOTALL).strip()
         pred = pred.replace("```json", "").replace("```", "").strip()
 
-        # 3. Basic normalization
+        # 4. Basic normalization
         pred = pred.strip('\n\r\t ')
         
         # Unquote (double or single quotes) - only if properly balanced
         if len(pred) >= 2 and ((pred.startswith('"') and pred.endswith('"')) or \
                                (pred.startswith("'") and pred.endswith("'"))):
             pred = pred[1:-1]
+            
+        # 5. Domain-specific cleaning (Cisco commands)
+        # Handle common Cisco command patterns where model outputs full command instead of value
+        cisco_patterns = [
+            (r'^login\s+local$', 'local'),  # 'login local' -> 'local'
+            (r'^login\s+(.+)$', r'\1'),      # 'login <method>' -> '<method>'
+        ]
+        for pattern, replacement in cisco_patterns:
+            pred = re.sub(pattern, replacement, pred, flags=re.IGNORECASE).strip()
             
         # Handle nulls
         if pred.lower() in ['null', 'none', 'n/a', 'not configured', 'not found', '']:
@@ -179,6 +254,8 @@ class NetConfigQAScorer:
 
     def score(self, pred: str, gold: str, answer_type: str) -> Dict[str, float]:
         """Score prediction against gold answer based on answer type."""
+        # Clean prediction with answer_type context
+        pred = self.clean_prediction(pred, answer_type)
         gold = self.clean_gold(gold)
 
         try:
@@ -194,9 +271,50 @@ class NetConfigQAScorer:
             return {"score": 0.0, "error": str(e)}
 
     def _extract_number(self, val: str) -> float:
+        """Extract number from string, including word-to-digit conversion."""
         try:
+            # First try direct digit extraction
             match = re.search(r'-?\d+(\.\d+)?', val)
-            return float(match.group()) if match else None
+            if match:
+                return float(match.group())
+            
+            # If no digit found, try to extract number words
+            # Map of English number words to digits
+            word_to_num = {
+                'zero': 0, 'one': 1, 'two': 2, 'three': 3, 'four': 4,
+                'five': 5, 'six': 6, 'seven': 7, 'eight': 8, 'nine': 9,
+                'ten': 10, 'eleven': 11, 'twelve': 12, 'thirteen': 13,
+                'fourteen': 14, 'fifteen': 15, 'sixteen': 16, 'seventeen': 17,
+                'eighteen': 18, 'nineteen': 19, 'twenty': 20,
+                'thirty': 30, 'forty': 40, 'fifty': 50,
+                'sixty': 60, 'seventy': 70, 'eighty': 80, 'ninety': 90,
+                'hundred': 100, 'thousand': 1000
+            }
+            
+            val_lower = val.lower()
+            
+            # Look for patterns like "totaling five network interfaces"
+            patterns = [
+                r'totaling\s+(\w+)',
+                r'lists\s+(\w+)',
+                r'has\s+exactly\s+(\w+)',
+                r'total\s+of\s+(\w+)',
+                r'consists?\s+of\s+(\w+)',
+            ]
+            
+            for pattern in patterns:
+                match = re.search(pattern, val_lower)
+                if match:
+                    word = match.group(1)
+                    if word in word_to_num:
+                        return float(word_to_num[word])
+            
+            # Try to find any number word in the string
+            for word, num in word_to_num.items():
+                if re.search(r'\b' + word + r'\b', val_lower):
+                    return float(num)
+            
+            return None
         except:
             return None
 
@@ -253,6 +371,22 @@ class NetConfigQAScorer:
         f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0
         return {"score": f1, "f1": f1, "precision": precision, "recall": recall}
 
+    def _normalize_ip_value(self, value: str) -> str:
+        """
+        Normalize IP address value for comparison.
+        Removes CIDR notation if present.
+        
+        Examples:
+        - "10.0.0.1/31" -> "10.0.0.1"
+        - "10.0.0.1" -> "10.0.0.1"
+        - "" -> ""
+        """
+        value = str(value).strip()
+        # Remove CIDR notation (e.g., /31, /24, /32)
+        if '/' in value:
+            value = value.split('/')[0].strip()
+        return value.lower()
+    
     def _score_map(self, pred: str, gold: str) -> Dict[str, float]:
         try:
             p_obj = json.loads(pred.replace("'", '"'))
@@ -268,7 +402,14 @@ class NetConfigQAScorer:
         if not all_k:
             return {"score": 1.0}
         
-        val_matches = sum(1 for k in common if str(p_obj[k]).lower() == str(g_obj[k]).lower())
+        # Compare values with IP normalization (removes CIDR notation)
+        val_matches = 0
+        for k in common:
+            pred_val = self._normalize_ip_value(p_obj[k])
+            gold_val = self._normalize_ip_value(g_obj[k])
+            if pred_val == gold_val:
+                val_matches += 1
+        
         return {"score": (len(common)/len(all_k)*0.5) + (val_matches/len(common)*0.5 if common else 0)}
 
     def _normalize_for_comparison(self, text: str) -> str:
@@ -498,8 +639,8 @@ def analyze_results(json_file: str, verbose: bool = False):
         level = row.get('level', 'L1')
         category = row.get('category', 'General')
         
-        # 전처리
-        clean_pred = scorer.clean_prediction(raw_pred)
+        # 전처리 (answer_type 전달)
+        clean_pred = scorer.clean_prediction(raw_pred, answer_type)
         clean_gold = scorer.clean_gold(row['gold'])
         
         # Type-Aware 점수 계산
@@ -571,16 +712,16 @@ def analyze_results(json_file: str, verbose: bool = False):
                 # BERTScore 통계에도 추가
                 answer_type = result['type']
                 trad_metrics_by_type[answer_type]['bertscore_f1'].append(F1[i].item())
-            print(f"   ✓ BERTScore calculated for {len(results)} samples")
+            print(f"   [OK] BERTScore calculated for {len(results)} samples")
         except Exception as e:
-            print(f"   ⚠ BERTScore calculation failed: {e}")
+            print(f"   [WARNING] BERTScore calculation failed: {e}")
             for result in results:
                 result['bertscore_precision'] = 0.0
                 result['bertscore_recall'] = 0.0
                 result['bertscore_f1'] = 0.0
     else:
         if not BERTSCORE_AVAILABLE:
-            print("   ⚠ BERTScore not available (install with: pip install bert-score)")
+            print("   [WARNING] BERTScore not available (install with: pip install bert-score)")
         for result in results:
             result['bertscore_precision'] = 0.0
             result['bertscore_recall'] = 0.0

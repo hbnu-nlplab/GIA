@@ -503,7 +503,41 @@ def is_empty(val: str) -> bool:
 
 ---
 
-## 6. 관련 연구 / 인용 근거
+## 6. Type-Aware vs EM vs F1 비교 분석
+
+Type-Aware Scoring은 단순히 하나의 메트릭이 아니라, 데이터의 구조를 이해하고 EM(Exact Match)과 F1의 장점을 결합한 방식입니다.
+
+### 6.1 메트릭 간 상관관계 요약
+
+| Answer Type | Type-Aware vs EM | Type-Aware vs Token F1 | 핵심 차이점 |
+| :--- | :--- | :--- | :--- |
+| **Boolean** | **높음 (Lenient)** | **높음** | "yes", "1", "true"를 모두 동일하게 처리 (Semantic EM) |
+| **Numeric** | **높음 (Lenient)** | **비슷함** | "1명", "1.0", "1"에서 숫자 '1'만 추출하여 비교 |
+| **Set** | **높음** | **높음** | 순서 무관 + **요소 단위** 비교 (Token 단위가 아님) |
+| **Map** | **훨씬 높음** | **높음** | JSON 구조 이해, Key/Value 분리 채점, 순서 무관 |
+| **Text** | **높음** | **비슷하거나 낮음** | 동의어 정규화 후 F1 계산. 단순 토큰 겹침보다 엄격할 수 있음 |
+
+### 6.2 왜 점수 차이가 발생하는가?
+
+#### 1) Set Type: Token F1 vs Element F1
+- **Token F1**: `GigabitEthernet0/0`을 `Gigabit`, `Ethernet`, `0`, `/`, `0`으로 쪼개서 채점합니다.
+- **Type-Aware (Set)**: `GigabitEthernet0/0` 전체를 하나의 **의미 있는 단위(Element)**로 봅니다.
+- **결과**: 인터페이스 이름의 일부만 맞춘 경우 Token F1은 점수를 주지만, Type-Aware는 0점을 줍니다. 반면, 순서가 바뀌었을 때 EM은 0점이지만 Type-Aware는 만점을 줍니다.
+
+#### 2) Map Type: Structural Credit
+- **Exact Match**: JSON 문자열이 한 글자만 달라도(공백, 순서 등) 0점입니다.
+- **Type-Aware (Map)**: 
+    - **Key Score (50%)**: 정답의 키를 얼마나 포함했는가?
+    - **Value Score (50%)**: 포함된 키의 값이 얼마나 정확한가?
+- **결과**: 10개의 인터페이스 상태 중 9개만 맞춰도 EM은 0점이지만, Type-Aware는 약 0.9점을 부여하여 모델의 실제 능력을 정확히 반영합니다.
+
+#### 3) Text Type: Semantic Normalization & Hybrid Scoring
+- **로직**: 먼저 정규화된 EM을 시도하고, 실패하면 Token F1을 계산합니다.
+- **결과**: 한국어 조사나 단위 표현("개", "대", "명") 때문에 발생하는 EM의 한계를 극복합니다. 다만, 단순 Token F1은 정규화 없이도 우연히 겹치는 토큰에 점수를 주므로, Type-Aware가 더 보수적(엄격)일 수 있습니다.
+
+---
+
+## 7. 관련 연구 / 인용 근거
 
 교수님께 관련 연구로 언급할 수 있는 것들:
 
@@ -526,7 +560,7 @@ def is_empty(val: str) -> bool:
 
 ---
 
-## 7. 결론: 교수님께 설명할 때
+## 8. 결론: 교수님께 설명할 때
 
 ### 한 문장 요약
 
