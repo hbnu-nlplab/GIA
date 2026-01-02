@@ -50,17 +50,17 @@ class TeleQnADataset(BaseDataset):
     # 대표 메트릭: Accuracy (객관식이므로 option 번호 일치 여부)
     primary_metric = "Accuracy"
     
-    # 샘플링 설정: 객관식은 짧은 응답이 필요
+    # 샘플링 설정: 객관식은 짧은 응답이 필요하지만, 추론 모델을 위해 토큰 대폭 상향
     sampling_config = SamplingConfig(
         temperature=0.0,      # 결정적 생성 필수
         top_p=1.0,
-        max_tokens=32,        # "option X: ..." 형식이므로 짧게
-        stop=["\n\n", "---", "###", "Question:", "Explanation:"],
+        max_tokens=8192,      # Qwen3, GPT-OSS 등 추론 모델을 위해 충분한 공간 확보
+        stop=["---", "###", "Question:", "Explanation:"], # \n\n 제거 (Reasoning 모델 대응)
         # Structured Output 옵션 (선택적)
-        use_structured_output=False,  # True로 설정 시 JSON 응답 강제
+        use_structured_output=False,
         response_schema=TELEQNA_RESPONSE_SCHEMA,
     )
-    
+
     def load(self, path: str) -> List[DataItem]:
         """TeleQnA JSON 로드"""
         with open(path, "r", encoding="utf-8") as f:
@@ -112,18 +112,18 @@ class TeleQnADataset(BaseDataset):
         return items
     
     def get_system_prompt(self) -> str:
-        """TeleQnA 시스템 프롬프트"""
+        """TeleQnA 시스템 프롬프트 (Few-shot + 정답 강제)"""
         return """You are a Senior Telecommunications Engineer taking a multiple-choice exam.
 
 RULES:
 1. Select the single best answer from the given options.
 2. Use your expert knowledge of telecom standards (3GPP, IEEE, etc.).
-3. Pay attention to specific standard versions mentioned (e.g., Release 18).
-4. Output ONLY your answer in this exact format: "option N: [answer text]"
-5. Do NOT explain your reasoning."""
+3. Output ONLY your answer in this exact format: "option N: [answer text]"
+4. Do NOT include any reasoning, thoughts, or explanations. 
+5. Start your response immediately with "option"."""
     
     def build_user_prompt(self, item: DataItem) -> str:
-        """TeleQnA 사용자 프롬프트"""
+        """TeleQnA 사용자 프롬프트 (Local 버전)"""
         return f"""Question:
 {item.question}
 
@@ -143,8 +143,20 @@ Your answer:"""
         
         response = response.strip()
         
-        # <think> 태그 제거 (Qwen3 등)
+        # 1. <think> 태그 제거 (Qwen3 등)
         response = re.sub(r'<think>.*?</think>', '', response, flags=re.DOTALL).strip()
+        
+        # 2. Reasoning 모델의 특수 키워드 처리 (Mistral, GPT-OSS 등)
+        # "assistant", "final", "analysis", "thought" 등의 키워드 이후의 내용만 취함
+        for marker in ["assistant", "final", "Answer:", "Result:"]:
+            if marker.lower() in response.lower():
+                # 마지막 발생 지점 이후를 답변으로 간주
+                parts = re.split(re.escape(marker), response, flags=re.IGNORECASE)
+                if len(parts) > 1:
+                    response = parts[-1].strip()
+        
+        # "analysis", "thought" 등으로 시작하는 경우 해당 문구 제거
+        response = re.sub(r'^(?:analysis|thought|reasoning)[:\s]*', '', response, flags=re.IGNORECASE).strip()
         
         # JSON 응답 처리 (structured output 사용 시)
         if response.startswith("{"):
