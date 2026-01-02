@@ -14,7 +14,7 @@ import logging
 import datetime
 import sys
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Dict, Any, Optional
 
 import torch
 
@@ -22,8 +22,56 @@ import torch
 try:
     from vllm import LLM, SamplingParams
 except ImportError:
-    print("Error: 'vllm' module not found. Please install it using `pip install vllm`.")
-    pass
+    LLM = None
+    SamplingParams = None
+    print("Warning: 'vllm' module not found. vLLM backend will be unavailable. Install with `pip install vllm`.")
+
+
+class OpenAIEngine:
+    """Thin wrapper for OpenAI API inference.
+
+    Uses the official `openai` Python SDK. Keep this dependency optional by importing lazily.
+    """
+
+    def __init__(
+        self,
+        model: str,
+        api_key: Optional[str] = None,
+        base_url: Optional[str] = None,
+    ):
+        try:
+            from openai import OpenAI
+        except ImportError as e:
+            raise RuntimeError(
+                "openai SDK가 필요합니다. `pip install openai` 후 다시 시도하세요."
+            ) from e
+
+        resolved_key = api_key or os.getenv("OPENAI_API_KEY")
+        if not resolved_key:
+            raise RuntimeError(
+                "OPENAI_API_KEY가 설정되어 있지 않습니다. 환경변수로 설정하거나 --openai_api_key로 넘기세요."
+            )
+
+        self.client = OpenAI(api_key=resolved_key, base_url=base_url) if base_url else OpenAI(api_key=resolved_key)
+        self.model = model
+
+    def generate_one(self, messages: List[Dict[str, str]], max_tokens: int) -> str:
+        # Prefer Responses API (current SDK). `input` accepts structured messages.
+        resp = self.client.responses.create(
+            model=self.model,
+            input=messages,
+            temperature=0.0,
+            max_output_tokens=max_tokens,
+        )
+        text = getattr(resp, "output_text", None)
+        if text is not None:
+            return text
+
+        # Fallback: attempt to navigate response structure
+        try:
+            return resp.output[0].content[0].text
+        except Exception:
+            return ""
 
 # === Configuration ===
 class Config:
@@ -234,7 +282,17 @@ class ConfigManager:
 # === Evaluator ===
 
 class VLLMEvaluator:
-    def __init__(self, model_key: str, config_dir: str, gpu_util: float = 0.9):
+    def __init__(
+        self,
+        model_key: str,
+        config_dir: str,
+        gpu_util: float = 0.9,
+        backend: str = "vllm",
+        openai_model: Optional[str] = None,
+        openai_api_key: Optional[str] = None,
+        openai_base_url: Optional[str] = None,
+        max_tokens: int = 32768,
+    ):
         # Initial Logging
         global logger
         logger, self.timestamp = setup_logger(model_key)
@@ -242,50 +300,74 @@ class VLLMEvaluator:
         self.model_name = model_key
         self.model_path = Config.MODEL_DICT.get(model_key, model_key)
         self.gpu_util = gpu_util
+        self.backend = backend
+        self.max_tokens = max_tokens
+        self.openai_model = openai_model
         
-        logger.info(f"Initializing VLLM Evaluator...")
+        logger.info("Initializing Evaluator...")
+        logger.info(f"Backend: {self.backend}")
         logger.info(f"Model: {self.model_name} ({self.model_path})")
         logger.info(f"Config Dir: {config_dir}")
-        
-        # Verify resources
-        try:
-            self.llm = LLM(
-                model=self.model_path,
-                tensor_parallel_size=torch.cuda.device_count(), # Utilize all visible GPUs
-                gpu_memory_utilization=self.gpu_util,
-                max_model_len=16384,
-                trust_remote_code=True,
-                enforce_eager=False,
-                quantization="awq" if "AWQ" in self.model_path else None
-            )
-        except Exception as e:
-            logger.critical(f"VLLM Initialization Failed: {e}")
-            raise e
-            
-        self.tokenizer = self.llm.get_tokenizer()
+
         self.config_manager = ConfigManager([config_dir])
-        self.sampling_params = SamplingParams(
-            temperature=0.0,
-            max_tokens=32768,  # Keep high for long reasoning chains
-            stop=[
-                "<|eot_id|>", 
-                "Question:", 
-                "User:", 
-                "=== QUESTION ===",
-                "\n\nExample",  # Stop if model starts generating examples
-                "\n\nQuestion:",  # Stop if model starts new question
-                "\nBased on the analysis",  # Common verbose pattern
-                "\nIn summary",  # Common verbose pattern
-                "\nThe answer is",  # Common verbose pattern
-            ]
-        )
+
+        self.llm = None
+        self.tokenizer = None
+        self.sampling_params = None
+        self.openai_engine: Optional[OpenAIEngine] = None
+
+        if self.backend == "vllm":
+            if LLM is None or SamplingParams is None:
+                raise RuntimeError("vLLM backend를 사용하려면 vllm 설치가 필요합니다. `pip install vllm`.")
+
+            # Verify resources
+            try:
+                self.llm = LLM(
+                    model=self.model_path,
+                    tensor_parallel_size=torch.cuda.device_count(),  # Utilize all visible GPUs
+                    gpu_memory_utilization=self.gpu_util,
+                    max_model_len=16384,
+                    trust_remote_code=True,
+                    enforce_eager=False,
+                    quantization="awq" if "AWQ" in self.model_path else None,
+                )
+            except Exception as e:
+                logger.critical(f"VLLM Initialization Failed: {e}")
+                raise e
+
+            self.tokenizer = self.llm.get_tokenizer()
+            self.sampling_params = SamplingParams(
+                temperature=0.0,
+                max_tokens=self.max_tokens,
+                stop=[
+                    "<|eot_id|>",
+                    "Question:",
+                    "User:",
+                    "=== QUESTION ===",
+                    "\n\nExample",
+                    "\n\nQuestion:",
+                    "\nBased on the analysis",
+                    "\nIn summary",
+                    "\nThe answer is",
+                ],
+            )
+        elif self.backend == "openai":
+            if not self.openai_model:
+                raise ValueError("--backend openai 사용 시 --openai_model 을 지정하세요.")
+            self.openai_engine = OpenAIEngine(
+                model=self.openai_model,
+                api_key=openai_api_key,
+                base_url=openai_base_url,
+            )
+        else:
+            raise ValueError(f"Unknown backend: {self.backend}")
         
         # Result Dir Setup
-        self.res_dir = os.path.join(Config.RESULT_DIR, self.model_name.replace("/", "_"))
+        dir_name = self.openai_model if self.backend == "openai" and self.openai_model else self.model_name
+        self.res_dir = os.path.join(Config.RESULT_DIR, dir_name.replace("/", "_"))
         os.makedirs(self.res_dir, exist_ok=True)
 
-    def prepare_prompt(self, question: str, answer_type: str, configs: str) -> str:
-        # Prompt Template - Direct and Clear
+    def prepare_messages(self, question: str, answer_type: str, configs: str) -> List[Dict[str, str]]:
         system_msg = """You are an expert Network Engineer analyzing network configurations.
 
 OUTPUT FORMAT RULES (CRITICAL - MUST FOLLOW EXACTLY):
@@ -333,14 +415,20 @@ REMEMBER: After </think>, output ONLY the answer value on ONE line. Nothing else
 [Your analysis here]
 </think>
 [ANSWER VALUE ONLY - ONE LINE]"""
-        messages = [
+        return [
             {"role": "system", "content": system_msg},
-            {"role": "user", "content": user_msg}
+            {"role": "user", "content": user_msg},
         ]
-        
+
+    def prepare_prompt(self, messages: List[Dict[str, str]]) -> str:
+        if not self.tokenizer:
+            # Should not happen for vLLM
+            return "\n\n".join([f"{m['role'].upper()}:\n{m['content']}" for m in messages])
         try:
             return self.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-        except:
+        except Exception:
+            system_msg = messages[0]["content"] if messages else ""
+            user_msg = messages[1]["content"] if len(messages) > 1 else ""
             return f"{system_msg}\n\n{user_msg}"
 
     def run(self, csv_path: str, limit: int = None):
@@ -355,30 +443,45 @@ REMEMBER: After </think>, output ONLY the answer value on ONE line. Nothing else
         
         if limit: data = data[:limit]
         
-        logger.info("Generating prompts...")
+        logger.info("Generating prompts/messages...")
         # Pre-load Configs once
         hostnames = list(self.config_manager._cache.keys())
         configs_content = self.config_manager.get_configs(hostnames)
-        
-        prompts = []
+
+        prepared: List[Dict[str, Any]] = []
         for row in data:
-            p = self.prepare_prompt(row['question'], row['answer_type'], configs_content)
-            prompts.append(p)
-            
-        logger.info(f"Starting batch generation for {len(prompts)} samples...")
+            messages = self.prepare_messages(row["question"], row["answer_type"], configs_content)
+            prompt = None
+            if self.backend == "vllm":
+                prompt = self.prepare_prompt(messages)
+            prepared.append({"messages": messages, "prompt": prompt})
+
+        logger.info(f"Starting generation for {len(prepared)} samples...")
         start_time = time.time()
-        
-        outputs = self.llm.generate(prompts, self.sampling_params)
+
+        raw_preds: List[str] = []
+        if self.backend == "vllm":
+            prompts = [p["prompt"] for p in prepared]
+            outputs = self.llm.generate(prompts, self.sampling_params)
+            for output in outputs:
+                raw_preds.append(output.outputs[0].text)
+        else:
+            # OpenAI: 기본은 순차 호출 (레이트리밋 고려)
+            if not self.openai_engine:
+                raise RuntimeError("OpenAI engine is not initialized")
+            for i, p in enumerate(prepared, 1):
+                if i % 10 == 0:
+                    logger.info(f"Progress: {i}/{len(prepared)}")
+                raw = self.openai_engine.generate_one(p["messages"], max_tokens=self.max_tokens)
+                raw_preds.append(raw)
         
         duration = time.time() - start_time
-        logger.info(f"Inference Time: {duration:.2f}s | Throughput: {len(prompts)/duration:.1f} req/s")
+        logger.info(f"Inference Time: {duration:.2f}s | Throughput: {len(prepared)/duration:.1f} req/s")
         
         # Collect Results (RAW + Cleaned prediction)
         results = []
-        for i, output in enumerate(outputs):
+        for i, raw_pred in enumerate(raw_preds):
             row = data[i]
-            raw_pred = output.outputs[0].text
-            
             # Extract clean answer from raw output
             cleaned_pred = extract_answer_from_raw(raw_pred, row['answer_type'])
             
@@ -399,13 +502,16 @@ REMEMBER: After </think>, output ONLY the answer value on ONE line. Nothing else
         output_file = os.path.join(self.res_dir, f"results_raw_{self.timestamp}.json")
         final_output = {
             "meta": {
+                "backend": self.backend,
                 "model": self.model_name,
+                "openai_model": self.openai_model if self.backend == "openai" else None,
                 "date": str(datetime.datetime.now()),
                 "duration": duration,
                 "dataset": os.path.basename(csv_path),
-                "total_samples": len(results)
+                "total_samples": len(results),
+                "max_tokens": self.max_tokens,
             },
-            "results": results
+            "results": results,
         }
         
         with open(output_file, 'w', encoding='utf-8') as f:
@@ -419,6 +525,13 @@ def main():
     parser.add_argument("--dataset", default=Config.DEFAULT_DATASET_PATH)
     parser.add_argument("--config_dir", default=Config.DEFAULT_CONFIG_DIR)
     parser.add_argument("--model", nargs='+', required=True, help="하나 이상의 모델 지정 (예: --model Qwen3-8B Mistral3-8B)")
+
+    parser.add_argument("--backend", choices=["vllm", "openai"], default="vllm", help="추론 엔진 선택")
+    parser.add_argument("--openai_model", default=None, help="OpenAI 모델명 (예: gpt-4o-mini)")
+    parser.add_argument("--openai_api_key", default=None, help="미지정 시 OPENAI_API_KEY 환경변수 사용")
+    parser.add_argument("--openai_base_url", default=None, help="프록시/호환 엔드포인트 사용 시 지정")
+    parser.add_argument("--max_tokens", type=int, default=32768, help="출력 토큰 한도 (vllm/openai 공통)")
+
     parser.add_argument("--gpu_util", type=float, default=0.9)
     parser.add_argument("--sample", type=int, default=None)
     args = parser.parse_args()
@@ -431,7 +544,16 @@ def main():
         print(f"{'='*60}\n")
         
         try:
-            evaluator = VLLMEvaluator(model_key, args.config_dir, args.gpu_util)
+            evaluator = VLLMEvaluator(
+                model_key=model_key,
+                config_dir=args.config_dir,
+                gpu_util=args.gpu_util,
+                backend=args.backend,
+                openai_model=args.openai_model,
+                openai_api_key=args.openai_api_key,
+                openai_base_url=args.openai_base_url,
+                max_tokens=args.max_tokens,
+            )
             evaluator.run(args.dataset, args.sample)
             
             # 메모리 정리 (중요!)

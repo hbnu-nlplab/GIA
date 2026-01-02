@@ -27,8 +27,9 @@
       "rouge1": 0.8,
       "rouge2": 0.6666666666666666,
       "rougeL": 0.8,
+      "bleu": 0.1495348781221221,
       "bertscore_precision": 0.9341092109680176,
-      "bertscore_recall": 0.9641734957695007,
+      "bertscore_recall": 0.964173436164856,
       "bertscore_f1": 0.9489032626152039
     },
     {
@@ -50,8 +51,9 @@
       "rouge1": 0.8,
       "rouge2": 0.6666666666666666,
       "rougeL": 0.8,
+      "bleu": 0.1495348781221221,
       "bertscore_precision": 0.9341092109680176,
-      "bertscore_recall": 0.9641734957695007,
+      "bertscore_recall": 0.964173436164856,
       "bertscore_f1": 0.9489032626152039
     },
     {
@@ -73,8 +75,9 @@
       "rouge1": 0.8,
       "rouge2": 0.6666666666666666,
       "rougeL": 0.8,
+      "bleu": 0.1495348781221221,
       "bertscore_precision": 0.9341092109680176,
-      "bertscore_recall": 0.9641734957695007,
+      "bertscore_recall": 0.964173436164856,
       "bertscore_f1": 0.9489032626152039
     },
     {
@@ -96,8 +99,9 @@
       "rouge1": 0.8,
       "rouge2": 0.6666666666666666,
       "rougeL": 0.8,
+      "bleu": 0.1495348781221221,
       "bertscore_precision": 0.9341092109680176,
-      "bertscore_recall": 0.9641734957695007,
+      "bertscore_recall": 0.964173436164856,
       "bertscore_f1": 0.9489032626152039
     },
     {
@@ -119,8 +123,9 @@
       "rouge1": 0.8,
       "rouge2": 0.6666666666666666,
       "rougeL": 0.8,
+      "bleu": 0.1495348781221221,
       "bertscore_precision": 0.9341092109680176,
-      "bertscore_recall": 0.9641734957695007,
+      "bertscore_recall": 0.964173436164856,
       "bertscore_f1": 0.9489032626152039
     },
     {
@@ -145,9 +150,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.878450870513916,
-      "bertscore_recall": 0.878450870513916,
-      "bertscore_f1": 0.878450870513916
+      "bleu": 0.0,
+      "bertscore_precision": 0.8784507513046265,
+      "bertscore_recall": 0.8784507513046265,
+      "bertscore_f1": 0.8784507513046265
     },
     {
       "question_id": "31",
@@ -171,9 +177,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.878450870513916,
-      "bertscore_recall": 0.878450870513916,
-      "bertscore_f1": 0.878450870513916
+      "bleu": 0.0,
+      "bertscore_precision": 0.8784507513046265,
+      "bertscore_recall": 0.8784507513046265,
+      "bertscore_f1": 0.8784507513046265
     },
     {
       "question_id": "32",
@@ -197,9 +204,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.878450870513916,
-      "bertscore_recall": 0.878450870513916,
-      "bertscore_f1": 0.878450870513916
+      "bleu": 0.0,
+      "bertscore_precision": 0.8784507513046265,
+      "bertscore_recall": 0.8784507513046265,
+      "bertscore_f1": 0.8784507513046265
     },
     {
       "question_id": "33",
@@ -223,9 +231,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.878450870513916,
-      "bertscore_recall": 0.878450870513916,
-      "bertscore_f1": 0.878450870513916
+      "bleu": 0.0,
+      "bertscore_precision": 0.8784507513046265,
+      "bertscore_recall": 0.8784507513046265,
+      "bertscore_f1": 0.8784507513046265
     },
     {
       "question_id": "34",
@@ -249,9 +258,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.878450870513916,
-      "bertscore_recall": 0.878450870513916,
-      "bertscore_f1": 0.878450870513916
+      "bleu": 0.0,
+      "bertscore_precision": 0.8784507513046265,
+      "bertscore_recall": 0.8784507513046265,
+      "bertscore_f1": 0.8784507513046265
     },
     {
       "question_id": "35",
@@ -275,9 +285,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.878450870513916,
-      "bertscore_recall": 0.878450870513916,
-      "bertscore_f1": 0.878450870513916
+      "bleu": 0.0,
+      "bertscore_precision": 0.8784507513046265,
+      "bertscore_recall": 0.8784507513046265,
+      "bertscore_f1": 0.8784507513046265
     },
     {
       "question_id": "36",
@@ -301,9 +312,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.878450870513916,
-      "bertscore_recall": 0.878450870513916,
-      "bertscore_f1": 0.878450870513916
+      "bleu": 0.0,
+      "bertscore_precision": 0.8784507513046265,
+      "bertscore_recall": 0.8784507513046265,
+      "bertscore_f1": 0.8784507513046265
     },
     {
       "question_id": "37",
@@ -327,9 +339,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.878450870513916,
-      "bertscore_recall": 0.878450870513916,
-      "bertscore_f1": 0.878450870513916
+      "bleu": 0.0,
+      "bertscore_precision": 0.8784507513046265,
+      "bertscore_recall": 0.8784507513046265,
+      "bertscore_f1": 0.8784507513046265
     },
     {
       "question_id": "38",
@@ -353,9 +366,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.878450870513916,
-      "bertscore_recall": 0.878450870513916,
-      "bertscore_f1": 0.878450870513916
+      "bleu": 0.0,
+      "bertscore_precision": 0.8784507513046265,
+      "bertscore_recall": 0.8784507513046265,
+      "bertscore_f1": 0.8784507513046265
     },
     {
       "question_id": "39",
@@ -379,9 +393,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.878450870513916,
-      "bertscore_recall": 0.878450870513916,
-      "bertscore_f1": 0.878450870513916
+      "bleu": 0.0,
+      "bertscore_precision": 0.8784507513046265,
+      "bertscore_recall": 0.8784507513046265,
+      "bertscore_f1": 0.8784507513046265
     },
     {
       "question_id": "40",
@@ -402,9 +417,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.9803619384765625,
-      "bertscore_recall": 0.9803619384765625,
-      "bertscore_f1": 0.9803619384765625
+      "bleu": 0,
+      "bertscore_precision": 0.980362057685852,
+      "bertscore_recall": 0.980362057685852,
+      "bertscore_f1": 0.980362057685852
     },
     {
       "question_id": "41",
@@ -425,9 +441,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.9803619384765625,
-      "bertscore_recall": 0.9803619384765625,
-      "bertscore_f1": 0.9803619384765625
+      "bleu": 0,
+      "bertscore_precision": 0.980362057685852,
+      "bertscore_recall": 0.980362057685852,
+      "bertscore_f1": 0.980362057685852
     },
     {
       "question_id": "42",
@@ -448,9 +465,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.9803619384765625,
-      "bertscore_recall": 0.9803619384765625,
-      "bertscore_f1": 0.9803619384765625
+      "bleu": 0,
+      "bertscore_precision": 0.980362057685852,
+      "bertscore_recall": 0.980362057685852,
+      "bertscore_f1": 0.980362057685852
     },
     {
       "question_id": "43",
@@ -471,9 +489,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.9803619384765625,
-      "bertscore_recall": 0.9803619384765625,
-      "bertscore_f1": 0.9803619384765625
+      "bleu": 0,
+      "bertscore_precision": 0.980362057685852,
+      "bertscore_recall": 0.980362057685852,
+      "bertscore_f1": 0.980362057685852
     },
     {
       "question_id": "44",
@@ -494,9 +513,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.9803619384765625,
-      "bertscore_recall": 0.9803619384765625,
-      "bertscore_f1": 0.9803619384765625
+      "bleu": 0,
+      "bertscore_precision": 0.980362057685852,
+      "bertscore_recall": 0.980362057685852,
+      "bertscore_f1": 0.980362057685852
     },
     {
       "question_id": "45",
@@ -517,9 +537,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7900843620300293,
-      "bertscore_recall": 0.8360228538513184,
-      "bertscore_f1": 0.8124047517776489
+      "bleu": 0.0,
+      "bertscore_precision": 0.7900837659835815,
+      "bertscore_recall": 0.8360222578048706,
+      "bertscore_f1": 0.8124040961265564
     },
     {
       "question_id": "46",
@@ -540,9 +561,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.9803619384765625,
-      "bertscore_recall": 0.9803619384765625,
-      "bertscore_f1": 0.9803619384765625
+      "bleu": 0,
+      "bertscore_precision": 0.980362057685852,
+      "bertscore_recall": 0.980362057685852,
+      "bertscore_f1": 0.980362057685852
     },
     {
       "question_id": "47",
@@ -563,9 +585,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.9803619384765625,
-      "bertscore_recall": 0.9803619384765625,
-      "bertscore_f1": 0.9803619384765625
+      "bleu": 0,
+      "bertscore_precision": 0.980362057685852,
+      "bertscore_recall": 0.980362057685852,
+      "bertscore_f1": 0.980362057685852
     },
     {
       "question_id": "48",
@@ -586,9 +609,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.9803619384765625,
-      "bertscore_recall": 0.9803619384765625,
-      "bertscore_f1": 0.9803619384765625
+      "bleu": 0,
+      "bertscore_precision": 0.980362057685852,
+      "bertscore_recall": 0.980362057685852,
+      "bertscore_f1": 0.980362057685852
     },
     {
       "question_id": "49",
@@ -609,9 +633,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.9803619384765625,
-      "bertscore_recall": 0.9803619384765625,
-      "bertscore_f1": 0.9803619384765625
+      "bleu": 0,
+      "bertscore_precision": 0.980362057685852,
+      "bertscore_recall": 0.980362057685852,
+      "bertscore_f1": 0.980362057685852
     },
     {
       "question_id": "90",
@@ -632,9 +657,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8139137625694275,
+      "bleu": 0.0,
+      "bertscore_precision": 0.8139138221740723,
       "bertscore_recall": 0.7096298336982727,
-      "bertscore_f1": 0.7582027316093445
+      "bertscore_f1": 0.758202850818634
     },
     {
       "question_id": "91",
@@ -655,8 +681,9 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8115774393081665,
-      "bertscore_recall": 0.7090394496917725,
+      "bleu": 0.0,
+      "bertscore_precision": 0.8115773797035217,
+      "bertscore_recall": 0.709039568901062,
       "bertscore_f1": 0.7568512558937073
     },
     {
@@ -678,9 +705,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8086698651313782,
+      "bleu": 0.0,
+      "bertscore_precision": 0.8086696863174438,
       "bertscore_recall": 0.7131859064102173,
-      "bertscore_f1": 0.7579324841499329
+      "bertscore_f1": 0.7579323649406433
     },
     {
       "question_id": "93",
@@ -701,9 +729,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8099179267883301,
+      "bleu": 0.0,
+      "bertscore_precision": 0.8099178075790405,
       "bertscore_recall": 0.7099111080169678,
-      "bertscore_f1": 0.7566242218017578
+      "bertscore_f1": 0.756624162197113
     },
     {
       "question_id": "94",
@@ -724,9 +753,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8086698651313782,
+      "bleu": 0.0,
+      "bertscore_precision": 0.8086696863174438,
       "bertscore_recall": 0.7131859064102173,
-      "bertscore_f1": 0.7579324841499329
+      "bertscore_f1": 0.7579323649406433
     },
     {
       "question_id": "95",
@@ -747,9 +777,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8086698651313782,
+      "bleu": 0.0,
+      "bertscore_precision": 0.8086696863174438,
       "bertscore_recall": 0.7131859064102173,
-      "bertscore_f1": 0.7579324841499329
+      "bertscore_f1": 0.7579323649406433
     },
     {
       "question_id": "96",
@@ -770,9 +801,10 @@
       "rouge1": 0.923076923076923,
       "rouge2": 0.9166666666666666,
       "rougeL": 0.923076923076923,
-      "bertscore_precision": 0.9923130869865417,
+      "bleu": 0.6771219109764864,
+      "bertscore_precision": 0.9923132061958313,
       "bertscore_recall": 0.9839019775390625,
-      "bertscore_f1": 0.9880896210670471
+      "bertscore_f1": 0.9880897402763367
     },
     {
       "question_id": "97",
@@ -793,7 +825,8 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8062262535095215,
+      "bleu": 0.0,
+      "bertscore_precision": 0.8062261343002319,
       "bertscore_recall": 0.7135314345359802,
       "bertscore_f1": 0.757051944732666
     },
@@ -816,8 +849,9 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8115774393081665,
-      "bertscore_recall": 0.7090394496917725,
+      "bleu": 0.0,
+      "bertscore_precision": 0.8115773797035217,
+      "bertscore_recall": 0.709039568901062,
       "bertscore_f1": 0.7568512558937073
     },
     {
@@ -839,9 +873,10 @@
       "rouge1": 0.8461538461538461,
       "rouge2": 0.7500000000000001,
       "rougeL": 0.8461538461538461,
-      "bertscore_precision": 0.9122028946876526,
-      "bertscore_recall": 0.9288297891616821,
-      "bertscore_f1": 0.920441210269928
+      "bleu": 0.13747081017605653,
+      "bertscore_precision": 0.9122029542922974,
+      "bertscore_recall": 0.9288299679756165,
+      "bertscore_f1": 0.9204413890838623
     },
     {
       "question_id": "100",
@@ -862,9 +897,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7897531986236572,
-      "bertscore_recall": 0.8355553150177002,
-      "bertscore_f1": 0.8120089173316956
+      "bleu": 0.0,
+      "bertscore_precision": 0.7897529602050781,
+      "bertscore_recall": 0.8355550169944763,
+      "bertscore_f1": 0.8120086193084717
     },
     {
       "question_id": "101",
@@ -885,9 +921,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7896391153335571,
-      "bertscore_recall": 0.8357221484184265,
-      "bertscore_f1": 0.8120273947715759
+      "bleu": 0.0,
+      "bertscore_precision": 0.7896386384963989,
+      "bertscore_recall": 0.8357216715812683,
+      "bertscore_f1": 0.8120269179344177
     },
     {
       "question_id": "102",
@@ -908,9 +945,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7896391153335571,
-      "bertscore_recall": 0.8357221484184265,
-      "bertscore_f1": 0.8120273947715759
+      "bleu": 0.0,
+      "bertscore_precision": 0.7896386384963989,
+      "bertscore_recall": 0.8357216715812683,
+      "bertscore_f1": 0.8120269179344177
     },
     {
       "question_id": "103",
@@ -931,9 +969,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7897531986236572,
-      "bertscore_recall": 0.8355553150177002,
-      "bertscore_f1": 0.8120089173316956
+      "bleu": 0.0,
+      "bertscore_precision": 0.7897529602050781,
+      "bertscore_recall": 0.8355550169944763,
+      "bertscore_f1": 0.8120086193084717
     },
     {
       "question_id": "104",
@@ -954,9 +993,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7897531986236572,
-      "bertscore_recall": 0.8355553150177002,
-      "bertscore_f1": 0.8120089173316956
+      "bleu": 0.0,
+      "bertscore_precision": 0.7897529602050781,
+      "bertscore_recall": 0.8355550169944763,
+      "bertscore_f1": 0.8120086193084717
     },
     {
       "question_id": "105",
@@ -977,9 +1017,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7896391153335571,
-      "bertscore_recall": 0.8357221484184265,
-      "bertscore_f1": 0.8120273947715759
+      "bleu": 0.0,
+      "bertscore_precision": 0.7896386384963989,
+      "bertscore_recall": 0.8357216715812683,
+      "bertscore_f1": 0.8120269179344177
     },
     {
       "question_id": "106",
@@ -1000,9 +1041,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7896391153335571,
-      "bertscore_recall": 0.8357221484184265,
-      "bertscore_f1": 0.8120273947715759
+      "bleu": 0.0,
+      "bertscore_precision": 0.7896386384963989,
+      "bertscore_recall": 0.8357216715812683,
+      "bertscore_f1": 0.8120269179344177
     },
     {
       "question_id": "107",
@@ -1023,9 +1065,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7897531986236572,
-      "bertscore_recall": 0.8355553150177002,
-      "bertscore_f1": 0.8120089173316956
+      "bleu": 0.0,
+      "bertscore_precision": 0.7897529602050781,
+      "bertscore_recall": 0.8355550169944763,
+      "bertscore_f1": 0.8120086193084717
     },
     {
       "question_id": "108",
@@ -1046,9 +1089,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7897531986236572,
-      "bertscore_recall": 0.8355553150177002,
-      "bertscore_f1": 0.8120089173316956
+      "bleu": 0.0,
+      "bertscore_precision": 0.7897529602050781,
+      "bertscore_recall": 0.8355550169944763,
+      "bertscore_f1": 0.8120086193084717
     },
     {
       "question_id": "109",
@@ -1069,9 +1113,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7897531986236572,
-      "bertscore_recall": 0.8355553150177002,
-      "bertscore_f1": 0.8120089173316956
+      "bleu": 0.0,
+      "bertscore_precision": 0.7897529602050781,
+      "bertscore_recall": 0.8355550169944763,
+      "bertscore_f1": 0.8120086193084717
     },
     {
       "question_id": "110",
@@ -1092,9 +1137,10 @@
       "rouge1": 0.4,
       "rouge2": 0.0,
       "rougeL": 0.4,
-      "bertscore_precision": 0.8042002320289612,
-      "bertscore_recall": 0.8429874777793884,
-      "bertscore_f1": 0.8231371641159058
+      "bleu": 0.08034284189446518,
+      "bertscore_precision": 0.8042001724243164,
+      "bertscore_recall": 0.842987060546875,
+      "bertscore_f1": 0.8231369853019714
     },
     {
       "question_id": "111",
@@ -1115,9 +1161,10 @@
       "rouge1": 0.4,
       "rouge2": 0.0,
       "rougeL": 0.4,
-      "bertscore_precision": 0.8042002320289612,
-      "bertscore_recall": 0.8429874777793884,
-      "bertscore_f1": 0.8231371641159058
+      "bleu": 0.08034284189446518,
+      "bertscore_precision": 0.8042001724243164,
+      "bertscore_recall": 0.842987060546875,
+      "bertscore_f1": 0.8231369853019714
     },
     {
       "question_id": "112",
@@ -1138,9 +1185,10 @@
       "rouge1": 0.4,
       "rouge2": 0.0,
       "rougeL": 0.4,
-      "bertscore_precision": 0.8042002320289612,
-      "bertscore_recall": 0.8429874777793884,
-      "bertscore_f1": 0.8231371641159058
+      "bleu": 0.08034284189446518,
+      "bertscore_precision": 0.8042001724243164,
+      "bertscore_recall": 0.842987060546875,
+      "bertscore_f1": 0.8231369853019714
     },
     {
       "question_id": "113",
@@ -1161,9 +1209,10 @@
       "rouge1": 0.4,
       "rouge2": 0.0,
       "rougeL": 0.4,
-      "bertscore_precision": 0.8042002320289612,
-      "bertscore_recall": 0.8429874777793884,
-      "bertscore_f1": 0.8231371641159058
+      "bleu": 0.08034284189446518,
+      "bertscore_precision": 0.8042001724243164,
+      "bertscore_recall": 0.842987060546875,
+      "bertscore_f1": 0.8231369853019714
     },
     {
       "question_id": "114",
@@ -1184,9 +1233,10 @@
       "rouge1": 0.4,
       "rouge2": 0.0,
       "rougeL": 0.4,
-      "bertscore_precision": 0.8042002320289612,
-      "bertscore_recall": 0.8429874777793884,
-      "bertscore_f1": 0.8231371641159058
+      "bleu": 0.08034284189446518,
+      "bertscore_precision": 0.8042001724243164,
+      "bertscore_recall": 0.842987060546875,
+      "bertscore_f1": 0.8231369853019714
     },
     {
       "question_id": "115",
@@ -1207,9 +1257,10 @@
       "rouge1": 0.4,
       "rouge2": 0.0,
       "rougeL": 0.4,
-      "bertscore_precision": 0.8042002320289612,
-      "bertscore_recall": 0.8429874777793884,
-      "bertscore_f1": 0.8231371641159058
+      "bleu": 0.08034284189446518,
+      "bertscore_precision": 0.8042001724243164,
+      "bertscore_recall": 0.842987060546875,
+      "bertscore_f1": 0.8231369853019714
     },
     {
       "question_id": "116",
@@ -1230,9 +1281,10 @@
       "rouge1": 0.4,
       "rouge2": 0.0,
       "rougeL": 0.4,
-      "bertscore_precision": 0.8042002320289612,
-      "bertscore_recall": 0.8429874777793884,
-      "bertscore_f1": 0.8231371641159058
+      "bleu": 0.08034284189446518,
+      "bertscore_precision": 0.8042001724243164,
+      "bertscore_recall": 0.842987060546875,
+      "bertscore_f1": 0.8231369853019714
     },
     {
       "question_id": "117",
@@ -1253,9 +1305,10 @@
       "rouge1": 0.4,
       "rouge2": 0.0,
       "rougeL": 0.4,
-      "bertscore_precision": 0.8042002320289612,
-      "bertscore_recall": 0.8429874777793884,
-      "bertscore_f1": 0.8231371641159058
+      "bleu": 0.08034284189446518,
+      "bertscore_precision": 0.8042001724243164,
+      "bertscore_recall": 0.842987060546875,
+      "bertscore_f1": 0.8231369853019714
     },
     {
       "question_id": "118",
@@ -1276,9 +1329,10 @@
       "rouge1": 0.4,
       "rouge2": 0.0,
       "rougeL": 0.4,
-      "bertscore_precision": 0.8042002320289612,
-      "bertscore_recall": 0.8429874777793884,
-      "bertscore_f1": 0.8231371641159058
+      "bleu": 0.08034284189446518,
+      "bertscore_precision": 0.8042001724243164,
+      "bertscore_recall": 0.842987060546875,
+      "bertscore_f1": 0.8231369853019714
     },
     {
       "question_id": "119",
@@ -1299,9 +1353,10 @@
       "rouge1": 0.4,
       "rouge2": 0.0,
       "rougeL": 0.4,
-      "bertscore_precision": 0.8042002320289612,
-      "bertscore_recall": 0.8429874777793884,
-      "bertscore_f1": 0.8231371641159058
+      "bleu": 0.08034284189446518,
+      "bertscore_precision": 0.8042001724243164,
+      "bertscore_recall": 0.842987060546875,
+      "bertscore_f1": 0.8231369853019714
     },
     {
       "question_id": "120",
@@ -1322,9 +1377,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0,
       "bertscore_precision": 0.8566102385520935,
-      "bertscore_recall": 0.6790382862091064,
-      "bertscore_f1": 0.7575575709342957
+      "bertscore_recall": 0.6790383458137512,
+      "bertscore_f1": 0.7575576901435852
     },
     {
       "question_id": "121",
@@ -1345,9 +1401,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0,
       "bertscore_precision": 0.8566102385520935,
-      "bertscore_recall": 0.6790382862091064,
-      "bertscore_f1": 0.7575575709342957
+      "bertscore_recall": 0.6790383458137512,
+      "bertscore_f1": 0.7575576901435852
     },
     {
       "question_id": "122",
@@ -1368,9 +1425,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0,
       "bertscore_precision": 0.8566102385520935,
-      "bertscore_recall": 0.6790382862091064,
-      "bertscore_f1": 0.7575575709342957
+      "bertscore_recall": 0.6790383458137512,
+      "bertscore_f1": 0.7575576901435852
     },
     {
       "question_id": "123",
@@ -1391,9 +1449,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0,
       "bertscore_precision": 0.8566102385520935,
-      "bertscore_recall": 0.6790382862091064,
-      "bertscore_f1": 0.7575575709342957
+      "bertscore_recall": 0.6790383458137512,
+      "bertscore_f1": 0.7575576901435852
     },
     {
       "question_id": "124",
@@ -1414,9 +1473,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0,
       "bertscore_precision": 0.8566102385520935,
-      "bertscore_recall": 0.6790382862091064,
-      "bertscore_f1": 0.7575575709342957
+      "bertscore_recall": 0.6790383458137512,
+      "bertscore_f1": 0.7575576901435852
     },
     {
       "question_id": "125",
@@ -1437,9 +1497,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0,
       "bertscore_precision": 0.8566102385520935,
-      "bertscore_recall": 0.6790382862091064,
-      "bertscore_f1": 0.7575575709342957
+      "bertscore_recall": 0.6790383458137512,
+      "bertscore_f1": 0.7575576901435852
     },
     {
       "question_id": "126",
@@ -1460,9 +1521,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0,
       "bertscore_precision": 0.8566102385520935,
-      "bertscore_recall": 0.6790382862091064,
-      "bertscore_f1": 0.7575575709342957
+      "bertscore_recall": 0.6790383458137512,
+      "bertscore_f1": 0.7575576901435852
     },
     {
       "question_id": "127",
@@ -1483,9 +1545,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0,
       "bertscore_precision": 0.8566102385520935,
-      "bertscore_recall": 0.6790382862091064,
-      "bertscore_f1": 0.7575575709342957
+      "bertscore_recall": 0.6790383458137512,
+      "bertscore_f1": 0.7575576901435852
     },
     {
       "question_id": "128",
@@ -1506,9 +1569,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0,
       "bertscore_precision": 0.8566102385520935,
-      "bertscore_recall": 0.6790382862091064,
-      "bertscore_f1": 0.7575575709342957
+      "bertscore_recall": 0.6790383458137512,
+      "bertscore_f1": 0.7575576901435852
     },
     {
       "question_id": "129",
@@ -1529,9 +1593,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0,
       "bertscore_precision": 0.8566102385520935,
-      "bertscore_recall": 0.6790382862091064,
-      "bertscore_f1": 0.7575575709342957
+      "bertscore_recall": 0.6790383458137512,
+      "bertscore_f1": 0.7575576901435852
     },
     {
       "question_id": "130",
@@ -1552,8 +1617,9 @@
       "rouge1": 0.5,
       "rouge2": 0.0,
       "rougeL": 0.5,
-      "bertscore_precision": 0.8232801556587219,
-      "bertscore_recall": 0.8931475281715393,
+      "bleu": 0.11362193664674995,
+      "bertscore_precision": 0.8232800960540771,
+      "bertscore_recall": 0.8931474685668945,
       "bertscore_f1": 0.8567918539047241
     },
     {
@@ -1575,8 +1641,9 @@
       "rouge1": 0.5,
       "rouge2": 0.0,
       "rougeL": 0.5,
-      "bertscore_precision": 0.8232801556587219,
-      "bertscore_recall": 0.8931475281715393,
+      "bleu": 0.11362193664674995,
+      "bertscore_precision": 0.8232800960540771,
+      "bertscore_recall": 0.8931474685668945,
       "bertscore_f1": 0.8567918539047241
     },
     {
@@ -1598,8 +1665,9 @@
       "rouge1": 0.5,
       "rouge2": 0.0,
       "rougeL": 0.5,
-      "bertscore_precision": 0.8232801556587219,
-      "bertscore_recall": 0.8931475281715393,
+      "bleu": 0.11362193664674995,
+      "bertscore_precision": 0.8232800960540771,
+      "bertscore_recall": 0.8931474685668945,
       "bertscore_f1": 0.8567918539047241
     },
     {
@@ -1621,8 +1689,9 @@
       "rouge1": 0.5,
       "rouge2": 0.0,
       "rougeL": 0.5,
-      "bertscore_precision": 0.8232801556587219,
-      "bertscore_recall": 0.8931475281715393,
+      "bleu": 0.11362193664674995,
+      "bertscore_precision": 0.8232800960540771,
+      "bertscore_recall": 0.8931474685668945,
       "bertscore_f1": 0.8567918539047241
     },
     {
@@ -1644,8 +1713,9 @@
       "rouge1": 0.5,
       "rouge2": 0.0,
       "rougeL": 0.5,
-      "bertscore_precision": 0.8232801556587219,
-      "bertscore_recall": 0.8931475281715393,
+      "bleu": 0.11362193664674995,
+      "bertscore_precision": 0.8232800960540771,
+      "bertscore_recall": 0.8931474685668945,
       "bertscore_f1": 0.8567918539047241
     },
     {
@@ -1667,8 +1737,9 @@
       "rouge1": 0.5,
       "rouge2": 0.0,
       "rougeL": 0.5,
-      "bertscore_precision": 0.8232801556587219,
-      "bertscore_recall": 0.8931475281715393,
+      "bleu": 0.11362193664674995,
+      "bertscore_precision": 0.8232800960540771,
+      "bertscore_recall": 0.8931474685668945,
       "bertscore_f1": 0.8567918539047241
     },
     {
@@ -1690,9 +1761,10 @@
       "rouge1": 0.25,
       "rouge2": 0.0,
       "rougeL": 0.25,
-      "bertscore_precision": 0.7614778280258179,
-      "bertscore_recall": 0.8430569767951965,
-      "bertscore_f1": 0.8001935482025146
+      "bleu": 0.033031643180138064,
+      "bertscore_precision": 0.761478066444397,
+      "bertscore_recall": 0.843056857585907,
+      "bertscore_f1": 0.8001936674118042
     },
     {
       "question_id": "137",
@@ -1713,9 +1785,10 @@
       "rouge1": 0.25,
       "rouge2": 0.0,
       "rougeL": 0.25,
-      "bertscore_precision": 0.7614778280258179,
-      "bertscore_recall": 0.8430569767951965,
-      "bertscore_f1": 0.8001935482025146
+      "bleu": 0.033031643180138064,
+      "bertscore_precision": 0.761478066444397,
+      "bertscore_recall": 0.843056857585907,
+      "bertscore_f1": 0.8001936674118042
     },
     {
       "question_id": "138",
@@ -1736,9 +1809,10 @@
       "rouge1": 0.19999999999999998,
       "rouge2": 0.0,
       "rougeL": 0.19999999999999998,
-      "bertscore_precision": 0.766544759273529,
-      "bertscore_recall": 0.828731119632721,
-      "bertscore_f1": 0.7964258790016174
+      "bleu": 0.023980296761827107,
+      "bertscore_precision": 0.7665450572967529,
+      "bertscore_recall": 0.8287314176559448,
+      "bertscore_f1": 0.7964261770248413
     },
     {
       "question_id": "139",
@@ -1759,8 +1833,9 @@
       "rouge1": 0.5,
       "rouge2": 0.0,
       "rougeL": 0.5,
-      "bertscore_precision": 0.8232801556587219,
-      "bertscore_recall": 0.8931475281715393,
+      "bleu": 0.11362193664674995,
+      "bertscore_precision": 0.8232800960540771,
+      "bertscore_recall": 0.8931474685668945,
       "bertscore_f1": 0.8567918539047241
     },
     {
@@ -1782,9 +1857,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.8173930644989014,
-      "bertscore_recall": 0.8827858567237854,
-      "bertscore_f1": 0.8488318920135498
+      "bleu": 0,
+      "bertscore_precision": 0.817392885684967,
+      "bertscore_recall": 0.8827857375144958,
+      "bertscore_f1": 0.8488317131996155
     },
     {
       "question_id": "145",
@@ -1805,9 +1881,10 @@
       "rouge1": 0.19999999999999998,
       "rouge2": 0.0,
       "rougeL": 0.19999999999999998,
-      "bertscore_precision": 0.7626818418502808,
+      "bleu": 0.023980296761827107,
+      "bertscore_precision": 0.7626820802688599,
       "bertscore_recall": 0.8208465576171875,
-      "bertscore_f1": 0.7906959652900696
+      "bertscore_f1": 0.7906961441040039
     },
     {
       "question_id": "146",
@@ -1828,8 +1905,9 @@
       "rouge1": 0.4,
       "rouge2": 0.0,
       "rougeL": 0.4,
-      "bertscore_precision": 0.8003883361816406,
-      "bertscore_recall": 0.8655703067779541,
+      "bleu": 0.08034284189446518,
+      "bertscore_precision": 0.8003882765769958,
+      "bertscore_recall": 0.8655701875686646,
       "bertscore_f1": 0.8317041397094727
     },
     {
@@ -1851,9 +1929,10 @@
       "rouge1": 0.19999999999999998,
       "rouge2": 0.0,
       "rougeL": 0.19999999999999998,
+      "bleu": 0.023980296761827107,
       "bertscore_precision": 0.7571721076965332,
-      "bertscore_recall": 0.8185561895370483,
-      "bertscore_f1": 0.7866685390472412
+      "bertscore_recall": 0.8185560703277588,
+      "bertscore_f1": 0.7866684198379517
     },
     {
       "question_id": "148",
@@ -1874,9 +1953,10 @@
       "rouge1": 0.19999999999999998,
       "rouge2": 0.0,
       "rougeL": 0.19999999999999998,
-      "bertscore_precision": 0.7626818418502808,
+      "bleu": 0.023980296761827107,
+      "bertscore_precision": 0.7626820802688599,
       "bertscore_recall": 0.8208465576171875,
-      "bertscore_f1": 0.7906959652900696
+      "bertscore_f1": 0.7906961441040039
     },
     {
       "question_id": "150",
@@ -1897,9 +1977,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7897531986236572,
-      "bertscore_recall": 0.8355553150177002,
-      "bertscore_f1": 0.8120089173316956
+      "bleu": 0.0,
+      "bertscore_precision": 0.7897529602050781,
+      "bertscore_recall": 0.8355550169944763,
+      "bertscore_f1": 0.8120086193084717
     },
     {
       "question_id": "151",
@@ -1920,9 +2001,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7896391153335571,
-      "bertscore_recall": 0.8357221484184265,
-      "bertscore_f1": 0.8120273947715759
+      "bleu": 0.0,
+      "bertscore_precision": 0.7896386384963989,
+      "bertscore_recall": 0.8357216715812683,
+      "bertscore_f1": 0.8120269179344177
     },
     {
       "question_id": "152",
@@ -1943,9 +2025,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7897531986236572,
-      "bertscore_recall": 0.8355553150177002,
-      "bertscore_f1": 0.8120089173316956
+      "bleu": 0.0,
+      "bertscore_precision": 0.7897529602050781,
+      "bertscore_recall": 0.8355550169944763,
+      "bertscore_f1": 0.8120086193084717
     },
     {
       "question_id": "153",
@@ -1966,9 +2049,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7897531986236572,
-      "bertscore_recall": 0.8355553150177002,
-      "bertscore_f1": 0.8120089173316956
+      "bleu": 0.0,
+      "bertscore_precision": 0.7897529602050781,
+      "bertscore_recall": 0.8355550169944763,
+      "bertscore_f1": 0.8120086193084717
     },
     {
       "question_id": "154",
@@ -1989,6 +2073,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
+      "bleu": 0,
       "bertscore_precision": 0.9993913769721985,
       "bertscore_recall": 0.9993913769721985,
       "bertscore_f1": 0.9993913769721985
@@ -2012,9 +2097,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7897531986236572,
-      "bertscore_recall": 0.8355553150177002,
-      "bertscore_f1": 0.8120089173316956
+      "bleu": 0.0,
+      "bertscore_precision": 0.7897529602050781,
+      "bertscore_recall": 0.8355550169944763,
+      "bertscore_f1": 0.8120086193084717
     },
     {
       "question_id": "157",
@@ -2035,9 +2121,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7896391153335571,
-      "bertscore_recall": 0.8357221484184265,
-      "bertscore_f1": 0.8120273947715759
+      "bleu": 0.0,
+      "bertscore_precision": 0.7896386384963989,
+      "bertscore_recall": 0.8357216715812683,
+      "bertscore_f1": 0.8120269179344177
     },
     {
       "question_id": "158",
@@ -2058,9 +2145,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.9997093081474304,
-      "bertscore_recall": 0.9997093081474304,
-      "bertscore_f1": 0.9997093081474304
+      "bleu": 0,
+      "bertscore_precision": 0.9997094869613647,
+      "bertscore_recall": 0.9997094869613647,
+      "bertscore_f1": 0.9997094869613647
     },
     {
       "question_id": "159",
@@ -2081,9 +2169,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7896391153335571,
-      "bertscore_recall": 0.8357221484184265,
-      "bertscore_f1": 0.8120273947715759
+      "bleu": 0.0,
+      "bertscore_precision": 0.7896386384963989,
+      "bertscore_recall": 0.8357216715812683,
+      "bertscore_f1": 0.8120269179344177
     },
     {
       "question_id": "160",
@@ -2104,9 +2193,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8220200538635254,
+      "bleu": 0.0,
+      "bertscore_precision": 0.8220199942588806,
       "bertscore_recall": 0.7267031669616699,
-      "bertscore_f1": 0.7714284658432007
+      "bertscore_f1": 0.7714284062385559
     },
     {
       "question_id": "161",
@@ -2127,6 +2217,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0.0,
       "bertscore_precision": 0.8008154630661011,
       "bertscore_recall": 0.7230190634727478,
       "bertscore_f1": 0.7599313855171204
@@ -2150,9 +2241,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7989604473114014,
-      "bertscore_recall": 0.7216353416442871,
-      "bertscore_f1": 0.758331835269928
+      "bleu": 0.0,
+      "bertscore_precision": 0.7989603281021118,
+      "bertscore_recall": 0.7216355204582214,
+      "bertscore_f1": 0.7583319544792175
     },
     {
       "question_id": "163",
@@ -2173,9 +2265,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8029032945632935,
+      "bleu": 0.0,
+      "bertscore_precision": 0.8029031753540039,
       "bertscore_recall": 0.7215414643287659,
-      "bertscore_f1": 0.7600511312484741
+      "bertscore_f1": 0.7600511908531189
     },
     {
       "question_id": "164",
@@ -2196,9 +2289,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8084065914154053,
-      "bertscore_recall": 0.7294734716415405,
-      "bertscore_f1": 0.766914427280426
+      "bleu": 0.0,
+      "bertscore_precision": 0.8084065318107605,
+      "bertscore_recall": 0.729473352432251,
+      "bertscore_f1": 0.7669142484664917
     },
     {
       "question_id": "165",
@@ -2219,9 +2313,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0.0,
       "bertscore_precision": 0.8241204023361206,
-      "bertscore_recall": 0.7260102033615112,
-      "bertscore_f1": 0.7719605565071106
+      "bertscore_recall": 0.7260103225708008,
+      "bertscore_f1": 0.7719606161117554
     },
     {
       "question_id": "166",
@@ -2242,8 +2337,9 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0.0,
       "bertscore_precision": 0.8009567260742188,
-      "bertscore_recall": 0.7195343375205994,
+      "bertscore_recall": 0.7195342779159546,
       "bertscore_f1": 0.758065402507782
     },
     {
@@ -2265,6 +2361,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0.0,
       "bertscore_precision": 0.7958314418792725,
       "bertscore_recall": 0.723563015460968,
       "bertscore_f1": 0.757978618144989
@@ -2288,9 +2385,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8072541356086731,
-      "bertscore_recall": 0.7221568822860718,
-      "bertscore_f1": 0.7623380422592163
+      "bleu": 0.0,
+      "bertscore_precision": 0.8072539567947388,
+      "bertscore_recall": 0.7221569418907166,
+      "bertscore_f1": 0.7623381018638611
     },
     {
       "question_id": "169",
@@ -2311,9 +2409,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0.0,
       "bertscore_precision": 0.8019388914108276,
-      "bertscore_recall": 0.7207860350608826,
-      "bertscore_f1": 0.7591999769210815
+      "bertscore_recall": 0.7207860946655273,
+      "bertscore_f1": 0.7592000365257263
     },
     {
       "question_id": "174",
@@ -2334,9 +2433,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7838279008865356,
-      "bertscore_recall": 0.8284363746643066,
-      "bertscore_f1": 0.8055149912834167
+      "bleu": 0.0,
+      "bertscore_precision": 0.783827543258667,
+      "bertscore_recall": 0.8284359574317932,
+      "bertscore_f1": 0.8055146932601929
     },
     {
       "question_id": "177",
@@ -2357,9 +2457,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7838279008865356,
-      "bertscore_recall": 0.8284363746643066,
-      "bertscore_f1": 0.8055149912834167
+      "bleu": 0.0,
+      "bertscore_precision": 0.783827543258667,
+      "bertscore_recall": 0.8284359574317932,
+      "bertscore_f1": 0.8055146932601929
     },
     {
       "question_id": "180",
@@ -2380,9 +2481,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8137161731719971,
-      "bertscore_recall": 0.7081248164176941,
-      "bertscore_f1": 0.757257342338562
+      "bleu": 0.0,
+      "bertscore_precision": 0.8137160539627075,
+      "bertscore_recall": 0.7081247568130493,
+      "bertscore_f1": 0.7572572231292725
     },
     {
       "question_id": "181",
@@ -2403,9 +2505,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8137161731719971,
-      "bertscore_recall": 0.7081248164176941,
-      "bertscore_f1": 0.757257342338562
+      "bleu": 0.0,
+      "bertscore_precision": 0.8137160539627075,
+      "bertscore_recall": 0.7081247568130493,
+      "bertscore_f1": 0.7572572231292725
     },
     {
       "question_id": "182",
@@ -2426,9 +2529,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8081371784210205,
-      "bertscore_recall": 0.7099876403808594,
-      "bertscore_f1": 0.7558896541595459
+      "bleu": 0.0,
+      "bertscore_precision": 0.8081371188163757,
+      "bertscore_recall": 0.7099875807762146,
+      "bertscore_f1": 0.7558895349502563
     },
     {
       "question_id": "183",
@@ -2449,9 +2553,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8137161731719971,
-      "bertscore_recall": 0.7081248164176941,
-      "bertscore_f1": 0.757257342338562
+      "bleu": 0.0,
+      "bertscore_precision": 0.8137160539627075,
+      "bertscore_recall": 0.7081247568130493,
+      "bertscore_f1": 0.7572572231292725
     },
     {
       "question_id": "184",
@@ -2472,8 +2577,9 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.813041627407074,
-      "bertscore_recall": 0.7147474884986877,
+      "bleu": 0.0,
+      "bertscore_precision": 0.8130416870117188,
+      "bertscore_recall": 0.7147475481033325,
       "bertscore_f1": 0.7607325911521912
     },
     {
@@ -2495,9 +2601,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8137161731719971,
-      "bertscore_recall": 0.7081248164176941,
-      "bertscore_f1": 0.757257342338562
+      "bleu": 0.0,
+      "bertscore_precision": 0.8137160539627075,
+      "bertscore_recall": 0.7081247568130493,
+      "bertscore_f1": 0.7572572231292725
     },
     {
       "question_id": "186",
@@ -2518,9 +2625,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8126187324523926,
-      "bertscore_recall": 0.7120788097381592,
-      "bertscore_f1": 0.7590339183807373
+      "bleu": 0.0,
+      "bertscore_precision": 0.812618613243103,
+      "bertscore_recall": 0.7120786905288696,
+      "bertscore_f1": 0.7590337991714478
     },
     {
       "question_id": "187",
@@ -2541,9 +2649,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8081371784210205,
-      "bertscore_recall": 0.7099876403808594,
-      "bertscore_f1": 0.7558896541595459
+      "bleu": 0.0,
+      "bertscore_precision": 0.8081371188163757,
+      "bertscore_recall": 0.7099875807762146,
+      "bertscore_f1": 0.7558895349502563
     },
     {
       "question_id": "188",
@@ -2564,9 +2673,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8081371784210205,
-      "bertscore_recall": 0.7099876403808594,
-      "bertscore_f1": 0.7558896541595459
+      "bleu": 0.0,
+      "bertscore_precision": 0.8081371188163757,
+      "bertscore_recall": 0.7099875807762146,
+      "bertscore_f1": 0.7558895349502563
     },
     {
       "question_id": "189",
@@ -2587,9 +2697,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8081371784210205,
-      "bertscore_recall": 0.7099876403808594,
-      "bertscore_f1": 0.7558896541595459
+      "bleu": 0.0,
+      "bertscore_precision": 0.8081371188163757,
+      "bertscore_recall": 0.7099875807762146,
+      "bertscore_f1": 0.7558895349502563
     },
     {
       "question_id": "191",
@@ -2610,8 +2721,9 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.8440114259719849,
-      "bertscore_recall": 0.9176619052886963,
+      "bleu": 0,
+      "bertscore_precision": 0.8440113067626953,
+      "bertscore_recall": 0.9176619648933411,
       "bertscore_f1": 0.8792970776557922
     },
     {
@@ -2633,8 +2745,9 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.8440114259719849,
-      "bertscore_recall": 0.9176619052886963,
+      "bleu": 0,
+      "bertscore_precision": 0.8440113067626953,
+      "bertscore_recall": 0.9176619648933411,
       "bertscore_f1": 0.8792970776557922
     },
     {
@@ -2656,9 +2769,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7838279008865356,
-      "bertscore_recall": 0.8284363746643066,
-      "bertscore_f1": 0.8055149912834167
+      "bleu": 0.0,
+      "bertscore_precision": 0.783827543258667,
+      "bertscore_recall": 0.8284359574317932,
+      "bertscore_f1": 0.8055146932601929
     },
     {
       "question_id": "207",
@@ -2679,9 +2793,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7838279008865356,
-      "bertscore_recall": 0.8284363746643066,
-      "bertscore_f1": 0.8055149912834167
+      "bleu": 0.0,
+      "bertscore_precision": 0.783827543258667,
+      "bertscore_recall": 0.8284359574317932,
+      "bertscore_f1": 0.8055146932601929
     },
     {
       "question_id": "212",
@@ -2705,9 +2820,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8533762097358704,
-      "bertscore_recall": 0.8280541896820068,
-      "bertscore_f1": 0.8405245542526245
+      "bleu": 0.0,
+      "bertscore_precision": 0.853376030921936,
+      "bertscore_recall": 0.8280540108680725,
+      "bertscore_f1": 0.8405243158340454
     },
     {
       "question_id": "219",
@@ -2731,8 +2847,9 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8534552454948425,
-      "bertscore_recall": 0.8275814652442932,
+      "bleu": 0.0,
+      "bertscore_precision": 0.8534551858901978,
+      "bertscore_recall": 0.8275814056396484,
       "bertscore_f1": 0.8403192162513733
     },
     {
@@ -2757,9 +2874,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8710651397705078,
-      "bertscore_recall": 0.8756921291351318,
-      "bertscore_f1": 0.873372495174408
+      "bleu": 0.0,
+      "bertscore_precision": 0.8710649609565735,
+      "bertscore_recall": 0.8756920695304871,
+      "bertscore_f1": 0.8733723759651184
     },
     {
       "question_id": "232",
@@ -2783,9 +2901,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8710651397705078,
-      "bertscore_recall": 0.8756921291351318,
-      "bertscore_f1": 0.873372495174408
+      "bleu": 0.0,
+      "bertscore_precision": 0.8710649609565735,
+      "bertscore_recall": 0.8756920695304871,
+      "bertscore_f1": 0.8733723759651184
     },
     {
       "question_id": "233",
@@ -2809,9 +2928,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8710651397705078,
-      "bertscore_recall": 0.8756921291351318,
-      "bertscore_f1": 0.873372495174408
+      "bleu": 0.0,
+      "bertscore_precision": 0.8710649609565735,
+      "bertscore_recall": 0.8756920695304871,
+      "bertscore_f1": 0.8733723759651184
     },
     {
       "question_id": "236",
@@ -2835,9 +2955,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8710651397705078,
-      "bertscore_recall": 0.8756921291351318,
-      "bertscore_f1": 0.873372495174408
+      "bleu": 0.0,
+      "bertscore_precision": 0.8710649609565735,
+      "bertscore_recall": 0.8756920695304871,
+      "bertscore_f1": 0.8733723759651184
     },
     {
       "question_id": "237",
@@ -2861,9 +2982,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8710651397705078,
-      "bertscore_recall": 0.8756921291351318,
-      "bertscore_f1": 0.873372495174408
+      "bleu": 0.0,
+      "bertscore_precision": 0.8710649609565735,
+      "bertscore_recall": 0.8756920695304871,
+      "bertscore_f1": 0.8733723759651184
     },
     {
       "question_id": "238",
@@ -2887,9 +3009,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8710651397705078,
-      "bertscore_recall": 0.8756921291351318,
-      "bertscore_f1": 0.873372495174408
+      "bleu": 0.0,
+      "bertscore_precision": 0.8710649609565735,
+      "bertscore_recall": 0.8756920695304871,
+      "bertscore_f1": 0.8733723759651184
     },
     {
       "question_id": "240",
@@ -2913,6 +3036,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0.0,
       "bertscore_precision": 0.8784652948379517,
       "bertscore_recall": 0.8784652948379517,
       "bertscore_f1": 0.8784652948379517
@@ -2939,6 +3063,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0.0,
       "bertscore_precision": 0.8784652948379517,
       "bertscore_recall": 0.8784652948379517,
       "bertscore_f1": 0.8784652948379517
@@ -2965,6 +3090,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0.0,
       "bertscore_precision": 0.8784652948379517,
       "bertscore_recall": 0.8784652948379517,
       "bertscore_f1": 0.8784652948379517
@@ -2991,6 +3117,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0.0,
       "bertscore_precision": 0.8784652948379517,
       "bertscore_recall": 0.8784652948379517,
       "bertscore_f1": 0.8784652948379517
@@ -3017,6 +3144,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0.0,
       "bertscore_precision": 0.8784652948379517,
       "bertscore_recall": 0.8784652948379517,
       "bertscore_f1": 0.8784652948379517
@@ -3043,6 +3171,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0.0,
       "bertscore_precision": 0.8784652948379517,
       "bertscore_recall": 0.8784652948379517,
       "bertscore_f1": 0.8784652948379517
@@ -3069,9 +3198,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0.0,
       "bertscore_precision": 0.8636897206306458,
-      "bertscore_recall": 0.7472095489501953,
-      "bertscore_f1": 0.801238477230072
+      "bertscore_recall": 0.7472094297409058,
+      "bertscore_f1": 0.8012383580207825
     },
     {
       "question_id": "251",
@@ -3095,9 +3225,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8572252988815308,
-      "bertscore_recall": 0.7291417121887207,
-      "bertscore_f1": 0.7880128026008606
+      "bleu": 0.0,
+      "bertscore_precision": 0.8572251796722412,
+      "bertscore_recall": 0.7291415929794312,
+      "bertscore_f1": 0.7880126237869263
     },
     {
       "question_id": "253",
@@ -3121,9 +3252,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8572252988815308,
-      "bertscore_recall": 0.7291417121887207,
-      "bertscore_f1": 0.7880128026008606
+      "bleu": 0.0,
+      "bertscore_precision": 0.8572251796722412,
+      "bertscore_recall": 0.7291415929794312,
+      "bertscore_f1": 0.7880126237869263
     },
     {
       "question_id": "256",
@@ -3147,9 +3279,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8663027286529541,
-      "bertscore_recall": 0.7655417919158936,
-      "bertscore_f1": 0.8128114342689514
+      "bleu": 0.0,
+      "bertscore_precision": 0.8663026690483093,
+      "bertscore_recall": 0.7655417323112488,
+      "bertscore_f1": 0.8128113746643066
     },
     {
       "question_id": "257",
@@ -3173,9 +3306,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0.0,
       "bertscore_precision": 0.8636897206306458,
-      "bertscore_recall": 0.7472095489501953,
-      "bertscore_f1": 0.801238477230072
+      "bertscore_recall": 0.7472094297409058,
+      "bertscore_f1": 0.8012383580207825
     },
     {
       "question_id": "259",
@@ -3199,9 +3333,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8663027286529541,
-      "bertscore_recall": 0.7655417919158936,
-      "bertscore_f1": 0.8128114342689514
+      "bleu": 0.0,
+      "bertscore_precision": 0.8663026690483093,
+      "bertscore_recall": 0.7655417323112488,
+      "bertscore_f1": 0.8128113746643066
     },
     {
       "question_id": "263",
@@ -3225,8 +3360,9 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8558914065361023,
-      "bertscore_recall": 0.7608895301818848,
+      "bleu": 0.0,
+      "bertscore_precision": 0.8558914661407471,
+      "bertscore_recall": 0.76088947057724,
       "bertscore_f1": 0.8055992722511292
     },
     {
@@ -3251,8 +3387,9 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8558914065361023,
-      "bertscore_recall": 0.7608895301818848,
+      "bleu": 0.0,
+      "bertscore_precision": 0.8558914661407471,
+      "bertscore_recall": 0.76088947057724,
       "bertscore_f1": 0.8055992722511292
     },
     {
@@ -3274,9 +3411,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7838279008865356,
-      "bertscore_recall": 0.8284363746643066,
-      "bertscore_f1": 0.8055149912834167
+      "bleu": 0.0,
+      "bertscore_precision": 0.783827543258667,
+      "bertscore_recall": 0.8284359574317932,
+      "bertscore_f1": 0.8055146932601929
     },
     {
       "question_id": "277",
@@ -3297,9 +3435,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7838279008865356,
-      "bertscore_recall": 0.8284363746643066,
-      "bertscore_f1": 0.8055149912834167
+      "bleu": 0.0,
+      "bertscore_precision": 0.783827543258667,
+      "bertscore_recall": 0.8284359574317932,
+      "bertscore_f1": 0.8055146932601929
     },
     {
       "question_id": "280",
@@ -3320,9 +3459,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7865585684776306,
-      "bertscore_recall": 0.8344330191612244,
-      "bertscore_f1": 0.8097888827323914
+      "bleu": 0.0,
+      "bertscore_precision": 0.7865581512451172,
+      "bertscore_recall": 0.8344324827194214,
+      "bertscore_f1": 0.8097884058952332
     },
     {
       "question_id": "281",
@@ -3343,9 +3483,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7865585684776306,
-      "bertscore_recall": 0.8344330191612244,
-      "bertscore_f1": 0.8097888827323914
+      "bleu": 0.0,
+      "bertscore_precision": 0.7865581512451172,
+      "bertscore_recall": 0.8344324827194214,
+      "bertscore_f1": 0.8097884058952332
     },
     {
       "question_id": "282",
@@ -3366,9 +3507,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7865585684776306,
-      "bertscore_recall": 0.8344330191612244,
-      "bertscore_f1": 0.8097888827323914
+      "bleu": 0.0,
+      "bertscore_precision": 0.7865581512451172,
+      "bertscore_recall": 0.8344324827194214,
+      "bertscore_f1": 0.8097884058952332
     },
     {
       "question_id": "283",
@@ -3389,9 +3531,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7865585684776306,
-      "bertscore_recall": 0.8344330191612244,
-      "bertscore_f1": 0.8097888827323914
+      "bleu": 0.0,
+      "bertscore_precision": 0.7865581512451172,
+      "bertscore_recall": 0.8344324827194214,
+      "bertscore_f1": 0.8097884058952332
     },
     {
       "question_id": "284",
@@ -3412,8 +3555,9 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8082601428031921,
-      "bertscore_recall": 0.7307340502738953,
+      "bleu": 0.0,
+      "bertscore_precision": 0.8082600831985474,
+      "bertscore_recall": 0.7307339906692505,
       "bertscore_f1": 0.7675443887710571
     },
     {
@@ -3435,9 +3579,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7865585684776306,
-      "bertscore_recall": 0.8344330191612244,
-      "bertscore_f1": 0.8097888827323914
+      "bleu": 0.0,
+      "bertscore_precision": 0.7865581512451172,
+      "bertscore_recall": 0.8344324827194214,
+      "bertscore_f1": 0.8097884058952332
     },
     {
       "question_id": "286",
@@ -3458,9 +3603,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7865585684776306,
-      "bertscore_recall": 0.8344330191612244,
-      "bertscore_f1": 0.8097888827323914
+      "bleu": 0.0,
+      "bertscore_precision": 0.7865581512451172,
+      "bertscore_recall": 0.8344324827194214,
+      "bertscore_f1": 0.8097884058952332
     },
     {
       "question_id": "287",
@@ -3481,9 +3627,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7865585684776306,
-      "bertscore_recall": 0.8344330191612244,
-      "bertscore_f1": 0.8097888827323914
+      "bleu": 0.0,
+      "bertscore_precision": 0.7865581512451172,
+      "bertscore_recall": 0.8344324827194214,
+      "bertscore_f1": 0.8097884058952332
     },
     {
       "question_id": "288",
@@ -3504,8 +3651,9 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8082601428031921,
-      "bertscore_recall": 0.7307340502738953,
+      "bleu": 0.0,
+      "bertscore_precision": 0.8082600831985474,
+      "bertscore_recall": 0.7307339906692505,
       "bertscore_f1": 0.7675443887710571
     },
     {
@@ -3527,9 +3675,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7865585684776306,
-      "bertscore_recall": 0.8344330191612244,
-      "bertscore_f1": 0.8097888827323914
+      "bleu": 0.0,
+      "bertscore_precision": 0.7865581512451172,
+      "bertscore_recall": 0.8344324827194214,
+      "bertscore_f1": 0.8097884058952332
     },
     {
       "question_id": "290",
@@ -3550,9 +3699,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7887418270111084,
-      "bertscore_recall": 0.8351757526397705,
-      "bertscore_f1": 0.8112949728965759
+      "bleu": 0.0,
+      "bertscore_precision": 0.7887412309646606,
+      "bertscore_recall": 0.8351752161979675,
+      "bertscore_f1": 0.8112943768501282
     },
     {
       "question_id": "292",
@@ -3573,9 +3723,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7838279008865356,
-      "bertscore_recall": 0.8284363746643066,
-      "bertscore_f1": 0.8055149912834167
+      "bleu": 0.0,
+      "bertscore_precision": 0.783827543258667,
+      "bertscore_recall": 0.8284359574317932,
+      "bertscore_f1": 0.8055146932601929
     },
     {
       "question_id": "295",
@@ -3596,9 +3747,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7838279008865356,
-      "bertscore_recall": 0.8284363746643066,
-      "bertscore_f1": 0.8055149912834167
+      "bleu": 0.0,
+      "bertscore_precision": 0.783827543258667,
+      "bertscore_recall": 0.8284359574317932,
+      "bertscore_f1": 0.8055146932601929
     },
     {
       "question_id": "296",
@@ -3619,9 +3771,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7887418270111084,
-      "bertscore_recall": 0.8351757526397705,
-      "bertscore_f1": 0.8112949728965759
+      "bleu": 0.0,
+      "bertscore_precision": 0.7887412309646606,
+      "bertscore_recall": 0.8351752161979675,
+      "bertscore_f1": 0.8112943768501282
     },
     {
       "question_id": "302",
@@ -3642,9 +3795,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7838279008865356,
-      "bertscore_recall": 0.8284363746643066,
-      "bertscore_f1": 0.8055149912834167
+      "bleu": 0.0,
+      "bertscore_precision": 0.783827543258667,
+      "bertscore_recall": 0.8284359574317932,
+      "bertscore_f1": 0.8055146932601929
     },
     {
       "question_id": "306",
@@ -3665,9 +3819,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7887418270111084,
-      "bertscore_recall": 0.8351757526397705,
-      "bertscore_f1": 0.8112949728965759
+      "bleu": 0.0,
+      "bertscore_precision": 0.7887412309646606,
+      "bertscore_recall": 0.8351752161979675,
+      "bertscore_f1": 0.8112943768501282
     },
     {
       "question_id": "307",
@@ -3688,9 +3843,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7887418270111084,
-      "bertscore_recall": 0.8351757526397705,
-      "bertscore_f1": 0.8112949728965759
+      "bleu": 0.0,
+      "bertscore_precision": 0.7887412309646606,
+      "bertscore_recall": 0.8351752161979675,
+      "bertscore_f1": 0.8112943768501282
     },
     {
       "question_id": "311",
@@ -3711,9 +3867,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7890322804450989,
-      "bertscore_recall": 0.6879526376724243,
-      "bertscore_f1": 0.7350336313247681
+      "bleu": 0.0,
+      "bertscore_precision": 0.7890318632125854,
+      "bertscore_recall": 0.6879525780677795,
+      "bertscore_f1": 0.7350334525108337
     },
     {
       "question_id": "312",
@@ -3734,9 +3891,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7890322804450989,
-      "bertscore_recall": 0.6879526376724243,
-      "bertscore_f1": 0.7350336313247681
+      "bleu": 0.0,
+      "bertscore_precision": 0.7890318632125854,
+      "bertscore_recall": 0.6879525780677795,
+      "bertscore_f1": 0.7350334525108337
     },
     {
       "question_id": "315",
@@ -3757,8 +3915,9 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0,
       "bertscore_precision": 0.8535189032554626,
-      "bertscore_recall": 0.7078653573989868,
+      "bertscore_recall": 0.7078654170036316,
       "bertscore_f1": 0.7738985419273376
     },
     {
@@ -3780,9 +3939,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7890322804450989,
-      "bertscore_recall": 0.6879526376724243,
-      "bertscore_f1": 0.7350336313247681
+      "bleu": 0.0,
+      "bertscore_precision": 0.7890318632125854,
+      "bertscore_recall": 0.6879525780677795,
+      "bertscore_f1": 0.7350334525108337
     },
     {
       "question_id": "317",
@@ -3803,9 +3963,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7890322804450989,
-      "bertscore_recall": 0.6879526376724243,
-      "bertscore_f1": 0.7350336313247681
+      "bleu": 0.0,
+      "bertscore_precision": 0.7890318632125854,
+      "bertscore_recall": 0.6879525780677795,
+      "bertscore_f1": 0.7350334525108337
     },
     {
       "question_id": "318",
@@ -3826,8 +3987,9 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8471319675445557,
-      "bertscore_recall": 0.7086886167526245,
+      "bleu": 0,
+      "bertscore_precision": 0.8471320271492004,
+      "bertscore_recall": 0.7086885571479797,
       "bertscore_f1": 0.7717506289482117
     },
     {
@@ -3849,9 +4011,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8492351174354553,
+      "bleu": 0,
+      "bertscore_precision": 0.8492349982261658,
       "bertscore_recall": 0.7038419246673584,
-      "bertscore_f1": 0.7697330117225647
+      "bertscore_f1": 0.7697328329086304
     },
     {
       "question_id": "330",
@@ -3875,6 +4038,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0.0,
       "bertscore_precision": 0.850744366645813,
       "bertscore_recall": 0.7182011008262634,
       "bertscore_f1": 0.7788742184638977
@@ -3898,9 +4062,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7838279008865356,
-      "bertscore_recall": 0.8284363746643066,
-      "bertscore_f1": 0.8055149912834167
+      "bleu": 0.0,
+      "bertscore_precision": 0.783827543258667,
+      "bertscore_recall": 0.8284359574317932,
+      "bertscore_f1": 0.8055146932601929
     },
     {
       "question_id": "334",
@@ -3924,6 +4089,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0.0,
       "bertscore_precision": 0.850744366645813,
       "bertscore_recall": 0.7182011008262634,
       "bertscore_f1": 0.7788742184638977
@@ -3950,9 +4116,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0.0,
       "bertscore_precision": 0.8692024946212769,
-      "bertscore_recall": 0.8064993619918823,
-      "bertscore_f1": 0.8366777896881104
+      "bertscore_recall": 0.8064994215965271,
+      "bertscore_f1": 0.8366778492927551
     },
     {
       "question_id": "336",
@@ -3976,9 +4143,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0.0,
       "bertscore_precision": 0.8692024946212769,
-      "bertscore_recall": 0.8064993619918823,
-      "bertscore_f1": 0.8366777896881104
+      "bertscore_recall": 0.8064994215965271,
+      "bertscore_f1": 0.8366778492927551
     },
     {
       "question_id": "337",
@@ -4002,9 +4170,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0.0,
       "bertscore_precision": 0.8692024946212769,
-      "bertscore_recall": 0.8064993619918823,
-      "bertscore_f1": 0.8366777896881104
+      "bertscore_recall": 0.8064994215965271,
+      "bertscore_f1": 0.8366778492927551
     },
     {
       "question_id": "338",
@@ -4028,8 +4197,9 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.860136091709137,
-      "bertscore_recall": 0.7518162131309509,
+      "bleu": 0.0,
+      "bertscore_precision": 0.8601361513137817,
+      "bertscore_recall": 0.7518161535263062,
       "bertscore_f1": 0.8023366928100586
     },
     {
@@ -4051,9 +4221,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7838279008865356,
-      "bertscore_recall": 0.8284363746643066,
-      "bertscore_f1": 0.8055149912834167
+      "bleu": 0.0,
+      "bertscore_precision": 0.783827543258667,
+      "bertscore_recall": 0.8284359574317932,
+      "bertscore_f1": 0.8055146932601929
     },
     {
       "question_id": "340",
@@ -4074,9 +4245,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.789542555809021,
-      "bertscore_recall": 0.8353355526924133,
-      "bertscore_f1": 0.8117937445640564
+      "bleu": 0.0,
+      "bertscore_precision": 0.7895421385765076,
+      "bertscore_recall": 0.8353351354598999,
+      "bertscore_f1": 0.8117933869361877
     },
     {
       "question_id": "341",
@@ -4097,9 +4269,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7838279008865356,
-      "bertscore_recall": 0.8284363746643066,
-      "bertscore_f1": 0.8055149912834167
+      "bleu": 0.0,
+      "bertscore_precision": 0.783827543258667,
+      "bertscore_recall": 0.8284359574317932,
+      "bertscore_f1": 0.8055146932601929
     },
     {
       "question_id": "342",
@@ -4120,9 +4293,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7838279008865356,
-      "bertscore_recall": 0.8284363746643066,
-      "bertscore_f1": 0.8055149912834167
+      "bleu": 0.0,
+      "bertscore_precision": 0.783827543258667,
+      "bertscore_recall": 0.8284359574317932,
+      "bertscore_f1": 0.8055146932601929
     },
     {
       "question_id": "343",
@@ -4143,9 +4317,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.9998156428337097,
-      "bertscore_recall": 0.9998156428337097,
-      "bertscore_f1": 0.9998156428337097
+      "bleu": 0,
+      "bertscore_precision": 0.9998157620429993,
+      "bertscore_recall": 0.9998157620429993,
+      "bertscore_f1": 0.9998157620429993
     },
     {
       "question_id": "344",
@@ -4166,9 +4341,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "345",
@@ -4189,9 +4365,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7838279008865356,
-      "bertscore_recall": 0.8284363746643066,
-      "bertscore_f1": 0.8055149912834167
+      "bleu": 0.0,
+      "bertscore_precision": 0.783827543258667,
+      "bertscore_recall": 0.8284359574317932,
+      "bertscore_f1": 0.8055146932601929
     },
     {
       "question_id": "346",
@@ -4212,9 +4389,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.9998126029968262,
-      "bertscore_recall": 0.9998126029968262,
-      "bertscore_f1": 0.9998126029968262
+      "bleu": 0,
+      "bertscore_precision": 0.999812662601471,
+      "bertscore_recall": 0.999812662601471,
+      "bertscore_f1": 0.999812662601471
     },
     {
       "question_id": "347",
@@ -4235,9 +4413,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.9998156428337097,
-      "bertscore_recall": 0.9998156428337097,
-      "bertscore_f1": 0.9998156428337097
+      "bleu": 0,
+      "bertscore_precision": 0.9998157620429993,
+      "bertscore_recall": 0.9998157620429993,
+      "bertscore_f1": 0.9998157620429993
     },
     {
       "question_id": "348",
@@ -4258,9 +4437,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.789542555809021,
-      "bertscore_recall": 0.8353355526924133,
-      "bertscore_f1": 0.8117937445640564
+      "bleu": 0.0,
+      "bertscore_precision": 0.7895421385765076,
+      "bertscore_recall": 0.8353351354598999,
+      "bertscore_f1": 0.8117933869361877
     },
     {
       "question_id": "349",
@@ -4281,9 +4461,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7838279008865356,
-      "bertscore_recall": 0.8284363746643066,
-      "bertscore_f1": 0.8055149912834167
+      "bleu": 0.0,
+      "bertscore_precision": 0.783827543258667,
+      "bertscore_recall": 0.8284359574317932,
+      "bertscore_f1": 0.8055146932601929
     },
     {
       "question_id": "352",
@@ -4304,9 +4485,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7838279008865356,
-      "bertscore_recall": 0.8284363746643066,
-      "bertscore_f1": 0.8055149912834167
+      "bleu": 0.0,
+      "bertscore_precision": 0.783827543258667,
+      "bertscore_recall": 0.8284359574317932,
+      "bertscore_f1": 0.8055146932601929
     },
     {
       "question_id": "354",
@@ -4327,9 +4509,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7838279008865356,
-      "bertscore_recall": 0.8284363746643066,
-      "bertscore_f1": 0.8055149912834167
+      "bleu": 0.0,
+      "bertscore_precision": 0.783827543258667,
+      "bertscore_recall": 0.8284359574317932,
+      "bertscore_f1": 0.8055146932601929
     },
     {
       "question_id": "355",
@@ -4350,9 +4533,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7877313494682312,
-      "bertscore_recall": 0.8344916105270386,
-      "bertscore_f1": 0.8104375600814819
+      "bleu": 0.0,
+      "bertscore_precision": 0.7877309322357178,
+      "bertscore_recall": 0.8344911932945251,
+      "bertscore_f1": 0.8104371428489685
     },
     {
       "question_id": "357",
@@ -4373,9 +4557,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7838279008865356,
-      "bertscore_recall": 0.8284363746643066,
-      "bertscore_f1": 0.8055149912834167
+      "bleu": 0.0,
+      "bertscore_precision": 0.783827543258667,
+      "bertscore_recall": 0.8284359574317932,
+      "bertscore_f1": 0.8055146932601929
     },
     {
       "question_id": "359",
@@ -4396,9 +4581,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7838279008865356,
-      "bertscore_recall": 0.8284363746643066,
-      "bertscore_f1": 0.8055149912834167
+      "bleu": 0.0,
+      "bertscore_precision": 0.783827543258667,
+      "bertscore_recall": 0.8284359574317932,
+      "bertscore_f1": 0.8055146932601929
     },
     {
       "question_id": "361",
@@ -4419,9 +4605,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7838279008865356,
-      "bertscore_recall": 0.8284363746643066,
-      "bertscore_f1": 0.8055149912834167
+      "bleu": 0.0,
+      "bertscore_precision": 0.783827543258667,
+      "bertscore_recall": 0.8284359574317932,
+      "bertscore_f1": 0.8055146932601929
     },
     {
       "question_id": "365",
@@ -4445,8 +4632,9 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8585904240608215,
-      "bertscore_recall": 0.752072274684906,
+      "bleu": 0.0,
+      "bertscore_precision": 0.8585903644561768,
+      "bertscore_recall": 0.7520721554756165,
       "bertscore_f1": 0.8018091320991516
     },
     {
@@ -4471,8 +4659,9 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8585904240608215,
-      "bertscore_recall": 0.752072274684906,
+      "bleu": 0.0,
+      "bertscore_precision": 0.8585903644561768,
+      "bertscore_recall": 0.7520721554756165,
       "bertscore_f1": 0.8018091320991516
     },
     {
@@ -4494,9 +4683,10 @@
       "rouge1": 0.3636363636363636,
       "rouge2": 0.0,
       "rougeL": 0.3636363636363636,
-      "bertscore_precision": 0.8006347417831421,
-      "bertscore_recall": 0.9315420389175415,
-      "bertscore_f1": 0.8611418008804321
+      "bleu": 0.048549177170732344,
+      "bertscore_precision": 0.8006346821784973,
+      "bertscore_recall": 0.9315419793128967,
+      "bertscore_f1": 0.8611417412757874
     },
     {
       "question_id": "393",
@@ -4517,9 +4707,10 @@
       "rouge1": 0.5454545454545454,
       "rouge2": 0.22222222222222224,
       "rougeL": 0.5454545454545454,
+      "bleu": 0.048549177170732344,
       "bertscore_precision": 0.797150194644928,
-      "bertscore_recall": 0.9203454852104187,
-      "bertscore_f1": 0.8543294668197632
+      "bertscore_recall": 0.9203454256057739,
+      "bertscore_f1": 0.8543294072151184
     },
     {
       "question_id": "394",
@@ -4540,9 +4731,10 @@
       "rouge1": 0.3636363636363636,
       "rouge2": 0.0,
       "rougeL": 0.3636363636363636,
+      "bleu": 0.048549177170732344,
       "bertscore_precision": 0.7992994785308838,
-      "bertscore_recall": 0.9250163435935974,
-      "bertscore_f1": 0.857574999332428
+      "bertscore_recall": 0.9250165224075317,
+      "bertscore_f1": 0.8575750589370728
     },
     {
       "question_id": "395",
@@ -4563,9 +4755,10 @@
       "rouge1": 0.5454545454545454,
       "rouge2": 0.22222222222222224,
       "rougeL": 0.5454545454545454,
-      "bertscore_precision": 0.7973045110702515,
-      "bertscore_recall": 0.91984623670578,
-      "bertscore_f1": 0.8542028665542603
+      "bleu": 0.048549177170732344,
+      "bertscore_precision": 0.7973044514656067,
+      "bertscore_recall": 0.9198461174964905,
+      "bertscore_f1": 0.8542028069496155
     },
     {
       "question_id": "396",
@@ -4586,9 +4779,10 @@
       "rouge1": 0.5454545454545454,
       "rouge2": 0.4444444444444445,
       "rougeL": 0.5454545454545454,
-      "bertscore_precision": 0.79365473985672,
+      "bleu": 0.048549177170732344,
+      "bertscore_precision": 0.7936547994613647,
       "bertscore_recall": 0.9066482782363892,
-      "bertscore_f1": 0.8463969826698303
+      "bertscore_f1": 0.8463970422744751
     },
     {
       "question_id": "397",
@@ -4609,8 +4803,9 @@
       "rouge1": 0.5454545454545454,
       "rouge2": 0.4444444444444445,
       "rougeL": 0.5454545454545454,
-      "bertscore_precision": 0.7972812652587891,
-      "bertscore_recall": 0.9211022853851318,
+      "bleu": 0.048549177170732344,
+      "bertscore_precision": 0.7972813248634338,
+      "bertscore_recall": 0.9211023449897766,
       "bertscore_f1": 0.8547307252883911
     },
     {
@@ -4632,9 +4827,10 @@
       "rouge1": 0.5454545454545454,
       "rouge2": 0.0,
       "rougeL": 0.5454545454545454,
-      "bertscore_precision": 0.8086857795715332,
-      "bertscore_recall": 0.9415462017059326,
-      "bertscore_f1": 0.8700732588768005
+      "bleu": 0.048549177170732344,
+      "bertscore_precision": 0.8086858987808228,
+      "bertscore_recall": 0.9415460824966431,
+      "bertscore_f1": 0.8700733184814453
     },
     {
       "question_id": "399",
@@ -4655,9 +4851,10 @@
       "rouge1": 0.3636363636363636,
       "rouge2": 0.0,
       "rougeL": 0.3636363636363636,
+      "bleu": 0.048549177170732344,
       "bertscore_precision": 0.7984886765480042,
-      "bertscore_recall": 0.9287375211715698,
-      "bertscore_f1": 0.8587020635604858
+      "bertscore_recall": 0.9287375807762146,
+      "bertscore_f1": 0.8587021231651306
     },
     {
       "question_id": "400",
@@ -4678,6 +4875,7 @@
       "rouge1": 0.3636363636363636,
       "rouge2": 0.0,
       "rougeL": 0.3636363636363636,
+      "bleu": 0.048549177170732344,
       "bertscore_precision": 0.7964961528778076,
       "bertscore_recall": 0.9256585240364075,
       "bertscore_f1": 0.8562337756156921
@@ -4701,8 +4899,9 @@
       "rouge1": 0.5454545454545454,
       "rouge2": 0.22222222222222224,
       "rougeL": 0.5454545454545454,
+      "bleu": 0.048549177170732344,
       "bertscore_precision": 0.7968465685844421,
-      "bertscore_recall": 0.919951319694519,
+      "bertscore_recall": 0.9199513792991638,
       "bertscore_f1": 0.8539853096008301
     },
     {
@@ -4724,9 +4923,10 @@
       "rouge1": 0.7272727272727272,
       "rouge2": 0.0,
       "rougeL": 0.5454545454545454,
-      "bertscore_precision": 0.8036954402923584,
-      "bertscore_recall": 0.937802791595459,
-      "bertscore_f1": 0.8655855059623718
+      "bleu": 0.048549177170732344,
+      "bertscore_precision": 0.8036952614784241,
+      "bertscore_recall": 0.9378027319908142,
+      "bertscore_f1": 0.8655853867530823
     },
     {
       "question_id": "403",
@@ -4747,8 +4947,9 @@
       "rouge1": 0.5454545454545454,
       "rouge2": 0.4444444444444445,
       "rougeL": 0.5454545454545454,
-      "bertscore_precision": 0.7983685731887817,
-      "bertscore_recall": 0.9301427602767944,
+      "bleu": 0.048549177170732344,
+      "bertscore_precision": 0.7983686923980713,
+      "bertscore_recall": 0.9301425814628601,
       "bertscore_f1": 0.8592327237129211
     },
     {
@@ -4770,9 +4971,10 @@
       "rouge1": 0.5454545454545454,
       "rouge2": 0.0,
       "rougeL": 0.5454545454545454,
-      "bertscore_precision": 0.8076704740524292,
-      "bertscore_recall": 0.9389447569847107,
-      "bertscore_f1": 0.8683744072914124
+      "bleu": 0.048549177170732344,
+      "bertscore_precision": 0.807670533657074,
+      "bertscore_recall": 0.9389445781707764,
+      "bertscore_f1": 0.8683743476867676
     },
     {
       "question_id": "405",
@@ -4793,7 +4995,8 @@
       "rouge1": 0.7272727272727272,
       "rouge2": 0.0,
       "rougeL": 0.5454545454545454,
-      "bertscore_precision": 0.7981961965560913,
+      "bleu": 0.048549177170732344,
+      "bertscore_precision": 0.7981961369514465,
       "bertscore_recall": 0.9248421788215637,
       "bertscore_f1": 0.8568648099899292
     },
@@ -4816,9 +5019,10 @@
       "rouge1": 0.5454545454545454,
       "rouge2": 0.4444444444444445,
       "rougeL": 0.5454545454545454,
-      "bertscore_precision": 0.8018093109130859,
-      "bertscore_recall": 0.9305673241615295,
-      "bertscore_f1": 0.8614034056663513
+      "bleu": 0.048549177170732344,
+      "bertscore_precision": 0.8018094301223755,
+      "bertscore_recall": 0.9305673837661743,
+      "bertscore_f1": 0.8614034652709961
     },
     {
       "question_id": "407",
@@ -4839,9 +5043,10 @@
       "rouge1": 0.5454545454545454,
       "rouge2": 0.0,
       "rougeL": 0.5454545454545454,
-      "bertscore_precision": 0.8050479292869568,
-      "bertscore_recall": 0.9249840378761292,
-      "bertscore_f1": 0.860858678817749
+      "bleu": 0.048549177170732344,
+      "bertscore_precision": 0.805047869682312,
+      "bertscore_recall": 0.9249839186668396,
+      "bertscore_f1": 0.8608585596084595
     },
     {
       "question_id": "408",
@@ -4862,9 +5067,10 @@
       "rouge1": 0.5454545454545454,
       "rouge2": 0.22222222222222224,
       "rougeL": 0.5454545454545454,
-      "bertscore_precision": 0.7956269383430481,
+      "bleu": 0.048549177170732344,
+      "bertscore_precision": 0.7956268787384033,
       "bertscore_recall": 0.9196169376373291,
-      "bertscore_f1": 0.8531405329704285
+      "bertscore_f1": 0.8531404137611389
     },
     {
       "question_id": "409",
@@ -4885,8 +5091,9 @@
       "rouge1": 0.7272727272727272,
       "rouge2": 0.0,
       "rougeL": 0.5454545454545454,
+      "bleu": 0.048549177170732344,
       "bertscore_precision": 0.8036352396011353,
-      "bertscore_recall": 0.9368316531181335,
+      "bertscore_recall": 0.9368317127227783,
       "bertscore_f1": 0.8651367425918579
     },
     {
@@ -4908,9 +5115,10 @@
       "rouge1": 0.7272727272727272,
       "rouge2": 0.0,
       "rougeL": 0.5454545454545454,
-      "bertscore_precision": 0.8040796518325806,
+      "bleu": 0.048549177170732344,
+      "bertscore_precision": 0.8040797710418701,
       "bertscore_recall": 0.9370512962341309,
-      "bertscore_f1": 0.8654878735542297
+      "bertscore_f1": 0.8654879331588745
     },
     {
       "question_id": "411",
@@ -4931,9 +5139,10 @@
       "rouge1": 0.7272727272727272,
       "rouge2": 0.0,
       "rougeL": 0.5454545454545454,
+      "bleu": 0.048549177170732344,
       "bertscore_precision": 0.7996762990951538,
-      "bertscore_recall": 0.9273788332939148,
-      "bertscore_f1": 0.858806312084198
+      "bertscore_recall": 0.9273788928985596,
+      "bertscore_f1": 0.8588062524795532
     },
     {
       "question_id": "415",
@@ -4954,7 +5163,8 @@
       "rouge1": 0.5454545454545454,
       "rouge2": 0.4444444444444445,
       "rougeL": 0.5454545454545454,
-      "bertscore_precision": 0.7987849116325378,
+      "bleu": 0.048549177170732344,
+      "bertscore_precision": 0.7987849712371826,
       "bertscore_recall": 0.9260226488113403,
       "bertscore_f1": 0.8577107191085815
     },
@@ -4977,8 +5187,9 @@
       "rouge1": 0.5454545454545454,
       "rouge2": 0.4444444444444445,
       "rougeL": 0.5454545454545454,
-      "bertscore_precision": 0.7992356419563293,
-      "bertscore_recall": 0.9259839653968811,
+      "bleu": 0.048549177170732344,
+      "bertscore_precision": 0.7992357015609741,
+      "bertscore_recall": 0.9259839057922363,
       "bertscore_f1": 0.8579538464546204
     },
     {
@@ -5000,9 +5211,10 @@
       "rouge1": 0.5454545454545454,
       "rouge2": 0.4444444444444445,
       "rougeL": 0.5454545454545454,
-      "bertscore_precision": 0.8003624081611633,
+      "bleu": 0.048549177170732344,
+      "bertscore_precision": 0.8003624677658081,
       "bertscore_recall": 0.9268065094947815,
-      "bertscore_f1": 0.8589560985565186
+      "bertscore_f1": 0.8589560389518738
     },
     {
       "question_id": "421",
@@ -5023,7 +5235,8 @@
       "rouge1": 0.5454545454545454,
       "rouge2": 0.4444444444444445,
       "rougeL": 0.5454545454545454,
-      "bertscore_precision": 0.8003025650978088,
+      "bleu": 0.048549177170732344,
+      "bertscore_precision": 0.8003025054931641,
       "bertscore_recall": 0.9288185238838196,
       "bertscore_f1": 0.8597846031188965
     },
@@ -5046,9 +5259,10 @@
       "rouge1": 0.5454545454545454,
       "rouge2": 0.4444444444444445,
       "rougeL": 0.5454545454545454,
-      "bertscore_precision": 0.8012314438819885,
+      "bleu": 0.048549177170732344,
+      "bertscore_precision": 0.8012315034866333,
       "bertscore_recall": 0.9299086332321167,
-      "bertscore_f1": 0.8607876300811768
+      "bertscore_f1": 0.8607876896858215
     },
     {
       "question_id": "424",
@@ -5069,9 +5283,10 @@
       "rouge1": 0.5454545454545454,
       "rouge2": 0.4444444444444445,
       "rougeL": 0.5454545454545454,
-      "bertscore_precision": 0.7996063828468323,
-      "bertscore_recall": 0.9256095886230469,
-      "bertscore_f1": 0.8580065965652466
+      "bleu": 0.048549177170732344,
+      "bertscore_precision": 0.799606442451477,
+      "bertscore_recall": 0.9256096482276917,
+      "bertscore_f1": 0.8580066561698914
     },
     {
       "question_id": "426",
@@ -5092,9 +5307,10 @@
       "rouge1": 0.5454545454545454,
       "rouge2": 0.4444444444444445,
       "rougeL": 0.5454545454545454,
+      "bleu": 0.048549177170732344,
       "bertscore_precision": 0.7974284291267395,
-      "bertscore_recall": 0.9259466528892517,
-      "bertscore_f1": 0.8568955063819885
+      "bertscore_recall": 0.9259465932846069,
+      "bertscore_f1": 0.8568954467773438
     },
     {
       "question_id": "430",
@@ -5115,9 +5331,10 @@
       "rouge1": 0.5454545454545454,
       "rouge2": 0.4444444444444445,
       "rougeL": 0.5454545454545454,
-      "bertscore_precision": 0.8004544973373413,
-      "bertscore_recall": 0.929423987865448,
-      "bertscore_f1": 0.8601316809654236
+      "bleu": 0.048549177170732344,
+      "bertscore_precision": 0.8004545569419861,
+      "bertscore_recall": 0.9294240474700928,
+      "bertscore_f1": 0.8601316213607788
     },
     {
       "question_id": "432",
@@ -5138,9 +5355,10 @@
       "rouge1": 0.6666666666666666,
       "rouge2": 0.4000000000000001,
       "rougeL": 0.6666666666666666,
+      "bleu": 0.12209471671615688,
       "bertscore_precision": 0.9181313514709473,
-      "bertscore_recall": 0.9381127953529358,
-      "bertscore_f1": 0.9280145764350891
+      "bertscore_recall": 0.9381126761436462,
+      "bertscore_f1": 0.9280144572257996
     },
     {
       "question_id": "433",
@@ -5161,6 +5379,7 @@
       "rouge1": 0.6,
       "rouge2": 0.0,
       "rougeL": 0.6,
+      "bleu": 0.0641328089975786,
       "bertscore_precision": 0.9584235548973083,
       "bertscore_recall": 0.9344251751899719,
       "bertscore_f1": 0.9462722539901733
@@ -5184,8 +5403,9 @@
       "rouge1": 0.4,
       "rouge2": 0.0,
       "rougeL": 0.4,
+      "bleu": 0.05795053470733952,
       "bertscore_precision": 0.9582816362380981,
-      "bertscore_recall": 0.9327125549316406,
+      "bertscore_recall": 0.9327126145362854,
       "bertscore_f1": 0.9453242421150208
     },
     {
@@ -5207,9 +5427,10 @@
       "rouge1": 0.8333333333333334,
       "rouge2": 0.6,
       "rougeL": 0.8333333333333334,
-      "bertscore_precision": 0.9563250541687012,
-      "bertscore_recall": 0.9478548765182495,
-      "bertscore_f1": 0.9520711302757263
+      "bleu": 0.25406637407730737,
+      "bertscore_precision": 0.9563251733779907,
+      "bertscore_recall": 0.9478549361228943,
+      "bertscore_f1": 0.9520712494850159
     },
     {
       "question_id": "436",
@@ -5230,9 +5451,10 @@
       "rouge1": 0.6666666666666666,
       "rouge2": 0.4000000000000001,
       "rougeL": 0.6666666666666666,
-      "bertscore_precision": 0.9168081879615784,
-      "bertscore_recall": 0.9377822875976562,
-      "bertscore_f1": 0.9271766543388367
+      "bleu": 0.12209471671615688,
+      "bertscore_precision": 0.9168078899383545,
+      "bertscore_recall": 0.9377822279930115,
+      "bertscore_f1": 0.9271764159202576
     },
     {
       "question_id": "437",
@@ -5253,9 +5475,10 @@
       "rouge1": 0.6,
       "rouge2": 0.0,
       "rougeL": 0.6,
-      "bertscore_precision": 0.9610052108764648,
-      "bertscore_recall": 0.9372187852859497,
-      "bertscore_f1": 0.9489629864692688
+      "bleu": 0.0641328089975786,
+      "bertscore_precision": 0.961005449295044,
+      "bertscore_recall": 0.937218964099884,
+      "bertscore_f1": 0.9489632248878479
     },
     {
       "question_id": "438",
@@ -5276,8 +5499,9 @@
       "rouge1": 0.6666666666666666,
       "rouge2": 0.4000000000000001,
       "rougeL": 0.6666666666666666,
-      "bertscore_precision": 0.917267382144928,
-      "bertscore_recall": 0.9389753341674805,
+      "bleu": 0.12209471671615688,
+      "bertscore_precision": 0.9172673225402832,
+      "bertscore_recall": 0.9389753937721252,
       "bertscore_f1": 0.9279944896697998
     },
     {
@@ -5299,9 +5523,10 @@
       "rouge1": 0.4,
       "rouge2": 0.0,
       "rougeL": 0.4,
+      "bleu": 0.05795053470733952,
       "bertscore_precision": 0.9615270495414734,
-      "bertscore_recall": 0.9357143640518188,
-      "bertscore_f1": 0.9484451413154602
+      "bertscore_recall": 0.9357143044471741,
+      "bertscore_f1": 0.9484450817108154
     },
     {
       "question_id": "440",
@@ -5322,9 +5547,10 @@
       "rouge1": 0.4,
       "rouge2": 0.0,
       "rougeL": 0.4,
-      "bertscore_precision": 0.9612199068069458,
-      "bertscore_recall": 0.9356802105903625,
-      "bertscore_f1": 0.9482781291007996
+      "bleu": 0.05795053470733952,
+      "bertscore_precision": 0.9612200856208801,
+      "bertscore_recall": 0.9356803297996521,
+      "bertscore_f1": 0.9482783079147339
     },
     {
       "question_id": "441",
@@ -5345,6 +5571,7 @@
       "rouge1": 0.8333333333333334,
       "rouge2": 0.6,
       "rougeL": 0.8333333333333334,
+      "bleu": 0.25406637407730737,
       "bertscore_precision": 0.9629229307174683,
       "bertscore_recall": 0.9562059640884399,
       "bertscore_f1": 0.9595527052879333
@@ -5368,9 +5595,10 @@
       "rouge1": 0.4,
       "rouge2": 0.0,
       "rougeL": 0.4,
-      "bertscore_precision": 0.956500232219696,
-      "bertscore_recall": 0.9310340285301208,
-      "bertscore_f1": 0.9435953497886658
+      "bleu": 0.05795053470733952,
+      "bertscore_precision": 0.9565002918243408,
+      "bertscore_recall": 0.9310340881347656,
+      "bertscore_f1": 0.9435954093933105
     },
     {
       "question_id": "443",
@@ -5391,9 +5619,10 @@
       "rouge1": 0.4,
       "rouge2": 0.0,
       "rougeL": 0.4,
-      "bertscore_precision": 0.9619408845901489,
-      "bertscore_recall": 0.9367939233779907,
-      "bertscore_f1": 0.9492008686065674
+      "bleu": 0.05795053470733952,
+      "bertscore_precision": 0.9619409441947937,
+      "bertscore_recall": 0.9367939829826355,
+      "bertscore_f1": 0.9492009878158569
     },
     {
       "question_id": "444",
@@ -5414,9 +5643,10 @@
       "rouge1": 0.6,
       "rouge2": 0.0,
       "rougeL": 0.6,
-      "bertscore_precision": 0.9612460136413574,
-      "bertscore_recall": 0.937771201133728,
-      "bertscore_f1": 0.9493635296821594
+      "bleu": 0.0641328089975786,
+      "bertscore_precision": 0.961246132850647,
+      "bertscore_recall": 0.9377712607383728,
+      "bertscore_f1": 0.949363648891449
     },
     {
       "question_id": "446",
@@ -5437,9 +5667,10 @@
       "rouge1": 0.6,
       "rouge2": 0.0,
       "rougeL": 0.6,
-      "bertscore_precision": 0.9607619643211365,
-      "bertscore_recall": 0.9312015175819397,
-      "bertscore_f1": 0.9457507729530334
+      "bleu": 0.0641328089975786,
+      "bertscore_precision": 0.9607620239257812,
+      "bertscore_recall": 0.9312015771865845,
+      "bertscore_f1": 0.9457508325576782
     },
     {
       "question_id": "447",
@@ -5460,9 +5691,10 @@
       "rouge1": 0.6,
       "rouge2": 0.0,
       "rougeL": 0.6,
-      "bertscore_precision": 0.957755982875824,
+      "bleu": 0.0641328089975786,
+      "bertscore_precision": 0.9577561020851135,
       "bertscore_recall": 0.9352853894233704,
-      "bertscore_f1": 0.9463873505592346
+      "bertscore_f1": 0.9463874101638794
     },
     {
       "question_id": "448",
@@ -5483,9 +5715,10 @@
       "rouge1": 0.4,
       "rouge2": 0.0,
       "rougeL": 0.4,
-      "bertscore_precision": 0.9627654552459717,
-      "bertscore_recall": 0.9378136396408081,
-      "bertscore_f1": 0.9501257538795471
+      "bleu": 0.05795053470733952,
+      "bertscore_precision": 0.9627653360366821,
+      "bertscore_recall": 0.9378135800361633,
+      "bertscore_f1": 0.9501256346702576
     },
     {
       "question_id": "449",
@@ -5506,9 +5739,10 @@
       "rouge1": 0.4,
       "rouge2": 0.0,
       "rougeL": 0.4,
-      "bertscore_precision": 0.9587038159370422,
-      "bertscore_recall": 0.9332507252693176,
-      "bertscore_f1": 0.9458060264587402
+      "bleu": 0.05795053470733952,
+      "bertscore_precision": 0.9587036967277527,
+      "bertscore_recall": 0.9332506060600281,
+      "bertscore_f1": 0.9458059072494507
     },
     {
       "question_id": "450",
@@ -5529,6 +5763,7 @@
       "rouge1": 0.6,
       "rouge2": 0.0,
       "rougeL": 0.6,
+      "bleu": 0.0641328089975786,
       "bertscore_precision": 0.9622119665145874,
       "bertscore_recall": 0.9388344287872314,
       "bertscore_f1": 0.950379490852356
@@ -5552,9 +5787,10 @@
       "rouge1": 0.4,
       "rouge2": 0.0,
       "rougeL": 0.4,
-      "bertscore_precision": 0.9600067138671875,
-      "bertscore_recall": 0.9344698190689087,
-      "bertscore_f1": 0.9470661282539368
+      "bleu": 0.05795053470733952,
+      "bertscore_precision": 0.9600067734718323,
+      "bertscore_recall": 0.9344698786735535,
+      "bertscore_f1": 0.9470661878585815
     },
     {
       "question_id": "453",
@@ -5575,7 +5811,8 @@
       "rouge1": 0.5882352941176471,
       "rouge2": 0.4,
       "rougeL": 0.5882352941176471,
-      "bertscore_precision": 0.9159880876541138,
+      "bleu": 0.05637560315259291,
+      "bertscore_precision": 0.915988028049469,
       "bertscore_recall": 0.9464998245239258,
       "bertscore_f1": 0.9309940338134766
     },
@@ -5598,9 +5835,10 @@
       "rouge1": 0.7272727272727272,
       "rouge2": 0.4444444444444445,
       "rougeL": 0.7272727272727272,
+      "bleu": 0.23394743548827707,
       "bertscore_precision": 0.9601335525512695,
-      "bertscore_recall": 0.957263708114624,
-      "bertscore_f1": 0.9586964845657349
+      "bertscore_recall": 0.9572638273239136,
+      "bertscore_f1": 0.9586965441703796
     },
     {
       "question_id": "456",
@@ -5621,9 +5859,10 @@
       "rouge1": 0.8333333333333334,
       "rouge2": 0.6,
       "rougeL": 0.8333333333333334,
-      "bertscore_precision": 0.9777668118476868,
-      "bertscore_recall": 0.9703630805015564,
-      "bertscore_f1": 0.9740508794784546
+      "bleu": 0.25406637407730737,
+      "bertscore_precision": 0.9777668714523315,
+      "bertscore_recall": 0.9703631401062012,
+      "bertscore_f1": 0.9740509390830994
     },
     {
       "question_id": "457",
@@ -5644,6 +5883,7 @@
       "rouge1": 0.8333333333333334,
       "rouge2": 0.6,
       "rougeL": 0.8333333333333334,
+      "bleu": 0.25406637407730737,
       "bertscore_precision": 0.9809166789054871,
       "bertscore_recall": 0.9737613797187805,
       "bertscore_f1": 0.977325975894928
@@ -5667,9 +5907,10 @@
       "rouge1": 0.6666666666666666,
       "rouge2": 0.4000000000000001,
       "rougeL": 0.6666666666666666,
-      "bertscore_precision": 0.9722257852554321,
-      "bertscore_recall": 0.9722257852554321,
-      "bertscore_f1": 0.9722257852554321
+      "bleu": 0.12209471671615688,
+      "bertscore_precision": 0.9722257256507874,
+      "bertscore_recall": 0.9722257256507874,
+      "bertscore_f1": 0.9722257256507874
     },
     {
       "question_id": "459",
@@ -5690,9 +5931,10 @@
       "rouge1": 0.7692307692307692,
       "rouge2": 0.5454545454545454,
       "rougeL": 0.7692307692307692,
-      "bertscore_precision": 0.9507638216018677,
-      "bertscore_recall": 0.9603313207626343,
-      "bertscore_f1": 0.9555236101150513
+      "bleu": 0.09878765474230743,
+      "bertscore_precision": 0.950764000415802,
+      "bertscore_recall": 0.9603314399719238,
+      "bertscore_f1": 0.9555237889289856
     },
     {
       "question_id": "460",
@@ -5713,9 +5955,10 @@
       "rouge1": 0.5555555555555556,
       "rouge2": 0.37499999999999994,
       "rougeL": 0.5555555555555556,
-      "bertscore_precision": 0.9251642227172852,
+      "bleu": 0.10600313379512592,
+      "bertscore_precision": 0.9251643419265747,
       "bertscore_recall": 0.9461783170700073,
-      "bertscore_f1": 0.935553252696991
+      "bertscore_f1": 0.9355533719062805
     },
     {
       "question_id": "461",
@@ -5736,9 +5979,10 @@
       "rouge1": 0.8333333333333334,
       "rouge2": 0.6,
       "rougeL": 0.8333333333333334,
-      "bertscore_precision": 0.9786304235458374,
-      "bertscore_recall": 0.9719254374504089,
-      "bertscore_f1": 0.9752663969993591
+      "bleu": 0.25406637407730737,
+      "bertscore_precision": 0.9786303043365479,
+      "bertscore_recall": 0.9719253778457642,
+      "bertscore_f1": 0.9752662777900696
     },
     {
       "question_id": "464",
@@ -5759,9 +6003,10 @@
       "rouge1": 0.923076923076923,
       "rouge2": 0.7272727272727272,
       "rougeL": 0.923076923076923,
-      "bertscore_precision": 0.9691429138183594,
-      "bertscore_recall": 0.9854310750961304,
-      "bertscore_f1": 0.9772191047668457
+      "bleu": 0.274941620352113,
+      "bertscore_precision": 0.9691427946090698,
+      "bertscore_recall": 0.9854310154914856,
+      "bertscore_f1": 0.9772189855575562
     },
     {
       "question_id": "465",
@@ -5782,9 +6027,10 @@
       "rouge1": 0.6666666666666667,
       "rouge2": 0.4615384615384615,
       "rougeL": 0.6666666666666667,
-      "bertscore_precision": 0.9404007792472839,
-      "bertscore_recall": 0.953728199005127,
-      "bertscore_f1": 0.9470176100730896
+      "bleu": 0.14923729480049117,
+      "bertscore_precision": 0.9404010772705078,
+      "bertscore_recall": 0.9537283182144165,
+      "bertscore_f1": 0.9470177888870239
     },
     {
       "question_id": "466",
@@ -5805,9 +6051,10 @@
       "rouge1": 0.923076923076923,
       "rouge2": 0.9090909090909091,
       "rougeL": 0.923076923076923,
-      "bertscore_precision": 0.9745423197746277,
+      "bleu": 0.6147881529512643,
+      "bertscore_precision": 0.9745424389839172,
       "bertscore_recall": 0.9900991916656494,
-      "bertscore_f1": 0.9822591543197632
+      "bertscore_f1": 0.9822592735290527
     },
     {
       "question_id": "467",
@@ -5828,9 +6075,10 @@
       "rouge1": 0.8333333333333334,
       "rouge2": 0.6,
       "rougeL": 0.8333333333333334,
-      "bertscore_precision": 0.9808018207550049,
-      "bertscore_recall": 0.9738874435424805,
-      "bertscore_f1": 0.9773324131965637
+      "bleu": 0.25406637407730737,
+      "bertscore_precision": 0.9808018803596497,
+      "bertscore_recall": 0.9738875031471252,
+      "bertscore_f1": 0.9773324728012085
     },
     {
       "question_id": "468",
@@ -5851,9 +6099,10 @@
       "rouge1": 0.7692307692307692,
       "rouge2": 0.5454545454545454,
       "rougeL": 0.7692307692307692,
-      "bertscore_precision": 0.9695542454719543,
+      "bleu": 0.09878765474230743,
+      "bertscore_precision": 0.9695543050765991,
       "bertscore_recall": 0.9737836718559265,
-      "bertscore_f1": 0.9716643691062927
+      "bertscore_f1": 0.9716644287109375
     },
     {
       "question_id": "471",
@@ -5874,6 +6123,7 @@
       "rouge1": 0.8333333333333334,
       "rouge2": 0.6,
       "rougeL": 0.8333333333333334,
+      "bleu": 0.25406637407730737,
       "bertscore_precision": 0.9806300401687622,
       "bertscore_recall": 0.9732407331466675,
       "bertscore_f1": 0.9769214391708374
@@ -5897,9 +6147,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.9909940361976624,
-      "bertscore_recall": 0.9909940361976624,
-      "bertscore_f1": 0.9909940361976624
+      "bleu": 0,
+      "bertscore_precision": 0.9909939765930176,
+      "bertscore_recall": 0.9909939765930176,
+      "bertscore_f1": 0.9909939765930176
     },
     {
       "question_id": "474",
@@ -5920,9 +6171,10 @@
       "rouge1": 0.30769230769230765,
       "rouge2": 0.08333333333333333,
       "rougeL": 0.30769230769230765,
-      "bertscore_precision": 0.8475547432899475,
-      "bertscore_recall": 0.9018197655677795,
-      "bertscore_f1": 0.8738455772399902
+      "bleu": 0.024218026052883736,
+      "bertscore_precision": 0.8475548624992371,
+      "bertscore_recall": 0.9018198251724243,
+      "bertscore_f1": 0.8738457560539246
     },
     {
       "question_id": "475",
@@ -5943,9 +6195,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.9473254680633545,
-      "bertscore_recall": 0.9473254680633545,
-      "bertscore_f1": 0.9473254680633545
+      "bleu": 0,
+      "bertscore_precision": 0.9473254084587097,
+      "bertscore_recall": 0.9473254084587097,
+      "bertscore_f1": 0.9473254084587097
     },
     {
       "question_id": "476",
@@ -5966,9 +6219,10 @@
       "rouge1": 0.8571428571428571,
       "rouge2": 0.8,
       "rougeL": 0.8571428571428571,
-      "bertscore_precision": 0.8699962496757507,
-      "bertscore_recall": 0.9299080967903137,
-      "bertscore_f1": 0.8989551067352295
+      "bleu": 0.17216896116316355,
+      "bertscore_precision": 0.8699963688850403,
+      "bertscore_recall": 0.9299082159996033,
+      "bertscore_f1": 0.8989551663398743
     },
     {
       "question_id": "477",
@@ -5989,9 +6243,10 @@
       "rouge1": 0.16666666666666669,
       "rouge2": 0.0,
       "rougeL": 0.16666666666666669,
+      "bleu": 0.0017499545160859073,
       "bertscore_precision": 0.8922282457351685,
-      "bertscore_recall": 0.7721285820007324,
-      "bertscore_f1": 0.8278452754020691
+      "bertscore_recall": 0.7721288204193115,
+      "bertscore_f1": 0.8278453350067139
     },
     {
       "question_id": "478",
@@ -6012,9 +6267,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.9982398152351379,
-      "bertscore_recall": 0.9982398152351379,
-      "bertscore_f1": 0.9982398152351379
+      "bleu": 0,
+      "bertscore_precision": 0.9982397556304932,
+      "bertscore_recall": 0.9982397556304932,
+      "bertscore_f1": 0.9982397556304932
     },
     {
       "question_id": "484",
@@ -6035,9 +6291,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.9982398152351379,
-      "bertscore_recall": 0.9982398152351379,
-      "bertscore_f1": 0.9982398152351379
+      "bleu": 0,
+      "bertscore_precision": 0.9982397556304932,
+      "bertscore_recall": 0.9982397556304932,
+      "bertscore_f1": 0.9982397556304932
     },
     {
       "question_id": "494",
@@ -6058,9 +6315,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.9982398152351379,
-      "bertscore_recall": 0.9982398152351379,
-      "bertscore_f1": 0.9982398152351379
+      "bleu": 0,
+      "bertscore_precision": 0.9982397556304932,
+      "bertscore_recall": 0.9982397556304932,
+      "bertscore_f1": 0.9982397556304932
     },
     {
       "question_id": "495",
@@ -6084,9 +6342,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8651295900344849,
+      "bleu": 0.0,
+      "bertscore_precision": 0.8651294112205505,
       "bertscore_recall": 0.8022747039794922,
-      "bertscore_f1": 0.8325174450874329
+      "bertscore_f1": 0.8325173854827881
     },
     {
       "question_id": "496",
@@ -6107,9 +6366,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.789542555809021,
-      "bertscore_recall": 0.8353355526924133,
-      "bertscore_f1": 0.8117937445640564
+      "bleu": 0.0,
+      "bertscore_precision": 0.7895421385765076,
+      "bertscore_recall": 0.8353351354598999,
+      "bertscore_f1": 0.8117933869361877
     },
     {
       "question_id": "503",
@@ -6130,9 +6390,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7896391153335571,
-      "bertscore_recall": 0.8357221484184265,
-      "bertscore_f1": 0.8120273947715759
+      "bleu": 0.0,
+      "bertscore_precision": 0.7896386384963989,
+      "bertscore_recall": 0.8357216715812683,
+      "bertscore_f1": 0.8120269179344177
     },
     {
       "question_id": "507",
@@ -6153,9 +6414,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7894116640090942,
-      "bertscore_recall": 0.8345513343811035,
-      "bertscore_f1": 0.8113541007041931
+      "bleu": 0.0,
+      "bertscore_precision": 0.789411187171936,
+      "bertscore_recall": 0.8345508575439453,
+      "bertscore_f1": 0.8113536238670349
     },
     {
       "question_id": "512",
@@ -6176,9 +6438,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.75633704662323,
-      "bertscore_recall": 0.697562575340271,
-      "bertscore_f1": 0.7257618308067322
+      "bleu": 0,
+      "bertscore_precision": 0.7563372254371643,
+      "bertscore_recall": 0.6975626349449158,
+      "bertscore_f1": 0.7257619500160217
     },
     {
       "question_id": "513",
@@ -6199,9 +6462,10 @@
       "rouge1": 0.888888888888889,
       "rouge2": 0.8571428571428571,
       "rougeL": 0.888888888888889,
-      "bertscore_precision": 0.9492682218551636,
-      "bertscore_recall": 0.9548343420028687,
-      "bertscore_f1": 0.9520431160926819
+      "bleu": 0,
+      "bertscore_precision": 0.9492683410644531,
+      "bertscore_recall": 0.9548344016075134,
+      "bertscore_f1": 0.9520431756973267
     },
     {
       "question_id": "514",
@@ -6222,9 +6486,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7757905721664429,
-      "bertscore_recall": 0.6995000839233398,
-      "bertscore_f1": 0.7356727123260498
+      "bleu": 0,
+      "bertscore_precision": 0.7757905125617981,
+      "bertscore_recall": 0.6995001435279846,
+      "bertscore_f1": 0.7356727719306946
     },
     {
       "question_id": "515",
@@ -6245,9 +6510,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7880561351776123,
-      "bertscore_recall": 0.6998876333236694,
-      "bertscore_f1": 0.7413596510887146
+      "bleu": 0,
+      "bertscore_precision": 0.7880562543869019,
+      "bertscore_recall": 0.6998875737190247,
+      "bertscore_f1": 0.7413597106933594
     },
     {
       "question_id": "516",
@@ -6268,6 +6534,7 @@
       "rouge1": 0.6666666666666666,
       "rouge2": 0.5,
       "rougeL": 0.6666666666666666,
+      "bleu": 0,
       "bertscore_precision": 0.9535883069038391,
       "bertscore_recall": 0.9535883069038391,
       "bertscore_f1": 0.9535883069038391
@@ -6291,8 +6558,9 @@
       "rouge1": 0.6666666666666666,
       "rouge2": 0.0,
       "rougeL": 0.6666666666666666,
-      "bertscore_precision": 0.8382217288017273,
-      "bertscore_recall": 0.9127602577209473,
+      "bleu": 0,
+      "bertscore_precision": 0.8382216691970825,
+      "bertscore_recall": 0.9127601385116577,
       "bertscore_f1": 0.8739044070243835
     },
     {
@@ -6314,9 +6582,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0,
       "bertscore_precision": 0.7724472284317017,
-      "bertscore_recall": 0.6969482898712158,
-      "bertscore_f1": 0.7327581644058228
+      "bertscore_recall": 0.6969484090805054,
+      "bertscore_f1": 0.7327582240104675
     },
     {
       "question_id": "519",
@@ -6337,9 +6606,10 @@
       "rouge1": 0.8,
       "rouge2": 0.6666666666666666,
       "rougeL": 0.8,
-      "bertscore_precision": 0.9079201221466064,
-      "bertscore_recall": 0.9349582195281982,
-      "bertscore_f1": 0.9212408065795898
+      "bleu": 0,
+      "bertscore_precision": 0.907920241355896,
+      "bertscore_recall": 0.9349583387374878,
+      "bertscore_f1": 0.9212409257888794
     },
     {
       "question_id": "520",
@@ -6360,9 +6630,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7769482731819153,
-      "bertscore_recall": 0.7000760436058044,
-      "bertscore_f1": 0.736511766910553
+      "bleu": 0,
+      "bertscore_precision": 0.7769484519958496,
+      "bertscore_recall": 0.700076162815094,
+      "bertscore_f1": 0.7365118861198425
     },
     {
       "question_id": "521",
@@ -6383,9 +6654,10 @@
       "rouge1": 0.4,
       "rouge2": 0.0,
       "rougeL": 0.4,
-      "bertscore_precision": 0.7824060916900635,
-      "bertscore_recall": 0.8707754611968994,
-      "bertscore_f1": 0.8242289423942566
+      "bleu": 0,
+      "bertscore_precision": 0.7824060320854187,
+      "bertscore_recall": 0.8707754015922546,
+      "bertscore_f1": 0.8242288827896118
     },
     {
       "question_id": "522",
@@ -6406,8 +6678,9 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7505645155906677,
-      "bertscore_recall": 0.6977267861366272,
+      "bleu": 0,
+      "bertscore_precision": 0.750564455986023,
+      "bertscore_recall": 0.697726845741272,
       "bertscore_f1": 0.7231818437576294
     },
     {
@@ -6429,6 +6702,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0,
       "bertscore_precision": 0.7865405678749084,
       "bertscore_recall": 0.6983485221862793,
       "bertscore_f1": 0.7398256063461304
@@ -6452,9 +6726,10 @@
       "rouge1": 0.5,
       "rouge2": 0.33333333333333337,
       "rougeL": 0.5,
-      "bertscore_precision": 0.8557841181755066,
-      "bertscore_recall": 0.9059882760047913,
-      "bertscore_f1": 0.8801708817481995
+      "bleu": 0,
+      "bertscore_precision": 0.8557842373847961,
+      "bertscore_recall": 0.9059883952140808,
+      "bertscore_f1": 0.880171000957489
     },
     {
       "question_id": "525",
@@ -6475,9 +6750,10 @@
       "rouge1": 0.5,
       "rouge2": 0.0,
       "rougeL": 0.5,
+      "bleu": 0,
       "bertscore_precision": 0.8068743348121643,
-      "bertscore_recall": 0.8841907978057861,
-      "bertscore_f1": 0.843765139579773
+      "bertscore_recall": 0.8841909170150757,
+      "bertscore_f1": 0.8437650799751282
     },
     {
       "question_id": "526",
@@ -6498,8 +6774,9 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.655953049659729,
-      "bertscore_recall": 0.6807572841644287,
+      "bleu": 0,
+      "bertscore_precision": 0.6559531688690186,
+      "bertscore_recall": 0.6807572245597839,
       "bertscore_f1": 0.6681250333786011
     },
     {
@@ -6521,9 +6798,10 @@
       "rouge1": 0.6666666666666666,
       "rouge2": 0.0,
       "rougeL": 0.6666666666666666,
-      "bertscore_precision": 0.8833609819412231,
+      "bleu": 0,
+      "bertscore_precision": 0.8833611607551575,
       "bertscore_recall": 0.9161372184753418,
-      "bertscore_f1": 0.8994506001472473
+      "bertscore_f1": 0.8994507193565369
     },
     {
       "question_id": "528",
@@ -6544,6 +6822,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0,
       "bertscore_precision": 0.7865405678749084,
       "bertscore_recall": 0.6983485221862793,
       "bertscore_f1": 0.7398256063461304
@@ -6567,9 +6846,10 @@
       "rouge1": 0.4444444444444444,
       "rouge2": 0.0,
       "rougeL": 0.4444444444444444,
-      "bertscore_precision": 0.8205893039703369,
-      "bertscore_recall": 0.9160975813865662,
-      "bertscore_f1": 0.8657171726226807
+      "bleu": 0,
+      "bertscore_precision": 0.8205892443656921,
+      "bertscore_recall": 0.9160977005958557,
+      "bertscore_f1": 0.8657172322273254
     },
     {
       "question_id": "530",
@@ -6590,9 +6870,10 @@
       "rouge1": 0.4,
       "rouge2": 0.0,
       "rougeL": 0.4,
-      "bertscore_precision": 0.8952656388282776,
-      "bertscore_recall": 0.9144742488861084,
-      "bertscore_f1": 0.9047680497169495
+      "bleu": 0,
+      "bertscore_precision": 0.8952658176422119,
+      "bertscore_recall": 0.9144744277000427,
+      "bertscore_f1": 0.904768168926239
     },
     {
       "question_id": "531",
@@ -6613,9 +6894,10 @@
       "rouge1": 0.6666666666666666,
       "rouge2": 0.0,
       "rougeL": 0.6666666666666666,
-      "bertscore_precision": 0.9393516778945923,
+      "bleu": 0,
+      "bertscore_precision": 0.9393517374992371,
       "bertscore_recall": 0.9357810616493225,
-      "bertscore_f1": 0.9375629425048828
+      "bertscore_f1": 0.9375630021095276
     },
     {
       "question_id": "532",
@@ -6636,9 +6918,10 @@
       "rouge1": 0.0017985611510791368,
       "rouge2": 0.0,
       "rougeL": 0.0017985611510791368,
-      "bertscore_precision": 0.6551893353462219,
-      "bertscore_recall": 0.889768123626709,
-      "bertscore_f1": 0.7546700835227966
+      "bleu": 8.757841317953923e-05,
+      "bertscore_precision": 0.6551893949508667,
+      "bertscore_recall": 0.8897683024406433,
+      "bertscore_f1": 0.7546702027320862
     },
     {
       "question_id": "533",
@@ -6659,7 +6942,8 @@
       "rouge1": 0.6666666666666665,
       "rouge2": 0.28571428571428575,
       "rougeL": 0.6666666666666665,
-      "bertscore_precision": 0.9383722543716431,
+      "bleu": 0,
+      "bertscore_precision": 0.9383723139762878,
       "bertscore_recall": 0.9457101225852966,
       "bertscore_f1": 0.9420269727706909
     },
@@ -6682,8 +6966,9 @@
       "rouge1": 0.6666666666666666,
       "rouge2": 0.0,
       "rougeL": 0.4444444444444444,
-      "bertscore_precision": 0.9040945768356323,
-      "bertscore_recall": 0.9327136874198914,
+      "bleu": 0,
+      "bertscore_precision": 0.9040945172309875,
+      "bertscore_recall": 0.9327137470245361,
       "bertscore_f1": 0.9181811809539795
     },
     {
@@ -6705,7 +6990,8 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7617748975753784,
+      "bleu": 0,
+      "bertscore_precision": 0.761775016784668,
       "bertscore_recall": 0.6982866525650024,
       "bertscore_f1": 0.7286504507064819
     },
@@ -6728,8 +7014,9 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7818921804428101,
-      "bertscore_recall": 0.700009286403656,
+      "bleu": 0,
+      "bertscore_precision": 0.7818921208381653,
+      "bertscore_recall": 0.7000093460083008,
       "bertscore_f1": 0.738688588142395
     },
     {
@@ -6751,8 +7038,9 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7655467391014099,
-      "bertscore_recall": 0.69695645570755,
+      "bleu": 0,
+      "bertscore_precision": 0.7655466198921204,
+      "bertscore_recall": 0.6969565749168396,
       "bertscore_f1": 0.7296432256698608
     },
     {
@@ -6774,9 +7062,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7745779752731323,
+      "bleu": 0,
+      "bertscore_precision": 0.7745780944824219,
       "bertscore_recall": 0.6973322033882141,
-      "bertscore_f1": 0.7339281439781189
+      "bertscore_f1": 0.7339282631874084
     },
     {
       "question_id": "539",
@@ -6797,9 +7086,10 @@
       "rouge1": 1.0,
       "rouge2": 1.0,
       "rougeL": 1.0,
-      "bertscore_precision": 0.9640858769416809,
-      "bertscore_recall": 0.9640858769416809,
-      "bertscore_f1": 0.9640858769416809
+      "bleu": 0,
+      "bertscore_precision": 0.9640859365463257,
+      "bertscore_recall": 0.9640859365463257,
+      "bertscore_f1": 0.9640859365463257
     },
     {
       "question_id": "540",
@@ -6820,9 +7110,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.740805983543396,
-      "bertscore_recall": 0.6964554190635681,
-      "bertscore_f1": 0.717946469783783
+      "bleu": 0,
+      "bertscore_precision": 0.7408061027526855,
+      "bertscore_recall": 0.6964555382728577,
+      "bertscore_f1": 0.7179465889930725
     },
     {
       "question_id": "541",
@@ -6843,9 +7134,10 @@
       "rouge1": 0.8571428571428571,
       "rouge2": 0.0,
       "rougeL": 0.5714285714285715,
-      "bertscore_precision": 0.9263914227485657,
+      "bleu": 0,
+      "bertscore_precision": 0.9263915419578552,
       "bertscore_recall": 0.9382701516151428,
-      "bertscore_f1": 0.9322929382324219
+      "bertscore_f1": 0.9322929978370667
     },
     {
       "question_id": "542",
@@ -6866,9 +7158,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7858715653419495,
-      "bertscore_recall": 0.6995376348495483,
-      "bertscore_f1": 0.7401956915855408
+      "bleu": 0,
+      "bertscore_precision": 0.7858716249465942,
+      "bertscore_recall": 0.6995377540588379,
+      "bertscore_f1": 0.7401957511901855
     },
     {
       "question_id": "543",
@@ -6889,9 +7182,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0,
       "bertscore_precision": 0.7623125314712524,
-      "bertscore_recall": 0.6989657878875732,
-      "bertscore_f1": 0.7292661070823669
+      "bertscore_recall": 0.6989656686782837,
+      "bertscore_f1": 0.7292660474777222
     },
     {
       "question_id": "544",
@@ -6912,7 +7206,8 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7617748975753784,
+      "bleu": 0,
+      "bertscore_precision": 0.761775016784668,
       "bertscore_recall": 0.6982866525650024,
       "bertscore_f1": 0.7286504507064819
     },
@@ -6935,8 +7230,9 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7582995295524597,
-      "bertscore_recall": 0.6965981721878052,
+      "bleu": 0,
+      "bertscore_precision": 0.7582995891571045,
+      "bertscore_recall": 0.69659823179245,
       "bertscore_f1": 0.7261404991149902
     },
     {
@@ -6958,8 +7254,9 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8136342167854309,
-      "bertscore_recall": 0.6952626705169678,
+      "bleu": 0,
+      "bertscore_precision": 0.8136341571807861,
+      "bertscore_recall": 0.6952627301216125,
       "bertscore_f1": 0.7498053908348083
     },
     {
@@ -6981,9 +7278,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0,
       "bertscore_precision": 0.7623125314712524,
-      "bertscore_recall": 0.6989657878875732,
-      "bertscore_f1": 0.7292661070823669
+      "bertscore_recall": 0.6989656686782837,
+      "bertscore_f1": 0.7292660474777222
     },
     {
       "question_id": "548",
@@ -7004,9 +7302,10 @@
       "rouge1": 0.5714285714285715,
       "rouge2": 0.4,
       "rougeL": 0.5714285714285715,
-      "bertscore_precision": 0.8589469194412231,
-      "bertscore_recall": 0.9103249907493591,
-      "bertscore_f1": 0.8838899731636047
+      "bleu": 0,
+      "bertscore_precision": 0.8589469790458679,
+      "bertscore_recall": 0.9103250503540039,
+      "bertscore_f1": 0.8838900327682495
     },
     {
       "question_id": "549",
@@ -7027,9 +7326,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0,
       "bertscore_precision": 0.7623125314712524,
-      "bertscore_recall": 0.6989657878875732,
-      "bertscore_f1": 0.7292661070823669
+      "bertscore_recall": 0.6989656686782837,
+      "bertscore_f1": 0.7292660474777222
     },
     {
       "question_id": "550",
@@ -7050,9 +7350,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7665585875511169,
+      "bleu": 0,
+      "bertscore_precision": 0.7665586471557617,
       "bertscore_recall": 0.6984037756919861,
-      "bertscore_f1": 0.7308958172798157
+      "bertscore_f1": 0.7308957576751709
     },
     {
       "question_id": "551",
@@ -7073,7 +7374,8 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7640914916992188,
+      "bleu": 0,
+      "bertscore_precision": 0.764091432094574,
       "bertscore_recall": 0.6964730620384216,
       "bertscore_f1": 0.728717029094696
     },
@@ -7096,6 +7398,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0,
       "bertscore_precision": 0.7690539956092834,
       "bertscore_recall": 0.6979880928993225,
       "bertscore_f1": 0.7317997813224792
@@ -7119,8 +7422,9 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0,
       "bertscore_precision": 0.7727437019348145,
-      "bertscore_recall": 0.6969760060310364,
+      "bertscore_recall": 0.6969760656356812,
       "bertscore_f1": 0.7329068779945374
     },
     {
@@ -7142,9 +7446,10 @@
       "rouge1": 1.0,
       "rouge2": 1.0,
       "rougeL": 1.0,
-      "bertscore_precision": 0.9641134738922119,
-      "bertscore_recall": 0.9641134738922119,
-      "bertscore_f1": 0.9641134738922119
+      "bleu": 0,
+      "bertscore_precision": 0.9641135931015015,
+      "bertscore_recall": 0.9641135931015015,
+      "bertscore_f1": 0.9641135931015015
     },
     {
       "question_id": "555",
@@ -7165,9 +7470,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7710097432136536,
-      "bertscore_recall": 0.6992391347885132,
-      "bertscore_f1": 0.733372688293457
+      "bleu": 0,
+      "bertscore_precision": 0.7710098028182983,
+      "bertscore_recall": 0.699239194393158,
+      "bertscore_f1": 0.7333727478981018
     },
     {
       "question_id": "556",
@@ -7188,9 +7494,10 @@
       "rouge1": 0.6666666666666666,
       "rouge2": 0.0,
       "rougeL": 0.6666666666666666,
+      "bleu": 0,
       "bertscore_precision": 0.8330975770950317,
-      "bertscore_recall": 0.9154921770095825,
-      "bertscore_f1": 0.8723536133766174
+      "bertscore_recall": 0.9154922962188721,
+      "bertscore_f1": 0.8723536729812622
     },
     {
       "question_id": "557",
@@ -7211,9 +7518,10 @@
       "rouge1": 0.5714285714285715,
       "rouge2": 0.4,
       "rougeL": 0.5714285714285715,
-      "bertscore_precision": 0.9409418702125549,
-      "bertscore_recall": 0.9139883518218994,
-      "bertscore_f1": 0.9272693395614624
+      "bleu": 0.1477219991186121,
+      "bertscore_precision": 0.9409419298171997,
+      "bertscore_recall": 0.913988471031189,
+      "bertscore_f1": 0.9272693991661072
     },
     {
       "question_id": "558",
@@ -7234,9 +7542,10 @@
       "rouge1": 0.6666666666666666,
       "rouge2": 0.4,
       "rougeL": 0.6666666666666666,
-      "bertscore_precision": 0.9413193464279175,
-      "bertscore_recall": 0.9728474617004395,
-      "bertscore_f1": 0.9568237662315369
+      "bleu": 0.2214250071345737,
+      "bertscore_precision": 0.9413194060325623,
+      "bertscore_recall": 0.9728475213050842,
+      "bertscore_f1": 0.9568238258361816
     },
     {
       "question_id": "559",
@@ -7257,7 +7566,8 @@
       "rouge1": 0.4,
       "rouge2": 0.0,
       "rougeL": 0.4,
-      "bertscore_precision": 0.9055315852165222,
+      "bleu": 0.07596458453655348,
+      "bertscore_precision": 0.905531644821167,
       "bertscore_recall": 0.9063515067100525,
       "bertscore_f1": 0.905941367149353
     },
@@ -7280,9 +7590,10 @@
       "rouge1": 0.25,
       "rouge2": 0.0,
       "rougeL": 0.25,
+      "bleu": 0.1122444464861146,
       "bertscore_precision": 0.9263581037521362,
-      "bertscore_recall": 0.910094141960144,
-      "bertscore_f1": 0.9181540608406067
+      "bertscore_recall": 0.9100942015647888,
+      "bertscore_f1": 0.9181541800498962
     },
     {
       "question_id": "561",
@@ -7303,6 +7614,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
+      "bleu": 0.056122223243057295,
       "bertscore_precision": 0.9076765775680542,
       "bertscore_recall": 0.9315188527107239,
       "bertscore_f1": 0.9194431900978088
@@ -7326,9 +7638,10 @@
       "rouge1": 0.23076923076923075,
       "rouge2": 0.0,
       "rougeL": 0.23076923076923075,
-      "bertscore_precision": 0.8656216859817505,
-      "bertscore_recall": 0.9439104199409485,
-      "bertscore_f1": 0.9030724763870239
+      "bleu": 0.032709344708772174,
+      "bertscore_precision": 0.8656217455863953,
+      "bertscore_recall": 0.9439104795455933,
+      "bertscore_f1": 0.9030725359916687
     },
     {
       "question_id": "563",
@@ -7349,6 +7662,7 @@
       "rouge1": 0.16666666666666666,
       "rouge2": 0.0,
       "rougeL": 0.16666666666666666,
+      "bleu": 0.0169861974906263,
       "bertscore_precision": 0.8777186870574951,
       "bertscore_recall": 0.8828874230384827,
       "bertscore_f1": 0.8802955150604248
@@ -7372,6 +7686,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
+      "bleu": 0.056122223243057295,
       "bertscore_precision": 0.9077838659286499,
       "bertscore_recall": 0.9360951781272888,
       "bertscore_f1": 0.9217221736907959
@@ -7395,8 +7710,9 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.8181854486465454,
-      "bertscore_recall": 0.8854883909225464,
+      "bleu": 0.012673718536830811,
+      "bertscore_precision": 0.8181855082511902,
+      "bertscore_recall": 0.8854885101318359,
       "bertscore_f1": 0.8505075573921204
     },
     {
@@ -7418,8 +7734,9 @@
       "rouge1": 0.5,
       "rouge2": 0.3333333333333333,
       "rougeL": 0.5,
+      "bleu": 0.1122444464861146,
       "bertscore_precision": 0.9284404516220093,
-      "bertscore_recall": 0.9115092754364014,
+      "bertscore_recall": 0.9115092158317566,
       "bertscore_f1": 0.9198969602584839
     },
     {
@@ -7441,9 +7758,10 @@
       "rouge1": 0.28571428571428575,
       "rouge2": 0.0,
       "rougeL": 0.28571428571428575,
-      "bertscore_precision": 0.9361335635185242,
-      "bertscore_recall": 0.9101947546005249,
-      "bertscore_f1": 0.9229819774627686
+      "bleu": 0.1477219991186121,
+      "bertscore_precision": 0.9361335039138794,
+      "bertscore_recall": 0.9101946949958801,
+      "bertscore_f1": 0.9229819178581238
     },
     {
       "question_id": "568",
@@ -7464,8 +7782,9 @@
       "rouge1": 0.5,
       "rouge2": 0.3333333333333333,
       "rougeL": 0.5,
+      "bleu": 0.1122444464861146,
       "bertscore_precision": 0.9284404516220093,
-      "bertscore_recall": 0.9115092754364014,
+      "bertscore_recall": 0.9115092158317566,
       "bertscore_f1": 0.9198969602584839
     },
     {
@@ -7487,9 +7806,10 @@
       "rouge1": 0.36363636363636365,
       "rouge2": 0.2222222222222222,
       "rougeL": 0.36363636363636365,
+      "bleu": 0.06541868941754436,
       "bertscore_precision": 0.8901832103729248,
-      "bertscore_recall": 0.9020764231681824,
-      "bertscore_f1": 0.8960903286933899
+      "bertscore_recall": 0.9020766019821167,
+      "bertscore_f1": 0.8960904479026794
     },
     {
       "question_id": "570",
@@ -7510,9 +7830,10 @@
       "rouge1": 0.28571428571428575,
       "rouge2": 0.0,
       "rougeL": 0.28571428571428575,
-      "bertscore_precision": 0.9361335635185242,
-      "bertscore_recall": 0.9101947546005249,
-      "bertscore_f1": 0.9229819774627686
+      "bleu": 0.1477219991186121,
+      "bertscore_precision": 0.9361335039138794,
+      "bertscore_recall": 0.9101946949958801,
+      "bertscore_f1": 0.9229819178581238
     },
     {
       "question_id": "571",
@@ -7533,9 +7854,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.8424821496009827,
-      "bertscore_recall": 0.872337818145752,
-      "bertscore_f1": 0.8571500778198242
+      "bleu": 0.0169861974906263,
+      "bertscore_precision": 0.8424822092056274,
+      "bertscore_recall": 0.8723378777503967,
+      "bertscore_f1": 0.857150137424469
     },
     {
       "question_id": "572",
@@ -7556,9 +7878,10 @@
       "rouge1": 0.5714285714285715,
       "rouge2": 0.4,
       "rougeL": 0.5714285714285715,
-      "bertscore_precision": 0.941534161567688,
-      "bertscore_recall": 0.9145179986953735,
-      "bertscore_f1": 0.9278295040130615
+      "bleu": 0.1477219991186121,
+      "bertscore_precision": 0.9415342211723328,
+      "bertscore_recall": 0.9145180583000183,
+      "bertscore_f1": 0.9278295636177063
     },
     {
       "question_id": "573",
@@ -7579,6 +7902,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
+      "bleu": 0.04740604259878138,
       "bertscore_precision": 0.8989244699478149,
       "bertscore_recall": 0.925112783908844,
       "bertscore_f1": 0.9118306040763855
@@ -7602,8 +7926,9 @@
       "rouge1": 0.4444444444444445,
       "rouge2": 0.28571428571428575,
       "rougeL": 0.4444444444444445,
-      "bertscore_precision": 0.9158844947814941,
-      "bertscore_recall": 0.9087843894958496,
+      "bleu": 0.09058752341587764,
+      "bertscore_precision": 0.9158846139907837,
+      "bertscore_recall": 0.9087844491004944,
       "bertscore_f1": 0.9123206734657288
     },
     {
@@ -7625,7 +7950,8 @@
       "rouge1": 0.4,
       "rouge2": 0.0,
       "rougeL": 0.4,
-      "bertscore_precision": 0.9055315852165222,
+      "bleu": 0.07596458453655348,
+      "bertscore_precision": 0.905531644821167,
       "bertscore_recall": 0.9063515067100525,
       "bertscore_f1": 0.905941367149353
     },
@@ -7648,9 +7974,10 @@
       "rouge1": 0.003088008234688626,
       "rouge2": 0.0,
       "rougeL": 0.003088008234688626,
-      "bertscore_precision": 0.7151796221733093,
-      "bertscore_recall": 0.8438812494277954,
-      "bertscore_f1": 0.7742182016372681
+      "bleu": 0.0002011472625551105,
+      "bertscore_precision": 0.7151800394058228,
+      "bertscore_recall": 0.8438810706138611,
+      "bertscore_f1": 0.7742184400558472
     },
     {
       "question_id": "577",
@@ -7671,7 +7998,8 @@
       "rouge1": 0.054054054054054064,
       "rouge2": 0.0,
       "rougeL": 0.054054054054054064,
-      "bertscore_precision": 0.8485865592956543,
+      "bleu": 0.01618861356572822,
+      "bertscore_precision": 0.8485866189002991,
       "bertscore_recall": 0.8896240592002869,
       "bertscore_f1": 0.8686208724975586
     },
@@ -7694,9 +8022,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.8426563143730164,
+      "bleu": 0.018798317647335087,
+      "bertscore_precision": 0.8426563739776611,
       "bertscore_recall": 0.8921825885772705,
-      "bertscore_f1": 0.8667124509811401
+      "bertscore_f1": 0.8667125105857849
     },
     {
       "question_id": "579",
@@ -7717,7 +8046,8 @@
       "rouge1": 0.4444444444444445,
       "rouge2": 0.0,
       "rougeL": 0.4444444444444445,
-      "bertscore_precision": 0.9172384142875671,
+      "bleu": 0.13545994273378145,
+      "bertscore_precision": 0.9172385931015015,
       "bertscore_recall": 0.9082391858100891,
       "bertscore_f1": 0.9127166271209717
     },
@@ -7740,9 +8070,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.861522376537323,
-      "bertscore_recall": 0.8781974911689758,
-      "bertscore_f1": 0.8697800040245056
+      "bleu": 0.025098621243978974,
+      "bertscore_precision": 0.8615224361419678,
+      "bertscore_recall": 0.8781975507736206,
+      "bertscore_f1": 0.8697801232337952
     },
     {
       "question_id": "581",
@@ -7763,7 +8094,8 @@
       "rouge1": 0.25,
       "rouge2": 0.0,
       "rougeL": 0.25,
-      "bertscore_precision": 0.9221073985099792,
+      "bleu": 0.1122444464861146,
+      "bertscore_precision": 0.9221072793006897,
       "bertscore_recall": 0.9088964462280273,
       "bertscore_f1": 0.9154542088508606
     },
@@ -7786,7 +8118,8 @@
       "rouge1": 0.5714285714285715,
       "rouge2": 0.4,
       "rougeL": 0.5714285714285715,
-      "bertscore_precision": 0.9421661496162415,
+      "bleu": 0.1477219991186121,
+      "bertscore_precision": 0.9421660900115967,
       "bertscore_recall": 0.9139918088912964,
       "bertscore_f1": 0.9278651475906372
     },
@@ -7809,7 +8142,8 @@
       "rouge1": 0.25,
       "rouge2": 0.0,
       "rougeL": 0.25,
-      "bertscore_precision": 0.9228072166442871,
+      "bleu": 0.1122444464861146,
+      "bertscore_precision": 0.9228072762489319,
       "bertscore_recall": 0.9091202020645142,
       "bertscore_f1": 0.9159126281738281
     },
@@ -7832,8 +8166,9 @@
       "rouge1": 0.28571428571428575,
       "rouge2": 0.0,
       "rougeL": 0.28571428571428575,
-      "bertscore_precision": 0.9361098408699036,
-      "bertscore_recall": 0.9110192060470581,
+      "bleu": 0.1477219991186121,
+      "bertscore_precision": 0.9361097812652588,
+      "bertscore_recall": 0.9110192656517029,
       "bertscore_f1": 0.9233940839767456
     },
     {
@@ -7855,9 +8190,10 @@
       "rouge1": 0.4,
       "rouge2": 0.25,
       "rougeL": 0.4,
-      "bertscore_precision": 0.9053986668586731,
-      "bertscore_recall": 0.9054213762283325,
-      "bertscore_f1": 0.9054099917411804
+      "bleu": 0.07596458453655348,
+      "bertscore_precision": 0.9053987264633179,
+      "bertscore_recall": 0.9054214358329773,
+      "bertscore_f1": 0.90541011095047
     },
     {
       "question_id": "586",
@@ -7878,9 +8214,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.9012404084205627,
+      "bleu": 0.04740604259878138,
+      "bertscore_precision": 0.9012405276298523,
       "bertscore_recall": 0.9248228073120117,
-      "bertscore_f1": 0.9128793478012085
+      "bertscore_f1": 0.9128794074058533
     },
     {
       "question_id": "588",
@@ -7901,9 +8238,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.789542555809021,
-      "bertscore_recall": 0.8353355526924133,
-      "bertscore_f1": 0.8117937445640564
+      "bleu": 0.0,
+      "bertscore_precision": 0.7895421385765076,
+      "bertscore_recall": 0.8353351354598999,
+      "bertscore_f1": 0.8117933869361877
     },
     {
       "question_id": "589",
@@ -7924,9 +8262,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "590",
@@ -7947,9 +8286,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.789542555809021,
-      "bertscore_recall": 0.8353355526924133,
-      "bertscore_f1": 0.8117937445640564
+      "bleu": 0.0,
+      "bertscore_precision": 0.7895421385765076,
+      "bertscore_recall": 0.8353351354598999,
+      "bertscore_f1": 0.8117933869361877
     },
     {
       "question_id": "591",
@@ -7970,9 +8310,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "592",
@@ -7993,9 +8334,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7900843620300293,
-      "bertscore_recall": 0.8360229730606079,
-      "bertscore_f1": 0.8124047517776489
+      "bleu": 0.0,
+      "bertscore_precision": 0.7900838851928711,
+      "bertscore_recall": 0.8360226154327393,
+      "bertscore_f1": 0.8124043345451355
     },
     {
       "question_id": "593",
@@ -8016,9 +8358,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "594",
@@ -8039,9 +8382,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "595",
@@ -8062,9 +8406,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "596",
@@ -8085,9 +8430,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "597",
@@ -8108,9 +8454,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "598",
@@ -8131,9 +8478,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "599",
@@ -8154,9 +8502,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7896391153335571,
-      "bertscore_recall": 0.8357221484184265,
-      "bertscore_f1": 0.8120273947715759
+      "bleu": 0.0,
+      "bertscore_precision": 0.7896386384963989,
+      "bertscore_recall": 0.8357216715812683,
+      "bertscore_f1": 0.8120269179344177
     },
     {
       "question_id": "600",
@@ -8177,9 +8526,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "601",
@@ -8200,9 +8550,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7900843620300293,
-      "bertscore_recall": 0.8360229730606079,
-      "bertscore_f1": 0.8124047517776489
+      "bleu": 0.0,
+      "bertscore_precision": 0.7900838851928711,
+      "bertscore_recall": 0.8360226154327393,
+      "bertscore_f1": 0.8124043345451355
     },
     {
       "question_id": "602",
@@ -8223,9 +8574,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "603",
@@ -8246,9 +8598,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "604",
@@ -8269,9 +8622,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "605",
@@ -8292,9 +8646,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.789542555809021,
-      "bertscore_recall": 0.8353355526924133,
-      "bertscore_f1": 0.8117937445640564
+      "bleu": 0.0,
+      "bertscore_precision": 0.7895421385765076,
+      "bertscore_recall": 0.8353351354598999,
+      "bertscore_f1": 0.8117933869361877
     },
     {
       "question_id": "606",
@@ -8315,9 +8670,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.789542555809021,
-      "bertscore_recall": 0.8353355526924133,
-      "bertscore_f1": 0.8117937445640564
+      "bleu": 0.0,
+      "bertscore_precision": 0.7895421385765076,
+      "bertscore_recall": 0.8353351354598999,
+      "bertscore_f1": 0.8117933869361877
     },
     {
       "question_id": "607",
@@ -8338,9 +8694,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "608",
@@ -8361,9 +8718,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7900843620300293,
-      "bertscore_recall": 0.8360229730606079,
-      "bertscore_f1": 0.8124047517776489
+      "bleu": 0.0,
+      "bertscore_precision": 0.7900838851928711,
+      "bertscore_recall": 0.8360226154327393,
+      "bertscore_f1": 0.8124043345451355
     },
     {
       "question_id": "609",
@@ -8384,9 +8742,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "610",
@@ -8407,9 +8766,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7896391153335571,
-      "bertscore_recall": 0.8357221484184265,
-      "bertscore_f1": 0.8120273947715759
+      "bleu": 0.0,
+      "bertscore_precision": 0.7896386384963989,
+      "bertscore_recall": 0.8357216715812683,
+      "bertscore_f1": 0.8120269179344177
     },
     {
       "question_id": "611",
@@ -8430,9 +8790,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "612",
@@ -8453,9 +8814,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "613",
@@ -8476,9 +8838,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "614",
@@ -8499,9 +8862,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "615",
@@ -8522,9 +8886,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "616",
@@ -8545,9 +8910,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "617",
@@ -8568,9 +8934,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "618",
@@ -8591,9 +8958,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "619",
@@ -8614,9 +8982,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7900843620300293,
-      "bertscore_recall": 0.8360229730606079,
-      "bertscore_f1": 0.8124047517776489
+      "bleu": 0.0,
+      "bertscore_precision": 0.7900838851928711,
+      "bertscore_recall": 0.8360226154327393,
+      "bertscore_f1": 0.8124043345451355
     },
     {
       "question_id": "620",
@@ -8637,9 +9006,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "621",
@@ -8660,9 +9030,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "622",
@@ -8683,9 +9054,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "623",
@@ -8706,9 +9078,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7896391153335571,
-      "bertscore_recall": 0.8357221484184265,
-      "bertscore_f1": 0.8120273947715759
+      "bleu": 0.0,
+      "bertscore_precision": 0.7896386384963989,
+      "bertscore_recall": 0.8357216715812683,
+      "bertscore_f1": 0.8120269179344177
     },
     {
       "question_id": "624",
@@ -8729,9 +9102,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "625",
@@ -8752,9 +9126,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.789542555809021,
-      "bertscore_recall": 0.8353355526924133,
-      "bertscore_f1": 0.8117937445640564
+      "bleu": 0.0,
+      "bertscore_precision": 0.7895421385765076,
+      "bertscore_recall": 0.8353351354598999,
+      "bertscore_f1": 0.8117933869361877
     },
     {
       "question_id": "626",
@@ -8775,9 +9150,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "627",
@@ -8798,9 +9174,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "628",
@@ -8821,9 +9198,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "629",
@@ -8844,9 +9222,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "630",
@@ -8867,9 +9246,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "631",
@@ -8890,9 +9270,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.789542555809021,
-      "bertscore_recall": 0.8353355526924133,
-      "bertscore_f1": 0.8117937445640564
+      "bleu": 0.0,
+      "bertscore_precision": 0.7895421385765076,
+      "bertscore_recall": 0.8353351354598999,
+      "bertscore_f1": 0.8117933869361877
     },
     {
       "question_id": "632",
@@ -8913,9 +9294,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7906025648117065,
-      "bertscore_recall": 0.8364513516426086,
-      "bertscore_f1": 0.8128809332847595
+      "bleu": 0.0,
+      "bertscore_precision": 0.7906020879745483,
+      "bertscore_recall": 0.8364509344100952,
+      "bertscore_f1": 0.8128805756568909
     },
     {
       "question_id": "634",
@@ -8936,9 +9318,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0,
       "bertscore_precision": 0.7673847079277039,
-      "bertscore_recall": 0.6763297915458679,
-      "bertscore_f1": 0.7189857959747314
+      "bertscore_recall": 0.6763298511505127,
+      "bertscore_f1": 0.7189858555793762
     },
     {
       "question_id": "635",
@@ -8959,8 +9342,9 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7867017388343811,
-      "bertscore_recall": 0.6549525260925293,
+      "bleu": 0.0,
+      "bertscore_precision": 0.7867015600204468,
+      "bertscore_recall": 0.6549526453018188,
       "bertscore_f1": 0.7148070335388184
     },
     {
@@ -8982,8 +9366,9 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7867017388343811,
-      "bertscore_recall": 0.6549525260925293,
+      "bleu": 0.0,
+      "bertscore_precision": 0.7867015600204468,
+      "bertscore_recall": 0.6549526453018188,
       "bertscore_f1": 0.7148070335388184
     },
     {
@@ -9005,9 +9390,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8031302094459534,
+      "bleu": 0.0,
+      "bertscore_precision": 0.8031299710273743,
       "bertscore_recall": 0.7927390336990356,
-      "bertscore_f1": 0.7979007959365845
+      "bertscore_f1": 0.7979006767272949
     },
     {
       "question_id": "638",
@@ -9028,9 +9414,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7091031074523926,
-      "bertscore_recall": 0.6687007546424866,
-      "bertscore_f1": 0.6883095502853394
+      "bleu": 0,
+      "bertscore_precision": 0.7091031670570374,
+      "bertscore_recall": 0.6687008738517761,
+      "bertscore_f1": 0.6883096098899841
     },
     {
       "question_id": "645",
@@ -9051,9 +9438,10 @@
       "rouge1": 1.0,
       "rouge2": 1.0,
       "rougeL": 1.0,
+      "bleu": 0.012930512089935809,
       "bertscore_precision": 0.9683150053024292,
-      "bertscore_recall": 0.969902515411377,
-      "bertscore_f1": 0.9691081047058105
+      "bertscore_recall": 0.9699026346206665,
+      "bertscore_f1": 0.9691081643104553
     },
     {
       "question_id": "646",
@@ -9074,9 +9462,10 @@
       "rouge1": 0.7272727272727272,
       "rouge2": 0.4444444444444445,
       "rougeL": 0.7272727272727272,
-      "bertscore_precision": 0.9195393323898315,
+      "bleu": 0.05795053470733952,
+      "bertscore_precision": 0.9195394515991211,
       "bertscore_recall": 0.9314559698104858,
-      "bertscore_f1": 0.9254592657089233
+      "bertscore_f1": 0.9254593849182129
     },
     {
       "question_id": "647",
@@ -9097,9 +9486,10 @@
       "rouge1": 0.1702127659574468,
       "rouge2": 0.08888888888888888,
       "rougeL": 0.1702127659574468,
-      "bertscore_precision": 0.790435254573822,
-      "bertscore_recall": 0.8931978344917297,
-      "bertscore_f1": 0.8386804461479187
+      "bleu": 0.05795053470733952,
+      "bertscore_precision": 0.7904353141784668,
+      "bertscore_recall": 0.8931980133056641,
+      "bertscore_f1": 0.8386805057525635
     },
     {
       "question_id": "648",
@@ -9120,6 +9510,7 @@
       "rouge1": 1.0,
       "rouge2": 1.0,
       "rougeL": 1.0,
+      "bleu": 0.0351487760467425,
       "bertscore_precision": 0.9774156212806702,
       "bertscore_recall": 0.9774156212806702,
       "bertscore_f1": 0.9774156212806702
@@ -9143,9 +9534,10 @@
       "rouge1": 0.7272727272727272,
       "rouge2": 0.4444444444444445,
       "rougeL": 0.7272727272727272,
-      "bertscore_precision": 0.9220939874649048,
-      "bertscore_recall": 0.9358888864517212,
-      "bertscore_f1": 0.9289402365684509
+      "bleu": 0.05795053470733952,
+      "bertscore_precision": 0.9220941066741943,
+      "bertscore_recall": 0.9358888268470764,
+      "bertscore_f1": 0.9289402961730957
     },
     {
       "question_id": "650",
@@ -9166,9 +9558,10 @@
       "rouge1": 0.6,
       "rouge2": 0.4444444444444444,
       "rougeL": 0.6,
-      "bertscore_precision": 0.8840367794036865,
+      "bleu": 0.0351487760467425,
+      "bertscore_precision": 0.8840368390083313,
       "bertscore_recall": 0.9317164421081543,
-      "bertscore_f1": 0.9072505831718445
+      "bertscore_f1": 0.9072506427764893
     },
     {
       "question_id": "651",
@@ -9189,6 +9582,7 @@
       "rouge1": 1.0,
       "rouge2": 1.0,
       "rougeL": 1.0,
+      "bleu": 0.0351487760467425,
       "bertscore_precision": 0.9769973158836365,
       "bertscore_recall": 0.977599561214447,
       "bertscore_f1": 0.977298378944397
@@ -9212,9 +9606,10 @@
       "rouge1": 0.8571428571428571,
       "rouge2": 0.5,
       "rougeL": 0.8571428571428571,
-      "bertscore_precision": 0.9531415104866028,
-      "bertscore_recall": 0.9663630127906799,
-      "bertscore_f1": 0.959706723690033
+      "bleu": 0.0351487760467425,
+      "bertscore_precision": 0.9531415700912476,
+      "bertscore_recall": 0.9663630723953247,
+      "bertscore_f1": 0.9597067832946777
     },
     {
       "question_id": "653",
@@ -9235,6 +9630,7 @@
       "rouge1": 1.0,
       "rouge2": 1.0,
       "rougeL": 1.0,
+      "bleu": 0.0351487760467425,
       "bertscore_precision": 0.9756594896316528,
       "bertscore_recall": 0.9756594896316528,
       "bertscore_f1": 0.9756594896316528
@@ -9258,9 +9654,10 @@
       "rouge1": 0.6666666666666666,
       "rouge2": 0.30769230769230765,
       "rougeL": 0.6666666666666666,
-      "bertscore_precision": 0.8837231993675232,
-      "bertscore_recall": 0.9235373735427856,
-      "bertscore_f1": 0.9031917452812195
+      "bleu": 0.05795053470733952,
+      "bertscore_precision": 0.8837233185768127,
+      "bertscore_recall": 0.9235374927520752,
+      "bertscore_f1": 0.903191864490509
     },
     {
       "question_id": "661",
@@ -9284,9 +9681,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8035336136817932,
-      "bertscore_recall": 0.7214171886444092,
-      "bertscore_f1": 0.7602644562721252
+      "bleu": 0.0,
+      "bertscore_precision": 0.8035333156585693,
+      "bertscore_recall": 0.7214171290397644,
+      "bertscore_f1": 0.7602642774581909
     },
     {
       "question_id": "662",
@@ -9310,6 +9708,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
+      "bleu": 0.0,
       "bertscore_precision": 0.8580666184425354,
       "bertscore_recall": 0.7519745826721191,
       "bertscore_f1": 0.8015252351760864
@@ -9336,9 +9735,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8615374565124512,
-      "bertscore_recall": 0.7906772494316101,
-      "bertscore_f1": 0.8245877623558044
+      "bleu": 0.0,
+      "bertscore_precision": 0.861537516117096,
+      "bertscore_recall": 0.7906774282455444,
+      "bertscore_f1": 0.824587881565094
     },
     {
       "question_id": "666",
@@ -9359,9 +9759,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.9570227861404419,
-      "bertscore_recall": 0.9570227861404419,
-      "bertscore_f1": 0.9570227861404419
+      "bleu": 0,
+      "bertscore_precision": 0.9570226669311523,
+      "bertscore_recall": 0.9570226669311523,
+      "bertscore_f1": 0.9570226669311523
     },
     {
       "question_id": "668",
@@ -9382,9 +9783,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.990591287612915,
-      "bertscore_recall": 0.990591287612915,
-      "bertscore_f1": 0.990591287612915
+      "bleu": 0,
+      "bertscore_precision": 0.9905913472175598,
+      "bertscore_recall": 0.9905913472175598,
+      "bertscore_f1": 0.9905913472175598
     },
     {
       "question_id": "669",
@@ -9405,6 +9807,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
+      "bleu": 0,
       "bertscore_precision": 0.9565707445144653,
       "bertscore_recall": 0.9565707445144653,
       "bertscore_f1": 0.9565708041191101
@@ -9428,9 +9831,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.9564735889434814,
-      "bertscore_recall": 0.9564735889434814,
-      "bertscore_f1": 0.9564735889434814
+      "bleu": 0,
+      "bertscore_precision": 0.9564734101295471,
+      "bertscore_recall": 0.9564734101295471,
+      "bertscore_f1": 0.9564734697341919
     },
     {
       "question_id": "672",
@@ -9451,9 +9855,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.9570227861404419,
-      "bertscore_recall": 0.9570227861404419,
-      "bertscore_f1": 0.9570227861404419
+      "bleu": 0,
+      "bertscore_precision": 0.9570226669311523,
+      "bertscore_recall": 0.9570226669311523,
+      "bertscore_f1": 0.9570226669311523
     },
     {
       "question_id": "674",
@@ -9474,6 +9879,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
+      "bleu": 0,
       "bertscore_precision": 0.9565707445144653,
       "bertscore_recall": 0.9565707445144653,
       "bertscore_f1": 0.9565708041191101
@@ -9497,9 +9903,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.9564735889434814,
-      "bertscore_recall": 0.9564735889434814,
-      "bertscore_f1": 0.9564735889434814
+      "bleu": 0,
+      "bertscore_precision": 0.9564734101295471,
+      "bertscore_recall": 0.9564734101295471,
+      "bertscore_f1": 0.9564734697341919
     },
     {
       "question_id": "681",
@@ -9520,9 +9927,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.9500187039375305,
-      "bertscore_recall": 0.9500187039375305,
-      "bertscore_f1": 0.9500187039375305
+      "bleu": 0,
+      "bertscore_precision": 0.9500188827514648,
+      "bertscore_recall": 0.9500188827514648,
+      "bertscore_f1": 0.9500188827514648
     },
     {
       "question_id": "682",
@@ -9543,9 +9951,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.9564735889434814,
-      "bertscore_recall": 0.9564735889434814,
-      "bertscore_f1": 0.9564735889434814
+      "bleu": 0,
+      "bertscore_precision": 0.9564734101295471,
+      "bertscore_recall": 0.9564734101295471,
+      "bertscore_f1": 0.9564734697341919
     },
     {
       "question_id": "685",
@@ -9566,9 +9975,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.9570227861404419,
-      "bertscore_recall": 0.9570227861404419,
-      "bertscore_f1": 0.9570227861404419
+      "bleu": 0,
+      "bertscore_precision": 0.9570226669311523,
+      "bertscore_recall": 0.9570226669311523,
+      "bertscore_f1": 0.9570226669311523
     },
     {
       "question_id": "687",
@@ -9589,9 +9999,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.990591287612915,
-      "bertscore_recall": 0.990591287612915,
-      "bertscore_f1": 0.990591287612915
+      "bleu": 0,
+      "bertscore_precision": 0.9905913472175598,
+      "bertscore_recall": 0.9905913472175598,
+      "bertscore_f1": 0.9905913472175598
     },
     {
       "question_id": "688",
@@ -9612,6 +10023,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
+      "bleu": 0,
       "bertscore_precision": 0.9565707445144653,
       "bertscore_recall": 0.9565707445144653,
       "bertscore_f1": 0.9565708041191101
@@ -9635,9 +10047,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.9565539360046387,
-      "bertscore_recall": 0.9565539360046387,
-      "bertscore_f1": 0.9565539360046387
+      "bleu": 0,
+      "bertscore_precision": 0.9565538763999939,
+      "bertscore_recall": 0.9565538763999939,
+      "bertscore_f1": 0.9565538763999939
     },
     {
       "question_id": "692",
@@ -9658,9 +10071,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.990591287612915,
-      "bertscore_recall": 0.990591287612915,
-      "bertscore_f1": 0.990591287612915
+      "bleu": 0,
+      "bertscore_precision": 0.9905913472175598,
+      "bertscore_recall": 0.9905913472175598,
+      "bertscore_f1": 0.9905913472175598
     },
     {
       "question_id": "694",
@@ -9681,9 +10095,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7897735834121704,
-      "bertscore_recall": 0.8355578184127808,
-      "bertscore_f1": 0.8120208382606506
+      "bleu": 0.0,
+      "bertscore_precision": 0.789773166179657,
+      "bertscore_recall": 0.835557222366333,
+      "bertscore_f1": 0.8120203018188477
     },
     {
       "question_id": "695",
@@ -9704,9 +10119,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7890427112579346,
-      "bertscore_recall": 0.834952712059021,
-      "bertscore_f1": 0.8113487958908081
+      "bleu": 0.0,
+      "bertscore_precision": 0.7890421748161316,
+      "bertscore_recall": 0.834952175617218,
+      "bertscore_f1": 0.8113481998443604
     },
     {
       "question_id": "696",
@@ -9727,9 +10143,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.790206253528595,
-      "bertscore_recall": 0.8357154726982117,
-      "bertscore_f1": 0.8123239278793335
+      "bleu": 0.0,
+      "bertscore_precision": 0.7902058362960815,
+      "bertscore_recall": 0.835715115070343,
+      "bertscore_f1": 0.8123235702514648
     },
     {
       "question_id": "697",
@@ -9750,9 +10167,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.790206253528595,
-      "bertscore_recall": 0.8357154726982117,
-      "bertscore_f1": 0.8123239278793335
+      "bleu": 0.0,
+      "bertscore_precision": 0.7902058362960815,
+      "bertscore_recall": 0.835715115070343,
+      "bertscore_f1": 0.8123235702514648
     },
     {
       "question_id": "698",
@@ -9773,9 +10191,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.790206253528595,
-      "bertscore_recall": 0.8357154726982117,
-      "bertscore_f1": 0.8123239278793335
+      "bleu": 0.0,
+      "bertscore_precision": 0.7902058362960815,
+      "bertscore_recall": 0.835715115070343,
+      "bertscore_f1": 0.8123235702514648
     },
     {
       "question_id": "699",
@@ -9796,9 +10215,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.790206253528595,
-      "bertscore_recall": 0.8357154726982117,
-      "bertscore_f1": 0.8123239278793335
+      "bleu": 0.0,
+      "bertscore_precision": 0.7902058362960815,
+      "bertscore_recall": 0.835715115070343,
+      "bertscore_f1": 0.8123235702514648
     },
     {
       "question_id": "700",
@@ -9819,9 +10239,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.790206253528595,
-      "bertscore_recall": 0.8357154726982117,
-      "bertscore_f1": 0.8123239278793335
+      "bleu": 0.0,
+      "bertscore_precision": 0.7902058362960815,
+      "bertscore_recall": 0.835715115070343,
+      "bertscore_f1": 0.8123235702514648
     },
     {
       "question_id": "701",
@@ -9842,9 +10263,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.790206253528595,
-      "bertscore_recall": 0.8357154726982117,
-      "bertscore_f1": 0.8123239278793335
+      "bleu": 0.0,
+      "bertscore_precision": 0.7902058362960815,
+      "bertscore_recall": 0.835715115070343,
+      "bertscore_f1": 0.8123235702514648
     },
     {
       "question_id": "702",
@@ -9865,9 +10287,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7902622222900391,
-      "bertscore_recall": 0.8358123302459717,
-      "bertscore_f1": 0.8123992681503296
+      "bleu": 0.0,
+      "bertscore_precision": 0.7902618050575256,
+      "bertscore_recall": 0.8358119130134583,
+      "bertscore_f1": 0.8123989105224609
     },
     {
       "question_id": "703",
@@ -9888,9 +10311,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.7902622222900391,
-      "bertscore_recall": 0.8358123302459717,
-      "bertscore_f1": 0.8123992681503296
+      "bleu": 0.0,
+      "bertscore_precision": 0.7902618050575256,
+      "bertscore_recall": 0.8358119130134583,
+      "bertscore_f1": 0.8123989105224609
     },
     {
       "question_id": "704",
@@ -9911,9 +10335,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8179486989974976,
-      "bertscore_recall": 0.7262902855873108,
-      "bertscore_f1": 0.7693992257118225
+      "bleu": 0.0,
+      "bertscore_precision": 0.8179483413696289,
+      "bertscore_recall": 0.726290225982666,
+      "bertscore_f1": 0.769399106502533
     },
     {
       "question_id": "705",
@@ -9934,9 +10359,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8183736801147461,
-      "bertscore_recall": 0.7275117039680481,
-      "bertscore_f1": 0.770272433757782
+      "bleu": 0.0,
+      "bertscore_precision": 0.8183733820915222,
+      "bertscore_recall": 0.7275115251541138,
+      "bertscore_f1": 0.7702721953392029
     },
     {
       "question_id": "706",
@@ -9957,9 +10383,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8174609541893005,
-      "bertscore_recall": 0.7258763909339905,
-      "bertscore_f1": 0.7689512968063354
+      "bleu": 0.0,
+      "bertscore_precision": 0.8174606561660767,
+      "bertscore_recall": 0.7258762121200562,
+      "bertscore_f1": 0.7689510583877563
     },
     {
       "question_id": "707",
@@ -9980,9 +10407,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8183736801147461,
-      "bertscore_recall": 0.7275117039680481,
-      "bertscore_f1": 0.770272433757782
+      "bleu": 0.0,
+      "bertscore_precision": 0.8183733820915222,
+      "bertscore_recall": 0.7275115251541138,
+      "bertscore_f1": 0.7702721953392029
     },
     {
       "question_id": "708",
@@ -10003,9 +10431,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.8174609541893005,
-      "bertscore_recall": 0.7258763909339905,
-      "bertscore_f1": 0.7689512968063354
+      "bleu": 0.0,
+      "bertscore_precision": 0.8174606561660767,
+      "bertscore_recall": 0.7258762121200562,
+      "bertscore_f1": 0.7689510583877563
     },
     {
       "question_id": "709",
@@ -10026,9 +10455,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0,
-      "bertscore_precision": 0.780218243598938,
+      "bleu": 0.0,
+      "bertscore_precision": 0.7802179455757141,
       "bertscore_recall": 0.6621847152709961,
-      "bertscore_f1": 0.7163720726966858
+      "bertscore_f1": 0.716372013092041
     },
     {
       "question_id": "710",
@@ -10049,9 +10479,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
+      "bleu": 0,
       "bertscore_precision": 0.9180874228477478,
-      "bertscore_recall": 0.8081603646278381,
-      "bertscore_f1": 0.8596237897872925
+      "bertscore_recall": 0.8081604838371277,
+      "bertscore_f1": 0.8596238493919373
     },
     {
       "question_id": "712",
@@ -10072,9 +10503,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.876257061958313,
-      "bertscore_recall": 0.8591549396514893,
-      "bertscore_f1": 0.8676217198371887
+      "bleu": 0,
+      "bertscore_precision": 0.8762571215629578,
+      "bertscore_recall": 0.8591550588607788,
+      "bertscore_f1": 0.867621898651123
     },
     {
       "question_id": "713",
@@ -10095,9 +10527,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.8757020235061646,
-      "bertscore_recall": 0.8593652248382568,
-      "bertscore_f1": 0.8674567341804504
+      "bleu": 0,
+      "bertscore_precision": 0.8757021427154541,
+      "bertscore_recall": 0.8593654632568359,
+      "bertscore_f1": 0.86745685338974
     },
     {
       "question_id": "714",
@@ -10118,9 +10551,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.8757020235061646,
-      "bertscore_recall": 0.8593652248382568,
-      "bertscore_f1": 0.8674567341804504
+      "bleu": 0,
+      "bertscore_precision": 0.8757021427154541,
+      "bertscore_recall": 0.8593654632568359,
+      "bertscore_f1": 0.86745685338974
     },
     {
       "question_id": "715",
@@ -10141,9 +10575,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
+      "bleu": 0,
       "bertscore_precision": 0.8920936584472656,
-      "bertscore_recall": 0.867946982383728,
-      "bertscore_f1": 0.8798547387123108
+      "bertscore_recall": 0.8679470419883728,
+      "bertscore_f1": 0.879854679107666
     },
     {
       "question_id": "716",
@@ -10164,9 +10599,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.8757020235061646,
-      "bertscore_recall": 0.8593652248382568,
-      "bertscore_f1": 0.8674567341804504
+      "bleu": 0,
+      "bertscore_precision": 0.8757021427154541,
+      "bertscore_recall": 0.8593654632568359,
+      "bertscore_f1": 0.86745685338974
     },
     {
       "question_id": "717",
@@ -10187,6 +10623,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
+      "bleu": 0,
       "bertscore_precision": 0.865848958492279,
       "bertscore_recall": 0.8575170636177063,
       "bertscore_f1": 0.8616629242897034
@@ -10210,9 +10647,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.876257061958313,
-      "bertscore_recall": 0.8591549396514893,
-      "bertscore_f1": 0.8676217198371887
+      "bleu": 0,
+      "bertscore_precision": 0.8762571215629578,
+      "bertscore_recall": 0.8591550588607788,
+      "bertscore_f1": 0.867621898651123
     },
     {
       "question_id": "719",
@@ -10233,6 +10671,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
+      "bleu": 0,
       "bertscore_precision": 0.865848958492279,
       "bertscore_recall": 0.8575170636177063,
       "bertscore_f1": 0.8616629242897034
@@ -10256,9 +10695,10 @@
       "rouge1": 0.28571428571428575,
       "rouge2": 0.0,
       "rougeL": 0.28571428571428575,
+      "bleu": 0,
       "bertscore_precision": 0.8648678064346313,
-      "bertscore_recall": 0.8575589656829834,
-      "bertscore_f1": 0.8611978888511658
+      "bertscore_recall": 0.857559084892273,
+      "bertscore_f1": 0.8611979484558105
     },
     {
       "question_id": "721",
@@ -10279,9 +10719,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.876257061958313,
-      "bertscore_recall": 0.8591549396514893,
-      "bertscore_f1": 0.8676217198371887
+      "bleu": 0,
+      "bertscore_precision": 0.8762571215629578,
+      "bertscore_recall": 0.8591550588607788,
+      "bertscore_f1": 0.867621898651123
     },
     {
       "question_id": "722",
@@ -10302,6 +10743,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
+      "bleu": 0,
       "bertscore_precision": 0.865848958492279,
       "bertscore_recall": 0.8575170636177063,
       "bertscore_f1": 0.8616629242897034
@@ -10325,9 +10767,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.8757020235061646,
-      "bertscore_recall": 0.8593652248382568,
-      "bertscore_f1": 0.8674567341804504
+      "bleu": 0,
+      "bertscore_precision": 0.8757021427154541,
+      "bertscore_recall": 0.8593654632568359,
+      "bertscore_f1": 0.86745685338974
     },
     {
       "question_id": "724",
@@ -10348,9 +10791,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.8757020235061646,
-      "bertscore_recall": 0.8593652248382568,
-      "bertscore_f1": 0.8674567341804504
+      "bleu": 0,
+      "bertscore_precision": 0.8757021427154541,
+      "bertscore_recall": 0.8593654632568359,
+      "bertscore_f1": 0.86745685338974
     },
     {
       "question_id": "725",
@@ -10371,9 +10815,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.8757020235061646,
-      "bertscore_recall": 0.8593652248382568,
-      "bertscore_f1": 0.8674567341804504
+      "bleu": 0,
+      "bertscore_precision": 0.8757021427154541,
+      "bertscore_recall": 0.8593654632568359,
+      "bertscore_f1": 0.86745685338974
     },
     {
       "question_id": "726",
@@ -10394,7 +10839,8 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.8627436757087708,
+      "bleu": 0,
+      "bertscore_precision": 0.8627437353134155,
       "bertscore_recall": 0.8562259674072266,
       "bertscore_f1": 0.8594725131988525
     },
@@ -10417,9 +10863,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.8787973523139954,
-      "bertscore_recall": 0.8604922294616699,
-      "bertscore_f1": 0.869548499584198
+      "bleu": 0,
+      "bertscore_precision": 0.8787975311279297,
+      "bertscore_recall": 0.8604924082756042,
+      "bertscore_f1": 0.8695486187934875
     },
     {
       "question_id": "728",
@@ -10440,9 +10887,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.876257061958313,
-      "bertscore_recall": 0.8591549396514893,
-      "bertscore_f1": 0.8676217198371887
+      "bleu": 0,
+      "bertscore_precision": 0.8762571215629578,
+      "bertscore_recall": 0.8591550588607788,
+      "bertscore_f1": 0.867621898651123
     },
     {
       "question_id": "729",
@@ -10463,9 +10911,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.8757020235061646,
-      "bertscore_recall": 0.8593652248382568,
-      "bertscore_f1": 0.8674567341804504
+      "bleu": 0,
+      "bertscore_precision": 0.8757021427154541,
+      "bertscore_recall": 0.8593654632568359,
+      "bertscore_f1": 0.86745685338974
     },
     {
       "question_id": "730",
@@ -10486,9 +10935,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.876257061958313,
-      "bertscore_recall": 0.8591549396514893,
-      "bertscore_f1": 0.8676217198371887
+      "bleu": 0,
+      "bertscore_precision": 0.8762571215629578,
+      "bertscore_recall": 0.8591550588607788,
+      "bertscore_f1": 0.867621898651123
     },
     {
       "question_id": "731",
@@ -10509,7 +10959,8 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.8627436757087708,
+      "bleu": 0,
+      "bertscore_precision": 0.8627437353134155,
       "bertscore_recall": 0.8562259674072266,
       "bertscore_f1": 0.8594725131988525
     },
@@ -10532,9 +10983,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.8787973523139954,
-      "bertscore_recall": 0.8604922294616699,
-      "bertscore_f1": 0.869548499584198
+      "bleu": 0,
+      "bertscore_precision": 0.8787975311279297,
+      "bertscore_recall": 0.8604924082756042,
+      "bertscore_f1": 0.8695486187934875
     },
     {
       "question_id": "733",
@@ -10555,9 +11007,10 @@
       "rouge1": 1.0,
       "rouge2": 1.0,
       "rougeL": 1.0,
-      "bertscore_precision": 0.9909887313842773,
-      "bertscore_recall": 0.9864275455474854,
-      "bertscore_f1": 0.9887028932571411
+      "bleu": 0.06333742121977234,
+      "bertscore_precision": 0.9909886717796326,
+      "bertscore_recall": 0.9864274859428406,
+      "bertscore_f1": 0.9887028336524963
     },
     {
       "question_id": "734",
@@ -10578,9 +11031,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.8757020235061646,
-      "bertscore_recall": 0.8593652248382568,
-      "bertscore_f1": 0.8674567341804504
+      "bleu": 0,
+      "bertscore_precision": 0.8757021427154541,
+      "bertscore_recall": 0.8593654632568359,
+      "bertscore_f1": 0.86745685338974
     },
     {
       "question_id": "735",
@@ -10601,9 +11055,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.876257061958313,
-      "bertscore_recall": 0.8591549396514893,
-      "bertscore_f1": 0.8676217198371887
+      "bleu": 0,
+      "bertscore_precision": 0.8762571215629578,
+      "bertscore_recall": 0.8591550588607788,
+      "bertscore_f1": 0.867621898651123
     },
     {
       "question_id": "736",
@@ -10624,9 +11079,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.876257061958313,
-      "bertscore_recall": 0.8591549396514893,
-      "bertscore_f1": 0.8676217198371887
+      "bleu": 0,
+      "bertscore_precision": 0.8762571215629578,
+      "bertscore_recall": 0.8591550588607788,
+      "bertscore_f1": 0.867621898651123
     },
     {
       "question_id": "737",
@@ -10647,9 +11103,10 @@
       "rouge1": 1.0,
       "rouge2": 1.0,
       "rougeL": 1.0,
-      "bertscore_precision": 0.9909887313842773,
-      "bertscore_recall": 0.9864275455474854,
-      "bertscore_f1": 0.9887028932571411
+      "bleu": 0.06333742121977234,
+      "bertscore_precision": 0.9909886717796326,
+      "bertscore_recall": 0.9864274859428406,
+      "bertscore_f1": 0.9887028336524963
     },
     {
       "question_id": "738",
@@ -10670,7 +11127,8 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.8627436757087708,
+      "bleu": 0,
+      "bertscore_precision": 0.8627437353134155,
       "bertscore_recall": 0.8562259674072266,
       "bertscore_f1": 0.8594725131988525
     },
@@ -10693,6 +11151,7 @@
       "rouge1": 0.25,
       "rouge2": 0.0,
       "rougeL": 0.25,
+      "bleu": 0,
       "bertscore_precision": 0.8539417386054993,
       "bertscore_recall": 0.8563382029533386,
       "bertscore_f1": 0.8551383018493652
@@ -10716,9 +11175,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.876257061958313,
-      "bertscore_recall": 0.8591549396514893,
-      "bertscore_f1": 0.8676217198371887
+      "bleu": 0,
+      "bertscore_precision": 0.8762571215629578,
+      "bertscore_recall": 0.8591550588607788,
+      "bertscore_f1": 0.867621898651123
     },
     {
       "question_id": "741",
@@ -10739,9 +11199,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.876257061958313,
-      "bertscore_recall": 0.8591549396514893,
-      "bertscore_f1": 0.8676217198371887
+      "bleu": 0,
+      "bertscore_precision": 0.8762571215629578,
+      "bertscore_recall": 0.8591550588607788,
+      "bertscore_f1": 0.867621898651123
     },
     {
       "question_id": "742",
@@ -10762,7 +11223,8 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.8627436757087708,
+      "bleu": 0,
+      "bertscore_precision": 0.8627437353134155,
       "bertscore_recall": 0.8562259674072266,
       "bertscore_f1": 0.8594725131988525
     },
@@ -10785,6 +11247,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
+      "bleu": 0,
       "bertscore_precision": 0.865848958492279,
       "bertscore_recall": 0.8575170636177063,
       "bertscore_f1": 0.8616629242897034
@@ -10808,9 +11271,10 @@
       "rouge1": 1.0,
       "rouge2": 1.0,
       "rougeL": 1.0,
-      "bertscore_precision": 0.9909887313842773,
-      "bertscore_recall": 0.9864275455474854,
-      "bertscore_f1": 0.9887028932571411
+      "bleu": 0.06333742121977234,
+      "bertscore_precision": 0.9909886717796326,
+      "bertscore_recall": 0.9864274859428406,
+      "bertscore_f1": 0.9887028336524963
     },
     {
       "question_id": "745",
@@ -10831,9 +11295,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.8757020235061646,
-      "bertscore_recall": 0.8593652248382568,
-      "bertscore_f1": 0.8674567341804504
+      "bleu": 0,
+      "bertscore_precision": 0.8757021427154541,
+      "bertscore_recall": 0.8593654632568359,
+      "bertscore_f1": 0.86745685338974
     },
     {
       "question_id": "746",
@@ -10854,9 +11319,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.876257061958313,
-      "bertscore_recall": 0.8591549396514893,
-      "bertscore_f1": 0.8676217198371887
+      "bleu": 0,
+      "bertscore_precision": 0.8762571215629578,
+      "bertscore_recall": 0.8591550588607788,
+      "bertscore_f1": 0.867621898651123
     },
     {
       "question_id": "747",
@@ -10877,9 +11343,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.876257061958313,
-      "bertscore_recall": 0.8591549396514893,
-      "bertscore_f1": 0.8676217198371887
+      "bleu": 0,
+      "bertscore_precision": 0.8762571215629578,
+      "bertscore_recall": 0.8591550588607788,
+      "bertscore_f1": 0.867621898651123
     },
     {
       "question_id": "748",
@@ -10900,6 +11367,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
+      "bleu": 0,
       "bertscore_precision": 0.8539921045303345,
       "bertscore_recall": 0.8550201654434204,
       "bertscore_f1": 0.8545057773590088
@@ -10923,9 +11391,10 @@
       "rouge1": 1.0,
       "rouge2": 1.0,
       "rougeL": 1.0,
-      "bertscore_precision": 0.9909887313842773,
-      "bertscore_recall": 0.9864275455474854,
-      "bertscore_f1": 0.9887028932571411
+      "bleu": 0.06333742121977234,
+      "bertscore_precision": 0.9909886717796326,
+      "bertscore_recall": 0.9864274859428406,
+      "bertscore_f1": 0.9887028336524963
     },
     {
       "question_id": "750",
@@ -10946,9 +11415,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.8757020235061646,
-      "bertscore_recall": 0.8593652248382568,
-      "bertscore_f1": 0.8674567341804504
+      "bleu": 0,
+      "bertscore_precision": 0.8757021427154541,
+      "bertscore_recall": 0.8593654632568359,
+      "bertscore_f1": 0.86745685338974
     },
     {
       "question_id": "751",
@@ -10969,9 +11439,10 @@
       "rouge1": 1.0,
       "rouge2": 1.0,
       "rougeL": 1.0,
-      "bertscore_precision": 0.9909887313842773,
-      "bertscore_recall": 0.9864275455474854,
-      "bertscore_f1": 0.9887028932571411
+      "bleu": 0.06333742121977234,
+      "bertscore_precision": 0.9909886717796326,
+      "bertscore_recall": 0.9864274859428406,
+      "bertscore_f1": 0.9887028336524963
     },
     {
       "question_id": "752",
@@ -10992,9 +11463,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.8757020235061646,
-      "bertscore_recall": 0.8593652248382568,
-      "bertscore_f1": 0.8674567341804504
+      "bleu": 0,
+      "bertscore_precision": 0.8757021427154541,
+      "bertscore_recall": 0.8593654632568359,
+      "bertscore_f1": 0.86745685338974
     },
     {
       "question_id": "753",
@@ -11015,6 +11487,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
+      "bleu": 0,
       "bertscore_precision": 0.865848958492279,
       "bertscore_recall": 0.8575170636177063,
       "bertscore_f1": 0.8616629242897034
@@ -11038,9 +11511,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.8757020235061646,
-      "bertscore_recall": 0.8593652248382568,
-      "bertscore_f1": 0.8674567341804504
+      "bleu": 0,
+      "bertscore_precision": 0.8757021427154541,
+      "bertscore_recall": 0.8593654632568359,
+      "bertscore_f1": 0.86745685338974
     },
     {
       "question_id": "755",
@@ -11061,9 +11535,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.876257061958313,
-      "bertscore_recall": 0.8591549396514893,
-      "bertscore_f1": 0.8676217198371887
+      "bleu": 0,
+      "bertscore_precision": 0.8762571215629578,
+      "bertscore_recall": 0.8591550588607788,
+      "bertscore_f1": 0.867621898651123
     },
     {
       "question_id": "756",
@@ -11084,7 +11559,8 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.8627436757087708,
+      "bleu": 0,
+      "bertscore_precision": 0.8627437353134155,
       "bertscore_recall": 0.8562259674072266,
       "bertscore_f1": 0.8594725131988525
     },
@@ -11107,6 +11583,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
+      "bleu": 0,
       "bertscore_precision": 0.865848958492279,
       "bertscore_recall": 0.8575170636177063,
       "bertscore_f1": 0.8616629242897034
@@ -11130,9 +11607,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.876257061958313,
-      "bertscore_recall": 0.8591549396514893,
-      "bertscore_f1": 0.8676217198371887
+      "bleu": 0,
+      "bertscore_precision": 0.8762571215629578,
+      "bertscore_recall": 0.8591550588607788,
+      "bertscore_f1": 0.867621898651123
     },
     {
       "question_id": "759",
@@ -11153,6 +11631,7 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
+      "bleu": 0,
       "bertscore_precision": 0.865848958492279,
       "bertscore_recall": 0.8575170636177063,
       "bertscore_f1": 0.8616629242897034
@@ -11176,9 +11655,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.876257061958313,
-      "bertscore_recall": 0.8591549396514893,
-      "bertscore_f1": 0.8676217198371887
+      "bleu": 0,
+      "bertscore_precision": 0.8762571215629578,
+      "bertscore_recall": 0.8591550588607788,
+      "bertscore_f1": 0.867621898651123
     },
     {
       "question_id": "761",
@@ -11199,9 +11679,10 @@
       "rouge1": 0.0,
       "rouge2": 0.0,
       "rougeL": 0.0,
-      "bertscore_precision": 0.8757020235061646,
-      "bertscore_recall": 0.8593652248382568,
-      "bertscore_f1": 0.8674567341804504
+      "bleu": 0,
+      "bertscore_precision": 0.8757021427154541,
+      "bertscore_recall": 0.8593654632568359,
+      "bertscore_f1": 0.86745685338974
     }
   ]
 }

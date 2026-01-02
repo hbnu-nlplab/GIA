@@ -1,0 +1,12 @@
+2026-01-02 19:49:01,663 | INFO | Initializing Evaluator...
+2026-01-02 19:49:01,663 | INFO | Backend: openai
+2026-01-02 19:49:01,663 | INFO | Model: openai_api (openai_api)
+2026-01-02 19:49:01,663 | INFO | Config Dir: GIA/Data/Pnetlab/Research_Institute_Internal_DC/configs
+2026-01-02 19:49:01,664 | INFO | Loaded 10 configuration files.
+2026-01-02 19:49:01,691 | INFO | Loading dataset from GIA/Data/Pnetlab/Research_Institute_Internal_DC/Dataset/Research_Institute_Internal_DC_dataset_batfish_20251230_125613.csv
+2026-01-02 19:49:01,695 | INFO | Generating prompts/messages...
+2026-01-02 19:49:01,706 | INFO | Starting generation for 762 samples...
+2026-01-02 19:49:21,119 | INFO | Progress: 10/762
+2026-01-02 19:49:36,905 | INFO | Progress: 20/762
+2026-01-02 19:49:52,825 | INFO | Progress: 30/762
+2026-01-02 19:50:08,924 | INFO | Progress: 40/762
