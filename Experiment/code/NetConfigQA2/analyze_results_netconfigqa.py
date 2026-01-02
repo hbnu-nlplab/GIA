@@ -20,6 +20,26 @@ from typing import Dict, List, Set
 from collections import defaultdict
 from datetime import datetime
 
+
+def canonical_answer_type(answer_type: str) -> str:
+    """Normalize answer_type values to a canonical set used by the scorer/reports."""
+    if answer_type is None:
+        return 'text'
+    atype = str(answer_type).strip().lower()
+    aliases = {
+        # observed plural/variant forms
+        'numbers': 'number',
+        'num': 'numeric',
+        'int': 'number',
+        'integer': 'number',
+        'float': 'numeric',
+        # common dataset schema aliases
+        'list_str': 'set',
+        'set_string': 'set',
+        'dict': 'map',
+    }
+    return aliases.get(atype, atype)
+
 # Traditional metrics
 try:
     from rouge_score import rouge_scorer
@@ -34,6 +54,14 @@ try:
 except ImportError:
     BERTSCORE_AVAILABLE = False
     print("[WARNING] bert-score not available. Install with: pip install bert-score")
+
+try:
+    import nltk
+    from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
+    NLTK_AVAILABLE = True
+except ImportError:
+    NLTK_AVAILABLE = False
+    print("[WARNING] nltk not available. Install with: pip install nltk")
 
 
 # ==================== Traditional Metrics Calculator ====================
@@ -102,6 +130,24 @@ class TraditionalMetricsCalculator:
         except:
             return {"rouge1": 0.0, "rouge2": 0.0, "rougeL": 0.0}
     
+    def calculate_bleu(self, pred: str, gold: str) -> float:
+        """Calculate BLEU score."""
+        if not NLTK_AVAILABLE:
+            return 0.0
+        
+        pred_tokens = self.normalize_text(pred).split()
+        gold_tokens = [self.normalize_text(gold).split()]
+        
+        if not pred_tokens or not gold_tokens[0]:
+            return 0.0
+            
+        try:
+            # Use smoothing to avoid 0.0 for short sequences
+            smooth = SmoothingFunction().method1
+            return sentence_bleu(gold_tokens, pred_tokens, smoothing_function=smooth)
+        except:
+            return 0.0
+    
     def calculate_all(self, pred: str, gold: str) -> Dict[str, float]:
         """Calculate all traditional metrics (except BERTScore which should be batched)."""
         metrics = {}
@@ -116,6 +162,9 @@ class TraditionalMetricsCalculator:
         # ROUGE
         rouge_metrics = self.calculate_rouge(pred, gold)
         metrics.update(rouge_metrics)
+
+        # BLEU
+        metrics['bleu'] = self.calculate_bleu(pred, gold)
         
         return metrics
 
@@ -140,6 +189,7 @@ class NetConfigQAScorer:
         if not pred:
             return ""
         
+        answer_type = canonical_answer_type(answer_type)
         original_pred = pred  # Keep original for fallback extraction
             
         # 1. Handle <think> tags and common delimiters
@@ -255,6 +305,7 @@ class NetConfigQAScorer:
     def score(self, pred: str, gold: str, answer_type: str) -> Dict[str, float]:
         """Score prediction against gold answer based on answer type."""
         # Clean prediction with answer_type context
+        answer_type = canonical_answer_type(answer_type)
         pred = self.clean_prediction(pred, answer_type)
         gold = self.clean_gold(gold)
 
@@ -522,6 +573,7 @@ class ScorecardGenerator:
         lines.append("## 📊 Metric Comparison by Answer Type\n")
         lines.append("| Metric | Number | Numeric | Set | Map | Text | **Overall** |")
         lines.append("|--------|--------|---------|-----|-----|------|-------------|")
+        lines.append("\n> Note: `Number`는 주로 정수/카운트(개수) 유형, `Numeric`은 수치값(스칼라/실수 가능) 유형입니다. 둘 다 동일한 숫자 채점 로직으로 평가되지만 분석을 위해 분리 집계합니다.\n")
         
         # Type-Aware row
         ta_row = "| **Type-Aware** |"
@@ -601,6 +653,80 @@ class ScorecardGenerator:
         return "\n".join(lines)
 
 
+class SummaryReportGenerator:
+    """Generates a concise summary report with specific tables requested by the user."""
+    
+    def generate(self, all_stats_meta: List[tuple]) -> str:
+        """
+        Generate a comparison report for multiple models.
+        all_stats_meta: List of (stats, meta) tuples
+        """
+        lines = []
+        lines.append(f"# NetConfigQA Comparison Report\n")
+        lines.append(f"> **Generated on**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        
+        # Table 1: Traditional Metrics
+        lines.append("### 1. Traditional NLP Metrics\n")
+        lines.append("| 모델 | Rouge-1 | Rouge-2 | Rouge-L | EM | BLEU | BertScore | f1(Token) | Type-Aware Accuracy |")
+        lines.append("| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |")
+        
+        for stats, meta in all_stats_meta:
+            model_name = meta.get("model", "Unknown")
+            trad = stats.get('traditional_metrics', {})
+            r1 = trad.get('rouge1', 0) * 100
+            r2 = trad.get('rouge2', 0) * 100
+            rl = trad.get('rougeL', 0) * 100
+            em = trad.get('exact_match', 0) * 100
+            bleu = trad.get('bleu', 0) * 100
+            bs = trad.get('bertscore_f1', 0) * 100
+            f1 = trad.get('token_f1', 0) * 100
+            ta_acc = stats.get('accuracy', 0) * 100
+            
+            lines.append(f"| {model_name} | {r1:.2f} | {r2:.2f} | {rl:.2f} | {em:.2f} | {bleu:.2f} | {bs:.2f} | {f1:.2f} | {ta_acc:.2f} |")
+        
+        lines.append("\n---\n")
+        
+        # Table 2: Answer Type Scores
+        lines.append("### 2. Type-Aware Accuracy by Answer Type\n")
+        lines.append("| 모델 | map | numeric | text | number | set |")
+        lines.append("| :--- | :---: | :---: | :---: | :---: | :---: |")
+        
+        for stats, meta in all_stats_meta:
+            model_name = meta.get("model", "Unknown")
+            by_type = stats.get('by_type', {})
+            m_score = by_type.get('map', 0) * 100
+            n_score = by_type.get('numeric', 0) * 100
+            t_score = by_type.get('text', 0) * 100
+            num_score = by_type.get('number', 0) * 100
+            s_score = by_type.get('set', 0) * 100
+            
+            lines.append(f"| {model_name} | {m_score:.2f} | {n_score:.2f} | {t_score:.2f} | {num_score:.2f} | {s_score:.2f} |")
+
+        lines.append("\n> Note: `number`는 주로 정수/카운트(개수) 유형, `numeric`은 수치값(스칼라/실수 가능) 유형입니다. 둘 다 동일한 숫자 채점 로직으로 평가되지만 분석을 위해 분리 집계합니다.\n")
+        
+        lines.append("\n---\n")
+        
+        # Table 3: Level Scores
+        lines.append("### 3. Type-Aware Accuracy by Level\n")
+        lines.append("| 모델 | L1 | L2 | L3 | L4 | L5 |")
+        lines.append("| :--- | :---: | :---: | :---: | :---: | :---: |")
+        
+        for stats, meta in all_stats_meta:
+            model_name = meta.get("model", "Unknown")
+            by_level = stats.get('by_level', {})
+            l1 = by_level.get('L1', 0) * 100
+            l2 = by_level.get('L2', 0) * 100
+            l3 = by_level.get('L3', 0) * 100
+            l4 = by_level.get('L4', 0) * 100
+            l5 = by_level.get('L5', 0) * 100
+            
+            lines.append(f"| {model_name} | {l1:.2f} | {l2:.2f} | {l3:.2f} | {l4:.2f} | {l5:.2f} |")
+        
+        lines.append("\n")
+        
+        return "\n".join(lines)
+
+
 # ==================== Main Analyzer ====================
 
 def analyze_results(json_file: str, verbose: bool = False):
@@ -634,7 +760,7 @@ def analyze_results(json_file: str, verbose: bool = False):
     for row in data['results']:
         # 필드명 호환성 처리 (raw_pred vs pred, answer_type vs type, answer_status vs status)
         raw_pred = row.get('raw_pred', row.get('pred', ''))
-        answer_type = row.get('answer_type', row.get('type', 'text'))
+        answer_type = canonical_answer_type(row.get('answer_type', row.get('type', 'text')))
         status = row.get('answer_status', row.get('status', 'OK'))
         level = row.get('level', 'L1')
         category = row.get('category', 'General')
@@ -733,7 +859,7 @@ def analyze_results(json_file: str, verbose: bool = False):
     
     # Traditional metrics의 overall 평균 계산
     overall_trad_metrics = {}
-    for metric_name in ['exact_match', 'token_f1', 'rouge1', 'rouge2', 'rougeL', 'bertscore_f1']:
+    for metric_name in ['exact_match', 'token_f1', 'rouge1', 'rouge2', 'rougeL', 'bertscore_f1', 'bleu']:
         all_values = [r.get(metric_name, 0.0) for r in results]
         overall_trad_metrics[metric_name] = sum(all_values) / len(all_values) if all_values else 0.0
     
@@ -767,6 +893,7 @@ def analyze_results(json_file: str, verbose: bool = False):
     print(f"{'Type-Aware Accuracy':<25} {avg_acc:>9.2%}")
     print(f"{'Exact Match':<25} {overall_trad_metrics.get('exact_match', 0):>9.2%}")
     print(f"{'Token F1':<25} {overall_trad_metrics.get('token_f1', 0):>9.2%}")
+    print(f"{'BLEU':<25} {overall_trad_metrics.get('bleu', 0):>9.2%}")
     print(f"{'BERTScore F1':<25} {overall_trad_metrics.get('bertscore_f1', 0):>9.2%}")
     print(f"{'ROUGE-L':<25} {overall_trad_metrics.get('rougeL', 0):>9.2%}")
     print(f"{'ROUGE-1':<25} {overall_trad_metrics.get('rouge1', 0):>9.2%}")
@@ -848,18 +975,44 @@ def analyze_results(json_file: str, verbose: bool = False):
         f.write(scorecard_md)
     
     print(f"[OK] Saved scorecard to: {scorecard_file}")
+
+    # Summary Report 저장 (개별 모델용)
+    summary_file = output_file.replace(".json", "_summary.md")
+    summary_gen = SummaryReportGenerator()
+    summary_md = summary_gen.generate([(stats, meta)])
+    
+    with open(summary_file, 'w', encoding='utf-8') as f:
+        f.write(summary_md)
+    
+    print(f"[OK] Saved summary report to: {summary_file}")
     print(f"\n[TIP] Run 'python Figure.py \"{output_file}\"' to generate visualizations.")
     
-    return stats, results
+    return stats, results, meta
 
 
 def main():
     parser = argparse.ArgumentParser(description="Analyze NetConfigQA evaluation results")
-    parser.add_argument("json_file", help="Path to results json (raw or already analyzed)")
+    parser.add_argument("json_files", nargs="+", help="Path to results json(s) (raw or already analyzed)")
     parser.add_argument("--verbose", "-v", action="store_true", help="Show detailed error analysis")
+    parser.add_argument("--output_summary", "-o", default="comparison_summary.md", help="Output path for combined summary")
     args = parser.parse_args()
 
-    analyze_results(args.json_file, args.verbose)
+    all_results = []
+    for json_file in args.json_files:
+        stats, results, meta = analyze_results(json_file, args.verbose)
+        all_results.append((stats, meta))
+    
+    # 여러 파일이 입력된 경우 통합 비교 리포트 생성
+    if len(args.json_files) > 1:
+        summary_gen = SummaryReportGenerator()
+        comparison_md = summary_gen.generate(all_results)
+        
+        with open(args.output_summary, 'w', encoding='utf-8') as f:
+            f.write(comparison_md)
+        
+        print(f"\n" + "="*80)
+        print(f"[SUCCESS] Generated combined comparison report: {args.output_summary}")
+        print("="*80)
 
 
 if __name__ == "__main__":
