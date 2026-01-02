@@ -83,9 +83,40 @@ def extract_answer_from_raw(raw_text: str, answer_type: str) -> str:
     import re
     import json
     
-    # 1. </think> 태그 이후 텍스트 추출
+    original_text = raw_text  # Keep for fallback
+    
+    # 1. </think> 태그 및 구분자 이후 텍스트 추출
     if '</think>' in raw_text:
-        after_think = raw_text.split('</think>', 1)[-1].strip()
+        after_think = raw_text.split('</think>')[-1].strip()
+    elif 'assistantfinal' in raw_text:
+        # Handle multiple assistantfinal - take LAST one
+        parts = raw_text.split('assistantfinal')
+        after_think = parts[-1].strip()
+        
+        # Handle 'assistantfinal think' pattern
+        if after_think.startswith('think'):
+            after_think = after_think[5:].strip()
+            
+            # If long explanation without structured answer, extract from original
+            if len(after_think) > 80 and not any(after_think.strip().startswith(c) for c in ['{', '[', '"']):
+                # Look for last JSON object
+                json_matches = list(re.finditer(r'\{[^{}]+:[^{}]+\}', original_text))
+                if json_matches:
+                    after_think = json_matches[-1].group(0)
+                # Look for last JSON array
+                elif re.search(r'\[[^\[\]]+\]', original_text):
+                    array_matches = list(re.finditer(r'\[[^\[\]]+\]', original_text))
+                    after_think = array_matches[-1].group(0)
+                # Extract number from explanation
+                elif len(after_think) > 100:
+                    sentences = after_think.split('.')
+                    if sentences:
+                        last_sent = sentences[-1].strip()
+                        num_match = re.search(r'\b(\d+)\b', last_sent)
+                        if num_match:
+                            after_think = num_match.group(1)
+    elif '<think>' in raw_text:
+        after_think = raw_text.split('<think>')[0].strip()
     else:
         after_think = raw_text.strip()
     
@@ -98,6 +129,10 @@ def extract_answer_from_raw(raw_text: str, answer_type: str) -> str:
         r'^answer:\s*',
         r'^result:\s*',
         r'^\**answer\**:\s*',
+        r'^json\s*',
+        r'^set\s*',
+        r'^map\s*',
+        r'^text\s*',
     ]
     
     cleaned = after_think
@@ -157,6 +192,9 @@ def extract_answer_from_raw(raw_text: str, answer_type: str) -> str:
         if len(text.split()) > 5:
             # 너무 긴 설명이면 첫 단어만
             text = text.split()[0]
+        # Cisco-specific: 'login local' -> 'local'
+        if text.lower() == 'login local':
+            text = 'local'
         return text
 
 class ConfigManager:

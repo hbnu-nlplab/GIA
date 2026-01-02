@@ -1,0 +1,1354 @@
+﻿question_id,level,category,type,status,question,gold,pred,type_aware_score,exact_match,token_f1,bertscore_f1,rougeL,rouge1,rouge2
+0,L1,System_Inventory,text,OK,p2 장비의 호스트네임은 무엇입니까? [답변 형식: 정확한 값만],"""p2""",P2,1.0,1.0,1.0,0.9925472140312195,1.0,1.0,0.0
+1,L1,System_Inventory,text,OK,pe2 장비의 호스트네임은 무엇입니까? [답변 형식: 정확한 값만],"""pe2""",PE2,1.0,1.0,1.0,0.9976428747177124,1.0,1.0,0.0
+2,L1,System_Inventory,text,OK,p3 장비의 호스트네임은 무엇입니까? [답변 형식: 정확한 값만],"""p3""",P3,1.0,1.0,1.0,0.9959045052528381,1.0,1.0,0.0
+3,L1,System_Inventory,text,OK,p4 장비의 호스트네임은 무엇입니까? [답변 형식: 정확한 값만],"""p4""",P4,1.0,1.0,1.0,0.9741384983062744,1.0,1.0,0.0
+4,L1,System_Inventory,text,OK,leaf3 장비의 호스트네임은 무엇입니까? [답변 형식: 정확한 값만],"""leaf3""",Leaf3,1.0,1.0,1.0,0.9796204566955566,1.0,1.0,0.0
+5,L1,System_Inventory,text,OK,leaf1 장비의 호스트네임은 무엇입니까? [답변 형식: 정확한 값만],"""leaf1""",Leaf1,1.0,1.0,1.0,0.9968828558921814,1.0,1.0,0.0
+6,L1,System_Inventory,text,OK,pe1 장비의 호스트네임은 무엇입니까? [답변 형식: 정확한 값만],"""pe1""",PE1,1.0,1.0,1.0,0.9950789213180542,1.0,1.0,0.0
+7,L1,System_Inventory,text,OK,p1 장비의 호스트네임은 무엇입니까? [답변 형식: 정확한 값만],"""p1""",P1,1.0,1.0,1.0,0.9911202192306519,1.0,1.0,0.0
+8,L1,System_Inventory,text,OK,leaf4 장비의 호스트네임은 무엇입니까? [답변 형식: 정확한 값만],"""leaf4""",Leaf4,1.0,1.0,1.0,0.9853184223175049,1.0,1.0,0.0
+9,L1,System_Inventory,text,OK,leaf2 장비의 호스트네임은 무엇입니까? [답변 형식: 정확한 값만],"""leaf2""",Leaf2,1.0,1.0,1.0,0.997169554233551,1.0,1.0,0.0
+10,L1,System_Inventory,text,OK,p2 장비의 운영체제(OS) 버전은 무엇입니까? [답변 형식: 정확한 값만],"""15.7""",15.7,1.0,1.0,1.0,0.9999998807907104,1.0,1.0,1.0
+11,L1,System_Inventory,text,OK,leaf2 장비의 운영체제(OS) 버전은 무엇입니까? [답변 형식: 정확한 값만],"""15.7""",15.7,1.0,1.0,1.0,0.9999998807907104,1.0,1.0,1.0
+12,L1,System_Inventory,text,OK,leaf4 장비의 운영체제(OS) 버전은 무엇입니까? [답변 형식: 정확한 값만],"""15.7""",15.7,1.0,1.0,1.0,0.9999998807907104,1.0,1.0,1.0
+13,L1,System_Inventory,text,OK,pe1 장비의 운영체제(OS) 버전은 무엇입니까? [답변 형식: 정확한 값만],"""15.7""",15.7,1.0,1.0,1.0,0.9999998807907104,1.0,1.0,1.0
+14,L1,System_Inventory,text,OK,p1 장비의 운영체제(OS) 버전은 무엇입니까? [답변 형식: 정확한 값만],"""15.7""",15.7,1.0,1.0,1.0,0.9999998807907104,1.0,1.0,1.0
+15,L1,System_Inventory,text,OK,p3 장비의 운영체제(OS) 버전은 무엇입니까? [답변 형식: 정확한 값만],"""15.7""",15.7,1.0,1.0,1.0,0.9999998807907104,1.0,1.0,1.0
+16,L1,System_Inventory,text,OK,leaf1 장비의 운영체제(OS) 버전은 무엇입니까? [답변 형식: 정확한 값만],"""15.7""",15.7,1.0,1.0,1.0,0.9999998807907104,1.0,1.0,1.0
+17,L1,System_Inventory,text,OK,pe2 장비의 운영체제(OS) 버전은 무엇입니까? [답변 형식: 정확한 값만],"""15.7""",15.7,1.0,1.0,1.0,0.9999998807907104,1.0,1.0,1.0
+18,L1,System_Inventory,text,OK,leaf3 장비의 운영체제(OS) 버전은 무엇입니까? [답변 형식: 정확한 값만],"""15.7""",15.7,1.0,1.0,1.0,0.9999998807907104,1.0,1.0,1.0
+19,L1,System_Inventory,text,OK,p4 장비의 운영체제(OS) 버전은 무엇입니까? [답변 형식: 정확한 값만],"""15.7""",15.7,1.0,1.0,1.0,0.9999998807907104,1.0,1.0,1.0
+20,L1,System_Inventory,text,NOT_CONFIGURED,pe2 장비의 시간대(Timezone)는 무엇입니까? [답변 형식: 설정값 또는 null],null,,1.0,1.0,1.0,1.0,0,0.0,0.0
+21,L1,System_Inventory,text,NOT_CONFIGURED,p3 장비의 시간대(Timezone)는 무엇입니까? [답변 형식: 설정값 또는 null],null,,1.0,1.0,1.0,1.0,0,0.0,0.0
+22,L1,System_Inventory,text,NOT_CONFIGURED,pe1 장비의 시간대(Timezone)는 무엇입니까? [답변 형식: 설정값 또는 null],null,,1.0,1.0,1.0,1.0,0,0.0,0.0
+23,L1,System_Inventory,text,NOT_CONFIGURED,leaf2 장비의 시간대(Timezone)는 무엇입니까? [답변 형식: 설정값 또는 null],null,,1.0,1.0,1.0,1.0,0,0.0,0.0
+24,L1,System_Inventory,text,NOT_CONFIGURED,leaf1 장비의 시간대(Timezone)는 무엇입니까? [답변 형식: 설정값 또는 null],null,,1.0,1.0,1.0,1.0,0,0.0,0.0
+25,L1,System_Inventory,text,NOT_CONFIGURED,leaf3 장비의 시간대(Timezone)는 무엇입니까? [답변 형식: 설정값 또는 null],null,,1.0,1.0,1.0,1.0,0,0.0,0.0
+26,L1,System_Inventory,text,NOT_CONFIGURED,p1 장비의 시간대(Timezone)는 무엇입니까? [답변 형식: 설정값 또는 null],null,,1.0,1.0,1.0,1.0,0,0.0,0.0
+27,L1,System_Inventory,text,NOT_CONFIGURED,p4 장비의 시간대(Timezone)는 무엇입니까? [답변 형식: 설정값 또는 null],null,,1.0,1.0,1.0,1.0,0,0.0,0.0
+28,L1,System_Inventory,text,NOT_CONFIGURED,leaf4 장비의 시간대(Timezone)는 무엇입니까? [답변 형식: 설정값 또는 null],null,,1.0,1.0,1.0,1.0,0,0.0,0.0
+29,L1,System_Inventory,text,NOT_CONFIGURED,p2 장비의 시간대(Timezone)는 무엇입니까? [답변 형식: 설정값 또는 null],null,,1.0,1.0,1.0,1.0,0,0.0,0.0
+30,L1,System_Inventory,set,OK,leaf4 장비에 등록된 로컬 사용자 목록을 알려주세요. [답변 형식: 리스트],"[""admin""]","[""admin""]",1.0,1.0,1.0,1.0,1.0,1.0,0.0
+31,L1,System_Inventory,set,OK,p2 장비에 등록된 로컬 사용자 목록을 알려주세요. [답변 형식: 리스트],"[""admin""]","[""admin""]",1.0,1.0,1.0,1.0,1.0,1.0,0.0
+32,L1,System_Inventory,set,OK,pe2 장비에 등록된 로컬 사용자 목록을 알려주세요. [답변 형식: 리스트],"[""admin""]","[""admin""]",1.0,1.0,1.0,1.0,1.0,1.0,0.0
+33,L1,System_Inventory,set,OK,leaf1 장비에 등록된 로컬 사용자 목록을 알려주세요. [답변 형식: 리스트],"[""admin""]","[""admin""]",1.0,1.0,1.0,1.0,1.0,1.0,0.0
+34,L1,System_Inventory,set,OK,pe1 장비에 등록된 로컬 사용자 목록을 알려주세요. [답변 형식: 리스트],"[""admin""]","[""admin""]",1.0,1.0,1.0,1.0,1.0,1.0,0.0
+35,L1,System_Inventory,set,OK,p1 장비에 등록된 로컬 사용자 목록을 알려주세요. [답변 형식: 리스트],"[""admin""]","[""admin""]",1.0,1.0,1.0,1.0,1.0,1.0,0.0
+36,L1,System_Inventory,set,OK,p3 장비에 등록된 로컬 사용자 목록을 알려주세요. [답변 형식: 리스트],"[""admin""]","[""admin""]",1.0,1.0,1.0,1.0,1.0,1.0,0.0
+37,L1,System_Inventory,set,OK,leaf2 장비에 등록된 로컬 사용자 목록을 알려주세요. [답변 형식: 리스트],"[""admin""]","[""admin""]",1.0,1.0,1.0,1.0,1.0,1.0,0.0
+38,L1,System_Inventory,set,OK,leaf3 장비에 등록된 로컬 사용자 목록을 알려주세요. [답변 형식: 리스트],"[""admin""]","[""admin""]",1.0,1.0,1.0,1.0,1.0,1.0,0.0
+39,L1,System_Inventory,set,OK,p4 장비에 등록된 로컬 사용자 목록을 알려주세요. [답변 형식: 리스트],"[""admin""]","[""admin""]",1.0,1.0,1.0,1.0,1.0,1.0,0.0
+40,L1,System_Inventory,numeric,OK,leaf2 장비에 등록된 로컬 사용자는 총 몇 명입니까? [답변 형식: 숫자],1,1,1.0,1.0,1.0,0.9999997019767761,1.0,1.0,0.0
+41,L1,System_Inventory,numeric,OK,p2 장비에 등록된 로컬 사용자는 총 몇 명입니까? [답변 형식: 숫자],1,1,1.0,1.0,1.0,0.9999997019767761,1.0,1.0,0.0
+42,L1,System_Inventory,numeric,OK,p3 장비에 등록된 로컬 사용자는 총 몇 명입니까? [답변 형식: 숫자],1,1,1.0,1.0,1.0,0.9999997019767761,1.0,1.0,0.0
+43,L1,System_Inventory,numeric,OK,pe1 장비에 등록된 로컬 사용자는 총 몇 명입니까? [답변 형식: 숫자],1,1,1.0,1.0,1.0,0.9999997019767761,1.0,1.0,0.0
+44,L1,System_Inventory,numeric,OK,p1 장비에 등록된 로컬 사용자는 총 몇 명입니까? [답변 형식: 숫자],1,1,1.0,1.0,1.0,0.9999997019767761,1.0,1.0,0.0
+45,L1,System_Inventory,numeric,OK,leaf1 장비에 등록된 로컬 사용자는 총 몇 명입니까? [답변 형식: 숫자],1,1,1.0,1.0,1.0,0.9999997019767761,1.0,1.0,0.0
+46,L1,System_Inventory,numeric,OK,pe2 장비에 등록된 로컬 사용자는 총 몇 명입니까? [답변 형식: 숫자],1,2,0.0,0.0,0.0,0.9997974634170532,0.0,0.0,0.0
+47,L1,System_Inventory,numeric,OK,leaf4 장비에 등록된 로컬 사용자는 총 몇 명입니까? [답변 형식: 숫자],1,0,0.0,0.0,0.0,0.9803619384765625,0.0,0.0,0.0
+48,L1,System_Inventory,numeric,OK,leaf3 장비에 등록된 로컬 사용자는 총 몇 명입니까? [답변 형식: 숫자],1,1,1.0,1.0,1.0,0.9999997019767761,1.0,1.0,0.0
+49,L1,System_Inventory,numeric,OK,p4 장비에 등록된 로컬 사용자는 총 몇 명입니까? [답변 형식: 숫자],1,0,0.0,0.0,0.0,0.9803619384765625,0.0,0.0,0.0
+50,L1,System_Inventory,text,NOT_CONFIGURED,leaf1 장비에서 logging buffered의 severity-level은 무엇입니까? [답변 형식: 설정값 또는 null],null,,1.0,1.0,1.0,1.0,0,0.0,0.0
+51,L1,System_Inventory,text,NOT_CONFIGURED,leaf3 장비에서 logging buffered의 severity-level은 무엇입니까? [답변 형식: 설정값 또는 null],null,,1.0,1.0,1.0,1.0,0,0.0,0.0
+52,L1,System_Inventory,text,NOT_CONFIGURED,p3 장비에서 logging buffered의 severity-level은 무엇입니까? [답변 형식: 설정값 또는 null],null,,1.0,1.0,1.0,1.0,0,0.0,0.0
+53,L1,System_Inventory,text,NOT_CONFIGURED,p1 장비에서 logging buffered의 severity-level은 무엇입니까? [답변 형식: 설정값 또는 null],null,,1.0,1.0,1.0,1.0,0,0.0,0.0
+54,L1,System_Inventory,text,NOT_CONFIGURED,leaf2 장비에서 logging buffered의 severity-level은 무엇입니까? [답변 형식: 설정값 또는 null],null,,1.0,1.0,1.0,1.0,0,0.0,0.0
+55,L1,System_Inventory,text,NOT_CONFIGURED,leaf4 장비에서 logging buffered의 severity-level은 무엇입니까? [답변 형식: 설정값 또는 null],null,,1.0,1.0,1.0,1.0,0,0.0,0.0
+56,L1,System_Inventory,text,NOT_CONFIGURED,pe2 장비에서 logging buffered의 severity-level은 무엇입니까? [답변 형식: 설정값 또는 null],null,,1.0,1.0,1.0,1.0,0,0.0,0.0
+57,L1,System_Inventory,text,NOT_CONFIGURED,pe1 장비에서 logging buffered의 severity-level은 무엇입니까? [답변 형식: 설정값 또는 null],null,,1.0,1.0,1.0,1.0,0,0.0,0.0
+58,L1,System_Inventory,text,NOT_CONFIGURED,p4 장비에서 logging buffered의 severity-level은 무엇입니까? [답변 형식: 설정값 또는 null],null,,1.0,1.0,1.0,1.0,0,0.0,0.0
+59,L1,System_Inventory,text,NOT_CONFIGURED,p2 장비에서 logging buffered의 severity-level은 무엇입니까? [답변 형식: 설정값 또는 null],null,,1.0,1.0,1.0,1.0,0,0.0,0.0
+60,L1,System_Inventory,set,NOT_CONFIGURED,p2 장비에 설정된 NTP 서버 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999995231628418,0,0.0,0.0
+61,L1,System_Inventory,set,NOT_CONFIGURED,pe2 장비에 설정된 NTP 서버 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999995231628418,0,0.0,0.0
+62,L1,System_Inventory,set,NOT_CONFIGURED,leaf2 장비에 설정된 NTP 서버 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999995231628418,0,0.0,0.0
+63,L1,System_Inventory,set,NOT_CONFIGURED,leaf4 장비에 설정된 NTP 서버 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999995231628418,0,0.0,0.0
+64,L1,System_Inventory,set,NOT_CONFIGURED,p1 장비에 설정된 NTP 서버 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+65,L1,System_Inventory,set,NOT_CONFIGURED,p4 장비에 설정된 NTP 서버 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+66,L1,System_Inventory,set,NOT_CONFIGURED,pe1 장비에 설정된 NTP 서버 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+67,L1,System_Inventory,set,NOT_CONFIGURED,leaf1 장비에 설정된 NTP 서버 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+68,L1,System_Inventory,set,NOT_CONFIGURED,p3 장비에 설정된 NTP 서버 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+69,L1,System_Inventory,set,NOT_CONFIGURED,leaf3 장비에 설정된 NTP 서버 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+70,L1,System_Inventory,set,NOT_CONFIGURED,pe1 장비에 설정된 SNMP 커뮤니티 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+71,L1,System_Inventory,set,NOT_CONFIGURED,p1 장비에 설정된 SNMP 커뮤니티 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+72,L1,System_Inventory,set,NOT_CONFIGURED,leaf2 장비에 설정된 SNMP 커뮤니티 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+73,L1,System_Inventory,set,NOT_CONFIGURED,p4 장비에 설정된 SNMP 커뮤니티 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+74,L1,System_Inventory,set,NOT_CONFIGURED,leaf3 장비에 설정된 SNMP 커뮤니티 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+75,L1,System_Inventory,set,NOT_CONFIGURED,pe2 장비에 설정된 SNMP 커뮤니티 목록을 알려주세요. [답변 형식: 리스트],[],"[""public"", ""private""]",0.0,0.0,0.0,0.7894454002380371,0,0.0,0.0
+76,L1,System_Inventory,set,NOT_CONFIGURED,leaf1 장비에 설정된 SNMP 커뮤니티 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+77,L1,System_Inventory,set,NOT_CONFIGURED,leaf4 장비에 설정된 SNMP 커뮤니티 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+78,L1,System_Inventory,set,NOT_CONFIGURED,p3 장비에 설정된 SNMP 커뮤니티 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+79,L1,System_Inventory,set,NOT_CONFIGURED,p2 장비에 설정된 SNMP 커뮤니티 목록을 알려주세요. [답변 형식: 리스트],[],"[""public""]",0.0,0.0,0.0,0.8264974355697632,0,0.0,0.0
+80,L1,System_Inventory,set,NOT_CONFIGURED,leaf4 장비에 설정된 Syslog 서버 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+81,L1,System_Inventory,set,NOT_CONFIGURED,p2 장비에 설정된 Syslog 서버 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+82,L1,System_Inventory,set,NOT_CONFIGURED,p4 장비에 설정된 Syslog 서버 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+83,L1,System_Inventory,set,NOT_CONFIGURED,leaf3 장비에 설정된 Syslog 서버 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+84,L1,System_Inventory,set,NOT_CONFIGURED,pe1 장비에 설정된 Syslog 서버 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+85,L1,System_Inventory,set,NOT_CONFIGURED,p1 장비에 설정된 Syslog 서버 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+86,L1,System_Inventory,set,NOT_CONFIGURED,leaf2 장비에 설정된 Syslog 서버 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+87,L1,System_Inventory,set,NOT_CONFIGURED,p3 장비에 설정된 Syslog 서버 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+88,L1,System_Inventory,set,NOT_CONFIGURED,pe2 장비에 설정된 Syslog 서버 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+89,L1,System_Inventory,set,NOT_CONFIGURED,leaf1 장비에 설정된 Syslog 서버 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+90,L1,System_Inventory,map,OK,leaf1 장비의 각 인터페이스 상태를 알려주세요. [답변 형식: {{'인터페이스명': '상태'}}],"{""GigabitEthernet0/0"": ""up"", ""GigabitEthernet0/1"": ""up"", ""GigabitEthernet0/2"": ""up"", ""GigabitEthernet0/3"": ""up""}","{""GigabitEthernet0/0"": ""up"", ""GigabitEthernet0/1"": ""up"", ""GigabitEthernet0/2"": ""up"", ""GigabitEthernet0/3"": ""up""}",1.0,1.0,1.0,1.0,1.0,1.0,1.0
+91,L1,System_Inventory,map,OK,leaf3 장비의 각 인터페이스 상태를 알려주세요. [답변 형식: {{'인터페이스명': '상태'}}],"{""GigabitEthernet0/0"": ""up"", ""GigabitEthernet0/1"": ""down"", ""GigabitEthernet0/2"": ""up"", ""GigabitEthernet0/3"": ""down""}","{""GigabitEthernet0/0"": ""up"", ""GigabitEthernet0/1"": ""down"", ""GigabitEthernet0/2"": ""up"", ""GigabitEthernet0/3"": ""down""}",1.0,1.0,1.0,1.0,1.0,1.0,1.0
+92,L1,System_Inventory,map,OK,pe1 장비의 각 인터페이스 상태를 알려주세요. [답변 형식: {{'인터페이스명': '상태'}}],"{""GigabitEthernet0/0"": ""up"", ""GigabitEthernet0/1"": ""up"", ""GigabitEthernet0/2"": ""up"", ""GigabitEthernet0/3"": ""up"", ""Loopback0"": ""up""}","{""GigabitEthernet0/0"": ""up"", ""GigabitEthernet0/1"": ""up"", ""GigabitEthernet0/2"": ""up"", ""GigabitEthernet0/3"": ""up"", ""Loopback0"": ""up""}",1.0,1.0,1.0,1.0,1.0,1.0,1.0
+93,L1,System_Inventory,map,OK,leaf2 장비의 각 인터페이스 상태를 알려주세요. [답변 형식: {{'인터페이스명': '상태'}}],"{""GigabitEthernet0/0"": ""up"", ""GigabitEthernet0/1"": ""down"", ""GigabitEthernet0/2"": ""up"", ""GigabitEthernet0/3"": ""up""}","{""GigabitEthernet0/0"": ""up"", ""GigabitEthernet0/1"": ""down"", ""GigabitEthernet0/2"": ""up"", ""GigabitEthernet0/3"": ""down""}",0.875,0.0,0.8571428571428571,0.9967584013938904,0.9166666666666666,0.9166666666666666,0.9090909090909091
+94,L1,System_Inventory,map,OK,p3 장비의 각 인터페이스 상태를 알려주세요. [답변 형식: {{'인터페이스명': '상태'}}],"{""GigabitEthernet0/0"": ""up"", ""GigabitEthernet0/1"": ""up"", ""GigabitEthernet0/2"": ""up"", ""GigabitEthernet0/3"": ""up"", ""Loopback0"": ""up""}","{""GigabitEthernet0/0"": ""up"", ""GigabitEthernet0/1"": ""up"", ""GigabitEthernet0/2"": ""up"", ""GigabitEthernet0/3"": ""up""}",0.9,0.0,0.923076923076923,0.9880896210670471,0.923076923076923,0.923076923076923,0.9166666666666666
+95,L1,System_Inventory,map,OK,p2 장비의 각 인터페이스 상태를 알려주세요. [답변 형식: {{'인터페이스명': '상태'}}],"{""GigabitEthernet0/0"": ""up"", ""GigabitEthernet0/1"": ""up"", ""GigabitEthernet0/2"": ""up"", ""GigabitEthernet0/3"": ""up"", ""Loopback0"": ""up""}","{""GigabitEthernet0/0"": ""up"", ""GigabitEthernet0/1"": ""up"", ""GigabitEthernet0/2"": ""up"", ""GigabitEthernet0/3"": ""up""}",0.9,0.0,0.923076923076923,0.9880896210670471,0.923076923076923,0.923076923076923,0.9166666666666666
+96,L1,System_Inventory,map,OK,pe2 장비의 각 인터페이스 상태를 알려주세요. [답변 형식: {{'인터페이스명': '상태'}}],"{""GigabitEthernet0/0"": ""up"", ""GigabitEthernet0/1"": ""up"", ""GigabitEthernet0/2"": ""up"", ""GigabitEthernet0/3"": ""up"", ""Loopback0"": ""up""}","{""GigabitEthernet0/0"": ""up"", ""GigabitEthernet0/1"": ""up"", ""GigabitEthernet0/2"": ""up"", ""GigabitEthernet0/3"": ""up""}",0.9,0.0,0.923076923076923,0.9880896210670471,0.923076923076923,0.923076923076923,0.9166666666666666
+97,L1,System_Inventory,map,OK,p1 장비의 각 인터페이스 상태를 알려주세요. [답변 형식: {{'인터페이스명': '상태'}}],"{""GigabitEthernet0/0"": ""up"", ""GigabitEthernet0/1"": ""up"", ""GigabitEthernet0/2"": ""up"", ""GigabitEthernet0/3"": ""down"", ""Loopback0"": ""up""}","{""GigabitEthernet0/0"": ""up"", ""GigabitEthernet0/1"": ""up"", ""GigabitEthernet0/2"": ""up"", ""GigabitEthernet0/3"": ""down""}",0.9,0.0,0.7142857142857143,0.9868971109390259,0.923076923076923,0.923076923076923,0.9166666666666666
+98,L1,System_Inventory,map,OK,leaf4 장비의 각 인터페이스 상태를 알려주세요. [답변 형식: {{'인터페이스명': '상태'}}],"{""GigabitEthernet0/0"": ""up"", ""GigabitEthernet0/1"": ""down"", ""GigabitEthernet0/2"": ""up"", ""GigabitEthernet0/3"": ""down""}","{""GigabitEthernet0/0"": ""up"", ""GigabitEthernet0/1"": ""down"", ""GigabitEthernet0/2"": ""up"", ""GigabitEthernet0/3"": ""down""}",1.0,1.0,1.0,1.0,1.0,1.0,1.0
+99,L1,System_Inventory,map,OK,p4 장비의 각 인터페이스 상태를 알려주세요. [답변 형식: {{'인터페이스명': '상태'}}],"{""GigabitEthernet0/0"": ""up"", ""GigabitEthernet0/1"": ""up"", ""GigabitEthernet0/2"": ""up"", ""GigabitEthernet0/3"": ""down"", ""Loopback0"": ""up""}","{""GigabitEthernet0/0"": ""up"", ""GigabitEthernet0/1"": ""up"", ""GigabitEthernet0/2"": ""up"", ""GigabitEthernet0/3"": ""down""}",0.9,0.0,0.7142857142857143,0.9868971109390259,0.923076923076923,0.923076923076923,0.9166666666666666
+100,L1,System_Inventory,number,OK,p3 장비의 라우팅 테이블 엔트리는 총 몇 개입니까? [답변 형식: 숫자],5,23,0.0,0.0,0.0,0.9998614192008972,0.0,0.0,0.0
+101,L1,System_Inventory,number,OK,leaf1 장비의 라우팅 테이블 엔트리는 총 몇 개입니까? [답변 형식: 숫자],4,20,0.0,0.0,0.0,0.9991417527198792,0.0,0.0,0.0
+102,L1,System_Inventory,number,OK,leaf4 장비의 라우팅 테이블 엔트리는 총 몇 개입니까? [답변 형식: 숫자],4,4,1.0,1.0,1.0,1.000000238418579,1.0,1.0,0.0
+103,L1,System_Inventory,number,OK,pe2 장비의 라우팅 테이블 엔트리는 총 몇 개입니까? [답변 형식: 숫자],5,23,0.0,0.0,0.0,0.9998614192008972,0.0,0.0,0.0
+104,L1,System_Inventory,number,OK,pe1 장비의 라우팅 테이블 엔트리는 총 몇 개입니까? [답변 형식: 숫자],5,23,0.0,0.0,0.0,0.9998614192008972,0.0,0.0,0.0
+105,L1,System_Inventory,number,OK,leaf2 장비의 라우팅 테이블 엔트리는 총 몇 개입니까? [답변 형식: 숫자],4,2,0.0,0.0,0.0,0.9999338388442993,0.0,0.0,0.0
+106,L1,System_Inventory,number,OK,leaf3 장비의 라우팅 테이블 엔트리는 총 몇 개입니까? [답변 형식: 숫자],4,20,0.0,0.0,0.0,0.9991417527198792,0.0,0.0,0.0
+107,L1,System_Inventory,number,OK,p2 장비의 라우팅 테이블 엔트리는 총 몇 개입니까? [답변 형식: 숫자],5,23,0.0,0.0,0.0,0.9998614192008972,0.0,0.0,0.0
+108,L1,System_Inventory,number,OK,p4 장비의 라우팅 테이블 엔트리는 총 몇 개입니까? [답변 형식: 숫자],5,23,0.0,0.0,0.0,0.9998614192008972,0.0,0.0,0.0
+109,L1,System_Inventory,number,OK,p1 장비의 라우팅 테이블 엔트리는 총 몇 개입니까? [답변 형식: 숫자],5,20,0.0,0.0,0.0,0.9993363618850708,0.0,0.0,0.0
+110,L1,Security_Inventory,text,OK,pe2 장비의 SSH 버전은 무엇입니까? [답변 형식: 정확한 값만],"""2""",2,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+111,L1,Security_Inventory,text,OK,p1 장비의 SSH 버전은 무엇입니까? [답변 형식: 정확한 값만],"""2""",2,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+112,L1,Security_Inventory,text,OK,leaf2 장비의 SSH 버전은 무엇입니까? [답변 형식: 정확한 값만],"""2""",2,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+113,L1,Security_Inventory,text,OK,p4 장비의 SSH 버전은 무엇입니까? [답변 형식: 정확한 값만],"""2""",2,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+114,L1,Security_Inventory,text,OK,leaf3 장비의 SSH 버전은 무엇입니까? [답변 형식: 정확한 값만],"""2""",2,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+115,L1,Security_Inventory,text,OK,p2 장비의 SSH 버전은 무엇입니까? [답변 형식: 정확한 값만],"""2""",2,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+116,L1,Security_Inventory,text,OK,leaf4 장비의 SSH 버전은 무엇입니까? [답변 형식: 정확한 값만],"""2""",2,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+117,L1,Security_Inventory,text,OK,pe1 장비의 SSH 버전은 무엇입니까? [답변 형식: 정확한 값만],"""2""",2,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+118,L1,Security_Inventory,text,OK,leaf1 장비의 SSH 버전은 무엇입니까? [답변 형식: 정확한 값만],"""2""",2,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+119,L1,Security_Inventory,text,OK,p3 장비의 SSH 버전은 무엇입니까? [답변 형식: 정확한 값만],"""2""",2,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+120,L1,Security_Inventory,text,OK,"leaf1 장비의 AAA 인증 방식은 무엇입니까? [답변 형식: local, tacacs+, radius 중 하나 또는 '미설정']","""미설정""",local,0.0,0.0,0.0,0.7575575709342957,0,0.0,0.0
+121,L1,Security_Inventory,text,OK,"pe1 장비의 AAA 인증 방식은 무엇입니까? [답변 형식: local, tacacs+, radius 중 하나 또는 '미설정']","""미설정""",local,0.0,0.0,0.0,0.7575575709342957,0,0.0,0.0
+122,L1,Security_Inventory,text,OK,"leaf4 장비의 AAA 인증 방식은 무엇입니까? [답변 형식: local, tacacs+, radius 중 하나 또는 '미설정']","""미설정""",local,0.0,0.0,0.0,0.7575575709342957,0,0.0,0.0
+123,L1,Security_Inventory,text,OK,"leaf2 장비의 AAA 인증 방식은 무엇입니까? [답변 형식: local, tacacs+, radius 중 하나 또는 '미설정']","""미설정""",local,0.0,0.0,0.0,0.7575575709342957,0,0.0,0.0
+124,L1,Security_Inventory,text,OK,"p2 장비의 AAA 인증 방식은 무엇입니까? [답변 형식: local, tacacs+, radius 중 하나 또는 '미설정']","""미설정""",local,0.0,0.0,0.0,0.7575575709342957,0,0.0,0.0
+125,L1,Security_Inventory,text,OK,"p4 장비의 AAA 인증 방식은 무엇입니까? [답변 형식: local, tacacs+, radius 중 하나 또는 '미설정']","""미설정""",local,0.0,0.0,0.0,0.7575575709342957,0,0.0,0.0
+126,L1,Security_Inventory,text,OK,"leaf3 장비의 AAA 인증 방식은 무엇입니까? [답변 형식: local, tacacs+, radius 중 하나 또는 '미설정']","""미설정""",local,0.0,0.0,0.0,0.7575575709342957,0,0.0,0.0
+127,L1,Security_Inventory,text,OK,"pe2 장비의 AAA 인증 방식은 무엇입니까? [답변 형식: local, tacacs+, radius 중 하나 또는 '미설정']","""미설정""",local,0.0,0.0,0.0,0.7575575709342957,0,0.0,0.0
+128,L1,Security_Inventory,text,OK,"p3 장비의 AAA 인증 방식은 무엇입니까? [답변 형식: local, tacacs+, radius 중 하나 또는 '미설정']","""미설정""",local,0.0,0.0,0.0,0.7575575709342957,0,0.0,0.0
+129,L1,Security_Inventory,text,OK,"p1 장비의 AAA 인증 방식은 무엇입니까? [답변 형식: local, tacacs+, radius 중 하나 또는 '미설정']","""미설정""",local,0.0,0.0,0.0,0.7575575709342957,0,0.0,0.0
+130,L1,Security_Inventory,text,OK,leaf1 장비의 VTY transport input 설정은 무엇입니까? [답변 형식: 설정값 또는 null],"""ssh""",transport input ssh,0.5,0.0,0.5,0.8567918539047241,0.5,0.5,0.0
+131,L1,Security_Inventory,text,OK,pe1 장비의 VTY transport input 설정은 무엇입니까? [답변 형식: 설정값 또는 null],"""ssh""",transport input ssh,0.5,0.0,0.5,0.8567918539047241,0.5,0.5,0.0
+132,L1,Security_Inventory,text,OK,p4 장비의 VTY transport input 설정은 무엇입니까? [답변 형식: 설정값 또는 null],"""ssh""",ssh,1.0,1.0,1.0,0.9999998807907104,1.0,1.0,0.0
+133,L1,Security_Inventory,text,OK,leaf2 장비의 VTY transport input 설정은 무엇입니까? [답변 형식: 설정값 또는 null],"""ssh""",transport input ssh,0.5,0.0,0.5,0.8567918539047241,0.5,0.5,0.0
+134,L1,Security_Inventory,text,OK,leaf3 장비의 VTY transport input 설정은 무엇입니까? [답변 형식: 설정값 또는 null],"""ssh""",transport input ssh,0.5,0.0,0.5,0.8567918539047241,0.5,0.5,0.0
+135,L1,Security_Inventory,text,OK,p1 장비의 VTY transport input 설정은 무엇입니까? [답변 형식: 설정값 또는 null],"""ssh""",transport input ssh,0.5,0.0,0.5,0.8567918539047241,0.5,0.5,0.0
+136,L1,Security_Inventory,text,OK,p3 장비의 VTY transport input 설정은 무엇입니까? [답변 형식: 설정값 또는 null],"""ssh""",transport input ssh,0.5,0.0,0.5,0.8567918539047241,0.5,0.5,0.0
+137,L1,Security_Inventory,text,OK,p2 장비의 VTY transport input 설정은 무엇입니까? [답변 형식: 설정값 또는 null],"""ssh""",transport input ssh,0.5,0.0,0.5,0.8567918539047241,0.5,0.5,0.0
+138,L1,Security_Inventory,text,OK,leaf4 장비의 VTY transport input 설정은 무엇입니까? [답변 형식: 설정값 또는 null],"""ssh""",ssh,1.0,1.0,1.0,0.9999998807907104,1.0,1.0,0.0
+139,L1,Security_Inventory,text,OK,pe2 장비의 VTY transport input 설정은 무엇입니까? [답변 형식: 설정값 또는 null],"""ssh""",transport input ssh,0.5,0.0,0.5,0.8567918539047241,0.5,0.5,0.0
+140,L1,Security_Inventory,text,OK,leaf3 장비의 VTY line 로그인 방식은 무엇입니까? [답변 형식: 설정값 또는 null],"""local""",local,1.0,1.0,1.0,0.9999998807907104,1.0,1.0,0.0
+141,L1,Security_Inventory,text,OK,p4 장비의 VTY line 로그인 방식은 무엇입니까? [답변 형식: 설정값 또는 null],"""local""","line vty 0 4
+ login local
+ transport input ssh",0.19999999999999998,0.0,0.19999999999999998,0.7906959652900696,0.19999999999999998,0.19999999999999998,0.0
+142,L1,Security_Inventory,text,OK,pe1 장비의 VTY line 로그인 방식은 무엇입니까? [답변 형식: 설정값 또는 null],"""local""",local,1.0,1.0,1.0,0.9999998807907104,1.0,1.0,0.0
+143,L1,Security_Inventory,text,OK,p1 장비의 VTY line 로그인 방식은 무엇입니까? [답변 형식: 설정값 또는 null],"""local""",local,1.0,1.0,1.0,0.9999998807907104,1.0,1.0,0.0
+144,L1,Security_Inventory,text,OK,p3 장비의 VTY line 로그인 방식은 무엇입니까? [답변 형식: 설정값 또는 null],"""local""",local,1.0,1.0,1.0,0.9999998807907104,1.0,1.0,0.0
+145,L1,Security_Inventory,text,OK,p2 장비의 VTY line 로그인 방식은 무엇입니까? [답변 형식: 설정값 또는 null],"""local""",local,1.0,1.0,1.0,0.9999998807907104,1.0,1.0,0.0
+146,L1,Security_Inventory,text,OK,leaf4 장비의 VTY line 로그인 방식은 무엇입니까? [답변 형식: 설정값 또는 null],"""local""",local,1.0,1.0,1.0,0.9999998807907104,1.0,1.0,0.0
+147,L1,Security_Inventory,text,OK,leaf2 장비의 VTY line 로그인 방식은 무엇입니까? [답변 형식: 설정값 또는 null],"""local""",local,1.0,1.0,1.0,0.9999998807907104,1.0,1.0,0.0
+148,L1,Security_Inventory,text,OK,leaf1 장비의 VTY line 로그인 방식은 무엇입니까? [답변 형식: 설정값 또는 null],"""local""",local,1.0,1.0,1.0,0.9999998807907104,1.0,1.0,0.0
+149,L1,Security_Inventory,text,OK,pe2 장비의 VTY line 로그인 방식은 무엇입니까? [답변 형식: 설정값 또는 null],"""local""","line vty 0 4
+ login local
+ transport input ssh",0.19999999999999998,0.0,0.19999999999999998,0.7906959652900696,0.19999999999999998,0.19999999999999998,0.0
+150,L1,Interface_Inventory,numeric,OK,p1 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까? [답변 형식: 숫자],5,4,0.0,0.0,0.0,0.9993913769721985,0.0,0.0,0.0
+151,L1,Interface_Inventory,numeric,OK,leaf2 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까? [답변 형식: 숫자],4,4,1.0,1.0,1.0,1.000000238418579,1.0,1.0,0.0
+152,L1,Interface_Inventory,numeric,OK,p4 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까? [답변 형식: 숫자],5,4,0.0,0.0,0.0,0.9993913769721985,0.0,0.0,0.0
+153,L1,Interface_Inventory,numeric,OK,pe1 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까? [답변 형식: 숫자],5,4,0.0,0.0,0.0,0.9993913769721985,0.0,0.0,0.0
+154,L1,Interface_Inventory,numeric,OK,pe2 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까? [답변 형식: 숫자],5,4,0.0,0.0,0.0,0.9993913769721985,0.0,0.0,0.0
+155,L1,Interface_Inventory,numeric,OK,leaf1 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까? [답변 형식: 숫자],4,4,1.0,1.0,1.0,1.000000238418579,1.0,1.0,0.0
+156,L1,Interface_Inventory,numeric,OK,p2 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까? [답변 형식: 숫자],5,4,0.0,0.0,0.0,0.9993913769721985,0.0,0.0,0.0
+157,L1,Interface_Inventory,numeric,OK,leaf3 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까? [답변 형식: 숫자],4,4,1.0,1.0,1.0,1.000000238418579,1.0,1.0,0.0
+158,L1,Interface_Inventory,numeric,OK,p3 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까? [답변 형식: 숫자],5,4,0.0,0.0,0.0,0.9993913769721985,0.0,0.0,0.0
+159,L1,Interface_Inventory,numeric,OK,leaf4 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까? [답변 형식: 숫자],4,4,1.0,1.0,1.0,1.000000238418579,1.0,1.0,0.0
+160,L1,Interface_Inventory,map,OK,leaf4 장비의 각 인터페이스에 할당된 IP 주소를 알려주세요. [답변 형식: {{'인터페이스': 'IP'}}],"{""GigabitEthernet0/0"": ""172.16.4.2/24"", ""GigabitEthernet0/1"": """", ""GigabitEthernet0/2"": ""10.10.10.34/24"", ""GigabitEthernet0/3"": """"}","{""GigabitEthernet0/0"": ""172.16.4.2"", ""GigabitEthernet0/2"": ""10.10.10.34""}",0.75,0.0,0.3333333333333333,0.9642370343208313,0.8,0.8,0.7142857142857143
+161,L1,Interface_Inventory,map,OK,p2 장비의 각 인터페이스에 할당된 IP 주소를 알려주세요. [답변 형식: {{'인터페이스': 'IP'}}],"{""GigabitEthernet0/0"": ""10.0.0.1/31"", ""GigabitEthernet0/1"": ""10.0.0.2/31"", ""GigabitEthernet0/2"": ""10.0.1.0/31"", ""GigabitEthernet0/3"": ""10.10.10.12/24"", ""Loopback0"": ""10.255.0.2/32""}","{""GigabitEthernet0/0"": ""10.0.0.1"", ""GigabitEthernet0/1"": ""10.0.0.2"", ""GigabitEthernet0/2"": ""10.0.1.0"", ""GigabitEthernet0/3"": ""10.10.10.12""}",0.9,0.0,0.4444444444444445,0.9696657657623291,0.8275862068965517,0.8275862068965517,0.7142857142857143
+162,L1,Interface_Inventory,map,OK,p1 장비의 각 인터페이스에 할당된 IP 주소를 알려주세요. [답변 형식: {{'인터페이스': 'IP'}}],"{""GigabitEthernet0/0"": ""10.0.0.0/31"", ""GigabitEthernet0/1"": ""10.0.0.7/31"", ""GigabitEthernet0/2"": ""10.10.10.11/24"", ""GigabitEthernet0/3"": """", ""Loopback0"": ""10.255.0.1/32""}","{""GigabitEthernet0/0"": ""10.0.0.0 255.255.255.254"", ""GigabitEthernet0/1"": ""10.0.0.7 255.255.255.254"", ""GigabitEthernet0/2"": ""10.10.10.11 255.255.255.0"", ""GigabitEthernet0/3"": ""no ip address""}",0.4,0.0,0.3636363636363636,0.9538692235946655,0.625,0.6875,0.5483870967741935
+163,L1,Interface_Inventory,map,OK,pe2 장비의 각 인터페이스에 할당된 IP 주소를 알려주세요. [답변 형식: {{'인터페이스': 'IP'}}],"{""GigabitEthernet0/0"": ""10.0.1.3/31"", ""GigabitEthernet0/1"": ""172.16.3.1/24"", ""GigabitEthernet0/2"": ""172.16.4.1/24"", ""GigabitEthernet0/3"": ""10.10.10.22/24"", ""Loopback0"": ""10.255.0.12/32""}","{""GigabitEthernet0/0"": ""10.0.1.3"", ""GigabitEthernet0/1"": ""172.16.3.1"", ""GigabitEthernet0/2"": ""172.16.4.1"", ""GigabitEthernet0/3"": ""10.10.10.22""}",0.9,0.0,0.4444444444444445,0.9719040989875793,0.8275862068965517,0.8275862068965517,0.7142857142857143
+164,L1,Interface_Inventory,map,OK,leaf2 장비의 각 인터페이스에 할당된 IP 주소를 알려주세요. [답변 형식: {{'인터페이스': 'IP'}}],"{""GigabitEthernet0/0"": ""172.16.2.2/24"", ""GigabitEthernet0/1"": """", ""GigabitEthernet0/2"": ""10.10.2.1/24"", ""GigabitEthernet0/3"": ""10.10.10.32/24""}","{""GigabitEthernet0/0"": ""172.16.2.2"", ""GigabitEthernet0/1"": ""none"", ""GigabitEthernet0/2"": ""10.10.2.1"", ""GigabitEthernet0/3"": ""10.10.10.32""}",0.875,0.0,0.5,0.983413815498352,0.909090909090909,0.909090909090909,0.8095238095238095
+165,L1,Interface_Inventory,map,OK,leaf3 장비의 각 인터페이스에 할당된 IP 주소를 알려주세요. [답변 형식: {{'인터페이스': 'IP'}}],"{""GigabitEthernet0/0"": ""172.16.3.2/24"", ""GigabitEthernet0/1"": """", ""GigabitEthernet0/2"": ""10.10.10.33/24"", ""GigabitEthernet0/3"": """"}","{""GigabitEthernet0/0"": ""172.16.3.2"", ""GigabitEthernet0/2"": ""10.10.10.33""}",0.75,0.0,0.3333333333333333,0.9634132981300354,0.8,0.8,0.7142857142857143
+166,L1,Interface_Inventory,map,OK,p3 장비의 각 인터페이스에 할당된 IP 주소를 알려주세요. [답변 형식: {{'인터페이스': 'IP'}}],"{""GigabitEthernet0/0"": ""10.0.0.3/31"", ""GigabitEthernet0/1"": ""10.0.0.4/31"", ""GigabitEthernet0/2"": ""10.0.1.2/31"", ""GigabitEthernet0/3"": ""10.10.10.13/24"", ""Loopback0"": ""10.255.0.3/32""}","{""GigabitEthernet0/0"": ""10.0.0.3"", ""GigabitEthernet0/1"": ""10.0.0.4"", ""GigabitEthernet0/2"": ""10.0.1.2"", ""GigabitEthernet0/3"": ""10.10.10.13""}",0.9,0.0,0.4444444444444445,0.9702196717262268,0.8275862068965517,0.8275862068965517,0.7142857142857143
+167,L1,Interface_Inventory,map,OK,p4 장비의 각 인터페이스에 할당된 IP 주소를 알려주세요. [답변 형식: {{'인터페이스': 'IP'}}],"{""GigabitEthernet0/0"": ""10.0.0.5/31"", ""GigabitEthernet0/1"": ""10.0.0.6/31"", ""GigabitEthernet0/2"": ""10.10.10.14/24"", ""GigabitEthernet0/3"": """", ""Loopback0"": ""10.255.0.4/32""}","{""GigabitEthernet0/0"": ""10.0.0.5"", ""GigabitEthernet0/1"": ""10.0.0.6"", ""GigabitEthernet0/2"": ""10.10.10.14"", ""GigabitEthernet0/3"": ""none""}",0.775,0.0,0.4444444444444445,0.9689863324165344,0.7999999999999999,0.7999999999999999,0.6666666666666666
+168,L1,Interface_Inventory,map,OK,leaf1 장비의 각 인터페이스에 할당된 IP 주소를 알려주세요. [답변 형식: {{'인터페이스': 'IP'}}],"{""GigabitEthernet0/0"": ""172.16.1.2/24"", ""GigabitEthernet0/1"": ""192.168.100.1/24"", ""GigabitEthernet0/2"": ""10.10.1.1/24"", ""GigabitEthernet0/3"": ""10.10.10.31/24""}","{""GigabitEthernet0/0"": ""172.16.1.2"", ""GigabitEthernet0/1"": ""192.168.100.1"", ""GigabitEthernet0/2"": ""10.10.1.1"", ""GigabitEthernet0/3"": ""10.10.10.31""}",1.0,0.0,0.5,0.9829216003417969,0.923076923076923,0.923076923076923,0.7999999999999999
+169,L1,Interface_Inventory,map,OK,pe1 장비의 각 인터페이스에 할당된 IP 주소를 알려주세요. [답변 형식: {{'인터페이스': 'IP'}}],"{""GigabitEthernet0/0"": ""10.0.1.1/31"", ""GigabitEthernet0/1"": ""172.16.1.1/24"", ""GigabitEthernet0/2"": ""172.16.2.1/24"", ""GigabitEthernet0/3"": ""10.10.10.21/24"", ""Loopback0"": ""10.255.0.11/32""}","{""GigabitEthernet0/0"": ""10.0.1.1"", ""GigabitEthernet0/1"": ""172.16.1.1"", ""GigabitEthernet0/2"": ""172.16.2.1"", ""GigabitEthernet0/3"": ""10.10.10.21""}",0.9,0.0,0.4444444444444445,0.9720274209976196,0.8275862068965517,0.8275862068965517,0.7142857142857143
+170,L1,Interface_Inventory,numeric,NOT_CONFIGURED,leaf4 장비에 설정된 서브인터페이스는 총 몇 개입니까? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+171,L1,Interface_Inventory,numeric,NOT_CONFIGURED,leaf3 장비에 설정된 서브인터페이스는 총 몇 개입니까? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+172,L1,Interface_Inventory,numeric,NOT_CONFIGURED,leaf2 장비에 설정된 서브인터페이스는 총 몇 개입니까? [답변 형식: 숫자],0,2,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+173,L1,Interface_Inventory,numeric,NOT_CONFIGURED,p3 장비에 설정된 서브인터페이스는 총 몇 개입니까? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+174,L1,Interface_Inventory,numeric,NOT_CONFIGURED,pe1 장비에 설정된 서브인터페이스는 총 몇 개입니까? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+175,L1,Interface_Inventory,numeric,NOT_CONFIGURED,p2 장비에 설정된 서브인터페이스는 총 몇 개입니까? [답변 형식: 숫자],0,2,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+176,L1,Interface_Inventory,numeric,NOT_CONFIGURED,leaf1 장비에 설정된 서브인터페이스는 총 몇 개입니까? [답변 형식: 숫자],0,2,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+177,L1,Interface_Inventory,numeric,NOT_CONFIGURED,pe2 장비에 설정된 서브인터페이스는 총 몇 개입니까? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+178,L1,Interface_Inventory,numeric,NOT_CONFIGURED,p4 장비에 설정된 서브인터페이스는 총 몇 개입니까? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+179,L1,Interface_Inventory,numeric,NOT_CONFIGURED,p1 장비에 설정된 서브인터페이스는 총 몇 개입니까? [답변 형식: 숫자],0,2,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+180,L1,Interface_Inventory,map,OK,leaf3 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요. [답변 형식: {{'인터페이스': 'VRF'}}],"{""GigabitEthernet0/0"": ""default"", ""GigabitEthernet0/1"": ""default"", ""GigabitEthernet0/2"": ""default"", ""GigabitEthernet0/3"": ""default""}","{""GigabitEthernet0/0"": ""default"", ""GigabitEthernet0/1"": ""default"", ""GigabitEthernet0/2"": ""default"", ""GigabitEthernet0/3"": ""default""}",1.0,1.0,1.0,1.0,1.0,1.0,1.0
+181,L1,Interface_Inventory,map,OK,leaf2 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요. [답변 형식: {{'인터페이스': 'VRF'}}],"{""GigabitEthernet0/0"": ""default"", ""GigabitEthernet0/1"": ""default"", ""GigabitEthernet0/2"": ""default"", ""GigabitEthernet0/3"": ""default""}","{""GigabitEthernet0/0"": ""default"", ""GigabitEthernet0/1"": ""none"", ""GigabitEthernet0/2"": ""default"", ""GigabitEthernet0/3"": ""none""}",0.75,0.0,0.7692307692307692,0.9931843280792236,0.8333333333333334,0.8333333333333334,0.7272727272727273
+182,L1,Interface_Inventory,map,OK,p2 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요. [답변 형식: {{'인터페이스': 'VRF'}}],"{""GigabitEthernet0/0"": ""default"", ""GigabitEthernet0/1"": ""default"", ""GigabitEthernet0/2"": ""default"", ""GigabitEthernet0/3"": ""default"", ""Loopback0"": ""default""}","{""GigabitEthernet0/0"": ""default"", ""GigabitEthernet0/1"": ""default"", ""GigabitEthernet0/2"": ""VRF_AI"", ""GigabitEthernet0/3"": ""default""}",0.775,0.0,0.8571428571428571,0.9758267998695374,0.8148148148148148,0.8148148148148148,0.7199999999999999
+183,L1,Interface_Inventory,map,OK,leaf4 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요. [답변 형식: {{'인터페이스': 'VRF'}}],"{""GigabitEthernet0/0"": ""default"", ""GigabitEthernet0/1"": ""default"", ""GigabitEthernet0/2"": ""default"", ""GigabitEthernet0/3"": ""default""}","{""GigabitEthernet0/0"": ""default"", ""GigabitEthernet0/1"": ""default"", ""GigabitEthernet0/2"": ""default"", ""GigabitEthernet0/3"": ""default""}",1.0,1.0,1.0,1.0,1.0,1.0,1.0
+184,L1,Interface_Inventory,map,OK,pe1 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요. [답변 형식: {{'인터페이스': 'VRF'}}],"{""GigabitEthernet0/0"": ""default"", ""GigabitEthernet0/1"": ""VRF_AI"", ""GigabitEthernet0/2"": ""VRF_BIO"", ""GigabitEthernet0/3"": ""default"", ""Loopback0"": ""default""}","{""GigabitEthernet0/0"": ""default"", ""GigabitEthernet0/1"": ""VRF_AI"", ""GigabitEthernet0/2"": ""VRF_BIO"", ""GigabitEthernet0/3"": ""default""}",0.9,0.0,0.9411764705882353,0.9904588460922241,0.9333333333333333,0.9333333333333333,0.9285714285714286
+185,L1,Interface_Inventory,map,OK,leaf1 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요. [답변 형식: {{'인터페이스': 'VRF'}}],"{""GigabitEthernet0/0"": ""default"", ""GigabitEthernet0/1"": ""default"", ""GigabitEthernet0/2"": ""default"", ""GigabitEthernet0/3"": ""default""}","{""GigabitEthernet0/0"": ""default"", ""GigabitEthernet0/1"": ""default"", ""GigabitEthernet0/2"": ""default"", ""GigabitEthernet0/3"": ""default""}",1.0,1.0,1.0,1.0,1.0,1.0,1.0
+186,L1,Interface_Inventory,map,OK,pe2 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요. [답변 형식: {{'인터페이스': 'VRF'}}],"{""GigabitEthernet0/0"": ""default"", ""GigabitEthernet0/1"": ""VRF_HPC"", ""GigabitEthernet0/2"": ""VRF_AI"", ""GigabitEthernet0/3"": ""default"", ""Loopback0"": ""default""}","{""GigabitEthernet0/0"": ""n/a"", ""GigabitEthernet0/1"": ""VRF_HPC"", ""GigabitEthernet0/2"": ""VRF_AI"", ""GigabitEthernet0/3"": ""n/a""}",0.65,0.0,0.7058823529411765,0.9732813239097595,0.75,0.75,0.6666666666666666
+187,L1,Interface_Inventory,map,OK,p1 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요. [답변 형식: {{'인터페이스': 'VRF'}}],"{""GigabitEthernet0/0"": ""default"", ""GigabitEthernet0/1"": ""default"", ""GigabitEthernet0/2"": ""default"", ""GigabitEthernet0/3"": ""default"", ""Loopback0"": ""default""}","{""GigabitEthernet0/0"": ""default"", ""GigabitEthernet0/1"": ""default"", ""GigabitEthernet0/2"": ""default"", ""GigabitEthernet0/3"": ""default""}",0.9,0.0,0.923076923076923,0.9886621832847595,0.923076923076923,0.923076923076923,0.9166666666666666
+188,L1,Interface_Inventory,map,OK,p4 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요. [답변 형식: {{'인터페이스': 'VRF'}}],"{""GigabitEthernet0/0"": ""default"", ""GigabitEthernet0/1"": ""default"", ""GigabitEthernet0/2"": ""default"", ""GigabitEthernet0/3"": ""default"", ""Loopback0"": ""default""}","{""GigabitEthernet0/0"": ""default"", ""GigabitEthernet0/1"": ""default"", ""GigabitEthernet0/2"": ""default"", ""GigabitEthernet0/3"": ""default""}",0.9,0.0,0.923076923076923,0.9886621832847595,0.923076923076923,0.923076923076923,0.9166666666666666
+189,L1,Interface_Inventory,map,OK,p3 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요. [답변 형식: {{'인터페이스': 'VRF'}}],"{""GigabitEthernet0/0"": ""default"", ""GigabitEthernet0/1"": ""default"", ""GigabitEthernet0/2"": ""default"", ""GigabitEthernet0/3"": ""default"", ""Loopback0"": ""default""}","{""GigabitEthernet0/0"": ""default"", ""GigabitEthernet0/1"": ""default"", ""GigabitEthernet0/2"": ""VRF_HPC"", ""GigabitEthernet0/3"": ""default""}",0.775,0.0,0.8571428571428571,0.9743415117263794,0.8148148148148148,0.8148148148148148,0.7199999999999999
+190,L1,Routing_Inventory,numeric,OK,pe2 장비의 BGP Local-AS 번호는 무엇입니까? [답변 형식: 숫자],65000,65000,1.0,1.0,1.0,0.9999998807907104,1.0,1.0,0.0
+191,L1,Routing_Inventory,numeric,NOT_CONFIGURED,p4 장비의 BGP Local-AS 번호는 무엇입니까? [답변 형식: 숫자],0,65000,0.0,0.0,0.0,0.8792970776557922,0.0,0.0,0.0
+192,L1,Routing_Inventory,numeric,OK,pe1 장비의 BGP Local-AS 번호는 무엇입니까? [답변 형식: 숫자],65000,65000,1.0,1.0,1.0,0.9999998807907104,1.0,1.0,0.0
+193,L1,Routing_Inventory,numeric,NOT_CONFIGURED,leaf4 장비의 BGP Local-AS 번호는 무엇입니까? [답변 형식: 숫자],0,65000,0.0,0.0,0.0,0.8792970776557922,0.0,0.0,0.0
+194,L1,Routing_Inventory,numeric,NOT_CONFIGURED,p2 장비의 BGP Local-AS 번호는 무엇입니까? [답변 형식: 숫자],0,65000,0.0,0.0,0.0,0.8792970776557922,0.0,0.0,0.0
+195,L1,Routing_Inventory,numeric,NOT_CONFIGURED,leaf1 장비의 BGP Local-AS 번호는 무엇입니까? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+196,L1,Routing_Inventory,numeric,NOT_CONFIGURED,p3 장비의 BGP Local-AS 번호는 무엇입니까? [답변 형식: 숫자],0,65000,0.0,0.0,0.0,0.8792970776557922,0.0,0.0,0.0
+197,L1,Routing_Inventory,numeric,NOT_CONFIGURED,p1 장비의 BGP Local-AS 번호는 무엇입니까? [답변 형식: 숫자],0,65000,0.0,0.0,0.0,0.8792970776557922,0.0,0.0,0.0
+198,L1,Routing_Inventory,numeric,NOT_CONFIGURED,leaf2 장비의 BGP Local-AS 번호는 무엇입니까? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+199,L1,Routing_Inventory,numeric,NOT_CONFIGURED,leaf3 장비의 BGP Local-AS 번호는 무엇입니까? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+200,L1,Routing_Inventory,numeric,NOT_CONFIGURED,leaf4 장비의 BGP 피어(이웃)는 총 몇 개입니까? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+201,L1,Routing_Inventory,numeric,OK,pe1 장비의 BGP 피어(이웃)는 총 몇 개입니까? [답변 형식: 숫자],1,2,0.0,0.0,0.0,0.999797523021698,0.0,0.0,0.0
+202,L1,Routing_Inventory,numeric,NOT_CONFIGURED,leaf1 장비의 BGP 피어(이웃)는 총 몇 개입니까? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+203,L1,Routing_Inventory,numeric,NOT_CONFIGURED,p1 장비의 BGP 피어(이웃)는 총 몇 개입니까? [답변 형식: 숫자],0,2,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+204,L1,Routing_Inventory,numeric,NOT_CONFIGURED,leaf2 장비의 BGP 피어(이웃)는 총 몇 개입니까? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+205,L1,Routing_Inventory,numeric,NOT_CONFIGURED,leaf3 장비의 BGP 피어(이웃)는 총 몇 개입니까? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+206,L1,Routing_Inventory,numeric,OK,pe2 장비의 BGP 피어(이웃)는 총 몇 개입니까? [답변 형식: 숫자],1,1,1.0,1.0,1.0,1.0000004768371582,1.0,1.0,0.0
+207,L1,Routing_Inventory,numeric,NOT_CONFIGURED,p2 장비의 BGP 피어(이웃)는 총 몇 개입니까? [답변 형식: 숫자],0,1,0.0,0.0,0.0,0.9803617596626282,0.0,0.0,0.0
+208,L1,Routing_Inventory,numeric,NOT_CONFIGURED,p4 장비의 BGP 피어(이웃)는 총 몇 개입니까? [답변 형식: 숫자],0,1,0.0,0.0,0.0,0.9803617596626282,0.0,0.0,0.0
+209,L1,Routing_Inventory,numeric,NOT_CONFIGURED,p3 장비의 BGP 피어(이웃)는 총 몇 개입니까? [답변 형식: 숫자],0,1,0.0,0.0,0.0,0.9803617596626282,0.0,0.0,0.0
+210,L1,Routing_Inventory,set,NOT_CONFIGURED,leaf3 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트],[],"[""10.255.0.11"", ""10.255.0.12""]",0.0,0.0,0.0,0.7935506105422974,0,0.0,0.0
+211,L1,Routing_Inventory,set,NOT_CONFIGURED,p2 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트],[],"[""10.255.0.11""]",0.0,0.0,0.0,0.8033934831619263,0,0.0,0.0
+212,L1,Routing_Inventory,set,OK,pe1 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트],"[""10.255.0.12""]","[""10.255.0.11"", ""10.255.0.12""]",0.6666666666666666,0.0,0.0,0.9386436343193054,0.6666666666666666,0.6666666666666666,0.6
+213,L1,Routing_Inventory,set,NOT_CONFIGURED,p3 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트],[],"[""10.255.0.12""]",0.0,0.0,0.0,0.804076611995697,0,0.0,0.0
+214,L1,Routing_Inventory,set,NOT_CONFIGURED,p1 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트],[],"[""10.255.0.11"", ""10.255.0.12""]",0.0,0.0,0.0,0.7935506105422974,0,0.0,0.0
+215,L1,Routing_Inventory,set,NOT_CONFIGURED,p4 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트],[],"[""10.255.0.11""]",0.0,0.0,0.0,0.8033934831619263,0,0.0,0.0
+216,L1,Routing_Inventory,set,NOT_CONFIGURED,leaf1 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트],[],"[""10.255.0.11"", ""10.255.0.12""]",0.0,0.0,0.0,0.7935506105422974,0,0.0,0.0
+217,L1,Routing_Inventory,set,NOT_CONFIGURED,leaf4 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트],[],"[""10.255.0.11"", ""10.255.0.12""]",0.0,0.0,0.0,0.7935506105422974,0,0.0,0.0
+218,L1,Routing_Inventory,set,NOT_CONFIGURED,leaf2 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트],[],"[""10.255.0.11"", ""10.255.0.12""]",0.0,0.0,0.0,0.7935506105422974,0,0.0,0.0
+219,L1,Routing_Inventory,set,OK,pe2 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트],"[""10.255.0.11""]","{""pe2_ibgp_peers_ip"": [""10.255.0.11""]}",0.0,0.0,0.0,0.8962209820747375,0.6666666666666666,0.6666666666666666,0.6
+220,L1,Routing_Inventory,set,NOT_CONFIGURED,leaf2 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트],[],"[""10.255.0.11"", ""10.255.0.12""]",0.0,0.0,0.0,0.7935506105422974,0,0.0,0.0
+221,L1,Routing_Inventory,set,NOT_CONFIGURED,pe1 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트],[],"[""10.255.0.12""]",0.0,0.0,0.0,0.804076611995697,0,0.0,0.0
+222,L1,Routing_Inventory,set,NOT_CONFIGURED,leaf1 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트],[],"[""10.255.0.11"", ""10.255.0.12""]",0.0,0.0,0.0,0.7935506105422974,0,0.0,0.0
+223,L1,Routing_Inventory,set,NOT_CONFIGURED,p4 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+224,L1,Routing_Inventory,set,NOT_CONFIGURED,p2 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+225,L1,Routing_Inventory,set,NOT_CONFIGURED,p3 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+226,L1,Routing_Inventory,set,NOT_CONFIGURED,pe2 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트],[],"[""10.255.0.11""]",0.0,0.0,0.0,0.8033934831619263,0,0.0,0.0
+227,L1,Routing_Inventory,set,NOT_CONFIGURED,p1 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트],[],"[""10.255.0.11"", ""10.255.0.12""]",0.0,0.0,0.0,0.7935506105422974,0,0.0,0.0
+228,L1,Routing_Inventory,set,NOT_CONFIGURED,leaf3 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트],[],"[""10.255.0.11"", ""10.255.0.12""]",0.0,0.0,0.0,0.7935506105422974,0,0.0,0.0
+229,L1,Routing_Inventory,set,NOT_CONFIGURED,leaf4 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트],[],"[""10.255.0.11"", ""10.255.0.12""]",0.0,0.0,0.0,0.7935506105422974,0,0.0,0.0
+230,L1,Routing_Inventory,set,OK,p2 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요. [답변 형식: 리스트],"[""1""]",[1],1.0,0.0,0.0,0.8962618708610535,1.0,1.0,0.0
+231,L1,Routing_Inventory,set,NOT_CONFIGURED,leaf2 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+232,L1,Routing_Inventory,set,OK,pe1 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요. [답변 형식: 리스트],"[""1""]","[""1""]",1.0,1.0,1.0,1.0000003576278687,1.0,1.0,0.0
+233,L1,Routing_Inventory,set,OK,p4 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요. [답변 형식: 리스트],"[""1""]",[1],1.0,0.0,0.0,0.8962618708610535,1.0,1.0,0.0
+234,L1,Routing_Inventory,set,NOT_CONFIGURED,leaf1 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+235,L1,Routing_Inventory,set,NOT_CONFIGURED,leaf3 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+236,L1,Routing_Inventory,set,OK,p1 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요. [답변 형식: 리스트],"[""1""]","[""1""]",1.0,1.0,1.0,1.0000003576278687,1.0,1.0,0.0
+237,L1,Routing_Inventory,set,OK,pe2 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요. [답변 형식: 리스트],"[""1""]","[ANSWER VALUE ONLY - ONE LINE] [""1""]",0.0,0.0,0.25,0.8509190678596497,0.2857142857142857,0.2857142857142857,0.0
+238,L1,Routing_Inventory,set,OK,p3 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요. [답변 형식: 리스트],"[""1""]",[1],1.0,0.0,0.0,0.8962618708610535,1.0,1.0,0.0
+239,L1,Routing_Inventory,set,NOT_CONFIGURED,leaf4 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+240,L1,Routing_Inventory,set,OK,p4 장비가 참여하는 OSPF Area 목록을 알려주세요. [답변 형식: 리스트],"[""0""]","{""answer"": [""area 0""]}",0.0,0.0,0.0,0.8766431212425232,0.5,0.5,0.0
+241,L1,Routing_Inventory,set,OK,p2 장비가 참여하는 OSPF Area 목록을 알려주세요. [답변 형식: 리스트],"[""0""]","{""key"": ""value""}",0.0,0.0,0.0,0.8284739851951599,0.0,0.0,0.0
+242,L1,Routing_Inventory,set,OK,p3 장비가 참여하는 OSPF Area 목록을 알려주세요. [답변 형식: 리스트],"[""0""]","{""key"": ""value""}",0.0,0.0,0.0,0.8284739851951599,0.0,0.0,0.0
+243,L1,Routing_Inventory,set,NOT_CONFIGURED,leaf3 장비가 참여하는 OSPF Area 목록을 알려주세요. [답변 형식: 리스트],[],"[""area 0""]",0.0,0.0,0.0,0.8202311992645264,0,0.0,0.0
+244,L1,Routing_Inventory,set,OK,pe2 장비가 참여하는 OSPF Area 목록을 알려주세요. [답변 형식: 리스트],"[""0""]","{""area"": ""0""}",0.0,0.0,0.0,0.8588594794273376,0.6666666666666666,0.6666666666666666,0.0
+245,L1,Routing_Inventory,set,NOT_CONFIGURED,leaf2 장비가 참여하는 OSPF Area 목록을 알려주세요. [답변 형식: 리스트],[],"[""area 0""]",0.0,0.0,0.0,0.8202311992645264,0,0.0,0.0
+246,L1,Routing_Inventory,set,NOT_CONFIGURED,leaf4 장비가 참여하는 OSPF Area 목록을 알려주세요. [답변 형식: 리스트],[],"[""area 0""]",0.0,0.0,0.0,0.8202311992645264,0,0.0,0.0
+247,L1,Routing_Inventory,set,OK,p1 장비가 참여하는 OSPF Area 목록을 알려주세요. [답변 형식: 리스트],"[""0""]","{""answer"": [""area 0""]}",0.0,0.0,0.0,0.8766431212425232,0.5,0.5,0.0
+248,L1,Routing_Inventory,set,OK,pe1 장비가 참여하는 OSPF Area 목록을 알려주세요. [답변 형식: 리스트],"[""0""]","{""area_list"": [""area 0"", ""area 0""]}",0.0,0.0,0.0,0.8492494821548462,0.2857142857142857,0.2857142857142857,0.0
+249,L1,Routing_Inventory,set,NOT_CONFIGURED,leaf1 장비가 참여하는 OSPF Area 목록을 알려주세요. [답변 형식: 리스트],[],"[""area 0"", ""area 0""]",0.0,0.0,0.0,0.7852413654327393,0,0.0,0.0
+250,L1,Routing_Inventory,set,OK,p1 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요. [답변 형식: 리스트],"[""GigabitEthernet0/0"", ""GigabitEthernet0/1"", ""Loopback0""]","[""GigabitEthernet0/0"", ""GigabitEthernet0/1""]",0.8,0.0,0.4,0.9818291068077087,0.888888888888889,0.888888888888889,0.8571428571428571
+251,L1,Routing_Inventory,set,OK,p3 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요. [답변 형식: 리스트],"[""GigabitEthernet0/0"", ""GigabitEthernet0/1"", ""GigabitEthernet0/2"", ""Loopback0""]","[""GigabitEthernet0/0"", ""GigabitEthernet0/1"", ""GigabitEthernet0/2""]",0.8571428571428571,0.0,0.5714285714285715,0.986193835735321,0.923076923076923,0.923076923076923,0.9090909090909091
+252,L1,Routing_Inventory,set,NOT_CONFIGURED,leaf2 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요. [답변 형식: 리스트],[],"[""GigabitEthernet0/0""]",0.0,0.0,0.0,0.7766708731651306,0,0.0,0.0
+253,L1,Routing_Inventory,set,OK,p2 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요. [답변 형식: 리스트],"[""GigabitEthernet0/0"", ""GigabitEthernet0/1"", ""GigabitEthernet0/2"", ""Loopback0""]","[""GigabitEthernet0/0"", ""GigabitEthernet0/1"", ""GigabitEthernet0/2"", ""Loopback0""]",1.0,1.0,1.0,1.0,1.0,1.0,1.0
+254,L1,Routing_Inventory,set,NOT_CONFIGURED,leaf3 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요. [답변 형식: 리스트],[],"[""GigabitEthernet0/0""]",0.0,0.0,0.0,0.7766708731651306,0,0.0,0.0
+255,L1,Routing_Inventory,set,NOT_CONFIGURED,leaf1 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요. [답변 형식: 리스트],[],"[""GigabitEthernet0/0"", ""GigabitEthernet0/2"", ""GigabitEthernet0/3""]",0.0,0.0,0.0,0.7588809728622437,0,0.0,0.0
+256,L1,Routing_Inventory,set,OK,pe1 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요. [답변 형식: 리스트],"[""GigabitEthernet0/0"", ""Loopback0""]","[""GigabitEthernet0/0"", ""Loopback0"", ""GigabitEthernet0/3""]",0.8,0.0,0.4,0.9546132683753967,0.7499999999999999,0.7499999999999999,0.6666666666666666
+257,L1,Routing_Inventory,set,OK,p4 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요. [답변 형식: 리스트],"[""GigabitEthernet0/0"", ""GigabitEthernet0/1"", ""Loopback0""]","[""GigabitEthernet0/0"", ""GigabitEthernet0/1""]",0.8,0.0,0.4,0.9818291068077087,0.888888888888889,0.888888888888889,0.8571428571428571
+258,L1,Routing_Inventory,set,NOT_CONFIGURED,leaf4 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요. [답변 형식: 리스트],[],"[""GigabitEthernet0/0"", ""GigabitEthernet0/2""]",0.0,0.0,0.0,0.768638014793396,0,0.0,0.0
+259,L1,Routing_Inventory,set,OK,pe2 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요. [답변 형식: 리스트],"[""GigabitEthernet0/0"", ""Loopback0""]","[""GigabitEthernet0/0"", ""GigabitEthernet0/2"", ""GigabitEthernet0/3""]",0.4,0.0,0.4,0.9241032600402832,0.4444444444444444,0.4444444444444444,0.28571428571428575
+260,L1,Services_Inventory,set,NOT_CONFIGURED,leaf2 장비에 설정된 VRF 이름 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+261,L1,Services_Inventory,set,NOT_CONFIGURED,leaf3 장비에 설정된 VRF 이름 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+262,L1,Services_Inventory,set,NOT_CONFIGURED,leaf1 장비에 설정된 VRF 이름 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+263,L1,Services_Inventory,set,OK,pe1 장비에 설정된 VRF 이름 목록을 알려주세요. [답변 형식: 리스트],"[""VRF_AI"", ""VRF_BIO"", ""VRF_HPC""]","[""VRF_AI"", ""VRF_BIO"", ""VRF_HPC""]",1.0,1.0,1.0,1.0,1.0,1.0,1.0
+264,L1,Services_Inventory,set,NOT_CONFIGURED,p1 장비에 설정된 VRF 이름 목록을 알려주세요. [답변 형식: 리스트],[],"{""VRF_AI"", ""VRF_BIO"", ""VRF_HPC""}",0.0,0.0,0.0,0.7716693878173828,0,0.0,0.0
+265,L1,Services_Inventory,set,NOT_CONFIGURED,p2 장비에 설정된 VRF 이름 목록을 알려주세요. [답변 형식: 리스트],[],"{""VRF_AI"",""VRF_BIO"",""VRF_HPC""}",0.0,0.0,0.0,0.7742409706115723,0,0.0,0.0
+266,L1,Services_Inventory,set,NOT_CONFIGURED,p4 장비에 설정된 VRF 이름 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+267,L1,Services_Inventory,set,OK,pe2 장비에 설정된 VRF 이름 목록을 알려주세요. [답변 형식: 리스트],"[""VRF_AI"", ""VRF_BIO"", ""VRF_HPC""]","[""VRF_AI"", ""VRF_BIO"", ""VRF_HPC""]",1.0,1.0,1.0,1.0,1.0,1.0,1.0
+268,L1,Services_Inventory,set,NOT_CONFIGURED,leaf4 장비에 설정된 VRF 이름 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+269,L1,Services_Inventory,set,NOT_CONFIGURED,p3 장비에 설정된 VRF 이름 목록을 알려주세요. [답변 형식: 리스트],[],"{""VRF_AI"",""VRF_BIO"",""VRF_HPC""}",0.0,0.0,0.0,0.7742409706115723,0,0.0,0.0
+270,L1,Services_Inventory,numeric,OK,pe2 장비에 설정된 VRF는 총 몇 개입니까? [답변 형식: 숫자],3,2,0.0,0.0,0.0,0.9998126029968262,0.0,0.0,0.0
+271,L1,Services_Inventory,numeric,NOT_CONFIGURED,leaf4 장비에 설정된 VRF는 총 몇 개입니까? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+272,L1,Services_Inventory,numeric,NOT_CONFIGURED,leaf3 장비에 설정된 VRF는 총 몇 개입니까? [답변 형식: 숫자],0,2,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+273,L1,Services_Inventory,numeric,NOT_CONFIGURED,leaf1 장비에 설정된 VRF는 총 몇 개입니까? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+274,L1,Services_Inventory,numeric,NOT_CONFIGURED,p1 장비에 설정된 VRF는 총 몇 개입니까? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+275,L1,Services_Inventory,numeric,NOT_CONFIGURED,p3 장비에 설정된 VRF는 총 몇 개입니까? [답변 형식: 숫자],0,2,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+276,L1,Services_Inventory,numeric,NOT_CONFIGURED,p4 장비에 설정된 VRF는 총 몇 개입니까? [답변 형식: 숫자],0,2,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+277,L1,Services_Inventory,numeric,NOT_CONFIGURED,leaf2 장비에 설정된 VRF는 총 몇 개입니까? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+278,L1,Services_Inventory,numeric,OK,pe1 장비에 설정된 VRF는 총 몇 개입니까? [답변 형식: 숫자],3,3,1.0,1.0,1.0,1.0000003576278687,1.0,1.0,0.0
+279,L1,Services_Inventory,numeric,NOT_CONFIGURED,p2 장비에 설정된 VRF는 총 몇 개입니까? [답변 형식: 숫자],0,2,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+280,L1,Services_Inventory,map,NOT_CONFIGURED,leaf1 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요. [답변 형식: {{'VRF': 'RD'}}],{},{},1.0,1.0,1.0,0.9999995231628418,0,0.0,0.0
+281,L1,Services_Inventory,map,NOT_CONFIGURED,leaf2 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요. [답변 형식: {{'VRF': 'RD'}}],{},"{""VRF_AI"": ""65000:1"", ""VRF_BIO"": ""65000:2"", ""VRF_HPC"": ""65000:3""}",0.0,0.0,0.0,0.7553020119667053,0,0.0,0.0
+282,L1,Services_Inventory,map,NOT_CONFIGURED,leaf3 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요. [답변 형식: {{'VRF': 'RD'}}],{},"{""VRF_AI"": ""65000:1"", ""VRF_BIO"": ""65000:2"", ""VRF_HPC"": ""65000:3""}",0.0,0.0,0.0,0.7553020119667053,0,0.0,0.0
+283,L1,Services_Inventory,map,NOT_CONFIGURED,p2 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요. [답변 형식: {{'VRF': 'RD'}}],{},"{""VRF_AI"": ""65000:1"", ""VRF_BIO"": ""65000:2"", ""VRF_HPC"": ""65000:3""}",0.0,0.0,0.0,0.7553020119667053,0,0.0,0.0
+284,L1,Services_Inventory,map,OK,pe2 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요. [답변 형식: {{'VRF': 'RD'}}],"{""VRF_AI"": ""65000:1"", ""VRF_BIO"": ""65000:2"", ""VRF_HPC"": ""65000:3""}","{""VRF_AI"": ""65000:1"", ""VRF_BIO"": ""65000:2"", ""VRF_HPC"": ""65000:3""}",1.0,1.0,1.0,0.9999999403953552,1.0,1.0,1.0
+285,L1,Services_Inventory,map,NOT_CONFIGURED,p4 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요. [답변 형식: {{'VRF': 'RD'}}],{},"{""VRF"": ""RD""}",0.0,0.0,0.0,0.7735128402709961,0,0.0,0.0
+286,L1,Services_Inventory,map,NOT_CONFIGURED,leaf4 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요. [답변 형식: {{'VRF': 'RD'}}],{},"{""VRF"": ""RD""}",0.0,0.0,0.0,0.7735128402709961,0,0.0,0.0
+287,L1,Services_Inventory,map,NOT_CONFIGURED,p3 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요. [답변 형식: {{'VRF': 'RD'}}],{},"{""VRF_AI"": ""65000:1"", ""VRF_BIO"": ""65000:2"", ""VRF_HPC"": ""65000:3""}",0.0,0.0,0.0,0.7553020119667053,0,0.0,0.0
+288,L1,Services_Inventory,map,OK,pe1 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요. [답변 형식: {{'VRF': 'RD'}}],"{""VRF_AI"": ""65000:1"", ""VRF_BIO"": ""65000:2"", ""VRF_HPC"": ""65000:3""}","{""VRF_AI"": ""65000:1"", ""VRF_BIO"": ""65000:2"", ""VRF_HPC"": ""65000:3""}",1.0,1.0,1.0,0.9999999403953552,1.0,1.0,1.0
+289,L1,Services_Inventory,map,NOT_CONFIGURED,p1 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요. [답변 형식: {{'VRF': 'RD'}}],{},"{""VRF_AI"": ""65000:1"", ""VRF_BIO"": ""65000:2"", ""VRF_HPC"": ""65000:3""}",0.0,0.0,0.0,0.7553020119667053,0,0.0,0.0
+290,L1,Services_Inventory,numeric,OK,pe1 장비의 Route Target Import 설정은 총 몇 개입니까? [답변 형식: 숫자],6,2,0.0,0.0,0.0,0.9997294545173645,0.0,0.0,0.0
+291,L1,Services_Inventory,numeric,NOT_CONFIGURED,leaf4 장비의 Route Target Import 설정은 총 몇 개입니까? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+292,L1,Services_Inventory,numeric,NOT_CONFIGURED,leaf2 장비의 Route Target Import 설정은 총 몇 개입니까? [답변 형식: 숫자],0,2,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+293,L1,Services_Inventory,numeric,NOT_CONFIGURED,p2 장비의 Route Target Import 설정은 총 몇 개입니까? [답변 형식: 숫자],0,2,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+294,L1,Services_Inventory,numeric,NOT_CONFIGURED,leaf1 장비의 Route Target Import 설정은 총 몇 개입니까? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+295,L1,Services_Inventory,numeric,NOT_CONFIGURED,p3 장비의 Route Target Import 설정은 총 몇 개입니까? [답변 형식: 숫자],0,2,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+296,L1,Services_Inventory,numeric,OK,pe2 장비의 Route Target Import 설정은 총 몇 개입니까? [답변 형식: 숫자],6,2,0.0,0.0,0.0,0.9997294545173645,0.0,0.0,0.0
+297,L1,Services_Inventory,numeric,NOT_CONFIGURED,p4 장비의 Route Target Import 설정은 총 몇 개입니까? [답변 형식: 숫자],0,2,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+298,L1,Services_Inventory,numeric,NOT_CONFIGURED,leaf3 장비의 Route Target Import 설정은 총 몇 개입니까? [답변 형식: 숫자],0,2,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+299,L1,Services_Inventory,numeric,NOT_CONFIGURED,p1 장비의 Route Target Import 설정은 총 몇 개입니까? [답변 형식: 숫자],0,2,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+300,L1,Services_Inventory,numeric,NOT_CONFIGURED,leaf4 장비의 Route Target Export 설정은 총 몇 개입니까? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+301,L1,Services_Inventory,numeric,NOT_CONFIGURED,leaf3 장비의 Route Target Export 설정은 총 몇 개입니까? [답변 형식: 숫자],0,2,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+302,L1,Services_Inventory,numeric,NOT_CONFIGURED,p2 장비의 Route Target Export 설정은 총 몇 개입니까? [답변 형식: 숫자],0,2,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+303,L1,Services_Inventory,numeric,NOT_CONFIGURED,p3 장비의 Route Target Export 설정은 총 몇 개입니까? [답변 형식: 숫자],0,2,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+304,L1,Services_Inventory,numeric,NOT_CONFIGURED,leaf2 장비의 Route Target Export 설정은 총 몇 개입니까? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+305,L1,Services_Inventory,numeric,NOT_CONFIGURED,p4 장비의 Route Target Export 설정은 총 몇 개입니까? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+306,L1,Services_Inventory,numeric,OK,pe1 장비의 Route Target Export 설정은 총 몇 개입니까? [답변 형식: 숫자],6,2,0.0,0.0,0.0,0.9997294545173645,0.0,0.0,0.0
+307,L1,Services_Inventory,numeric,OK,pe2 장비의 Route Target Export 설정은 총 몇 개입니까? [답변 형식: 숫자],6,2,0.0,0.0,0.0,0.9997294545173645,0.0,0.0,0.0
+308,L1,Services_Inventory,numeric,NOT_CONFIGURED,p1 장비의 Route Target Export 설정은 총 몇 개입니까? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+309,L1,Services_Inventory,numeric,NOT_CONFIGURED,leaf1 장비의 Route Target Export 설정은 총 몇 개입니까? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+310,L1,Services_Inventory,text,OK,p3 장비의 MPLS LDP Router-ID는 무엇입니까? [답변 형식: IP 주소 (예: 10.255.0.1) 또는 '미설정'],"""10.255.0.3""",10.255.0.3,1.0,1.0,1.0,0.9999999403953552,1.0,1.0,1.0
+311,L1,Services_Inventory,text,OK,leaf4 장비의 MPLS LDP Router-ID는 무엇입니까? [답변 형식: IP 주소 (예: 10.255.0.1) 또는 '미설정'],"""미설정""",미설정,1.0,1.0,1.0,0.9999999403953552,0,0.0,0.0
+312,L1,Services_Inventory,text,OK,leaf1 장비의 MPLS LDP Router-ID는 무엇입니까? [답변 형식: IP 주소 (예: 10.255.0.1) 또는 '미설정'],"""미설정""",,0.0,0.0,0.0,0.7350336313247681,0,0.0,0.0
+313,L1,Services_Inventory,text,OK,p1 장비의 MPLS LDP Router-ID는 무엇입니까? [답변 형식: IP 주소 (예: 10.255.0.1) 또는 '미설정'],"""10.255.0.1""",10.255.0.1,1.0,1.0,1.0,1.0,1.0,1.0,1.0
+314,L1,Services_Inventory,text,OK,p2 장비의 MPLS LDP Router-ID는 무엇입니까? [답변 형식: IP 주소 (예: 10.255.0.1) 또는 '미설정'],"""10.255.0.2""",10.255.0.2,1.0,1.0,1.0,0.9999999403953552,1.0,1.0,1.0
+315,L1,Services_Inventory,text,OK,p4 장비의 MPLS LDP Router-ID는 무엇입니까? [답변 형식: IP 주소 (예: 10.255.0.1) 또는 '미설정'],"""미설정""",미설정,1.0,1.0,1.0,0.9999999403953552,0,0.0,0.0
+316,L1,Services_Inventory,text,OK,leaf2 장비의 MPLS LDP Router-ID는 무엇입니까? [답변 형식: IP 주소 (예: 10.255.0.1) 또는 '미설정'],"""미설정""",,0.0,0.0,0.0,0.7350336313247681,0,0.0,0.0
+317,L1,Services_Inventory,text,OK,leaf3 장비의 MPLS LDP Router-ID는 무엇입니까? [답변 형식: IP 주소 (예: 10.255.0.1) 또는 '미설정'],"""미설정""",,0.0,0.0,0.0,0.7350336313247681,0,0.0,0.0
+318,L1,Services_Inventory,text,OK,pe1 장비의 MPLS LDP Router-ID는 무엇입니까? [답변 형식: IP 주소 (예: 10.255.0.1) 또는 '미설정'],"""미설정""",10.255.0.11,0.0,0.0,0.0,0.7717506289482117,0,0.0,0.0
+319,L1,Services_Inventory,text,OK,pe2 장비의 MPLS LDP Router-ID는 무엇입니까? [답변 형식: IP 주소 (예: 10.255.0.1) 또는 '미설정'],"""미설정""",10.255.0.12,0.0,0.0,0.0,0.7697330117225647,0,0.0,0.0
+320,L1,Services_Inventory,set,NOT_CONFIGURED,leaf1 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+321,L1,Services_Inventory,set,NOT_CONFIGURED,p2 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+322,L1,Services_Inventory,set,NOT_CONFIGURED,p1 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+323,L1,Services_Inventory,set,NOT_CONFIGURED,leaf2 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+324,L1,Services_Inventory,set,NOT_CONFIGURED,leaf3 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+325,L1,Services_Inventory,set,NOT_CONFIGURED,leaf4 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+326,L1,Services_Inventory,set,NOT_CONFIGURED,pe2 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+327,L1,Services_Inventory,set,NOT_CONFIGURED,p3 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+328,L1,Services_Inventory,set,NOT_CONFIGURED,p4 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+329,L1,Services_Inventory,set,NOT_CONFIGURED,pe1 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+330,L2,Security_Policy,set,OK,SSH 접속이 가능한 장비 목록을 알려주세요. [답변 형식: 리스트],"[""leaf1"", ""leaf2"", ""leaf3"", ""leaf4"", ""p1"", ""p2"", ""p3"", ""p4"", ""pe1"", ""pe2""]","[""Leaf1"", ""Leaf2"", ""Leaf3"", ""Leaf4"", ""P1"", ""P2"", ""P3"", ""P4"", ""PE1"", ""PE2""]",1.0,1.0,1.0,0.9586188197135925,1.0,1.0,1.0
+331,L2,Security_Policy,set,OK,SSH 접속이 불가능한 장비 목록을 알려주세요. [답변 형식: 리스트],[],"[""Leaf2"", ""Leaf3"", ""Leaf4"", ""P1"", ""P2"", ""P3"", ""P4"", ""PE1"", ""PE2""]",0.0,0.0,0.0,0.7555408477783203,0,0.0,0.0
+332,L2,Security_Policy,numeric,OK,SSH 접속이 불가능한 장비는 총 몇 대입니까? [답변 형식: 숫자],0,2,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+333,L2,Security_Policy,set,OK,AAA 기능이 활성화된 장비 목록을 알려주세요. [답변 형식: 리스트],[],"[""P1"", ""P2"", ""P3"", ""P4"", ""PE1"", ""PE2""]",0.0,0.0,0.0,0.7692391872406006,0,0.0,0.0
+334,L2,Security_Policy,set,OK,AAA 기능이 비활성화된 장비 목록을 알려주세요. [답변 형식: 리스트],"[""leaf1"", ""leaf2"", ""leaf3"", ""leaf4"", ""p1"", ""p2"", ""p3"", ""p4"", ""pe1"", ""pe2""]","[""Leaf1"", ""Leaf2"", ""Leaf3"", ""Leaf4"", ""P1"", ""P2"", ""P3"", ""P4"", ""PE1"", ""PE2""]",1.0,1.0,1.0,0.9586188197135925,1.0,1.0,1.0
+335,L2,Security_Policy,set,OK,VRF_AI VRF를 사용하는 장비 목록을 알려주세요. [답변 형식: 리스트],"[""pe1"", ""pe2""]","[""PE1"", ""PE2"", ""P1"", ""P2"", ""P3"", ""P4""]",0.5,0.0,0.25,0.9316026568412781,0.5,0.5,0.33333333333333337
+336,L2,Security_Policy,set,OK,VRF_BIO VRF를 사용하는 장비 목록을 알려주세요. [답변 형식: 리스트],"[""pe1"", ""pe2""]","[""PE1"", ""PE2""]",1.0,1.0,1.0,0.9803186655044556,1.0,1.0,1.0
+337,L2,Security_Policy,set,OK,VRF_HPC VRF를 사용하는 장비 목록을 알려주세요. [답변 형식: 리스트],"[""pe1"", ""pe2""]","[""PE2""]",0.6666666666666666,0.0,0.0,0.8901734352111816,0.6666666666666666,0.6666666666666666,0.0
+338,L2,OSPF_Consistency,set,OK,OSPF Area 0에 속한 장비 목록을 알려주세요. [답변 형식: 리스트],"[""p1"", ""p2"", ""p3"", ""p4"", ""pe1"", ""pe2""]","[""P1"", ""P2"", ""P3"", ""P4"", ""PE1"", ""PE2""]",1.0,1.0,1.0,0.9843665957450867,1.0,1.0,1.0
+339,L2,OSPF_Consistency,numeric,OK,leaf1 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까? [답변 형식: 숫자],0,2,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+340,L2,OSPF_Consistency,numeric,OK,p1 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까? [답변 형식: 숫자],3,4,0.0,0.0,0.0,0.9998156428337097,0.0,0.0,0.0
+341,L2,OSPF_Consistency,numeric,OK,leaf2 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까? [답변 형식: 숫자],0,2,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+342,L2,OSPF_Consistency,numeric,OK,leaf3 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까? [답변 형식: 숫자],0,2,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+343,L2,OSPF_Consistency,numeric,OK,p3 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까? [답변 형식: 숫자],4,3,0.0,0.0,0.0,0.9998156428337097,0.0,0.0,0.0
+344,L2,OSPF_Consistency,numeric,OK,pe1 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까? [답변 형식: 숫자],2,4,0.0,0.0,0.0,0.9999338388442993,0.0,0.0,0.0
+345,L2,OSPF_Consistency,numeric,OK,leaf4 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까? [답변 형식: 숫자],0,2,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+346,L2,OSPF_Consistency,numeric,OK,pe2 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까? [답변 형식: 숫자],2,4,0.0,0.0,0.0,0.9999338388442993,0.0,0.0,0.0
+347,L2,OSPF_Consistency,numeric,OK,p2 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까? [답변 형식: 숫자],4,4,1.0,1.0,1.0,1.000000238418579,1.0,1.0,0.0
+348,L2,OSPF_Consistency,numeric,OK,p4 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까? [답변 형식: 숫자],3,2,0.0,0.0,0.0,0.9998126029968262,0.0,0.0,0.0
+349,L2,OSPF_Consistency,number,OK,OSPF Area 0의 이웃 관계는 총 몇 개입니까? [답변 형식: 숫자],0,6,0.0,0.0,0.0,0.9805391430854797,0.0,0.0,0.0
+350,L2,L2VPN_Consistency,set,OK,"구성된 L2VPN pseudowire 회선(장비쌍) 목록을 알려주세요. [답변 형식: ['A<->B', ...]]",[],"[""PE1<->Leaf1"", ""PE1<->Leaf2"", ""PE2<->Leaf3"", ""PE2<->Leaf4""]",0.0,0.0,0.0,0.7711241841316223,0,0.0,0.0
+351,L3,L2VPN_Consistency,set,OK,단방향으로만 설정된 L2VPN 회선(장비쌍) 목록을 알려주세요. [답변 형식: 리스트],[],"[""Leaf1"", ""Leaf2"", ""Leaf3"", ""Leaf4"", ""P1"", ""P2"", ""P3"", ""P4"", ""PE1"", ""PE2""]",0.0,0.0,0.0,0.7598078846931458,0,0.0,0.0
+352,L3,L2VPN_Consistency,numeric,OK,단방향으로만 설정된 L2VPN 회선은 총 몇 개입니까? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+353,L3,L2VPN_Consistency,set,OK,PW-ID가 불일치하는 L2VPN 회선(장비쌍) 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+354,L3,L2VPN_Consistency,numeric,OK,PW-ID 불일치 또는 단방향 L2VPN 회선은 총 몇 개입니까? [답변 형식: 숫자],0,2,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+355,L3,BGP_Consistency,text,OK,"AS 65000의 iBGP Full-Mesh 상태와 누락된 피어링을 알려주세요. [답변 형식: 'OK' 또는 'Missing: A<->B, C<->D']","""OK""",OK,1.0,1.0,1.0,0.9999996423721313,1.0,1.0,0.0
+356,L3,BGP_Consistency,set,OK,AS 65000의 iBGP Full-Mesh에서 누락된 장비쌍 목록을 알려주세요. [답변 형식: 리스트],[],"[""PE1"", ""PE2""]",0.0,0.0,0.0,0.7908523678779602,0,0.0,0.0
+357,L3,BGP_Consistency,numeric,OK,AS 65000의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까? [답변 형식: 숫자],0,2,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+358,L3,BGP_Consistency,set,OK,AS 65000에서 iBGP 피어 수가 부족한 장비 목록을 알려주세요. [답변 형식: 리스트],[],"[""PE1"", ""PE2""]",0.0,0.0,0.0,0.7908523678779602,0,0.0,0.0
+359,L3,BGP_Consistency,numeric,OK,AS 65000에서 iBGP 피어 수가 부족한 장비는 총 몇 대입니까? [답변 형식: 숫자],0,2,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+360,L3,VRF_Consistency,set,OK,route-target이 없는 VRF(장비/VRF) 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+361,L3,VRF_Consistency,numeric,OK,route-target이 없는 VRF(장비/VRF)는 총 몇 개입니까? [답변 형식: 숫자],0,2,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+362,L3,VRF_Consistency,set,OK,p2 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요. [답변 형식: 리스트],[],"[""65000:1"", ""65000:2"", ""65000:3""]",0.0,0.0,0.0,0.7580398321151733,0,0.0,0.0
+363,L3,VRF_Consistency,set,OK,leaf1 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+364,L3,VRF_Consistency,set,OK,p4 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+365,L3,VRF_Consistency,set,OK,pe2 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요. [답변 형식: 리스트],"[""65000:1"", ""65000:2"", ""65000:3""]","[""65000:1"", ""65000:2"", ""65000:3""]",1.0,1.0,1.0,1.0,1.0,1.0,1.0
+366,L3,VRF_Consistency,set,OK,pe1 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요. [답변 형식: 리스트],"[""65000:1"", ""65000:2"", ""65000:3""]","[""65000:1"", ""65000:2"", ""65000:3""]",1.0,1.0,1.0,1.0,1.0,1.0,1.0
+367,L3,VRF_Consistency,set,OK,p3 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요. [답변 형식: 리스트],[],"[""65000:1"", ""65000:2"", ""65000:3""]",0.0,0.0,0.0,0.7580398321151733,0,0.0,0.0
+368,L3,VRF_Consistency,set,OK,leaf2 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+369,L3,VRF_Consistency,set,OK,leaf3 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+370,L3,VRF_Consistency,set,OK,leaf4 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요. [답변 형식: 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+371,L3,VRF_Consistency,set,OK,p1 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요. [답변 형식: 리스트],[],"[""65000:1"", ""65000:2"", ""65000:3""]",0.0,0.0,0.0,0.7580398321151733,0,0.0,0.0
+372,L3,Comparison_Analysis,text,OK,"leaf2과 pe2의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf2: N개, pe2: M개, 차이: K개']","""leaf2: 0, pe2: 1, diff: 1""","leaf2: 0개, pe2: 1개, 차이: 1개",1.0,0.0,0.3333333333333333,0.856823205947876,0.9090909090909091,0.9090909090909091,0.6666666666666665
+373,L3,Comparison_Analysis,text,OK,"p1과 p2의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p1: N개, p2: M개, 차이: K개']","""p1: 0, p2: 0, diff: 0""","p1: 1개, p2: 2개, 차이: 1개",0.0,0.0,0.3636363636363636,0.8451948165893555,0.3636363636363636,0.3636363636363636,0.0
+374,L3,Comparison_Analysis,text,OK,"leaf3과 p4의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf3: N개, p4: M개, 차이: K개']","""leaf3: 0, p4: 0, diff: 0""","leaf3: 0개, p4: 0개, 차이: 0개",1.0,0.0,0.4000000000000001,0.8676148056983948,0.9090909090909091,0.9090909090909091,0.6666666666666665
+375,L3,Comparison_Analysis,text,OK,"leaf3과 p2의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf3: N개, p2: M개, 차이: K개']","""leaf3: 0, p2: 0, diff: 0""","leaf3: 0개, p2: 2개, 차이: 2개",0.0,0.0,0.3636363636363636,0.8554387092590332,0.5454545454545454,0.5454545454545454,0.4444444444444445
+376,L3,Comparison_Analysis,text,OK,"p3과 p4의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p3: N개, p4: M개, 차이: K개']","""p3: 0, p4: 0, diff: 0""","p3: 2개, p4: 1개, 차이: 1개",0.0,0.0,0.3636363636363636,0.8462908267974854,0.3636363636363636,0.3636363636363636,0.0
+377,L3,Comparison_Analysis,text,OK,"leaf4과 pe2의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf4: N개, pe2: M개, 차이: K개']","""leaf4: 0, pe2: 1, diff: 1""","leaf4: 0개, pe2: 1개, 차이: 1개",1.0,0.0,0.3333333333333333,0.8547876477241516,0.9090909090909091,0.9090909090909091,0.6666666666666665
+378,L3,Comparison_Analysis,text,OK,"leaf1과 p4의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf1: N개, p4: M개, 차이: K개']","""leaf1: 0, p4: 0, diff: 0""","leaf1: 0개, p4: 0개, 차이: 0개",1.0,0.0,0.4000000000000001,0.8645454049110413,0.9090909090909091,0.9090909090909091,0.6666666666666665
+379,L3,Comparison_Analysis,text,OK,"leaf4과 p2의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf4: N개, p2: M개, 차이: K개']","""leaf4: 0, p2: 0, diff: 0""","leaf4: 0개, p2: 2개, 차이: 2개",0.0,0.0,0.3636363636363636,0.8535559177398682,0.5454545454545454,0.5454545454545454,0.4444444444444445
+380,L3,Comparison_Analysis,text,OK,"leaf2과 pe1의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf2: N개, pe1: M개, 차이: K개']","""leaf2: 0, pe1: 1, diff: 1""","leaf2: 0개, pe1: 1개, 차이: 1개",1.0,0.0,0.3333333333333333,0.8550370931625366,0.9090909090909091,0.9090909090909091,0.6666666666666665
+381,L3,Comparison_Analysis,text,OK,"p2과 pe1의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p2: N개, pe1: M개, 차이: K개']","""p2: 0, pe1: 1, diff: 1""","p2: 1개, pe1: 1개, 차이: 0개",0.0,0.0,0.3636363636363636,0.8504002690315247,0.5454545454545454,0.9090909090909091,0.22222222222222224
+382,L3,Comparison_Analysis,text,OK,"leaf3과 pe1의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf3: N개, pe1: M개, 차이: K개']","""leaf3: 0, pe1: 1, diff: 1""","leaf3: 0개, pe1: 1개, 차이: 1개",1.0,0.0,0.3333333333333333,0.8532045483589172,0.9090909090909091,0.9090909090909091,0.6666666666666665
+383,L3,Comparison_Analysis,text,OK,"p4과 pe1의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p4: N개, pe1: M개, 차이: K개']","""p4: 0, pe1: 1, diff: 1""","p4: 1개, pe1: 1개, 차이: 0개",0.0,0.0,0.3636363636363636,0.8476247787475586,0.5454545454545454,0.9090909090909091,0.22222222222222224
+384,L3,Comparison_Analysis,text,OK,"p1과 pe1의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p1: N개, pe1: M개, 차이: K개']","""p1: 0, pe1: 1, diff: 1""","p1: 1개, pe1: 1개, 차이: 0개",0.0,0.0,0.3636363636363636,0.8495333790779114,0.5454545454545454,0.9090909090909091,0.22222222222222224
+385,L3,Comparison_Analysis,text,OK,"p3과 pe2의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p3: N개, pe2: M개, 차이: K개']","""p3: 0, pe2: 1, diff: 1""","p3: 1개, pe2: 1개, 차이: 0개",0.0,0.0,0.3636363636363636,0.8517193794250488,0.5454545454545454,0.9090909090909091,0.22222222222222224
+386,L3,Comparison_Analysis,text,OK,"p1과 pe2의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p1: N개, pe2: M개, 차이: K개']","""p1: 0, pe2: 1, diff: 1""","p1: 1개, pe2: 1개, 차이: 0개",0.0,0.0,0.3636363636363636,0.8504041433334351,0.5454545454545454,0.9090909090909091,0.22222222222222224
+387,L3,Comparison_Analysis,text,OK,"p1과 p3의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p1: N개, p3: M개, 차이: K개']","""p1: 0, p3: 0, diff: 0""","p1: 1개, p3: 2개, 차이: 1개",0.0,0.0,0.3636363636363636,0.8452956080436707,0.3636363636363636,0.3636363636363636,0.0
+388,L3,Comparison_Analysis,text,OK,"leaf3과 leaf4의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf3: N개, leaf4: M개, 차이: K개']","""leaf3: 0, leaf4: 0, diff: 0""","leaf3: 0개, leaf4: 0개, 차이: 0개",1.0,0.0,0.4000000000000001,0.8586743474006653,0.9090909090909091,0.9090909090909091,0.6666666666666665
+389,L3,Comparison_Analysis,text,OK,"leaf1과 p2의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf1: N개, p2: M개, 차이: K개']","""leaf1: 0, p2: 0, diff: 0""","leaf1: 0개, p2: 2개, 차이: 2개",0.0,0.0,0.3636363636363636,0.8523858189582825,0.5454545454545454,0.5454545454545454,0.4444444444444445
+390,L3,Comparison_Analysis,text,OK,"p2과 p4의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p2: N개, p4: M개, 차이: K개']","""p2: 0, p4: 0, diff: 0""","p2: 1개, p4: 1개, 차이: 0개",0.0,0.0,0.4000000000000001,0.8548369407653809,0.5454545454545454,0.5454545454545454,0.0
+391,L3,Comparison_Analysis,text,OK,"p2과 pe2의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p2: N개, pe2: M개, 차이: K개']","""p2: 0, pe2: 1, diff: 1""","p2: 1개, pe2: 1개, 차이: 0개",0.0,0.0,0.3636363636363636,0.8510527014732361,0.5454545454545454,0.9090909090909091,0.22222222222222224
+392,L3,Comparison_Analysis,text,OK,"leaf2과 p4의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf2: N개, p4: M개, 차이: K개']","""leaf2: 4, p4: 5, diff: 1""","leaf2: 5개, p4: 5개, 차이: 0개",0.0,0.0,0.3636363636363636,0.8595073819160461,0.5454545454545454,0.5454545454545454,0.22222222222222224
+393,L3,Comparison_Analysis,text,OK,"p4과 pe2의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p4: N개, pe2: M개, 차이: K개']","""p4: 5, pe2: 5, diff: 0""","p4: 5개, pe2: 5개, 차이: 0개",1.0,0.0,0.4000000000000001,0.8655349612236023,0.9090909090909091,0.9090909090909091,0.6666666666666665
+394,L3,Comparison_Analysis,text,OK,"p1과 p2의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p1: N개, p2: M개, 차이: K개']","""p1: 5, p2: 5, diff: 0""","p1: 5개, p2: 6개, 차이: 1개",0.0,0.0,0.3636363636363636,0.8586438298225403,0.5454545454545454,0.5454545454545454,0.4444444444444445
+395,L3,Comparison_Analysis,text,OK,"p2과 pe1의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p2: N개, pe1: M개, 차이: K개']","""p2: 5, pe1: 5, diff: 0""","p2: 5개, pe1: 5개, 차이: 0개",1.0,0.0,0.4000000000000001,0.8647564053535461,0.9090909090909091,0.9090909090909091,0.6666666666666665
+396,L3,Comparison_Analysis,text,OK,"leaf1과 leaf2의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf1: N개, leaf2: M개, 차이: K개']","""leaf1: 4, leaf2: 4, diff: 0""","leaf1: 4개, leaf2: 4개, 차이: 0개",1.0,0.0,0.4000000000000001,0.8591797351837158,0.9090909090909091,0.9090909090909091,0.6666666666666665
+397,L3,Comparison_Analysis,text,OK,"leaf1과 pe1의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf1: N개, pe1: M개, 차이: K개']","""leaf1: 4, pe1: 5, diff: 1""","leaf1: 4개, pe1: 4개, 차이: 0개",0.0,0.0,0.3636363636363636,0.8547307252883911,0.5454545454545454,0.5454545454545454,0.4444444444444445
+398,L3,Comparison_Analysis,text,OK,"p3과 p4의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p3: N개, p4: M개, 차이: K개']","""p3: 5, p4: 5, diff: 0""","p3: 5개, p4: 5개, 차이: 0개",1.0,0.0,0.4000000000000001,0.8711423277854919,0.9090909090909091,0.9090909090909091,0.6666666666666665
+399,L3,Comparison_Analysis,text,OK,"leaf3과 p1의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf3: N개, p1: M개, 차이: K개']","""leaf3: 4, p1: 5, diff: 1""","leaf3: 5개, p1: 5개, 차이: 0개",0.0,0.0,0.3636363636363636,0.8572320342063904,0.5454545454545454,0.5454545454545454,0.22222222222222224
+400,L3,Comparison_Analysis,text,OK,"leaf4과 p1의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf4: N개, p1: M개, 차이: K개']","""leaf4: 4, p1: 5, diff: 1""","leaf4: 4개, p1: 4개, 차이: 0개",0.0,0.0,0.3636363636363636,0.8556272983551025,0.5454545454545454,0.5454545454545454,0.4444444444444445
+401,L3,Comparison_Analysis,text,OK,"p3과 pe1의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p3: N개, pe1: M개, 차이: K개']","""p3: 5, pe1: 5, diff: 0""","p3: 5개, pe1: 5개, 차이: 0개",1.0,0.0,0.4000000000000001,0.8643555045127869,0.9090909090909091,0.9090909090909091,0.6666666666666665
+402,L3,Comparison_Analysis,text,OK,"leaf2과 p3의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf2: N개, p3: M개, 차이: K개']","""leaf2: 4, p3: 5, diff: 1""","leaf2: 5개, p3: 6개, 차이: 1개",0.0,0.0,0.3333333333333333,0.8649521470069885,0.5454545454545454,0.7272727272727272,0.0
+403,L3,Comparison_Analysis,text,OK,"leaf2과 p1의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf2: N개, p1: M개, 차이: K개']","""leaf2: 4, p1: 5, diff: 1""","leaf2: 5개, p1: 5개, 차이: 0개",0.0,0.0,0.3636363636363636,0.8584820032119751,0.5454545454545454,0.5454545454545454,0.22222222222222224
+404,L3,Comparison_Analysis,text,OK,"p2과 p3의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p2: N개, p3: M개, 차이: K개']","""p2: 5, p3: 5, diff: 0""","p2: 6개, p3: 6개, 차이: 0개",0.0,0.0,0.4000000000000001,0.8683105707168579,0.5454545454545454,0.5454545454545454,0.0
+405,L3,Comparison_Analysis,text,OK,"leaf4과 pe1의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf4: N개, pe1: M개, 차이: K개']","""leaf4: 4, pe1: 5, diff: 1""","leaf4: 4개, pe1: 5개, 차이: 1개",1.0,0.0,0.3333333333333333,0.8581412434577942,0.9090909090909091,0.9090909090909091,0.6666666666666665
+406,L3,Comparison_Analysis,text,OK,"leaf1과 p1의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf1: N개, p1: M개, 차이: K개']","""leaf1: 4, p1: 5, diff: 1""","leaf1: 4개, p1: 4개, 차이: 0개",0.0,0.0,0.3636363636363636,0.8614034056663513,0.5454545454545454,0.5454545454545454,0.4444444444444445
+407,L3,Comparison_Analysis,text,OK,"leaf3과 leaf4의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf3: N개, leaf4: M개, 차이: K개']","""leaf3: 4, leaf4: 4, diff: 0""","leaf3: 4개, leaf4: 4개, 차이: 0개",1.0,0.0,0.4000000000000001,0.8623087406158447,0.9090909090909091,0.9090909090909091,0.6666666666666665
+408,L3,Comparison_Analysis,text,OK,"p4과 pe1의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p4: N개, pe1: M개, 차이: K개']","""p4: 5, pe1: 5, diff: 0""","p4: 5개, pe1: 5개, 차이: 0개",1.0,0.0,0.4000000000000001,0.8635123372077942,0.9090909090909091,0.9090909090909091,0.6666666666666665
+409,L3,Comparison_Analysis,text,OK,"leaf4과 p3의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf4: N개, p3: M개, 차이: K개']","""leaf4: 4, p3: 5, diff: 1""","leaf4: 5개, p3: 5개, 차이: 0개",0.0,0.0,0.3636363636363636,0.8596186637878418,0.5454545454545454,0.5454545454545454,0.22222222222222224
+410,L3,Comparison_Analysis,text,OK,"leaf3과 p2의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf3: N개, p2: M개, 차이: K개']","""leaf3: 4, p2: 5, diff: 1""","leaf3: 5개, p2: 5개, 차이: 0개",0.0,0.0,0.3636363636363636,0.8601105809211731,0.5454545454545454,0.5454545454545454,0.22222222222222224
+411,L3,Comparison_Analysis,text,OK,"leaf4과 pe2의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf4: N개, pe2: M개, 차이: K개']","""leaf4: 4, pe2: 5, diff: 1""","leaf4: 4개, pe2: 4개, 차이: 0개",0.0,0.0,0.3636363636363636,0.8566778898239136,0.5454545454545454,0.5454545454545454,0.4444444444444445
+412,L3,Comparison_Analysis,text,OK,"leaf3과 p4의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf3: N개, p4: M개, 차이: K개']","""leaf3: 0, p4: 0, diff: 0""","leaf3: 0개, p4: 0개, 차이: 0개",1.0,0.0,0.4000000000000001,0.8676148056983948,0.9090909090909091,0.9090909090909091,0.6666666666666665
+413,L3,Comparison_Analysis,text,OK,"leaf2과 p2의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf2: N개, p2: M개, 차이: K개']","""leaf2: 0, p2: 0, diff: 0""","leaf2: 0개, p2: 0개, 차이: 0개",1.0,0.0,0.4000000000000001,0.866071343421936,0.9090909090909091,0.9090909090909091,0.6666666666666665
+414,L3,Comparison_Analysis,text,OK,"leaf4과 p3의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf4: N개, p3: M개, 차이: K개']","""leaf4: 0, p3: 0, diff: 0""","leaf4: 1개, p3: 1개, 차이: 0개",0.0,0.0,0.4000000000000001,0.857311487197876,0.5454545454545454,0.5454545454545454,0.0
+415,L3,Comparison_Analysis,text,OK,"leaf4과 pe1의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf4: N개, pe1: M개, 차이: K개']","""leaf4: 0, pe1: 6, diff: 6""","leaf4: 0개, pe1: 3개, 차이: 3개",0.0,0.0,0.3333333333333333,0.8577107191085815,0.5454545454545454,0.5454545454545454,0.4444444444444445
+416,L3,Comparison_Analysis,text,OK,"leaf4과 p4의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf4: N개, p4: M개, 차이: K개']","""leaf4: 0, p4: 0, diff: 0""","leaf4: 0개, p4: 0개, 차이: 0개",1.0,0.0,0.4000000000000001,0.8664812445640564,0.9090909090909091,0.9090909090909091,0.6666666666666665
+417,L3,Comparison_Analysis,text,OK,"leaf1과 p4의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf1: N개, p4: M개, 차이: K개']","""leaf1: 0, p4: 0, diff: 0""","leaf1: 0개, p4: 0개, 차이: 0개",1.0,0.0,0.4000000000000001,0.8645454049110413,0.9090909090909091,0.9090909090909091,0.6666666666666665
+418,L3,Comparison_Analysis,text,OK,"leaf4과 pe2의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf4: N개, pe2: M개, 차이: K개']","""leaf4: 0, pe2: 6, diff: 6""","leaf4: 0개, pe2: 3개, 차이: 3개",0.0,0.0,0.3333333333333333,0.8579538464546204,0.5454545454545454,0.5454545454545454,0.4444444444444445
+419,L3,Comparison_Analysis,text,OK,"leaf3과 pe1의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf3: N개, pe1: M개, 차이: K개']","""leaf3: 0, pe1: 6, diff: 6""","leaf3: 0개, pe1: 3개, 차이: 3개",0.0,0.0,0.3333333333333333,0.8589560985565186,0.5454545454545454,0.5454545454545454,0.4444444444444445
+420,L3,Comparison_Analysis,text,OK,"leaf1과 leaf2의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf1: N개, leaf2: M개, 차이: K개']","""leaf1: 0, leaf2: 0, diff: 0""","leaf1: 0개, leaf2: 0개, 차이: 0개",1.0,0.0,0.4000000000000001,0.8568865060806274,0.9090909090909091,0.9090909090909091,0.6666666666666665
+421,L3,Comparison_Analysis,text,OK,"p4과 pe2의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p4: N개, pe2: M개, 차이: K개']","""p4: 0, pe2: 6, diff: 6""","p4: 1개, pe2: 3개, 차이: 2개",0.0,0.0,0.3333333333333333,0.8498008251190186,0.3636363636363636,0.3636363636363636,0.0
+422,L3,Comparison_Analysis,text,OK,"p3과 pe2의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p3: N개, pe2: M개, 차이: K개']","""p3: 0, pe2: 6, diff: 6""","p3: 3개, pe2: 3개, 차이: 0개",0.0,0.0,0.3636363636363636,0.8541747331619263,0.3636363636363636,0.5454545454545454,0.0
+423,L3,Comparison_Analysis,text,OK,"leaf1과 leaf3의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf1: N개, leaf3: M개, 차이: K개']","""leaf1: 0, leaf3: 0, diff: 0""","leaf1: 0개, leaf3: 0개, 차이: 0개",1.0,0.0,0.4000000000000001,0.8575133681297302,0.9090909090909091,0.9090909090909091,0.6666666666666665
+424,L3,Comparison_Analysis,text,OK,"leaf2과 pe1의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf2: N개, pe1: M개, 차이: K개']","""leaf2: 0, pe1: 6, diff: 6""","leaf2: 0개, pe1: 3개, 차이: 3개",0.0,0.0,0.3333333333333333,0.8580065965652466,0.5454545454545454,0.5454545454545454,0.4444444444444445
+425,L3,Comparison_Analysis,text,OK,"p1과 p4의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p1: N개, p4: M개, 차이: K개']","""p1: 0, p4: 0, diff: 0""","p1: 1개, p4: 1개, 차이: 0개",0.0,0.0,0.4000000000000001,0.8529689908027649,0.5454545454545454,0.5454545454545454,0.0
+426,L3,Comparison_Analysis,text,OK,"p1과 pe1의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p1: N개, pe1: M개, 차이: K개']","""p1: 0, pe1: 6, diff: 6""","p1: 0개, pe1: 3개, 차이: 3개",0.0,0.0,0.3333333333333333,0.8568955063819885,0.5454545454545454,0.5454545454545454,0.4444444444444445
+427,L3,Comparison_Analysis,text,OK,"leaf2과 p1의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf2: N개, p1: M개, 차이: K개']","""leaf2: 0, p1: 0, diff: 0""","leaf2: 0개, p1: 0개, 차이: 0개",1.0,0.0,0.4000000000000001,0.8656883239746094,0.9090909090909091,0.9090909090909091,0.6666666666666665
+428,L3,Comparison_Analysis,text,OK,"p2과 p4의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p2: N개, p4: M개, 차이: K개']","""p2: 0, p4: 0, diff: 0""","p2: 3개, p4: 2개, 차이: 1개",0.0,0.0,0.3636363636363636,0.8424647450447083,0.3636363636363636,0.3636363636363636,0.0
+429,L3,Comparison_Analysis,text,OK,"leaf1과 p1의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf1: N개, p1: M개, 차이: K개']","""leaf1: 0, p1: 0, diff: 0""","leaf1: 0개, p1: 0개, 차이: 0개",1.0,0.0,0.4000000000000001,0.8657336831092834,0.9090909090909091,0.9090909090909091,0.6666666666666665
+430,L3,Comparison_Analysis,text,OK,"p3과 pe1의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p3: N개, pe1: M개, 차이: K개']","""p3: 0, pe1: 6, diff: 6""","p3: 3개, pe1: 3개, 차이: 0개",0.0,0.0,0.3636363636363636,0.8531782627105713,0.3636363636363636,0.5454545454545454,0.0
+431,L3,Comparison_Analysis,text,OK,"leaf4과 p1의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf4: N개, p1: M개, 차이: K개']","""leaf4: 0, p1: 0, diff: 0""","leaf4: 0개, p1: 0개, 차이: 0개",1.0,0.0,0.4000000000000001,0.8633999228477478,0.9090909090909091,0.9090909090909091,0.6666666666666665
+432,L3,Comparison_Analysis,text,OK,"p1과 p4의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'p1: AS X, p4: AS Y']","""p1: AS None, p4: AS None""","p1: AS 65000, p4: AS 65000",0.3333333333333333,0.0,0.6,0.9280145764350891,0.6666666666666666,0.6666666666666666,0.4000000000000001
+433,L3,Comparison_Analysis,text,OK,"leaf4과 pe1의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf4: AS X, pe1: AS Y']","""leaf4: AS None, pe1: AS 65000""","leaf4: AS 65000, pe1: AS 65000",0.6666666666666666,0.0,0.8000000000000002,0.9579525589942932,0.8333333333333334,0.8333333333333334,0.6
+434,L3,Comparison_Analysis,text,OK,"leaf1과 leaf2의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf1: AS X, leaf2: AS Y']","""leaf1: AS None, leaf2: AS None""","leaf1: AS 65000, leaf2: AS 65000",0.3333333333333333,0.0,0.6,0.927352249622345,0.6666666666666666,0.6666666666666666,0.4000000000000001
+435,L3,Comparison_Analysis,text,OK,"p1과 pe1의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'p1: AS X, pe1: AS Y']","""p1: AS None, pe1: AS 65000""","p1: AS 65000, pe1: AS 65000",0.6666666666666666,0.0,0.8000000000000002,0.9520711302757263,0.8333333333333334,0.8333333333333334,0.6
+436,L3,Comparison_Analysis,text,OK,"p2과 p3의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'p2: AS X, p3: AS Y']","""p2: AS None, p3: AS None""","p2: AS 65000, p3: AS 65000",0.3333333333333333,0.0,0.6,0.9271766543388367,0.6666666666666666,0.6666666666666666,0.4000000000000001
+437,L3,Comparison_Analysis,text,OK,"leaf3과 pe1의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf3: AS X, pe1: AS Y']","""leaf3: AS None, pe1: AS 65000""","leaf3: AS 65000, pe1: AS 65000",0.6666666666666666,0.0,0.8000000000000002,0.9566441178321838,0.8333333333333334,0.8333333333333334,0.6
+438,L3,Comparison_Analysis,text,OK,"p3과 p4의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'p3: AS X, p4: AS Y']","""p3: AS None, p4: AS None""","p3: AS 65000, p4: AS 65000",0.3333333333333333,0.0,0.6,0.9279944896697998,0.6666666666666666,0.6666666666666666,0.4000000000000001
+439,L3,Comparison_Analysis,text,OK,"leaf3과 p1의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf3: AS X, p1: AS Y']","""leaf3: AS None, p1: AS None""","leaf3: AS 65000, p1: AS 65000",0.3333333333333333,0.0,0.6,0.9284662008285522,0.6666666666666666,0.6666666666666666,0.4000000000000001
+440,L3,Comparison_Analysis,text,OK,"leaf2과 p1의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf2: AS X, p1: AS Y']","""leaf2: AS None, p1: AS None""","leaf2: AS 65000, p1: AS 65000",0.3333333333333333,0.0,0.6,0.9298039674758911,0.6666666666666666,0.6666666666666666,0.4000000000000001
+441,L3,Comparison_Analysis,text,OK,"p3과 pe2의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'p3: AS X, pe2: AS Y']","""p3: AS None, pe2: AS 65000""","p3: AS 65000, pe2: AS 65000",0.6666666666666666,0.0,0.8000000000000002,0.9595527052879333,0.8333333333333334,0.8333333333333334,0.6
+442,L3,Comparison_Analysis,text,OK,"leaf1과 leaf4의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf1: AS X, leaf4: AS Y']","""leaf1: AS None, leaf4: AS None""","leaf1: AS 65000, leaf4: AS 65000",0.3333333333333333,0.0,0.6,0.9310806393623352,0.6666666666666666,0.6666666666666666,0.4000000000000001
+443,L3,Comparison_Analysis,text,OK,"leaf4과 p2의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf4: AS X, p2: AS Y']","""leaf4: AS None, p2: AS None""","leaf4: AS 65000, p2: AS 65000",0.3333333333333333,0.0,0.6,0.9283527135848999,0.6666666666666666,0.6666666666666666,0.4000000000000001
+444,L3,Comparison_Analysis,text,OK,"leaf2과 pe1의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf2: AS X, pe1: AS Y']","""leaf2: AS None, pe1: AS 65000""","leaf2: AS 65000, pe1: AS 65000",0.6666666666666666,0.0,0.8000000000000002,0.9552144408226013,0.8333333333333334,0.8333333333333334,0.6
+445,L3,Comparison_Analysis,text,OK,"pe1과 pe2의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'pe1: AS X, pe2: AS Y']","""pe1: AS 65000, pe2: AS 65000""","pe1: AS 65000, pe2: AS 65000",1.0,1.0,1.0,1.0,1.0,1.0,1.0
+446,L3,Comparison_Analysis,text,OK,"p4과 pe2의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'p4: AS X, pe2: AS Y']","""p4: AS None, pe2: AS 65000""","p4: AS 65000, pe2: AS 65000",0.6666666666666666,0.0,0.8000000000000002,0.9605439901351929,0.8333333333333334,0.8333333333333334,0.6
+447,L3,Comparison_Analysis,text,OK,"leaf1과 pe1의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf1: AS X, pe1: AS Y']","""leaf1: AS None, pe1: AS 65000""","leaf1: AS 65000, pe1: AS 65000",0.6666666666666666,0.0,0.8000000000000002,0.9513492584228516,0.8333333333333334,0.8333333333333334,0.6
+448,L3,Comparison_Analysis,text,OK,"leaf3과 p2의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf3: AS X, p2: AS Y']","""leaf3: AS None, p2: AS None""","leaf3: AS 65000, p2: AS 65000",0.3333333333333333,0.0,0.6,0.9291669726371765,0.6666666666666666,0.6666666666666666,0.4000000000000001
+449,L3,Comparison_Analysis,text,OK,"leaf4과 p4의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf4: AS X, p4: AS Y']","""leaf4: AS None, p4: AS None""","leaf4: AS 65000, p4: AS 65000",0.3333333333333333,0.0,0.6,0.9256235361099243,0.6666666666666666,0.6666666666666666,0.4000000000000001
+450,L3,Comparison_Analysis,text,OK,"leaf2과 pe2의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf2: AS X, pe2: AS Y']","""leaf2: AS None, pe2: AS 65000""","leaf2: AS 65000, pe2: AS 65000",0.6666666666666666,0.0,0.8000000000000002,0.9528061747550964,0.8333333333333334,0.8333333333333334,0.6
+451,L3,Comparison_Analysis,text,OK,"leaf2과 p2의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf2: AS X, p2: AS Y']","""leaf2: AS None, p2: AS None""","leaf2: AS 65000, p2: AS 65000",0.3333333333333333,0.0,0.6,0.9242151379585266,0.6666666666666666,0.6666666666666666,0.4000000000000001
+452,L3,Comparison_Analysis,text,OK,"p4과 pe2가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'p4: Area 0, 1, pe2: Area 0, 2']","""p4: Area 0, pe2: Area 0""","p4: Area 0, pe2: Area 0, 1",0.6666666666666666,0.0,0.8000000000000002,0.9778684973716736,0.923076923076923,0.923076923076923,0.9090909090909091
+453,L3,Comparison_Analysis,text,OK,"leaf3과 pe1가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'leaf3: Area 0, 1, pe1: Area 0, 2']","""leaf3: Area None, pe1: Area 0""","leaf3: Area 0, pe1: Area 0, 1",0.3333333333333333,0.0,0.6,0.957743227481842,0.7692307692307692,0.7692307692307692,0.5454545454545454
+454,L3,Comparison_Analysis,text,OK,"leaf2과 p3가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'leaf2: Area 0, 1, p3: Area 0, 2']","""leaf2: Area None, p3: Area 0""","leaf2: Area 0, p3: Area 0, 1",0.3333333333333333,0.0,0.6,0.9713419675827026,0.7692307692307692,0.7692307692307692,0.5454545454545454
+455,L3,Comparison_Analysis,text,OK,"p2과 p3가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'p2: Area 0, 1, p3: Area 0, 2']","""p2: Area 0, p3: Area 0""","p2: Area 0, 1, p3: Area 0, 1",0.3333333333333333,0.0,0.7272727272727272,0.9758355021476746,0.8571428571428571,0.8571428571428571,0.6666666666666666
+456,L3,Comparison_Analysis,text,OK,"leaf4과 p4가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'leaf4: Area 0, 1, p4: Area 0, 2']","""leaf4: Area None, p4: Area 0""","leaf4: Area 0, p4: Area 0",0.6666666666666666,0.0,0.8000000000000002,0.9740508794784546,0.8333333333333334,0.8333333333333334,0.6
+457,L3,Comparison_Analysis,text,OK,"leaf4과 p3가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'leaf4: Area 0, 1, p3: Area 0, 2']","""leaf4: Area None, p3: Area 0""","leaf4: Area 0, p3: Area 0, 1",0.3333333333333333,0.0,0.6,0.9714403748512268,0.7692307692307692,0.7692307692307692,0.5454545454545454
+458,L3,Comparison_Analysis,text,OK,"leaf1과 leaf4가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'leaf1: Area 0, 1, leaf4: Area 0, 2']","""leaf1: Area None, leaf4: Area None""","leaf1: Area 0, 1, leaf4: Area 0, 2",0.3333333333333333,0.0,0.5454545454545454,0.9416278600692749,0.5714285714285715,0.5714285714285715,0.3333333333333333
+459,L3,Comparison_Analysis,text,OK,"leaf1과 pe1가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'leaf1: Area 0, 1, pe1: Area 0, 2']","""leaf1: Area None, pe1: Area 0""","leaf1: Area 0, pe1: Area 0, 1",0.3333333333333333,0.0,0.6,0.9555236101150513,0.7692307692307692,0.7692307692307692,0.5454545454545454
+460,L3,Comparison_Analysis,text,OK,"leaf1과 p3가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'leaf1: Area 0, 1, p3: Area 0, 2']","""leaf1: Area None, p3: Area 0""","leaf1: Area 0, 1, p3: Area 0, 2",0.3333333333333333,0.0,0.5454545454545454,0.9560059309005737,0.7142857142857143,0.7142857142857143,0.5
+461,L3,Comparison_Analysis,text,OK,"leaf1과 pe2가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'leaf1: Area 0, 1, pe2: Area 0, 2']","""leaf1: Area None, pe2: Area 0""","leaf1: Area 0, pe2: Area 0, 2",0.3333333333333333,0.0,0.6,0.961911141872406,0.7692307692307692,0.7692307692307692,0.5454545454545454
+462,L3,Comparison_Analysis,text,OK,"p4과 pe1가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'p4: Area 0, 1, pe1: Area 0, 2']","""p4: Area 0, pe1: Area 0""","p4: Area 0, pe1: Area 0, 1",0.6666666666666666,0.0,0.8000000000000002,0.971078634262085,0.923076923076923,0.923076923076923,0.9090909090909091
+463,L3,Comparison_Analysis,text,OK,"p1과 p4가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'p1: Area 0, 1, p4: Area 0, 2']","""p1: Area 0, p4: Area 0""","p1: Area 0, p4: Area 0",1.0,1.0,1.0,0.9999998807907104,1.0,1.0,1.0
+464,L3,Comparison_Analysis,text,OK,"p2과 p4가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'p2: Area 0, 1, p4: Area 0, 2']","""p2: Area 0, p4: Area 0""","p2: Area 0, 1, p4: Area 0",0.6666666666666666,0.0,0.9090909090909091,0.9823864698410034,0.923076923076923,0.923076923076923,0.7272727272727272
+465,L3,Comparison_Analysis,text,OK,"leaf1과 p4가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'leaf1: Area 0, 1, p4: Area 0, 2']","""leaf1: Area None, p4: Area 0""","leaf1: Area 0, 1, p4: Area 0, 2",0.3333333333333333,0.0,0.5454545454545454,0.9559177756309509,0.7142857142857143,0.7142857142857143,0.5
+466,L3,Comparison_Analysis,text,OK,"p1과 p2가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'p1: Area 0, 1, p2: Area 0, 2']","""p1: Area 0, p2: Area 0""","p1: Area 0, p2: Area 0, 1",0.6666666666666666,0.0,0.8000000000000002,0.9822591543197632,0.923076923076923,0.923076923076923,0.9090909090909091
+467,L3,Comparison_Analysis,text,OK,"leaf3과 p4가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'leaf3: Area 0, 1, p4: Area 0, 2']","""leaf3: Area None, p4: Area 0""","leaf3: Area 0, p4: Area 0",0.6666666666666666,0.0,0.8000000000000002,0.9773324131965637,0.8333333333333334,0.8333333333333334,0.6
+468,L3,Comparison_Analysis,text,OK,"leaf4과 p2가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'leaf4: Area 0, 1, p2: Area 0, 2']","""leaf4: Area None, p2: Area 0""","leaf4: Area 0, p2: Area 0, 1",0.3333333333333333,0.0,0.6,0.9716643691062927,0.7692307692307692,0.7692307692307692,0.5454545454545454
+469,L3,Comparison_Analysis,text,OK,"p3과 pe2가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'p3: Area 0, 1, pe2: Area 0, 2']","""p3: Area 0, pe2: Area 0""","p3: Area 0, pe2: Area 0, 1",0.6666666666666666,0.0,0.8000000000000002,0.9761770367622375,0.923076923076923,0.923076923076923,0.9090909090909091
+470,L3,Comparison_Analysis,text,OK,"pe1과 pe2가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'pe1: Area 0, 1, pe2: Area 0, 2']","""pe1: Area 0, pe2: Area 0""","pe1: Area 0, 0, pe2: Area 0, 0",0.3333333333333333,0.0,1.0,0.9751946926116943,0.8571428571428571,0.8571428571428571,0.8333333333333333
+471,L3,Comparison_Analysis,text,OK,"leaf4과 p1가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'leaf4: Area 0, 1, p1: Area 0, 2']","""leaf4: Area None, p1: Area 0""","leaf4: Area 0, p1: Area 0, 1",0.3333333333333333,0.0,0.6,0.969215452671051,0.7692307692307692,0.7692307692307692,0.5454545454545454
+472,L3,Comparison_Analysis,text,OK,인터페이스 수가 가장 많은 장비와 그 개수를 알려주세요. [답변 형식: '장비명: N개'],"""p1: 5""",PE1: 5개,0.0,0.0,0.0,0.9021015763282776,0.5,0.5,0.0
+473,L3,Comparison_Analysis,text,OK,BGP 피어가 가장 많은 장비와 그 개수를 알려주세요. [답변 형식: '장비명: N개'],"""pe1: 1""",PE1: 2개,0.0,0.0,0.5,0.8762620687484741,0.5,0.5,0.0
+474,L3,Comparison_Analysis,text,OK,"모든 장비의 BGP AS 번호를 나열해주세요. [답변 형식: '장비1: AS X, 장비2: AS Y, ...']","""pe1: AS 65000, pe2: AS 65000""","PE1: 65000, PE2: 65000",0.0,0.0,0.888888888888889,0.9635763764381409,0.8,0.8,0.25
+475,L3,Comparison_Analysis,text,OK,인터페이스 수가 가장 적은 장비와 그 개수를 알려주세요. [답변 형식: '장비명: N개'],"""leaf1: 4""",PE1: 5개,0.0,0.0,0.0,0.8937569260597229,0.0,0.0,0.0
+476,L3,Comparison_Analysis,text,OK,"각 AS별 장비 수 분포를 알려주세요. [답변 형식: 'AS X: N대, AS Y: M대']","""AS 65000: 2 devices""","AS 65000: 6대, AS 65001: 0대, AS 65002: 0대, AS 65003: 0대, AS 65004: 0대, AS 65005: 0대, AS 65006: 0대, AS 65007: 0대, AS 65008: 0대, AS 65009: 0대, AS 65010: 0대, AS 65011: 0대, AS 65012: 0대, AS 65013: 0대, AS 65014: 0대, AS 65015: 0대, AS 65016: 0대, AS 65017: 0대, AS 65018: 0대, AS 65019: 0대, AS 65020: 0대, AS 65021: 0대, AS 65022: 0대, AS 65023: 0대, AS 65024: 0대, AS 65025: 0대, AS 65026: 0대, AS 65027: 0대, AS 65028: 0대, AS 65029: 0대, AS 65030: 0대, AS 65031: 0대, AS 65032: 0대, AS 65033: 0대, AS 65034: 0대, AS 65035: 0대, AS 65036: 0대, AS 65037: 0대, AS 65038: 0대, AS 65039: 0대, AS 65040: 0대, AS 65041: 0대, AS 65042: 0대, AS 65043: 0대, AS 65044: 0대, AS 65045: 0대, AS 65046: 0대, AS 65047: 0대, AS 65048: 0대, AS 65049: 0대, AS 65050: 0대, AS 65051: 0대, AS 65052: 0대, AS 65053: 0대, AS 65054: 0대, AS 65055: 0대, AS 65056: 0대, AS 65057: 0대, AS 65058: 0대, AS 65059: 0대, AS 65060: 0대, AS 65061: 0대, AS 65062: 0대, AS 65063: 0대, AS 65064: 0대, AS 65065: 0대, AS 65066: 0대, AS 65067: 0대, AS 65068: 0대, AS 65069: 0대, AS 65070: 0대, AS 65071: 0대, AS 65072: 0대, AS 65073: 0대, AS 65074: 0대, AS 65075: 0대, AS 65076: 0대, AS 65077: 0대, AS 65078: 0대, AS 65079: 0대, AS 65080: 0대, AS 65081: 0대, AS 65082: 0대, AS 65083: 0대, AS 65084: 0대, AS 65085: 0대, AS 65086: 0대, AS 65087: 0대, AS 65088: 0대, AS 65089: 0대, AS 65090: 0대, AS 65091: 0대, AS 65092: 0대, AS 65093: 0대, AS 65094: 0대, AS 65095: 0대, AS 65096: 0대, AS 65097: 0대, AS 65098: 0대, AS 65099: 0대, AS 65100: 0대, AS 65101: 0대, AS 65102: 0대, AS 65103: 0대, AS 65104: 0대, AS 65105: 0대, AS 65106: 0대, AS 65107: 0대, AS 65108: 0대, AS 65109: 0대, AS 65110: 0대, AS 65111: 0대, AS 65112: 0대, AS 65113: 0대, AS 65114: 0대, AS 65115: 0대, AS 65116: 0대, AS 65117: 0대, AS 65118: 0대, AS 65119: 0대, AS 65120: 0대, AS 65121: 0대, AS 65122: 0대, AS 65123: 0대, AS 65124: 0대, AS 65125: 0대, AS 65126: 0대, AS 65127: 0대, AS 65128: 0대, AS 65129: 0대, AS 65130: 0대, AS 65131: 0대, AS 65132: 0대, AS 65133: 0대, AS 65134: 0대, AS 65135: 0대, AS 65136: 0대, AS 65137: 0대, AS 65138: 0대, AS 65139: 0대, AS 65140: 0대, AS 65141: 0대, AS 65142: 0대, AS 65143: 0대, AS 65144: 0대, AS 65145: 0대, AS 65146: 0대, AS 65147: 0대, AS 65148: 0대, AS 65149: 0대, AS 65150: 0대, AS 65151: 0대, AS 65152: 0대, AS 65153: 0대, AS 65154: 0대, AS 65155: 0대, AS 65156: 0대, AS 65157: 0대, AS 65158: 0대, AS 65159: 0대, AS 65160: 0대, AS 65161: 0대, AS 65162: 0대, AS 65163: 0대, AS 65164: 0대, AS 65165: 0대, AS 65166: 0대, AS 65167: 0대, AS 65168: 0대, AS 65169: 0대, AS 65170: 0대, AS 65171: 0대, AS 65172: 0대, AS 65173: 0대, AS 65174: 0대, AS 65175: 0대, AS 65176: 0대, AS 65177: 0대, AS 65178: 0대, AS 65179: 0대, AS 65180: 0대, AS 65181: 0대, AS 65182: 0대, AS 65183: 0대, AS 65184: 0대, AS 65185: 0대, AS 65186: 0대, AS 65187: 0대, AS 65188: 0대, AS 65189: 0대, AS 65190: 0대, AS 65191: 0대, AS 65192: 0대, AS 65193: 0대, AS 65194: 0대, AS 65195: 0대, AS 65196: 0대, AS 65197: 0대, AS 65198: 0대, AS 65199: 0대, AS 65200: 0대, AS 65201: 0대, AS 65202: 0대, AS 65203: 0대, AS 65204: 0대, AS 65205: 0대, AS 65206: 0대, AS 65207: 0대, AS 65208: 0대, AS 65209: 0대, AS 65210: 0대, AS 65211: 0대, AS 65212: 0대, AS 65213: 0대, AS 65214: 0대, AS 65215: 0대, AS 65216: 0대, AS 65217: 0대, AS 65218: 0대, AS 65219: 0대, AS 65220: 0대, AS 65221: 0대, AS 65222: 0대, AS 65223: 0대, AS 65224: 0대, AS 65225: 0대, AS 65226: 0대, AS 65227: 0대, AS 65228: 0대, AS 65229: 0대, AS 65230: 0대, AS 65231: 0대, AS 65232: 0대, AS 65233: 0대, AS 65234: 0대, AS 65235: 0대, AS 65236: 0대, AS 65237: 0대, AS 65238: 0대, AS 65239: 0대, AS 65240: 0대, AS 65241: 0대, AS 65242: 0대, AS 65243: 0대, AS 65244: 0대, AS 65245: 0대, AS 65246: 0대, AS 65247: 0대, AS 65248: 0대, AS 65249: 0대, AS 65250: 0대, AS 65251: 0대, AS 65252: 0대, AS 65253: 0대, AS 65254: 0대, AS 65255: 0대, AS 65256: 0대, AS 65257: 0대, AS 65258: 0대, AS 65259: 0대, AS 65260: 0대, AS 65261: 0대, AS 65262: 0대, AS 65263: 0대, AS 65264: 0대, AS 65265: 0대, AS 65266: 0대, AS 65267: 0대, AS 65268: 0대, AS 65269: 0대, AS 65270: 0대, AS 65271: 0대, AS 65272: 0대, AS 65273: 0대, AS 65274: 0대, AS 65275: 0대, AS 65276: 0대, AS 65277: 0대, AS 65278: 0대, AS 65279: 0대, AS 65280: 0대, AS 65281: 0대, AS 65282: 0대, AS 65283: 0대, AS 65284: 0대, AS 65285: 0대, AS 65286: 0대, AS 65287: 0대, AS 65288: 0대, AS 65289: 0대, AS 65290: 0대, AS 65291: 0대, AS 65292: 0대, AS 65293: 0대, AS 65294: 0대, AS 65295: 0대, AS 65296: 0대, AS 65297: 0대, AS 65298: 0대, AS 65299: 0대, AS 65300: 0대, AS 65301: 0대, AS 65302: 0대, AS 65303: 0대, AS 65304: 0대, AS 65305: 0대, AS 65306: 0대, AS 65307: 0대, AS 65308: 0대, AS 65309: 0대, AS 65310: 0대, AS 65311: 0대, AS 65312: 0대, AS 65313: 0대, AS 65314: 0대, AS 65315: 0대, AS 65316: 0대, AS 65317: 0대, AS 65318: 0대, AS 65319: 0대, AS 65320: 0대, AS 65321: 0대, AS 65322: 0대, AS 65323: 0대, AS 65324: 0대, AS 65325: 0대, AS 65326: 0대, AS 65327: 0대, AS 65328: 0대, AS 65329: 0대, AS 65330: 0대, AS 65331: 0대, AS 65332: 0대, AS 65333: 0대, AS 65334: 0대, AS 65335: 0대, AS 65336: 0대, AS 65337: 0대, AS 65338: 0대, AS 65339: 0대, AS 65340: 0대, AS 65341: 0대, AS 65342: 0대, AS 65343: 0대, AS 65344: 0대, AS 65345: 0대, AS 65346: 0대, AS 65347: 0대, AS 65348: 0대, AS 65349: 0대, AS 65350: 0대, AS 65351: 0대, AS 65352: 0대, AS 65353: 0대, AS 65354: 0대, AS 65355: 0대, AS 65356: 0대, AS 65357: 0대, AS 65358: 0대, AS 65359: 0대, AS 65360: 0대, AS 65361: 0대, AS 65362: 0대, AS 65363: 0대, AS 65364: 0대, AS 65365: 0대, AS 65366: 0대, AS 65367: 0대, AS 65368: 0대, AS 65369: 0대, AS 65370: 0대, AS 65371: 0대, AS 65372: 0대, AS 65373: 0대, AS 65374: 0대, AS 65375: 0대, AS 65376: 0대, AS 65377: 0대, AS 65378: 0대, AS 65379: 0대, AS 65380: 0대, AS 65381: 0대, AS 65382: 0대, AS 65383: 0대, AS 65384: 0대, AS 65385: 0대, AS 65386: 0대, AS 65387: 0대, AS 65388: 0대, AS 65389: 0대, AS 65390: 0대, AS 65391: 0대, AS 65392: 0대, AS 65393: 0대, AS 65394: 0대, AS 65395: 0대, AS 65396: 0대, AS 65397: 0대, AS 65398: 0대, AS 65399: 0대, AS 65400: 0대, AS 65401: 0대, AS 65402: 0대, AS 65403: 0대, AS 65404: 0대, AS 65405: 0대, AS 65406: 0대, AS 65407: 0대, AS 65408: 0대, AS 65409: 0대, AS 65410: 0대, AS 65411: 0대, AS 65412: 0대, AS 65413: 0대, AS 65414: 0대, AS 65415: 0대, AS 65416: 0대, AS 65417: 0대, AS 65418: 0대, AS 65419: 0대, AS 65420: 0대, AS 65421: 0대, AS 65422: 0대, AS 65423: 0대, AS 65424: 0대, AS 65425: 0대, AS 65426: 0대, AS 65427: 0대, AS 65428: 0대, AS 65429: 0대, AS 65430: 0대, AS 65431: 0대, AS 65432: 0대, AS 65433: 0대, AS 65434: 0대, AS 65435: 0대, AS 65436: 0대, AS 65437: 0대, AS 65438: 0대, AS 65439: 0대, AS 65440: 0대, AS 65441: 0대, AS 65442: 0대, AS 65443: 0대, AS 65444: 0대, AS 65445: 0대, AS 65446: 0대, AS 65447: 0대, AS 65448: 0대, AS 65449: 0대, AS 65450: 0대, AS 65451: 0대, AS 65452: 0대, AS 65453: 0대, AS 65454: 0대, AS 65455: 0대, AS 65456: 0대, AS 65457: 0대, AS 65458: 0대, AS 65459: 0대, AS 65460: 0대, AS 65461: 0대, AS 65462: 0대, AS 65463: 0대, AS 65464: 0대, AS 65465: 0대, AS 65466: 0대, AS 65467: 0대, AS 65468: 0대, AS 65469: 0대, AS 65470: 0대, AS 65471: 0대, AS 65472: 0대, AS 65473: 0대, AS 65474: 0대, AS 65475: 0대, AS 65476: 0대, AS 65477: 0대, AS 65478: 0대, AS 65479: 0대, AS 65480: 0대, AS 65481: 0대, AS 65482: 0대, AS 65483: 0대, AS 65484: 0대, AS 65485: 0대, AS 65486: 0대, AS 65487: 0대, AS 65488: 0대, AS 65489: 0대, AS 65490: 0대, AS 65491: 0대, AS 65492: 0대, AS 65493: 0대, AS 65494: 0대, AS 65495: 0대, AS 65496: 0대, AS 65497: 0대, AS 65498: 0대, AS 65499: 0대, AS 65500: 0대, AS 65501: 0대, AS 65502: 0대, AS 65503: 0대, AS 65504: 0대, AS 65505: 0대, AS 65506: 0대, AS 65507: 0대, AS 65508: 0대, AS 65509: 0대, AS 65510: 0대, AS 65511: 0대, AS 65512: 0대, AS 65513: 0대, AS 65514: 0대, AS 65515: 0대, AS 65516: 0대, AS 65517: 0대, AS 65518: 0대, AS 65519: 0대, AS 65520: 0대, AS 65521: 0대, AS 65522: 0대, AS 65523: 0대, AS 65524: 0대, AS 65525: 0대, AS 65526: 0대, AS 65527: 0대, AS 65528: 0대, AS 65529: 0대, AS 65530: 0대, AS 65531: 0대, AS 65532: 0대, AS 65533: 0대, AS 65534: 0대, AS 65535: 0대, AS 65536: 0대, AS 65537: 0대, AS 65538: 0대, AS 65539: 0대, AS 65540: 0대, AS 65541: 0대, AS 65542: 0대, AS 65543: 0대, AS 65544: 0대, AS 65545: 0대, AS 65546: 0대, AS 65547: 0대, AS 65548: 0대, AS 65549: 0대, AS 65550: 0대, AS 65551: 0대, AS 65552: 0대, AS 65553: 0대, AS 65554: 0대, AS 65555: 0대, AS 65556: 0대, AS 65557: 0대, AS 65558: 0대, AS 65559: 0대, AS 65560: 0대, AS 65561: 0대, AS 65562: 0대, AS 65563: 0대, AS 65564: 0대, AS 65565: 0대, AS 65566: 0대, AS 65567: 0대, AS 65568: 0대, AS 65569: 0대, AS 65570: 0대, AS 65571: 0대, AS 65572: 0대, AS 65573: 0대, AS 65574: 0대, AS 65575: 0대, AS 65576: 0대, AS 65577: 0대, AS 65578: 0대, AS 65579: 0대, AS 65580: 0대, AS 65581: 0대, AS 65582: 0대, AS 65583: 0대, AS 65584: 0대, AS 65585: 0대, AS 65586: 0대, AS 65587: 0대, AS 65588: 0대, AS 65589: 0대, AS 65590: 0대, AS 65591: 0대, AS 65592: 0대, AS 65593: 0대, AS 65594: 0대, AS 65595: 0대, AS 65596: 0대, AS 65597: 0대, AS 65598: 0대, AS 65599: 0대, AS 65600: 0대, AS 65601: 0대, AS 65602: 0대, AS 65603: 0대, AS 65604: 0대, AS 65605: 0대, AS 65606: 0대, AS 65607: 0대, AS 65608: 0대, AS 65609: 0대, AS 65610: 0대, AS 65611: 0대, AS 65612: 0대, AS 65613: 0대, AS 65614: 0대, AS 65615: 0대, AS 65616: 0대, AS 65617: 0대, AS 65618: 0대, AS 65619: 0대, AS 65620: 0대, AS 65621: 0대, AS 65622: 0대, AS 65623: 0대, AS 65624: 0대, AS 65625: 0대, AS 65626: 0대, AS 65627: 0대, AS 65628: 0대, AS 65629: 0대, AS 65630: 0대, AS 65631: 0대, AS 65632: 0대, AS 65633: 0대, AS 65634: 0대, AS 65635: 0대, AS 65636: 0대, AS 65637: 0대, AS 65638: 0대, AS 65639: 0대, AS 65640: 0대, AS 65641: 0대, AS 65642: 0대, AS 65643: 0대, AS 65644: 0대, AS 65645: 0대, AS 65646: 0대, AS 65647: 0대, AS 65648: 0대, AS 65649: 0대, AS 65650: 0대, AS 65651: 0대, AS 65652: 0대, AS 65653: 0대, AS 65654: 0대, AS 65655: 0대, AS 65656: 0대, AS 65657: 0대, AS 65658: 0대, AS 65659: 0대, AS 65660: 0대, AS 65661: 0대, AS 65662: 0대, AS 65663: 0대, AS 65664: 0대, AS 65665: 0대, AS 65666: 0대, AS 65667: 0대, AS 65668: 0대, AS 65669: 0대, AS 65670: 0대, AS 65671: 0대, AS 65672: 0대, AS 65673: 0대, AS 65674: 0대, AS 65675: 0대, AS 65676: 0대, AS 65677: 0대, AS 65678: 0대, AS 65679: 0대, AS 65680: 0대, AS 65681: 0대, AS 65682: 0대, AS 65683: 0대, AS 65684: 0대, AS 65685: 0대, AS 65686: 0대, AS 65687: 0대, AS 65688: 0대, AS 65689: 0대, AS 65690: 0대, AS 65691: 0대, AS 65692: 0대, AS 65693: 0대, AS 65694: 0대, AS 65695: 0대, AS 65696: 0대, AS 65697: 0대, AS 65698: 0대, AS 65699: 0대, AS 65700: 0대, AS 65701: 0대, AS 65702: 0대, AS 65703: 0대, AS 65704: 0대, AS 65705: 0대, AS 65706: 0대, AS 65707: 0대, AS 65708: 0대, AS 65709: 0대, AS 65710: 0대, AS 65711: 0대, AS 65712: 0대, AS 65713: 0대, AS 65714: 0대, AS 65715: 0대, AS 65716: 0대, AS 65717: 0대, AS 65718: 0대, AS 65719: 0대, AS 65720: 0대, AS 65721: 0대, AS 65722: 0대, AS 65723: 0대, AS 65724: 0대, AS 65725: 0대, AS 65726: 0대, AS 65727: 0대, AS 65728: 0대, AS 65729: 0대, AS 65730: 0대, AS 65731: 0대, AS 65732: 0대, AS 65733: 0대, AS 65734: 0대, AS 65735: 0대, AS 65736: 0대, AS 65737: 0대, AS 65738: 0대, AS 65739: 0대, AS 65740: 0대, AS 65741: 0대, AS 65742: 0대, AS 65743: 0대, AS 65744: 0대, AS 65745: 0대, AS 65746: 0대, AS 65747: 0대, AS 65748: 0대, AS 65749: 0대, AS 65750: 0대, AS 65751: 0대, AS 65752: 0대, AS 65753: 0대, AS 65754: 0대, AS 65755: 0대, AS 65756: 0대, AS 65757: 0대, AS 65758: 0대, AS 65759: 0대, AS 65760: 0대, AS 65761: 0대, AS 65762: 0대, AS 65763: 0대, AS 65764: 0대, AS 65",0.002597402597402597,0.0,0.00517464424320828,0.7313735485076904,0.001738374619730552,0.001738374619730552,0.0008699434536755111
+477,L3,Comparison_Analysis,text,OK,"VRF 사용중인 장비 중에서 각 장비별 VRF 사용 수를 알려주세요. [답변 형식: '장비1: N, 장비2: M']","""leaf1: 0개, leaf2: 0개, leaf3: 0개, leaf4: 0개, p1: 0개, p2: 0개, p3: 0개, p4: 0개, pe1: 3개, pe2: 3개""","PE1: 3, PE2: 3",0.0,0.0,0.23529411764705882,0.8275611400604248,0.33333333333333337,0.33333333333333337,0.2727272727272727
+478,L1,Configuration_Check,text,NOT_CONFIGURED,'{node}' 장비의 Password Encryption 기능 설정값은 무엇입니까? [답변 형식: Enabled/Disabled],"""Disabled""",Disabled,1.0,1.0,1.0,0.9999999403953552,1.0,1.0,0.0
+479,L1,Configuration_Check,text,NOT_CONFIGURED,'{node}' 장비의 Enable Secret 설정 상태는? [답변 형식: 5(MD5)/Scrypt/None],"""None""",,1.0,1.0,1.0,1.0,0,0.0,0.0
+480,L1,Configuration_Check,text,NOT_CONFIGURED,'{node}' 장비의 Console Password는 무엇으로 설정되어 있습니까? [답변 형식: 암호값 또는 None],"""None""",admin,0.0,0.0,0.0,0.8098546266555786,0,0.0,0.0
+481,L1,Configuration_Check,text,NOT_CONFIGURED,'{node}' 장비의 VTY/Console Exec Timeout 설정값은? [답변 형식: '분 초' 또는 None],"""None""",,1.0,1.0,1.0,1.0,0,0.0,0.0
+482,L1,Configuration_Check,text,NOT_CONFIGURED,'{node}' 장비의 MOTD(Message of the Day) 배너 내용은? [답변 형식: 내용 또는 None],"""None""",,1.0,1.0,1.0,1.0,0,0.0,0.0
+483,L1,Configuration_Check,text,NOT_CONFIGURED,'{node}' 장비의 Login 배너 내용은? [답변 형식: 내용 또는 None],"""None""",Login:,0.0,0.0,0.0,0.8563438653945923,0,0.0,0.0
+484,L1,Configuration_Check,text,NOT_CONFIGURED,'{node}' 장비의 HTTP Server 활성화 상태는? [답변 형식: Enabled/Disabled],"""Disabled""",Disabled,1.0,1.0,1.0,0.9999999403953552,1.0,1.0,0.0
+485,L1,Configuration_Check,text,OK,'{node}' 장비의 CDP(Cisco Discovery Protocol) 활성화 상태는? [답변 형식: Enabled/Disabled],"""Enabled""",Disabled,0.0,0.0,0.0,0.9982398152351379,0.0,0.0,0.0
+486,L1,Configuration_Check,text,OK,'{node}' 장비의 IP Source Route 기능 활성화 상태는? [답변 형식: Enabled/Disabled],"""Enabled""",Disabled,0.0,0.0,0.0,0.9982398152351379,0.0,0.0,0.0
+487,L1,Configuration_Check,set,NOT_CONFIGURED,'{node}' 장비에 설정된 NTP 서버 목록은? [답변 형식: IP 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+488,L1,Configuration_Check,set,NOT_CONFIGURED,'{node}' 장비에 설정된 Syslog 서버 목록은? [답변 형식: IP 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+489,L1,Configuration_Check,set,NOT_CONFIGURED,'{node}' 장비에 설정된 SNMP Community 목록은? [답변 형식: 문자열 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+490,L1,Configuration_Check,set,NOT_CONFIGURED,'{node}' 장비에 설정된 Loopback 인터페이스 목록은? [답변 형식: 인터페이스명 리스트],[],"[""Loopback0""]",0.0,0.0,0.0,0.8057519197463989,0,0.0,0.0
+491,L1,Configuration_Check,set,NOT_CONFIGURED,'{node}' 장비에 설정된 DNS 서버(Name Server) 목록은? [답변 형식: IP 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+492,L1,Configuration_Check,set,NOT_CONFIGURED,'{node}' 장비에서 활성화된 OSPF 프로세스 ID 목록은? [답변 형식: ID 리스트],[],"[""1""]",0.0,0.0,0.0,0.8129847645759583,0,0.0,0.0
+493,L1,Configuration_Check,set,NOT_CONFIGURED,'{node}' 장비에 설정된 BGP AS 번호는? [답변 형식: AS번호 리스트],[],"[""65000""]",0.0,0.0,0.0,0.8160773515701294,0,0.0,0.0
+494,L1,Configuration_Check,text,NOT_CONFIGURED,'{node}' 장비의 MPLS LDP 활성화 상태는? [답변 형식: Enabled/Disabled],"""Disabled""",Enabled,0.0,0.0,0.0,0.9982398152351379,0.0,0.0,0.0
+495,L1,Configuration_Check,set,OK,'{node}' 장비에 설정된 Default Route(0.0.0.0/0)의 Next Hop 목록은? [답변 형식: IP 리스트],"[""10.10.10.1"", ""172.16.1.1""]","[""172.16.1.1"", ""10.10.10.1"", ""172.16.2.1"", ""10.10.10.1"", ""172.16.3.1"", ""10.10.10.1"", ""172.16.4.1"", ""10.10.10.1""]",0.5714285714285715,0.0,0.0,0.9011529684066772,0.4,0.4,0.3684210526315789
+496,L1,Configuration_Check,numeric,OK,'{node}' 장비에 설정된 정적 경로(Static Route)의 총 개수는? [답변 형식: 숫자],3,4,0.0,0.0,0.0,0.9998156428337097,0.0,0.0,0.0
+497,L1,Configuration_Check,numeric,NOT_CONFIGURED,'{node}' 장비에 정의된 ACL(Access Control List)의 개수는? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+498,L1,Configuration_Check,set,NOT_CONFIGURED,'{node}' 장비에서 ACL이 적용된 인터페이스 목록은? [답변 형식: 인터페이스명 리스트],[],"[""GigabitEthernet0/0"",""GigabitEthernet0/1"",""GigabitEthernet0/2"",""GigabitEthernet0/3""]",0.0,0.0,0.0,0.7537040710449219,0,0.0,0.0
+499,L1,Configuration_Check,numeric,NOT_CONFIGURED,'{node}' 장비에 정의된 Prefix-List 개수는? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+500,L1,Configuration_Check,numeric,NOT_CONFIGURED,'{node}' 장비에 정의된 Route-Map 개수는? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+501,L1,Configuration_Check,set,NOT_CONFIGURED,'{node}' 장비에 정의된 QoS Class-Map 목록은? [답변 형식: 이름 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+502,L1,Configuration_Check,set,NOT_CONFIGURED,'{node}' 장비에 정의된 NetFlow Monitor 목록은? [답변 형식: 이름 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+503,L1,Configuration_Check,numeric,OK,'{node}' 장비에서 설명(Description)이 누락된 인터페이스 개수는? [답변 형식: 숫자],4,2,0.0,0.0,0.0,0.9999338388442993,0.0,0.0,0.0
+504,L1,Configuration_Check,set,NOT_CONFIGURED,'{node}' 장비에 설정된 EIGRP AS 번호 목록은? [답변 형식: AS번호 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+505,L1,Configuration_Check,set,NOT_CONFIGURED,'{node}' 장비의 RIP 프로토콜 활성화 상태는? [답변 형식: Enabled/Disabled],[],"{""node"": ""PE1"", ""status"": ""Disabled""}",0.0,0.0,0.0,0.7716553807258606,0,0.0,0.0
+506,L1,Configuration_Check,set,NOT_CONFIGURED,'{node}' 장비에 설정된 HSRP/VRRP 그룹 ID 목록은? [답변 형식: ID 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+507,L1,Configuration_Check,text,NOT_CONFIGURED,'{node}' 장비의 Multicast Routing 활성화 상태는? [답변 형식: Enabled/Disabled],"""Disabled""",Disabled,1.0,1.0,1.0,0.9999999403953552,1.0,1.0,0.0
+508,L1,Hardware_Inventory,set,NOT_CONFIGURED,네트워크 전체에서 Serial 인터페이스를 보유한 장비 목록은? [답변 형식: 장비명 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+509,L1,Hardware_Inventory,set,NOT_CONFIGURED,네트워크 전체에서 Tunnel 인터페이스를 보유한 장비 목록은? [답변 형식: 장비명 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+510,L1,Hardware_Inventory,set,NOT_CONFIGURED,네트워크 전체에서 Port-Channel(EtherChannel) 인터페이스를 보유한 장비 목록은? [답변 형식: 장비명 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+511,L1,Hardware_Inventory,set,NOT_CONFIGURED,네트워크 전체에서 VLAN 인터페이스(SVI)를 보유한 장비 목록은? [답변 형식: 장비명 리스트],[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+512,L4,Reachability_Analysis,text,OK,leaf4에서 10.0.0.3까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",Leaf4 → P3 → PE2 → PE1 → Leaf1,0.0,0.0,0.0,0.7276442646980286,0,0.0,0.0
+513,L4,Reachability_Analysis,text,OK,pe2에서 10.0.1.1까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""pe2 → p3 → p2 → pe1""",PE2→PE1,0.0,0.0,0.0,0.8963825702667236,0.6666666666666666,0.6666666666666666,0.0
+514,L4,Reachability_Analysis,text,OK,leaf3에서 10.0.0.1까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",Leaf3→PE2→P2,0.0,0.0,0.0,0.7418352365493774,0,0.0,0.0
+515,L4,Reachability_Analysis,text,OK,leaf1에서 10.0.0.5까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",Leaf1 → P1 → P2 → P3 → P4 → PE1 → PE2,0.0,0.0,0.0,0.7190225124359131,0,0.0,0.0
+516,L4,Reachability_Analysis,text,OK,p1에서 10.0.1.1까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""p1 → p2 → pe1""",P1→P2→PE1,0.0,0.0,0.0,0.9647926092147827,1.0,1.0,1.0
+517,L4,Reachability_Analysis,text,OK,pe2에서 172.16.3.2까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""pe2""",PE2→Leaf3,0.0,0.0,0.0,0.8739044070243835,0.6666666666666666,0.6666666666666666,0.0
+518,L4,Reachability_Analysis,text,OK,leaf1에서 10.0.0.1까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",Leaf1 → P1 → PE2 → Leaf2,0.0,0.0,0.0,0.730579137802124,0,0.0,0.0
+519,L4,Reachability_Analysis,text,OK,pe1에서 10.0.0.1까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""pe1 → p2""",PE1→P2→P1,0.0,0.0,0.0,0.9212408065795898,0.8,0.8,0.6666666666666666
+520,L4,Reachability_Analysis,text,OK,leaf3에서 10.0.0.3까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""","Leaf3에서 10.0.0.3까지의 네트워크 경로를 추적하기 위해, Leaf3의 인터페이스 설정과 라우팅 테이블을 분석합니다. Leaf3의 GigabitEthernet0/0 인터페이스는 172.16.3.2로 설정되어 있으며, 이는 PE2의 GigabitEthernet0/2 인터페이스(172.16.3.1)와 연결되어 있습니다. PE2는 OSPF 네트워크 10.0.1.0/24에 참여하고 있으며, 이는 P3의 GigabitEthernet0/2 인터페이스(10.0.1.2)와 연결되어 있습니다. P3의 GigabitEthernet0/0 인터페이스는 10.0.0.3으로 설정되어 있으므로, Leaf3 → PE2 → P3의 경로입니다.
+
+Leaf3 → PE2 → P3
+
+[""Leaf3"", ""PE2"", ""P3""]",0.0,0.0,0.0,0.8011429905891418,0,0.0,0.0
+521,L4,Reachability_Analysis,text,OK,p1에서 172.16.3.2까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""p1""",P1→P2→PE1→PE2→Leaf3,0.0,0.0,0.0,0.8148182034492493,0.33333333333333337,0.33333333333333337,0.0
+522,L4,Reachability_Analysis,text,OK,leaf1에서 172.16.4.2까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",Leaf1 → P1 → PE2 → Leaf4,0.0,0.0,0.0,0.7308409810066223,0,0.0,0.0
+523,L4,Reachability_Analysis,text,OK,leaf2에서 10.0.0.0까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",PE1→P1→Leaf2,0.0,0.0,0.0,0.7369576692581177,0,0.0,0.0
+524,L4,Reachability_Analysis,text,OK,p4에서 10.0.0.3까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""p4 → p3""",P4→PE1→P1→P3,0.0,0.0,0.0,0.9048397541046143,0.6666666666666666,0.6666666666666666,0.0
+525,L4,Reachability_Analysis,text,OK,p4에서 172.16.3.2까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""p4""",P4→P3→PE2,0.0,0.0,0.0,0.8499665856361389,0.5,0.5,0.0
+526,L4,Reachability_Analysis,text,OK,leaf4에서 10.0.1.1까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",Leaf4→P1→PE1,0.0,0.0,0.0,0.7436420917510986,0,0.0,0.0
+527,L4,Reachability_Analysis,text,OK,p1에서 10.0.0.5까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""p1 → p4""",P1→P2→P3→P4→PE1,0.0,0.0,0.0,0.8823055624961853,0.5714285714285715,0.5714285714285715,0.0
+528,L4,Reachability_Analysis,text,OK,leaf2에서 10.0.0.1까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",PE1→P1→Leaf2,0.0,0.0,0.0,0.7369576692581177,0,0.0,0.0
+529,L4,Reachability_Analysis,text,OK,p1에서 10.0.0.3까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""p1 → p2 → p3""",P1→P2→P3,0.0,0.0,0.0,0.9703678488731384,1.0,1.0,1.0
+530,L4,Reachability_Analysis,text,OK,pe2에서 10.0.0.3까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""pe2 → p3""",PE2→PE1→P3,0.0,0.0,0.0,0.9278955459594727,0.8,0.8,0.0
+531,L4,Reachability_Analysis,text,OK,pe2에서 10.0.0.1까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""pe2 → p3 → p2""",PE2→PE1→P1,0.0,0.0,0.0,0.9285534620285034,0.3333333333333333,0.3333333333333333,0.0
+532,L4,Reachability_Analysis,text,OK,p1에서 10.0.0.1까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""p1 → p2""",P1→P2→PE2→Leaf2,0.0,0.0,0.0,0.9076805710792542,0.6666666666666666,0.6666666666666666,0.5
+533,L4,Reachability_Analysis,text,OK,p4에서 10.0.1.1까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""p4 → p3 → p2 → pe1""",P4→P3→P2→P1→PE1,0.0,0.0,0.0,0.9542465209960938,0.888888888888889,0.888888888888889,0.5714285714285715
+534,L4,Reachability_Analysis,text,OK,p4에서 10.0.0.1까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""p4 → p1 → p2""",P4→P3→P2,0.0,0.0,0.0,0.9467991590499878,0.6666666666666666,0.6666666666666666,0.0
+535,L4,Reachability_Analysis,text,OK,leaf2에서 172.16.3.2까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""","Leaf2에서 172.16.3.2까지의 네트워크 경로를 추적하기 위해, Leaf2의 구성에서 해당 IP 주소에 연결된 인터페이스를 확인하고, 라우팅 테이블을 분석해야 합니다.
+
+Leaf2의 구성에서 `interface GigabitEthernet0/0`에 `ip address 172.16.2.2 255.255.255.0`가 설정되어 있습니다. 이 인터페이스는 172.16.2.0/24 네트워크에 연결되어 있습니다. Leaf2의 라우팅 테이블에서 `ip route 0.0.0.0 0.0.0.0 172.16.2.1`이 설정되어 있으므로, 이 경로를 통해 172.16.2.0/24 네트워크로 이동합니다.
+
+다음으로, 172.16.2.1은 PE1의 `interface GigabitEthernet0/2`에 연결되어 있으며, 이 인터페이스는 VRF_BIO에 속해 있습니다. PE1의 라우팅 테이블에서 `network 172.16.2.0 255.255.255.0`이 설정되어 있으므로, 이 네트워크를 통해 172.16.3.2에 도달할 수 있습니다.
+
+따라서, Leaf2에서 172.16.3.2까지의 네트워크 경로는 다음과 같습니다:
+Leaf2 → PE1 → 172.16.3.2
+
+Leaf2 → PE1 → 172.16.3.2",0.0,0.0,0.0,0.7978970408439636,0,0.0,0.0
+536,L4,Reachability_Analysis,text,OK,leaf2에서 10.0.1.3까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""","Leaf2에서 10.0.1.3까지의 네트워크 경로를 추적하기 위해, Leaf2의 인터페이스 설정과 라우팅 테이블을 분석합니다. Leaf2의 GigabitEthernet0/0 인터페이스는 172.16.2.2 IP 주소를 가지고 있으며, 이는 PE1의 GigabitEthernet0/2 인터페이스(172.16.2.1)와 연결되어 있습니다. PE1의 라우팅 테이블에서 10.0.1.3은 PE2의 GigabitEthernet0/0 인터페이스(10.0.1.3)와 연결되어 있습니다. 따라서 경로는 Leaf2 → PE1 → PE2입니다.
+
+Leaf2
+PE1
+PE2
+
+[""Leaf2"", ""PE1"", ""PE2""]",0.0,0.0,0.0,0.8076999187469482,0,0.0,0.0
+537,L4,Reachability_Analysis,text,OK,leaf1에서 10.0.0.3까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",Leaf1 → P1 → P3 → PE2,0.0,0.0,0.0,0.7330603003501892,0,0.0,0.0
+538,L4,Reachability_Analysis,text,OK,leaf1에서 172.16.2.2까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",Leaf1 → P1 → PE2 → Leaf2,0.0,0.0,0.0,0.730579137802124,0,0.0,0.0
+539,L4,Reachability_Analysis,text,OK,p1에서 10.0.1.3까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""p1 → p2 → p3 → pe2""",P1→P2→PE2,0.0,0.0,0.0,0.9460124373435974,0.8571428571428571,0.8571428571428571,0.4
+540,L4,Reachability_Analysis,text,OK,leaf4에서 10.0.1.3까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",Leaf4→PE2,0.0,0.0,0.0,0.7554742693901062,0,0.0,0.0
+541,L4,Reachability_Analysis,text,OK,pe1에서 10.0.0.3까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""pe1 → p2 → p3""",PE1→PE2→P2→P3,0.0,0.0,0.0,0.9490280747413635,0.8571428571428571,0.8571428571428571,0.4
+542,L4,Reachability_Analysis,text,OK,leaf1에서 10.0.1.1까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",Leaf1 → P1 → PE1,0.0,0.0,0.0,0.7390514612197876,0,0.0,0.0
+543,L4,Reachability_Analysis,text,OK,leaf4에서 10.0.0.5까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",Leaf4→P4→PE1,0.0,0.0,0.0,0.7449343204498291,0,0.0,0.0
+544,L4,Reachability_Analysis,text,OK,leaf2에서 172.16.4.2까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""","Leaf2에서 172.16.4.2까지의 네트워크 경로를 추적하기 위해, Leaf2의 라우팅 테이블을 확인해야 합니다. Leaf2의 라우팅 테이블에서 172.16.4.0/24 네트워크에 대한 경로가 존재하는지 확인합니다. Leaf2의 라우팅 테이블에서 172.16.4.0/24 네트워크에 대한 경로는 172.16.2.1을 다음 헤드로 사용하고 있습니다. 이는 Leaf2와 연결된 GigabitEthernet0/0 인터페이스의 IP 주소인 172.16.2.2의 다음 헤드입니다. 따라서 Leaf2에서 172.16.4.2까지의 경로는 Leaf2 → P1 → PE2 → 172.16.4.2입니다.
+
+Leaf2 → P1 → PE2",0.0,0.0,0.0,0.8026025891304016,0,0.0,0.0
+545,L4,Reachability_Analysis,text,OK,leaf1에서 172.16.3.2까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",Leaf1 → P1 → PE2 → Leaf3,0.0,0.0,0.0,0.7290464043617249,0,0.0,0.0
+546,L4,Reachability_Analysis,text,OK,leaf1에서 10.0.0.0까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",Leaf1 → P1 → PE1,0.0,0.0,0.0,0.7390514612197876,0,0.0,0.0
+547,L4,Reachability_Analysis,text,OK,leaf4에서 10.0.0.0까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",PE1→P1→Leaf4,0.0,0.0,0.0,0.7390033006668091,0,0.0,0.0
+548,L4,Reachability_Analysis,text,OK,p2에서 10.0.0.3까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""p2 → p3""",P2→P3,0.0,0.0,0.0,0.963767409324646,1.0,1.0,1.0
+549,L4,Reachability_Analysis,text,OK,leaf4에서 10.0.0.1까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",,0.0,0.0,0.0,0.7300863862037659,0,0.0,0.0
+550,L4,Reachability_Analysis,text,OK,leaf4에서 172.16.3.2까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",Leaf4 → PE2 → PE1 → Leaf3,0.0,0.0,0.0,0.7304084300994873,0,0.0,0.0
+551,L4,Reachability_Analysis,text,OK,leaf2에서 10.0.0.5까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",Leaf2→PE1→P4,0.0,0.0,0.0,0.7416647672653198,0,0.0,0.0
+552,L4,Reachability_Analysis,text,OK,leaf2에서 10.0.1.1까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""","Leaf2에서 10.0.1.1까지의 네트워크 경로를 추적하기 위해, Leaf2의 인터페이스 설정과 라우팅 테이블을 분석합니다. Leaf2의 GigabitEthernet0/0 인터페이스는 172.16.2.2 IP 주소를 가지고 있으며, 이는 PE1의 GigabitEthernet0/2 인터페이스(172.16.2.1)와 연결되어 있습니다. PE1의 라우팅 테이블에서 10.0.1.1은 GigabitEthernet0/0 인터페이스(10.0.1.1)에 직접 연결되어 있습니다. 따라서 경로는 Leaf2 → PE1 → 10.0.1.1입니다.
+
+Leaf2
+→ PE1
+→ 10.0.1.1",0.0,0.0,0.0,0.8079977035522461,0,0.0,0.0
+553,L4,Reachability_Analysis,text,OK,leaf1에서 10.0.1.3까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""",Leaf1 → P1 → P2 → PE2,0.0,0.0,0.0,0.7317003607749939,0,0.0,0.0
+554,L4,Reachability_Analysis,text,OK,p4에서 10.0.1.3까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""p4 → p3 → pe2""",P4→P3→P2→PE2,0.0,0.0,0.0,0.9472585916519165,0.8571428571428571,0.8571428571428571,0.4
+555,L4,Reachability_Analysis,text,OK,leaf2에서 10.0.0.3까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""경로 없음""","Leaf2에서 10.0.0.3까지의 네트워크 경로를 추적하기 위해, Leaf2의 인터페이스 설정과 라우팅 테이블을 분석합니다. Leaf2는 GigabitEthernet0/0 인터페이스에서 172.16.2.2 IP 주소를 가지고 있으며, 이 인터페이스는 PE1의 GigabitEthernet0/2 인터페이스(172.16.2.1)와 연결되어 있습니다. PE1은 BGP를 통해 P3와 연결되어 있으며, P3는 10.0.0.3 IP 주소를 가지고 있습니다. 따라서 경로는 Leaf2 → PE1 → P3입니다.
+
+Leaf2 → PE1 → P3",0.0,0.0,0.0,0.8087664246559143,0,0.0,0.0
+556,L4,Reachability_Analysis,text,OK,pe1에서 172.16.3.2까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)],"""pe1""",PE1→Leaf2→Leaf3,0.0,0.0,0.0,0.8299160599708557,0.5,0.5,0.0
+557,L4,Reachability_Analysis,text,OK,"172.16.4.2에서 10.0.0.3(22/TCP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf4 → pe2, 도달: 불가 (원인: NO_ROUTE)""","경로: LEAF4 → PE2 → P3, 도달: 가능",0.5,0.0,0.5333333333333333,0.922324001789093,0.5714285714285715,0.5714285714285715,0.4
+558,L4,Reachability_Analysis,text,OK,"172.16.4.2에서 10.0.1.3(0/ICMP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf4 → pe2, 도달: 불가 (원인: NO_ROUTE)""","경로: Leaf4 → 10.10.10.1 → P1 → PE2, 도달: 가능",0.4444444444444445,0.0,0.625,0.9175591468811035,0.36363636363636365,0.36363636363636365,0.0
+559,L4,Reachability_Analysis,text,OK,"172.16.2.2에서 172.16.4.2(22/TCP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf2 → pe1, 도달: 불가 (원인: NO_ROUTE)""","경로: LEAF2 → PE1 → PE2 → LEAF4, 도달: 가능",0.4444444444444445,0.0,0.5,0.9114608764648438,0.5,0.5,0.3333333333333333
+560,L4,Reachability_Analysis,text,OK,"172.16.2.2에서 10.0.0.0(0/ICMP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf2 → pe1, 도달: 불가 (원인: NO_ROUTE)""","경로: LEAF2 → P1, 도달: 불가 (원인: NO_ROUTE)",0.75,0.0,0.875,0.9816669821739197,0.75,0.75,0.3333333333333333
+561,L4,Reachability_Analysis,text,OK,"10.0.0.5에서 10.0.1.3(0/ICMP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: p4 → p3 → pe2, 도달: 가능 (ACCEPTED)""","경로: P4 → PE2, 도달: 가능",0.7499999999999999,0.0,0.8571428571428571,0.9619560241699219,0.6666666666666666,0.6666666666666666,0.0
+562,L4,Reachability_Analysis,text,OK,"10.0.0.0에서 10.0.1.1(22/TCP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: p1 → p2 → pe1, 도달: 가능 (ACCEPTED)""","경로: P1 → Leaf1 → PE1, 도달: 가능",0.6666666666666665,0.0,0.7999999999999999,0.9631854295730591,0.5714285714285715,0.5714285714285715,0.0
+563,L4,Reachability_Analysis,text,OK,"10.0.0.0에서 172.16.3.2(0/ICMP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: p1, 도달: 불가 (원인: INSUFFICIENT_INFO)""","경로: P1 → 10.10.10.1 → Leaf1, 도달: 불가 (원인: NO_ROUTE)",0.0,0.0,0.5333333333333333,0.940836489200592,0.18181818181818182,0.18181818181818182,0.0
+564,L4,Reachability_Analysis,text,OK,"10.0.0.5에서 10.0.0.1(0/ICMP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: p4 → p1 → p2, 도달: 가능 (ACCEPTED)""","경로: P4 → P3 → P2, 도달: 가능",0.6666666666666665,0.0,0.7999999999999999,0.969406008720398,0.5714285714285715,0.5714285714285715,0.0
+565,L4,Reachability_Analysis,text,OK,"172.16.1.2에서 172.16.2.2(0/ICMP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf1 → pe1, 도달: 불가 (원인: NO_ROUTE)""","경로: Leaf1 → PE1 → PE2 → Leaf2, 도달: 가능",0.4444444444444445,0.0,0.5,0.9134214520454407,0.5,0.5,0.3333333333333333
+566,L4,Reachability_Analysis,text,OK,"172.16.3.2에서 10.0.0.1(22/TCP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf3 → pe2, 도달: 불가 (원인: NO_ROUTE)""","경로: Leaf3 → PE2 → P1, 도달: 가능",0.5,0.0,0.5333333333333333,0.928199827671051,0.5714285714285715,0.5714285714285715,0.4
+567,L4,Reachability_Analysis,text,OK,"172.16.2.2에서 10.0.0.1(0/ICMP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf2 → pe1, 도달: 불가 (원인: NO_ROUTE)""","경로: LEAF2 → P2, 도달: 가능",0.5714285714285715,0.0,0.5714285714285715,0.9223955273628235,0.3333333333333333,0.3333333333333333,0.0
+568,L4,Reachability_Analysis,text,OK,"172.16.3.2에서 10.0.0.1(0/ICMP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf3 → pe2, 도달: 불가 (원인: NO_ROUTE)""","경로: LEAF3 → 10.10.10.1 → P1, 도달: 불가 (원인: NO_ROUTE)",0.6666666666666665,0.0,0.823529411764706,0.963362455368042,0.5,0.5,0.2
+569,L4,Reachability_Analysis,text,OK,"172.16.1.2에서 172.16.4.2(22/TCP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf1 → pe1, 도달: 불가 (원인: NO_ROUTE)""","경로: LEAF1 → PE1 → PE2 → LEAF4, 도달: 가능",0.4444444444444445,0.0,0.5,0.9088510274887085,0.5,0.5,0.3333333333333333
+570,L4,Reachability_Analysis,text,OK,"172.16.2.2에서 10.0.1.3(22/TCP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf2 → pe1, 도달: 불가 (원인: NO_ROUTE)""","경로: LEAF2 → 10.10.10.1 → PE2, 도달: 불가 (원인: NO_ROUTE)",0.6666666666666665,0.0,0.823529411764706,0.9639514088630676,0.5,0.5,0.2
+571,L4,Reachability_Analysis,text,OK,"10.0.1.3에서 172.16.3.2(22/TCP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: pe2, 도달: 불가 (원인: INSUFFICIENT_INFO)""","경로: PE2 → Leaf3, 도달: 가능",0.0,0.0,0.3333333333333333,0.9079278707504272,0.4,0.4,0.0
+572,L4,Reachability_Analysis,text,OK,"172.16.1.2에서 10.0.0.1(22/TCP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf1 → pe1, 도달: 불가 (원인: NO_ROUTE)""","경로: LEAF1 → PE1 → P1, 도달: 가능",0.5,0.0,0.5333333333333333,0.922092854976654,0.5714285714285715,0.5714285714285715,0.4
+573,L4,Reachability_Analysis,text,OK,"10.0.0.5에서 10.0.1.1(22/TCP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: p4 → p3 → p2 → pe1, 도달: 가능 (ACCEPTED)""","경로: P4 → Leaf1, 도달: 불가 (원인: NO_ROUTE)",0.4,0.0,0.47058823529411764,0.917702317237854,0.22222222222222224,0.22222222222222224,0.0
+574,L4,Reachability_Analysis,text,OK,"172.16.4.2에서 10.0.1.1(0/ICMP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf4 → pe2, 도달: 불가 (원인: NO_ROUTE)""","경로: LEAF4 → 10.10.10.1 → P1 → PE1, 도달: 가능",0.4444444444444445,0.0,0.5,0.9100556969642639,0.18181818181818182,0.18181818181818182,0.0
+575,L4,Reachability_Analysis,text,OK,"172.16.2.2에서 172.16.4.2(0/ICMP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf2 → pe1, 도달: 불가 (원인: NO_ROUTE)""","경로: Leaf2 → PE2 → Leaf4, 도달: 가능",0.5,0.0,0.5333333333333333,0.9226802587509155,0.28571428571428575,0.28571428571428575,0.0
+576,L4,Reachability_Analysis,text,OK,"10.0.0.0에서 10.0.1.1(0/ICMP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: p1 → p2 → pe1, 도달: 가능 (ACCEPTED)""","경로: P1 → PE1, 도달: 가능",0.7499999999999999,0.0,0.8571428571428571,0.9629804491996765,0.6666666666666666,0.6666666666666666,0.0
+577,L4,Reachability_Analysis,text,OK,"172.16.4.2에서 172.16.3.2(0/ICMP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf4 → pe2, 도달: 불가 (원인: NO_ROUTE)""","경로: Leaf4 → PE2 → Leaf3, 도달: 가능",0.5,0.0,0.5333333333333333,0.9253774285316467,0.5714285714285715,0.5714285714285715,0.4
+578,L4,Reachability_Analysis,text,OK,"172.16.1.2에서 10.0.1.3(0/ICMP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf1 → pe1, 도달: 불가 (원인: NO_ROUTE)""","경로: LEAF1 → PE1 → PE2, 도달: 가능",0.5,0.0,0.5333333333333333,0.9179924130439758,0.5714285714285715,0.5714285714285715,0.4
+579,L4,Reachability_Analysis,text,OK,"172.16.2.2에서 10.0.1.1(22/TCP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf2 → pe1, 도달: 불가 (원인: NO_ROUTE)""","경로: LEAF2 → 10.10.10.1, 도달: 불가 (원인: NO_ROUTE)",0.75,0.0,0.875,0.9616022109985352,0.5454545454545454,0.5454545454545454,0.2222222222222222
+580,L4,Reachability_Analysis,text,OK,"10.0.1.1에서 172.16.3.2(22/TCP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: pe1, 도달: 불가 (원인: INSUFFICIENT_INFO)""","경로: 10.0.1.1 → 10.0.1.3 → 172.16.3.1 → 172.16.3.2, 도달: 가능",0.0,0.0,0.28571428571428575,0.8697800040245056,0.0,0.0,0.0
+581,L4,Reachability_Analysis,text,OK,"172.16.1.2에서 10.0.0.0(0/ICMP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf1 → pe1, 도달: 불가 (원인: NO_ROUTE)""","경로: LEAF1 → PE1 → P1, 도달: 가능",0.5,0.0,0.5333333333333333,0.922092854976654,0.5714285714285715,0.5714285714285715,0.4
+582,L4,Reachability_Analysis,text,OK,"172.16.4.2에서 10.0.0.1(22/TCP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf4 → pe2, 도달: 불가 (원인: NO_ROUTE)""","경로: LEAF4 → 10.10.10.1 → P2, 도달: 가능",0.5,0.0,0.5333333333333333,0.9116786122322083,0.2,0.2,0.0
+583,L4,Reachability_Analysis,text,OK,"172.16.2.2에서 10.0.0.5(22/TCP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf2 → pe1, 도달: 불가 (원인: NO_ROUTE)""","경로: LEAF2 → PE2 → P4, 도달: 가능",0.5,0.0,0.5333333333333333,0.9166333079338074,0.28571428571428575,0.28571428571428575,0.0
+584,L4,Reachability_Analysis,text,OK,"172.16.2.2에서 10.0.0.3(0/ICMP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf2 → pe1, 도달: 불가 (원인: NO_ROUTE)""","경로: LEAF2 → PE1 → P1 → P3, 도달: 가능",0.4444444444444445,0.0,0.5,0.9170764684677124,0.5,0.5,0.3333333333333333
+585,L4,Reachability_Analysis,text,OK,"172.16.1.2에서 172.16.2.2(22/TCP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: leaf1 → pe1, 도달: 불가 (원인: NO_ROUTE)""","경로: Leaf1 → PE1 → PE2 → Leaf2, 도달: 가능",0.4444444444444445,0.0,0.5,0.9134214520454407,0.5,0.5,0.3333333333333333
+586,L4,Reachability_Analysis,text,OK,"10.0.0.5에서 10.0.1.1(0/ICMP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']","""경로: p4 → p3 → p2 → pe1, 도달: 가능 (ACCEPTED)""","경로: P4 → P3 → P2 → P1 → PE1, 도달: 가능",0.8333333333333334,0.0,0.8888888888888888,0.9703643918037415,0.8000000000000002,0.8000000000000002,0.5
+587,L4,Reachability_Analysis,text,OK,네트워크에 포워딩 루프가 존재합니까? [답변 형식: '없음' 또는 '발견: A→B→C→A'],"""없음""",없음,1.0,1.0,1.0,1.0,0,0.0,0.0
+588,L4,Reachability_Analysis,number,OK,p4에서 10.0.1.3로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],3,5,0.0,0.0,0.0,0.9997093081474304,0.0,0.0,0.0
+589,L4,Reachability_Analysis,number,OK,leaf1에서 172.16.2.2로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,2,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+590,L4,Reachability_Analysis,number,OK,p1에서 10.0.1.1로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],3,2,0.0,0.0,0.0,0.9998126029968262,0.0,0.0,0.0
+591,L4,Reachability_Analysis,number,OK,leaf4에서 172.16.3.2로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,2,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+592,L4,Reachability_Analysis,number,OK,pe2에서 172.16.3.2로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],1,3,0.0,0.0,0.0,0.9996644854545593,0.0,0.0,0.0
+593,L4,Reachability_Analysis,number,OK,pe2에서 10.0.0.3로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,2,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+594,L4,Reachability_Analysis,number,OK,leaf2에서 10.0.0.5로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,2,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+595,L4,Reachability_Analysis,number,OK,leaf4에서 10.0.0.0로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,3,0.0,0.0,0.0,0.9998126029968262,0.0,0.0,0.0
+596,L4,Reachability_Analysis,number,OK,p1에서 10.0.0.1로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,2,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+597,L4,Reachability_Analysis,number,OK,p1에서 10.0.0.5로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,3,0.0,0.0,0.0,0.9998126029968262,0.0,0.0,0.0
+598,L4,Reachability_Analysis,number,OK,leaf2에서 10.0.0.3로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,2,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+599,L4,Reachability_Analysis,number,OK,p4에서 10.0.1.1로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],4,3,0.0,0.0,0.0,0.9998156428337097,0.0,0.0,0.0
+600,L4,Reachability_Analysis,number,OK,leaf2에서 10.0.0.0로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,1,0.0,0.0,0.0,0.999797523021698,0.0,0.0,0.0
+601,L4,Reachability_Analysis,number,OK,pe1에서 172.16.3.2로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],1,3,0.0,0.0,0.0,0.9996644854545593,0.0,0.0,0.0
+602,L4,Reachability_Analysis,number,OK,leaf1에서 10.0.0.1로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,3,0.0,0.0,0.0,0.9998126029968262,0.0,0.0,0.0
+603,L4,Reachability_Analysis,number,OK,leaf2에서 10.0.1.3로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,2,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+604,L4,Reachability_Analysis,number,OK,leaf4에서 10.0.0.3로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,2,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+605,L4,Reachability_Analysis,number,OK,pe1에서 10.0.0.3로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],3,3,1.0,1.0,1.0,1.0000003576278687,1.0,1.0,0.0
+606,L4,Reachability_Analysis,number,OK,p4에서 10.0.0.1로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],3,2,0.0,0.0,0.0,0.9998126029968262,0.0,0.0,0.0
+607,L4,Reachability_Analysis,number,OK,leaf3에서 10.0.0.3로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,2,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+608,L4,Reachability_Analysis,number,OK,p4에서 172.16.3.2로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],1,2,0.0,0.0,0.0,0.999797523021698,0.0,0.0,0.0
+609,L4,Reachability_Analysis,number,OK,leaf1에서 10.0.0.3로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,3,0.0,0.0,0.0,0.9998126029968262,0.0,0.0,0.0
+610,L4,Reachability_Analysis,number,OK,p1에서 10.0.1.3로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],4,3,0.0,0.0,0.0,0.9998156428337097,0.0,0.0,0.0
+611,L4,Reachability_Analysis,number,OK,leaf1에서 10.0.1.3로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,2,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+612,L4,Reachability_Analysis,number,OK,pe1에서 10.0.0.1로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,3,0.0,0.0,0.0,0.9998126029968262,0.0,0.0,0.0
+613,L4,Reachability_Analysis,number,OK,leaf2에서 10.0.0.1로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,3,0.0,0.0,0.0,0.9998126029968262,0.0,0.0,0.0
+614,L4,Reachability_Analysis,number,OK,leaf2에서 172.16.3.2로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,2,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+615,L4,Reachability_Analysis,number,OK,leaf1에서 10.0.0.5로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,4,0.0,0.0,0.0,0.9999338388442993,0.0,0.0,0.0
+616,L4,Reachability_Analysis,number,OK,leaf1에서 10.0.0.0로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,2,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+617,L4,Reachability_Analysis,number,OK,leaf2에서 10.0.1.1로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,2,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+618,L4,Reachability_Analysis,number,OK,leaf4에서 10.0.0.5로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,2,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+619,L4,Reachability_Analysis,number,OK,p1에서 172.16.3.2로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],1,3,0.0,0.0,0.0,0.9996644854545593,0.0,0.0,0.0
+620,L4,Reachability_Analysis,number,OK,leaf1에서 10.0.1.1로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,1,0.0,0.0,0.0,0.999797523021698,0.0,0.0,0.0
+621,L4,Reachability_Analysis,number,OK,leaf1에서 172.16.4.2로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,3,0.0,0.0,0.0,0.9998126029968262,0.0,0.0,0.0
+622,L4,Reachability_Analysis,number,OK,leaf2에서 172.16.4.2로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,2,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+623,L4,Reachability_Analysis,number,OK,pe2에서 10.0.1.1로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],4,2,0.0,0.0,0.0,0.9999338388442993,0.0,0.0,0.0
+624,L4,Reachability_Analysis,number,OK,leaf3에서 10.0.0.1로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,3,0.0,0.0,0.0,0.9998126029968262,0.0,0.0,0.0
+625,L4,Reachability_Analysis,number,OK,p1에서 10.0.0.3로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],3,2,0.0,0.0,0.0,0.9998126029968262,0.0,0.0,0.0
+626,L4,Reachability_Analysis,number,OK,leaf4에서 10.0.1.3로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,4,0.0,0.0,0.0,0.9999338388442993,0.0,0.0,0.0
+627,L4,Reachability_Analysis,number,OK,leaf4에서 10.0.1.1로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,3,0.0,0.0,0.0,0.9998126029968262,0.0,0.0,0.0
+628,L4,Reachability_Analysis,number,OK,leaf1에서 172.16.3.2로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,3,0.0,0.0,0.0,0.9998126029968262,0.0,0.0,0.0
+629,L4,Reachability_Analysis,number,OK,leaf4에서 10.0.0.1로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,3,0.0,0.0,0.0,0.9998126029968262,0.0,0.0,0.0
+630,L4,Reachability_Analysis,number,OK,p4에서 10.0.0.3로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,2,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+631,L4,Reachability_Analysis,number,OK,pe2에서 10.0.0.1로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],3,2,0.0,0.0,0.0,0.9998126029968262,0.0,0.0,0.0
+632,L4,Reachability_Analysis,number,OK,p2에서 10.0.0.3로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자],2,0,0.0,0.0,0.0,0.9796121120452881,0.0,0.0,0.0
+633,L4,Reachability_Analysis,set,OK,"네트워크에서 블랙홀이 발생하는 목적지 prefix 목록을 알려주세요. [답변 형식: prefix 목록 (예: [""10.0.0.0/8"", ""192.168.1.0/24""]) 또는 빈 목록 []]",[],[],1.0,1.0,1.0,0.9999998807907104,0,0.0,0.0
+634,L4,Reachability_Analysis,text,OK,172.16.1.2에서 10.0.0.3로 가는 트래픽이 p1를 경유할 때의 전체 경로는 무엇입니까? [답변 형식: 'A → B → C' 형식 또는 '경유하지 않음'],"""경유하지 않음""",LEAF1 → P1 → P3,0.0,0.0,0.0,0.726738452911377,0,0.0,0.0
+635,L4,Reachability_Analysis,text,OK,172.16.1.2에서 10.0.0.3로 가는 트래픽이 p4를 경유할 때의 전체 경로는 무엇입니까? [답변 형식: 'A → B → C' 형식 또는 '경유하지 않음'],"""경유하지 않음""",LEAF1 → PE1 → P2 → P4 → P3,0.0,0.0,0.0,0.7152899503707886,0,0.0,0.0
+636,L4,Reachability_Analysis,text,OK,172.16.1.2에서 10.0.0.3로 가는 트래픽이 pe2를 경유할 때의 전체 경로는 무엇입니까? [답변 형식: 'A → B → C' 형식 또는 '경유하지 않음'],"""경유하지 않음""",Leaf1 → PE1 → PE2 → P3,0.0,0.0,0.0,0.7253322005271912,0,0.0,0.0
+637,L4,Reachability_Analysis,text,OK,172.16.1.2에서 10.0.0.3로 가는 트래픽이 pe1를 경유할 때의 전체 경로는 무엇입니까? [답변 형식: 'A → B → C' 형식 또는 '경유하지 않음'],"""leaf1 → pe1""",LEAF1 → PE1 → P3,0.8571428571428571,0.0,0.8571428571428571,0.9035320281982422,0.8,0.8,0.6666666666666666
+638,L4,Reachability_Analysis,text,OK,172.16.1.2에서 10.0.0.3로 가는 트래픽이 p2를 경유할 때의 전체 경로는 무엇입니까? [답변 형식: 'A → B → C' 형식 또는 '경유하지 않음'],"""경유하지 않음""",PE1 → P1 → P2 → P3,0.0,0.0,0.0,0.7214838266372681,0,0.0,0.0
+639,L4,Security_Analysis,set,OK,"VRF_AI과 default 사이에 누수된 prefix 목록은 무엇입니까? [답변 형식: prefix 목록 (예: [""10.10.10.0/24""]) 또는 빈 목록 []]",[],"[""192.168.100.0/24""]",0.0,0.0,0.0,0.7835934162139893,0,0.0,0.0
+640,L4,Security_Analysis,set,OK,"VRF_AI과 VRF_HPC 사이에 누수된 prefix 목록은 무엇입니까? [답변 형식: prefix 목록 (예: [""10.10.10.0/24""]) 또는 빈 목록 []]",[],"[""172.16.1.0/24"", ""172.16.4.0/24""]",0.0,0.0,0.0,0.7934008836746216,0,0.0,0.0
+641,L4,Security_Analysis,set,OK,"VRF_AI과 VRF_BIO 사이에 누수된 prefix 목록은 무엇입니까? [답변 형식: prefix 목록 (예: [""10.10.10.0/24""]) 또는 빈 목록 []]",[],"[""192.168.100.0/24""]",0.0,0.0,0.0,0.7835934162139893,0,0.0,0.0
+642,L4,Security_Analysis,set,OK,"default과 VRF_HPC 사이에 누수된 prefix 목록은 무엇입니까? [답변 형식: prefix 목록 (예: [""10.10.10.0/24""]) 또는 빈 목록 []]",[],"[""172.16.3.0/24""]",0.0,0.0,0.0,0.7959601879119873,0,0.0,0.0
+643,L4,Security_Analysis,set,OK,"default과 VRF_BIO 사이에 누수된 prefix 목록은 무엇입니까? [답변 형식: prefix 목록 (예: [""10.10.10.0/24""]) 또는 빈 목록 []]",[],"[""172.16.2.0/24""]",0.0,0.0,0.0,0.7925313115119934,0,0.0,0.0
+644,L4,Security_Analysis,set,OK,"VRF_HPC과 VRF_BIO 사이에 누수된 prefix 목록은 무엇입니까? [답변 형식: prefix 목록 (예: [""10.10.10.0/24""]) 또는 빈 목록 []]",[],"[""172.16.3.0/24"", ""172.16.2.0/24""]",0.0,0.0,0.0,0.7950578331947327,0,0.0,0.0
+645,L4,Routing_Analysis,text,OK,"p1과 p3 사이의 Forward/Reverse 경로를 비교해주세요. [답변 형식: 'Forward: A→B→C, Reverse: C→D→A' 형식]","""Forward: p1 → p2 → p3, Reverse: p3 → p2 → p1""","Forward: P1→P2→P3, Reverse: P3→P2→P1",0.0,0.0,0.36363636363636365,0.9691081047058105,1.0,1.0,1.0
+646,L4,Routing_Analysis,text,OK,"pe1과 leaf3 사이의 Forward/Reverse 경로를 비교해주세요. [답변 형식: 'Forward: A→B→C, Reverse: C→D→A' 형식]","""Forward: pe1, Reverse: leaf3 → pe2""","Forward: PE1→PE2→Leaf3, Reverse: Leaf3→PE2→PE1",0.0,0.0,0.4,0.9155005812644958,0.7692307692307693,0.7692307692307693,0.5454545454545454
+647,L4,Routing_Analysis,text,OK,"leaf2과 p3 사이의 Forward/Reverse 경로를 비교해주세요. [답변 형식: 'Forward: A→B→C, Reverse: C→D→A' 형식]","""Forward: leaf2 → pe1, Reverse: p3""","Forward: leaf2→PE1→PE2→p3, Reverse: p3→PE2→PE1→leaf2",0.0,0.0,0.4,0.9031417369842529,0.6666666666666666,0.6666666666666666,0.46153846153846156
+648,L4,Routing_Analysis,text,OK,"pe1과 p2 사이의 Forward/Reverse 경로를 비교해주세요. [답변 형식: 'Forward: A→B→C, Reverse: C→D→A' 형식]","""Forward: pe1 → p2, Reverse: p2 → pe1""","Forward: PE1→P2, Reverse: P2→PE1",0.0,0.0,0.4,0.9774156212806702,1.0,1.0,1.0
+649,L4,Routing_Analysis,text,OK,"leaf1과 p1 사이의 Forward/Reverse 경로를 비교해주세요. [답변 형식: 'Forward: A→B→C, Reverse: C→D→A' 형식]","""Forward: leaf1 → pe1, Reverse: p1""","Forward: Leaf1→PE1→P1, Reverse: P1→PE1→Leaf1",0.0,0.0,0.4,0.9152661561965942,0.7692307692307693,0.7692307692307693,0.5454545454545454
+650,L4,Routing_Analysis,text,OK,"leaf1과 leaf4 사이의 Forward/Reverse 경로를 비교해주세요. [답변 형식: 'Forward: A→B→C, Reverse: C→D→A' 형식]","""Forward: leaf1 → pe1, Reverse: leaf4 → pe2""","Forward: Leaf1→PE1→P1→P2→P3→P4→PE2→Leaf4, Reverse: Leaf4→PE2→P4→P3→P2→P1→PE1→Leaf1",0.0,0.0,0.36363636363636365,0.8919612765312195,0.5,0.5,0.3636363636363636
+651,L4,Routing_Analysis,text,OK,"p1과 p2 사이의 Forward/Reverse 경로를 비교해주세요. [답변 형식: 'Forward: A→B→C, Reverse: C→D→A' 형식]","""Forward: p1 → p2, Reverse: p2 → p1""","Forward: P1→PE1→PE2→P2, Reverse: P2→PE2→PE1→P1",0.0,0.0,0.4,0.949587345123291,0.7499999999999999,0.7499999999999999,0.42857142857142855
+652,L4,Routing_Analysis,text,OK,"p1과 p4 사이의 Forward/Reverse 경로를 비교해주세요. [답변 형식: 'Forward: A→B→C, Reverse: C→D→A' 형식]","""Forward: p1 → p4, Reverse: p4 → p1""","Forward: P1→PE1→PE2, Reverse: PE2→PE1→P1",0.0,0.0,0.4,0.9438313841819763,0.5714285714285715,0.5714285714285715,0.16666666666666666
+653,L4,Routing_Analysis,text,OK,"pe2과 p3 사이의 Forward/Reverse 경로를 비교해주세요. [답변 형식: 'Forward: A→B→C, Reverse: C→D→A' 형식]","""Forward: pe2 → p3, Reverse: p3 → pe2""","Forward: PE2→P2→P3, Reverse: P3→P2→PE2",0.0,0.0,0.4,0.9602391123771667,0.8571428571428571,0.8571428571428571,0.5
+654,L4,Routing_Analysis,text,OK,"leaf3과 p3 사이의 Forward/Reverse 경로를 비교해주세요. [답변 형식: 'Forward: A→B→C, Reverse: C→D→A' 형식]","""Forward: leaf3 → pe2, Reverse: p3""","Forward: leaf3→10.10.10.1→p3, Reverse: p3→10.10.10.1→leaf3",0.0,0.0,0.4,0.9133111238479614,0.4210526315789473,0.4210526315789473,0.23529411764705882
+655,L4,Security_Policy,text,OK,"**보안 정책**: 네트워크 설계상 'leaf1'에서 'leaf3'로 가는 모든 트래픽은 보안 검사(방화벽/IPS)를 위해 반드시 'pe2' 장비를 경유해야 합니다.
+
+**질문**: 현재 네트워크 구성에서 이 보안 정책을 우회하는 직접 경로가 존재합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 우회 경로가 있는 경우: ""우회 경로 존재 (경로: 장비1→장비2→장비3)""
+- 우회 경로가 없는 경우: ""우회 경로 없음 (정책 준수)""
+
+**예시**:
+- ""우회 경로 존재 (경로: leaf1→leaf2→leaf3)""
+- ""우회 경로 없음 (정책 준수)""","""우회 경로 없음 (정책 준수)""",우회 경로 존재 (경로: leaf1→leaf3),0.4444444444444445,0.0,0.4000000000000001,0.911935567855835,0,0.0,0.0
+656,L4,Security_Policy,text,OK,"**보안 정책**: 네트워크 설계상 'leaf2'에서 'leaf3'로 가는 모든 트래픽은 보안 검사(방화벽/IPS)를 위해 반드시 'pe2' 장비를 경유해야 합니다.
+
+**질문**: 현재 네트워크 구성에서 이 보안 정책을 우회하는 직접 경로가 존재합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 우회 경로가 있는 경우: ""우회 경로 존재 (경로: 장비1→장비2→장비3)""
+- 우회 경로가 없는 경우: ""우회 경로 없음 (정책 준수)""
+
+**예시**:
+- ""우회 경로 존재 (경로: leaf1→leaf2→leaf3)""
+- ""우회 경로 없음 (정책 준수)""","""우회 경로 없음 (정책 준수)""",우회 경로 존재 (경로: leaf2→leaf3),0.4444444444444445,0.0,0.4000000000000001,0.912194550037384,0,0.0,0.0
+657,L4,Security_Policy,text,OK,"**보안 정책**: 네트워크 설계상 'leaf4'에서 'leaf3'로 가는 모든 트래픽은 보안 검사(방화벽/IPS)를 위해 반드시 'pe2' 장비를 경유해야 합니다.
+
+**질문**: 현재 네트워크 구성에서 이 보안 정책을 우회하는 직접 경로가 존재합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 우회 경로가 있는 경우: ""우회 경로 존재 (경로: 장비1→장비2→장비3)""
+- 우회 경로가 없는 경우: ""우회 경로 없음 (정책 준수)""
+
+**예시**:
+- ""우회 경로 존재 (경로: leaf1→leaf2→leaf3)""
+- ""우회 경로 없음 (정책 준수)""","""우회 경로 없음 (정책 준수)""",우회 경로 존재 (경로: leaf4→leaf3),0.4444444444444445,0.0,0.4000000000000001,0.9124773144721985,0,0.0,0.0
+658,L4,Security_Policy,text,OK,"**보안 정책**: 네트워크 설계상 'leaf1'에서 'leaf3'로 가는 모든 트래픽은 보안 검사(방화벽/IPS)를 위해 반드시 'pe1' 장비를 경유해야 합니다.
+
+**질문**: 현재 네트워크 구성에서 이 보안 정책을 우회하는 직접 경로가 존재합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 우회 경로가 있는 경우: ""우회 경로 존재 (경로: 장비1→장비2→장비3)""
+- 우회 경로가 없는 경우: ""우회 경로 없음 (정책 준수)""
+
+**예시**:
+- ""우회 경로 존재 (경로: leaf1→leaf2→leaf3)""
+- ""우회 경로 없음 (정책 준수)""","""우회 경로 없음 (정책 준수)""",우회 경로 없음 (정책 준수),1.0,1.0,1.0,1.0,0,0.0,0.0
+659,L4,Security_Policy,text,OK,"**보안 정책**: 네트워크 설계상 'leaf2'에서 'leaf3'로 가는 모든 트래픽은 보안 검사(방화벽/IPS)를 위해 반드시 'pe1' 장비를 경유해야 합니다.
+
+**질문**: 현재 네트워크 구성에서 이 보안 정책을 우회하는 직접 경로가 존재합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 우회 경로가 있는 경우: ""우회 경로 존재 (경로: 장비1→장비2→장비3)""
+- 우회 경로가 없는 경우: ""우회 경로 없음 (정책 준수)""
+
+**예시**:
+- ""우회 경로 존재 (경로: leaf1→leaf2→leaf3)""
+- ""우회 경로 없음 (정책 준수)""","""우회 경로 없음 (정책 준수)""",우회 경로 존재 (경로: leaf2→leaf3),0.4444444444444445,0.0,0.4000000000000001,0.912194550037384,0,0.0,0.0
+660,L4,Security_Policy,text,OK,"**보안 정책**: 네트워크 설계상 'leaf4'에서 'leaf3'로 가는 모든 트래픽은 보안 검사(방화벽/IPS)를 위해 반드시 'pe1' 장비를 경유해야 합니다.
+
+**질문**: 현재 네트워크 구성에서 이 보안 정책을 우회하는 직접 경로가 존재합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 우회 경로가 있는 경우: ""우회 경로 존재 (경로: 장비1→장비2→장비3)""
+- 우회 경로가 없는 경우: ""우회 경로 없음 (정책 준수)""
+
+**예시**:
+- ""우회 경로 존재 (경로: leaf1→leaf2→leaf3)""
+- ""우회 경로 없음 (정책 준수)""","""우회 경로 없음 (정책 준수)""",우회 경로 존재 (경로: leaf4→leaf3),0.4444444444444445,0.0,0.4000000000000001,0.9124773144721985,0,0.0,0.0
+661,L5,What_If_Analysis,set,OK,단일 장비 장애 시 통신이 두절되는 구간(SPOF: Single Point of Failure)이 존재합니까? [답변 형식: SPOF 장비 목록 또는 '없음'],"""없음""","[""Leaf1"", ""Leaf2"", ""Leaf3"", ""Leaf4"", ""P1"", ""P2"", ""P3"", ""P4"", ""PE1"", ""PE2""]",0.0,0.0,0.0,0.7233948111534119,0,0.0,0.0
+662,L5,What_If_Analysis,set,OK,"OSPF Backbone Area(Area 0)에 속한 라우터 목록은 무엇입니까? [답변 형식: 라우터 이름 목록 (예: [""spine1"", ""spine2"", ""p1""])]","[""p1"", ""p2"", ""p3"", ""p4"", ""pe1""]","[""P1"", ""P2"", ""P3"", ""P4"", ""PE1"", ""PE2""]",0.9090909090909091,0.0,0.7272727272727272,0.9649209976196289,0.9090909090909091,0.9090909090909091,0.888888888888889
+663,L5,What_If_Analysis,set,OK,"leaf1에서 172.16.3.2로 가는 대체 경로들을 모두 나열해주세요. [답변 형식: 경로 목록 (예: [""A→B→C"", ""A→D→C""])]","[""leaf1 → pe1"", ""leaf1""]",[],0.0,0.0,0.0,0.7849264144897461,0,0.0,0.0
+664,L5,What_If_Analysis,text,OK,"leaf2에서 leaf3로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe1""",PE1,1.0,1.0,1.0,0.9950793385505676,1.0,1.0,0.0
+665,L5,What_If_Analysis,text,OK,"leaf1에서 leaf3로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe1""",PE1,1.0,1.0,1.0,0.9950793385505676,1.0,1.0,0.0
+666,L5,What_If_Analysis,text,OK,"leaf2에서 pe1로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe1""",PE1,1.0,1.0,1.0,0.9950793385505676,1.0,1.0,0.0
+667,L5,What_If_Analysis,text,OK,"leaf2에서 leaf4로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe1""",PE1,1.0,1.0,1.0,0.9950793385505676,1.0,1.0,0.0
+668,L5,What_If_Analysis,text,OK,"leaf1에서 p4로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe1""",PE1,1.0,1.0,1.0,0.9950793385505676,1.0,1.0,0.0
+669,L5,What_If_Analysis,text,OK,"leaf2에서 p3로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe1""",PE1,1.0,1.0,1.0,0.9950793385505676,1.0,1.0,0.0
+670,L5,What_If_Analysis,text,OK,"leaf4에서 p1로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe2""",PE1,0.0,0.0,0.0,0.9565539360046387,0.0,0.0,0.0
+671,L5,What_If_Analysis,text,OK,"p1에서 leaf3로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""p1""",PE1,0.0,0.0,0.0,0.9978979825973511,0.0,0.0,0.0
+672,L5,What_If_Analysis,text,OK,"leaf2에서 p1로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe1""",PE1,1.0,1.0,1.0,0.9950793385505676,1.0,1.0,0.0
+673,L5,What_If_Analysis,text,OK,"leaf1에서 leaf4로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe1""",PE1,1.0,1.0,1.0,0.9950793385505676,1.0,1.0,0.0
+674,L5,What_If_Analysis,text,OK,"leaf2에서 p4로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe1""",PE1,1.0,1.0,1.0,0.9950793385505676,1.0,1.0,0.0
+675,L5,What_If_Analysis,text,OK,"leaf3에서 p3로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe2""",PE1,0.0,0.0,0.0,0.9565539360046387,0.0,0.0,0.0
+676,L5,What_If_Analysis,text,OK,"leaf4에서 p2로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe2""",PE1,0.0,0.0,0.0,0.9565539360046387,0.0,0.0,0.0
+677,L5,What_If_Analysis,text,OK,"leaf4에서 p3로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe2""",PE1,0.0,0.0,0.0,0.9565539360046387,0.0,0.0,0.0
+678,L5,What_If_Analysis,text,OK,"p4에서 leaf3로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""p4""",PE2,0.0,0.0,0.0,0.9644067287445068,0.0,0.0,0.0
+679,L5,What_If_Analysis,text,OK,"leaf4에서 pe1로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe2""",PE1,0.0,0.0,0.0,0.9565539360046387,0.0,0.0,0.0
+680,L5,What_If_Analysis,text,OK,"leaf4에서 leaf3로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe2""",PE1,0.0,0.0,0.0,0.9565539360046387,0.0,0.0,0.0
+681,L5,What_If_Analysis,text,OK,"leaf1에서 p2로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe1""",PE1,1.0,1.0,1.0,0.9950793385505676,1.0,1.0,0.0
+682,L5,What_If_Analysis,text,OK,"leaf4에서 pe2로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe2""",PE2,1.0,1.0,1.0,0.9976425170898438,1.0,1.0,0.0
+683,L5,What_If_Analysis,text,OK,"pe1에서 leaf3로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe1""",PE1,1.0,1.0,1.0,0.9950793385505676,1.0,1.0,0.0
+684,L5,What_If_Analysis,text,OK,"leaf1에서 leaf2로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe1""",PE1,1.0,1.0,1.0,0.9950793385505676,1.0,1.0,0.0
+685,L5,What_If_Analysis,text,OK,"leaf2에서 pe2로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe1""",PE2,0.0,0.0,0.0,0.9565708041191101,0.0,0.0,0.0
+686,L5,What_If_Analysis,text,OK,"pe2에서 leaf3로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe2""",PE2,1.0,1.0,1.0,0.9976425170898438,1.0,1.0,0.0
+687,L5,What_If_Analysis,text,OK,"leaf1에서 p3로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe1""",PE1,1.0,1.0,1.0,0.9950793385505676,1.0,1.0,0.0
+688,L5,What_If_Analysis,text,OK,"leaf2에서 p2로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe1""",PE1,1.0,1.0,1.0,0.9950793385505676,1.0,1.0,0.0
+689,L5,What_If_Analysis,text,OK,"leaf4에서 p4로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe2""",PE1,0.0,0.0,0.0,0.9565539360046387,0.0,0.0,0.0
+690,L5,What_If_Analysis,text,OK,"leaf1에서 pe2로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe1""",PE2,0.0,0.0,0.0,0.9565708041191101,0.0,0.0,0.0
+691,L5,What_If_Analysis,text,OK,"leaf1에서 pe1로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe1""",PE1,1.0,1.0,1.0,0.9950793385505676,1.0,1.0,0.0
+692,L5,What_If_Analysis,text,OK,"leaf1에서 p1로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe1""",PE1,1.0,1.0,1.0,0.9950793385505676,1.0,1.0,0.0
+693,L5,What_If_Analysis,text,OK,"leaf3에서 p2로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe2""",PE1,0.0,0.0,0.0,0.9565539360046387,0.0,0.0,0.0
+694,L5,What_If_Analysis,number,OK,'leaf1' 장비가 다운되면 몇 개의 트래픽 흐름이 새로 차단됩니까? [답변 형식: 숫자],16,2,0.0,0.0,0.0,0.9994017481803894,0.0,0.0,0.0
+695,L5,What_If_Analysis,number,OK,'leaf2' 장비가 다운되면 몇 개의 트래픽 흐름이 새로 차단됩니까? [답변 형식: 숫자],17,1,0.0,0.0,0.0,0.9994930028915405,0.0,0.0,0.0
+696,L5,What_If_Analysis,number,OK,'leaf4' 장비가 다운되면 몇 개의 트래픽 흐름이 새로 차단됩니까? [답변 형식: 숫자],18,1,0.0,0.0,0.0,0.9990978837013245,0.0,0.0,0.0
+697,L5,What_If_Analysis,number,OK,'p1' 장비가 다운되면 몇 개의 트래픽 흐름이 새로 차단됩니까? [답변 형식: 숫자],18,3,0.0,0.0,0.0,0.9993758797645569,0.0,0.0,0.0
+698,L5,What_If_Analysis,number,OK,'p4' 장비가 다운되면 몇 개의 트래픽 흐름이 새로 차단됩니까? [답변 형식: 숫자],18,2,0.0,0.0,0.0,0.998944103717804,0.0,0.0,0.0
+699,L5,What_If_Analysis,number,OK,'pe2' 장비가 다운되면 몇 개의 트래픽 흐름이 새로 차단됩니까? [답변 형식: 숫자],18,2,0.0,0.0,0.0,0.998944103717804,0.0,0.0,0.0
+700,L5,What_If_Analysis,number,OK,'pe1' 장비가 다운되면 몇 개의 트래픽 흐름이 새로 차단됩니까? [답변 형식: 숫자],18,8,0.0,0.0,0.0,0.9998879432678223,0.0,0.0,0.0
+701,L5,What_If_Analysis,number,OK,'leaf3' 장비가 다운되면 몇 개의 트래픽 흐름이 새로 차단됩니까? [답변 형식: 숫자],18,1,0.0,0.0,0.0,0.9990978837013245,0.0,0.0,0.0
+702,L5,What_If_Analysis,number,OK,'p2' 장비가 다운되면 몇 개의 트래픽 흐름이 새로 차단됩니까? [답변 형식: 숫자],19,2,0.0,0.0,0.0,0.9994800686836243,0.0,0.0,0.0
+703,L5,What_If_Analysis,number,OK,'p3' 장비가 다운되면 몇 개의 트래픽 흐름이 새로 차단됩니까? [답변 형식: 숫자],19,3,0.0,0.0,0.0,0.9996746778488159,0.0,0.0,0.0
+704,L5,What_If_Analysis,text,OK,'leaf1'과 'leaf2'가 동시에 다운되면 고립되는 흐름이 있습니까? 몇 개입니까? [답변 형식: '없음' 또는 'N개'],"""15개""",1개,0.0,0.0,0.0,0.9983203411102295,0.0,0.0,0.0
+705,L5,What_If_Analysis,text,OK,'leaf3'과 'leaf4'가 동시에 다운되면 고립되는 흐름이 있습니까? 몇 개입니까? [답변 형식: '없음' 또는 'N개'],"""18개""",2개,0.0,0.0,0.0,0.9980635643005371,0.0,0.0,0.0
+706,L5,What_If_Analysis,text,OK,'p1'과 'p2'가 동시에 다운되면 고립되는 흐름이 있습니까? 몇 개입니까? [답변 형식: '없음' 또는 'N개'],"""17개""",1개,0.0,0.0,0.0,0.9979994297027588,0.0,0.0,0.0
+707,L5,What_If_Analysis,text,OK,'p3'과 'p4'가 동시에 다운되면 고립되는 흐름이 있습니까? 몇 개입니까? [답변 형식: '없음' 또는 'N개'],"""18개""",1개,0.0,0.0,0.0,0.9983335733413696,0.0,0.0,0.0
+708,L5,What_If_Analysis,text,OK,'pe1'과 'pe2'가 동시에 다운되면 고립되는 흐름이 있습니까? 몇 개입니까? [답변 형식: '없음' 또는 'N개'],"""17개""",1개,0.0,0.0,0.0,0.9979994297027588,0.0,0.0,0.0
+709,L5,What_If_Analysis,text,OK,"'leaf1', 'leaf2', 'leaf3'가 동시에 다운되면 네트워크가 완전히 분리됩니까? [답변 형식: '예, 완전 분리' 또는 '아니오, N개 흐름만 영향']","""아니오, 15개 흐름만 영향""","아니오, N개 흐름만 영향",0.6666666666666666,0.0,0.75,0.9921403527259827,0.0,0.0,0.0
+710,L5,What_If_Analysis,text,OK,단일 장비 장애 시 가장 큰 영향을 주는 장비는? [답변 형식: '장비명 (N개)'],"""p2 (19개)""",PE1 (2),0.0,0.0,0.0,0.8534283638000488,0.0,0.0,0.0
+711,L5,What_If_Analysis,number,OK,'non_existent_router_999' 장비가 다운되면 몇 개의 트래픽 흐름이 차단됩니까? [답변 형식: 숫자],0,0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+712,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-pe1' 링크와 'leaf3-p1' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf2'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",가능 (대체경로: leaf2→P1→P3),0.0,0.0,0.0,0.8699105978012085,0.0,0.0,0.0
+713,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-p2' 링크와 'leaf3-leaf2' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf4'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe2에서 NO_ROUTE)""",가능 (대체경로: leaf4→10.10.10.1→P3),0.0,0.0,0.0,0.87375807762146,0.0,0.0,0.0
+714,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-p4' 링크와 'leaf2-p1' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf4'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe2에서 NO_ROUTE)""",가능 (대체경로: leaf4→p3),0.0,0.0,0.0,0.8807085156440735,0.0,0.0,0.0
+715,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-p3' 링크와 'leaf3-leaf4' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf2'에서 'p2'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",가능 (대체경로: leaf2→P1→P2),0.0,0.0,0.0,0.8697681427001953,0.0,0.0,0.0
+716,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-leaf2' 링크와 'leaf3-pe2' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf4'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe2에서 NO_ROUTE)""",가능 (대체경로: leaf4→PE2→PE1→P3),0.0,0.0,0.0,0.8628504872322083,0.28571428571428575,0.28571428571428575,0.0
+717,L5,What_If_Analysis,text,OK,"(시나리오)'leaf2-pe2' 링크와 'leaf3-pe1' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf1'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",가능 (대체경로: PE1→PE2→P3),0.0,0.0,0.0,0.8690098524093628,0.3333333333333333,0.3333333333333333,0.0
+718,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-pe1' 링크와 'leaf3-pe2' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf2'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",가능 (대체경로: leaf2→P3),0.0,0.0,0.0,0.8794773817062378,0.0,0.0,0.0
+719,L5,What_If_Analysis,text,OK,"(시나리오)'leaf2-leaf4' 링크와 'leaf3-p4' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf1'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",가능 (대체경로: leaf1→P1→P2→P3),0.0,0.0,0.0,0.8633982539176941,0.0,0.0,0.0
+720,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-p2' 링크와 'leaf3-p3' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf2'에서 'pe1'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",가능 (대체경로: leaf2→P1→PE1),0.0,0.0,0.0,0.873210608959198,0.3333333333333333,0.3333333333333333,0.0
+721,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-p1' 링크와 'leaf3-pe2' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf2'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",불가능 (원인: leaf2에서 NO_ROUTE),0.6666666666666666,0.0,0.75,0.9960026741027832,0.6666666666666666,0.6666666666666666,0.5
+722,L5,What_If_Analysis,text,OK,"(시나리오)'leaf2-leaf4' 링크와 'leaf3-p2' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf1'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",가능 (대체경로: leaf1→PE1→P3),0.0,0.0,0.0,0.8745726943016052,0.3333333333333333,0.3333333333333333,0.0
+723,L5,What_If_Analysis,text,OK,"(시나리오)'leaf2-pe2' 링크와 'leaf3-leaf1' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf4'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe2에서 NO_ROUTE)""",가능 (대체경로: leaf4→PE2→p3),0.0,0.0,0.0,0.8712276220321655,0.3333333333333333,0.3333333333333333,0.0
+724,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-pe1' 링크와 'leaf3-leaf2' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf4'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe2에서 NO_ROUTE)""",가능 (대체경로: leaf4→PE1→P1→P3),0.0,0.0,0.0,0.8626843094825745,0.0,0.0,0.0
+725,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-p2' 링크와 'leaf2-pe1' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf4'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe2에서 NO_ROUTE)""",가능 (대체경로: leaf4→PE2→P3),0.0,0.0,0.0,0.8713566660881042,0.3333333333333333,0.3333333333333333,0.0
+726,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-p3' 링크와 'leaf2-pe1' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf4'에서 'p2'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe2에서 NO_ROUTE)""",가능 (대체경로: leaf4→p1→p2),0.0,0.0,0.0,0.8678454756736755,0.0,0.0,0.0
+727,L5,What_If_Analysis,text,OK,"(시나리오)'leaf2-pe1' 링크와 'leaf3-p3' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf1'에서 'p2'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",가능 (대체경로: Leaf1→PE1→P2),0.0,0.0,0.0,0.8720425367355347,0.3333333333333333,0.3333333333333333,0.0
+728,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-p1' 링크와 'leaf3-leaf4' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf2'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",,0.0,0.0,0.0,0.7415053248405457,0,0.0,0.0
+729,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-leaf3' 링크와 'leaf2-p4' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf4'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe2에서 NO_ROUTE)""",가능 (대체경로: leaf4→p3),0.0,0.0,0.0,0.8807085156440735,0.0,0.0,0.0
+730,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-pe2' 링크와 'leaf3-p1' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf2'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",가능 (대체경로: leaf2→P3),0.0,0.0,0.0,0.8794773817062378,0.0,0.0,0.0
+731,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-p3' 링크와 'leaf2-leaf3' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf4'에서 'p2'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe2에서 NO_ROUTE)""",가능 (대체경로: leaf4→10.10.10.0/24→p2),0.0,0.0,0.0,0.8704398274421692,0.0,0.0,0.0
+732,L5,What_If_Analysis,text,OK,"(시나리오)'leaf2-p3' 링크와 'leaf3-p1' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf1'에서 'p2'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",가능 (대체경로: leaf1→PE1→P2),0.0,0.0,0.0,0.8730685710906982,0.3333333333333333,0.3333333333333333,0.0
+733,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-pe1' 링크와 'leaf2-leaf4' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'p1'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""가능 (대체경로: p1 → p2 → p3)""",가능 (대체경로: p1→p2→p3),0.28571428571428575,0.0,0.4444444444444444,0.9887028932571411,1.0,1.0,1.0
+734,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-p2' 링크와 'leaf2-pe2' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf4'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe2에서 NO_ROUTE)""",가능 (대체경로: leaf4→10.10.10.1→p3),0.0,0.0,0.0,0.8728345632553101,0.0,0.0,0.0
+735,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-p2' 링크와 'leaf3-leaf4' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf2'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",가능 (대체경로: leaf2→10.10.10.1→p3),0.0,0.0,0.0,0.8722794651985168,0.0,0.0,0.0
+736,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-p2' 링크와 'leaf3-pe2' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf2'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",가능 (대체경로: leaf2→10.10.10.1→P1→P3),0.0,0.0,0.0,0.8671057820320129,0.0,0.0,0.0
+737,L5,What_If_Analysis,text,OK,"(시나리오)'leaf2-leaf1' 링크와 'leaf3-leaf4' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'p1'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""가능 (대체경로: p1 → p2 → p3)""",가능 (대체경로: p1→p2→p3),0.28571428571428575,0.0,0.4444444444444444,0.9887028932571411,1.0,1.0,1.0
+738,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-leaf3' 링크와 'leaf2-p3' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf4'에서 'p2'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe2에서 NO_ROUTE)""",가능 (대체경로: leaf4→10.10.10.1→P2),0.0,0.0,0.0,0.8753718137741089,0.0,0.0,0.0
+739,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-p3' 링크와 'leaf3-p2' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf2'에서 'pe1'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",가능 (대체경로: leaf2→10.10.10.1→pe1),0.0,0.0,0.0,0.8724501729011536,0.2222222222222222,0.2222222222222222,0.0
+740,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-pe1' 링크와 'leaf3-p3' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf2'에서 'p2'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",가능 (대체경로: leaf2→10.10.10.1→p2),0.0,0.0,0.0,0.8732100129127502,0.0,0.0,0.0
+741,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-p4' 링크와 'leaf3-p1' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf2'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",가능 (대체경로: leaf2→PE2→p3),0.0,0.0,0.0,0.870146632194519,0.0,0.0,0.0
+742,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-leaf2' 링크와 'leaf3-p3' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf4'에서 'p2'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe2에서 NO_ROUTE)""",가능 (대체경로: leaf4→PE2→P2),0.0,0.0,0.0,0.8732849359512329,0.3333333333333333,0.3333333333333333,0.0
+743,L5,What_If_Analysis,text,OK,"(시나리오)'leaf2-pe1' 링크와 'leaf3-p4' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf1'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",가능 (대체경로: leaf1→PE1→P3),0.0,0.0,0.0,0.8745726943016052,0.3333333333333333,0.3333333333333333,0.0
+744,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-leaf2' 링크와 'leaf3-leaf4' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'p1'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""가능 (대체경로: p1 → p2 → p3)""",가능 (대체경로: p1→p2→p3),0.28571428571428575,0.0,0.4444444444444444,0.9887028932571411,1.0,1.0,1.0
+745,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-p2' 링크와 'leaf2-p4' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf4'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe2에서 NO_ROUTE)""",가능 (대체경로: leaf4→p3),0.0,0.0,0.0,0.8807085156440735,0.0,0.0,0.0
+746,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-p4' 링크와 'leaf3-leaf4' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf2'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",가능 (대체경로: leaf2→p3),0.0,0.0,0.0,0.8781009912490845,0.0,0.0,0.0
+747,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-leaf4' 링크와 'leaf3-p2' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf2'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",가능 (대체경로: leaf2→10.10.10.1→P3),0.0,0.0,0.0,0.8731508851051331,0.0,0.0,0.0
+748,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-p3' 링크와 'leaf3-pe2' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf2'에서 'p2'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",가능 (대체경로: leaf2→PE1→P2),0.0,0.0,0.0,0.871212363243103,0.3333333333333333,0.3333333333333333,0.0
+749,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-leaf4' 링크와 'leaf2-pe1' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'p1'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""가능 (대체경로: p1 → p2 → p3)""",가능 (대체경로: p1→pe1→p3),0.28571428571428575,0.0,0.4444444444444444,0.9794102907180786,0.6666666666666666,0.6666666666666666,0.0
+750,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-pe2' 링크와 'leaf2-pe1' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf4'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe2에서 NO_ROUTE)""",가능 (대체경로: leaf4→10.10.10.1→p3),0.0,0.0,0.0,0.8728345632553101,0.0,0.0,0.0
+751,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-leaf3' 링크와 'leaf2-leaf4' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'p1'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""가능 (대체경로: p1 → p2 → p3)""",가능 (대체경로: p1→pe1→pe2→p3),0.28571428571428575,0.0,0.4444444444444444,0.979769766330719,0.5714285714285715,0.5714285714285715,0.0
+752,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-leaf3' 링크와 'leaf2-p2' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf4'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe2에서 NO_ROUTE)""",가능 (대체경로: leaf4→PE2→P3),0.0,0.0,0.0,0.8713566660881042,0.3333333333333333,0.3333333333333333,0.0
+753,L5,What_If_Analysis,text,OK,"(시나리오)'leaf2-leaf4' 링크와 'leaf3-pe2' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf1'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",가능 (대체경로: leaf1→PE1→P3),0.0,0.0,0.0,0.8745726943016052,0.3333333333333333,0.3333333333333333,0.0
+754,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-pe1' 링크와 'leaf2-p2' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf4'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe2에서 NO_ROUTE)""",가능 (대체경로: leaf4→PE2→P3),0.0,0.0,0.0,0.8713566660881042,0.3333333333333333,0.3333333333333333,0.0
+755,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-pe1' 링크와 'leaf3-pe2' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf2'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",가능 (대체경로: leaf2→PE2→P3),0.0,0.0,0.0,0.870487630367279,0.0,0.0,0.0
+756,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-p3' 링크와 'leaf2-pe2' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf4'에서 'p2'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe2에서 NO_ROUTE)""",가능 (대체경로: leaf4→10.10.10.1→p1→p2),0.0,0.0,0.0,0.8675193786621094,0.0,0.0,0.0
+757,L5,What_If_Analysis,text,OK,"(시나리오)'leaf2-p2' 링크와 'leaf3-p1' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf1'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",가능 (대체경로: leaf1→PE1→P3),0.0,0.0,0.0,0.8745726943016052,0.3333333333333333,0.3333333333333333,0.0
+758,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-p4' 링크와 'leaf3-pe2' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf2'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",가능 (대체경로: leaf2→PE1→p3),0.0,0.0,0.0,0.870180606842041,0.3333333333333333,0.3333333333333333,0.0
+759,L5,What_If_Analysis,text,OK,"(시나리오)'leaf2-pe2' 링크와 'leaf3-p1' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf1'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",가능 (대체경로: PE1→P3),0.0,0.0,0.0,0.8769525289535522,0.4,0.4,0.0
+760,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-p2' 링크와 'leaf3-pe1' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf2'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe1에서 NO_ROUTE)""",가능 (대체경로: leaf2→10.10.10.1→p3),0.0,0.0,0.0,0.8722794651985168,0.0,0.0,0.0
+761,L5,What_If_Analysis,text,OK,"(시나리오)'leaf1-pe1' 링크와 'leaf2-p4' 링크가 동시에 장애로 다운되었습니다.
+
+**질문**: 이 상황에서 'leaf4'에서 'p3'로의 트래픽 전달이 가능합니까?
+
+**답변 형식** (반드시 아래 형식 중 하나로만 답변):
+- 가능한 경우: ""가능 (대체경로: 장비1→장비2→장비3)""
+- 불가능한 경우: ""불가능 (원인: 차단장비에서 차단사유)""
+
+**예시**:
+- ""가능 (대체경로: p1→p2→p3)""
+- ""불가능 (원인: leaf1에서 NO_ROUTE)""","""불가능 (원인: pe2에서 NO_ROUTE)""",가능 (대체경로: leaf4→PE2→P3),0.0,0.0,0.0,0.8713566660881042,0.3333333333333333,0.3333333333333333,0.0
