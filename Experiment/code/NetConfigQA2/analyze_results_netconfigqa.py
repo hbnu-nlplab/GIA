@@ -424,19 +424,26 @@ class NetConfigQAScorer:
 
     def _normalize_ip_value(self, value: str) -> str:
         """
-        Normalize IP address value for comparison.
+        Normalize IP address or status value for comparison.
         Removes CIDR notation if present.
+        Maps 'shutdown' to 'down'.
         
         Examples:
         - "10.0.0.1/31" -> "10.0.0.1"
         - "10.0.0.1" -> "10.0.0.1"
+        - "shutdown" -> "down"
         - "" -> ""
         """
-        value = str(value).strip()
+        value = str(value).strip().lower()
+
+        # Map shutdown to down (network status normalization)
+        if value == 'shutdown':
+            return 'down'
+            
         # Remove CIDR notation (e.g., /31, /24, /32)
         if '/' in value:
             value = value.split('/')[0].strip()
-        return value.lower()
+        return value
     
     def _score_map(self, pred: str, gold: str) -> Dict[str, float]:
         try:
@@ -481,6 +488,7 @@ class NetConfigQAScorer:
             'no': '아니오',
             'true': '예',
             'false': '아니오',
+            'shutdown': 'down',
         }
         
         text = text.lower().strip()
