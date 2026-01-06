@@ -4,11 +4,12 @@ import os
 from openai import OpenAI
 
 
-sys.path.append('../')
-from load_env import load_api_key
+from config.load_env import load_api_key
 
 QUESTION_DIR = "../data/qa/qa_dataset.json"
-OUTPUT_DIR = "../data/qa/paragraphs.json"
+OUTPUT_DIR = "../data/passages/telequad_passage.json"
+
+
 
 def gen_paragraph():
     api_key = load_api_key()
