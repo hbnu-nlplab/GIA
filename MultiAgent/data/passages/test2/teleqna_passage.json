@@ -1,0 +1,52 @@
+[
+    {
+        "question": "What is the purpose of the Nmfaf_3daDataManagement_Deconfigure service operation? [3GPP Release 18]",
+        "gold_answer": "option 2: To configure the MFAF to stop mapping data or analytics received by the MFAF to out-bound notification endpoints",
+        "passage": "The Nmfaf_3daDataManagement_Deconfigure service operation, as defined in 3GPP Release 18, is designed to facilitate the deconfiguration of data management resources within the network. Its primary purpose is to ensure that any previously allocated data management functions or resources are properly released and that the associated configurations are removed. This operation is essential for maintaining network efficiency and resource optimization, allowing for the dynamic adjustment of network capabilities in response to changing demands or operational requirements. By executing this deconfiguration process, the network can effectively manage its resources, ensuring that they are available for other tasks or services as needed."
+    },
+    {
+        "question": "Which non-orthogonal multiple access scheme utilizes the low-complexity message passing algorithm at the receiver for user data detection?",
+        "gold_answer": "option 5: SCMA",
+        "passage": "The non-orthogonal multiple access (NOMA) scheme that utilizes a low-complexity message passing algorithm at the receiver for user data detection is known as Sparse Code Multiple Access (SCMA). SCMA employs a sparse codebook to allow multiple users to share the same frequency resources simultaneously, while the message passing algorithm helps in efficiently decoding the signals from different users, even in the presence of interference. This approach enhances spectral efficiency and supports a larger number of users compared to traditional orthogonal access methods."
+    },
+    {
+        "question": "What is the diversity gain for the detection of each symbol in the Alamouti scheme?",
+        "gold_answer": "option 3: 2",
+        "passage": "The Alamouti scheme, a space-time block coding technique, provides diversity gain by transmitting two symbols over two time slots using two antennas. For each symbol transmitted, the diversity gain is 2, as the scheme effectively utilizes the spatial diversity offered by the two antennas. This means that the probability of error is reduced, enhancing the reliability of symbol detection. The Alamouti scheme achieves this by encoding the symbols in such a way that even if one of the transmissions experiences fading, the other can still be received correctly, thus improving overall performance in wireless communication systems."
+    },
+    {
+        "question": "When are devices required to send the GTS Request command? [IEEE 802.15.4]",
+        "gold_answer": "option 4: All devices",
+        "passage": "In IEEE 802.15.4, devices are required to send the GTS (Guaranteed Time Slot) Request command when they need to request a guaranteed time slot for transmitting data in a superframe structure. This is particularly relevant in networks that utilize the beacon-enabled mode, where devices can request specific time slots to ensure reliable and timely data transmission. The GTS Request command is sent to the coordinator, which manages the allocation of GTSs based on the network's traffic requirements and the availability of time slots. Devices typically send this command during the contention access period of the superframe to ensure they can communicate their needs effectively."
+    },
+    {
+        "question": "How does a supporting UE attach to the same core network operator from which it detached in a shared network? [3GPP Release 17]",
+        "gold_answer": "option 2: It uses information stored in the UE when it was detached.",
+        "passage": "In a shared network environment, when a supporting User Equipment (UE) wishes to reattach to the same core network operator from which it previously detached, it follows a specific procedure as outlined in 3GPP Release 17. The supporting UE initiates the attach process by sending an Attach Request to the Radio Access Network (RAN). This request includes the UE's identity and the necessary credentials for authentication. The RAN forwards this request to the core network, which verifies the UE's identity and checks its subscription status.\n\nOnce the core network confirms that the UE is eligible to reattach, it sends an Attach Accept message back to the RAN, which then relays it to the UE. The UE may also need to perform a re-authentication process if required by the network policies. After successful authentication and security procedures, the core network allocates the necessary resources, and the UE is reconnected to the network, allowing it to resume services seamlessly. This process ensures that the UE can efficiently re-establish its connection while maintaining compliance with the shared network's operational protocols."
+    },
+    {
+        "question": "What are the extreme points of the family of Regenerating Codes?",
+        "gold_answer": "option 3: MBR point and MSR point",
+        "passage": "Regenerating Codes are a class of erasure codes designed for distributed storage systems, allowing for efficient data recovery and storage. The extreme points of the family of Regenerating Codes are characterized by two key parameters: the number of data blocks (k) and the number of parity blocks (n). The extreme points can be defined in terms of the trade-off between the storage efficiency and the repair bandwidth. \n\n1. **Minimum Storage Regenerating (MSR) Codes**: These codes achieve the minimum storage requirement while allowing for optimal repair bandwidth. They are designed to minimize the amount of data stored per node while ensuring that the repair process is efficient.\n\n2. **Minimum Bandwidth Regenerating (MBR) Codes**: In contrast, MBR codes focus on minimizing the bandwidth used during the repair process, which may lead to higher storage requirements. These codes are optimal in scenarios where the cost of data transfer is a critical factor.\n\nThe choice between MSR and MBR codes depends on the specific requirements of the storage system, such as the importance of storage efficiency versus repair speed. Understanding these extreme points helps in designing systems that balance performance and resource utilization effectively."
+    },
+    {
+        "question": "What is the typical coverage range of LPWANs (Low-Power Wide Area Networks) in urban areas?",
+        "gold_answer": "option 2: 2-5 km",
+        "passage": "Low-Power Wide Area Networks (LPWANs) are designed to provide long-range connectivity for low-power devices, making them ideal for applications such as IoT (Internet of Things). In urban areas, the typical coverage range of LPWANs can vary depending on the specific technology used and the environment. Generally, LPWANs can achieve coverage ranges of 2 to 5 kilometers (1.2 to 3.1 miles) in urban settings, although this can be influenced by factors such as building density, interference, and the presence of obstacles. Technologies like LoRaWAN and Sigfox are commonly used in LPWAN deployments, and they are optimized to maintain connectivity over these distances while consuming minimal power."
+    },
+    {
+        "question": "What is one of the use cases of SDN (Software Defined Networking) in satellite networks?",
+        "gold_answer": "option 1: Network Function Virtualization (NFV)",
+        "passage": "One of the key use cases of Software Defined Networking (SDN) in satellite networks is the dynamic management of bandwidth allocation. In satellite communications, bandwidth is a limited resource that must be efficiently managed to accommodate varying user demands and application requirements. SDN enables network operators to programmatically adjust bandwidth allocation in real-time based on current traffic conditions, user priorities, and service level agreements. This flexibility allows for improved resource utilization, reduced latency, and enhanced quality of service for end-users, making satellite networks more responsive and efficient in delivering connectivity, especially in remote or underserved areas."
+    },
+    {
+        "question": "What is the primary concern of proposals aiming to improve system performance with QoS/power constraints in underlaying D2D (Device-to-Device) communications?",
+        "gold_answer": "option 1: Maximizing system throughput",
+        "passage": "The primary concern of proposals aimed at improving system performance with Quality of Service (QoS) and power constraints in underlying Device-to-Device (D2D) communications is to achieve an optimal balance between resource allocation and energy efficiency. These proposals focus on ensuring that D2D communication maintains high data rates and low latency while minimizing power consumption to extend device battery life. Additionally, they must address interference management among devices, ensuring that QoS requirements such as reliability and throughput are met without compromising the overall network performance. This involves developing algorithms and protocols that can dynamically adapt to varying network conditions and user demands while adhering to the constraints imposed by power limitations."
+    },
+    {
+        "question": "What does the acronym VPN stand for?",
+        "gold_answer": "option 2: Virtual Private Network",
+        "passage": "VPN stands for Virtual Private Network. It is a technology that creates a secure and encrypted connection over a less secure network, such as the Internet. VPNs are commonly used to protect private web traffic from snooping, interference, and censorship. By routing the user's internet connection through a server operated by the VPN provider, it masks the user's IP address and encrypts data, enhancing privacy and security online."
+    }
+]
