@@ -1,0 +1,23 @@
+2026-01-07 15:11:23,938 | INFO | ================================================================================
+2026-01-07 15:11:23,938 | INFO | NetConfigQA Agent Evaluator - LangChain Based
+2026-01-07 15:11:23,938 | INFO | ================================================================================
+2026-01-07 15:11:23,939 | INFO | Backend: vllm_server
+2026-01-07 15:11:23,939 | INFO | Model: GPT-OSS-20B
+2026-01-07 15:11:23,939 | INFO | Dataset: /home/kilab_pyj/codespace/GIA/Data/Pnetlab/Research_Institute_Internal_DC/Dataset/Research_Institute_Internal_DC_dataset_batfish_20251230_125613.csv
+2026-01-07 15:11:23,939 | INFO | Facts File: /home/kilab_pyj/codespace/GIA/Data/Pnetlab/Research_Institute_Internal_DC/Dataset/Research_Institute_Internal_DC_batfish_facts_20251230_125613.json
+2026-01-07 15:11:23,939 | INFO | Sample Limit: 10
+2026-01-07 15:11:23,939 | INFO | vLLM Server URL: http://localhost:8000/v1
+2026-01-07 15:11:23,939 | INFO | ================================================================================
+2026-01-07 15:11:23,939 | INFO | Loading facts from /home/kilab_pyj/codespace/GIA/Data/Pnetlab/Research_Institute_Internal_DC/Dataset/Research_Institute_Internal_DC_batfish_facts_20251230_125613.json
+2026-01-07 15:11:23,939 | INFO | Using vLLM server at http://localhost:8000/v1
+2026-01-07 15:11:24,088 | ERROR | ❌ Evaluation failed: Prompt missing required variables: {'tool_names'}
+Traceback (most recent call last):
+  File "/home/kilab_pyj/codespace/GIA/Experiment/code/NetConfigQA3_Single_Agent/run_netconfigqa_eval_agent.py", line 706, in main
+    agent = NetConfigQAAgent(
+  File "/home/kilab_pyj/codespace/GIA/Experiment/code/NetConfigQA3_Single_Agent/run_netconfigqa_eval_agent.py", line 261, in __init__
+    self.agent = self._create_agent()
+  File "/home/kilab_pyj/codespace/GIA/Experiment/code/NetConfigQA3_Single_Agent/run_netconfigqa_eval_agent.py", line 401, in _create_agent
+    agent = create_react_agent(
+  File "/home/kilab_pyj/.local/lib/python3.10/site-packages/langchain/agents/react/agent.py", line 117, in create_react_agent
+    raise ValueError(f"Prompt missing required variables: {missing_vars}")
+ValueError: Prompt missing required variables: {'tool_names'}
