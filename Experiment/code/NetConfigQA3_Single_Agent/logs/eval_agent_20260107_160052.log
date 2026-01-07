@@ -1,0 +1,17 @@
+2026-01-07 16:00:52,833 | INFO | Processing Q: SYSTEM_HOSTNAME_TEXT
+2026-01-07 16:00:52,846 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 16:00:53,695 | ERROR | Query failed: FactsQueryEngine.query_device_info() missing 1 required positional argument: 'field'
+2026-01-07 16:00:53,695 | INFO | Processing Q: SYSTEM_HOSTNAME_TEXT
+2026-01-07 16:00:53,702 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 16:00:54,514 | ERROR | Query failed: FactsQueryEngine.query_device_info() missing 1 required positional argument: 'field'
+2026-01-07 16:00:54,514 | INFO | Processing Q: SYSTEM_HOSTNAME_TEXT
+2026-01-07 16:00:54,521 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 16:00:55,323 | ERROR | Query failed: FactsQueryEngine.query_device_info() missing 1 required positional argument: 'field'
+2026-01-07 16:00:55,324 | INFO | Processing Q: SYSTEM_HOSTNAME_TEXT
+2026-01-07 16:00:55,331 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 16:00:56,255 | ERROR | Query failed: FactsQueryEngine.query_device_info() missing 1 required positional argument: 'field'
+2026-01-07 16:00:56,255 | INFO | Processing Q: SYSTEM_HOSTNAME_TEXT
+2026-01-07 16:00:56,263 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 16:00:57,059 | ERROR | Query failed: FactsQueryEngine.query_device_info() missing 1 required positional argument: 'field'
+2026-01-07 16:00:57,059 | INFO | Processing Q: SYSTEM_HOSTNAME_TEXT
+2026-01-07 16:00:57,067 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"

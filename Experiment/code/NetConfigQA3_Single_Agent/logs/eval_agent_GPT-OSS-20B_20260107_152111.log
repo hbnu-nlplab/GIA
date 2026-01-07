@@ -1,0 +1,42 @@
+2026-01-07 15:21:11,500 | INFO | ================================================================================
+2026-01-07 15:21:11,500 | INFO | NetConfigQA Agent Evaluator - LangChain Based
+2026-01-07 15:21:11,500 | INFO | ================================================================================
+2026-01-07 15:21:11,500 | INFO | Backend: vllm_server
+2026-01-07 15:21:11,500 | INFO | Model: GPT-OSS-20B
+2026-01-07 15:21:11,501 | INFO | Dataset: /home/kilab_pyj/codespace/GIA/Data/Pnetlab/Research_Institute_Internal_DC/Dataset/Research_Institute_Internal_DC_dataset_batfish_20251230_125613.csv
+2026-01-07 15:21:11,501 | INFO | Facts File: /home/kilab_pyj/codespace/GIA/Data/Pnetlab/Research_Institute_Internal_DC/Dataset/Research_Institute_Internal_DC_batfish_facts_20251230_125613.json
+2026-01-07 15:21:11,501 | INFO | Sample Limit: 10
+2026-01-07 15:21:11,501 | INFO | vLLM Server URL: http://localhost:8000/v1
+2026-01-07 15:21:11,501 | INFO | ================================================================================
+2026-01-07 15:21:11,501 | INFO | Loading facts from /home/kilab_pyj/codespace/GIA/Data/Pnetlab/Research_Institute_Internal_DC/Dataset/Research_Institute_Internal_DC_batfish_facts_20251230_125613.json
+2026-01-07 15:21:11,501 | INFO | Using vLLM server at http://localhost:8000/v1
+2026-01-07 15:21:11,642 | INFO | Loading dataset from /home/kilab_pyj/codespace/GIA/Data/Pnetlab/Research_Institute_Internal_DC/Dataset/Research_Institute_Internal_DC_dataset_batfish_20251230_125613.csv
+2026-01-07 15:21:11,646 | INFO | Evaluating 10 samples...
+2026-01-07 15:22:05,116 | INFO | Progress: 10/10
+2026-01-07 15:22:10,680 | INFO | Results saved to /home/kilab_pyj/codespace/GIA/Experiment/code/NetConfigQA3_Single_Agent/results/GPT-OSS-20B_agent/results_agent_20260107_152111.json
+2026-01-07 15:22:10,680 | INFO | Detailed metrics saved to /home/kilab_pyj/codespace/GIA/Experiment/code/NetConfigQA3_Single_Agent/results/GPT-OSS-20B_agent/metrics_agent_20260107_152111.csv
+2026-01-07 15:22:10,681 | INFO | 
+================================================================================
+2026-01-07 15:22:10,681 | INFO | Next steps:
+2026-01-07 15:22:10,681 | INFO | 1. Analyze results with: python reanalyze_results.py "/home/kilab_pyj/codespace/GIA/Experiment/code/NetConfigQA3_Single_Agent/results/GPT-OSS-20B_agent/results_agent_20260107_152111.json"
+2026-01-07 15:22:10,681 | INFO | 2. View detailed metrics: /home/kilab_pyj/codespace/GIA/Experiment/code/NetConfigQA3_Single_Agent/results/GPT-OSS-20B_agent/metrics_agent_20260107_152111.csv
+2026-01-07 15:22:10,681 | INFO | ================================================================================
+2026-01-07 15:22:10,681 | INFO | Evaluation completed in 59.03s
+2026-01-07 15:22:10,681 | INFO | Average metrics: {
+  "total_queries": 10,
+  "successful_queries": 10,
+  "success_rate": 1.0,
+  "avg_time_per_query": 5.903295469284058,
+  "avg_tool_calls": 0.9,
+  "avg_prompt_tokens": 0.0,
+  "avg_completion_tokens": 0.0,
+  "avg_total_tokens": 0.0,
+  "avg_context_size": 268.0,
+  "avg_agent_steps": 5.0,
+  "total_prompt_tokens": 0,
+  "total_completion_tokens": 0,
+  "total_tokens": 0,
+  "total_tool_calls": 9,
+  "cache_hit_rate": 0.0
+}
+2026-01-07 15:22:10,681 | INFO | ✅ Evaluation completed successfully!

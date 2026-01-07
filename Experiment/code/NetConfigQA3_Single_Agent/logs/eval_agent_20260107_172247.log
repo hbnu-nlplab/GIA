@@ -1,0 +1,1291 @@
+2026-01-07 17:22:48,202 | INFO | Processing Q: SYSTEM_HOSTNAME_TEXT
+2026-01-07 17:22:48,215 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:22:49,474 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:22:49,840 | INFO | Processing Q: SYSTEM_HOSTNAME_TEXT
+2026-01-07 17:22:49,847 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:22:50,258 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:22:50,601 | INFO | Processing Q: SYSTEM_HOSTNAME_TEXT
+2026-01-07 17:22:50,608 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:22:51,017 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:22:51,447 | INFO | Processing Q: SYSTEM_HOSTNAME_TEXT
+2026-01-07 17:22:51,454 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:22:51,865 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:22:52,215 | INFO | Processing Q: SYSTEM_HOSTNAME_TEXT
+2026-01-07 17:22:52,220 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:22:52,633 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:22:52,918 | INFO | Processing Q: SYSTEM_HOSTNAME_TEXT
+2026-01-07 17:22:52,925 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:22:53,316 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:22:53,654 | INFO | Processing Q: SYSTEM_HOSTNAME_TEXT
+2026-01-07 17:22:53,659 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:22:54,469 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:22:54,800 | INFO | Processing Q: SYSTEM_HOSTNAME_TEXT
+2026-01-07 17:22:54,807 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:22:55,610 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:22:55,956 | INFO | Processing Q: SYSTEM_HOSTNAME_TEXT
+2026-01-07 17:22:55,962 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:22:56,365 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:22:56,652 | INFO | Processing Q: SYSTEM_HOSTNAME_TEXT
+2026-01-07 17:22:56,660 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:22:57,073 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:22:57,404 | INFO | Processing Q: SYSTEM_VERSION_TEXT
+2026-01-07 17:22:57,412 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:22:58,232 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:22:59,030 | INFO | Processing Q: SYSTEM_VERSION_TEXT
+2026-01-07 17:22:59,036 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:22:59,843 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:00,449 | INFO | Processing Q: SYSTEM_VERSION_TEXT
+2026-01-07 17:23:00,455 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:01,264 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:01,962 | INFO | Processing Q: SYSTEM_VERSION_TEXT
+2026-01-07 17:23:01,969 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:02,784 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:03,503 | INFO | Processing Q: SYSTEM_VERSION_TEXT
+2026-01-07 17:23:03,511 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:04,303 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:04,634 | INFO | Processing Q: SYSTEM_VERSION_TEXT
+2026-01-07 17:23:04,642 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:05,458 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:06,078 | INFO | Processing Q: SYSTEM_VERSION_TEXT
+2026-01-07 17:23:06,084 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:06,893 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:07,596 | INFO | Processing Q: SYSTEM_VERSION_TEXT
+2026-01-07 17:23:07,605 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:08,391 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:09,109 | INFO | Processing Q: SYSTEM_VERSION_TEXT
+2026-01-07 17:23:09,117 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:09,923 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:10,528 | INFO | Processing Q: SYSTEM_VERSION_TEXT
+2026-01-07 17:23:10,536 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:11,322 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:12,049 | INFO | Processing Q: SYSTEM_TIMEZONE_TEXT
+2026-01-07 17:23:12,056 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:13,283 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:14,447 | INFO | Processing Q: SYSTEM_TIMEZONE_TEXT
+2026-01-07 17:23:14,454 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:16,211 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:17,189 | INFO | Processing Q: SYSTEM_TIMEZONE_TEXT
+2026-01-07 17:23:17,197 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:18,576 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:19,858 | INFO | Processing Q: SYSTEM_TIMEZONE_TEXT
+2026-01-07 17:23:19,866 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:21,244 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:21,941 | INFO | Processing Q: SYSTEM_TIMEZONE_TEXT
+2026-01-07 17:23:21,949 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:23,684 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:25,125 | INFO | Processing Q: SYSTEM_TIMEZONE_TEXT
+2026-01-07 17:23:25,132 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:26,506 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:27,419 | INFO | Processing Q: SYSTEM_TIMEZONE_TEXT
+2026-01-07 17:23:27,427 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:29,881 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:30,893 | INFO | Processing Q: SYSTEM_TIMEZONE_TEXT
+2026-01-07 17:23:30,900 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:32,627 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:36,034 | INFO | Processing Q: SYSTEM_TIMEZONE_TEXT
+2026-01-07 17:23:36,042 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:37,977 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:38,960 | INFO | Processing Q: SYSTEM_TIMEZONE_TEXT
+2026-01-07 17:23:38,967 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:41,166 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:42,125 | INFO | Processing Q: SYSTEM_USER_LIST
+2026-01-07 17:23:42,132 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:44,013 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:44,940 | INFO | Processing Q: SYSTEM_USER_LIST
+2026-01-07 17:23:44,947 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:46,161 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:46,957 | INFO | Processing Q: SYSTEM_USER_LIST
+2026-01-07 17:23:46,965 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:48,579 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:49,429 | INFO | Processing Q: SYSTEM_USER_LIST
+2026-01-07 17:23:49,437 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:50,438 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:51,350 | INFO | Processing Q: SYSTEM_USER_LIST
+2026-01-07 17:23:51,358 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:52,718 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:53,515 | INFO | Processing Q: SYSTEM_USER_LIST
+2026-01-07 17:23:53,523 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:54,472 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:55,408 | INFO | Processing Q: SYSTEM_USER_LIST
+2026-01-07 17:23:55,416 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:56,633 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:57,570 | INFO | Processing Q: SYSTEM_USER_LIST
+2026-01-07 17:23:57,578 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:58,620 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:23:59,556 | INFO | Processing Q: SYSTEM_USER_LIST
+2026-01-07 17:23:59,564 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:00,790 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:01,727 | INFO | Processing Q: SYSTEM_USER_LIST
+2026-01-07 17:24:01,735 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:06,405 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:06,951 | INFO | Processing Q: SYSTEM_USER_COUNT
+2026-01-07 17:24:06,959 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:08,092 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:08,805 | INFO | Processing Q: SYSTEM_USER_COUNT
+2026-01-07 17:24:08,813 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:10,169 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:10,481 | INFO | Processing Q: SYSTEM_USER_COUNT
+2026-01-07 17:24:10,488 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:11,823 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:12,461 | INFO | Processing Q: SYSTEM_USER_COUNT
+2026-01-07 17:24:12,469 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:13,797 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:14,107 | INFO | Processing Q: SYSTEM_USER_COUNT
+2026-01-07 17:24:14,115 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:15,447 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:16,088 | INFO | Processing Q: SYSTEM_USER_COUNT
+2026-01-07 17:24:16,095 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:18,677 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:19,348 | INFO | Processing Q: SYSTEM_USER_COUNT
+2026-01-07 17:24:19,356 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:20,639 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:21,083 | INFO | Processing Q: SYSTEM_USER_COUNT
+2026-01-07 17:24:21,091 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:22,294 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:22,611 | INFO | Processing Q: SYSTEM_USER_COUNT
+2026-01-07 17:24:22,619 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:23,838 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:24,362 | INFO | Processing Q: SYSTEM_USER_COUNT
+2026-01-07 17:24:24,370 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:25,443 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:26,291 | INFO | Processing Q: LOGGING_BUFFERED_SEVERITY_TEXT
+2026-01-07 17:24:26,299 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:28,646 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:32,018 | INFO | Processing Q: LOGGING_BUFFERED_SEVERITY_TEXT
+2026-01-07 17:24:32,026 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:34,537 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:35,880 | INFO | Processing Q: LOGGING_BUFFERED_SEVERITY_TEXT
+2026-01-07 17:24:35,888 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:40,687 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:42,875 | INFO | Processing Q: LOGGING_BUFFERED_SEVERITY_TEXT
+2026-01-07 17:24:42,883 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:45,173 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:46,055 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:49,510 | INFO | Processing Q: LOGGING_BUFFERED_SEVERITY_TEXT
+2026-01-07 17:24:49,517 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:52,367 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:53,878 | INFO | Processing Q: LOGGING_BUFFERED_SEVERITY_TEXT
+2026-01-07 17:24:53,886 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:57,188 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:24:59,577 | INFO | Processing Q: LOGGING_BUFFERED_SEVERITY_TEXT
+2026-01-07 17:24:59,585 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:25:01,850 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:25:04,295 | INFO | Processing Q: LOGGING_BUFFERED_SEVERITY_TEXT
+2026-01-07 17:25:04,301 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:25:06,484 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:25:08,338 | INFO | Processing Q: LOGGING_BUFFERED_SEVERITY_TEXT
+2026-01-07 17:25:08,345 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:25:10,974 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:25:12,388 | INFO | Processing Q: LOGGING_BUFFERED_SEVERITY_TEXT
+2026-01-07 17:25:12,396 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:25:15,351 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:25:16,689 | INFO | Processing Q: NTP_SERVER_LIST
+2026-01-07 17:25:16,696 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:25:20,323 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:25:22,741 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:25:26,076 | INFO | Processing Q: NTP_SERVER_LIST
+2026-01-07 17:25:26,084 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:25:28,620 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:25:31,109 | INFO | Processing Q: NTP_SERVER_LIST
+2026-01-07 17:25:31,116 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:25:33,821 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:25:36,738 | INFO | Processing Q: NTP_SERVER_LIST
+2026-01-07 17:25:36,744 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:25:40,022 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:25:42,682 | INFO | Processing Q: NTP_SERVER_LIST
+2026-01-07 17:25:42,689 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:25:46,218 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:25:49,776 | INFO | Processing Q: NTP_SERVER_LIST
+2026-01-07 17:25:49,784 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:25:52,746 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:25:55,802 | INFO | Processing Q: NTP_SERVER_LIST
+2026-01-07 17:25:55,809 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:25:58,508 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:26:01,278 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:26:04,307 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:26:09,327 | INFO | Processing Q: NTP_SERVER_LIST
+2026-01-07 17:26:09,335 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:26:11,656 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:26:14,735 | INFO | Processing Q: NTP_SERVER_LIST
+2026-01-07 17:26:14,743 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:26:16,790 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:26:20,413 | INFO | Processing Q: NTP_SERVER_LIST
+2026-01-07 17:26:20,420 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:26:24,103 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:26:27,128 | INFO | Processing Q: SNMP_COMMUNITY_LIST
+2026-01-07 17:26:27,136 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:26:27,735 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:26:30,383 | INFO | Processing Q: SNMP_COMMUNITY_LIST
+2026-01-07 17:26:30,391 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:26:30,967 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:26:32,981 | INFO | Processing Q: SNMP_COMMUNITY_LIST
+2026-01-07 17:26:32,988 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:26:33,519 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:26:35,859 | INFO | Processing Q: SNMP_COMMUNITY_LIST
+2026-01-07 17:26:35,866 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:26:36,442 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:26:39,381 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:26:42,244 | INFO | Processing Q: SNMP_COMMUNITY_LIST
+2026-01-07 17:26:42,250 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:26:42,913 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:26:43,830 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:26:46,276 | INFO | Processing Q: SNMP_COMMUNITY_LIST
+2026-01-07 17:26:46,284 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:26:46,861 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:26:49,188 | INFO | Processing Q: SNMP_COMMUNITY_LIST
+2026-01-07 17:26:49,196 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:26:49,650 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:26:54,367 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:27:00,601 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:27:05,408 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:27:07,259 | INFO | Processing Q: SNMP_COMMUNITY_LIST
+2026-01-07 17:27:07,267 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:27:07,922 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:27:11,527 | INFO | Processing Q: SNMP_COMMUNITY_LIST
+2026-01-07 17:27:11,535 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:27:12,142 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:27:13,948 | INFO | Processing Q: SNMP_COMMUNITY_LIST
+2026-01-07 17:27:13,956 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:27:14,534 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:27:16,610 | INFO | Processing Q: SYSLOG_SERVER_LIST
+2026-01-07 17:27:16,618 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:27:20,234 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:27:23,710 | INFO | Processing Q: SYSLOG_SERVER_LIST
+2026-01-07 17:27:23,717 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:27:28,308 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:27:33,031 | INFO | Processing Q: SYSLOG_SERVER_LIST
+2026-01-07 17:27:33,037 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:27:40,471 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:27:43,093 | INFO | Processing Q: SYSLOG_SERVER_LIST
+2026-01-07 17:27:43,101 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:27:48,376 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:27:51,131 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:27:53,400 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:27:56,309 | INFO | Processing Q: SYSLOG_SERVER_LIST
+2026-01-07 17:27:56,317 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:27:59,961 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:28:03,320 | INFO | Processing Q: SYSLOG_SERVER_LIST
+2026-01-07 17:28:03,328 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:28:06,637 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:28:10,402 | INFO | Processing Q: SYSLOG_SERVER_LIST
+2026-01-07 17:28:10,410 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:28:14,337 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:28:17,680 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:28:19,961 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:28:23,550 | INFO | Processing Q: SYSLOG_SERVER_LIST
+2026-01-07 17:28:23,558 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:28:28,492 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:28:31,651 | INFO | Processing Q: SYSLOG_SERVER_LIST
+2026-01-07 17:28:31,658 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:28:35,223 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:28:38,199 | INFO | Processing Q: SYSLOG_SERVER_LIST
+2026-01-07 17:28:38,205 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:28:40,981 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:28:44,863 | INFO | Processing Q: INTERFACE_STATUS_MAP
+2026-01-07 17:28:44,870 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:28:46,811 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:28:49,388 | INFO | Processing Q: INTERFACE_STATUS_MAP
+2026-01-07 17:28:49,396 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:28:51,759 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:28:53,790 | INFO | Processing Q: INTERFACE_STATUS_MAP
+2026-01-07 17:28:53,798 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:28:55,596 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:28:58,279 | INFO | Processing Q: INTERFACE_STATUS_MAP
+2026-01-07 17:28:58,287 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:03,432 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:05,441 | INFO | Processing Q: INTERFACE_STATUS_MAP
+2026-01-07 17:29:05,448 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:07,590 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:10,195 | INFO | Processing Q: INTERFACE_STATUS_MAP
+2026-01-07 17:29:10,203 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:12,148 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:13,480 | INFO | Processing Q: INTERFACE_STATUS_MAP
+2026-01-07 17:29:13,488 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:15,297 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:17,104 | INFO | Processing Q: INTERFACE_STATUS_MAP
+2026-01-07 17:29:17,112 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:18,968 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:20,966 | INFO | Processing Q: INTERFACE_STATUS_MAP
+2026-01-07 17:29:20,974 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:23,343 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:26,005 | INFO | Processing Q: INTERFACE_STATUS_MAP
+2026-01-07 17:29:26,013 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:27,868 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:30,428 | INFO | Processing Q: ROUTING_TABLE_ENTRY_COUNT
+2026-01-07 17:29:30,434 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:31,662 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:31,973 | INFO | Processing Q: ROUTING_TABLE_ENTRY_COUNT
+2026-01-07 17:29:31,981 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:33,388 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:33,886 | INFO | Processing Q: ROUTING_TABLE_ENTRY_COUNT
+2026-01-07 17:29:33,893 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:35,042 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:35,370 | INFO | Processing Q: ROUTING_TABLE_ENTRY_COUNT
+2026-01-07 17:29:35,377 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:36,627 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:36,922 | INFO | Processing Q: ROUTING_TABLE_ENTRY_COUNT
+2026-01-07 17:29:36,930 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:38,226 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:38,828 | INFO | Processing Q: ROUTING_TABLE_ENTRY_COUNT
+2026-01-07 17:29:38,836 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:39,990 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:40,234 | INFO | Processing Q: ROUTING_TABLE_ENTRY_COUNT
+2026-01-07 17:29:40,242 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:41,770 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:42,144 | INFO | Processing Q: ROUTING_TABLE_ENTRY_COUNT
+2026-01-07 17:29:42,152 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:43,442 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:43,733 | INFO | Processing Q: ROUTING_TABLE_ENTRY_COUNT
+2026-01-07 17:29:43,740 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:44,952 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:45,246 | INFO | Processing Q: ROUTING_TABLE_ENTRY_COUNT
+2026-01-07 17:29:45,253 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:46,773 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:47,565 | INFO | Processing Q: SSH_VERSION_TEXT
+2026-01-07 17:29:47,573 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:50,655 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:29:57,731 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:30:00,962 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:30:07,678 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:30:11,204 | INFO | Processing Q: SSH_VERSION_TEXT
+2026-01-07 17:30:11,212 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:30:14,139 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:30:18,134 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:30:25,752 | INFO | Processing Q: SSH_VERSION_TEXT
+2026-01-07 17:30:25,760 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:30:28,353 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:30:29,515 | INFO | Processing Q: SSH_VERSION_TEXT
+2026-01-07 17:30:29,523 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:30:35,414 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:30:37,661 | INFO | Processing Q: SSH_VERSION_TEXT
+2026-01-07 17:30:37,669 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:30:40,246 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:30:45,417 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:30:49,088 | INFO | Processing Q: SSH_VERSION_TEXT
+2026-01-07 17:30:49,095 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:30:52,042 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:30:53,438 | INFO | Processing Q: SSH_VERSION_TEXT
+2026-01-07 17:30:53,446 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:30:56,623 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:30:57,374 | INFO | Processing Q: SSH_VERSION_TEXT
+2026-01-07 17:30:57,382 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:31:03,051 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:31:04,371 | INFO | Processing Q: SSH_VERSION_TEXT
+2026-01-07 17:31:04,379 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:31:06,546 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:31:09,535 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:31:14,357 | INFO | Processing Q: SSH_VERSION_TEXT
+2026-01-07 17:31:14,364 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:31:20,826 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:31:23,248 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:31:27,726 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:31:34,577 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:31:36,895 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:31:41,811 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:31:44,558 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:31:48,052 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:31:50,881 | INFO | Processing Q: AAA_AUTHENTICATION_METHOD
+2026-01-07 17:31:50,889 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:31:55,152 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:31:57,779 | INFO | Processing Q: AAA_AUTHENTICATION_METHOD
+2026-01-07 17:31:57,786 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:32:07,313 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:32:12,171 | INFO | Processing Q: AAA_AUTHENTICATION_METHOD
+2026-01-07 17:32:12,179 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:32:17,833 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:32:20,701 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:32:22,604 | INFO | Processing Q: AAA_AUTHENTICATION_METHOD
+2026-01-07 17:32:22,612 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:32:29,979 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:32:33,166 | INFO | Processing Q: AAA_AUTHENTICATION_METHOD
+2026-01-07 17:32:33,173 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:32:36,450 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:32:40,010 | INFO | Processing Q: AAA_AUTHENTICATION_METHOD
+2026-01-07 17:32:40,017 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:32:45,889 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:32:50,785 | INFO | Processing Q: AAA_AUTHENTICATION_METHOD
+2026-01-07 17:32:50,793 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:32:55,176 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:32:56,460 | INFO | Processing Q: AAA_AUTHENTICATION_METHOD
+2026-01-07 17:32:56,467 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:33:03,445 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:33:15,733 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:33:19,615 | INFO | Processing Q: AAA_AUTHENTICATION_METHOD
+2026-01-07 17:33:19,623 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:33:24,115 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:33:27,343 | INFO | Processing Q: AAA_AUTHENTICATION_METHOD
+2026-01-07 17:33:27,351 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:33:32,850 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:33:36,144 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:33:40,146 | INFO | Processing Q: VTY_TRANSPORT_INPUT_TEXT
+2026-01-07 17:33:40,154 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:33:43,315 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:33:46,779 | INFO | Processing Q: VTY_TRANSPORT_INPUT_TEXT
+2026-01-07 17:33:46,786 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:33:51,845 | INFO | Processing Q: VTY_TRANSPORT_INPUT_TEXT
+2026-01-07 17:33:51,853 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:33:54,347 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:33:56,324 | INFO | Processing Q: VTY_TRANSPORT_INPUT_TEXT
+2026-01-07 17:33:56,332 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:33:58,489 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:34:00,950 | INFO | Processing Q: VTY_TRANSPORT_INPUT_TEXT
+2026-01-07 17:34:00,958 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:34:04,675 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:34:05,962 | INFO | Processing Q: VTY_TRANSPORT_INPUT_TEXT
+2026-01-07 17:34:05,970 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:34:08,938 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:34:11,115 | INFO | Processing Q: VTY_TRANSPORT_INPUT_TEXT
+2026-01-07 17:34:11,123 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:34:14,821 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:34:16,545 | INFO | Processing Q: VTY_TRANSPORT_INPUT_TEXT
+2026-01-07 17:34:16,553 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:34:20,187 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:34:21,512 | INFO | Processing Q: VTY_TRANSPORT_INPUT_TEXT
+2026-01-07 17:34:21,520 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:34:24,898 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:34:27,979 | INFO | Processing Q: VTY_TRANSPORT_INPUT_TEXT
+2026-01-07 17:34:27,987 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:34:30,164 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:34:32,042 | INFO | Processing Q: VTY_LOGIN_MODE_TEXT
+2026-01-07 17:34:32,050 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:34:35,910 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:34:39,117 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:34:42,207 | INFO | Processing Q: VTY_LOGIN_MODE_TEXT
+2026-01-07 17:34:42,214 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:34:45,191 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:34:50,382 | INFO | Processing Q: VTY_LOGIN_MODE_TEXT
+2026-01-07 17:34:50,389 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:34:56,056 | INFO | Processing Q: VTY_LOGIN_MODE_TEXT
+2026-01-07 17:34:56,064 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:34:59,168 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:35:00,239 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:35:02,721 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:35:04,547 | INFO | Processing Q: VTY_LOGIN_MODE_TEXT
+2026-01-07 17:35:04,555 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:35:07,969 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:35:10,774 | INFO | Processing Q: VTY_LOGIN_MODE_TEXT
+2026-01-07 17:35:10,781 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:35:14,185 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:35:17,301 | INFO | Processing Q: VTY_LOGIN_MODE_TEXT
+2026-01-07 17:35:17,309 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:35:23,481 | INFO | Processing Q: VTY_LOGIN_MODE_TEXT
+2026-01-07 17:35:23,489 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:35:37,525 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:35:39,333 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:35:42,633 | INFO | Processing Q: VTY_LOGIN_MODE_TEXT
+2026-01-07 17:35:42,641 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:35:45,387 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:35:46,780 | INFO | Processing Q: VTY_LOGIN_MODE_TEXT
+2026-01-07 17:35:46,788 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:35:50,602 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:35:52,597 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:35:56,766 | INFO | Processing Q: INTERFACE_COUNT
+2026-01-07 17:35:56,774 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:35:58,032 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:35:58,291 | INFO | Processing Q: INTERFACE_COUNT
+2026-01-07 17:35:58,299 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:35:59,320 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:35:59,578 | INFO | Processing Q: INTERFACE_COUNT
+2026-01-07 17:35:59,586 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:00,815 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:01,066 | INFO | Processing Q: INTERFACE_COUNT
+2026-01-07 17:36:01,073 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:02,071 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:02,314 | INFO | Processing Q: INTERFACE_COUNT
+2026-01-07 17:36:02,322 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:03,376 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:03,636 | INFO | Processing Q: INTERFACE_COUNT
+2026-01-07 17:36:03,644 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:04,651 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:04,911 | INFO | Processing Q: INTERFACE_COUNT
+2026-01-07 17:36:04,918 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:06,174 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:06,402 | INFO | Processing Q: INTERFACE_COUNT
+2026-01-07 17:36:06,410 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:07,263 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:07,510 | INFO | Processing Q: INTERFACE_COUNT
+2026-01-07 17:36:07,518 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:08,750 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:08,996 | INFO | Processing Q: INTERFACE_COUNT
+2026-01-07 17:36:09,003 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:10,045 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:10,303 | INFO | Processing Q: INTERFACE_IP_MAP
+2026-01-07 17:36:10,311 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:12,610 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:14,848 | INFO | Processing Q: INTERFACE_IP_MAP
+2026-01-07 17:36:14,856 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:18,070 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:20,919 | INFO | Processing Q: INTERFACE_IP_MAP
+2026-01-07 17:36:20,927 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:22,717 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:26,193 | INFO | Processing Q: INTERFACE_IP_MAP
+2026-01-07 17:36:26,200 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:28,477 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:30,736 | INFO | Processing Q: INTERFACE_IP_MAP
+2026-01-07 17:36:30,743 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:32,412 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:35,459 | INFO | Processing Q: INTERFACE_IP_MAP
+2026-01-07 17:36:35,466 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:37,974 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:41,381 | INFO | Processing Q: INTERFACE_IP_MAP
+2026-01-07 17:36:41,389 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:43,168 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:46,742 | INFO | Processing Q: INTERFACE_IP_MAP
+2026-01-07 17:36:46,750 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:48,872 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:52,326 | INFO | Processing Q: INTERFACE_IP_MAP
+2026-01-07 17:36:52,334 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:55,424 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:36:59,493 | INFO | Processing Q: INTERFACE_IP_MAP
+2026-01-07 17:36:59,501 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:37:02,618 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:37:05,825 | INFO | Processing Q: SUBINTERFACE_COUNT
+2026-01-07 17:37:05,832 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:37:07,509 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:37:08,777 | INFO | Processing Q: SUBINTERFACE_COUNT
+2026-01-07 17:37:08,785 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:37:10,707 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:37:11,291 | INFO | Processing Q: SUBINTERFACE_COUNT
+2026-01-07 17:37:11,299 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:37:13,183 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:37:14,011 | INFO | Processing Q: SUBINTERFACE_COUNT
+2026-01-07 17:37:14,019 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:38:21,258 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:38:22,126 | INFO | Processing Q: SUBINTERFACE_COUNT
+2026-01-07 17:38:22,133 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:38:24,404 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:38:25,770 | INFO | Processing Q: SUBINTERFACE_COUNT
+2026-01-07 17:38:25,778 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:38:28,208 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:38:29,712 | INFO | Processing Q: SUBINTERFACE_COUNT
+2026-01-07 17:38:29,718 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:38:32,011 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:38:32,707 | INFO | Processing Q: SUBINTERFACE_COUNT
+2026-01-07 17:38:32,715 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:38:34,103 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:38:34,796 | INFO | Processing Q: SUBINTERFACE_COUNT
+2026-01-07 17:38:34,804 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:38:37,113 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:38:37,798 | INFO | Processing Q: SUBINTERFACE_COUNT
+2026-01-07 17:38:37,806 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:38:40,873 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:38:41,560 | INFO | Processing Q: VRF_BIND_MAP
+2026-01-07 17:38:41,568 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:38:43,691 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:38:45,858 | INFO | Processing Q: VRF_BIND_MAP
+2026-01-07 17:38:45,865 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:38:48,846 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:38:51,772 | INFO | Processing Q: VRF_BIND_MAP
+2026-01-07 17:38:51,780 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:38:54,081 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:38:55,931 | INFO | Processing Q: VRF_BIND_MAP
+2026-01-07 17:38:55,939 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:38:59,201 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:39:02,259 | INFO | Processing Q: VRF_BIND_MAP
+2026-01-07 17:39:02,267 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:39:04,075 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:39:06,234 | INFO | Processing Q: VRF_BIND_MAP
+2026-01-07 17:39:06,242 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:39:09,000 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:39:11,292 | INFO | Processing Q: VRF_BIND_MAP
+2026-01-07 17:39:11,300 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:39:13,119 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:39:18,010 | INFO | Processing Q: VRF_BIND_MAP
+2026-01-07 17:39:18,018 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:39:20,877 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:39:23,687 | INFO | Processing Q: VRF_BIND_MAP
+2026-01-07 17:39:23,694 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:39:25,236 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:39:28,009 | INFO | Processing Q: VRF_BIND_MAP
+2026-01-07 17:39:28,016 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:39:29,880 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:39:33,369 | INFO | Processing Q: BGP_LOCAL_AS_NUMERIC
+2026-01-07 17:39:33,377 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:39:35,941 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:40:33,471 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:40:37,501 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:40:55,728 | INFO | Processing Q: BGP_LOCAL_AS_NUMERIC
+2026-01-07 17:40:55,735 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:40:56,207 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:40:59,551 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:41:01,125 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:41:02,828 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:41:03,454 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:41:04,090 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:41:05,512 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:41:07,154 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:41:08,333 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:41:09,476 | INFO | Processing Q: BGP_LOCAL_AS_NUMERIC
+2026-01-07 17:41:09,483 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:41:12,048 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:41:17,019 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:41:19,546 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:41:25,446 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:41:30,075 | INFO | Processing Q: BGP_LOCAL_AS_NUMERIC
+2026-01-07 17:41:30,081 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:41:30,954 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:41:33,425 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:41:37,303 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:41:42,021 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:41:46,954 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:41:49,000 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:41:52,081 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:41:54,035 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:41:59,901 | INFO | Processing Q: BGP_LOCAL_AS_NUMERIC
+2026-01-07 17:41:59,907 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:42:01,119 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:42:12,302 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:42:21,320 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:42:35,105 | INFO | Processing Q: BGP_LOCAL_AS_NUMERIC
+2026-01-07 17:42:35,113 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:42:37,234 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:42:39,023 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:42:43,161 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:42:45,518 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:43:07,771 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:43:09,982 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:43:17,675 | INFO | Processing Q: BGP_LOCAL_AS_NUMERIC
+2026-01-07 17:43:17,683 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:43:20,248 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:43:21,745 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:43:23,829 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:43:25,917 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:43:28,624 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:43:30,281 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:43:34,077 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:43:35,898 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:44:28,272 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:44:31,119 | INFO | Processing Q: BGP_LOCAL_AS_NUMERIC
+2026-01-07 17:44:31,127 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:44:34,566 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:44:39,284 | INFO | Processing Q: BGP_LOCAL_AS_NUMERIC
+2026-01-07 17:44:39,291 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:44:41,863 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:44:46,996 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:44:49,435 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:44:52,537 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:44:57,578 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:45:00,615 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:45:03,119 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:45:44,660 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:45:53,099 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:45:59,317 | INFO | Processing Q: BGP_LOCAL_AS_NUMERIC
+2026-01-07 17:45:59,325 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:46:00,195 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:46:04,884 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:46:09,949 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:46:13,366 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:46:18,053 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:46:23,727 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:46:28,435 | INFO | Processing Q: BGP_NEIGHBOR_COUNT
+2026-01-07 17:46:28,442 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:46:30,985 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:46:53,158 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:46:55,220 | INFO | Processing Q: BGP_NEIGHBOR_COUNT
+2026-01-07 17:46:55,228 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:46:56,791 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:47:07,795 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:47:10,884 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:47:15,728 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:48:14,102 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:48:18,228 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:48:25,596 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:48:27,010 | INFO | Processing Q: BGP_NEIGHBOR_COUNT
+2026-01-07 17:48:27,018 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:48:28,740 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:48:36,064 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:48:43,948 | INFO | Processing Q: BGP_NEIGHBOR_COUNT
+2026-01-07 17:48:43,956 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:48:46,110 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:48:53,501 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:48:55,871 | INFO | Processing Q: BGP_NEIGHBOR_COUNT
+2026-01-07 17:48:55,879 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:48:57,605 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:49:10,065 | INFO | Processing Q: BGP_NEIGHBOR_COUNT
+2026-01-07 17:49:10,073 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:49:11,797 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:49:18,870 | INFO | Processing Q: BGP_NEIGHBOR_COUNT
+2026-01-07 17:49:18,878 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:49:20,942 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:49:22,600 | INFO | Processing Q: BGP_NEIGHBOR_COUNT
+2026-01-07 17:49:22,607 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:49:24,107 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:49:29,327 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:49:30,644 | INFO | Processing Q: BGP_NEIGHBOR_COUNT
+2026-01-07 17:49:30,652 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:49:32,290 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:49:34,686 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:50:53,807 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:50:58,071 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:51:01,140 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:51:02,231 | INFO | Processing Q: BGP_NEIGHBOR_COUNT
+2026-01-07 17:51:02,239 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:51:04,293 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:51:37,267 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:51:43,016 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:51:44,865 | INFO | Processing Q: NEIGHBOR_LIST_IBGP
+2026-01-07 17:51:44,873 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:51:47,122 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:51:54,109 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:51:58,982 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:52:03,881 | INFO | Processing Q: NEIGHBOR_LIST_IBGP
+2026-01-07 17:52:03,890 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:52:10,670 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:52:13,912 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:52:29,303 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:52:30,486 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:52:35,849 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:54:51,879 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:54:57,283 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:55:00,900 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:55:05,266 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:55:09,592 | INFO | Processing Q: NEIGHBOR_LIST_IBGP
+2026-01-07 17:55:09,599 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:55:11,857 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:55:13,905 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:55:18,059 | INFO | Processing Q: NEIGHBOR_LIST_IBGP
+2026-01-07 17:55:18,066 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:55:21,799 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:55:24,587 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:55:29,460 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:55:32,522 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:55:38,542 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:55:45,463 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:55:48,423 | INFO | Processing Q: NEIGHBOR_LIST_IBGP
+2026-01-07 17:55:48,430 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:55:51,575 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:57:41,404 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:57:58,038 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:58:05,165 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:58:14,038 | INFO | Processing Q: NEIGHBOR_LIST_IBGP
+2026-01-07 17:58:14,046 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:58:17,856 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:58:23,057 | INFO | Processing Q: NEIGHBOR_LIST_IBGP
+2026-01-07 17:58:23,065 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:58:26,319 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:58:30,554 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 17:59:39,507 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:00:27,360 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:00:37,856 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:00:44,330 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:00:50,751 | INFO | Processing Q: NEIGHBOR_LIST_IBGP
+2026-01-07 18:00:50,759 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:00:52,160 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:00:58,045 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:01:02,472 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:01:08,029 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:01:11,174 | INFO | Processing Q: NEIGHBOR_LIST_IBGP
+2026-01-07 18:01:11,182 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:01:15,310 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:01:17,424 | INFO | Processing Q: NEIGHBOR_LIST_IBGP
+2026-01-07 18:01:17,432 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:01:19,104 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:01:23,934 | INFO | Processing Q: NEIGHBOR_LIST_EBGP
+2026-01-07 18:01:23,942 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:01:26,571 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:03:43,920 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:03:45,606 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:03:53,243 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:03:55,108 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:03:57,199 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:03:58,479 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:03:59,270 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:04:00,063 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:04:01,305 | INFO | Processing Q: NEIGHBOR_LIST_EBGP
+2026-01-07 18:04:01,313 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:04:03,090 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:04:08,553 | INFO | Processing Q: NEIGHBOR_LIST_EBGP
+2026-01-07 18:04:08,558 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:04:10,256 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:04:16,826 | INFO | Processing Q: NEIGHBOR_LIST_EBGP
+2026-01-07 18:04:16,832 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:04:18,437 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:04:22,616 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:04:28,701 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:04:30,087 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:04:34,299 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:05:20,088 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:05:57,809 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:06:02,857 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:06:20,768 | INFO | Processing Q: NEIGHBOR_LIST_EBGP
+2026-01-07 18:06:20,776 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:06:23,120 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:07:02,935 | INFO | Processing Q: NEIGHBOR_LIST_EBGP
+2026-01-07 18:07:02,943 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:07:04,562 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:07:07,630 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:07:09,656 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:07:13,135 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:07:15,181 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:07:19,356 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:07:20,824 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:07:22,280 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:07:28,870 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:07:31,502 | INFO | Processing Q: NEIGHBOR_LIST_EBGP
+2026-01-07 18:07:31,510 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:07:34,145 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:07:36,566 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:07:39,979 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:07:43,671 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:07:47,265 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:07:50,321 | INFO | Processing Q: NEIGHBOR_LIST_EBGP
+2026-01-07 18:07:50,327 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:07:52,025 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:07:55,874 | INFO | Processing Q: NEIGHBOR_LIST_EBGP
+2026-01-07 18:07:55,882 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:07:58,224 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:08:02,982 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:08:05,403 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:08:09,582 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:08:11,655 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:09:50,468 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:09:53,814 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:10:00,837 | INFO | Processing Q: NEIGHBOR_LIST_EBGP
+2026-01-07 18:10:00,844 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:10:03,322 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:10:13,411 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:10:15,796 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:10:23,556 | INFO | Processing Q: OSPF_PROCESS_IDS_SET
+2026-01-07 18:10:23,563 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:10:26,351 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:10:26,942 | INFO | Processing Q: OSPF_PROCESS_IDS_SET
+2026-01-07 18:10:26,950 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:10:28,700 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:10:29,558 | INFO | Processing Q: OSPF_PROCESS_IDS_SET
+2026-01-07 18:10:29,565 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:10:30,717 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:10:31,675 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:10:35,091 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:10:36,499 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:10:38,756 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:10:43,256 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:10:44,845 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:10:49,242 | INFO | Processing Q: OSPF_PROCESS_IDS_SET
+2026-01-07 18:10:49,249 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:10:49,775 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:10:53,372 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:10:56,756 | INFO | Processing Q: OSPF_PROCESS_IDS_SET
+2026-01-07 18:10:56,763 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:10:58,678 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:11:02,577 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:12:35,214 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:12:36,921 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:12:38,896 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:12:42,914 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:12:46,755 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:12:48,707 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:12:53,409 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:12:55,377 | INFO | Processing Q: OSPF_PROCESS_IDS_SET
+2026-01-07 18:12:55,385 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:12:57,840 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:12:59,265 | INFO | Processing Q: OSPF_PROCESS_IDS_SET
+2026-01-07 18:12:59,273 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:12:59,945 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:13:01,322 | INFO | Processing Q: OSPF_PROCESS_IDS_SET
+2026-01-07 18:13:01,330 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:13:03,663 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:13:06,908 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:13:53,271 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:14:04,325 | INFO | Processing Q: OSPF_PROCESS_IDS_SET
+2026-01-07 18:14:04,333 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:14:10,971 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:14:11,924 | INFO | Processing Q: OSPF_PROCESS_IDS_SET
+2026-01-07 18:14:11,931 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:14:14,959 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:14:17,449 | INFO | Processing Q: OSPF_AREA_SET
+2026-01-07 18:14:17,457 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:14:19,141 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:14:22,023 | INFO | Processing Q: OSPF_AREA_SET
+2026-01-07 18:14:22,031 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:14:25,199 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:16:42,522 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:16:47,792 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:16:50,174 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:16:55,747 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:17:00,911 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:17:11,999 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:17:18,597 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:17:24,657 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:17:30,681 | INFO | Processing Q: OSPF_AREA_SET
+2026-01-07 18:17:30,689 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:17:32,286 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:17:34,517 | INFO | Processing Q: OSPF_AREA_SET
+2026-01-07 18:17:34,524 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:17:36,218 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:17:38,923 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:17:42,145 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:17:46,559 | INFO | Processing Q: OSPF_AREA_SET
+2026-01-07 18:17:46,567 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:17:48,003 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:17:53,311 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:17:57,989 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:18:02,138 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:18:06,003 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:18:10,374 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:19:04,312 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:19:07,826 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:19:10,196 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:19:15,809 | INFO | Processing Q: OSPF_AREA_SET
+2026-01-07 18:19:15,817 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:19:17,351 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:19:21,665 | INFO | Processing Q: OSPF_AREA_SET
+2026-01-07 18:19:21,673 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:19:23,278 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:19:26,093 | INFO | Processing Q: OSPF_AREA_SET
+2026-01-07 18:19:26,100 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:19:27,659 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:19:29,044 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:19:32,449 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:20:53,200 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:22:12,588 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:22:20,240 | INFO | Processing Q: OSPF_AREA_SET
+2026-01-07 18:22:20,247 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:22:21,773 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:23:09,970 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:23:12,473 | INFO | Processing Q: OSPF_AREA_SET
+2026-01-07 18:23:12,480 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:23:14,286 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:23:19,884 | INFO | Processing Q: OSPF_AREA0_IF_LIST
+2026-01-07 18:23:19,891 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:23:31,086 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:23:32,107 | INFO | Processing Q: OSPF_AREA0_IF_LIST
+2026-01-07 18:23:32,114 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:23:37,439 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:23:38,448 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:23:41,990 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:23:43,487 | INFO | Processing Q: OSPF_AREA0_IF_LIST
+2026-01-07 18:23:43,495 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:23:47,210 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:23:49,062 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:23:52,594 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:23:58,901 | INFO | Processing Q: OSPF_AREA0_IF_LIST
+2026-01-07 18:23:58,909 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:24:06,802 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:24:08,609 | INFO | Processing Q: OSPF_AREA0_IF_LIST
+2026-01-07 18:24:08,616 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:24:12,631 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:24:20,720 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:24:25,617 | INFO | Processing Q: OSPF_AREA0_IF_LIST
+2026-01-07 18:24:25,625 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:24:28,945 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:26:46,345 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:26:51,423 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:26:55,441 | INFO | Processing Q: OSPF_AREA0_IF_LIST
+2026-01-07 18:26:55,449 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:27:01,438 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:27:02,406 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:27:04,980 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:27:06,352 | INFO | Processing Q: OSPF_AREA0_IF_LIST
+2026-01-07 18:27:06,360 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:27:11,139 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:27:13,590 | INFO | Processing Q: OSPF_AREA0_IF_LIST
+2026-01-07 18:27:13,598 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:27:17,718 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:27:19,336 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:27:25,047 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:27:28,534 | INFO | Processing Q: OSPF_AREA0_IF_LIST
+2026-01-07 18:27:28,541 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:27:33,856 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:27:34,911 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:27:37,625 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:27:38,908 | INFO | Processing Q: VRF_NAMES_SET
+2026-01-07 18:27:38,916 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:27:40,905 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:27:42,693 | INFO | Processing Q: VRF_NAMES_SET
+2026-01-07 18:27:42,701 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:27:44,266 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:27:46,649 | INFO | Processing Q: VRF_NAMES_SET
+2026-01-07 18:27:46,657 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:27:48,045 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:27:50,268 | INFO | Processing Q: VRF_NAMES_SET
+2026-01-07 18:27:50,274 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:27:52,272 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:27:53,913 | INFO | Processing Q: VRF_NAMES_SET
+2026-01-07 18:27:53,921 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:27:58,331 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:00,261 | INFO | Processing Q: VRF_NAMES_SET
+2026-01-07 18:28:00,269 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:02,648 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:05,020 | INFO | Processing Q: VRF_NAMES_SET
+2026-01-07 18:28:05,028 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:06,614 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:07,776 | INFO | Processing Q: VRF_NAMES_SET
+2026-01-07 18:28:07,784 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:09,329 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:11,560 | INFO | Processing Q: VRF_NAMES_SET
+2026-01-07 18:28:11,568 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:13,111 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:15,370 | INFO | Processing Q: VRF_NAMES_SET
+2026-01-07 18:28:15,377 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:17,238 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:19,613 | INFO | Processing Q: VRF_COUNT
+2026-01-07 18:28:19,621 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:21,828 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:22,893 | INFO | Processing Q: VRF_COUNT
+2026-01-07 18:28:22,901 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:24,845 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:26,163 | INFO | Processing Q: VRF_COUNT
+2026-01-07 18:28:26,171 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:28,464 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:29,249 | INFO | Processing Q: VRF_COUNT
+2026-01-07 18:28:29,256 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:31,080 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:32,407 | INFO | Processing Q: VRF_COUNT
+2026-01-07 18:28:32,415 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:34,952 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:36,223 | INFO | Processing Q: VRF_COUNT
+2026-01-07 18:28:36,231 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:39,193 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:40,354 | INFO | Processing Q: VRF_COUNT
+2026-01-07 18:28:40,362 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:42,535 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:44,658 | INFO | Processing Q: VRF_COUNT
+2026-01-07 18:28:44,666 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:46,442 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:47,473 | INFO | Processing Q: VRF_COUNT
+2026-01-07 18:28:47,481 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:50,042 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:51,087 | INFO | Processing Q: VRF_COUNT
+2026-01-07 18:28:51,095 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:53,532 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:54,606 | INFO | Processing Q: VRF_RD_MAP
+2026-01-07 18:28:54,614 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:28:59,430 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:29:03,380 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:29:05,594 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:29:10,695 | INFO | Processing Q: VRF_RD_MAP
+2026-01-07 18:29:10,701 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:29:26,165 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:29:28,143 | INFO | Processing Q: VRF_RD_MAP
+2026-01-07 18:29:28,150 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:29:32,224 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:29:33,433 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:29:39,699 | INFO | Processing Q: VRF_RD_MAP
+2026-01-07 18:29:39,706 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:30:16,575 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:30:18,163 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:30:19,206 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:30:22,873 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:30:27,362 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:30:28,485 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:30:31,554 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:30:34,810 | INFO | Processing Q: VRF_RD_MAP
+2026-01-07 18:30:34,818 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:30:43,897 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:30:45,963 | INFO | Processing Q: VRF_RD_MAP
+2026-01-07 18:30:45,970 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:30:50,004 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:30:55,355 | INFO | Processing Q: VRF_RD_MAP
+2026-01-07 18:30:55,363 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:31:02,013 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:31:04,739 | INFO | Processing Q: VRF_RD_MAP
+2026-01-07 18:31:04,746 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:31:10,069 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:31:12,835 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:31:16,479 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:31:18,901 | INFO | Processing Q: VRF_RD_MAP
+2026-01-07 18:31:18,907 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:31:23,696 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:31:25,141 | INFO | Processing Q: VRF_RD_MAP
+2026-01-07 18:31:25,148 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:31:30,968 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:31:31,712 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:31:37,012 | INFO | Processing Q: RT_IMPORT_COUNT
+2026-01-07 18:31:37,019 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:31:43,232 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:31:45,307 | INFO | Processing Q: RT_IMPORT_COUNT
+2026-01-07 18:31:45,315 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:31:50,451 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:31:54,052 | INFO | Processing Q: RT_IMPORT_COUNT
+2026-01-07 18:31:54,060 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:31:57,694 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:32:00,078 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:32:06,974 | INFO | Processing Q: RT_IMPORT_COUNT
+2026-01-07 18:32:06,982 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:32:10,554 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:32:12,084 | INFO | Processing Q: RT_IMPORT_COUNT
+2026-01-07 18:32:12,091 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:32:18,891 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:32:21,782 | INFO | Processing Q: RT_IMPORT_COUNT
+2026-01-07 18:32:21,790 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:32:26,664 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:32:27,721 | INFO | Processing Q: RT_IMPORT_COUNT
+2026-01-07 18:32:27,728 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:32:32,486 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:33:09,545 | INFO | Processing Q: RT_IMPORT_COUNT
+2026-01-07 18:33:09,552 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:33:12,611 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:33:15,151 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:33:19,439 | INFO | Processing Q: RT_IMPORT_COUNT
+2026-01-07 18:33:19,446 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:33:23,481 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:33:25,682 | INFO | Processing Q: RT_IMPORT_COUNT
+2026-01-07 18:33:25,689 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:33:29,808 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:33:32,473 | INFO | Processing Q: RT_EXPORT_COUNT
+2026-01-07 18:33:32,480 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:33:37,982 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:33:39,763 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:34:13,958 | INFO | Processing Q: RT_EXPORT_COUNT
+2026-01-07 18:34:13,966 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:34:19,663 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:34:23,275 | INFO | Processing Q: RT_EXPORT_COUNT
+2026-01-07 18:34:23,282 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:34:27,738 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:34:31,302 | INFO | Processing Q: RT_EXPORT_COUNT
+2026-01-07 18:34:31,309 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:34:35,364 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:34:37,960 | INFO | Processing Q: RT_EXPORT_COUNT
+2026-01-07 18:34:37,968 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:34:43,071 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:34:47,652 | INFO | Processing Q: RT_EXPORT_COUNT
+2026-01-07 18:34:47,658 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:34:53,565 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:34:55,636 | INFO | Processing Q: RT_EXPORT_COUNT
+2026-01-07 18:34:55,643 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:34:58,582 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:35:02,084 | INFO | Processing Q: RT_EXPORT_COUNT
+2026-01-07 18:35:02,092 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:35:05,435 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:35:10,068 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:35:11,409 | INFO | Processing Q: RT_EXPORT_COUNT
+2026-01-07 18:35:11,417 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:35:15,174 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:35:17,855 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:35:27,995 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:35:33,771 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:35:37,120 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:35:40,248 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:35:43,517 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:35:52,040 | INFO | Processing Q: RT_EXPORT_COUNT
+2026-01-07 18:35:52,047 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:35:56,310 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:35:59,439 | INFO | Processing Q: MPLS_LDP_ROUTER_ID
+2026-01-07 18:35:59,447 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:36:02,222 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:36:06,382 | INFO | Processing Q: MPLS_LDP_ROUTER_ID
+2026-01-07 18:36:06,390 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:36:09,200 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:36:16,826 | INFO | Processing Q: MPLS_LDP_ROUTER_ID
+2026-01-07 18:36:16,834 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:36:19,479 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:36:21,043 | INFO | Processing Q: MPLS_LDP_ROUTER_ID
+2026-01-07 18:36:21,051 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:36:24,670 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:36:33,433 | INFO | Processing Q: MPLS_LDP_ROUTER_ID
+2026-01-07 18:36:33,441 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:36:36,298 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:36:39,774 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:36:41,441 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:36:48,367 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:36:52,967 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:36:55,061 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:36:57,685 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:37:00,721 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:37:03,270 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:37:04,678 | INFO | Processing Q: MPLS_LDP_ROUTER_ID
+2026-01-07 18:37:04,686 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:37:07,641 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:37:08,807 | INFO | Processing Q: MPLS_LDP_ROUTER_ID
+2026-01-07 18:37:08,815 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:37:12,212 | INFO | Processing Q: MPLS_LDP_ROUTER_ID
+2026-01-07 18:37:12,220 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:37:14,457 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:37:16,992 | INFO | Processing Q: MPLS_LDP_ROUTER_ID
+2026-01-07 18:37:16,998 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:37:19,725 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:37:21,663 | INFO | Processing Q: MPLS_LDP_ROUTER_ID
+2026-01-07 18:37:21,671 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:37:26,581 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:37:29,176 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:37:32,933 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:39:04,686 | INFO | Processing Q: L2VPN_PW_ID_SET
+2026-01-07 18:39:04,694 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:39:08,546 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:39:11,923 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:39:16,822 | INFO | Processing Q: L2VPN_PW_ID_SET
+2026-01-07 18:39:16,830 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:39:20,311 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:39:23,666 | INFO | Processing Q: L2VPN_PW_ID_SET
+2026-01-07 18:39:23,674 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:39:26,686 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:39:30,663 | INFO | Processing Q: L2VPN_PW_ID_SET
+2026-01-07 18:39:30,670 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:39:33,427 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:39:36,882 | INFO | Processing Q: L2VPN_PW_ID_SET
+2026-01-07 18:39:36,890 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:39:39,736 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:39:41,749 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:39:43,460 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:39:44,414 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:39:45,368 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:39:48,333 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:39:49,685 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:39:51,214 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:39:53,721 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:39:55,787 | INFO | Processing Q: L2VPN_PW_ID_SET
+2026-01-07 18:39:55,794 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:39:59,286 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:40:05,541 | INFO | Processing Q: L2VPN_PW_ID_SET
+2026-01-07 18:40:05,549 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:40:08,750 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:40:12,672 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:40:15,586 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:40:23,401 | INFO | Processing Q: L2VPN_PW_ID_SET
+2026-01-07 18:40:23,409 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:40:25,518 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:40:28,308 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:40:31,539 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:40:34,337 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:40:39,815 | INFO | Processing Q: L2VPN_PW_ID_SET
+2026-01-07 18:40:39,823 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:40:43,023 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:40:45,178 | INFO | Processing Q: L2VPN_PW_ID_SET
+2026-01-07 18:40:45,185 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:40:49,676 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:40:53,418 | INFO | Processing Q: SSH_ENABLED_DEVICES
+2026-01-07 18:40:53,426 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:40:56,748 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:40:58,692 | INFO | Processing Q: SSH_MISSING_DEVICES
+2026-01-07 18:40:58,700 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:41:10,087 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:41:14,927 | INFO | Processing Q: SSH_MISSING_COUNT
+2026-01-07 18:41:14,935 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:41:21,259 | INFO | Processing Q: AAA_ENABLED_DEVICES
+2026-01-07 18:41:21,267 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:41:28,142 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:41:37,155 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:41:41,740 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:41:45,555 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:41:48,987 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:41:51,273 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:41:56,986 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:41:58,580 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:42:01,071 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:42:03,813 | INFO | Processing Q: AAA_MISSING_DEVICES
+2026-01-07 18:42:03,820 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:42:09,898 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:42:12,314 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:42:21,117 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:42:24,366 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:42:31,940 | INFO | Processing Q: DEVICES_WITH_SAME_VRF
+2026-01-07 18:42:31,948 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:42:33,785 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:42:34,818 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:42:35,796 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:42:36,898 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:42:37,905 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:42:38,611 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:42:40,955 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:42:41,689 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:42:43,703 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:42:44,455 | INFO | Processing Q: DEVICES_WITH_SAME_VRF
+2026-01-07 18:42:44,463 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:42:46,338 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:42:49,219 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:42:53,146 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:45:10,002 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:45:13,858 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:45:15,896 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:45:22,747 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:45:28,152 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"

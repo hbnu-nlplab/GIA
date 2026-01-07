@@ -163,15 +163,23 @@ def extract_answer_from_raw(raw_text: str, answer_type: str) -> str:
                         num_match = re.search(r'\b(\d+)\b', last_sent)
                         if num_match:
                             after_think = num_match.group(1)
+        
     elif '<think>' in raw_text:
         after_think = raw_text.split('<think>')[0].strip()
     else:
         after_think = raw_text.strip()
     
-    # 2. 불필요한 프리픽스 제거
+    # 2. 불필요한 태그 제거 (Facts JSON 응답에서 <p2> 같은 태그 제거)
+    # Multiple passes to ensure complete removal
+    for _ in range(3):  # Repeat 3 times to handle nested/multiple tags
+        after_think = re.sub(r'<([^>]+)>', r'\1', after_think)  # <p2> → p2
+        after_think = after_think.strip()
+    
+    # 3. 불필요한 프리픽스 제거
     prefixes_to_remove = [
         r'^analysis\s*',
         r'^we need to\s*',
+        r'^we need\s*',
         r'^based on\s*',
         r'^the answer is\s*',
         r'^answer:\s*',
@@ -181,20 +189,36 @@ def extract_answer_from_raw(raw_text: str, answer_type: str) -> str:
         r'^set\s*',
         r'^map\s*',
         r'^text\s*',
+        r'^device:\s*',
+        r'^router:\s*',
+        r'^hostname:\s*',
     ]
     
     cleaned = after_think
     for prefix in prefixes_to_remove:
         cleaned = re.sub(prefix, '', cleaned, flags=re.IGNORECASE)
     
-    # 3. 첫 번째 라인만 추출 (여러 줄 설명이 있을 경우)
+    # 4. 첫 번째 라인만 추출 (여러 줄 설명이 있을 경우)
     lines = [l.strip() for l in cleaned.split('\n') if l.strip()]
     if not lines:
         return "null"
     
     first_line = lines[0]
     
-    # 4. 타입별 특수 처리
+    # 5. "We need to check..." 같은 설명문 감지 및 처리
+    if first_line.lower().startswith('we ') and len(first_line) > 50:
+        # JSON 값이나 숫자 추출 시도
+        if answer_type in ["number", "numeric"]:
+            num_match = re.search(r'\b(\d+\.?\d*)\b', first_line)
+            if num_match:
+                first_line = num_match.group(1)
+        elif answer_type == "text":
+            # 디바이스명이나 값 추출 (예: "We need OS version of p2" → "p2")
+            device_match = re.search(r'of\s+(\w+)', first_line)
+            if device_match:
+                first_line = device_match.group(1)
+    
+    # 6. 타입별 특수 처리
     if answer_type == "set":
         # JSON 배열 파싱 시도
         match = re.search(r'\[.*?\]', first_line)
@@ -286,6 +310,7 @@ class VLLMEvaluator:
         self,
         model_key: str,
         config_dir: str,
+        facts_file: Optional[str] = None,
         gpu_util: float = 0.9,
         backend: str = "vllm",
         openai_model: Optional[str] = None,
@@ -303,13 +328,18 @@ class VLLMEvaluator:
         self.backend = backend
         self.max_tokens = max_tokens
         self.openai_model = openai_model
+        self.facts_file = facts_file
         
         logger.info("Initializing Evaluator...")
         logger.info(f"Backend: {self.backend}")
         logger.info(f"Model: {self.model_name} ({self.model_path})")
-        logger.info(f"Config Dir: {config_dir}")
-
-        self.config_manager = ConfigManager([config_dir])
+        
+        if self.facts_file:
+            logger.info(f"Facts File: {self.facts_file}")
+            self.config_manager = None
+        else:
+            logger.info(f"Config Dir: {config_dir}")
+            self.config_manager = ConfigManager([config_dir])
 
         self.llm = None
         self.tokenizer = None
@@ -367,8 +397,51 @@ class VLLMEvaluator:
         self.res_dir = os.path.join(Config.RESULT_DIR, dir_name.replace("/", "_"))
         os.makedirs(self.res_dir, exist_ok=True)
 
-    def prepare_messages(self, question: str, answer_type: str, configs: str) -> List[Dict[str, str]]:
-        system_msg = """You are an expert Network Engineer analyzing network configurations.
+    def prepare_messages(self, question: str, answer_type: str, configs: str, context_type: str = "NETWORK CONFIGURATIONS") -> List[Dict[str, str]]:
+        # Facts JSON 구조인 경우 특화된 프롬프트 사용
+        if "FACTS (JSON)" in context_type:
+            system_msg = """You are an expert Network Engineer analyzing structured network state facts in JSON format.
+
+OUTPUT FORMAT RULES (CRITICAL - MUST FOLLOW EXACTLY):
+
+1. First, use <think>...</think> tags to analyze:
+   - Query the JSON structure for relevant fields
+   - Navigate through devices/interfaces/routing sections
+   - Locate the exact answer value
+
+2. After </think>, output ONLY the extracted value in ONE line:
+   - text type: Extract exact string from JSON (e.g., from "hostname": "p2" → output: p2)
+     ⚠️ DO NOT wrap in angle brackets like <p2>
+     ⚠️ DO NOT add prefixes like "device:" or "router:"
+     ⚠️ Just the raw value: p2
+   
+   - numeric/number type: Extract exact number from JSON field
+     Example: "num_interfaces": 5 → output: 5
+   
+   - set type: Extract list and format as JSON array
+     Example: ["leaf1", "leaf2"] → output: ["leaf1", "leaf2"]
+   
+   - map type: Extract object and format as JSON object
+     Example: {"GigabitEthernet0/0": "172.16.1.2/24"} → output exactly as is
+
+3. FORBIDDEN after </think>:
+   ❌ "The answer is..."
+   ❌ "Based on the analysis..."
+   ❌ "We need to check..."
+   ❌ "Looking at device X..."
+   ❌ Any explanatory sentences or descriptions
+   ❌ HTML/XML-style tags like <hostname>
+   
+4. If information is missing or null in JSON:
+   - text: null
+   - numeric: 0
+   - set: []
+   - map: {}
+   - boolean: false
+
+REMEMBER: You are querying a JSON database. Output ONLY the raw extracted value on ONE line."""
+        else:
+            system_msg = """You are an expert Network Engineer analyzing network configurations.
 
 OUTPUT FORMAT RULES (CRITICAL - MUST FOLLOW EXACTLY):
 
@@ -401,7 +474,7 @@ OUTPUT FORMAT RULES (CRITICAL - MUST FOLLOW EXACTLY):
 
 REMEMBER: After </think>, output ONLY the answer value on ONE line. Nothing else."""
 
-        user_msg = f"""=== NETWORK CONFIGURATIONS ===
+        user_msg = f"""=== {context_type} ===
 {configs}
 
 === QUESTION ===
@@ -444,13 +517,27 @@ REMEMBER: After </think>, output ONLY the answer value on ONE line. Nothing else
         if limit: data = data[:limit]
         
         logger.info("Generating prompts/messages...")
-        # Pre-load Configs once
-        hostnames = list(self.config_manager._cache.keys())
-        configs_content = self.config_manager.get_configs(hostnames)
+        
+        # Load context (Configs or Facts)
+        if self.facts_file:
+            try:
+                with open(self.facts_file, 'r', encoding='utf-8') as f:
+                    facts_data = json.load(f)
+                configs_content = json.dumps(facts_data, indent=2, ensure_ascii=False)
+                context_type = "NETWORK STATE FACTS (JSON)"
+                logger.info(f"Using facts from {self.facts_file}")
+            except Exception as e:
+                logger.error(f"Failed to load facts file: {e}")
+                configs_content = ""
+                context_type = "NETWORK CONFIGURATIONS"
+        else:
+            hostnames = list(self.config_manager._cache.keys())
+            configs_content = self.config_manager.get_configs(hostnames)
+            context_type = "NETWORK CONFIGURATIONS"
 
         prepared: List[Dict[str, Any]] = []
         for row in data:
-            messages = self.prepare_messages(row["question"], row["answer_type"], configs_content)
+            messages = self.prepare_messages(row["question"], row["answer_type"], configs_content, context_type)
             prompt = None
             if self.backend == "vllm":
                 prompt = self.prepare_prompt(messages)
@@ -524,6 +611,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dataset", default=Config.DEFAULT_DATASET_PATH)
     parser.add_argument("--config_dir", default=Config.DEFAULT_CONFIG_DIR)
+    parser.add_argument("--facts_file", default=None, help="JSON 형식의 Batfish Facts 파일 경로 (config_dir 대신 사용 가능)")
     parser.add_argument("--model", nargs='+', required=True, help="하나 이상의 모델 지정 (예: --model Qwen3-8B Mistral3-8B)")
 
     parser.add_argument("--backend", choices=["vllm", "openai"], default="vllm", help="추론 엔진 선택")
@@ -547,6 +635,7 @@ def main():
             evaluator = VLLMEvaluator(
                 model_key=model_key,
                 config_dir=args.config_dir,
+                facts_file=args.facts_file,
                 gpu_util=args.gpu_util,
                 backend=args.backend,
                 openai_model=args.openai_model,
