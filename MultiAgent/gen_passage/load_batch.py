@@ -84,13 +84,19 @@ def check_and_retrieve():
 
     print("🔍 Checking Batch Job Status (Last 10 jobs)...")
     
-    # 최근 10개 배치 조회
     batches = client.batches.list(limit=10)
     
     for batch in batches.data:
         status = batch.status
         batch_id = batch.id
-        description = batch.metadata.get("description", "No description")
+        
+        # === [수정된 부분] ===
+        # metadata가 None이면 빈 딕셔너리처럼 취급하거나 기본값 설정
+        if batch.metadata:
+            description = batch.metadata.get("description", "No description")
+        else:
+            description = "No description"
+        # ===================
         
         print(f"\n[Batch ID: {batch_id}]")
         print(f" - Status: {status}")
@@ -99,7 +105,6 @@ def check_and_retrieve():
         if status == 'completed' and batch.output_file_id:
             print(f" - Output File ID: {batch.output_file_id}")
             
-            # 설명문(metadata)에서 데이터셋 이름 추출 (예: "Passage generation for netconfig")
             dataset_key = None
             for key in DATA_PATHS.keys():
                 if key in description:
@@ -108,11 +113,12 @@ def check_and_retrieve():
             
             if dataset_key:
                 print(f"⬇️ Downloading results for '{dataset_key}'...")
-                file_response = client.files.content(batch.output_file_id)
-                content = file_response.text
-                
-                # 병합 및 저장 실행
-                merge_results(dataset_key, content)
+                try:
+                    file_response = client.files.content(batch.output_file_id)
+                    content = file_response.text
+                    merge_results(dataset_key, content)
+                except Exception as e:
+                    print(f"⚠️ Error downloading/merging: {e}")
             else:
                 print("⚠️ Could not identify dataset from description. Skipping merge.")
 
@@ -121,6 +127,7 @@ def check_and_retrieve():
         
         elif status in ['in_progress', 'validating', 'finalizing']:
             print("⏳ Still processing... Check again later.")
-
+            
+            
 if __name__ == "__main__":
     check_and_retrieve()

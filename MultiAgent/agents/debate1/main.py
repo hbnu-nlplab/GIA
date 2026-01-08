@@ -215,7 +215,7 @@ def run_debate_on_dataset(input_file, output_file, limit=None):
     results = []
 
     for i, item in enumerate(data):
-        print(f"\n Processing Item {i+1}/{len(data)}: {item.get('question')[:30]}...")
+        print(f"\nx Processing Item {i+1}/{len(data)}: {item.get('question')[:30]}...")
         
         initial_state = {
             "question": item['question'],
