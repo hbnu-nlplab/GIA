@@ -13,10 +13,10 @@ sys.path.append(str(BASE_DIR))
 
 # 평가할 파일들의 경로 리스트
 DATA_FILES = {
-    "TeleQuAD": BASE_DIR / "data" / "passages" / "test3" / "telequad_passage.json",
-    "TeleQnA": BASE_DIR / "data" / "passages" / "test3" / "teleqna_passage.json",
-    "NetBench": BASE_DIR / "data" / "passages" / "test3" / "netbench_passage.json",
-    "NetConfig": BASE_DIR / "data" / "passages" / "test3" / "netconfig_passage.json"
+    "TeleQuAD": BASE_DIR / "data" / "passages" / "full" / "telequad_passage.json",
+    "TeleQnA": BASE_DIR / "data" / "passages" / "full" / "teleqna_passage.json",
+    "NetBench": BASE_DIR / "data" / "passages" / "full" / "netbench_passage.json",
+    "NetConfig": BASE_DIR / "data" / "passages" / "full" / "netconfig_passage.json"
 }
 
 def load_metrics():
@@ -37,11 +37,25 @@ def evaluate_single_file(file_path, dataset_name, rouge, bertscore):
     preds = []
     
     for item in data:
-        # 정답이나 패시지가 유효하지 않으면 스킵
-        g = item.get('gold_answer')
-        p = item.get('passage')
-        refs.append(g.lower())
-        preds.append(p.lower())
+        p = item.get('passage', '')
+        g = item.get('gold_answer', '')
+
+        # [Fix] gold_answer가 dict나 list일 경우 에러 방지 (문자열 변환)
+        if isinstance(g, dict):
+            # 만약 dict라면 문자열로 변환 (필요시 특정 키값만 추출 가능)
+            g = str(g)
+        elif isinstance(g, list):
+            # 만약 정답이 리스트라면 첫 번째 요소를 쓰거나 문자열로 변환
+            g = str(g[0]) if len(g) > 0 else ""
+        elif g is None:
+            g = ""
+            
+        # passage도 안전하게 문자열 변환
+        if p is None:
+            p = ""
+        
+        preds.append(str(p).lower())
+        refs.append(str(g).lower())
 
     if not preds:
         return None

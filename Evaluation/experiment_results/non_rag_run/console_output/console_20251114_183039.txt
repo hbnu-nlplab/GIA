@@ -1,0 +1,1 @@
+[ERROR] Non-RAG pipeline failed: [Errno 2] No such file or directory: 'Evaluation/dataset/test_fin.csv'
