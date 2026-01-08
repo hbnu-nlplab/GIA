@@ -1,0 +1,33 @@
+2026-01-08 12:58:40,074 | INFO | Processing Q: TRACEROUTE_leaf2_leaf3
+2026-01-08 12:58:40,088 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-08 13:00:55,249 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-08 13:01:01,879 | ERROR | Query failed: unexpected tokens remaining in message header: Some("to=assistant")
+2026-01-08 13:01:01,879 | INFO | Processing Q: VTY_TRANSPORT_INPUT_TEXT
+2026-01-08 13:01:01,886 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-08 13:01:02,905 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-08 13:01:03,373 | INFO | Processing Q: COMPARE_INTERFACE_COUNT
+2026-01-08 13:01:03,381 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-08 13:01:04,215 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-08 13:01:04,643 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-08 13:01:10,292 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-08 13:03:25,862 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-08 13:03:29,551 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-08 13:03:32,393 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-08 13:03:35,208 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-08 13:03:36,433 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-08 13:03:38,264 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-08 13:03:41,952 | INFO | Processing Q: TRACEROUTE_p1_p2
+2026-01-08 13:03:41,960 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-08 13:05:58,420 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-08 13:06:13,137 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-08 13:08:28,109 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-08 13:08:34,973 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-08 13:09:14,427 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-08 13:09:23,317 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-08 13:09:26,253 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-08 13:09:29,786 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-08 13:09:36,070 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-08 13:09:43,457 | INFO | Processing Q: MPLS_LDP_ROUTER_ID
+2026-01-08 13:09:43,466 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-08 13:09:46,174 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-08 13:09:47,478 | INFO | Saved results to results/GPT-OSS-20B_agent

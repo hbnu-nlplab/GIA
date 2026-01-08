@@ -1,0 +1,320 @@
+{
+  "meta": {
+    "model": "GPT-OSS-20B",
+    "total_samples": 10,
+    "duration": 11.98489236831665
+  },
+  "metrics_summary": {
+    "avg_time_per_query": 1.198489236831665,
+    "avg_tool_calls": 1.0,
+    "avg_prompt_tokens": 537.0,
+    "avg_completion_tokens": 2.0,
+    "avg_total_tokens": 539.0,
+    "avg_context_size": 3.4,
+    "total_tokens": 5390,
+    "total_tool_calls": 10,
+    "success_rate": 1.0
+  },
+  "results": [
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT",
+      "question": "p2 장비의 호스트네임은 무엇입니까? [답변 형식: 정확한 값만]",
+      "gold": "\"p2\"",
+      "pred": "p2",
+      "pred_raw": "p2",
+      "answer_type": "text",
+      "level": "L1",
+      "category": "System_Inventory",
+      "status": "OK",
+      "metrics": {
+        "question_id": "SYSTEM_HOSTNAME_TEXT",
+        "total_time": 1.0777192115783691,
+        "tool_calls": 1,
+        "tool_call_details": [
+          {
+            "tool": "query_device",
+            "input": "p2, hostname",
+            "output_len": 2
+          }
+        ],
+        "prompt_tokens": 537,
+        "completion_tokens": 2,
+        "total_tokens": 539,
+        "context_size": 2,
+        "agent_steps": 1,
+        "success": true,
+        "error_msg": null
+      }
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT",
+      "question": "pe2 장비의 호스트네임은 무엇입니까? [답변 형식: 정확한 값만]",
+      "gold": "\"pe2\"",
+      "pred": "pe2",
+      "pred_raw": "pe2",
+      "answer_type": "text",
+      "level": "L1",
+      "category": "System_Inventory",
+      "status": "OK",
+      "metrics": {
+        "question_id": "SYSTEM_HOSTNAME_TEXT",
+        "total_time": 1.310279130935669,
+        "tool_calls": 1,
+        "tool_call_details": [
+          {
+            "tool": "query_device",
+            "input": "pe2, hostname",
+            "output_len": 3
+          }
+        ],
+        "prompt_tokens": 537,
+        "completion_tokens": 2,
+        "total_tokens": 539,
+        "context_size": 3,
+        "agent_steps": 1,
+        "success": true,
+        "error_msg": null
+      }
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT",
+      "question": "p3 장비의 호스트네임은 무엇입니까? [답변 형식: 정확한 값만]",
+      "gold": "\"p3\"",
+      "pred": "p3",
+      "pred_raw": "p3",
+      "answer_type": "text",
+      "level": "L1",
+      "category": "System_Inventory",
+      "status": "OK",
+      "metrics": {
+        "question_id": "SYSTEM_HOSTNAME_TEXT",
+        "total_time": 1.4992401599884033,
+        "tool_calls": 1,
+        "tool_call_details": [
+          {
+            "tool": "query_device",
+            "input": "p3, hostname",
+            "output_len": 2
+          }
+        ],
+        "prompt_tokens": 537,
+        "completion_tokens": 2,
+        "total_tokens": 539,
+        "context_size": 2,
+        "agent_steps": 1,
+        "success": true,
+        "error_msg": null
+      }
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT",
+      "question": "p4 장비의 호스트네임은 무엇입니까? [답변 형식: 정확한 값만]",
+      "gold": "\"p4\"",
+      "pred": "p4",
+      "pred_raw": "p4",
+      "answer_type": "text",
+      "level": "L1",
+      "category": "System_Inventory",
+      "status": "OK",
+      "metrics": {
+        "question_id": "SYSTEM_HOSTNAME_TEXT",
+        "total_time": 1.0228090286254883,
+        "tool_calls": 1,
+        "tool_call_details": [
+          {
+            "tool": "query_device",
+            "input": "p4, hostname",
+            "output_len": 2
+          }
+        ],
+        "prompt_tokens": 537,
+        "completion_tokens": 2,
+        "total_tokens": 539,
+        "context_size": 2,
+        "agent_steps": 1,
+        "success": true,
+        "error_msg": null
+      }
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT",
+      "question": "leaf3 장비의 호스트네임은 무엇입니까? [답변 형식: 정확한 값만]",
+      "gold": "\"leaf3\"",
+      "pred": "leaf3",
+      "pred_raw": "leaf3",
+      "answer_type": "text",
+      "level": "L1",
+      "category": "System_Inventory",
+      "status": "OK",
+      "metrics": {
+        "question_id": "SYSTEM_HOSTNAME_TEXT",
+        "total_time": 1.3295137882232666,
+        "tool_calls": 1,
+        "tool_call_details": [
+          {
+            "tool": "query_device",
+            "input": "leaf3, hostname",
+            "output_len": 5
+          }
+        ],
+        "prompt_tokens": 537,
+        "completion_tokens": 2,
+        "total_tokens": 539,
+        "context_size": 5,
+        "agent_steps": 1,
+        "success": true,
+        "error_msg": null
+      }
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT",
+      "question": "leaf1 장비의 호스트네임은 무엇입니까? [답변 형식: 정확한 값만]",
+      "gold": "\"leaf1\"",
+      "pred": "leaf1",
+      "pred_raw": "leaf1",
+      "answer_type": "text",
+      "level": "L1",
+      "category": "System_Inventory",
+      "status": "OK",
+      "metrics": {
+        "question_id": "SYSTEM_HOSTNAME_TEXT",
+        "total_time": 1.030057430267334,
+        "tool_calls": 1,
+        "tool_call_details": [
+          {
+            "tool": "query_device",
+            "input": "leaf1, hostname",
+            "output_len": 5
+          }
+        ],
+        "prompt_tokens": 537,
+        "completion_tokens": 2,
+        "total_tokens": 539,
+        "context_size": 5,
+        "agent_steps": 1,
+        "success": true,
+        "error_msg": null
+      }
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT",
+      "question": "pe1 장비의 호스트네임은 무엇입니까? [답변 형식: 정확한 값만]",
+      "gold": "\"pe1\"",
+      "pred": "pe1",
+      "pred_raw": "pe1",
+      "answer_type": "text",
+      "level": "L1",
+      "category": "System_Inventory",
+      "status": "OK",
+      "metrics": {
+        "question_id": "SYSTEM_HOSTNAME_TEXT",
+        "total_time": 1.2999529838562012,
+        "tool_calls": 1,
+        "tool_call_details": [
+          {
+            "tool": "query_device",
+            "input": "pe1, hostname",
+            "output_len": 3
+          }
+        ],
+        "prompt_tokens": 537,
+        "completion_tokens": 2,
+        "total_tokens": 539,
+        "context_size": 3,
+        "agent_steps": 1,
+        "success": true,
+        "error_msg": null
+      }
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT",
+      "question": "p1 장비의 호스트네임은 무엇입니까? [답변 형식: 정확한 값만]",
+      "gold": "\"p1\"",
+      "pred": "p1",
+      "pred_raw": "p1",
+      "answer_type": "text",
+      "level": "L1",
+      "category": "System_Inventory",
+      "status": "OK",
+      "metrics": {
+        "question_id": "SYSTEM_HOSTNAME_TEXT",
+        "total_time": 1.0155158042907715,
+        "tool_calls": 1,
+        "tool_call_details": [
+          {
+            "tool": "query_device",
+            "input": "p1, hostname",
+            "output_len": 2
+          }
+        ],
+        "prompt_tokens": 537,
+        "completion_tokens": 2,
+        "total_tokens": 539,
+        "context_size": 2,
+        "agent_steps": 1,
+        "success": true,
+        "error_msg": null
+      }
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT",
+      "question": "leaf4 장비의 호스트네임은 무엇입니까? [답변 형식: 정확한 값만]",
+      "gold": "\"leaf4\"",
+      "pred": "leaf4",
+      "pred_raw": "leaf4",
+      "answer_type": "text",
+      "level": "L1",
+      "category": "System_Inventory",
+      "status": "OK",
+      "metrics": {
+        "question_id": "SYSTEM_HOSTNAME_TEXT",
+        "total_time": 1.3946731090545654,
+        "tool_calls": 1,
+        "tool_call_details": [
+          {
+            "tool": "query_device",
+            "input": "leaf4, hostname",
+            "output_len": 5
+          }
+        ],
+        "prompt_tokens": 537,
+        "completion_tokens": 2,
+        "total_tokens": 539,
+        "context_size": 5,
+        "agent_steps": 1,
+        "success": true,
+        "error_msg": null
+      }
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT",
+      "question": "leaf2 장비의 호스트네임은 무엇입니까? [답변 형식: 정확한 값만]",
+      "gold": "\"leaf2\"",
+      "pred": "leaf2",
+      "pred_raw": "leaf2",
+      "answer_type": "text",
+      "level": "L1",
+      "category": "System_Inventory",
+      "status": "OK",
+      "metrics": {
+        "question_id": "SYSTEM_HOSTNAME_TEXT",
+        "total_time": 1.005131721496582,
+        "tool_calls": 1,
+        "tool_call_details": [
+          {
+            "tool": "query_device",
+            "input": "leaf2, hostname",
+            "output_len": 5
+          }
+        ],
+        "prompt_tokens": 537,
+        "completion_tokens": 2,
+        "total_tokens": 539,
+        "context_size": 5,
+        "agent_steps": 1,
+        "success": true,
+        "error_msg": null
+      }
+    }
+  ]
+}

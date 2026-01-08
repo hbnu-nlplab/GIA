@@ -1,0 +1,81 @@
+2026-01-07 19:51:07,642 | INFO | Processing Q: SYSTEM_HOSTNAME_TEXT
+2026-01-07 19:51:07,653 | INFO | Retrying request to /chat/completions in 0.376722 seconds
+2026-01-07 19:51:08,031 | INFO | Retrying request to /chat/completions in 0.983038 seconds
+2026-01-07 19:51:09,016 | ERROR | Query failed: Connection error.
+2026-01-07 19:51:09,016 | INFO | Processing Q: SYSTEM_HOSTNAME_TEXT
+2026-01-07 19:51:09,019 | INFO | Retrying request to /chat/completions in 0.477037 seconds
+2026-01-07 19:51:09,498 | INFO | Retrying request to /chat/completions in 0.794378 seconds
+2026-01-07 19:51:10,295 | ERROR | Query failed: Connection error.
+2026-01-07 19:51:10,295 | INFO | Processing Q: SYSTEM_HOSTNAME_TEXT
+2026-01-07 19:51:10,301 | INFO | Retrying request to /chat/completions in 0.382071 seconds
+2026-01-07 19:51:10,685 | INFO | Retrying request to /chat/completions in 0.827463 seconds
+2026-01-07 19:51:11,514 | ERROR | Query failed: Connection error.
+2026-01-07 19:51:11,515 | INFO | Processing Q: SYSTEM_HOSTNAME_TEXT
+2026-01-07 19:51:11,518 | INFO | Retrying request to /chat/completions in 0.480002 seconds
+2026-01-07 19:51:12,000 | INFO | Retrying request to /chat/completions in 0.777419 seconds
+2026-01-07 19:51:12,780 | ERROR | Query failed: Connection error.
+2026-01-07 19:51:12,780 | INFO | Processing Q: SYSTEM_HOSTNAME_TEXT
+2026-01-07 19:51:12,786 | INFO | Retrying request to /chat/completions in 0.422122 seconds
+2026-01-07 19:51:13,210 | INFO | Retrying request to /chat/completions in 0.859589 seconds
+2026-01-07 19:51:14,072 | ERROR | Query failed: Connection error.
+2026-01-07 19:51:14,073 | INFO | Processing Q: SYSTEM_HOSTNAME_TEXT
+2026-01-07 19:51:14,079 | INFO | Retrying request to /chat/completions in 0.406884 seconds
+2026-01-07 19:51:14,487 | INFO | Retrying request to /chat/completions in 0.851152 seconds
+2026-01-07 19:51:15,341 | ERROR | Query failed: Connection error.
+2026-01-07 19:51:15,341 | INFO | Processing Q: SYSTEM_HOSTNAME_TEXT
+2026-01-07 19:51:15,348 | INFO | Retrying request to /chat/completions in 0.431987 seconds
+2026-01-07 19:51:15,781 | INFO | Retrying request to /chat/completions in 0.970243 seconds
+2026-01-07 19:51:16,754 | ERROR | Query failed: Connection error.
+2026-01-07 19:51:16,754 | INFO | Processing Q: SYSTEM_HOSTNAME_TEXT
+2026-01-07 19:51:16,760 | INFO | Retrying request to /chat/completions in 0.392038 seconds
+2026-01-07 19:51:17,154 | INFO | Retrying request to /chat/completions in 0.911519 seconds
+2026-01-07 19:51:18,067 | ERROR | Query failed: Connection error.
+2026-01-07 19:51:18,067 | INFO | Processing Q: SYSTEM_HOSTNAME_TEXT
+2026-01-07 19:51:18,070 | INFO | Retrying request to /chat/completions in 0.482126 seconds
+2026-01-07 19:51:18,554 | INFO | Retrying request to /chat/completions in 0.965018 seconds
+2026-01-07 19:51:19,521 | ERROR | Query failed: Connection error.
+2026-01-07 19:51:19,521 | INFO | Processing Q: SYSTEM_HOSTNAME_TEXT
+2026-01-07 19:51:19,535 | INFO | Retrying request to /chat/completions in 0.428036 seconds
+2026-01-07 19:51:19,965 | INFO | Retrying request to /chat/completions in 0.858280 seconds
+2026-01-07 19:51:20,825 | ERROR | Query failed: Connection error.
+2026-01-07 19:51:20,825 | INFO | Processing Q: SYSTEM_VERSION_TEXT
+2026-01-07 19:51:20,828 | INFO | Retrying request to /chat/completions in 0.466669 seconds
+2026-01-07 19:51:21,297 | INFO | Retrying request to /chat/completions in 0.987606 seconds
+2026-01-07 19:51:22,286 | ERROR | Query failed: Connection error.
+2026-01-07 19:51:22,287 | INFO | Processing Q: SYSTEM_VERSION_TEXT
+2026-01-07 19:51:22,291 | INFO | Retrying request to /chat/completions in 0.457983 seconds
+2026-01-07 19:51:22,751 | INFO | Retrying request to /chat/completions in 0.800299 seconds
+2026-01-07 19:51:23,554 | ERROR | Query failed: Connection error.
+2026-01-07 19:51:23,554 | INFO | Processing Q: SYSTEM_VERSION_TEXT
+2026-01-07 19:51:23,560 | INFO | Retrying request to /chat/completions in 0.390649 seconds
+2026-01-07 19:51:23,953 | INFO | Retrying request to /chat/completions in 0.819484 seconds
+2026-01-07 19:51:24,775 | ERROR | Query failed: Connection error.
+2026-01-07 19:51:24,775 | INFO | Processing Q: SYSTEM_VERSION_TEXT
+2026-01-07 19:51:24,781 | INFO | Retrying request to /chat/completions in 0.409216 seconds
+2026-01-07 19:51:25,192 | INFO | Retrying request to /chat/completions in 0.803522 seconds
+2026-01-07 19:51:25,998 | ERROR | Query failed: Connection error.
+2026-01-07 19:51:25,998 | INFO | Processing Q: SYSTEM_VERSION_TEXT
+2026-01-07 19:51:26,004 | INFO | Retrying request to /chat/completions in 0.456750 seconds
+2026-01-07 19:51:26,462 | INFO | Retrying request to /chat/completions in 0.941335 seconds
+2026-01-07 19:51:27,405 | ERROR | Query failed: Connection error.
+2026-01-07 19:51:27,406 | INFO | Processing Q: SYSTEM_VERSION_TEXT
+2026-01-07 19:51:27,411 | INFO | Retrying request to /chat/completions in 0.404509 seconds
+2026-01-07 19:51:27,817 | INFO | Retrying request to /chat/completions in 0.954450 seconds
+2026-01-07 19:51:28,774 | ERROR | Query failed: Connection error.
+2026-01-07 19:51:28,774 | INFO | Processing Q: SYSTEM_VERSION_TEXT
+2026-01-07 19:51:28,781 | INFO | Retrying request to /chat/completions in 0.413223 seconds
+2026-01-07 19:51:29,195 | INFO | Retrying request to /chat/completions in 0.928296 seconds
+2026-01-07 19:51:30,126 | ERROR | Query failed: Connection error.
+2026-01-07 19:51:30,126 | INFO | Processing Q: SYSTEM_VERSION_TEXT
+2026-01-07 19:51:30,132 | INFO | Retrying request to /chat/completions in 0.407285 seconds
+2026-01-07 19:51:30,541 | INFO | Retrying request to /chat/completions in 0.948476 seconds
+2026-01-07 19:51:31,491 | ERROR | Query failed: Connection error.
+2026-01-07 19:51:31,491 | INFO | Processing Q: SYSTEM_VERSION_TEXT
+2026-01-07 19:51:31,496 | INFO | Retrying request to /chat/completions in 0.424344 seconds
+2026-01-07 19:51:31,922 | INFO | Retrying request to /chat/completions in 0.855845 seconds
+2026-01-07 19:51:32,780 | ERROR | Query failed: Connection error.
+2026-01-07 19:51:32,780 | INFO | Processing Q: SYSTEM_VERSION_TEXT
+2026-01-07 19:51:32,787 | INFO | Retrying request to /chat/completions in 0.429833 seconds
+2026-01-07 19:51:33,218 | INFO | Retrying request to /chat/completions in 0.881394 seconds
+2026-01-07 19:51:34,103 | ERROR | Query failed: Connection error.
+2026-01-07 19:51:34,104 | INFO | Saved results to results/GPT-OSS-20B_agent
