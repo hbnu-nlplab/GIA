@@ -506,9 +506,12 @@ class NetConfigQAScorer:
         # Remove Korean counters after numbers
         text = re.sub(r'(\d+)\s*[개대명건번째]', r'\1', text)
         
-        # 3. Normalize punctuation: remove extra spaces around colons/commas
+        # 3. Normalize punctuation: remove extra spaces around colons/commas/arrows
         text = re.sub(r'\s*:\s*', ':', text)
         text = re.sub(r'\s*,\s*', ',', text)
+        # Normalize arrows used in path outputs (e.g., "p1 → p2" vs "p1→p2" vs "p1 -> p2")
+        text = text.replace('->', '→')
+        text = re.sub(r'\s*→\s*', '→', text)
         
         return text
 
@@ -789,8 +792,10 @@ def analyze_results(json_file: str, verbose: bool = False):
     print(f"[Step 1/3] Calculating Type-Aware and Traditional metrics...")
 
     for row in data['results']:
-        # 필드명 호환성 처리 (raw_pred vs pred, answer_type vs type, answer_status vs status)
-        raw_pred = row.get('raw_pred', row.get('pred', ''))
+        # 필드명 호환성 처리 (pred/raw_pred/pred_raw, answer_type vs type, answer_status vs status)
+        # - pred:     eval 단계에서 타입별(JSON) 정규화된 출력(채점 권장)
+        # - pred_raw: eval 단계에서 "원문 출력" 보존용(디버그/분석용)
+        raw_pred = row.get('pred', row.get('raw_pred', row.get('pred_raw', '')))
         answer_type = canonical_answer_type(row.get('answer_type', row.get('type', 'text')))
         status = row.get('answer_status', row.get('status', 'OK'))
         level = row.get('level', 'L1')

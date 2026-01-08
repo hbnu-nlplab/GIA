@@ -1,0 +1,254 @@
+{
+  "meta": {
+    "model": "GPT-OSS-20B",
+    "total_samples": 5,
+    "duration": 525.5977973937988
+  },
+  "metrics_summary": {
+    "avg_time_per_query": 105.11955947875977,
+    "avg_tool_calls": 11.0,
+    "avg_prompt_tokens": 446.6,
+    "avg_completion_tokens": 5.0,
+    "avg_total_tokens": 451.6,
+    "avg_context_size": 203.0,
+    "total_tokens": 2258,
+    "total_tool_calls": 55,
+    "success_rate": 0.8
+  },
+  "results": [
+    {
+      "question_id": "TRACEROUTE_leaf2_leaf3",
+      "question": "leaf2에서 172.16.3.2까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)]",
+      "gold": "\"경로 없음\"",
+      "pred": "Error",
+      "pred_raw": "Error",
+      "answer_type": "text",
+      "level": "L4",
+      "category": "Reachability_Analysis",
+      "status": "OK",
+      "metrics": {
+        "question_id": "TRACEROUTE_leaf2_leaf3",
+        "total_time": 0,
+        "tool_calls": 0,
+        "tool_call_details": [],
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0,
+        "context_size": 0,
+        "agent_steps": 0,
+        "success": false,
+        "error_msg": "unexpected tokens remaining in message header: Some(\"to=assistant\")"
+      }
+    },
+    {
+      "question_id": "VTY_TRANSPORT_INPUT_TEXT",
+      "question": "p2 장비의 VTY transport input 설정은 무엇입니까? [답변 형식: 설정값 또는 null]",
+      "gold": "\"ssh\"",
+      "pred": "ssh",
+      "pred_raw": "ssh",
+      "answer_type": "text",
+      "level": "L1",
+      "category": "Security_Inventory",
+      "status": "OK",
+      "metrics": {
+        "question_id": "VTY_TRANSPORT_INPUT_TEXT",
+        "total_time": 1.4936506748199463,
+        "tool_calls": 1,
+        "tool_call_details": [
+          {
+            "tool": "query_device",
+            "input": "p2, vty_transport_input_text",
+            "output_len": 3
+          }
+        ],
+        "prompt_tokens": 538,
+        "completion_tokens": 1,
+        "total_tokens": 539,
+        "context_size": 3,
+        "agent_steps": 1,
+        "success": true,
+        "error_msg": null
+      }
+    },
+    {
+      "question_id": "COMPARE_INTERFACE_COUNT",
+      "question": "p2과 pe1의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p2: N개, pe1: M개, 차이: K개']",
+      "gold": "\"p2: 5, pe1: 5, diff: 0\"",
+      "pred": "Agent stopped due to iteration limit or time limit.",
+      "pred_raw": "Agent stopped due to iteration limit or time limit.",
+      "answer_type": "text",
+      "level": "L3",
+      "category": "Comparison_Analysis",
+      "status": "OK",
+      "metrics": {
+        "question_id": "COMPARE_INTERFACE_COUNT",
+        "total_time": 158.57952499389648,
+        "tool_calls": 8,
+        "tool_call_details": [
+          {
+            "tool": "query_device",
+            "input": "p2, num_interfaces",
+            "output_len": 1
+          },
+          {
+            "tool": "_Exception",
+            "input": "Invalid Format: Missing 'Action:' after 'Thought:",
+            "output_len": 49
+          },
+          {
+            "tool": "query_device",
+            "input": "p2, num_interfaces",
+            "output_len": 1
+          },
+          {
+            "tool": "_Exception",
+            "input": "Invalid Format: Missing 'Action:' after 'Thought:",
+            "output_len": 49
+          },
+          {
+            "tool": "query_device",
+            "input": "p2, num_interfaces",
+            "output_len": 1
+          },
+          {
+            "tool": "query_device",
+            "input": "p2, num_interfaces",
+            "output_len": 1
+          },
+          {
+            "tool": "query_device",
+            "input": "p2, num_interfaces",
+            "output_len": 1
+          },
+          {
+            "tool": "query_device",
+            "input": "p2, num_interfaces",
+            "output_len": 1
+          },
+          {
+            "tool": "query_device",
+            "input": "p2, num_interfaces",
+            "output_len": 1
+          },
+          {
+            "tool": "query_device",
+            "input": "p2, num_interfaces",
+            "output_len": 1
+          }
+        ],
+        "prompt_tokens": 565,
+        "completion_tokens": 10,
+        "total_tokens": 575,
+        "context_size": 106,
+        "agent_steps": 10,
+        "success": true,
+        "error_msg": null
+      }
+    },
+    {
+      "question_id": "TRACEROUTE_p1_p2",
+      "question": "p1에서 10.0.0.1까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)]",
+      "gold": "\"p1 → p2\"",
+      "pred": "Agent stopped due to iteration limit or time limit.",
+      "pred_raw": "Agent stopped due to iteration limit or time limit.",
+      "answer_type": "text",
+      "level": "L4",
+      "category": "Reachability_Analysis",
+      "status": "OK",
+      "metrics": {
+        "question_id": "TRACEROUTE_p1_p2",
+        "total_time": 361.50437664985657,
+        "tool_calls": 45,
+        "tool_call_details": [
+          {
+            "tool": "_Exception",
+            "input": "Invalid Format: Missing 'Action:' after 'Thought:",
+            "output_len": 49
+          },
+          {
+            "tool": "list_all_devices",
+            "input": "<|constrain|>json<|message|>{}",
+            "output_len": 60
+          },
+          {
+            "tool": "_Exception",
+            "input": "Invalid Format: Missing 'Action:' after 'Thought:",
+            "output_len": 49
+          },
+          {
+            "tool": "list_all_devices",
+            "input": "<|constrain|>json<|message|>{}",
+            "output_len": 60
+          },
+          {
+            "tool": "list_all_devices",
+            "input": "{}",
+            "output_len": 60
+          },
+          {
+            "tool": "list_all_devices",
+            "input": "hostname",
+            "output_len": 74
+          },
+          {
+            "tool": "_Exception",
+            "input": "Invalid Format: Missing 'Action:' after 'Thought:",
+            "output_len": 49
+          },
+          {
+            "tool": "_Exception",
+            "input": "Invalid Format: Missing 'Action:' after 'Thought:",
+            "output_len": 49
+          },
+          {
+            "tool": "_Exception",
+            "input": "Invalid Format: Missing 'Action:' after 'Thought:",
+            "output_len": 49
+          },
+          {
+            "tool": "query_device",
+            "input": "leaf1, interfaces",
+            "output_len": 403
+          }
+        ],
+        "prompt_tokens": 573,
+        "completion_tokens": 10,
+        "total_tokens": 583,
+        "context_size": 902,
+        "agent_steps": 10,
+        "success": true,
+        "error_msg": null
+      }
+    },
+    {
+      "question_id": "MPLS_LDP_ROUTER_ID",
+      "question": "leaf1 장비의 MPLS LDP Router-ID는 무엇입니까? [답변 형식: IP 주소 (예: 10.255.0.1) 또는 '미설정']",
+      "gold": "\"미설정\"",
+      "pred": "미설정",
+      "pred_raw": "미설정",
+      "answer_type": "text",
+      "level": "L1",
+      "category": "Services_Inventory",
+      "status": "OK",
+      "metrics": {
+        "question_id": "MPLS_LDP_ROUTER_ID",
+        "total_time": 4.02024507522583,
+        "tool_calls": 1,
+        "tool_call_details": [
+          {
+            "tool": "query_device",
+            "input": "leaf1, ldp_router_id",
+            "output_len": 4
+          }
+        ],
+        "prompt_tokens": 557,
+        "completion_tokens": 4,
+        "total_tokens": 561,
+        "context_size": 4,
+        "agent_steps": 1,
+        "success": true,
+        "error_msg": null
+      }
+    }
+  ]
+}

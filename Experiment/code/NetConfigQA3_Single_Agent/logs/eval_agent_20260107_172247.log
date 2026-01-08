@@ -1289,3 +1289,1730 @@
 2026-01-07 18:45:15,896 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
 2026-01-07 18:45:22,747 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
 2026-01-07 18:45:28,152 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:47:43,142 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:47:53,171 | INFO | Processing Q: DEVICES_WITH_SAME_VRF
+2026-01-07 18:47:53,177 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:48:02,118 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:48:04,845 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:48:17,145 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:48:24,831 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:48:32,244 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:48:34,186 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:48:36,114 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:48:41,315 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:48:43,017 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:48:44,521 | INFO | Processing Q: OSPF_AREA_MEMBERSHIP
+2026-01-07 18:48:44,529 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:48:46,988 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:48:49,844 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:48:52,011 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:48:53,546 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:48:56,888 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:48:58,321 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:49:02,720 | INFO | Processing Q: OSPF_AREA0_IF_COUNT
+2026-01-07 18:49:02,728 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:49:05,805 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:49:07,040 | INFO | Processing Q: OSPF_AREA0_IF_COUNT
+2026-01-07 18:49:07,046 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:49:09,734 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:49:13,050 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:49:17,089 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:49:20,918 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:49:24,362 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:49:28,432 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:49:33,461 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:49:35,549 | INFO | Processing Q: OSPF_AREA0_IF_COUNT
+2026-01-07 18:49:35,557 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:49:42,904 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:49:43,591 | INFO | Processing Q: OSPF_AREA0_IF_COUNT
+2026-01-07 18:49:43,599 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:49:48,390 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:49:49,447 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:49:52,274 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:49:54,682 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:49:57,237 | INFO | Processing Q: OSPF_AREA0_IF_COUNT
+2026-01-07 18:49:57,246 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:50:02,591 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:50:06,831 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:50:11,036 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:50:16,003 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:50:19,927 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:50:29,223 | INFO | Processing Q: OSPF_AREA0_IF_COUNT
+2026-01-07 18:50:29,231 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:50:33,643 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:50:35,150 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:50:38,221 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:50:40,185 | INFO | Processing Q: OSPF_AREA0_IF_COUNT
+2026-01-07 18:50:40,193 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:50:46,349 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:50:46,966 | INFO | Processing Q: OSPF_AREA0_IF_COUNT
+2026-01-07 18:50:46,974 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:50:51,826 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:50:52,975 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:50:56,634 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:50:57,660 | INFO | Processing Q: OSPF_AREA0_IF_COUNT
+2026-01-07 18:50:57,668 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:51:00,779 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:51:01,403 | INFO | Processing Q: OSPF_AREA0_IF_COUNT
+2026-01-07 18:51:01,411 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:51:07,835 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:51:10,898 | INFO | Processing Q: OSPF_NEIGHBOR_COUNT_PER_AREA
+2026-01-07 18:51:10,906 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:51:14,209 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:51:19,443 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:51:23,021 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:51:26,608 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:51:36,819 | INFO | Processing Q: L2VPN_PAIRS
+2026-01-07 18:51:36,827 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:51:52,098 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:51:56,206 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:52:03,271 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:52:07,619 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:52:11,105 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:52:15,080 | INFO | Processing Q: L2VPN_UNIDIRECTIONAL_PAIRS
+2026-01-07 18:52:15,086 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:52:21,546 | INFO | Processing Q: L2VPN_UNIDIR_COUNT
+2026-01-07 18:52:21,554 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:52:36,748 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:52:39,111 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:52:45,632 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:52:53,018 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:52:56,824 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:53:01,969 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:53:05,374 | INFO | Processing Q: L2VPN_PWID_MISMATCH_PAIRS
+2026-01-07 18:53:05,380 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:53:10,898 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:53:12,652 | INFO | Processing Q: L2VPN_MISMATCH_COUNT
+2026-01-07 18:53:12,660 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:53:26,283 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:53:30,186 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:54:21,471 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:54:24,163 | INFO | Processing Q: IBGP_FULLMESH_OK
+2026-01-07 18:54:24,171 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:54:29,251 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-07 18:54:32,261 | ERROR | Query failed: peer closed connection without sending complete message body (incomplete chunked read)
+2026-01-07 18:54:32,261 | INFO | Processing Q: IBGP_MISSING_PAIRS
+2026-01-07 18:54:32,265 | INFO | Retrying request to /chat/completions in 0.486900 seconds
+2026-01-07 18:54:32,753 | INFO | Retrying request to /chat/completions in 0.970117 seconds
+2026-01-07 18:54:33,726 | ERROR | Query failed: Connection error.
+2026-01-07 18:54:33,726 | INFO | Processing Q: IBGP_MISSING_PAIRS_COUNT
+2026-01-07 18:54:33,732 | INFO | Retrying request to /chat/completions in 0.477042 seconds
+2026-01-07 18:54:34,211 | INFO | Retrying request to /chat/completions in 0.935726 seconds
+2026-01-07 18:54:35,149 | ERROR | Query failed: Connection error.
+2026-01-07 18:54:35,149 | INFO | Processing Q: IBGP_UNDER_PEERED_DEVICES
+2026-01-07 18:54:35,155 | INFO | Retrying request to /chat/completions in 0.401239 seconds
+2026-01-07 18:54:35,558 | INFO | Retrying request to /chat/completions in 0.936819 seconds
+2026-01-07 18:54:36,496 | ERROR | Query failed: Connection error.
+2026-01-07 18:54:36,496 | INFO | Processing Q: IBGP_UNDER_PEERED_COUNT
+2026-01-07 18:54:36,502 | INFO | Retrying request to /chat/completions in 0.423159 seconds
+2026-01-07 18:54:36,927 | INFO | Retrying request to /chat/completions in 0.769768 seconds
+2026-01-07 18:54:37,698 | ERROR | Query failed: Connection error.
+2026-01-07 18:54:37,699 | INFO | Processing Q: VRF_WITHOUT_RT_PAIRS
+2026-01-07 18:54:37,705 | INFO | Retrying request to /chat/completions in 0.472768 seconds
+2026-01-07 18:54:38,179 | INFO | Retrying request to /chat/completions in 0.855987 seconds
+2026-01-07 18:54:39,037 | ERROR | Query failed: Connection error.
+2026-01-07 18:54:39,038 | INFO | Processing Q: VRF_WITHOUT_RT_COUNT
+2026-01-07 18:54:39,044 | INFO | Retrying request to /chat/completions in 0.487535 seconds
+2026-01-07 18:54:39,532 | INFO | Retrying request to /chat/completions in 0.915249 seconds
+2026-01-07 18:54:40,449 | ERROR | Query failed: Connection error.
+2026-01-07 18:54:40,449 | INFO | Processing Q: VRF_RT_LIST_PER_DEVICE
+2026-01-07 18:54:40,455 | INFO | Retrying request to /chat/completions in 0.478630 seconds
+2026-01-07 18:54:40,935 | INFO | Retrying request to /chat/completions in 0.914710 seconds
+2026-01-07 18:54:41,852 | ERROR | Query failed: Connection error.
+2026-01-07 18:54:41,852 | INFO | Processing Q: VRF_RT_LIST_PER_DEVICE
+2026-01-07 18:54:41,858 | INFO | Retrying request to /chat/completions in 0.403070 seconds
+2026-01-07 18:54:42,263 | INFO | Retrying request to /chat/completions in 0.888384 seconds
+2026-01-07 18:54:43,153 | ERROR | Query failed: Connection error.
+2026-01-07 18:54:43,154 | INFO | Processing Q: VRF_RT_LIST_PER_DEVICE
+2026-01-07 18:54:43,158 | INFO | Retrying request to /chat/completions in 0.434396 seconds
+2026-01-07 18:54:43,594 | INFO | Retrying request to /chat/completions in 0.822642 seconds
+2026-01-07 18:54:44,419 | ERROR | Query failed: Connection error.
+2026-01-07 18:54:44,419 | INFO | Processing Q: VRF_RT_LIST_PER_DEVICE
+2026-01-07 18:54:44,425 | INFO | Retrying request to /chat/completions in 0.439267 seconds
+2026-01-07 18:54:44,866 | INFO | Retrying request to /chat/completions in 0.816965 seconds
+2026-01-07 18:54:45,686 | ERROR | Query failed: Connection error.
+2026-01-07 18:54:45,686 | INFO | Processing Q: VRF_RT_LIST_PER_DEVICE
+2026-01-07 18:54:45,692 | INFO | Retrying request to /chat/completions in 0.422594 seconds
+2026-01-07 18:54:46,117 | INFO | Retrying request to /chat/completions in 0.773074 seconds
+2026-01-07 18:54:46,892 | ERROR | Query failed: Connection error.
+2026-01-07 18:54:46,893 | INFO | Processing Q: VRF_RT_LIST_PER_DEVICE
+2026-01-07 18:54:46,899 | INFO | Retrying request to /chat/completions in 0.421452 seconds
+2026-01-07 18:54:47,322 | INFO | Retrying request to /chat/completions in 0.960792 seconds
+2026-01-07 18:54:48,285 | ERROR | Query failed: Connection error.
+2026-01-07 18:54:48,285 | INFO | Processing Q: VRF_RT_LIST_PER_DEVICE
+2026-01-07 18:54:48,291 | INFO | Retrying request to /chat/completions in 0.451802 seconds
+2026-01-07 18:54:48,745 | INFO | Retrying request to /chat/completions in 0.772159 seconds
+2026-01-07 18:54:49,519 | ERROR | Query failed: Connection error.
+2026-01-07 18:54:49,519 | INFO | Processing Q: VRF_RT_LIST_PER_DEVICE
+2026-01-07 18:54:49,525 | INFO | Retrying request to /chat/completions in 0.456864 seconds
+2026-01-07 18:54:49,983 | INFO | Retrying request to /chat/completions in 0.783752 seconds
+2026-01-07 18:54:50,769 | ERROR | Query failed: Connection error.
+2026-01-07 18:54:50,770 | INFO | Processing Q: VRF_RT_LIST_PER_DEVICE
+2026-01-07 18:54:50,775 | INFO | Retrying request to /chat/completions in 0.426763 seconds
+2026-01-07 18:54:51,204 | INFO | Retrying request to /chat/completions in 0.758167 seconds
+2026-01-07 18:54:51,963 | ERROR | Query failed: Connection error.
+2026-01-07 18:54:51,963 | INFO | Processing Q: VRF_RT_LIST_PER_DEVICE
+2026-01-07 18:54:51,966 | INFO | Retrying request to /chat/completions in 0.449421 seconds
+2026-01-07 18:54:52,418 | INFO | Retrying request to /chat/completions in 0.929256 seconds
+2026-01-07 18:54:53,349 | ERROR | Query failed: Connection error.
+2026-01-07 18:54:53,349 | INFO | Processing Q: COMPARE_BGP_NEIGHBOR_COUNT
+2026-01-07 18:54:53,354 | INFO | Retrying request to /chat/completions in 0.435308 seconds
+2026-01-07 18:54:53,791 | INFO | Retrying request to /chat/completions in 0.816067 seconds
+2026-01-07 18:54:54,608 | ERROR | Query failed: Connection error.
+2026-01-07 18:54:54,608 | INFO | Processing Q: COMPARE_BGP_NEIGHBOR_COUNT
+2026-01-07 18:54:54,614 | INFO | Retrying request to /chat/completions in 0.438912 seconds
+2026-01-07 18:54:55,055 | INFO | Retrying request to /chat/completions in 0.865447 seconds
+2026-01-07 18:54:55,922 | ERROR | Query failed: Connection error.
+2026-01-07 18:54:55,922 | INFO | Processing Q: COMPARE_BGP_NEIGHBOR_COUNT
+2026-01-07 18:54:55,929 | INFO | Retrying request to /chat/completions in 0.452547 seconds
+2026-01-07 18:54:56,383 | INFO | Retrying request to /chat/completions in 0.909095 seconds
+2026-01-07 18:54:57,294 | ERROR | Query failed: Connection error.
+2026-01-07 18:54:57,294 | INFO | Processing Q: COMPARE_BGP_NEIGHBOR_COUNT
+2026-01-07 18:54:57,300 | INFO | Retrying request to /chat/completions in 0.399788 seconds
+2026-01-07 18:54:57,702 | INFO | Retrying request to /chat/completions in 0.845341 seconds
+2026-01-07 18:54:58,549 | ERROR | Query failed: Connection error.
+2026-01-07 18:54:58,549 | INFO | Processing Q: COMPARE_BGP_NEIGHBOR_COUNT
+2026-01-07 18:54:58,555 | INFO | Retrying request to /chat/completions in 0.441758 seconds
+2026-01-07 18:54:58,998 | INFO | Retrying request to /chat/completions in 0.898114 seconds
+2026-01-07 18:54:59,899 | ERROR | Query failed: Connection error.
+2026-01-07 18:54:59,899 | INFO | Processing Q: COMPARE_BGP_NEIGHBOR_COUNT
+2026-01-07 18:54:59,913 | INFO | Retrying request to /chat/completions in 0.489923 seconds
+2026-01-07 18:55:00,405 | INFO | Retrying request to /chat/completions in 0.952989 seconds
+2026-01-07 18:55:01,359 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:01,359 | INFO | Processing Q: COMPARE_BGP_NEIGHBOR_COUNT
+2026-01-07 18:55:01,363 | INFO | Retrying request to /chat/completions in 0.444783 seconds
+2026-01-07 18:55:01,810 | INFO | Retrying request to /chat/completions in 0.971250 seconds
+2026-01-07 18:55:02,784 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:02,784 | INFO | Processing Q: COMPARE_BGP_NEIGHBOR_COUNT
+2026-01-07 18:55:02,790 | INFO | Retrying request to /chat/completions in 0.488541 seconds
+2026-01-07 18:55:03,280 | INFO | Retrying request to /chat/completions in 0.876104 seconds
+2026-01-07 18:55:04,158 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:04,158 | INFO | Processing Q: COMPARE_BGP_NEIGHBOR_COUNT
+2026-01-07 18:55:04,164 | INFO | Retrying request to /chat/completions in 0.492295 seconds
+2026-01-07 18:55:04,658 | INFO | Retrying request to /chat/completions in 0.907973 seconds
+2026-01-07 18:55:05,568 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:05,569 | INFO | Processing Q: COMPARE_BGP_NEIGHBOR_COUNT
+2026-01-07 18:55:05,573 | INFO | Retrying request to /chat/completions in 0.468636 seconds
+2026-01-07 18:55:06,043 | INFO | Retrying request to /chat/completions in 0.947993 seconds
+2026-01-07 18:55:06,993 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:06,993 | INFO | Processing Q: COMPARE_BGP_NEIGHBOR_COUNT
+2026-01-07 18:55:06,999 | INFO | Retrying request to /chat/completions in 0.440067 seconds
+2026-01-07 18:55:07,441 | INFO | Retrying request to /chat/completions in 0.883665 seconds
+2026-01-07 18:55:08,326 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:08,326 | INFO | Processing Q: COMPARE_BGP_NEIGHBOR_COUNT
+2026-01-07 18:55:08,332 | INFO | Retrying request to /chat/completions in 0.464521 seconds
+2026-01-07 18:55:08,798 | INFO | Retrying request to /chat/completions in 0.942393 seconds
+2026-01-07 18:55:09,742 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:09,742 | INFO | Processing Q: COMPARE_BGP_NEIGHBOR_COUNT
+2026-01-07 18:55:09,748 | INFO | Retrying request to /chat/completions in 0.482900 seconds
+2026-01-07 18:55:10,233 | INFO | Retrying request to /chat/completions in 0.781471 seconds
+2026-01-07 18:55:11,016 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:11,016 | INFO | Processing Q: COMPARE_BGP_NEIGHBOR_COUNT
+2026-01-07 18:55:11,019 | INFO | Retrying request to /chat/completions in 0.450321 seconds
+2026-01-07 18:55:11,471 | INFO | Retrying request to /chat/completions in 0.767282 seconds
+2026-01-07 18:55:12,241 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:12,241 | INFO | Processing Q: COMPARE_BGP_NEIGHBOR_COUNT
+2026-01-07 18:55:12,247 | INFO | Retrying request to /chat/completions in 0.453804 seconds
+2026-01-07 18:55:12,703 | INFO | Retrying request to /chat/completions in 0.878155 seconds
+2026-01-07 18:55:13,583 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:13,583 | INFO | Processing Q: COMPARE_BGP_NEIGHBOR_COUNT
+2026-01-07 18:55:13,589 | INFO | Retrying request to /chat/completions in 0.465050 seconds
+2026-01-07 18:55:14,056 | INFO | Retrying request to /chat/completions in 0.969674 seconds
+2026-01-07 18:55:15,028 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:15,028 | INFO | Processing Q: COMPARE_BGP_NEIGHBOR_COUNT
+2026-01-07 18:55:15,034 | INFO | Retrying request to /chat/completions in 0.408153 seconds
+2026-01-07 18:55:15,444 | INFO | Retrying request to /chat/completions in 0.870957 seconds
+2026-01-07 18:55:16,317 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:16,317 | INFO | Processing Q: COMPARE_BGP_NEIGHBOR_COUNT
+2026-01-07 18:55:16,323 | INFO | Retrying request to /chat/completions in 0.401880 seconds
+2026-01-07 18:55:16,727 | INFO | Retrying request to /chat/completions in 0.803394 seconds
+2026-01-07 18:55:17,532 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:17,533 | INFO | Processing Q: COMPARE_BGP_NEIGHBOR_COUNT
+2026-01-07 18:55:17,538 | INFO | Retrying request to /chat/completions in 0.480971 seconds
+2026-01-07 18:55:18,020 | INFO | Retrying request to /chat/completions in 0.992759 seconds
+2026-01-07 18:55:19,015 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:19,015 | INFO | Processing Q: COMPARE_BGP_NEIGHBOR_COUNT
+2026-01-07 18:55:19,021 | INFO | Retrying request to /chat/completions in 0.499985 seconds
+2026-01-07 18:55:19,523 | INFO | Retrying request to /chat/completions in 0.966823 seconds
+2026-01-07 18:55:20,491 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:20,492 | INFO | Processing Q: COMPARE_INTERFACE_COUNT
+2026-01-07 18:55:20,497 | INFO | Retrying request to /chat/completions in 0.438036 seconds
+2026-01-07 18:55:20,937 | INFO | Retrying request to /chat/completions in 0.899881 seconds
+2026-01-07 18:55:21,839 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:21,839 | INFO | Processing Q: COMPARE_INTERFACE_COUNT
+2026-01-07 18:55:21,845 | INFO | Retrying request to /chat/completions in 0.461981 seconds
+2026-01-07 18:55:22,308 | INFO | Retrying request to /chat/completions in 0.768045 seconds
+2026-01-07 18:55:23,079 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:23,079 | INFO | Processing Q: COMPARE_INTERFACE_COUNT
+2026-01-07 18:55:23,085 | INFO | Retrying request to /chat/completions in 0.476969 seconds
+2026-01-07 18:55:23,564 | INFO | Retrying request to /chat/completions in 0.912965 seconds
+2026-01-07 18:55:24,479 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:24,479 | INFO | Processing Q: COMPARE_INTERFACE_COUNT
+2026-01-07 18:55:24,484 | INFO | Retrying request to /chat/completions in 0.413183 seconds
+2026-01-07 18:55:24,899 | INFO | Retrying request to /chat/completions in 0.866563 seconds
+2026-01-07 18:55:25,768 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:25,768 | INFO | Processing Q: COMPARE_INTERFACE_COUNT
+2026-01-07 18:55:25,774 | INFO | Retrying request to /chat/completions in 0.448141 seconds
+2026-01-07 18:55:26,224 | INFO | Retrying request to /chat/completions in 0.814573 seconds
+2026-01-07 18:55:27,040 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:27,040 | INFO | Processing Q: COMPARE_INTERFACE_COUNT
+2026-01-07 18:55:27,046 | INFO | Retrying request to /chat/completions in 0.483591 seconds
+2026-01-07 18:55:27,531 | INFO | Retrying request to /chat/completions in 0.801707 seconds
+2026-01-07 18:55:28,335 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:28,335 | INFO | Processing Q: COMPARE_INTERFACE_COUNT
+2026-01-07 18:55:28,341 | INFO | Retrying request to /chat/completions in 0.384385 seconds
+2026-01-07 18:55:28,728 | INFO | Retrying request to /chat/completions in 0.963407 seconds
+2026-01-07 18:55:29,693 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:29,694 | INFO | Processing Q: COMPARE_INTERFACE_COUNT
+2026-01-07 18:55:29,700 | INFO | Retrying request to /chat/completions in 0.463069 seconds
+2026-01-07 18:55:30,165 | INFO | Retrying request to /chat/completions in 0.951197 seconds
+2026-01-07 18:55:31,118 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:31,119 | INFO | Processing Q: COMPARE_INTERFACE_COUNT
+2026-01-07 18:55:31,124 | INFO | Retrying request to /chat/completions in 0.382224 seconds
+2026-01-07 18:55:31,508 | INFO | Retrying request to /chat/completions in 0.933942 seconds
+2026-01-07 18:55:32,444 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:32,444 | INFO | Processing Q: COMPARE_INTERFACE_COUNT
+2026-01-07 18:55:32,450 | INFO | Retrying request to /chat/completions in 0.498144 seconds
+2026-01-07 18:55:32,950 | INFO | Retrying request to /chat/completions in 0.762576 seconds
+2026-01-07 18:55:33,715 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:33,715 | INFO | Processing Q: COMPARE_INTERFACE_COUNT
+2026-01-07 18:55:33,721 | INFO | Retrying request to /chat/completions in 0.405451 seconds
+2026-01-07 18:55:34,128 | INFO | Retrying request to /chat/completions in 0.815389 seconds
+2026-01-07 18:55:34,946 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:34,946 | INFO | Processing Q: COMPARE_INTERFACE_COUNT
+2026-01-07 18:55:34,952 | INFO | Retrying request to /chat/completions in 0.439993 seconds
+2026-01-07 18:55:35,394 | INFO | Retrying request to /chat/completions in 0.927261 seconds
+2026-01-07 18:55:36,324 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:36,324 | INFO | Processing Q: COMPARE_INTERFACE_COUNT
+2026-01-07 18:55:36,330 | INFO | Retrying request to /chat/completions in 0.457417 seconds
+2026-01-07 18:55:36,789 | INFO | Retrying request to /chat/completions in 0.800166 seconds
+2026-01-07 18:55:37,592 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:37,592 | INFO | Processing Q: COMPARE_INTERFACE_COUNT
+2026-01-07 18:55:37,597 | INFO | Retrying request to /chat/completions in 0.443850 seconds
+2026-01-07 18:55:38,043 | INFO | Retrying request to /chat/completions in 0.917587 seconds
+2026-01-07 18:55:38,962 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:38,962 | INFO | Processing Q: COMPARE_INTERFACE_COUNT
+2026-01-07 18:55:38,968 | INFO | Retrying request to /chat/completions in 0.459664 seconds
+2026-01-07 18:55:39,429 | INFO | Retrying request to /chat/completions in 0.883547 seconds
+2026-01-07 18:55:40,315 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:40,315 | INFO | Processing Q: COMPARE_INTERFACE_COUNT
+2026-01-07 18:55:40,321 | INFO | Retrying request to /chat/completions in 0.386267 seconds
+2026-01-07 18:55:40,710 | INFO | Retrying request to /chat/completions in 0.889759 seconds
+2026-01-07 18:55:41,602 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:41,602 | INFO | Processing Q: COMPARE_INTERFACE_COUNT
+2026-01-07 18:55:41,608 | INFO | Retrying request to /chat/completions in 0.391391 seconds
+2026-01-07 18:55:42,001 | INFO | Retrying request to /chat/completions in 0.767024 seconds
+2026-01-07 18:55:42,770 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:42,770 | INFO | Processing Q: COMPARE_INTERFACE_COUNT
+2026-01-07 18:55:42,776 | INFO | Retrying request to /chat/completions in 0.490984 seconds
+2026-01-07 18:55:43,269 | INFO | Retrying request to /chat/completions in 0.859324 seconds
+2026-01-07 18:55:44,130 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:44,130 | INFO | Processing Q: COMPARE_INTERFACE_COUNT
+2026-01-07 18:55:44,136 | INFO | Retrying request to /chat/completions in 0.476561 seconds
+2026-01-07 18:55:44,615 | INFO | Retrying request to /chat/completions in 0.854562 seconds
+2026-01-07 18:55:45,471 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:45,471 | INFO | Processing Q: COMPARE_INTERFACE_COUNT
+2026-01-07 18:55:45,477 | INFO | Retrying request to /chat/completions in 0.409989 seconds
+2026-01-07 18:55:45,888 | INFO | Retrying request to /chat/completions in 0.801127 seconds
+2026-01-07 18:55:46,692 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:46,692 | INFO | Processing Q: COMPARE_VRF_COUNT
+2026-01-07 18:55:46,698 | INFO | Retrying request to /chat/completions in 0.417219 seconds
+2026-01-07 18:55:47,116 | INFO | Retrying request to /chat/completions in 0.863230 seconds
+2026-01-07 18:55:47,982 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:47,982 | INFO | Processing Q: COMPARE_VRF_COUNT
+2026-01-07 18:55:47,988 | INFO | Retrying request to /chat/completions in 0.443993 seconds
+2026-01-07 18:55:48,434 | INFO | Retrying request to /chat/completions in 0.909664 seconds
+2026-01-07 18:55:49,346 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:49,346 | INFO | Processing Q: COMPARE_VRF_COUNT
+2026-01-07 18:55:49,352 | INFO | Retrying request to /chat/completions in 0.496422 seconds
+2026-01-07 18:55:49,850 | INFO | Retrying request to /chat/completions in 0.824098 seconds
+2026-01-07 18:55:50,676 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:50,677 | INFO | Processing Q: COMPARE_VRF_COUNT
+2026-01-07 18:55:50,683 | INFO | Retrying request to /chat/completions in 0.487152 seconds
+2026-01-07 18:55:51,171 | INFO | Retrying request to /chat/completions in 0.834391 seconds
+2026-01-07 18:55:52,008 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:52,008 | INFO | Processing Q: COMPARE_VRF_COUNT
+2026-01-07 18:55:52,014 | INFO | Retrying request to /chat/completions in 0.481955 seconds
+2026-01-07 18:55:52,498 | INFO | Retrying request to /chat/completions in 0.927399 seconds
+2026-01-07 18:55:53,427 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:53,427 | INFO | Processing Q: COMPARE_VRF_COUNT
+2026-01-07 18:55:53,433 | INFO | Retrying request to /chat/completions in 0.474436 seconds
+2026-01-07 18:55:53,909 | INFO | Retrying request to /chat/completions in 0.908903 seconds
+2026-01-07 18:55:54,820 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:54,820 | INFO | Processing Q: COMPARE_VRF_COUNT
+2026-01-07 18:55:54,826 | INFO | Retrying request to /chat/completions in 0.410153 seconds
+2026-01-07 18:55:55,238 | INFO | Retrying request to /chat/completions in 0.923278 seconds
+2026-01-07 18:55:56,164 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:56,164 | INFO | Processing Q: COMPARE_VRF_COUNT
+2026-01-07 18:55:56,170 | INFO | Retrying request to /chat/completions in 0.462371 seconds
+2026-01-07 18:55:56,635 | INFO | Retrying request to /chat/completions in 0.902883 seconds
+2026-01-07 18:55:57,539 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:57,540 | INFO | Processing Q: COMPARE_VRF_COUNT
+2026-01-07 18:55:57,546 | INFO | Retrying request to /chat/completions in 0.488872 seconds
+2026-01-07 18:55:58,036 | INFO | Retrying request to /chat/completions in 0.854490 seconds
+2026-01-07 18:55:58,893 | ERROR | Query failed: Connection error.
+2026-01-07 18:55:58,893 | INFO | Processing Q: COMPARE_VRF_COUNT
+2026-01-07 18:55:58,899 | INFO | Retrying request to /chat/completions in 0.466122 seconds
+2026-01-07 18:55:59,367 | INFO | Retrying request to /chat/completions in 0.841205 seconds
+2026-01-07 18:56:00,210 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:00,211 | INFO | Processing Q: COMPARE_VRF_COUNT
+2026-01-07 18:56:00,216 | INFO | Retrying request to /chat/completions in 0.473442 seconds
+2026-01-07 18:56:00,691 | INFO | Retrying request to /chat/completions in 0.981733 seconds
+2026-01-07 18:56:01,675 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:01,675 | INFO | Processing Q: COMPARE_VRF_COUNT
+2026-01-07 18:56:01,680 | INFO | Retrying request to /chat/completions in 0.464342 seconds
+2026-01-07 18:56:02,146 | INFO | Retrying request to /chat/completions in 0.905700 seconds
+2026-01-07 18:56:03,054 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:03,054 | INFO | Processing Q: COMPARE_VRF_COUNT
+2026-01-07 18:56:03,060 | INFO | Retrying request to /chat/completions in 0.413619 seconds
+2026-01-07 18:56:03,475 | INFO | Retrying request to /chat/completions in 0.916261 seconds
+2026-01-07 18:56:04,393 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:04,393 | INFO | Processing Q: COMPARE_VRF_COUNT
+2026-01-07 18:56:04,399 | INFO | Retrying request to /chat/completions in 0.415946 seconds
+2026-01-07 18:56:04,816 | INFO | Retrying request to /chat/completions in 0.765725 seconds
+2026-01-07 18:56:05,584 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:05,584 | INFO | Processing Q: COMPARE_VRF_COUNT
+2026-01-07 18:56:05,590 | INFO | Retrying request to /chat/completions in 0.451749 seconds
+2026-01-07 18:56:06,044 | INFO | Retrying request to /chat/completions in 0.782839 seconds
+2026-01-07 18:56:06,828 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:06,828 | INFO | Processing Q: COMPARE_VRF_COUNT
+2026-01-07 18:56:06,833 | INFO | Retrying request to /chat/completions in 0.441586 seconds
+2026-01-07 18:56:07,276 | INFO | Retrying request to /chat/completions in 0.988523 seconds
+2026-01-07 18:56:08,267 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:08,267 | INFO | Processing Q: COMPARE_VRF_COUNT
+2026-01-07 18:56:08,272 | INFO | Retrying request to /chat/completions in 0.428973 seconds
+2026-01-07 18:56:08,703 | INFO | Retrying request to /chat/completions in 0.860681 seconds
+2026-01-07 18:56:09,566 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:09,566 | INFO | Processing Q: COMPARE_VRF_COUNT
+2026-01-07 18:56:09,572 | INFO | Retrying request to /chat/completions in 0.413998 seconds
+2026-01-07 18:56:09,988 | INFO | Retrying request to /chat/completions in 0.961489 seconds
+2026-01-07 18:56:10,951 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:10,952 | INFO | Processing Q: COMPARE_VRF_COUNT
+2026-01-07 18:56:10,958 | INFO | Retrying request to /chat/completions in 0.444482 seconds
+2026-01-07 18:56:11,404 | INFO | Retrying request to /chat/completions in 0.977084 seconds
+2026-01-07 18:56:12,384 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:12,384 | INFO | Processing Q: COMPARE_VRF_COUNT
+2026-01-07 18:56:12,390 | INFO | Retrying request to /chat/completions in 0.418366 seconds
+2026-01-07 18:56:12,810 | INFO | Retrying request to /chat/completions in 0.930904 seconds
+2026-01-07 18:56:13,744 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:13,744 | INFO | Processing Q: COMPARE_BGP_AS
+2026-01-07 18:56:13,750 | INFO | Retrying request to /chat/completions in 0.379674 seconds
+2026-01-07 18:56:14,131 | INFO | Retrying request to /chat/completions in 0.893341 seconds
+2026-01-07 18:56:15,027 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:15,027 | INFO | Processing Q: COMPARE_BGP_AS
+2026-01-07 18:56:15,033 | INFO | Retrying request to /chat/completions in 0.439742 seconds
+2026-01-07 18:56:15,474 | INFO | Retrying request to /chat/completions in 0.835857 seconds
+2026-01-07 18:56:16,312 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:16,312 | INFO | Processing Q: COMPARE_BGP_AS
+2026-01-07 18:56:16,317 | INFO | Retrying request to /chat/completions in 0.382267 seconds
+2026-01-07 18:56:16,701 | INFO | Retrying request to /chat/completions in 0.990294 seconds
+2026-01-07 18:56:17,694 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:17,694 | INFO | Processing Q: COMPARE_BGP_AS
+2026-01-07 18:56:17,700 | INFO | Retrying request to /chat/completions in 0.492542 seconds
+2026-01-07 18:56:18,194 | INFO | Retrying request to /chat/completions in 0.793431 seconds
+2026-01-07 18:56:18,990 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:18,990 | INFO | Processing Q: COMPARE_BGP_AS
+2026-01-07 18:56:18,996 | INFO | Retrying request to /chat/completions in 0.486775 seconds
+2026-01-07 18:56:19,484 | INFO | Retrying request to /chat/completions in 0.822708 seconds
+2026-01-07 18:56:20,308 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:20,308 | INFO | Processing Q: COMPARE_BGP_AS
+2026-01-07 18:56:20,313 | INFO | Retrying request to /chat/completions in 0.445216 seconds
+2026-01-07 18:56:20,760 | INFO | Retrying request to /chat/completions in 0.808281 seconds
+2026-01-07 18:56:21,570 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:21,571 | INFO | Processing Q: COMPARE_BGP_AS
+2026-01-07 18:56:21,577 | INFO | Retrying request to /chat/completions in 0.482871 seconds
+2026-01-07 18:56:22,061 | INFO | Retrying request to /chat/completions in 0.818066 seconds
+2026-01-07 18:56:22,881 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:22,882 | INFO | Processing Q: COMPARE_BGP_AS
+2026-01-07 18:56:22,888 | INFO | Retrying request to /chat/completions in 0.446439 seconds
+2026-01-07 18:56:23,336 | INFO | Retrying request to /chat/completions in 0.991175 seconds
+2026-01-07 18:56:24,329 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:24,329 | INFO | Processing Q: COMPARE_BGP_AS
+2026-01-07 18:56:24,335 | INFO | Retrying request to /chat/completions in 0.439658 seconds
+2026-01-07 18:56:24,777 | INFO | Retrying request to /chat/completions in 0.793806 seconds
+2026-01-07 18:56:25,572 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:25,573 | INFO | Processing Q: COMPARE_BGP_AS
+2026-01-07 18:56:25,579 | INFO | Retrying request to /chat/completions in 0.426480 seconds
+2026-01-07 18:56:26,007 | INFO | Retrying request to /chat/completions in 0.986278 seconds
+2026-01-07 18:56:26,995 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:26,996 | INFO | Processing Q: COMPARE_BGP_AS
+2026-01-07 18:56:27,002 | INFO | Retrying request to /chat/completions in 0.470254 seconds
+2026-01-07 18:56:27,473 | INFO | Retrying request to /chat/completions in 0.945903 seconds
+2026-01-07 18:56:28,421 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:28,422 | INFO | Processing Q: COMPARE_BGP_AS
+2026-01-07 18:56:28,428 | INFO | Retrying request to /chat/completions in 0.380371 seconds
+2026-01-07 18:56:28,809 | INFO | Retrying request to /chat/completions in 0.829070 seconds
+2026-01-07 18:56:29,640 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:29,641 | INFO | Processing Q: COMPARE_BGP_AS
+2026-01-07 18:56:29,647 | INFO | Retrying request to /chat/completions in 0.437733 seconds
+2026-01-07 18:56:30,087 | INFO | Retrying request to /chat/completions in 0.963836 seconds
+2026-01-07 18:56:31,053 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:31,053 | INFO | Processing Q: COMPARE_BGP_AS
+2026-01-07 18:56:31,059 | INFO | Retrying request to /chat/completions in 0.387490 seconds
+2026-01-07 18:56:31,448 | INFO | Retrying request to /chat/completions in 0.763514 seconds
+2026-01-07 18:56:32,214 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:32,214 | INFO | Processing Q: COMPARE_BGP_AS
+2026-01-07 18:56:32,220 | INFO | Retrying request to /chat/completions in 0.478543 seconds
+2026-01-07 18:56:32,700 | INFO | Retrying request to /chat/completions in 0.870734 seconds
+2026-01-07 18:56:33,573 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:33,574 | INFO | Processing Q: COMPARE_BGP_AS
+2026-01-07 18:56:33,580 | INFO | Retrying request to /chat/completions in 0.416427 seconds
+2026-01-07 18:56:33,997 | INFO | Retrying request to /chat/completions in 0.850272 seconds
+2026-01-07 18:56:34,850 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:34,850 | INFO | Processing Q: COMPARE_BGP_AS
+2026-01-07 18:56:34,856 | INFO | Retrying request to /chat/completions in 0.481697 seconds
+2026-01-07 18:56:35,340 | INFO | Retrying request to /chat/completions in 0.762672 seconds
+2026-01-07 18:56:36,104 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:36,104 | INFO | Processing Q: COMPARE_BGP_AS
+2026-01-07 18:56:36,110 | INFO | Retrying request to /chat/completions in 0.443088 seconds
+2026-01-07 18:56:36,555 | INFO | Retrying request to /chat/completions in 0.897218 seconds
+2026-01-07 18:56:37,454 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:37,454 | INFO | Processing Q: COMPARE_BGP_AS
+2026-01-07 18:56:37,460 | INFO | Retrying request to /chat/completions in 0.492225 seconds
+2026-01-07 18:56:37,954 | INFO | Retrying request to /chat/completions in 0.883340 seconds
+2026-01-07 18:56:38,840 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:38,840 | INFO | Processing Q: COMPARE_BGP_AS
+2026-01-07 18:56:38,846 | INFO | Retrying request to /chat/completions in 0.419198 seconds
+2026-01-07 18:56:39,267 | INFO | Retrying request to /chat/completions in 0.972070 seconds
+2026-01-07 18:56:40,240 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:40,240 | INFO | Processing Q: COMPARE_OSPF_AREAS
+2026-01-07 18:56:40,243 | INFO | Retrying request to /chat/completions in 0.459988 seconds
+2026-01-07 18:56:40,705 | INFO | Retrying request to /chat/completions in 0.860718 seconds
+2026-01-07 18:56:41,568 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:41,568 | INFO | Processing Q: COMPARE_OSPF_AREAS
+2026-01-07 18:56:41,574 | INFO | Retrying request to /chat/completions in 0.423497 seconds
+2026-01-07 18:56:41,999 | INFO | Retrying request to /chat/completions in 0.799282 seconds
+2026-01-07 18:56:42,800 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:42,801 | INFO | Processing Q: COMPARE_OSPF_AREAS
+2026-01-07 18:56:42,807 | INFO | Retrying request to /chat/completions in 0.455493 seconds
+2026-01-07 18:56:43,264 | INFO | Retrying request to /chat/completions in 0.844803 seconds
+2026-01-07 18:56:44,111 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:44,112 | INFO | Processing Q: COMPARE_OSPF_AREAS
+2026-01-07 18:56:44,118 | INFO | Retrying request to /chat/completions in 0.418444 seconds
+2026-01-07 18:56:44,538 | INFO | Retrying request to /chat/completions in 0.954065 seconds
+2026-01-07 18:56:45,493 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:45,493 | INFO | Processing Q: COMPARE_OSPF_AREAS
+2026-01-07 18:56:45,496 | INFO | Retrying request to /chat/completions in 0.402743 seconds
+2026-01-07 18:56:45,901 | INFO | Retrying request to /chat/completions in 0.976250 seconds
+2026-01-07 18:56:46,880 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:46,880 | INFO | Processing Q: COMPARE_OSPF_AREAS
+2026-01-07 18:56:46,886 | INFO | Retrying request to /chat/completions in 0.424663 seconds
+2026-01-07 18:56:47,312 | INFO | Retrying request to /chat/completions in 0.888996 seconds
+2026-01-07 18:56:48,204 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:48,204 | INFO | Processing Q: COMPARE_OSPF_AREAS
+2026-01-07 18:56:48,210 | INFO | Retrying request to /chat/completions in 0.436087 seconds
+2026-01-07 18:56:48,647 | INFO | Retrying request to /chat/completions in 0.958983 seconds
+2026-01-07 18:56:49,608 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:49,608 | INFO | Processing Q: COMPARE_OSPF_AREAS
+2026-01-07 18:56:49,612 | INFO | Retrying request to /chat/completions in 0.426093 seconds
+2026-01-07 18:56:50,040 | INFO | Retrying request to /chat/completions in 0.823709 seconds
+2026-01-07 18:56:50,866 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:50,867 | INFO | Processing Q: COMPARE_OSPF_AREAS
+2026-01-07 18:56:50,873 | INFO | Retrying request to /chat/completions in 0.394936 seconds
+2026-01-07 18:56:51,269 | INFO | Retrying request to /chat/completions in 0.977865 seconds
+2026-01-07 18:56:52,250 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:52,250 | INFO | Processing Q: COMPARE_OSPF_AREAS
+2026-01-07 18:56:52,256 | INFO | Retrying request to /chat/completions in 0.393501 seconds
+2026-01-07 18:56:52,651 | INFO | Retrying request to /chat/completions in 0.926189 seconds
+2026-01-07 18:56:53,580 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:53,580 | INFO | Processing Q: COMPARE_OSPF_AREAS
+2026-01-07 18:56:53,586 | INFO | Retrying request to /chat/completions in 0.433410 seconds
+2026-01-07 18:56:54,021 | INFO | Retrying request to /chat/completions in 0.944875 seconds
+2026-01-07 18:56:54,968 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:54,969 | INFO | Processing Q: COMPARE_OSPF_AREAS
+2026-01-07 18:56:54,975 | INFO | Retrying request to /chat/completions in 0.455276 seconds
+2026-01-07 18:56:55,431 | INFO | Retrying request to /chat/completions in 0.773318 seconds
+2026-01-07 18:56:56,207 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:56,207 | INFO | Processing Q: COMPARE_OSPF_AREAS
+2026-01-07 18:56:56,213 | INFO | Retrying request to /chat/completions in 0.393811 seconds
+2026-01-07 18:56:56,609 | INFO | Retrying request to /chat/completions in 0.820609 seconds
+2026-01-07 18:56:57,432 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:57,432 | INFO | Processing Q: COMPARE_OSPF_AREAS
+2026-01-07 18:56:57,438 | INFO | Retrying request to /chat/completions in 0.418163 seconds
+2026-01-07 18:56:57,858 | INFO | Retrying request to /chat/completions in 0.801864 seconds
+2026-01-07 18:56:58,662 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:58,662 | INFO | Processing Q: COMPARE_OSPF_AREAS
+2026-01-07 18:56:58,668 | INFO | Retrying request to /chat/completions in 0.430252 seconds
+2026-01-07 18:56:59,101 | INFO | Retrying request to /chat/completions in 0.877601 seconds
+2026-01-07 18:56:59,981 | ERROR | Query failed: Connection error.
+2026-01-07 18:56:59,981 | INFO | Processing Q: COMPARE_OSPF_AREAS
+2026-01-07 18:56:59,987 | INFO | Retrying request to /chat/completions in 0.413885 seconds
+2026-01-07 18:57:00,402 | INFO | Retrying request to /chat/completions in 0.765126 seconds
+2026-01-07 18:57:01,170 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:01,170 | INFO | Processing Q: COMPARE_OSPF_AREAS
+2026-01-07 18:57:01,176 | INFO | Retrying request to /chat/completions in 0.468107 seconds
+2026-01-07 18:57:01,645 | INFO | Retrying request to /chat/completions in 0.807772 seconds
+2026-01-07 18:57:02,455 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:02,455 | INFO | Processing Q: COMPARE_OSPF_AREAS
+2026-01-07 18:57:02,461 | INFO | Retrying request to /chat/completions in 0.454645 seconds
+2026-01-07 18:57:02,918 | INFO | Retrying request to /chat/completions in 0.757601 seconds
+2026-01-07 18:57:03,678 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:03,678 | INFO | Processing Q: COMPARE_OSPF_AREAS
+2026-01-07 18:57:03,684 | INFO | Retrying request to /chat/completions in 0.390426 seconds
+2026-01-07 18:57:04,076 | INFO | Retrying request to /chat/completions in 0.855945 seconds
+2026-01-07 18:57:04,934 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:04,934 | INFO | Processing Q: COMPARE_OSPF_AREAS
+2026-01-07 18:57:04,940 | INFO | Retrying request to /chat/completions in 0.491640 seconds
+2026-01-07 18:57:05,433 | INFO | Retrying request to /chat/completions in 0.790815 seconds
+2026-01-07 18:57:06,227 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:06,227 | INFO | Processing Q: MAX_INTERFACE_DEVICE
+2026-01-07 18:57:06,233 | INFO | Retrying request to /chat/completions in 0.481272 seconds
+2026-01-07 18:57:06,716 | INFO | Retrying request to /chat/completions in 0.962125 seconds
+2026-01-07 18:57:07,680 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:07,680 | INFO | Processing Q: MAX_BGP_PEER_DEVICE
+2026-01-07 18:57:07,686 | INFO | Retrying request to /chat/completions in 0.378888 seconds
+2026-01-07 18:57:08,067 | INFO | Retrying request to /chat/completions in 0.844430 seconds
+2026-01-07 18:57:08,913 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:08,914 | INFO | Processing Q: ALL_DEVICES_SAME_AS
+2026-01-07 18:57:08,920 | INFO | Retrying request to /chat/completions in 0.476312 seconds
+2026-01-07 18:57:09,398 | INFO | Retrying request to /chat/completions in 0.953648 seconds
+2026-01-07 18:57:10,353 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:10,354 | INFO | Processing Q: MIN_INTERFACE_DEVICE
+2026-01-07 18:57:10,360 | INFO | Retrying request to /chat/completions in 0.416854 seconds
+2026-01-07 18:57:10,778 | INFO | Retrying request to /chat/completions in 0.913509 seconds
+2026-01-07 18:57:11,694 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:11,695 | INFO | Processing Q: BGP_AS_DISTRIBUTION
+2026-01-07 18:57:11,701 | INFO | Retrying request to /chat/completions in 0.479097 seconds
+2026-01-07 18:57:12,182 | INFO | Retrying request to /chat/completions in 0.902927 seconds
+2026-01-07 18:57:13,087 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:13,088 | INFO | Processing Q: VRF_USAGE_STATISTICS
+2026-01-07 18:57:13,094 | INFO | Retrying request to /chat/completions in 0.472079 seconds
+2026-01-07 18:57:13,567 | INFO | Retrying request to /chat/completions in 0.971867 seconds
+2026-01-07 18:57:14,541 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:14,541 | INFO | Processing Q: PASSWORD_ENCRYPTION_CONFIG
+2026-01-07 18:57:14,546 | INFO | Retrying request to /chat/completions in 0.436240 seconds
+2026-01-07 18:57:14,984 | INFO | Retrying request to /chat/completions in 0.923493 seconds
+2026-01-07 18:57:15,909 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:15,909 | INFO | Processing Q: ENABLE_SECRET_TYPE
+2026-01-07 18:57:15,916 | INFO | Retrying request to /chat/completions in 0.459388 seconds
+2026-01-07 18:57:16,377 | INFO | Retrying request to /chat/completions in 0.857539 seconds
+2026-01-07 18:57:17,237 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:17,237 | INFO | Processing Q: CONSOLE_PASSWORD_VAL
+2026-01-07 18:57:17,243 | INFO | Retrying request to /chat/completions in 0.384407 seconds
+2026-01-07 18:57:17,629 | INFO | Retrying request to /chat/completions in 0.782006 seconds
+2026-01-07 18:57:18,413 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:18,414 | INFO | Processing Q: EXEC_TIMEOUT_VAL
+2026-01-07 18:57:18,420 | INFO | Retrying request to /chat/completions in 0.383964 seconds
+2026-01-07 18:57:18,805 | INFO | Retrying request to /chat/completions in 0.973214 seconds
+2026-01-07 18:57:19,780 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:19,780 | INFO | Processing Q: BANNER_MOTD_CONTENT
+2026-01-07 18:57:19,785 | INFO | Retrying request to /chat/completions in 0.402423 seconds
+2026-01-07 18:57:20,189 | INFO | Retrying request to /chat/completions in 0.767693 seconds
+2026-01-07 18:57:20,959 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:20,960 | INFO | Processing Q: BANNER_LOGIN_CONTENT
+2026-01-07 18:57:20,966 | INFO | Retrying request to /chat/completions in 0.453943 seconds
+2026-01-07 18:57:21,421 | INFO | Retrying request to /chat/completions in 0.941521 seconds
+2026-01-07 18:57:22,365 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:22,365 | INFO | Processing Q: HTTP_SERVER_CONFIG
+2026-01-07 18:57:22,371 | INFO | Retrying request to /chat/completions in 0.497977 seconds
+2026-01-07 18:57:22,871 | INFO | Retrying request to /chat/completions in 0.972933 seconds
+2026-01-07 18:57:23,847 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:23,847 | INFO | Processing Q: CDP_CONFIG
+2026-01-07 18:57:23,853 | INFO | Retrying request to /chat/completions in 0.491617 seconds
+2026-01-07 18:57:24,346 | INFO | Retrying request to /chat/completions in 0.846843 seconds
+2026-01-07 18:57:25,195 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:25,195 | INFO | Processing Q: IP_SOURCE_ROUTE_CONFIG
+2026-01-07 18:57:25,201 | INFO | Retrying request to /chat/completions in 0.404297 seconds
+2026-01-07 18:57:25,607 | INFO | Retrying request to /chat/completions in 0.895871 seconds
+2026-01-07 18:57:26,505 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:26,506 | INFO | Processing Q: NTP_SERVERS_LIST
+2026-01-07 18:57:26,510 | INFO | Retrying request to /chat/completions in 0.381883 seconds
+2026-01-07 18:57:26,894 | INFO | Retrying request to /chat/completions in 0.863649 seconds
+2026-01-07 18:57:27,760 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:27,761 | INFO | Processing Q: SYSLOG_SERVERS_LIST
+2026-01-07 18:57:27,766 | INFO | Retrying request to /chat/completions in 0.487611 seconds
+2026-01-07 18:57:28,256 | INFO | Retrying request to /chat/completions in 0.831849 seconds
+2026-01-07 18:57:29,090 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:29,091 | INFO | Processing Q: SNMP_SERVER_COMMUNITIES
+2026-01-07 18:57:29,097 | INFO | Retrying request to /chat/completions in 0.495963 seconds
+2026-01-07 18:57:29,595 | INFO | Retrying request to /chat/completions in 0.755170 seconds
+2026-01-07 18:57:30,352 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:30,352 | INFO | Processing Q: LOOPBACK_INTERFACES_LIST
+2026-01-07 18:57:30,358 | INFO | Retrying request to /chat/completions in 0.441531 seconds
+2026-01-07 18:57:30,801 | INFO | Retrying request to /chat/completions in 0.973969 seconds
+2026-01-07 18:57:31,777 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:31,777 | INFO | Processing Q: DNS_SERVERS_LIST
+2026-01-07 18:57:31,783 | INFO | Retrying request to /chat/completions in 0.468080 seconds
+2026-01-07 18:57:32,253 | INFO | Retrying request to /chat/completions in 0.805393 seconds
+2026-01-07 18:57:33,061 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:33,061 | INFO | Processing Q: ACTIVE_OSPF_PROCESSES
+2026-01-07 18:57:33,067 | INFO | Retrying request to /chat/completions in 0.384282 seconds
+2026-01-07 18:57:33,453 | INFO | Retrying request to /chat/completions in 0.888865 seconds
+2026-01-07 18:57:34,344 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:34,344 | INFO | Processing Q: CONFIGURED_BGP_AS_NUMBERS
+2026-01-07 18:57:34,350 | INFO | Retrying request to /chat/completions in 0.490937 seconds
+2026-01-07 18:57:34,843 | INFO | Retrying request to /chat/completions in 0.965704 seconds
+2026-01-07 18:57:35,811 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:35,811 | INFO | Processing Q: MPLS_LDP_CONFIG
+2026-01-07 18:57:35,818 | INFO | Retrying request to /chat/completions in 0.488966 seconds
+2026-01-07 18:57:36,308 | INFO | Retrying request to /chat/completions in 0.894094 seconds
+2026-01-07 18:57:37,205 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:37,205 | INFO | Processing Q: DEFAULT_ROUTE_NEXT_HOPS
+2026-01-07 18:57:37,211 | INFO | Retrying request to /chat/completions in 0.394626 seconds
+2026-01-07 18:57:37,607 | INFO | Retrying request to /chat/completions in 0.804904 seconds
+2026-01-07 18:57:38,415 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:38,415 | INFO | Processing Q: STATIC_ROUTE_COUNT
+2026-01-07 18:57:38,421 | INFO | Retrying request to /chat/completions in 0.464551 seconds
+2026-01-07 18:57:38,887 | INFO | Retrying request to /chat/completions in 0.924798 seconds
+2026-01-07 18:57:39,815 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:39,815 | INFO | Processing Q: ACL_CONFIGURED_COUNT
+2026-01-07 18:57:39,821 | INFO | Retrying request to /chat/completions in 0.477803 seconds
+2026-01-07 18:57:40,301 | INFO | Retrying request to /chat/completions in 0.775594 seconds
+2026-01-07 18:57:41,078 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:41,079 | INFO | Processing Q: ACL_APPLIED_INTERFACES_LIST
+2026-01-07 18:57:41,085 | INFO | Retrying request to /chat/completions in 0.457042 seconds
+2026-01-07 18:57:41,543 | INFO | Retrying request to /chat/completions in 0.872438 seconds
+2026-01-07 18:57:42,418 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:42,418 | INFO | Processing Q: PREFIX_LIST_COUNT
+2026-01-07 18:57:42,424 | INFO | Retrying request to /chat/completions in 0.379913 seconds
+2026-01-07 18:57:42,806 | INFO | Retrying request to /chat/completions in 0.753484 seconds
+2026-01-07 18:57:43,562 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:43,562 | INFO | Processing Q: ROUTE_MAP_COUNT
+2026-01-07 18:57:43,568 | INFO | Retrying request to /chat/completions in 0.419186 seconds
+2026-01-07 18:57:43,989 | INFO | Retrying request to /chat/completions in 0.968674 seconds
+2026-01-07 18:57:44,960 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:44,960 | INFO | Processing Q: QOS_CLASS_MAPS_LIST
+2026-01-07 18:57:44,966 | INFO | Retrying request to /chat/completions in 0.435203 seconds
+2026-01-07 18:57:45,403 | INFO | Retrying request to /chat/completions in 0.925936 seconds
+2026-01-07 18:57:46,331 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:46,331 | INFO | Processing Q: NETFLOW_MONITORS_LIST
+2026-01-07 18:57:46,337 | INFO | Retrying request to /chat/completions in 0.492980 seconds
+2026-01-07 18:57:46,832 | INFO | Retrying request to /chat/completions in 0.833389 seconds
+2026-01-07 18:57:47,668 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:47,668 | INFO | Processing Q: INTERFACES_MISSING_DESCRIPTION_COUNT
+2026-01-07 18:57:47,674 | INFO | Retrying request to /chat/completions in 0.410245 seconds
+2026-01-07 18:57:48,086 | INFO | Retrying request to /chat/completions in 0.929420 seconds
+2026-01-07 18:57:49,018 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:49,018 | INFO | Processing Q: EIGRP_AS_NUMBERS
+2026-01-07 18:57:49,023 | INFO | Retrying request to /chat/completions in 0.411369 seconds
+2026-01-07 18:57:49,436 | INFO | Retrying request to /chat/completions in 0.827868 seconds
+2026-01-07 18:57:50,266 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:50,266 | INFO | Processing Q: RIP_PROCESSES
+2026-01-07 18:57:50,272 | INFO | Retrying request to /chat/completions in 0.431762 seconds
+2026-01-07 18:57:50,705 | INFO | Retrying request to /chat/completions in 0.981870 seconds
+2026-01-07 18:57:51,690 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:51,690 | INFO | Processing Q: HSRP_GROUPS_LIST
+2026-01-07 18:57:51,696 | INFO | Retrying request to /chat/completions in 0.491014 seconds
+2026-01-07 18:57:52,188 | INFO | Retrying request to /chat/completions in 0.888877 seconds
+2026-01-07 18:57:53,080 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:53,080 | INFO | Processing Q: MULTICAST_ROUTING_CONFIG
+2026-01-07 18:57:53,086 | INFO | Retrying request to /chat/completions in 0.454847 seconds
+2026-01-07 18:57:53,542 | INFO | Retrying request to /chat/completions in 0.959283 seconds
+2026-01-07 18:57:54,503 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:54,503 | INFO | Processing Q: SERIAL_INTERFACE_DEVICES
+2026-01-07 18:57:54,508 | INFO | Retrying request to /chat/completions in 0.474886 seconds
+2026-01-07 18:57:54,984 | INFO | Retrying request to /chat/completions in 0.789681 seconds
+2026-01-07 18:57:55,776 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:55,776 | INFO | Processing Q: TUNNEL_INTERFACE_DEVICES
+2026-01-07 18:57:55,782 | INFO | Retrying request to /chat/completions in 0.395263 seconds
+2026-01-07 18:57:56,180 | INFO | Retrying request to /chat/completions in 0.754672 seconds
+2026-01-07 18:57:56,936 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:56,936 | INFO | Processing Q: PORT_CHANNEL_DEVICES
+2026-01-07 18:57:56,943 | INFO | Retrying request to /chat/completions in 0.493483 seconds
+2026-01-07 18:57:57,438 | INFO | Retrying request to /chat/completions in 0.888332 seconds
+2026-01-07 18:57:58,328 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:58,328 | INFO | Processing Q: VLAN_INTERFACE_DEVICES
+2026-01-07 18:57:58,331 | INFO | Retrying request to /chat/completions in 0.456331 seconds
+2026-01-07 18:57:58,789 | INFO | Retrying request to /chat/completions in 0.821642 seconds
+2026-01-07 18:57:59,614 | ERROR | Query failed: Connection error.
+2026-01-07 18:57:59,614 | INFO | Processing Q: TRACEROUTE_leaf4_p3
+2026-01-07 18:57:59,620 | INFO | Retrying request to /chat/completions in 0.496142 seconds
+2026-01-07 18:58:00,118 | INFO | Retrying request to /chat/completions in 0.861883 seconds
+2026-01-07 18:58:00,981 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:00,982 | INFO | Processing Q: TRACEROUTE_pe2_pe1
+2026-01-07 18:58:00,987 | INFO | Retrying request to /chat/completions in 0.435830 seconds
+2026-01-07 18:58:01,425 | INFO | Retrying request to /chat/completions in 0.953519 seconds
+2026-01-07 18:58:02,380 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:02,381 | INFO | Processing Q: TRACEROUTE_leaf3_p2
+2026-01-07 18:58:02,386 | INFO | Retrying request to /chat/completions in 0.383568 seconds
+2026-01-07 18:58:02,772 | INFO | Retrying request to /chat/completions in 0.873346 seconds
+2026-01-07 18:58:03,647 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:03,647 | INFO | Processing Q: TRACEROUTE_leaf1_p4
+2026-01-07 18:58:03,651 | INFO | Retrying request to /chat/completions in 0.404831 seconds
+2026-01-07 18:58:04,058 | INFO | Retrying request to /chat/completions in 0.948295 seconds
+2026-01-07 18:58:05,009 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:05,009 | INFO | Processing Q: TRACEROUTE_p1_pe1
+2026-01-07 18:58:05,015 | INFO | Retrying request to /chat/completions in 0.481924 seconds
+2026-01-07 18:58:05,498 | INFO | Retrying request to /chat/completions in 0.986520 seconds
+2026-01-07 18:58:06,486 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:06,486 | INFO | Processing Q: TRACEROUTE_pe2_leaf3
+2026-01-07 18:58:06,491 | INFO | Retrying request to /chat/completions in 0.395473 seconds
+2026-01-07 18:58:06,888 | INFO | Retrying request to /chat/completions in 0.987199 seconds
+2026-01-07 18:58:07,878 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:07,878 | INFO | Processing Q: TRACEROUTE_leaf1_p2
+2026-01-07 18:58:07,884 | INFO | Retrying request to /chat/completions in 0.489014 seconds
+2026-01-07 18:58:08,374 | INFO | Retrying request to /chat/completions in 0.887490 seconds
+2026-01-07 18:58:09,264 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:09,264 | INFO | Processing Q: TRACEROUTE_pe1_p2
+2026-01-07 18:58:09,270 | INFO | Retrying request to /chat/completions in 0.495655 seconds
+2026-01-07 18:58:09,768 | INFO | Retrying request to /chat/completions in 0.957004 seconds
+2026-01-07 18:58:10,727 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:10,728 | INFO | Processing Q: TRACEROUTE_leaf3_p3
+2026-01-07 18:58:10,734 | INFO | Retrying request to /chat/completions in 0.435236 seconds
+2026-01-07 18:58:11,171 | INFO | Retrying request to /chat/completions in 0.866480 seconds
+2026-01-07 18:58:12,039 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:12,040 | INFO | Processing Q: TRACEROUTE_p1_leaf3
+2026-01-07 18:58:12,046 | INFO | Retrying request to /chat/completions in 0.428263 seconds
+2026-01-07 18:58:12,475 | INFO | Retrying request to /chat/completions in 0.766019 seconds
+2026-01-07 18:58:13,243 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:13,243 | INFO | Processing Q: TRACEROUTE_leaf1_leaf4
+2026-01-07 18:58:13,247 | INFO | Retrying request to /chat/completions in 0.386655 seconds
+2026-01-07 18:58:13,636 | INFO | Retrying request to /chat/completions in 0.950778 seconds
+2026-01-07 18:58:14,589 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:14,589 | INFO | Processing Q: TRACEROUTE_leaf2_p1
+2026-01-07 18:58:14,595 | INFO | Retrying request to /chat/completions in 0.463823 seconds
+2026-01-07 18:58:15,060 | INFO | Retrying request to /chat/completions in 0.827808 seconds
+2026-01-07 18:58:15,890 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:15,890 | INFO | Processing Q: TRACEROUTE_p4_p3
+2026-01-07 18:58:15,897 | INFO | Retrying request to /chat/completions in 0.499486 seconds
+2026-01-07 18:58:16,398 | INFO | Retrying request to /chat/completions in 0.760961 seconds
+2026-01-07 18:58:17,161 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:17,161 | INFO | Processing Q: TRACEROUTE_p4_leaf3
+2026-01-07 18:58:17,167 | INFO | Retrying request to /chat/completions in 0.468622 seconds
+2026-01-07 18:58:17,638 | INFO | Retrying request to /chat/completions in 0.966522 seconds
+2026-01-07 18:58:18,607 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:18,607 | INFO | Processing Q: TRACEROUTE_leaf4_pe1
+2026-01-07 18:58:18,613 | INFO | Retrying request to /chat/completions in 0.406340 seconds
+2026-01-07 18:58:19,021 | INFO | Retrying request to /chat/completions in 0.809676 seconds
+2026-01-07 18:58:19,833 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:19,833 | INFO | Processing Q: TRACEROUTE_p1_p4
+2026-01-07 18:58:19,839 | INFO | Retrying request to /chat/completions in 0.447650 seconds
+2026-01-07 18:58:20,288 | INFO | Retrying request to /chat/completions in 0.912945 seconds
+2026-01-07 18:58:21,204 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:21,204 | INFO | Processing Q: TRACEROUTE_leaf2_p2
+2026-01-07 18:58:21,210 | INFO | Retrying request to /chat/completions in 0.425797 seconds
+2026-01-07 18:58:21,638 | INFO | Retrying request to /chat/completions in 0.857624 seconds
+2026-01-07 18:58:22,497 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:22,497 | INFO | Processing Q: TRACEROUTE_p1_p3
+2026-01-07 18:58:22,502 | INFO | Retrying request to /chat/completions in 0.455396 seconds
+2026-01-07 18:58:22,959 | INFO | Retrying request to /chat/completions in 0.968311 seconds
+2026-01-07 18:58:23,929 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:23,929 | INFO | Processing Q: TRACEROUTE_pe2_p3
+2026-01-07 18:58:23,935 | INFO | Retrying request to /chat/completions in 0.476316 seconds
+2026-01-07 18:58:24,413 | INFO | Retrying request to /chat/completions in 0.931665 seconds
+2026-01-07 18:58:25,347 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:25,348 | INFO | Processing Q: TRACEROUTE_pe2_p2
+2026-01-07 18:58:25,354 | INFO | Retrying request to /chat/completions in 0.463161 seconds
+2026-01-07 18:58:25,819 | INFO | Retrying request to /chat/completions in 0.978950 seconds
+2026-01-07 18:58:26,800 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:26,801 | INFO | Processing Q: TRACEROUTE_p1_p2
+2026-01-07 18:58:26,806 | INFO | Retrying request to /chat/completions in 0.435260 seconds
+2026-01-07 18:58:27,243 | INFO | Retrying request to /chat/completions in 0.989658 seconds
+2026-01-07 18:58:28,235 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:28,235 | INFO | Processing Q: TRACEROUTE_p4_pe1
+2026-01-07 18:58:28,241 | INFO | Retrying request to /chat/completions in 0.377700 seconds
+2026-01-07 18:58:28,620 | INFO | Retrying request to /chat/completions in 0.997789 seconds
+2026-01-07 18:58:29,620 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:29,620 | INFO | Processing Q: TRACEROUTE_p4_p2
+2026-01-07 18:58:29,625 | INFO | Retrying request to /chat/completions in 0.440347 seconds
+2026-01-07 18:58:30,067 | INFO | Retrying request to /chat/completions in 0.945033 seconds
+2026-01-07 18:58:31,015 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:31,015 | INFO | Processing Q: TRACEROUTE_leaf2_leaf3
+2026-01-07 18:58:31,021 | INFO | Retrying request to /chat/completions in 0.453627 seconds
+2026-01-07 18:58:31,476 | INFO | Retrying request to /chat/completions in 0.764673 seconds
+2026-01-07 18:58:32,243 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:32,243 | INFO | Processing Q: TRACEROUTE_leaf2_pe2
+2026-01-07 18:58:32,249 | INFO | Retrying request to /chat/completions in 0.420931 seconds
+2026-01-07 18:58:32,672 | INFO | Retrying request to /chat/completions in 0.997730 seconds
+2026-01-07 18:58:33,672 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:33,672 | INFO | Processing Q: TRACEROUTE_leaf1_p3
+2026-01-07 18:58:33,678 | INFO | Retrying request to /chat/completions in 0.416767 seconds
+2026-01-07 18:58:34,097 | INFO | Retrying request to /chat/completions in 0.830037 seconds
+2026-01-07 18:58:34,929 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:34,929 | INFO | Processing Q: TRACEROUTE_leaf1_leaf2
+2026-01-07 18:58:34,935 | INFO | Retrying request to /chat/completions in 0.469347 seconds
+2026-01-07 18:58:35,406 | INFO | Retrying request to /chat/completions in 0.767891 seconds
+2026-01-07 18:58:36,176 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:36,177 | INFO | Processing Q: TRACEROUTE_p1_pe2
+2026-01-07 18:58:36,183 | INFO | Retrying request to /chat/completions in 0.480301 seconds
+2026-01-07 18:58:36,665 | INFO | Retrying request to /chat/completions in 0.825418 seconds
+2026-01-07 18:58:37,492 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:37,492 | INFO | Processing Q: TRACEROUTE_leaf4_pe2
+2026-01-07 18:58:37,498 | INFO | Retrying request to /chat/completions in 0.468121 seconds
+2026-01-07 18:58:37,967 | INFO | Retrying request to /chat/completions in 0.944342 seconds
+2026-01-07 18:58:38,913 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:38,913 | INFO | Processing Q: TRACEROUTE_pe1_p3
+2026-01-07 18:58:38,917 | INFO | Retrying request to /chat/completions in 0.433118 seconds
+2026-01-07 18:58:39,352 | INFO | Retrying request to /chat/completions in 0.931364 seconds
+2026-01-07 18:58:40,286 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:40,286 | INFO | Processing Q: TRACEROUTE_leaf1_pe1
+2026-01-07 18:58:40,300 | INFO | Retrying request to /chat/completions in 0.466935 seconds
+2026-01-07 18:58:40,770 | INFO | Retrying request to /chat/completions in 0.900782 seconds
+2026-01-07 18:58:41,673 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:41,673 | INFO | Processing Q: TRACEROUTE_leaf4_p4
+2026-01-07 18:58:41,679 | INFO | Retrying request to /chat/completions in 0.391673 seconds
+2026-01-07 18:58:42,072 | INFO | Retrying request to /chat/completions in 0.867191 seconds
+2026-01-07 18:58:42,941 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:42,941 | INFO | Processing Q: TRACEROUTE_leaf2_leaf4
+2026-01-07 18:58:42,947 | INFO | Retrying request to /chat/completions in 0.483249 seconds
+2026-01-07 18:58:43,432 | INFO | Retrying request to /chat/completions in 0.967424 seconds
+2026-01-07 18:58:44,402 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:44,402 | INFO | Processing Q: TRACEROUTE_leaf1_leaf3
+2026-01-07 18:58:44,408 | INFO | Retrying request to /chat/completions in 0.459666 seconds
+2026-01-07 18:58:44,869 | INFO | Retrying request to /chat/completions in 0.821322 seconds
+2026-01-07 18:58:45,693 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:45,693 | INFO | Processing Q: TRACEROUTE_leaf1_p1
+2026-01-07 18:58:45,699 | INFO | Retrying request to /chat/completions in 0.438808 seconds
+2026-01-07 18:58:46,140 | INFO | Retrying request to /chat/completions in 0.973693 seconds
+2026-01-07 18:58:47,116 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:47,117 | INFO | Processing Q: TRACEROUTE_leaf4_p1
+2026-01-07 18:58:47,123 | INFO | Retrying request to /chat/completions in 0.439684 seconds
+2026-01-07 18:58:47,564 | INFO | Retrying request to /chat/completions in 0.810493 seconds
+2026-01-07 18:58:48,376 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:48,376 | INFO | Processing Q: TRACEROUTE_p2_p3
+2026-01-07 18:58:48,382 | INFO | Retrying request to /chat/completions in 0.409869 seconds
+2026-01-07 18:58:48,794 | INFO | Retrying request to /chat/completions in 0.822161 seconds
+2026-01-07 18:58:49,618 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:49,619 | INFO | Processing Q: TRACEROUTE_leaf4_p2
+2026-01-07 18:58:49,625 | INFO | Retrying request to /chat/completions in 0.487495 seconds
+2026-01-07 18:58:50,114 | INFO | Retrying request to /chat/completions in 0.872454 seconds
+2026-01-07 18:58:50,989 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:50,990 | INFO | Processing Q: TRACEROUTE_leaf4_leaf3
+2026-01-07 18:58:50,996 | INFO | Retrying request to /chat/completions in 0.454874 seconds
+2026-01-07 18:58:51,452 | INFO | Retrying request to /chat/completions in 0.878709 seconds
+2026-01-07 18:58:52,333 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:52,333 | INFO | Processing Q: TRACEROUTE_leaf2_p4
+2026-01-07 18:58:52,339 | INFO | Retrying request to /chat/completions in 0.489442 seconds
+2026-01-07 18:58:52,831 | INFO | Retrying request to /chat/completions in 0.957043 seconds
+2026-01-07 18:58:53,790 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:53,790 | INFO | Processing Q: TRACEROUTE_leaf2_pe1
+2026-01-07 18:58:53,796 | INFO | Retrying request to /chat/completions in 0.476824 seconds
+2026-01-07 18:58:54,275 | INFO | Retrying request to /chat/completions in 0.781790 seconds
+2026-01-07 18:58:55,059 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:55,059 | INFO | Processing Q: TRACEROUTE_leaf1_pe2
+2026-01-07 18:58:55,065 | INFO | Retrying request to /chat/completions in 0.397393 seconds
+2026-01-07 18:58:55,464 | INFO | Retrying request to /chat/completions in 0.892277 seconds
+2026-01-07 18:58:56,358 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:56,358 | INFO | Processing Q: TRACEROUTE_p4_pe2
+2026-01-07 18:58:56,361 | INFO | Retrying request to /chat/completions in 0.457385 seconds
+2026-01-07 18:58:56,820 | INFO | Retrying request to /chat/completions in 0.933075 seconds
+2026-01-07 18:58:57,755 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:57,755 | INFO | Processing Q: TRACEROUTE_leaf2_p3
+2026-01-07 18:58:57,761 | INFO | Retrying request to /chat/completions in 0.381005 seconds
+2026-01-07 18:58:58,143 | INFO | Retrying request to /chat/completions in 0.874436 seconds
+2026-01-07 18:58:59,020 | ERROR | Query failed: Connection error.
+2026-01-07 18:58:59,020 | INFO | Processing Q: TRACEROUTE_pe1_leaf3
+2026-01-07 18:58:59,026 | INFO | Retrying request to /chat/completions in 0.461688 seconds
+2026-01-07 18:58:59,489 | INFO | Retrying request to /chat/completions in 0.867903 seconds
+2026-01-07 18:59:00,360 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:00,360 | INFO | Processing Q: REACH_leaf4_p3_TCP
+2026-01-07 18:59:00,374 | INFO | Retrying request to /chat/completions in 0.441731 seconds
+2026-01-07 18:59:00,817 | INFO | Retrying request to /chat/completions in 0.836677 seconds
+2026-01-07 18:59:01,657 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:01,657 | INFO | Processing Q: REACH_leaf4_pe2_ICMP
+2026-01-07 18:59:01,663 | INFO | Retrying request to /chat/completions in 0.448383 seconds
+2026-01-07 18:59:02,113 | INFO | Retrying request to /chat/completions in 0.902489 seconds
+2026-01-07 18:59:03,017 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:03,018 | INFO | Processing Q: REACH_leaf2_leaf4_TCP
+2026-01-07 18:59:03,024 | INFO | Retrying request to /chat/completions in 0.480521 seconds
+2026-01-07 18:59:03,506 | INFO | Retrying request to /chat/completions in 0.898779 seconds
+2026-01-07 18:59:04,407 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:04,407 | INFO | Processing Q: REACH_leaf2_p1_ICMP
+2026-01-07 18:59:04,413 | INFO | Retrying request to /chat/completions in 0.471495 seconds
+2026-01-07 18:59:04,886 | INFO | Retrying request to /chat/completions in 0.973614 seconds
+2026-01-07 18:59:05,863 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:05,863 | INFO | Processing Q: REACH_p4_pe2_ICMP
+2026-01-07 18:59:05,868 | INFO | Retrying request to /chat/completions in 0.384988 seconds
+2026-01-07 18:59:06,255 | INFO | Retrying request to /chat/completions in 0.823774 seconds
+2026-01-07 18:59:07,080 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:07,080 | INFO | Processing Q: REACH_p1_pe1_TCP
+2026-01-07 18:59:07,085 | INFO | Retrying request to /chat/completions in 0.382625 seconds
+2026-01-07 18:59:07,469 | INFO | Retrying request to /chat/completions in 0.829405 seconds
+2026-01-07 18:59:08,300 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:08,300 | INFO | Processing Q: REACH_p1_leaf3_ICMP
+2026-01-07 18:59:08,306 | INFO | Retrying request to /chat/completions in 0.448755 seconds
+2026-01-07 18:59:08,757 | INFO | Retrying request to /chat/completions in 0.867671 seconds
+2026-01-07 18:59:09,627 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:09,627 | INFO | Processing Q: REACH_p4_p2_ICMP
+2026-01-07 18:59:09,633 | INFO | Retrying request to /chat/completions in 0.451558 seconds
+2026-01-07 18:59:10,086 | INFO | Retrying request to /chat/completions in 0.832192 seconds
+2026-01-07 18:59:10,920 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:10,920 | INFO | Processing Q: REACH_leaf1_leaf2_ICMP
+2026-01-07 18:59:10,926 | INFO | Retrying request to /chat/completions in 0.479297 seconds
+2026-01-07 18:59:11,407 | INFO | Retrying request to /chat/completions in 0.835199 seconds
+2026-01-07 18:59:12,244 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:12,244 | INFO | Processing Q: REACH_leaf3_p2_TCP
+2026-01-07 18:59:12,248 | INFO | Retrying request to /chat/completions in 0.468395 seconds
+2026-01-07 18:59:12,718 | INFO | Retrying request to /chat/completions in 0.884205 seconds
+2026-01-07 18:59:13,605 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:13,605 | INFO | Processing Q: REACH_leaf2_p2_ICMP
+2026-01-07 18:59:13,611 | INFO | Retrying request to /chat/completions in 0.417325 seconds
+2026-01-07 18:59:14,030 | INFO | Retrying request to /chat/completions in 0.941866 seconds
+2026-01-07 18:59:14,975 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:14,975 | INFO | Processing Q: REACH_leaf3_p2_ICMP
+2026-01-07 18:59:14,981 | INFO | Retrying request to /chat/completions in 0.436631 seconds
+2026-01-07 18:59:15,419 | INFO | Retrying request to /chat/completions in 0.999277 seconds
+2026-01-07 18:59:16,420 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:16,420 | INFO | Processing Q: REACH_leaf1_leaf4_TCP
+2026-01-07 18:59:16,425 | INFO | Retrying request to /chat/completions in 0.474987 seconds
+2026-01-07 18:59:16,901 | INFO | Retrying request to /chat/completions in 0.772389 seconds
+2026-01-07 18:59:17,676 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:17,676 | INFO | Processing Q: REACH_leaf2_pe2_TCP
+2026-01-07 18:59:17,682 | INFO | Retrying request to /chat/completions in 0.381514 seconds
+2026-01-07 18:59:18,065 | INFO | Retrying request to /chat/completions in 0.821991 seconds
+2026-01-07 18:59:18,890 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:18,890 | INFO | Processing Q: REACH_pe2_leaf3_TCP
+2026-01-07 18:59:18,896 | INFO | Retrying request to /chat/completions in 0.413573 seconds
+2026-01-07 18:59:19,312 | INFO | Retrying request to /chat/completions in 0.935742 seconds
+2026-01-07 18:59:20,250 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:20,250 | INFO | Processing Q: REACH_leaf1_p2_TCP
+2026-01-07 18:59:20,256 | INFO | Retrying request to /chat/completions in 0.425171 seconds
+2026-01-07 18:59:20,683 | INFO | Retrying request to /chat/completions in 0.810754 seconds
+2026-01-07 18:59:21,496 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:21,496 | INFO | Processing Q: REACH_p4_pe1_TCP
+2026-01-07 18:59:21,501 | INFO | Retrying request to /chat/completions in 0.386955 seconds
+2026-01-07 18:59:21,889 | INFO | Retrying request to /chat/completions in 0.912390 seconds
+2026-01-07 18:59:22,804 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:22,805 | INFO | Processing Q: REACH_leaf4_pe1_ICMP
+2026-01-07 18:59:22,811 | INFO | Retrying request to /chat/completions in 0.406134 seconds
+2026-01-07 18:59:23,218 | INFO | Retrying request to /chat/completions in 0.942589 seconds
+2026-01-07 18:59:24,162 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:24,163 | INFO | Processing Q: REACH_leaf2_leaf4_ICMP
+2026-01-07 18:59:24,168 | INFO | Retrying request to /chat/completions in 0.458170 seconds
+2026-01-07 18:59:24,629 | INFO | Retrying request to /chat/completions in 0.963444 seconds
+2026-01-07 18:59:25,595 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:25,595 | INFO | Processing Q: REACH_p1_pe1_ICMP
+2026-01-07 18:59:25,601 | INFO | Retrying request to /chat/completions in 0.378471 seconds
+2026-01-07 18:59:25,982 | INFO | Retrying request to /chat/completions in 0.942066 seconds
+2026-01-07 18:59:26,926 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:26,926 | INFO | Processing Q: REACH_leaf4_leaf3_ICMP
+2026-01-07 18:59:26,932 | INFO | Retrying request to /chat/completions in 0.462286 seconds
+2026-01-07 18:59:27,397 | INFO | Retrying request to /chat/completions in 0.789053 seconds
+2026-01-07 18:59:28,188 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:28,188 | INFO | Processing Q: REACH_leaf1_pe2_ICMP
+2026-01-07 18:59:28,192 | INFO | Retrying request to /chat/completions in 0.469909 seconds
+2026-01-07 18:59:28,664 | INFO | Retrying request to /chat/completions in 0.845490 seconds
+2026-01-07 18:59:29,512 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:29,512 | INFO | Processing Q: REACH_leaf2_pe1_TCP
+2026-01-07 18:59:29,517 | INFO | Retrying request to /chat/completions in 0.405437 seconds
+2026-01-07 18:59:29,924 | INFO | Retrying request to /chat/completions in 0.806912 seconds
+2026-01-07 18:59:30,732 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:30,732 | INFO | Processing Q: REACH_pe1_leaf3_TCP
+2026-01-07 18:59:30,738 | INFO | Retrying request to /chat/completions in 0.493499 seconds
+2026-01-07 18:59:31,234 | INFO | Retrying request to /chat/completions in 0.869292 seconds
+2026-01-07 18:59:32,106 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:32,106 | INFO | Processing Q: REACH_leaf1_p1_ICMP
+2026-01-07 18:59:32,112 | INFO | Retrying request to /chat/completions in 0.423749 seconds
+2026-01-07 18:59:32,537 | INFO | Retrying request to /chat/completions in 0.863218 seconds
+2026-01-07 18:59:33,403 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:33,403 | INFO | Processing Q: REACH_leaf4_p2_TCP
+2026-01-07 18:59:33,409 | INFO | Retrying request to /chat/completions in 0.425120 seconds
+2026-01-07 18:59:33,836 | INFO | Retrying request to /chat/completions in 0.909873 seconds
+2026-01-07 18:59:34,748 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:34,748 | INFO | Processing Q: REACH_leaf2_p4_TCP
+2026-01-07 18:59:34,754 | INFO | Retrying request to /chat/completions in 0.471161 seconds
+2026-01-07 18:59:35,227 | INFO | Retrying request to /chat/completions in 0.960535 seconds
+2026-01-07 18:59:36,190 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:36,190 | INFO | Processing Q: REACH_leaf2_p3_ICMP
+2026-01-07 18:59:36,194 | INFO | Retrying request to /chat/completions in 0.402634 seconds
+2026-01-07 18:59:36,599 | INFO | Retrying request to /chat/completions in 0.831440 seconds
+2026-01-07 18:59:37,433 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:37,433 | INFO | Processing Q: REACH_leaf1_leaf2_TCP
+2026-01-07 18:59:37,439 | INFO | Retrying request to /chat/completions in 0.381103 seconds
+2026-01-07 18:59:37,822 | INFO | Retrying request to /chat/completions in 0.937328 seconds
+2026-01-07 18:59:38,762 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:38,762 | INFO | Processing Q: REACH_p4_pe1_ICMP
+2026-01-07 18:59:38,768 | INFO | Retrying request to /chat/completions in 0.434379 seconds
+2026-01-07 18:59:39,204 | INFO | Retrying request to /chat/completions in 0.850706 seconds
+2026-01-07 18:59:40,057 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:40,057 | INFO | Processing Q: LOOP_DETECTION_GLOBAL
+2026-01-07 18:59:40,062 | INFO | Retrying request to /chat/completions in 0.437904 seconds
+2026-01-07 18:59:40,501 | INFO | Retrying request to /chat/completions in 0.830737 seconds
+2026-01-07 18:59:41,334 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:41,334 | INFO | Processing Q: BOUNDED_PATH_p4_pe2
+2026-01-07 18:59:41,339 | INFO | Retrying request to /chat/completions in 0.453465 seconds
+2026-01-07 18:59:41,795 | INFO | Retrying request to /chat/completions in 0.771463 seconds
+2026-01-07 18:59:42,568 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:42,568 | INFO | Processing Q: BOUNDED_PATH_leaf1_leaf2
+2026-01-07 18:59:42,575 | INFO | Retrying request to /chat/completions in 0.389402 seconds
+2026-01-07 18:59:42,965 | INFO | Retrying request to /chat/completions in 0.963176 seconds
+2026-01-07 18:59:43,931 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:43,931 | INFO | Processing Q: BOUNDED_PATH_p1_pe1
+2026-01-07 18:59:43,937 | INFO | Retrying request to /chat/completions in 0.405681 seconds
+2026-01-07 18:59:44,344 | INFO | Retrying request to /chat/completions in 0.954941 seconds
+2026-01-07 18:59:45,301 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:45,302 | INFO | Processing Q: BOUNDED_PATH_leaf4_leaf3
+2026-01-07 18:59:45,308 | INFO | Retrying request to /chat/completions in 0.412336 seconds
+2026-01-07 18:59:45,722 | INFO | Retrying request to /chat/completions in 0.894648 seconds
+2026-01-07 18:59:46,619 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:46,619 | INFO | Processing Q: BOUNDED_PATH_pe2_leaf3
+2026-01-07 18:59:46,623 | INFO | Retrying request to /chat/completions in 0.423647 seconds
+2026-01-07 18:59:47,048 | INFO | Retrying request to /chat/completions in 0.849513 seconds
+2026-01-07 18:59:47,901 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:47,901 | INFO | Processing Q: BOUNDED_PATH_pe2_p3
+2026-01-07 18:59:47,907 | INFO | Retrying request to /chat/completions in 0.498878 seconds
+2026-01-07 18:59:48,408 | INFO | Retrying request to /chat/completions in 0.825243 seconds
+2026-01-07 18:59:49,235 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:49,236 | INFO | Processing Q: BOUNDED_PATH_leaf2_p4
+2026-01-07 18:59:49,242 | INFO | Retrying request to /chat/completions in 0.407770 seconds
+2026-01-07 18:59:49,651 | INFO | Retrying request to /chat/completions in 0.952483 seconds
+2026-01-07 18:59:50,606 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:50,606 | INFO | Processing Q: BOUNDED_PATH_leaf4_p1
+2026-01-07 18:59:50,612 | INFO | Retrying request to /chat/completions in 0.476088 seconds
+2026-01-07 18:59:51,090 | INFO | Retrying request to /chat/completions in 0.760253 seconds
+2026-01-07 18:59:51,852 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:51,852 | INFO | Processing Q: BOUNDED_PATH_p1_p2
+2026-01-07 18:59:51,857 | INFO | Retrying request to /chat/completions in 0.454933 seconds
+2026-01-07 18:59:52,314 | INFO | Retrying request to /chat/completions in 0.885001 seconds
+2026-01-07 18:59:53,202 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:53,202 | INFO | Processing Q: BOUNDED_PATH_p1_p4
+2026-01-07 18:59:53,206 | INFO | Retrying request to /chat/completions in 0.474578 seconds
+2026-01-07 18:59:53,682 | INFO | Retrying request to /chat/completions in 0.785023 seconds
+2026-01-07 18:59:54,468 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:54,469 | INFO | Processing Q: BOUNDED_PATH_leaf2_p3
+2026-01-07 18:59:54,473 | INFO | Retrying request to /chat/completions in 0.457394 seconds
+2026-01-07 18:59:54,931 | INFO | Retrying request to /chat/completions in 0.853641 seconds
+2026-01-07 18:59:55,788 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:55,788 | INFO | Processing Q: BOUNDED_PATH_p4_pe1
+2026-01-07 18:59:55,795 | INFO | Retrying request to /chat/completions in 0.429819 seconds
+2026-01-07 18:59:56,226 | INFO | Retrying request to /chat/completions in 0.979761 seconds
+2026-01-07 18:59:57,208 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:57,208 | INFO | Processing Q: BOUNDED_PATH_leaf2_p1
+2026-01-07 18:59:57,214 | INFO | Retrying request to /chat/completions in 0.421398 seconds
+2026-01-07 18:59:57,638 | INFO | Retrying request to /chat/completions in 0.851211 seconds
+2026-01-07 18:59:58,491 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:58,491 | INFO | Processing Q: BOUNDED_PATH_pe1_leaf3
+2026-01-07 18:59:58,496 | INFO | Retrying request to /chat/completions in 0.450148 seconds
+2026-01-07 18:59:58,949 | INFO | Retrying request to /chat/completions in 0.776127 seconds
+2026-01-07 18:59:59,727 | ERROR | Query failed: Connection error.
+2026-01-07 18:59:59,727 | INFO | Processing Q: BOUNDED_PATH_leaf1_p2
+2026-01-07 18:59:59,734 | INFO | Retrying request to /chat/completions in 0.425427 seconds
+2026-01-07 19:00:00,160 | INFO | Retrying request to /chat/completions in 0.990409 seconds
+2026-01-07 19:00:01,153 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:01,153 | INFO | Processing Q: BOUNDED_PATH_leaf2_pe2
+2026-01-07 19:00:01,159 | INFO | Retrying request to /chat/completions in 0.484389 seconds
+2026-01-07 19:00:01,645 | INFO | Retrying request to /chat/completions in 0.802872 seconds
+2026-01-07 19:00:02,451 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:02,451 | INFO | Processing Q: BOUNDED_PATH_leaf4_p3
+2026-01-07 19:00:02,457 | INFO | Retrying request to /chat/completions in 0.465219 seconds
+2026-01-07 19:00:02,924 | INFO | Retrying request to /chat/completions in 0.870908 seconds
+2026-01-07 19:00:03,798 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:03,798 | INFO | Processing Q: BOUNDED_PATH_pe1_p3
+2026-01-07 19:00:03,804 | INFO | Retrying request to /chat/completions in 0.414066 seconds
+2026-01-07 19:00:04,220 | INFO | Retrying request to /chat/completions in 0.875197 seconds
+2026-01-07 19:00:05,098 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:05,098 | INFO | Processing Q: BOUNDED_PATH_p4_p2
+2026-01-07 19:00:05,104 | INFO | Retrying request to /chat/completions in 0.463667 seconds
+2026-01-07 19:00:05,569 | INFO | Retrying request to /chat/completions in 0.815611 seconds
+2026-01-07 19:00:06,387 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:06,387 | INFO | Processing Q: BOUNDED_PATH_leaf3_p3
+2026-01-07 19:00:06,390 | INFO | Retrying request to /chat/completions in 0.378675 seconds
+2026-01-07 19:00:06,770 | INFO | Retrying request to /chat/completions in 0.898073 seconds
+2026-01-07 19:00:07,671 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:07,671 | INFO | Processing Q: BOUNDED_PATH_p4_leaf3
+2026-01-07 19:00:07,677 | INFO | Retrying request to /chat/completions in 0.476908 seconds
+2026-01-07 19:00:08,156 | INFO | Retrying request to /chat/completions in 0.993883 seconds
+2026-01-07 19:00:09,152 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:09,152 | INFO | Processing Q: BOUNDED_PATH_leaf1_p3
+2026-01-07 19:00:09,159 | INFO | Retrying request to /chat/completions in 0.484068 seconds
+2026-01-07 19:00:09,644 | INFO | Retrying request to /chat/completions in 0.983067 seconds
+2026-01-07 19:00:10,629 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:10,629 | INFO | Processing Q: BOUNDED_PATH_p1_pe2
+2026-01-07 19:00:10,634 | INFO | Retrying request to /chat/completions in 0.398496 seconds
+2026-01-07 19:00:11,034 | INFO | Retrying request to /chat/completions in 0.908646 seconds
+2026-01-07 19:00:11,945 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:11,945 | INFO | Processing Q: BOUNDED_PATH_leaf1_pe2
+2026-01-07 19:00:11,951 | INFO | Retrying request to /chat/completions in 0.398156 seconds
+2026-01-07 19:00:12,350 | INFO | Retrying request to /chat/completions in 0.963193 seconds
+2026-01-07 19:00:13,316 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:13,316 | INFO | Processing Q: BOUNDED_PATH_pe1_p2
+2026-01-07 19:00:13,322 | INFO | Retrying request to /chat/completions in 0.485344 seconds
+2026-01-07 19:00:13,809 | INFO | Retrying request to /chat/completions in 0.843435 seconds
+2026-01-07 19:00:14,655 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:14,655 | INFO | Processing Q: BOUNDED_PATH_leaf2_p2
+2026-01-07 19:00:14,670 | INFO | Retrying request to /chat/completions in 0.429255 seconds
+2026-01-07 19:00:15,101 | INFO | Retrying request to /chat/completions in 0.928569 seconds
+2026-01-07 19:00:16,032 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:16,032 | INFO | Processing Q: BOUNDED_PATH_leaf2_leaf3
+2026-01-07 19:00:16,038 | INFO | Retrying request to /chat/completions in 0.378989 seconds
+2026-01-07 19:00:16,419 | INFO | Retrying request to /chat/completions in 0.802544 seconds
+2026-01-07 19:00:17,224 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:17,224 | INFO | Processing Q: BOUNDED_PATH_leaf1_p4
+2026-01-07 19:00:17,230 | INFO | Retrying request to /chat/completions in 0.411831 seconds
+2026-01-07 19:00:17,644 | INFO | Retrying request to /chat/completions in 0.921509 seconds
+2026-01-07 19:00:18,568 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:18,568 | INFO | Processing Q: BOUNDED_PATH_leaf1_p1
+2026-01-07 19:00:18,574 | INFO | Retrying request to /chat/completions in 0.388765 seconds
+2026-01-07 19:00:18,965 | INFO | Retrying request to /chat/completions in 0.973867 seconds
+2026-01-07 19:00:19,941 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:19,941 | INFO | Processing Q: BOUNDED_PATH_leaf2_pe1
+2026-01-07 19:00:19,946 | INFO | Retrying request to /chat/completions in 0.400659 seconds
+2026-01-07 19:00:20,348 | INFO | Retrying request to /chat/completions in 0.785047 seconds
+2026-01-07 19:00:21,135 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:21,136 | INFO | Processing Q: BOUNDED_PATH_leaf4_p4
+2026-01-07 19:00:21,142 | INFO | Retrying request to /chat/completions in 0.394123 seconds
+2026-01-07 19:00:21,537 | INFO | Retrying request to /chat/completions in 0.943360 seconds
+2026-01-07 19:00:22,483 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:22,483 | INFO | Processing Q: BOUNDED_PATH_p1_leaf3
+2026-01-07 19:00:22,489 | INFO | Retrying request to /chat/completions in 0.423253 seconds
+2026-01-07 19:00:22,914 | INFO | Retrying request to /chat/completions in 0.874971 seconds
+2026-01-07 19:00:23,792 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:23,792 | INFO | Processing Q: BOUNDED_PATH_leaf1_pe1
+2026-01-07 19:00:23,798 | INFO | Retrying request to /chat/completions in 0.383041 seconds
+2026-01-07 19:00:24,183 | INFO | Retrying request to /chat/completions in 0.997846 seconds
+2026-01-07 19:00:25,183 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:25,184 | INFO | Processing Q: BOUNDED_PATH_leaf1_leaf4
+2026-01-07 19:00:25,188 | INFO | Retrying request to /chat/completions in 0.415450 seconds
+2026-01-07 19:00:25,605 | INFO | Retrying request to /chat/completions in 0.837589 seconds
+2026-01-07 19:00:26,445 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:26,445 | INFO | Processing Q: BOUNDED_PATH_leaf2_leaf4
+2026-01-07 19:00:26,451 | INFO | Retrying request to /chat/completions in 0.468942 seconds
+2026-01-07 19:00:26,921 | INFO | Retrying request to /chat/completions in 0.935032 seconds
+2026-01-07 19:00:27,859 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:27,859 | INFO | Processing Q: BOUNDED_PATH_pe2_pe1
+2026-01-07 19:00:27,865 | INFO | Retrying request to /chat/completions in 0.446912 seconds
+2026-01-07 19:00:28,314 | INFO | Retrying request to /chat/completions in 0.915807 seconds
+2026-01-07 19:00:29,232 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:29,232 | INFO | Processing Q: BOUNDED_PATH_leaf3_p2
+2026-01-07 19:00:29,239 | INFO | Retrying request to /chat/completions in 0.483266 seconds
+2026-01-07 19:00:29,724 | INFO | Retrying request to /chat/completions in 0.974639 seconds
+2026-01-07 19:00:30,701 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:30,701 | INFO | Processing Q: BOUNDED_PATH_p1_p3
+2026-01-07 19:00:30,707 | INFO | Retrying request to /chat/completions in 0.453128 seconds
+2026-01-07 19:00:31,162 | INFO | Retrying request to /chat/completions in 0.968136 seconds
+2026-01-07 19:00:32,132 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:32,132 | INFO | Processing Q: BOUNDED_PATH_leaf4_pe2
+2026-01-07 19:00:32,138 | INFO | Retrying request to /chat/completions in 0.464718 seconds
+2026-01-07 19:00:32,605 | INFO | Retrying request to /chat/completions in 0.822255 seconds
+2026-01-07 19:00:33,429 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:33,429 | INFO | Processing Q: BOUNDED_PATH_leaf4_pe1
+2026-01-07 19:00:33,432 | INFO | Retrying request to /chat/completions in 0.447276 seconds
+2026-01-07 19:00:33,881 | INFO | Retrying request to /chat/completions in 0.923795 seconds
+2026-01-07 19:00:34,808 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:34,808 | INFO | Processing Q: BOUNDED_PATH_leaf1_leaf3
+2026-01-07 19:00:34,814 | INFO | Retrying request to /chat/completions in 0.497400 seconds
+2026-01-07 19:00:35,313 | INFO | Retrying request to /chat/completions in 0.760996 seconds
+2026-01-07 19:00:36,076 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:36,077 | INFO | Processing Q: BOUNDED_PATH_leaf4_p2
+2026-01-07 19:00:36,083 | INFO | Retrying request to /chat/completions in 0.467188 seconds
+2026-01-07 19:00:36,551 | INFO | Retrying request to /chat/completions in 0.961472 seconds
+2026-01-07 19:00:37,515 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:37,515 | INFO | Processing Q: BOUNDED_PATH_p4_p3
+2026-01-07 19:00:37,521 | INFO | Retrying request to /chat/completions in 0.492288 seconds
+2026-01-07 19:00:38,015 | INFO | Retrying request to /chat/completions in 0.785007 seconds
+2026-01-07 19:00:38,802 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:38,802 | INFO | Processing Q: BOUNDED_PATH_pe2_p2
+2026-01-07 19:00:38,805 | INFO | Retrying request to /chat/completions in 0.384012 seconds
+2026-01-07 19:00:39,191 | INFO | Retrying request to /chat/completions in 0.857259 seconds
+2026-01-07 19:00:40,051 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:40,051 | INFO | Processing Q: BOUNDED_PATH_p2_p3
+2026-01-07 19:00:40,057 | INFO | Retrying request to /chat/completions in 0.456431 seconds
+2026-01-07 19:00:40,515 | INFO | Retrying request to /chat/completions in 0.931104 seconds
+2026-01-07 19:00:41,448 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:41,448 | INFO | Processing Q: BLACKHOLE_DETECTION_GLOBAL
+2026-01-07 19:00:41,454 | INFO | Retrying request to /chat/completions in 0.476986 seconds
+2026-01-07 19:00:41,932 | INFO | Retrying request to /chat/completions in 0.762122 seconds
+2026-01-07 19:00:42,696 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:42,697 | INFO | Processing Q: WAYPOINT_leaf1_p3_p1
+2026-01-07 19:00:42,703 | INFO | Retrying request to /chat/completions in 0.439957 seconds
+2026-01-07 19:00:43,144 | INFO | Retrying request to /chat/completions in 0.988993 seconds
+2026-01-07 19:00:44,135 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:44,136 | INFO | Processing Q: WAYPOINT_leaf1_p3_p4
+2026-01-07 19:00:44,142 | INFO | Retrying request to /chat/completions in 0.375361 seconds
+2026-01-07 19:00:44,518 | INFO | Retrying request to /chat/completions in 0.995804 seconds
+2026-01-07 19:00:45,516 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:45,516 | INFO | Processing Q: WAYPOINT_leaf1_p3_pe2
+2026-01-07 19:00:45,522 | INFO | Retrying request to /chat/completions in 0.383915 seconds
+2026-01-07 19:00:45,907 | INFO | Retrying request to /chat/completions in 0.929439 seconds
+2026-01-07 19:00:46,839 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:46,847 | INFO | Processing Q: WAYPOINT_leaf1_p3_pe1
+2026-01-07 19:00:46,853 | INFO | Retrying request to /chat/completions in 0.470729 seconds
+2026-01-07 19:00:47,325 | INFO | Retrying request to /chat/completions in 0.946091 seconds
+2026-01-07 19:00:48,273 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:48,274 | INFO | Processing Q: WAYPOINT_leaf1_p3_p2
+2026-01-07 19:00:48,280 | INFO | Retrying request to /chat/completions in 0.467303 seconds
+2026-01-07 19:00:48,749 | INFO | Retrying request to /chat/completions in 0.968854 seconds
+2026-01-07 19:00:49,720 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:49,720 | INFO | Processing Q: ISOLATION_VRF_AI_default
+2026-01-07 19:00:49,726 | INFO | Retrying request to /chat/completions in 0.392275 seconds
+2026-01-07 19:00:50,120 | INFO | Retrying request to /chat/completions in 0.830716 seconds
+2026-01-07 19:00:50,953 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:50,953 | INFO | Processing Q: ISOLATION_VRF_AI_VRF_HPC
+2026-01-07 19:00:50,959 | INFO | Retrying request to /chat/completions in 0.389177 seconds
+2026-01-07 19:00:51,350 | INFO | Retrying request to /chat/completions in 0.797291 seconds
+2026-01-07 19:00:52,149 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:52,150 | INFO | Processing Q: ISOLATION_VRF_AI_VRF_BIO
+2026-01-07 19:00:52,154 | INFO | Retrying request to /chat/completions in 0.470411 seconds
+2026-01-07 19:00:52,626 | INFO | Retrying request to /chat/completions in 0.958555 seconds
+2026-01-07 19:00:53,587 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:53,587 | INFO | Processing Q: ISOLATION_default_VRF_HPC
+2026-01-07 19:00:53,593 | INFO | Retrying request to /chat/completions in 0.479962 seconds
+2026-01-07 19:00:54,075 | INFO | Retrying request to /chat/completions in 0.909274 seconds
+2026-01-07 19:00:54,987 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:54,987 | INFO | Processing Q: ISOLATION_default_VRF_BIO
+2026-01-07 19:00:54,993 | INFO | Retrying request to /chat/completions in 0.483214 seconds
+2026-01-07 19:00:55,478 | INFO | Retrying request to /chat/completions in 0.926761 seconds
+2026-01-07 19:00:56,406 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:56,407 | INFO | Processing Q: ISOLATION_VRF_HPC_VRF_BIO
+2026-01-07 19:00:56,411 | INFO | Retrying request to /chat/completions in 0.375695 seconds
+2026-01-07 19:00:56,789 | INFO | Retrying request to /chat/completions in 0.973365 seconds
+2026-01-07 19:00:57,765 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:57,765 | INFO | Processing Q: ASYMMETRIC_p1_p3
+2026-01-07 19:00:57,771 | INFO | Retrying request to /chat/completions in 0.439674 seconds
+2026-01-07 19:00:58,212 | INFO | Retrying request to /chat/completions in 0.814230 seconds
+2026-01-07 19:00:59,029 | ERROR | Query failed: Connection error.
+2026-01-07 19:00:59,029 | INFO | Processing Q: ASYMMETRIC_pe1_leaf3
+2026-01-07 19:00:59,035 | INFO | Retrying request to /chat/completions in 0.406920 seconds
+2026-01-07 19:00:59,443 | INFO | Retrying request to /chat/completions in 0.873357 seconds
+2026-01-07 19:01:00,319 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:00,319 | INFO | Processing Q: ASYMMETRIC_leaf2_p3
+2026-01-07 19:01:00,325 | INFO | Retrying request to /chat/completions in 0.427978 seconds
+2026-01-07 19:01:00,755 | INFO | Retrying request to /chat/completions in 0.796722 seconds
+2026-01-07 19:01:01,553 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:01,553 | INFO | Processing Q: ASYMMETRIC_pe1_p2
+2026-01-07 19:01:01,556 | INFO | Retrying request to /chat/completions in 0.450496 seconds
+2026-01-07 19:01:02,008 | INFO | Retrying request to /chat/completions in 0.910331 seconds
+2026-01-07 19:01:02,921 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:02,922 | INFO | Processing Q: ASYMMETRIC_leaf1_p1
+2026-01-07 19:01:02,928 | INFO | Retrying request to /chat/completions in 0.394136 seconds
+2026-01-07 19:01:03,324 | INFO | Retrying request to /chat/completions in 0.851779 seconds
+2026-01-07 19:01:04,178 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:04,178 | INFO | Processing Q: ASYMMETRIC_leaf1_leaf4
+2026-01-07 19:01:04,184 | INFO | Retrying request to /chat/completions in 0.468302 seconds
+2026-01-07 19:01:04,654 | INFO | Retrying request to /chat/completions in 0.844914 seconds
+2026-01-07 19:01:05,501 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:05,501 | INFO | Processing Q: ASYMMETRIC_p1_p2
+2026-01-07 19:01:05,506 | INFO | Retrying request to /chat/completions in 0.407972 seconds
+2026-01-07 19:01:05,916 | INFO | Retrying request to /chat/completions in 0.895527 seconds
+2026-01-07 19:01:06,813 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:06,814 | INFO | Processing Q: ASYMMETRIC_p1_p4
+2026-01-07 19:01:06,819 | INFO | Retrying request to /chat/completions in 0.393150 seconds
+2026-01-07 19:01:07,214 | INFO | Retrying request to /chat/completions in 0.837218 seconds
+2026-01-07 19:01:08,054 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:08,054 | INFO | Processing Q: ASYMMETRIC_pe2_p3
+2026-01-07 19:01:08,060 | INFO | Retrying request to /chat/completions in 0.478234 seconds
+2026-01-07 19:01:08,540 | INFO | Retrying request to /chat/completions in 0.903930 seconds
+2026-01-07 19:01:09,446 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:09,446 | INFO | Processing Q: ASYMMETRIC_leaf3_p3
+2026-01-07 19:01:09,452 | INFO | Retrying request to /chat/completions in 0.375216 seconds
+2026-01-07 19:01:09,829 | INFO | Retrying request to /chat/completions in 0.758541 seconds
+2026-01-07 19:01:10,590 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:10,590 | INFO | Processing Q: SEC_BYPASS_leaf1_leaf3_pe2
+2026-01-07 19:01:10,596 | INFO | Retrying request to /chat/completions in 0.398110 seconds
+2026-01-07 19:01:10,996 | INFO | Retrying request to /chat/completions in 0.935100 seconds
+2026-01-07 19:01:11,933 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:11,933 | INFO | Processing Q: SEC_BYPASS_leaf2_leaf3_pe2
+2026-01-07 19:01:11,939 | INFO | Retrying request to /chat/completions in 0.389779 seconds
+2026-01-07 19:01:12,331 | INFO | Retrying request to /chat/completions in 0.859509 seconds
+2026-01-07 19:01:13,193 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:13,193 | INFO | Processing Q: SEC_BYPASS_leaf4_leaf3_pe2
+2026-01-07 19:01:13,199 | INFO | Retrying request to /chat/completions in 0.420317 seconds
+2026-01-07 19:01:13,621 | INFO | Retrying request to /chat/completions in 0.974181 seconds
+2026-01-07 19:01:14,598 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:14,598 | INFO | Processing Q: SEC_BYPASS_leaf1_leaf3_pe1
+2026-01-07 19:01:14,604 | INFO | Retrying request to /chat/completions in 0.466207 seconds
+2026-01-07 19:01:15,072 | INFO | Retrying request to /chat/completions in 0.874552 seconds
+2026-01-07 19:01:15,949 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:15,949 | INFO | Processing Q: SEC_BYPASS_leaf2_leaf3_pe1
+2026-01-07 19:01:15,955 | INFO | Retrying request to /chat/completions in 0.487933 seconds
+2026-01-07 19:01:16,445 | INFO | Retrying request to /chat/completions in 0.880791 seconds
+2026-01-07 19:01:17,328 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:17,328 | INFO | Processing Q: SEC_BYPASS_leaf4_leaf3_pe1
+2026-01-07 19:01:17,334 | INFO | Retrying request to /chat/completions in 0.458790 seconds
+2026-01-07 19:01:17,795 | INFO | Retrying request to /chat/completions in 0.875265 seconds
+2026-01-07 19:01:18,673 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:18,673 | INFO | Processing Q: SPOF_DETECTION_GLOBAL
+2026-01-07 19:01:18,679 | INFO | Retrying request to /chat/completions in 0.455783 seconds
+2026-01-07 19:01:19,137 | INFO | Retrying request to /chat/completions in 0.953082 seconds
+2026-01-07 19:01:20,092 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:20,093 | INFO | Processing Q: OSPF_AREA0_ROUTERS_GLOBAL
+2026-01-07 19:01:20,099 | INFO | Retrying request to /chat/completions in 0.480635 seconds
+2026-01-07 19:01:20,581 | INFO | Retrying request to /chat/completions in 0.983565 seconds
+2026-01-07 19:01:21,567 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:21,568 | INFO | Processing Q: K_FAILURE_leaf1_leaf3
+2026-01-07 19:01:21,574 | INFO | Retrying request to /chat/completions in 0.481575 seconds
+2026-01-07 19:01:22,057 | INFO | Retrying request to /chat/completions in 0.759735 seconds
+2026-01-07 19:01:22,819 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:22,819 | INFO | Processing Q: ROOT_CAUSE_leaf2_leaf3
+2026-01-07 19:01:22,825 | INFO | Retrying request to /chat/completions in 0.452786 seconds
+2026-01-07 19:01:23,280 | INFO | Retrying request to /chat/completions in 0.862227 seconds
+2026-01-07 19:01:24,144 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:24,145 | INFO | Processing Q: ROOT_CAUSE_leaf1_leaf3
+2026-01-07 19:01:24,151 | INFO | Retrying request to /chat/completions in 0.498390 seconds
+2026-01-07 19:01:24,651 | INFO | Retrying request to /chat/completions in 0.910419 seconds
+2026-01-07 19:01:25,563 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:25,563 | INFO | Processing Q: ROOT_CAUSE_leaf2_pe1
+2026-01-07 19:01:25,569 | INFO | Retrying request to /chat/completions in 0.455174 seconds
+2026-01-07 19:01:26,026 | INFO | Retrying request to /chat/completions in 0.971632 seconds
+2026-01-07 19:01:27,000 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:27,000 | INFO | Processing Q: ROOT_CAUSE_leaf2_leaf4
+2026-01-07 19:01:27,007 | INFO | Retrying request to /chat/completions in 0.438959 seconds
+2026-01-07 19:01:27,447 | INFO | Retrying request to /chat/completions in 0.774152 seconds
+2026-01-07 19:01:28,223 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:28,223 | INFO | Processing Q: ROOT_CAUSE_leaf1_p4
+2026-01-07 19:01:28,229 | INFO | Retrying request to /chat/completions in 0.493842 seconds
+2026-01-07 19:01:28,725 | INFO | Retrying request to /chat/completions in 0.978471 seconds
+2026-01-07 19:01:29,705 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:29,705 | INFO | Processing Q: ROOT_CAUSE_leaf2_p3
+2026-01-07 19:01:29,711 | INFO | Retrying request to /chat/completions in 0.424533 seconds
+2026-01-07 19:01:30,138 | INFO | Retrying request to /chat/completions in 0.959611 seconds
+2026-01-07 19:01:31,100 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:31,101 | INFO | Processing Q: ROOT_CAUSE_leaf4_p1
+2026-01-07 19:01:31,106 | INFO | Retrying request to /chat/completions in 0.445323 seconds
+2026-01-07 19:01:31,553 | INFO | Retrying request to /chat/completions in 0.823368 seconds
+2026-01-07 19:01:32,379 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:32,379 | INFO | Processing Q: ROOT_CAUSE_p1_leaf3
+2026-01-07 19:01:32,385 | INFO | Retrying request to /chat/completions in 0.443175 seconds
+2026-01-07 19:01:32,829 | INFO | Retrying request to /chat/completions in 0.923414 seconds
+2026-01-07 19:01:33,754 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:33,755 | INFO | Processing Q: ROOT_CAUSE_leaf2_p1
+2026-01-07 19:01:33,761 | INFO | Retrying request to /chat/completions in 0.482923 seconds
+2026-01-07 19:01:34,245 | INFO | Retrying request to /chat/completions in 0.803956 seconds
+2026-01-07 19:01:35,052 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:35,052 | INFO | Processing Q: ROOT_CAUSE_leaf1_leaf4
+2026-01-07 19:01:35,058 | INFO | Retrying request to /chat/completions in 0.460114 seconds
+2026-01-07 19:01:35,520 | INFO | Retrying request to /chat/completions in 0.908134 seconds
+2026-01-07 19:01:36,430 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:36,430 | INFO | Processing Q: ROOT_CAUSE_leaf2_p4
+2026-01-07 19:01:36,435 | INFO | Retrying request to /chat/completions in 0.398406 seconds
+2026-01-07 19:01:36,835 | INFO | Retrying request to /chat/completions in 0.911234 seconds
+2026-01-07 19:01:37,749 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:37,749 | INFO | Processing Q: ROOT_CAUSE_leaf3_p3
+2026-01-07 19:01:37,755 | INFO | Retrying request to /chat/completions in 0.452738 seconds
+2026-01-07 19:01:38,210 | INFO | Retrying request to /chat/completions in 0.930121 seconds
+2026-01-07 19:01:39,142 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:39,142 | INFO | Processing Q: ROOT_CAUSE_leaf4_p2
+2026-01-07 19:01:39,148 | INFO | Retrying request to /chat/completions in 0.465034 seconds
+2026-01-07 19:01:39,615 | INFO | Retrying request to /chat/completions in 0.776253 seconds
+2026-01-07 19:01:40,394 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:40,394 | INFO | Processing Q: ROOT_CAUSE_leaf4_p3
+2026-01-07 19:01:40,400 | INFO | Retrying request to /chat/completions in 0.421844 seconds
+2026-01-07 19:01:40,824 | INFO | Retrying request to /chat/completions in 0.928294 seconds
+2026-01-07 19:01:41,755 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:41,755 | INFO | Processing Q: ROOT_CAUSE_p4_leaf3
+2026-01-07 19:01:41,761 | INFO | Retrying request to /chat/completions in 0.446942 seconds
+2026-01-07 19:01:42,209 | INFO | Retrying request to /chat/completions in 0.781427 seconds
+2026-01-07 19:01:42,993 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:42,993 | INFO | Processing Q: ROOT_CAUSE_leaf4_pe1
+2026-01-07 19:01:42,999 | INFO | Retrying request to /chat/completions in 0.413025 seconds
+2026-01-07 19:01:43,414 | INFO | Retrying request to /chat/completions in 0.893615 seconds
+2026-01-07 19:01:44,309 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:44,309 | INFO | Processing Q: ROOT_CAUSE_leaf4_leaf3
+2026-01-07 19:01:44,313 | INFO | Retrying request to /chat/completions in 0.454189 seconds
+2026-01-07 19:01:44,769 | INFO | Retrying request to /chat/completions in 0.861371 seconds
+2026-01-07 19:01:45,633 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:45,634 | INFO | Processing Q: ROOT_CAUSE_leaf1_p2
+2026-01-07 19:01:45,640 | INFO | Retrying request to /chat/completions in 0.378660 seconds
+2026-01-07 19:01:46,020 | INFO | Retrying request to /chat/completions in 0.939216 seconds
+2026-01-07 19:01:46,962 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:46,962 | INFO | Processing Q: ROOT_CAUSE_leaf4_pe2
+2026-01-07 19:01:46,968 | INFO | Retrying request to /chat/completions in 0.495624 seconds
+2026-01-07 19:01:47,465 | INFO | Retrying request to /chat/completions in 0.884263 seconds
+2026-01-07 19:01:48,352 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:48,352 | INFO | Processing Q: ROOT_CAUSE_pe1_leaf3
+2026-01-07 19:01:48,355 | INFO | Retrying request to /chat/completions in 0.400529 seconds
+2026-01-07 19:01:48,758 | INFO | Retrying request to /chat/completions in 0.942398 seconds
+2026-01-07 19:01:49,702 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:49,702 | INFO | Processing Q: ROOT_CAUSE_leaf1_leaf2
+2026-01-07 19:01:49,707 | INFO | Retrying request to /chat/completions in 0.414533 seconds
+2026-01-07 19:01:50,123 | INFO | Retrying request to /chat/completions in 0.969708 seconds
+2026-01-07 19:01:51,095 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:51,096 | INFO | Processing Q: ROOT_CAUSE_leaf2_pe2
+2026-01-07 19:01:51,102 | INFO | Retrying request to /chat/completions in 0.425957 seconds
+2026-01-07 19:01:51,529 | INFO | Retrying request to /chat/completions in 0.860915 seconds
+2026-01-07 19:01:52,392 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:52,392 | INFO | Processing Q: ROOT_CAUSE_pe2_leaf3
+2026-01-07 19:01:52,398 | INFO | Retrying request to /chat/completions in 0.403320 seconds
+2026-01-07 19:01:52,804 | INFO | Retrying request to /chat/completions in 0.903680 seconds
+2026-01-07 19:01:53,709 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:53,709 | INFO | Processing Q: ROOT_CAUSE_leaf1_p3
+2026-01-07 19:01:53,712 | INFO | Retrying request to /chat/completions in 0.495022 seconds
+2026-01-07 19:01:54,209 | INFO | Retrying request to /chat/completions in 0.971247 seconds
+2026-01-07 19:01:55,183 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:55,183 | INFO | Processing Q: ROOT_CAUSE_leaf2_p2
+2026-01-07 19:01:55,190 | INFO | Retrying request to /chat/completions in 0.427304 seconds
+2026-01-07 19:01:55,619 | INFO | Retrying request to /chat/completions in 0.842885 seconds
+2026-01-07 19:01:56,463 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:56,463 | INFO | Processing Q: ROOT_CAUSE_leaf4_p4
+2026-01-07 19:01:56,469 | INFO | Retrying request to /chat/completions in 0.400179 seconds
+2026-01-07 19:01:56,871 | INFO | Retrying request to /chat/completions in 0.886458 seconds
+2026-01-07 19:01:57,760 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:57,760 | INFO | Processing Q: ROOT_CAUSE_leaf1_pe2
+2026-01-07 19:01:57,766 | INFO | Retrying request to /chat/completions in 0.453675 seconds
+2026-01-07 19:01:58,221 | INFO | Retrying request to /chat/completions in 0.889017 seconds
+2026-01-07 19:01:59,113 | ERROR | Query failed: Connection error.
+2026-01-07 19:01:59,113 | INFO | Processing Q: ROOT_CAUSE_leaf1_pe1
+2026-01-07 19:01:59,119 | INFO | Retrying request to /chat/completions in 0.475444 seconds
+2026-01-07 19:01:59,596 | INFO | Retrying request to /chat/completions in 0.983046 seconds
+2026-01-07 19:02:00,582 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:00,582 | INFO | Processing Q: ROOT_CAUSE_leaf1_p1
+2026-01-07 19:02:00,588 | INFO | Retrying request to /chat/completions in 0.493226 seconds
+2026-01-07 19:02:01,084 | INFO | Retrying request to /chat/completions in 0.778781 seconds
+2026-01-07 19:02:01,865 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:01,865 | INFO | Processing Q: ROOT_CAUSE_leaf3_p2
+2026-01-07 19:02:01,871 | INFO | Retrying request to /chat/completions in 0.438316 seconds
+2026-01-07 19:02:02,311 | INFO | Retrying request to /chat/completions in 0.822146 seconds
+2026-01-07 19:02:03,135 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:03,135 | INFO | Processing Q: NODE_FAILURE_leaf1
+2026-01-07 19:02:03,138 | INFO | Retrying request to /chat/completions in 0.481480 seconds
+2026-01-07 19:02:03,621 | INFO | Retrying request to /chat/completions in 0.971139 seconds
+2026-01-07 19:02:04,594 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:04,594 | INFO | Processing Q: NODE_FAILURE_leaf2
+2026-01-07 19:02:04,600 | INFO | Retrying request to /chat/completions in 0.408178 seconds
+2026-01-07 19:02:05,010 | INFO | Retrying request to /chat/completions in 0.991052 seconds
+2026-01-07 19:02:06,003 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:06,004 | INFO | Processing Q: NODE_FAILURE_leaf4
+2026-01-07 19:02:06,010 | INFO | Retrying request to /chat/completions in 0.410901 seconds
+2026-01-07 19:02:06,422 | INFO | Retrying request to /chat/completions in 0.764830 seconds
+2026-01-07 19:02:07,189 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:07,189 | INFO | Processing Q: NODE_FAILURE_p1
+2026-01-07 19:02:07,192 | INFO | Retrying request to /chat/completions in 0.455644 seconds
+2026-01-07 19:02:07,650 | INFO | Retrying request to /chat/completions in 0.914304 seconds
+2026-01-07 19:02:08,566 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:08,566 | INFO | Processing Q: NODE_FAILURE_p4
+2026-01-07 19:02:08,572 | INFO | Retrying request to /chat/completions in 0.408812 seconds
+2026-01-07 19:02:08,983 | INFO | Retrying request to /chat/completions in 0.789734 seconds
+2026-01-07 19:02:09,775 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:09,775 | INFO | Processing Q: NODE_FAILURE_pe2
+2026-01-07 19:02:09,781 | INFO | Retrying request to /chat/completions in 0.392216 seconds
+2026-01-07 19:02:10,175 | INFO | Retrying request to /chat/completions in 0.796544 seconds
+2026-01-07 19:02:10,974 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:10,974 | INFO | Processing Q: NODE_FAILURE_pe1
+2026-01-07 19:02:10,980 | INFO | Retrying request to /chat/completions in 0.497144 seconds
+2026-01-07 19:02:11,479 | INFO | Retrying request to /chat/completions in 0.785998 seconds
+2026-01-07 19:02:12,266 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:12,266 | INFO | Processing Q: NODE_FAILURE_leaf3
+2026-01-07 19:02:12,272 | INFO | Retrying request to /chat/completions in 0.383375 seconds
+2026-01-07 19:02:12,658 | INFO | Retrying request to /chat/completions in 0.971005 seconds
+2026-01-07 19:02:13,630 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:13,630 | INFO | Processing Q: NODE_FAILURE_p2
+2026-01-07 19:02:13,637 | INFO | Retrying request to /chat/completions in 0.430092 seconds
+2026-01-07 19:02:14,068 | INFO | Retrying request to /chat/completions in 0.904744 seconds
+2026-01-07 19:02:14,975 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:14,975 | INFO | Processing Q: NODE_FAILURE_p3
+2026-01-07 19:02:14,981 | INFO | Retrying request to /chat/completions in 0.376367 seconds
+2026-01-07 19:02:15,360 | INFO | Retrying request to /chat/completions in 0.761011 seconds
+2026-01-07 19:02:16,123 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:16,124 | INFO | Processing Q: DUAL_FAILURE_leaf1_leaf2
+2026-01-07 19:02:16,130 | INFO | Retrying request to /chat/completions in 0.486026 seconds
+2026-01-07 19:02:16,617 | INFO | Retrying request to /chat/completions in 0.761097 seconds
+2026-01-07 19:02:17,380 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:17,381 | INFO | Processing Q: DUAL_FAILURE_leaf3_leaf4
+2026-01-07 19:02:17,386 | INFO | Retrying request to /chat/completions in 0.438864 seconds
+2026-01-07 19:02:17,827 | INFO | Retrying request to /chat/completions in 0.918216 seconds
+2026-01-07 19:02:18,748 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:18,748 | INFO | Processing Q: DUAL_FAILURE_p1_p2
+2026-01-07 19:02:18,754 | INFO | Retrying request to /chat/completions in 0.471695 seconds
+2026-01-07 19:02:19,228 | INFO | Retrying request to /chat/completions in 0.977809 seconds
+2026-01-07 19:02:20,208 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:20,208 | INFO | Processing Q: DUAL_FAILURE_p3_p4
+2026-01-07 19:02:20,214 | INFO | Retrying request to /chat/completions in 0.414671 seconds
+2026-01-07 19:02:20,631 | INFO | Retrying request to /chat/completions in 0.917790 seconds
+2026-01-07 19:02:21,551 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:21,551 | INFO | Processing Q: DUAL_FAILURE_pe1_pe2
+2026-01-07 19:02:21,556 | INFO | Retrying request to /chat/completions in 0.423375 seconds
+2026-01-07 19:02:21,982 | INFO | Retrying request to /chat/completions in 0.847916 seconds
+2026-01-07 19:02:22,832 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:22,832 | INFO | Processing Q: TRIPLE_FAILURE_leaf1_leaf2_leaf3
+2026-01-07 19:02:22,836 | INFO | Retrying request to /chat/completions in 0.409865 seconds
+2026-01-07 19:02:23,248 | INFO | Retrying request to /chat/completions in 0.987310 seconds
+2026-01-07 19:02:24,238 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:24,239 | INFO | Processing Q: WORST_CASE_FAILURE
+2026-01-07 19:02:24,245 | INFO | Retrying request to /chat/completions in 0.402371 seconds
+2026-01-07 19:02:24,648 | INFO | Retrying request to /chat/completions in 0.855753 seconds
+2026-01-07 19:02:25,506 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:25,506 | INFO | Processing Q: NEGATIVE_TEST_FAKE_NODE
+2026-01-07 19:02:25,512 | INFO | Retrying request to /chat/completions in 0.494337 seconds
+2026-01-07 19:02:26,007 | INFO | Retrying request to /chat/completions in 0.810929 seconds
+2026-01-07 19:02:26,821 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:26,821 | INFO | Processing Q: MULTI_FAIL_leaf1_pe1_leaf3_p1
+2026-01-07 19:02:26,827 | INFO | Retrying request to /chat/completions in 0.383590 seconds
+2026-01-07 19:02:27,212 | INFO | Retrying request to /chat/completions in 0.759033 seconds
+2026-01-07 19:02:27,973 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:27,974 | INFO | Processing Q: MULTI_FAIL_leaf1_p2_leaf3_leaf2
+2026-01-07 19:02:27,980 | INFO | Retrying request to /chat/completions in 0.430743 seconds
+2026-01-07 19:02:28,412 | INFO | Retrying request to /chat/completions in 0.818569 seconds
+2026-01-07 19:02:29,233 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:29,233 | INFO | Processing Q: MULTI_FAIL_leaf1_p4_leaf2_p1
+2026-01-07 19:02:29,239 | INFO | Retrying request to /chat/completions in 0.457587 seconds
+2026-01-07 19:02:29,698 | INFO | Retrying request to /chat/completions in 0.818727 seconds
+2026-01-07 19:02:30,519 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:30,519 | INFO | Processing Q: MULTI_FAIL_leaf1_p3_leaf3_leaf4
+2026-01-07 19:02:30,524 | INFO | Retrying request to /chat/completions in 0.422163 seconds
+2026-01-07 19:02:30,948 | INFO | Retrying request to /chat/completions in 0.986452 seconds
+2026-01-07 19:02:31,937 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:31,937 | INFO | Processing Q: MULTI_FAIL_leaf1_leaf2_leaf3_pe2
+2026-01-07 19:02:31,943 | INFO | Retrying request to /chat/completions in 0.471445 seconds
+2026-01-07 19:02:32,415 | INFO | Retrying request to /chat/completions in 0.983783 seconds
+2026-01-07 19:02:33,402 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:33,402 | INFO | Processing Q: MULTI_FAIL_leaf2_pe2_leaf3_pe1
+2026-01-07 19:02:33,408 | INFO | Retrying request to /chat/completions in 0.431216 seconds
+2026-01-07 19:02:33,841 | INFO | Retrying request to /chat/completions in 0.886266 seconds
+2026-01-07 19:02:34,730 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:34,730 | INFO | Processing Q: MULTI_FAIL_leaf1_pe1_leaf3_pe2
+2026-01-07 19:02:34,736 | INFO | Retrying request to /chat/completions in 0.492743 seconds
+2026-01-07 19:02:35,230 | INFO | Retrying request to /chat/completions in 0.813350 seconds
+2026-01-07 19:02:36,046 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:36,046 | INFO | Processing Q: MULTI_FAIL_leaf2_leaf4_leaf3_p4
+2026-01-07 19:02:36,051 | INFO | Retrying request to /chat/completions in 0.467196 seconds
+2026-01-07 19:02:36,520 | INFO | Retrying request to /chat/completions in 0.999425 seconds
+2026-01-07 19:02:37,522 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:37,522 | INFO | Processing Q: MULTI_FAIL_leaf1_p2_leaf3_p3
+2026-01-07 19:02:37,527 | INFO | Retrying request to /chat/completions in 0.460107 seconds
+2026-01-07 19:02:37,990 | INFO | Retrying request to /chat/completions in 0.824581 seconds
+2026-01-07 19:02:38,817 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:38,817 | INFO | Processing Q: MULTI_FAIL_leaf1_p1_leaf3_pe2
+2026-01-07 19:02:38,823 | INFO | Retrying request to /chat/completions in 0.394991 seconds
+2026-01-07 19:02:39,219 | INFO | Retrying request to /chat/completions in 0.854802 seconds
+2026-01-07 19:02:40,077 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:40,077 | INFO | Processing Q: MULTI_FAIL_leaf2_leaf4_leaf3_p2
+2026-01-07 19:02:40,083 | INFO | Retrying request to /chat/completions in 0.495301 seconds
+2026-01-07 19:02:40,580 | INFO | Retrying request to /chat/completions in 0.856599 seconds
+2026-01-07 19:02:41,438 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:41,439 | INFO | Processing Q: MULTI_FAIL_leaf2_pe2_leaf3_leaf1
+2026-01-07 19:02:41,445 | INFO | Retrying request to /chat/completions in 0.425226 seconds
+2026-01-07 19:02:41,872 | INFO | Retrying request to /chat/completions in 0.998650 seconds
+2026-01-07 19:02:42,873 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:42,874 | INFO | Processing Q: MULTI_FAIL_leaf1_pe1_leaf3_leaf2
+2026-01-07 19:02:42,880 | INFO | Retrying request to /chat/completions in 0.499219 seconds
+2026-01-07 19:02:43,381 | INFO | Retrying request to /chat/completions in 0.995236 seconds
+2026-01-07 19:02:44,378 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:44,378 | INFO | Processing Q: MULTI_FAIL_leaf1_p2_leaf2_pe1
+2026-01-07 19:02:44,384 | INFO | Retrying request to /chat/completions in 0.427019 seconds
+2026-01-07 19:02:44,813 | INFO | Retrying request to /chat/completions in 0.946708 seconds
+2026-01-07 19:02:45,761 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:45,761 | INFO | Processing Q: MULTI_FAIL_leaf1_p3_leaf2_pe1
+2026-01-07 19:02:45,766 | INFO | Retrying request to /chat/completions in 0.487510 seconds
+2026-01-07 19:02:46,255 | INFO | Retrying request to /chat/completions in 0.790482 seconds
+2026-01-07 19:02:47,048 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:47,048 | INFO | Processing Q: MULTI_FAIL_leaf2_pe1_leaf3_p3
+2026-01-07 19:02:47,054 | INFO | Retrying request to /chat/completions in 0.492050 seconds
+2026-01-07 19:02:47,548 | INFO | Retrying request to /chat/completions in 0.871649 seconds
+2026-01-07 19:02:48,422 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:48,422 | INFO | Processing Q: MULTI_FAIL_leaf1_p1_leaf3_leaf4
+2026-01-07 19:02:48,428 | INFO | Retrying request to /chat/completions in 0.380236 seconds
+2026-01-07 19:02:48,810 | INFO | Retrying request to /chat/completions in 0.787122 seconds
+2026-01-07 19:02:49,599 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:49,599 | INFO | Processing Q: MULTI_FAIL_leaf1_leaf3_leaf2_p4
+2026-01-07 19:02:49,605 | INFO | Retrying request to /chat/completions in 0.392020 seconds
+2026-01-07 19:02:49,999 | INFO | Retrying request to /chat/completions in 0.895353 seconds
+2026-01-07 19:02:50,897 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:50,897 | INFO | Processing Q: MULTI_FAIL_leaf1_pe2_leaf3_p1
+2026-01-07 19:02:50,903 | INFO | Retrying request to /chat/completions in 0.409911 seconds
+2026-01-07 19:02:51,315 | INFO | Retrying request to /chat/completions in 0.802395 seconds
+2026-01-07 19:02:52,120 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:52,120 | INFO | Processing Q: MULTI_FAIL_leaf1_p3_leaf2_leaf3
+2026-01-07 19:02:52,126 | INFO | Retrying request to /chat/completions in 0.381717 seconds
+2026-01-07 19:02:52,509 | INFO | Retrying request to /chat/completions in 0.827224 seconds
+2026-01-07 19:02:53,338 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:53,338 | INFO | Processing Q: MULTI_FAIL_leaf2_p3_leaf3_p1
+2026-01-07 19:02:53,342 | INFO | Retrying request to /chat/completions in 0.460925 seconds
+2026-01-07 19:02:53,805 | INFO | Retrying request to /chat/completions in 0.952305 seconds
+2026-01-07 19:02:54,759 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:54,759 | INFO | Processing Q: MULTI_FAIL_leaf1_pe1_leaf2_leaf4
+2026-01-07 19:02:54,765 | INFO | Retrying request to /chat/completions in 0.441097 seconds
+2026-01-07 19:02:55,208 | INFO | Retrying request to /chat/completions in 0.863287 seconds
+2026-01-07 19:02:56,074 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:56,074 | INFO | Processing Q: MULTI_FAIL_leaf1_p2_leaf2_pe2
+2026-01-07 19:02:56,080 | INFO | Retrying request to /chat/completions in 0.473452 seconds
+2026-01-07 19:02:56,555 | INFO | Retrying request to /chat/completions in 0.762850 seconds
+2026-01-07 19:02:57,320 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:57,321 | INFO | Processing Q: MULTI_FAIL_leaf1_p2_leaf3_leaf4
+2026-01-07 19:02:57,327 | INFO | Retrying request to /chat/completions in 0.377866 seconds
+2026-01-07 19:02:57,706 | INFO | Retrying request to /chat/completions in 0.786073 seconds
+2026-01-07 19:02:58,494 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:58,495 | INFO | Processing Q: MULTI_FAIL_leaf1_p2_leaf3_pe2
+2026-01-07 19:02:58,499 | INFO | Retrying request to /chat/completions in 0.429247 seconds
+2026-01-07 19:02:58,930 | INFO | Retrying request to /chat/completions in 0.945488 seconds
+2026-01-07 19:02:59,878 | ERROR | Query failed: Connection error.
+2026-01-07 19:02:59,879 | INFO | Processing Q: MULTI_FAIL_leaf2_leaf1_leaf3_leaf4
+2026-01-07 19:02:59,885 | INFO | Retrying request to /chat/completions in 0.420401 seconds
+2026-01-07 19:03:00,307 | INFO | Retrying request to /chat/completions in 0.945924 seconds
+2026-01-07 19:03:01,255 | ERROR | Query failed: Connection error.
+2026-01-07 19:03:01,256 | INFO | Processing Q: MULTI_FAIL_leaf1_leaf3_leaf2_p3
+2026-01-07 19:03:01,262 | INFO | Retrying request to /chat/completions in 0.447516 seconds
+2026-01-07 19:03:01,711 | INFO | Retrying request to /chat/completions in 0.922236 seconds
+2026-01-07 19:03:02,635 | ERROR | Query failed: Connection error.
+2026-01-07 19:03:02,635 | INFO | Processing Q: MULTI_FAIL_leaf1_p3_leaf3_p2
+2026-01-07 19:03:02,641 | INFO | Retrying request to /chat/completions in 0.492555 seconds
+2026-01-07 19:03:03,135 | INFO | Retrying request to /chat/completions in 0.846774 seconds
+2026-01-07 19:03:03,984 | ERROR | Query failed: Connection error.
+2026-01-07 19:03:03,985 | INFO | Processing Q: MULTI_FAIL_leaf1_pe1_leaf3_p3
+2026-01-07 19:03:03,991 | INFO | Retrying request to /chat/completions in 0.387741 seconds
+2026-01-07 19:03:04,380 | INFO | Retrying request to /chat/completions in 0.925765 seconds
+2026-01-07 19:03:05,308 | ERROR | Query failed: Connection error.
+2026-01-07 19:03:05,308 | INFO | Processing Q: MULTI_FAIL_leaf1_p4_leaf3_p1
+2026-01-07 19:03:05,314 | INFO | Retrying request to /chat/completions in 0.391670 seconds
+2026-01-07 19:03:05,708 | INFO | Retrying request to /chat/completions in 0.776960 seconds
+2026-01-07 19:03:06,487 | ERROR | Query failed: Connection error.
+2026-01-07 19:03:06,487 | INFO | Processing Q: MULTI_FAIL_leaf1_leaf2_leaf3_p3
+2026-01-07 19:03:06,492 | INFO | Retrying request to /chat/completions in 0.417598 seconds
+2026-01-07 19:03:06,912 | INFO | Retrying request to /chat/completions in 0.993610 seconds
+2026-01-07 19:03:07,908 | ERROR | Query failed: Connection error.
+2026-01-07 19:03:07,908 | INFO | Processing Q: MULTI_FAIL_leaf2_pe1_leaf3_p4
+2026-01-07 19:03:07,914 | INFO | Retrying request to /chat/completions in 0.400632 seconds
+2026-01-07 19:03:08,317 | INFO | Retrying request to /chat/completions in 0.822470 seconds
+2026-01-07 19:03:09,142 | ERROR | Query failed: Connection error.
+2026-01-07 19:03:09,142 | INFO | Processing Q: MULTI_FAIL_leaf1_leaf2_leaf3_leaf4
+2026-01-07 19:03:09,148 | INFO | Retrying request to /chat/completions in 0.461803 seconds
+2026-01-07 19:03:09,612 | INFO | Retrying request to /chat/completions in 0.900738 seconds
+2026-01-07 19:03:10,515 | ERROR | Query failed: Connection error.
+2026-01-07 19:03:10,515 | INFO | Processing Q: MULTI_FAIL_leaf1_p2_leaf2_p4
+2026-01-07 19:03:10,529 | INFO | Retrying request to /chat/completions in 0.384085 seconds
+2026-01-07 19:03:10,914 | INFO | Retrying request to /chat/completions in 0.809590 seconds
+2026-01-07 19:03:11,725 | ERROR | Query failed: Connection error.
+2026-01-07 19:03:11,726 | INFO | Processing Q: MULTI_FAIL_leaf1_p4_leaf3_leaf4
+2026-01-07 19:03:11,732 | INFO | Retrying request to /chat/completions in 0.420260 seconds
+2026-01-07 19:03:12,154 | INFO | Retrying request to /chat/completions in 0.935962 seconds
+2026-01-07 19:03:13,092 | ERROR | Query failed: Connection error.
+2026-01-07 19:03:13,092 | INFO | Processing Q: MULTI_FAIL_leaf1_leaf4_leaf3_p2
+2026-01-07 19:03:13,098 | INFO | Retrying request to /chat/completions in 0.489283 seconds
+2026-01-07 19:03:13,590 | INFO | Retrying request to /chat/completions in 0.760350 seconds
+2026-01-07 19:03:14,352 | ERROR | Query failed: Connection error.
+2026-01-07 19:03:14,352 | INFO | Processing Q: MULTI_FAIL_leaf1_p3_leaf3_pe2
+2026-01-07 19:03:14,355 | INFO | Retrying request to /chat/completions in 0.399301 seconds
+2026-01-07 19:03:14,756 | INFO | Retrying request to /chat/completions in 0.814094 seconds
+2026-01-07 19:03:15,573 | ERROR | Query failed: Connection error.
+2026-01-07 19:03:15,573 | INFO | Processing Q: MULTI_FAIL_leaf1_leaf4_leaf2_pe1
+2026-01-07 19:03:15,587 | INFO | Retrying request to /chat/completions in 0.484446 seconds
+2026-01-07 19:03:16,073 | INFO | Retrying request to /chat/completions in 0.794567 seconds
+2026-01-07 19:03:16,870 | ERROR | Query failed: Connection error.
+2026-01-07 19:03:16,870 | INFO | Processing Q: MULTI_FAIL_leaf1_pe2_leaf2_pe1
+2026-01-07 19:03:16,873 | INFO | Retrying request to /chat/completions in 0.452810 seconds
+2026-01-07 19:03:17,328 | INFO | Retrying request to /chat/completions in 0.868409 seconds
+2026-01-07 19:03:18,198 | ERROR | Query failed: Connection error.
+2026-01-07 19:03:18,199 | INFO | Processing Q: MULTI_FAIL_leaf1_leaf3_leaf2_leaf4
+2026-01-07 19:03:18,203 | INFO | Retrying request to /chat/completions in 0.409715 seconds
+2026-01-07 19:03:18,615 | INFO | Retrying request to /chat/completions in 0.869486 seconds
+2026-01-07 19:03:19,486 | ERROR | Query failed: Connection error.
+2026-01-07 19:03:19,486 | INFO | Processing Q: MULTI_FAIL_leaf1_leaf3_leaf2_p2
+2026-01-07 19:03:19,491 | INFO | Retrying request to /chat/completions in 0.419682 seconds
+2026-01-07 19:03:19,913 | INFO | Retrying request to /chat/completions in 0.844372 seconds
+2026-01-07 19:03:20,759 | ERROR | Query failed: Connection error.
+2026-01-07 19:03:20,760 | INFO | Processing Q: MULTI_FAIL_leaf2_leaf4_leaf3_pe2
+2026-01-07 19:03:20,765 | INFO | Retrying request to /chat/completions in 0.468682 seconds
+2026-01-07 19:03:21,236 | INFO | Retrying request to /chat/completions in 0.956218 seconds
+2026-01-07 19:03:22,194 | ERROR | Query failed: Connection error.
+2026-01-07 19:03:22,194 | INFO | Processing Q: MULTI_FAIL_leaf1_pe1_leaf2_p2
+2026-01-07 19:03:22,198 | INFO | Retrying request to /chat/completions in 0.499471 seconds
+2026-01-07 19:03:22,699 | INFO | Retrying request to /chat/completions in 0.931916 seconds
+2026-01-07 19:03:23,633 | ERROR | Query failed: Connection error.
+2026-01-07 19:03:23,633 | INFO | Processing Q: MULTI_FAIL_leaf1_pe1_leaf3_pe2
+2026-01-07 19:03:23,637 | INFO | Retrying request to /chat/completions in 0.494606 seconds
+2026-01-07 19:03:24,134 | INFO | Retrying request to /chat/completions in 0.987076 seconds
+2026-01-07 19:03:25,124 | ERROR | Query failed: Connection error.
+2026-01-07 19:03:25,124 | INFO | Processing Q: MULTI_FAIL_leaf1_p3_leaf2_pe2
+2026-01-07 19:03:25,130 | INFO | Retrying request to /chat/completions in 0.458785 seconds
+2026-01-07 19:03:25,591 | INFO | Retrying request to /chat/completions in 0.893271 seconds
+2026-01-07 19:03:26,486 | ERROR | Query failed: Connection error.
+2026-01-07 19:03:26,486 | INFO | Processing Q: MULTI_FAIL_leaf2_p2_leaf3_p1
+2026-01-07 19:03:26,492 | INFO | Retrying request to /chat/completions in 0.469946 seconds
+2026-01-07 19:03:26,964 | INFO | Retrying request to /chat/completions in 0.853937 seconds
+2026-01-07 19:03:27,820 | ERROR | Query failed: Connection error.
+2026-01-07 19:03:27,821 | INFO | Processing Q: MULTI_FAIL_leaf1_p4_leaf3_pe2
+2026-01-07 19:03:27,827 | INFO | Retrying request to /chat/completions in 0.427984 seconds
+2026-01-07 19:03:28,256 | INFO | Retrying request to /chat/completions in 0.945417 seconds
+2026-01-07 19:03:29,204 | ERROR | Query failed: Connection error.
+2026-01-07 19:03:29,204 | INFO | Processing Q: MULTI_FAIL_leaf2_pe2_leaf3_p1
+2026-01-07 19:03:29,210 | INFO | Retrying request to /chat/completions in 0.457744 seconds
+2026-01-07 19:03:29,669 | INFO | Retrying request to /chat/completions in 0.985234 seconds
+2026-01-07 19:03:30,657 | ERROR | Query failed: Connection error.
+2026-01-07 19:03:30,658 | INFO | Processing Q: MULTI_FAIL_leaf1_p2_leaf3_pe1
+2026-01-07 19:03:30,664 | INFO | Retrying request to /chat/completions in 0.397971 seconds
+2026-01-07 19:03:31,063 | INFO | Retrying request to /chat/completions in 0.900078 seconds
+2026-01-07 19:03:31,965 | ERROR | Query failed: Connection error.
+2026-01-07 19:03:31,965 | INFO | Processing Q: MULTI_FAIL_leaf1_pe1_leaf2_p4
+2026-01-07 19:03:31,971 | INFO | Retrying request to /chat/completions in 0.442279 seconds
+2026-01-07 19:03:32,416 | INFO | Retrying request to /chat/completions in 0.763027 seconds
+2026-01-07 19:03:33,181 | ERROR | Query failed: Connection error.
+2026-01-07 19:03:33,214 | INFO | Saved results to results/GPT-OSS-20B_agent

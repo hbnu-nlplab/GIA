@@ -4,6 +4,8 @@
 
 로컬 vLLM 모델(GPT-OSS-20B)로 LangChain Agent를 실행하여 Facts가 Config보다 우수함을 증명합니다.
 
+> **현재 Phase 3 구현 요약**: Facts 전체를 프롬프트에 주입하지 않고, LLM은 Tool(Action)로만 필요한 정보를 조회합니다.
+
 ## 📦 필요 사항
 
 - GPU가 있는 시스템 (vLLM 실행용)
