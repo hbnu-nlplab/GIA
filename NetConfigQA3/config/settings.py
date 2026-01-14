@@ -46,6 +46,13 @@ class NSOConfig:
     timeout: int = 30
 
 
+@dataclass
+class BatfishConfig:
+    """Batfish 연결 설정"""
+    host: str
+    network_name: str = "netconfig_qa"
+
+
 @dataclass  
 class OpenAIConfig:
     """OpenAI API 설정"""
@@ -60,6 +67,7 @@ class Settings:
     def __init__(self):
         self._pnetlab: Optional[PnetlabConfig] = None
         self._nso: Optional[NSOConfig] = None
+        self._batfish: Optional[BatfishConfig] = None
         self._openai: Optional[OpenAIConfig] = None
     
     @property
@@ -88,6 +96,16 @@ class Settings:
                 timeout=int(os.getenv("NSO_TIMEOUT", "30"))
             )
         return self._nso
+
+    @property
+    def batfish(self) -> BatfishConfig:
+        """Batfish 설정 반환"""
+        if self._batfish is None:
+            self._batfish = BatfishConfig(
+                host=os.getenv("BATFISH_HOST", "localhost"),
+                network_name=os.getenv("BATFISH_NETWORK", "netconfig_qa")
+            )
+        return self._batfish
     
     @property
     def openai(self) -> OpenAIConfig:
