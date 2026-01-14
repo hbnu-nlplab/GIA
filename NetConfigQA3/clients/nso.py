@@ -169,11 +169,114 @@ class NSOClient:
             
         return "Unknown response from live-status."
 
+    def _run_action(self, path: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """NSO Action 실행"""
+        payload = params or {}
+        res = self._request("POST", path, payload=payload)
+        
+        if isinstance(res, dict):
+             # Action 결과는 보통 output 키 안에 있음
+            if "output" in res:
+                return res["output"]
+            return res
+        return {"status": "unknown", "raw": str(res)}
+
     # =========================================================
     #          Public High-level API (LLM용 도구)
     # =========================================================
 
-    # --- Discovery & Inventory ---
+    # --- Onboarding & Management ---
+
+    def create_authgroup(self, group: str, username: str, password: str) -> bool:
+        """Authgroup 생성"""
+        path = "tailf-ncs:devices/authgroups/group"
+        
+        # 이미 존재하는지 확인하지 않고, 항상 생성 시도 (멱등성 보장)
+        # 1. Group 생성
+        payload = {
+            "tailf-ncs:group": [
+                {
+                    "name": group,
+                    "default-map": {
+                        "remote-name": username,
+                        "remote-password": password
+                    }
+                }
+            ]
+        }
+        
+        # PATCH를 사용하여 없으면 생성, 있으면 업데이트
+        res = self._request("PATCH", "tailf-ncs:devices/authgroups", payload=payload)
+        return not (isinstance(res, dict) and res.get("status") == "error")
+
+    def register_device(self, device_info: Dict[str, Any]) -> bool:
+        """장비 등록"""
+        name = device_info["name"]
+        address = device_info["oob_ip"]
+        port = device_info.get("port", 22)
+        authgroup = device_info.get("authgroup", "default")
+        ned_id = device_info.get("ned_id", "cisco-ios-cli-6.110")
+        
+        # 장비 등록 Payload
+        payload = {
+            "tailf-ncs:device": [
+                {
+                    "name": name,
+                    "address": address,
+                    "port": port,
+                    "authgroup": authgroup,
+                    "device-type": {
+                        "cli": {
+                            "ned-id": ned_id
+                        }
+                    },
+                    "state": {
+                        "admin-state": "unlocked"
+                    },
+                    # SSH 알고리즘 설정 (필수적인 것들만)
+                    "ssh-algorithms": {
+                        "public-key": ["ssh-rsa"] 
+                    }
+                }
+            ]
+        }
+        
+        # PATCH로 생성/업데이트
+        res = self._request("PATCH", "tailf-ncs:devices", payload=payload)
+        
+        if isinstance(res, dict) and res.get("status") == "error":
+            logger.error(f"Failed to register device {name}: {res.get('message')}")
+            return False
+            
+        return True
+
+    def fetch_host_keys(self, device_name: str) -> bool:
+        """SSH 호스트 키 가져오기"""
+        path = f"tailf-ncs:devices/device={device_name}/ssh/fetch-host-keys"
+        res = self._run_action(path)
+        
+        # 결과 확인 ("result": "fetched" 등)
+        full_res = str(res)
+        return "fetched" in full_res or "result" in full_res
+
+    def sync_from(self, device_name: str) -> bool:
+        """Sync-from 실행"""
+        path = f"tailf-ncs:devices/device={device_name}/sync-from"
+        res = self._run_action(path)
+        
+        # 결과 확인 ("result": true)
+        if isinstance(res, dict):
+            return str(res.get("result", "")).lower() == "true"
+        return False
+
+    def check_sync(self, device_name: str) -> bool:
+        """Check-sync 실행"""
+        path = f"tailf-ncs:devices/device={device_name}/check-sync"
+        res = self._run_action(path)
+        
+        if isinstance(res, dict):
+            return str(res.get("result", "")).lower() == "in-sync"
+        return False
 
     def get_devices(self) -> List[str]:
         """NSO에 등록된 모든 장비 목록 반환"""

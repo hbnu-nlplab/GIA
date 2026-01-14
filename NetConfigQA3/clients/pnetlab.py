@@ -145,7 +145,10 @@ class PnetlabClient:
             session: 세션 값 (쿠키명: _session)
             xsrf: XSRF 토큰 (쿠키명: XSRF-TOKEN)
         """
-        domain = self.base_url.split('//')[1].split(':')[0]
+        if '//' in self.base_url:
+            domain = self.base_url.split('//')[1].split(':')[0]
+        else:
+            domain = self.base_url.split(':')[0]
         
         self.session.cookies.set('token', token, domain=domain)
         self.session.cookies.set('_session', session, domain=domain)

@@ -23,7 +23,8 @@ except ImportError:
     LANGGRAPH_AVAILABLE = False
 
 from config.settings import settings
-from agent.tools import get_tools
+from agent.tools import get_tools, get_pnetlab_client
+from agent.tracing import setup_langsmith, get_structured_logger
 
 # 로깅 설정
 logging.basicConfig(
@@ -68,6 +69,9 @@ PNETLab 실험실과 Cisco NSO를 연동하는 지능형 네트워크 운영 에
 - 전문적인 네트워크 엔지니어처럼 답변하세요.
 - 문제 발견 시 '현상 - 원인 - 해결책' 순서로 정리하세요.
 - 한국어로 답변하되, 기술 용어(BGP, OSPF, VRF 등)는 영어로 유지하세요.
+
+## 현재 네트워크 상태 (Context)
+{context}
 """
 
 
@@ -79,16 +83,53 @@ class NetworkAgent:
     """네트워크 운영 에이전트"""
     
     def __init__(self):
+        # LangSmith 트레이싱 활성화 (선택사항)
+        setup_langsmith("NetConfigQA3-Agent")
+        
         self.agent = None
         self.memory = None
         self._initialized = False
+        self.topology_context = "초기화되지 않음"
     
+    def _fetch_topology_context(self) -> str:
+        """PNETLab에서 토폴로지 정보를 가져와 요약 텍스트 생성"""
+        try:
+            pnetlab = get_pnetlab_client()
+            if not pnetlab.login():
+                return "PNETLab 로그인 실패로 정보를 가져올 수 없습니다."
+                
+            topology = pnetlab.get_session_topology()
+            if "error" in topology:
+                return f"토폴로지 조회 실패: {topology['error']}"
+                
+            nodes = pnetlab.get_nodes_from_topology(topology)
+            
+            # 요약 정보 생성
+            summary = [f"총 장비 수: {len(nodes)}대"]
+            node_list = []
+            for n in nodes:
+                node_list.append(f"- {n['name']} ({n['type']})")
+            
+            summary.extend(node_list)
+            return "\n".join(summary)
+            
+        except Exception as e:
+            logger.error(f"Failed to fetch topology context: {e}")
+            return "토폴로지 정보를 가져오는 중 오류 발생"
+
     def initialize(self) -> bool:
         """에이전트 초기화"""
         if not LANGGRAPH_AVAILABLE:
             logger.error("LangGraph not available")
             return False
-        
+            
+        # ... (기존 코드)
+
+        # 0. 토폴로지 컨텍스트 로드
+        print("   ⏳ 초기 네트워크 컨텍스트 로딩 중...")
+        self.topology_context = self._fetch_topology_context()
+        logger.info(f"Topology context loaded: {len(self.topology_context)} chars")
+
         if not settings.openai.api_key:
             logger.error("OpenAI API key not set")
             print("❌ OPENAI_API_KEY 환경변수를 설정하세요.")
@@ -134,8 +175,11 @@ class NetworkAgent:
         try:
             config = {"configurable": {"thread_id": thread_id}}
             
+            # 시스템 프롬프트에 컨텍스트 주입
+            formatted_system_prompt = SYSTEM_PROMPT.format(context=self.topology_context)
+            
             response = self.agent.invoke(
-                {"messages": [("system", SYSTEM_PROMPT), ("user", message)]},
+                {"messages": [("system", formatted_system_prompt), ("user", message)]},
                 config=config
             )
             

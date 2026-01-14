@@ -184,7 +184,7 @@ async def auto_onboard_lab(
         # 4. NSO 등록
         logger.info(f"\n[4/5] NSO 등록 시작...")
         
-        nso_onboarder = NSOOnboarder(inventory_dict)
+        nso_onboarder = NSOOnboarder(inventory_dict, nso_client=nso_client)
         nso_results = nso_onboarder.register_all_devices()
         
         logger.info(f"\n✅ NSO 등록 완료")
