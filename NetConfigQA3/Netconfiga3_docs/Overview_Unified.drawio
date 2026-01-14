@@ -1,0 +1,133 @@
+<mxCell id="2" value="NetConfigQA3: 시각적 핵심 설계 및 실험 프레임워크 상세" style="text;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontStyle=1;fontSize=22;fontColor=#1A237E;" vertex="1" parent="1">
+  <mxGeometry x="40" y="10" width="1120" height="40" as="geometry"/>
+</mxCell>
+
+<!-- [원칙 1 & 3 시각화] 계층적 정보 및 메가툴 -->
+<mxCell id="3" value="핵심 설계 메커니즘 시각화" style="swimlane;whiteSpace=wrap;html=1;fillColor=#F9F9F9;strokeColor=#666666;startSize=25;fontStyle=1;" vertex="1" parent="1">
+  <mxGeometry x="40" y="70" width="340" height="520" as="geometry"/>
+</mxCell>
+
+<mxCell id="4" value="원칙 1: 지도 기반 계층 탐색" style="text;whiteSpace=wrap;html=1;fontStyle=1;fontSize=12;" vertex="1" parent="3">
+  <mxGeometry x="10" y="35" width="200" height="25" as="geometry"/>
+</mxCell>
+<mxCell id="5" value="Lv 1: 전체 네트워크 지도&lt;br/&gt;(상시 보유, 요약 정보)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#FBC02D;" vertex="1" parent="3">
+  <mxGeometry x="20" y="65" width="180" height="40" as="geometry"/>
+</mxCell>
+<mxCell id="6" value="Lv 2: 상세 증거팩&lt;br/&gt;(필요 시 질의하여 로드)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF176;strokeColor=#FBC02D;" vertex="1" parent="3">
+  <mxGeometry x="50" y="115" width="180" height="40" as="geometry"/>
+</mxCell>
+<mxCell id="7" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;dashed=1;strokeColor=#FBC02D;" edge="1" parent="3" source="5" target="6">
+  <mxGeometry relative="1" as="geometry"/>
+</mxCell>
+<mxCell id="8" value="Context 절약: 질문 관련 정보만 로드" style="text;whiteSpace=wrap;html=1;fontSize=10;fontColor=#666666;" vertex="1" parent="3">
+  <mxGeometry x="20" y="160" width="210" height="20" as="geometry"/>
+</mxCell>
+
+<mxCell id="9" value="원칙 3: 메가툴 패턴 (추상화)" style="text;whiteSpace=wrap;html=1;fontStyle=1;fontSize=12;" vertex="1" parent="3">
+  <mxGeometry x="10" y="200" width="200" height="25" as="geometry"/>
+</mxCell>
+<mxCell id="10" value="수십 개의 내부 함수&lt;br/&gt;(ACL, BGP, OSPF, ...)" style="shape=trapezoid;perimeter=trapezoidPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#E8F5E9;strokeColor=#2E7D32;direction=south;" vertex="1" parent="3">
+  <mxGeometry x="30" y="235" width="100" height="150" as="geometry"/>
+</mxCell>
+<mxCell id="11" value="5~8개 통합 메가툴&lt;br/&gt;(facts.query, nso.txn, ...)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#A5D6A7;strokeColor=#2E7D32;" vertex="1" parent="3">
+  <mxGeometry x="180" y="280" width="140" height="60" as="geometry"/>
+</mxCell>
+<mxCell id="12" value="도구 선택 오류 방지" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0;entryY=0.5;" edge="1" parent="3" source="10" target="11">
+  <mxGeometry relative="1" as="geometry"/>
+</mxCell>
+
+<mxCell id="13" value="원칙 4: 리스크 기반 승인" style="text;whiteSpace=wrap;html=1;fontStyle=1;fontSize=12;" vertex="1" parent="3">
+  <mxGeometry x="10" y="400" width="200" height="25" as="geometry"/>
+</mxCell>
+<mxCell id="14" value="High: 필수 승인&lt;br/&gt;(Commit, Rollback)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEBEE;strokeColor=#C62828;fontSize=10;" vertex="1" parent="3">
+  <mxGeometry x="15" y="435" width="100" height="40" as="geometry"/>
+</mxCell>
+<mxCell id="15" value="Critical: 거부&lt;br/&gt;(Any-Any Permit)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#B71C1C;fontColor=#ffffff;fontSize=10;" vertex="1" parent="3">
+  <mxGeometry x="120" y="435" width="100" height="40" as="geometry"/>
+</mxCell>
+<mxCell id="16" value="Low: 자동 승인&lt;br/&gt;(조회 작업)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=10;" vertex="1" parent="3">
+  <mxGeometry x="225" y="435" width="100" height="40" as="geometry"/>
+</mxCell>
+
+<!-- [운영 런북 시각화] 타임라인 -->
+<mxCell id="17" value="운영 안전 프로세스: 10단계 런북 타임라인" style="swimlane;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;startSize=25;fontStyle=1;" vertex="1" parent="1">
+  <mxGeometry x="400" y="70" width="760" height="240" as="geometry"/>
+</mxCell>
+<mxCell id="18" value="[0] 목표&lt;br/&gt;확정" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="17">
+  <mxGeometry x="20" y="60" width="60" height="60" as="geometry"/>
+</mxCell>
+<mxCell id="19" value="[1] 범위&lt;br/&gt;추정" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="17">
+  <mxGeometry x="100" y="60" width="60" height="60" as="geometry"/>
+</mxCell>
+<mxCell id="20" value="[2] 증거v1&lt;br/&gt;수집" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="17">
+  <mxGeometry x="180" y="60" width="60" height="60" as="geometry"/>
+</mxCell>
+<mxCell id="21" value="[✓ 체크 1]" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF9C4;fontSize=10;" vertex="1" parent="17">
+  <mxGeometry x="250" y="55" width="70" height="70" as="geometry"/>
+</mxCell>
+<mxCell id="22" value="[3] 가설&lt;br/&gt;[4] 증거v2" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;" vertex="1" parent="17">
+  <mxGeometry x="330" y="60" width="60" height="60" as="geometry"/>
+</mxCell>
+<mxCell id="23" value="[✓ 체크 2]" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF9C4;fontSize=10;" vertex="1" parent="17">
+  <mxGeometry x="400" y="55" width="70" height="70" as="geometry"/>
+</mxCell>
+<mxCell id="24" value="[5] 변경안&lt;br/&gt;[6] Dry-run" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeWidth=2;strokeColor=#D32F2F;" vertex="1" parent="17">
+  <mxGeometry x="480" y="60" width="70" height="70" as="geometry"/>
+</mxCell>
+<mxCell id="25" value="[✓ 체크 3]⭐" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFEBEE;fontSize=10;fontColor=#D32F2F;" vertex="1" parent="17">
+  <mxGeometry x="560" y="55" width="80" height="80" as="geometry"/>
+</mxCell>
+<mxCell id="26" value="[⚠️ 승인]" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#D32F2F;fontColor=#ffffff;" vertex="1" parent="17">
+  <mxGeometry x="650" y="70" width="90" height="40" as="geometry"/>
+</mxCell>
+<mxCell id="27" value="[9] Commit&lt;br/&gt;[10] 검증/롤백" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1A237E;fontColor=#ffffff;" vertex="1" parent="17">
+  <mxGeometry x="645" y="160" width="100" height="50" as="geometry"/>
+</mxCell>
+<mxCell id="28" value="" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="17" source="18" target="19"/><mxCell id="29" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="17" source="19" target="20"/><mxCell id="30" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="17" source="20" target="21"/><mxCell id="31" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="17" source="21" target="22"/><mxCell id="32" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="17" source="22" target="23"/><mxCell id="33" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="17" source="23" target="24"/><mxCell id="34" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="17" source="24" target="25"/><mxCell id="35" style="endArrow=classic;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="17" source="25" target="26"/><mxCell id="36" style="endArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="17" source="26" target="27"/>
+
+<!-- [실험 설계 시각화] 3축 프레임워크 -->
+<mxCell id="37" value="실험 3축 프레임워크 (Evaluation)" style="swimlane;whiteSpace=wrap;html=1;fillColor=#E0F2F1;strokeColor=#00695C;startSize=25;fontStyle=1;" vertex="1" parent="1">
+  <mxGeometry x="400" y="330" width="370" height="260" as="geometry"/>
+</mxCell>
+<mxCell id="38" value="" style="endArrow=classic;html=1;strokeWidth=2;" edge="1" parent="37">
+  <mxGeometry width="50" height="50" relative="1" as="geometry">
+    <mxPoint x="50" y="210" as="sourcePoint"/>
+    <mxPoint x="50" y="30" as="targetPoint"/>
+  </mxGeometry>
+</mxCell>
+<mxCell id="39" value="" style="endArrow=classic;html=1;strokeWidth=2;" edge="1" parent="37">
+  <mxGeometry width="50" height="50" relative="1" as="geometry">
+    <mxPoint x="50" y="210" as="sourcePoint"/>
+    <mxPoint x="230" y="210" as="targetPoint"/>
+  </mxGeometry>
+</mxCell>
+<mxCell id="40" value="" style="endArrow=classic;html=1;strokeWidth=2;" edge="1" parent="37">
+  <mxGeometry width="50" height="50" relative="1" as="geometry">
+    <mxPoint x="50" y="210" as="sourcePoint"/>
+    <mxPoint x="140" y="140" as="targetPoint"/>
+  </mxGeometry>
+</mxCell>
+<mxCell id="41" value="&lt;b&gt;축 A: 정적 QA&lt;/b&gt;&lt;br/&gt;(Accuracy)" style="text;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="37">
+  <mxGeometry x="10" y="10" width="90" height="30" as="geometry"/>
+</mxCell>
+<mxCell id="42" value="&lt;b&gt;축 B: 동적 분석&lt;/b&gt;&lt;br/&gt;(TTR, 성공률)" style="text;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="37">
+  <mxGeometry x="235" y="195" width="90" height="30" as="geometry"/>
+</mxCell>
+<mxCell id="43" value="&lt;b&gt;축 C: 운영 실천성&lt;/b&gt; ⭐&lt;br/&gt;(Safety, Efficiency)" style="text;whiteSpace=wrap;html=1;fontSize=10;fontColor=#D32F2F;" vertex="1" parent="37">
+  <mxGeometry x="145" y="125" width="110" height="30" as="geometry"/>
+</mxCell>
+<mxCell id="44" value="● 지표: Correctness, Safety, Efficiency&lt;br/&gt;● 도구: Batfish Verifier (결정적 채점)" style="text;whiteSpace=wrap;html=1;fontSize=10;fontColor=#666666;" vertex="1" parent="37">
+  <mxGeometry x="60" y="225" width="220" height="30" as="geometry"/>
+</mxCell>
+
+<!-- [핵심 주장 박스] -->
+<mxCell id="45" value="핵심 주장 (Core Claims)" style="swimlane;whiteSpace=wrap;html=1;fillColor=#FFFAF8;strokeColor=#D32F2F;startSize=25;fontStyle=1;" vertex="1" parent="1">
+  <mxGeometry x="790" y="330" width="370" height="260" as="geometry"/>
+</mxCell>
+<mxCell id="46" value="&lt;b&gt;주장 A: 운영 실천성 벤치마크&lt;/b&gt;&lt;br/&gt;Verifier + 승인 게이트 + 롤백이 결합된 MAS만이 실제 운영 환경에서 안전성과 효율성을 동시 달성함&lt;br/&gt;&lt;br/&gt;&lt;b&gt;주장 B: 동적 관측 통제의 효율성&lt;/b&gt;&lt;br/&gt;무분별한 데이터 주입 대신 Evidence Pack으로 동적 데이터를 통제하면 비용(토큰) 대비 최고의 성능을 냄" style="text;whiteSpace=wrap;html=1;fontSize=11;spacingTop=5;" vertex="1" parent="45">
+  <mxGeometry x="15" y="40" width="340" height="200" as="geometry"/>
+</mxCell>
+
+<mxCell id="47" value="&quot;같은 성능을 더 싸게, 같은 비용에서 더 안전하게&quot;" style="text;whiteSpace=wrap;html=1;align=center;fontSize=18;fontColor=#D32F2F;fontStyle=1;" vertex="1" parent="1">
+  <mxGeometry x="40" y="600" width="1120" height="40" as="geometry"/>
+</mxCell>
