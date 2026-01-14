@@ -154,31 +154,7 @@ class PnetlabServer:
             장비 목록 및 요약 정보
         """
         try:
-            if not self.client.is_authenticated:
-                if not self.client.login():
-                    return {"error": "PNETLab 로그인 실패"}
-            
-            topology = self.client.get_session_topology()
-            if "error" in topology:
-                return topology
-            
-            nodes = self.client.get_nodes_from_topology(topology)
-            
-            return {
-                "status": "success",
-                "lab_name": topology.get("name", "Unknown"),
-                "lab_path": topology.get("path", "Unknown"),
-                "total_nodes": len(nodes),
-                "nodes": [
-                    {
-                        "name": n.get("name"),
-                        "type": n.get("type"),
-                        "template": n.get("template"),
-                        "console": n.get("console")
-                    }
-                    for n in nodes
-                ]
-            }
+            return self.client.get_inventory()
             
         except Exception as e:
             logger.error(f"Show inventory error: {e}")
@@ -226,24 +202,7 @@ class PnetlabServer:
             콘솔 링크 정보
         """
         try:
-            inventory = self.show_inventory()
-            if "error" in inventory:
-                return inventory
-            
-            for node in inventory.get("nodes", []):
-                if node["name"].lower() == device.lower():
-                    console = node.get("console")
-                    if console:
-                        return {
-                            "status": "success",
-                            "device": device,
-                            "console_link": f"{self.base_url}/console/{console}",
-                            "console_port": console
-                        }
-                    else:
-                        return {"error": f"No console available for {device}"}
-            
-            return {"error": f"Device not found: {device}"}
+            return self.client.get_console_url_by_name(device)
             
         except Exception as e:
             logger.error(f"Get console link error: {e}")

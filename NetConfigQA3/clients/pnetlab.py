@@ -475,6 +475,67 @@ class PnetlabClient:
         """인증 상태 반환"""
         return self._is_authenticated
 
+    # =========================================================================
+    # High-level Methods (SDK)
+    # =========================================================================
+
+    def get_node_id_by_name(self, name: str) -> Optional[int]:
+        """장비명으로 Node ID 검색"""
+        # 캐싱된 토폴로지가 없으면 조회
+        topology = self.get_session_topology()
+        if "error" in topology:
+            return None
+            
+        nodes = self.get_nodes_from_topology(topology)
+        for node in nodes:
+            if node["name"].lower() == name.lower():
+                return int(node["id"])
+        return None
+
+    def get_inventory(self) -> Dict[str, Any]:
+        """전체 장비 목록 및 상세 정보 (High-level)"""
+        if not self.is_authenticated:
+            if not self.login():
+                return {"error": "Authentication failed"}
+            
+        topology = self.get_session_topology()
+        if "error" in topology:
+            return topology
+            
+        nodes = self.get_nodes_from_topology(topology)
+        
+        return {
+            "status": "success",
+            "lab_name": topology.get("name", "Unknown"),
+            "lab_path": topology.get("path", "Unknown"),
+            "total_nodes": len(nodes),
+            "nodes": nodes
+        }
+
+    def get_console_url_by_name(self, device_name: str) -> Dict[str, Any]:
+        """
+        장비명으로 콘솔 접속 URL 반환 (Server Logic)
+        """
+        inventory = self.get_inventory()
+        if "error" in inventory:
+            return inventory
+            
+        for node in inventory.get("nodes", []):
+            if node["name"].lower() == device_name.lower():
+                console = node.get("console")
+                if console:
+                    return {
+                        "status": "success",
+                        "device": device_name,
+                        "console_link": f"{self.base_url}/console/{console}",
+                        "console_port": console,
+                        "node_id": node.get("id")
+                    }
+                else:
+                    return {"error": f"No console available for {device_name}"}
+        
+        return {"error": f"Device not found: {device_name}"}
+
 
 # --- 테스트 코드 ---
 if __name__ == "__main__":
