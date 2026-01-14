@@ -1,3 +1,4 @@
+from pathlib import Path
 """
 Inventory Builder 테스트
 PNETLab 토폴로지를 device_info.json으로 변환합니다.
@@ -7,7 +8,7 @@ import sys
 import os
 import logging
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, str(Path(__file__).parents[2]))
 
 # 로깅 설정
 logging.basicConfig(

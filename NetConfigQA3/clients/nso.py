@@ -8,9 +8,27 @@ Cisco NSO와 통신하는 LLM-Friendly 클라이언트
 import requests
 import logging
 import re
+import subprocess
+from pathlib import Path
 from typing import Dict, Any, List, Optional
+from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class ConfigExportResult:
+    """cfg/xml/yang 추출 결과 (하이브리드 전략)"""
+    device: str
+    success: bool
+    cfg_path: Optional[str] = None       # Native CLI (Batfish용)
+    xml_path: Optional[str] = None       # XML (레거시)
+    yang_path: Optional[str] = None      # YANG JSON (향후 확장)
+    cfg_size: int = 0
+    xml_size: int = 0
+    yang_size: int = 0
+    error: Optional[str] = None
+
 
 
 class NSOClient:
@@ -32,16 +50,18 @@ class NSOClient:
         "device": "tailf-ncs:devices/device",
     }
     
-    def __init__(self, base_url: str, username: str, password: str, timeout: int = 30):
+    def __init__(self, base_url: str, username: str, password: str, timeout: int = 30, docker_container: str = "cisco-nso-dev"):
         """
         Args:
-            base_url: NSO RESTCONF URL (예: http://localhost:8080/restconf/data)
+            base_url: NSO RESTCONF base URL (예: http://localhost:8080/restconf)
             username: NSO 사용자명
             password: NSO 비밀번호
             timeout: 요청 타임아웃 (초)
+            docker_container: NSO Docker 컨테이너 이름 (CLI 실행용)
         """
         self.base_url = base_url.rstrip('/')
         self.timeout = timeout
+        self.docker_container = docker_container
         
         self.session = requests.Session()
         self.session.auth = (username, password)
@@ -71,7 +91,21 @@ class NSOClient:
 
     def _request(self, method: str, path: str, payload: Optional[dict] = None) -> Any:
         """HTTP 요청 처리"""
-        url = f"{self.base_url}/{path}"
+        # RESTCONF 경로 구성: 데이터스토어 작업은 /data 추가, 작업/액션은 그대로
+        # 데이터스토어 경로: tailf-ncs:, cisco-ios: 등으로 시작
+        # 액션/오퍼레이션 경로: /{operation_name}, /operations/ 포함
+        if path.startswith('tailf-ncs:') or path.startswith('cisco-') or (
+            '/' in path and not path.startswith('operations/') and 
+            '/operations/' not in path and not path.startswith('running/')
+        ):
+            # 이미 /data로 시작하지 않으면 추가
+            if not path.startswith('data/'):
+                url = f"{self.base_url}/data/{path}"
+            else:
+                url = f"{self.base_url}/{path}"
+        else:
+            url = f"{self.base_url}/{path}"
+        
         try:
             if method == "GET":
                 response = self.session.get(url, timeout=self.timeout)
@@ -189,10 +223,9 @@ class NSOClient:
 
     def create_authgroup(self, group: str, username: str, password: str) -> bool:
         """Authgroup 생성"""
-        path = "tailf-ncs:devices/authgroups/group"
+        path = "tailf-ncs:devices/authgroups"
         
-        # 이미 존재하는지 확인하지 않고, 항상 생성 시도 (멱등성 보장)
-        # 1. Group 생성
+        # Authgroup 생성 (POST 사용)
         payload = {
             "tailf-ncs:group": [
                 {
@@ -205,8 +238,8 @@ class NSOClient:
             ]
         }
         
-        # PATCH를 사용하여 없으면 생성, 있으면 업데이트
-        res = self._request("PATCH", "tailf-ncs:devices/authgroups", payload=payload)
+        # POST를 사용하여 새 authgroup 생성
+        res = self._request("POST", path, payload=payload)
         return not (isinstance(res, dict) and res.get("status") == "error")
 
     def register_device(self, device_info: Dict[str, Any]) -> bool:
@@ -216,33 +249,37 @@ class NSOClient:
         port = device_info.get("port", 22)
         authgroup = device_info.get("authgroup", "default")
         ned_id = device_info.get("ned_id", "cisco-ios-cli-6.110")
+        protocol = device_info.get("protocol", "ssh")
         
         # 장비 등록 Payload
-        payload = {
-            "tailf-ncs:device": [
-                {
-                    "name": name,
-                    "address": address,
-                    "port": port,
-                    "authgroup": authgroup,
-                    "device-type": {
-                        "cli": {
-                            "ned-id": ned_id
-                        }
-                    },
-                    "state": {
-                        "admin-state": "unlocked"
-                    },
-                    # SSH 알고리즘 설정 (필수적인 것들만)
-                    "ssh-algorithms": {
-                        "public-key": ["ssh-rsa"] 
-                    }
+        device_data = {
+            "name": name,
+            "address": address,
+            "port": port,
+            "authgroup": authgroup,
+            "device-type": {
+                "cli": {
+                    "ned-id": ned_id,
+                    "protocol": protocol
                 }
-            ]
+            },
+            "state": {
+                "admin-state": "unlocked"
+            }
         }
         
-        # PATCH로 생성/업데이트
-        res = self._request("PATCH", "tailf-ncs:devices", payload=payload)
+        # SSH일 경우에만 알고리즘 설정 추가
+        if protocol == "ssh":
+            device_data["ssh-algorithms"] = {
+                "public-key": ["ssh-rsa"] 
+            }
+        
+        payload = {
+            "tailf-ncs:device": [device_data]
+        }
+        
+        # POST로 생성
+        res = self._request("POST", "tailf-ncs:devices", payload=payload)
         
         if isinstance(res, dict) and res.get("status") == "error":
             logger.error(f"Failed to register device {name}: {res.get('message')}")
@@ -251,7 +288,19 @@ class NSOClient:
         return True
 
     def fetch_host_keys(self, device_name: str) -> bool:
-        """SSH 호스트 키 가져오기"""
+        """SSH 호스트 키 가져오기 (SSH 프로토콜인 경우만 실행)"""
+        # 먼저 장비 정보를 조회하여 프로토콜 확인
+        info = self.get_device_info(device_name)
+        protocol = "ssh" # 기본값
+        
+        if info and "device-type" in info:
+            cli = info["device-type"].get("cli", {})
+            protocol = cli.get("protocol", "ssh")
+            
+        if protocol != "ssh":
+            logger.info(f"Skipping fetch-host-keys for {device_name} (protocol: {protocol})")
+            return True
+            
         path = f"tailf-ncs:devices/device={device_name}/ssh/fetch-host-keys"
         res = self._run_action(path)
         
@@ -553,6 +602,304 @@ class NSOClient:
             result["success"] = True
         
         return result
+
+    def delete_device(self, device_name: str) -> bool:
+        """장비를 삭제합니다."""
+        path = f"tailf-ncs:devices/device={device_name}"
+        result = self._request("DELETE", path)
+        
+        # _request returns None on success (204) or dict on error
+        if isinstance(result, dict) and "errors" in result:
+            logger.error(f"Failed to delete device {device_name}: {result}")
+            return False
+            
+        logger.info(f"Deleted device: {device_name}")
+        return True
+
+    # =========================================================================
+    #          Orchestration & High-level Workflows (SDK)
+    # =========================================================================
+
+    def onboard_devices(self, devices: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """
+        장비 일괄 등록 및 초기화 (Registration -> Host Key -> Sync)
+        
+        Args:
+            devices: 장비 정보 리스트
+                     [{"name": "P1", "oob_ip": "...", "port": ..., "protocol": "telnet", ...}]
+        
+        Returns:
+            결과 요약
+        """
+        results = {
+            "total": len(devices),
+            "registered": [],
+            "failed_registration": [],
+            "synced": [],
+            "failed_sync": []
+        }
+        
+        for dev in devices:
+            name = dev["name"]
+            logger.info(f"Onboarding device: {name}")
+            
+            # 1. Register
+            if self.register_device(dev):
+                results["registered"].append(name)
+            else:
+                results["failed_registration"].append(name)
+                continue
+                
+            # 2. Fetch Host Keys (SSH Only)
+            # fetch_host_keys handles protocol check internally
+            try:
+                self.fetch_host_keys(name)
+            except Exception as e:
+                logger.warning(f"Fetch host keys warning for {name}: {e}")
+                
+            # 3. Sync-from
+            if self.sync_from(name):
+                results["synced"].append(name)
+            else:
+                results["failed_sync"].append(name)
+                
+        return results
+
+    def check_device_connectivity(self, device: str) -> bool:
+        """
+        장비 연결 상태 확인
+        """
+        # Simple implementation: check sync status first
+        if self.check_sync(device):
+            return True
+        # If not in sync, try to sync
+        return self.sync_from(device)
+
+    # =========================================================================
+    #          Batfish Config Export
+    # =========================================================================
+    
+    def export_batfish_configs(
+        self,
+        devices: Optional[List[str]] = None,
+        output_dir: str = ".",
+        export_xml: bool = True,
+        export_yang_json: bool = True
+    ) -> Dict[str, Any]:
+        """
+        Batfish 분석용 cfg/xml 파일 + YANG JSON 추출 (하이브리드 전략)
+        """
+        # 1. 장비 목록 확보
+        if not devices:
+            devices = self.get_devices()
+        
+        if not devices:
+            return {"error": "No devices found", "results": []}
+        
+        # 2. 디렉토리 생성
+        configs_dir = Path(output_dir) / "configs"
+        xml_dir = Path(output_dir) / "xml" if export_xml else None
+        yang_dir = Path(output_dir) / "yang" if export_yang_json else None
+        
+        configs_dir.mkdir(parents=True, exist_ok=True)
+        if xml_dir:
+            xml_dir.mkdir(parents=True, exist_ok=True)
+        if yang_dir:
+            yang_dir.mkdir(parents=True, exist_ok=True)
+        
+        # 3. 각 장비 설정 추출
+        results: List[ConfigExportResult] = []
+        
+        for device in devices:
+            result = self._export_device_config(device, configs_dir, xml_dir, yang_dir)
+            results.append(result)
+        
+        # 4. 결과 요약
+        success_count = sum(1 for r in results if r.success)
+        
+        return {
+            "status": "completed",
+            "total": len(devices),
+            "success": success_count,
+            "failed": len(devices) - success_count,
+            "configs_dir": str(configs_dir),
+            "xml_dir": str(xml_dir) if xml_dir else None,
+            "yang_dir": str(yang_dir) if yang_dir else None,
+            "results": [
+                {
+                    "device": r.device,
+                    "success": r.success,
+                    "cfg_path": r.cfg_path,
+                    "xml_path": r.xml_path,
+                    "yang_path": r.yang_path,
+                    "error": r.error
+                }
+                for r in results
+            ]
+        }
+    
+    def _export_device_config(
+        self,
+        device: str,
+        configs_dir: Path,
+        xml_dir: Optional[Path],
+        yang_dir: Optional[Path] = None
+    ) -> ConfigExportResult:
+        """단일 장비 설정 추출"""
+        result = ConfigExportResult(device=device, success=False)
+        
+        try:
+            # === 1. CFG 추출 (Native CLI) - Batfish용 ===
+            cmd_cfg = f"show running-config devices device {device} config"
+            raw_cfg = self._run_nso_docker_cmd(cmd_cfg)
+            
+            if not raw_cfg:
+                result.error = "Failed to get native config via CLI"
+                return result
+            
+            # CFG 정제 및 저장
+            cleaned_cfg = self._clean_config(raw_cfg)
+            cfg_path = configs_dir / f"{device}.cfg"
+            
+            with open(cfg_path, "w", encoding="utf-8") as f:
+                f.write(cleaned_cfg)
+            
+            result.cfg_path = str(cfg_path)
+            result.cfg_size = len(cleaned_cfg)
+            logger.info(f"✅ Exported Native CLI: {cfg_path} ({result.cfg_size} bytes)")
+            
+            # === 2. XML 추출 (선택적) ===
+            if xml_dir:
+                cmd_xml = f"show running-config devices device {device} config | display xml"
+                raw_xml = self._run_nso_docker_cmd(cmd_xml)
+                
+                if raw_xml:
+                    cleaned_xml = self._clean_xml_output(raw_xml)
+                    xml_path = xml_dir / f"{device}.xml"
+                    with open(xml_path, "w", encoding="utf-8") as f:
+                        f.write(cleaned_xml)
+                    
+                    result.xml_path = str(xml_path)
+                    result.xml_size = len(cleaned_xml)
+                    logger.info(f"✅ Exported XML: {xml_path} ({result.xml_size} bytes)")
+            
+            # === 3. YANG JSON 추출 (선택적) ===
+            if yang_dir:
+                yang_config = self._fetch_config(device)
+                
+                if yang_config:
+                    import json
+                    yang_path = yang_dir / f"{device}.json"
+                    with open(yang_path, "w", encoding="utf-8") as f:
+                        json.dump(yang_config, f, ensure_ascii=False, indent=2)
+                    
+                    yang_json_str = json.dumps(yang_config, ensure_ascii=False, indent=2)
+                    result.yang_path = str(yang_path)
+                    result.yang_size = len(yang_json_str)
+                    logger.info(f"✅ Exported YANG JSON: {yang_path} ({result.yang_size} bytes)")
+            
+            result.success = True
+            
+        except Exception as e:
+            result.error = str(e)
+            logger.error(f"❌ Export error for {device}: {e}")
+        
+        return result
+    
+    def _run_nso_docker_cmd(self, cmd_input: str) -> str:
+        """NSO Docker CLI 명령 실행"""
+        bash_cmd = f'cd ~/ncs-instance && source ~/nso-6.6/ncsrc && ncs_cli -C -u admin <<< "{cmd_input}"'
+        full_cmd = ['docker', 'exec', self.docker_container, 'bash', '-c', bash_cmd]
+        
+        try:
+            result = subprocess.run(full_cmd, capture_output=True, text=False, timeout=self.timeout)
+            
+            stdout_text = ""
+            if result.stdout:
+                for encoding in ['utf-8', 'cp949']:
+                    try:
+                        stdout_text = result.stdout.decode(encoding)
+                        break
+                    except UnicodeDecodeError:
+                        continue
+                else:
+                    stdout_text = result.stdout.decode('utf-8', errors='ignore')
+            
+            return stdout_text
+            
+        except subprocess.TimeoutExpired:
+            raise TimeoutError(f"Command timed out after {self.timeout}s")
+        except Exception as e:
+            raise RuntimeError(f"Docker command failed: {e}")
+    
+    def _clean_config(self, raw_config: str) -> str:
+        """설정 텍스트 정제"""
+        lines = raw_config.splitlines()
+        cleaned_lines = []
+        skip_until_config = True
+        in_banner = False
+        banner_delimiter = ""
+        
+        for line in lines:
+            if "admin@ncs#" in line or "admin@ncs%" in line:
+                continue
+            if "live-status exec" in line or "devices device" in line:
+                continue
+            if line.strip().endswith("#") and len(line.strip().split()) == 1:
+                continue
+            if "Building configuration" in line or "Current configuration" in line:
+                continue
+            if line.strip().startswith("result"):
+                continue
+            
+            if skip_until_config:
+                if line.strip() and (line.strip().startswith("!") or line.strip().startswith("version")):
+                    skip_until_config = False
+                    cleaned_lines.append(line)
+                continue
+            
+            if line.strip().startswith("banner "):
+                banner_delimiter = line.strip()[-1]
+                in_banner = True
+                continue
+            
+            if in_banner:
+                if line.strip().endswith(banner_delimiter):
+                    in_banner = False
+                continue
+            
+            cleaned_lines.append(line)
+        
+        return "\n".join(cleaned_lines)
+    
+    def _clean_xml_output(self, raw_output: str) -> str:
+        """XML 출력 정제"""
+        lines = raw_output.splitlines()
+        xml_lines = []
+        in_xml = False
+        in_banner_xml = False
+        
+        for line in lines:
+            if "admin@ncs#" in line or "admin@ncs%" in line:
+                continue
+            if line.strip().startswith("show "):
+                continue
+            
+            if line.strip().startswith("<") and not in_xml:
+                in_xml = True
+            
+            if in_xml:
+                if "<banner" in line:
+                    in_banner_xml = True
+                
+                if in_banner_xml:
+                    if "</banner>" in line:
+                        in_banner_xml = False
+                    continue
+                
+                xml_lines.append(line)
+        
+        return "\n".join(xml_lines)
 
 
 # 하위 호환성을 위한 alias

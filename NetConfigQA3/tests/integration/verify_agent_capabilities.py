@@ -1,3 +1,4 @@
+from pathlib import Path
 #!/usr/bin/env python3
 """
 에이전트 기능 테스트 스크립트
@@ -9,7 +10,7 @@ import sys
 from pathlib import Path
 
 # 프로젝트 루트 경로 추가
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parents[2]))
 
 import logging
 from agent.core import NetworkAgent

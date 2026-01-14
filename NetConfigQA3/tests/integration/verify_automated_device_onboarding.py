@@ -1,3 +1,4 @@
+from pathlib import Path
 """
 Auto Onboard 테스트 스크립트
 
@@ -25,7 +26,7 @@ from pathlib import Path
 import os
 
 # 현재 디렉토리를 path에 추가
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parents[2]))
 
 from clients.pnetlab import PnetlabClient
 from clients.nso import NSOClient

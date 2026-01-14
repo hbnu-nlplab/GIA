@@ -15,10 +15,8 @@ import os
 import sys
 import json
 import logging
-import subprocess
 from pathlib import Path
 from typing import Dict, Any, List, Optional
-from dataclasses import dataclass
 
 # MCP SDK import
 try:
@@ -36,20 +34,6 @@ from clients.nso import NSOClient
 from config.settings import settings
 
 logger = logging.getLogger(__name__)
-
-
-@dataclass
-class ConfigExportResult:
-    """cfg/xml/yang 추출 결과 (하이브리드 전략)"""
-    device: str
-    success: bool
-    cfg_path: Optional[str] = None       # Native CLI (Batfish용)
-    xml_path: Optional[str] = None       # XML (레거시)
-    yang_path: Optional[str] = None      # YANG JSON (향후 확장)
-    cfg_size: int = 0
-    xml_size: int = 0
-    yang_size: int = 0
-    error: Optional[str] = None
 
 
 class NSOServer:
@@ -100,7 +84,8 @@ class NSOServer:
                 base_url=self.base_url,
                 username=self.username,
                 password=self.password,
-                timeout=self.timeout
+                timeout=self.timeout,
+                docker_container=self.docker_container
             )
         return self._client
     
@@ -237,260 +222,13 @@ class NSOServer:
     ) -> Dict[str, Any]:
         """
         Batfish 분석용 cfg/xml 파일 + YANG JSON 추출 (하이브리드 전략)
-        
-        Args:
-            devices: 추출할 장비 목록 (None이면 전체)
-            output_dir: 출력 디렉토리
-            export_xml: XML도 추출할지 여부
-            export_yang_json: YANG JSON도 추출할지 여부 (향후 확장성)
-            
-        Returns:
-            추출 결과 요약
         """
-        # 1. 장비 목록 확보
-        if not devices:
-            devices = self.get_devices()
-        
-        if not devices:
-            return {"error": "No devices found", "results": []}
-        
-        # 2. 디렉토리 생성
-        configs_dir = Path(output_dir) / "configs"  # Batfish용 Native CLI
-        xml_dir = Path(output_dir) / "xml" if export_xml else None
-        yang_dir = Path(output_dir) / "yang" if export_yang_json else None  # YANG JSON
-        
-        configs_dir.mkdir(parents=True, exist_ok=True)
-        if xml_dir:
-            xml_dir.mkdir(parents=True, exist_ok=True)
-        if yang_dir:
-            yang_dir.mkdir(parents=True, exist_ok=True)
-        
-        # 3. 각 장비 설정 추출
-        results: List[ConfigExportResult] = []
-        
-        for device in devices:
-            result = self._export_device_config(device, configs_dir, xml_dir, yang_dir)
-            results.append(result)
-        
-        # 4. 결과 요약
-        success_count = sum(1 for r in results if r.success)
-        
-        return {
-            "status": "completed",
-            "total": len(devices),
-            "success": success_count,
-            "failed": len(devices) - success_count,
-            "configs_dir": str(configs_dir),
-            "xml_dir": str(xml_dir) if xml_dir else None,
-            "yang_dir": str(yang_dir) if yang_dir else None,
-            "results": [
-                {
-                    "device": r.device,
-                    "success": r.success,
-                    "cfg_path": r.cfg_path,
-                    "xml_path": r.xml_path,
-                    "yang_path": r.yang_path,
-                    "cfg_size": r.cfg_size,
-                    "xml_size": r.xml_size,
-                    "yang_size": r.yang_size,
-                    "error": r.error
-                }
-                for r in results
-            ]
-        }
-    
-    def _export_device_config(
-        self,
-        device: str,
-        configs_dir: Path,
-        xml_dir: Optional[Path],
-        yang_dir: Optional[Path] = None
-    ) -> ConfigExportResult:
-        """
-        단일 장비 설정 추출 (하이브리드 전략)
-        
-        - Native CLI (CFG): Batfish 분석용
-        - XML: 레거시 호환성
-        - YANG JSON: 향후 확장성 (표준 기반)
-        """
-        result = ConfigExportResult(device=device, success=False)
-        
-        try:
-            # === 1. CFG 추출 (Native CLI) - Batfish용 ===
-            # NSO CDB에서 Native CLI 형식으로 직접 조회 (Docker CLI 방식)
-            # ⚠️ '| display native'는 필요 없음 (NSO CLI 옵션에 존재하지 않음)
-            cmd_cfg = f"show running-config devices device {device} config"
-            raw_cfg = self._run_nso_docker_cmd(cmd_cfg)
-            
-            if not raw_cfg:
-                result.error = "Failed to get native config via CLI"
-                return result
-            
-            # CFG 정제 및 저장
-            cleaned_cfg = self._clean_config(raw_cfg)
-            cfg_path = configs_dir / f"{device}.cfg"
-            
-            with open(cfg_path, "w", encoding="utf-8") as f:
-                f.write(cleaned_cfg)
-            
-            result.cfg_path = str(cfg_path)
-            result.cfg_size = len(cleaned_cfg)
-            logger.info(f"✅ Exported Native CLI: {cfg_path} ({result.cfg_size} bytes)")
-            
-            # === 2. XML 추출 (선택적) ===
-            if xml_dir:
-                # NSO CDB에서 XML 형식으로 조회
-                cmd_xml = f"show running-config devices device {device} config | display xml"
-                raw_xml = self._run_nso_docker_cmd(cmd_xml)
-                
-                if raw_xml:
-                    cleaned_xml = self._clean_xml_output(raw_xml)
-                    xml_path = xml_dir / f"{device}.xml"
-                    with open(xml_path, "w", encoding="utf-8") as f:
-                        f.write(cleaned_xml)
-                    
-                    result.xml_path = str(xml_path)
-                    result.xml_size = len(cleaned_xml)
-                    logger.info(f"✅ Exported XML: {xml_path} ({result.xml_size} bytes)")
-            
-            # === 3. YANG JSON 추출 (선택적) - 향후 확장성 ===
-            if yang_dir:
-                # RESTCONF GET으로 YANG 구조화된 JSON 가져오기
-                yang_config = self.client._fetch_config(device)
-                
-                if yang_config:
-                    import json
-                    yang_path = yang_dir / f"{device}.json"
-                    with open(yang_path, "w", encoding="utf-8") as f:
-                        json.dump(yang_config, f, ensure_ascii=False, indent=2)
-                    
-                    yang_json_str = json.dumps(yang_config, ensure_ascii=False, indent=2)
-                    result.yang_path = str(yang_path)
-                    result.yang_size = len(yang_json_str)
-                    logger.info(f"✅ Exported YANG JSON: {yang_path} ({result.yang_size} bytes)")
-            
-            result.success = True
-            
-        except Exception as e:
-            result.error = str(e)
-            logger.error(f"❌ Export error for {device}: {e}")
-        
-        return result
-    
-    def _run_nso_docker_cmd(self, cmd_input: str) -> str:
-        """
-        NSO CLI 명령어를 Docker 컨테이너 내부에서 실행
-        
-        ⚠️ NSO CDB 방식 사용 (live-status가 아님!)
-        - CDB: NSO에 이미 저장된 설정 (빠르고 안정적)
-        - live-status: 실제 장비에 SSH 연결 (느리고 타임아웃 가능)
-        
-        📚 연구 설계 근거 (Netconfiga3_system.md):
-        "Static Facts Database - 스냅샷 기반, 변경 시점이 명확함"
-        """
-        # heredoc(<<<) 방식으로 명령 전달
-        bash_cmd = f'cd ~/ncs-instance && source ~/nso-6.6/ncsrc && ncs_cli -C -u admin <<< "{cmd_input}"'
-        full_cmd = ['docker', 'exec', self.docker_container, 'bash', '-c', bash_cmd]
-        
-        try:
-            result = subprocess.run(full_cmd, capture_output=True, text=False, timeout=self.timeout)
-            
-            # 인코딩 처리
-            stdout_text = ""
-            if result.stdout:
-                for encoding in ['utf-8', 'cp949']:
-                    try:
-                        stdout_text = result.stdout.decode(encoding)
-                        break
-                    except UnicodeDecodeError:
-                        continue
-                else:
-                    stdout_text = result.stdout.decode('utf-8', errors='ignore')
-            
-            return stdout_text
-            
-        except subprocess.TimeoutExpired:
-            raise TimeoutError(f"Command timed out after {self.timeout}s")
-        except Exception as e:
-            raise RuntimeError(f"Docker command failed: {e}")
-    
-    def _clean_config(self, raw_config: str) -> str:
-        """
-        NSO live-status에서 가져온 설정을 Batfish 형식으로 정제
-        (3-Config_Export_Batfish.py의 clean_config 함수 포팅)
-        """
-        lines = raw_config.splitlines()
-        cleaned_lines = []
-        skip_until_config = True
-        in_banner = False
-        banner_delimiter = ""
-        
-        for line in lines:
-            # NSO 프롬프트 및 노이즈 제거
-            if "admin@ncs#" in line or "admin@ncs%" in line:
-                continue
-            if "live-status exec" in line or "devices device" in line:
-                continue
-            if line.strip().endswith("#") and len(line.strip().split()) == 1:
-                continue
-            if "Building configuration" in line or "Current configuration" in line:
-                continue
-            if line.strip().startswith("result"):
-                continue
-            
-            # 설정 시작 지점 찾기
-            if skip_until_config:
-                if line.strip() and (line.strip().startswith("!") or line.strip().startswith("version")):
-                    skip_until_config = False
-                    cleaned_lines.append(line)
-                continue
-            
-            # Banner 제거
-            if line.strip().startswith("banner "):
-                banner_delimiter = line.strip()[-1]
-                in_banner = True
-                continue
-            
-            if in_banner:
-                if line.strip().endswith(banner_delimiter):
-                    in_banner = False
-                continue
-            
-            cleaned_lines.append(line)
-        
-        return "\n".join(cleaned_lines)
-    
-    def _clean_xml_output(self, raw_output: str) -> str:
-        """
-        NSO XML 출력에서 프롬프트 및 불필요한 부분 제거
-        (3-Config_Export_Batfish.py의 clean_xml_output 함수 포팅)
-        """
-        lines = raw_output.splitlines()
-        xml_lines = []
-        in_xml = False
-        in_banner_xml = False
-        
-        for line in lines:
-            if "admin@ncs#" in line or "admin@ncs%" in line:
-                continue
-            if line.strip().startswith("show "):
-                continue
-            
-            if line.strip().startswith("<") and not in_xml:
-                in_xml = True
-            
-            if in_xml:
-                if "<banner" in line:
-                    in_banner_xml = True
-                
-                if in_banner_xml:
-                    if "</banner>" in line:
-                        in_banner_xml = False
-                    continue
-                
-                xml_lines.append(line)
-        
-        return "\n".join(xml_lines)
+        return self.client.export_batfish_configs(
+            devices=devices,
+            output_dir=output_dir,
+            export_xml=export_xml,
+            export_yang_json=export_yang_json
+        )
     
     # =========================================================================
     # MCP Server Lifecycle

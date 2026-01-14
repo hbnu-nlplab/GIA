@@ -1,3 +1,4 @@
+from pathlib import Path
 #!/usr/bin/env python3
 """
 LangSmith 트레이싱 데모
@@ -19,7 +20,7 @@ from pathlib import Path
 from typing import Optional
 
 # 프로젝트 루트 경로
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parents[2]))
 
 # config.settings를 먼저 임포트하여 .env 로드
 from config.settings import settings

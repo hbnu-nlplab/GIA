@@ -1,3 +1,4 @@
+from pathlib import Path
 """
 NetConfigQA3 Test Configuration
 

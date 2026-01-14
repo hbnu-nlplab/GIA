@@ -1,3 +1,4 @@
+from pathlib import Path
 """
 PNETLab 연결 테스트 스크립트
 JWT 토큰으로 인증하고 Lab 토폴로지를 가져옵니다.
@@ -8,7 +9,7 @@ import os
 import logging
 
 # 상위 디렉토리를 Python 경로에 추가
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, str(Path(__file__).parents[2]))
 
 # 로깅 설정 - DEBUG 레벨로 자세한 정보 확인
 logging.basicConfig(
