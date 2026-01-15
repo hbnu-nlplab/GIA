@@ -12,12 +12,10 @@ Modules:
 
 from .ssh_enabler import SSHEnabler
 from .nso_onboarder import NSOOnboarder
-from .onboard import auto_onboard_lab
 
 __all__ = [
     'SSHEnabler',
     'NSOOnboarder',
-    'auto_onboard_lab',
 ]
 
 __version__ = '2.0.0'

@@ -65,25 +65,59 @@ class SkillLoader:
         self._skills_cache: Dict[str, Skill] = {}
     
     def load_all_skills(self) -> List[Skill]:
-        """모든 Skill 파일 로드"""
+        """
+        모든 Skill 파일 로드
+        
+        표준 구조와 레거시 구조 모두 지원:
+        - 표준: skills/skill-name/SKILL.md
+        - 레거시: skills/*.md
+        """
         skills = []
         
         if not self.skills_dir.exists():
             return skills
         
-        for md_file in self.skills_dir.rglob("*.md"):
-            # README.md 제외
+        # 1. 표준 구조: 폴더 내 SKILL.md 파일 찾기
+        for skill_dir in self.skills_dir.iterdir():
+            if skill_dir.is_dir():
+                skill_file = skill_dir / "SKILL.md"
+                if skill_file.exists():
+                    skill = self._parse_skill_file(skill_file)
+                    if skill:
+                        skills.append(skill)
+                        self._skills_cache[skill.name] = skill
+                        continue
+                
+                # 폴더 내 다른 .md 파일도 확인 (레거시 호환)
+                for md_file in skill_dir.glob("*.md"):
+                    if md_file.name == "README.md":
+                        continue
+                    skill = self._parse_skill_file(md_file)
+                    if skill:
+                        skills.append(skill)
+                        self._skills_cache[skill.name] = skill
+        
+        # 2. 레거시 구조: 루트의 .md 파일
+        for md_file in self.skills_dir.glob("*.md"):
             if md_file.name == "README.md":
                 continue
             
             skill = self._parse_skill_file(md_file)
-            if skill:
+            if skill and skill.name not in self._skills_cache:
                 skills.append(skill)
                 self._skills_cache[skill.name] = skill
         
+        # 중복 제거 (이름 기준)
+        seen = set()
+        unique_skills = []
+        for skill in skills:
+            if skill.name not in seen:
+                seen.add(skill.name)
+                unique_skills.append(skill)
+        
         # 우선순위 순으로 정렬
-        skills.sort(key=lambda s: s.priority, reverse=True)
-        return skills
+        unique_skills.sort(key=lambda s: s.priority, reverse=True)
+        return unique_skills
     
     def load_enabled_skills(self) -> List[Skill]:
         """활성화된 Skill만 로드"""
@@ -102,6 +136,21 @@ class SkillLoader:
         """특정 태그를 가진 Skill만 로드"""
         all_skills = self.load_all_skills()
         return [s for s in all_skills if s.matching_tags(tags)]
+    
+    def load_by_names(self, names: List[str]) -> List[Skill]:
+        """
+        이름 목록으로 Skill 로드 (Planner가 선택한 스킬)
+        
+        Args:
+            names: 스킬 이름 리스트 (예: ["core_policy", "device_lifecycle_playbook"])
+            
+        Returns:
+            매칭된 Skill 리스트 (우선순위 순 정렬)
+        """
+        all_skills = self.load_all_skills()
+        matched = [s for s in all_skills if s.name in names]
+        matched.sort(key=lambda s: s.priority, reverse=True)
+        return matched
     
     def load_core_skills(self) -> List[Skill]:
         """Core Skill만 로드 (항상 포함)"""
@@ -211,10 +260,31 @@ def load_skills_for_task(task_description: str) -> List[Skill]:
     
     # 태그 매핑
     tag_keywords = {
+        # 네트워크 프로토콜
         "bgp": ["bgp", "border gateway"],
         "acl": ["acl", "access-list", "firewall"],
+        
+        # 장비 라이프사이클
+        "lifecycle": ["생성", "삭제", "추가", "제거", "만들", "create", "delete", "add", "remove"],
+        "device": ["장비", "라우터", "스위치", "노드", "router", "switch", "device", "node"],
+        "creation": ["생성", "추가", "create", "add", "new"],
+        "deletion": ["삭제", "제거", "delete", "remove"],
+        
+        # NSO 관련
+        "registration": ["등록", "register", "nso", "sync"],
+        
+        # 연결 관련
+        "connection": ["연결", "connect", "disconnect", "interface", "클라우드", "cloud"],
+        
+        # 문제 해결
         "troubleshooting": ["troubleshoot", "issue", "problem", "장애", "문제"],
-        "reachability": ["ping", "reach", "도달"],
+        "reachability": ["ping", "reach", "도달", "통신"],
+        
+        # 분석
+        "batfish": ["batfish", "분석", "검증", "verify", "reachability"],
+        
+        # 설정
+        "configuration": ["설정", "config", "변경", "수정", "change", "modify"],
     }
     
     relevant_tags = []
@@ -227,7 +297,15 @@ def load_skills_for_task(task_description: str) -> List[Skill]:
         domain_skills = loader.load_by_tags(relevant_tags)
         skills.extend(domain_skills)
     
-    return skills
+    # 중복 제거 (이름 기준)
+    seen_names = set()
+    unique_skills = []
+    for skill in skills:
+        if skill.name not in seen_names:
+            seen_names.add(skill.name)
+            unique_skills.append(skill)
+    
+    return unique_skills
 
 
 if __name__ == "__main__":

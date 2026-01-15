@@ -23,12 +23,19 @@ except ImportError:
     LANGGRAPH_AVAILABLE = False
 
 from config.settings import settings
-from agent.tools import get_tools, get_pnetlab_client
+from agent.unified_tools import get_unified_tools, get_filtered_tools
+from agent.tools import get_pnetlab_client  # Keep for topology context
 from agent.tracing import setup_langsmith, get_structured_logger
+from agent.skill_loader import SkillLoader
+from agent.planner import TaskPlanner
+from agent.models import TaskPassage
 
 # 로깅 설정
+log_file_path = Path(settings.log_file)
+log_file_path.parent.mkdir(parents=True, exist_ok=True)
+
 logging.basicConfig(
-    filename=settings.log_file,
+    filename=str(log_file_path),
     level=getattr(logging, settings.log_level),
     format='%(asctime)s - [SANOA] - %(levelname)s - %(message)s'
 )
@@ -45,25 +52,53 @@ PNETLab 실험실과 Cisco NSO를 연동하는 지능형 네트워크 운영 에
 
 ## 당신의 역할
 1. 네트워크 장비 정보 조회 및 분석
-2. 설정 일관성 검증 및 문제 진단
+2. 설정 일관성 검증 및 문제 진단 (Batfish 활용)
 3. PNETLab 실험실 ↔ NSO 자동 연동
-4. 네트워크 연결성 테스트 (Ping, Traceroute)
+4. 네트워크 연결성 검증 및 트러블슈팅
 
-## 핵심 행동 수칙
-1. **효율성 우선**: 필요한 정보만 조회하세요. 전체 덤프 대신 특정 장비/설정만 요청하세요.
-2. **검증 필수**: 설정이 있다고 끝이 아닙니다. 통신 문제라면 ping_test로 실제 확인하세요.
-3. **안전 우선**: 변경 작업 전에는 반드시 현재 상태를 확인하세요.
+## 핵심 행동 수칙 (Core Policy)
+1. **효율성 우선**: 필요한 정보만 조회하세요. 전체 Facts 덤프 금지.
+2. **검증 필수**: 설정 변경 전 반드시 `network_verify`로 영향 분석.
+3. **안전 우선**: `network_change("commit", ...)` 전에 반드시 `approval_request()` 사용.
+4. **Evidence Pack 상한**: 한 번에 최대 30개 로그, 20개 메트릭, 40개 Facts 조회.
 
-## 도구 사용 가이드
-- **scan_network_devices**: NSO에 등록된 장비 목록 조회
-- **get_device_info**: 특정 장비의 기본 정보 조회
-- **get_interfaces / get_interface_ips**: 인터페이스 정보 조회
-- **get_routing_info**: BGP/OSPF 라우팅 설정 조회
-- **compare_devices**: 두 장비 설정 비교
-- **check_ip_conflicts**: IP 충돌 검사
-- **ping_test / traceroute_test**: 연결성 테스트
-- **lab_show_inventory**: PNETLab 실험실 장비 목록
-- **lab_sync_to_nso**: 실험실 → NSO 자동 연동
+## 통합 도구 (7개)
+1. **network_query** - NSO에서 설정 정보 조회
+   - category: device, interface, routing, vrf, security, acl
+   - 예: `network_query("routing", device="PE1", params={{"protocol": "bgp"}})`
+
+2. **network_verify** - Batfish로 네트워크 속성 검증
+   - test_type: reachability, traceroute, bgp_session, route_table
+   - 예: `network_verify("reachability", {{"src": "10.1.1.1", "dst": "10.2.2.2"}})`
+
+3. **network_change** - NSO를 통한 설정 변경 (⚠️ 주의)
+   - action: dry_run, commit (승인필요), rollback (승인필요), diff
+   - 예: `network_change("dry_run", "PE1", "acl/100", {{...}})`
+
+4. **telemetry_query** - 로그/메트릭/플로우 조회
+   - source: logs, metrics, flows
+   - 예: `telemetry_query("logs", {{"device": "PE1", "severity": "error"}})`
+
+5. **lab_manage** - PNETLab 실험실 관리
+   - action: show_inventory, get_status, export_configs, init_batfish
+
+6. **approval_request** - 위험 작업 승인 요청 (⚠️ 필수)
+   - commit/rollback 전 반드시 호출
+
+7. **help_guide** - 도구 사용법 조회
+   - topic: tools, examples, troubleshooting, best_practices
+
+## 금지 행동
+❌ any-any permit ACL 추가
+❌ default route 무단 추가  
+❌ 전체 BGP clear/reset
+❌ 승인 없이 commit 실행
+
+## Task Analysis (Planner 결과)
+{task_passage}
+
+## 사용 가능한 도구
+위 분석에서 선택된 도구만 사용할 수 있습니다.
 
 ## 답변 스타일
 - 전문적인 네트워크 엔지니어처럼 답변하세요.
@@ -72,6 +107,8 @@ PNETLab 실험실과 Cisco NSO를 연동하는 지능형 네트워크 운영 에
 
 ## 현재 네트워크 상태 (Context)
 {context}
+
+{skills_prompt}
 """
 
 
@@ -80,13 +117,20 @@ PNETLab 실험실과 Cisco NSO를 연동하는 지능형 네트워크 운영 에
 # =============================================================================
 
 class NetworkAgent:
-    """네트워크 운영 에이전트"""
+    """
+    2-Stage Network Agent
     
-    def __init__(self):
+    Stage 1 (Planner): 사용자 요청을 분석하여 필요한 스킬/도구 결정
+    Stage 2 (Executor): 선택된 스킬/도구로 작업 수행
+    """
+    
+    def __init__(self, model: str = "gpt-4o-mini"):
         # LangSmith 트레이싱 활성화 (선택사항)
         setup_langsmith("NetConfigQA3-Agent")
         
-        self.agent = None
+        self.model = model
+        self.planner = None
+        self.skill_loader = None
         self.memory = None
         self._initialized = False
         self.topology_context = "초기화되지 않음"
@@ -122,8 +166,6 @@ class NetworkAgent:
         if not LANGGRAPH_AVAILABLE:
             logger.error("LangGraph not available")
             return False
-            
-        # ... (기존 코드)
 
         # 0. 토폴로지 컨텍스트 로드
         print("   ⏳ 초기 네트워크 컨텍스트 로딩 중...")
@@ -136,30 +178,20 @@ class NetworkAgent:
             return False
         
         try:
-            # LLM 초기화
-            llm = ChatOpenAI(
-                model=settings.openai.model,
-                temperature=settings.openai.temperature,
-                api_key=settings.openai.api_key
-            )
-            logger.info(f"LLM initialized: {settings.openai.model}")
+            # Planner 초기화 (Stage 1)
+            print("   ⏳ Planner Agent 초기화 중...")
+            self.planner = TaskPlanner(model=self.model)
+            logger.info(f"Planner initialized: {self.model}")
+            
+            # SkillLoader 초기화
+            self.skill_loader = SkillLoader()
             
             # 메모리 설정
             self.memory = MemorySaver()
             
-            # 도구 로드
-            tools = get_tools()
-            logger.info(f"Loaded {len(tools)} tools")
-            
-            # ReAct 에이전트 생성
-            self.agent = create_react_agent(
-                llm,
-                tools,
-                checkpointer=self.memory
-            )
-            
             self._initialized = True
-            logger.info("NetworkAgent initialized successfully")
+            logger.info("NetworkAgent initialized successfully (2-stage architecture)")
+            print("   ✅ 2-Stage Agent 초기화 완료")
             return True
             
         except Exception as e:
@@ -168,17 +200,62 @@ class NetworkAgent:
             return False
     
     def chat(self, message: str, thread_id: str = "default") -> str:
-        """사용자 메시지에 응답"""
+        """
+        2-Stage 처리로 사용자 메시지에 응답
+        
+        Stage 1: Planner가 요청 분석 → TaskPassage 생성
+        Stage 2: Executor가 선택된 스킬/도구로 작업 수행
+        """
         if not self._initialized:
             return "에이전트가 초기화되지 않았습니다. initialize()를 먼저 호출하세요."
         
         try:
+            # =========================================
+            # Stage 1: Planner - 요청 분석
+            # =========================================
+            logger.info(f"Stage 1: Planning for '{message[:50]}...'")
+            passage = self.planner.plan(message)
+            
+            logger.info(f"Plan result: intent={passage.intent.value}, "
+                       f"tools={passage.required_tools}, skills={passage.required_skills}")
+            
+            # =========================================
+            # Stage 2: Executor - 작업 수행
+            # =========================================
+            logger.info("Stage 2: Executing with filtered tools")
+            
+            # 선택된 Skills만 로드
+            skills = self.skill_loader.load_by_names(passage.required_skills)
+            skills_prompt = self.skill_loader.build_system_prompt(skills) if skills else ""
+            
+            # 선택된 Tools만 바인딩
+            tools = get_filtered_tools(passage.required_tools)
+            logger.info(f"Filtered tools: {len(tools)} (vs 7 total)")
+            
+            # Executor LLM 생성 (동적 도구 바인딩)
+            executor_llm = ChatOpenAI(
+                model=self.model,
+                temperature=0,
+                api_key=settings.openai.api_key
+            )
+            
+            # ReAct 에이전트 생성 (선택된 도구만)
+            executor = create_react_agent(
+                executor_llm,
+                tools,
+                checkpointer=self.memory
+            )
+            
+            # 시스템 프롬프트 구성
             config = {"configurable": {"thread_id": thread_id}}
+            formatted_system_prompt = SYSTEM_PROMPT.format(
+                context=self.topology_context,
+                task_passage=passage.to_prompt_context(),
+                skills_prompt=skills_prompt
+            )
             
-            # 시스템 프롬프트에 컨텍스트 주입
-            formatted_system_prompt = SYSTEM_PROMPT.format(context=self.topology_context)
-            
-            response = self.agent.invoke(
+            # Executor 실행
+            response = executor.invoke(
                 {"messages": [("system", formatted_system_prompt), ("user", message)]},
                 config=config
             )

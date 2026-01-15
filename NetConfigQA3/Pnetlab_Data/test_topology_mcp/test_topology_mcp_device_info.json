@@ -1,0 +1,7 @@
+{
+  "description": "Test Topology for MCP Verification",
+  "devices": [
+    "R1",
+    "R2"
+  ]
+}

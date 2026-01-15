@@ -173,21 +173,13 @@ class NSOOnboarder:
             
             # 등록
             if self.register_device(device):
-                # sync-from 시도
+                registered.append(device_name)
+                
+                # sync-from
                 if self.sync_from(device_name):
-                    registered.append(device_name)
                     synced.append(device_name)
-                    logger.info(f"  ✅ {device_name} 등록 및 Sync 완료 (SSH)")
                 else:
-                    # SSH Sync 실패 -> Telnet Fallback 시도 (No route 등으로 인한 실패 시)
-                    logger.warning(f"  ⚠️  SSH Sync 실패. Telnet(Console) 모드로 전환 시도...")
-                    if self._fallback_to_telnet(device):
-                        registered.append(device_name)
-                        synced.append(device_name)
-                        logger.info(f"  ✅ {device_name} 등록 및 Sync 완료 (Telnet Fallback)")
-                    else:
-                        registered.append(device_name) # 등록은 되었으나 Sync 실패
-                        failed_sync.append(device_name)
+                    failed_sync.append(device_name)
             else:
                 failed_register.append(device_name)
         
@@ -206,48 +198,6 @@ class NSOOnboarder:
             "failed_register": failed_register,
             "failed_sync": failed_sync
         }
-
-    def _fallback_to_telnet(self, device: Dict[str, Any]) -> bool:
-        """SSH 실패 시 Telnet(Console Proxy)으로 재등록 및 Sync 시도"""
-        device_name = device['name']
-        pnetlab_ip = self.global_settings.get('pnetlab_vm_ip')
-        telnet_port = device.get('telnet_port')
-        
-        if not pnetlab_ip or not telnet_port:
-            logger.error(f"  ❌ Telnet 정보 부족 (IP: {pnetlab_ip}, Port: {telnet_port})")
-            return False
-            
-        logger.info(f"  [Fallback] {device_name} -> Telnet Mode ({pnetlab_ip}:{telnet_port}) 변경 중...")
-        
-        try:
-            # 1. Telnet 정보로 재등록 (Overwrite)
-            reg_info = {
-                "name": device_name,
-                "oob_ip": pnetlab_ip,  # PNETLab 서버 IP
-                "port": telnet_port,   # Console Port
-                "authgroup": self.global_settings.get('nso_authgroup', 'default'),
-                "ned_id": self.global_settings.get('nso_ned_id', 'cisco-ios-cli-6.110'),
-                "protocol": "telnet"   # 프로토콜 변경
-            }
-            
-            if not self.client.register_device(reg_info):
-                logger.error("  ❌ Telnet 모드 등록 실패")
-                return False
-                
-            # 2. Sync-from 재시도
-            logger.info("  [Fallback] Telnet Sync-from 시도...")
-            # 약간의 딜레이
-            time.sleep(2)
-            if self.client.sync_from(device_name):
-                logger.info(f"  ✅ Telnet Sync 성공!")
-                return True
-            else:
-                logger.error("  ❌ Telnet Sync 실패")
-                return False
-                
-        except Exception as e:
-            logger.error(f"  ❌ Fallback 중 에러: {e}")
-            return False
     
     def verify_connectivity(self, device_name: str) -> bool:
         """연결 검증 (check-sync)"""
