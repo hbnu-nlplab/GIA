@@ -97,6 +97,7 @@ class NSOServer:
         @self._server.list_tools()
         async def list_tools() -> List[Tool]:
             return [
+                # --- 기존 도구 ---
                 Tool(
                     name="nso.get_devices",
                     description="NSO에 등록된 모든 장비 목록을 조회합니다",
@@ -148,6 +149,158 @@ class NSOServer:
                         "required": ["device", "command"]
                     }
                 ),
+                
+                # --- 신규 추가 도구 (Lifecycle) ---
+                Tool(
+                    name="nso.register_device",
+                    description="새 장비를 NSO에 등록합니다",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "name": {"type": "string", "description": "장비 호스트명"},
+                            "oob_ip": {"type": "string", "description": "관리 IP 주소"},
+                            "port": {"type": "integer", "description": "SSH 포트 (기본 22)", "default": 22},
+                            "authgroup": {"type": "string", "description": "인증 그룹명 (기본 'default')", "default": "default"},
+                            "ned_id": {"type": "string", "description": "NED ID (기본 'cisco-ios-cli-6.110')", "default": "cisco-ios-cli-6.110"},
+                            "protocol": {"type": "string", "description": "통신 프로토콜 (ssh/telnet)", "default": "ssh"}
+                        },
+                        "required": ["name", "oob_ip"]
+                    }
+                ),
+                Tool(
+                    name="nso.delete_device",
+                    description="NSO에서 장비를 삭제합니다",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "device_name": {"type": "string", "description": "삭제할 장비명"}
+                        },
+                        "required": ["device_name"]
+                    }
+                ),
+                Tool(
+                    name="nso.create_authgroup",
+                    description="인증 그룹(Authgroup)을 생성합니다",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "group": {"type": "string", "description": "그룹명"},
+                            "username": {"type": "string", "description": "장비 접속 ID"},
+                            "password": {"type": "string", "description": "장비 접속 PW"}
+                        },
+                        "required": ["group", "username", "password"]
+                    }
+                ),
+                
+                # --- 신규 추가 도구 (Sync & Keys) ---
+                Tool(
+                    name="nso.sync_from",
+                    description="장비 설정을 NSO로 동기화(sync-from)합니다",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "device_name": {"type": "string", "description": "장비명"}
+                        },
+                        "required": ["device_name"]
+                    }
+                ),
+                Tool(
+                    name="nso.check_sync",
+                    description="장비가 NSO와 동기화 상태인지(in-sync) 확인합니다",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "device_name": {"type": "string", "description": "장비명"}
+                        },
+                        "required": ["device_name"]
+                    }
+                ),
+                Tool(
+                    name="nso.fetch_host_keys",
+                    description="SSH 호스트 키를 가져옵니다 (SSH 장비만 해당)",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "device_name": {"type": "string", "description": "장비명"}
+                        },
+                        "required": ["device_name"]
+                    }
+                ),
+                
+                # --- 신규 추가 도구 (High-level Workflow) ---
+                Tool(
+                    name="nso.onboard_devices",
+                    description="여러 장비를 일괄 등록하고 초기화(Key Fetch, Sync)합니다",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "devices": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "name": {"type": "string"},
+                                        "oob_ip": {"type": "string"},
+                                        "port": {"type": "integer"},
+                                        "authgroup": {"type": "string"},
+                                        "ned_id": {"type": "string"},
+                                        "protocol": {"type": "string"}
+                                    },
+                                    "required": ["name", "oob_ip"]
+                                },
+                                "description": "등록할 장비 정보 리스트"
+                            }
+                        },
+                        "required": ["devices"]
+                    }
+                ),
+                
+                # --- 신규 추가 도구 (Network Tools) ---
+                Tool(
+                    name="nso.ping",
+                    description="장비에서 특정 대상으로 Ping을 수행합니다",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "device": {"type": "string", "description": "소스 장비명"},
+                            "target": {"type": "string", "description": "목적지 IP 또는 호스트"},
+                            "count": {"type": "integer", "description": "핑 횟수", "default": 5}
+                        },
+                        "required": ["device", "target"]
+                    }
+                ),
+                Tool(
+                    name="nso.traceroute",
+                    description="장비에서 특정 대상으로 Traceroute를 수행합니다",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "device": {"type": "string", "description": "소스 장비명"},
+                            "target": {"type": "string", "description": "목적지 IP 또는 호스트"}
+                        },
+                        "required": ["device", "target"]
+                    }
+                ),
+                Tool(
+                    name="nso.check_ip_conflicts",
+                    description="전체 네트워크에서 IP 중복/충돌을 검사합니다",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {},
+                        "required": []
+                    }
+                ),
+                Tool(
+                    name="nso.get_interfaces",
+                    description="장비의 인터페이스 목록과 상세 정보를 조회합니다",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "device": {"type": "string", "description": "장비명"}
+                        },
+                        "required": ["device"]
+                    }
+                ),
             ]
         
         @self._server.call_tool()
@@ -158,6 +311,7 @@ class NSOServer:
     async def _handle_tool_call(self, name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """도구 호출 처리"""
         try:
+            # --- 조회 / 설정 ---
             if name == "nso.get_devices":
                 return {"devices": self.get_devices()}
             
@@ -177,6 +331,58 @@ class NSOServer:
                 device = arguments.get("device")
                 command = arguments.get("command")
                 return {"output": self.run_command(device, command)}
+            
+            # --- Lifecycle ---
+            elif name == "nso.register_device":
+                # 인자 매핑 (NSOClient.register_device는 dict를 받음)
+                return {"success": self.client.register_device(arguments)}
+                
+            elif name == "nso.delete_device":
+                device_name = arguments.get("device_name")
+                return {"success": self.client.delete_device(device_name)}
+                
+            elif name == "nso.create_authgroup":
+                group = arguments.get("group")
+                username = arguments.get("username")
+                password = arguments.get("password")
+                return {"success": self.client.create_authgroup(group, username, password)}
+            
+            # --- Sync & Keys ---
+            elif name == "nso.sync_from":
+                device_name = arguments.get("device_name")
+                return {"success": self.client.sync_from(device_name)}
+                
+            elif name == "nso.check_sync":
+                device_name = arguments.get("device_name")
+                return {"in_sync": self.client.check_sync(device_name)}
+                
+            elif name == "nso.fetch_host_keys":
+                device_name = arguments.get("device_name")
+                return {"success": self.client.fetch_host_keys(device_name)}
+                
+            # --- Workflows ---
+            elif name == "nso.onboard_devices":
+                devices = arguments.get("devices", [])
+                return self.client.onboard_devices(devices)
+            
+            # --- Network Tools ---
+            elif name == "nso.ping":
+                device = arguments.get("device")
+                target = arguments.get("target")
+                count = arguments.get("count", 5)
+                return self.client.ping(device, target, count)
+                
+            elif name == "nso.traceroute":
+                device = arguments.get("device")
+                target = arguments.get("target")
+                return self.client.traceroute(device, target)
+                
+            elif name == "nso.check_ip_conflicts":
+                return {"conflicts": self.client.check_ip_conflicts()}
+                
+            elif name == "nso.get_interfaces":
+                device = arguments.get("device")
+                return {"interfaces": self.client.get_interfaces(device)}
             
             else:
                 return {"error": f"Unknown tool: {name}"}

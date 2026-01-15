@@ -222,7 +222,7 @@ class NSOClient:
     # --- Onboarding & Management ---
 
     def create_authgroup(self, group: str, username: str, password: str) -> bool:
-        """Authgroup 생성"""
+        """Authgroup 생성 (이미 존재하면 True 반환)"""
         path = "tailf-ncs:devices/authgroups"
         
         # Authgroup 생성 (POST 사용)
@@ -240,10 +240,17 @@ class NSOClient:
         
         # POST를 사용하여 새 authgroup 생성
         res = self._request("POST", path, payload=payload)
-        return not (isinstance(res, dict) and res.get("status") == "error")
+        if isinstance(res, dict) and res.get("status") == "error":
+            error_msg = res.get("message", "")
+            # 409 Conflict = 이미 존재함 → 성공으로 처리
+            if "409" in error_msg or "Conflict" in error_msg:
+                logger.info(f"Authgroup '{group}' already exists")
+                return True
+            return False
+        return True
 
     def register_device(self, device_info: Dict[str, Any]) -> bool:
-        """장비 등록"""
+        """장비 등록 (이미 존재하면 True 반환)"""
         name = device_info["name"]
         address = device_info["oob_ip"]
         port = device_info.get("port", 22)
@@ -282,7 +289,12 @@ class NSOClient:
         res = self._request("POST", "tailf-ncs:devices", payload=payload)
         
         if isinstance(res, dict) and res.get("status") == "error":
-            logger.error(f"Failed to register device {name}: {res.get('message')}")
+            error_msg = res.get("message", "")
+            # 409 Conflict = 이미 존재함 → 성공으로 처리
+            if "409" in error_msg or "Conflict" in error_msg:
+                logger.info(f"Device {name} already exists, skipping registration")
+                return True
+            logger.error(f"Failed to register device {name}: {error_msg}")
             return False
             
         return True
@@ -315,7 +327,11 @@ class NSOClient:
         
         # 결과 확인 ("result": true)
         if isinstance(res, dict):
-            return str(res.get("result", "")).lower() == "true"
+            success = str(res.get("result", "")).lower() == "true"
+            if not success:
+                error_info = res.get("info", "No additional info provided by NSO")
+                logger.error(f"Sync-from failed for {device_name}. Reason: {error_info}")
+            return success
         return False
 
     def check_sync(self, device_name: str) -> bool:

@@ -26,17 +26,10 @@ try:
 except ImportError:
     MCP_AVAILABLE = False
 
-# 프로젝트 경로 설정 (Make_Dataset/src/core_batfish 접근용)
-MAKE_DATASET_PATH = Path(__file__).parent.parent.parent / "Make_Dataset" / "src"
-sys.path.insert(0, str(MAKE_DATASET_PATH))
+# 프로젝트 경로 설정
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-# Batfish 모듈 import (선택적)
-try:
-    from core_batfish.batfish_builder import BatfishBuilder
-    from core_batfish.batfish_base import BATFISH_AVAILABLE
-except ImportError:
-    BatfishBuilder = None
-    BATFISH_AVAILABLE = False
+from clients.batfish import BatfishClient
 
 logger = logging.getLogger(__name__)
 
@@ -45,27 +38,19 @@ class BatfishServer:
     """
     Batfish MCP 서버
     
-    기존 Make_Dataset/src/core_batfish 코드를 래핑하여 MCP 인터페이스 제공
+    clients.batfish.BatfishClient를 통해 분석 수행
     """
     
     def __init__(
         self,
-        host: str = "localhost",
-        network_name: str = "netconfig_qa",
-        snapshot_path: Optional[str] = None
+        host: str = "localhost"
     ):
         """
         Args:
             host: Batfish 서버 호스트
-            network_name: 네트워크 이름
-            snapshot_path: 스냅샷 경로 (configs 폴더 포함)
         """
         self.host = host
-        self.network_name = network_name
-        self.snapshot_path = snapshot_path
-        
-        self._builder: Optional[BatfishBuilder] = None
-        self._initialized = False
+        self._client = BatfishClient(host)
         
         # MCP 서버 초기화
         if MCP_AVAILABLE:
@@ -76,14 +61,8 @@ class BatfishServer:
             logger.warning("MCP SDK not available. Server functionality disabled.")
     
     @property
-    def builder(self) -> Optional[BatfishBuilder]:
-        """BatfishBuilder 인스턴스"""
-        return self._builder
-    
-    @property
-    def is_available(self) -> bool:
-        """Batfish 사용 가능 여부"""
-        return BATFISH_AVAILABLE and BatfishBuilder is not None
+    def client(self) -> BatfishClient:
+        return self._client
     
     def _register_tools(self):
         """MCP 도구 등록"""
@@ -95,13 +74,21 @@ class BatfishServer:
             return [
                 Tool(
                     name="batfish.init_snapshot",
-                    description="Batfish 스냅샷을 초기화합니다 (configs 폴더 필요)",
+                    description="설정 파일 저장 및 Batfish 스냅샷 초기화",
                     inputSchema={
                         "type": "object",
                         "properties": {
-                            "snapshot_path": {"type": "string", "description": "스냅샷 경로 (configs 폴더 포함)"}
+                            "topology_name": {"type": "string", "description": "토폴로지 이름 (폴더명)"},
+                            "configs": {
+                                "type": "object", 
+                                "description": "설정 파일 내용 ({hostname: content})"
+                            },
+                            "device_info": {
+                                "type": "object",
+                                "description": "장비 정보 (JSON 메타데이터)"
+                            }
                         },
-                        "required": ["snapshot_path"]
+                        "required": ["topology_name", "configs"]
                     }
                 ),
                 Tool(
@@ -147,21 +134,11 @@ class BatfishServer:
                     inputSchema={
                         "type": "object",
                         "properties": {
-                            "device": {"type": "string", "description": "장비명"},
-                            "vrf": {"type": "string", "description": "VRF 이름 (기본: default)"}
+                            "device": {"type": "string", "description": "장비명"}
                         },
                         "required": ["device"]
                     }
-                ),
-                Tool(
-                    name="batfish.get_nodes",
-                    description="스냅샷의 모든 노드 목록을 반환합니다",
-                    inputSchema={
-                        "type": "object",
-                        "properties": {},
-                        "required": []
-                    }
-                ),
+                )
             ]
         
         @self._server.call_tool()
@@ -173,11 +150,14 @@ class BatfishServer:
         """도구 호출 처리"""
         try:
             if name == "batfish.init_snapshot":
-                snapshot_path = arguments.get("snapshot_path")
-                return self.init_snapshot(snapshot_path)
+                return self.client.init_snapshot(
+                    topology_name=arguments["topology_name"],
+                    configs=arguments["configs"],
+                    device_info=arguments.get("device_info")
+                )
             
             elif name == "batfish.reachability":
-                return self.check_reachability(
+                return self.client.check_reachability(
                     src=arguments.get("src"),
                     dst=arguments.get("dst"),
                     protocol=arguments.get("protocol", "icmp"),
@@ -185,24 +165,16 @@ class BatfishServer:
                 )
             
             elif name == "batfish.traceroute":
-                return self.traceroute(
+                return self.client.traceroute(
                     src=arguments.get("src"),
                     dst=arguments.get("dst")
                 )
             
             elif name == "batfish.bgp_session":
-                return self.get_bgp_sessions(
-                    device=arguments.get("device")
-                )
+                return {"sessions": self.client.get_bgp_sessions(arguments.get("device"))}
             
             elif name == "batfish.route_table":
-                return self.get_route_table(
-                    device=arguments.get("device"),
-                    vrf=arguments.get("vrf", "default")
-                )
-            
-            elif name == "batfish.get_nodes":
-                return {"nodes": self.get_nodes()}
+                return {"routes": self.client.get_route_table(arguments.get("device"))}
             
             else:
                 return {"error": f"Unknown tool: {name}"}
@@ -210,259 +182,6 @@ class BatfishServer:
         except Exception as e:
             logger.error(f"Tool call error: {e}")
             return {"error": str(e)}
-    
-    # =========================================================================
-    # Public API Methods
-    # =========================================================================
-    
-    def init_snapshot(self, snapshot_path: str) -> Dict[str, Any]:
-        """
-        Batfish 스냅샷 초기화
-        
-        Args:
-            snapshot_path: 스냅샷 경로 (configs 폴더 포함)
-            
-        Returns:
-            초기화 결과 (nodes, interfaces 등)
-        """
-        if not self.is_available:
-            return {"error": "Batfish not available. Install pybatfish."}
-        
-        try:
-            self.snapshot_path = snapshot_path
-            self._builder = BatfishBuilder(
-                snapshot_path=snapshot_path,
-                batfish_host=self.host,
-                network_name=self.network_name
-            )
-            
-            if self._builder.initialize():
-                self._initialized = True
-                return {
-                    "status": "initialized",
-                    "nodes": self._builder.nodes,
-                    "node_count": len(self._builder.nodes),
-                    "snapshot_path": snapshot_path
-                }
-            else:
-                return {"error": "Failed to initialize Batfish"}
-                
-        except Exception as e:
-            logger.error(f"Init snapshot error: {e}")
-            return {"error": str(e)}
-    
-    def check_reachability(
-        self,
-        src: str,
-        dst: str,
-        protocol: str = "icmp",
-        dst_port: Optional[int] = None
-    ) -> Dict[str, Any]:
-        """
-        도달성 검증
-        
-        Args:
-            src: 출발지 (IP 또는 노드명)
-            dst: 목적지 (IP 또는 노드명)
-            protocol: 프로토콜
-            dst_port: 목적지 포트
-            
-        Returns:
-            도달성 검증 결과
-        """
-        if not self._initialized:
-            return {"error": "Batfish not initialized. Call init_snapshot first."}
-        
-        try:
-            # BatfishBuilder의 reachability 분석 사용
-            # 기존 L4AnalyzerMixin 코드 활용
-            from pybatfish.datamodel.flow import HeaderConstraints
-            
-            headers = HeaderConstraints(
-                srcIps=src if "." in src else None,
-                dstIps=dst if "." in dst else None,
-                ipProtocols=[protocol.upper()],
-                dstPorts=[str(dst_port)] if dst_port else None
-            )
-            
-            # src_location 설정
-            src_location = src if "." not in src else None
-            
-            result = self._builder.bf.q.reachability(
-                pathConstraints={"startLocation": src_location} if src_location else None,
-                headers=headers
-            ).answer().frame()
-            
-            if result.empty:
-                return {
-                    "reachable": False,
-                    "reason": "No path found",
-                    "src": src,
-                    "dst": dst
-                }
-            
-            # 결과 분석
-            first_row = result.iloc[0]
-            flow_disposition = str(first_row.get("Flow_Disposition", "UNKNOWN"))
-            
-            return {
-                "reachable": "ACCEPTED" in flow_disposition,
-                "disposition": flow_disposition,
-                "src": src,
-                "dst": dst,
-                "protocol": protocol,
-                "hops": len(first_row.get("Traces", [[]])[0]) if "Traces" in first_row else 0
-            }
-            
-        except Exception as e:
-            logger.error(f"Reachability check error: {e}")
-            return {"error": str(e), "src": src, "dst": dst}
-    
-    def traceroute(self, src: str, dst: str) -> Dict[str, Any]:
-        """
-        경로 추적
-        
-        Args:
-            src: 출발지 노드
-            dst: 목적지 IP
-            
-        Returns:
-            경로 정보
-        """
-        if not self._initialized:
-            return {"error": "Batfish not initialized. Call init_snapshot first."}
-        
-        try:
-            from pybatfish.datamodel.flow import HeaderConstraints
-            
-            result = self._builder.bf.q.traceroute(
-                startLocation=src,
-                headers=HeaderConstraints(dstIps=dst)
-            ).answer().frame()
-            
-            if result.empty:
-                return {"path": [], "hops": 0, "src": src, "dst": dst}
-            
-            # 경로 추출
-            traces = result.iloc[0].get("Traces", [])
-            path = []
-            
-            if traces:
-                for hop in traces[0]:
-                    node = getattr(hop, 'node', str(hop))
-                    path.append(node)
-            
-            return {
-                "path": path,
-                "hops": len(path),
-                "src": src,
-                "dst": dst,
-                "disposition": str(result.iloc[0].get("Flow_Disposition", "UNKNOWN"))
-            }
-            
-        except Exception as e:
-            logger.error(f"Traceroute error: {e}")
-            return {"error": str(e), "src": src, "dst": dst}
-    
-    def get_bgp_sessions(self, device: Optional[str] = None) -> Dict[str, Any]:
-        """
-        BGP 세션 상태 조회
-        
-        Args:
-            device: 장비명 (None이면 전체)
-            
-        Returns:
-            BGP 세션 목록
-        """
-        if not self._initialized:
-            return {"error": "Batfish not initialized. Call init_snapshot first."}
-        
-        try:
-            result = self._builder.bf.q.bgpSessionStatus().answer().frame()
-            
-            sessions = []
-            for _, row in result.iterrows():
-                node = str(row.get("Node", ""))
-                
-                # 장비 필터링
-                if device and device.lower() not in node.lower():
-                    continue
-                
-                sessions.append({
-                    "node": node,
-                    "remote_node": str(row.get("Remote_Node", "")),
-                    "local_as": row.get("Local_AS"),
-                    "remote_as": row.get("Remote_AS"),
-                    "status": str(row.get("Established_Status", "UNKNOWN"))
-                })
-            
-            return {
-                "sessions": sessions,
-                "total": len(sessions),
-                "device_filter": device
-            }
-            
-        except Exception as e:
-            logger.error(f"BGP session query error: {e}")
-            return {"error": str(e)}
-    
-    def get_route_table(self, device: str, vrf: str = "default") -> Dict[str, Any]:
-        """
-        라우팅 테이블 조회
-        
-        Args:
-            device: 장비명
-            vrf: VRF 이름
-            
-        Returns:
-            라우팅 테이블
-        """
-        if not self._initialized:
-            return {"error": "Batfish not initialized. Call init_snapshot first."}
-        
-        try:
-            result = self._builder.bf.q.routes(
-                nodes=device,
-                vrfs=vrf
-            ).answer().frame()
-            
-            routes = []
-            for _, row in result.iterrows():
-                routes.append({
-                    "network": str(row.get("Network", "")),
-                    "next_hop": str(row.get("Next_Hop", "")),
-                    "next_hop_ip": str(row.get("Next_Hop_IP", "")),
-                    "protocol": str(row.get("Protocol", "")),
-                    "metric": row.get("Metric", 0),
-                    "admin_distance": row.get("Admin_Distance", 0)
-                })
-            
-            return {
-                "device": device,
-                "vrf": vrf,
-                "routes": routes,
-                "count": len(routes)
-            }
-            
-        except Exception as e:
-            logger.error(f"Route table query error: {e}")
-            return {"error": str(e), "device": device}
-    
-    def get_nodes(self) -> List[str]:
-        """스냅샷의 모든 노드 반환"""
-        if not self._initialized:
-            return []
-        return self._builder.nodes if self._builder else []
-    
-    def get_layer3_edges(self) -> List[Dict[str, Any]]:
-        """L3 링크 목록 반환"""
-        if not self._initialized or not self._builder:
-            return []
-        return self._builder.get_layer3_edges()
-    
-    # =========================================================================
-    # MCP Server Lifecycle
-    # =========================================================================
     
     async def run(self):
         """MCP 서버 실행"""

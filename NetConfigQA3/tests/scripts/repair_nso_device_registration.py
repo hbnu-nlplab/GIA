@@ -61,11 +61,11 @@ def main():
     for d in config["devices"]:
         devices_to_onboard.append({
             "name": d["name"],
-            "oob_ip": pnetlab_vm_ip,
-            "port": d["telnet_port"],
+            "oob_ip": d["oob_ip"],
+            "port": 22,
             "authgroup": authgroup,
             "ned_id": ned_id,
-            "protocol": "telnet"
+            "protocol": "ssh"
         })
     
     print(f"\n📝 {len(devices_to_onboard)}개 장비 등록 및 초기화 시작 (Unified Onboarding)...")
