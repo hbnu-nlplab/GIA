@@ -240,7 +240,7 @@ class PnetlabClient:
         # - data: {인터페이스ID문자열: 네트워크ID문자열}
         # - 연결 해제: {"node_id": "1", "data": {"0": ""}}
         url = f"{self.base_url}/api/labs/session/interfaces/edit"
-        
+            
         # 네트워크 ID가 0이면 연결 해제 (빈 문자열)
         net_id_str = str(network_id) if network_id > 0 else ""
         

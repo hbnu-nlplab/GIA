@@ -37,6 +37,12 @@ from mcp_servers.batfish_server import BatfishServer
 from mcp_servers.pnetlab_server import PnetlabServer
 from mcp_servers.telemetry_server import TelemetryServer
 
+# Lite-IRON 모듈 (Context, Approval, Rollback)
+from agent.tools.context_tools import get_context_manager, search_context as _search_context
+from agent.approval_gate import get_approval_gate, RiskLevel
+from agent.tools.evidence_tools import get_evidence_collector
+from agent.rollback_tracker import get_rollback_tracker
+
 logger = logging.getLogger(__name__)
 
 
@@ -700,60 +706,81 @@ def lab_manage(
 
 
 # =============================================================================
-# 6. approval.request - 승인 요청
+# 6. approval.request - 승인 요청 (Lite-IRON 통합)
 # =============================================================================
-
-# 승인 요청 저장소 (메모리)
-_pending_approvals: Dict[str, Dict[str, Any]] = {}
-_approval_counter = 0
-
 
 @tool
 def approval_request(
     action_type: str,
     description: str,
     affected_devices: List[str],
-    risk_assessment: str
+    risk_assessment: str = "auto",
+    include_evidence: bool = True
 ) -> Dict[str, Any]:
     """
     [승인] 위험 작업에 대한 승인을 요청합니다.
     
+    Lite-IRON 통합: RiskLevel 자동 평가, EvidencePack 첨부, CLI 프롬프트 생성
+    
     Args:
-        action_type: 요청 액션 유형 ("commit", "rollback", "bulk_change")
+        action_type: 요청 액션 유형 ("commit", "rollback", "bulk_change", "delete")
         description: 변경 내용 설명
         affected_devices: 영향받는 장비 목록
-        risk_assessment: 위험도 평가 ("low", "medium", "high")
+        risk_assessment: 위험도 평가 ("low", "medium", "high", "auto")
+                        "auto"면 자동 평가
+        include_evidence: 증거팩 포함 여부 (기본: True)
     
     Returns:
-        승인 요청 결과 (request_id, status)
+        승인 요청 결과 (request_id, risk_level, cli_prompt, evidence_pack)
     
     Examples:
-        - approval_request("commit", "ACL 규칙 추가", ["PE1"], "low")
+        - approval_request("commit", "BGP neighbor 추가", ["PE1"], "auto")
+        - approval_request("rollback", "ACL 변경 롤백", ["PE1", "PE2"], "high")
     """
-    global _approval_counter
-    logger.info(f"approval_request({action_type}, {description})")
+    logger.info(f"approval_request({action_type}, {description}, devices={affected_devices})")
     
     try:
-        _approval_counter += 1
-        request_id = f"REQ-{_approval_counter:04d}"
+        gate = get_approval_gate()
         
-        approval = {
-            "request_id": request_id,
-            "action_type": action_type,
-            "description": description,
-            "affected_devices": affected_devices,
-            "risk_assessment": risk_assessment,
-            "status": "pending",
-            "created_at": __import__("datetime").datetime.now().isoformat()
-        }
+        # EvidencePack 구성 (첫 번째 장비 기준)
+        evidence_pack = None
+        if include_evidence and affected_devices:
+            try:
+                collector = get_evidence_collector()
+                pack = collector.build_evidence_pack(
+                    device=affected_devices[0],
+                    change_type=action_type,
+                    include_logs=True,
+                    include_batfish=True
+                )
+                evidence_pack = pack.to_dict()
+            except Exception as e:
+                logger.warning(f"Evidence pack failed: {e}")
+                evidence_pack = {"error": str(e)}
         
-        _pending_approvals[request_id] = approval
+        # 승인 요청 생성
+        request = gate.create_request(
+            action=action_type,
+            target_devices=affected_devices,
+            change_summary=description,
+            change_details={"risk_input": risk_assessment},
+            evidence_pack=evidence_pack
+        )
+        
+        # CLI 프롬프트 생성
+        cli_prompt = gate.format_cli_prompt(request)
         
         return {
-            "status": "pending",
-            "request_id": request_id,
-            "message": f"Approval request created. Awaiting review.",
-            "details": approval
+            "status": "AWAITING_APPROVAL",
+            "request_id": request.request_id,
+            "risk_level": request.risk_level.value,
+            "affected_devices": affected_devices,
+            "action_required": "USER_INPUT_NEEDED",
+            "message": "⚠️ 승인 대기 중입니다. 사용자가 승인/거부를 입력할 때까지 기다리세요.",
+            "instruction_for_agent": "STOP HERE. Do NOT call any more tools. Wait for user to respond with 승인/거부/수정.",
+            "cli_prompt": cli_prompt,
+            "evidence_pack_summary": pack.summary() if evidence_pack and "error" not in evidence_pack else None,
+            "rollback_method": request.rollback_method
         }
         
     except Exception as e:
@@ -761,29 +788,84 @@ def approval_request(
         return {"error": str(e)}
 
 
+
 def approve_request(request_id: str, approved: bool, reason: str = "") -> Dict[str, Any]:
     """
-    승인 요청 처리 (관리자용)
+    승인 요청 처리 (관리자용) - ApprovalGate 연동
     
     Args:
         request_id: 요청 ID
         approved: 승인 여부
         reason: 승인/거부 사유
     """
-    if request_id not in _pending_approvals:
-        return {"error": f"Request not found: {request_id}"}
+    gate = get_approval_gate()
     
-    approval = _pending_approvals[request_id]
-    approval["status"] = "approved" if approved else "rejected"
-    approval["reason"] = reason
-    approval["processed_at"] = __import__("datetime").datetime.now().isoformat()
+    if approved:
+        response = "A"
+    else:
+        response = "R"
     
-    return approval
+    status = gate.process_cli_response(request_id, response, reason)
+    request = gate.get_request(request_id)
+    
+    if request:
+        return {
+            "request_id": request_id,
+            "status": status.value,
+            "reason": reason,
+            "devices": request.target_devices
+        }
+    return {"error": f"Request not found: {request_id}"}
 
 
 # =============================================================================
-# 7. help.guide - 도움말
+# 9. context.search - Level 2 Facts 검색 (Lite-IRON)
 # =============================================================================
+
+@tool
+def context_search(
+    device: str,
+    section: str = "all"
+) -> Dict[str, Any]:
+    """
+    [컨텍스트] Level 2 Facts에서 장비 정보를 검색합니다.
+    
+    효율적인 네트워크 정보 조회를 위해 사전 파싱된 Facts를 검색합니다.
+    NSO 실시간 조회(network_query)보다 빠르지만, 캐시된 데이터입니다.
+    
+    Args:
+        device: 장비명 (예: "PE1", "P1", "leaf1")
+        section: 검색할 섹션
+            - "all": 전체 정보
+            - "interfaces": 인터페이스 목록
+            - "routing": 라우팅 정보 (BGP, OSPF)
+            - "routing.bgp": BGP 상세
+            - "routing.ospf": OSPF 상세
+            - "services": 서비스 설정
+            - "security": 보안 설정 (SSH, AAA)
+    
+    Returns:
+        검색된 Facts 데이터
+    
+    Examples:
+        - context_search("PE1", "routing.bgp") → BGP Neighbors, AS Number
+        - context_search("P1", "interfaces") → 인터페이스 목록
+        - context_search("leaf1", "all") → 전체 정보
+    """
+    logger.info(f"context_search({device}, {section})")
+    
+    try:
+        result = _search_context(device, section)
+        return result
+    except Exception as e:
+        logger.error(f"context_search error: {e}")
+        return {"error": str(e)}
+
+
+# =============================================================================
+# 10. help.guide - 도움말
+# =============================================================================
+
 
 @tool
 def help_guide(
@@ -1055,10 +1137,8 @@ def device_workflow(
             })
             
             # Step 2: NSO 등록 장비 목록 조회
-            nso_devices = nso.list_devices()
-            nso_names = set()
-            if isinstance(nso_devices, dict) and "devices" in nso_devices:
-                nso_names = {d.get("name") for d in nso_devices["devices"] if d.get("name")}
+            nso_devices = nso.get_devices()
+            nso_names = set(nso_devices)
             results["steps"].append({
                 "step": "nso_inventory",
                 "count": len(nso_names),
@@ -1164,6 +1244,7 @@ UNIFIED_TOOLS = [
     approval_request,
     help_guide,
     device_workflow,  # PNETLab-NSO 통합 워크플로우
+    context_search,   # Lite-IRON: Level 2 Facts 검색
 ]
 
 # 도구 이름 → 도구 매핑
@@ -1176,7 +1257,9 @@ TOOL_NAME_MAP = {
     "approval_request": approval_request,
     "help_guide": help_guide,
     "device_workflow": device_workflow,
+    "context_search": context_search,  # Lite-IRON
 }
+
 
 
 def get_unified_tools() -> List:
