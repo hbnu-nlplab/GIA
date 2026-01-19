@@ -1,0 +1,37 @@
+[
+    {
+        "question": "When deferring or rejecting a concurrent request, what needs to be considered?",
+        "gold_answer": "LCS Client/AF priority and any other relevant priority information",
+        "debate1_passage": "When deferring or rejecting a concurrent request, consider Quality of Service (QoS) requirements, privacy settings, the entity's capacity for concurrent requests, priority information, and the nature of the requests. Each request should be treated separately.",
+        "debate1_answer": "QoS requirements, privacy settings, capacity, priority, nature of requests",
+        "debate2_answer": "Key factors for decision-making"
+    },
+    {
+        "question": "How can concurrent location requests be combined?",
+        "gold_answer": "by executing only one request and using the ensuing location estimate result(s) to satisfy the other request(s)",
+        "debate1_passage": "Concurrent location requests can be combined by entities such as H-GMLC, NEF, AMF, LMF, and UE. An H-GMLC or NEF can execute one request to satisfy others for the same target UE. A V-GMLC can combine 5GC-MT LR and 5GC-MO LR requests if no privacy actions are needed. An AMF can combine requests after ensuring necessary privacy actions are completed. An LMF can combine requests if QoS requirements are met. A UE may combine requests if QoS requirements are satisfied and positioning procedures are supported.",
+        "debate1_answer": "H-GMLC, NEF, AMF, LMF, UE",
+        "debate2_answer": "H-GMLC, NEF, AMF, LMF, UE"
+    },
+    {
+        "question": "What can be combined by an AMF?",
+        "gold_answer": "concurrent 5GC-MT LR, 5GC-MO LR and 5GC-NI LR location requests",
+        "debate1_passage": "An AMF can combine concurrent location requests: 5GC-MT LR, 5GC-MO LR, and 5GC-NI LR.",
+        "debate1_answer": "5GC-MT LR, 5GC-MO LR, 5GC-NI LR",
+        "debate2_answer": "5GC-MT LR, 5GC-MO LR, 5GC-NI LR"
+    },
+    {
+        "question": "What should be considered when cancelling one or several existing requests?",
+        "gold_answer": "LCS Client/AF priority and any other relevant priority information",
+        "debate1_passage": "When cancelling existing location requests, consider the priority of requests, Quality of Service (QoS) requirements, privacy settings, correlation of location responses with requests, outstanding privacy actions for the target user equipment (UE), and QoS requirements for non-executed requests.",
+        "debate1_answer": "Priority of requests, QoS requirements, privacy settings, correlation of responses, outstanding privacy actions.",
+        "debate2_answer": "Insufficient depth"
+    },
+    {
+        "question": "What may combine requests from the H GMLC?",
+        "gold_answer": "the same target UE",
+        "debate1_passage": "An H-GMLC can combine concurrent location requests for the same target User Equipment (UE) by executing a single request and using the resulting location estimate to satisfy other requests. It can also utilize location information obtained from concurrent requests for individual UEs within a group for bulk location requests.",
+        "debate1_answer": "Concurrent location requests",
+        "debate2_answer": "Concurrent location requests"
+    }
+]

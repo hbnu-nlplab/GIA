@@ -1,0 +1,37 @@
+[
+    {
+        "question": "When deferring or rejecting a concurrent request, what needs to be considered?",
+        "gold_answer": "LCS Client/AF priority and any other relevant priority information",
+        "debate1_passage": "",
+        "debate1_answer": "",
+        "debate2_answer": "The current state of resources, the priority or importance of the request, and the possibility of resource deadlock."
+    },
+    {
+        "question": "How can concurrent location requests be combined?",
+        "gold_answer": "by executing only one request and using the ensuing location estimate result(s) to satisfy the other request(s)",
+        "debate1_passage": "",
+        "debate1_answer": "",
+        "debate2_answer": ""
+    },
+    {
+        "question": "What can be combined by an AMF?",
+        "gold_answer": "concurrent 5GC-MT LR, 5GC-MO LR and 5GC-NI LR location requests",
+        "debate1_passage": "",
+        "debate1_answer": "",
+        "debate2_answer": ""
+    },
+    {
+        "question": "What should be considered when cancelling one or several existing requests?",
+        "gold_answer": "LCS Client/AF priority and any other relevant priority information",
+        "debate1_passage": "",
+        "debate1_answer": "",
+        "debate2_answer": ""
+    },
+    {
+        "question": "What may combine requests from the H GMLC?",
+        "gold_answer": "the same target UE",
+        "debate1_passage": "",
+        "debate1_answer": "",
+        "debate2_answer": ""
+    }
+]

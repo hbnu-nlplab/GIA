@@ -30,7 +30,7 @@ def build_graph():
     workflow.add_edge("Verifier", "Synthesizer")
 
     def check_loop(state):
-        return "continue" if state["round_count"] < 2 else "finish_d1"
+        return "continue" if state["round_count"] < 3 else "finish_d1"
 
     workflow.add_conditional_edges(
         "Synthesizer",
@@ -53,18 +53,21 @@ def main():
     
     app = build_graph()
     
-    input_path = BASE_DIR / "data" / "passages" / "full" / "netconfig_passage.json"
-    output_path = BASE_DIR / "data" / "debate_results" / "final_result.json"
+    input_path = BASE_DIR / "data" / "passages" / "full_w_context" / "telequad_passage.json"
+    output_path = BASE_DIR / "data" / "debate_results" / "full_w_context" / "telequad_result.json"
     
     if not input_path.exists():
         print(f"Input file not found: {input_path}")
         return
 
     with open(input_path, 'r', encoding='utf-8') as f:
-        data = json.load(f)[:3]
+        data = json.load(f)[:5]
 
     results = []
     
+    import time
+    elapsed_times = []
+
     for i, item in enumerate(data):
         q_text = item.get('question', '')
         print(f"\n🔹 [{i+1}/{len(data)}] Question: {q_text[:40]}...")
@@ -74,6 +77,7 @@ def main():
             "original_passage": item.get('passage', ''),
             "current_passage": item.get('passage', ''),
             "gold_answer": item.get('gold_answer', ''),
+            "options": item.get('options', ''),
             "round_count": 0,
             "history": [],
             "candidate_answer": "",
@@ -82,17 +86,20 @@ def main():
             "final_answer": ""
         }
         
+        start_time = time.time()
         try:
             out = app.invoke(initial_state)
+            end_time = time.time()
+            duration = end_time - start_time
+            elapsed_times.append(duration)
+            print(f"   ⏱️ Time taken: {duration:.2f} seconds")
             
             result_item = {
                 "question": q_text,
                 "gold_answer": item.get('gold_answer'),
                 "debate1_passage": out['current_passage'],
-                "debate1_candidate": out['candidate_answer'],
-                "debate2_final": out['final_answer'],
-                "pro_log": out['pro_argument'],
-                "con_log": out['con_argument']
+                "debate1_answer": out['candidate_answer'],
+                "debate2_answer": out['final_answer']
             }
             results.append(result_item)
             
@@ -100,6 +107,10 @@ def main():
             print(f"Error: {e}")
             import traceback
             traceback.print_exc()
+
+    if elapsed_times:
+        avg_time = sum(elapsed_times) / len(elapsed_times)
+        print(f"\n📊 Average time per question: {avg_time:.2f} seconds")
 
     os.makedirs(output_path.parent, exist_ok=True)
     with open(output_path, 'w', encoding='utf-8') as f:

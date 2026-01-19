@@ -13,19 +13,19 @@ BASE_DIR = Path(__file__).resolve().parents[1]
 DATA_PATHS = {
     "telequad": {
         "reference": BASE_DIR / "data" / "passages" / "reference" / "telequad_ref.json",
-        "final_output": BASE_DIR / "data" / "passages" / "full" / "telequad_passage.json"
-    },
-    "teleqna": {
-        "reference": BASE_DIR / "data" / "passages" / "reference" / "teleqna_ref.json",
-        "final_output": BASE_DIR / "data" / "passages" / "full" / "teleqna_passage.json"
-    },
-    "netbench": {
-        "reference": BASE_DIR / "data" / "passages" / "reference" / "netbench_ref.json",
-        "final_output": BASE_DIR / "data" / "passages" / "full" / "netbench_passage.json"
-    },
-    "netconfig": {
-        "reference": BASE_DIR / "data" / "passages" / "reference" / "netconfig_ref.json",
-        "final_output": BASE_DIR / "data" / "passages" / "full" / "netconfig_passage.json"
+        "final_output": BASE_DIR / "data" / "passages" / "full_w_context" / "telequad_passage.json"
+    # },
+    # "teleqna": {
+    #     "reference": BASE_DIR / "data" / "passages" / "reference" / "teleqna_ref.json",
+    #     "final_output": BASE_DIR / "data" / "passages" / "full" / "teleqna_passage.json"
+    # },
+    # "netbench": {
+    #     "reference": BASE_DIR / "data" / "passages" / "reference" / "netbench_ref.json",
+    #     "final_output": BASE_DIR / "data" / "passages" / "full" / "netbench_passage.json"
+    # },
+    # "netconfig": {
+    #     "reference": BASE_DIR / "data" / "passages" / "reference" / "netconfig_ref.json",
+    #     "final_output": BASE_DIR / "data" / "passages" / "full" / "netconfig_passage.json"
     }
 }
 
