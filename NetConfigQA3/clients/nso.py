@@ -111,6 +111,8 @@ class NSOClient:
                 response = self.session.get(url, timeout=self.timeout)
             elif method == "PATCH":
                 response = self.session.patch(url, json=payload, timeout=self.timeout)
+            elif method == "PUT":
+                response = self.session.put(url, json=payload, timeout=self.timeout)
             elif method == "POST":
                 response = self.session.post(url, json=payload, timeout=self.timeout)
             elif method == "DELETE":
@@ -285,16 +287,12 @@ class NSOClient:
             "tailf-ncs:device": [device_data]
         }
         
-        # POST로 생성
-        res = self._request("POST", "tailf-ncs:devices", payload=payload)
+        # PUT을 사용하여 생성 또는 덮어쓰기 (Create or Replace)
+        # NSO RESTCONF에서 개별 장비 경로는 devices/device={name}
+        res = self._request("PUT", f"tailf-ncs:devices/device={name}", payload={"tailf-ncs:device": device_data})
         
         if isinstance(res, dict) and res.get("status") == "error":
-            error_msg = res.get("message", "")
-            # 409 Conflict = 이미 존재함 → 성공으로 처리
-            if "409" in error_msg or "Conflict" in error_msg:
-                logger.info(f"Device {name} already exists, skipping registration")
-                return True
-            logger.error(f"Failed to register device {name}: {error_msg}")
+            logger.error(f"Failed to register/update device {name}: {res.get('message')}")
             return False
             
         return True
