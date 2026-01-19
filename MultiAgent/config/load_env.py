@@ -9,7 +9,8 @@ def load_louter():
     model2 = os.getenv("OPENROUTER_MODEL2")
     model3 = os.getenv("OPENROUTER_MODEL3") 
     model4 = os.getenv("OPENROUTER_MODEL4")
-    return api_key, base_url, model1, model2, model3, model4
+    model5 = os.getenv("OPENROUTER_MODEL5")
+    return api_key, base_url, model1, model2, model3, model4, model5
     
 def load_api_key():
     load_dotenv()

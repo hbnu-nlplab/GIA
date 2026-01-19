@@ -4,6 +4,7 @@ class AgentState(TypedDict):
     question: str
     original_passage: str
     gold_answer: str
+    options: str
     
     current_passage: str    # 계속 수정되는 지문
     round_count: int        # 반복 횟수 체크

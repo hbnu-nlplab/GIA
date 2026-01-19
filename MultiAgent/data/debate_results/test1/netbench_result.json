@@ -1,0 +1,37 @@
+[
+    {
+        "question": "Which BGP path (A or B) will the router prefer by default for prefix 10.1.0.0/16, and why?",
+        "gold_answer": "Path A will be preferred. BGP path selection prioritizes the path with the highest Local Preference *before* considering AS_PATH length. Even though Path B has a shorter AS_PATH, Path A's higher Local Preference makes it more desirable according to the standard BGP best path selection algorithm.",
+        "debate1_passage": "In BGP (Border Gateway Protocol) path selection, the router will prefer Path A for the prefix 10.1.0.0/16 by default due to the higher Local Preference associated with Path A.",
+        "debate1_answer": "The router will prefer Path A for the prefix 10.1.0.0/16 because it has a higher Local Preference.",
+        "debate2_answer": "The router will prefer Path A for the prefix 10.1.0.0/16 because it has a higher Local Preference."
+    },
+    {
+        "question": "What is the primary function of configuring a BGP neighbor as a `route-reflector-client` within an iBGP design?",
+        "gold_answer": "The primary function is to relax the iBGP split-horizon rule. Normally, routes learned from an iBGP peer are not advertised to other iBGP peers. A Route Reflector (RR) *can* advertise routes learned from one client to other clients (and non-clients), allowing scalability by avoiding a full mesh of iBGP sessions while preventing loops.",
+        "debate1_passage": "The primary function of configuring a BGP neighbor as a `route-reflector-client` is to allow the route reflector to manage and control the flow of routing updates among its clients, reducing the need for a full mesh of iBGP peerings.",
+        "debate1_answer": "Configuring a BGP neighbor as a `route-reflector-client` enables a route reflector to manage routing updates and reduces the complexity of an iBGP network by eliminating the need for a full mesh of iBGP peerings.",
+        "debate2_answer": "Configuring a BGP neighbor as a `route-reflector-client` enables a route reflector to manage routing updates and reduces the complexity of an iBGP network by eliminating the need for a full mesh of iBGP peerings."
+    },
+    {
+        "question": "Assuming default behavior for inter-AS MED comparison, which peer's route (A or B) would likely be preferred based *only* on the MED attribute?",
+        "gold_answer": "Peer A's route (MED 50) would be preferred. By default, when comparing routes from different peers within the *same* neighboring autonomous system, BGP prefers the path with the lower MED value (lower is better). Since Peer A has MED 50 and Peer B has MED 100, Path A is considered better based on MED.",
+        "debate1_passage": "The default behavior for inter-AS MED comparison is to prefer the route with the lower MED value. Peer A has a MED value of 50, while Peer B has a MED value of 100.",
+        "debate1_answer": "Peer A's route would be preferred because it has a lower MED value (50) than Peer B (100).",
+        "debate2_answer": "Peer A's route would be preferred because it has a lower MED value (50) than Peer B (100)."
+    },
+    {
+        "question": "What common BGP filtering technique is used on AS65000's routers to prevent advertising routes learned from ISP_A to ISP_B?",
+        "gold_answer": "A common technique is using an AS_PATH filter list or route map. On the outbound policy towards ISP_B, implement a filter that denies any route whose AS_PATH contains the ASN of ISP_A. This prevents AS65000 from becoming a transit AS between ISP_A and ISP_B.",
+        "debate1_passage": "Route maps or prefix lists are common BGP filtering techniques used on AS65000's routers to prevent advertising routes learned from ISP_A to ISP_B.",
+        "debate1_answer": "Route maps or prefix lists.",
+        "debate2_answer": "Route maps or prefix lists."
+    },
+    {
+        "question": "What BGP design feature specifically helps reduce iBGP convergence time compared to a full mesh, especially in large networks?",
+        "gold_answer": "BGP Route Reflectors (RRs) help reduce iBGP convergence time. By significantly reducing the number of required iBGP sessions (from N*(N-1)/2 to N sessions to RRs), RRs decrease the amount of BGP update processing and flooding required during convergence events, leading to faster stabilization.",
+        "debate1_passage": "Route Reflectors (RRs) are a BGP design feature that helps reduce iBGP convergence time in large networks compared to a full mesh by acting as central points for route distribution, reducing the number of required peerings and allowing for faster propagation of routing updates.",
+        "debate1_answer": "Route Reflectors (RRs) reduce iBGP convergence time in large networks by acting as central points for route distribution, minimizing peerings and accelerating routing update propagation compared to a full mesh.",
+        "debate2_answer": "Route Reflectors (RRs) reduce iBGP convergence time in large networks by acting as central points for route distribution, minimizing peerings and accelerating routing update propagation compared to a full mesh."
+    }
+]

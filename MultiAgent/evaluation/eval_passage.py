@@ -13,10 +13,10 @@ sys.path.append(str(BASE_DIR))
 
 # 평가할 파일들의 경로 리스트
 DATA_FILES = {
-    "TeleQuAD": BASE_DIR / "data" / "passages" / "full" / "telequad_passage.json",
-    "TeleQnA": BASE_DIR / "data" / "passages" / "full" / "teleqna_passage.json",
-    "NetBench": BASE_DIR / "data" / "passages" / "full" / "netbench_passage.json",
-    "NetConfig": BASE_DIR / "data" / "passages" / "full" / "netconfig_passage.json"
+    "TeleQuAD": BASE_DIR / "data" / "debate_results" / "ablation2" / "telequad_result.json",
+    # "TeleQnA": BASE_DIR / "data" / "passages" / "ablation1" / "teleqna_result.json"
+    # "NetBench": BASE_DIR / "data" / "passages" / "full" / "netbench_passage.json",
+    # "NetConfig": BASE_DIR / "data" / "passages" / "full" / "netconfig_passage.json"
 }
 
 def load_metrics():
@@ -37,7 +37,7 @@ def evaluate_single_file(file_path, dataset_name, rouge, bertscore):
     preds = []
     
     for item in data:
-        p = item.get('passage', '')
+        p = item.get('debate2_answer', '')
         g = item.get('gold_answer', '')
 
         # [Fix] gold_answer가 dict나 list일 경우 에러 방지 (문자열 변환)
@@ -65,15 +65,26 @@ def evaluate_single_file(file_path, dataset_name, rouge, bertscore):
     bert_res = bertscore.compute(predictions=preds, references=refs, lang='en', model_type="distilbert-base-uncased")
     f1_mean = np.mean(bert_res['f1'])
     
-    # 2. Substring Match (정답 포함 여부 - Recall 성격)
+    # 2. Exact Match (정확히 일치)
+    em_count = sum(1 for p, r in zip(preds, refs) if p.strip() == r.strip())
+    em_score = (em_count / len(preds)) * 100
+
+    # 3. ROUGE (Rouge-1, 2, L)
+    rouge_res = rouge.compute(predictions=preds, references=refs)
+
+    # 4. Substring Match (정답 포함 여부 - Recall 성격)
     inclusion_count = sum(1 for p, r in zip(preds, refs) if r in p)
     inclusion_rate = (inclusion_count / len(preds)) * 100
     
-    # 3. 평균 길이
+    # 5. 평균 길이
     avg_len = np.mean([len(p) for p in preds])
 
     return {
         "BERT_F1": round(f1_mean, 4),
+        "EM": round(em_score, 2),
+        "ROUGE1": round(rouge_res['rouge1'], 4),
+        "ROUGE2": round(rouge_res['rouge2'], 4),
+        "ROUGEL": round(rouge_res['rougeL'], 4),
         "Include_%": round(inclusion_rate, 2),
         "Avg_Len": round(avg_len, 1),
         "Count": len(preds)
@@ -97,14 +108,16 @@ def run_evaluation_all():
         res = evaluate_single_file(path, name, rouge_metric, bert_metric)
         
         if res:
-            # 데이터셋별 컬럼 추가 (예: NetConfig_BERT, NetConfig_Len)
+            # 데이터셋별 컬럼 추가
             report_row[f"{name}_BERT"] = res["BERT_F1"]
-            report_row[f"{name}_Inc%"] = res["Include_%"]
-            report_row[f"{name}_Len"] = res["Avg_Len"]
+            report_row[f"{name}_EM"] = res["EM"]
+            report_row[f"{name}_R1"] = res["ROUGE1"]
+            report_row[f"{name}_R2"] = res["ROUGE2"]
+            report_row[f"{name}_RL"] = res["ROUGEL"]
             
             total_bert += res["BERT_F1"]
             valid_datasets += 1
-            print(f"   -> BERT: {res['BERT_F1']}, Inc: {res['Include_%']}%, Len: {res['Avg_Len']}")
+            print(f"   -> BERT: {res['BERT_F1']}, EM: {res['EM']}, R1: {res['ROUGE1']}, R2: {res['ROUGE2']}, RL: {res['ROUGEL']}")
         else:
             print("   -> No data or file missing.")
 
