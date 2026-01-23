@@ -1,0 +1,195 @@
+{
+  "meta": {
+    "model": "GPT-OSS-20B",
+    "total_samples": 5,
+    "duration": 30.22921919822693
+  },
+  "metrics_summary": {
+    "avg_time_per_query": 6.045843839645386,
+    "avg_tool_calls": 1.6,
+    "avg_prompt_tokens": 561.2,
+    "avg_completion_tokens": 7.2,
+    "avg_total_tokens": 568.4,
+    "avg_context_size": 27.0,
+    "total_tokens": 2842,
+    "total_tool_calls": 8,
+    "success_rate": 1.0
+  },
+  "results": [
+    {
+      "question_id": "TRACEROUTE_leaf2_leaf3",
+      "question": "leaf2에서 172.16.3.2까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)]",
+      "gold": "\"경로 없음\"",
+      "pred": "leaf2→leaf3",
+      "pred_raw": "leaf2→leaf3",
+      "answer_type": "text",
+      "level": "L4",
+      "category": "Reachability_Analysis",
+      "status": "OK",
+      "metrics": {
+        "question_id": "TRACEROUTE_leaf2_leaf3",
+        "total_time": 10.430232048034668,
+        "tool_calls": 2,
+        "tool_call_details": [
+          {
+            "tool": "traceroute_path",
+            "input": "leaf2, 172.16.3.2",
+            "output_len": 11
+          },
+          {
+            "tool": "_Exception",
+            "input": "Invalid Format: Missing 'Action:' after 'Thought:",
+            "output_len": 49
+          },
+          {
+            "tool": "traceroute_path",
+            "input": "leaf2, 172.16.3.2",
+            "output_len": 11
+          }
+        ],
+        "prompt_tokens": 573,
+        "completion_tokens": 5,
+        "total_tokens": 578,
+        "context_size": 71,
+        "agent_steps": 3,
+        "success": true,
+        "error_msg": null
+      }
+    },
+    {
+      "question_id": "VTY_TRANSPORT_INPUT_TEXT",
+      "question": "p2 장비의 VTY transport input 설정은 무엇입니까? [답변 형식: 설정값 또는 null]",
+      "gold": "\"ssh\"",
+      "pred": "ssh",
+      "pred_raw": "ssh",
+      "answer_type": "text",
+      "level": "L1",
+      "category": "Security_Inventory",
+      "status": "OK",
+      "metrics": {
+        "question_id": "VTY_TRANSPORT_INPUT_TEXT",
+        "total_time": 1.7158536911010742,
+        "tool_calls": 1,
+        "tool_call_details": [
+          {
+            "tool": "query_device",
+            "input": "p2, vty_transport_input_text",
+            "output_len": 3
+          }
+        ],
+        "prompt_tokens": 538,
+        "completion_tokens": 1,
+        "total_tokens": 539,
+        "context_size": 3,
+        "agent_steps": 1,
+        "success": true,
+        "error_msg": null
+      }
+    },
+    {
+      "question_id": "COMPARE_INTERFACE_COUNT",
+      "question": "p2과 pe1의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'p2: N개, pe1: M개, 차이: K개']",
+      "gold": "\"p2: 5, pe1: 5, diff: 0\"",
+      "pred": "p2: 5개, pe1: 5개, 차이: 0개",
+      "pred_raw": "p2: 5개, pe1: 5개, 차이: 0개",
+      "answer_type": "text",
+      "level": "L3",
+      "category": "Comparison_Analysis",
+      "status": "OK",
+      "metrics": {
+        "question_id": "COMPARE_INTERFACE_COUNT",
+        "total_time": 7.2730393409729,
+        "tool_calls": 3,
+        "tool_call_details": [
+          {
+            "tool": "query_device",
+            "input": "p2, num_interfaces",
+            "output_len": 1
+          },
+          {
+            "tool": "_Exception",
+            "input": "Invalid Format: Missing 'Action:' after 'Thought:",
+            "output_len": 49
+          },
+          {
+            "tool": "query_device",
+            "input": "p2, num_interfaces",
+            "output_len": 1
+          },
+          {
+            "tool": "query_device",
+            "input": "pe1, num_interfaces",
+            "output_len": 1
+          }
+        ],
+        "prompt_tokens": 565,
+        "completion_tokens": 21,
+        "total_tokens": 586,
+        "context_size": 52,
+        "agent_steps": 4,
+        "success": true,
+        "error_msg": null
+      }
+    },
+    {
+      "question_id": "TRACEROUTE_p1_p2",
+      "question": "p1에서 10.0.0.1까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)]",
+      "gold": "\"p1 → p2\"",
+      "pred": "p1→p2",
+      "pred_raw": "p1→p2",
+      "answer_type": "text",
+      "level": "L4",
+      "category": "Reachability_Analysis",
+      "status": "OK",
+      "metrics": {
+        "question_id": "TRACEROUTE_p1_p2",
+        "total_time": 3.578834056854248,
+        "tool_calls": 1,
+        "tool_call_details": [
+          {
+            "tool": "traceroute_path",
+            "input": "p1, 10.0.0.1",
+            "output_len": 5
+          }
+        ],
+        "prompt_tokens": 573,
+        "completion_tokens": 5,
+        "total_tokens": 578,
+        "context_size": 5,
+        "agent_steps": 1,
+        "success": true,
+        "error_msg": null
+      }
+    },
+    {
+      "question_id": "MPLS_LDP_ROUTER_ID",
+      "question": "leaf1 장비의 MPLS LDP Router-ID는 무엇입니까? [답변 형식: IP 주소 (예: 10.255.0.1) 또는 '미설정']",
+      "gold": "\"미설정\"",
+      "pred": "미설정",
+      "pred_raw": "미설정",
+      "answer_type": "text",
+      "level": "L1",
+      "category": "Services_Inventory",
+      "status": "OK",
+      "metrics": {
+        "question_id": "MPLS_LDP_ROUTER_ID",
+        "total_time": 7.231260061264038,
+        "tool_calls": 1,
+        "tool_call_details": [
+          {
+            "tool": "query_device",
+            "input": "leaf1, loopback_interfaces",
+            "output_len": 4
+          }
+        ],
+        "prompt_tokens": 557,
+        "completion_tokens": 4,
+        "total_tokens": 561,
+        "context_size": 4,
+        "agent_steps": 1,
+        "success": true,
+        "error_msg": null
+      }
+    }
+  ]
+}

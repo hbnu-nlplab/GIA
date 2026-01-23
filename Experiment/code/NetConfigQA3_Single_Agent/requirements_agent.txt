@@ -1,0 +1,20 @@
+# NetConfigQA3 Single Agent Evaluator Dependencies
+#
+# IMPORTANT:
+# - Pin versions to avoid accidentally installing a non-official `langchain` package
+#   that uses a 1.x versioning scheme and does NOT include AgentExecutor.
+
+# LangChain (official) - pin to 0.x series
+langchain==0.2.16
+langchain-core==0.2.41
+langchain-community==0.2.16
+langchain-openai==0.1.23
+
+# OpenAI-compatible client (used by langchain-openai)
+openai>=1.0.0
+
+# Utilities
+python-dotenv>=1.0.0
+tiktoken>=0.5.0
+pandas>=2.0.0
+

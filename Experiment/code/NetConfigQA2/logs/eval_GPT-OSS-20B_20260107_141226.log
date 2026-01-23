@@ -1,0 +1,11 @@
+2026-01-07 14:12:26,092 | INFO | Initializing Evaluator...
+2026-01-07 14:12:26,092 | INFO | Backend: vllm
+2026-01-07 14:12:26,092 | INFO | Model: GPT-OSS-20B (openai/gpt-oss-20b)
+2026-01-07 14:12:26,092 | INFO | Facts File: GIA/Data/Pnetlab/Research_Institute_Internal_DC/Dataset/Research_Institute_Internal_DC_batfish_facts_20251230_125613.json
+2026-01-07 14:12:55,831 | INFO | Loading dataset from GIA/Data/Pnetlab/Research_Institute_Internal_DC/Dataset/Research_Institute_Internal_DC_dataset_batfish_20251230_125613.csv
+2026-01-07 14:12:55,839 | INFO | Generating prompts/messages...
+2026-01-07 14:12:55,842 | INFO | Using facts from GIA/Data/Pnetlab/Research_Institute_Internal_DC/Dataset/Research_Institute_Internal_DC_batfish_facts_20251230_125613.json
+2026-01-07 14:12:55,984 | INFO | Starting generation for 762 samples...
+2026-01-07 14:21:47,843 | INFO | Inference Time: 531.86s | Throughput: 1.4 req/s
+2026-01-07 14:21:47,945 | INFO | Inference Complete. Raw results saved to /home/kilab_pyj/codespace/GIA/Experiment/code/NetConfigQA2/results/GPT-OSS-20B/results_raw_20260107_141226.json
+2026-01-07 14:21:47,945 | INFO | Run 'python reanalyze_results.py "/home/kilab_pyj/codespace/GIA/Experiment/code/NetConfigQA2/results/GPT-OSS-20B/results_raw_20260107_141226.json"' to score and visualize.
