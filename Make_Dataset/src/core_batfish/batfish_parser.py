@@ -14,7 +14,12 @@ logging.getLogger("pybatfish").setLevel(logging.WARN)
 
 def get_batfish_session(host: str = "localhost", snapshot_dir: str = None) -> Session:
     """Batfish 세션을 초기화하고 스냅샷을 업로드합니다."""
-    bf = Session(host=host)
+    # host:port 형식 처리
+    if ":" in host:
+        base_host, port = host.split(":")
+        bf = Session(host=base_host, port=int(port))
+    else:
+        bf = Session(host=host)
     if snapshot_dir:
         bf.set_network("generate_dataset_network")
         # 스냅샷 이름에 타임스탬프나 고유값을 붙이면 좋지만, 여기선 덮어쓰기 모드
@@ -32,6 +37,7 @@ def parse_text_config(config_path: Path) -> Dict[str, Any]:
         "ntp": {"servers": []},
         "users": [],
         "domain_name": None,
+        "timezone": None,
         # New L1 Fields
         "service_password_encryption": False,
         "enable_secret": "None",
@@ -68,7 +74,7 @@ def parse_text_config(config_path: Path) -> Dict[str, Any]:
         content = config_path.read_text(encoding="utf-8")
         
         # 1. SSH
-        ssh_ver_match = re.search(r"ip ssh version (\d)", content)
+        ssh_ver_match = re.search(r"^\s*ip ssh version (\d)", content, re.MULTILINE)
         if ssh_ver_match:
             text_facts["ssh"]["version"] = ssh_ver_match.group(1)
             text_facts["ssh"]["enabled"] = True
@@ -100,18 +106,22 @@ def parse_text_config(config_path: Path) -> Dict[str, Any]:
                 text_facts["aaa"]["protocol"] = "RADIUS"
         
         # 3. Logging & NTP & Users & Domain
-        text_facts["logging"]["hosts"] = re.findall(r"^logging host (\S+)", content, re.MULTILINE)
-        text_facts["ntp"]["servers"] = re.findall(r"^ntp server (\S+)", content, re.MULTILINE)
-        text_facts["users"] = re.findall(r"^username (\S+)", content, re.MULTILINE)
+        text_facts["logging"]["hosts"] = re.findall(r"^\s*logging host (\S+)", content, re.MULTILINE)
+        text_facts["ntp"]["servers"] = re.findall(r"^\s*ntp server (\S+)", content, re.MULTILINE)
+        text_facts["users"] = re.findall(r"^\s*username (\S+)", content, re.MULTILINE)
         
         domain_match = re.search(r"^ip domain[ -]name (\S+)", content, re.MULTILINE)
         if domain_match:
             text_facts["domain_name"] = domain_match.group(1)
 
+        timezone_match = re.search(r"^\s*clock timezone (\S+ \S+)", content, re.MULTILINE)
+        if timezone_match:
+            text_facts["timezone"] = timezone_match.group(1)
+
         # --- New L1 Metrics Parsing ---
 
         # Security
-        if re.search(r"^service password-encryption", content, re.MULTILINE):
+        if re.search(r"^\s*service password-encryption", content, re.MULTILINE):
             text_facts["service_password_encryption"] = True
             
         enable_secret_match = re.search(r"^enable secret (\d) ", content, re.MULTILINE)
@@ -140,43 +150,45 @@ def parse_text_config(config_path: Path) -> Dict[str, Any]:
         if login_match: text_facts["banner_login"] = login_match.group(1).strip()
 
         # HTTP Server
-        if re.search(r"^no ip http server", content, re.MULTILINE):
+        if re.search(r"^\s*no ip http server", content, re.MULTILINE):
             text_facts["http_server"] = False
-        elif re.search(r"^ip http server", content, re.MULTILINE):
+        elif re.search(r"^\s*ip http server", content, re.MULTILINE):
             text_facts["http_server"] = True
             
         # CDP
-        if re.search(r"^no cdp run", content, re.MULTILINE):
+        if re.search(r"^\s*no cdp run", content, re.MULTILINE):
             text_facts["cdp"] = False
+        elif re.search(r"^\s*cdp run", content, re.MULTILINE):
+            text_facts["cdp"] = True
 
         # IP Source Route
-        if re.search(r"^no ip source-route", content, re.MULTILINE):
+        if re.search(r"^\s*no ip source-route", content, re.MULTILINE):
             text_facts["ip_source_route"] = False
 
         # Operational & Routing Lists
-        text_facts["snmp_communities"] = re.findall(r"^snmp-server community (\S+)", content, re.MULTILINE)
+        text_facts["snmp_communities"] = re.findall(r"^\s*snmp-server community (\S+)", content, re.MULTILINE)
         
         # Loopback Interfaces (checking names in `interface ...` block)
-        text_facts["loopback_interfaces"] = re.findall(r"^interface (Loopback\d+)", content, re.MULTILINE)
+        text_facts["loopback_interfaces"] = re.findall(r"^\s*interface (Loopback\d+)", content, re.MULTILINE)
         
-        text_facts["name_servers"] = re.findall(r"^ip name-server (\S+)", content, re.MULTILINE)
+        text_facts["name_servers"] = re.findall(r"^\s*ip name-server (\S+)", content, re.MULTILINE)
         
-        text_facts["ospf_processes"] = re.findall(r"^router ospf (\d+)", content, re.MULTILINE)
+        text_facts["ospf_processes"] = sorted(list(set(re.findall(r"^\s*router ospf (\d+)", content, re.MULTILINE))))
         
-        text_facts["bgp_as"] = re.findall(r"^router bgp (\d+)", content, re.MULTILINE)
+        text_facts["bgp_as"] = sorted(list(set(re.findall(r"^\s*router bgp (\d+)", content, re.MULTILINE))))
         
-        if re.search(r"^mpls ip", content, re.MULTILINE) or re.search(r"^mpls ldp router-id", content, re.MULTILINE):
+        if re.search(r"^\s*mpls ip", content, re.MULTILINE) or re.search(r"^\s*mpls ldp router-id", content, re.MULTILINE):
             text_facts["mpls_ldp"] = True
             
-        mpls_ldp_match = re.search(r"^mpls ldp router-id (\S+)", content, re.MULTILINE)
+        mpls_ldp_match = re.search(r"^\s*mpls ldp router-id (\S+)", content, re.MULTILINE)
         text_facts["mpls_ldp_rid"] = mpls_ldp_match.group(1) if mpls_ldp_match else None
 
-        text_facts["default_route"] = re.findall(r"^ip route 0\.0\.0\.0 0\.0\.0\.0 (\S+)", content, re.MULTILINE)
+        text_facts["default_route"] = re.findall(r"^\s*ip route 0\.0\.0\.0 0\.0\.0\.0 (\S+)", content, re.MULTILINE)
         
-        text_facts["static_routes_count"] = len(re.findall(r"^ip route ", content, re.MULTILINE))
+        text_facts["static_routes_count"] = len(re.findall(r"^\s*ip route ", content, re.MULTILINE))
 
         # ACLs & Advanced
-        text_facts["acls_count"] = len(re.findall(r"^access-list |^ip access-list ", content, re.MULTILINE))
+        text_facts["acls_count"] = len(re.findall(r"^\s*(?:access-list|ip access-list) ", content, re.MULTILINE))
         
         # ACL applied interfaces
         # Look for 'ip access-group ... in' or 'out' under interfaces
@@ -184,7 +196,7 @@ def parse_text_config(config_path: Path) -> Dict[str, Any]:
         text_facts["acl_interfaces"] = [] # To be populated by complex parsing if needed, or simplied count
         # Let's try to extract interface names that have access-group
         # Regex to find interface blocks and check content
-        iface_blocks = re.finditer(r'^interface\s+(\S+)([\s\S]*?)(?=^interface|^!|^router)', content, re.MULTILINE)
+        iface_blocks = re.finditer(r'^\s*interface\s+(\S+)([\s\S]*?)(?=^\s*interface|^\s*!|^\s*router)', content, re.MULTILINE)
         for match in iface_blocks:
             ifname = match.group(1)
             block = match.group(2)
@@ -193,20 +205,24 @@ def parse_text_config(config_path: Path) -> Dict[str, Any]:
             if "description" not in block:
                 text_facts["missing_descriptions_count"] += 1
                 
-        text_facts["prefix_lists_count"] = len(re.findall(r"^ip prefix-list ", content, re.MULTILINE))
-        text_facts["route_maps_count"] = len(re.findall(r"^route-map ", content, re.MULTILINE))
+        # Fix: Count UNIQUE names, not just lines
+        prefix_matches = re.findall(r"^\s*ip prefix-list\s+(\S+)", content, re.MULTILINE)
+        route_matches = re.findall(r"^\s*route-map\s+(\S+)", content, re.MULTILINE)
         
-        text_facts["class_maps"] = re.findall(r"^class-map (?:match-\w+ )?(\S+)", content, re.MULTILINE)
-        text_facts["netflow_monitors"] = re.findall(r"^flow monitor (\S+)", content, re.MULTILINE)
+        text_facts["prefix_lists_count"] = len(set(prefix_matches))
+        text_facts["route_maps_count"] = len(set(route_matches))
         
-        text_facts["eigrp_as"] = re.findall(r"^router eigrp (\d+)", content, re.MULTILINE)
+        text_facts["class_maps"] = re.findall(r"^\s*class-map (?:match-\w+ )?(\S+)", content, re.MULTILINE)
+        text_facts["netflow_monitors"] = re.findall(r"^\s*flow monitor (\S+)", content, re.MULTILINE)
         
-        if re.search(r"^router rip", content, re.MULTILINE):
+        text_facts["eigrp_as"] = sorted(list(set(re.findall(r"^\s*router eigrp (\d+)", content, re.MULTILINE))))
+        
+        if re.search(r"^\s*router rip", content, re.MULTILINE):
             text_facts["rip_enabled"] = True
             
-        text_facts["fhrp_groups"] = re.findall(r"^\s*(?:standby|vrrp) (\d+) ", content, re.MULTILINE)
+        text_facts["fhrp_groups"] = sorted(list(set(re.findall(r"^\s*(?:standby|vrrp) (\d+) ", content, re.MULTILINE))))
         
-        if re.search(r"^ip multicast-routing", content, re.MULTILINE):
+        if re.search(r"^\s*ip multicast-routing", content, re.MULTILINE):
             text_facts["multicast_enabled"] = True
 
         # System Version
@@ -234,15 +250,19 @@ def parse_text_config(config_path: Path) -> Dict[str, Any]:
 
     return text_facts
 
-def parse_batfish_datamodel(configs_dir: Path) -> Dict[str, Any]:
+def parse_batfish_datamodel(configs_dir: Path, batfish_host: str = "localhost") -> Dict[str, Any]:
     """
     Batfish를 통해 설정을 파싱하고, 기존 parser와 호환되는 facts 구조를 반환합니다.
     """
-    # 1. Batfish 세션 연결 및 스냅샷 업로드
-    snapshot_dir = configs_dir.parent
+    # snapshot_dir은 'configs' 폴더를 포함하는 상위 폴더여야 함.
+    if configs_dir.name == "configs":
+        snapshot_dir = configs_dir.parent
+    else:
+        snapshot_dir = configs_dir
     
-    print(f"Initializing Batfish with snapshot: {snapshot_dir}")
-    bf = get_batfish_session(snapshot_dir=str(snapshot_dir))
+    print(f"[BatfishParser] configs_dir: {configs_dir}")
+    print(f"[BatfishParser] snapshot_dir: {snapshot_dir} (host: {batfish_host})")
+    bf = get_batfish_session(host=batfish_host, snapshot_dir=str(snapshot_dir))
     
     facts_result = {"devices": []}
     
@@ -282,7 +302,15 @@ def parse_batfish_datamodel(configs_dir: Path) -> Dict[str, Any]:
     
     for hostname in all_nodes:
         # 3.0 Preliminary: Text Parsing for System Info
+        # Case-insensitive file lookup
         cfg_file_path = configs_dir / f"{hostname}.cfg"
+        if not cfg_file_path.exists():
+            # Try finding the file case-insensitively
+            for f in configs_dir.iterdir():
+                if f.is_file() and f.suffix.lower() == ".cfg" and f.stem.lower() == hostname.lower():
+                    cfg_file_path = f
+                    break
+        
         text_info = parse_text_config(cfg_file_path)
 
         device_facts = {
@@ -291,7 +319,8 @@ def parse_batfish_datamodel(configs_dir: Path) -> Dict[str, Any]:
                 "hostname": hostname,
                 "version": text_info.get("version", "15.0"), 
                 "users": text_info["users"],
-                "domain_name": text_info["domain_name"]
+                "domain_name": text_info["domain_name"],
+                "timezone": text_info["timezone"]
             },
             # BuilderCore expects SSH and AAA in 'security'
             "security": {

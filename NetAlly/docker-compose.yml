@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  # =========================================================================
+  # NetAlly Main Service
+  # =========================================================================
+  netally:
+    build: .
+    container_name: netally
+    ports:
+      - "8000:8000"  # Web UI + API
+    environment:
+      # OpenAI API
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      
+      # vLLM (GPT-OSS-20B)
+      - VLLM_URL=${VLLM_URL:-http://localhost:8000}
+      
+      # LangSmith
+      - LANGCHAIN_API_KEY=${LANGCHAIN_API_KEY}
+      - LANGCHAIN_TRACING_V2=${LANGCHAIN_TRACING_V2:-false}
+      - LANGCHAIN_PROJECT=${LANGCHAIN_PROJECT:-NetAlly}
+      
+      # NSO (컨테이너 외부)
+      - NSO_BASE_URL=${NSO_BASE_URL:-http://host.docker.internal:8080/restconf}
+      - NSO_USERNAME=${NSO_USERNAME:-admin}
+      - NSO_PASSWORD=${NSO_PASSWORD:-admin}
+      
+      # Batfish (동일 컴포즈 네트워크)
+      - BATFISH_HOST=batfish
+      
+      # PNETLab (호스트 네트워크)
+      - PNETLAB_URL=${PNETLAB_URL:-http://host.docker.internal}
+      - PNETLAB_USERNAME=${PNETLAB_USERNAME:-admin}
+      - PNETLAB_PASSWORD=${PNETLAB_PASSWORD:-pnetlab}
+      - PNETLAB_COOKIES=${PNETLAB_COOKIES:-}
+      
+    volumes:
+      - netally_data:/data
+      - ./results:/app/results
+    
+    depends_on:
+      batfish:
+        condition: service_healthy
+    
+    restart: unless-stopped
+
+  # =========================================================================
+  # Batfish - Network Analysis Engine
+  # =========================================================================
+  batfish:
+    image: batfish/allinone:latest
+    container_name: batfish
+    ports:
+      - "9996:9996"
+      - "9997:9997"
+    volumes:
+      - batfish_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9996/v2"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  netally_data:
+    driver: local
+  batfish_data:
+    driver: local
