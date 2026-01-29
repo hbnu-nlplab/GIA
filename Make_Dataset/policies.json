@@ -770,9 +770,9 @@
             "level": "L5",
             "category": "What_If_Analysis",
             "answer_type": "number",
-            "template": "'{node}' 장비가 다운되면 몇 개의 트래픽 흐름이 새로 차단됩니까? [답변 형식: 숫자]",
+            "template": "'{host}' 장비가 다운되면 몇 개의 트래픽 흐름이 새로 차단됩니까? [답변 형식: 숫자]",
             "description": "특정 장비(Node)가 가동 불능 상태(Down)가 되었을 때, 네트워크 도달성에 미치는 영향을 분석합니다. Fork Snapshot으로 장비를 비활성화한 후 Differential Reachability로 차단된 흐름 수를 계산합니다.",
-            "verification": "검증 방법: 1) {node}를 비활성화한 Fork Snapshot을 생성합니다. 2) Differential Reachability 분석으로 차단된 흐름 수를 반환합니다.",
+            "verification": "검증 방법: 1) {host}를 비활성화한 Fork Snapshot을 생성합니다. 2) Differential Reachability 분석으로 차단된 흐름 수를 반환합니다.",
             "logic_ref": "batfish.fork_snapshot(deactivate=[node]).differential_reachability().count()"
          },
          "redundancy_verification": {
@@ -806,7 +806,7 @@
             "level": "L5",
             "category": "What_If_Analysis",
             "answer_type": "number",
-            "template": "'{fake_node}' 장비가 다운되면 몇 개의 트래픽 흐름이 차단됩니까? [답변 형식: 숫자]",
+            "template": "'{host}' 장비가 다운되면 몇 개의 트래픽 흐름이 차단됩니까? [답변 형식: 숫자]",
             "description": "존재하지 않는 장비에 대한 장애 영향을 질문합니다. LLM은 해당 장비가 네트워크에 없음을 인지하고 '0'을 답해야 합니다. (Negative Testing)",
             "verification": "검증 방법: 1) 토폴로지에 없는 장비명으로 질문 생성. 2) 존재하지 않으므로 영향 0을 반환.",
             "logic_ref": "if node not in nodes: return 0"
@@ -842,7 +842,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "text",
-            "template": "'{node}' 장비의 Password Encryption 기능 설정값은 무엇입니까? [답변 형식: Enabled/Disabled]",
+            "template": "'{host}' 장비의 Password Encryption 기능 설정값은 무엇입니까? [답변 형식: Enabled/Disabled]",
             "description": "Cisco 'service password-encryption' 설정 여부를 확인합니다.",
             "verification": "검증 방법: Config 파일에서 'service password-encryption' 문장 유무 확인.",
             "logic_ref": "parse_config(node).service_password_encryption"
@@ -851,7 +851,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "text",
-            "template": "'{node}' 장비의 Enable Secret 설정 상태는? [답변 형식: 5(MD5)/Scrypt/None]",
+            "template": "'{host}' 장비의 Enable Secret 설정 상태는? [답변 형식: 5(MD5)/Scrypt/None]",
             "description": "Privileged Exec 모드 접근을 위한 암호 설정 방식을 확인합니다.",
             "verification": "검증 방법: 'enable secret' 설정 확인.",
             "logic_ref": "parse_config(node).enable_secret"
@@ -860,7 +860,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "text",
-            "template": "'{node}' 장비의 Console Password는 무엇으로 설정되어 있습니까? [답변 형식: 암호값 또는 None]",
+            "template": "'{host}' 장비의 Console Password는 무엇으로 설정되어 있습니까? [답변 형식: 암호값 또는 None]",
             "description": "Console 포트 접근 제어 비밀번호를 확인합니다.",
             "verification": "검증 방법: 'line console 0' 하위의 'password' 설정 확인.",
             "logic_ref": "parse_config(node).line_console_password"
@@ -869,7 +869,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "text",
-            "template": "'{node}' 장비의 VTY/Console Exec Timeout 설정값은? [답변 형식: '분 초' 또는 None]",
+            "template": "'{host}' 장비의 VTY/Console Exec Timeout 설정값은? [답변 형식: '분 초' 또는 None]",
             "description": "유휴 세션 자동 종료 시간 설정을 확인합니다.",
             "verification": "검증 방법: 'exec-timeout' 설정값 확인.",
             "logic_ref": "parse_config(node).exec_timeout"
@@ -878,7 +878,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "text",
-            "template": "'{node}' 장비의 MOTD(Message of the Day) 배너 내용은? [답변 형식: 내용 또는 None]",
+            "template": "'{host}' 장비의 MOTD(Message of the Day) 배너 내용은? [답변 형식: 내용 또는 None]",
             "description": "시스템 접속 시 표시되는 법적 고지사항(Banner) 내용을 확인합니다.",
             "verification": "검증 방법: 'banner motd' 설정 확인.",
             "logic_ref": "parse_config(node).banner_motd"
@@ -887,7 +887,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "text",
-            "template": "'{node}' 장비의 Login 배너 내용은? [답변 형식: 내용 또는 None]",
+            "template": "'{host}' 장비의 Login 배너 내용은? [답변 형식: 내용 또는 None]",
             "description": "로그인 프롬프트 전 표시되는 배너 내용을 확인합니다.",
             "verification": "검증 방법: 'banner login' 설정 확인.",
             "logic_ref": "parse_config(node).banner_login"
@@ -896,7 +896,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "text",
-            "template": "'{node}' 장비의 HTTP Server 활성화 상태는? [답변 형식: Enabled/Disabled]",
+            "template": "'{host}' 장비의 HTTP Server 활성화 상태는? [답변 형식: Enabled/Disabled]",
             "description": "보안 취약점이 될 수 있는 HTTP 관리 서버 활성화 여부를 확인합니다.",
             "verification": "검증 방법: 'ip http server' 설정 유무.",
             "logic_ref": "parse_config(node).http_server"
@@ -905,7 +905,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "text",
-            "template": "'{node}' 장비의 CDP(Cisco Discovery Protocol) 활성화 상태는? [답변 형식: Enabled/Disabled]",
+            "template": "'{host}' 장비의 CDP(Cisco Discovery Protocol) 활성화 상태는? [답변 형식: Enabled/Disabled]",
             "description": "인접 장비 정보를 교환하는 CDP 프로토콜 활성화 여부를 확인합니다.",
             "verification": "검증 방법: 'no cdp run' 설정 유무.",
             "logic_ref": "parse_config(node).cdp"
@@ -914,7 +914,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "text",
-            "template": "'{node}' 장비의 IP Source Route 기능 활성화 상태는? [답변 형식: Enabled/Disabled]",
+            "template": "'{host}' 장비의 IP Source Route 기능 활성화 상태는? [답변 형식: Enabled/Disabled]",
             "description": "소스 라우팅(Source Routing) 허용 여부를 확인합니다 (보안상 Disabled 권장).",
             "verification": "검증 방법: 'no ip source-route' 설정 유무.",
             "logic_ref": "parse_config(node).ip_source_route"
@@ -923,7 +923,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "set_str",
-            "template": "'{node}' 장비에 설정된 NTP 서버 목록은? [답변 형식: IP 리스트]",
+            "template": "'{host}' 장비에 설정된 NTP 서버 목록은? [답변 형식: IP 리스트]",
             "description": "시간 동기화를 위한 NTP 서버 IP 목록을 확인합니다.",
             "verification": "검증 방법: 'ntp server' 구문으로 설정된 IP 추출.",
             "logic_ref": "parse_config(node).ntp_servers"
@@ -932,7 +932,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "set_str",
-            "template": "'{node}' 장비에 설정된 Syslog 서버 목록은? [답변 형식: IP 리스트]",
+            "template": "'{host}' 장비에 설정된 Syslog 서버 목록은? [답변 형식: IP 리스트]",
             "description": "로그 전송을 위한 Syslog 서버 목록을 확인합니다.",
             "verification": "검증 방법: 'logging host' 설정 확인.",
             "logic_ref": "parse_config(node).logging_hosts"
@@ -941,7 +941,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "set_str",
-            "template": "'{node}' 장비에 설정된 SNMP Community 목록은? [답변 형식: 문자열 리스트]",
+            "template": "'{host}' 장비에 설정된 SNMP Community 목록은? [답변 형식: 문자열 리스트]",
             "description": "SNMP 모니터링을 위한 커뮤니티 문자열을 확인합니다.",
             "verification": "검증 방법: 'snmp-server community' 설정 확인.",
             "logic_ref": "parse_config(node).snmp_communities"
@@ -950,7 +950,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "set_str",
-            "template": "'{node}' 장비에 설정된 Loopback 인터페이스 목록은? [답변 형식: 인터페이스명 리스트]",
+            "template": "'{host}' 장비에 설정된 Loopback 인터페이스 목록은? [답변 형식: 인터페이스명 리스트]",
             "description": "관리 및 라우팅 ID용 Loopback 인터페이스 존재 여부를 확인합니다.",
             "verification": "검증 방법: 인터페이스 목록 중 'Loopback'으로 시작하는 항목 추출.",
             "logic_ref": "parse_config(node).loopback_interfaces"
@@ -959,7 +959,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "set_str",
-            "template": "'{node}' 장비에 설정된 DNS 서버(Name Server) 목록은? [답변 형식: IP 리스트]",
+            "template": "'{host}' 장비에 설정된 DNS 서버(Name Server) 목록은? [답변 형식: IP 리스트]",
             "description": "도메인 이름 해석을 위한 DNS 서버 설정을 확인합니다.",
             "verification": "검증 방법: 'ip name-server' 설정 확인.",
             "logic_ref": "parse_config(node).name_servers"
@@ -968,7 +968,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "set_str",
-            "template": "'{node}' 장비에서 활성화된 OSPF 프로세스 ID 목록은? [답변 형식: ID 리스트]",
+            "template": "'{host}' 장비에서 활성화된 OSPF 프로세스 ID 목록은? [답변 형식: ID 리스트]",
             "description": "라우팅 프로토콜 OSPF의 활성화 상태를 확인합니다.",
             "verification": "검증 방법: 'router ospf' 설정 확인.",
             "logic_ref": "parse_config(node).ospf_processes"
@@ -977,7 +977,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "set_str",
-            "template": "'{node}' 장비에 설정된 BGP AS 번호는? [답변 형식: AS번호 리스트]",
+            "template": "'{host}' 장비에 설정된 BGP AS 번호는? [답변 형식: AS번호 리스트]",
             "description": "라우팅 프로토콜 BGP의 설정 상태를 확인합니다.",
             "verification": "검증 방법: 'router bgp' 설정 확인.",
             "logic_ref": "parse_config(node).bgp_as"
@@ -986,7 +986,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "text",
-            "template": "'{node}' 장비의 MPLS LDP 활성화 상태는? [답변 형식: Enabled/Disabled]",
+            "template": "'{host}' 장비의 MPLS LDP 활성화 상태는? [답변 형식: Enabled/Disabled]",
             "description": "MPLS Label Distribution Protocol 활성화 여부를 확인합니다.",
             "verification": "검증 방법: 'mpls ip' 또는 'mpls ldp properties' 등의 설정.",
             "logic_ref": "parse_config(node).mpls_ldp"
@@ -995,7 +995,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "set_str",
-            "template": "'{node}' 장비에 설정된 Default Route(0.0.0.0/0)의 Next Hop 목록은? [답변 형식: IP 리스트]",
+            "template": "'{host}' 장비에 설정된 Default Route(0.0.0.0/0)의 Next Hop 목록은? [답변 형식: IP 리스트]",
             "description": "기본 라우팅 경로의 구성 상태를 확인합니다.",
             "verification": "검증 방법: 'ip route 0.0.0.0 0.0.0.0' 설정 확인.",
             "logic_ref": "parse_config(node).default_route"
@@ -1004,7 +1004,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "number",
-            "template": "'{node}' 장비에 설정된 정적 경로(Static Route)의 총 개수는? [답변 형식: 숫자]",
+            "template": "'{host}' 장비에 설정된 정적 경로(Static Route)의 총 개수는? [답변 형식: 숫자]",
             "description": "설정된 정적 라우팅의 복잡도를 확인합니다.",
             "verification": "검증 방법: 'ip route' 구문의 총 라인 수 카운트.",
             "logic_ref": "count_static_routes(node)"
@@ -1013,7 +1013,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "number",
-            "template": "'{node}' 장비에 정의된 ACL(Access Control List)의 개수는? [답변 형식: 숫자]",
+            "template": "'{host}' 장비에 정의된 ACL(Access Control List)의 개수는? [답변 형식: 숫자]",
             "description": "보안 정책 객체(ACL)의 정의 개수를 확인합니다.",
             "verification": "검증 방법: 'access-list' 또는 'ip access-list' 정의 수 확인.",
             "logic_ref": "count_acls(node)"
@@ -1022,7 +1022,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "set_str",
-            "template": "'{node}' 장비에서 ACL이 적용된 인터페이스 목록은? [답변 형식: 인터페이스명 리스트]",
+            "template": "'{host}' 장비에서 ACL이 적용된 인터페이스 목록은? [답변 형식: 인터페이스명 리스트]",
             "description": "보안 정책이 실제로 적용된 인터페이스를 식별합니다.",
             "verification": "검증 방법: 인터페이스 하위 'ip access-group' 설정 확인.",
             "logic_ref": "get_acl_interfaces(node)"
@@ -1031,7 +1031,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "number",
-            "template": "'{node}' 장비에 정의된 Prefix-List 개수는? [답변 형식: 숫자]",
+            "template": "'{host}' 장비에 정의된 Prefix-List 개수는? [답변 형식: 숫자]",
             "description": "라우팅 필터링 객체의 정의 상태를 확인합니다.",
             "verification": "검증 방법: 'ip prefix-list' 정의 수 확인.",
             "logic_ref": "count_prefix_lists(node)"
@@ -1040,7 +1040,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "number",
-            "template": "'{node}' 장비에 정의된 Route-Map 개수는? [답변 형식: 숫자]",
+            "template": "'{host}' 장비에 정의된 Route-Map 개수는? [답변 형식: 숫자]",
             "description": "라우팅 정책 제어 객체(Route-Map)의 정의 상태를 확인합니다.",
             "verification": "검증 방법: 'route-map' 정의 수 확인.",
             "logic_ref": "count_route_maps(node)"
@@ -1049,7 +1049,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "set_str",
-            "template": "'{node}' 장비에 정의된 QoS Class-Map 목록은? [답변 형식: 이름 리스트]",
+            "template": "'{host}' 장비에 정의된 QoS Class-Map 목록은? [답변 형식: 이름 리스트]",
             "description": "QoS 트래픽 분류 설정 존재 여부를 확인합니다.",
             "verification": "검증 방법: 'class-map' 정의 확인.",
             "logic_ref": "get_class_maps(node)"
@@ -1058,7 +1058,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "set_str",
-            "template": "'{node}' 장비에 정의된 NetFlow Monitor 목록은? [답변 형식: 이름 리스트]",
+            "template": "'{host}' 장비에 정의된 NetFlow Monitor 목록은? [답변 형식: 이름 리스트]",
             "description": "트래픽 모니터링 설정(NetFlow) 확인.",
             "verification": "검증 방법: 'flow monitor' 정의 확인.",
             "logic_ref": "get_netflow_monitors(node)"
@@ -1067,7 +1067,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "number",
-            "template": "'{node}' 장비에서 설명(Description)이 누락된 인터페이스 개수는? [답변 형식: 숫자]",
+            "template": "'{host}' 장비에서 설명(Description)이 누락된 인터페이스 개수는? [답변 형식: 숫자]",
             "description": "관리 편의성을 위한 인터페이스 설명 설정 준수율을 확인합니다.",
             "verification": "검증 방법: 각 인터페이스 블록 내 'description' 구문 유무 확인.",
             "logic_ref": "count_missing_descriptions(node)"
@@ -1076,7 +1076,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "set_str",
-            "template": "'{node}' 장비에 설정된 EIGRP AS 번호 목록은? [답변 형식: AS번호 리스트]",
+            "template": "'{host}' 장비에 설정된 EIGRP AS 번호 목록은? [답변 형식: AS번호 리스트]",
             "description": "EIGRP 라우팅 프로토콜 설정 확인.",
             "verification": "검증 방법: 'router eigrp' 설정 확인.",
             "logic_ref": "get_eigrp_as(node)"
@@ -1085,7 +1085,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "text",
-            "template": "'{node}' 장비의 RIP 프로토콜 활성화 상태는? [답변 형식: Enabled/Disabled]",
+            "template": "'{host}' 장비의 RIP 프로토콜 활성화 상태는? [답변 형식: Enabled/Disabled]",
             "description": "RIP 라우팅 프로토콜 설정 확인.",
             "verification": "검증 방법: 'router rip' 설정 확인.",
             "logic_ref": "check_rip_enabled(node)"
@@ -1094,7 +1094,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "set_str",
-            "template": "'{node}' 장비에 설정된 HSRP/VRRP 그룹 ID 목록은? [답변 형식: ID 리스트]",
+            "template": "'{host}' 장비에 설정된 HSRP/VRRP 그룹 ID 목록은? [답변 형식: ID 리스트]",
             "description": "게이트웨이 이중화 프로토콜(FHRP) 설정 확인.",
             "verification": "검증 방법: 인터페이스 하위 'standby' 또는 'vrrp' 설정 확인.",
             "logic_ref": "get_fhrp_groups(node)"
@@ -1103,7 +1103,7 @@
             "level": "L1",
             "category": "Configuration_Check",
             "answer_type": "text",
-            "template": "'{node}' 장비의 Multicast Routing 활성화 상태는? [답변 형식: Enabled/Disabled]",
+            "template": "'{host}' 장비의 Multicast Routing 활성화 상태는? [답변 형식: Enabled/Disabled]",
             "description": "멀티캐스트 라우팅 기능 활성화 여부 확인.",
             "verification": "검증 방법: 'ip multicast-routing' 설정 확인.",
             "logic_ref": "check_multicast_enabled(node)"

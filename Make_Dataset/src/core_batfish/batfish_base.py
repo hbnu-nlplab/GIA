@@ -182,7 +182,12 @@ class BatfishBase:
         """Batfish 세션 초기화 및 스냅샷 로드"""
         try:
             logger.info(f"Connecting to Batfish at {self.batfish_host}...")
-            self.bf = Session(host=self.batfish_host)
+            # host:port 형식 처리
+            if ":" in self.batfish_host:
+                base_host, port = self.batfish_host.split(":")
+                self.bf = Session(host=base_host, port=int(port))
+            else:
+                self.bf = Session(host=self.batfish_host)
             
             logger.info(f"Setting network: {self.network_name}")
             self.bf.set_network(self.network_name)

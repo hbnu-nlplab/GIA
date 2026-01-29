@@ -182,32 +182,51 @@ def main():
     parser.add_argument("--lab-path", required=True, help="Path to Lab directory (e.g. Data/Pnetlab/Research_Institute_Internal_DC)")
     parser.add_argument("--out-dir", default=None, help="Output directory (default: <lab-path>/Dataset)")
     parser.add_argument("--policies", default="policies.json", help="Path to policies JSON")
+    parser.add_argument("--batfish-host", default="localhost", help="Batfish server host (e.g. localhost:8889)")
     parser.add_argument("--min-per-cat", type=int, default=50, help="Minimal questions per category")
     args = parser.parse_args()
 
-    lab_path = Path(args.lab_path)
+    # [Antigravity Mod v3] - 8889 Port & Snapshot Root Fix
+    print(f"[Info] NetConfigQA Dataset Generator (Batfish Edition) - v20240129-01")
+    
+    lab_path = Path(args.lab_path).resolve()
     if not lab_path.exists():
         print(f"[Error] Lab path not found: {lab_path}")
         return
-
-    # 1. 경로 설정
-    xml_dir = lab_path / "xml" 
-    if not xml_dir.exists():
-        xml_dir = lab_path / "configs"
-        
-    if not args.out_dir:
-        out_dir = lab_path / "Dataset"
+    
+    # Batfish 스냅샷 루트(configs 폴더의 부모) 결정
+    if lab_path.name in ["configs", "xml"]:
+        snapshot_root = lab_path.parent
+    elif (lab_path / "configs").exists():
+        snapshot_root = lab_path
+    elif (lab_path.parent / "configs").exists():
+        snapshot_root = lab_path.parent
     else:
-        out_dir = Path(args.out_dir)
+        # Fallback: 현재 경로를 일단 루트로 가정
+        snapshot_root = lab_path
+    
+    # 텍스트 파이싱을 위한 실제 설정 파일 위치
+    xml_dir = snapshot_root / "configs"
+    if not xml_dir.exists():
+        xml_dir = snapshot_root / "xml"
+    if not xml_dir.exists():
+        xml_dir = snapshot_root # Fallback
+
+    # 결과 저장 디렉토리
+    if not args.out_dir:
+        out_dir = snapshot_root / "Dataset"
+    else:
+        out_dir = Path(args.out_dir).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
 
     timestamp = time.strftime("%Y%m%d_%H%M%S")
     
     # 2. 파싱 (Batfish Engine - Static Facts)
-    print(f"[1] Parsing configurations using Batfish from: {xml_dir} (target: configs)")
+    print(f"[1] Parsing configurations using Batfish from root: {snapshot_root}")
     u_parser = UniversalParser()
     try:
-        facts = u_parser.parse_dir(str(xml_dir))
+        # snapshot_root를 넘겨서 내부에서 configs 폴더를 찾게 함
+        facts = u_parser.parse_dir(str(snapshot_root), batfish_host=args.batfish_host)
     except Exception as e:
         print(f"[Error] Batfish parsing failed: {e}")
         import traceback
@@ -215,7 +234,7 @@ def main():
         return
 
     # Facts 저장
-    facts_out = out_dir / f"{lab_path.name}_batfish_facts_{timestamp}.json"
+    facts_out = out_dir / f"{snapshot_root.name}_batfish_facts_{timestamp}.json"
     facts_out.write_text(json.dumps(facts, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"    -> Saved facts to {facts_out}")
 
@@ -235,9 +254,10 @@ def main():
 
     # Batfish Init with policies_path
     bf_builder = BatfishBuilder(
-        snapshot_path=str(lab_path), 
-        network_name=lab_path.name,
-        policies_path=str(policy_path)
+        snapshot_path=str(snapshot_root), 
+        network_name=snapshot_root.name,
+        policies_path=str(policy_path),
+        batfish_host=args.batfish_host
     )
     bf_active = bf_builder.initialize()
     if bf_active:

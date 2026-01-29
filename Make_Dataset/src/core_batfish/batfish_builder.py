@@ -63,10 +63,9 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
     - L5AnalyzerMixin: What-If 분석 (Link Failure, RCA 등)
     """
 
-    def __init__(self, network_name: str, snapshot_path: str, policies_path: str = None):
+    def __init__(self, network_name: str, snapshot_path: str, policies_path: str = None, batfish_host: str = "localhost"):
         # Fix: Pass arguments by keyword to avoid mismatch with BatfishBase signature
-        # BatfishBase.__init__(snapshot_path, batfish_host="localhost", network_name="...")
-        super().__init__(snapshot_path=snapshot_path, network_name=network_name)
+        super().__init__(snapshot_path=snapshot_path, network_name=network_name, batfish_host=batfish_host)
         
         self.metrics_metadata = {}
         if policies_path:
@@ -189,6 +188,46 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
                 "academic_reference": "HSA (NSDI'12): loop-free as core invariant"
             })
         
+        # 3.5 ACL Blocking Point Analysis
+        acl_flows = self.get_representative_flows()
+        random.shuffle(acl_flows)
+        acl_q_count = 0
+        
+        for flow in acl_flows[:30]:
+            # Use acl_blocking_point analysis
+            # Ensure port is valid (default 80 if 0/None)
+            port = flow.dst_port if flow.dst_port else 80
+            
+            res = self.acl_blocking_point(flow.src_ip, flow.dst_ip, port)
+            if res.status == "OK":
+                blocked = res.value.get("blocked", False)
+                blocking_node = res.value.get("node", "")
+                reason = res.value.get("reason", "")
+                
+                if blocked:
+                    result_text = f"차단됨 (장비: {blocking_node}, 원인: {reason})"
+                else:
+                    result_text = "허용됨"
+                
+                metric = "acl_blocking_point"
+                template = self._get_template(metric, "{src_ip}에서 {dst_ip}({dst_port}/TCP)로의 트래픽이 ACL에 의해 차단됩니까? 차단된다면 어느 장비입니까?\\n[답변 형식: '허용됨' 또는 '차단됨 (장비: 장비명, 원인: 사유)']")
+                q_text = template.format(src_ip=flow.src_ip, dst_ip=flow.dst_ip, dst_port=port)
+                
+                questions.append({
+                    "id": f"ACL_BLOCKING_{flow.src_location}_{flow.dst_location}",
+                    "category": "Security_Analysis",
+                    "level": "L4",
+                    "answer_type": "text",
+                    "question": q_text,
+                    "ground_truth": result_text,
+                    "explanation": f"metric `{metric}` analysis",
+                    "evidence_hint": {"scope": {"type": "FLOW", "src_ip": flow.src_ip, "dst_ip": flow.dst_ip}, "metric": metric},
+                    "academic_reference": "ACL Reachability Analysis"
+                })
+                acl_q_count += 1
+                if acl_q_count >= 10:
+                    break
+
         # 4. Bounded Path Length
         all_pairs_bounded = self.get_node_pairs()
         random.shuffle(all_pairs_bounded)
@@ -429,7 +468,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
         
         # 1. Link Failure Impact
         edges = self.get_layer3_edges()
-        ce_nodes = [n for n in self.nodes if 'ce' in n.lower()]
+        ce_nodes = [n for n in self.nodes if 'ce' in n.lower() or 'leaf' in n.lower()]
         pe_nodes = [n for n in self.nodes if 'pe' in n.lower()]
         
         if edges and len(ce_nodes) >= 2:
@@ -611,7 +650,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
 
                 metric = "node_failure_impact"
                 template = self._get_template(metric, "'{node}' 장비가 다운되면 몇 개의 트래픽 흐름이 새로 차단됩니까? [답변 형식: 숫자]")
-                q_text = template.format(node=node)
+                q_text = template.format(host=node)
 
                 questions.append({
                     "id": f"NODE_FAILURE_{node}",
@@ -742,7 +781,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
         
         # 존재하지 않는 장비이므로 영향은 0
         tmpl_neg = self._get_template(neg_metric, "'{fake_node}' 장비가 다운되면 몇 개의 트래픽 흐름이 차단됩니까? [답변 형식: 숫자]")
-        q_text_neg = tmpl_neg.format(fake_node=fake_node)
+        q_text_neg = tmpl_neg.format(host=fake_node)
         
         questions.append({
             "id": "NEGATIVE_TEST_FAKE_NODE",

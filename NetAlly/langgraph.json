@@ -1,0 +1,8 @@
+{
+  "name": "LabMate",
+  "graphs": {
+    "agent": "./agent/graph.py:create_graph"
+  },
+  "env": ".env",
+  "dependencies": ["."]
+}

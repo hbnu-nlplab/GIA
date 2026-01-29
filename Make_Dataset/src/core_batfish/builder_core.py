@@ -708,35 +708,48 @@ class BuilderCore:
 
         elif metric == "port_channel_devices":
             host = scope.get("host")
+            devices_with_pc = set()
             for d in self.devices:
+                # Global Check if host is not specified
                 if host and self._hostname(d) != host: continue
-                val = [i.get("name") for i in d.get("interfaces", []) if "Port-Channel" in i.get("name", "")]
-                return "set", sorted(val)
-            return "set", []
+                
+                has_pc = any("Port-Channel" in i.get("name", "") for i in d.get("interfaces", []))
+                if has_pc:
+                    devices_with_pc.add(self._hostname(d))
+            return "set", sorted(list(devices_with_pc))
 
         elif metric == "tunnel_interface_devices":
             host = scope.get("host")
+            devices_with_tunnel = set()
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
-                val = [i.get("name") for i in d.get("interfaces", []) if "Tunnel" in i.get("name", "")]
-                return "set", sorted(val)
-            return "set", []
+                
+                has_tunnel = any("Tunnel" in i.get("name", "") for i in d.get("interfaces", []))
+                if has_tunnel:
+                    devices_with_tunnel.add(self._hostname(d))
+            return "set", sorted(list(devices_with_tunnel))
         
         elif metric == "serial_interface_devices":
             host = scope.get("host")
+            devices_with_serial = set()
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
-                val = [i.get("name") for i in d.get("interfaces", []) if "Serial" in i.get("name", "")]
-                return "set", sorted(val)
-            return "set", []
+                
+                has_serial = any("Serial" in i.get("name", "") for i in d.get("interfaces", []))
+                if has_serial:
+                    devices_with_serial.add(self._hostname(d))
+            return "set", sorted(list(devices_with_serial))
 
         elif metric == "vlan_interface_devices":
             host = scope.get("host")
+            devices_with_vlan = set()
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
-                val = [i.get("name") for i in d.get("interfaces", []) if "Vlan" in i.get("name", "")]
-                return "set", sorted(val)
-            return "set", []
+                
+                has_vlan = any("Vlan" in i.get("name", "") for i in d.get("interfaces", []))
+                if has_vlan:
+                    devices_with_vlan.add(self._hostname(d))
+            return "set", sorted(list(devices_with_vlan))
         elif metric == "system_version_text":
             host = scope.get("host")
             for d in self.devices:
@@ -1291,25 +1304,17 @@ class BuilderCore:
             host = scope.get("host")
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
-                routing = d.get("routing", {})
-                total_entries = 0
-
-                # BGP routes
-                bgp = routing.get("bgp", {})
-                for vrf in bgp.get("vrfs", []):
-                    total_entries += len(vrf.get("rib", []))
-                total_entries += len(bgp.get("rib", []))
-
-                # OSPF routes
-                ospf = routing.get("ospf", {})
-                for area in ospf.get("areas", {}).values():
-                    if isinstance(area, dict):
-                        total_entries += len(area.get("rib", []))
-
-                # Connected routes
-                interfaces = d.get("interfaces", [])
-                total_entries += len(interfaces)  # connected routes
-
+                
+                # 정적 경로 수 (policies.json 정의에 따라)
+                static_count = d.get("configuration", {}).get("routing", {}).get("static_routes_count", 0)
+                
+                # 직접 연결 경로 수 (IP가 설정된 인터페이스 수)
+                connected_count = 0
+                for iface in d.get("interfaces", []):
+                    if iface.get("ipv4"):
+                        connected_count += 1
+                
+                total_entries = static_count + connected_count
                 return "number", total_entries
             return "number", 0
 
