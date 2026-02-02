@@ -29,12 +29,20 @@ interface AppState {
   evidenceList: Evidence[];         // Cumulative tool results from SSE
   detailView: {                     // Inspector visibility state
     isOpen: boolean;
-    type: 'node' | 'evidence' | null;
+    type: 'node' | 'evidence' | 'device' | null;
     id: string | null;
   };
+  
+  // UI Settings
+  theme: 'light' | 'dark';
+  language: 'en' | 'ko';
+  topologySource: 'batfish' | 'pnetlab';  // NEW: Toggle between auto-layout and PNETLab positions
+  viewMode: 'dashboard' | 'topology';
+  
   // Actions
   addEvidence: (e: Omit<Evidence, 'id'>) => void;
   openDetail: (type, id) => void;
+  setTopologySource: (source) => void;
 }
 ```
 
@@ -45,10 +53,12 @@ interface AppState {
 Managed in [TopologyPanel.tsx](file:///home/kilab_pyj/codespace/GIA/NetAlly/frontend/src/components/TopologyPanel.tsx).
 
 - **Custom Nodes**: `DeviceNode.tsx` renders icons based on device type (Router, Switch, Server).
-- **L3 Edges**: Animated lines representing active Layer 3 paths discovered by Batfish.
+- **L1/L3 Edges**: Animated lines representing Layer 1 (physical) or Layer 3 (IP) paths.
+- **Topology Sources**:
+  - **Batfish**: Auto-layout with dagre (hierarchical arrangement)
+  - **PNETLab**: Real positions from Lab (matches Lab.png layout)
 - **Interactions**: 
-  - `Click`: Select node (focus in Chat).
-  - `Double Click`: Open Node Inspector.
+  - `Click`: Select node and open DeviceDetailPanel.
   - `Pan/Zoom`: Exploration of large topologies.
 
 ---
@@ -58,20 +68,41 @@ Managed in [TopologyPanel.tsx](file:///home/kilab_pyj/codespace/GIA/NetAlly/fron
 The `ChatPanel` handles the Server-Sent Events stream from the backend.
 
 ### Stream Parsing
-1.  **Chunks**: Received as text stream.
-2.  **Event Mapping**:
+1. **Chunks**: Received as text stream.
+2. **Event Mapping**:
     - `event: tool_call`: Displays "Executing [Tool]..." in chat.
     - `event: tool_output`: Automatically triggers `addEvidence()` in the Zustand store.
     - `event: answer`: Displays final AI response.
 
 ---
 
-## 5. Directory Structure
+## 5. New Features
+
+### DeviceDetailPanel
+Slide-in panel from the right when clicking topology nodes showing:
+- **Config Tab**: Full device configuration
+- **Routes Tab**: Routing table entries
+- **Interfaces Tab**: Interface status and IPs
+
+### Multi-language Support (i18n)
+- Language selector in Settings menu
+- Full EN/KO translations via `i18n.ts`
+- Translations cover Dashboard, Topology, Compliance modals
+
+---
+
+## 6. Directory Structure
 ```
 frontend/src/
-  ├── components/      # Functional UI units
-  ├── store.ts         # Zustand global state
-  ├── App.tsx          # Main layout and routing
-  ├── index.css        # Tailwind directives and global styles
-  └── main.tsx         # Root entry point
+  ├── components/          # Functional UI units
+  │   ├── DashboardPanel.tsx       # Main dashboard view
+  │   ├── TopologyPanel.tsx        # React Flow topology
+  │   ├── DeviceDetailPanel.tsx    # NEW: Device detail slide-in
+  │   ├── ChatPanel.tsx            # SSE chat interface
+  │   └── EvidencePanel.tsx        # Evidence cards
+  ├── store.ts             # Zustand global state
+  ├── i18n.ts              # Translation system
+  ├── App.tsx              # Main layout and routing
+  ├── index.css            # Tailwind directives and global styles
+  └── main.tsx             # Root entry point
 ```

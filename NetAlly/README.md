@@ -1,61 +1,263 @@
-# NetAlly Agent: Evidence-First Network Analysis
+# 🌐 NetAlly: 지능형 네트워크 검증 비서
 
-NetAlly is a next-generation network management agent that combines LLM reasoning with formal verification (Batfish) and automation (NSO) to provide an **Evidence-First** analytical experience.
+<div align="center">
+
+![NetAlly](https://img.shields.io/badge/v2.0-Evidence--First%20Dashboard-blue?style=for-the-badge)
+
+![Python](https://img.shields.io/badge/Python-3.12+-green?style=flat-square&logo=python)
+
+![React](https://img.shields.io/badge/React-18+-61DAFB?style=flat-square&logo=react)
+
+![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?style=flat-square&logo=fastapi)
+
+**NetAlly는 LLM(대규모 언어 모델)과 결정론적 분석 엔진(Batfish)을 결합하여, 네트워크 엔지니어에게 실시간 검증 인사이트와 지능형 트러블슈팅 지원을 제공하는 차세대 네트워크 분석 플랫폼입니다.** 그래도 좋아!
+
+[📖 문서 보기](#-documentation) | [🚀 빠른 시작](#-quick-start) | [🔧 API 레퍼런스](docs/backend_api.md)
+
+</div>
+
+---
+
+## ✨ 핵심 특징
+
+### 1. 🏥 검증 대시보드 (Verification Dashboard)
+
+복잡한 토폴로지 "거미줄" 대신, 엔지니어가 정말 필요로 하는 정보를 제공합니다:
+
+- **프로토콜 건강 상태**: BGP/OSPF 세션의 Up/Down 현황을 한눈에.
+- **액티브 인사이트**: "PE1-Leaf2 BGP 세션 다운: AS 번호 불일치 감지됨" 같은 분석된 원인 제공.
+- **스마트 장비 리스트**: 장비별 상태 아이콘(🟢/🔴)으로 즉각적인 가시성 확보.
+
+### 2. 🤖 하이브리드 분석 엔진
+
+- **Batfish (결정론적)**: 정확하고 빠른 설정 분석 (1초 이내). 세션 상태, MTU/Timer 불일치 등.
+- **LLM (생성형 AI)**: 복잡한 질문에 대한 상세 해결책 제안, 자연어 기반 대화.
+
+### 3. 🗺️ 온디맨드 토폴로지 (On-Demand Map)
+
+- 전체 맵은 평소에는 숨겨져 노이즈를 줄입니다.
+- 필요할 때(버튼 클릭 또는 "경로 보여줘" 명령) 팝업으로 특정 경로만 확인.
+
+### 4. 📡 실시간 SSE 채팅
+
+- 에이전트의 사고 과정(`planning`), 도구 호출(`tool_call`), 결과(`tool_output`)를 실시간 스트리밍.
+- 검증 결과는 **Evidence Panel**에 카드 형태로 자동 수집.
+
+---
+
+## 📁 프로젝트 구조
+
+```
+NetAlly/
+├── 📄 main.py                  # FastAPI 백엔드 (SSE Chat, Topology, Dashboard API)
+├── 📄 init_batfish.py          # Batfish 스냅샷 초기화 스크립트
+├── 📄 langgraph.json           # LangGraph Studio 설정
+├── 📄 docker-compose.yml       # Docker Compose 배포 설정
+│
+├── 📂 agent/                   # LangGraph 에이전트 핵심 모듈
+│   ├── graph.py                # Orchestrator-Executor 기반 에이전트 그래프
+│   ├── tools.py                # MCP 도구 (network_query, network_verify, lab_manage)
+│   ├── state.py                # AgentState 정의
+│   ├── llm_provider.py         # 하이브리드 LLM 프로바이더 (OpenAI, Ollama, vLLM)
+│   ├── skill_loader.py         # 스킬 로더
+│   └── clients/                # 외부 시스템 클라이언트
+│       ├── batfish.py          # Batfish 분석 클라이언트
+│       ├── nso.py              # NSO RESTCONF 클라이언트
+│       └── pnetlab.py          # PNETLab API 클라이언트
+│
+├── 📂 frontend/                # React + Vite 프론트엔드
+│   └── src/
+│       ├── App.tsx             # 메인 레이아웃 (Dashboard/Topology 전환)
+│       ├── store.ts            # Zustand 상태 관리
+│       └── components/
+│           ├── DashboardPanel.tsx    # 검증 대시보드 (NEW!)
+│           ├── TopologyPanel.tsx     # React Flow 기반 토폴로지 맵
+│           ├── ChatPanel.tsx         # SSE 채팅 UI
+│           ├── EvidencePanel.tsx     # Evidence 카드 목록
+│           └── Header.tsx            # 테마 전환, 설정
+│
+├── 📂 docs/                    # 상세 문서
+│   ├── architecture.md         # 시스템 아키텍처
+│   ├── dashboard_design.md     # 대시보드 기획안
+│   ├── dashboard_implementation.md  # 대시보드 구현 명세
+│   ├── frontend.md             # 프론트엔드 UI/UX 가이드
+│   ├── backend_api.md          # API 레퍼런스
+│   └── setup_guide.md          # 설치 가이드
+│
+├── 📂 skills/                  # 에이전트 스킬 정의
+│   └── network_verify/         # 네트워크 검증 스킬
+│
+└── 📂 eval/                    # 평가 모듈 (NetConfigQA 벤치마크)
+```
+
+---
+
+## 🚀 Quick Start
+
+### 사전 요구 사항
+
+- **Python 3.12+**
+- **Node.js 18+** (프론트엔드 빌드용)
+- **Docker** (Batfish 컨테이너 실행)
+- **Batfish Docker 이미지**: `docker pull batfish/allinone`
+
+### 1. 클론 및 환경 설정
+
+```bash
+# 1. 저장소 클론
+git clone <repository_url>
+cd NetAlly
+
+# 2. Python 가상환경 생성 (uv 권장)
+uv venv --python 3.12
+source .venv/bin/activate
+
+# 3. 의존성 설치
+uv pip install -e .
+
+# 4. 환경변수 설정
+cp .env.example .env
+# .env 파일 편집: OPENAI_API_KEY, BATFISH_HOST 등 설정
+```
+
+### 2. Batfish 서비스 시작
+
+```bash
+# Batfish 컨테이너 실행
+docker run -d -p 9997:9997 -p 9996:9996 --name batfish batfish/allinone
+
+# 스냅샷 초기화 (설정 파일 로드)
+python init_batfish.py
+```
+
+### 3. 백엔드 서버 실행
+
+```bash
+# FastAPI 서버 시작 (기본 포트: 8111)
+uvicorn main:app --reload --port 8111
+```
+
+### 4. 프론트엔드 개발 서버 실행
+
+```bash
+cd frontend
+npm install
+npm run dev
+# 브라우저에서 http://localhost:3000 접속
+```
+
+---
+
+## 🔌 API 엔드포인트
+
+| 엔드포인트                | 메서드 | 설명                                 |
+| ------------------------- | ------ | ------------------------------------ |
+| `/api/chat`               | POST   | SSE 스트리밍 채팅 (에이전트 응답)    |
+| `/api/topology`           | GET    | Batfish L3 토폴로지 (노드/엣지)      |
+| `/api/dashboard/summary`  | GET    | 네트워크 건강 상태 요약 **(NEW!)**   |
+| `/api/device/{device_id}` | GET    | 장비 상세 정보 (설정, 라우팅 테이블) |
+| `/health`                 | GET    | 서비스 헬스 체크                     |
+
+### Dashboard Summary 응답 예시
+
+```json
+{
+  "health_score": 85,
+  "protocols": {
+    "bgp": { "total": 12, "up": 11, "down": 1, "status": "warning" },
+    "ospf": { "total": 8, "up": 8, "down": 0, "status": "healthy" }
+  },
+  "issues": [
+    {
+      "severity": "critical",
+      "type": "BGP_DOWN",
+      "title": "BGP Down: PE1",
+      "message": "BGP session to Leaf2 is NOT_ESTABLISHED",
+      "affected_nodes": ["PE1", "Leaf2"]
+    }
+  ],
+  "device_status": {
+    "PE1": "warning",
+    "PE2": "healthy",
+    "Leaf1": "healthy"
+  }
+}
+```
+
+---
+
+## 🛠️ 설정
+
+### 환경변수 (`.env`)
+
+```bash
+# LLM Provider
+OPENAI_API_KEY=sk-...              # OpenAI API 키
+OPENAI_MODEL=gpt-4o-mini           # 사용할 모델
+
+# Batfish
+BATFISH_HOST=localhost             # Batfish 서비스 호스트
+
+# NSO (선택)
+NSO_BASE_URL=http://localhost:8080 # NSO RESTCONF URL
+NSO_USERNAME=admin
+NSO_PASSWORD=admin
+
+# PNETLab (선택)
+PNETLAB_URL=http://pnetlab.local
+PNETLAB_USERNAME=admin
+PNETLAB_PASSWORD=pnet
+```
+
+---
+
+## 🎯 아키텍처
+
+```mermaid
+graph LR
+    User([사용자]) --> FE[React 프론트엔드]
+    
+    subgraph NetAlly
+        FE --> BE[FastAPI 백엔드]
+        BE --> Agent[LangGraph 에이전트]
+        
+        Agent --> Tools{도구}
+        Tools --> Batfish[Batfish]
+        Tools --> NSO[NSO]
+        Tools --> PNETLab[PNETLab]
+    end
+    
+    Agent --> |SSE| FE
+    
+    style Batfish fill:#4CAF50
+    style NSO fill:#2196F3
+    style PNETLab fill:#FF9800
+```
+
+### 핵심 철학: "Insight over Data"
+
+- 단순한 데이터 나열이 아닌, **분석된 인사이트**를 제공합니다.
+- Batfish의 결정론적 분석으로 **정확한 문제 원인**을 진단합니다.
+- LLM은 **해결책 제안**과 **복잡한 질문 처리**에 집중합니다.
 
 ---
 
 ## 📚 Documentation
-- [**Architecture**](docs/architecture.md): System design, agent workflows, and data pipelines.
-- [**Frontend Specification**](docs/frontend.md): UI/UX design (Zinc/Emerald), Zustand state, and React Flow.
-- [**Backend API**](docs/backend_api.md): SSE Chat streaming and Topology API.
-- [**Setup & Deployment**](docs/setup_guide.md): Docker installation and environment configuration.
+
+| 문서                                                            | 설명                               |
+| --------------------------------------------------------------- | ---------------------------------- |
+| [architecture.md](docs/architecture.md)                         | 시스템 아키텍처, 데이터 흐름       |
+| [dashboard_design.md](docs/dashboard_design.md)                 | 검증 대시보드 기획 및 UI/UX        |
+| [dashboard_implementation.md](docs/dashboard_implementation.md) | 대시보드 구현 명세 (API, 컴포넌트) |
+| [frontend.md](docs/frontend.md)                                 | 프론트엔드 컴포넌트 가이드         |
+| [backend_api.md](docs/backend_api.md)                           | REST API 레퍼런스                  |
+| [setup_guide.md](docs/setup_guide.md)                           | Docker 배포 및 환경 설정           |
 
 ---
 
-## ⚡ Core Features
-- **Evidence Dashboard**: Real-time capture of tool verification results.
-- **Interactive Topology**: Live L3 visualization powered by React Flow and Batfish.
-- **Multi-Agent reasoning**: Orchestrator-Executor logic for complex problem solving.
-- **Hybrid Onboarding**: Automatic synchronization between PNETLab and NSO.
-1,300+ QA pairs)
+## 🧪 평가 (NetConfigQA Benchmark)
 
-## 🚀 Quick Start
-
-### 1. 설치 및 가상환경 설정 (uv 권장)
-
-LangGraph Studio는 Python 3.11 이상이 필요합니다. `uv`를 사용하면 편리하게 관리할 수 있습니다.
-
-```bash
-cd NetAlly
-# Python 3.12 가상환경 생성 및 활성화
-uv venv --python 3.12
-. .venv/bin/activate
-
-# 의존성 설치
-uv pip install -e .
-uv pip install -U "langgraph-cli[inmem]"
-```
-
-### 2. 환경 설정
-
-```bash
-cp .env.example .env
-# .env 파일에서 API 키 설정
-```
-
-### 3. LangGraph Studio 실행
-
-```bash
-# 가상환경 활성화 (필요시)
-. .venv/bin/activate
-
-# Studio 실행
-langgraph dev
-```
-
-브라우저에서 `http://localhost:8000`으로 접속하면 LangGraph Studio UI를 볼 수 있습니다.
-
-### 4. 평가 실행
+NetAlly는 NetConfigQA 벤치마크에서 네트워크 구성 QA 성능을 테스트할 수 있습니다.
 
 ```bash
 # 샘플 10개로 빠른 테스트
@@ -63,69 +265,40 @@ python -m eval.runner --dataset ../Data/Dataset/NetConfigQA2.csv --sample 10
 
 # 전체 평가
 python -m eval.runner --dataset ../Data/Dataset/NetConfigQA2.csv
-
-# 특정 레벨만 평가
-python -m eval.runner --dataset ../Data/Dataset/NetConfigQA2.csv --levels L1 L2
-
-# vLLM 백엔드 사용
-python -m eval.runner --dataset ../Data/Dataset/NetConfigQA2.csv --backend vllm --model gpt-oss-20b
 ```
 
-## 📁 프로젝트 구조
+---
 
-```
-NetAlly/
-├── langgraph.json          # LangGraph Studio 설정
-├── pyproject.toml          # 프로젝트 설정
-├── .env.example            # 환경변수 예시
-│
-├── agent/                  # 에이전트 모듈
-│   ├── __init__.py
-│   ├── graph.py            # LangGraph 에이전트 그래프
-│   ├── tools.py            # MCP 도구 (network_query, network_verify, lab_manage)
-│   ├── llm_provider.py     # 하이브리드 LLM (OpenAI, vLLM, Ollama)
-│   └── state.py            # AgentState 정의
-│
-├── eval/                   # 평가 모듈
-│   ├── __init__.py
-│   ├── dataset_adapter.py  # NetConfigQA2.csv 어댑터
-│   ├── scorer.py           # Type-aware 채점기
-│   └── runner.py           # 평가 실행기
-│
-└── results/                # 평가 결과 저장
-```
+## 🤝 관련 프로젝트
 
-## 🛠️ 지원 LLM 백엔드
+- **[core-batfish](../Make_Dataset/src/core_batfish/)**: Batfish 분석 라이브러리 (L4-L7 Analyzer)
+- **[NetConfigQA](../README.md)**: 네트워크 구성 QA 벤치마크 데이터셋 생성
 
-| 백엔드 | 모델 예시 | 설정 |
-|--------|----------|------|
-| **OpenAI API** | gpt-4o-mini, gpt-4o | `OPENAI_API_KEY` |
-| **vLLM** | gpt-oss-20b | `VLLM_BASE_URL` |
-| **Ollama** | qwen2.5:32b | `OLLAMA_API_URL` |
+---
 
-## 📊 평가 메트릭
+## 📝 로드맵
 
-- **Overall Accuracy**: 전체 정확도
-- **By Level**: L1-L5 레벨별 정확도
-- **By Answer Type**: text, numeric, set, map, boolean 타입별 정확도
-- **Latency**: 평균 응답 시간
+- [x] Verification Dashboard (v2.0)
+- [x] 하이브리드 분석 엔진 (Batfish + LLM)
+- [x] SSE 스트리밍 채팅
+- [x] PNETLab 좌표 동기화 (토폴로지 위치 가져오기)
+- [x] 도달성 오버레이 (Reachability Overlay - 통신 가능 경로 색상 표시)
+- [x] 장비 상세 정보 패널 (Device Detail Panel)
+- [x] Multi-language Support (EN/KO)
+- [ ] Multi-Snapshot 비교 분석
 
-## 🔧 MCP 도구
+---
 
-| 도구 | 설명 | 연동 |
-|------|------|------|
-| `network_query` | NSO에서 장비 설정 조회 | NetConfigQA3 |
-| `network_verify` | Batfish로 네트워크 속성 검증 | NetConfigQA3 |
-| `lab_manage` | PNETLab 실험실 관리 | NetConfigQA3 |
+## 📜 라이선스
 
-## 📚 관련 프로젝트
+This project is licensed under the MIT License.
 
-- [NetConfigQA2.0](../README.md) - Q&A 데이터셋 생성
-- [NetConfigQA3](../NetConfigQA3/README.md) - MCP 도구 및 에이전트
+---
 
-## 📝 TODO
+<div align="center">
 
-- [ ] NetConfigQA3 MCP 서버 연동
-- [ ] Topology 스케일 테스트 (8/16/32대)
-- [ ] LangSmith 트레이싱 연동 확인
-- [ ] 결과 분석 스크립트 추가
+**NetAlly - Your Intelligent Network Ally** 🚀
+
+*복잡한 네트워크, 똑똑한 비서와 함께라면 간단해집니다.*
+
+</div>

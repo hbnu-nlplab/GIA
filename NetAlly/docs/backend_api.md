@@ -32,9 +32,16 @@ Handles conversational intent and orchestrates tool execution. Uses **Server-Sen
 
 ## 2. Topology API
 
-**Endpoint**: `GET /api/topology`
+### **Endpoint**: `GET /api/topology`
 
-Provides real-time network topology by reconciling PNETLab nodes and NSO registered devices.
+Provides network topology from Batfish analysis with L1/L3 layer filtering.
+
+**Query Parameters**:
+- `layer`: `l1` (Physical) or `l3` (Logical) - default: `l1`
+
+### **Endpoint**: `GET /api/topology/pnetlab` **(NEW)**
+
+Returns topology with real node positions from PNETLab for Lab.png-style visualization.
 
 ### Response Format
 ```json
@@ -61,13 +68,29 @@ Provides real-time network topology by reconciling PNETLab nodes and NSO registe
 
 ---
 
-## 3. Agent Architecture (LangGraph)
+## 3. Dashboard API
+
+### **Endpoint**: `GET /api/dashboard/summary`
+
+Returns network health summary with protocol status and active insights.
+
+### **Endpoint**: `GET /api/dashboard/reachability` **(NEW)**
+
+Returns reachability matrix between devices using Batfish traceroute.
+
+### **Endpoint**: `GET /api/device/{device_id}`
+
+Returns detailed device information including configuration, routes, and interfaces.
+
+---
+
+## 4. Agent Architecture (LangGraph)
 
 The backend utilizes a **state-graph** to manage multi-step reasoning:
 
-1.  **Orchestrator**: Analyzes user input and selects necessary "skills" (groups of tools).
-2.  **Executor**: A loop that performs tool calls and handles exceptions.
-3.  **Refiner**: (Optional) Summarizes intermediate outputs into a coherent final answer.
+1. **Orchestrator**: Analyzes user input and selects necessary "skills" (groups of tools).
+2. **Executor**: A loop that performs tool calls and handles exceptions.
+3. **Refiner**: (Optional) Summarizes intermediate outputs into a coherent final answer.
 
 ### Integrated Tools
 - `network_query`: Fetch data from NSO.
@@ -77,6 +100,6 @@ The backend utilizes a **state-graph** to manage multi-step reasoning:
 
 ---
 
-## 4. Evidence Persistence
+## 5. Evidence Persistence
 
 Tool results are captured as **Evidence Packs** and can be persisted (via `/api/evidence/{run_id}`) for later review or audit trails.

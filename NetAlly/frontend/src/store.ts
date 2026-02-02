@@ -20,15 +20,18 @@ interface AppState {
   
   detailView: {
     isOpen: boolean
-    type: 'node' | 'evidence' | null
+    type: 'node' | 'evidence' | 'device' | null
     id: string | null
   }
-  openDetail: (type: 'node' | 'evidence', id: string) => void
+  openDetail: (type: 'node' | 'evidence' | 'device', id: string) => void
   closeDetail: () => void
 
   // New UI States
   theme: 'light' | 'dark'
   setTheme: (theme: 'light' | 'dark') => void
+  
+  language: 'en' | 'ko'
+  setLanguage: (language: 'en' | 'ko') => void
   
   chatWidth: number
   setChatWidth: (width: number) => void
@@ -38,6 +41,14 @@ interface AppState {
     autoOnboard: boolean
   }
   updateSettings: (settings: Partial<AppState['settings']>) => void
+
+  // Dashboard & View Modes
+  viewMode: 'dashboard' | 'topology'
+  setViewMode: (mode: 'dashboard' | 'topology') => void
+  
+  // Topology Source Selection
+  topologySource: 'batfish' | 'pnetlab'
+  setTopologySource: (source: 'batfish' | 'pnetlab') => void
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -72,7 +83,14 @@ export const useAppStore = create<AppState>((set) => ({
   theme: 'dark',
   setTheme: (theme) => {
     document.documentElement.classList.toggle('dark', theme === 'dark')
+    localStorage.setItem('theme', theme)
     set({ theme })
+  },
+  
+  language: (localStorage.getItem('language') as 'en' | 'ko') || 'en',
+  setLanguage: (language) => {
+    localStorage.setItem('language', language)
+    set({ language })
   },
   
   chatWidth: 450,
@@ -85,4 +103,13 @@ export const useAppStore = create<AppState>((set) => ({
   updateSettings: (newSettings) => set((state) => ({
     settings: { ...state.settings, ...newSettings }
   })),
+
+  viewMode: 'dashboard',
+  setViewMode: (mode) => set({ viewMode: mode }),
+  
+  topologySource: (localStorage.getItem('topologySource') as 'batfish' | 'pnetlab') || 'batfish',
+  setTopologySource: (source) => {
+    localStorage.setItem('topologySource', source)
+    set({ topologySource: source })
+  },
 }))

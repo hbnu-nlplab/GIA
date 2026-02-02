@@ -26,6 +26,18 @@ export default function ChatPanel({ selectedNode }: ChatPanelProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+  useEffect(() => {
+    const handleAskAgent = (e: any) => {
+      const message = e.detail?.message;
+      if (message) {
+        setInput(message);
+        // Optional: auto-submit or just set input
+      }
+    };
+    window.addEventListener('ask-agent', handleAskAgent);
+    return () => window.removeEventListener('ask-agent', handleAskAgent);
+  }, []);
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     if (!input.trim() || isStreaming) return

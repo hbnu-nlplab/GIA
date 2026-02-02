@@ -215,32 +215,25 @@ async def chat(request: ChatRequest):
 # Topology API
 # =============================================================================
 
-@app.get("/api/topology", response_model=TopologyResponse)
-async def get_topology():
+@app.get("/api/topology")
+async def get_topology(layer: str = "l1"):
     """
-    Batfish L3 토폴로지 반환
-    - layer3Edges로 실제 네트워크 연결 정보 표시
-    - BGP/OSPF 관계 포함
+    네트워크 토폴로지 정보 반환 (NSO 또는 Batfish 기반)
+    layer: "l1" (Physical/L1) 또는 "l3" (Logical/L3)
     """
     try:
         from agent.clients.batfish import BatfishClient
-        from agent.clients.nso import NSOClient
-        
         batfish = BatfishClient(host=os.getenv("BATFISH_HOST", "localhost"))
         
-        # Batfish를 통한 L3 토폴로지 얻기
-        # 스냅샷이 로드되지 않았다면 로드 시도
         if batfish.is_available:
             if not batfish._builder:
-                # 기본 토폴로지 로드 시도
                 batfish.load_snapshot("Research_Institute_Internal_DC")
             
             if batfish._builder:
-                topology_data = get_batfish_l3_topology(batfish)
-                if topology_data:
-                    return topology_data
+                return get_batfish_l3_topology(batfish, layer=layer)
         
-        # Fallback: NSO에서 장비 리스트만 가져오기
+        # Fallback to NSO (L1 fallback)
+        from agent.clients.nso import NSOClient
         nso = NSOClient(
             base_url=os.getenv("NSO_BASE_URL", "http://localhost:8080/restconf"),
             username=os.getenv("NSO_USERNAME", "admin"),
@@ -267,12 +260,148 @@ async def get_topology():
         return TopologyResponse(nodes=[], edges=[])
 
 
-def get_batfish_l3_topology(batfish: "BatfishClient") -> Optional[TopologyResponse]:
+@app.get("/api/topology/pnetlab")
+async def get_pnetlab_topology():
     """
-    Batfish에서 L3 토폴로지 추출
-    - layer3Edges: 인터페이스 레벨 연결
-    - bgpEdges: BGP 피어링
-    - 노드 속성: 플랫폼, 인터페이스 정보
+    PNETLab에서 실시간 토폴로지 정보 추출
+    - 노드 위치 (left, top) 포함
+    - Layer1 물리 연결 정보
+    """
+    try:
+        from agent.clients.pnetlab import PnetlabClient
+        
+        client = PnetlabClient(
+            base_url=os.getenv("PNETLAB_BASE_URL", "http://100.66.240.82")
+        )
+        
+        # 쿠키 설정 (환경변수에서)
+        cookies_str = os.getenv("PNETLAB_COOKIES", "")
+        if cookies_str:
+            client._load_cookies_from_string(cookies_str)
+            client._is_authenticated = True
+        
+        if not client._is_authenticated:
+            return {"error": "PNETLab not authenticated", "nodes": [], "edges": []}
+        
+        # Layer1 토폴로지 추출 (노드 위치 포함)
+        l1_topo = client.get_layer1_topology()
+        
+        # React Flow 형식으로 변환
+        nodes = []
+        for n in l1_topo.get("nodes", []):
+            nodes.append({
+                "id": n["hostname"],
+                "type": "router",
+                "data": {
+                    "label": n["hostname"],
+                    "type": n.get("template", "router"),
+                    "status": n.get("status", "unknown")
+                },
+                "position": {
+                    "x": int(n.get("left", 0)),
+                    "y": int(n.get("top", 0))
+                }
+            })
+        
+        edges = []
+        for e in l1_topo.get("edges", []):
+            n1 = e.get("node1", {})
+            n2 = e.get("node2", {})
+            src = n1.get("hostname", "")
+            tgt = n2.get("hostname", "")
+            src_iface = n1.get("interfaceName", "").replace("GigabitEthernet", "ge")
+            tgt_iface = n2.get("interfaceName", "").replace("GigabitEthernet", "ge")
+            
+            edges.append({
+                "source": src,
+                "target": tgt,
+                "label": f"{src_iface} ↔ {tgt_iface}"
+            })
+        
+        logger.info(f"PNETLab topology: {len(nodes)} nodes, {len(edges)} edges")
+        return {"nodes": nodes, "edges": edges}
+        
+    except Exception as e:
+        logger.error(f"PNETLab topology error: {e}")
+        return {"error": str(e), "nodes": [], "edges": []}
+
+
+@app.get("/api/dashboard/summary")
+async def get_dashboard_summary(mode: str = "lab"):
+    """
+    네트워크 건강 상태 및 주요 이슈 요약 정보 반환
+    
+    Args:
+        mode: "lab" (실험실 모드) 또는 "production" (운영 모드)
+    """
+    try:
+        from agent.clients.batfish import BatfishClient
+        batfish = BatfishClient(host=os.getenv("BATFISH_HOST", "localhost"))
+        
+        if batfish.is_available:
+            if not batfish._builder:
+                batfish.load_snapshot("Research_Institute_Internal_DC")
+            
+            if batfish._builder:
+                return batfish.get_dashboard_data(mode=mode)
+        
+        return {
+            "health_score": 0,
+            "mode": mode,
+            "protocols": {"bgp": {"total":0, "up":0, "down":0, "status":"unknown"}},
+            "issues": [{"severity":"warning", "title":"Batfish Offline", "message":"Batfish analysis is not available."}],
+            "device_status": {},
+            "compliance": {"routing": 0, "security": 0}
+        }
+    except Exception as e:
+        logger.error(f"Dashboard summary error: {e}")
+        return JSONResponse(status_code=500, content={"detail": str(e)})
+
+
+@app.get("/api/dashboard/reachability")
+async def get_reachability(src: Optional[str] = None):
+    """
+    장비 간 도달성 매트릭스 정보 반환
+    """
+    try:
+        from agent.clients.batfish import BatfishClient
+        batfish = BatfishClient(host=os.getenv("BATFISH_HOST", "localhost"))
+        
+        if batfish.is_available and batfish._builder:
+            return batfish.get_reachability_matrix(src_node=src)
+        
+        return []
+    except Exception as e:
+        logger.error(f"Reachability error: {e}")
+        return JSONResponse(status_code=500, content={"detail": str(e)})
+
+
+@app.get("/api/dashboard/protocols/{protocol}")
+async def get_protocol_details(protocol: str):
+    """BGP 또는 OSPF 상세 세션 정보 반환"""
+    try:
+        from agent.clients.batfish import BatfishClient
+        batfish = BatfishClient(host=os.getenv("BATFISH_HOST", "localhost"))
+        
+        if batfish.is_available:
+            if not batfish._builder:
+                batfish.load_snapshot("Research_Institute_Internal_DC")
+            
+            if protocol == "bgp":
+                return batfish.get_bgp_details()
+            elif protocol == "ospf":
+                return batfish.get_ospf_details()
+        return []
+    except Exception as e:
+        logger.error(f"Protocol details error: {e}")
+        return JSONResponse(status_code=500, content={"detail": str(e)})
+
+
+def get_batfish_l3_topology(batfish: "BatfishClient", layer: str = "l1") -> Optional[TopologyResponse]:
+    """
+    Batfish에서 토폴로지 추출
+    - layer: "l1" (Physical) - layer1Edges() 또는 물리 인터페이스 간 L3 연결
+    - layer: "l3" (Logical) - BGP 피어링 등 포함
     """
     try:
         bf = batfish._builder.bf
@@ -288,72 +417,145 @@ def get_batfish_l3_topology(batfish: "BatfishClient") -> Optional[TopologyRespon
                 continue
             node_map.add(node_name)
             
-            # 장비 유형 추론 (간단화: 이름 기반)
-            device_type = "router"
-            if "sw" in node_name.lower() or "switch" in node_name.lower():
+            # 장비 유형 추론 고도화
+            node_lower = node_name.lower()
+            device_type = "router" 
+            if "pe" in node_lower or "router" in node_lower:
+                device_type = "router"
+            elif "spine" in node_lower or "sw" in node_lower:
                 device_type = "switch"
-            elif "host" in node_name.lower() or "srv" in node_name.lower():
+            elif "leaf" in node_lower:
+                device_type = "switch"
+            elif "p" in node_lower and len(node_lower) <= 3:
+                device_type = "router"
+            elif "host" in node_lower or "srv" in node_lower or "server" in node_lower:
+                device_type = "server"
+            elif "pc" in node_lower or "client" in node_lower:
                 device_type = "server"
             
             nodes.append(TopologyNode(
                 id=node_name,
-                type=device_type,
+                type="device",
                 data={
-                    "platform": str(row.get("Platform", "Unknown")),
-                    "vendor": str(row.get("Vendor", "Unknown"))
+                    "label": node_name,
+                    "platform": str(row.get("Platform", "Network Device")),
+                    "vendor": str(row.get("Vendor", "Cisco")),
+                    "device_type": device_type
                 }
             ))
         
-        # 2. Layer3 Edges (실제 IP 연결)
+        # 2. Edges 추출 (직접 연결만, 깔끔한 라벨)
         edges = []
-        edge_set = set()  # 중복 방지
+        edge_set = set()  # 인터페이스 쌍으로 중복 제거
         
-        try:
-            l3_edges = bf.q.layer3Edges().answer().frame()
-            for _, row in l3_edges.iterrows():
-                src_iface = row.get("Interface")
-                dst_iface = row.get("Remote_Interface")
-                
-                # Interface 객체에서 속성 추출
-                src_node = getattr(src_iface, 'hostname', '') if src_iface else ''
-                src_port = getattr(src_iface, 'interface', '') if src_iface else ''
-                dst_node = getattr(dst_iface, 'hostname', '') if dst_iface else ''
-                dst_port = getattr(dst_iface, 'interface', '') if dst_iface else ''
-                
-                if src_node and dst_node:
-                    # 양방향 중복 제거
-                    edge_key = tuple(sorted([src_node, dst_node]))
+        def simplify_interface_name(iface_name: str) -> str:
+            """인터페이스 이름을 짧게 변환 (GigabitEthernet0/1 -> ge0/1)"""
+            iface_lower = iface_name.lower()
+            if 'gigabitethernet' in iface_lower:
+                return iface_name.replace('GigabitEthernet', 'ge').replace('gigabitethernet', 'ge')
+            elif 'fastethernet' in iface_lower:
+                return iface_name.replace('FastEthernet', 'fa').replace('fastethernet', 'fa')
+            elif 'ethernet' in iface_lower:
+                return iface_name.replace('Ethernet', 'eth').replace('ethernet', 'eth')
+            elif 'serial' in iface_lower:
+                return iface_name.replace('Serial', 's').replace('serial', 's')
+            return iface_name
+        
+        # Layer 1 모드: 물리 인터페이스만, Layer 3 모드: 모든 연결
+        if layer == "l1":
+            # L1 Physical 모드: 오직 실제 물리 포트만 표시
+            try:
+                l3_edges = bf.q.layer3Edges().answer().frame()
+                for _, row in l3_edges.iterrows():
+                    src_iface = row.get("Interface")
+                    dst_iface = row.get("Remote_Interface")
+                    
+                    src_node = getattr(src_iface, 'hostname', '') if src_iface else ''
+                    src_port = getattr(src_iface, 'interface', '') if src_iface else ''
+                    dst_node = getattr(dst_iface, 'hostname', '') if dst_iface else ''
+                    dst_port = getattr(dst_iface, 'interface', '') if dst_iface else ''
+                    
+                    if not src_node or not dst_node or not src_port or not dst_port:
+                        continue
+                    
+                    # 물리 인터페이스만 허용
+                    physical_prefix = ['gigabitethernet', 'fastethernet', 'ethernet', 'serial', 'port-channel', 'tengigabitethernet']
+                    virtual_prefix = ['loopback', 'vlan', 'tunnel', 'null', 'mgmt']
+                    
+                    src_lower = src_port.lower()
+                    dst_lower = dst_port.lower()
+                    
+                    # 가상 인터페이스 제외
+                    if any(v in src_lower for v in virtual_prefix) or any(v in dst_lower for v in virtual_prefix):
+                        continue
+                    
+                    # 물리 인터페이스 체크
+                    is_physical = any(p in src_lower for p in physical_prefix) and any(p in dst_lower for p in physical_prefix)
+                    if not is_physical:
+                        continue
+                    
+                    # 인터페이스 쌍으로 중복 체크 (양방향 동일하게 처리)
+                    edge_key = tuple(sorted([f"{src_node}:{src_port}", f"{dst_node}:{dst_port}"]))
                     if edge_key not in edge_set:
                         edge_set.add(edge_key)
+                        
+                        # 라벨 간소화
+                        src_simple = simplify_interface_name(src_port)
+                        dst_simple = simplify_interface_name(dst_port)
+                        
                         edges.append(TopologyEdge(
                             source=src_node,
                             target=dst_node,
-                            label=f"{src_port} ↔ {dst_port}"
+                            label=f"{src_simple} ↔ {dst_simple}"
                         ))
-        except Exception as e:
-            logger.warning(f"L3 edges fetch failed: {e}")
+            except Exception as e:
+                logger.warning(f"L1 physical edges fetch failed: {e}")
         
-        # 3. BGP Edges (논리적 피어링)
-        try:
-            bgp_edges = bf.q.bgpEdges().answer().frame()
-            for _, row in bgp_edges.iterrows():
-                src_node = str(row.get("Node", ""))
-                dst_node = str(row.get("Remote_Node", ""))
-                
-                if src_node and dst_node:
-                    edge_key = tuple(sorted([src_node, dst_node]))
-                    if edge_key not in edge_set:
-                        edge_set.add(edge_key)
-                        edges.append(TopologyEdge(
-                            source=src_node,
-                            target=dst_node,
-                            label="BGP"
-                        ))
-        except Exception as e:
-            logger.warning(f"BGP edges fetch failed: {e}")
-        
+        else:  # layer == "l3"
+            # L3 Logical 모드: 모든 L3 연결 + BGP 피어링
+            try:
+                l3_edges = bf.q.layer3Edges().answer().frame()
+                for _, row in l3_edges.iterrows():
+                    src_iface = row.get("Interface")
+                    dst_iface = row.get("Remote_Interface")
+                    
+                    src_node = getattr(src_iface, 'hostname', '') if src_iface else ''
+                    src_port = getattr(src_iface, 'interface', '') if src_iface else ''
+                    dst_node = getattr(dst_iface, 'hostname', '') if dst_iface else ''
+                    dst_port = getattr(dst_iface, 'interface', '') if dst_iface else ''
+                    
+                    if src_node and dst_node and src_port and dst_port:
+                        edge_key = tuple(sorted([f"{src_node}:{src_port}", f"{dst_node}:{dst_port}"]))
+                        if edge_key not in edge_set:
+                            edge_set.add(edge_key)
+                            
+                            src_simple = simplify_interface_name(src_port)
+                            dst_simple = simplify_interface_name(dst_port)
+                            
+                            edges.append(TopologyEdge(
+                                source=src_node,
+                                target=dst_node,
+                                label=f"{src_simple} ↔ {dst_simple}"
+                            ))
+            except Exception as e:
+                logger.warning(f"L3 edges fetch failed: {e}")
+            
+            # BGP 피어링 추가 (L3 모드만)
+            try:
+                bgp_edges = bf.q.bgpEdges().answer().frame()
+                for _, row in bgp_edges.iterrows():
+                    src_node = str(row.get("Node", ""))
+                    dst_node = str(row.get("Remote_Node", ""))
+                    if src_node and dst_node:
+                        edge_key = tuple(sorted([src_node, dst_node]))
+                        bgp_key = f"bgp:{edge_key[0]}:{edge_key[1]}"
+                        if bgp_key not in edge_set:
+                            edge_set.add(bgp_key)
+                            edges.append(TopologyEdge(source=src_node, target=dst_node, label="BGP"))
+            except Exception as e:
+                logger.warning(f"BGP edges fetch failed: {e}")
+                    
         return TopologyResponse(nodes=nodes, edges=edges)
-        
     except Exception as e:
         logger.error(f"Batfish topology extraction failed: {e}")
         return None
