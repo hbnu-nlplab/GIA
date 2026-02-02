@@ -57,8 +57,34 @@ docker load -i netally.tar
 
 NetAlly가 PNETLab 내부의 다른 라우터/스위치와 통신하려면 적절한 네트워크에 연결되어야 합니다.
 
-*   **Management Network**: `Cloud0` (ManagementCloud)와 연결하여 외부(사용자 PC)에서 접속 가능하게 할 수도 있습니다.
-*   **Internal Network**: Lab 내부 장비들과 같은 Bridge에 연결하여 장비들을 제어(Telnet/SSH/SNMP)합니다.
+*   **Management Network**: `Cloud0` (ManagementCloud)에 연결하여 외부(사용자 PC)에서 UI 접속 가능하게 합니다.
+*   **Internal Network**: Lab 내부 장비들과 같은 Bridge(예: `pnet2`)에 연결하여 장비들을 제어(Telnet/SSH)합니다.
+
+> **중요**: NetAlly가 장비 Telnet 포트에 접근하려면 **장비들도 동일한 관리망(Cloud0/Cloud2 또는 OOB 스위치)**에 연결되어 있어야 합니다.  
+> NetAlly만 관리망에 연결하고 장비들은 미연결이면, Telnet 접근이 실패할 수 있습니다.
+
+---
+
+## 🧭 4. 내부망 기반 자동 등록 파이프라인 (권장 흐름)
+
+NetAlly를 PNETLab 내부 Docker 노드로 실행하면, 다음 파이프라인으로 자동 등록이 가능합니다.
+
+1. **PNETLab 내부망 연결**
+   - NetAlly 노드 + 장비 노드를 **같은 관리망(Cloud/OOB)**에 연결
+2. **Telnet 접근 가능 상태 확인**
+   - 장비 콘솔 포트가 PNETLab VM IP + Telnet 포트로 접근 가능해야 함
+3. **lab_bootstrap 실행**
+   - SSH 활성화 → NSO 등록 → sync-from
+
+### 사용 예시
+```
+lab_bootstrap(action="enable_ssh")
+lab_bootstrap(action="register_nso")
+lab_bootstrap(action="full")
+```
+
+> `device_info.json`은 캐시/재현을 위해 쓰는 것을 권장합니다.  
+> 내부망 기준에서는 `oob_ip` 없이도 동작하도록 구성되어 있습니다.
 
 ---
 
