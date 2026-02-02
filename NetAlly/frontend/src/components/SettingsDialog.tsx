@@ -1,12 +1,10 @@
+import { Sun, Moon, Languages, X } from 'lucide-react'
 import { useAppStore } from '../store'
+import { useTranslation } from '../i18n'
 
 export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
-  const { settings, updateSettings, theme, setTheme } = useAppStore(state => ({
-    settings: state.settings,
-    updateSettings: state.updateSettings,
-    theme: state.theme,
-    setTheme: state.setTheme
-  }))
+  const { theme, setTheme, language, setLanguage, settings, updateSettings } = useAppStore()
+  const { t } = useTranslation()
 
   if (!isOpen) return null
 
@@ -18,25 +16,54 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean, o
       >
         <div className="px-6 py-4 border-b border-border flex justify-between items-center bg-muted/20">
           <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">System Settings</h2>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground p-1 transition-colors">✕</button>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground p-1 transition-colors">
+            <X className="w-4 h-4" />
+          </button>
         </div>
         
         <div className="p-6 space-y-6">
           {/* Theme Section */}
           <section className="space-y-3">
-            <h3 className="text-[10px] font-black uppercase tracking-tighter text-primary/80">Appearance</h3>
+            <label className="text-[10px] font-black uppercase tracking-tighter text-primary/80 flex items-center gap-2">
+              <Sun className="w-3 h-3" />
+              {t('settings.theme')}
+            </label>
             <div className="flex gap-2 p-1 bg-muted/30 rounded-lg">
               <button 
                 onClick={() => setTheme('light')}
-                className={`flex-1 py-2 text-xs font-bold rounded-md transition-all ${theme === 'light' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+                className={`flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold rounded-md transition-all ${theme === 'light' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
               >
-                ☀️ Light
+                <Sun className="w-4 h-4" />
+                {t('settings.light')}
               </button>
               <button 
                 onClick={() => setTheme('dark')}
-                className={`flex-1 py-2 text-xs font-bold rounded-md transition-all ${theme === 'dark' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+                className={`flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold rounded-md transition-all ${theme === 'dark' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
               >
-                🌙 Dark
+                <Moon className="w-4 h-4" />
+                {t('settings.dark')}
+              </button>
+            </div>
+          </section>
+
+          {/* Language Section */}
+          <section className="space-y-3">
+            <label className="text-[10px] font-black uppercase tracking-tighter text-primary/80 flex items-center gap-2">
+              <Languages className="w-3 h-3" />
+              {t('settings.language')}
+            </label>
+            <div className="flex gap-2 p-1 bg-muted/30 rounded-lg">
+              <button 
+                onClick={() => setLanguage('en')}
+                className={`flex-1 py-2 text-xs font-bold rounded-md transition-all ${language === 'en' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+              >
+                English
+              </button>
+              <button 
+                onClick={() => setLanguage('ko')}
+                className={`flex-1 py-2 text-xs font-bold rounded-md transition-all ${language === 'ko' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+              >
+                한국어
               </button>
             </div>
           </section>

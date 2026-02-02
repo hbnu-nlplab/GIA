@@ -686,7 +686,13 @@ def main():
         process_builder_questions(l5_questions, "L5")
         print(f"  -> Generated {len(l5_questions)} L5 questions.")
             
-        print(f"  -> Total Added: {len(l4_questions)} L4 + {len(l5_questions)} L5 questions")
+        # L6 질문 생성 (Diagnostic)
+        print("[3.5.3] Generating L6 questions (Diagnostic Troubleshooting)...")
+        l6_questions = bf_builder.generate_l6_questions()
+        process_builder_questions(l6_questions, "L6")
+        print(f"  -> Generated {len(l6_questions)} L6 questions.")
+            
+        print(f"  -> Total Added: {len(l4_questions)} L4 + {len(l5_questions)} L5 + {len(l6_questions)} L6 questions")
 
 
     # 결과 저장 (CSV + JSON)

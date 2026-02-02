@@ -55,11 +55,13 @@
     font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 }
 
 #root {
   height: 100vh;
+  background-color: hsl(var(--background));
 }
 
 /* Custom Scrollbar */

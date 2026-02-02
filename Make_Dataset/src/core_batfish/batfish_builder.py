@@ -40,6 +40,7 @@ from .models import (
 from .batfish_base import BatfishBase, BATFISH_AVAILABLE
 from .l4_analyzer import L4AnalyzerMixin
 from .l5_analyzer import L5AnalyzerMixin
+from .l6_analyzer import L6AnalyzerMixin
 
 # Batfish 로드 (선택적)
 try:
@@ -53,7 +54,7 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 
-class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
+class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMixin):
     """
     Batfish 기반 L4/L5 문제 생성기
     
@@ -61,6 +62,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
     - BatfishBase: 초기화, 스냅샷 관리, 기본 쿼리
     - L4AnalyzerMixin: 도달성 분석 (Traceroute, ACL, Loop 등)
     - L5AnalyzerMixin: What-If 분석 (Link Failure, RCA 등)
+    - L6AnalyzerMixin: Diagnostic 분석 (Fault Injection, 역추론)
     """
 
     def __init__(self, network_name: str, snapshot_path: str, policies_path: str = None, batfish_host: str = "localhost"):
@@ -858,11 +860,73 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
         
         return questions
     
+    def generate_l6_questions(self) -> List[Dict[str, Any]]:
+        """L6 레벨 진단형(Diagnostic) 문제 생성
+        
+        5가지 진단 유형을 모두 호출하여 문제 생성:
+        1. Link Failure Diagnostic (링크 장애)
+        2. Node Failure Diagnostic (노드 장애)
+        3. BGP Mismatch Diagnostic (BGP 세션 호환성)
+        4. OSPF Mismatch Diagnostic (OSPF 인접 호환성)
+        5. ACL Block Diagnostic (ACL 차단)
+        """
+        questions = []
+        
+        if not self._initialized:
+            logger.warning("Batfish not initialized. Skipping L6 question generation.")
+            return questions
+            
+        logger.info("Generating L6 Diagnostic QA...")
+        
+        # 1. Link Failure Diagnostic
+        try:
+            link_questions = self.generate_diagnostic_qa_link(count=20)
+            questions.extend(link_questions)
+            logger.info(f"  - Link Failure: {len(link_questions)} questions")
+        except Exception as e:
+            logger.error(f"L6 Link Failure QA generation failed: {e}")
+        
+        # 2. Node Failure Diagnostic
+        try:
+            node_questions = self.generate_diagnostic_qa_node(count=10)
+            questions.extend(node_questions)
+            logger.info(f"  - Node Failure: {len(node_questions)} questions")
+        except Exception as e:
+            logger.error(f"L6 Node Failure QA generation failed: {e}")
+        
+        # 3. BGP Mismatch Diagnostic
+        try:
+            bgp_questions = self.generate_diagnostic_qa_bgp_mismatch(count=10)
+            questions.extend(bgp_questions)
+            logger.info(f"  - BGP Mismatch: {len(bgp_questions)} questions")
+        except Exception as e:
+            logger.error(f"L6 BGP Mismatch QA generation failed: {e}")
+        
+        # 4. OSPF Mismatch Diagnostic
+        try:
+            ospf_questions = self.generate_diagnostic_qa_ospf_mismatch(count=10)
+            questions.extend(ospf_questions)
+            logger.info(f"  - OSPF Mismatch: {len(ospf_questions)} questions")
+        except Exception as e:
+            logger.error(f"L6 OSPF Mismatch QA generation failed: {e}")
+        
+        # 5. ACL Block Diagnostic
+        try:
+            acl_questions = self.generate_diagnostic_qa_acl_block(count=10)
+            questions.extend(acl_questions)
+            logger.info(f"  - ACL Block: {len(acl_questions)} questions")
+        except Exception as e:
+            logger.error(f"L6 ACL Block QA generation failed: {e}")
+            
+        logger.info(f"Generated {len(questions)} L6 Diagnostic questions total.")
+        return questions
+    
     def generate_all_questions(self) -> Dict[str, List[Dict[str, Any]]]:
-        """모든 L4/L5 문제 생성"""
+        """모든 L4/L5/L6 문제 생성"""
         return {
             "Reachability_Analysis": self.generate_l4_questions(),
-            "What_If_Analysis": self.generate_l5_questions()
+            "What_If_Analysis": self.generate_l5_questions(),
+            "Diagnostic_Troubleshooting": self.generate_l6_questions()
         }
 
 

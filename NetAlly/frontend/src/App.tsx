@@ -2,8 +2,10 @@ import { useState, useEffect, useRef } from 'react'
 import { ReactFlowProvider } from '@xyflow/react'
 import Header from './components/Header'
 import TopologyPanel from './components/TopologyPanel'
+import DashboardPanel from './components/DashboardPanel'
 import ChatPanel from './components/ChatPanel'
 import EvidencePanel from './components/EvidencePanel'
+import DeviceDetailPanel from './components/DeviceDetailPanel'
 import { DeviceInspectorContent, EvidenceInspectorContent } from './components/InspectorPanels'
 import { useAppStore } from './store'
 
@@ -14,20 +16,24 @@ function App() {
     closeDetail, 
     theme, 
     chatWidth, 
-    setChatWidth 
+    setChatWidth,
+    viewMode,
+    setViewMode
   } = useAppStore((state) => ({
     selectedNode: state.selectedNode,
     detailView: state.detailView,
     closeDetail: state.closeDetail,
     theme: state.theme,
     chatWidth: state.chatWidth,
-    setChatWidth: state.setChatWidth
+    setChatWidth: state.setChatWidth,
+    viewMode: state.viewMode,
+    setViewMode: state.setViewMode
   }))
 
   const [localShowEvidence, setLocalShowEvidence] = useState(true)
   const isResizing = useRef(false)
 
-  // Apply theme on mount
+  // Ensure theme class is consistent with store on mount
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark')
   }, [theme])
@@ -56,13 +62,33 @@ function App() {
 
   return (
     <ReactFlowProvider>
-      <div className={`flex flex-col h-screen bg-background text-foreground transition-colors duration-300 font-sans`}>
+      <div className={`flex flex-col h-screen bg-background text-foreground transition-colors duration-300 font-sans overflow-hidden selection:bg-blue-500/30`}>
         <Header />
 
         <main className="flex-1 flex overflow-hidden relative">
-          {/* Left: Viewport (Topology) */}
-          <div className="flex-1 relative overflow-hidden bg-background">
-            <TopologyPanel />
+          {/* Main View Area (Topology or Dashboard) */}
+          <div className="flex-1 relative flex flex-col min-w-0">
+            {viewMode === 'dashboard' ? <DashboardPanel /> : <TopologyPanel />}
+
+            {/* View Mode Toggle Switch */}
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 flex bg-card/80 backdrop-blur-md border border-border p-1 rounded-full shadow-lg z-10">
+              <button 
+                onClick={() => setViewMode('dashboard')}
+                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-2 ${
+                  viewMode === 'dashboard' ? 'bg-blue-500 text-white shadow-sm' : 'hover:bg-muted text-muted-foreground'
+                }`}
+              >
+                Dashboard
+              </button>
+              <button 
+                onClick={() => setViewMode('topology')}
+                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-2 ${
+                  viewMode === 'topology' ? 'bg-blue-500 text-white shadow-sm' : 'hover:bg-muted text-muted-foreground'
+                }`}
+              >
+                Map View
+              </button>
+            </div>
             
             {/* Overlay Evidence Dashboard (Toggleable) */}
             {localShowEvidence && (
@@ -131,6 +157,9 @@ function App() {
             <ChatPanel selectedNode={selectedNode} />
           </div>
         </main>
+        
+        {/* Device Detail Panel (slides in from right) */}
+        <DeviceDetailPanel />
       </div>
     </ReactFlowProvider>
   )

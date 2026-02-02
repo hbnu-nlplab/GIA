@@ -484,7 +484,7 @@ class PnetlabClient:
             topology: get_session_topology()의 결과
             
         Returns:
-            노드 정보 리스트
+            노드 정보 리스트 (위치, 인터페이스 정보 포함)
         """
         nodes = []
         
@@ -512,6 +512,9 @@ class PnetlabClient:
                             except (ValueError, IndexError):
                                 logger.debug(f"Failed to parse telnet port from URL: {url}")
                         
+                        # 인터페이스 정보 추출
+                        ethernets = node_info.get("ethernets", {})
+                        
                         nodes.append({
                             "id": node_id,
                             "name": node_info.get("name", f"node_{node_id}"),
@@ -520,7 +523,12 @@ class PnetlabClient:
                             "status": node_info.get("status", "unknown"),
                             "console": node_info.get("console", ""),
                             "url": url,
-                            "telnet_port": telnet_port
+                            "telnet_port": telnet_port,
+                            # 위치 정보 추가
+                            "left": node_info.get("left", 0),
+                            "top": node_info.get("top", 0),
+                            # 인터페이스 연결 정보 추가
+                            "ethernets": ethernets
                         })
             
             logger.info(f"Extracted {len(nodes)} nodes from topology")
@@ -529,6 +537,109 @@ class PnetlabClient:
             logger.error(f"Error extracting nodes: {e}")
         
         return nodes
+    
+    def get_layer1_topology(self, topology: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """
+        PNETLab 토폴로지에서 Layer1 연결 정보를 Batfish 형식으로 추출합니다.
+        
+        Returns:
+            {
+                "nodes": [{"hostname": "...", "left": x, "top": y, ...}, ...],
+                "edges": [{"node1": {...}, "node2": {...}}, ...]
+            }
+        """
+        if topology is None:
+            topology = self.get_session_topology()
+            if "error" in topology:
+                return {"error": topology.get("error"), "nodes": [], "edges": []}
+        
+        nodes = self.get_nodes_from_topology(topology)
+        
+        # network_id별로 연결된 인터페이스 수집
+        # {network_id: [(node_name, iface_id, iface_name), ...]}
+        network_connections: Dict[str, List[tuple]] = {}
+        
+        for node in nodes:
+            node_name = node.get("name", "").lower()
+            ethernets = node.get("ethernets", {})
+            
+            if isinstance(ethernets, dict):
+                for iface_id, iface_info in ethernets.items():
+                    if isinstance(iface_info, dict):
+                        network_id = iface_info.get("network_id")
+                        iface_name = iface_info.get("name", f"GigabitEthernet0/{iface_id}")
+                        
+                        # network_id가 있고 0이 아닌 경우 (연결됨)
+                        if network_id and str(network_id) != "0":
+                            net_key = str(network_id)
+                            if net_key not in network_connections:
+                                network_connections[net_key] = []
+                            network_connections[net_key].append((node_name, iface_id, iface_name))
+        
+        # 같은 network_id 공유하는 인터페이스 쌍을 edge로 변환
+        edges = []
+        for net_id, connections in network_connections.items():
+            # 2개 인터페이스가 같은 네트워크에 연결 = 직접 연결
+            if len(connections) == 2:
+                n1, iface1_id, iface1_name = connections[0]
+                n2, iface2_id, iface2_name = connections[1]
+                edges.append({
+                    "node1": {
+                        "hostname": n1,
+                        "interfaceName": iface1_name
+                    },
+                    "node2": {
+                        "hostname": n2,
+                        "interfaceName": iface2_name
+                    }
+                })
+            elif len(connections) > 2:
+                # 3개 이상 = broadcast network (모든 쌍 연결)
+                logger.debug(f"Broadcast network {net_id} with {len(connections)} connections")
+        
+        # 노드 정보 (위치 포함)
+        node_list = [{
+            "hostname": n.get("name", "").lower(),
+            "left": n.get("left", 0),
+            "top": n.get("top", 0),
+            "type": n.get("type", "unknown"),
+            "template": n.get("template", ""),
+            "status": n.get("status", "unknown")
+        } for n in nodes]
+        
+        logger.info(f"Extracted Layer1 topology: {len(node_list)} nodes, {len(edges)} edges")
+        
+        return {
+            "nodes": node_list,
+            "edges": edges
+        }
+    
+    def export_layer1_topology_json(self, output_path: str = None) -> Dict[str, Any]:
+        """
+        Layer1 토폴로지를 Batfish 형식의 JSON 파일로 내보냅니다.
+        
+        Args:
+            output_path: 저장할 파일 경로 (None이면 파일 저장 안 함)
+            
+        Returns:
+            Batfish layer1_topology.json 형식
+        """
+        import json
+        
+        l1_topo = self.get_layer1_topology()
+        
+        # Batfish 형식으로 변환
+        batfish_format = {
+            "edges": l1_topo.get("edges", [])
+        }
+        
+        if output_path:
+            with open(output_path, 'w') as f:
+                json.dump(batfish_format, f, indent=2)
+            logger.info(f"Layer1 topology exported to {output_path}")
+        
+        return batfish_format
+
 
     def get_console_link(self, node_id: int, index: int = 1) -> Dict[str, Any]:
         """

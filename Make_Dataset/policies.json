@@ -586,14 +586,20 @@
             "logic_ref": "map(device.local_as)"
         },
         "min_interface_device": {
-            "level": "L3",
-            "category": "Comparison_Analysis",
-            "answer_type": "text",
             "template": "인터페이스 수가 가장 적은 장비와 그 개수를 알려주세요. [답변 형식: '장비명: N개']",
             "description": "전체 네트워크에서 가장 적은 수의 인터페이스를 보유한 '최소 규모' 장비를 식별합니다. 이는 엣지(Edge) 라우터, 브랜치 사이트 장비, 또는 아직 설정 작업이 완료되지 않은 장비를 찾는 데 사용됩니다. 예상보다 인터페이스가 적다면 설정 누락이나 하드웨어 문제를 의심할 수 있습니다. 반대로 의도적으로 최소 구성인지 확인하여 네트워크 설계의 적절성을 검증합니다.",
-            "verification": "검증 방법: 1) 모든 장비의 인터페이스 수를 집계하여 그중 최솟값을 찾습니다. 2) 해당 장비명과 개수를 '장비명: N개' 형식으로 반환합니다.",
-            "logic_ref": "min(device.interfaces.count)"
+            "verification": "검증 방법: 1) 모든 장비를 하나씩 돌아가며 Fork Snapshot 생성. 2) Blast Radius 측정. 3) 가장 영향 큰 장비 도출.",
+            "logic_ref": "max(node_failure_impact(n).count)"
         },
+        "diagnostic_link_failure": {
+            "level": "L6",
+            "category": "Diagnostic_Troubleshooting",
+            "answer_type": "text",
+            "template": "**네트워크 장애 신고**: 사용자 '{src}'에서 목적지 '{dst}'(IP: {dst_ip})로의 통신이 갑자기 중단되었습니다.\n현재 상태에서 Traceroute 결과는 '{disposition}'입니다.\n\n**질문**: 이 장애의 근본 원인(Root Cause)이 되는 링크(장비 A - 장비 B)를 진단하십시오.\n[답변 형식: '장비A - 장비B' (예: Core1 - Spine2)]",
+            "description": "운영 중인 네트워크에 가상의 링크 장애(Fault Injection)를 주입한 후, 발생하는 증상(Symptom)만을 제시하여 에이전트의 장애 진단(Troubleshooting) 능력을 평가합니다. 에이전트는 제한된 가시성(Show command 등)을 통해 원인을 추론해야 합니다.",
+            "verification": "검증 방법: 1) 정상 상태 흐름 확인. 2) 임의의 링크를 Down 시키는 Fork Snapshot 생성. 3) 해당 흐름이 차단되는지 확인(Symptom Verification). 4) 차단된 구간을 정답으로 설정.",
+            "logic_ref": "batfish.fork_snapshot(link_down).diagnose()"
+         },
         "bgp_as_distribution": {
             "level": "L3",
             "category": "Comparison_Analysis",

@@ -1,0 +1,144 @@
+{
+  "edges": [
+    {
+      "node1": {
+        "hostname": "pe1",
+        "interfaceName": "GigabitEthernet0/0"
+      },
+      "node2": {
+        "hostname": "p1",
+        "interfaceName": "GigabitEthernet0/0"
+      }
+    },
+    {
+      "node1": {
+        "hostname": "pe1",
+        "interfaceName": "GigabitEthernet0/1"
+      },
+      "node2": {
+        "hostname": "leaf1",
+        "interfaceName": "GigabitEthernet0/0"
+      }
+    },
+    {
+      "node1": {
+        "hostname": "pe1",
+        "interfaceName": "GigabitEthernet0/2"
+      },
+      "node2": {
+        "hostname": "leaf2",
+        "interfaceName": "GigabitEthernet0/0"
+      }
+    },
+    {
+      "node1": {
+        "hostname": "pe2",
+        "interfaceName": "GigabitEthernet0/0"
+      },
+      "node2": {
+        "hostname": "p2",
+        "interfaceName": "GigabitEthernet0/0"
+      }
+    },
+    {
+      "node1": {
+        "hostname": "pe2",
+        "interfaceName": "GigabitEthernet0/1"
+      },
+      "node2": {
+        "hostname": "leaf3",
+        "interfaceName": "GigabitEthernet0/0"
+      }
+    },
+    {
+      "node1": {
+        "hostname": "pe2",
+        "interfaceName": "GigabitEthernet0/2"
+      },
+      "node2": {
+        "hostname": "leaf4",
+        "interfaceName": "GigabitEthernet0/0"
+      }
+    },
+    {
+      "node1": {
+        "hostname": "p1",
+        "interfaceName": "GigabitEthernet0/1"
+      },
+      "node2": {
+        "hostname": "p2",
+        "interfaceName": "GigabitEthernet0/1"
+      }
+    },
+    {
+      "node1": {
+        "hostname": "p1",
+        "interfaceName": "GigabitEthernet0/2"
+      },
+      "node2": {
+        "hostname": "p3",
+        "interfaceName": "GigabitEthernet0/2"
+      }
+    },
+    {
+      "node1": {
+        "hostname": "p2",
+        "interfaceName": "GigabitEthernet0/2"
+      },
+      "node2": {
+        "hostname": "p4",
+        "interfaceName": "GigabitEthernet0/2"
+      }
+    },
+    {
+      "node1": {
+        "hostname": "p3",
+        "interfaceName": "GigabitEthernet0/3"
+      },
+      "node2": {
+        "hostname": "p4",
+        "interfaceName": "GigabitEthernet0/3"
+      }
+    },
+    {
+      "node1": {
+        "hostname": "leaf1",
+        "interfaceName": "GigabitEthernet0/3"
+      },
+      "node2": {
+        "hostname": "leaf2",
+        "interfaceName": "GigabitEthernet0/3"
+      }
+    },
+    {
+      "node1": {
+        "hostname": "leaf1",
+        "interfaceName": "GigabitEthernet0/2"
+      },
+      "node2": {
+        "hostname": "leaf3",
+        "interfaceName": "GigabitEthernet0/2"
+      }
+    },
+    {
+      "node1": {
+        "hostname": "leaf2",
+        "interfaceName": "GigabitEthernet0/2"
+      },
+      "node2": {
+        "hostname": "leaf4",
+        "interfaceName": "GigabitEthernet0/2"
+      }
+    },
+    {
+      "node1": {
+        "hostname": "leaf3",
+        "interfaceName": "GigabitEthernet0/3"
+      },
+      "node2": {
+        "hostname": "leaf4",
+        "interfaceName": "GigabitEthernet0/3"
+      }
+    }
+  ]
+}
