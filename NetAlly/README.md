@@ -156,7 +156,9 @@ npm run dev
 | `/api/topology`           | GET    | Batfish L3 토폴로지 (노드/엣지)      |
 | `/api/dashboard/summary`  | GET    | 네트워크 건강 상태 요약 **(NEW!)**   |
 | `/api/device/{device_id}` | GET    | 장비 상세 정보 (설정, 라우팅 테이블) |
-| `/health`                 | GET    | 서비스 헬스 체크                     |
+| `/api/health`             | GET    | 서비스 헬스 체크                     |
+| `/api/lab/refresh`        | POST   | 신규 장비 부트스트랩 (Refresh 버튼)  |
+| `/api/lab/prepare`        | POST   | Batfish 준비/초기화                  |
 
 ### Dashboard Summary 응답 예시
 
@@ -194,19 +196,46 @@ npm run dev
 # LLM Provider
 OPENAI_API_KEY=sk-...              # OpenAI API 키
 OPENAI_MODEL=gpt-4o-mini           # 사용할 모델
+VLLM_BASE_URL=http://localhost:8000/v1
 
 # Batfish
 BATFISH_HOST=localhost             # Batfish 서비스 호스트
+BATFISH_SNAPSHOT=default           # 기본 스냅샷 이름
+BATFISH_NETWORK=default            # Alias
+BATFISH_EXPORT_DIR=./snapshot      # NSO 설정 export 경로
+USE_RESTCONF_EXPORT=false          # NSO CLI export 실패 시 RESTCONF fallback
 
 # NSO (선택)
 NSO_BASE_URL=http://localhost:8080 # NSO RESTCONF URL
 NSO_USERNAME=admin
 NSO_PASSWORD=admin
+# Alias (optional)
+NSO_USER=admin
+NSO_PASS=admin
+# Auto-discovery (optional)
+PNETLAB_NSO_NODE=NSO
+NSO_SCHEME=http
+NSO_PORT=8080
+NSO_RESTCONF_PATH=/restconf
 
 # PNETLab (선택)
 PNETLAB_URL=http://pnetlab.local
-PNETLAB_USERNAME=admin
-PNETLAB_PASSWORD=pnet
+PNETLAB_COOKIES=token=...; _session=...; XSRF-TOKEN=...
+PNETLAB_DEVICE_INFO=Data/Pnetlab/Research_Institute_Internal_DC/device_info.json
+PNETLAB_DEVICE_INFO_AUTOGEN=true
+PNETLAB_VM_IP=
+PNETLAB_GATEWAY_IP=
+PNETLAB_DOMAIN_NAME=lab.local
+PNETLAB_ADMIN_PASSWORD=admin
+PNETLAB_ENABLE_PASSWORD=
+PNETLAB_OOB_INTF=
+PNETLAB_DEVICE_GROUP=
+NSO_AUTHGROUP=default
+NSO_NED_ID=cisco-ios-cli-6.110
+
+# Demo Automation (Optional)
+AUTO_PREPARE_ON_CHAT=false         # 채팅 요청 시 Batfish 준비 자동 수행
+AUTO_INIT_BATFISH=false            # 준비 실패 시 Batfish init 자동 수행
 ```
 
 ---

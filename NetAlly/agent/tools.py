@@ -1,5 +1,6 @@
 import os
 import json
+import asyncio
 from typing import Dict, Any, List, Optional, Literal
 from langchain_core.tools import tool
 from dotenv import load_dotenv
@@ -8,6 +9,15 @@ from dotenv import load_dotenv
 from agent.clients.nso import NSOClient
 from agent.clients.batfish import BatfishClient
 from agent.clients.pnetlab import PnetlabClient
+from agent.onboarding import (
+    load_device_info,
+    ensure_device_info,
+    generate_device_info_from_pnetlab,
+    parse_config,
+    enable_ssh_all,
+    check_connectivity,
+    register_devices_nso,
+)
 
 load_dotenv()
 
@@ -23,10 +33,17 @@ _pnetlab_client: Optional[PnetlabClient] = None
 def get_nso_client() -> NSOClient:
     global _nso_client
     if not _nso_client:
+        base_url = os.getenv("NSO_BASE_URL")
+        if not base_url:
+            base_url = _discover_nso_base_url()
+        if base_url:
+            print(f"[lab_bootstrap] NSO base_url resolved: {base_url}")
+        if not base_url:
+            base_url = "http://localhost:8080/restconf"
         _nso_client = NSOClient(
-            base_url=os.getenv("NSO_BASE_URL", "http://localhost:8080/restconf"),
-            username=os.getenv("NSO_USERNAME", "admin"),
-            password=os.getenv("NSO_PASSWORD", "admin")
+            base_url=base_url,
+            username=os.getenv("NSO_USERNAME") or os.getenv("NSO_USER", "admin"),
+            password=os.getenv("NSO_PASSWORD") or os.getenv("NSO_PASS", "admin")
         )
     return _nso_client
 
@@ -42,9 +59,33 @@ def get_pnetlab_client() -> PnetlabClient:
     global _pnetlab_client
     if not _pnetlab_client:
         _pnetlab_client = PnetlabClient(
-            base_url=os.getenv("PNETLAB_URL", "http://localhost"),
+            base_url=os.getenv("PNETLAB_URL") or os.getenv("PNETLAB_HOST", "http://localhost"),
         )
     return _pnetlab_client
+
+
+def _discover_nso_base_url() -> Optional[str]:
+    """
+    PNETLab API에서 NSO 노드의 관리 IP를 찾아 RESTCONF URL을 생성합니다.
+    필요 환경변수:
+      - PNETLAB_NSO_NODE (default: NSO)
+      - NSO_SCHEME (default: http)
+      - NSO_PORT (default: 8080)
+      - NSO_RESTCONF_PATH (default: /restconf)
+    """
+    try:
+        node_name = os.getenv("PNETLAB_NSO_NODE", "NSO")
+        scheme = os.getenv("NSO_SCHEME", "http")
+        port = os.getenv("NSO_PORT", "8080")
+        path = os.getenv("NSO_RESTCONF_PATH", "/restconf").lstrip("/")
+        pnetlab = get_pnetlab_client()
+        ip = pnetlab.get_node_ip_by_name(node_name)
+        print(f"[lab_bootstrap] discover_nso: node={node_name} ip={ip}")
+        if not ip:
+            return None
+        return f"{scheme}://{ip}:{port}/{path}"
+    except Exception:
+        return None
 
 
 # =============================================================================
@@ -251,23 +292,106 @@ def lab_manage(
     """
     try:
         pnetlab = get_pnetlab_client()
+        nso = get_nso_client()
         params = params or {}
         
         if action == "show_inventory":
-            return pnetlab.get_nodes()
+            topology = pnetlab.get_session_topology()
+            if "error" in topology:
+                return topology
+            return {
+                "nodes": pnetlab.get_nodes_from_topology(topology),
+                "lab": {
+                    "name": topology.get("name"),
+                    "path": topology.get("path"),
+                },
+            }
             
         elif action == "get_status":
             device = params.get("device")
-            if not device: return {"error": "device required"}
-            return pnetlab.get_node_status(device)
+            status = pnetlab.get_nodes_status()
+            if "error" in status:
+                return status
+            if not device:
+                return status
+            # filter by device name if possible
+            nodes = status.get("data", {}).get("nodes", {})
+            for node_id, info in nodes.items():
+                if str(info.get("name", "")).lower() == str(device).lower():
+                    return {"node_id": node_id, "status": info}
+            return {"error": f"device not found in status: {device}"}
+            
+        elif action == "export_configs":
+            output_dir = params.get("output_dir", "./snapshot")
+            export_xml = bool(params.get("export_xml", True))
+            export_yang = bool(params.get("export_yang_json", True))
+            devices = params.get("devices")
+            return nso.export_batfish_configs(
+                devices=devices,
+                output_dir=output_dir,
+                export_xml=export_xml,
+                export_yang_json=export_yang,
+            )
             
         elif action == "init_batfish":
-            # 1. Export configs from NSO/PNETLab
-            # 2. Init Batfish snapshot
             bf = get_batfish_client()
-            snapshot_path = params.get("snapshot_path", "./snapshot")
-            bf.init_snapshot(snapshot_path)
-            return {"status": "Batfish initialized", "snapshot": snapshot_path}
+            topology_name = (
+                params.get("topology_name")
+                or os.getenv("BATFISH_SNAPSHOT")
+                or os.getenv("BATFISH_NETWORK")
+                or "default"
+            )
+            output_dir = params.get("output_dir", "./snapshot")
+            devices = params.get("devices")
+            use_restconf = bool(params.get("use_restconf", False))
+            
+            export_result = nso.export_batfish_configs(
+                devices=devices,
+                output_dir=output_dir,
+                export_xml=False,
+                export_yang_json=False,
+            )
+            if "error" in export_result and use_restconf:
+                device_names = devices or nso.get_devices()
+                if not device_names:
+                    return {"error": "No devices found for RESTCONF export"}
+                
+                configs = {}
+                for name in device_names:
+                    cfg = nso.get_native_config(name)
+                    if cfg:
+                        configs[name] = cfg
+                if not configs:
+                    return {"error": "RESTCONF export returned empty configs"}
+                
+                return bf.init_snapshot(
+                    topology_name=topology_name,
+                    configs=configs,
+                    device_info={
+                        "source": "NSO_RESTCONF",
+                        "topology": topology_name,
+                    },
+                )
+            elif "error" in export_result:
+                return export_result
+            
+            configs_dir = export_result.get("configs_dir")
+            if not configs_dir:
+                return {"error": "configs_dir missing from export result"}
+            
+            from pathlib import Path
+            cfg_files = list(Path(configs_dir).glob("*.cfg"))
+            if not cfg_files:
+                return {"error": f"No .cfg files found in {configs_dir}"}
+            
+            return bf.init_snapshot(
+                topology_name=topology_name,
+                configs=[str(p) for p in cfg_files],
+                device_info={
+                    "source": "NSO",
+                    "topology": topology_name,
+                },
+            )
             
         return {"error": f"Action {action} not implemented"}
         
@@ -283,6 +407,7 @@ def lab_manage(
 def scan_and_sync(
     action: Literal["scan", "sync", "scan_and_sync"],
     auto_onboard: bool = False,
+    auto_remove: bool = False,
     oob_ip: str = "localhost",
     protocol: str = "telnet"
 ) -> Dict[str, Any]:
@@ -292,6 +417,7 @@ def scan_and_sync(
     Args:
         action: "scan" (비교만), "sync" (누락 장비 등록), "scan_and_sync" (둘 다)
         auto_onboard: True면 누락 장비 자동 등록 (action이 "sync" 또는 "scan_and_sync"일 때)
+        auto_remove: True면 PNETLab에 없는 NSO 장비 자동 삭제
         oob_ip: OOB IP 주소 (기본: "localhost")
         protocol: 연결 프로토콜 ("telnet" 또는 "ssh")
     
@@ -308,6 +434,9 @@ def scan_and_sync(
             "nso_devices": [],
             "missing": [],
             "already_registered": [],
+            "removed": [],
+            "deleted": [],
+            "delete_failed": [],
             "onboarded": [],
             "failed": []
         }
@@ -318,6 +447,7 @@ def scan_and_sync(
             return {"error": f"PNETLab API error: {topology.get('error')}"}
         
         pnetlab_nodes = pnetlab.get_nodes_from_topology(topology)
+        pnetlab_name_set = set(node.get("name", "").lower() for node in pnetlab_nodes)
         
         # 실행 중인 노드만 필터링 (status == 2 means running)
         running_nodes = [
@@ -344,6 +474,10 @@ def scan_and_sync(
                 result["already_registered"].append(node_name)
             else:
                 result["missing"].append(node)
+
+        # 3-b. NSO에는 있으나 PNETLab에 없는 장비
+        removed = [d for d in nso_devices if d.lower() not in pnetlab_name_set]
+        result["removed"] = removed
         
         # 4. Sync (auto_onboard가 True이고 action이 sync 또는 scan_and_sync인 경우)
         if action in ["sync", "scan_and_sync"] and auto_onboard and result["missing"]:
@@ -374,6 +508,14 @@ def scan_and_sync(
                         "error": onboard_result.get("error", "Unknown error"),
                         "steps": onboard_result.get("steps", [])
                     })
+
+        # 5. Remove (auto_remove가 True이고 action이 sync 또는 scan_and_sync인 경우)
+        if action in ["sync", "scan_and_sync"] and auto_remove and result["removed"]:
+            for device_name in result["removed"]:
+                if nso.delete_device(device_name):
+                    result["deleted"].append(device_name)
+                else:
+                    result["delete_failed"].append(device_name)
         
         return result
         
@@ -418,6 +560,180 @@ def check_logs(
 
 
 # =============================================================================
+# 6. lab_bootstrap (PNETLab -> SSH -> NSO)
+# =============================================================================
+
+@tool
+def lab_bootstrap(
+    action: Literal[
+        "enable_ssh",
+        "register_nso",
+        "check_connectivity",
+        "sync_from",
+        "detect_changes",
+        "sync_changed",
+        "diff_report",
+        "generate_device_info",
+        "refresh_onboard",
+        "full",
+        "discover_nso"
+    ],
+    params: Optional[Dict[str, Any]] = None
+) -> Dict[str, Any]:
+    """
+    [Bootstrap] PNETLab 장비 초기화 파이프라인.
+    
+    Args:
+        action: "enable_ssh", "register_nso", "check_connectivity", "full"
+        params:
+            - config_path: device_info.json 경로 (기본: PNETLAB_DEVICE_INFO env)
+            - device: 특정 장비 이름 (check_connectivity에서 선택)
+    """
+    try:
+        params = params or {}
+        config_path = params.get("config_path") or os.getenv(
+            "PNETLAB_DEVICE_INFO",
+            "Data/Pnetlab/Research_Institute_Internal_DC/device_info.json"
+        )
+        pnetlab = get_pnetlab_client()
+        overrides = params.get("overrides") if params else None
+        cfg = ensure_device_info(config_path, pnetlab, overrides=overrides)
+        gs, devices = parse_config(cfg)
+        device_filter = params.get("devices")
+        if device_filter:
+            device_set = set(str(d).lower() for d in device_filter)
+            devices = [d for d in devices if d.name.lower() in device_set]
+            if not devices:
+                return {"error": "No matching devices for filter", "devices": device_filter}
+        
+        if action == "enable_ssh":
+            results = asyncio.run(enable_ssh_all(gs, devices))
+            return {"status": "completed", "results": results}
+        
+        if action == "check_connectivity":
+            target_name = params.get("device")
+            target = None
+            for dev in devices:
+                if not target_name or dev.name.lower() == str(target_name).lower():
+                    target = dev
+                    break
+            if not target:
+                return {"error": f"device not found: {target_name}"}
+            ok = asyncio.run(check_connectivity(gs, target))
+            return {"device": target.name, "reachable": ok}
+        
+        if action == "register_nso":
+            nso = get_nso_client()
+            result = register_devices_nso(gs, devices, nso)
+            return {"status": "completed", **result}
+
+        if action == "sync_from":
+            nso = get_nso_client()
+            synced = []
+            failed = []
+            for dev in devices:
+                if nso.sync_from(dev.name):
+                    synced.append(dev.name)
+                else:
+                    failed.append(dev.name)
+            return {"status": "completed", "synced": synced, "failed": failed}
+
+        if action == "detect_changes":
+            nso = get_nso_client()
+            in_sync = []
+            out_of_sync = []
+            for dev in devices:
+                if nso.check_sync(dev.name):
+                    in_sync.append(dev.name)
+                else:
+                    out_of_sync.append(dev.name)
+            return {
+                "status": "completed",
+                "in_sync": in_sync,
+                "out_of_sync": out_of_sync,
+            }
+
+        if action == "sync_changed":
+            nso = get_nso_client()
+            changed = []
+            synced = []
+            failed = []
+            for dev in devices:
+                if nso.check_sync(dev.name):
+                    continue
+                changed.append(dev.name)
+                if nso.sync_from(dev.name):
+                    synced.append(dev.name)
+                else:
+                    failed.append(dev.name)
+            return {
+                "status": "completed",
+                "changed": changed,
+                "synced": synced,
+                "failed": failed,
+            }
+
+        if action == "diff_report":
+            # 1) 신규/삭제 감지 (PNETLab vs NSO)
+            diff = scan_and_sync(
+                action="scan",
+                auto_onboard=False,
+                auto_remove=False,
+            )
+            # 2) 변경 감지 (NSO check-sync)
+            change = lab_bootstrap(
+                action="detect_changes",
+                params={"config_path": config_path, "devices": [d.name for d in devices]},
+            )
+            return {
+                "status": "completed",
+                "new_devices": diff.get("missing", []),
+                "removed_devices": diff.get("removed", []),
+                "out_of_sync": change.get("out_of_sync", []),
+                "in_sync": change.get("in_sync", []),
+            }
+        
+        if action == "full":
+            ssh_result = asyncio.run(enable_ssh_all(gs, devices))
+            nso = get_nso_client()
+            reg_result = register_devices_nso(gs, devices, nso)
+            return {"status": "completed", "ssh": ssh_result, "nso": reg_result}
+
+        if action == "discover_nso":
+            node_name = params.get("node_name") if params else None
+            node_name = node_name or os.getenv("PNETLAB_NSO_NODE", "NSO")
+            ip = pnetlab.get_node_ip_by_name(node_name)
+            return {"node_name": node_name, "ip": ip}
+
+        if action == "generate_device_info":
+            payload = generate_device_info_from_pnetlab(pnetlab, config_path, overrides=overrides)
+            return {"status": "completed", "path": config_path, "devices": len(payload.get("devices", []))}
+
+        if action == "refresh_onboard":
+            diff = scan_and_sync(
+                action="scan",
+                auto_onboard=False,
+                auto_remove=False,
+            )
+            missing = diff.get("missing", [])
+            missing_names = [n.get("name") for n in missing if n.get("name")]
+            if not missing_names:
+                return {"status": "completed", "message": "No new devices", "missing": []}
+
+            filtered = [d for d in devices if d.name in set(missing_names)]
+            if not filtered:
+                return {"status": "completed", "message": "No matching devices in device_info", "missing": missing_names}
+            ssh_result = asyncio.run(enable_ssh_all(gs, filtered))
+            nso = get_nso_client()
+            reg_result = register_devices_nso(gs, filtered, nso)
+            return {"status": "completed", "missing": missing_names, "ssh": ssh_result, "nso": reg_result}
+        
+        return {"error": f"Action {action} not implemented"}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+# =============================================================================
 # Tool List (for LangGraph)
 # =============================================================================
 
@@ -429,6 +745,7 @@ def get_tools() -> List:
         lab_manage,
         scan_and_sync,
         check_logs,
+        lab_bootstrap,
     ]
 
 

@@ -39,6 +39,12 @@ interface AppState {
   settings: {
     showTopologyLabels: boolean
     autoOnboard: boolean
+    oobIntf: string
+    deviceGroup: string
+    pnetlabVmIp: string
+    gatewayIp: string
+    nsoAuthgroup: string
+    nsoNedId: string
   }
   updateSettings: (settings: Partial<AppState['settings']>) => void
 
@@ -49,6 +55,14 @@ interface AppState {
   // Topology Source Selection
   topologySource: 'batfish' | 'pnetlab'
   setTopologySource: (source: 'batfish' | 'pnetlab') => void
+
+  // Lab Operations Status
+  labPrepareStatus: string | null
+  labPrepareDetail: any | null
+  setLabPrepare: (status: string | null, detail?: any) => void
+
+  labRefreshResult: any | null
+  setLabRefreshResult: (result: any | null) => void
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -99,6 +113,12 @@ export const useAppStore = create<AppState>((set) => ({
   settings: {
     showTopologyLabels: true,
     autoOnboard: false,
+    oobIntf: localStorage.getItem('lab_oob_intf') || '',
+    deviceGroup: localStorage.getItem('lab_device_group') || '',
+    pnetlabVmIp: localStorage.getItem('lab_pnetlab_vm_ip') || '',
+    gatewayIp: localStorage.getItem('lab_gateway_ip') || '',
+    nsoAuthgroup: localStorage.getItem('lab_nso_authgroup') || '',
+    nsoNedId: localStorage.getItem('lab_nso_ned_id') || '',
   },
   updateSettings: (newSettings) => set((state) => ({
     settings: { ...state.settings, ...newSettings }
@@ -112,4 +132,27 @@ export const useAppStore = create<AppState>((set) => ({
     localStorage.setItem('topologySource', source)
     set({ topologySource: source })
   },
+
+  labPrepareStatus: null,
+  labPrepareDetail: null,
+  setLabPrepare: (status, detail) => set({ labPrepareStatus: status, labPrepareDetail: detail ?? null }),
+
+  labRefreshResult: null,
+  setLabRefreshResult: (result) => set({ labRefreshResult: result }),
 }))
+
+// persist lab settings
+const persistLabSettings = (settings: AppState['settings']) => {
+  localStorage.setItem('lab_oob_intf', settings.oobIntf || '')
+  localStorage.setItem('lab_device_group', settings.deviceGroup || '')
+  localStorage.setItem('lab_pnetlab_vm_ip', settings.pnetlabVmIp || '')
+  localStorage.setItem('lab_gateway_ip', settings.gatewayIp || '')
+  localStorage.setItem('lab_nso_authgroup', settings.nsoAuthgroup || '')
+  localStorage.setItem('lab_nso_ned_id', settings.nsoNedId || '')
+}
+
+useAppStore.subscribe((state, prev) => {
+  if (state.settings !== prev.settings) {
+    persistLabSettings(state.settings)
+  }
+})

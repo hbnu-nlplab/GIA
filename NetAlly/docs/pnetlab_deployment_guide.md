@@ -53,7 +53,7 @@ docker load -i netally.tar
 
 ---
 
-## 🌐 3. 네트워크 구성
+## 🌐 3. 네트워크 구성 (권장)
 
 NetAlly가 PNETLab 내부의 다른 라우터/스위치와 통신하려면 적절한 네트워크에 연결되어야 합니다.
 
@@ -83,12 +83,18 @@ lab_bootstrap(action="register_nso")
 lab_bootstrap(action="full")
 ```
 
-> `device_info.json`은 캐시/재현을 위해 쓰는 것을 권장합니다.  
+> `device_info.json`은 **PNETLab API로 자동 생성**됩니다.  
 > 내부망 기준에서는 `oob_ip` 없이도 동작하도록 구성되어 있습니다.
+
+### 자동 생성 / Refresh 시나리오
+```
+lab_bootstrap(action="generate_device_info")
+lab_bootstrap(action="refresh_onboard")  # 신규 장비만 부트스트랩
+```
 
 ---
 
-## 🖱️ 4. 접속 및 사용
+## 🖱️ 5. 접속 및 사용
 
 ### 아이콘 더블 클릭
 설정이 정확하다면, PNETLab 토폴로지 맵에서 NetAlly 아이콘을 **더블 클릭**하는 순간 새 브라우저 탭이 열리며 NetAlly 대시보드(`http://<NODE_IP>:8000`)로 접속됩니다.
@@ -97,6 +103,17 @@ lab_bootstrap(action="full")
 만약 아이콘 클릭이 작동하지 않는다면:
 1.  PNETLab 내에서 NetAlly 노드의 IP를 확인합니다. (보통 부팅 시 콘솔 로그에 뜨거나, `Cloud0` DHCP로 할당됨)
 2.  브라우저 주소창에 `http://<PNETLAB_BOX_IP>:<MAPPED_PORT>` 또는 (PNETLab 내부망 접근 시) `http://<NODE_IP>:8000`을 직접 입력합니다.
+
+### Refresh 버튼 (부트스트랩)
+상단의 **Refresh** 버튼은 신규 장비만 자동 부트스트랩합니다.
+- 내부적으로 `lab_bootstrap(action="refresh_onboard")`가 실행됨
+- `device_info.json`이 없으면 PNETLab API로 자동 생성
+- **Settings > Bootstrap Overrides**에서 OOB 인터페이스/그룹/게이트웨이 등을 입력하면 생성 시 반영됨
+
+### Prepare 버튼 (Batfish 준비)
+상단의 **Prepare** 버튼은 Batfish 상태를 점검합니다.
+- `/api/lab/prepare` 호출
+- 상태가 `ready/loaded/initialized`면 분석 가능
 
 ---
 
@@ -112,3 +129,4 @@ lab_bootstrap(action="full")
 ### Q3. 다른 장비에 Ping이 안 나갑니다.
 *   NetAlly 노드가 올바른 vSwitch/Bridge에 연결되어 있는지 확인하세요.
 *   Docker 컨테이너 내부의 IP 설정(`ifconfig` 등)이 Lab 네트워크 대역과 일치하는지 확인해야 합니다.
+*   장비 노드도 동일한 관리망(Cloud/OOB)에 연결되어 있는지 확인하세요.

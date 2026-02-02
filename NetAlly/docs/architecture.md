@@ -81,4 +81,4 @@ NetAlly is deployed as a multi-container stack:
 - **`batfish`**: Specialized analysis engine.
 - **External NSO**: Connected via RESTCONF.
 
-See [setup.md](setup.md) for environment configuration.
+See [setup_guide.md](setup_guide.md) for environment configuration.
