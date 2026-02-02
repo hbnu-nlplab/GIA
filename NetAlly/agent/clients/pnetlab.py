@@ -218,6 +218,19 @@ class PnetlabClient:
             return {"error": f"HTTP {resp.status_code}"}
         except Exception as e: return {"error": str(e)}
 
+    def get_node_details(self, node_id: int) -> Dict[str, Any]:
+        """노드 상세 정보 조회"""
+        if not self._is_authenticated:
+            return {"error": "Not authenticated"}
+        url = f"{self.base_url}/api/labs/session/nodes/{node_id}"
+        try:
+            resp = self.session.get(url, timeout=self.timeout)
+            if resp.status_code == 200:
+                return resp.json()
+            return {"error": f"HTTP {resp.status_code}", "message": resp.text}
+        except Exception as e:
+            return {"error": str(e)}
+
     def connect_node_interface(self, node_id: int, interface_id: int, network_id: int) -> bool:
         """
         노드 인터페이스를 네트워크에 연결합니다.
@@ -524,6 +537,10 @@ class PnetlabClient:
                             "console": node_info.get("console", ""),
                             "url": url,
                             "telnet_port": telnet_port,
+                            # 일부 환경에서 IP 정보가 포함될 수 있음
+                            "ip": node_info.get("ip", ""),
+                            "mgmt_ip": node_info.get("mgmt_ip", ""),
+                            "address": node_info.get("address", ""),
                             # 위치 정보 추가
                             "left": node_info.get("left", 0),
                             "top": node_info.get("top", 0),
@@ -537,6 +554,49 @@ class PnetlabClient:
             logger.error(f"Error extracting nodes: {e}")
         
         return nodes
+
+    def get_node_ip_by_name(self, name: str) -> Optional[str]:
+        """
+        노드 이름으로 관리 IP를 추출합니다.
+        (토폴로지/상태 응답에 포함된 IP 필드를 best-effort로 사용)
+        """
+        logger.info("Looking up node IP by name: %s", name)
+        topology = self.get_session_topology()
+        if "error" in topology:
+            logger.warning("Topology lookup failed: %s", topology.get("error"))
+            return None
+        nodes = self.get_nodes_from_topology(topology)
+        for node in nodes:
+            if node.get("name", "").lower() == name.lower():
+                for key in ("mgmt_ip", "ip", "address", "ipv4", "management_ip"):
+                    val = node.get(key)
+                    if val:
+                        logger.info("IP found in topology: %s=%s", key, val)
+                        return val
+
+        status = self.get_nodes_status()
+        nodes_status = status.get("data", {}).get("nodes", {}) if isinstance(status, dict) else {}
+        for _, info in nodes_status.items():
+            if str(info.get("name", "")).lower() == name.lower():
+                for key in ("mgmt_ip", "ip", "address", "ipaddr", "ipv4", "management_ip"):
+                    val = info.get(key)
+                    if val:
+                        logger.info("IP found in nodestatus: %s=%s", key, val)
+                        return val
+
+        # 노드 ID로 상세 조회 시도
+        node_id = self.get_node_id_by_name(name)
+        if node_id is not None:
+            logger.info("Fetching node details for %s (id=%s)", name, node_id)
+            details = self.get_node_details(node_id)
+            data = details.get("data", details) if isinstance(details, dict) else {}
+            for key in ("mgmt_ip", "ip", "address", "ipaddr", "ipv4", "management_ip"):
+                val = data.get(key)
+                if val:
+                    logger.info("IP found in node details: %s=%s", key, val)
+                    return val
+        logger.warning("IP not found for node: %s", name)
+        return None
     
     def get_layer1_topology(self, topology: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
@@ -917,4 +977,3 @@ if __name__ == "__main__":
     #     print(f"❌ Topology error: {topology}")
     # else:
     #     print("❌ Login failed")
-

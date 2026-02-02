@@ -394,6 +394,7 @@ class BatfishClient:
             return []
             
         bf = self._builder.bf
+        from pybatfish.datamodel.flow import HeaderConstraints
         results = []
         
         nodes = self._builder.nodes

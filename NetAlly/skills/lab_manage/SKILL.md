@@ -18,6 +18,8 @@ PNETLab 실험실 환경을 관리합니다.
 ## 도구 사용법
 ```
 lab_manage(action="show_inventory")
-lab_manage(action="get_status", params={"device": "p1"})
-lab_manage(action="export_configs")
+lab_manage(action="get_status")  # 전체 상태
+lab_manage(action="get_status", params={"device": "p1"})  # 특정 장비
+lab_manage(action="export_configs", params={"output_dir": "./snapshot"})
+lab_manage(action="init_batfish", params={"topology_name": "lab1"})
 ```

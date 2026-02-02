@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """
 Batfish 초기화 스크립트
-Research_Institute_Internal_DC 설정 파일로 Batfish 스냅샷 생성
+NSO에서 설정을 Export하여 Batfish 스냅샷을 생성합니다.
 """
 
+import os
 import sys
 from pathlib import Path
 
@@ -11,49 +12,87 @@ from pathlib import Path
 NETALLY_PATH = Path(__file__).parent
 sys.path.insert(0, str(NETALLY_PATH))
 
+from dotenv import load_dotenv
+load_dotenv()
+
 from agent.clients.batfish import BatfishClient
+from agent.clients.nso import NSOClient
 
 def init_batfish_snapshot():
     """
-    Research_Institute_Internal_DC 설정 파일로 Batfish 초기화
+    NSO Export 결과로 Batfish 초기화
     """
-    # 설정 파일 경로
-    config_dir = Path("/home/kilab_pyj/codespace/GIA/Data/Pnetlab/Research_Institute_Internal_DC/configs")
-    
-    if not config_dir.exists():
-        print(f"❌ Config directory not found: {config_dir}")
-        return False
-    
-    # 모든 .cfg 파일 찾기
-    config_files = list(config_dir.glob("*.cfg"))
-    
-    if not config_files:
-        print(f"❌ No .cfg files found in {config_dir}")
-        return False
-    
-    print(f"📁 Found {len(config_files)} configuration files")
-    for f in config_files:
-        print(f"  - {f.name}")
-    
+    snapshot_name = (
+        os.getenv("BATFISH_SNAPSHOT")
+        or os.getenv("BATFISH_NETWORK")
+        or "default"
+    )
+    output_dir = os.getenv("BATFISH_EXPORT_DIR", "./snapshot")
+    use_restconf = os.getenv("USE_RESTCONF_EXPORT", "false").lower() == "true"
+
+    nso = NSOClient(
+        base_url=os.getenv("NSO_BASE_URL", "http://localhost:8080/restconf"),
+        username=os.getenv("NSO_USERNAME") or os.getenv("NSO_USER", "admin"),
+        password=os.getenv("NSO_PASSWORD") or os.getenv("NSO_PASS", "admin"),
+    )
+
     # Batfish 클라이언트 생성
-    batfish = BatfishClient(host="localhost")
+    batfish = BatfishClient(host=os.getenv("BATFISH_HOST", "localhost"))
     
     if not batfish.is_available:
         print("❌ Batfish is not available. Check if Batfish SDK is installed.")
         return False
     
-    # 스냅샷 초기화
-    print("\n🚀 Initializing Batfish snapshot...")
-    
-    result = batfish.init_snapshot(
-        topology_name="Research_Institute_Internal_DC",
-        configs=[str(f) for f in config_files],
-        device_info={
-            "source": "PNETLab",
-            "topology": "Research Institute Internal DC",
-            "timestamp": str(Path(config_files[0]).stat().st_mtime)
-        }
+    # 1) NSO에서 configs export
+    print("\n📦 Exporting configs from NSO...")
+    export_result = nso.export_batfish_configs(
+        output_dir=output_dir,
+        export_xml=False,
+        export_yang_json=False,
     )
+
+    if "error" in export_result:
+        print(f"⚠️ NSO export failed: {export_result.get('error')}")
+        if not use_restconf:
+            return False
+    else:
+        configs_dir = export_result.get("configs_dir")
+        if not configs_dir:
+            print("❌ NSO export returned no configs_dir.")
+            return False
+        config_dir = Path(configs_dir)
+        config_files = list(config_dir.glob("*.cfg"))
+        if not config_files:
+            print(f"❌ No .cfg files found in {config_dir}")
+            return False
+        print(f"📁 Found {len(config_files)} configuration files")
+
+    # 2) 스냅샷 초기화
+    print("\n🚀 Initializing Batfish snapshot...")
+    if "error" in export_result and use_restconf:
+        device_names = nso.get_devices()
+        if not device_names:
+            print("❌ No devices found for RESTCONF export.")
+            return False
+        configs = {}
+        for name in device_names:
+            cfg = nso.get_native_config(name)
+            if cfg:
+                configs[name] = cfg
+        if not configs:
+            print("❌ RESTCONF export returned empty configs.")
+            return False
+        result = batfish.init_snapshot(
+            topology_name=snapshot_name,
+            configs=configs,
+            device_info={"source": "NSO_RESTCONF", "topology": snapshot_name},
+        )
+    else:
+        result = batfish.init_snapshot(
+            topology_name=snapshot_name,
+            configs=[str(f) for f in config_files],
+            device_info={"source": "NSO", "topology": snapshot_name},
+        )
     
     if "error" in result:
         print(f"❌ Initialization failed: {result['error']}")
@@ -70,14 +109,6 @@ def init_batfish_snapshot():
         bf = batfish._builder.bf
         l3_edges = bf.q.layer3Edges().answer().frame()
         print(f"✅ Found {len(l3_edges)} L3 edges")
-        
-        if not l3_edges.empty:
-            print("\nSample edges:")
-            for idx, row in l3_edges.head(3).iterrows():
-                src = row.get("Interface", {})
-                dst = row.get("Remote_Interface", {})
-                print(f"  {src.get('hostname')}:{src.get('interface')} <-> {dst.get('hostname')}:{dst.get('interface')}")
-    
     except Exception as e:
         print(f"⚠️ L3 edge test failed: {e}")
     

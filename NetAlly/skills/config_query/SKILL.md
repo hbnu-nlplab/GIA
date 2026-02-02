@@ -18,7 +18,7 @@ requires_tools: [network_query]
 
 ## 도구 사용법
 ```
-network_query(category="device", device="p1", field="hostname")
+network_query(category="device", device="p1")
 network_query(category="interface", device="p1")
-network_query(category="routing", device="p1", field="ospf")
+network_query(category="routing", device="p1", params={"protocol": "bgp"})
 ```

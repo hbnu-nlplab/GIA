@@ -42,6 +42,17 @@ class ChatRequest(BaseModel):
     answer_type: str = Field(default="text", description="답변 형식: text, numeric, set, map, boolean")
 
 
+class LabRefreshRequest(BaseModel):
+    """Lab refresh 요청"""
+    config_path: Optional[str] = Field(default=None, description="device_info.json 경로")
+    overrides: Optional[Dict[str, Any]] = Field(default=None, description="device_info.json 생성 오버라이드")
+
+
+class LabPrepareRequest(BaseModel):
+    """Lab prepare 요청"""
+    auto_init_batfish: Optional[bool] = Field(default=None, description="Batfish init 자동 수행")
+
+
 class TopologyNode(BaseModel):
     """토폴로지 노드"""
     id: str
@@ -94,6 +105,15 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Snapshot name (Batfish)
+BATFISH_SNAPSHOT = (
+    os.getenv("BATFISH_SNAPSHOT")
+    or os.getenv("BATFISH_NETWORK")
+    or "default"
+)
+AUTO_PREPARE_ON_CHAT = os.getenv("AUTO_PREPARE_ON_CHAT", "false").lower() == "true"
+AUTO_INIT_BATFISH = os.getenv("AUTO_INIT_BATFISH", "false").lower() == "true"
+
 # CORS 설정 (개발용)
 app.add_middleware(
     CORSMiddleware,
@@ -119,6 +139,74 @@ async def health():
     return {"status": "ok", "service": "netally"}
 
 
+@app.post("/api/lab/refresh")
+async def lab_refresh(request: LabRefreshRequest):
+    """
+    PNETLab -> 신규 장비 부트스트랩 (Refresh 버튼용)
+    - device_info.json이 없으면 API로 자동 생성
+    """
+    try:
+        from agent.tools import lab_bootstrap
+        params = {}
+        if request.config_path:
+            params["config_path"] = request.config_path
+        if request.overrides:
+            params["overrides"] = request.overrides
+        result = await asyncio.to_thread(
+            lab_bootstrap.invoke,
+            {"action": "refresh_onboard", "params": params}
+        )
+        return result
+    except Exception as e:
+        logger.error(f"Lab refresh error: {e}")
+        return JSONResponse(status_code=500, content={"detail": str(e)})
+
+
+async def ensure_batfish_ready(auto_init: bool) -> Dict[str, Any]:
+    from agent.clients.batfish import BatfishClient
+    from agent.tools import lab_manage
+
+    batfish = BatfishClient(host=os.getenv("BATFISH_HOST", "localhost"))
+    if not batfish.is_available:
+        return {"status": "unavailable"}
+
+    if batfish._builder:
+        return {"status": "ready", "snapshot": BATFISH_SNAPSHOT}
+
+    loaded = await asyncio.to_thread(batfish.load_snapshot, BATFISH_SNAPSHOT)
+    if loaded:
+        return {"status": "loaded", "snapshot": BATFISH_SNAPSHOT}
+
+    if auto_init:
+        params = {
+            "topology_name": BATFISH_SNAPSHOT,
+            "output_dir": os.getenv("BATFISH_EXPORT_DIR", "./snapshot"),
+        }
+        result = await asyncio.to_thread(
+            lab_manage.invoke,
+            {"action": "init_batfish", "params": params}
+        )
+        return {"status": "initialized", "snapshot": BATFISH_SNAPSHOT, "result": result}
+
+    return {"status": "not_ready"}
+
+
+@app.post("/api/lab/prepare")
+async def lab_prepare(request: LabPrepareRequest):
+    """
+    Batfish 준비 상태를 확인하고 필요 시 초기화합니다.
+    """
+    try:
+        auto_init = request.auto_init_batfish
+        if auto_init is None:
+            auto_init = AUTO_INIT_BATFISH
+        result = await ensure_batfish_ready(auto_init=auto_init)
+        return result
+    except Exception as e:
+        logger.error(f"Lab prepare error: {e}")
+        return JSONResponse(status_code=500, content={"detail": str(e)})
+
+
 # =============================================================================
 # Chat API (SSE Streaming)
 # =============================================================================
@@ -141,6 +229,17 @@ async def chat_stream_generator(request: ChatRequest, graph):
     }
     
     try:
+        if AUTO_PREPARE_ON_CHAT:
+            prep = await ensure_batfish_ready(auto_init=AUTO_INIT_BATFISH)
+            if prep.get("status") in ("unavailable", "not_ready"):
+                data = {
+                    "type": "answer",
+                    "content": "Batfish is not ready. Please run lab_manage(action=\"init_batfish\") or enable AUTO_INIT_BATFISH.",
+                    "meta": prep,
+                }
+                yield f"event: answer\ndata: {json.dumps(data)}\n\n"
+                yield f"event: complete\ndata: {json.dumps({'type': 'complete'})}\n\n"
+                return
         # 스트리밍 실행
         async for event in graph.astream(initial_state, stream_mode="updates"):
             for node_name, node_output in event.items():
@@ -227,7 +326,7 @@ async def get_topology(layer: str = "l1"):
         
         if batfish.is_available:
             if not batfish._builder:
-                batfish.load_snapshot("Research_Institute_Internal_DC")
+                batfish.load_snapshot(BATFISH_SNAPSHOT)
             
             if batfish._builder:
                 return get_batfish_l3_topology(batfish, layer=layer)
@@ -271,7 +370,7 @@ async def get_pnetlab_topology():
         from agent.clients.pnetlab import PnetlabClient
         
         client = PnetlabClient(
-            base_url=os.getenv("PNETLAB_BASE_URL", "http://100.66.240.82")
+            base_url=os.getenv("PNETLAB_URL") or os.getenv("PNETLAB_HOST", "http://100.66.240.82")
         )
         
         # 쿠키 설정 (환경변수에서)
@@ -340,7 +439,7 @@ async def get_dashboard_summary(mode: str = "lab"):
         
         if batfish.is_available:
             if not batfish._builder:
-                batfish.load_snapshot("Research_Institute_Internal_DC")
+                batfish.load_snapshot(BATFISH_SNAPSHOT)
             
             if batfish._builder:
                 return batfish.get_dashboard_data(mode=mode)
@@ -385,7 +484,7 @@ async def get_protocol_details(protocol: str):
         
         if batfish.is_available:
             if not batfish._builder:
-                batfish.load_snapshot("Research_Institute_Internal_DC")
+                batfish.load_snapshot(BATFISH_SNAPSHOT)
             
             if protocol == "bgp":
                 return batfish.get_bgp_details()

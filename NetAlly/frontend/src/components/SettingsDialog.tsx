@@ -99,6 +99,64 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean, o
             </div>
           </section>
 
+          <section className="space-y-3">
+            <h3 className="text-[10px] font-black uppercase tracking-tighter text-primary/80">Bootstrap Overrides</h3>
+            <div className="space-y-2">
+              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">OOB Interface (optional)</label>
+              <input
+                value={settings.oobIntf}
+                onChange={e => updateSettings({ oobIntf: e.target.value })}
+                placeholder="GigabitEthernet0/2"
+                className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">Device Group (optional)</label>
+              <input
+                value={settings.deviceGroup}
+                onChange={e => updateSettings({ deviceGroup: e.target.value })}
+                placeholder="RI_Internal_DC"
+                className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">PNETLab VM IP (optional)</label>
+              <input
+                value={settings.pnetlabVmIp}
+                onChange={e => updateSettings({ pnetlabVmIp: e.target.value })}
+                placeholder="100.66.240.82"
+                className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">Gateway IP (optional)</label>
+              <input
+                value={settings.gatewayIp}
+                onChange={e => updateSettings({ gatewayIp: e.target.value })}
+                placeholder="10.10.10.1"
+                className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">NSO Authgroup (optional)</label>
+              <input
+                value={settings.nsoAuthgroup}
+                onChange={e => updateSettings({ nsoAuthgroup: e.target.value })}
+                placeholder="default"
+                className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">NSO NED ID (optional)</label>
+              <input
+                value={settings.nsoNedId}
+                onChange={e => updateSettings({ nsoNedId: e.target.value })}
+                placeholder="cisco-ios-cli-6.110"
+                className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+              />
+            </div>
+          </section>
+
           <section className="pt-4 border-t border-border">
              <div className="bg-primary/5 p-3 rounded-lg border border-primary/20">
                 <p className="text-[10px] text-primary/80 leading-relaxed italic">
