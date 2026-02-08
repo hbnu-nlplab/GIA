@@ -60,8 +60,15 @@ def get_pnetlab_client() -> PnetlabClient:
     if not _pnetlab_client:
         _pnetlab_client = PnetlabClient(
             base_url=os.getenv("PNETLAB_URL") or os.getenv("PNETLAB_HOST", "http://localhost"),
+            username=os.getenv("PNETLAB_USERNAME", ""),
+            password=os.getenv("PNETLAB_PASSWORD", ""),
         )
     return _pnetlab_client
+
+
+def reset_pnetlab_client() -> None:
+    global _pnetlab_client
+    _pnetlab_client = None
 
 
 def _discover_nso_base_url() -> Optional[str]:

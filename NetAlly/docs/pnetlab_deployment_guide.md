@@ -115,6 +115,11 @@ lab_bootstrap(action="refresh_onboard")  # 신규 장비만 부트스트랩
 - `/api/lab/prepare` 호출
 - 상태가 `ready/loaded/initialized`면 분석 가능
 
+### PNETLab 인증 (자동로그인/쿠키)
+PNETLab API 접근을 위해 인증이 필요합니다.
+- **Auto Login**: Settings에서 계정/비밀번호 입력 후 활성화
+- **Cookies**: 자동로그인이 실패하면 쿠키를 입력하여 인증
+
 ---
 
 ## ❓ 문제 해결 (Troubleshooting)

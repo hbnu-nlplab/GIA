@@ -49,7 +49,7 @@ const DashboardPanel: React.FC = () => {
   const [showComplianceDetail, setShowComplianceDetail] = useState<'routing' | 'security' | 'insights' | null>(null);
   const [fetchingDetail, setFetchingDetail] = useState(false);
   
-  const { setSelectedNode } = useAppStore();
+  const { setSelectedNode, labPrepareStatus, labPrepareDetail, labRefreshResult } = useAppStore();
 
   const fetchDashboard = async () => {
     try {
@@ -281,6 +281,59 @@ const DashboardPanel: React.FC = () => {
           >
             <Zap className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
           </button>
+        </div>
+      </div>
+
+      {/* Lab Operations Status */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="p-6 rounded-2xl border bg-card/60 backdrop-blur-sm">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-bold text-lg">Batfish Prepare</h3>
+            <span className={`text-[10px] uppercase font-black tracking-[0.2em] px-2 py-1 rounded-md ${
+              labPrepareStatus === 'ready' || labPrepareStatus === 'loaded' || labPrepareStatus === 'initialized'
+                ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
+                : labPrepareStatus === 'not_ready'
+                ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20'
+                : 'bg-slate-500/10 text-slate-500 border border-slate-500/20'
+            }`}>
+              {labPrepareStatus || 'unknown'}
+            </span>
+          </div>
+          <div className="text-xs text-muted-foreground">
+            {labPrepareDetail?.snapshot && (
+              <div>Snapshot: <span className="text-foreground">{labPrepareDetail.snapshot}</span></div>
+            )}
+            {!labPrepareDetail && <div>Click “Prepare” in the header to check Batfish readiness.</div>}
+          </div>
+        </div>
+
+        <div className="p-6 rounded-2xl border bg-card/60 backdrop-blur-sm">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-bold text-lg">Refresh Result</h3>
+            <span className="text-[10px] uppercase font-black tracking-[0.2em] px-2 py-1 rounded-md bg-muted/40 text-muted-foreground">
+              {labRefreshResult?.status || 'idle'}
+            </span>
+          </div>
+          {labRefreshResult ? (
+            <div className="space-y-2 text-xs">
+              <div className="text-muted-foreground">
+                New devices: <span className="text-foreground">{labRefreshResult?.missing?.length || 0}</span>
+              </div>
+              <div className="text-muted-foreground">
+                SSH 실패: <span className="text-foreground">{Object.entries(labRefreshResult?.ssh || {}).filter(([, ok]) => !ok).length}</span>
+              </div>
+              <div className="text-muted-foreground">
+                NSO 등록 실패: <span className="text-foreground">{labRefreshResult?.nso?.failed?.length || 0}</span>
+              </div>
+              {labRefreshResult?.nso?.failed?.length ? (
+                <div className="text-[10px] text-rose-500/80">
+                  Failed: {labRefreshResult.nso.failed.join(', ')}
+                </div>
+              ) : null}
+            </div>
+          ) : (
+            <div className="text-xs text-muted-foreground">Click “Refresh” to bootstrap new devices.</div>
+          )}
         </div>
       </div>
 

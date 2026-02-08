@@ -505,7 +505,11 @@ class NetConfigQAScorer:
         text = re.sub(r'\s*:\s*', ':', text)
         text = re.sub(r'\s*,\s*', ',', text)
         
-        return text
+        # 4. Normalize arrows (network paths): '->' to '→' and ensure consistent spacing
+        text = text.replace('->', '→')
+        text = re.sub(r'\s*→\s*', ' → ', text)
+        
+        return text.strip()
 
     def _score_text(self, pred: str, gold: str) -> Dict[str, float]:
         """

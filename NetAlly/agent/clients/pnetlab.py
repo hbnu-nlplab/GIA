@@ -87,6 +87,13 @@ class PnetlabClient:
                 # 토큰만 있는 경우
                 self.set_jwt_token(jwt_from_env)
                 logger.warning("Only JWT token loaded - session and XSRF may be needed")
+
+        # 방법 3: 계정 기반 자동 로그인 (선택)
+        auto_login = os.getenv("PNETLAB_AUTO_LOGIN", "false").lower() == "true"
+        if not self._is_authenticated and auto_login and self.username and self.password:
+            login_res = self.login()
+            if "error" in login_res:
+                logger.warning(f"PNETLab auto-login failed: {login_res.get('error')}")
         
         logger.info(f"PnetlabClient initialized for {self.base_url}")
     
@@ -172,6 +179,32 @@ class PnetlabClient:
         self._is_authenticated = True
         
         logger.info("Session set from browser cookies with full headers")
+
+    def login(self) -> Dict[str, Any]:
+        """
+        계정 기반 로그인 (EVE-NG/PNETLab API 호환).
+        성공 시 세션 쿠키를 획득합니다.
+        """
+        url = f"{self.base_url}/api/auth/login"
+        payload = {
+            "username": self.username,
+            "password": self.password
+        }
+        try:
+            resp = self.session.post(url, json=payload, timeout=self.timeout)
+            if resp.status_code != 200:
+                return {"error": f"HTTP {resp.status_code}", "message": resp.text}
+
+            # 쿠키는 requests.Session에 자동 저장됨
+            xsrf = self.session.cookies.get("XSRF-TOKEN")
+            if xsrf:
+                self._xsrf_token = unquote(xsrf)
+                self.session.headers["X-XSRF-TOKEN"] = self._xsrf_token
+
+            self._is_authenticated = True
+            return {"status": "success"}
+        except Exception as e:
+            return {"error": str(e)}
 
     def add_network(self, name: str, net_type: str = "pnet2", left: int = 100, top: int = 100) -> Dict[str, Any]:
         """

@@ -159,6 +159,8 @@ npm run dev
 | `/api/health`             | GET    | 서비스 헬스 체크                     |
 | `/api/lab/refresh`        | POST   | 신규 장비 부트스트랩 (Refresh 버튼)  |
 | `/api/lab/prepare`        | POST   | Batfish 준비/초기화                  |
+| `/api/pnetlab/status`     | GET    | PNETLab 인증 상태                    |
+| `/api/pnetlab/auth`       | POST   | PNETLab 인증 설정 (쿠키/자동로그인)  |
 
 ### Dashboard Summary 응답 예시
 
@@ -221,6 +223,9 @@ NSO_RESTCONF_PATH=/restconf
 # PNETLab (선택)
 PNETLAB_URL=http://pnetlab.local
 PNETLAB_COOKIES=token=...; _session=...; XSRF-TOKEN=...
+PNETLAB_USERNAME=admin
+PNETLAB_PASSWORD=pnetlab
+PNETLAB_AUTO_LOGIN=false
 PNETLAB_DEVICE_INFO=Data/Pnetlab/Research_Institute_Internal_DC/device_info.json
 PNETLAB_DEVICE_INFO_AUTOGEN=true
 PNETLAB_VM_IP=

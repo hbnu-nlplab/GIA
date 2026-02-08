@@ -53,6 +53,14 @@ class LabPrepareRequest(BaseModel):
     auto_init_batfish: Optional[bool] = Field(default=None, description="Batfish init 자동 수행")
 
 
+class PnetlabAuthRequest(BaseModel):
+    """PNETLab 인증 설정"""
+    cookies: Optional[str] = Field(default=None, description="PNETLab 쿠키 문자열")
+    auto_login: Optional[bool] = Field(default=None, description="자동 로그인 사용")
+    username: Optional[str] = Field(default=None, description="PNETLab 계정")
+    password: Optional[str] = Field(default=None, description="PNETLab 비밀번호")
+
+
 class TopologyNode(BaseModel):
     """토폴로지 노드"""
     id: str
@@ -204,6 +212,50 @@ async def lab_prepare(request: LabPrepareRequest):
         return result
     except Exception as e:
         logger.error(f"Lab prepare error: {e}")
+        return JSONResponse(status_code=500, content={"detail": str(e)})
+
+
+@app.get("/api/pnetlab/status")
+async def pnetlab_status():
+    """
+    PNETLab 인증 상태 확인
+    """
+    try:
+        from agent.tools import get_pnetlab_client
+        client = get_pnetlab_client()
+        if not client.is_authenticated:
+            return {"authenticated": False}
+        topo = client.get_session_topology()
+        if isinstance(topo, dict) and "error" in topo:
+            return {"authenticated": False, "error": topo.get("error")}
+        return {"authenticated": True}
+    except Exception as e:
+        logger.error(f"Pnetlab status error: {e}")
+        return JSONResponse(status_code=500, content={"detail": str(e)})
+
+
+@app.post("/api/pnetlab/auth")
+async def pnetlab_auth(request: PnetlabAuthRequest):
+    """
+    PNETLab 인증 정보 설정 (쿠키/자동로그인)
+    """
+    try:
+        if request.cookies is not None:
+            os.environ["PNETLAB_COOKIES"] = request.cookies
+        if request.auto_login is not None:
+            os.environ["PNETLAB_AUTO_LOGIN"] = "true" if request.auto_login else "false"
+        if request.username is not None:
+            os.environ["PNETLAB_USERNAME"] = request.username
+        if request.password is not None:
+            os.environ["PNETLAB_PASSWORD"] = request.password
+
+        from agent.tools import reset_pnetlab_client, get_pnetlab_client
+        reset_pnetlab_client()
+        client = get_pnetlab_client()
+        ok = client.is_authenticated
+        return {"authenticated": ok}
+    except Exception as e:
+        logger.error(f"Pnetlab auth error: {e}")
         return JSONResponse(status_code=500, content={"detail": str(e)})
 
 
