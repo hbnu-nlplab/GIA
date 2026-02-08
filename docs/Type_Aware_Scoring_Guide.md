@@ -1,6 +1,8 @@
 # NetConfigQA Type-Aware Scoring 완전 가이드
 
 > **이 문서의 목적**: 왜 EM/F1/BERTScore/ROUGE 대신 Type-Aware Scoring을 사용하는지, 각 타입별 비교 로직이 어떻게 동작하는지 완벽히 이해하기
+>
+> **코드 참조**: `Experiment/code/NetConfigQA2/analyze_results_netconfigqa.py`
 
 ---
 
@@ -49,78 +51,29 @@
 ```
 데이터셋 구조:
 ┌──────────────────────────────────────────────────────────────┐
-│ question: "P3 장비의 SSH 서비스가 활성화되어 있습니까?"        │
-│ answer: "true"                                               │
-│ answer_type: "boolean"  ← 이 타입을 보고 비교 방식 결정!      │
+│ question: "PE1 장비에 설정된 VRF 목록을 알려주세요."           │
+│ answer: "[\"VRF_AI\", \"VRF_BIO\", \"VRF_HPC\"]"              │
+│ answer_type: "set"  ← 이 타입을 보고 비교 방식 결정!          │
 └──────────────────────────────────────────────────────────────┘
 ```
 
-### 2.2 지원하는 5가지 Answer Type
+### 2.2 지원하는 4가지 Answer Type
 
-| Answer Type | 의미            | 예시 정답 (실제 데이터셋)          |
-| ----------- | --------------- | ---------------------------------- |
-| `boolean`   | 참/거짓         | `true`, `false`                    |
-| `numeric`   | 숫자            | `1`, `15.7`, `5`                   |
-| `set`       | 순서 없는 집합  | `["admin"]`, `["Loopback0"]`       |
-| `map`       | 키-값 쌍 (JSON) | `{"Gi0/0": "up", "Gi0/1": "down"}` |
-| `text`      | 일반 텍스트     | `"leaf1"`, `"Cisco IOS"`           |
+| Answer Type | 의미            | 예시 정답 (실제 데이터셋)           | 별칭 (코드 호환) |
+| ----------- | --------------- | ----------------------------------- | --------------- |
+| `numeric`   | 숫자            | `1`, `15.7`, `5`                    | `number`, `scalar_int` |
+| `set`       | 순서 없는 집합  | `["admin"]`, `["Loopback0"]`        | `set_str`, `list` |
+| `map`       | 키-값 쌍 (JSON) | `{"Gi0/0": "up", "Gi0/1": "down"}`  | `map_str_str`, `dictionary`, `json` |
+| `text`      | 일반 텍스트     | `"leaf1"`, `"Cisco IOS"`            | (기본값) |
+
+> [!IMPORTANT]
+> **Boolean 타입은 별도로 존재하지 않습니다.** `true`/`false` 답변은 `text` 타입으로 처리됩니다.
 
 ---
 
 ## 3. 각 타입별 비교 로직 상세
 
-### 3.1 Boolean Type (참/거짓)
-
-#### 왜 특별한 처리가 필요한가?
-
-LLM은 불리언 값을 다양한 형태로 출력합니다:
-
-- `true`, `True`, `TRUE`
-- `yes`, `Yes`, `YES`
-- `enabled`, `on`, `1`
-
-모두 **같은 의미**이므로 정답으로 처리해야 합니다.
-
-#### 비교 알고리즘
-
-```python
-def score_boolean(pred: str, gold: str) -> float:
-    # Step 1: 정규화 (대소문자 무시, 동의어 통일)
-    TRUE_VALUES = {'true', 'yes', 'on', 'enabled', '1'}
-    FALSE_VALUES = {'false', 'no', 'off', 'disabled', '0'}
-
-    pred_lower = pred.strip().lower()
-    gold_lower = gold.strip().lower()
-
-    # Step 2: True/False로 변환
-    pred_bool = pred_lower in TRUE_VALUES
-    gold_bool = gold_lower in TRUE_VALUES
-
-    # Step 3: 비교
-    return 1.0 if pred_bool == gold_bool else 0.0
-```
-
-#### 예시
-
-```
-질문: "p3 장비의 SSH 서비스가 활성화되어 있습니까?" (ID: 112)
-정답(Gold): true
-
-┌────────────┬─────────────┬───────────────┬───────────┐
-│ LLM 예측    │ Exact Match │ Type-Aware   │ 이유       │
-├────────────┼─────────────┼───────────────┼───────────┤
-│ true       │ ✓ 1.0       │ ✓ 1.0         │ 완전 일치  │
-│ True       │ ✗ 0.0       │ ✓ 1.0         │ 대소문자   │
-│ yes        │ ✗ 0.0       │ ✓ 1.0         │ 동의어    │
-│ enabled    │ ✗ 0.0       │ ✓ 1.0         │ 동의어    │
-│ 1          │ ✗ 0.0       │ ✓ 1.0         │ 숫자형    │
-│ false      │ ✗ 0.0       │ ✗ 0.0         │ 실제 오답 │
-└────────────┴─────────────┴───────────────┴───────────┘
-```
-
----
-
-### 3.2 Numeric Type (숫자)
+### 3.1 Numeric Type (숫자) - `number`, `numeric`, `scalar_int`
 
 #### 왜 특별한 처리가 필요한가?
 
@@ -129,54 +82,64 @@ LLM은 숫자를 다양한 형식으로 출력합니다:
 - `5` vs `"5"` vs `5.0` → 같은 숫자
 - `15.7` vs `15.70` → 같은 숫자
 - `3명` vs `3` → 숫자 추출 필요
+- `five` → 영어 숫자 단어도 인식
 
 #### 비교 알고리즘
 
 ```python
-import re
-
-def extract_number(val: str) -> float:
-    """문자열에서 숫자만 추출"""
-    # 정규식: 음수, 정수, 소수 모두 매칭
-    match = re.search(r'-?\d+(\.\d+)?', val)
+def _extract_number(self, val: str) -> float:
+    """Extract number from string, including word-to-digit conversion."""
+    # First try direct digit extraction
+    match = re.search(r'-?\d+(\\.\\d+)?', val)
     if match:
         return float(match.group())
-    return None  # 숫자가 없으면 None
+    
+    # If no digit found, try to extract number words
+    word_to_num = {
+        'zero': 0, 'one': 1, 'two': 2, 'three': 3, 'four': 4,
+        'five': 5, 'six': 6, 'seven': 7, 'eight': 8, 'nine': 9,
+        'ten': 10, 'eleven': 11, 'twelve': 12, ...
+    }
+    
+    # Look for patterns like "totaling five network interfaces"
+    patterns = [
+        r'totaling\\s+(\\w+)',
+        r'has\\s+exactly\\s+(\\w+)',
+        r'total\\s+of\\s+(\\w+)',
+    ]
+    # ... extract and convert
+    
+    return None
 
-def score_numeric(pred: str, gold: str) -> float:
-    # Step 1: 숫자 추출
-    pred_num = extract_number(pred)  # "5명" → 5.0
-    gold_num = extract_number(gold)  # "5" → 5.0
-
-    # Step 2: 둘 다 숫자면 비교
-    if pred_num is not None and gold_num is not None:
-        return 1.0 if pred_num == gold_num else 0.0
-
-    # Step 3: 숫자 추출 실패시 문자열 비교
-    return 1.0 if pred.lower() == gold.lower() else 0.0
+def _score_numeric(self, pred: str, gold: str) -> Dict[str, float]:
+    p_num = self._extract_number(pred)
+    g_num = self._extract_number(gold)
+    if p_num is None or g_num is None:
+        return {"score": 1.0 if pred.lower() == gold.lower() else 0.0}
+    return {"score": 1.0 if p_num == g_num else 0.0}
 ```
 
 #### 예시
 
 ```
-질문: "p4 장비에 등록된 로컬 사용자는 총 몇 명입니까?" (ID: 42)
+질문: "p4 장비에 등록된 로컬 사용자는 총 몇 명입니까?"
 정답(Gold): 1
 
-┌────────────┬─────────────┬───────────────┬─────────────────┐
-│ LLM 예측    │ Exact Match │ Type-Aware   │ 이유            │
-├────────────┼─────────────┼───────────────┼─────────────────┤
-│ 1          │ ✓ 1.0       │ ✓ 1.0         │ 완전 일치       │
-│ "1"        │ ✗ 0.0       │ ✓ 1.0         │ 따옴표 제거 후 1 │
-│ 1.0        │ ✗ 0.0       │ ✓ 1.0         │ 1.0 == 1       │
-│ 1명        │ ✗ 0.0       │ ✓ 1.0         │ 숫자 추출 → 1   │
-│ one        │ ✗ 0.0       │ ✗ 0.0         │ 숫자 없음      │
-│ 2          │ ✗ 0.0       │ ✗ 0.0         │ 실제 오답      │
-└────────────┴─────────────┴───────────────┴─────────────────┘
+┌────────────────────┬─────────────┬───────────────┬─────────────────┐
+│ LLM 예측            │ Exact Match │ Type-Aware   │ 이유            │
+├────────────────────┼─────────────┼───────────────┼─────────────────┤
+│ 1                  │ ✓ 1.0       │ ✓ 1.0         │ 완전 일치       │
+│ "1"                │ ✗ 0.0       │ ✓ 1.0         │ 따옴표 제거 후 1 │
+│ 1.0                │ ✗ 0.0       │ ✓ 1.0         │ 1.0 == 1       │
+│ 1명                │ ✗ 0.0       │ ✓ 1.0         │ 숫자 추출 → 1   │
+│ one                │ ✗ 0.0       │ ✓ 1.0         │ 영어 단어 변환  │
+│ 2                  │ ✗ 0.0       │ ✗ 0.0         │ 실제 오답      │
+└────────────────────┴─────────────┴───────────────┴─────────────────┘
 ```
 
 ---
 
-### 3.3 Set Type (집합) - F1 Score 사용
+### 3.2 Set Type (집합) - F1 Score 사용
 
 #### 왜 특별한 처리가 필요한가?
 
@@ -184,7 +147,7 @@ def score_numeric(pred: str, gold: str) -> float:
 
 1. **순서가 없음**: `["a", "b"]` = `["b", "a"]`
 2. **부분 정답 가능**: 4개 중 2개 맞추면 0점이 아님
-3. **다양한 형식**: `["a"]`, `['a']`, `a` 모두 같은 의미
+3. **다양한 형식**: `["a"]`, `['a']`, `{"a"}`, `(a)` 모두 같은 의미
 
 #### 비교 알고리즘: F1 Score
 
@@ -196,53 +159,56 @@ Recall    = (맞춘 요소 수) / (정답 요소 수)    → "정답 중 얼마�
 ```
 
 ```python
-import json
-
-def parse_set(val: str) -> set:
-    """문자열을 집합으로 변환"""
+def _parse_set(self, val: str) -> Set[str]:
+    """
+    Parse set from various formats:
+    - JSON array: ["item1", "item2"]
+    - Set notation: {"item1", "item2"}
+    - Tuple: ("item1", "item2")
+    - Comma-separated: item1, item2
+    """
     val = val.strip()
-
-    # JSON 배열 형식 시도
+    
     try:
-        val = val.replace("'", '"')  # 작은따옴표 → 큰따옴표
-        if val.startswith('[') and val.endswith(']'):
-            items = json.loads(val)
+        # 1. JSON 형식 파싱 시도 (대괄호, 중괄호, 소괄호 모두 지원)
+        val_normalized = val.replace("'", '"')
+        if (val_normalized.startswith('[') and val_normalized.endswith(']')) or \
+           (val_normalized.startswith('{') and val_normalized.endswith('}')) or \
+           (val_normalized.startswith('(') and val_normalized.endswith(')')):
+            # 중괄호/소괄호를 대괄호로 변환
+            val_normalized = val_normalized.replace('{', '[').replace('}', ']')
+            val_normalized = val_normalized.replace('(', '[').replace(')', ']')
+            items = json.loads(val_normalized)
             return set(str(i).strip().lower() for i in items)
     except:
         pass
-
-    # 쉼표로 분리
-    if val:
-        return set(i.strip().lower() for i in val.split(','))
-
+    
+    # 2. Fallback: 쉼표 구분 파싱
+    val_cleaned = val.strip('[]{}()"\\' ').strip()
+    if ',' in val_cleaned:
+        return set(i.strip().lower() for i in val_cleaned.split(',') if i.strip())
+    elif val_cleaned:
+        return {val_cleaned.lower()}
+    
     return set()
 
-def score_set(pred: str, gold: str) -> float:
-    # Step 1: 집합으로 변환
-    pred_set = parse_set(pred)  # {"gi0/0", "gi0/1"}
-    gold_set = parse_set(gold)  # {"gi0/0", "gi0/1", "gi0/2", "loopback0"}
-
-    # Step 2: 빈 집합 처리
-    if not gold_set and not pred_set:
-        return 1.0  # 둘 다 비었으면 정답
-
-    # Step 3: F1 계산
-    intersection = len(pred_set & gold_set)  # 교집합 크기
-
-    precision = intersection / len(pred_set) if pred_set else 0.0
-    recall = intersection / len(gold_set) if gold_set else 0.0
-
-    if precision + recall == 0:
-        return 0.0
-
-    f1 = 2 * precision * recall / (precision + recall)
-    return f1
+def _score_set(self, pred: str, gold: str) -> Dict[str, float]:
+    p_set = self._parse_set(pred)
+    g_set = self._parse_set(gold)
+    if not g_set and not p_set:
+        return {"score": 1.0, "f1": 1.0}
+    
+    intersection = len(p_set & g_set)
+    precision = intersection / len(p_set) if p_set else 0.0
+    recall = intersection / len(g_set) if g_set else 0.0
+    f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0
+    return {"score": f1, "f1": f1, "precision": precision, "recall": recall}
 ```
 
 #### 예시 1: 순서 무관
 
 ```
-질문: "p1 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요." (ID: 271)
+질문: "PE1 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요."
 정답(Gold): ["GigabitEthernet0/0", "GigabitEthernet0/1", "Loopback0"]
 
 ┌───────────────────────────────────────────────┬───────────────┬─────────────────────┐
@@ -254,15 +220,15 @@ def score_set(pred: str, gold: str) -> float:
 │ ["Loopback0", "GigabitEthernet0/1",           │ ✗ 0.0         │ ✓ 1.0 (순서 무관!)   │
 │  "GigabitEthernet0/0"]                        │               │                     │
 ├───────────────────────────────────────────────┼───────────────┼─────────────────────┤
-│ ['gigabitethernet0/0', 'gigabitethernet0/1',  │ ✗ 0.0         │ ✓ 1.0 (대소문자 무시) │
-│  'loopback0']                                 │               │                     │
+│ {'gigabitethernet0/0', 'gigabitethernet0/1',  │ ✗ 0.0         │ ✓ 1.0 (대소문자 무시) │
+│  'loopback0'}                                 │               │                     │
 └───────────────────────────────────────────────┴───────────────┴─────────────────────┘
 ```
 
 #### 예시 2: 부분 점수
 
 ```
-질문: "p1 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요." (ID: 271)
+질문: "PE1 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요."
 정답(Gold): ["GigabitEthernet0/0", "GigabitEthernet0/1", "Loopback0"] (3개)
 
 ┌─────────────────────────────────┬────────────────────────────────────────┐
@@ -285,7 +251,7 @@ def score_set(pred: str, gold: str) -> float:
 
 ---
 
-### 3.4 Map Type (JSON/Dictionary)
+### 3.3 Map Type (JSON/Dictionary)
 
 #### 왜 특별한 처리가 필요한가?
 
@@ -294,63 +260,60 @@ JSON의 핵심 특성:
 1. **키 순서 무관**: `{"a":1, "b":2}` = `{"b":2, "a":1}`
 2. **키와 값 모두 중요**: 키만 맞고 값이 틀리면 부분 점수
 3. **따옴표 스타일**: `{"a": "1"}` = `{'a': '1'}`
+4. **네트워크 특화**: IP 정규화, 상태 정규화 (shutdown → down)
 
 #### 비교 알고리즘
 
 ```
-점수 = (키 일치 점수 × 0.5) + (값 일치 점수 × 0.5)
-
-키 일치 점수 = (공통 키 수) / (전체 키 수)
-값 일치 점수 = (값도 일치하는 키 수) / (공통 키 수)
+점수 = (공통 키 수 / 전체 키 수) × 0.5 + (값 일치 수 / 공통 키 수) × 0.5
 ```
 
 ```python
-import json
+def _normalize_ip_value(self, value: str) -> str:
+    """
+    Normalize IP address or status value for comparison.
+    - "10.0.0.1/31" -> "10.0.0.1"  (CIDR 제거)
+    - "shutdown" -> "down"        (상태 정규화)
+    """
+    value = str(value).strip().lower()
+    if value == 'shutdown':
+        return 'down'
+    if '/' in value:
+        value = value.split('/')[0].strip()
+    return value
 
-def score_map(pred: str, gold: str) -> float:
-    # Step 1: JSON 파싱
+def _score_map(self, pred: str, gold: str) -> Dict[str, float]:
     try:
-        pred_obj = json.loads(pred.replace("'", '"'))
-        gold_obj = json.loads(gold.replace("'", '"'))
+        p_obj = json.loads(pred.replace("'", '"'))
+        g_obj = json.loads(gold.replace("'", '"'))
     except:
-        # 파싱 실패시 문자열 비교
-        return 1.0 if pred.lower() == gold.lower() else 0.0
-
-    # Step 2: 딕셔너리 확인
-    if not isinstance(pred_obj, dict) or not isinstance(gold_obj, dict):
-        return 1.0 if str(pred_obj) == str(gold_obj) else 0.0
-
-    # Step 3: 키 분석
-    pred_keys = set(pred_obj.keys())
-    gold_keys = set(gold_obj.keys())
-    common_keys = pred_keys & gold_keys  # 교집합
-    all_keys = pred_keys | gold_keys     # 합집합
-
-    if not all_keys:
-        return 1.0  # 둘 다 빈 딕셔너리
-
-    # Step 4: 점수 계산
-    # 키 일치 점수 (50%)
-    key_score = len(common_keys) / len(all_keys) * 0.5
-
-    # 값 일치 점수 (50%)
-    if common_keys:
-        value_matches = sum(
-            1 for k in common_keys
-            if str(pred_obj[k]).lower() == str(gold_obj[k]).lower()
-        )
-        value_score = value_matches / len(common_keys) * 0.5
-    else:
-        value_score = 0
-
-    return key_score + value_score
+        return {"score": 1.0 if pred.lower() == gold.lower() else 0.0}
+    
+    if not isinstance(p_obj, dict) or not isinstance(g_obj, dict):
+        return {"score": 1.0 if str(p_obj) == str(g_obj) else 0.0}
+         
+    common = set(p_obj.keys()) & set(g_obj.keys())
+    all_k = set(p_obj.keys()) | set(g_obj.keys())
+    if not all_k:
+        return {"score": 1.0}
+    
+    # Compare values with IP normalization
+    val_matches = 0
+    for k in common:
+        pred_val = self._normalize_ip_value(p_obj[k])
+        gold_val = self._normalize_ip_value(g_obj[k])
+        if pred_val == gold_val:
+            val_matches += 1
+    
+    return {"score": (len(common)/len(all_k)*0.5) + (val_matches/len(common)*0.5 if common else 0)}
 ```
 
 #### 예시
 
 ```
-질문: "leaf4 장비의 각 인터페이스 상태를 알려주세요." (ID: 92)
-정답(Gold): {"GigabitEthernet0/0": "up", "GigabitEthernet0/1": "down", "GigabitEthernet0/2": "up", "GigabitEthernet0/3": "down"}
+질문: "Leaf4 장비의 각 인터페이스 상태를 알려주세요."
+정답(Gold): {"GigabitEthernet0/0": "up", "GigabitEthernet0/1": "down", 
+            "GigabitEthernet0/2": "up", "GigabitEthernet0/3": "down"}
 
 ┌─────────────────────────────────────────────┬───────────────┬─────────────┐
 │ LLM 예측                                     │ Exact Match  │ Type-Aware  │
@@ -371,61 +334,107 @@ def score_map(pred: str, gold: str) -> float:
 │ (키 1개 누락)                                │               │ 값일치 3/3  │
 │                                             │               │ = 50%       │
 ├─────────────────────────────────────────────┼───────────────┼─────────────┤
-│ {"GigabitEthernet0/0":"down",               │ ✗ 0.0         │ 0.625       │
-│  "GigabitEthernet0/1":"down",               │               │ 키 4/4=50%  │
-│  "GigabitEthernet0/2":"up",                 │               │ 값 3/4=37.5%│
-│  "GigabitEthernet0/3":"down"}               │               │             │
-│ (값 1개 틀림: GigabitEthernet0/0)            │               │             │
+│ {"GigabitEthernet0/1":"shutdown",           │ ✗ 0.0         │ ✓ 1.0       │
+│ ...}                                        │               │ shutdown=down│
+│ (shutdown → down 정규화)                     │               │  자동 변환!  │
 └─────────────────────────────────────────────┴───────────────┴─────────────┘
 ```
 
 ---
 
-### 3.5 Text Type (일반 텍스트)
+### 3.4 Text Type (일반 텍스트) - **Hybrid Scoring**
 
 #### 왜 특별한 처리가 필요한가?
 
-단순하지만 중요한 처리:
+Text 타입은 가장 일반적이면서 복잡합니다:
 
 1. **대소문자 무시**: `"Leaf1"` = `"leaf1"` = `"LEAF1"`
 2. **따옴표 제거**: `"leaf1"` → `leaf1`
 3. **공백 정리**: `" leaf1 "` → `leaf1`
+4. **한국어 카운터 제거**: `"3개"` → `"3"`
+5. **동의어 매핑**: `shutdown` → `down`, `true` → `예`
+6. **부분 점수 (Token F1)**: 완전 일치 실패 시 토큰 기반 F1 계산
 
-#### 비교 알고리즘
+#### 비교 알고리즘 (2단계 Hybrid)
 
 ```python
-def score_text(pred: str, gold: str) -> float:
-    # Step 1: 정규화
-    pred_clean = pred.strip().lower()
-    gold_clean = gold.strip().lower()
+def _normalize_for_comparison(self, text: str) -> str:
+    """
+    Normalize text for comparison:
+    1. Extract numbers (remove Korean counters like 개, 대, 명)
+    2. Map synonyms (diff -> 차이, etc.)
+    """
+    synonyms = {
+        'diff': '차이', 'difference': '차이',
+        'count': '개수', 'total': '합계',
+        'yes': '예', 'no': '아니오',
+        'true': '예', 'false': '아니오',
+        'shutdown': 'down',
+    }
+    
+    text = text.lower().strip()
+    
+    # Apply synonym mapping
+    for eng, kor in synonyms.items():
+        text = text.replace(eng, kor)
+    
+    # Normalize numbers: "0개" -> "0", "1대" -> "1"
+    text = re.sub(r'(\\d+)\\s*[개대명건번째]', r'\\1', text)
+    
+    return text
 
-    # Step 2: 따옴표 제거
-    for quote in ['"', "'"]:
-        if pred_clean.startswith(quote) and pred_clean.endswith(quote):
-            pred_clean = pred_clean[1:-1]
-        if gold_clean.startswith(quote) and gold_clean.endswith(quote):
-            gold_clean = gold_clean[1:-1]
-
-    # Step 3: 비교
-    return 1.0 if pred_clean == gold_clean else 0.0
+def _score_text(self, pred: str, gold: str) -> Dict[str, float]:
+    """
+    Score text answers using Type-Aware logic + Token F1 for robustness.
+    Strategy:
+    1. Exact Match (normalized): 1.0
+    2. Token F1 with normalization: Partial match
+    """
+    # Handle 'false' or '0' which some models use for NOT_CONFIGURED text fields
+    if pred.lower() in ['false', '0']:
+        pred = ""
+        
+    # Apply normalization
+    pred_norm = self._normalize_for_comparison(pred)
+    gold_norm = self._normalize_for_comparison(gold)
+    
+    # 1. Exact Match (Primary)
+    if pred_norm == gold_norm:
+        return {"score": 1.0}
+        
+    # 2. Token F1 (Secondary - Robustness)
+    pred_tokens = set(pred_norm.split())
+    gold_tokens = set(gold_norm.split())
+    
+    if not gold_tokens:
+        return {"score": 1.0 if not pred_tokens else 0.0}
+        
+    common = pred_tokens & gold_tokens
+    if common:
+        precision = len(common) / len(pred_tokens) if pred_tokens else 0
+        recall = len(common) / len(gold_tokens)
+        f1 = 2 * (precision * recall) / (precision + recall)
+        return {"score": f1}
+        
+    return {"score": 0.0}
 ```
 
 #### 예시
 
 ```
-질문: "leaf1 장비의 호스트네임은 무엇입니까?" (ID: 2)
-정답(Gold): "leaf1"
+질문: "PE1 장비의 호스트네임은 무엇입니까?"
+정답(Gold): "PE1"
 
-┌────────────┬─────────────┬───────────────┬─────────────────┐
-│ LLM 예측    │ Exact Match │ Type-Aware   │ 이유            │
-├────────────┼─────────────┼───────────────┼─────────────────┤
-│ "leaf1"    │ ✓ 1.0       │ ✓ 1.0         │ 완전 일치       │
-│ leaf1      │ ✗ 0.0       │ ✓ 1.0         │ 따옴표 없어도 OK │
-│ Leaf1      │ ✗ 0.0       │ ✓ 1.0         │ 대소문자 무시   │
-│ LEAF1      │ ✗ 0.0       │ ✓ 1.0         │ 대소문자 무시   │
-│ " leaf1 "  │ ✗ 0.0       │ ✓ 1.0         │ 공백 제거       │
-│ leaf2      │ ✗ 0.0       │ ✗ 0.0         │ 실제 오답       │
-└────────────┴─────────────┴───────────────┴─────────────────┘
+┌────────────────────┬─────────────┬───────────────┬─────────────────┐
+│ LLM 예측            │ Exact Match │ Type-Aware   │ 이유            │
+├────────────────────┼─────────────┼───────────────┼─────────────────┤
+│ "PE1"              │ ✓ 1.0       │ ✓ 1.0         │ 완전 일치       │
+│ pe1                │ ✗ 0.0       │ ✓ 1.0         │ 대소문자 무시   │
+│ PE1                │ ✗ 0.0       │ ✓ 1.0         │ 따옴표 없어도 OK │
+│ " PE1 "            │ ✗ 0.0       │ ✓ 1.0         │ 공백 제거       │
+│ 호스트네임은 PE1   │ ✗ 0.0       │ 0.5 (Token F1)│ 부분 일치       │
+│ PE2                │ ✗ 0.0       │ ✗ 0.0         │ 실제 오답       │
+└────────────────────┴─────────────┴───────────────┴─────────────────┘
 ```
 
 ---
@@ -449,16 +458,15 @@ def score_text(pred: str, gold: str) -> float:
 "없음"을 나타내는 다양한 표현을 정답으로 인정:
 
 ```python
-EMPTY_VALUES = {'', 'null', 'none', 'n/a', 'not configured', 'not found'}
-
-def is_empty(val: str) -> bool:
-    return val.strip().lower() in EMPTY_VALUES
+# clean_gold 및 clean_prediction에서 처리
+if gold.lower() in ['null', 'none', 'n/a', 'not configured', 'not found', '']:
+    gold = ""
 ```
 
 ### 4.3 예시
 
 ```
-질문: "p4 장비의 시간대(Timezone)는 무엇입니까?" (ID: 22)
+질문: "p4 장비의 시간대(Timezone)는 무엇입니까?"
 정답(Gold): null (설정 안 됨)
 
 ┌──────────────────┬───────────────┬─────────────────────────────┐
@@ -485,16 +493,17 @@ def is_empty(val: str) -> bool:
 │                                                                     │
 │  1. 입력 정리 (공통)                                                │
 │     ├─ <think>...</think> 태그 제거                                 │
+│     ├─ assistantfinal 구분자 처리                                   │
+│     ├─ Markdown 코드 블록 제거                                      │
 │     ├─ 따옴표 정규화                                                │
 │     └─ 공백/개행 정리                                               │
 │                                                                     │
-│  2. Answer Type 확인                                                │
+│  2. Answer Type 확인 (canonical_answer_type으로 정규화)              │
 │     │                                                               │
-│     ├─ boolean  → 동의어 정규화 후 True/False 비교                  │
-│     ├─ numeric  → 숫자 추출 후 수치 비교                            │
-│     ├─ set      → 집합 변환 후 F1 Score 계산                        │
-│     ├─ map      → JSON 파싱 후 Key-Value 매칭                       │
-│     └─ text     → 대소문자 무시 Exact Match                         │
+│     ├─ numeric/number/scalar_int → 숫자 추출 후 수치 비교           │
+│     ├─ set/set_str/list         → 집합 변환 후 F1 Score 계산        │
+│     ├─ map/map_str_str/json     → JSON 파싱 후 Key-Value 매칭       │
+│     └─ text (기본값)            → 정규화 EM → Token F1 폴백         │
 │                                                                     │
 │  3. 점수 반환 (0.0 ~ 1.0)                                           │
 │                                                                     │
@@ -503,19 +512,16 @@ def is_empty(val: str) -> bool:
 
 ---
 
-## 6. Type-Aware vs EM vs F1 비교 분석
-
-Type-Aware Scoring은 단순히 하나의 메트릭이 아니라, 데이터의 구조를 이해하고 EM(Exact Match)과 F1의 장점을 결합한 방식입니다.
+## 6. Type-Aware vs EM vs Token F1 비교 분석
 
 ### 6.1 메트릭 간 상관관계 요약
 
 | Answer Type | Type-Aware vs EM | Type-Aware vs Token F1 | 핵심 차이점 |
 | :--- | :--- | :--- | :--- |
-| **Boolean** | **높음 (Lenient)** | **높음** | "yes", "1", "true"를 모두 동일하게 처리 (Semantic EM) |
-| **Numeric** | **높음 (Lenient)** | **비슷함** | "1명", "1.0", "1"에서 숫자 '1'만 추출하여 비교 |
-| **Set** | **높음** | **높음** | 순서 무관 + **요소 단위** 비교 (Token 단위가 아님) |
-| **Map** | **훨씬 높음** | **높음** | JSON 구조 이해, Key/Value 분리 채점, 순서 무관 |
-| **Text** | **높음** | **비슷하거나 낮음** | 동의어 정규화 후 F1 계산. 단순 토큰 겹침보다 엄격할 수 있음 |
+| **Numeric** | **높음 (Lenient)** | **비슷함** | "1명", "1.0", "one"에서 숫자 추출 비교 |
+| **Set** | **높음** | **높음** | 순서 무관 + **요소 단위** 비교 |
+| **Map** | **훨씬 높음** | **높음** | JSON 구조 이해, Key/Value 분리 채점, IP 정규화 |
+| **Text** | **높음** | **비슷하거나 낮음** | EM 우선 + Token F1 폴백 (Hybrid) |
 
 ### 6.2 왜 점수 차이가 발생하는가?
 
@@ -529,19 +535,18 @@ Type-Aware Scoring은 단순히 하나의 메트릭이 아니라, 데이터의 �
 - **Type-Aware (Map)**: 
     - **Key Score (50%)**: 정답의 키를 얼마나 포함했는가?
     - **Value Score (50%)**: 포함된 키의 값이 얼마나 정확한가?
-- **결과**: 10개의 인터페이스 상태 중 9개만 맞춰도 EM은 0점이지만, Type-Aware는 약 0.9점을 부여하여 모델의 실제 능력을 정확히 반영합니다.
+    - **IP 정규화**: CIDR 제거, shutdown→down 매핑
+- **결과**: 10개의 인터페이스 상태 중 9개만 맞춰도 EM은 0점이지만, Type-Aware는 약 0.9점을 부여합니다.
 
-#### 3) Text Type: Semantic Normalization & Hybrid Scoring
+#### 3) Text Type: Hybrid Scoring
 - **로직**: 먼저 정규화된 EM을 시도하고, 실패하면 Token F1을 계산합니다.
-- **결과**: 한국어 조사나 단위 표현("개", "대", "명") 때문에 발생하는 EM의 한계를 극복합니다. 다만, 단순 Token F1은 정규화 없이도 우연히 겹치는 토큰에 점수를 주므로, Type-Aware가 더 보수적(엄격)일 수 있습니다.
+- **결과**: 한국어 조사나 단위 표현("개", "대", "명") 때문에 발생하는 EM의 한계를 극복합니다.
 
 ---
 
 ## 7. 관련 연구 / 인용 근거
 
-교수님께 관련 연구로 언급할 수 있는 것들:
-
-### 6.1 유사한 접근을 사용하는 벤치마크
+### 7.1 유사한 접근을 사용하는 벤치마크
 
 | 벤치마크              | 도메인       | 평가 방식          | 이유                                   |
 | --------------------- | ------------ | ------------------ | -------------------------------------- |
@@ -550,7 +555,7 @@ Type-Aware Scoring은 단순히 하나의 메트릭이 아니라, 데이터의 �
 | **TriviaQA**          | QA           | Normalized EM      | 대소문자/공백 등 정규화                |
 | **Natural Questions** | QA           | Token-level F1     | 하지만 구조화 데이터엔 부적합          |
 
-### 6.2 핵심 인용 문구
+### 7.2 핵심 인용 문구
 
 > "For structured data extraction tasks, token-level metrics like F1 or ROUGE are insufficient because they fail to capture semantic equivalence of structured outputs."
 > — 관련 연구들의 공통 주장
@@ -566,14 +571,20 @@ Type-Aware Scoring은 단순히 하나의 메트릭이 아니라, 데이터의 �
 
 > "EM/F1/BERT/ROUGE는 **자연어 텍스트용**이고, 저희 데이터는 **구조화된 정형 데이터**라서 **데이터 타입별 정확성 비교**를 사용했습니다."
 
-### 3가지 핵심 근거
+### 4가지 핵심 근거
 
 1. **Token F1의 한계**: IP 주소 `10.0.0.1` vs `10.0.0.2`가 85% 정답으로 처리됨 → 네트워크에서 치명적 오류
 2. **순서 불변성 필요**: JSON `{"a":1, "b":2}` = `{"b":2, "a":1}`이지만 ROUGE는 다르게 처리
-3. **형식 불변성 필요**: `true` = `True` = `yes`이지만 EM은 다 다르게 처리
+3. **형식 불변성 필요**: `one` = `1` = `1.0`이지만 EM은 다 다르게 처리
+4. **네트워크 특화**: CIDR 제거, shutdown→down 매핑 등 도메인 지식 반영
 
 ### 관련 연구
 
 - Spider (Text-to-SQL): **Execution Accuracy** 사용
 - KILT: **Normalized Exact Match** 사용
 - 둘 다 구조화된 답변에 단순 문자열 비교가 부적합하다는 문제의식에서 출발
+
+---
+
+**문서 업데이트**: 2026-02-05  
+**코드 기준**: `analyze_results_netconfigqa.py` (NetConfigQAScorer 클래스)

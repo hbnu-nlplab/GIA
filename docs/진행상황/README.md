@@ -60,6 +60,7 @@ L1-L5 계층별 QA            →    자동 복구 성공률
 | **[3. NSO-Pnetlab-Tailscale 연동\_정리.md](./3.%20NSO-Pnetlab-Tailscale%20연동_정리.md)**                         | 네트워크 통합 구성               |
 | **[4. Batfish*설치*및*구성*임시.md](./4.%20Batfish_설치_및_구성_임시.md)**                                        | Batfish 네트워크 분석 도구       |
 | **[5. 자동화 스크립트.md](./5.%20자동화%20스크립트.md)**                                                          | 데이터 수집 자동화               |
+| **[8. NetAlly_Demo_Flow.md](./8.%20NetAlly_Demo_Flow.md)**                                                       | NetAlly 데모 플로우 정리         |
 
 ---
 

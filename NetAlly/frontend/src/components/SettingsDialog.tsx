@@ -1,12 +1,55 @@
 import { Sun, Moon, Languages, X } from 'lucide-react'
 import { useAppStore } from '../store'
 import { useTranslation } from '../i18n'
+import { useEffect, useState } from 'react'
 
 export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
   const { theme, setTheme, language, setLanguage, settings, updateSettings } = useAppStore()
   const { t } = useTranslation()
+  const [pnetlabCookies, setPnetlabCookies] = useState(localStorage.getItem('pnetlab_cookies') || '')
+  const [pnetlabUser, setPnetlabUser] = useState(localStorage.getItem('pnetlab_user') || '')
+  const [pnetlabPass, setPnetlabPass] = useState(localStorage.getItem('pnetlab_pass') || '')
+  const [autoLogin, setAutoLogin] = useState(localStorage.getItem('pnetlab_auto_login') === 'true')
+  const [authStatus, setAuthStatus] = useState<'unknown' | 'ok' | 'fail'>('unknown')
+
+  useEffect(() => {
+    if (!isOpen) return
+    const fetchStatus = async () => {
+      try {
+        const res = await fetch('/api/pnetlab/status')
+        const data = await res.json()
+        setAuthStatus(data?.authenticated ? 'ok' : 'fail')
+      } catch {
+        setAuthStatus('fail')
+      }
+    }
+    fetchStatus()
+  }, [isOpen])
 
   if (!isOpen) return null
+
+  const applyAuth = async () => {
+    localStorage.setItem('pnetlab_cookies', pnetlabCookies)
+    localStorage.setItem('pnetlab_user', pnetlabUser)
+    localStorage.setItem('pnetlab_pass', pnetlabPass)
+    localStorage.setItem('pnetlab_auto_login', autoLogin ? 'true' : 'false')
+    try {
+      const res = await fetch('/api/pnetlab/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cookies: pnetlabCookies || null,
+          username: pnetlabUser || null,
+          password: pnetlabPass || null,
+          auto_login: autoLogin
+        })
+      })
+      const data = await res.json()
+      setAuthStatus(data?.authenticated ? 'ok' : 'fail')
+    } catch {
+      setAuthStatus('fail')
+    }
+  }
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
@@ -155,6 +198,63 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean, o
                 className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
               />
             </div>
+          </section>
+
+          <section className="space-y-3">
+            <h3 className="text-[10px] font-black uppercase tracking-tighter text-primary/80">PNETLab Auth</h3>
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-muted-foreground">Status</span>
+              <span className={`${authStatus === 'ok' ? 'text-emerald-500' : authStatus === 'fail' ? 'text-rose-500' : 'text-slate-500'}`}>
+                {authStatus === 'ok' ? 'Authenticated' : authStatus === 'fail' ? 'Not Authenticated' : 'Unknown'}
+              </span>
+            </div>
+            <div className="flex items-center justify-between group">
+              <div className="space-y-0.5">
+                <div className="text-xs font-bold text-foreground">Auto Login</div>
+                <div className="text-[10px] text-muted-foreground">Use username/password if cookies are not set.</div>
+              </div>
+              <input 
+                type="checkbox"
+                checked={autoLogin}
+                onChange={e => setAutoLogin(e.target.checked)}
+                className="w-4 h-4 rounded border-border text-primary focus:ring-primary accent-primary"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">Username</label>
+              <input
+                value={pnetlabUser}
+                onChange={e => setPnetlabUser(e.target.value)}
+                placeholder="admin"
+                className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">Password</label>
+              <input
+                type="password"
+                value={pnetlabPass}
+                onChange={e => setPnetlabPass(e.target.value)}
+                placeholder="pnetlab"
+                className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">Cookies (fallback)</label>
+              <textarea
+                rows={3}
+                value={pnetlabCookies}
+                onChange={e => setPnetlabCookies(e.target.value)}
+                placeholder="token=...; _session=...; XSRF-TOKEN=..."
+                className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+              />
+            </div>
+            <button
+              onClick={applyAuth}
+              className="w-full py-2 text-[11px] font-bold uppercase tracking-widest rounded-md bg-primary text-primary-foreground hover:scale-105 transition-all"
+            >
+              Apply Auth
+            </button>
           </section>
 
           <section className="pt-4 border-t border-border">
