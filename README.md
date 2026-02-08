@@ -6,9 +6,6 @@
 
 ---
 
-
-## 📌 주요 특징
-
 - **자동화된 Ground Truth 생성**: Batfish 네트워크 분석 엔진을 활용하여 100% 재현 가능한 정답 생성
 - **다층 난이도 체계 (L1-L5)**: 단순 설정 조회부터 장애 시나리오 추론까지 5단계 복잡도
 - **하이브리드 분석 엔진**: 규칙 기반(Regex) 파서 + Batfish 시뮬레이션 결합
@@ -25,7 +22,8 @@
 | **PnetLab**     | 가상 네트워크 토폴로지 구성 환경      | [공식 사이트](https://pnetlab.com/) |
 | **Cisco NSO**   | 네트워크 장비 설정 수집 및 동기화     | Docker 컨테이너 권장                |
 | **Batfish**     | 네트워크 설정 분석 및 시뮬레이션 엔진 | Docker 컨테이너 필수                |
-| **Python 3.9+** | 데이터셋 생성 스크립트 실행 환경      | `requirements.txt` 참조             |
+| **Python 3.9+** | 데이터셋 생성 스크립트 실행 환경      | `uv` 권장 (`pip` 호환)             |
+| **Node.js**     | 프론트엔드 실행 환경 (NetAlly)       | `npm` 사용                         |
 
 ### Batfish 설치 (Docker)
 
@@ -48,9 +46,19 @@ docker run -d -p 8080:8080 -p 8888:8888 --name cisco-nso-dev cisco-nso-dev
 ### 1. 환경 설정
 
 ```bash
+# Repo Clone
 git clone https://github.com/hbnu-kilab/GIA.git
 cd GIA
-pip install -r requirements.txt
+
+# 1. Python 환경 구축 (uv 권장)
+# uv가 없다면: curl -LsSf https://astral.sh/uv/install.sh | sh
+uv venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+uv pip install -r requirements.txt
+
+# 2. Frontend 환경 구축 (Node.js)
+cd NetAlly/frontend
+npm install
 ```
 
 ### 2. 데이터 준비 (PnetLab → NSO → Batfish)
@@ -98,9 +106,9 @@ python main_batfish.py --lab-path ../../Data/Pnetlab/Research_Institute_Internal
 
 ## 📁 프로젝트 구조
 
-```
+```text
 GIA/
-├── Make_Dataset/           # 데이터셋 생성 파이프라인
+├── Make_Dataset/           # 데이터셋 생성 파이트라인
 │   └── src/
 │       ├── core_batfish/   # Batfish 분석 엔진 (L4/L5)
 │       ├── main_batfish.py # 메인 실행 스크립트
