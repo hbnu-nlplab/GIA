@@ -201,6 +201,9 @@ Batfish 준비 후 Chat Panel에서 질의 실행
 4. 자동 점검 스크립트
    - `./scripts/demo_precheck.sh`
    - PASS 출력 확인 후 데모 시작
+5. 원클릭 기동(선택)
+   - `./scripts/demo_up_local.sh`
+   - backend/frontend 기동 + precheck 자동 수행
 
 ---
 
