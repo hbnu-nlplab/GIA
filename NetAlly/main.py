@@ -675,6 +675,50 @@ async def get_dashboard_summary(mode: str = "lab"):
     Args:
         mode: "lab" (실험실 모드) 또는 "production" (운영 모드)
     """
+    def normalize_dashboard_summary(raw: Any, mode_value: str, offline_note: Optional[str] = None) -> Dict[str, Any]:
+        default_protocol = {"total": 0, "up": 0, "down": 0, "status": "unknown"}
+        data = raw if isinstance(raw, dict) else {}
+        protocols = data.get("protocols")
+        protocols = protocols if isinstance(protocols, dict) else {}
+        bgp = protocols.get("bgp")
+        ospf = protocols.get("ospf")
+        bgp = bgp if isinstance(bgp, dict) else {}
+        ospf = ospf if isinstance(ospf, dict) else {}
+        compliance = data.get("compliance")
+        compliance = compliance if isinstance(compliance, dict) else {}
+        device_status = data.get("device_status")
+        device_status = device_status if isinstance(device_status, dict) else {}
+        issues = data.get("issues")
+        issues = issues if isinstance(issues, list) else []
+
+        if offline_note and not issues:
+            issues = [{"severity": "warning", "title": "Batfish Offline", "message": offline_note}]
+
+        return {
+            "health_score": int(data.get("health_score", 0) or 0),
+            "mode": str(data.get("mode", mode_value) or mode_value),
+            "protocols": {
+                "bgp": {
+                    "total": int(bgp.get("total", default_protocol["total"]) or 0),
+                    "up": int(bgp.get("up", default_protocol["up"]) or 0),
+                    "down": int(bgp.get("down", default_protocol["down"]) or 0),
+                    "status": str(bgp.get("status", default_protocol["status"]) or "unknown"),
+                },
+                "ospf": {
+                    "total": int(ospf.get("total", default_protocol["total"]) or 0),
+                    "up": int(ospf.get("up", default_protocol["up"]) or 0),
+                    "down": int(ospf.get("down", default_protocol["down"]) or 0),
+                    "status": str(ospf.get("status", default_protocol["status"]) or "unknown"),
+                },
+            },
+            "issues": issues,
+            "device_status": device_status,
+            "compliance": {
+                "routing": int(compliance.get("routing", 0) or 0),
+                "security": int(compliance.get("security", 0) or 0),
+            },
+        }
+
     try:
         from agent.clients.batfish import BatfishClient
         batfish = BatfishClient(host=os.getenv("BATFISH_HOST", "localhost"))
@@ -684,16 +728,9 @@ async def get_dashboard_summary(mode: str = "lab"):
                 batfish.load_snapshot(BATFISH_SNAPSHOT)
             
             if batfish._builder:
-                return batfish.get_dashboard_data(mode=mode)
+                return normalize_dashboard_summary(batfish.get_dashboard_data(mode=mode), mode)
         
-        return {
-            "health_score": 0,
-            "mode": mode,
-            "protocols": {"bgp": {"total":0, "up":0, "down":0, "status":"unknown"}},
-            "issues": [{"severity":"warning", "title":"Batfish Offline", "message":"Batfish analysis is not available."}],
-            "device_status": {},
-            "compliance": {"routing": 0, "security": 0}
-        }
+        return normalize_dashboard_summary({}, mode, offline_note="Batfish analysis is not available.")
     except Exception as e:
         logger.error(f"Dashboard summary error: {e}")
         return JSONResponse(status_code=500, content={"detail": str(e)})
