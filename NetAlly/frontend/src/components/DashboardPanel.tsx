@@ -39,6 +39,45 @@ interface DashboardData {
   };
 }
 
+const DEFAULT_PROTOCOL: ProtocolStatus = {
+  total: 0,
+  up: 0,
+  down: 0,
+  status: 'unknown',
+};
+
+const normalizeDashboardData = (raw: any): DashboardData => {
+  const protocols = raw?.protocols || {};
+  const bgp = protocols.bgp || {};
+  const ospf = protocols.ospf || {};
+  const compliance = raw?.compliance || {};
+
+  return {
+    health_score: Number(raw?.health_score ?? 0),
+    mode: String(raw?.mode ?? 'lab'),
+    protocols: {
+      bgp: {
+        total: Number(bgp.total ?? DEFAULT_PROTOCOL.total),
+        up: Number(bgp.up ?? DEFAULT_PROTOCOL.up),
+        down: Number(bgp.down ?? DEFAULT_PROTOCOL.down),
+        status: (bgp.status ?? DEFAULT_PROTOCOL.status) as ProtocolStatus['status'],
+      },
+      ospf: {
+        total: Number(ospf.total ?? DEFAULT_PROTOCOL.total),
+        up: Number(ospf.up ?? DEFAULT_PROTOCOL.up),
+        down: Number(ospf.down ?? DEFAULT_PROTOCOL.down),
+        status: (ospf.status ?? DEFAULT_PROTOCOL.status) as ProtocolStatus['status'],
+      },
+    },
+    issues: Array.isArray(raw?.issues) ? raw.issues : [],
+    device_status: raw?.device_status && typeof raw.device_status === 'object' ? raw.device_status : {},
+    compliance: {
+      routing: Number(compliance.routing ?? 0),
+      security: Number(compliance.security ?? 0),
+    },
+  };
+};
+
 const DashboardPanel: React.FC = () => {
   // ALL HOOKS MUST BE AT THE TOP - BEFORE ANY CONDITIONAL RETURNS
   const [data, setData] = useState<DashboardData | null>(null);
@@ -56,7 +95,7 @@ const DashboardPanel: React.FC = () => {
       setLoading(true);
       const response = await fetch(`/api/dashboard/summary?mode=${mode}`);
       const result = await response.json();
-      setData(result);
+      setData(normalizeDashboardData(result));
     } catch (error) {
       console.error('Failed to fetch dashboard summary:', error);
     } finally {
