@@ -17,23 +17,24 @@ DATA_PATHS = {
     #     "reference": BASE_DIR / "data" / "passages" / "reference" / "telequad_ref.json",
     #     "final_output": BASE_DIR / "data" / "passages" / "generated" / "telequad_passage.json"
     # }
-    "teleqna": {
-        "input": BASE_DIR / "data" / "original" / "teleqna_original.json",
-        "batch_jsonl": BASE_DIR / "data" / "batch_input" / "teleqna_batch.jsonl",
-        "reference": BASE_DIR / "data" / "passages" / "reference" / "teleqna_ref.json",
-        "final_output": BASE_DIR / "data" / "passages" / "generated" / "teleqna_passage.json"
-    }
+    # "teleqna": {
+    #     "input": BASE_DIR / "data" / "original" / "teleqna_original.json",
+    #     "batch_jsonl": BASE_DIR / "data" / "batch_input" / "teleqna_batch.jsonl",
+    #     "reference": BASE_DIR / "data" / "passages" / "reference" / "teleqna_ref.json",
+    #     "final_output": BASE_DIR / "data" / "passages" / "generated" / "teleqna_passage.json"
+    # }
     # "netbench": {
     #     "input": BASE_DIR / "data" / "original" / "netbench_original.json",
     #     "batch_jsonl": BASE_DIR / "data" / "batch_input" / "netbench_batch.jsonl",
     #     "reference": BASE_DIR / "data" / "passages" / "reference" / "netbench_ref.json"
     # },
-    # "netconfig": {
-    #     "input": BASE_DIR / "data" / "original" / "qa_dataset.json",
-    #     "batch_jsonl": BASE_DIR / "data" / "batch_input" / "netconfig_batch.jsonl",
-    #     "reference": BASE_DIR / "data" / "passages" / "reference" / "netconfig_ref.json",
-    #     "context_file": BASE_DIR / "data" / "original" / "netconfig_context.txt"
-    # }
+    "netconfig": {
+        "input": BASE_DIR / "data" / "original" / "Research_Institute_Internal_DC" / "netconfig.json",
+        "batch_jsonl": BASE_DIR / "data" / "batch_input" / "netconfig_batch.jsonl",
+        "reference": BASE_DIR / "data" / "passages" / "reference" / "netconfig_ref.json",
+        "final_output": BASE_DIR / "data" / "passages" / "generated" / "netconfig_passage2.json",
+        "config_dir": BASE_DIR / "data" / "original" / "Research_Institute_Internal_DC" / "configs"
+    }
 }
 
 # 데이터 처리 함수들은 그대로 유지
@@ -67,7 +68,7 @@ def process_netbench_data(item):
 
 def process_netconfig_data(item):
     question = item.get('question', '')
-    gold_answer = item.get('ground_truth', '')
+    gold_answer = item.get('answer', '')
     return question, gold_answer
 
 
@@ -88,7 +89,12 @@ def create_batch_files_and_run(dataset_key):
     try:
         with open(paths['input'], 'r', encoding='utf-8') as f:
             raw_data = json.load(f)
-            if isinstance(raw_data, dict):
+            if dataset_key == 'netconfig':
+                data_list = raw_data.get('questions', [])
+                print("+++++++++++++++++++++++")
+                print("data_list: ", data_list[:10])
+                print("+++++++++++++++++++++++")
+            elif isinstance(raw_data, dict):
                 data_list = list(raw_data.values())
             else:
                 data_list = raw_data
@@ -99,12 +105,18 @@ def create_batch_files_and_run(dataset_key):
     # Netconfig Context 로드
     netconfig_context = ""
     if dataset_key == 'netconfig':
-        context_file = paths.get('context_file')
-        if os.path.exists(context_file):
-            with open(context_file, 'r', encoding='utf-8') as f:
-                netconfig_context = f.read()
+        config_dir = paths.get('config_dir')
+        if config_dir and os.path.exists(config_dir):
+            configs = []
+            files = sorted([f for f in os.listdir(config_dir) if f.endswith(".cfg")])
+            for filename in files:
+                file_path = os.path.join(config_dir, filename)
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                    configs.append(f"--- File: {filename} ---\n{content}")
+            netconfig_context = "\n\n".join(configs)
         else:
-            print(f"Warning: Context file not found.")
+            print(f"Warning: Config directory not found.")
             return
 
     print(f"Creating Batch Input for '{dataset_key}' ({len(data_list)} items)...")
@@ -125,7 +137,7 @@ def create_batch_files_and_run(dataset_key):
             combined_input = f"Scenario Context: {context}\n\nQuestion: {question}"
         elif dataset_key == 'netconfig':
             question, gold_answer = process_netconfig_data(item)
-            combined_input = f"Network Configurations (Minified XML): {netconfig_context}\n\nQuestion: {question}"
+            combined_input = f"Network Configurations:\n{netconfig_context}\n\nQuestion: {question}"
         else:
             continue
 
@@ -156,7 +168,14 @@ Passage:
             }
         }
         
-        batch_lines.append(json.dumps(request_obj))
+        batch_lines.append(json.dumps(request_obj, ensure_ascii=False))
+
+        # Debug print for the first item
+        if idx == 0:
+            print(f"[{dataset_key} First Item Verification]")
+            print(f"Question: {question}")
+            print(f"Gold Answer: {gold_answer}")
+            print(f"Combined Context Length: {len(combined_input)}")
 
         if dataset_key == 'teleqna':
             reference_data.append({

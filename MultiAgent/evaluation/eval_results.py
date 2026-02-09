@@ -13,6 +13,7 @@ NetConfigQA Result Analyzer (Scoring Only)
 import json
 import re
 import os
+import sys
 import argparse
 import csv
 from pathlib import Path
@@ -505,11 +506,7 @@ class NetConfigQAScorer:
         text = re.sub(r'\s*:\s*', ':', text)
         text = re.sub(r'\s*,\s*', ',', text)
         
-        # 4. Normalize arrows (network paths): '->' to '→' and ensure consistent spacing
-        text = text.replace('->', '→')
-        text = re.sub(r'\s*→\s*', ' → ', text)
-        
-        return text.strip()
+        return text
 
     def _score_text(self, pred: str, gold: str) -> Dict[str, float]:
         """
@@ -745,7 +742,16 @@ def analyze_results(json_file: str, verbose: bool = False):
     """메인 분석 함수"""
     
     with open(json_file, 'r', encoding='utf-8') as f:
-        data = json.load(f)
+        raw_data = json.load(f)
+
+    if isinstance(raw_data, list):
+        data = raw_data
+        meta = {}
+    elif isinstance(raw_data, dict):
+        data = raw_data.get("results", [])
+        meta = raw_data.get("meta", {})
+    else:
+        raise ValueError("Unknown JSON format")
 
     scorer = NetConfigQAScorer()
     trad_calc = TraditionalMetricsCalculator()
@@ -753,7 +759,7 @@ def analyze_results(json_file: str, verbose: bool = False):
     
     # 통계 수집용
     grouped_by_type = defaultdict(list)
-    grouped_by_level = defaultdict(list)
+    # grouped_by_level = defaultdict(list)
     grouped_by_category = defaultdict(list)
     grouped_by_status = defaultdict(list)
     
@@ -766,7 +772,7 @@ def analyze_results(json_file: str, verbose: bool = False):
     all_preds = []
     all_golds = []
     
-    print(f"Analyzing {len(data['results'])} results...")
+    print(f"Analyzing {len(data)} results...")
     print(f"[Step 1/3] Calculating Type-Aware and Traditional metrics...")
 
     for row in data:
@@ -929,7 +935,7 @@ def analyze_results(json_file: str, verbose: bool = False):
     if "_raw_" in json_file:
         output_file = json_file.replace("_raw_", "_analyzed_")
     
-    meta = data.get("meta", {})
+    # meta is already extracted at the beginning
     output_data = {
         "meta": meta,
         "stats": stats,
@@ -994,7 +1000,7 @@ def analyze_results(json_file: str, verbose: bool = False):
 
 def main():
     parser = argparse.ArgumentParser(description="Analyze NetConfigQA evaluation results")
-    parser.add_argument("json_files", nargs="+", help="Path to results json(s) (raw or already analyzed)")
+    parser.add_argument("json_files", nargs="*", help="Path to results json(s) (raw or already analyzed)")
     parser.add_argument("--verbose", "-v", action="store_true", help="Show detailed error analysis")
     parser.add_argument("--output_summary", "-o", default="comparison_summary.md", help="Output path for combined summary")
     args = parser.parse_args()
@@ -1006,7 +1012,19 @@ def main():
     sys.path.append(str(BASE_DIR))
 
 
-    json_file = BASE_DIR / "data" / "debate_results" / "full_w_context4" / "netconfig_result2.json"
+    all_results = []
+    
+    files_to_process = args.json_files
+    if not files_to_process:
+        # Default file if none provided
+        default_file = BASE_DIR / "data" / "debate_results" / "full_w_context4" / "netconfig_result2.json"
+        if default_file.exists():
+            files_to_process = [str(default_file)]
+        else:
+            print(f"Error: No files provided and default file not found: {default_file}")
+            return
+
+    for json_file in files_to_process:
         stats, results, meta = analyze_results(json_file, args.verbose)
         all_results.append((stats, meta))
     

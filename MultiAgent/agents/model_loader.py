@@ -90,7 +90,7 @@ def init_models():
             print("Check config/load_env.py implementation")
             return {}
 
-        common_params = {"base_url": base_url, "api_key": api_key, "temperature": 0, "max_tokens": 256}
+        common_params = {"base_url": base_url, "api_key": api_key, "temperature": 0, "max_tokens": 1024}
 
         print(f"   - Model A (Engineer/Judge): {model1}")
         print(f"   - Model B (Auditor/Skeptic): {model2}")

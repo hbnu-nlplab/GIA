@@ -56,7 +56,6 @@ def parse_response(content):
         passage = m.group(1).strip()
         answer = m.group(2).strip()
     else:
-        # Fallback
         if "Answer:" in target_content:
             parts = target_content.split("Answer:")
             answer = parts[-1].strip()
@@ -71,18 +70,76 @@ def parse_response(content):
 
 
 def collector_node(state):
-    print(f"   [D1] Round {state['round_count']+1}: Collector gathering details...")
-    system_prompt = """You are a Network Info Collector.
-Your task is to analyze the [Question] and [Current Passage] to construct a factual passage and derive an answer.
+    dataset_type = state.get('dataset_type', 'descriptive')
+    print(f"   [D1] Round {state['round_count']+1}: Collector gathering details ({dataset_type})...")
+    
+    # --- Prompt Definitions ---
+    PROMPTS = {
+        "descriptive": """You are a Network Info Collector for descriptive questions.
+TASK: Construct current passage included the answer then, answer the question based on the passage.
 
-### 1. ANALYZE QUESTION TYPE & FORMAT ANSWER:
-- **Multiple Choice**: IF the question contains options, choose the correct option and only write the number.
-- **Short Answer**: IF the Question asks for a specific entity, provide the value.
-- **Descriptive**: IF the Question asks to "explain", "describe", or "how", provide a concise explanation.
+RULES:
+1. Provide a complete technical answer in 1-2 sentences that includes both the direct answer and the technical reasoning.
+2. Output ONLY your passage and answer. Do NOT include any meta-commentary like "analysis:", "thought:", or "reasoning:".
+3. If the answer involves configurations, include the exact syntax (CLI, YAML, etc.) along with a brief explanation.
+4. Match the expert-level depth and completeness expected in professional network engineering documentation.""",
+        
 
-### 2. INSTRUCTIONS:
-- Construct a concise 'Passage' strictly based on the provided gold context.
-- If the context is insufficient, output "[NONE]".
+        "short_answer": """You are a Network Info Collector for short-answer questions.
+        TASK: Construct current passage included the answer then, answer the question based on the passage.
+        
+RULES:
+1. Find the exact answer span in the context.
+2. Output ONLY the extracted text in answer
+
+- no explanations, no reasoning, no thoughts.
+3. Do NOT paraphrase - use exact wording from context.
+4. If the answer is a value with a unit, include both.""",
+        
+
+        "multiple_choice": """You are a Network Info Collector for multiple-choice questions.
+
+        TASK: Construct current passage included the answer then, answer the question based on the passage.
+
+RULES:
+1. Select the single best answer from the given options.
+2. Use your expert knowledge of telecom standards (3GPP, IEEE, etc.).
+3. Output your answer in this exact format: "option N: [answer text]"
+4. Do NOT include any reasoning, thoughts, or explanations in answer.""",
+
+        "netconfig": """You are a Network Info Collector for short-answer questions.
+        TASK:
+    1. Search the Context for the specific value requested.
+    2. If the Context is "[NONE]" or the information is not found, the Passage must be "[NONE]". 
+    Answer FORMAT RULES (CRITICAL - MUST FOLLOW EXACTLY):
+
+1. output the raw answer value in ONE line:
+   - text type: Just the text value (e.g., "R1" or "10.0.0.1")
+   - numeric/number type: Just the number (e.g., 5 or 10.5)
+   - set type: JSON array format (e.g., ["item1", "item2"])
+   - map type: JSON object format (e.g., {"key": "value"})
+   - boolean type: true or false
+
+2. CORE SEARCH RULES (CRITICAL)
+- **Scope Restriction**: Identify the target device and search ONLY within its specific configuration block (e.g., between `<Leaf1.cfg>` and the next tag). IGNORE content outside this block.
+- **No Inference**: Do NOT assume settings exist just because they appear on connected devices (e.g., configurations on a PE router do NOT imply the same settings on a Leaf switch).
+- **Strict 'None' Handling**: If the specific command is missing in the target block, do NOT guess or use unrelated values (like IPs). Return the Empty Value defined below.
+   
+   
+3. If NOT_CONFIGURED or information missing:
+   - text: null
+   - numeric: 0
+   - set: []
+   - map: {}
+   - boolean: false
+   - If there is no route, answer ‘경로 없음’. """
+}
+
+    base_system = PROMPTS.get(dataset_type, PROMPTS["descriptive"])
+    system_prompt = base_system + """
+
+### INSTRUCTIONS:
+- Do not write a passage if you don’t know accurate information about the question. Write [NONE] if you cannot write a factual good passage. (ex. Passage: [NONE])  
 
 ### OUTPUT FORMAT:
 [START]
@@ -92,19 +149,11 @@ Answer:
 """
 
     options_str = state.get('options', '')
-    if options_str:
-        user_prompt = f"""
-Question: {state['question']}
-Options: {options_str}
-Current Passage: {state['current_passage']}
-"""
-    else:
-        user_prompt = f"""
-Question: {state['question']}
-Current Passage: {state['current_passage']}
-"""
-
-    print("Options:", options_str)
+    user_prompt = f"Question: {state['question']}\n"
+    if dataset_type == "multiple_choice" and options_str:
+        user_prompt += f"Options: {options_str}\n"
+    user_prompt += f"Context: {state.get('context', '')}\n"
+    user_prompt += f"Current Passage: {state['current_passage']}"
 
     res = models['A'].invoke([
         SystemMessage(content=system_prompt),
@@ -116,17 +165,70 @@ Current Passage: {state['current_passage']}
 
 
 def verifier_node(state):
-    print(f"   [D1] Round {state['round_count']+1}: Verifier checking facts...")
-    system_prompt = """You are a Strict Network Info Verifier.
-Your task is to scrutinize the [Current Passage] and [Candidate Answer] for errors.
+    dataset_type = state.get('dataset_type', 'descriptive')
+    print(f"   [D1] Round {state['round_count']+1}: Verifier checking facts ({dataset_type})...")
+    
+    PROMPTS = {
+        "descriptive": """You are a Network Info Verifier for descriptive questions.
+TASK: Scrutinize current passage that included the gold answer for errors then, answer the question based on the passage.
+
+RULES:
+1. Provide a complete technical answer in 1-2 sentences that includes both the direct answer and the technical reasoning.
+2. Output ONLY your passage and answer. Do NOT include any meta-commentary like "analysis:", "thought:", or "reasoning:".
+3. If the answer involves configurations, include the exact syntax (CLI, YAML, etc.) along with a brief explanation.
+4. Match the expert-level depth and completeness expected in professional network engineering documentation.""",
+        
+
+        "short_answer": """You are a Network Info Verifier for short-answer questions.
+        TASK: Compare the correct passage and the candidate answers with the context to check for errors. If errors are found, output the corrected passage and the correct answer.
+        
+RULES:
+1. Find the exact answer span in the context.
+2. Output ONLY the extracted text in answer - no explanations, no reasoning, no thoughts.
+3. Do NOT paraphrase - use exact wording from context.
+4. If the answer is a value with a unit, include both.""",
+        
+
+        "multiple_choice": """You are a Network Info Verifier for multiple-choice questions.
+
+        TASK: Compare the correct passage and the candidate answers to check for errors. If errors are found, output the corrected passage and the correct answer.
+
+RULES:
+1. Select the single best answer from the given options.
+2. Use your expert knowledge of telecom standards (3GPP, IEEE, etc.).
+3. Output your answer in this exact format: "option N: [answer text]"
+4. Do NOT include any reasoning, thoughts, or explanations in answer. """,
+
+        "netconfig": """You are a Network Info Verifier for short-answer questions.
+    TASK: You must find the answer in the given context. Compare the correct passage, context and the candidate answers to check for errors. If errors are found, output the corrected passage and the correct answer.
+    
+    Answer FORMAT RULES (CRITICAL - MUST FOLLOW EXACTLY):
+1. output the raw answer value in ONE line:
+   - text type: Just the text value (e.g., "R1" or "10.0.0.1")
+   - numeric/number type: Just the number (e.g., 5 or 10.5)
+   - set type: JSON array format (e.g., ["item1", "item2"])
+   - map type: JSON object format (e.g., {"key": "value"})
+   - boolean type: true or false
+
+2. CORE SEARCH RULES (CRITICAL)
+- **Scope Restriction**: Identify the target device and search ONLY within its specific configuration block (e.g., between `<Leaf1.cfg>` and the next tag). IGNORE content outside this block.
+- **No Inference**: Do NOT assume settings exist just because they appear on connected devices (e.g., configurations on a PE router do NOT imply the same settings on a Leaf switch).
+- **Strict 'None' Handling**: If the specific command is missing in the target block, do NOT guess or use unrelated values (like IPs). Return the Empty Value defined below.
+   
+   
+3. If NOT_CONFIGURED or information missing:
+   - text: null
+   - numeric: 0
+   - set: []
+   - map: {}
+   - boolean: false"""
+    }
+
+    base_system = PROMPTS.get(dataset_type, PROMPTS["descriptive"])
+    system_prompt = base_system + """
 
 ### INSTRUCTIONS:
-1. **Verify Logic**: Ensure the Answer is logically supported by the Passage.
-2. **Maintain Format**:
-   - **Multiple Choice**: IF the question contains options ensure the output remains the option number.
-   - **Short Answer**: keep it concise.
-   - **Descriptive**: check for hallucinations.
-3. **Correction**: Only modify the answer and passage if it is factually wrong.
+- Do not write a passage if you don’t know accurate information about the question. Write [NONE] if you cannot write a factual good passage. (ex. Passage: [NONE])  
 
 ### OUTPUT FORMAT:
 [START]
@@ -135,21 +237,13 @@ Answer:
 [DONE]
 """
 
-
     options_str = state.get('options', '')
-    if options_str:
-        user_prompt = f"""
-Question: {state['question']}
-Options: {options_str}
-Current Passage: {state['current_passage']}
-Candidate Answer: {state.get('candidate_answer', '')}
-"""
-    else:
-        user_prompt = f"""
-Question: {state['question']}
-Current Passage: {state['current_passage']}
-Candidate Answer: {state.get('candidate_answer', '')}
-"""
+    user_prompt = f"Question: {state['question']}\n"
+    if dataset_type == "multiple_choice" and options_str:
+        user_prompt += f"Options: {options_str}\n"
+    user_prompt += f"Context: {state.get('context', '')}\n"
+    user_prompt += f"Current Passage: {state['current_passage']}\n"
+    user_prompt += f"Candidate Answer: {state.get('candidate_answer', '')}"
     
     res = models['B'].invoke([
         SystemMessage(content=system_prompt),
@@ -159,40 +253,84 @@ Candidate Answer: {state.get('candidate_answer', '')}
     return {"current_passage": p, "candidate_answer": a}
 
 
-
 def synthesizer_node(state):
-    print(f"   [D1] Round {state['round_count']+1}: Synthesizer summarizing & answering...")
-    system_prompt = """You are a Network Info Synthesizer.
-Your task is to consolidate the info into a clear context and finalize the answer.
+    dataset_type = state.get('dataset_type', 'descriptive')
+    print(f"   [D1] Round {state['round_count']+1}: Synthesizer summarizing & answering ({dataset_type})...")
+    
+    PROMPTS = {
+        "descriptive": """You are a Network Info Synthesizer for descriptive questions.
+TASK: Consolidate the passage into a clear context and write the answer.
 
+RULES:
+1. Provide a complete technical answer in 1-2 sentences that includes both the direct answer and the technical reasoning.
+2. Output ONLY your passage and answer. Do NOT include any meta-commentary like "analysis:", "thought:", or "reasoning:".
+3. If the answer involves configurations, include the exact syntax (CLI, YAML, etc.) along with a brief explanation.
+4. Match the expert-level depth and completeness expected in professional network engineering documentation.""",
+        
+
+        "short_answer": """You are a Network Info Synthesizer for short-answer questions.
+        TASK: Consolidate the passage into a clear context and write the answer.
+        
+RULES:
+1. Find the exact answer span in the context.
+2. Output ONLY the extracted text in answer - no explanations, no reasoning, no thoughts.
+3. Do NOT paraphrase - use exact wording from context.
+4. If the answer is a value with a unit, include both.""",
+        
+
+        "multiple_choice": """You are a Network Info Synthesizer for multiple-choice questions.
+
+        TASK: Consolidate the passage into a clear context and write the answer.
+
+RULES:
+1. Select the single best answer from the given options.
+2. Use your expert knowledge of telecom standards (3GPP, IEEE, etc.).
+3. Output your answer in this exact format: "option N: [answer text]"
+4. Do NOT include any reasoning, thoughts, or explanations in answer.""",
+
+        "netconfig": """You are a Network Info Synthesizer for short-answer questions.
+        TASK: You must find the answer in the given context. Consolidate the passage into a clear context and write the answer.
+        
+        Answer FORMAT RULES (CRITICAL - MUST FOLLOW EXACTLY):
+1. output the raw answer value in ONE line:
+   - text type: Just the text value (e.g., "R1" or "10.0.0.1")
+   - numeric/number type: Just the number (e.g., 5 or 10.5)
+   - set type: JSON array format (e.g., ["item1", "item2"])
+   - map type: JSON object format (e.g., {"key": "value"})
+   - boolean type: true or false
+
+2. CORE SEARCH RULES (CRITICAL)
+- **Scope Restriction**: Identify the target device and search ONLY within its specific configuration block (e.g., between `<Leaf1.cfg>` and the next tag). IGNORE content outside this block.
+- **No Inference**: Do NOT assume settings exist just because they appear on connected devices (e.g., configurations on a PE router do NOT imply the same settings on a Leaf switch).
+- **Strict 'None' Handling**: If the specific command is missing in the target block, do NOT guess or use unrelated values (like IPs). Return the Empty Value defined below.
+   
+3. If NOT_CONFIGURED or information missing:
+   - text: null
+   - numeric: 0
+   - set: []
+   - map: {}
+   - boolean: false"""
+}
+
+    base_synth = PROMPTS.get(dataset_type, PROMPTS["descriptive"])
+    system_prompt = base_synth + f"""
 ### INSTRUCTIONS:
-1. **Finalize Answer**:
-   - **Multiple Choice**: Output ONLY the option key.
-   - **Short Answer**: Output the exact value/term.
-   - **Descriptive**: Ensure the explanation is clear and concise.
-2. **Refine Passage**: Polish the passage to be factual and context-rich.
+- Do not write a passage if you don’t know accurate information about the question. Write [NONE] if you cannot write a factual good passage.(ex. Passage: [NONE])  
 
 ### OUTPUT FORMAT:
 [START]
-Passage: 
+Passage:
 Answer:
 [DONE]
 """
 
     options_str = state.get('options', '')
-    if options_str:
-        user_prompt = f"""
-Question: {state['question']}
-Options: {options_str}
-Current Passage: {state['current_passage']}
-Candidate Answer: {state.get('candidate_answer', '')}
-"""
-    else:
-        user_prompt = f"""
-Question: {state['question']}
-Current Passage: {state['current_passage']}
-Candidate Answer: {state.get('candidate_answer', '')}
-"""
+    user_prompt = f"Question: {state['question']}\n"
+    if dataset_type == "multiple_choice" and options_str:
+        user_prompt += f"Options: {options_str}\n"
+    user_prompt += f"Context: {state.get('context', '')}\n"
+    user_prompt += f"Current Passage: {state['current_passage']}\n"
+    user_prompt += f"Candidate Answer: {state.get('candidate_answer', '')}"
 
     res = models['C'].invoke([
         SystemMessage(content=system_prompt),

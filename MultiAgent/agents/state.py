@@ -5,6 +5,8 @@ class AgentState(TypedDict):
     original_passage: str
     gold_answer: str
     options: str
+    dataset_type: str
+    context: str            # 원본 지문 혹은 관련 컨텍스트
     
     current_passage: str    # 계속 수정되는 지문
     round_count: int        # 반복 횟수 체크

@@ -1,0 +1,11 @@
+[
+    {
+        "question": "CE01과 CE02의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'CE01: AS X, CE02: AS Y']",
+        "gold_answer": "CE01: AS 없음, CE02: AS 없음",
+        "debate1_passage": "",
+        "debate1_answer": "CE01: AS 65001, CE02: AS 65002",
+        "debate2_answer": "[NONE]",
+        "debate_history": [],
+        "duration": 17.88313388824463
+    }
+]

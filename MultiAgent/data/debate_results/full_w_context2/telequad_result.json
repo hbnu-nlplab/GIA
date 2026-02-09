@@ -1,0 +1,92 @@
+[
+    {
+        "question": "When deferring or rejecting a concurrent request, what needs to be considered?",
+        "gold_answer": "LCS Client/AF priority and any other relevant priority information",
+        "debate1_passage": "When deferring or rejecting a concurrent request, the following needs to be considered...",
+        "debate1_answer": "The impact on the overall system performance and resource utilization. The potential consequences of delaying or rejecting the request, including any downstream effects on dependent tasks or systems. The need to communicate the decision to the requesting entity, including any relevant information or alternatives. The potential for future requests from the same entity, and how to handle them in a fair and consistent manner. The need to document the decision and any subsequent actions taken.",
+        "debate2_answer": "The impact on the overall system performance and resource utilization. The potential consequences of delaying or rejecting the request, including any downstream effects on dependent tasks or systems. The need to communicate the decision to the requesting entity, including any relevant information or alternatives. The potential for future requests from the same entity, and how to handle them in a fair and consistent manner. The need to document the decision and any subsequent actions taken.",
+        "debate_history": [],
+        "duration": 25.7882239818573
+    },
+    {
+        "question": "What is RF?",
+        "gold_answer": "Rating Function",
+        "debate1_passage": "In the context of the converged charging system as defined in the 3GPP specifications, RF stands for Rating Function.",
+        "debate1_answer": "Rating Function",
+        "debate2_answer": "Rating Function",
+        "debate_history": [],
+        "duration": 19.295127153396606
+    },
+    {
+        "question": "What is CDF?",
+        "gold_answer": "Charging Data Function",
+        "debate1_passage": "Cumulative distribution function (CDF) is a function that takes a random variable as input and returns the probability that the variable takes on a value less than or equal to the given value.",
+        "debate1_answer": "Cumulative distribution function (CDF)",
+        "debate2_answer": "Cumulative distribution function (CDF) is a function that takes a random variable as input and returns the probability that the variable takes on a value less than or equal to the given value.",
+        "debate_history": [],
+        "duration": 21.051068782806396
+    },
+    {
+        "question": "What is CHF?",
+        "gold_answer": "Charging Function",
+        "debate1_passage": "The Charging Function (CHF) is a key component of the converged charging system as defined in the 3GPP specifications.",
+        "debate1_answer": "The Charging Function (CHF)",
+        "debate2_answer": "The Charging Function (CHF)",
+        "debate_history": [],
+        "duration": 21.729581832885742
+    },
+    {
+        "question": "What do the Charging Function include?",
+        "gold_answer": "Online Charging Function (OCF) and Charging Data Function (CDF)",
+        "debate1_passage": "The Charging Function includes the Online Charging Function (OCF) and the Charging Data Function (CDF).",
+        "debate1_answer": "Online Charging Function (OCF) and the Charging Data Function (CDF)",
+        "debate2_answer": "The Charging Function includes the Online Charging Function (OCF) and the Charging Data Function (CDF).",
+        "debate_history": [],
+        "duration": 24.260613203048706
+    },
+    {
+        "question": "What is ABMF?",
+        "gold_answer": "Account Balance Management Function",
+        "debate1_passage": "ABMF stands for American Board of Medical Faculties.",
+        "debate1_answer": "American Board of Medical Faculties",
+        "debate2_answer": "American Board of Medical Faculties",
+        "debate_history": [],
+        "duration": 24.52969217300415
+    },
+    {
+        "question": "What may combine requests from the H GMLC?",
+        "gold_answer": "the same target UE",
+        "debate1_passage": "The H GMLC may combine requests from the H GMLC's own network and from the I GMLC's network.",
+        "debate1_answer": "The H GMLC's own network and from the I GMLC's network.",
+        "debate2_answer": "The H GMLC's own network and from the I GMLC's network.",
+        "debate_history": [],
+        "duration": 18.701573610305786
+    },
+    {
+        "question": "How can concurrent location requests be combined?",
+        "gold_answer": "by executing only one request and using the ensuing location estimate result(s) to satisfy the other request(s)",
+        "debate1_passage": "For instance, an H-GMLC or NEF can execute one request and use the resulting location estimate to satisfy other requests for the same target UE.",
+        "debate1_answer": "use the resulting location estimate to satisfy other requests for the same target UE.",
+        "debate2_answer": "use the resulting location estimate to satisfy other requests for the same target UE.",
+        "debate_history": [],
+        "duration": 20.738283395767212
+    },
+    {
+        "question": "What can be combined by an AMF?",
+        "gold_answer": "concurrent 5GC-MT LR, 5GC-MO LR and 5GC-NI LR location requests",
+        "debate1_passage": "An AMF (Access and Mobility Management Function) can combine concurrent location requests, specifically 5GC-MT LR (Mobile Terminated Location Request), 5GC-MO LR (Mobile Originated Location Request), and 5GC-NI LR (Location Request for Network Initiated services).",
+        "debate1_answer": "5GC-MT LR, 5GC-MO LR, 5GC-NI LR",
+        "debate2_answer": "5GC-MT LR (Mobile Terminated Location Request), 5GC-MO LR (Mobile Originated Location Request), and 5GC-NI LR (Location Request for Network Initiated services)",
+        "debate_history": [],
+        "duration": 35.938918352127075
+    },
+    {
+        "question": "What should be considered when cancelling one or several existing requests?",
+        "gold_answer": "LCS Client/AF priority and any other relevant priority information",
+        "debate1_passage": "When cancelling one or several existing requests, it's important to consider the following:\n- The current state of the request(s)\n- The impact on dependent resources\n- The potential for cascading cancellations",
+        "debate1_answer": "The current state of the request(s), the impact on dependent resources, the potential for cascading cancellations",
+        "debate2_answer": "The current state of the request(s)\n- The impact on dependent resources\n- The potential for cascading cancellations",
+        "debate_history": [],
+        "duration": 45.986746072769165
+    }
+]
