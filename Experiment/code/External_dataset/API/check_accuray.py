@@ -3,7 +3,7 @@ import re
 
 # 파일 경로 설정 (사용자 환경에 맞게 수정)
 DATA_PATH = "../data/llm_answer_teleqna/llm_answer_gpt4o-mini.json"
-MODEL_KEY = "openai/gpt-4o-mini"
+MODEL_KEY = "gpt-4o-mini"
 
 def extract_option_number(text):
     """

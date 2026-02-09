@@ -769,20 +769,17 @@ def analyze_results(json_file: str, verbose: bool = False):
     print(f"Analyzing {len(data['results'])} results...")
     print(f"[Step 1/3] Calculating Type-Aware and Traditional metrics...")
 
-    for row in data['results']:
+    for row in data:
         # 필드명 호환성 처리 (raw_pred vs pred, answer_type vs type, answer_status vs status)
-        raw_pred = row.get('raw_pred', row.get('pred', ''))
+        raw_pred = row.get('debate2_answer')
         answer_type = canonical_answer_type(row.get('answer_type', row.get('type', 'text')))
-        status = row.get('answer_status', row.get('status', 'OK'))
-        level = row.get('level', 'L1')
-        category = row.get('category', 'General')
         
         # 전처리 (answer_type 전달)
         clean_pred = scorer.clean_prediction(raw_pred, answer_type)
-        clean_gold = scorer.clean_gold(row['gold'])
+        clean_gold = scorer.clean_gold(row['gold_answer'])
         
         # Type-Aware 점수 계산
-        type_aware_metrics = scorer.score(clean_pred, row['gold'], answer_type)
+        type_aware_metrics = scorer.score(clean_pred, row['gold_answer'], answer_type)
         type_aware_score = type_aware_metrics['score']
         
         # Traditional metrics 계산
@@ -790,17 +787,11 @@ def analyze_results(json_file: str, verbose: bool = False):
         
         # 결과 저장
         result = {
-            "question_id": row.get('question_id', ''),
             "question": row['question'],
-            "gold": row['gold'],
+            "gold": row['gold_answer'],
             "gold_cleaned": clean_gold,
-            "raw_pred": raw_pred,
-            "pred": clean_pred,
-            "type_aware_score": type_aware_score,  # Renamed from 'score'
-            "level": level,
-            "category": category,
+            "type_aware_score": type_aware_score,
             "type": answer_type,
-            "status": status,
         }
         
         # Type-Aware 추가 메트릭 (f1, precision, recall 등)
@@ -828,7 +819,6 @@ def analyze_results(json_file: str, verbose: bool = False):
         # 오류 샘플 수집
         if type_aware_score < 0.99 and len(error_samples) < 20:
             error_samples.append({
-                "id": row.get('question_id', '?'),
                 "question": row['question'][:60] + "..." if len(row['question']) > 60 else row['question'],
                 "gold": clean_gold[:40] if clean_gold else "(empty)",
                 "pred": clean_pred[:40] if clean_pred else "(empty)",
@@ -1009,8 +999,14 @@ def main():
     parser.add_argument("--output_summary", "-o", default="comparison_summary.md", help="Output path for combined summary")
     args = parser.parse_args()
 
-    all_results = []
-    for json_file in args.json_files:
+
+    current_dir = Path(__file__).resolve().parent
+    sys.path.append(str(current_dir))
+    BASE_DIR = current_dir.parent
+    sys.path.append(str(BASE_DIR))
+
+
+    json_file = BASE_DIR / "data" / "debate_results" / "full_w_context4" / "netconfig_result2.json"
         stats, results, meta = analyze_results(json_file, args.verbose)
         all_results.append((stats, meta))
     

@@ -1,0 +1,9 @@
+[
+    {
+        "question": "모든 장비의 BGP AS 번호를 나열해주세요. [답변 형식: '장비1: AS X, 장비2: AS Y, 장비3: AS Z']",
+        "gold_answer": "[NONE]",
+        "debate1_passage": "",
+        "debate1_answer": "NONE",
+        "debate2_answer": ""
+    }
+]
