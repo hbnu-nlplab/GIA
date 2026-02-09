@@ -164,3 +164,4 @@ Skill은 도구 접근 제어가 아니라 프롬프트 가이드 용도로 사�
   - 백엔드 통합 테스트: `/api/settings`, `/api/health` 런타임 반영 검증
   - 브라우저 스모크 테스트: Settings MCP 필드/저장, Chat SSE 기본 렌더 검증
   - CI: backend pytest + frontend Playwright smoke를 PR 단계에서 자동 실행
+  - CI 산출물: pytest JUnit XML, Playwright report/test-results 업로드

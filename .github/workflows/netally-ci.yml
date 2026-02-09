@@ -39,7 +39,15 @@ jobs:
         run: uv sync --extra dev
 
       - name: Run backend tests
-        run: uv run pytest -q tests
+        run: uv run pytest -q tests --junitxml=pytest-report.xml
+
+      - name: Upload backend test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: netally-backend-pytest-report
+          path: NetAlly/pytest-report.xml
+          if-no-files-found: warn
 
   frontend-e2e-smoke:
     runs-on: ubuntu-latest
@@ -77,3 +85,13 @@ jobs:
 
       - name: Run frontend E2E smoke
         run: npm run test:e2e
+
+      - name: Upload Playwright reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: netally-frontend-playwright-report
+          path: |
+            NetAlly/frontend/playwright-report
+            NetAlly/frontend/test-results
+          if-no-files-found: warn
