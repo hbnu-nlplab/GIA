@@ -74,7 +74,7 @@ class RuleBasedGenerator:
         atype = meta.get("answer_type", "set_str")
         # Simplify answer types to internal aggregation types if needed
         # But generally we pass the raw type or map it
-        if "scalar_int" in atype or "numeric" in atype:
+        if "scalar_int" in atype or "numeric" in atype or "number" in atype:
             return "numeric"
         if "bool" in atype:
             return "boolean"

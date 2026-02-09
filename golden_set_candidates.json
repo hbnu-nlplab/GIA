@@ -1,0 +1,1294 @@
+[
+  {
+    "id": "AAA_AUTHENTICATION_METHOD",
+    "category": "Security_Inventory",
+    "level": "L1",
+    "metric": "aaa_authentication_method",
+    "question": "leaf1 장비의 AAA 인증 방식은 무엇입니까? [답변 형식: local, tacacs+, radius 중 하나 또는 '미설정']",
+    "answer": "미설정",
+    "status": "Generated",
+    "metric_key": "aaa_authentication_method"
+  },
+  {
+    "id": "AAA_ENABLED_DEVICES",
+    "category": "Security_Policy",
+    "level": "L2",
+    "metric": "aaa_enabled_devices",
+    "question": "AAA 기능이 활성화된 장비 목록을 알려주세요. [답변 형식: 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "aaa_enabled_devices"
+  },
+  {
+    "id": "AAA_MISSING_DEVICES",
+    "category": "Security_Policy",
+    "level": "L2",
+    "metric": "aaa_missing_devices",
+    "question": "AAA 기능이 비활성화된 장비 목록을 알려주세요. [답변 형식: 리스트]",
+    "answer": [
+      "leaf1",
+      "leaf2",
+      "leaf3",
+      "leaf4",
+      "p1",
+      "p2",
+      "p3",
+      "p4",
+      "pe1",
+      "pe2"
+    ],
+    "status": "Generated",
+    "metric_key": "aaa_missing_devices"
+  },
+  {
+    "id": "ACL_APPLIED_INTERFACES_LIST",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "acl_applied_interfaces_list",
+    "question": "'leaf1' 장비에서 ACL이 적용된 인터페이스 목록은? [답변 형식: 인터페이스명 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "acl_applied_interfaces_list"
+  },
+  {
+    "id": "ACL_BLOCKING_p2_p3",
+    "category": "Security_Analysis",
+    "level": "L4",
+    "metric": "acl_blocking_point",
+    "question": "10.0.0.1에서 10.0.0.3로 트래픽이 차단된다면 차단 지점을 알려주세요. [답변 형식: 차단 지점 장비명 또는 '허용']",
+    "answer": "허용됨",
+    "status": "Generated",
+    "metric_key": "acl_blocking_point"
+  },
+  {
+    "id": "ACL_CONFIGURED_COUNT",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "acl_configured_count",
+    "question": "'leaf1' 장비에 정의된 ACL(Access Control List)의 개수는? [답변 형식: 숫자]",
+    "answer": 0,
+    "status": "Generated",
+    "metric_key": "acl_configured_count"
+  },
+  {
+    "id": "ACTIVE_OSPF_PROCESSES",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "active_ospf_processes",
+    "question": "'leaf1' 장비에서 활성화된 OSPF 프로세스 ID 목록은? [답변 형식: ID 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "active_ospf_processes"
+  },
+  {
+    "id": "ALL_DEVICES_SAME_AS",
+    "category": "Comparison_Analysis",
+    "level": "L3",
+    "metric": "all_devices_same_as",
+    "question": "모든 장비의 BGP AS 번호를 나열해주세요. [답변 형식: '장비1: AS X, 장비2: AS Y, ...']",
+    "answer": "pe1: AS 65000, pe2: AS 65000",
+    "status": "Generated",
+    "metric_key": "all_devices_same_as"
+  },
+  {
+    "id": "ASYMMETRIC_leaf4_pe1",
+    "category": "Routing_Analysis",
+    "level": "L4",
+    "metric": "asymmetric_path_comparison",
+    "question": "leaf4과 pe1 사이의 Forward/Reverse 경로를 비교해주세요. [답변 형식: 'Forward: A→B→C, Reverse: C→D→A' 형식]",
+    "answer": "Forward: leaf4 → pe2, Reverse: pe1",
+    "status": "Generated",
+    "metric_key": "asymmetric_path_comparison"
+  },
+  {
+    "id": "BANNER_LOGIN_CONTENT",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "banner_login_content",
+    "question": "'leaf1' 장비의 Login 배너 내용은? [답변 형식: 내용 또는 None]",
+    "answer": "None",
+    "status": "Generated",
+    "metric_key": "banner_login_content"
+  },
+  {
+    "id": "BANNER_MOTD_CONTENT",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "banner_motd_content",
+    "question": "'leaf1' 장비의 MOTD(Message of the Day) 배너 내용은? [답변 형식: 내용 또는 None]",
+    "answer": "None",
+    "status": "Generated",
+    "metric_key": "banner_motd_content"
+  },
+  {
+    "id": "BGP_AS_DISTRIBUTION",
+    "category": "Comparison_Analysis",
+    "level": "L3",
+    "metric": "bgp_as_distribution",
+    "question": "각 AS별 장비 수 분포를 알려주세요. [답변 형식: 'AS X: N대, AS Y: M대']",
+    "answer": "AS 65000: 2 devices",
+    "status": "Generated",
+    "metric_key": "bgp_as_distribution"
+  },
+  {
+    "id": "BGP_LOCAL_AS_NUMERIC",
+    "category": "Routing_Inventory",
+    "level": "L1",
+    "metric": "bgp_local_as_numeric",
+    "question": "leaf1 장비의 BGP Local-AS 번호는 무엇입니까? [답변 형식: 숫자]",
+    "answer": 0,
+    "status": "Generated",
+    "metric_key": "bgp_local_as_numeric"
+  },
+  {
+    "id": "BGP_NEIGHBOR_COUNT",
+    "category": "Routing_Inventory",
+    "level": "L1",
+    "metric": "bgp_neighbor_count",
+    "question": "leaf1 장비의 BGP 피어(이웃)는 총 몇 개입니까? [답변 형식: 숫자]",
+    "answer": 0,
+    "status": "Generated",
+    "metric_key": "bgp_neighbor_count"
+  },
+  {
+    "id": "BLACKHOLE_DETECTION_GLOBAL",
+    "category": "Reachability_Analysis",
+    "level": "L4",
+    "metric": "blackhole_destination_list",
+    "question": "네트워크에서 블랙홀이 발생하는 목적지 prefix 목록을 알려주세요. [답변 형식: prefix 목록 (예: [\"10.0.0.0/8\", \"192.168.1.0/24\"]) 또는 빈 목록 []]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "blackhole_destination_list"
+  },
+  {
+    "id": "BOUNDED_PATH_p2_p3",
+    "category": "Reachability_Analysis",
+    "level": "L4",
+    "metric": "bounded_path_length",
+    "question": "p2에서 10.0.0.3로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자]",
+    "answer": "2",
+    "status": "Generated",
+    "metric_key": "bounded_path_length"
+  },
+  {
+    "id": "CDP_CONFIG",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "cdp_config",
+    "question": "'leaf1' 장비의 CDP(Cisco Discovery Protocol) 활성화 상태는? [답변 형식: Enabled/Disabled]",
+    "answer": "Enabled",
+    "status": "Generated",
+    "metric_key": "cdp_config"
+  },
+  {
+    "id": "COMPARE_BGP_AS",
+    "category": "Comparison_Analysis",
+    "level": "L3",
+    "metric": "compare_bgp_as",
+    "question": "leaf1과 leaf2의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf1: AS X, leaf2: AS Y']",
+    "answer": "leaf1: AS None, leaf2: AS None",
+    "status": "Generated",
+    "metric_key": "compare_bgp_as"
+  },
+  {
+    "id": "COMPARE_BGP_NEIGHBOR_COUNT",
+    "category": "Comparison_Analysis",
+    "level": "L3",
+    "metric": "compare_bgp_neighbor_count",
+    "question": "leaf1과 leaf2의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf1: N개, leaf2: M개, 차이: K개']",
+    "answer": "leaf1: 0, leaf2: 0, diff: 0",
+    "status": "Generated",
+    "metric_key": "compare_bgp_neighbor_count"
+  },
+  {
+    "id": "COMPARE_INTERFACE_COUNT",
+    "category": "Comparison_Analysis",
+    "level": "L3",
+    "metric": "compare_interface_count",
+    "question": "leaf1과 leaf2의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf1: N개, leaf2: M개, 차이: K개']",
+    "answer": "leaf1: 4, leaf2: 4, diff: 0",
+    "status": "Generated",
+    "metric_key": "compare_interface_count"
+  },
+  {
+    "id": "COMPARE_OSPF_AREAS",
+    "category": "Comparison_Analysis",
+    "level": "L3",
+    "metric": "compare_ospf_areas",
+    "question": "leaf1과 leaf2가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'leaf1: Area 0, 1, leaf2: Area 0, 2']",
+    "answer": "leaf1: Area None, leaf2: Area None",
+    "status": "Generated",
+    "metric_key": "compare_ospf_areas"
+  },
+  {
+    "id": "COMPARE_VRF_COUNT",
+    "category": "Comparison_Analysis",
+    "level": "L3",
+    "metric": "compare_vrf_count",
+    "question": "leaf1과 leaf2의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'leaf1: N개, leaf2: M개, 차이: K개']",
+    "answer": "leaf1: 0, leaf2: 0, diff: 0",
+    "status": "Generated",
+    "metric_key": "compare_vrf_count"
+  },
+  {
+    "status": "MISSING",
+    "reason": "No valid instance generated",
+    "metric_key": "config_change_impact"
+  },
+  {
+    "id": "CONFIGURED_BGP_AS_NUMBERS",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "configured_bgp_as_numbers",
+    "question": "'leaf1' 장비에 설정된 BGP AS 번호는? [답변 형식: AS번호 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "configured_bgp_as_numbers"
+  },
+  {
+    "id": "CONSOLE_PASSWORD_VAL",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "console_password_val",
+    "question": "'leaf1' 장비의 Console Password는 무엇으로 설정되어 있습니까? [답변 형식: 암호값 또는 None]",
+    "answer": "None",
+    "status": "Generated",
+    "metric_key": "console_password_val"
+  },
+  {
+    "id": "DEFAULT_ROUTE_NEXT_HOPS",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "default_route_next_hops",
+    "question": "'leaf1' 장비에 설정된 Default Route(0.0.0.0/0)의 Next Hop 목록은? [답변 형식: IP 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "default_route_next_hops"
+  },
+  {
+    "id": "DEVICES_WITH_SAME_VRF",
+    "category": "Security_Policy",
+    "level": "L2",
+    "metric": "devices_with_same_vrf",
+    "question": "default VRF를 사용하는 장비 목록을 알려주세요. [답변 형식: 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "devices_with_same_vrf"
+  },
+  {
+    "status": "MISSING",
+    "reason": "No valid instance generated",
+    "metric_key": "differential_reachability"
+  },
+  {
+    "id": "DNS_SERVERS_LIST",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "dns_servers_list",
+    "question": "'leaf1' 장비에 설정된 DNS 서버(Name Server) 목록은? [답변 형식: IP 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "dns_servers_list"
+  },
+  {
+    "id": "EIGRP_AS_NUMBERS",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "eigrp_as_numbers",
+    "question": "'leaf1' 장비에 설정된 EIGRP AS 번호 목록은? [답변 형식: AS번호 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "eigrp_as_numbers"
+  },
+  {
+    "id": "ENABLE_SECRET_TYPE",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "enable_secret_type",
+    "question": "'leaf1' 장비의 Enable Secret 설정 상태는? [답변 형식: 5(MD5)/Scrypt/None]",
+    "answer": "None",
+    "status": "Generated",
+    "metric_key": "enable_secret_type"
+  },
+  {
+    "id": "EXEC_TIMEOUT_VAL",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "exec_timeout_val",
+    "question": "'leaf1' 장비의 VTY/Console Exec Timeout 설정값은? [답변 형식: '분 초' 또는 None]",
+    "answer": "None",
+    "status": "Generated",
+    "metric_key": "exec_timeout_val"
+  },
+  {
+    "id": "HSRP_GROUPS_LIST",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "hsrp_groups_list",
+    "question": "'leaf1' 장비에 설정된 HSRP/VRRP 그룹 ID 목록은? [답변 형식: ID 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "hsrp_groups_list"
+  },
+  {
+    "id": "HTTP_SERVER_CONFIG",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "http_server_config",
+    "question": "'leaf1' 장비의 HTTP Server 활성화 상태는? [답변 형식: Enabled/Disabled]",
+    "answer": "Disabled",
+    "status": "Generated",
+    "metric_key": "http_server_config"
+  },
+  {
+    "id": "IBGP_FULLMESH_OK",
+    "category": "BGP_Consistency",
+    "level": "L3",
+    "metric": "ibgp_fullmesh_ok",
+    "question": "AS 65000의 iBGP Full-Mesh 상태와 누락된 피어링을 알려주세요. [답변 형식: 'OK' 또는 'Missing: A<->B, C<->D']",
+    "answer": "OK",
+    "status": "Generated",
+    "metric_key": "ibgp_fullmesh_ok"
+  },
+  {
+    "id": "IBGP_MISSING_PAIRS",
+    "category": "BGP_Consistency",
+    "level": "L3",
+    "metric": "ibgp_missing_pairs",
+    "question": "AS 65000의 iBGP Full-Mesh에서 누락된 장비쌍 목록을 알려주세요. [답변 형식: 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "ibgp_missing_pairs"
+  },
+  {
+    "id": "IBGP_MISSING_PAIRS_COUNT",
+    "category": "BGP_Consistency",
+    "level": "L3",
+    "metric": "ibgp_missing_pairs_count",
+    "question": "AS 65000의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까? [답변 형식: 숫자]",
+    "answer": 0,
+    "status": "Generated",
+    "metric_key": "ibgp_missing_pairs_count"
+  },
+  {
+    "id": "IBGP_UNDER_PEERED_COUNT",
+    "category": "BGP_Consistency",
+    "level": "L3",
+    "metric": "ibgp_under_peered_count",
+    "question": "AS 65000에서 iBGP 피어 수가 부족한 장비는 총 몇 대입니까? [답변 형식: 숫자]",
+    "answer": 0,
+    "status": "Generated",
+    "metric_key": "ibgp_under_peered_count"
+  },
+  {
+    "id": "IBGP_UNDER_PEERED_DEVICES",
+    "category": "BGP_Consistency",
+    "level": "L3",
+    "metric": "ibgp_under_peered_devices",
+    "question": "AS 65000에서 iBGP 피어 수가 부족한 장비 목록을 알려주세요. [답변 형식: 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "ibgp_under_peered_devices"
+  },
+  {
+    "id": "INTERFACE_COUNT",
+    "category": "Interface_Inventory",
+    "level": "L1",
+    "metric": "interface_count",
+    "question": "leaf1 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까? [답변 형식: 숫자]",
+    "answer": 4,
+    "status": "Generated",
+    "metric_key": "interface_count"
+  },
+  {
+    "id": "INTERFACE_IP_MAP",
+    "category": "Interface_Inventory",
+    "level": "L1",
+    "metric": "interface_ip_map",
+    "question": "leaf1 장비의 각 인터페이스에 할당된 IP 주소를 알려주세요. [답변 형식: {{'인터페이스': 'IP'}}]",
+    "answer": {
+      "GigabitEthernet0/0": "172.16.1.2/24",
+      "GigabitEthernet0/1": "192.168.100.1/24",
+      "GigabitEthernet0/2": "10.10.1.1/24",
+      "GigabitEthernet0/3": "10.10.10.31/24"
+    },
+    "status": "Generated",
+    "metric_key": "interface_ip_map"
+  },
+  {
+    "id": "INTERFACE_STATUS_MAP",
+    "category": "System_Inventory",
+    "level": "L1",
+    "metric": "interface_status_map",
+    "question": "leaf1 장비의 각 인터페이스 상태를 알려주세요. [답변 형식: {{'인터페이스명': '상태'}}]",
+    "answer": {
+      "GigabitEthernet0/0": "up",
+      "GigabitEthernet0/1": "up",
+      "GigabitEthernet0/2": "up",
+      "GigabitEthernet0/3": "up"
+    },
+    "status": "Generated",
+    "metric_key": "interface_status_map"
+  },
+  {
+    "id": "INTERFACES_MISSING_DESCRIPTION_COUNT",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "interfaces_missing_description_count",
+    "question": "'leaf1' 장비에서 설명(Description)이 누락된 인터페이스 개수는? [답변 형식: 숫자]",
+    "answer": 0,
+    "status": "Generated",
+    "metric_key": "interfaces_missing_description_count"
+  },
+  {
+    "id": "IP_SOURCE_ROUTE_CONFIG",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "ip_source_route_config",
+    "question": "'leaf1' 장비의 IP Source Route 기능 활성화 상태는? [답변 형식: Enabled/Disabled]",
+    "answer": "Enabled",
+    "status": "Generated",
+    "metric_key": "ip_source_route_config"
+  },
+  {
+    "id": "L2VPN_MISMATCH_COUNT",
+    "category": "L2VPN_Consistency",
+    "level": "L3",
+    "metric": "l2vpn_mismatch_count",
+    "question": "PW-ID 불일치 또는 단방향 L2VPN 회선은 총 몇 개입니까? [답변 형식: 숫자]",
+    "answer": 0,
+    "status": "Generated",
+    "metric_key": "l2vpn_mismatch_count"
+  },
+  {
+    "id": "L2VPN_PAIRS",
+    "category": "L2VPN_Consistency",
+    "level": "L2",
+    "metric": "l2vpn_pairs",
+    "question": "구성된 L2VPN pseudowire 회선(장비쌍) 목록을 알려주세요. [답변 형식: ['A<->B', ...]]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "l2vpn_pairs"
+  },
+  {
+    "id": "L2VPN_PW_ID_SET",
+    "category": "Services_Inventory",
+    "level": "L1",
+    "metric": "l2vpn_pw_id_set",
+    "question": "leaf1 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요. [답변 형식: 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "l2vpn_pw_id_set"
+  },
+  {
+    "id": "L2VPN_PWID_MISMATCH_PAIRS",
+    "category": "L2VPN_Consistency",
+    "level": "L3",
+    "metric": "l2vpn_pwid_mismatch_pairs",
+    "question": "PW-ID가 불일치하는 L2VPN 회선(장비쌍) 목록을 알려주세요. [답변 형식: 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "l2vpn_pwid_mismatch_pairs"
+  },
+  {
+    "id": "L2VPN_UNIDIR_COUNT",
+    "category": "L2VPN_Consistency",
+    "level": "L3",
+    "metric": "l2vpn_unidir_count",
+    "question": "단방향으로만 설정된 L2VPN 회선은 총 몇 개입니까? [답변 형식: 숫자]",
+    "answer": 0,
+    "status": "Generated",
+    "metric_key": "l2vpn_unidir_count"
+  },
+  {
+    "id": "L2VPN_UNIDIRECTIONAL_PAIRS",
+    "category": "L2VPN_Consistency",
+    "level": "L3",
+    "metric": "l2vpn_unidirectional_pairs",
+    "question": "단방향으로만 설정된 L2VPN 회선(장비쌍) 목록을 알려주세요. [답변 형식: 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "l2vpn_unidirectional_pairs"
+  },
+  {
+    "id": "ISOLATION_VRF_AI_VRF_HPC",
+    "category": "Security_Analysis",
+    "level": "L4",
+    "metric": "leaked_prefixes_list",
+    "question": "VRF_AI과 VRF_HPC 사이에 누수된 prefix 목록은 무엇입니까? [답변 형식: prefix 목록 (예: [\"10.10.10.0/24\"]) 또는 빈 목록 []]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "leaked_prefixes_list"
+  },
+  {
+    "id": "LINK_FAILURE_leaf1_pe1",
+    "category": "What_If_Analysis",
+    "level": "L5",
+    "metric": "link_failure_impact",
+    "question": "'leaf1-pe1' 링크가 다운될 경우, 'leaf1→leaf3' 트래픽에 어떤 영향이 발생합니까? [답변 형식: 'NONE', 'REROUTED', 'DISCONNECTED']",
+    "answer": "REROUTED:Rerouted: leaf1",
+    "status": "Generated",
+    "metric_key": "link_failure_impact"
+  },
+  {
+    "id": "LOGGING_BUFFERED_SEVERITY_TEXT",
+    "category": "System_Inventory",
+    "level": "L1",
+    "metric": "logging_buffered_severity_text",
+    "question": "leaf1 장비에서 logging buffered의 severity-level은 무엇입니까? [답변 형식: 설정값 또는 null]",
+    "answer": "",
+    "status": "Generated",
+    "metric_key": "logging_buffered_severity_text"
+  },
+  {
+    "id": "LOOP_DETECTION_GLOBAL",
+    "category": "Reachability_Analysis",
+    "level": "L4",
+    "metric": "loop_detection",
+    "question": "네트워크에 포워딩 루프가 존재합니까? [답변 형식: '없음' 또는 '발견: A→B→C→A']",
+    "answer": "없음",
+    "status": "Generated",
+    "metric_key": "loop_detection"
+  },
+  {
+    "id": "LOOPBACK_INTERFACES_LIST",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "loopback_interfaces_list",
+    "question": "'leaf1' 장비에 설정된 Loopback 인터페이스 목록은? [답변 형식: 인터페이스명 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "loopback_interfaces_list"
+  },
+  {
+    "id": "MAX_BGP_PEER_DEVICE",
+    "category": "Comparison_Analysis",
+    "level": "L3",
+    "metric": "max_bgp_peer_device",
+    "question": "BGP 피어가 가장 많은 장비와 그 개수를 알려주세요. [답변 형식: '장비명: N개']",
+    "answer": "pe1: 1",
+    "status": "Generated",
+    "metric_key": "max_bgp_peer_device"
+  },
+  {
+    "id": "MAX_INTERFACE_DEVICE",
+    "category": "Comparison_Analysis",
+    "level": "L3",
+    "metric": "max_interface_device",
+    "question": "인터페이스 수가 가장 많은 장비와 그 개수를 알려주세요. [답변 형식: '장비명: N개']",
+    "answer": "p1: 5",
+    "status": "Generated",
+    "metric_key": "max_interface_device"
+  },
+  {
+    "id": "MIN_INTERFACE_DEVICE",
+    "category": "Comparison_Analysis",
+    "level": "L3",
+    "metric": "min_interface_device",
+    "question": "인터페이스 수가 가장 적은 장비와 그 개수를 알려주세요. [답변 형식: '장비명: N개']",
+    "answer": "leaf1: 4",
+    "status": "Generated",
+    "metric_key": "min_interface_device"
+  },
+  {
+    "id": "MPLS_LDP_CONFIG",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "mpls_ldp_config",
+    "question": "'leaf1' 장비의 MPLS LDP 활성화 상태는? [답변 형식: Enabled/Disabled]",
+    "answer": "Disabled",
+    "status": "Generated",
+    "metric_key": "mpls_ldp_config"
+  },
+  {
+    "id": "MPLS_LDP_ROUTER_ID",
+    "category": "Services_Inventory",
+    "level": "L1",
+    "metric": "mpls_ldp_router_id",
+    "question": "leaf1 장비의 MPLS LDP Router-ID는 무엇입니까? [답변 형식: IP 주소 (예: 10.255.0.1) 또는 '미설정']",
+    "answer": "미설정",
+    "status": "Generated",
+    "metric_key": "mpls_ldp_router_id"
+  },
+  {
+    "id": "MULTI_FAIL_leaf2_p3_leaf3_p2",
+    "category": "What_If_Analysis",
+    "level": "L5",
+    "metric": "multi_link_failure_reachability",
+    "question": "(시나리오)'leaf2-p3' 링크와 'leaf3-p2' 링크가 동시에 장애로 다운되었습니다.\n\n**질문**: 이 상황에서 'leaf1'에서 'pe1'로의 트래픽 전달이 가능합니까?\n\n**답변 형식** (반드시 아래 형식 중 하나로만 답변):\n- 가능한 경우: \"가능 (대체경로: 장비1→장비2→장비3)\"\n- 불가능한 경우: \"불가능 (원인: 차단장비에서 차단사유)\"\n\n**예시**:\n- \"가능 (대체경로: p1→p2→p3)\"\n- \"불가능 (원인: leaf1에서 NO_ROUTE)\"",
+    "answer": "불가능 (원인: pe1에서 NO_ROUTE)",
+    "status": "Generated",
+    "metric_key": "multi_link_failure_reachability"
+  },
+  {
+    "id": "MULTICAST_ROUTING_CONFIG",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "multicast_routing_config",
+    "question": "'leaf1' 장비의 Multicast Routing 활성화 상태는? [답변 형식: Enabled/Disabled]",
+    "answer": "Disabled",
+    "status": "Generated",
+    "metric_key": "multicast_routing_config"
+  },
+  {
+    "id": "NEIGHBOR_LIST_EBGP",
+    "category": "Routing_Inventory",
+    "level": "L1",
+    "metric": "neighbor_list_ebgp",
+    "question": "leaf1 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "neighbor_list_ebgp"
+  },
+  {
+    "id": "NEIGHBOR_LIST_IBGP",
+    "category": "Routing_Inventory",
+    "level": "L1",
+    "metric": "neighbor_list_ibgp",
+    "question": "leaf1 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "neighbor_list_ibgp"
+  },
+  {
+    "id": "NETFLOW_MONITORS_LIST",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "netflow_monitors_list",
+    "question": "'leaf1' 장비에 정의된 NetFlow Monitor 목록은? [답변 형식: 이름 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "netflow_monitors_list"
+  },
+  {
+    "id": "NODE_FAILURE_leaf1",
+    "category": "What_If_Analysis",
+    "level": "L5",
+    "metric": "node_failure_impact",
+    "question": "'leaf1' 장비가 다운되면 몇 개의 트래픽 흐름이 새로 차단됩니까? [답변 형식: 숫자]",
+    "answer": "16",
+    "status": "Generated",
+    "metric_key": "node_failure_impact"
+  },
+  {
+    "id": "NEGATIVE_TEST_FAKE_NODE",
+    "category": "What_If_Analysis",
+    "level": "L5",
+    "metric": "non_existent_node_check",
+    "question": "'non_existent_router_999' 장비가 다운되면 몇 개의 트래픽 흐름이 차단됩니까? [답변 형식: 숫자]",
+    "answer": "0",
+    "status": "Generated",
+    "metric_key": "non_existent_node_check"
+  },
+  {
+    "id": "NTP_SERVER_LIST",
+    "category": "System_Inventory",
+    "level": "L1",
+    "metric": "ntp_server_list",
+    "question": "leaf1 장비에 설정된 NTP 서버 목록을 알려주세요. [답변 형식: 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "ntp_server_list"
+  },
+  {
+    "id": "NTP_SERVERS_LIST",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "ntp_servers_list",
+    "question": "'leaf1' 장비에 설정된 NTP 서버 목록은? [답변 형식: IP 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "ntp_servers_list"
+  },
+  {
+    "id": "OSPF_AREA0_IF_COUNT",
+    "category": "OSPF_Consistency",
+    "level": "L2",
+    "metric": "ospf_area0_if_count",
+    "question": "leaf1 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까? [답변 형식: 숫자]",
+    "answer": 0,
+    "status": "Generated",
+    "metric_key": "ospf_area0_if_count"
+  },
+  {
+    "id": "OSPF_AREA0_IF_LIST",
+    "category": "Routing_Inventory",
+    "level": "L1",
+    "metric": "ospf_area0_if_list",
+    "question": "leaf1 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요. [답변 형식: 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "ospf_area0_if_list"
+  },
+  {
+    "id": "OSPF_AREA0_ROUTERS_GLOBAL",
+    "category": "What_If_Analysis",
+    "level": "L5",
+    "metric": "ospf_area0_routers",
+    "question": "OSPF Backbone Area(Area 0)에 속한 라우터 목록은 무엇입니까? [답변 형식: 라우터 이름 목록 (예: [\"spine1\", \"spine2\", \"p1\"])]",
+    "answer": [
+      "p1",
+      "p2",
+      "p3",
+      "p4",
+      "pe1"
+    ],
+    "status": "Generated",
+    "metric_key": "ospf_area0_routers"
+  },
+  {
+    "id": "OSPF_AREA_MEMBERSHIP",
+    "category": "OSPF_Consistency",
+    "level": "L2",
+    "metric": "ospf_area_membership",
+    "question": "OSPF Area 0에 속한 장비 목록을 알려주세요. [답변 형식: 리스트]",
+    "answer": [
+      "p1",
+      "p2",
+      "p3",
+      "p4",
+      "pe1",
+      "pe2"
+    ],
+    "status": "Generated",
+    "metric_key": "ospf_area_membership"
+  },
+  {
+    "id": "OSPF_AREA_SET",
+    "category": "Routing_Inventory",
+    "level": "L1",
+    "metric": "ospf_area_set",
+    "question": "leaf1 장비가 참여하는 OSPF Area 목록을 알려주세요. [답변 형식: 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "ospf_area_set"
+  },
+  {
+    "status": "MISSING",
+    "reason": "No valid instance generated",
+    "metric_key": "ospf_compatibility_check"
+  },
+  {
+    "id": "OSPF_NEIGHBOR_COUNT_PER_AREA",
+    "category": "OSPF_Consistency",
+    "level": "L2",
+    "metric": "ospf_neighbor_count_per_area",
+    "question": "OSPF Area 0의 이웃 관계는 총 몇 개입니까? [답변 형식: 숫자]",
+    "answer": 0,
+    "status": "Generated",
+    "metric_key": "ospf_neighbor_count_per_area"
+  },
+  {
+    "id": "OSPF_PROCESS_IDS_SET",
+    "category": "Routing_Inventory",
+    "level": "L1",
+    "metric": "ospf_process_ids_set",
+    "question": "leaf1 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요. [답변 형식: 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "ospf_process_ids_set"
+  },
+  {
+    "id": "PASSWORD_ENCRYPTION_CONFIG",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "password_encryption_config",
+    "question": "'leaf1' 장비의 Password Encryption 기능 설정값은 무엇입니까? [답변 형식: Enabled/Disabled]",
+    "answer": "Disabled",
+    "status": "Generated",
+    "metric_key": "password_encryption_config"
+  },
+  {
+    "status": "MISSING",
+    "reason": "No valid instance generated",
+    "metric_key": "policy_compliance_check"
+  },
+  {
+    "id": "PORT_CHANNEL_DEVICES",
+    "category": "Hardware_Inventory",
+    "level": "L1",
+    "metric": "port_channel_devices",
+    "question": "네트워크 전체에서 Port-Channel(EtherChannel) 인터페이스를 보유한 장비 목록은? [답변 형식: 장비명 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "port_channel_devices"
+  },
+  {
+    "id": "PREFIX_LIST_COUNT",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "prefix_list_count",
+    "question": "'leaf1' 장비에 정의된 Prefix-List 개수는? [답변 형식: 숫자]",
+    "answer": 0,
+    "status": "Generated",
+    "metric_key": "prefix_list_count"
+  },
+  {
+    "id": "QOS_CLASS_MAPS_LIST",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "qos_class_maps_list",
+    "question": "'leaf1' 장비에 정의된 QoS Class-Map 목록은? [답변 형식: 이름 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "qos_class_maps_list"
+  },
+  {
+    "id": "REACH_leaf4_p4_TCP",
+    "category": "Reachability_Analysis",
+    "level": "L4",
+    "metric": "reachability_status",
+    "question": "172.16.4.2에서 10.0.0.5(22/TCP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']",
+    "answer": "경로: leaf4 → pe2, 도달: 불가 (원인: NO_ROUTE)",
+    "status": "Generated",
+    "metric_key": "reachability_status"
+  },
+  {
+    "id": "DUAL_FAILURE_leaf1_leaf2",
+    "category": "What_If_Analysis",
+    "level": "L5",
+    "metric": "redundancy_verification",
+    "question": "'leaf1'과 'leaf2'가 동시에 다운되면 고립되는 흐름이 있습니까? 몇 개입니까? [답변 형식: '없음' 또는 'N개']",
+    "answer": "15개",
+    "status": "Generated",
+    "metric_key": "redundancy_verification"
+  },
+  {
+    "id": "K_FAILURE_leaf1_leaf3",
+    "category": "What_If_Analysis",
+    "level": "L5",
+    "metric": "redundant_paths_list",
+    "question": "leaf1에서 172.16.3.2로 가는 대체 경로들을 모두 나열해주세요. [답변 형식: 경로 목록 (예: [\"A→B→C\", \"A→D→C\"])]",
+    "answer": [
+      "leaf1"
+    ],
+    "status": "Generated",
+    "metric_key": "redundant_paths_list"
+  },
+  {
+    "id": "RIP_PROCESSES",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "rip_processes",
+    "question": "'leaf1' 장비의 RIP 프로토콜 활성화 상태는? [답변 형식: Enabled/Disabled]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "rip_processes"
+  },
+  {
+    "id": "ROOT_CAUSE_leaf1_leaf4",
+    "category": "What_If_Analysis",
+    "level": "L5",
+    "metric": "root_cause_analysis",
+    "question": "leaf1에서 leaf4로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]",
+    "answer": "leaf1",
+    "status": "Generated",
+    "metric_key": "root_cause_analysis"
+  },
+  {
+    "id": "ROUTE_MAP_COUNT",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "route_map_count",
+    "question": "'leaf1' 장비에 정의된 Route-Map 개수는? [답변 형식: 숫자]",
+    "answer": 0,
+    "status": "Generated",
+    "metric_key": "route_map_count"
+  },
+  {
+    "id": "ROUTING_TABLE_ENTRY_COUNT",
+    "category": "System_Inventory",
+    "level": "L1",
+    "metric": "routing_table_entry_count",
+    "question": "leaf1 장비의 라우팅 테이블 엔트리는 총 몇 개입니까? [답변 형식: 숫자]",
+    "answer": 4,
+    "status": "Generated",
+    "metric_key": "routing_table_entry_count"
+  },
+  {
+    "id": "RT_EXPORT_COUNT",
+    "category": "Services_Inventory",
+    "level": "L1",
+    "metric": "rt_export_count",
+    "question": "leaf1 장비의 Route Target Export 설정은 총 몇 개입니까? [답변 형식: 숫자]",
+    "answer": 0,
+    "status": "Generated",
+    "metric_key": "rt_export_count"
+  },
+  {
+    "id": "RT_IMPORT_COUNT",
+    "category": "Services_Inventory",
+    "level": "L1",
+    "metric": "rt_import_count",
+    "question": "leaf1 장비의 Route Target Import 설정은 총 몇 개입니까? [답변 형식: 숫자]",
+    "answer": 0,
+    "status": "Generated",
+    "metric_key": "rt_import_count"
+  },
+  {
+    "id": "SEC_BYPASS_leaf1_leaf3_pe2",
+    "category": "Security_Policy",
+    "level": "L4",
+    "metric": "security_policy_bypass_check",
+    "question": "**보안 정책**: 네트워크 설계상 'leaf1'에서 'leaf3'로 가는 모든 트래픽은 보안 검사(방화벽/IPS)를 위해 반드시 'pe2' 장비를 경유해야 합니다.\n\n**질문**: 현재 네트워크 구성에서 이 보안 정책을 우회하는 직접 경로가 존재합니까?\n\n**답변 형식** (반드시 아래 형식 중 하나로만 답변):\n- 우회 경로가 있는 경우: \"우회 경로 존재 (경로: 장비1→장비2→장비3)\"\n- 우회 경로가 없는 경우: \"우회 경로 없음 (정책 준수)\"\n\n**예시**:\n- \"우회 경로 존재 (경로: leaf1→leaf2→leaf3)\"\n- \"우회 경로 없음 (정책 준수)\"",
+    "answer": "우회 경로 없음 (정책 준수)",
+    "status": "Generated",
+    "metric_key": "security_policy_bypass_check"
+  },
+  {
+    "id": "SERIAL_INTERFACE_DEVICES",
+    "category": "Hardware_Inventory",
+    "level": "L1",
+    "metric": "serial_interface_devices",
+    "question": "네트워크 전체에서 Serial 인터페이스를 보유한 장비 목록은? [답변 형식: 장비명 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "serial_interface_devices"
+  },
+  {
+    "id": "SNMP_COMMUNITY_LIST",
+    "category": "System_Inventory",
+    "level": "L1",
+    "metric": "snmp_community_list",
+    "question": "leaf1 장비에 설정된 SNMP 커뮤니티 목록을 알려주세요. [답변 형식: 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "snmp_community_list"
+  },
+  {
+    "id": "SNMP_SERVER_COMMUNITIES",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "snmp_server_communities",
+    "question": "'leaf1' 장비에 설정된 SNMP Community 목록은? [답변 형식: 문자열 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "snmp_server_communities"
+  },
+  {
+    "id": "SPOF_DETECTION_GLOBAL",
+    "category": "What_If_Analysis",
+    "level": "L5",
+    "metric": "spof_detection",
+    "question": "단일 장비 장애 시 통신이 두절되는 구간(SPOF: Single Point of Failure)이 존재합니까? [답변 형식: SPOF 장비 목록 또는 '없음']",
+    "answer": "없음",
+    "status": "Generated",
+    "metric_key": "spof_detection"
+  },
+  {
+    "id": "SSH_ENABLED_DEVICES",
+    "category": "Security_Policy",
+    "level": "L2",
+    "metric": "ssh_enabled_devices",
+    "question": "SSH 접속이 가능한 장비 목록을 알려주세요. [답변 형식: 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "ssh_enabled_devices"
+  },
+  {
+    "id": "SSH_MISSING_COUNT",
+    "category": "Security_Policy",
+    "level": "L2",
+    "metric": "ssh_missing_count",
+    "question": "SSH 접속이 불가능한 장비는 총 몇 대입니까? [답변 형식: 숫자]",
+    "answer": 10,
+    "status": "Generated",
+    "metric_key": "ssh_missing_count"
+  },
+  {
+    "id": "SSH_MISSING_DEVICES",
+    "category": "Security_Policy",
+    "level": "L2",
+    "metric": "ssh_missing_devices",
+    "question": "SSH 접속이 불가능한 장비 목록을 알려주세요. [답변 형식: 리스트]",
+    "answer": [
+      "leaf1",
+      "leaf2",
+      "leaf3",
+      "leaf4",
+      "p1",
+      "p2",
+      "p3",
+      "p4",
+      "pe1",
+      "pe2"
+    ],
+    "status": "Generated",
+    "metric_key": "ssh_missing_devices"
+  },
+  {
+    "id": "SSH_VERSION_TEXT",
+    "category": "Security_Inventory",
+    "level": "L1",
+    "metric": "ssh_version_text",
+    "question": "leaf1 장비의 SSH 버전은 무엇입니까? [답변 형식: 정확한 값만]",
+    "answer": "미설정",
+    "status": "Generated",
+    "metric_key": "ssh_version_text"
+  },
+  {
+    "id": "STATIC_ROUTE_COUNT",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "static_route_count",
+    "question": "'leaf1' 장비에 설정된 정적 경로(Static Route)의 총 개수는? [답변 형식: 숫자]",
+    "answer": 0,
+    "status": "Generated",
+    "metric_key": "static_route_count"
+  },
+  {
+    "id": "SUBINTERFACE_COUNT",
+    "category": "Interface_Inventory",
+    "level": "L1",
+    "metric": "subinterface_count",
+    "question": "leaf1 장비에 설정된 서브인터페이스는 총 몇 개입니까? [답변 형식: 숫자]",
+    "answer": 0,
+    "status": "Generated",
+    "metric_key": "subinterface_count"
+  },
+  {
+    "id": "SYSLOG_SERVER_LIST",
+    "category": "System_Inventory",
+    "level": "L1",
+    "metric": "syslog_server_list",
+    "question": "leaf1 장비에 설정된 Syslog 서버 목록을 알려주세요. [답변 형식: 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "syslog_server_list"
+  },
+  {
+    "id": "SYSLOG_SERVERS_LIST",
+    "category": "Configuration_Check",
+    "level": "L1",
+    "metric": "syslog_servers_list",
+    "question": "'leaf1' 장비에 설정된 Syslog 서버 목록은? [답변 형식: IP 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "syslog_servers_list"
+  },
+  {
+    "id": "SYSTEM_HOSTNAME_TEXT",
+    "category": "System_Inventory",
+    "level": "L1",
+    "metric": "system_hostname_text",
+    "question": "leaf1 장비의 호스트네임은 무엇입니까? [답변 형식: 정확한 값만]",
+    "answer": "leaf1",
+    "status": "Generated",
+    "metric_key": "system_hostname_text"
+  },
+  {
+    "id": "SYSTEM_TIMEZONE_TEXT",
+    "category": "System_Inventory",
+    "level": "L1",
+    "metric": "system_timezone_text",
+    "question": "leaf1 장비의 시간대(Timezone)는 무엇입니까? [답변 형식: 설정값 또는 null]",
+    "answer": "",
+    "status": "Generated",
+    "metric_key": "system_timezone_text"
+  },
+  {
+    "id": "SYSTEM_USER_COUNT",
+    "category": "System_Inventory",
+    "level": "L1",
+    "metric": "system_user_count",
+    "question": "leaf1 장비에 등록된 로컬 사용자는 총 몇 명입니까? [답변 형식: 숫자]",
+    "answer": 0,
+    "status": "Generated",
+    "metric_key": "system_user_count"
+  },
+  {
+    "id": "SYSTEM_USER_LIST",
+    "category": "System_Inventory",
+    "level": "L1",
+    "metric": "system_user_list",
+    "question": "leaf1 장비에 등록된 로컬 사용자 목록을 알려주세요. [답변 형식: 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "system_user_list"
+  },
+  {
+    "id": "SYSTEM_VERSION_TEXT",
+    "category": "System_Inventory",
+    "level": "L1",
+    "metric": "system_version_text",
+    "question": "leaf1 장비의 운영체제(OS) 버전은 무엇입니까? [답변 형식: 정확한 값만]",
+    "answer": "15.0",
+    "status": "Generated",
+    "metric_key": "system_version_text"
+  },
+  {
+    "id": "TRACEROUTE_leaf4_p4",
+    "category": "Reachability_Analysis",
+    "level": "L4",
+    "metric": "traceroute_path",
+    "question": "leaf4에서 10.0.0.5까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)]",
+    "answer": "경로 없음",
+    "status": "Generated",
+    "metric_key": "traceroute_path"
+  },
+  {
+    "id": "TRIPLE_FAILURE_leaf1_leaf2_leaf3",
+    "category": "What_If_Analysis",
+    "level": "L5",
+    "metric": "triple_node_failure",
+    "question": "'leaf1', 'leaf2', 'leaf3'가 동시에 다운되면 네트워크가 완전히 분리됩니까? [답변 형식: '예, 완전 분리' 또는 '아니오, N개 흐름만 영향']",
+    "answer": "아니오, 15개 흐름만 영향",
+    "status": "Generated",
+    "metric_key": "triple_node_failure"
+  },
+  {
+    "id": "TUNNEL_INTERFACE_DEVICES",
+    "category": "Hardware_Inventory",
+    "level": "L1",
+    "metric": "tunnel_interface_devices",
+    "question": "네트워크 전체에서 Tunnel 인터페이스를 보유한 장비 목록은? [답변 형식: 장비명 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "tunnel_interface_devices"
+  },
+  {
+    "id": "VLAN_INTERFACE_DEVICES",
+    "category": "Hardware_Inventory",
+    "level": "L1",
+    "metric": "vlan_interface_devices",
+    "question": "네트워크 전체에서 VLAN 인터페이스(SVI)를 보유한 장비 목록은? [답변 형식: 장비명 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "vlan_interface_devices"
+  },
+  {
+    "id": "VRF_BIND_MAP",
+    "category": "Interface_Inventory",
+    "level": "L1",
+    "metric": "vrf_bind_map",
+    "question": "leaf1 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요. [답변 형식: {{'인터페이스': 'VRF'}}]",
+    "answer": {
+      "GigabitEthernet0/0": "default",
+      "GigabitEthernet0/1": "default",
+      "GigabitEthernet0/2": "default",
+      "GigabitEthernet0/3": "default"
+    },
+    "status": "Generated",
+    "metric_key": "vrf_bind_map"
+  },
+  {
+    "id": "VRF_COUNT",
+    "category": "Services_Inventory",
+    "level": "L1",
+    "metric": "vrf_count",
+    "question": "leaf1 장비에 설정된 VRF는 총 몇 개입니까? [답변 형식: 숫자]",
+    "answer": 0,
+    "status": "Generated",
+    "metric_key": "vrf_count"
+  },
+  {
+    "status": "MISSING",
+    "reason": "No valid instance generated",
+    "metric_key": "vrf_interface_bind_count"
+  },
+  {
+    "id": "VRF_NAMES_SET",
+    "category": "Services_Inventory",
+    "level": "L1",
+    "metric": "vrf_names_set",
+    "question": "leaf1 장비에 설정된 VRF 이름 목록을 알려주세요. [답변 형식: 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "vrf_names_set"
+  },
+  {
+    "id": "VRF_RD_MAP",
+    "category": "Services_Inventory",
+    "level": "L1",
+    "metric": "vrf_rd_map",
+    "question": "leaf1 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요. [답변 형식: {{'VRF': 'RD'}}]",
+    "answer": {},
+    "status": "Generated",
+    "metric_key": "vrf_rd_map"
+  },
+  {
+    "id": "VRF_RT_LIST_PER_DEVICE",
+    "category": "VRF_Consistency",
+    "level": "L3",
+    "metric": "vrf_rt_list_per_device",
+    "question": "leaf1 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요. [답변 형식: 리스트]",
+    "answer": [],
+    "status": "Generated",
+    "metric_key": "vrf_rt_list_per_device"
+  },
+  {
+    "id": "VRF_USAGE_STATISTICS",
+    "category": "Comparison_Analysis",
+    "level": "L3",
+    "metric": "vrf_usage_statistics",
+    "question": "VRF 사용중인 장비 중에서 각 장비별 VRF 사용 수를 알려주세요. [답변 형식: '장비1: N, 장비2: M']",
+    "answer": "leaf1: 0개, leaf2: 0개, leaf3: 0개, leaf4: 0개, p1: 0개, p2: 0개, p3: 0개, p4: 0개, pe1: 2개, pe2: 2개",
+    "status": "Generated",
+    "metric_key": "vrf_usage_statistics"
+  },
+  {
+    "id": "VRF_WITHOUT_RT_COUNT",
+    "category": "VRF_Consistency",
+    "level": "L3",
+    "metric": "vrf_without_rt_count",
+    "question": "route-target이 없는 VRF(장비/VRF)는 총 몇 개입니까? [답변 형식: 숫자]",
+    "answer": 4,
+    "status": "Generated",
+    "metric_key": "vrf_without_rt_count"
+  },
+  {
+    "id": "VRF_WITHOUT_RT_PAIRS",
+    "category": "VRF_Consistency",
+    "level": "L3",
+    "metric": "vrf_without_rt_pairs",
+    "question": "route-target이 없는 VRF(장비/VRF) 목록을 알려주세요. [답변 형식: 리스트]",
+    "answer": [
+      "pe1/VRF_AI",
+      "pe1/VRF_BIO",
+      "pe2/VRF_AI",
+      "pe2/VRF_HPC"
+    ],
+    "status": "Generated",
+    "metric_key": "vrf_without_rt_pairs"
+  },
+  {
+    "id": "VTY_LOGIN_MODE_TEXT",
+    "category": "Security_Inventory",
+    "level": "L1",
+    "metric": "vty_login_mode_text",
+    "question": "leaf1 장비의 VTY line 로그인 방식은 무엇입니까? [답변 형식: 설정값 또는 null]",
+    "answer": "",
+    "status": "Generated",
+    "metric_key": "vty_login_mode_text"
+  },
+  {
+    "id": "VTY_TRANSPORT_INPUT_TEXT",
+    "category": "Security_Inventory",
+    "level": "L1",
+    "metric": "vty_transport_input_text",
+    "question": "leaf1 장비의 VTY transport input 설정은 무엇입니까? [답변 형식: 설정값 또는 null]",
+    "answer": "",
+    "status": "Generated",
+    "metric_key": "vty_transport_input_text"
+  },
+  {
+    "id": "WAYPOINT_leaf1_p3_p1",
+    "category": "Reachability_Analysis",
+    "level": "L4",
+    "metric": "waypoint_traversal_path",
+    "question": "172.16.1.2에서 10.0.0.3로 가는 트래픽이 p1를 경유할 때의 전체 경로는 무엇입니까? [답변 형식: 'A → B → C' 형식 또는 '경유하지 않음']",
+    "answer": "경유하지 않음",
+    "status": "Generated",
+    "metric_key": "waypoint_traversal_path"
+  },
+  {
+    "id": "WORST_CASE_FAILURE",
+    "category": "What_If_Analysis",
+    "level": "L5",
+    "metric": "worst_case_failure_analysis",
+    "question": "단일 장비 장애 시 가장 큰 영향을 주는 장비는? [답변 형식: '장비명 (N개)']",
+    "answer": "p2 (19개)",
+    "status": "Generated",
+    "metric_key": "worst_case_failure_analysis"
+  }
+]
