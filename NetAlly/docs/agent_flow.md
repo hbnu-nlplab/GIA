@@ -69,7 +69,7 @@ Batfish 준비 후 Chat Panel에서 질의 실행
 ### 1) (선택) Batfish 준비 게이트
 - `AUTO_PREPARE_ON_CHAT=true`이면 `ensure_batfish_ready()` 실행
 - 상태가 `unavailable/not_ready`면 안내 메시지를 SSE로 반환하고 종료
-- `AUTO_INIT_BATFISH=true`면 `lab_manage(action="init_batfish")`로 스냅샷 생성 시도
+- `AUTO_INIT_BATFISH=true`면 MCP `lab_init_batfish`(legacy 모드에서는 `lab_manage(action="init_batfish")`)로 스냅샷 생성 시도
 
 ### 2) Orchestrator (Skill 선택)
 - 스킬 카탈로그(`skills/*/SKILL.md`)를 기반으로 **JSON 형식**으로 `selected_skills` 결정
@@ -77,12 +77,13 @@ Batfish 준비 후 Chat Panel에서 질의 실행
   - 파싱 실패 시 `core`만 사용
   - `core` 스킬은 항상 포함
 
-### 3) Tool Filter
-- 선택된 스킬의 `requires_tools`를 합산 → `enabled_tools` 생성
+### 3) Skill Prompt 구성
+- 선택된 스킬은 **도구 접근 제어가 아니라 가이드 프롬프트**로만 사용
 - Executor용 skill prompt는 **SKILL 본문 전체**가 포함됨
+- 실제 도구 실행은 `NETALLY_TOOL_BACKEND`(`mcp` 기본)에서 제공하는 전체 툴셋 사용
 
 ### 4) Executor (Tool 호출 루프)
-- 활성화된 도구만 바인딩하여 LLM 호출
+- MCP 프록시 도구(기본) 또는 Legacy 도구(옵션)를 바인딩하여 LLM 호출
 - LLM이 `tool_calls`를 생성하면:
   - SSE `tool_call` 이벤트 전송
   - ToolNode에서 실제 도구 실행
@@ -113,15 +114,25 @@ Batfish 준비 후 Chat Panel에서 질의 실행
 - Tool 호출 실패 시 `tool_output`에 오류 문자열이 그대로 전달
 - Batfish 준비 실패 시 즉시 안내 메시지 반환
 - `history`는 전달되더라도 Executor에 반영되지 않음
+- `NETALLY_MCP_ALLOW_MUTATIONS=false`이면 변경성 MCP 도구가 차단됨
+- mutation 차단 오류는 공통 계약으로 반환됨:
+  - `error`: 차단 사유
+  - `code`: `mutations_blocked`
+- deprecated wrapper I/O 계약:
+  - `check_logs`는 문자열(`str`) 유지
+  - 나머지 5개 wrapper는 JSON 객체(`Dict[str, Any]`) 유지
 
 ---
 
 ## 디버깅 포인트
 - `agent/graph.py`: orchestrator/executor prompt와 루프
-- `agent/tools.py`: 도구 호출 결과 및 에러 메시지
+- `agent/mcp_server.py`: MCP 도구 등록 및 보호 로직
+- `agent/mcp_client.py`: MCP transport 호출/에러
+- `agent/mcp_tools.py`: LangGraph용 MCP 프록시 도구
+- `agent/tools.py`: legacy 호환용 도구
 - `main.py`: SSE 이벤트 변환 및 Batfish 준비 게이트
 - `frontend/ChatPanel.tsx`: Evidence 카드 생성/요약 로직
-- `agent/skill_loader.py`: 스킬 로딩과 `requires_tools` 매핑
+- `agent/skill_loader.py`: 스킬 카탈로그/가이드 프롬프트 생성
 
 ---
 
@@ -133,6 +144,7 @@ Batfish 준비 후 Chat Panel에서 질의 실행
 | `/api/lab/prepare` | POST | Batfish 준비 상태 확인 |
 | `/api/pnetlab/status` | GET | PNETLab 인증 상태 |
 | `/api/pnetlab/auth` | POST | PNETLab 인증 설정 |
+| `/api/settings` | GET/POST | MCP 런타임 설정 조회/변경 |
 | `/api/chat` | POST | 에이전트 채팅 |
 
 ---
@@ -151,6 +163,25 @@ Batfish 준비 후 Chat Panel에서 질의 실행
 ### Batfish
 - `BATFISH_HOST`
 - `BATFISH_SNAPSHOT`
+
+### MCP Runtime
+- `NETALLY_TOOL_BACKEND` (`mcp` 기본, 장애 시 `legacy` 전환 가능)
+- `NETALLY_MCP_SERVER_URL`
+- `NETALLY_MCP_ALLOW_MUTATIONS` (`false` 기본)
+
+---
+
+## 운영 모드 / 장애 대응
+
+- 권장 운영 기본값:
+  - `tool_backend=mcp`
+  - `mcp_allow_mutations=false`
+- 데모 중 변경성 작업이 필요할 때만 `mcp_allow_mutations=true`를 짧게 활성화
+- 장애 대응 순서:
+  1. `/api/health`로 MCP 상태 확인
+  2. Settings에서 `tool_backend=legacy`로 임시 전환
+  3. `mcp_server_url` 수정 후 `tool_backend=mcp`로 복귀
+  4. read-only 도구 1회 호출로 정상화 확인
 
 ---
 

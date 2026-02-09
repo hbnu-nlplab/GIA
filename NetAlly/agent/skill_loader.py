@@ -56,7 +56,7 @@ class SkillLoader:
                 skill_file = skill_dir / "SKILL.md"
                 if skill_file.exists():
                     skill = self._parse_skill(skill_file)
-                    if skill:
+                    if skill and skill.enabled:
                         skills.append(skill)
                         self._cache[skill.name] = skill
         
@@ -85,11 +85,11 @@ class SkillLoader:
         return "\n".join(lines)
     
     def get_required_tools(self, skills: List[Skill]) -> Set[str]:
-        """Skills에서 필요한 도구 목록"""
-        tools = set()
-        for skill in skills:
-            tools.update(skill.requires_tools)
-        return tools
+        """Deprecated: tool access control is no longer managed by skills.
+
+        MCP-lite mode keeps skills as prompt guidance only.
+        """
+        return set()
     
     def build_executor_prompt(self, skills: List[Skill]) -> str:
         """Executor용 Skill 프롬프트"""
