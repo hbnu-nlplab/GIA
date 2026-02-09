@@ -1,0 +1,92 @@
+[
+    {
+        "question": "What can be combined by an AMF?",
+        "gold_answer": "concurrent 5GC-MT LR, 5GC-MO LR and 5GC-NI LR location requests",
+        "debate1_passage": "An AMF may combine concurrent 5GC-MT LR, 5GC-MO LR and 5GC-NI LR location requests once any needed privacy related actions (e.g. UE notification and verification) have been performed for each 5GC-MT LR.",
+        "debate1_answer": "5GC-MT LR, 5GC-MO LR and 5GC-NI LR",
+        "debate2_answer": "5GC-MT LR, 5GC-MO LR and 5GC-NI LR",
+        "debate_history": [],
+        "duration": 25.225715398788452
+    },
+    {
+        "question": "What may combine requests from the H GMLC?",
+        "gold_answer": "the same target UE",
+        "debate1_passage": "",
+        "debate1_answer": "An H-GMLC may combine concurrent location requests for the same target User Equipment (UE) by executing only one request and using the resulting location estimate to satisfy other requests.",
+        "debate2_answer": "An H-GMLC or NEF may combine concurrent location requests (e.g. 5GC-MT LR, 5GC-MO LR, 5GC-NI LR) for the same target UE by executing only one request and using the ensuing location estimate result(s) to satisfy the other request(s).",
+        "debate_history": [],
+        "duration": 25.329262733459473
+    },
+    {
+        "question": "What should be considered when cancelling one or several existing requests?",
+        "gold_answer": "LCS Client/AF priority and any other relevant priority information",
+        "debate1_passage": "LCS Client/AF priority and any other relevant priority information (e.g. UE subscription preferences) should be considered when rejecting or deferring a concurrent request or when cancelling one or more existing requests. In particular, location requests associated with emergency services or lawful interception clients should be given priority over other location requests.",
+        "debate1_answer": "LCS Client/AF priority and any other relevant priority information (e.g. UE subscription preferences) should be considered when cancelling one or more existing requests.",
+        "debate2_answer": "LCS Client/AF priority and any other relevant priority information (e.g. UE subscription preferences) should be considered when rejecting or deferring a concurrent request or when cancelling one or more existing requests.",
+        "debate_history": [],
+        "duration": 30.34267234802246
+    },
+    {
+        "question": "When deferring or rejecting a concurrent request, what needs to be considered?",
+        "gold_answer": "LCS Client/AF priority and any other relevant priority information",
+        "debate1_passage": "LCS Client/AF priority and any other relevant priority information (e.g. UE subscription preferences) should be considered when rejecting or deferring a concurrent request or when cancelling one or more existing requests.",
+        "debate1_answer": "LCS Client/AF priority and any other relevant priority information (e.g. UE subscription preferences)",
+        "debate2_answer": "LCS Client/AF priority and any other relevant priority information (e.g. UE subscription preferences)",
+        "debate_history": [],
+        "duration": 37.270490884780884
+    },
+    {
+        "question": "How can concurrent location requests be combined?",
+        "gold_answer": "by executing only one request and using the ensuing location estimate result(s) to satisfy the other request(s)",
+        "debate1_passage": "",
+        "debate1_answer": "fully executing one of the requests and using the ensuing location estimate result(s) to satisfy the other request(s) without fully executing the latter.",
+        "debate2_answer": "fully executing one of the requests and using the ensuing location estimate result(s) to satisfy the other request(s) without fully executing the latter.",
+        "debate_history": [],
+        "duration": 43.9003210067749
+    },
+    {
+        "question": "What is ABMF?",
+        "gold_answer": "Account Balance Management Function",
+        "debate1_passage": "The converged charging system consists of four distinct modules, namely the Charging Function (CHF), the Account Balance Management Function (ABMF), the Charging Gateway Function (CGF) and the Rating Function (RF).",
+        "debate1_answer": "Account Balance Management Function (ABMF)",
+        "debate2_answer": "Account Balance Management Function (ABMF)",
+        "debate_history": [],
+        "duration": 15.827040195465088
+    },
+    {
+        "question": "What do the Charging Function include?",
+        "gold_answer": "Online Charging Function (OCF) and Charging Data Function (CDF)",
+        "debate1_passage": "The Charging Function includes Online Charging Function (OCF) and Charging Data Function (CDF).",
+        "debate1_answer": "Online Charging Function (OCF) and Charging Data Function (CDF)",
+        "debate2_answer": "Online Charging Function (OCF) and Charging Data Function (CDF)",
+        "debate_history": [],
+        "duration": 17.551149129867554
+    },
+    {
+        "question": "What is CHF?",
+        "gold_answer": "Charging Function",
+        "debate1_passage": "The converged charging system consists of four distinct modules, namely the Charging Function (CHF), the Account Balance Management Function (ABMF), the Charging Gateway Function (CGF) and the Rating Function (RF).",
+        "debate1_answer": "Charging Function (CHF)",
+        "debate2_answer": "Charging Function (CHF)",
+        "debate_history": [],
+        "duration": 21.22694993019104
+    },
+    {
+        "question": "What is RF?",
+        "gold_answer": "Rating Function",
+        "debate1_passage": "The converged charging system consists of four distinct modules, namely the Charging Function (CHF), the Account Balance Management Function (ABMF), the Charging Gateway Function (CGF) and the Rating Function (RF).",
+        "debate1_answer": "Rating Function (RF)",
+        "debate2_answer": "Rating Function (RF)",
+        "debate_history": [],
+        "duration": 21.521620988845825
+    },
+    {
+        "question": "What is CDF?",
+        "gold_answer": "Charging Data Function",
+        "debate1_passage": "Charging Data Function (CDF)",
+        "debate1_answer": "Charging Data Function (CDF)",
+        "debate2_answer": "Charging Data Function (CDF)",
+        "debate_history": [],
+        "duration": 22.986926794052124
+    }
+]

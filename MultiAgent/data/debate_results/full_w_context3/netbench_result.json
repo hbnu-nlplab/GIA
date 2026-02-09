@@ -1,0 +1,132 @@
+[
+    {
+        "question": "Relocate environmental sensing mMTC slice from Asia-Pacific to Europe-Central.",
+        "gold_answer": {
+            "slice_id": {
+                "sst": 3,
+                "sd": "ENVIRONMENTAL_SENSING"
+            },
+            "slice_profile": {
+                "location_area": "Europe-Central"
+            }
+        },
+        "debate1_passage": "To relocate the environmental sensing mMTC slice from Asia-Pacific to Europe-Central, configure the core network elements using commands such as `configure terminal`, `interface mmtc-slice`, set QoS parameters with `qos policy <policy-name>`, and update the slice's location using `network slice location <slice-name> europe-central` to reflect the change in region.",
+        "debate1_answer": "To relocate the environmental sensing mMTC slice, use the command `network slice location <slice-name> europe-central` after configuring necessary QoS parameters and interface settings to ensure proper functionality in the new region.",
+        "debate2_answer": "To relocate the environmental sensing mMTC slice, configure core network elements by entering configuration mode (`configure terminal`), specifying the slice interface (`interface mmtc-slice`), setting QoS policies (`qos policy <policy-name>`), and finally updating the slice's location to the new region (`network slice location <slice-name> europe-central`).",
+        "debate_history": [],
+        "duration": 43.9963595867157
+    },
+    {
+        "question": "Change 5QI for campus connectivity eMBB slice in South-America to 9.",
+        "gold_answer": {
+            "slice_id": {
+                "sst": 1,
+                "sd": "CAMPUS_CONNECTIVITY"
+            },
+            "qos_profile": {
+                "5qi": 9
+            }
+        },
+        "debate1_passage": "To adjust the QoS 5QI for the eMBB slice supporting campus connectivity in 'South-America' to 9 (default Internet traffic), use the command `slice eMBB set 5qi 9` in the network management system.",
+        "debate1_answer": "The command `slice eMBB set 5qi 9` changes the 5QI for the eMBB slice to 9, designating it for default Internet traffic and ensuring appropriate QoS for campus connectivity in South-America.",
+        "debate2_answer": "The command `slice eMBB set 5qi 9` is used to change the 5QI for the eMBB slice supporting campus connectivity in 'South-America' to 9, aligning it with default Internet traffic QoS.",
+        "debate_history": [],
+        "duration": 45.88083815574646
+    },
+    {
+        "question": "Scale down uplink data rate for Remote Precision Manufacturing URLLC slice in Europe-West to 20 Mbps.",
+        "gold_answer": {
+            "slice_id": {
+                "sst": 2,
+                "sd": "REMOTE_PRECISION_MANUFACTURING"
+            },
+            "slice_profile": {
+                "max_data_rate_ul": "20Mbps"
+            }
+        },
+        "debate1_passage": "To scale down the maximum uplink data rate for the URLLC slice (Remote Precision Manufacturing) in 'Europe-West' to 20 Mbps, use the command `set urllc slice 'Remote Precision Manufacturing' region 'Europe-West' uplink-rate 20Mbps` in the network management system.",
+        "debate1_answer": "The correct command to achieve this is `set urllc slice 'Remote Precision Manufacturing' region 'Europe-West' uplink-rate 20Mbps`.",
+        "debate2_answer": "The command `set urllc slice 'Remote Precision Manufacturing' region 'Europe-West' uplink-rate 20Mbps` correctly scales down the maximum uplink data rate for the specified URLLC slice in the 'Europe-West' region to 20 Mbps.",
+        "debate_history": [],
+        "duration": 49.07257652282715
+    },
+    {
+        "question": "Set reliability to 99.999% for real-time video analytics URLLC slice in Europe-West.",
+        "gold_answer": {
+            "slice_id": {
+                "sst": 2,
+                "sd": "REAL_TIME_VIDEO_ANALYTICS_CRITICAL"
+            },
+            "slice_profile": {
+                "reliability": "99.999%"
+            }
+        },
+        "debate1_passage": "To achieve 99.999% reliability for the URLLC slice in 'Europe-West', configure redundant paths and low-latency routing, then implement QoS policies using `class-map match-all URLLC` and `policy-map QoS-Policy` to prioritize URLLC traffic. The configuration would include defining the class map and policy map as follows:\n```\nclass-map match-all URLLC\n match ip dscp ef\npolicy-map QoS-Policy\n class URLLC\n  priority 1000\n```",
+        "debate1_answer": "To set reliability to 99.999% for the real-time video analytics URLLC slice in Europe-West, configure redundant paths and low-latency routing, then implement QoS using `class-map match-all URLLC` with `match ip dscp ef` and `policy-map QoS-Policy` with `class URLLC priority 1000` to prioritize URLLC traffic and minimize packet loss and latency.",
+        "debate2_answer": "The provided configuration snippet using `class-map` and `policy-map` with `priority` queuing is a method to enhance network reliability for URLLC traffic, but it does not directly set a numerical reliability target of 99.999% within the configuration itself.",
+        "debate_history": [],
+        "duration": 52.26309537887573
+    },
+    {
+        "question": "Scale up downlink data rate for Digital Signage eMBB slice in South-America to 500 Mbps.",
+        "gold_answer": {
+            "slice_id": {
+                "sst": 1,
+                "sd": "DIGITAL_SIGNAGE"
+            },
+            "slice_profile": {
+                "max_data_rate_dl": "500Mbps"
+            }
+        },
+        "debate1_passage": "To scale up the downlink data rate for the enhanced Mobile Broadband (eMBB) slice dedicated to Digital Signage in South America to 500 Mbps, upgrade network infrastructure to support higher bandwidth, implement Massive MIMO and beamforming technologies, and ensure compliance with local regulations regarding spectrum usage.",
+        "debate1_answer": "The downlink data rate for the eMBB slice in South America can be scaled up to 500 Mbps by configuring the base station with the CLI command `set eMBB downlink-rate 500Mbps`, which requires upgraded network infrastructure supporting higher bandwidth through Massive MIMO and beamforming technologies, and adherence to local spectrum regulations.",
+        "debate2_answer": "To scale up the downlink data rate for the eMBB slice in South America to 500 Mbps, upgrade network infrastructure to support higher bandwidth, implement Massive MIMO and beamforming technologies, and ensure compliance with local regulations regarding spectrum usage.",
+        "debate_history": [],
+        "duration": 56.36838698387146
+    },
+    {
+        "question": "What is the primary function of configuring a BGP neighbor as a `route-reflector-client` within an iBGP design?",
+        "gold_answer": "The primary function is to relax the iBGP split-horizon rule. Normally, routes learned from an iBGP peer are not advertised to other iBGP peers. A Route Reflector (RR) *can* advertise routes learned from one client to other clients (and non-clients), allowing scalability by avoiding a full mesh of iBGP sessions while preventing loops.",
+        "debate1_passage": "The primary function of configuring a BGP neighbor as a `route-reflector-client` is to enable the route reflector to manage and control the flow of routing updates among its clients, thereby reducing the need for a full mesh of iBGP peerings and enhancing scalability and simplifying network topology.",
+        "debate1_answer": "Configuring a BGP neighbor as a `route-reflector-client` (using `neighbor <ip-address> route-reflector-client`) allows the route reflector to control routing updates among its clients, reducing the need for full mesh iBGP peerings and enhancing scalability.",
+        "debate2_answer": "Configuring a BGP neighbor as a `route-reflector-client` allows the route reflector to advertise routes learned from one client to other clients, eliminating the need for a full iBGP mesh and improving scalability in large iBGP networks.",
+        "debate_history": [],
+        "duration": 26.409552812576294
+    },
+    {
+        "question": "Which BGP path (A or B) will the router prefer by default for prefix 10.1.0.0/16, and why?",
+        "gold_answer": "Path A will be preferred. BGP path selection prioritizes the path with the highest Local Preference *before* considering AS_PATH length. Even though Path B has a shorter AS_PATH, Path A's higher Local Preference makes it more desirable according to the standard BGP best path selection algorithm.",
+        "debate1_passage": "The router will prefer Path A by default for prefix 10.1.0.0/16 due to its higher Local Preference, which is prioritized over AS_PATH length in BGP path selection.",
+        "debate1_answer": "The router will prefer Path A due to its higher Local Preference.",
+        "debate2_answer": "The router will prefer Path A by default for prefix 10.1.0.0/16 due to its higher Local Preference, which is prioritized over AS_PATH length in BGP path selection.",
+        "debate_history": [],
+        "duration": 31.897109746932983
+    },
+    {
+        "question": "Assuming default behavior for inter-AS MED comparison, which peer's route (A or B) would likely be preferred based *only* on the MED attribute?",
+        "gold_answer": "Peer A's route (MED 50) would be preferred. By default, when comparing routes from different peers within the *same* neighboring autonomous system, BGP prefers the path with the lower MED value (lower is better). Since Peer A has MED 50 and Peer B has MED 100, Path A is considered better based on MED.",
+        "debate1_passage": "In Border Gateway Protocol (BGP), the Multi-Exit Discriminator (MED) attribute is used to influence the selection of routes when multiple routes to the same destination exist from different Autonomous Systems (AS). The default behavior is to prefer the route with the lower MED value.",
+        "debate1_answer": "Peer A's route would be preferred based on the MED attribute because it has a lower value of 50 compared to Peer B's MED of 100.",
+        "debate2_answer": "Peer A's route would be preferred because BGP's default inter-AS MED comparison favors the route with the lower MED value, and 50 is less than 100.",
+        "debate_history": [],
+        "duration": 33.40437412261963
+    },
+    {
+        "question": "What BGP design feature specifically helps reduce iBGP convergence time compared to a full mesh, especially in large networks?",
+        "gold_answer": "BGP Route Reflectors (RRs) help reduce iBGP convergence time. By significantly reducing the number of required iBGP sessions (from N*(N-1)/2 to N sessions to RRs), RRs decrease the amount of BGP update processing and flooding required during convergence events, leading to faster stabilization.",
+        "debate1_passage": "Route Reflectors (RRs) help reduce iBGP convergence time by minimizing the number of peerings required in large networks, allowing for faster route update propagation during convergence events. This is achieved through the use of the `route-reflector-client` and `route-reflector-server` BGP configuration commands, which enable the RR to act as a central point for route distribution and reduce the number of required peerings.",
+        "debate1_answer": "Route Reflectors (RRs) specifically help reduce iBGP convergence time by minimizing peerings, using the `route-reflector-client` and `route-reflector-server` commands to centralize route distribution, thus speeding up route updates during convergence events.",
+        "debate2_answer": "Route Reflectors (RRs) reduce iBGP convergence time by minimizing the number of peerings from N*(N-1)/2 in a full mesh to N-1, allowing for faster route propagation by having clients peer only with the RR, which then reflects routes to other clients.",
+        "debate_history": [],
+        "duration": 38.3038272857666
+    },
+    {
+        "question": "What common BGP filtering technique is used on AS65000's routers to prevent advertising routes learned from ISP_A to ISP_B?",
+        "gold_answer": "A common technique is using an AS_PATH filter list or route map. On the outbound policy towards ISP_B, implement a filter that denies any route whose AS_PATH contains the ASN of ISP_A. This prevents AS65000 from becoming a transit AS between ISP_A and ISP_B.",
+        "debate1_passage": "To prevent AS65000 from advertising routes learned from Peer ISP_A to Peer ISP_B, a common BGP filtering technique is the use of route maps or prefix lists. By configuring a route map on the routers of AS65000, the network administrator can specify that any routes received from ISP_A should be denied from being advertised to ISP_B. For example, the configuration might look like this:\n```\nroute-map BLOCK_ISP_A_TO_ISP_B deny 10\n match ip address prefix-list ISP_A_ROUTES\n!\nrouter bgp 65000\n neighbor ISP_B_IP_ADDRESS route-map BLOCK_ISP_A_TO_ISP_B out\n```",
+        "debate1_answer": "The common BGP filtering technique used on AS65000's routers is a route map (BLOCK_ISP_A_TO_ISP_B) configured to deny (10) routes learned from ISP_A to ISP_B, using the `match ip address prefix-list` command to specify the routes to be denied, and applied to the BGP neighbor configuration (ISP_B_IP_ADDRESS).",
+        "debate2_answer": "The common BGP filtering technique used is a route map applied outbound to the ISP_B neighbor, configured to deny routes learned from ISP_A, as demonstrated by the example configuration `neighbor ISP_B_IP_ADDRESS route-map BLOCK_ISP_A_TO_ISP_B out`.",
+        "debate_history": [],
+        "duration": 66.90991568565369
+    }
+]

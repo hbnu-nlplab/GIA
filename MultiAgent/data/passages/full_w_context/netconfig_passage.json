@@ -1,293 +1,283 @@
 [
     {
-        "question": "모든 장비의 BGP AS 번호를 나열해주세요. [답변 형식: '장비1: AS X, 장비2: AS Y, 장비3: AS Z']",
-        "gold_answer": "정보없음",
-        "passage": "정보없음"
-    },
-    {
-        "question": "각 AS별 장비 수 분포를 알려주세요. [답변 형식: 'AS X: N대, AS Y: M대']",
-        "gold_answer": "정보없음",
-        "passage": "AS 1: 4대, AS 2: 3대"
-    },
-    {
         "question": "CE01과 CE02의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'CE01: AS X, CE02: AS Y']",
         "gold_answer": "CE01: AS 없음, CE02: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01과 CE03의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'CE01: AS X, CE03: AS Y']",
         "gold_answer": "CE01: AS 없음, CE03: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01과 CE04의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'CE01: AS X, CE04: AS Y']",
         "gold_answer": "CE01: AS 없음, CE04: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01과 P01의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'CE01: AS X, P01: AS Y']",
         "gold_answer": "CE01: AS 없음, P01: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01과 P04의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'CE01: AS X, P04: AS Y']",
         "gold_answer": "CE01: AS 없음, P04: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01과 PE02의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'CE01: AS X, PE02: AS Y']",
         "gold_answer": "CE01: AS 없음, PE02: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01과 PE03의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'CE01: AS X, PE03: AS Y']",
         "gold_answer": "CE01: AS 없음, PE03: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02과 CE03의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'CE02: AS X, CE03: AS Y']",
         "gold_answer": "CE02: AS 없음, CE03: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02과 CE04의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'CE02: AS X, CE04: AS Y']",
         "gold_answer": "CE02: AS 없음, CE04: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02과 P01의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'CE02: AS X, P01: AS Y']",
         "gold_answer": "CE02: AS 없음, P01: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02과 P04의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'CE02: AS X, P04: AS Y']",
         "gold_answer": "CE02: AS 없음, P04: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02과 PE02의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'CE02: AS X, PE02: AS Y']",
         "gold_answer": "CE02: AS 없음, PE02: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02과 PE03의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'CE02: AS X, PE03: AS Y']",
         "gold_answer": "CE02: AS 없음, PE03: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03과 CE04의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'CE03: AS X, CE04: AS Y']",
         "gold_answer": "CE03: AS 없음, CE04: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03과 P01의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'CE03: AS X, P01: AS Y']",
         "gold_answer": "CE03: AS 없음, P01: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03과 P04의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'CE03: AS X, P04: AS Y']",
         "gold_answer": "CE03: AS 없음, P04: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03과 PE02의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'CE03: AS X, PE02: AS Y']",
         "gold_answer": "CE03: AS 없음, PE02: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03과 PE03의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'CE03: AS X, PE03: AS Y']",
         "gold_answer": "CE03: AS 없음, PE03: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE04과 P01의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'CE04: AS X, P01: AS Y']",
         "gold_answer": "CE04: AS 없음, P01: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE04과 P04의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'CE04: AS X, P04: AS Y']",
         "gold_answer": "CE04: AS 없음, P04: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE04과 PE02의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'CE04: AS X, PE02: AS Y']",
         "gold_answer": "CE04: AS 없음, PE02: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE04과 PE03의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'CE04: AS X, PE03: AS Y']",
         "gold_answer": "CE04: AS 없음, PE03: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01과 P04의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'P01: AS X, P04: AS Y']",
         "gold_answer": "P01: AS 없음, P04: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01과 PE02의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'P01: AS X, PE02: AS Y']",
         "gold_answer": "P01: AS 없음, PE02: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01과 PE03의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'P01: AS X, PE03: AS Y']",
         "gold_answer": "P01: AS 없음, PE03: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P04과 PE02의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'P04: AS X, PE02: AS Y']",
         "gold_answer": "P04: AS 없음, PE02: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P04과 PE03의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'P04: AS X, PE03: AS Y']",
         "gold_answer": "P04: AS 없음, PE03: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE02과 PE03의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'PE02: AS X, PE03: AS Y']",
         "gold_answer": "PE02: AS 없음, PE03: AS 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01과 CE02의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE01: N개, CE02: M개, 차이: K개']",
         "gold_answer": "CE01: 0개, CE02: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01과 CE03의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE01: N개, CE03: M개, 차이: K개']",
         "gold_answer": "CE01: 0개, CE03: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01과 CE04의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE01: N개, CE04: M개, 차이: K개']",
         "gold_answer": "CE01: 0개, CE04: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01과 P01의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE01: N개, P01: M개, 차이: K개']",
         "gold_answer": "CE01: 0개, P01: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01과 P04의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE01: N개, P04: M개, 차이: K개']",
         "gold_answer": "CE01: 0개, P04: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01과 PE02의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE01: N개, PE02: M개, 차이: K개']",
         "gold_answer": "CE01: 0개, PE02: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01과 PE03의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE01: N개, PE03: M개, 차이: K개']",
         "gold_answer": "CE01: 0개, PE03: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02과 CE03의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE02: N개, CE03: M개, 차이: K개']",
         "gold_answer": "CE02: 0개, CE03: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02과 CE04의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE02: N개, CE04: M개, 차이: K개']",
         "gold_answer": "CE02: 0개, CE04: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02과 P01의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE02: N개, P01: M개, 차이: K개']",
         "gold_answer": "CE02: 0개, P01: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02과 P04의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE02: N개, P04: M개, 차이: K개']",
         "gold_answer": "CE02: 0개, P04: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02과 PE02의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE02: N개, PE02: M개, 차이: K개']",
         "gold_answer": "CE02: 0개, PE02: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02과 PE03의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE02: N개, PE03: M개, 차이: K개']",
         "gold_answer": "CE02: 0개, PE03: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03과 CE04의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE03: N개, CE04: M개, 차이: K개']",
         "gold_answer": "CE03: 0개, CE04: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03과 P01의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE03: N개, P01: M개, 차이: K개']",
         "gold_answer": "CE03: 0개, P01: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03과 P04의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE03: N개, P04: M개, 차이: K개']",
         "gold_answer": "CE03: 0개, P04: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03과 PE02의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE03: N개, PE02: M개, 차이: K개']",
         "gold_answer": "CE03: 0개, PE02: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03과 PE03의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE03: N개, PE03: M개, 차이: K개']",
         "gold_answer": "CE03: 0개, PE03: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE04과 P01의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE04: N개, P01: M개, 차이: K개']",
         "gold_answer": "CE04: 0개, P01: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE04과 P04의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE04: N개, P04: M개, 차이: K개']",
         "gold_answer": "CE04: 0개, P04: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE04과 PE02의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE04: N개, PE02: M개, 차이: K개']",
         "gold_answer": "CE04: 0개, PE02: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE04과 PE03의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE04: N개, PE03: M개, 차이: K개']",
         "gold_answer": "CE04: 0개, PE03: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01과 P04의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'P01: N개, P04: M개, 차이: K개']",
         "gold_answer": "P01: 0개, P04: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01과 PE02의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'P01: N개, PE02: M개, 차이: K개']",
         "gold_answer": "P01: 0개, PE02: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01과 PE03의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'P01: N개, PE03: M개, 차이: K개']",
         "gold_answer": "P01: 0개, PE03: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P04과 PE02의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'P04: N개, PE02: M개, 차이: K개']",
         "gold_answer": "P04: 0개, PE02: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P04과 PE03의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'P04: N개, PE03: M개, 차이: K개']",
         "gold_answer": "P04: 0개, PE03: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE02과 PE03의 BGP 피어 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'PE02: N개, PE03: M개, 차이: K개']",
         "gold_answer": "PE02: 0개, PE03: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01과 CE02의 인터페이스 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE01: N개, CE02: M개, 차이: K개']",
@@ -432,17 +422,17 @@
     {
         "question": "CE01과 CE02가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'CE01: Area 0, 1, CE02: Area 0, 2']",
         "gold_answer": "CE01: Area 없음, CE02: Area 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01과 CE03가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'CE01: Area 0, 1, CE03: Area 0, 2']",
         "gold_answer": "CE01: Area 없음, CE03: Area 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01과 CE04가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'CE01: Area 0, 1, CE04: Area 0, 2']",
         "gold_answer": "CE01: Area 없음, CE04: Area 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01과 P01가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'CE01: Area 0, 1, P01: Area 0, 2']",
@@ -467,12 +457,12 @@
     {
         "question": "CE02과 CE03가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'CE02: Area 0, 1, CE03: Area 0, 2']",
         "gold_answer": "CE02: Area 없음, CE03: Area 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02과 CE04가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'CE02: Area 0, 1, CE04: Area 0, 2']",
         "gold_answer": "CE02: Area 없음, CE04: Area 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02과 P01가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'CE02: Area 0, 1, P01: Area 0, 2']",
@@ -487,7 +477,7 @@
     {
         "question": "CE02과 PE02가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'CE02: Area 0, 1, PE02: Area 0, 2']",
         "gold_answer": "CE02: Area 없음, PE02: Area 없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02과 PE03가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'CE02: Area 0, 1, PE03: Area 0, 2']",
@@ -572,147 +562,147 @@
     {
         "question": "CE01과 CE02의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE01: N개, CE02: M개, 차이: K개']",
         "gold_answer": "CE01: 0개, CE02: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01과 CE03의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE01: N개, CE03: M개, 차이: K개']",
         "gold_answer": "CE01: 0개, CE03: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01과 CE04의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE01: N개, CE04: M개, 차이: K개']",
         "gold_answer": "CE01: 0개, CE04: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01과 P01의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE01: N개, P01: M개, 차이: K개']",
         "gold_answer": "CE01: 0개, P01: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01과 P04의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE01: N개, P04: M개, 차이: K개']",
         "gold_answer": "CE01: 0개, P04: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01과 PE02의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE01: N개, PE02: M개, 차이: K개']",
         "gold_answer": "CE01: 0개, PE02: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01과 PE03의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE01: N개, PE03: M개, 차이: K개']",
         "gold_answer": "CE01: 0개, PE03: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02과 CE03의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE02: N개, CE03: M개, 차이: K개']",
         "gold_answer": "CE02: 0개, CE03: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02과 CE04의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE02: N개, CE04: M개, 차이: K개']",
         "gold_answer": "CE02: 0개, CE04: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02과 P01의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE02: N개, P01: M개, 차이: K개']",
         "gold_answer": "CE02: 0개, P01: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02과 P04의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE02: N개, P04: M개, 차이: K개']",
         "gold_answer": "CE02: 0개, P04: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02과 PE02의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE02: N개, PE02: M개, 차이: K개']",
         "gold_answer": "CE02: 0개, PE02: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02과 PE03의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE02: N개, PE03: M개, 차이: K개']",
         "gold_answer": "CE02: 0개, PE03: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03과 CE04의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE03: N개, CE04: M개, 차이: K개']",
         "gold_answer": "CE03: 0개, CE04: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03과 P01의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE03: N개, P01: M개, 차이: K개']",
         "gold_answer": "CE03: 0개, P01: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03과 P04의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE03: N개, P04: M개, 차이: K개']",
         "gold_answer": "CE03: 0개, P04: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03과 PE02의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE03: N개, PE02: M개, 차이: K개']",
         "gold_answer": "CE03: 0개, PE02: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03과 PE03의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE03: N개, PE03: M개, 차이: K개']",
         "gold_answer": "CE03: 0개, PE03: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE04과 P01의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE04: N개, P01: M개, 차이: K개']",
         "gold_answer": "CE04: 0개, P01: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE04과 P04의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE04: N개, P04: M개, 차이: K개']",
         "gold_answer": "CE04: 0개, P04: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE04과 PE02의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE04: N개, PE02: M개, 차이: K개']",
         "gold_answer": "CE04: 0개, PE02: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE04과 PE03의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'CE04: N개, PE03: M개, 차이: K개']",
         "gold_answer": "CE04: 0개, PE03: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01과 P04의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'P01: N개, P04: M개, 차이: K개']",
         "gold_answer": "P01: 0개, P04: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01과 PE02의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'P01: N개, PE02: M개, 차이: K개']",
         "gold_answer": "P01: 0개, PE02: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01과 PE03의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'P01: N개, PE03: M개, 차이: K개']",
         "gold_answer": "P01: 0개, PE03: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P04과 PE02의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'P04: N개, PE02: M개, 차이: K개']",
         "gold_answer": "P04: 0개, PE02: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P04과 PE03의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'P04: N개, PE03: M개, 차이: K개']",
         "gold_answer": "P04: 0개, PE03: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE02과 PE03의 VRF 수는 각각 몇 개이며, 차이는 몇 개입니까? [답변 형식: 'PE02: N개, PE03: M개, 차이: K개']",
         "gold_answer": "PE02: 0개, PE03: 0개, 차이: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "BGP 피어가 가장 많은 장비와 그 개수를 알려주세요. [답변 형식: '장비명: N개']",
         "gold_answer": "CE01: 0개",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "인터페이스 수가 가장 많은 장비와 그 개수를 알려주세요. [답변 형식: '장비명: N개']",
@@ -723,11 +713,6 @@
         "question": "인터페이스 수가 가장 적은 장비와 그 개수를 알려주세요. [답변 형식: '장비명: N개']",
         "gold_answer": "CE01: 4개",
         "passage": "P01: 8개"
-    },
-    {
-        "question": "각 장비별 VRF 사용 수 통계를 알려주세요. [답변 형식: '장비1: N개, 장비2: M개']",
-        "gold_answer": "정보없음",
-        "passage": "정보없음"
     },
     {
         "question": "CE01 장비에 설정된 네트워크 인터페이스는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
@@ -807,7 +792,7 @@
     {
         "question": "양쪽 링크의 MTU 사이즈가 서로 다른 구간이 있습니까?\n[답변 형식: 불일치 구간 목록 또는 '없음']",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01 장비에 설정된 서브인터페이스는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
@@ -817,12 +802,12 @@
     {
         "question": "CE02 장비에 설정된 서브인터페이스는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03 장비에 설정된 서브인터페이스는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01 장비에 설정된 서브인터페이스는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
@@ -847,42 +832,42 @@
     {
         "question": "CE01 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요.\n[답변 형식: 키=값 형식 목록 (없으면 '없음')]",
         "gold_answer": "Ethernet0/0=default, Ethernet0/1=default, Ethernet0/2=default, Ethernet0/3=default",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요.\n[답변 형식: 키=값 형식 목록 (없으면 '없음')]",
         "gold_answer": "Ethernet0/0=default, Ethernet0/1=default, Ethernet0/2=default, Ethernet0/3=default",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요.\n[답변 형식: 키=값 형식 목록 (없으면 '없음')]",
         "gold_answer": "Ethernet0/0=default, Ethernet0/1=default, Ethernet0/2=default, Ethernet0/3=default",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요.\n[답변 형식: 키=값 형식 목록 (없으면 '없음')]",
         "gold_answer": "Ethernet0/0=default, Ethernet0/1=default, Ethernet0/2=default, Ethernet0/3=default, Ethernet1/0=default, Ethernet1/1=default, Ethernet1/2=default, Ethernet1/3=default, Loopback0=default",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P04 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요.\n[답변 형식: 키=값 형식 목록 (없으면 '없음')]",
         "gold_answer": "Ethernet0/0=default, Ethernet0/1=default, Ethernet0/2=default, Ethernet0/3=default, Ethernet1/0=default, Ethernet1/1=default, Ethernet1/2=default, Ethernet1/3=default, Loopback0=default",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE02 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요.\n[답변 형식: 키=값 형식 목록 (없으면 '없음')]",
         "gold_answer": "Ethernet0/0=default, Ethernet0/1=default, Ethernet0/2=default, Ethernet0/3=default, Ethernet1/0=default, Ethernet1/1=default, Ethernet1/2=default, Ethernet1/3=default, Loopback0=default",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE03 장비의 각 인터페이스별 VRF 바인딩 현황을 알려주세요.\n[답변 형식: 키=값 형식 목록 (없으면 '없음')]",
         "gold_answer": "Ethernet0/0=default, Ethernet0/1=default, Ethernet0/2=default, Ethernet0/3=default, Ethernet1/0=default, Ethernet1/1=default, Ethernet1/2=default, Ethernet1/3=default, Loopback0=default",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PW-ID 불일치 또는 단방향 L2VPN 회선은 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "구성된 L2VPN pseudowire 회선(장비쌍) 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
@@ -892,22 +877,22 @@
     {
         "question": "PW-ID가 불일치하는 L2VPN 회선(장비쌍) 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "단방향으로만 설정된 L2VPN 회선은 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "단방향으로만 설정된 L2VPN 회선(장비쌍) 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01, CE02, CE03, CE04, P01, P04, PE02, PE03 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
@@ -982,152 +967,152 @@
     {
         "question": "네트워크에 패킷이 드랍되는 블랙홀이 존재합니까?\n[답변 형식: true/false (소문자)]",
         "gold_answer": "false",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce01에서 ce03로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce01에서 pe03로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce02에서 ce01로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce02에서 ce03로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce02에서 ce04로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce02에서 p04로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce02에서 pe02로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce02에서 pe03로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce03에서 pe03로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce04에서 ce01로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce04에서 ce03로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce04에서 p04로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce04에서 pe03로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "p01에서 ce01로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "p01에서 ce02로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "p01에서 ce03로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "p01에서 ce04로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "p01에서 p04로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "p01에서 pe02로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "p01에서 pe03로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "p04에서 ce01로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "p04에서 ce03로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "p04에서 pe03로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "pe02에서 ce01로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "pe02에서 ce03로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "pe02에서 ce04로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "pe02에서 p04로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "pe02에서 pe03로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]",
         "gold_answer": "2",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "네트워크에 포워딩 루프가 존재합니까?\n[답변 형식: '없음' 또는 '발견: A→B→C→A']",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce02(10.10.10.102)에서 ce01(10.10.10.101)로의 ICMP 트래픽 경로와 도달 여부를 알려주세요.\n[답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: 없음, 도달: 불가']",
@@ -1432,7 +1417,7 @@
     {
         "question": "ce02에서 ce01로 가는 트래픽이 경유하는 노드들은 무엇입니까?\n[답변 형식: 쉼표로 구분된 노드 목록]",
         "gold_answer": "ce02, ce01",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce02에서 ce03로 가는 트래픽이 pe02(백본 장비)를 경유합니까?\n[답변 형식: '경유함 (경로: A→PE02→B)' 또는 '경유 안함 (경로: A→B)']",
@@ -1477,152 +1462,152 @@
     {
         "question": "CE01 장비의 BGP Local-AS 번호는 무엇입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02 장비의 BGP Local-AS 번호는 무엇입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03 장비의 BGP Local-AS 번호는 무엇입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01 장비의 BGP Local-AS 번호는 무엇입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P04 장비의 BGP Local-AS 번호는 무엇입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE02 장비의 BGP Local-AS 번호는 무엇입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE03 장비의 BGP Local-AS 번호는 무엇입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01 장비의 BGP 피어(이웃)는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02 장비의 BGP 피어(이웃)는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03 장비의 BGP 피어(이웃)는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01 장비의 BGP 피어(이웃)는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P04 장비의 BGP 피어(이웃)는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE02 장비의 BGP 피어(이웃)는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE03 장비의 BGP 피어(이웃)는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P04 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE02 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE03 장비와 eBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P04 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE02 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE03 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03 장비의 OSPF Area 0에 연결된 인터페이스 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
@@ -1652,17 +1637,17 @@
     {
         "question": "CE01 장비가 참여하는 OSPF Area 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02 장비가 참여하는 OSPF Area 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03 장비가 참여하는 OSPF Area 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01 장비가 참여하는 OSPF Area 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
@@ -1687,12 +1672,12 @@
     {
         "question": "CE01 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03 장비에 설정된 OSPF 프로세스 ID 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
@@ -1722,7 +1707,7 @@
     {
         "question": "CE01 장비의 AAA 인증 방식을 알려주세요. [답변 형식: 'TACACS+' / 'RADIUS' / 'Local' / '미설정']",
         "gold_answer": "미설정",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02 장비의 AAA 인증 방식을 알려주세요. [답변 형식: 'TACACS+' / 'RADIUS' / 'Local' / '미설정']",
@@ -1732,7 +1717,7 @@
     {
         "question": "CE03 장비의 AAA 인증 방식을 알려주세요. [답변 형식: 'TACACS+' / 'RADIUS' / 'Local' / '미설정']",
         "gold_answer": "미설정",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01 장비의 AAA 인증 방식을 알려주세요. [답변 형식: 'TACACS+' / 'RADIUS' / 'Local' / '미설정']",
@@ -1747,12 +1732,12 @@
     {
         "question": "PE02 장비의 AAA 인증 방식을 알려주세요. [답변 형식: 'TACACS+' / 'RADIUS' / 'Local' / '미설정']",
         "gold_answer": "미설정",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE03 장비의 AAA 인증 방식을 알려주세요. [답변 형식: 'TACACS+' / 'RADIUS' / 'Local' / '미설정']",
         "gold_answer": "미설정",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01 장비의 SSH 버전과 활성화 상태를 알려주세요. [답변 형식: 'SSHv1' / 'SSHv2' / '비활성화']",
@@ -1907,7 +1892,7 @@
     {
         "question": "{vrf} VRF를 사용하는 장비 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "SSH 접속이 가능한 장비 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
@@ -1927,52 +1912,52 @@
     {
         "question": "CE01 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P04 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE02 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE03 장비에 설정된 L2VPN Pseudowire ID 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01 장비의 MPLS LDP Router-ID를 알려주세요. [답변 형식: 'Router-ID: X.X.X.X' 또는 '미설정']",
         "gold_answer": "미설정",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02 장비의 MPLS LDP Router-ID를 알려주세요. [답변 형식: 'Router-ID: X.X.X.X' 또는 '미설정']",
         "gold_answer": "미설정",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03 장비의 MPLS LDP Router-ID를 알려주세요. [답변 형식: 'Router-ID: X.X.X.X' 또는 '미설정']",
         "gold_answer": "미설정",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01 장비의 MPLS LDP Router-ID를 알려주세요. [답변 형식: 'Router-ID: X.X.X.X' 또는 '미설정']",
@@ -1997,177 +1982,177 @@
     {
         "question": "CE01 장비의 Route Target Export 설정은 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02 장비의 Route Target Export 설정은 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03 장비의 Route Target Export 설정은 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01 장비의 Route Target Export 설정은 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P04 장비의 Route Target Export 설정은 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE02 장비의 Route Target Export 설정은 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE03 장비의 Route Target Export 설정은 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01 장비의 Route Target Import 설정은 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02 장비의 Route Target Import 설정은 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03 장비의 Route Target Import 설정은 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01 장비의 Route Target Import 설정은 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P04 장비의 Route Target Import 설정은 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE02 장비의 Route Target Import 설정은 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE03 장비의 Route Target Import 설정은 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01 장비에 설정된 VRF는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02 장비에 설정된 VRF는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03 장비에 설정된 VRF는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01 장비에 설정된 VRF는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P04 장비에 설정된 VRF는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE02 장비에 설정된 VRF는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE03 장비에 설정된 VRF는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01 장비에 설정된 VRF 이름 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02 장비에 설정된 VRF 이름 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03 장비에 설정된 VRF 이름 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01 장비에 설정된 VRF 이름 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P04 장비에 설정된 VRF 이름 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE02 장비에 설정된 VRF 이름 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE03 장비에 설정된 VRF 이름 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요.\n[답변 형식: 키=값 형식 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요.\n[답변 형식: 키=값 형식 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요.\n[답변 형식: 키=값 형식 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요.\n[답변 형식: 키=값 형식 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P04 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요.\n[답변 형식: 키=값 형식 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE02 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요.\n[답변 형식: 키=값 형식 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE03 장비에 설정된 VRF들의 이름과 RD(Route Distinguisher) 값을 함께 보여주세요.\n[답변 형식: 키=값 형식 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01 장비의 각 인터페이스 상태를 알려주세요.\n[답변 형식: 키=값 형식 목록 (없으면 '없음')]",
@@ -2232,7 +2217,7 @@
     {
         "question": "PE02 장비에서 logging buffered의 severity-level은 무엇입니까?\n[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",
         "gold_answer": "debugging",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE03 장비에서 logging buffered의 severity-level은 무엇입니까?\n[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",
@@ -2242,142 +2227,142 @@
     {
         "question": "CE01 장비에 설정된 NTP 서버 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02 장비에 설정된 NTP 서버 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03 장비에 설정된 NTP 서버 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01 장비에 설정된 NTP 서버 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P04 장비에 설정된 NTP 서버 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE02 장비에 설정된 NTP 서버 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE03 장비에 설정된 NTP 서버 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01 장비의 라우팅 테이블 엔트리는 총 몇 개입니까?",
         "gold_answer": "4",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02 장비의 라우팅 테이블 엔트리는 총 몇 개입니까?",
         "gold_answer": "4",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03 장비의 라우팅 테이블 엔트리는 총 몇 개입니까?",
         "gold_answer": "4",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01 장비의 라우팅 테이블 엔트리는 총 몇 개입니까?",
         "gold_answer": "9",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P04 장비의 라우팅 테이블 엔트리는 총 몇 개입니까?",
         "gold_answer": "9",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE02 장비의 라우팅 테이블 엔트리는 총 몇 개입니까?",
         "gold_answer": "9",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE03 장비의 라우팅 테이블 엔트리는 총 몇 개입니까?",
         "gold_answer": "9",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01 장비에 설정된 SNMP 커뮤니티 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02 장비에 설정된 SNMP 커뮤니티 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03 장비에 설정된 SNMP 커뮤니티 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01 장비에 설정된 SNMP 커뮤니티 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P04 장비에 설정된 SNMP 커뮤니티 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE02 장비에 설정된 SNMP 커뮤니티 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE03 장비에 설정된 SNMP 커뮤니티 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01 장비에 설정된 Syslog 서버 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02 장비에 설정된 Syslog 서버 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03 장비에 설정된 Syslog 서버 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01 장비에 설정된 Syslog 서버 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P04 장비에 설정된 Syslog 서버 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE02 장비에 설정된 Syslog 서버 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE03 장비에 설정된 Syslog 서버 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01 장비의 호스트네임은 무엇입니까?\n[답변 형식: 단답 텍스트 (없으면 '정보 없음')]",
@@ -2557,247 +2542,247 @@
     {
         "question": "CE01 장비의 {vrf} VRF에 바인딩된 인터페이스는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01, CE02, CE03, CE04, P01, P04, PE02, PE03 장비의 {vrf} VRF에 바인딩된 인터페이스는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02 장비의 {vrf} VRF에 바인딩된 인터페이스는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03 장비의 {vrf} VRF에 바인딩된 인터페이스는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE04 장비의 {vrf} VRF에 바인딩된 인터페이스는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01 장비의 {vrf} VRF에 바인딩된 인터페이스는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P04 장비의 {vrf} VRF에 바인딩된 인터페이스는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE02 장비의 {vrf} VRF에 바인딩된 인터페이스는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE03 장비의 {vrf} VRF에 바인딩된 인터페이스는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE01, CE02, CE03, CE04, P01, P04, PE02, PE03 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE02 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE03 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "CE04 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P01 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "P04 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE02 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "PE03 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "route-target이 없는 VRF(장비/VRF)는 총 몇 개입니까?\n[답변 형식: 정수 숫자]",
         "gold_answer": "0",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "route-target이 없는 VRF(장비/VRF) 목록을 알려주세요.\n[답변 형식: 쉼표로 구분된 항목 목록 (없으면 '없음')]",
         "gold_answer": "없음",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "OSPF Area 0(백본)이 끊어지지 않고 연속적으로 연결되어 있습니까?\n[답변 형식: true/false (소문자)]",
         "gold_answer": "true",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce01에서 ce03로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: ce01 → ce03)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce01에서 pe03로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: ce01 → pe03)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce02에서 ce01로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: ce02 → ce01)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce02에서 ce03로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: ce02 → ce03)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce02에서 ce04로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: ce02 → ce04)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce02에서 p04로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: ce02 → p04)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce02에서 pe02로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: ce02 → pe02)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce02에서 pe03로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: ce02 → pe03)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce03에서 pe03로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: ce03 → pe03)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce04에서 ce01로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: ce04 → ce01)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce04에서 ce03로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: ce04 → ce03)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce04에서 p04로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: ce04 → p04)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce04에서 pe03로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: ce04 → pe03)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "p01에서 ce01로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: p01 → ce01)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "p01에서 ce02로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: p01 → ce02)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "p01에서 ce03로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: p01 → ce03)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "p01에서 ce04로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: p01 → ce04)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "p01에서 p04로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: p01 → p04)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "p01에서 pe02로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: p01 → pe02)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "p01에서 pe03로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: p01 → pe03)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "p04에서 ce01로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: p04 → ce01)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "p04에서 ce03로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: p04 → ce03)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "p04에서 pe03로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: p04 → pe03)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "pe02에서 ce01로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: pe02 → ce01)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "pe02에서 ce03로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: pe02 → ce03)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "pe02에서 ce04로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: pe02 → ce04)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "pe02에서 p04로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: pe02 → p04)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "pe02에서 pe03로 가는 경로는 총 몇 개입니까?\n[답변 형식: 'N개 (경로1: A→B, 경로2: A→C→B)']",
         "gold_answer": "1개 (경로1: pe02 → pe03)",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "ce02과 ce03 사이의 링크가 다운되었을 때, ce01에서 ce04로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: '영향 없음 (현재경로: A→B→C가 장애링크 미경유)' / '경로 변경 (현재경로: A→B, 대체경로: A→C→B)' / '통신 단절 (현재경로: A→B, 대체경로 없음)']",
@@ -2952,12 +2937,12 @@
     {
         "question": "네트워크가 '모든 CE 간 트래픽은 pe02를 통과해야 한다'는 정책을 준수하고 있습니까?\n[답변 형식: true/false (소문자)]",
         "gold_answer": "true",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "네트워크가 '모든 CE 간 트래픽은 pe03를 통과해야 한다'는 정책을 준수하고 있습니까?\n[답변 형식: true/false (소문자)]",
         "gold_answer": "true",
-        "passage": "정보없음"
+        "passage": "[NONE]"
     },
     {
         "question": "단일 장비 장애 시 통신이 두절되는 구간(SPOF: Single Point of Failure)이 존재합니까?\n[답변 형식: SPOF 장비 목록 또는 '없음']",
