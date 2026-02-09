@@ -14,7 +14,8 @@ from langgraph.prebuilt import ToolNode
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 
 from agent.llm_provider import LLMProvider, LLMConfig
-from agent.tools import get_tools, get_tool_by_names
+from agent.tools import get_tools as get_legacy_tools
+from agent.mcp_tools import get_tools as get_mcp_tools
 from agent.skill_loader import get_skill_catalog, load_skills, get_loader
 
 load_dotenv()
@@ -126,24 +127,38 @@ def create_orchestrator_node(llm):
 # =============================================================================
 
 def filter_tools_node(state: OrchestratorState) -> OrchestratorState:
-    """Skills에 따라 도구 필터링"""
+    """Skills를 가이드 프롬프트로만 반영 (도구 접근 제어는 하지 않음)."""
     selected_skills = state.get("selected_skills", ["core"])
     
     # Skills 로드
     skills = load_skills(selected_skills)
-    
-    # 필요한 도구 추출
+
     loader = get_loader()
-    required_tools = loader.get_required_tools(skills)
-    
     # Executor용 Skill 프롬프트
     skill_prompt = loader.build_executor_prompt(skills)
+    runtime_tools = get_runtime_tools()
     
     return {
         **state,
-        "enabled_tools": list(required_tools),
+        "enabled_tools": [t.name for t in runtime_tools],
         "skill_prompt": skill_prompt,
     }
+
+
+def get_tool_backend() -> str:
+    """Tool backend selector.
+
+    - mcp (default): MCP-backed tools
+    - legacy: in-process LangChain tools
+    """
+    return os.getenv("NETALLY_TOOL_BACKEND", "mcp").strip().lower()
+
+
+def get_runtime_tools() -> List[Any]:
+    backend = get_tool_backend()
+    if backend == "legacy":
+        return get_legacy_tools()
+    return get_mcp_tools()
 
 
 # =============================================================================
@@ -174,11 +189,10 @@ def create_executor_node(llm):
         question = state.get("question", "")
         answer_type = state.get("answer_type", "text")
         skill_prompt = state.get("skill_prompt", "")
-        enabled_tools = state.get("enabled_tools", [])
         messages = state.get("messages", [])
         
-        # 활성화된 도구만 바인딩
-        tools = get_tool_by_names(enabled_tools)
+        # 런타임 백엔드의 전체 도구를 바인딩
+        tools = get_runtime_tools()
         llm_with_tools = llm.bind_tools(tools) if tools else llm
         
         # 첫 호출이면 시스템 프롬프트 추가
@@ -246,7 +260,7 @@ def create_orchestrated_graph(
     exec_llm = LLMProvider.create(exec_config)
     
     # 도구
-    all_tools = get_tools()
+    all_tools = get_runtime_tools()
     tool_node = ToolNode(all_tools)
     
     # 그래프 빌더

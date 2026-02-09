@@ -15,7 +15,7 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import StreamingResponse, JSONResponse
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from dotenv import load_dotenv
 import logging
 
@@ -61,6 +61,29 @@ class PnetlabAuthRequest(BaseModel):
     password: Optional[str] = Field(default=None, description="PNETLab 비밀번호")
 
 
+class SettingsRequest(BaseModel):
+    """런타임 설정 업데이트 (웹 UI에서 변경 가능)"""
+    openai_api_key: Optional[str] = Field(default=None, description="OpenAI API 키")
+    nso_base_url: Optional[str] = Field(default=None, description="NSO RESTCONF URL")
+    nso_username: Optional[str] = Field(default=None, description="NSO 계정")
+    nso_password: Optional[str] = Field(default=None, description="NSO 비밀번호")
+    pnetlab_url: Optional[str] = Field(default=None, description="PNETLab URL")
+    batfish_host: Optional[str] = Field(default=None, description="Batfish 호스트")
+    tool_backend: Optional[str] = Field(default=None, description="Tool backend: mcp | legacy")
+    mcp_server_url: Optional[str] = Field(default=None, description="MCP server URL")
+    mcp_allow_mutations: Optional[bool] = Field(default=None, description="Allow mutating MCP tools")
+
+    @field_validator("tool_backend")
+    @classmethod
+    def validate_tool_backend(cls, value: Optional[str]) -> Optional[str]:
+        if value is None:
+            return value
+        normalized = value.strip().lower()
+        if normalized not in {"mcp", "legacy"}:
+            raise ValueError("tool_backend must be one of: mcp, legacy")
+        return normalized
+
+
 class TopologyNode(BaseModel):
     """토폴로지 노드"""
     id: str
@@ -90,6 +113,21 @@ async def lifespan(app: FastAPI):
     """앱 시작/종료 시 실행"""
     # Startup
     print("[NetAlly] Starting up...")
+
+    app.state.tool_backend = os.getenv("NETALLY_TOOL_BACKEND", TOOL_BACKEND_DEFAULT).lower()
+    app.state.mcp_health = {"ok": False, "tool_count": 0}
+    if app.state.tool_backend == "mcp":
+        try:
+            from agent.mcp_server import start_embedded_mcp_server
+            from agent.mcp_client import get_mcp_client
+
+            started = await start_embedded_mcp_server()
+            health = await get_mcp_client().health_check()
+            app.state.mcp_health = health
+            logger.info(f"MCP runtime startup: {started}")
+            logger.info(f"MCP health: {health}")
+        except Exception as e:
+            logger.error(f"MCP runtime startup failed: {e}")
     
     # LangGraph 그래프 임포트 (지연 로딩)
     from agent.graph import graph
@@ -99,6 +137,12 @@ async def lifespan(app: FastAPI):
     yield
     
     # Shutdown
+    if getattr(app.state, "tool_backend", TOOL_BACKEND_DEFAULT) == "mcp":
+        try:
+            from agent.mcp_server import stop_embedded_mcp_server
+            await stop_embedded_mcp_server()
+        except Exception as e:
+            logger.warning(f"MCP runtime shutdown warning: {e}")
     print("[NetAlly] Shutting down...")
 
 
@@ -121,6 +165,8 @@ BATFISH_SNAPSHOT = (
 )
 AUTO_PREPARE_ON_CHAT = os.getenv("AUTO_PREPARE_ON_CHAT", "false").lower() == "true"
 AUTO_INIT_BATFISH = os.getenv("AUTO_INIT_BATFISH", "false").lower() == "true"
+TOOL_BACKEND_DEFAULT = os.getenv("NETALLY_TOOL_BACKEND", "mcp").lower()
+MCP_SERVER_URL_DEFAULT = os.getenv("NETALLY_MCP_SERVER_URL", "http://127.0.0.1:8811/mcp")
 
 # CORS 설정 (개발용)
 app.add_middleware(
@@ -138,13 +184,39 @@ if os.path.exists(static_path):
 
 
 # =============================================================================
+# MCP / Tool Backend Helpers
+# =============================================================================
+
+def get_tool_backend() -> str:
+    return os.getenv("NETALLY_TOOL_BACKEND", TOOL_BACKEND_DEFAULT).lower()
+
+
+async def call_mcp_tool(tool_name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    from agent.mcp_client import get_mcp_client
+
+    res = await get_mcp_client().call_tool(tool_name, arguments)
+    if res.get("ok"):
+        payload = res.get("result", {})
+        if isinstance(payload, dict):
+            return payload
+        return {"result": payload, "content": res.get("content", [])}
+
+    return {"error": res.get("error", "MCP call failed"), "tool": tool_name, "raw": res}
+
+
+# =============================================================================
 # Health Check
 # =============================================================================
 
 @app.get("/api/health")
 async def health():
     """헬스 체크"""
-    return {"status": "ok", "service": "netally"}
+    return {
+        "status": "ok",
+        "service": "netally",
+        "tool_backend": get_tool_backend(),
+        "mcp_health": getattr(app.state, "mcp_health", {"ok": False}),
+    }
 
 
 @app.post("/api/lab/refresh")
@@ -154,16 +226,24 @@ async def lab_refresh(request: LabRefreshRequest):
     - device_info.json이 없으면 API로 자동 생성
     """
     try:
-        from agent.tools import lab_bootstrap
         params = {}
         if request.config_path:
             params["config_path"] = request.config_path
         if request.overrides:
             params["overrides"] = request.overrides
-        result = await asyncio.to_thread(
-            lab_bootstrap.invoke,
-            {"action": "refresh_onboard", "params": params}
-        )
+
+        if get_tool_backend() == "mcp":
+            result = await call_mcp_tool(
+                "bootstrap_refresh_onboard",
+                {"config_path": params.get("config_path"), "overrides": params.get("overrides")},
+            )
+        else:
+            from agent.tools import lab_bootstrap
+
+            result = await asyncio.to_thread(
+                lab_bootstrap.invoke,
+                {"action": "refresh_onboard", "params": params}
+            )
         return result
     except Exception as e:
         logger.error(f"Lab refresh error: {e}")
@@ -172,7 +252,6 @@ async def lab_refresh(request: LabRefreshRequest):
 
 async def ensure_batfish_ready(auto_init: bool) -> Dict[str, Any]:
     from agent.clients.batfish import BatfishClient
-    from agent.tools import lab_manage
 
     batfish = BatfishClient(host=os.getenv("BATFISH_HOST", "localhost"))
     if not batfish.is_available:
@@ -186,14 +265,19 @@ async def ensure_batfish_ready(auto_init: bool) -> Dict[str, Any]:
         return {"status": "loaded", "snapshot": BATFISH_SNAPSHOT}
 
     if auto_init:
-        params = {
+        init_params = {
             "topology_name": BATFISH_SNAPSHOT,
             "output_dir": os.getenv("BATFISH_EXPORT_DIR", "./snapshot"),
         }
-        result = await asyncio.to_thread(
-            lab_manage.invoke,
-            {"action": "init_batfish", "params": params}
-        )
+        if get_tool_backend() == "mcp":
+            result = await call_mcp_tool("lab_init_batfish", init_params)
+        else:
+            from agent.tools import lab_manage
+
+            result = await asyncio.to_thread(
+                lab_manage.invoke,
+                {"action": "init_batfish", "params": init_params}
+            )
         return {"status": "initialized", "snapshot": BATFISH_SNAPSHOT, "result": result}
 
     return {"status": "not_ready"}
@@ -260,6 +344,111 @@ async def pnetlab_auth(request: PnetlabAuthRequest):
 
 
 # =============================================================================
+# Settings API (Runtime Configuration)
+# =============================================================================
+
+@app.get("/api/settings")
+async def get_settings():
+    """
+    현재 설정 조회 (민감 정보 마스킹)
+    웹 UI Settings Dialog에서 사용
+    """
+    return {
+        "openai_api_key": "****" if os.getenv("OPENAI_API_KEY") else None,
+        "nso_base_url": os.getenv("NSO_BASE_URL"),
+        "nso_username": os.getenv("NSO_USERNAME"),
+        "nso_password": "****" if os.getenv("NSO_PASSWORD") else None,
+        "pnetlab_url": os.getenv("PNETLAB_URL"),
+        "batfish_host": os.getenv("BATFISH_HOST", "batfish"),
+        "tool_backend": os.getenv("NETALLY_TOOL_BACKEND", TOOL_BACKEND_DEFAULT),
+        "mcp_server_url": os.getenv("NETALLY_MCP_SERVER_URL", MCP_SERVER_URL_DEFAULT),
+        "mcp_allow_mutations": os.getenv("NETALLY_MCP_ALLOW_MUTATIONS", "false").lower() == "true",
+    }
+
+
+@app.post("/api/settings")
+async def update_settings(request: SettingsRequest):
+    """
+    설정 업데이트 및 클라이언트 재초기화
+    웹 UI Settings Dialog에서 Apply 버튼 클릭 시 호출
+    """
+    try:
+        from agent.tools import (
+            reset_nso_client, 
+            reset_batfish_client, 
+            reset_pnetlab_client
+        )
+        
+        updated = []
+        
+        if request.openai_api_key:
+            os.environ["OPENAI_API_KEY"] = request.openai_api_key
+            updated.append("openai_api_key")
+        
+        if request.nso_base_url:
+            os.environ["NSO_BASE_URL"] = request.nso_base_url
+            reset_nso_client()
+            updated.append("nso_base_url")
+        
+        if request.nso_username:
+            os.environ["NSO_USERNAME"] = request.nso_username
+            reset_nso_client()
+            updated.append("nso_username")
+        
+        if request.nso_password:
+            os.environ["NSO_PASSWORD"] = request.nso_password
+            reset_nso_client()
+            updated.append("nso_password")
+        
+        if request.pnetlab_url:
+            os.environ["PNETLAB_URL"] = request.pnetlab_url
+            reset_pnetlab_client()
+            updated.append("pnetlab_url")
+        
+        if request.batfish_host:
+            os.environ["BATFISH_HOST"] = request.batfish_host
+            reset_batfish_client()
+            updated.append("batfish_host")
+
+        if request.tool_backend:
+            os.environ["NETALLY_TOOL_BACKEND"] = request.tool_backend
+            app.state.tool_backend = request.tool_backend
+            updated.append("tool_backend")
+
+        if request.mcp_server_url:
+            os.environ["NETALLY_MCP_SERVER_URL"] = request.mcp_server_url
+            updated.append("mcp_server_url")
+
+        if request.mcp_allow_mutations is not None:
+            os.environ["NETALLY_MCP_ALLOW_MUTATIONS"] = "true" if request.mcp_allow_mutations else "false"
+            updated.append("mcp_allow_mutations")
+
+        # MCP runtime 재기동 (백엔드/URL 변경 시)
+        if "tool_backend" in updated or "mcp_server_url" in updated:
+            try:
+                from agent.mcp_server import start_embedded_mcp_server, stop_embedded_mcp_server
+                from agent.mcp_client import get_mcp_client, reset_mcp_client
+
+                await stop_embedded_mcp_server()
+                reset_mcp_client()
+                if get_tool_backend() == "mcp":
+                    started = await start_embedded_mcp_server()
+                    app.state.mcp_health = await get_mcp_client().health_check()
+                    logger.info(f"MCP runtime restarted: {started}")
+                else:
+                    app.state.mcp_health = {"ok": False, "tool_count": 0}
+            except Exception as restart_err:
+                logger.warning(f"MCP runtime restart warning: {restart_err}")
+        
+        logger.info(f"Settings updated: {updated}")
+        return {"status": "updated", "updated_fields": updated}
+        
+    except Exception as e:
+        logger.error(f"Settings update error: {e}")
+        return JSONResponse(status_code=500, content={"detail": str(e)})
+
+
+# =============================================================================
 # Chat API (SSE Streaming)
 # =============================================================================
 
@@ -286,7 +475,7 @@ async def chat_stream_generator(request: ChatRequest, graph):
             if prep.get("status") in ("unavailable", "not_ready"):
                 data = {
                     "type": "answer",
-                    "content": "Batfish is not ready. Please run lab_manage(action=\"init_batfish\") or enable AUTO_INIT_BATFISH.",
+                    "content": "Batfish is not ready. Please run lab_init_batfish (or legacy lab_manage(action=\"init_batfish\")) or enable AUTO_INIT_BATFISH.",
                     "meta": prep,
                 }
                 yield f"event: answer\ndata: {json.dumps(data)}\n\n"
@@ -301,7 +490,8 @@ async def chat_stream_generator(request: ChatRequest, graph):
                     data = {
                         "type": "planning",
                         "skills": node_output.get("selected_skills", []),
-                        "reasoning": node_output.get("reasoning", "")
+                        "reasoning": node_output.get("reasoning", ""),
+                        "tool_backend": get_tool_backend(),
                     }
                     yield f"event: planning\ndata: {json.dumps(data)}\n\n"
                 

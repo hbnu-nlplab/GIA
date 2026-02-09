@@ -56,7 +56,10 @@ NetAlly/
 │
 ├── 📂 agent/                   # LangGraph 에이전트 핵심 모듈
 │   ├── graph.py                # Orchestrator-Executor 기반 에이전트 그래프
-│   ├── tools.py                # MCP 도구 (network_query, network_verify, lab_manage)
+│   ├── tools.py                # Legacy LangChain 도구 (호환용)
+│   ├── mcp_server.py           # MCP-lite 서버 (16 core + 6 compatibility)
+│   ├── mcp_client.py           # MCP streamable-http 클라이언트
+│   ├── mcp_tools.py            # LangGraph에서 사용하는 MCP 프록시 도구
 │   ├── state.py                # AgentState 정의
 │   ├── llm_provider.py         # 하이브리드 LLM 프로바이더 (OpenAI, Ollama, vLLM)
 │   ├── skill_loader.py         # 스킬 로더
@@ -84,8 +87,7 @@ NetAlly/
 │   ├── backend_api.md          # API 레퍼런스
 │   └── setup_guide.md          # 설치 가이드
 │
-├── 📂 skills/                  # 에이전트 스킬 정의
-│   └── network_verify/         # 네트워크 검증 스킬
+├── 📂 skills/                  # 에이전트 스킬 정의 (가이드 텍스트 전용)
 │
 └── 📂 eval/                    # 평가 모듈 (NetConfigQA 벤치마크)
 ```
@@ -112,8 +114,9 @@ cd NetAlly
 uv venv --python 3.12
 source .venv/bin/activate
 
-# 3. 의존성 설치
-uv pip install -e .
+# 3. 의존성 설치 (개발/테스트 기준)
+uv sync --extra dev
+# editable 설치가 필요하면: uv pip install -e .
 
 # 4. 환경변수 설정
 cp .env.example .env
@@ -127,14 +130,14 @@ cp .env.example .env
 docker run -d -p 9997:9997 -p 9996:9996 --name batfish batfish/allinone
 
 # 스냅샷 초기화 (설정 파일 로드)
-python init_batfish.py
+uv run python init_batfish.py
 ```
 
 ### 3. 백엔드 서버 실행
 
 ```bash
 # FastAPI 서버 시작 (기본 포트: 8111)
-uvicorn main:app --reload --port 8111
+uv run uvicorn main:app --reload --port 8111
 ```
 
 ### 4. 프론트엔드 개발 서버 실행
@@ -199,6 +202,7 @@ npm run dev
 OPENAI_API_KEY=sk-...              # OpenAI API 키
 OPENAI_MODEL=gpt-4o-mini           # 사용할 모델
 VLLM_BASE_URL=http://localhost:8000/v1
+LANGSMITH_TRACING=false            # API 키 설정 시에만 true 권장
 
 # Batfish
 BATFISH_HOST=localhost             # Batfish 서비스 호스트
@@ -241,6 +245,55 @@ NSO_NED_ID=cisco-ios-cli-6.110
 # Demo Automation (Optional)
 AUTO_PREPARE_ON_CHAT=false         # 채팅 요청 시 Batfish 준비 자동 수행
 AUTO_INIT_BATFISH=false            # 준비 실패 시 Batfish init 자동 수행
+
+# MCP-lite
+NETALLY_TOOL_BACKEND=mcp           # mcp | legacy
+NETALLY_MCP_SERVER_URL=http://127.0.0.1:8811/mcp
+NETALLY_MCP_ALLOW_MUTATIONS=false  # true면 변경성 도구 허용
+```
+
+### MCP-lite 호환/에러 계약
+
+- Deprecated wrapper 6개는 1차 안정화 단계에서 유지:
+  - `network_query`, `network_verify`, `lab_manage`, `scan_and_sync`, `check_logs`, `lab_bootstrap`
+- I/O 계약:
+  - `check_logs`는 legacy와 동일하게 문자열(`str`) 반환
+  - 나머지 5개 wrapper는 JSON 객체(`Dict[str, Any]`) 반환
+- mutation 차단 시 응답 계약:
+  - `error`: 사람이 읽을 수 있는 차단 사유
+  - `code`: `mutations_blocked`
+  - `result.blocked`: `true`
+
+### 데모 운영 모드 (Settings UI)
+
+- Settings > API Connections에서 아래 항목을 런타임 제어 가능:
+  - `Tool Backend` (`mcp` | `legacy`)
+  - `MCP Server URL`
+  - `Allow MCP Mutations`
+- 권장 기본값:
+  - `Tool Backend = mcp`
+  - `Allow MCP Mutations = false`
+- 변경성 작업이 필요할 때만 `Allow MCP Mutations = true`로 잠시 전환하고, 작업 직후 `false`로 복귀
+
+---
+
+## 🚑 데모 장애 대응
+
+1. `/api/health` 확인 (`tool_backend`, `mcp_health.ok` 체크)
+2. Settings에서 `Tool Backend=legacy`로 전환해 즉시 서비스 복구
+3. `MCP Server URL`을 점검/수정 후 `Tool Backend=mcp`로 복귀
+4. `/api/settings`와 read-only tool 1회 호출로 정상 동작 확인
+
+---
+
+## ✅ 테스트 실행
+
+```bash
+# 개발/테스트 의존성 동기화
+uv sync --extra dev
+
+# MCP-lite 안정화 회귀 테스트
+uv run pytest -q tests/
 ```
 
 ---
@@ -295,10 +348,10 @@ NetAlly는 NetConfigQA 벤치마크에서 네트워크 구성 QA 성능을 테�
 
 ```bash
 # 샘플 10개로 빠른 테스트
-python -m eval.runner --dataset ../Data/Dataset/NetConfigQA2.csv --sample 10
+uv run python -m eval.runner --dataset ../Data/Dataset/NetConfigQA2.csv --sample 10
 
 # 전체 평가
-python -m eval.runner --dataset ../Data/Dataset/NetConfigQA2.csv
+uv run python -m eval.runner --dataset ../Data/Dataset/NetConfigQA2.csv
 ```
 
 ---

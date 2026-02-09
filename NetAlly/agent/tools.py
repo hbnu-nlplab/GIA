@@ -71,6 +71,18 @@ def reset_pnetlab_client() -> None:
     _pnetlab_client = None
 
 
+def reset_nso_client() -> None:
+    """NSO 클라이언트 싱글톤 리셋 (설정 변경 시 호출)"""
+    global _nso_client
+    _nso_client = None
+
+
+def reset_batfish_client() -> None:
+    """Batfish 클라이언트 싱글톤 리셋 (설정 변경 시 호출)"""
+    global _batfish_client
+    _batfish_client = None
+
+
 def _discover_nso_base_url() -> Optional[str]:
     """
     PNETLab API에서 NSO 노드의 관리 IP를 찾아 RESTCONF URL을 생성합니다.
@@ -139,6 +151,28 @@ def network_query(
         elif category == "vrf":
             if not device: return {"error": "device required"}
             return {"vrfs": nso.get_vrf_list(device)}
+
+        elif category == "security":
+            if not device:
+                return {"error": "device required"}
+            return {
+                "ssh": nso.get_ssh_config(device),
+                "aaa": nso.get_aaa_config(device),
+            }
+
+        elif category == "acl":
+            if not device:
+                return {"error": "device required"}
+            # Prefer structured RESTCONF subtree first.
+            acl = nso._fetch_config(device, "ip/access-list")
+            if isinstance(acl, dict) and acl.get("status") == "error":
+                native = nso.get_native_config(device)
+                acl_lines = [
+                    line for line in native.splitlines()
+                    if line.strip().startswith("ip access-list")
+                ]
+                return {"acl": acl_lines}
+            return {"acl": acl}
             
         return {"error": f"Category {category} not implemented in stub"}
         
