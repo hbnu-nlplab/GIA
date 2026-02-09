@@ -13,6 +13,14 @@ type ApiSettingsSnapshot = {
   mcpAllowMutations: boolean
 }
 
+type SettingsSectionId =
+  | 'appearance'
+  | 'lab_behavior'
+  | 'bootstrap_overrides'
+  | 'api_connections'
+  | 'pnetlab_auth'
+  | 'about'
+
 const DEFAULT_API_SNAPSHOT: ApiSettingsSnapshot = {
   nsoBaseUrl: '',
   nsoUsername: '',
@@ -23,16 +31,26 @@ const DEFAULT_API_SNAPSHOT: ApiSettingsSnapshot = {
   mcpAllowMutations: false,
 }
 
-export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
+const SECTION_ITEMS: Array<{ id: SettingsSectionId; label: string; description: string }> = [
+  { id: 'appearance', label: 'Appearance', description: 'Theme + Language' },
+  { id: 'lab_behavior', label: 'Lab Behavior', description: 'Topology + Onboarding' },
+  { id: 'bootstrap_overrides', label: 'Bootstrap', description: 'Optional override values' },
+  { id: 'api_connections', label: 'API Connections', description: 'Backend + MCP runtime' },
+  { id: 'pnetlab_auth', label: 'PNETLab Auth', description: 'Cookie/Login credentials' },
+  { id: 'about', label: 'About', description: 'Runtime note' },
+]
+
+export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const { theme, setTheme, language, setLanguage, settings, updateSettings } = useAppStore()
   const { t } = useTranslation()
+  const [activeSection, setActiveSection] = useState<SettingsSectionId>('appearance')
+
   const [pnetlabCookies, setPnetlabCookies] = useState(localStorage.getItem('pnetlab_cookies') || '')
   const [pnetlabUser, setPnetlabUser] = useState(localStorage.getItem('pnetlab_user') || '')
   const [pnetlabPass, setPnetlabPass] = useState(localStorage.getItem('pnetlab_pass') || '')
   const [autoLogin, setAutoLogin] = useState(localStorage.getItem('pnetlab_auto_login') === 'true')
   const [authStatus, setAuthStatus] = useState<'unknown' | 'ok' | 'fail'>('unknown')
 
-  // API Connections state
   const [openaiKey, setOpenaiKey] = useState('')
   const [nsoBaseUrl, setNsoBaseUrl] = useState('')
   const [nsoUsername, setNsoUsername] = useState('')
@@ -48,6 +66,9 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean, o
 
   useEffect(() => {
     if (!isOpen) return
+
+    setActiveSection('appearance')
+
     const fetchStatus = async () => {
       try {
         const res = await fetch('/api/pnetlab/status')
@@ -57,7 +78,7 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean, o
         setAuthStatus('fail')
       }
     }
-    // Fetch current API settings
+
     const fetchSettings = async () => {
       try {
         const res = await fetch('/api/settings')
@@ -85,6 +106,7 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean, o
         // ignore
       }
     }
+
     fetchStatus()
     fetchSettings()
   }, [isOpen])
@@ -104,8 +126,8 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean, o
           cookies: pnetlabCookies || null,
           username: pnetlabUser || null,
           password: pnetlabPass || null,
-          auto_login: autoLogin
-        })
+          auto_login: autoLogin,
+        }),
       })
       const data = await res.json()
       setAuthStatus(data?.authenticated ? 'ok' : 'fail')
@@ -140,8 +162,9 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean, o
       const res = await fetch('/api/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       })
+
       if (res.ok) {
         setInitialApiSettings({
           nsoBaseUrl,
@@ -175,21 +198,10 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean, o
     }
   }
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div
-        className="w-full max-w-md bg-card border border-border rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
-        onClick={e => e.stopPropagation()}
-      >
-        <div className="px-6 py-4 border-b border-border flex justify-between items-center bg-muted/20">
-          <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">System Settings</h2>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground p-1 transition-colors">
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-
-        <div className="p-6 space-y-6">
-          {/* Theme Section */}
+  const renderSection = () => {
+    if (activeSection === 'appearance') {
+      return (
+        <section className="space-y-6" data-testid="settings-section-appearance">
           <section className="space-y-3">
             <label className="text-[10px] font-black uppercase tracking-tighter text-primary/80 flex items-center gap-2">
               <Sun className="w-3 h-3" />
@@ -213,7 +225,6 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean, o
             </div>
           </section>
 
-          {/* Language Section */}
           <section className="space-y-3">
             <label className="text-[10px] font-black uppercase tracking-tighter text-primary/80 flex items-center gap-2">
               <Languages className="w-3 h-3" />
@@ -234,286 +245,362 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean, o
               </button>
             </div>
           </section>
+        </section>
+      )
+    }
 
-          {/* Behavior Section */}
-          <section className="space-y-4">
-            <h3 className="text-[10px] font-black uppercase tracking-tighter text-primary/80">Laboratory Behavior</h3>
+    if (activeSection === 'lab_behavior') {
+      return (
+        <section className="space-y-4" data-testid="settings-section-lab-behavior">
+          <h3 className="text-[10px] font-black uppercase tracking-tighter text-primary/80">Laboratory Behavior</h3>
 
-            <div className="flex items-center justify-between group">
-              <div className="space-y-0.5">
-                <div className="text-xs font-bold text-foreground">Topology Labels</div>
-                <div className="text-[10px] text-muted-foreground">Show device names and IP addresses by default.</div>
-              </div>
-              <input
-                type="checkbox"
-                checked={settings.showTopologyLabels}
-                onChange={e => updateSettings({ showTopologyLabels: e.target.checked })}
-                className="w-4 h-4 rounded border-border text-primary focus:ring-primary accent-primary"
-              />
+          <div className="flex items-center justify-between group">
+            <div className="space-y-0.5">
+              <div className="text-xs font-bold text-foreground">Topology Labels</div>
+              <div className="text-[10px] text-muted-foreground">Show device names and IP addresses by default.</div>
             </div>
+            <input
+              type="checkbox"
+              checked={settings.showTopologyLabels}
+              onChange={e => updateSettings({ showTopologyLabels: e.target.checked })}
+              className="w-4 h-4 rounded border-border text-primary focus:ring-primary accent-primary"
+            />
+          </div>
 
-            <div className="flex items-center justify-between group">
-              <div className="space-y-0.5">
-                <div className="text-xs font-bold text-foreground">Auto-Onboarding</div>
-                <div className="text-[10px] text-muted-foreground">Automatically register new PNETLab nodes to NSO.</div>
-              </div>
-              <input
-                type="checkbox"
-                checked={settings.autoOnboard}
-                onChange={e => updateSettings({ autoOnboard: e.target.checked })}
-                className="w-4 h-4 rounded border-border text-primary focus:ring-primary accent-primary"
-              />
+          <div className="flex items-center justify-between group">
+            <div className="space-y-0.5">
+              <div className="text-xs font-bold text-foreground">Auto-Onboarding</div>
+              <div className="text-[10px] text-muted-foreground">Automatically register new PNETLab nodes to NSO.</div>
             </div>
-          </section>
+            <input
+              type="checkbox"
+              checked={settings.autoOnboard}
+              onChange={e => updateSettings({ autoOnboard: e.target.checked })}
+              className="w-4 h-4 rounded border-border text-primary focus:ring-primary accent-primary"
+            />
+          </div>
+        </section>
+      )
+    }
 
-          <section className="space-y-3">
-            <h3 className="text-[10px] font-black uppercase tracking-tighter text-primary/80">Bootstrap Overrides</h3>
-            <div className="space-y-2">
-              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">OOB Interface (optional)</label>
-              <input
-                value={settings.oobIntf}
-                onChange={e => updateSettings({ oobIntf: e.target.value })}
-                placeholder="GigabitEthernet0/2"
-                className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">Device Group (optional)</label>
-              <input
-                value={settings.deviceGroup}
-                onChange={e => updateSettings({ deviceGroup: e.target.value })}
-                placeholder="RI_Internal_DC"
-                className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">PNETLab VM IP (optional)</label>
-              <input
-                value={settings.pnetlabVmIp}
-                onChange={e => updateSettings({ pnetlabVmIp: e.target.value })}
-                placeholder="100.66.240.82"
-                className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">Gateway IP (optional)</label>
-              <input
-                value={settings.gatewayIp}
-                onChange={e => updateSettings({ gatewayIp: e.target.value })}
-                placeholder="10.10.10.1"
-                className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">NSO Authgroup (optional)</label>
-              <input
-                value={settings.nsoAuthgroup}
-                onChange={e => updateSettings({ nsoAuthgroup: e.target.value })}
-                placeholder="default"
-                className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">NSO NED ID (optional)</label>
-              <input
-                value={settings.nsoNedId}
-                onChange={e => updateSettings({ nsoNedId: e.target.value })}
-                placeholder="cisco-ios-cli-6.110"
-                className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
-              />
-            </div>
-          </section>
+    if (activeSection === 'bootstrap_overrides') {
+      return (
+        <section className="space-y-3" data-testid="settings-section-bootstrap-overrides">
+          <h3 className="text-[10px] font-black uppercase tracking-tighter text-primary/80">Bootstrap Overrides</h3>
 
-          {/* API Connections */}
-          <section className="space-y-3">
-            <h3 className="text-[10px] font-black uppercase tracking-tighter text-primary/80">
-              API Connections
-              {apiStatus === 'saved' && <span className="ml-2 text-emerald-500">✓ Saved</span>}
-              {apiStatus === 'error' && <span className="ml-2 text-rose-500">Error</span>}
-            </h3>
-            {apiError && (
-              <div className="text-[10px] text-rose-500 bg-rose-500/10 border border-rose-500/30 rounded-md px-2 py-1">
-                {apiError}
-              </div>
-            )}
-            <div className="space-y-2">
-              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">OpenAI API Key</label>
-              <input
-                type="password"
-                value={openaiKey}
-                onChange={e => setOpenaiKey(e.target.value)}
-                placeholder="sk-..."
-                className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">NSO Base URL</label>
-              <input
-                value={nsoBaseUrl}
-                onChange={e => setNsoBaseUrl(e.target.value)}
-                placeholder="http://10.10.10.100:8080/restconf"
-                className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <div className="space-y-2">
-                <label className="text-[10px] text-muted-foreground uppercase tracking-widest">NSO Username</label>
-                <input
-                  value={nsoUsername}
-                  onChange={e => setNsoUsername(e.target.value)}
-                  placeholder="admin"
-                  className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] text-muted-foreground uppercase tracking-widest">NSO Password</label>
-                <input
-                  type="password"
-                  value={nsoPassword}
-                  onChange={e => setNsoPassword(e.target.value)}
-                  placeholder="admin"
-                  className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">PNETLab URL</label>
-              <input
-                value={pnetlabUrl}
-                onChange={e => setPnetlabUrl(e.target.value)}
-                placeholder="http://192.168.50.60"
-                className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">Batfish Host</label>
-              <input
-                value={batfishHost}
-                onChange={e => setBatfishHost(e.target.value)}
-                placeholder="batfish (or localhost)"
-                className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">Tool Backend</label>
-              <div className="flex gap-2 p-1 bg-muted/30 rounded-lg">
-                <button
-                  onClick={() => setToolBackend('mcp')}
-                  className={`flex-1 py-2 text-xs font-bold rounded-md transition-all ${toolBackend === 'mcp' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
-                >
-                  MCP
-                </button>
-                <button
-                  onClick={() => setToolBackend('legacy')}
-                  className={`flex-1 py-2 text-xs font-bold rounded-md transition-all ${toolBackend === 'legacy' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
-                >
-                  Legacy
-                </button>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">MCP Server URL</label>
-              <input
-                value={mcpServerUrl}
-                onChange={e => setMcpServerUrl(e.target.value)}
-                placeholder="http://127.0.0.1:8811/mcp"
-                className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
-              />
-            </div>
-            <div className="flex items-center justify-between group">
-              <div className="space-y-0.5">
-                <div className="text-xs font-bold text-foreground">Allow MCP Mutations</div>
-                <div className="text-[10px] text-muted-foreground">Enable only for explicit onboarding/sync changes.</div>
-              </div>
-              <input
-                type="checkbox"
-                checked={mcpAllowMutations}
-                onChange={e => setMcpAllowMutations(e.target.checked)}
-                className="w-4 h-4 rounded border-border text-primary focus:ring-primary accent-primary"
-              />
-            </div>
-            <button
-              onClick={applyApiSettings}
-              disabled={apiStatus === 'saving'}
-              className="w-full py-2 text-[11px] font-bold uppercase tracking-widest rounded-md bg-primary text-primary-foreground hover:scale-105 transition-all disabled:opacity-50"
-            >
-              {apiStatus === 'saving' ? 'Saving...' : 'Apply API Settings'}
-            </button>
-          </section>
+          <div className="space-y-2">
+            <label className="text-[10px] text-muted-foreground uppercase tracking-widest">OOB Interface (optional)</label>
+            <input
+              value={settings.oobIntf}
+              onChange={e => updateSettings({ oobIntf: e.target.value })}
+              placeholder="GigabitEthernet0/2"
+              className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] text-muted-foreground uppercase tracking-widest">Device Group (optional)</label>
+            <input
+              value={settings.deviceGroup}
+              onChange={e => updateSettings({ deviceGroup: e.target.value })}
+              placeholder="RI_Internal_DC"
+              className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] text-muted-foreground uppercase tracking-widest">PNETLab VM IP (optional)</label>
+            <input
+              value={settings.pnetlabVmIp}
+              onChange={e => updateSettings({ pnetlabVmIp: e.target.value })}
+              placeholder="100.66.240.82"
+              className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] text-muted-foreground uppercase tracking-widest">Gateway IP (optional)</label>
+            <input
+              value={settings.gatewayIp}
+              onChange={e => updateSettings({ gatewayIp: e.target.value })}
+              placeholder="10.10.10.1"
+              className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] text-muted-foreground uppercase tracking-widest">NSO Authgroup (optional)</label>
+            <input
+              value={settings.nsoAuthgroup}
+              onChange={e => updateSettings({ nsoAuthgroup: e.target.value })}
+              placeholder="default"
+              className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] text-muted-foreground uppercase tracking-widest">NSO NED ID (optional)</label>
+            <input
+              value={settings.nsoNedId}
+              onChange={e => updateSettings({ nsoNedId: e.target.value })}
+              placeholder="cisco-ios-cli-6.110"
+              className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+            />
+          </div>
+        </section>
+      )
+    }
 
-          <section className="space-y-3">
-            <h3 className="text-[10px] font-black uppercase tracking-tighter text-primary/80">PNETLab Auth</h3>
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-muted-foreground">Status</span>
-              <span className={`${authStatus === 'ok' ? 'text-emerald-500' : authStatus === 'fail' ? 'text-rose-500' : 'text-slate-500'}`}>
-                {authStatus === 'ok' ? 'Authenticated' : authStatus === 'fail' ? 'Not Authenticated' : 'Unknown'}
-              </span>
+    if (activeSection === 'api_connections') {
+      return (
+        <section className="space-y-3" data-testid="settings-section-api-connections">
+          <h3 className="text-[10px] font-black uppercase tracking-tighter text-primary/80">
+            API Connections
+            {apiStatus === 'saved' && <span className="ml-2 text-emerald-500">✓ Saved</span>}
+            {apiStatus === 'error' && <span className="ml-2 text-rose-500">Error</span>}
+          </h3>
+
+          {apiError && (
+            <div className="text-[10px] text-rose-500 bg-rose-500/10 border border-rose-500/30 rounded-md px-2 py-1">
+              {apiError}
             </div>
-            <div className="flex items-center justify-between group">
-              <div className="space-y-0.5">
-                <div className="text-xs font-bold text-foreground">Auto Login</div>
-                <div className="text-[10px] text-muted-foreground">Use username/password if cookies are not set.</div>
-              </div>
-              <input
-                type="checkbox"
-                checked={autoLogin}
-                onChange={e => setAutoLogin(e.target.checked)}
-                className="w-4 h-4 rounded border-border text-primary focus:ring-primary accent-primary"
-              />
-            </div>
+          )}
+
+          <div className="space-y-2">
+            <label className="text-[10px] text-muted-foreground uppercase tracking-widest">OpenAI API Key</label>
+            <input
+              type="password"
+              value={openaiKey}
+              onChange={e => setOpenaiKey(e.target.value)}
+              placeholder="sk-..."
+              className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[10px] text-muted-foreground uppercase tracking-widest">NSO Base URL</label>
+            <input
+              value={nsoBaseUrl}
+              onChange={e => setNsoBaseUrl(e.target.value)}
+              placeholder="http://10.10.10.100:8080/restconf"
+              className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             <div className="space-y-2">
-              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">Username</label>
+              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">NSO Username</label>
               <input
-                value={pnetlabUser}
-                onChange={e => setPnetlabUser(e.target.value)}
+                value={nsoUsername}
+                onChange={e => setNsoUsername(e.target.value)}
                 placeholder="admin"
                 className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">Password</label>
+              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">NSO Password</label>
               <input
                 type="password"
-                value={pnetlabPass}
-                onChange={e => setPnetlabPass(e.target.value)}
-                placeholder="pnetlab"
+                value={nsoPassword}
+                onChange={e => setNsoPassword(e.target.value)}
+                placeholder="admin"
                 className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
               />
             </div>
-            <div className="space-y-2">
-              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">Cookies (fallback)</label>
-              <textarea
-                rows={3}
-                value={pnetlabCookies}
-                onChange={e => setPnetlabCookies(e.target.value)}
-                placeholder="token=...; _session=...; XSRF-TOKEN=..."
-                className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
-              />
-            </div>
-            <button
-              onClick={applyAuth}
-              className="w-full py-2 text-[11px] font-bold uppercase tracking-widest rounded-md bg-primary text-primary-foreground hover:scale-105 transition-all"
-            >
-              Apply Auth
-            </button>
-          </section>
+          </div>
 
-          <section className="pt-4 border-t border-border">
-            <div className="bg-primary/5 p-3 rounded-lg border border-primary/20">
-              <p className="text-[10px] text-primary/80 leading-relaxed italic">
-                Settings are saved locally and applied in real-time. Cloud synchronization is currently disabled.
-              </p>
+          <div className="space-y-2">
+            <label className="text-[10px] text-muted-foreground uppercase tracking-widest">PNETLab URL</label>
+            <input
+              value={pnetlabUrl}
+              onChange={e => setPnetlabUrl(e.target.value)}
+              placeholder="http://192.168.50.60"
+              className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[10px] text-muted-foreground uppercase tracking-widest">Batfish Host</label>
+            <input
+              value={batfishHost}
+              onChange={e => setBatfishHost(e.target.value)}
+              placeholder="batfish (or localhost)"
+              className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[10px] text-muted-foreground uppercase tracking-widest">Tool Backend</label>
+            <div className="flex gap-2 p-1 bg-muted/30 rounded-lg">
+              <button
+                onClick={() => setToolBackend('mcp')}
+                className={`flex-1 py-2 text-xs font-bold rounded-md transition-all ${toolBackend === 'mcp' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+              >
+                MCP
+              </button>
+              <button
+                onClick={() => setToolBackend('legacy')}
+                className={`flex-1 py-2 text-xs font-bold rounded-md transition-all ${toolBackend === 'legacy' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+              >
+                Legacy
+              </button>
             </div>
-          </section>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[10px] text-muted-foreground uppercase tracking-widest">MCP Server URL</label>
+            <input
+              value={mcpServerUrl}
+              onChange={e => setMcpServerUrl(e.target.value)}
+              placeholder="http://127.0.0.1:8811/mcp"
+              className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+            />
+          </div>
+
+          <div className="flex items-center justify-between group">
+            <div className="space-y-0.5">
+              <div className="text-xs font-bold text-foreground">Allow MCP Mutations</div>
+              <div className="text-[10px] text-muted-foreground">Enable only for explicit onboarding/sync changes.</div>
+            </div>
+            <input
+              type="checkbox"
+              checked={mcpAllowMutations}
+              onChange={e => setMcpAllowMutations(e.target.checked)}
+              className="w-4 h-4 rounded border-border text-primary focus:ring-primary accent-primary"
+            />
+          </div>
+
+          <button
+            onClick={applyApiSettings}
+            disabled={apiStatus === 'saving'}
+            className="w-full py-2 text-[11px] font-bold uppercase tracking-widest rounded-md bg-primary text-primary-foreground hover:scale-105 transition-all disabled:opacity-50"
+          >
+            {apiStatus === 'saving' ? 'Saving...' : 'Apply API Settings'}
+          </button>
+        </section>
+      )
+    }
+
+    if (activeSection === 'pnetlab_auth') {
+      return (
+        <section className="space-y-3" data-testid="settings-section-pnetlab-auth">
+          <h3 className="text-[10px] font-black uppercase tracking-tighter text-primary/80">PNETLab Auth</h3>
+
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-muted-foreground">Status</span>
+            <span className={`${authStatus === 'ok' ? 'text-emerald-500' : authStatus === 'fail' ? 'text-rose-500' : 'text-slate-500'}`}>
+              {authStatus === 'ok' ? 'Authenticated' : authStatus === 'fail' ? 'Not Authenticated' : 'Unknown'}
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between group">
+            <div className="space-y-0.5">
+              <div className="text-xs font-bold text-foreground">Auto Login</div>
+              <div className="text-[10px] text-muted-foreground">Use username/password if cookies are not set.</div>
+            </div>
+            <input
+              type="checkbox"
+              checked={autoLogin}
+              onChange={e => setAutoLogin(e.target.checked)}
+              className="w-4 h-4 rounded border-border text-primary focus:ring-primary accent-primary"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[10px] text-muted-foreground uppercase tracking-widest">Username</label>
+            <input
+              value={pnetlabUser}
+              onChange={e => setPnetlabUser(e.target.value)}
+              placeholder="admin"
+              className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[10px] text-muted-foreground uppercase tracking-widest">Password</label>
+            <input
+              type="password"
+              value={pnetlabPass}
+              onChange={e => setPnetlabPass(e.target.value)}
+              placeholder="pnetlab"
+              className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[10px] text-muted-foreground uppercase tracking-widest">Cookies (fallback)</label>
+            <textarea
+              rows={4}
+              value={pnetlabCookies}
+              onChange={e => setPnetlabCookies(e.target.value)}
+              placeholder="token=...; _session=...; XSRF-TOKEN=..."
+              className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+            />
+          </div>
+
+          <button
+            onClick={applyAuth}
+            className="w-full py-2 text-[11px] font-bold uppercase tracking-widest rounded-md bg-primary text-primary-foreground hover:scale-105 transition-all"
+          >
+            Apply Auth
+          </button>
+        </section>
+      )
+    }
+
+    return (
+      <section className="pt-1" data-testid="settings-section-about">
+        <div className="bg-primary/5 p-3 rounded-lg border border-primary/20">
+          <p className="text-[10px] text-primary/80 leading-relaxed italic">
+            Settings are saved locally and applied in real-time. Cloud synchronization is currently disabled.
+          </p>
+        </div>
+      </section>
+    )
+  }
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
+      <div
+        className="w-full max-w-5xl h-[88vh] bg-card border border-border rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="px-6 py-4 border-b border-border flex justify-between items-center bg-muted/20">
+          <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">System Settings</h2>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground p-1 transition-colors">
+            <X className="w-4 h-4" />
+          </button>
         </div>
 
-        <div className="px-6 py-4 bg-muted/10 border-t border-border flex justify-end">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-primary text-primary-foreground text-[11px] font-bold rounded-lg hover:scale-105 transition-all shadow-lg active:scale-95 uppercase tracking-widest"
-          >
-            Done
-          </button>
+        <div className="flex flex-col md:flex-row h-[calc(100%-64px)]">
+          <aside className="w-full md:w-64 shrink-0 border-b md:border-b-0 md:border-r border-border bg-muted/10 p-3 md:p-4 overflow-y-auto">
+            <div className="grid grid-cols-2 md:grid-cols-1 gap-2">
+              {SECTION_ITEMS.map(item => (
+                <button
+                  key={item.id}
+                  type="button"
+                  data-testid={`settings-nav-${item.id}`}
+                  onClick={() => setActiveSection(item.id)}
+                  className={`text-left rounded-lg border px-3 py-2.5 transition-all ${
+                    activeSection === item.id
+                      ? 'bg-card border-primary/40 text-foreground shadow-sm'
+                      : 'bg-transparent border-border text-muted-foreground hover:text-foreground hover:bg-card/40'
+                  }`}
+                >
+                  <div className="text-[11px] font-black uppercase tracking-wider">{item.label}</div>
+                  <div className="text-[10px] mt-0.5 opacity-80">{item.description}</div>
+                </button>
+              ))}
+            </div>
+          </aside>
+
+          <div className="flex-1 min-h-0 flex flex-col">
+            <div className="flex-1 min-h-0 overflow-y-auto p-5 md:p-6 space-y-6">{renderSection()}</div>
+
+            <div className="px-6 py-4 bg-muted/10 border-t border-border flex justify-end">
+              <button
+                onClick={onClose}
+                className="px-4 py-2 bg-primary text-primary-foreground text-[11px] font-bold rounded-lg hover:scale-105 transition-all shadow-lg active:scale-95 uppercase tracking-widest"
+              >
+                Done
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

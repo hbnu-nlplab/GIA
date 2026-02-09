@@ -367,6 +367,8 @@ graph LR
 | [dashboard_design.md](docs/dashboard_design.md)                 | 검증 대시보드 기획 및 UI/UX        |
 | [dashboard_implementation.md](docs/dashboard_implementation.md) | 대시보드 구현 명세 (API, 컴포넌트) |
 | [frontend.md](docs/frontend.md)                                 | 프론트엔드 컴포넌트 가이드         |
+| [web_architecture_beginner_ko.md](docs/web_architecture_beginner_ko.md) | 비웹 개발자용 웹 구조 입문 가이드 |
+| [onboarding_30min_code_walkthrough_ko.md](docs/onboarding_30min_code_walkthrough_ko.md) | 30분 코드 화면 온보딩 가이드 |
 | [backend_api.md](docs/backend_api.md)                           | REST API 레퍼런스                  |
 | [setup_guide.md](docs/setup_guide.md)                           | Docker 배포 및 환경 설정           |
 
