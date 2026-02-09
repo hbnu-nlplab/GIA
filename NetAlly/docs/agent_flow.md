@@ -185,6 +185,22 @@ Batfish 준비 후 Chat Panel에서 질의 실행
 
 ---
 
+## 데모 전 체크리스트 (자동검증)
+
+1. 백엔드 테스트 실행
+   - `uv sync --extra dev`
+   - `uv run pytest -q tests/`
+2. 프론트 스모크 실행
+   - `cd frontend`
+   - `npm ci`
+   - `npx playwright install --with-deps`
+   - `npm run test:e2e`
+3. 런타임 상태 확인
+   - `/api/health`에서 `tool_backend`, `mcp_health` 확인
+   - `/api/settings`에서 `tool_backend`, `mcp_server_url`, `mcp_allow_mutations` 확인
+
+---
+
 ## 알려진 제한
 - PNETLab API 인증은 **필수**
 - OOB 인터페이스 자동 매핑은 **미지원(수동 입력 권장)**

@@ -292,9 +292,22 @@ NETALLY_MCP_ALLOW_MUTATIONS=false  # true면 변경성 도구 허용
 # 개발/테스트 의존성 동기화
 uv sync --extra dev
 
-# MCP-lite 안정화 회귀 테스트
+# 1) 백엔드 회귀 테스트 (MCP 22개/게이트/호환/SSE 포함)
 uv run pytest -q tests/
+
+# 2) 프론트 E2E 스모크 (별도 터미널)
+cd frontend
+npm ci
+npx playwright install --with-deps
+npm run test:e2e
+# 디버깅 시: npm run test:e2e:headed
 ```
+
+### 데모 전 최소 점검 순서
+
+1. `uv run pytest -q tests/` 통과 확인
+2. `cd frontend && npm run test:e2e` 통과 확인
+3. `/api/health`, `/api/settings` 확인 후 데모 진행
 
 ---
 
