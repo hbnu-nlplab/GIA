@@ -1,0 +1,37 @@
+[
+    {
+        "question": "What is the purpose of the Nmfaf_3daDataManagement_Deconfigure service operation? [3GPP Release 18]",
+        "gold_answer": "option 2: To configure the MFAF to stop mapping data or analytics received by the MFAF to out-bound notification endpoints",
+        "debate1_passage": "According to 3GPP Release 18 specifications, the Nmfaf_3daDataManagement_Deconfigure service operation is designed to configure the Multifunction Application Framework (MFAF) to stop mapping data or analytics it receives to outbound notification endpoints. This essentially removes existing mappings, preventing the MFAF from forwarding specific data or analytics to those endpoints.",
+        "debate1_answer": "option 2",
+        "debate2_answer": "option 2"
+    },
+    {
+        "question": "Which non-orthogonal multiple access scheme utilizes the low-complexity message passing algorithm at the receiver for user data detection?",
+        "gold_answer": "option 5: SCMA",
+        "debate1_passage": "Sparse Code Multiple Access (SCMA) is a non-orthogonal multiple access (NOMA) scheme designed to improve spectral efficiency. A key characteristic of SCMA is its utilization of a low-complexity message passing algorithm at the receiver for user data detection, making it a computationally efficient approach to NOMA. This algorithm simplifies the decoding process, allowing for practical implementation.",
+        "debate1_answer": "5",
+        "debate2_answer": "5"
+    },
+    {
+        "question": "What is the diversity gain for the detection of each symbol in the Alamouti scheme?",
+        "gold_answer": "option 3: 2",
+        "debate1_passage": "The Alamouti scheme is a space-time block coding technique frequently used in wireless communication systems to combat the effects of fading. It operates by transmitting two distinct copies of each symbol across two consecutive time slots, leveraging two transmit antennas. This method provides a diversity gain of 2 for each detected symbol. This gain effectively doubles the probability of successful data reception compared to a system employing a single antenna.",
+        "debate1_answer": "2",
+        "debate2_answer": "2"
+    },
+    {
+        "question": "When are devices required to send the GTS Request command? [IEEE 802.15.4]",
+        "gold_answer": "option 4: All devices",
+        "debate1_passage": "In IEEE 802.15.4, the GTS (Guaranteed Time Slot) Request command is utilized by devices requiring guaranteed bandwidth for reliable communication. This is particularly useful for applications needing predictable latency, such as sensor data transmission or control signals. Any device needing guaranteed bandwidth can initiate a GTS request, provided it possesses the capability to do so. The requirement isn't tied to the addressing scheme (short or extended) but rather to the device's need for a reserved time slot.",
+        "debate1_answer": "3",
+        "debate2_answer": "3"
+    },
+    {
+        "question": "How does a supporting UE attach to the same core network operator from which it detached in a shared network? [3GPP Release 17]",
+        "gold_answer": "option 2: It uses information stored in the UE when it was detached.",
+        "debate1_passage": "In a shared network environment, a supporting User Equipment (UE) reattaching to the same core network operator from which it previously detached typically performs a fresh attach procedure. This ensures a new connection is established with the core network, allowing for re-authentication and re-registration. This approach is necessary because the network context from the previous detachment may no longer be valid or accessible within the shared network infrastructure. A fresh attach procedure guarantees that the UE is correctly identified and authorized within the current network state, regardless of prior detach events.",
+        "debate1_answer": "option 4",
+        "debate2_answer": "option 4"
+    }
+]

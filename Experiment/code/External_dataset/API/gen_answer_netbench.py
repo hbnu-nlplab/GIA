@@ -50,12 +50,15 @@ def create_input_jsonl(qna_list, model):
     input_jsonl_path = os.path.join(DATA_PATH, f"input_{model}.jsonl")
     PROMPT_TEMPLATE = PROMPT_TEMPLATE = """
 ### Task
-Answer the Question in 1–2 complete sentences by directly using and referencing the information provided in the Context.
+Answer the Question by producing an output that matches the format and structure implied by the Context and Question.
 
 ### Rules
-- Base the answer only on the Context.
-- Do not add external knowledge or assumptions.
-- If the Context lacks sufficient detail, restate it as a factual sentence without expansion.
+- Base the answer on the Context.
+- Preserve the expected output format:
+  - If the answer is a configuration, output the full configuration (e.g., YAML or JSON).
+  - If the answer is structured data, return it as structured data.
+  - If the answer is a definition, respond in clear sentences.
+- Do not summarize or paraphrase configurations.
 
 ---
 Context:

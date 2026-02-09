@@ -4,9 +4,9 @@ import time
 from dotenv import load_dotenv
 from openai import OpenAI
 
-RAW_DATA_PATH = "../data/telequad/TeleQuAD-v1-full-Tabular.json"
+RAW_DATA_PATH = "../data/telequad/TeleQuAD-v4-full.json"
 DATA_PATH = "../data/llm_answer_revised/"
-FINAL_JSON = os.path.join(DATA_PATH, "llm_answer__tabular_gpt4o-mini.json")
+FINAL_JSON = os.path.join(DATA_PATH, "llm_answer__gpt4o-mini.json")
 
 # 여기 아래에 모델들 넣으면 됨
 MODELS = ["gpt-4o-mini"]
@@ -21,25 +21,25 @@ def load_qna():
         data = json.load(f)
 
     qna_list = []
-    # for doc in data.get("data", []):
-    #     for para in doc.get("paragraphs", []):
-    #         context = para.get("context", "")
-    #         for qa in para.get("qas", []):
-    #             question = qa.get("question", "")
-    #             gold_answer = qa.get("answers", [{}])[0].get("text", "")
-    #             if not gold_answer.strip():
-    #                 continue
-    #             qna_list.append({"question": question, "gold_answer": gold_answer, "context": context})
     for doc in data.get("data", []):
-        for q in doc.get("questions", []):
-            question = q.get("question", "").strip()
-            answer = q.get("answer", "").strip()
-            context = q.get("context", "").strip()
+        for para in doc.get("paragraphs", []):
+            context = para.get("context", "")
+            for qa in para.get("qas", []):
+                question = qa.get("question", "")
+                gold_answer = qa.get("answers", [{}])[0].get("text", "")
+                if not gold_answer.strip():
+                    continue
+                qna_list.append({"question": question, "gold_answer": gold_answer, "context": context})
+    # for doc in data.get("data", []):
+    #     for q in doc.get("questions", []):
+    #         question = q.get("question", "").strip()
+    #         answer = q.get("answer", "").strip()
+    #         context = q.get("context", "").strip()
 
-            if not question or not answer:
-                continue
+    #         if not question or not answer:
+    #             continue
 
-            qna_list.append({"question": question, "gold_answer": answer,"context": context})
+    #         qna_list.append({"question": question, "gold_answer": answer,"context": context})
     return qna_list
 
 
@@ -56,10 +56,6 @@ You are a Senior Network Specification Engineer. Your task is to extract technic
 2. **Format:** Output raw technical values, units, or states.
 4. **Brevity:** Use standard abbreviations to keep the answer under 50 characters equivalent.
 
-### Examples
-Context: "For the PDSCH, the maximum throughput is 100 Mbps in Downlink when using 64QAM."
-Question: "What is the max DL throughput?"
-Answer: "100 Mbps (64QAM)"
 ---
 ### Context
 {context}
@@ -81,7 +77,7 @@ Answer:
                 "body": {
                     "model": model,
                     "messages": [{"role": "user", "content": prompt}],
-                    "temperature": 1
+                    "temperature": 0
                 }
             }
             f.write(json.dumps(entry, ensure_ascii=False) + "\n")

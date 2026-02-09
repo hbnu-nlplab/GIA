@@ -1,0 +1,92 @@
+[
+    {
+        "question": "각 AS별 장비 수 분포를 알려주세요. [답변 형식: 'AS X: N대, AS Y: M대']",
+        "gold_answer": "정보없음",
+        "debate1_passage": "AS 1: 4대, AS 2: 3대",
+        "debate1_answer": "AS 1: 4대, AS 2: 3대",
+        "debate2_answer": "AS 1: 4대, AS 2: 3대",
+        "debate_history": [],
+        "duration": 18.044494152069092
+    },
+    {
+        "question": "CE01과 CE04의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'CE01: AS X, CE04: AS Y']",
+        "gold_answer": "CE01: AS 없음, CE04: AS 없음",
+        "debate1_passage": "CE01 is configured with BGP Local AS number 65001, and CE04 is configured with BGP Local AS number 65002.",
+        "debate1_answer": "CE01: AS 65001, CE04: AS 65002",
+        "debate2_answer": "CE01: AS 65001, CE04: AS 65002",
+        "debate_history": [],
+        "duration": 23.8380343914032
+    },
+    {
+        "question": "CE01과 CE03의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'CE01: AS X, CE03: AS Y']",
+        "gold_answer": "CE01: AS 없음, CE03: AS 없음",
+        "debate1_passage": "CE01과 CE03은 CE01: AS 65001, CE03: AS 65002로 구성되어 있습니다.",
+        "debate1_answer": "CE01: AS 65001, CE03: AS 65002",
+        "debate2_answer": "CE01: AS 65001, CE03: AS 65002",
+        "debate_history": [],
+        "duration": 27.543713331222534
+    },
+    {
+        "question": "CE01과 CE02의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'CE01: AS X, CE02: AS Y']",
+        "gold_answer": "CE01: AS 없음, CE02: AS 없음",
+        "debate1_passage": "CE01 is configured with a BGP Local AS number of 65001, and CE02 is configured with a BGP Local AS number of 65002.",
+        "debate1_answer": "CE01: AS 65001, CE02: AS 65002",
+        "debate2_answer": "CE01: AS 65001, CE02: AS 65002",
+        "debate_history": [],
+        "duration": 29.02899169921875
+    },
+    {
+        "question": "모든 장비의 BGP AS 번호를 나열해주세요. [답변 형식: '장비1: AS X, 장비2: AS Y, 장비3: AS Z']",
+        "gold_answer": "정보없음",
+        "debate1_passage": "R1: AS 100, R2: AS 200, R3: AS 300, R4: AS 400, R5: AS 500, R6: AS 600, R7: AS 700, R8: AS 800, R9: AS 900, R10: AS 1000, R11: AS 1100, R12: AS 1200, R13: AS 1300, R14: AS 1400, R15: AS 1500, R16: AS 1600, R17: AS 1700, R18: AS 1800, R19: AS 1900, R20: AS 2000",
+        "debate1_answer": "R1: AS 100, R2: AS 200, R3: AS 300, R4: AS 400, R5: AS 500, R",
+        "debate2_answer": "R1: AS 100, R2: AS 200, R3: AS 300, R4: AS 400, R5: AS 500, R6: AS 600, R7: AS 700, R8: AS 800, R9: AS 900, R10: AS 1000, R11: AS 1100, R12: AS 1200, R13: AS 1300, R14: AS 1400, R15: AS 1500, R16: AS 1600, R17: AS 1700, R18: AS 1800, R19: AS 1900, R20: AS 2000",
+        "debate_history": [],
+        "duration": 67.2357063293457
+    },
+    {
+        "question": "네트워크가 '모든 CE 간 트래픽은 pe02를 통과해야 한다'는 정책을 준수하고 있습니까?\n[답변 형식: true/false (소문자)]",
+        "gold_answer": "true",
+        "debate1_passage": "네트워크가 '모든 CE 간 트래픽은 pe02를 통과해야 한다'는 정책을 준수하고 있습니다.",
+        "debate1_answer": "true",
+        "debate2_answer": "true",
+        "debate_history": [],
+        "duration": 14.81571912765503
+    },
+    {
+        "question": "pe02과 ce03 사이의 링크가 다운되었을 때, ce01에서 p04로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: '영향 없음 (현재경로: A→B→C가 장애링크 미경유)' / '경로 변경 (현재경로: A→B, 대체경로: A→C→B)' / '통신 단절 (현재경로: A→B, 대체경로 없음)']",
+        "gold_answer": "영향 없음 (현재경로: ce01 → p04가 장애링크 미경유)",
+        "debate1_passage": "",
+        "debate1_answer": "영향 없음 (현재경로: CE01→PE02→P04가 장애링크 미경유)",
+        "debate2_answer": "The user wants me to act as a Skeptic and critique the provided Candidate Answer and Opposite Argument. Then, I need to provide the Final Answer based on the critique, extracting the exact text from the passage if possible.\n\n**Critique:**\n\n*   **Candidate Answer:** \"영향 없음 (현재경로: CE01→PE02→P04가 장애링크 미경유)\"\n*   **Opposite Argument:** \"현재경로: CE01→PE02→P04가 장애링크 미경유\"\n\nBoth the Candidate Answer and the Opposite Argument state the same thing: \"No impact (current path: CE01→PE02→P04 does not pass through the failed link)\".\n\nThe question asks about the impact on traffic from CE01 to P04 when the link between PE02 and CE03 is down.\n\nThe Candidate Answer claims \"No impact\" because the current path CE01→PE02→P04 does not use the failed link (PE02 to CE03). This implies that the traffic from CE01 to P04 *directly* goes through PE02 and then to P04, bypassing CE03",
+        "debate_history": [],
+        "duration": 16.19891333580017
+    },
+    {
+        "question": "pe02과 ce03 사이의 링크가 다운되었을 때, ce01에서 p01로의 트래픽 영향은 어떻게 됩니까?\n[답변 형식: '영향 없음 (현재경로: A→B→C가 장애링크 미경유)' / '경로 변경 (현재경로: A→B, 대체경로: A→C→B)' / '통신 단절 (현재경로: A→B, 대체경로 없음)']",
+        "gold_answer": "영향 없음 (현재경로: ce01 → p01가 장애링크 미경유)",
+        "debate1_passage": "영향 없음 (현재경로: CE01→P01, 대체경로: 없음)",
+        "debate1_answer": "영향 없음 (현재경로: CE01→P01, 대체경로: 없음)",
+        "debate2_answer": "The user wants me to act as a Skeptic and critique the provided argument and candidate answer.\n\n**Critique:**\n\nThe question asks about the impact on traffic from CE01 to P01 when the link between PE02 and CE03 goes down. The provided \"Current Passage\" and \"Candidate Answer\" both state \"영향 없음 (현재경로: CE01→P01, 대체경로: 없음)\" which translates to \"No impact (Current path: CE01→P01, Alternative path: None)\".\n\nThe core of the skepticism lies in the *assumption* that the current path CE01→P01 is the *only* path and that it *doesn't* involve PE02 or CE03. The question specifically mentions the link between PE02 and CE03 going down. If the path from CE01 to P01 *does not* traverse PE02 or CE03, then the impact would indeed be \"No impact\". However, without knowing the network topology and how CE01, P01, PE02, and CE03 are interconnected, we cannot definitively conclude \"No impact\".\n\nThe provided answer assumes a direct or indirect",
+        "debate_history": [],
+        "duration": 17.84050989151001
+    },
+    {
+        "question": "단일 장비 장애 시 통신이 두절되는 구간(SPOF: Single Point of Failure)이 존재합니까?\n[답변 형식: SPOF 장비 목록 또는 '없음']",
+        "gold_answer": "없음",
+        "debate1_passage": "SPOF 장비 목록: CE01, CE02, CE03, CE04, P01, P04, PE02, PE03",
+        "debate1_answer": "SPOF 장비 목록: CE01, CE02, CE03, CE04, P01, P04, PE02, PE03",
+        "debate2_answer": "The user is asking me to act as a Skeptic and critique the provided argument and candidate answer.\n\n**Critique:**\n\n*   **Supporter's Argument:** The supporter's argument is simply a list of SPOF equipment. It directly answers the question by providing the requested information.\n*   **Candidate Answer:** The candidate answer is identical to the supporter's argument. It also directly answers the question.\n*   **Opposite Argument:** The opposite argument is also identical to the supporter's argument and the candidate answer. This is where the confusion lies. If the \"opposite argument\" is the same as the \"candidate answer,\" then there's no actual opposition or critique being presented. It seems like a redundant or incorrectly labeled \"opposite argument.\"\n\n**Conclusion:**\n\nAll provided texts (Supporter's Argument, Candidate Answer, Opposite Argument) are identical and directly answer the question by listing the SPOF equipment. There is no discrepancy or flaw to critique in terms of content. The \"Opposite Argument\" is not truly opposite.\n\nSince the task is to critique and then provide the Final Answer based on the critique, and there's no actual critique to be made *against* the content itself (as it's all",
+        "debate_history": [],
+        "duration": 19.44982099533081
+    },
+    {
+        "question": "네트워크가 '모든 CE 간 트래픽은 pe03를 통과해야 한다'는 정책을 준수하고 있습니까?\n[답변 형식: true/false (소문자)]",
+        "gold_answer": "true",
+        "debate1_passage": "네트워크가 '모든 CE 간 트래픽은 pe03를 통과해야 한다'는 정책을 준수하고 있습니다.",
+        "debate1_answer": "true",
+        "debate2_answer": "true",
+        "debate_history": [],
+        "duration": 21.303620100021362
+    }
+]
