@@ -310,6 +310,22 @@ npm run test:e2e
 3. `./scripts/demo_precheck.sh` 실행 후 PASS 확인
 4. `/api/health`, `/api/settings` 수동 재확인 후 데모 진행
 
+### 원클릭 데모 실행 (로컬)
+
+```bash
+cd NetAlly
+chmod +x scripts/demo_up_local.sh scripts/demo_precheck.sh
+./scripts/demo_up_local.sh
+```
+
+- 기본 동작:
+  - backend(`8111`) + frontend(`3000`) 동시 실행
+  - 준비 완료 후 `demo_precheck.sh` 자동 실행
+- 종료:
+  - 터미널에서 `Ctrl+C`
+- 포트/호스트 변경 예시:
+  - `NETALLY_HOST=0.0.0.0 NETALLY_BACKEND_PORT=8112 NETALLY_FRONTEND_PORT=3001 ./scripts/demo_up_local.sh`
+
 ---
 
 ## 🎯 아키텍처
