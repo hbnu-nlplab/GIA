@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "backend": "openai",
+    "model": "gpt-4o-mini",
+    "timestamp": "20260121_164935",
+    "total_samples": 2
+  },
+  "metrics": {
+    "overall": {
+      "total": 2,
+      "correct": 0,
+      "accuracy": 0.0,
+      "avg_latency": 1.9571632146835327
+    },
+    "by_level": {
+      "L4": {
+        "total": 1,
+        "correct": 0,
+        "accuracy": 0.0
+      },
+      "L1": {
+        "total": 1,
+        "correct": 0,
+        "accuracy": 0.0
+      }
+    },
+    "by_answer_type": {
+      "set": {
+        "total": 1,
+        "correct": 0,
+        "accuracy": 0.0
+      },
+      "numeric": {
+        "total": 1,
+        "correct": 0,
+        "accuracy": 0.0
+      }
+    }
+  },
+  "results": [
+    {
+      "question_id": "",
+      "question": "네트워크에서 블랙홀이 발생하는 목적지 prefix 목록을 알려주세요. [답변 형식: prefix 목록 (예: [\"10.0.0.0/8\", \"192.168.1.0/24\"]) 또는 빈 목록 []]",
+      "answer_type": "set",
+      "level": "L4",
+      "category": "Reachability_Analysis",
+      "gold": "[]",
+      "pred": "",
+      "is_correct": false,
+      "latency_seconds": 2.2668378353118896,
+      "step_count": 0,
+      "error": "Error code: 400 - {'error': {'message': \"Invalid parameter: messages with role 'tool' must be a response to a preceeding message with 'tool_calls'.\", 'type': 'invalid_request_error', 'param': 'messages.[0].role', 'code': None}}"
+    },
+    {
+      "question_id": "",
+      "question": "p1 장비에 설정된 서브인터페이스는 총 몇 개입니까? [답변 형식: 숫자]",
+      "answer_type": "numeric",
+      "level": "L1",
+      "category": "Interface_Inventory",
+      "gold": "0",
+      "pred": "",
+      "is_correct": false,
+      "latency_seconds": 1.6474885940551758,
+      "step_count": 0,
+      "error": "Error code: 400 - {'error': {'message': \"Invalid parameter: messages with role 'tool' must be a response to a preceeding message with 'tool_calls'.\", 'type': 'invalid_request_error', 'param': 'messages.[0].role', 'code': None}}"
+    }
+  ]
+}

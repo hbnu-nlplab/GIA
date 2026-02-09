@@ -13,24 +13,22 @@ class UniversalParser:
     def __init__(self):
         pass
 
-    def parse_dir(self, xml_dir: str) -> Dict[str, Any]:
+    def parse_dir(self, xml_dir: str, batfish_host: str = "localhost") -> Dict[str, Any]:
         """
-        기존 인터페이스(xml_dir)를 유지하되, 내부적으로는 configs 폴더를 찾아서 Batfish에 넘깁니다.
+        xml_dir: Lab root or configs directory.
         """
-        # xml_dir: .../xml
-        # Batfish는 .../configs 폴더가 필요함 (같은 레벨 가정)
-        base_xml = Path(xml_dir)
-        configs_dir = base_xml.parent / "configs"
+        path = Path(xml_dir)
         
-        if not configs_dir.exists():
-            # 만약 XML 디렉토리 자체가 configs라면?
-            if base_xml.name == "configs":
-                configs_dir = base_xml
-            else:
-                # Fallback: 그냥 xml_dir을 넘겨보거나 에러 처리
-                # 하지만 Batfish는 .cfg가 필요하므로 configs를 찾아야 함
-                print(f"[Warning] 'configs' directory not found near {xml_dir}. Trying to use {xml_dir} as configs.")
-                configs_dir = base_xml
+        # 1. 'configs' 폴더 찾기
+        if path.name == "configs":
+            configs_dir = path
+        elif (path / "configs").exists():
+            configs_dir = path / "configs"
+        elif (path.parent / "configs").exists():
+            configs_dir = path.parent / "configs"
+        else:
+            # 못 찾으면 현재 경로를 configs로 가정 (Batfish packaging error 가능성 높음)
+            configs_dir = path
 
-        # Dummy path list for signature compatibility
-        return batfish_parser.parse_batfish_datamodel(configs_dir)
+        print(f"[UniversalParser] Using configs_dir: {configs_dir}")
+        return batfish_parser.parse_batfish_datamodel(configs_dir, batfish_host=batfish_host)

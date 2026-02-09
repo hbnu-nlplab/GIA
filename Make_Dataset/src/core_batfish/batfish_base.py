@@ -104,11 +104,19 @@ class BatfishBase:
                     iface = row.get('Interface', {})
                     node_name = getattr(iface, 'hostname', '')
                     iface_name = getattr(iface, 'interface', '')
+                    
                     if iface_name.lower() == 'loopback0':
-                        self._loopback_cache[node_name] = True
-                        loopback_count += 1
-                        print(f"[DEBUG] _populate_loopback_cache: Found Loopback0 on {node_name}")
-                        logger.debug(f"_populate_loopback_cache: Found Loopback0 on {node_name}")
+                        val_active = row.get('Active', False)
+                        val_ip = row.get('Primary_Address')
+                        
+                        # Active 상태이고 IP가 있어야 유효한 Source로 간주
+                        if val_active and val_ip:
+                            self._loopback_cache[node_name] = True
+                            loopback_count += 1
+                            print(f"[DEBUG] _populate_loopback_cache: Found valid Loopback0 on {node_name}")
+                            logger.debug(f"_populate_loopback_cache: Found valid Loopback0 on {node_name}")
+                        else:
+                            print(f"[DEBUG] _populate_loopback_cache: Found Loopback0 on {node_name} but invalid (Active={val_active}, IP={val_ip})")
             
             print(f"[DEBUG] _populate_loopback_cache: Completed! Cached {len(self._loopback_cache)} nodes ({loopback_count} with Loopback0)")
             logger.debug(f"_populate_loopback_cache: Cached {len(self._loopback_cache)} nodes")
@@ -182,7 +190,12 @@ class BatfishBase:
         """Batfish 세션 초기화 및 스냅샷 로드"""
         try:
             logger.info(f"Connecting to Batfish at {self.batfish_host}...")
-            self.bf = Session(host=self.batfish_host)
+            # host:port 형식 처리
+            if ":" in self.batfish_host:
+                base_host, port = self.batfish_host.split(":")
+                self.bf = Session(host=base_host, port=int(port))
+            else:
+                self.bf = Session(host=self.batfish_host)
             
             logger.info(f"Setting network: {self.network_name}")
             self.bf.set_network(self.network_name)

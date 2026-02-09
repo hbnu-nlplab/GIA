@@ -40,6 +40,7 @@ from .models import (
 from .batfish_base import BatfishBase, BATFISH_AVAILABLE
 from .l4_analyzer import L4AnalyzerMixin
 from .l5_analyzer import L5AnalyzerMixin
+from .l6_analyzer import L6AnalyzerMixin
 
 # Batfish 로드 (선택적)
 try:
@@ -53,7 +54,7 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 
-class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
+class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMixin):
     """
     Batfish 기반 L4/L5 문제 생성기
     
@@ -61,12 +62,12 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
     - BatfishBase: 초기화, 스냅샷 관리, 기본 쿼리
     - L4AnalyzerMixin: 도달성 분석 (Traceroute, ACL, Loop 등)
     - L5AnalyzerMixin: What-If 분석 (Link Failure, RCA 등)
+    - L6AnalyzerMixin: Diagnostic 분석 (Fault Injection, 역추론)
     """
 
-    def __init__(self, network_name: str, snapshot_path: str, policies_path: str = None):
+    def __init__(self, network_name: str, snapshot_path: str, policies_path: str = None, batfish_host: str = "localhost"):
         # Fix: Pass arguments by keyword to avoid mismatch with BatfishBase signature
-        # BatfishBase.__init__(snapshot_path, batfish_host="localhost", network_name="...")
-        super().__init__(snapshot_path=snapshot_path, network_name=network_name)
+        super().__init__(snapshot_path=snapshot_path, network_name=network_name, batfish_host=batfish_host)
         
         self.metrics_metadata = {}
         if policies_path:
@@ -189,6 +190,46 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
                 "academic_reference": "HSA (NSDI'12): loop-free as core invariant"
             })
         
+        # 3.5 ACL Blocking Point Analysis
+        acl_flows = self.get_representative_flows()
+        random.shuffle(acl_flows)
+        acl_q_count = 0
+        
+        for flow in acl_flows[:30]:
+            # Use acl_blocking_point analysis
+            # Ensure port is valid (default 80 if 0/None)
+            port = flow.dst_port if flow.dst_port else 80
+            
+            res = self.acl_blocking_point(flow.src_ip, flow.dst_ip, port)
+            if res.status == "OK":
+                blocked = res.value.get("blocked", False)
+                blocking_node = res.value.get("node", "")
+                reason = res.value.get("reason", "")
+                
+                if blocked:
+                    result_text = f"차단됨 (장비: {blocking_node}, 원인: {reason})"
+                else:
+                    result_text = "허용됨"
+                
+                metric = "acl_blocking_point"
+                template = self._get_template(metric, "{src_ip}에서 {dst_ip}({dst_port}/TCP)로의 트래픽이 ACL에 의해 차단됩니까? 차단된다면 어느 장비입니까?\\n[답변 형식: '허용됨' 또는 '차단됨 (장비: 장비명, 원인: 사유)']")
+                q_text = template.format(src_ip=flow.src_ip, dst_ip=flow.dst_ip, dst_port=port)
+                
+                questions.append({
+                    "id": f"ACL_BLOCKING_{flow.src_location}_{flow.dst_location}",
+                    "category": "Security_Analysis",
+                    "level": "L4",
+                    "answer_type": "text",
+                    "question": q_text,
+                    "ground_truth": result_text,
+                    "explanation": f"metric `{metric}` analysis",
+                    "evidence_hint": {"scope": {"type": "FLOW", "src_ip": flow.src_ip, "dst_ip": flow.dst_ip}, "metric": metric},
+                    "academic_reference": "ACL Reachability Analysis"
+                })
+                acl_q_count += 1
+                if acl_q_count >= 10:
+                    break
+
         # 4. Bounded Path Length
         all_pairs_bounded = self.get_node_pairs()
         random.shuffle(all_pairs_bounded)
@@ -429,7 +470,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
         
         # 1. Link Failure Impact
         edges = self.get_layer3_edges()
-        ce_nodes = [n for n in self.nodes if 'ce' in n.lower()]
+        ce_nodes = [n for n in self.nodes if 'ce' in n.lower() or 'leaf' in n.lower()]
         pe_nodes = [n for n in self.nodes if 'pe' in n.lower()]
         
         if edges and len(ce_nodes) >= 2:
@@ -611,7 +652,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
 
                 metric = "node_failure_impact"
                 template = self._get_template(metric, "'{node}' 장비가 다운되면 몇 개의 트래픽 흐름이 새로 차단됩니까? [답변 형식: 숫자]")
-                q_text = template.format(node=node)
+                q_text = template.format(host=node)
 
                 questions.append({
                     "id": f"NODE_FAILURE_{node}",
@@ -742,7 +783,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
         
         # 존재하지 않는 장비이므로 영향은 0
         tmpl_neg = self._get_template(neg_metric, "'{fake_node}' 장비가 다운되면 몇 개의 트래픽 흐름이 차단됩니까? [답변 형식: 숫자]")
-        q_text_neg = tmpl_neg.format(fake_node=fake_node)
+        q_text_neg = tmpl_neg.format(host=fake_node)
         
         questions.append({
             "id": "NEGATIVE_TEST_FAKE_NODE",
@@ -819,11 +860,73 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin):
         
         return questions
     
+    def generate_l6_questions(self) -> List[Dict[str, Any]]:
+        """L6 레벨 진단형(Diagnostic) 문제 생성
+        
+        5가지 진단 유형을 모두 호출하여 문제 생성:
+        1. Link Failure Diagnostic (링크 장애)
+        2. Node Failure Diagnostic (노드 장애)
+        3. BGP Mismatch Diagnostic (BGP 세션 호환성)
+        4. OSPF Mismatch Diagnostic (OSPF 인접 호환성)
+        5. ACL Block Diagnostic (ACL 차단)
+        """
+        questions = []
+        
+        if not self._initialized:
+            logger.warning("Batfish not initialized. Skipping L6 question generation.")
+            return questions
+            
+        logger.info("Generating L6 Diagnostic QA...")
+        
+        # 1. Link Failure Diagnostic
+        try:
+            link_questions = self.generate_diagnostic_qa_link(count=20)
+            questions.extend(link_questions)
+            logger.info(f"  - Link Failure: {len(link_questions)} questions")
+        except Exception as e:
+            logger.error(f"L6 Link Failure QA generation failed: {e}")
+        
+        # 2. Node Failure Diagnostic
+        try:
+            node_questions = self.generate_diagnostic_qa_node(count=10)
+            questions.extend(node_questions)
+            logger.info(f"  - Node Failure: {len(node_questions)} questions")
+        except Exception as e:
+            logger.error(f"L6 Node Failure QA generation failed: {e}")
+        
+        # 3. BGP Mismatch Diagnostic
+        try:
+            bgp_questions = self.generate_diagnostic_qa_bgp_mismatch(count=10)
+            questions.extend(bgp_questions)
+            logger.info(f"  - BGP Mismatch: {len(bgp_questions)} questions")
+        except Exception as e:
+            logger.error(f"L6 BGP Mismatch QA generation failed: {e}")
+        
+        # 4. OSPF Mismatch Diagnostic
+        try:
+            ospf_questions = self.generate_diagnostic_qa_ospf_mismatch(count=10)
+            questions.extend(ospf_questions)
+            logger.info(f"  - OSPF Mismatch: {len(ospf_questions)} questions")
+        except Exception as e:
+            logger.error(f"L6 OSPF Mismatch QA generation failed: {e}")
+        
+        # 5. ACL Block Diagnostic
+        try:
+            acl_questions = self.generate_diagnostic_qa_acl_block(count=10)
+            questions.extend(acl_questions)
+            logger.info(f"  - ACL Block: {len(acl_questions)} questions")
+        except Exception as e:
+            logger.error(f"L6 ACL Block QA generation failed: {e}")
+            
+        logger.info(f"Generated {len(questions)} L6 Diagnostic questions total.")
+        return questions
+    
     def generate_all_questions(self) -> Dict[str, List[Dict[str, Any]]]:
-        """모든 L4/L5 문제 생성"""
+        """모든 L4/L5/L6 문제 생성"""
         return {
             "Reachability_Analysis": self.generate_l4_questions(),
-            "What_If_Analysis": self.generate_l5_questions()
+            "What_If_Analysis": self.generate_l5_questions(),
+            "Diagnostic_Troubleshooting": self.generate_l6_questions()
         }
 
 
