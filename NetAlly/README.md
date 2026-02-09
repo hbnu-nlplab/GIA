@@ -307,7 +307,8 @@ npm run test:e2e
 
 1. `uv run pytest -q tests/` 통과 확인
 2. `cd frontend && npm run test:e2e` 통과 확인
-3. `/api/health`, `/api/settings` 확인 후 데모 진행
+3. `./scripts/demo_precheck.sh` 실행 후 PASS 확인
+4. `/api/health`, `/api/settings` 수동 재확인 후 데모 진행
 
 ---
 

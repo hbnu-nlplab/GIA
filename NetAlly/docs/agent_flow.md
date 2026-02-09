@@ -198,6 +198,9 @@ Batfish 준비 후 Chat Panel에서 질의 실행
 3. 런타임 상태 확인
    - `/api/health`에서 `tool_backend`, `mcp_health` 확인
    - `/api/settings`에서 `tool_backend`, `mcp_server_url`, `mcp_allow_mutations` 확인
+4. 자동 점검 스크립트
+   - `./scripts/demo_precheck.sh`
+   - PASS 출력 확인 후 데모 시작
 
 ---
 
