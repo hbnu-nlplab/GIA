@@ -22,8 +22,9 @@ test('Settings에서 MCP 런타임 필드 로드/수정/저장', async ({ page, 
   await page.goto('http://127.0.0.1:3000')
   await page.getByTitle('System Settings').click()
 
-  await expect(page.getByText('API Connections')).toBeVisible()
-  const apiConnectionsSection = page.locator('section').filter({ hasText: 'API Connections' }).first()
+  await page.getByTestId('settings-nav-api_connections').click()
+  const apiConnectionsSection = page.getByTestId('settings-section-api-connections')
+  await expect(apiConnectionsSection).toBeVisible()
 
   const settingsBefore = await request.get('http://127.0.0.1:8111/api/settings')
   expect(settingsBefore.ok()).toBeTruthy()
