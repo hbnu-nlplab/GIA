@@ -86,3 +86,7 @@ NetAlly/frontend/node_modules
 
 # Slidev
 docs/slidev-netconfigqa
+
+# NetAlly frontend test artifacts
+NetAlly/frontend/test-results/
+NetAlly/frontend/playwright-report/
