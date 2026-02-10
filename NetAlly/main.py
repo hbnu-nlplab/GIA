@@ -118,6 +118,11 @@ async def lifespan(app: FastAPI):
 
     app.state.tool_backend = os.getenv("NETALLY_TOOL_BACKEND", TOOL_BACKEND_DEFAULT).lower()
     app.state.mcp_health = {"ok": False, "tool_count": 0}
+    # Agent graph is intentionally lazy-loaded so the app can boot without LLM creds
+    # (topology / settings / PNETLab LabFS features should still work).
+    app.state.graph = None
+    app.state.graph_load_error = None
+    app.state._graph_lock = asyncio.Lock()
     if app.state.tool_backend == "mcp":
         try:
             from agent.mcp_server import start_embedded_mcp_server
@@ -130,11 +135,8 @@ async def lifespan(app: FastAPI):
             logger.info(f"MCP health: {health}")
         except Exception as e:
             logger.error(f"MCP runtime startup failed: {e}")
-    
-    # LangGraph 그래프 임포트 (지연 로딩)
-    from agent.graph import graph
-    app.state.graph = graph
-    print("[NetAlly] Agent graph loaded.")
+
+    print("[NetAlly] Startup complete (agent graph lazy-loaded).")
     
     yield
     
@@ -180,9 +182,8 @@ app.add_middleware(
 )
 
 # 정적 파일 서빙 (프론트엔드 빌드 결과)
-static_path = os.path.join(os.path.dirname(__file__), "static")
-if os.path.exists(static_path):
-    app.mount("/", StaticFiles(directory=static_path, html=True), name="static")
+# NOTE: Static frontend is mounted *at the end of the file* so it does not
+# shadow /api/* routes in Starlette's first-match routing.
 
 
 # =============================================================================
@@ -218,6 +219,8 @@ async def health():
         "service": "netally",
         "tool_backend": get_tool_backend(),
         "mcp_health": getattr(app.state, "mcp_health", {"ok": False}),
+        "agent_graph_loaded": bool(getattr(app.state, "graph", None)),
+        "agent_graph_error": getattr(app.state, "graph_load_error", None),
     }
 
 # =============================================================================
@@ -467,6 +470,9 @@ async def update_settings(request: SettingsRequest):
         
         if request.openai_api_key:
             os.environ["OPENAI_API_KEY"] = request.openai_api_key
+            # Force graph reload on next /api/chat so new credentials take effect.
+            app.state.graph = None
+            app.state.graph_load_error = None
             updated.append("openai_api_key")
         
         if request.nso_base_url:
@@ -759,17 +765,57 @@ async def chat_stream_generator(request: ChatRequest, graph):
 @app.post("/api/chat")
 async def chat(request: ChatRequest):
     """SSE 스트리밍 채팅 엔드포인트"""
-    graph = app.state.graph
-    
-    return StreamingResponse(
-        chat_stream_generator(request, graph),
-        media_type="text/event-stream",
-        headers={
-            "Cache-Control": "no-cache",
-            "Connection": "keep-alive",
-            "X-Accel-Buffering": "no",  # nginx 버퍼링 비활성화
-        }
-    )
+    async def _ensure_graph_loaded():
+        # App should boot even without LLM creds; load graph on-demand for chat.
+        if getattr(app.state, "graph", None) is not None:
+            return app.state.graph
+
+        lock = getattr(app.state, "_graph_lock", None)
+        if lock is None:
+            app.state._graph_lock = asyncio.Lock()
+            lock = app.state._graph_lock
+
+        async with lock:
+            if getattr(app.state, "graph", None) is not None:
+                return app.state.graph
+            try:
+                from agent.graph import graph as loaded_graph
+                app.state.graph = loaded_graph
+                app.state.graph_load_error = None
+                logger.info("[NetAlly] Agent graph loaded (lazy).")
+                return loaded_graph
+            except Exception as e:
+                app.state.graph = None
+                app.state.graph_load_error = str(e)
+                raise
+
+    headers = {
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive",
+        "X-Accel-Buffering": "no",  # nginx 버퍼링 비활성화
+    }
+
+    try:
+        graph = await _ensure_graph_loaded()
+    except Exception as e:
+        raw = str(e)
+        if "OPENAI_API_KEY" in raw or "api_key" in raw:
+            message = (
+                "LLM API 키가 설정되지 않아 채팅 기능을 사용할 수 없습니다. "
+                "Settings에서 OpenAI API Key를 설정하거나 OPENAI_API_KEY 환경변수를 지정하세요."
+            )
+            code = "LLM_NOT_CONFIGURED"
+        else:
+            message = f"Agent graph 로딩 실패: {raw}"
+            code = "GRAPH_LOAD_FAILED"
+
+        async def error_stream():
+            yield f"event: error\ndata: {json.dumps({'type': 'error', 'code': code, 'message': message})}\n\n"
+            yield f"event: complete\ndata: {json.dumps({'type': 'complete'})}\n\n"
+
+        return StreamingResponse(error_stream(), media_type="text/event-stream", headers=headers)
+
+    return StreamingResponse(chat_stream_generator(request, graph), media_type="text/event-stream", headers=headers)
 
 
 # =============================================================================
@@ -1269,6 +1315,17 @@ async def get_evidence(run_id: str):
     """특정 실행의 Evidence 조회"""
     # TODO: Evidence Store에서 조회
     return {"run_id": run_id, "status": "not_implemented"}
+
+
+# =============================================================================
+# Static Frontend (Mount Last)
+# =============================================================================
+
+# Serve the built frontend (SPA) from the Docker image when present.
+# Must be mounted AFTER all /api routes; otherwise it shadows them.
+static_path = os.path.join(os.path.dirname(__file__), "static")
+if os.path.exists(static_path):
+    app.mount("/", StaticFiles(directory=static_path, html=True), name="static")
 
 
 # =============================================================================
