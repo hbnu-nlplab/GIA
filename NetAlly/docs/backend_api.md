@@ -44,6 +44,12 @@ Batfish 분석 기반 토폴로지 정보를 반환합니다.
 
 PNETLab의 실제 노드 좌표를 포함한 토폴로지를 반환합니다.
 
+권장 동작:
+- 기본은 **쿠키 없이 LabFS 기반 복제**를 권장합니다.
+  - `.unl` + `/opt/unetlab/tmp/*/*/wrapper.txt` 파싱
+  - PNETLab VM 내부 컨테이너 실행 시에는 `/opt/unetlab`을 컨테이너에 read-only로 마운트해야 합니다.
+- PNETLab API 기반(topology session API)은 CAPTCHA/XSRF/쿠키 만료 등으로 불안정할 수 있어 fallback 용도로만 사용합니다.
+
 ### 응답 예시
 ```json
 {

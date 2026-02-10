@@ -65,6 +65,39 @@ NetAlly가 PNETLab 내부의 다른 라우터/스위치와 통신하려면 적�
 
 ---
 
+## 🗺️ 3.5 PNETLab 토폴로지 "쿠키 없이" 복제하기 (권장: LabFS)
+
+PNETLab 웹/API는 CAPTCHA/XSRF 때문에 쿠키 자동화가 불안정할 수 있습니다.  
+NetAlly는 토폴로지 맵 복제를 위해 **PNETLab 파일 시스템(LabFS)** 를 읽는 경로를 지원합니다:
+
+- `.unl`: 노드 위치(left/top), 아이콘, 네트워크/연결 메타데이터
+- `/opt/unetlab/tmp/*/*/wrapper.txt`: 실행 중 노드의 콘솔 포트(best-effort)
+
+### 핵심: 컨테이너에 `/opt/unetlab`을 read-only로 바인드 마운트
+
+NetAlly가 PNETLab VM 내부에서 Docker 컨테이너로 실행되더라도, 기본적으로는 호스트의 `/opt/unetlab`을 볼 수 없습니다.  
+따라서 **컨테이너에 `/opt/unetlab:/opt/unetlab:ro` 마운트가 필요**합니다.
+
+PNETLab UI의 Docker Node 설정에서 volume/host path mapping 기능이 있다면:
+- Host: `/opt/unetlab`
+- Container: `/opt/unetlab`
+- Mode: `ro` (read-only 권장)
+
+만약 UI에서 마운트를 지원하지 않는 환경이라면, PNETLab 호스트에서 `docker run -v /opt/unetlab:/opt/unetlab:ro ...` 형태로 실행하는 방식이 더 확실합니다.
+
+### 권장 환경 변수
+
+토폴로지 복제는 PNETLab API 인증 없이도 가능합니다.
+
+```bash
+PNETLAB_INVENTORY_BACKEND=labfs_local
+PNETLAB_LAB_NAME=test_nso          # 또는 PNETLAB_LAB_PATH=/opt/unetlab/labs/test_nso.unl
+```
+
+> 참고: 위 설정이 되어 있으면 NetAlly의 `/api/topology/pnetlab`가 쿠키 없이도 동작합니다.
+
+---
+
 ## 🧭 4. 내부망 기반 자동 등록 파이프라인 (권장 흐름)
 
 NetAlly를 PNETLab 내부 Docker 노드로 실행하면, 다음 파이프라인으로 자동 등록이 가능합니다.
@@ -115,10 +148,13 @@ lab_bootstrap(action="refresh_onboard")  # 신규 장비만 부트스트랩
 - `/api/lab/prepare` 호출
 - 상태가 `ready/loaded/initialized`면 분석 가능
 
-### PNETLab 인증 (자동로그인/쿠키)
-PNETLab API 접근을 위해 인증이 필요합니다.
+### PNETLab API 인증 (선택)
+NetAlly의 일부 기능(예: `device_info.json` 자동 생성/부트스트랩)은 PNETLab API 접근이 필요할 수 있습니다.
+
 - **Auto Login**: Settings에서 계정/비밀번호 입력 후 활성화
 - **Cookies**: 자동로그인이 실패하면 쿠키를 입력하여 인증
+
+반면, **토폴로지 맵 복제(`/api/topology/pnetlab`)는 LabFS 모드에서 쿠키 없이 동작**합니다.
 
 ---
 

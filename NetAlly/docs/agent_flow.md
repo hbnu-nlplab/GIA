@@ -208,7 +208,9 @@ Batfish 준비 후 Chat Panel에서 질의 실행
 ---
 
 ## 알려진 제한
-- PNETLab API 인증은 **필수**
+- PNETLab API 인증은 **일부 기능에서만 필요(선택)**  
+  - 예: `device_info.json` 자동 생성/부트스트랩
+  - 토폴로지 복제(`/api/topology/pnetlab`)는 LabFS 모드에서 쿠키 없이 동작
 - OOB 인터페이스 자동 매핑은 **미지원(수동 입력 권장)**
 - 변경 감지는 **NSO check-sync** 기반
 - UI는 `answer_type`, `history`를 사용하지 않음

@@ -38,6 +38,8 @@ services:
     volumes:
       - netally_data:/data
       - ./results:/app/results
+      # When running on the PNETLab VM, mount UNetLab files read-only to enable cookie-less LabFS topology parsing:
+      # - /opt/unetlab:/opt/unetlab:ro
     
     depends_on:
       batfish:
