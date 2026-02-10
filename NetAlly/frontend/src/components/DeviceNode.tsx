@@ -10,6 +10,8 @@ interface DeviceNodeProps {
     type: string
     platform?: string
     mgmt_ip?: string
+    highlight?: boolean
+    highlightMode?: 'focus' | 'path'
   }
   selected?: boolean
 }
@@ -78,7 +80,12 @@ export default function DeviceNode({ data, selected }: DeviceNodeProps) {
         relative px-4 py-2.5 rounded-xl border transition-all duration-300
         ${selected 
           ? 'bg-primary/20 border-primary ring-4 ring-primary/10 shadow-lg shadow-primary/5 scale-105' 
-          : 'bg-card border-border hover:border-muted-foreground/30 shadow-sm hover:shadow-md'
+          : data.highlight
+            ? (data.highlightMode === 'path'
+                ? 'bg-emerald-500/10 border-emerald-500/50 ring-4 ring-emerald-500/10 shadow-lg shadow-emerald-500/10'
+                : 'bg-orange-500/10 border-orange-500/50 ring-4 ring-orange-500/10 shadow-lg shadow-orange-500/10'
+              )
+            : 'bg-card border-border hover:border-muted-foreground/30 shadow-sm hover:shadow-md'
         }
       `}
     >
@@ -87,7 +94,15 @@ export default function DeviceNode({ data, selected }: DeviceNodeProps) {
       <div className="flex items-center gap-3">
         <div className={`
           w-10 h-10 rounded-lg flex items-center justify-center border
-          ${selected ? 'bg-primary/30 text-primary border-primary' : getTypeColor()}
+          ${selected
+            ? 'bg-primary/30 text-primary border-primary'
+            : data.highlight
+              ? (data.highlightMode === 'path'
+                  ? 'bg-emerald-500/20 text-emerald-500 border-emerald-500/40'
+                  : 'bg-orange-500/20 text-orange-500 border-orange-500/40'
+                )
+              : getTypeColor()
+          }
           transition-all
         `}>
           {getDeviceIcon()}

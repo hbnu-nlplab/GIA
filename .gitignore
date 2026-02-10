@@ -83,6 +83,7 @@ dmypy.json
 # OS
 Thumbs.db
 NetAlly/frontend/node_modules
+NetAlly/frontend/*.tsbuildinfo
 
 # Slidev
 docs/slidev-netconfigqa

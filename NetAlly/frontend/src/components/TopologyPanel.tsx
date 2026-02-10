@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   ReactFlow,
   Background,
@@ -60,12 +60,13 @@ const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'TB') => 
 }
 
 export default function TopologyPanel() {
-  const { setSelectedNode, openDetail, theme, topologySource, setTopologySource } = useAppStore(state => ({
+  const { setSelectedNode, openDetail, theme, topologySource, setTopologySource, viz } = useAppStore(state => ({
     setSelectedNode: state.setSelectedNode,
     openDetail: state.openDetail,
     theme: state.theme,
     topologySource: state.topologySource,
-    setTopologySource: state.setTopologySource
+    setTopologySource: state.setTopologySource,
+    viz: state.viz,
   }))
 
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
@@ -74,6 +75,31 @@ export default function TopologyPanel() {
   const [error, setError] = useState<string | null>(null)
   const [analyzingReachability, setAnalyzingReachability] = useState(false)
   const [layer, setLayer] = useState<'l1' | 'l3'>('l1')
+
+  const vizNodeSet = useMemo(() => {
+    if (!viz) return new Set<string>()
+    return new Set((viz.nodes || []).map((n) => String(n).toLowerCase()))
+  }, [viz])
+
+  const vizEdgeSet = useMemo(() => {
+    if (!viz) return new Set<string>()
+    const s = new Set<string>()
+    for (const e of viz.edges || []) {
+      const src = String(e.source).toLowerCase()
+      const tgt = String(e.target).toLowerCase()
+      if (src && tgt) s.add(`${src}->${tgt}`)
+    }
+    return s
+  }, [viz])
+
+  const isEdgeInViz = useCallback((src: string, tgt: string) => {
+    const a = `${String(src).toLowerCase()}->${String(tgt).toLowerCase()}`
+    const b = `${String(tgt).toLowerCase()}->${String(src).toLowerCase()}`
+    return vizEdgeSet.has(a) || vizEdgeSet.has(b)
+  }, [vizEdgeSet])
+
+  const baseEdgeMarkerColor = theme === 'dark' ? '#10b981' : '#059669'
+  const vizEdgeColor = viz?.mode === 'path' ? (theme === 'dark' ? '#34d399' : '#059669') : (theme === 'dark' ? '#fb923c' : '#f97316')
 
   const fetchTopology = useCallback(async () => {
     setLoading(true)
@@ -106,6 +132,8 @@ export default function TopologyPanel() {
           label: n.id, 
           platform: n.data?.platform || 'Unknown',
           device_type: n.data?.device_type || 'router',
+          highlight: vizNodeSet.has(String(n.id).toLowerCase()),
+          highlightMode: viz?.mode || 'focus',
           ...n.data 
         },
       }))
@@ -118,9 +146,11 @@ export default function TopologyPanel() {
         animated: true,
         markerEnd: { 
           type: MarkerType.ArrowClosed,
-          color: theme === 'dark' ? '#10b981' : '#059669'
+          color: isEdgeInViz(e.source, e.target) ? vizEdgeColor : baseEdgeMarkerColor
         },
-        style: { stroke: 'hsl(var(--border))', strokeWidth: 2 },
+        style: isEdgeInViz(e.source, e.target)
+          ? { stroke: vizEdgeColor, strokeWidth: 4 }
+          : { stroke: 'hsl(var(--border))', strokeWidth: 2 },
         labelStyle: { fill: 'hsl(var(--muted-foreground))', fontSize: 10, fontWeight: 600 },
         labelBgStyle: { fill: 'hsl(var(--card))', fillOpacity: 0.8 },
         labelBgPadding: [4, 2],
@@ -142,7 +172,31 @@ export default function TopologyPanel() {
     } finally {
       setLoading(false)
     }
-  }, [theme, layer, topologySource, setNodes, setEdges])
+  }, [theme, layer, topologySource, setNodes, setEdges, viz, vizNodeSet, isEdgeInViz, vizEdgeColor, baseEdgeMarkerColor])
+
+  // Apply visualization overlay to existing nodes/edges whenever viz changes.
+  useEffect(() => {
+    setNodes((prev) => prev.map((n) => ({
+      ...n,
+      data: {
+        ...(n.data || {}),
+        highlight: vizNodeSet.has(String(n.id).toLowerCase()),
+        highlightMode: viz?.mode || 'focus',
+      },
+    })))
+
+    setEdges((prev) => prev.map((e) => {
+      const highlighted = viz ? isEdgeInViz(e.source, e.target) : false
+      return {
+        ...e,
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          color: highlighted ? vizEdgeColor : baseEdgeMarkerColor,
+        },
+        style: highlighted ? { stroke: vizEdgeColor, strokeWidth: 4 } : { stroke: 'hsl(var(--border))', strokeWidth: 2 },
+      }
+    }))
+  }, [viz, vizNodeSet, isEdgeInViz, setNodes, setEdges, vizEdgeColor, baseEdgeMarkerColor])
 
   useEffect(() => {
     fetchTopology()

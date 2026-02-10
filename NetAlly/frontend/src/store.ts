@@ -13,6 +13,17 @@ export interface Evidence {
 interface AppState {
   selectedNode: string | null
   setSelectedNode: (node: string | null) => void
+
+  // Visualization overlay (rule-based hints from backend / tools)
+  viz: {
+    nodes: string[]
+    edges: Array<{ source: string; target: string }>
+    mode: 'focus' | 'path'
+    title?: string
+    callId?: number
+  } | null
+  setViz: (viz: AppState['viz']) => void
+  clearViz: () => void
   
   evidenceList: Evidence[]
   addEvidence: (evidence: Omit<Evidence, 'id' | 'timestamp'>) => void
@@ -68,6 +79,10 @@ interface AppState {
 export const useAppStore = create<AppState>((set) => ({
   selectedNode: null,
   setSelectedNode: (node) => set({ selectedNode: node }),
+
+  viz: null,
+  setViz: (viz) => set({ viz }),
+  clearViz: () => set({ viz: null }),
   
   evidenceList: [],
   addEvidence: (evidence) => set((state) => ({
