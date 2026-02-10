@@ -452,6 +452,112 @@ async def update_settings(request: SettingsRequest):
 # Chat API (SSE Streaming)
 # =============================================================================
 
+def _build_viz_from_tool_call(tool: str, args: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    """
+    Build a small visualization hint payload from a tool call.
+
+    This is intentionally rule-based and conservative: we only emit node/edge
+    IDs that we can confidently derive from tool arguments.
+    """
+    try:
+        tool = str(tool or "")
+        args = args or {}
+
+        nodes: List[str] = []
+        edges: List[Dict[str, str]] = []
+        mode: str = "focus"
+        title: Optional[str] = None
+
+        def add_node(val: Any) -> None:
+            if val is None:
+                return
+            s = str(val).strip()
+            if not s:
+                return
+            nodes.append(s)
+
+        if tool in {"batfish_traceroute", "batfish_reachability"}:
+            add_node(args.get("src"))
+            add_node(args.get("dst"))
+            title = f"{tool}: {args.get('src')} -> {args.get('dst')}"
+        elif tool in {"batfish_route_table", "nso_get_device_info", "nso_get_interfaces", "nso_get_routing", "nso_get_logs"}:
+            add_node(args.get("device"))
+            title = f"{tool}: {args.get('device')}"
+        elif tool in {"network_query"}:
+            # wrapper tool: highlight the requested device if present
+            add_node(args.get("device"))
+            title = f"{tool}: {args.get('category')}"
+        elif tool in {"network_verify"}:
+            params = args.get("params") or {}
+            add_node(params.get("src"))
+            add_node(params.get("dst"))
+            title = f"{tool}: {args.get('test_type')}"
+        elif tool in {"lab_get_status"}:
+            add_node(args.get("device"))
+            title = f"{tool}"
+
+        # Dedup while preserving order
+        seen = set()
+        nodes_out = []
+        for n in nodes:
+            key = n.lower()
+            if key in seen:
+                continue
+            seen.add(key)
+            nodes_out.append(n)
+
+        if not nodes_out and not edges:
+            return None
+
+        return {
+            "mode": mode,
+            "title": title,
+            "nodes": nodes_out,
+            "edges": edges,
+        }
+    except Exception:
+        return None
+
+
+def _build_viz_from_tool_output(tool: str, args: Dict[str, Any], payload: Any) -> Optional[Dict[str, Any]]:
+    """
+    Build visualization hint from a tool output. Best-effort JSON parsing.
+    """
+    try:
+        tool = str(tool or "")
+        args = args or {}
+
+        # Batfish traceroute returns {found, path:[node...], disposition}
+        if tool in {"batfish_traceroute"} and isinstance(payload, dict):
+            path = payload.get("path")
+            if isinstance(path, list) and all(isinstance(x, (str, int)) for x in path) and len(path) >= 2:
+                nodes = [str(x) for x in path]
+                edges = [{"source": nodes[i], "target": nodes[i + 1]} for i in range(len(nodes) - 1)]
+                return {
+                    "mode": "path",
+                    "title": f"traceroute: {args.get('src')} -> {args.get('dst')}",
+                    "nodes": nodes,
+                    "edges": edges,
+                }
+
+        # Reachability doesn't always include a path, but we can at least focus src/dst.
+        if tool in {"batfish_reachability"} and isinstance(payload, dict):
+            src = args.get("src")
+            dst = args.get("dst")
+            if src or dst:
+                nodes = [str(x) for x in (src, dst) if x]
+                return {
+                    "mode": "focus",
+                    "title": f"reachability: {src} -> {dst}",
+                    "nodes": nodes,
+                    "edges": [],
+                }
+
+        return None
+    except Exception:
+        return None
+
+
 async def chat_stream_generator(request: ChatRequest, graph):
     """SSE 스트리밍 제너레이터"""
     
@@ -470,6 +576,10 @@ async def chat_stream_generator(request: ChatRequest, graph):
     }
     
     try:
+        current_tool_name: Optional[str] = None
+        current_tool_args: Dict[str, Any] = {}
+        current_call_id: int = 0
+
         if AUTO_PREPARE_ON_CHAT:
             prep = await ensure_batfish_ready(auto_init=AUTO_INIT_BATFISH)
             if prep.get("status") in ("unavailable", "not_ready"):
@@ -503,11 +613,18 @@ async def chat_stream_generator(request: ChatRequest, graph):
                         # 도구 호출
                         if hasattr(last_msg, "tool_calls") and last_msg.tool_calls:
                             for tc in last_msg.tool_calls:
+                                current_tool_name = tc.get("name", "")
+                                current_tool_args = tc.get("args", {}) or {}
+                                current_call_id += 1
+                                viz = _build_viz_from_tool_call(current_tool_name, current_tool_args)
                                 data = {
                                     "type": "tool_call",
                                     "tool": tc.get("name", ""),
                                     "input": tc.get("args", {})
                                 }
+                                data["call_id"] = current_call_id
+                                if viz:
+                                    data["viz"] = viz
                                 yield f"event: tool_call\ndata: {json.dumps(data)}\n\n"
                         # 최종 답변
                         elif node_output.get("is_complete"):
@@ -522,10 +639,29 @@ async def chat_stream_generator(request: ChatRequest, graph):
                     messages = node_output.get("messages", [])
                     if messages:
                         last_msg = messages[-1]
+                        raw_content = last_msg.content if hasattr(last_msg, "content") else last_msg
+                        structured = None
+                        if isinstance(raw_content, str):
+                            try:
+                                structured = json.loads(raw_content)
+                            except Exception:
+                                structured = None
+                        viz = None
+                        if current_tool_name:
+                            viz = _build_viz_from_tool_output(
+                                current_tool_name,
+                                current_tool_args,
+                                structured if structured is not None else raw_content,
+                            )
                         data = {
                             "type": "tool_output",
-                            "content": str(last_msg.content) if hasattr(last_msg, "content") else str(last_msg)
+                            "content": str(raw_content),
                         }
+                        if current_tool_name:
+                            data["tool"] = current_tool_name
+                            data["call_id"] = current_call_id
+                        if viz:
+                            data["viz"] = viz
                         yield f"event: tool_output\ndata: {json.dumps(data)}\n\n"
         
         # 완료 신호

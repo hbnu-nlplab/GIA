@@ -21,6 +21,8 @@ export default function ChatPanel({ selectedNode }: ChatPanelProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   
   const addEvidence = useAppStore(state => state.addEvidence)
+  const setViz = useAppStore(state => state.setViz)
+  const clearViz = useAppStore(state => state.clearViz)
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -45,6 +47,7 @@ export default function ChatPanel({ selectedNode }: ChatPanelProps) {
     const userMessage = input.trim()
     setInput('')
     setMessages(prev => [...prev, { role: 'user', content: userMessage }])
+    clearViz() // new question => clear any previous overlay
     setIsStreaming(true)
 
     try {
@@ -59,6 +62,7 @@ export default function ChatPanel({ selectedNode }: ChatPanelProps) {
 
       if (reader) {
         let currentTool: string | null = null;
+        let currentCallId: number | null = null;
         
         while (true) {
           const { done, value } = await reader.read()
@@ -80,12 +84,15 @@ export default function ChatPanel({ selectedNode }: ChatPanelProps) {
                   }])
                 } else if (data.type === 'tool_call') {
                   currentTool = data.tool;
+                  currentCallId = typeof data.call_id === 'number' ? data.call_id : null;
+                  if (data.viz) setViz({ ...data.viz, callId: currentCallId ?? undefined })
                   setMessages(prev => [...prev, {
                     role: 'system',
                     content: `Executing ${data.tool}...`,
                     type: 'tool'
                   }])
                 } else if (data.type === 'tool_output') {
+                  if (data.viz) setViz({ ...data.viz, callId: currentCallId ?? undefined })
                   // Push to Evidence Store
                   addEvidence({
                     type: currentTool || 'general',
@@ -95,6 +102,7 @@ export default function ChatPanel({ selectedNode }: ChatPanelProps) {
                     details: data.content
                   })
                 } else if (data.type === 'answer') {
+                  if (data.viz) setViz({ ...data.viz, callId: currentCallId ?? undefined })
                   setMessages(prev => [...prev, {
                     role: 'assistant',
                     content: data.content
