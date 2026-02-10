@@ -19,9 +19,15 @@ interface DeviceNodeProps {
 }
 
 export default function DeviceNode({ data, selected }: DeviceNodeProps) {
-  const [iconFailed, setIconFailed] = useState(false)
+  const [staticFailed, setStaticFailed] = useState(false)
+  const [proxyFailed, setProxyFailed] = useState(false)
 
   const pnetlabIconUrl = useMemo(() => {
+    if (!data.icon) return null
+    return `/pnetlab-icons/${encodeURIComponent(data.icon)}`
+  }, [data.icon])
+
+  const pnetlabProxyUrl = useMemo(() => {
     if (!data.icon) return null
     // Backend will validate / sanitize icon_name.
     return `/api/pnetlab/icon/${encodeURIComponent(data.icon)}`
@@ -115,12 +121,19 @@ export default function DeviceNode({ data, selected }: DeviceNodeProps) {
           }
           transition-all
         `}>
-          {pnetlabIconUrl && !iconFailed ? (
+          {pnetlabIconUrl && !staticFailed ? (
             <img
               src={pnetlabIconUrl}
               alt={data.icon || data.label}
               className="w-6 h-6 object-contain"
-              onError={() => setIconFailed(true)}
+              onError={() => setStaticFailed(true)}
+            />
+          ) : pnetlabProxyUrl && !proxyFailed ? (
+            <img
+              src={pnetlabProxyUrl}
+              alt={data.icon || data.label}
+              className="w-6 h-6 object-contain"
+              onError={() => setProxyFailed(true)}
             />
           ) : (
             getDeviceIcon()

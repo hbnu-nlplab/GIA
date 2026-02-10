@@ -6,9 +6,15 @@ import { Handle, Position } from '@xyflow/react'
 import { Cloud } from 'lucide-react'
 
 export default function NetworkNode({ data, selected }: { data: any; selected?: boolean }) {
-  const [iconFailed, setIconFailed] = useState(false)
+  const [staticFailed, setStaticFailed] = useState(false)
+  const [proxyFailed, setProxyFailed] = useState(false)
 
   const iconUrl = useMemo(() => {
+    if (!data?.icon) return null
+    return `/pnetlab-icons/${encodeURIComponent(String(data.icon))}`
+  }, [data?.icon])
+
+  const proxyUrl = useMemo(() => {
     if (!data?.icon) return null
     return `/api/pnetlab/icon/${encodeURIComponent(String(data.icon))}`
   }, [data?.icon])
@@ -27,12 +33,19 @@ export default function NetworkNode({ data, selected }: { data: any; selected?: 
 
       <div className="flex items-center gap-2">
         <div className="w-8 h-8 rounded-lg flex items-center justify-center border bg-muted/40 border-border">
-          {iconUrl && !iconFailed ? (
+          {iconUrl && !staticFailed ? (
             <img
               src={iconUrl}
               alt={data?.label || data?.icon || 'network'}
               className="w-5 h-5 object-contain"
-              onError={() => setIconFailed(true)}
+              onError={() => setStaticFailed(true)}
+            />
+          ) : proxyUrl && !proxyFailed ? (
+            <img
+              src={proxyUrl}
+              alt={data?.label || data?.icon || 'network'}
+              className="w-5 h-5 object-contain"
+              onError={() => setProxyFailed(true)}
             />
           ) : (
             <Cloud className="w-4.5 h-4.5 text-muted-foreground" />
@@ -55,4 +68,3 @@ export default function NetworkNode({ data, selected }: { data: any; selected?: 
     </div>
   )
 }
-
