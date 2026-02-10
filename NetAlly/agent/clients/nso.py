@@ -147,6 +147,18 @@ class NSOClient:
         """경로 정규화"""
         return re.sub(r'/+', '/', path.strip('/'))
 
+    def _normalize_ned_id(self, ned_id: str) -> str:
+        """
+        NSO RESTCONF에서 ned-id(identityref) 값을 정규화합니다.
+        예) cisco-ios-cli-3.8 -> cisco-ios-cli-3.8:cisco-ios-cli-3.8
+        """
+        value = str(ned_id or "").strip()
+        if not value:
+            return value
+        if ":" in value:
+            return value
+        return f"{value}:{value}"
+
     def get_native_config(self, device: str) -> str:
         """
         RESTCONF 액션을 사용하여 장비의 Native(CLI) 설정을 가져옵니다.
@@ -257,7 +269,7 @@ class NSOClient:
         address = device_info["oob_ip"]
         port = device_info.get("port", 22)
         authgroup = device_info.get("authgroup", "default")
-        ned_id = device_info.get("ned_id", "cisco-ios-cli-6.110")
+        ned_id = self._normalize_ned_id(device_info.get("ned_id", "cisco-ios-cli-6.110"))
         protocol = device_info.get("protocol", "ssh")
         
         # 장비 등록 Payload
@@ -1038,4 +1050,3 @@ if __name__ == "__main__":
         device = devices[0]
         print(f"\nDevice info for {device}:")
         print(client.get_device_info(device))
-
