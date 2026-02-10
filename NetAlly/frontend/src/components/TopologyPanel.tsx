@@ -11,6 +11,7 @@ import {
 } from '@xyflow/react'
 import { Zap, RefreshCcw, AlertCircle, Layers, Network } from 'lucide-react'
 import DeviceNode from './DeviceNode'
+import NetworkNode from './NetworkNode'
 import { useAppStore } from '../store'
 import dagre from 'dagre'
 
@@ -24,10 +25,12 @@ interface ApiEdge {
   source: string
   target: string
   label?: string
+  style?: Record<string, any>
 }
 
 const nodeTypes: Record<string, any> = {
   device: DeviceNode,
+  network: NetworkNode,
 }
 
 const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'TB') => {
@@ -123,7 +126,7 @@ export default function TopologyPanel() {
 
       const flowNodes: Node[] = data.nodes.map((n: ApiNode & { position?: { x: number, y: number } }) => ({
         id: n.id,
-        type: 'device',
+        type: n.type === 'network' ? 'network' : 'device',
         // PNETLab 위치가 있으면 직접 사용, 없으면 (0,0)으로 시작
         position: hasPositions && n.position 
           ? { x: n.position.x, y: n.position.y }
@@ -150,7 +153,7 @@ export default function TopologyPanel() {
         },
         style: isEdgeInViz(e.source, e.target)
           ? { stroke: vizEdgeColor, strokeWidth: 4 }
-          : { stroke: 'hsl(var(--border))', strokeWidth: 2 },
+          : { stroke: 'hsl(var(--border))', strokeWidth: 2, ...(e.style || {}) },
         labelStyle: { fill: 'hsl(var(--muted-foreground))', fontSize: 10, fontWeight: 600 },
         labelBgStyle: { fill: 'hsl(var(--card))', fillOpacity: 0.8 },
         labelBgPadding: [4, 2],

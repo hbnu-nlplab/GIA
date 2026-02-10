@@ -827,6 +827,13 @@ async def get_pnetlab_topology():
     - Layer1 물리 연결 정보
     """
     try:
+        # Prefer LabFS (UNL + /opt/unetlab/tmp) when configured to avoid web auth.
+        backend = os.getenv("PNETLAB_INVENTORY_BACKEND", "api").lower().strip()
+        if backend.startswith("labfs") or os.getenv("PNETLAB_LAB_PATH") or os.getenv("PNETLAB_LAB_NAME"):
+            from agent.pnetlab_labfs import build_pnetlab_map_from_labfs
+
+            return build_pnetlab_map_from_labfs()
+
         from agent.clients.pnetlab import PnetlabClient
         
         client = PnetlabClient(
