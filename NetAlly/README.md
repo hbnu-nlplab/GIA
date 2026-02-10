@@ -230,6 +230,16 @@ PNETLAB_COOKIES=token=...; _session=...; XSRF-TOKEN=...
 PNETLAB_USERNAME=admin
 PNETLAB_PASSWORD=pnetlab
 PNETLAB_AUTO_LOGIN=false
+PNETLAB_LAB_NAME=                # (선택) labfs_* 모드에서 사용할 .unl 이름 (예: test_nso)
+PNETLAB_LAB_PATH=                # (선택) labfs_* 모드에서 사용할 .unl 경로 (예: /opt/unetlab/labs/test_nso.unl)
+PNETLAB_INVENTORY_BACKEND=api    # api | labfs_local | labfs_ssh
+# labfs_ssh 전용 (로컬 PC에서 PNETLab VM 파일을 읽을 때)
+PNETLAB_SSH_HOST=
+PNETLAB_SSH_USER=root
+PNETLAB_SSH_PORT=22
+PNETLAB_SSH_KEY_PATH=~/.ssh/netally_pnetlab
+# 필요 시에만 사용: 예) -o StrictHostKeyChecking=accept-new
+PNETLAB_SSH_OPTIONS=
 PNETLAB_DEVICE_INFO=Data/Pnetlab/Research_Institute_Internal_DC/device_info.json
 PNETLAB_DEVICE_INFO_AUTOGEN=true
 PNETLAB_VM_IP=
@@ -251,6 +261,58 @@ NETALLY_TOOL_BACKEND=mcp           # mcp | legacy
 NETALLY_MCP_SERVER_URL=http://127.0.0.1:8811/mcp
 NETALLY_MCP_ALLOW_MUTATIONS=false  # true면 변경성 도구 허용
 ```
+
+### PNETLab 토폴로지 "쿠키 없이" 가져오기 (권장)
+PNETLab 웹/API는 CAPTCHA/XSRF 때문에 쿠키 자동화가 불안정할 수 있습니다.
+NetAlly는 그 대신 PNETLab의 파일 시스템(LabFS)을 읽어서 토폴로지를 복제합니다:
+
+- `.unl` (토폴로지/노드 위치/아이콘/연결 메타)
+- `/opt/unetlab/tmp/*/*/wrapper.txt` (실행 중인 노드의 콘솔 포트 best-effort)
+
+#### A) PNETLab VM 내부에서 NetAlly 실행 (가장 간단/안정)
+- `PNETLAB_INVENTORY_BACKEND=labfs_local`
+- `PNETLAB_LAB_NAME=test_nso` 또는 `PNETLAB_LAB_PATH=/opt/unetlab/labs/test_nso.unl`
+
+#### B) 내 PC에서 NetAlly 실행 (SSH 키로 원격 LabFS 읽기)
+- `PNETLAB_INVENTORY_BACKEND=labfs_ssh`
+- `PNETLAB_SSH_HOST`, `PNETLAB_SSH_KEY_PATH` 설정
+- `PNETLAB_LAB_NAME` 또는 `PNETLAB_LAB_PATH` 설정
+
+SSH 키 기본 권장:
+- 로컬 키 권한: `chmod 600 ~/.ssh/netally_pnetlab`
+- 가능하면 passphrase 설정 + `ssh-agent` 사용(데모 중 키 노출 방지)
+- 가능하면 PNETLab에 전용 계정을 만들고(또는 `authorized_keys`에 제한 옵션 부여) 권한을 최소화
+
+보안/안정성을 위해 NetAlly는 `ssh`에 `BatchMode=yes`를 사용합니다.
+처음 연결에서 host key 확인이 필요하면, 아래 중 하나로 처리하세요:
+
+1. (권장) 한 번만 수동으로 연결해서 host key 등록: `ssh root@<PNETLAB_IP>`
+2. 자동 등록이 필요하면: `PNETLAB_SSH_OPTIONS="-o StrictHostKeyChecking=accept-new"`
+
+### PNETLab 아이콘(Topology) 고정하기 (권장)
+PNETLab 맵을 NetAlly에서 최대한 동일하게 보이게 하려면, `.unl`이 참조하는 아이콘 파일을
+NetAlly 프론트 정적 폴더에 동기화해두는 것이 가장 빠릅니다.
+
+1. (권장) SSH 키 준비 후 1회 등록
+2. 아이콘 동기화 실행
+
+```bash
+cd NetAlly
+
+# 예시: PNETLab 호스트에서 test_nso.unl이 참조하는 아이콘을 레포로 복사
+PNETLAB_INVENTORY_BACKEND=labfs_ssh \
+PNETLAB_SSH_HOST=192.168.50.60 \
+PNETLAB_SSH_USER=root \
+PNETLAB_SSH_KEY_PATH=~/.ssh/netally_pnetlab \
+PNETLAB_LAB_NAME=test_nso \
+uv run python scripts/pnetlab_sync_icons.py
+```
+
+동기화된 아이콘은 `NetAlly/frontend/public/pnetlab-icons/`에 저장되며,
+프론트는 `/pnetlab-icons/<icon_name>`을 우선 사용합니다(실패 시 `/api/pnetlab/icon/<icon_name>`로 fallback).
+
+추가 옵션:
+- 출력 폴더를 바꾸고 싶으면 `PNETLAB_ICON_OUT_DIR=/path/to/pnetlab-icons`를 지정할 수 있습니다.
 
 ### MCP-lite 호환/에러 계약
 

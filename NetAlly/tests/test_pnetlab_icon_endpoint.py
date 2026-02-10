@@ -33,5 +33,15 @@ async def test_pnetlab_icon_endpoint_serves_from_root_and_sanitizes(tmp_path: Pa
     assert ok2.status_code == 200
     assert ok2.content == b"PNGDATA"
 
+    (icon_root / "ASA 5500.png").write_bytes(b"PNGDATA2")
+    ok3 = await api_client.get("/api/pnetlab/icon/ASA 5500.png")
+    assert ok3.status_code == 200
+    assert ok3.content == b"PNGDATA2"
+
+    (icon_root / "Router (blue).png").write_bytes(b"PNGDATA3")
+    ok4 = await api_client.get("/api/pnetlab/icon/Router (blue).png")
+    assert ok4.status_code == 200
+    assert ok4.content == b"PNGDATA3"
+
     bad = await api_client.get("/api/pnetlab/icon/.hidden.png")
     assert bad.status_code == 400

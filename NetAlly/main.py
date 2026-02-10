@@ -224,7 +224,9 @@ async def health():
 # PNETLab Icon Proxy (for topology replication)
 # =============================================================================
 
-_ICON_NAME_RE = re.compile(r"^[A-Za-z0-9_.-]+$")
+# Allow a narrow set of characters seen in PNETLab icon filenames.
+# Keep this strict to prevent traversal or odd filesystem tricks.
+_ICON_NAME_RE = re.compile(r"^[A-Za-z0-9_.() -]+$")
 
 
 def _pnetlab_icon_root() -> Path:
@@ -827,12 +829,21 @@ async def get_pnetlab_topology():
     - Layer1 물리 연결 정보
     """
     try:
-        # Prefer LabFS (UNL + /opt/unetlab/tmp) when configured to avoid web auth.
-        backend = os.getenv("PNETLAB_INVENTORY_BACKEND", "api").lower().strip()
-        if backend.startswith("labfs") or os.getenv("PNETLAB_LAB_PATH") or os.getenv("PNETLAB_LAB_NAME"):
-            from agent.pnetlab_labfs import build_pnetlab_map_from_labfs
+        # Prefer LabFS (UNL + /opt/unetlab/tmp) when possible to avoid web auth (cookies/XSRF/CAPTCHA).
+        explicit_backend = os.getenv("PNETLAB_INVENTORY_BACKEND", "").strip().lower()
+        force_labfs = bool(os.getenv("PNETLAB_LAB_PATH") or os.getenv("PNETLAB_LAB_NAME"))
+        if force_labfs or explicit_backend in {"labfs_local", "labfs_ssh"} or not explicit_backend:
+            from agent.pnetlab_labfs import build_pnetlab_map_from_labfs, resolve_inventory_backend
 
-            return build_pnetlab_map_from_labfs()
+            effective = explicit_backend or resolve_inventory_backend()
+            if force_labfs or effective in {"labfs_local", "labfs_ssh"}:
+                topo = build_pnetlab_map_from_labfs()
+                # If user explicitly forced LabFS, return the error as-is.
+                if force_labfs or explicit_backend in {"labfs_local", "labfs_ssh"}:
+                    return topo
+                # Auto mode: if LabFS succeeded, use it; otherwise fall back to API.
+                if isinstance(topo, dict) and not topo.get("error"):
+                    return topo
 
         from agent.clients.pnetlab import PnetlabClient
         
@@ -847,7 +858,15 @@ async def get_pnetlab_topology():
             client._is_authenticated = True
         
         if not client._is_authenticated:
-            return {"error": "PNETLab not authenticated", "nodes": [], "edges": []}
+            return {
+                "error": (
+                    "PNETLab not authenticated. Recommended: use LabFS mode (cookie-less). "
+                    "Set PNETLAB_INVENTORY_BACKEND=labfs_local (if running inside PNETLab) "
+                    "or labfs_ssh + PNETLAB_SSH_HOST/PNETLAB_SSH_KEY_PATH, and set PNETLAB_LAB_NAME or PNETLAB_LAB_PATH."
+                ),
+                "nodes": [],
+                "edges": [],
+            }
         
         # Layer1 토폴로지 추출 (노드 위치 포함)
         l1_topo = client.get_layer1_topology()

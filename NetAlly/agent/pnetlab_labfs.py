@@ -15,6 +15,7 @@ from __future__ import annotations
 import os
 import re
 import subprocess
+import shlex
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple
@@ -191,6 +192,27 @@ def parse_wrapper_ports(tmp_root: Path) -> Dict[str, int]:
 def resolve_unetlab_root() -> Path:
     return Path(os.getenv("PNETLAB_UNETLAB_ROOT", "/opt/unetlab"))
 
+def resolve_inventory_backend() -> str:
+    """
+    Resolve the effective inventory backend with a sane default:
+    - If PNETLAB_INVENTORY_BACKEND is explicitly set, honor it.
+    - Else prefer labfs_local when /opt/unetlab/labs exists (running inside PNETLab VM/container).
+    - Else prefer labfs_ssh when PNETLAB_SSH_HOST is set.
+    - Else fall back to api.
+    """
+    raw = os.getenv("PNETLAB_INVENTORY_BACKEND", "").strip().lower()
+    if raw:
+        return raw
+
+    unetlab_root = resolve_unetlab_root()
+    if (unetlab_root / "labs").exists():
+        return "labfs_local"
+
+    if os.getenv("PNETLAB_SSH_HOST", "").strip():
+        return "labfs_ssh"
+
+    return "api"
+
 
 def sh_quote(value: str) -> str:
     # minimal POSIX shell quoting
@@ -274,17 +296,17 @@ class _SshReader(_Reader):
             "-i",
             key,
             "-o",
-            "StrictHostKeyChecking=no",
-            "-o",
-            "UserKnownHostsFile=/dev/null",
+            "BatchMode=yes",
         ]
         if extra_opts:
-            self._base += extra_opts.split()
+            # Allow users to opt into accept-new etc. safely.
+            self._base += shlex.split(extra_opts)
         self._target = f"{user}@{host}"
 
     def _run(self, cmd: str) -> str:
         res = subprocess.run(
-            [*self._base, self._target, "--", "bash", "-lc", cmd],
+            # Avoid login shells: some PNETLab images print banners to stdout on -l.
+            [*self._base, self._target, "--", "sh", "-c", cmd],
             capture_output=True,
             text=True,
         )
@@ -408,10 +430,16 @@ def build_pnetlab_map_from_labfs() -> Dict[str, Any]:
       { nodes: [...], edges: [...] }
     Includes networks as nodes when visible or when network has >2 endpoints.
     """
-    backend = os.getenv("PNETLAB_INVENTORY_BACKEND", "api").lower().strip()
+    backend = resolve_inventory_backend()
     reader: _Reader = _LocalReader()
     if backend == "labfs_ssh":
         reader = _SshReader()
+    elif backend not in {"labfs_local", "labfs_ssh"}:
+        return {
+            "error": "LabFS backend not selected (set PNETLAB_INVENTORY_BACKEND=labfs_local|labfs_ssh)",
+            "nodes": [],
+            "edges": [],
+        }
 
     unetlab_root = str(resolve_unetlab_root())
     unl_path = resolve_unl_path_reader(reader, unetlab_root)
