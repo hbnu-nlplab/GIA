@@ -1,6 +1,7 @@
 /**
  * DeviceNode - Network equipment icons with lucide-react
  */
+import { useMemo, useState } from 'react'
 import { Handle, Position } from '@xyflow/react'
 import { Router, Network, Server, Wifi, HardDrive, Laptop } from 'lucide-react'
 
@@ -10,6 +11,7 @@ interface DeviceNodeProps {
     type: string
     platform?: string
     mgmt_ip?: string
+    icon?: string
     highlight?: boolean
     highlightMode?: 'focus' | 'path'
   }
@@ -17,6 +19,14 @@ interface DeviceNodeProps {
 }
 
 export default function DeviceNode({ data, selected }: DeviceNodeProps) {
+  const [iconFailed, setIconFailed] = useState(false)
+
+  const pnetlabIconUrl = useMemo(() => {
+    if (!data.icon) return null
+    // Backend will validate / sanitize icon_name.
+    return `/api/pnetlab/icon/${encodeURIComponent(data.icon)}`
+  }, [data.icon])
+
   const getDeviceIcon = () => {
     const name = data.label.toLowerCase()
     const platform = data.platform?.toLowerCase() || ''
@@ -105,7 +115,16 @@ export default function DeviceNode({ data, selected }: DeviceNodeProps) {
           }
           transition-all
         `}>
-          {getDeviceIcon()}
+          {pnetlabIconUrl && !iconFailed ? (
+            <img
+              src={pnetlabIconUrl}
+              alt={data.icon || data.label}
+              className="w-6 h-6 object-contain"
+              onError={() => setIconFailed(true)}
+            />
+          ) : (
+            getDeviceIcon()
+          )}
         </div>
         
         <div className="flex flex-col">

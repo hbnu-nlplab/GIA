@@ -566,6 +566,7 @@ class PnetlabClient:
                             "name": node_info.get("name", f"node_{node_id}"),
                             "type": node_info.get("type", "unknown"),
                             "template": node_info.get("template", ""),
+                            "icon": node_info.get("icon", ""),
                             "status": node_info.get("status", "unknown"),
                             "console": node_info.get("console", ""),
                             "url": url,
@@ -697,6 +698,7 @@ class PnetlabClient:
             "top": n.get("top", 0),
             "type": n.get("type", "unknown"),
             "template": n.get("template", ""),
+            "icon": n.get("icon", ""),
             "status": n.get("status", "unknown")
         } for n in nodes]
         

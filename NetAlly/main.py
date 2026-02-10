@@ -10,11 +10,13 @@ import json
 import asyncio
 from typing import List, Optional, Any, Dict
 from contextlib import asynccontextmanager
+from pathlib import Path
+import re
 
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import StreamingResponse, JSONResponse
+from fastapi.responses import StreamingResponse, JSONResponse, FileResponse
 from pydantic import BaseModel, Field, field_validator
 from dotenv import load_dotenv
 import logging
@@ -217,6 +219,86 @@ async def health():
         "tool_backend": get_tool_backend(),
         "mcp_health": getattr(app.state, "mcp_health", {"ok": False}),
     }
+
+# =============================================================================
+# PNETLab Icon Proxy (for topology replication)
+# =============================================================================
+
+_ICON_NAME_RE = re.compile(r"^[A-Za-z0-9_.-]+$")
+
+
+def _pnetlab_icon_root() -> Path:
+    # When running inside PNETLab (recommended), mount /opt/unetlab read-only.
+    return Path(os.getenv("PNETLAB_ICON_ROOT", "/opt/unetlab/html/images/icons"))
+
+
+def _pnetlab_icon_cache_dir() -> Path:
+    # Keep a small on-disk cache so UI stays snappy even if icon_root is remote mount.
+    base = os.getenv("NETALLY_CACHE_DIR")
+    if base:
+        return Path(base).expanduser().resolve() / "pnetlab_icons"
+    return Path(__file__).resolve().parent / ".tmp" / "pnetlab_icons"
+
+
+def _resolve_icon_path(icon_name: str) -> Optional[Path]:
+    """
+    Resolve an icon file by name, with a case-insensitive fallback.
+    Returns a Path under icon_root when found.
+    """
+    icon_root = _pnetlab_icon_root()
+    if not icon_root.exists():
+        return None
+
+    direct = icon_root / icon_name
+    if direct.exists() and direct.is_file():
+        return direct
+
+    # Case-insensitive fallback (PNETLab paths can vary by case).
+    target_lower = icon_name.lower()
+    try:
+        for p in icon_root.iterdir():
+            if p.is_file() and p.name.lower() == target_lower:
+                return p
+    except Exception:
+        return None
+    return None
+
+
+@app.get("/api/pnetlab/icon/{icon_name}")
+async def get_pnetlab_icon(icon_name: str):
+    """
+    Serve PNETLab icon images by filename.
+
+    This endpoint intentionally does not accept paths (to prevent traversal).
+    """
+    if (
+        not icon_name
+        or icon_name in {".", ".."}
+        or icon_name.startswith(".")
+        or "/" in icon_name
+        or "\\" in icon_name
+        or not _ICON_NAME_RE.match(icon_name)
+    ):
+        raise HTTPException(status_code=400, detail="Invalid icon_name")
+
+    cache_dir = _pnetlab_icon_cache_dir()
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    cached = cache_dir / icon_name
+    if cached.exists() and cached.is_file():
+        return FileResponse(str(cached), media_type="image/png")
+
+    src = _resolve_icon_path(icon_name)
+    if src is None:
+        raise HTTPException(status_code=404, detail="Icon not found")
+
+    # Copy to cache under requested name to keep the URL stable.
+    try:
+        cached.write_bytes(src.read_bytes())
+    except Exception:
+        # If caching fails, serve directly.
+        return FileResponse(str(src), media_type="image/png")
+
+    return FileResponse(str(cached), media_type="image/png")
 
 
 @app.post("/api/lab/refresh")
@@ -772,7 +854,8 @@ async def get_pnetlab_topology():
                 "data": {
                     "label": n["hostname"],
                     "type": n.get("template", "router"),
-                    "status": n.get("status", "unknown")
+                    "status": n.get("status", "unknown"),
+                    "icon": n.get("icon") or "",
                 },
                 "position": {
                     "x": int(n.get("left", 0)),
