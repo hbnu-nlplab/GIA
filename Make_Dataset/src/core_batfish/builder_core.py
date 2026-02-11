@@ -1719,7 +1719,27 @@ class BuilderCore:
                 for l_src, l_dst in sorted(list(links)):
                     # 테스트 트래픽: 임의의 두 장비 (장애 링크와 무관할 수도 있음)
                     # CE 장비 우선 선택 (실제 트래픽 흐름 모사)
-                    ce_hosts = [h for h in hosts if "ce" in h.lower()]
+                    # Edge 노드 우선 선택: eBGP neighbor가 있는 노드 = Provider Edge와 연결된 CE
+                    # Fallback: 이름 기반 ('ce' in name)
+                    ce_hosts = []
+                    for h in hosts:
+                        d = self.host_index.get(h, {})
+                        bgp = (d.get("routing") or {}).get("bgp") or {}
+                        neighbors = bgp.get("neighbors") or []
+                        local_as = bgp.get("local_as")
+                        # eBGP neighbor가 있으면 edge 노드
+                        has_ebgp = any(
+                            n.get("remote_as") and str(n.get("remote_as")) != str(local_as)
+                            for n in neighbors
+                        )
+                        if has_ebgp and not any(
+                            str(n.get("remote_as")) == str(local_as)
+                            for n in neighbors
+                        ):
+                            ce_hosts.append(h)
+                    if not ce_hosts:
+                        # Fallback: 이름 기반
+                        ce_hosts = [h for h in hosts if "ce" in h.lower()]
                     candidates = ce_hosts if len(ce_hosts) >= 2 else hosts
                     if len(candidates) >= 2:
                         fs, fd = rng.sample(candidates, 2)

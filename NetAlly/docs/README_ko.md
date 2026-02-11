@@ -42,6 +42,7 @@
 
 1. `docs/backend_api.md`
 2. `docs/agent_flow.md`
+3. `docs/team_multi_adapter.md`
 
 ---
 
@@ -56,6 +57,7 @@
 - `MCP`: 모델이 도구를 호출하는 표준 인터페이스 계층입니다.
 - `SSE`: 서버가 이벤트를 실시간으로 흘려주는 스트리밍 방식입니다. (`/api/chat`)
 - `OOB`: Out-Of-Band 관리망. 서비스 트래픽과 분리된 관리용 네트워크입니다.
+- `Agent Backend`: 채팅 실행 경로 선택값입니다. (`single_executor`, `team_multi_adapter`, `legacy_graph`)
 
 ---
 
@@ -109,6 +111,12 @@ npm run test:e2e
 cd NetAlly
 ./scripts/demo_precheck.sh
 ```
+
+### 런타임 기본값
+
+- `NETALLY_AGENT_BACKEND=single_executor`
+- `NETALLY_TOOL_BACKEND=mcp`
+- `NETALLY_MCP_ALLOW_MUTATIONS=false`
 
 ---
 

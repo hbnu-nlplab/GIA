@@ -42,7 +42,8 @@ NetAlly는 이 문제를 아래 방식으로 줄입니다.
 
 - `frontend/`: 사용자 화면, SSE 수신/렌더링
 - `main.py`: FastAPI 엔드포인트, 런타임 설정 API, 채팅 스트림 입구
-- `agent/graph.py`: 에이전트 흐름(계획/실행 루프)
+- `agent/runtime.py`: 에이전트 런타임 선택(`single_executor`, `team_multi_adapter`, `legacy_graph`)
+- `agent/team_multi_bridge.py`: 외부 MultiAgent 그래프 호출 브리지(입출력 매핑)
 - `agent/mcp_server.py`: MCP 도구 카탈로그(코어 16 + 호환 6)
 - `agent/clients/nso.py`: NSO RESTCONF 연동
 - `agent/clients/batfish.py`: Batfish 연동/스냅샷 처리
@@ -97,6 +98,11 @@ cd frontend && npm ci && cd ..
 - Frontend: `http://127.0.0.1:3000`
 
 이 스크립트는 시작 후 자동으로 `demo_precheck`를 수행합니다.
+
+기본 런타임:
+- `NETALLY_AGENT_BACKEND=single_executor`
+- `NETALLY_TOOL_BACKEND=mcp`
+- `NETALLY_MCP_ALLOW_MUTATIONS=false` (read-only 기본)
 
 ### 2.4 5분 확인 시나리오
 
@@ -258,6 +264,8 @@ cd NetAlly
 NetAlly/
 ├── main.py
 ├── agent/
+│   ├── runtime.py
+│   ├── team_multi_bridge.py
 │   ├── graph.py
 │   ├── mcp_server.py
 │   ├── mcp_client.py
@@ -279,6 +287,7 @@ NetAlly/
 - `docs/backend_api.md`: API 명세
 - `docs/web_architecture_beginner_ko.md`: 비웹 개발자용 구조 설명
 - `docs/agent_flow.md`: 에이전트 이벤트/흐름
+- `docs/team_multi_adapter.md`: Team Multi Adapter 설정/입출력 매핑
 - `docs/setup_guide.md`: 설치 요약(영문)
 
 ---

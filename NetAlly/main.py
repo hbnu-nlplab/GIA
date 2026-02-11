@@ -72,6 +72,30 @@ class SettingsRequest(BaseModel):
     pnetlab_url: Optional[str] = Field(default=None, description="PNETLab URL")
     batfish_host: Optional[str] = Field(default=None, description="Batfish 호스트")
     tool_backend: Optional[str] = Field(default=None, description="Tool backend: mcp | legacy")
+    agent_backend: Optional[str] = Field(
+        default=None,
+        description="Agent backend: single_executor | team_multi_adapter | legacy_graph",
+    )
+    executor_system_prompt: Optional[str] = Field(
+        default=None,
+        description="Prompt override for single_executor runtime",
+    )
+    team_multi_module: Optional[str] = Field(
+        default=None,
+        description="Python module for team multi-agent adapter (e.g. agents.main_netconfig)",
+    )
+    team_multi_dataset_type: Optional[str] = Field(
+        default=None,
+        description="Dataset type for team multi-agent adapter",
+    )
+    team_multi_root: Optional[str] = Field(
+        default=None,
+        description="Filesystem root path of external MultiAgent project",
+    )
+    team_multi_context_path: Optional[str] = Field(
+        default=None,
+        description="Optional context file path passed to team multi-agent adapter",
+    )
     mcp_server_url: Optional[str] = Field(default=None, description="MCP server URL")
     mcp_allow_mutations: Optional[bool] = Field(default=None, description="Allow mutating MCP tools")
 
@@ -83,6 +107,33 @@ class SettingsRequest(BaseModel):
         normalized = value.strip().lower()
         if normalized not in {"mcp", "legacy"}:
             raise ValueError("tool_backend must be one of: mcp, legacy")
+        return normalized
+
+    @field_validator("agent_backend")
+    @classmethod
+    def validate_agent_backend(cls, value: Optional[str]) -> Optional[str]:
+        if value is None:
+            return value
+        normalized = value.strip().lower()
+        if normalized not in {"single_executor", "team_multi_adapter", "legacy_graph"}:
+            raise ValueError(
+                "agent_backend must be one of: single_executor, team_multi_adapter, legacy_graph"
+            )
+        return normalized
+
+    @field_validator("team_multi_dataset_type")
+    @classmethod
+    def validate_team_multi_dataset_type(cls, value: Optional[str]) -> Optional[str]:
+        if value is None:
+            return value
+        normalized = value.strip().lower()
+        if not normalized:
+            return None
+        allowed = {"netconfig", "descriptive", "multiple_choice", "short_answer"}
+        if normalized not in allowed:
+            raise ValueError(
+                "team_multi_dataset_type must be one of: netconfig, descriptive, multiple_choice, short_answer"
+            )
         return normalized
 
 
@@ -117,12 +168,19 @@ async def lifespan(app: FastAPI):
     print("[NetAlly] Starting up...")
 
     app.state.tool_backend = os.getenv("NETALLY_TOOL_BACKEND", TOOL_BACKEND_DEFAULT).lower()
+    app.state.agent_backend = os.getenv("NETALLY_AGENT_BACKEND", AGENT_BACKEND_DEFAULT).lower()
     app.state.mcp_health = {"ok": False, "tool_count": 0}
-    # Agent graph is intentionally lazy-loaded so the app can boot without LLM creds
+    # Agent runtime is intentionally lazy-loaded so the app can boot without LLM creds
     # (topology / settings / PNETLab LabFS features should still work).
+    app.state.runtime = None
+    app.state.runtime_load_error = None
+    app.state.bound_tool_count = 0
+    app.state._runtime_lock = asyncio.Lock()
+    app.state.batfish_client = None
+    # Backward compatibility fields
     app.state.graph = None
     app.state.graph_load_error = None
-    app.state._graph_lock = asyncio.Lock()
+    app.state._graph_lock = app.state._runtime_lock
     if app.state.tool_backend == "mcp":
         try:
             from agent.mcp_server import start_embedded_mcp_server
@@ -136,7 +194,7 @@ async def lifespan(app: FastAPI):
         except Exception as e:
             logger.error(f"MCP runtime startup failed: {e}")
 
-    print("[NetAlly] Startup complete (agent graph lazy-loaded).")
+    print("[NetAlly] Startup complete (agent runtime lazy-loaded).")
     
     yield
     
@@ -170,6 +228,7 @@ BATFISH_SNAPSHOT = (
 AUTO_PREPARE_ON_CHAT = os.getenv("AUTO_PREPARE_ON_CHAT", "false").lower() == "true"
 AUTO_INIT_BATFISH = os.getenv("AUTO_INIT_BATFISH", "false").lower() == "true"
 TOOL_BACKEND_DEFAULT = os.getenv("NETALLY_TOOL_BACKEND", "mcp").lower()
+AGENT_BACKEND_DEFAULT = os.getenv("NETALLY_AGENT_BACKEND", "single_executor").lower()
 MCP_SERVER_URL_DEFAULT = os.getenv("NETALLY_MCP_SERVER_URL", "http://127.0.0.1:8811/mcp")
 
 # CORS 설정 (개발용)
@@ -194,6 +253,35 @@ def get_tool_backend() -> str:
     return os.getenv("NETALLY_TOOL_BACKEND", TOOL_BACKEND_DEFAULT).lower()
 
 
+def get_agent_backend() -> str:
+    return os.getenv("NETALLY_AGENT_BACKEND", AGENT_BACKEND_DEFAULT).lower()
+
+
+def get_executor_prompt_override() -> Optional[str]:
+    raw = os.getenv("NETALLY_EXECUTOR_SYSTEM_PROMPT")
+    if raw is None:
+        return None
+    val = raw.strip()
+    return val or None
+
+
+def _invalidate_runtime() -> None:
+    app.state.runtime = None
+    app.state.runtime_load_error = None
+    app.state.bound_tool_count = 0
+
+
+def _get_batfish_client():
+    from agent.clients.batfish import BatfishClient
+
+    desired_host = os.getenv("BATFISH_HOST", "localhost")
+    current = getattr(app.state, "batfish_client", None)
+    if current is None or getattr(current, "host", None) != desired_host:
+        current = BatfishClient(host=desired_host)
+        app.state.batfish_client = current
+    return current
+
+
 async def call_mcp_tool(tool_name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
     from agent.mcp_client import get_mcp_client
 
@@ -214,13 +302,20 @@ async def call_mcp_tool(tool_name: str, arguments: Dict[str, Any]) -> Dict[str, 
 @app.get("/api/health")
 async def health():
     """헬스 체크"""
+    runtime_loaded = bool(getattr(app.state, "runtime", None))
+    runtime_error = getattr(app.state, "runtime_load_error", None)
     return {
         "status": "ok",
         "service": "netally",
         "tool_backend": get_tool_backend(),
+        "agent_backend": get_agent_backend(),
         "mcp_health": getattr(app.state, "mcp_health", {"ok": False}),
-        "agent_graph_loaded": bool(getattr(app.state, "graph", None)),
-        "agent_graph_error": getattr(app.state, "graph_load_error", None),
+        "agent_runtime_loaded": runtime_loaded,
+        "agent_runtime_error": runtime_error,
+        "bound_tool_count": int(getattr(app.state, "bound_tool_count", 0) or 0),
+        # backward compatible aliases
+        "agent_graph_loaded": runtime_loaded,
+        "agent_graph_error": runtime_error,
     }
 
 # =============================================================================
@@ -338,9 +433,7 @@ async def lab_refresh(request: LabRefreshRequest):
 
 
 async def ensure_batfish_ready(auto_init: bool) -> Dict[str, Any]:
-    from agent.clients.batfish import BatfishClient
-
-    batfish = BatfishClient(host=os.getenv("BATFISH_HOST", "localhost"))
+    batfish = _get_batfish_client()
     if not batfish.is_available:
         return {"status": "unavailable"}
 
@@ -448,8 +541,16 @@ async def get_settings():
         "pnetlab_url": os.getenv("PNETLAB_URL"),
         "batfish_host": os.getenv("BATFISH_HOST", "batfish"),
         "tool_backend": os.getenv("NETALLY_TOOL_BACKEND", TOOL_BACKEND_DEFAULT),
+        "agent_backend": os.getenv("NETALLY_AGENT_BACKEND", AGENT_BACKEND_DEFAULT),
+        "agent_prompt_mode": "prompt_only",
+        "executor_system_prompt": os.getenv("NETALLY_EXECUTOR_SYSTEM_PROMPT"),
+        "team_multi_module": os.getenv("NETALLY_TEAM_MULTI_MODULE", "agents.main_netconfig"),
+        "team_multi_dataset_type": os.getenv("NETALLY_TEAM_MULTI_DATASET_TYPE", "netconfig"),
+        "team_multi_root": os.getenv("NETALLY_TEAM_MULTI_ROOT"),
+        "team_multi_context_path": os.getenv("NETALLY_TEAM_MULTI_CONTEXT_PATH"),
         "mcp_server_url": os.getenv("NETALLY_MCP_SERVER_URL", MCP_SERVER_URL_DEFAULT),
         "mcp_allow_mutations": os.getenv("NETALLY_MCP_ALLOW_MUTATIONS", "false").lower() == "true",
+        "bound_tool_count": int(getattr(app.state, "bound_tool_count", 0) or 0),
     }
 
 
@@ -470,10 +571,8 @@ async def update_settings(request: SettingsRequest):
         
         if request.openai_api_key:
             os.environ["OPENAI_API_KEY"] = request.openai_api_key
-            # Force graph reload on next /api/chat so new credentials take effect.
-            app.state.graph = None
-            app.state.graph_load_error = None
             updated.append("openai_api_key")
+            _invalidate_runtime()
         
         if request.nso_base_url:
             os.environ["NSO_BASE_URL"] = request.nso_base_url
@@ -498,12 +597,58 @@ async def update_settings(request: SettingsRequest):
         if request.batfish_host:
             os.environ["BATFISH_HOST"] = request.batfish_host
             reset_batfish_client()
+            app.state.batfish_client = None
             updated.append("batfish_host")
 
         if request.tool_backend:
             os.environ["NETALLY_TOOL_BACKEND"] = request.tool_backend
             app.state.tool_backend = request.tool_backend
             updated.append("tool_backend")
+
+        if request.agent_backend:
+            os.environ["NETALLY_AGENT_BACKEND"] = request.agent_backend
+            app.state.agent_backend = request.agent_backend
+            updated.append("agent_backend")
+
+        if request.executor_system_prompt is not None:
+            prompt_val = request.executor_system_prompt.strip()
+            if prompt_val:
+                os.environ["NETALLY_EXECUTOR_SYSTEM_PROMPT"] = prompt_val
+            else:
+                os.environ.pop("NETALLY_EXECUTOR_SYSTEM_PROMPT", None)
+            updated.append("executor_system_prompt")
+
+        if request.team_multi_module is not None:
+            module_val = request.team_multi_module.strip()
+            if module_val:
+                os.environ["NETALLY_TEAM_MULTI_MODULE"] = module_val
+            else:
+                os.environ.pop("NETALLY_TEAM_MULTI_MODULE", None)
+            updated.append("team_multi_module")
+
+        if request.team_multi_dataset_type is not None:
+            dataset_val = request.team_multi_dataset_type.strip()
+            if dataset_val:
+                os.environ["NETALLY_TEAM_MULTI_DATASET_TYPE"] = dataset_val
+            else:
+                os.environ.pop("NETALLY_TEAM_MULTI_DATASET_TYPE", None)
+            updated.append("team_multi_dataset_type")
+
+        if request.team_multi_root is not None:
+            root_val = request.team_multi_root.strip()
+            if root_val:
+                os.environ["NETALLY_TEAM_MULTI_ROOT"] = root_val
+            else:
+                os.environ.pop("NETALLY_TEAM_MULTI_ROOT", None)
+            updated.append("team_multi_root")
+
+        if request.team_multi_context_path is not None:
+            path_val = request.team_multi_context_path.strip()
+            if path_val:
+                os.environ["NETALLY_TEAM_MULTI_CONTEXT_PATH"] = path_val
+            else:
+                os.environ.pop("NETALLY_TEAM_MULTI_CONTEXT_PATH", None)
+            updated.append("team_multi_context_path")
 
         if request.mcp_server_url:
             os.environ["NETALLY_MCP_SERVER_URL"] = request.mcp_server_url
@@ -529,6 +674,19 @@ async def update_settings(request: SettingsRequest):
                     app.state.mcp_health = {"ok": False, "tool_count": 0}
             except Exception as restart_err:
                 logger.warning(f"MCP runtime restart warning: {restart_err}")
+
+        runtime_sensitive = {
+            "openai_api_key",
+            "tool_backend",
+            "agent_backend",
+            "executor_system_prompt",
+            "team_multi_module",
+            "team_multi_dataset_type",
+            "team_multi_root",
+            "team_multi_context_path",
+        }
+        if runtime_sensitive.intersection(updated):
+            _invalidate_runtime()
         
         logger.info(f"Settings updated: {updated}")
         return {"status": "updated", "updated_fields": updated}
@@ -648,23 +806,8 @@ def _build_viz_from_tool_output(tool: str, args: Dict[str, Any], payload: Any) -
         return None
 
 
-async def chat_stream_generator(request: ChatRequest, graph):
+async def chat_stream_generator(request: ChatRequest, runtime):
     """SSE 스트리밍 제너레이터"""
-    
-    # 초기 상태 구성
-    initial_state = {
-        "question": request.message,
-        "answer_type": request.answer_type,
-        "selected_skills": [],
-        "reasoning": "",
-        "enabled_tools": [],
-        "skill_prompt": "",
-        "messages": [],
-        "final_answer": "",
-        "step_count": 0,
-        "is_complete": False,
-    }
-    
     try:
         current_tool_name: Optional[str] = None
         current_tool_args: Dict[str, Any] = {}
@@ -681,110 +824,104 @@ async def chat_stream_generator(request: ChatRequest, graph):
                 yield f"event: answer\ndata: {json.dumps(data)}\n\n"
                 yield f"event: complete\ndata: {json.dumps({'type': 'complete'})}\n\n"
                 return
-        # 스트리밍 실행
-        async for event in graph.astream(initial_state, stream_mode="updates"):
-            for node_name, node_output in event.items():
-                
-                # Orchestrator 결과
-                if node_name == "orchestrator":
-                    data = {
-                        "type": "planning",
-                        "skills": node_output.get("selected_skills", []),
-                        "reasoning": node_output.get("reasoning", ""),
-                        "tool_backend": get_tool_backend(),
-                    }
-                    yield f"event: planning\ndata: {json.dumps(data)}\n\n"
-                
-                # Executor 결과
-                elif node_name == "executor":
-                    messages = node_output.get("messages", [])
-                    if messages:
-                        last_msg = messages[-1]
-                        # 도구 호출
-                        if hasattr(last_msg, "tool_calls") and last_msg.tool_calls:
-                            for tc in last_msg.tool_calls:
-                                current_tool_name = tc.get("name", "")
-                                current_tool_args = tc.get("args", {}) or {}
-                                current_call_id += 1
-                                viz = _build_viz_from_tool_call(current_tool_name, current_tool_args)
-                                data = {
-                                    "type": "tool_call",
-                                    "tool": tc.get("name", ""),
-                                    "input": tc.get("args", {})
-                                }
-                                data["call_id"] = current_call_id
-                                if viz:
-                                    data["viz"] = viz
-                                yield f"event: tool_call\ndata: {json.dumps(data)}\n\n"
-                        # 최종 답변
-                        elif node_output.get("is_complete"):
-                            data = {
-                                "type": "answer",
-                                "content": node_output.get("final_answer", "")
-                            }
-                            yield f"event: answer\ndata: {json.dumps(data)}\n\n"
-                
-                # 도구 실행 결과
-                elif node_name == "tools":
-                    messages = node_output.get("messages", [])
-                    if messages:
-                        last_msg = messages[-1]
-                        raw_content = last_msg.content if hasattr(last_msg, "content") else last_msg
-                        structured = None
-                        if isinstance(raw_content, str):
-                            try:
-                                structured = json.loads(raw_content)
-                            except Exception:
-                                structured = None
-                        viz = None
-                        if current_tool_name:
-                            viz = _build_viz_from_tool_output(
-                                current_tool_name,
-                                current_tool_args,
-                                structured if structured is not None else raw_content,
-                            )
-                        data = {
-                            "type": "tool_output",
-                            "content": str(raw_content),
-                        }
-                        if current_tool_name:
-                            data["tool"] = current_tool_name
-                            data["call_id"] = current_call_id
-                        if viz:
-                            data["viz"] = viz
-                        yield f"event: tool_output\ndata: {json.dumps(data)}\n\n"
-        
-        # 완료 신호
+
+        runtime_payload = {
+            "message": request.message,
+            "history": [m.model_dump() for m in request.history],
+            "answer_type": request.answer_type,
+        }
+        async for data in runtime.astream(runtime_payload):
+            data = dict(data or {})
+            event_type = str(data.get("type", "message"))
+
+            if event_type == "planning":
+                data.setdefault("skills", [])
+                data.setdefault("mode", "prompt_only")
+                data.setdefault("tool_backend", get_tool_backend())
+                data.setdefault("agent_backend", get_agent_backend())
+                data.setdefault("bound_tool_count", int(getattr(app.state, "bound_tool_count", 0) or 0))
+
+            if event_type == "tool_call":
+                current_tool_name = str(data.get("tool", "") or "")
+                current_tool_args = data.get("input", {}) or {}
+                call_id = data.get("call_id")
+                if isinstance(call_id, int):
+                    current_call_id = call_id
+                else:
+                    current_call_id += 1
+                    data["call_id"] = current_call_id
+                viz = _build_viz_from_tool_call(current_tool_name, current_tool_args)
+                if viz:
+                    data["viz"] = viz
+
+            if event_type == "tool_output":
+                raw_content = data.get("content", "")
+                if not isinstance(raw_content, str):
+                    raw_content = str(raw_content)
+                    data["content"] = raw_content
+                tool_name = str(data.get("tool", current_tool_name) or "")
+                args = data.get("input", current_tool_args) or {}
+                structured = None
+                try:
+                    structured = json.loads(raw_content)
+                except Exception:
+                    structured = None
+                viz = _build_viz_from_tool_output(
+                    tool_name,
+                    args,
+                    structured if structured is not None else raw_content,
+                )
+                if viz:
+                    data["viz"] = viz
+
+            yield f"event: {event_type}\ndata: {json.dumps(data)}\n\n"
+
         yield f"event: complete\ndata: {json.dumps({'type': 'complete'})}\n\n"
-        
+
     except Exception as e:
         error_data = {"type": "error", "message": str(e)}
         yield f"event: error\ndata: {json.dumps(error_data)}\n\n"
+        yield f"event: complete\ndata: {json.dumps({'type': 'complete'})}\n\n"
 
 
 @app.post("/api/chat")
 async def chat(request: ChatRequest):
     """SSE 스트리밍 채팅 엔드포인트"""
-    async def _ensure_graph_loaded():
-        # App should boot even without LLM creds; load graph on-demand for chat.
-        if getattr(app.state, "graph", None) is not None:
-            return app.state.graph
+    async def _ensure_runtime_loaded():
+        if getattr(app.state, "runtime", None) is not None:
+            return app.state.runtime
 
-        lock = getattr(app.state, "_graph_lock", None)
+        lock = getattr(app.state, "_runtime_lock", None)
         if lock is None:
-            app.state._graph_lock = asyncio.Lock()
-            lock = app.state._graph_lock
+            app.state._runtime_lock = asyncio.Lock()
+            lock = app.state._runtime_lock
 
         async with lock:
-            if getattr(app.state, "graph", None) is not None:
-                return app.state.graph
+            if getattr(app.state, "runtime", None) is not None:
+                return app.state.runtime
             try:
-                from agent.graph import graph as loaded_graph
-                app.state.graph = loaded_graph
+                from agent.runtime import create_runtime
+
+                runtime = create_runtime(
+                    agent_backend=get_agent_backend(),
+                    tool_backend=get_tool_backend(),
+                    prompt_override=get_executor_prompt_override(),
+                )
+                app.state.runtime = runtime
+                app.state.runtime_load_error = None
+                app.state.bound_tool_count = int(getattr(runtime, "bound_tool_count", 0) or 0)
+                # backward compatible aliases
+                app.state.graph = runtime
                 app.state.graph_load_error = None
-                logger.info("[NetAlly] Agent graph loaded (lazy).")
-                return loaded_graph
+                logger.info(
+                    "[NetAlly] Agent runtime loaded: backend=%s tools=%s",
+                    get_agent_backend(),
+                    app.state.bound_tool_count,
+                )
+                return runtime
             except Exception as e:
+                app.state.runtime = None
+                app.state.runtime_load_error = str(e)
                 app.state.graph = None
                 app.state.graph_load_error = str(e)
                 raise
@@ -796,7 +933,7 @@ async def chat(request: ChatRequest):
     }
 
     try:
-        graph = await _ensure_graph_loaded()
+        runtime = await _ensure_runtime_loaded()
     except Exception as e:
         raw = str(e)
         if "OPENAI_API_KEY" in raw or "api_key" in raw:
@@ -806,8 +943,8 @@ async def chat(request: ChatRequest):
             )
             code = "LLM_NOT_CONFIGURED"
         else:
-            message = f"Agent graph 로딩 실패: {raw}"
-            code = "GRAPH_LOAD_FAILED"
+            message = f"Agent runtime 로딩 실패: {raw}"
+            code = "RUNTIME_LOAD_FAILED"
 
         async def error_stream():
             yield f"event: error\ndata: {json.dumps({'type': 'error', 'code': code, 'message': message})}\n\n"
@@ -815,7 +952,7 @@ async def chat(request: ChatRequest):
 
         return StreamingResponse(error_stream(), media_type="text/event-stream", headers=headers)
 
-    return StreamingResponse(chat_stream_generator(request, graph), media_type="text/event-stream", headers=headers)
+    return StreamingResponse(chat_stream_generator(request, runtime), media_type="text/event-stream", headers=headers)
 
 
 # =============================================================================
@@ -829,8 +966,7 @@ async def get_topology(layer: str = "l1"):
     layer: "l1" (Physical/L1) 또는 "l3" (Logical/L3)
     """
     try:
-        from agent.clients.batfish import BatfishClient
-        batfish = BatfishClient(host=os.getenv("BATFISH_HOST", "localhost"))
+        batfish = _get_batfish_client()
         
         if batfish.is_available:
             if not batfish._builder:
@@ -849,14 +985,15 @@ async def get_topology(layer: str = "l1"):
         
         devices = nso.get_devices()
         nodes = []
-        for idx, dev in enumerate(devices):
+        for idx, dev_name in enumerate(devices):
+            device_info = nso.get_device_info(dev_name) if dev_name else {}
             nodes.append(TopologyNode(
-                id=dev.get("name", f"device-{idx}"),
+                id=dev_name or f"device-{idx}",
                 type="router",  # 기본값
                 data={
-                    "mgmt_ip": dev.get("address"),
-                    "platform": dev.get("platform", {}).get("name"),
-                    "device_type": dev.get("device-type", {})
+                    "mgmt_ip": device_info.get("address"),
+                    "platform": device_info.get("platform", {}).get("name") if isinstance(device_info, dict) else None,
+                    "device_type": device_info.get("device-type", {}) if isinstance(device_info, dict) else {},
                 }
             ))
         
@@ -1011,8 +1148,7 @@ async def get_dashboard_summary(mode: str = "lab"):
         }
 
     try:
-        from agent.clients.batfish import BatfishClient
-        batfish = BatfishClient(host=os.getenv("BATFISH_HOST", "localhost"))
+        batfish = _get_batfish_client()
         
         if batfish.is_available:
             if not batfish._builder:
@@ -1033,8 +1169,7 @@ async def get_reachability(src: Optional[str] = None):
     장비 간 도달성 매트릭스 정보 반환
     """
     try:
-        from agent.clients.batfish import BatfishClient
-        batfish = BatfishClient(host=os.getenv("BATFISH_HOST", "localhost"))
+        batfish = _get_batfish_client()
         
         if batfish.is_available and batfish._builder:
             return batfish.get_reachability_matrix(src_node=src)
@@ -1049,8 +1184,7 @@ async def get_reachability(src: Optional[str] = None):
 async def get_protocol_details(protocol: str):
     """BGP 또는 OSPF 상세 세션 정보 반환"""
     try:
-        from agent.clients.batfish import BatfishClient
-        batfish = BatfishClient(host=os.getenv("BATFISH_HOST", "localhost"))
+        batfish = _get_batfish_client()
         
         if batfish.is_available:
             if not batfish._builder:
@@ -1243,7 +1377,6 @@ async def get_device_detail(device_id: str):
     """
     try:
         from agent.clients.nso import NSOClient
-        from agent.clients.batfish import BatfishClient
         
         nso = NSOClient(
             base_url=os.getenv("NSO_BASE_URL", "http://localhost:8080/restconf"),
@@ -1253,13 +1386,12 @@ async def get_device_detail(device_id: str):
         
         # NSO에서 장비 정보
         devices = nso.get_devices()
-        device_info = next((d for d in devices if d.get("name") == device_id), None)
-        
-        if not device_info:
+        if device_id not in devices:
             raise HTTPException(status_code=404, detail="Device not found")
+        device_info = nso.get_device_info(device_id)
         
         # Batfish에서 인터페이스 및 라우팅 정보
-        batfish = BatfishClient()
+        batfish = _get_batfish_client()
         interfaces = []
         bgp_neighbors = []
         
