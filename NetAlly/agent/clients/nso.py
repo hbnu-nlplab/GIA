@@ -148,10 +148,7 @@ class NSOClient:
         return re.sub(r'/+', '/', path.strip('/'))
 
     def _normalize_ned_id(self, ned_id: str) -> str:
-        """
-        NSO RESTCONF에서 ned-id(identityref) 값을 정규화합니다.
-        예) cisco-ios-cli-3.8 -> cisco-ios-cli-3.8:cisco-ios-cli-3.8
-        """
+        """NSO identityref 형식으로 NED ID를 정규화합니다."""
         value = str(ned_id or "").strip()
         if not value:
             return value

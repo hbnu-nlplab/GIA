@@ -33,19 +33,32 @@ def patch_mcp_runtime(monkeypatch):
 @pytest.mark.asyncio
 async def test_get_settings_returns_mcp_runtime_fields(api_client, monkeypatch):
     monkeypatch.setenv("NETALLY_TOOL_BACKEND", "mcp")
+    monkeypatch.setenv("NETALLY_AGENT_BACKEND", "single_executor")
     monkeypatch.setenv("NETALLY_MCP_SERVER_URL", "http://127.0.0.1:18881/mcp")
     monkeypatch.setenv("NETALLY_MCP_ALLOW_MUTATIONS", "false")
+    monkeypatch.setenv("NETALLY_TEAM_MULTI_MODULE", "agents.main_netconfig")
+    monkeypatch.setenv("NETALLY_TEAM_MULTI_DATASET_TYPE", "netconfig")
 
     response = await api_client.get("/api/settings")
     assert response.status_code == 200
 
     payload = response.json()
     assert "tool_backend" in payload
+    assert "agent_backend" in payload
+    assert "agent_prompt_mode" in payload
+    assert "bound_tool_count" in payload
     assert "mcp_server_url" in payload
     assert "mcp_allow_mutations" in payload
+    assert "team_multi_module" in payload
+    assert "team_multi_dataset_type" in payload
     assert isinstance(payload["tool_backend"], str)
+    assert isinstance(payload["agent_backend"], str)
+    assert isinstance(payload["agent_prompt_mode"], str)
+    assert isinstance(payload["bound_tool_count"], int)
     assert isinstance(payload["mcp_server_url"], str)
     assert isinstance(payload["mcp_allow_mutations"], bool)
+    assert isinstance(payload["team_multi_module"], str)
+    assert isinstance(payload["team_multi_dataset_type"], str)
 
 
 @pytest.mark.asyncio
@@ -92,3 +105,6 @@ async def test_mcp_server_url_update_is_reflected_in_health(api_client, monkeypa
     assert health.status_code == 200
     health_payload = health.json()
     assert health_payload["mcp_health"]["server_url"] == new_url
+    assert "agent_backend" in health_payload
+    assert "agent_runtime_loaded" in health_payload
+    assert "bound_tool_count" in health_payload

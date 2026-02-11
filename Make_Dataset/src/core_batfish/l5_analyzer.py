@@ -246,7 +246,7 @@ class L5AnalyzerMixin:
             if len(self.nodes) < 3:
                 return AnswerResult("OK", {"detected": False, "spof_nodes": []}, "spof_result", evidence, "TOO_FEW_NODES")
             
-            ce_nodes = [n for n in self.nodes if 'ce' in n.lower()]
+            ce_nodes = self.get_edge_nodes()  # 토폴로지 추론 기반 (이전: 이름 기반)
             if len(ce_nodes) >= 2:
                 src, dst = ce_nodes[0], ce_nodes[-1]
             else:

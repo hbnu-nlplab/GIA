@@ -79,6 +79,17 @@ export default function TopologyPanel() {
   const [analyzingReachability, setAnalyzingReachability] = useState(false)
   const [layer, setLayer] = useState<'l1' | 'l3'>('l1')
 
+  // If the user has never selected a topology source before, we can safely
+  // auto-fallback to PNETLab when Batfish returns no nodes (common in demos
+  // where Batfish/NSO isn't running).
+  const hasPersistedTopologySource = useMemo(() => {
+    try {
+      return localStorage.getItem('topologySource') != null
+    } catch {
+      return false
+    }
+  }, [])
+
   const vizNodeSet = useMemo(() => {
     if (!viz) return new Set<string>()
     return new Set((viz.nodes || []).map((n) => String(n).toLowerCase()))
@@ -105,6 +116,7 @@ export default function TopologyPanel() {
   const vizEdgeColor = viz?.mode === 'path' ? (theme === 'dark' ? '#34d399' : '#059669') : (theme === 'dark' ? '#fb923c' : '#f97316')
 
   const fetchTopology = useCallback(async () => {
+    let switchingSource = false
     setLoading(true)
     setError(null)
     try {
@@ -119,6 +131,20 @@ export default function TopologyPanel() {
 
       if (!data || !Array.isArray(data.nodes)) {
         throw new Error('Invalid topology data format')
+      }
+
+      // If Batfish returns no nodes and the user hasn't explicitly chosen a
+      // source yet, auto-switch to PNETLab to avoid a confusing "Map view broken"
+      // first impression.
+      if (
+        topologySource === 'batfish' &&
+        !hasPersistedTopologySource &&
+        Array.isArray(data.nodes) &&
+        data.nodes.length === 0
+      ) {
+        switchingSource = true
+        setTopologySource('pnetlab')
+        return
       }
 
       // PNETLab 응답에 position이 있는지 확인
@@ -173,9 +199,9 @@ export default function TopologyPanel() {
       console.error('Failed to fetch topology:', err)
       setError(err.message || 'Failed to load topology')
     } finally {
-      setLoading(false)
+      if (!switchingSource) setLoading(false)
     }
-  }, [theme, layer, topologySource, setNodes, setEdges, viz, vizNodeSet, isEdgeInViz, vizEdgeColor, baseEdgeMarkerColor])
+  }, [theme, layer, topologySource, setNodes, setEdges, viz, vizNodeSet, isEdgeInViz, vizEdgeColor, baseEdgeMarkerColor, hasPersistedTopologySource, setTopologySource])
 
   // Apply visualization overlay to existing nodes/edges whenever viz changes.
   useEffect(() => {
@@ -247,16 +273,44 @@ export default function TopologyPanel() {
   }
 
   if (error || nodes.length === 0) {
+    const noNodes = !error && nodes.length === 0
+    const emptyHint =
+      noNodes && topologySource === 'batfish'
+        ? 'Batfish topology is empty. Run Prepare once, then retry.'
+        : noNodes
+          ? 'No nodes detected'
+          : null
+
     return (
       <div className="h-full flex flex-col items-center justify-center text-muted-foreground gap-3 bg-background">
         <AlertCircle className="w-12 h-12 text-rose-500/50" />
         <div className="text-xs font-bold uppercase tracking-[0.2em]">{error || 'No nodes detected'}</div>
-        <button 
-          onClick={fetchTopology}
-          className="mt-4 px-4 py-2 bg-primary/10 border border-primary/20 rounded text-[10px] font-bold uppercase hover:bg-primary/20 transition-all flex items-center gap-2"
-        >
-          <RefreshCcw className="w-3 h-3" /> Retry Scan
-        </button>
+        {emptyHint && (
+          <div className="text-[11px] text-muted-foreground/90">{emptyHint}</div>
+        )}
+        <div className="mt-4 flex items-center gap-2">
+          <button
+            onClick={fetchTopology}
+            className="px-4 py-2 bg-primary/10 border border-primary/20 rounded text-[10px] font-bold uppercase hover:bg-primary/20 transition-all flex items-center gap-2"
+          >
+            <RefreshCcw className="w-3 h-3" /> Retry Scan
+          </button>
+          {topologySource === 'batfish' ? (
+            <button
+              onClick={() => setTopologySource('pnetlab')}
+              className="px-4 py-2 bg-orange-500/10 border border-orange-500/30 rounded text-[10px] font-bold uppercase hover:bg-orange-500/20 transition-all"
+            >
+              Switch to Lab Map
+            </button>
+          ) : (
+            <button
+              onClick={() => setTopologySource('batfish')}
+              className="px-4 py-2 bg-amber-500/10 border border-amber-500/30 rounded text-[10px] font-bold uppercase hover:bg-amber-500/20 transition-all"
+            >
+              Switch to Batfish
+            </button>
+          )}
+        </div>
       </div>
     )
   }

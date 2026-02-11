@@ -88,9 +88,10 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
     # 문제 생성 메서드
     # =========================================================================
     
-    def generate_l4_questions(self) -> List[Dict[str, Any]]:
+    def generate_l4_questions(self, seed: int = 42) -> List[Dict[str, Any]]:
         """L4 레벨 문제 생성"""
         questions = []
+        random.seed(seed)  # 재현성 보장
         
         if not self._initialized:
             logger.warning("Batfish not initialized. Skipping L4 question generation.")
@@ -277,7 +278,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
             })
         
         # 6. Waypoint Traversal Path
-        spine_or_pe = [n for n in self.nodes if 'spine' in n.lower() or 'pe' in n.lower() or 'p' in n.lower()]
+        spine_or_pe = self.get_transit_nodes()  # 토폴로지 추론 기반 (이전: 이름 기반)
         if len(self.nodes) >= 3 and spine_or_pe:
             waypoint_count = 0
             for waypoint in spine_or_pe[:5]:
@@ -350,7 +351,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
         
         # 8. Asymmetric Path Comparison
         node_pairs = self.get_node_pairs()
-        random.shuffle(node_pairs)
+        random.shuffle(node_pairs)  # seed는 generate_l4_questions()에서 고정
         asym_count = 0
         for node1, node2 in node_pairs[:15]:
             asym_res = self.asymmetric_path_check(node1, node2)
@@ -413,8 +414,8 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                         break
         
         # 7. Advanced: Security Policy Bypass Check
-        spine_nodes = [n for n in self.nodes if 'spine' in n.lower() or 'pe' in n.lower()]
-        leaf_nodes = [n for n in self.nodes if 'leaf' in n.lower() or 'ce' in n.lower()]
+        spine_nodes = self.get_transit_nodes()  # 토폴로지 추론 기반 (이전: 이름 기반)
+        leaf_nodes = self.get_edge_nodes()        # 토폴로지 추론 기반 (이전: 이름 기반)
         
         if spine_nodes and len(leaf_nodes) >= 2:
             bypass_q_count = 0
@@ -460,9 +461,10 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
         
         return questions
     
-    def generate_l5_questions(self) -> List[Dict[str, Any]]:
+    def generate_l5_questions(self, seed: int = 42) -> List[Dict[str, Any]]:
         """L5 레벨 문제 생성"""
         questions = []
+        random.seed(seed)  # 재현성 보장
         
         if not self._initialized:
             logger.warning("Batfish not initialized. Skipping L5 question generation.")
@@ -470,8 +472,8 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
         
         # 1. Link Failure Impact
         edges = self.get_layer3_edges()
-        ce_nodes = [n for n in self.nodes if 'ce' in n.lower() or 'leaf' in n.lower()]
-        pe_nodes = [n for n in self.nodes if 'pe' in n.lower()]
+        ce_nodes = self.get_edge_nodes()            # 토폴로지 추론 기반 (이전: 이름 기반)
+        pe_nodes = self.get_provider_edge_nodes()    # 토폴로지 추론 기반 (이전: 이름 기반)
         
         if edges and len(ce_nodes) >= 2:
             link_count = 0
@@ -557,7 +559,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
         # 4. K-Failure Tolerance - Redundant Paths List
         # Sample a few source-destination pairs and analyze their path redundancy
         test_pairs = []
-        ce_or_leaf = [n for n in self.nodes if 'ce' in n.lower() or 'leaf' in n.lower()]
+        ce_or_leaf = self.get_edge_nodes()  # 토폴로지 추론 기반 (이전: 이름 기반)
         if len(ce_or_leaf) >= 2:
             test_pairs = [(ce_or_leaf[0], ce_or_leaf[-1])]
         elif len(self.nodes) >= 2:

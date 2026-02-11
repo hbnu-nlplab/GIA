@@ -332,18 +332,151 @@ class BatfishBase:
             logger.warning(f"get_vrfs error: {e}")
             return []
             
+    # =========================================================================
+    # Topology-Inferred Node Role Detection
+    # =========================================================================
+    # 이전: 이름 기반 휴리스틱 ('ce' in name.lower()) — 다른 토폴로지에서 실패
+    # 현재: Batfish BGP 세션 분석 + Edge Degree로 역할 추론 → 토폴로지 독립적
+    # Fallback: Batfish 데이터 없으면 이름 기반 휴리스틱 사용
+    # =========================================================================
+    
+    _node_roles_cache: Optional[Dict[str, str]] = None
+
+    def _infer_node_roles(self) -> Dict[str, str]:
+        """
+        Batfish BGP 세션 + L3 Edge Degree를 분석하여 노드 역할을 추론합니다.
+        
+        분류 기준:
+        - 'edge' (CE/Leaf): eBGP 세션만 있거나, L3 연결이 1~2개인 단말 노드
+        - 'provider_edge' (PE/Spine): eBGP + iBGP 세션 모두 보유한 경계 노드
+        - 'core' (P/Transit): iBGP 세션만 있고, L3 연결이 3개 이상인 중계 노드
+        - 'unknown': 분류 불가
+        
+        Returns:
+            Dict[str, str]: {node_name: role} 매핑
+        """
+        if self._node_roles_cache is not None:
+            return self._node_roles_cache
+        
+        roles: Dict[str, str] = {n: 'unknown' for n in self.nodes}
+        
+        if not self._initialized or not self.bf:
+            # Batfish 미초기화 시 이름 기반 fallback
+            logger.debug("_infer_node_roles: Batfish not initialized, using name-based fallback")
+            roles = self._name_based_fallback()
+            self._node_roles_cache = roles
+            return roles
+        
+        try:
+            # Step 1: BGP 세션 정보로 eBGP/iBGP 관계 파악
+            bgp_sessions = self.bf.q.bgpSessionCompatibility().answer().frame()
+            
+            node_has_ebgp: set = set()
+            node_has_ibgp: set = set()
+            
+            if not bgp_sessions.empty:
+                for _, row in bgp_sessions.iterrows():
+                    node = getattr(row.get('Node', ''), 'hostname', str(row.get('Node', '')))
+                    session_type = str(row.get('Session_Type', ''))
+                    
+                    if 'ebgp' in session_type.lower():
+                        node_has_ebgp.add(node)
+                    elif 'ibgp' in session_type.lower():
+                        node_has_ibgp.add(node)
+            
+            # Step 2: L3 Edge Degree 파악
+            edges = self.get_layer3_edges()
+            degree: Dict[str, int] = {n: 0 for n in self.nodes}
+            for e in edges:
+                n1, n2 = e.get('node1', ''), e.get('node2', '')
+                if n1 in degree:
+                    degree[n1] += 1
+                if n2 in degree:
+                    degree[n2] += 1
+            
+            # Step 3: 역할 분류
+            for node in self.nodes:
+                has_ebgp = node in node_has_ebgp
+                has_ibgp = node in node_has_ibgp
+                deg = degree.get(node, 0)
+                
+                if has_ebgp and not has_ibgp:
+                    # eBGP만 → Customer Edge (외부 AS에만 연결)
+                    roles[node] = 'edge'
+                elif has_ebgp and has_ibgp:
+                    # eBGP + iBGP → Provider Edge (내외부 경계)
+                    roles[node] = 'provider_edge'
+                elif has_ibgp and not has_ebgp:
+                    if deg >= 3:
+                        # iBGP만 + 높은 연결도 → Core Transit
+                        roles[node] = 'core'
+                    else:
+                        # iBGP만 + 낮은 연결도 → Provider Edge
+                        roles[node] = 'provider_edge'
+                else:
+                    # BGP 없는 노드 → Degree 기반 추론
+                    if deg <= 2:
+                        roles[node] = 'edge'
+                    else:
+                        roles[node] = 'core'
+            
+            logger.info(f"_infer_node_roles: Inferred roles: {roles}")
+            
+        except Exception as e:
+            logger.warning(f"_infer_node_roles: Topology inference failed ({e}), using name-based fallback")
+            roles = self._name_based_fallback()
+        
+        self._node_roles_cache = roles
+        return roles
+    
+    def _name_based_fallback(self) -> Dict[str, str]:
+        """이름 기반 역할 추론 (Fallback)"""
+        roles: Dict[str, str] = {}
+        for n in self.nodes:
+            nl = n.lower()
+            if 'ce' in nl or 'leaf' in nl:
+                roles[n] = 'edge'
+            elif 'pe' in nl or 'spine' in nl:
+                roles[n] = 'provider_edge'
+            elif nl.startswith('p') and not nl.startswith('pe'):
+                roles[n] = 'core'
+            else:
+                roles[n] = 'unknown'
+        return roles
+    
+    def get_edge_nodes(self) -> List[str]:
+        """Edge 노드(CE/Leaf) 목록 반환 — 토폴로지 추론 기반"""
+        roles = self._infer_node_roles()
+        return [n for n, r in roles.items() if r == 'edge']
+    
+    def get_provider_edge_nodes(self) -> List[str]:
+        """Provider Edge 노드(PE/Spine) 목록 반환 — 토폴로지 추론 기반"""
+        roles = self._infer_node_roles()
+        return [n for n, r in roles.items() if r == 'provider_edge']
+    
+    def get_core_nodes(self) -> List[str]:
+        """Core Transit 노드(P) 목록 반환 — 토폴로지 추론 기반"""
+        roles = self._infer_node_roles()
+        return [n for n, r in roles.items() if r == 'core']
+    
+    def get_transit_nodes(self) -> List[str]:
+        """Transit 노드(PE + P, 즉 Spine/PE/P) 목록 반환 — 토폴로지 추론 기반"""
+        roles = self._infer_node_roles()
+        return [n for n, r in roles.items() if r in ('provider_edge', 'core')]
+
+    # Backward-compatible aliases
     def get_pe_nodes(self) -> List[str]:
-        """PE 장비(Edge Router) 목록 반환 (이름 기반)"""
-        return [n for n in self.nodes if 'pe' in n.lower()]
+        """PE 장비 목록 반환 — 토폴로지 추론 기반 (이전: 이름 기반)"""
+        return self.get_provider_edge_nodes()
     
     def get_ce_nodes(self) -> List[str]:
-        """CE 장비(Customer Edge) 목록 반환 (이름 기반)"""
-        return [n for n in self.nodes if 'ce' in n.lower()]
+        """CE 장비 목록 반환 — 토폴로지 추론 기반 (이전: 이름 기반)"""
+        return self.get_edge_nodes()
     
     def get_spine_nodes(self) -> List[str]:
-        """Spine 장비 목록 반환 (이름 기반)"""
-        return [n for n in self.nodes if 'spine' in n.lower()]
+        """Spine 장비 목록 반환 — 토폴로지 추론 기반 (이전: 이름 기반)"""
+        return self.get_provider_edge_nodes()
     
     def get_leaf_nodes(self) -> List[str]:
-        """Leaf 장비 목록 반환 (이름 기반)"""
-        return [n for n in self.nodes if 'leaf' in n.lower()]
+        """Leaf 장비 목록 반환 — 토폴로지 추론 기반 (이전: 이름 기반)"""
+        return self.get_edge_nodes()

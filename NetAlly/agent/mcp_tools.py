@@ -295,29 +295,40 @@ async def lab_bootstrap(
     return await _mcp_call("lab_bootstrap", {"action": action, "params": params or {}})
 
 
+CORE_TOOLS: List[Any] = [
+    nso_list_devices,
+    nso_get_device_info,
+    nso_get_interfaces,
+    nso_get_routing,
+    nso_get_logs,
+    batfish_reachability,
+    batfish_traceroute,
+    batfish_bgp_sessions,
+    batfish_route_table,
+    batfish_advanced_verify,
+    lab_show_inventory,
+    lab_get_status,
+    lab_export_configs,
+    lab_init_batfish,
+    sync_scan,
+    bootstrap_refresh_onboard,
+]
+
+COMPATIBILITY_TOOLS: List[Any] = [
+    network_query,
+    network_verify,
+    lab_manage,
+    scan_and_sync,
+    check_logs,
+    lab_bootstrap,
+]
+
+
+def get_core_tools() -> List[Any]:
+    """MCP core tools only (16)."""
+    return list(CORE_TOOLS)
+
+
 def get_tools() -> List[Any]:
     """All MCP-backed LangChain tools (16 core + 6 compatibility wrappers)."""
-    return [
-        nso_list_devices,
-        nso_get_device_info,
-        nso_get_interfaces,
-        nso_get_routing,
-        nso_get_logs,
-        batfish_reachability,
-        batfish_traceroute,
-        batfish_bgp_sessions,
-        batfish_route_table,
-        batfish_advanced_verify,
-        lab_show_inventory,
-        lab_get_status,
-        lab_export_configs,
-        lab_init_batfish,
-        sync_scan,
-        bootstrap_refresh_onboard,
-        network_query,
-        network_verify,
-        lab_manage,
-        scan_and_sync,
-        check_logs,
-        lab_bootstrap,
-    ]
+    return list(CORE_TOOLS) + list(COMPATIBILITY_TOOLS)

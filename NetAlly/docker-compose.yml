@@ -60,7 +60,8 @@ services:
       - batfish_data:/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9996/v2"]
+      # Recent batfish/allinone images return 404 on /v2, but /v2/version is stable.
+      test: ["CMD", "curl", "-f", "http://localhost:9996/v2/version"]
       interval: 30s
       timeout: 10s
       retries: 3

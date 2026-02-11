@@ -1,11 +1,21 @@
 
-import torch
 import gc
 import sys
 from pathlib import Path
 from langchain_openai import ChatOpenAI
-from langchain_huggingface import HuggingFacePipeline
-from transformers import pipeline, BitsAndBytesConfig
+
+try:
+    import torch
+except ImportError:  # pragma: no cover - optional dependency for local mode only
+    torch = None
+
+try:
+    from langchain_huggingface import HuggingFacePipeline
+    from transformers import pipeline, BitsAndBytesConfig
+except ImportError:  # pragma: no cover - optional dependency for local mode only
+    HuggingFacePipeline = None
+    pipeline = None
+    BitsAndBytesConfig = None
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 sys.path.append(str(BASE_DIR))
@@ -20,12 +30,16 @@ class DynamicModelLoader:
         self.model_map = model_map
         self.loaded_models = {} # {model_id: pipeline}
         self.access_history = [] # For LRU
-        
-        self.bnb_config = BitsAndBytesConfig(
-            load_in_4bit=True, bnb_4bit_quant_type="nf4",
-            bnb_4bit_compute_dtype=torch.float16, bnb_4bit_use_double_quant=True,
-            llm_int8_enable_fp32_cpu_offload=True 
-        )
+        self.bnb_config = None
+
+        if BitsAndBytesConfig is not None and torch is not None:
+            self.bnb_config = BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_compute_dtype=torch.float16,
+                bnb_4bit_use_double_quant=True,
+                llm_int8_enable_fp32_cpu_offload=True,
+            )
 
     def load_model(self, role):
         model_id = self.model_map[role]
@@ -44,13 +58,21 @@ class DynamicModelLoader:
             print(f"♻️  Unloading {lru_model_id} to free VRAM...")
             del self.loaded_models[lru_model_id]
             gc.collect()
-            torch.cuda.empty_cache()
+            if torch is not None and hasattr(torch, "cuda"):
+                torch.cuda.empty_cache()
             
         print(f"🚀 Loading {role}: {model_id}...")
+
+        if pipeline is None or HuggingFacePipeline is None:
+            raise RuntimeError(
+                "Local model mode requires transformers and langchain_huggingface packages."
+            )
+        if torch is None:
+            raise RuntimeError("Local model mode requires torch package.")
         
         # Config Setup
         model_kwargs = {"low_cpu_mem_usage": True}
-        if "gpt-oss-20b" not in model_id:
+        if "gpt-oss-20b" not in model_id and self.bnb_config is not None:
             model_kwargs["quantization_config"] = self.bnb_config
             
         pipe = pipeline(
