@@ -8,6 +8,8 @@ import { Cloud } from 'lucide-react'
 export default function NetworkNode({ data, selected }: { data: any; selected?: boolean }) {
   const [staticFailed, setStaticFailed] = useState(false)
   const [proxyFailed, setProxyFailed] = useState(false)
+  const highlighted = Boolean(data?.highlight)
+  const isPath = data?.highlightMode === 'path'
 
   const iconUrl = useMemo(() => {
     if (!data?.icon) return null
@@ -25,6 +27,11 @@ export default function NetworkNode({ data, selected }: { data: any; selected?: 
         relative px-3 py-2 rounded-xl border transition-all duration-300
         ${selected
           ? 'bg-primary/20 border-primary ring-4 ring-primary/10 shadow-lg shadow-primary/5 scale-105'
+          : highlighted
+            ? (isPath
+                ? 'bg-emerald-500/10 border-emerald-500/50 ring-4 ring-emerald-500/10 shadow-lg shadow-emerald-500/10'
+                : 'bg-orange-500/10 border-orange-500/50 ring-4 ring-orange-500/10 shadow-lg shadow-orange-500/10'
+              )
           : 'bg-card border-border hover:border-muted-foreground/30 shadow-sm hover:shadow-md'
         }
       `}
@@ -32,7 +39,17 @@ export default function NetworkNode({ data, selected }: { data: any; selected?: 
       <Handle type="target" position={Position.Left} className="!opacity-0" />
 
       <div className="flex items-center gap-2">
-        <div className="w-8 h-8 rounded-lg flex items-center justify-center border bg-muted/40 border-border">
+        <div
+          className={`
+            w-8 h-8 rounded-lg flex items-center justify-center border
+            ${selected
+              ? 'bg-primary/30 border-primary'
+              : highlighted
+                ? (isPath ? 'bg-emerald-500/20 border-emerald-500/40' : 'bg-orange-500/20 border-orange-500/40')
+                : 'bg-muted/40 border-border'
+            }
+          `}
+        >
           {iconUrl && !staticFailed ? (
             <img
               src={iconUrl}

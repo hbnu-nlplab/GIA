@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   ReactFlow,
   Background,
@@ -31,6 +31,59 @@ interface ApiEdge {
 const nodeTypes: Record<string, any> = {
   device: DeviceNode,
   network: NetworkNode,
+}
+
+const toNodeKeyVariants = (value: unknown): string[] => {
+  const raw = String(value ?? '').trim().toLowerCase()
+  if (!raw) return []
+
+  const compact = raw.replace(/^['"`]+|['"`]+$/g, '').replace(/\s+/g, '')
+  if (!compact) return []
+
+  const out = new Set<string>()
+  out.add(compact)
+  out.add(compact.replace(/_/g, '-'))
+
+  if (!compact.startsWith('net:')) {
+    const dotIndex = compact.indexOf('.')
+    if (dotIndex > 0) {
+      const short = compact.slice(0, dotIndex)
+      if (short) {
+        out.add(short)
+        out.add(short.replace(/_/g, '-'))
+      }
+    }
+  }
+
+  return Array.from(out)
+}
+
+const primaryNodeKey = (value: unknown): string => toNodeKeyVariants(value)[0] || ''
+
+const makeUndirectedEdgeKey = (a: unknown, b: unknown): string => {
+  const ka = primaryNodeKey(a)
+  const kb = primaryNodeKey(b)
+  if (!ka || !kb) return ''
+  return ka < kb ? `${ka}<->${kb}` : `${kb}<->${ka}`
+}
+
+const collectAliasCandidates = (node: Node): string[] => {
+  const data = ((node.data || {}) as Record<string, any>)
+  const raw = [
+    node.id,
+    data.label,
+    data.hostname,
+    data.name,
+    data.node_id,
+    data.alias,
+  ]
+
+  if (Array.isArray(data.aliases)) raw.push(...data.aliases)
+  else if (typeof data.aliases === 'string') raw.push(...data.aliases.split(','))
+
+  return raw
+    .filter((v) => v != null && String(v).trim().length > 0)
+    .map((v) => String(v))
 }
 
 const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'TB') => {
@@ -74,10 +127,13 @@ export default function TopologyPanel() {
 
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
+  const nodesRef = useRef<Node[]>([])
+  const edgesRef = useRef<Edge[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [analyzingReachability, setAnalyzingReachability] = useState(false)
   const [layer, setLayer] = useState<'l1' | 'l3'>('l1')
+  const [topologyRevision, setTopologyRevision] = useState(0)
 
   // If the user has never selected a topology source before, we can safely
   // auto-fallback to PNETLab when Batfish returns no nodes (common in demos
@@ -89,28 +145,6 @@ export default function TopologyPanel() {
       return false
     }
   }, [])
-
-  const vizNodeSet = useMemo(() => {
-    if (!viz) return new Set<string>()
-    return new Set((viz.nodes || []).map((n) => String(n).toLowerCase()))
-  }, [viz])
-
-  const vizEdgeSet = useMemo(() => {
-    if (!viz) return new Set<string>()
-    const s = new Set<string>()
-    for (const e of viz.edges || []) {
-      const src = String(e.source).toLowerCase()
-      const tgt = String(e.target).toLowerCase()
-      if (src && tgt) s.add(`${src}->${tgt}`)
-    }
-    return s
-  }, [viz])
-
-  const isEdgeInViz = useCallback((src: string, tgt: string) => {
-    const a = `${String(src).toLowerCase()}->${String(tgt).toLowerCase()}`
-    const b = `${String(tgt).toLowerCase()}->${String(src).toLowerCase()}`
-    return vizEdgeSet.has(a) || vizEdgeSet.has(b)
-  }, [vizEdgeSet])
 
   const baseEdgeMarkerColor = theme === 'dark' ? '#10b981' : '#059669'
   const vizEdgeColor = viz?.mode === 'path' ? (theme === 'dark' ? '#34d399' : '#059669') : (theme === 'dark' ? '#fb923c' : '#f97316')
@@ -161,8 +195,6 @@ export default function TopologyPanel() {
           label: n.id, 
           platform: n.data?.platform || 'Unknown',
           device_type: n.data?.device_type || 'router',
-          highlight: vizNodeSet.has(String(n.id).toLowerCase()),
-          highlightMode: viz?.mode || 'focus',
           ...n.data 
         },
       }))
@@ -173,13 +205,19 @@ export default function TopologyPanel() {
         target: e.target,
         label: e.label,
         animated: true,
-        markerEnd: { 
-          type: MarkerType.ArrowClosed,
-          color: isEdgeInViz(e.source, e.target) ? vizEdgeColor : baseEdgeMarkerColor
+        data: {
+          ...((e as any).data || {}),
+          __baseStyle: { stroke: 'hsl(var(--border))', strokeWidth: 2, ...(e.style || {}) },
+          __baseMarker: {
+            type: MarkerType.ArrowClosed,
+            color: baseEdgeMarkerColor,
+          },
         },
-        style: isEdgeInViz(e.source, e.target)
-          ? { stroke: vizEdgeColor, strokeWidth: 4 }
-          : { stroke: 'hsl(var(--border))', strokeWidth: 2, ...(e.style || {}) },
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          color: baseEdgeMarkerColor,
+        },
+        style: { stroke: 'hsl(var(--border))', strokeWidth: 2, ...(e.style || {}) },
         labelStyle: { fill: 'hsl(var(--muted-foreground))', fontSize: 10, fontWeight: 600 },
         labelBgStyle: { fill: 'hsl(var(--card))', fillOpacity: 0.8 },
         labelBgPadding: [4, 2],
@@ -188,44 +226,163 @@ export default function TopologyPanel() {
 
       // PNETLab 위치가 있으면 dagre 건너뛰기
       if (hasPositions) {
+        nodesRef.current = flowNodes
+        edgesRef.current = flowEdges
         setNodes(flowNodes)
         setEdges(flowEdges)
       } else {
         const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(flowNodes, flowEdges)
+        nodesRef.current = layoutedNodes
+        edgesRef.current = layoutedEdges
         setNodes(layoutedNodes)
         setEdges(layoutedEdges)
       }
+      setTopologyRevision((v) => v + 1)
     } catch (err: any) {
       console.error('Failed to fetch topology:', err)
       setError(err.message || 'Failed to load topology')
     } finally {
       if (!switchingSource) setLoading(false)
     }
-  }, [theme, layer, topologySource, setNodes, setEdges, viz, vizNodeSet, isEdgeInViz, vizEdgeColor, baseEdgeMarkerColor, hasPersistedTopologySource, setTopologySource])
+  }, [layer, topologySource, setNodes, setEdges, baseEdgeMarkerColor, hasPersistedTopologySource, setTopologySource])
 
   // Apply visualization overlay to existing nodes/edges whenever viz changes.
   useEffect(() => {
-    setNodes((prev) => prev.map((n) => ({
-      ...n,
-      data: {
-        ...(n.data || {}),
-        highlight: vizNodeSet.has(String(n.id).toLowerCase()),
-        highlightMode: viz?.mode || 'focus',
-      },
-    })))
+    const currentNodes = nodesRef.current
+    const currentEdges = edgesRef.current
+    if (currentNodes.length === 0 && currentEdges.length === 0) return
 
-    setEdges((prev) => prev.map((e) => {
-      const highlighted = viz ? isEdgeInViz(e.source, e.target) : false
+    const aliasToNodeId = new Map<string, string>()
+    for (const node of currentNodes) {
+      for (const candidate of collectAliasCandidates(node)) {
+        for (const key of toNodeKeyVariants(candidate)) {
+          if (!aliasToNodeId.has(key)) aliasToNodeId.set(key, node.id)
+        }
+      }
+    }
+
+    const resolveNodeId = (value: unknown): string | null => {
+      for (const key of toNodeKeyVariants(value)) {
+        const hit = aliasToNodeId.get(key)
+        if (hit) return hit
+      }
+      return null
+    }
+
+    const adjacency = new Map<string, Set<string>>()
+    const existingEdgeKeys = new Set<string>()
+    for (const e of currentEdges) {
+      const s = primaryNodeKey(e.source)
+      const t = primaryNodeKey(e.target)
+      if (!s || !t) continue
+      const key = makeUndirectedEdgeKey(s, t)
+      if (key) existingEdgeKeys.add(key)
+
+      if (!adjacency.has(s)) adjacency.set(s, new Set<string>())
+      if (!adjacency.has(t)) adjacency.set(t, new Set<string>())
+      adjacency.get(s)!.add(t)
+      adjacency.get(t)!.add(s)
+    }
+
+    const highlightedNodeIds = new Set<string>()
+    const highlightedEdgeKeys = new Set<string>()
+
+    if (viz) {
+      for (const n of viz.nodes || []) {
+        const resolved = resolveNodeId(n)
+        if (resolved) highlightedNodeIds.add(resolved)
+      }
+
+      for (const edge of viz.edges || []) {
+        const srcResolved = resolveNodeId(edge.source)
+        const dstResolved = resolveNodeId(edge.target)
+        const srcKey = primaryNodeKey(srcResolved || edge.source)
+        const dstKey = primaryNodeKey(dstResolved || edge.target)
+        if (!srcKey || !dstKey) continue
+
+        if (srcResolved) highlightedNodeIds.add(srcResolved)
+        if (dstResolved) highlightedNodeIds.add(dstResolved)
+
+        const direct = makeUndirectedEdgeKey(srcKey, dstKey)
+        if (direct && existingEdgeKeys.has(direct)) {
+          highlightedEdgeKeys.add(direct)
+          continue
+        }
+
+        const srcNeighbors = adjacency.get(srcKey) || new Set<string>()
+        const dstNeighbors = adjacency.get(dstKey) || new Set<string>()
+        const commonHubs = Array.from(srcNeighbors).filter(
+          (neighbor) => neighbor.startsWith('net:') && dstNeighbors.has(neighbor)
+        )
+
+        if (commonHubs.length > 0) {
+          for (const hubKey of commonHubs) {
+            const sHub = makeUndirectedEdgeKey(srcKey, hubKey)
+            const dHub = makeUndirectedEdgeKey(dstKey, hubKey)
+            if (sHub) highlightedEdgeKeys.add(sHub)
+            if (dHub) highlightedEdgeKeys.add(dHub)
+            const hubNodeId = aliasToNodeId.get(hubKey)
+            if (hubNodeId) highlightedNodeIds.add(hubNodeId)
+          }
+          continue
+        }
+
+        if (direct) highlightedEdgeKeys.add(direct)
+      }
+    }
+
+    setNodes((prev) => {
+      const nextMode = viz?.mode || 'focus'
+      return prev.map((node) => {
+        const nextHighlight = Boolean(viz) && highlightedNodeIds.has(node.id)
+        if ((node.data as any)?.highlight === nextHighlight && (node.data as any)?.highlightMode === nextMode) {
+          return node
+        }
+        return {
+          ...node,
+          data: {
+            ...(node.data || {}),
+            highlight: nextHighlight,
+            highlightMode: nextMode,
+          },
+        }
+      })
+    })
+
+    setEdges((prev) => prev.map((edge) => {
+      const edgeData = ((edge.data || {}) as Record<string, any>)
+      const baseStyle = edgeData.__baseStyle || { stroke: 'hsl(var(--border))', strokeWidth: 2 }
+      const baseMarker = edgeData.__baseMarker || { type: MarkerType.ArrowClosed, color: baseEdgeMarkerColor }
+      const highlighted =
+        Boolean(viz) &&
+        highlightedEdgeKeys.has(makeUndirectedEdgeKey(edge.source, edge.target))
+
+      const style = highlighted
+        ? {
+            ...baseStyle,
+            stroke: vizEdgeColor,
+            strokeWidth: Math.max(Number(baseStyle.strokeWidth) || 2, 4),
+          }
+        : baseStyle
+      const markerEnd = highlighted
+        ? { ...baseMarker, color: vizEdgeColor }
+        : baseMarker
+
       return {
-        ...e,
-        markerEnd: {
-          type: MarkerType.ArrowClosed,
-          color: highlighted ? vizEdgeColor : baseEdgeMarkerColor,
-        },
-        style: highlighted ? { stroke: vizEdgeColor, strokeWidth: 4 } : { stroke: 'hsl(var(--border))', strokeWidth: 2 },
+        ...edge,
+        style,
+        markerEnd,
       }
     }))
-  }, [viz, vizNodeSet, isEdgeInViz, setNodes, setEdges, vizEdgeColor, baseEdgeMarkerColor])
+  }, [viz, topologyRevision, setNodes, setEdges, vizEdgeColor, baseEdgeMarkerColor])
+
+  useEffect(() => {
+    nodesRef.current = nodes
+  }, [nodes])
+
+  useEffect(() => {
+    edgesRef.current = edges
+  }, [edges])
 
   useEffect(() => {
     fetchTopology()
@@ -247,10 +404,22 @@ export default function TopologyPanel() {
         
         if (reach) {
           const color = reach.status === 'success' ? '#10b981' : reach.status === 'warning' ? '#f59e0b' : '#ef4444';
+          const edgeData = ((edge.data || {}) as Record<string, any>)
+          const nextStyle = { ...(edgeData.__baseStyle || edge.style || {}), stroke: color, strokeWidth: 3 }
+          const nextMarker = {
+            ...((edgeData.__baseMarker as Record<string, any>) || { type: MarkerType.ArrowClosed }),
+            color,
+          }
           return {
             ...edge,
             animated: reach.status === 'success',
-            style: { ...edge.style, stroke: color, strokeWidth: 3 },
+            style: nextStyle,
+            markerEnd: nextMarker as any,
+            data: {
+              ...edgeData,
+              __baseStyle: nextStyle,
+              __baseMarker: nextMarker,
+            },
             label: reach.message || edge.label
           };
         }
