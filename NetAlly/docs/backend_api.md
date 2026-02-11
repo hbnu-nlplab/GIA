@@ -2,6 +2,8 @@
 
 NetAlly 백엔드는 고동시성 네트워크 분석과 실시간 스트리밍을 위한 FastAPI 서버입니다.
 
+문서 허브: `docs/README_ko.md`
+
 ---
 
 ## 1. 채팅 API (SSE)
@@ -49,6 +51,10 @@ PNETLab의 실제 노드 좌표를 포함한 토폴로지를 반환합니다.
   - `.unl` + `/opt/unetlab/tmp/*/*/wrapper.txt` 파싱
   - PNETLab VM 내부 컨테이너 실행 시에는 `/opt/unetlab`을 컨테이너에 read-only로 마운트해야 합니다.
 - PNETLab API 기반(topology session API)은 CAPTCHA/XSRF/쿠키 만료 등으로 불안정할 수 있어 fallback 용도로만 사용합니다.
+
+운영 참고 문서:
+- `docs/pnetlab_deployment_guide.md`
+- `docs/pnetlab_wiring_runbook_ko.md` (NetAlly-NSO-Chromebook 배선, docker_options 실전값)
 
 ### 응답 예시
 ```json

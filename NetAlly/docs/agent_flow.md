@@ -1,5 +1,7 @@
 # NetAlly 데모 Agent Flow (PNETLab 내부 배포 기준)
 
+문서 허브: `docs/README_ko.md`
+
 ## 목적
 빠른 데모를 위해 **수동 Bootstrap + 자동 Refresh/Prepare + 에이전트 질의** 흐름을 정리한다.
 
