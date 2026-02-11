@@ -108,3 +108,15 @@ async def test_mcp_server_url_update_is_reflected_in_health(api_client, monkeypa
     assert "agent_backend" in health_payload
     assert "agent_runtime_loaded" in health_payload
     assert "bound_tool_count" in health_payload
+
+
+@pytest.mark.asyncio
+async def test_post_settings_allows_clearing_string_values(api_client, monkeypatch):
+    monkeypatch.setenv("NSO_BASE_URL", "http://10.0.0.1:8080/restconf")
+
+    response = await api_client.post("/api/settings", json={"nso_base_url": ""})
+    assert response.status_code == 200
+
+    settings_after = await api_client.get("/api/settings")
+    assert settings_after.status_code == 200
+    assert settings_after.json()["nso_base_url"] is None

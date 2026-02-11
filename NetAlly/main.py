@@ -568,34 +568,37 @@ async def update_settings(request: SettingsRequest):
         )
         
         updated = []
-        
-        if request.openai_api_key:
-            os.environ["OPENAI_API_KEY"] = request.openai_api_key
+
+        def set_or_clear_env(env_key: str, raw_value: Optional[str]) -> bool:
+            if raw_value is None:
+                return False
+            val = str(raw_value).strip()
+            if val:
+                os.environ[env_key] = val
+            else:
+                os.environ.pop(env_key, None)
+            return True
+
+        if set_or_clear_env("OPENAI_API_KEY", request.openai_api_key):
             updated.append("openai_api_key")
-            _invalidate_runtime()
-        
-        if request.nso_base_url:
-            os.environ["NSO_BASE_URL"] = request.nso_base_url
+
+        if set_or_clear_env("NSO_BASE_URL", request.nso_base_url):
             reset_nso_client()
             updated.append("nso_base_url")
-        
-        if request.nso_username:
-            os.environ["NSO_USERNAME"] = request.nso_username
+
+        if set_or_clear_env("NSO_USERNAME", request.nso_username):
             reset_nso_client()
             updated.append("nso_username")
-        
-        if request.nso_password:
-            os.environ["NSO_PASSWORD"] = request.nso_password
+
+        if set_or_clear_env("NSO_PASSWORD", request.nso_password):
             reset_nso_client()
             updated.append("nso_password")
-        
-        if request.pnetlab_url:
-            os.environ["PNETLAB_URL"] = request.pnetlab_url
+
+        if set_or_clear_env("PNETLAB_URL", request.pnetlab_url):
             reset_pnetlab_client()
             updated.append("pnetlab_url")
-        
-        if request.batfish_host:
-            os.environ["BATFISH_HOST"] = request.batfish_host
+
+        if set_or_clear_env("BATFISH_HOST", request.batfish_host):
             reset_batfish_client()
             app.state.batfish_client = None
             updated.append("batfish_host")
@@ -650,8 +653,7 @@ async def update_settings(request: SettingsRequest):
                 os.environ.pop("NETALLY_TEAM_MULTI_CONTEXT_PATH", None)
             updated.append("team_multi_context_path")
 
-        if request.mcp_server_url:
-            os.environ["NETALLY_MCP_SERVER_URL"] = request.mcp_server_url
+        if set_or_clear_env("NETALLY_MCP_SERVER_URL", request.mcp_server_url):
             updated.append("mcp_server_url")
 
         if request.mcp_allow_mutations is not None:
