@@ -129,6 +129,9 @@ cp .env.example .env
 # Batfish 컨테이너 실행
 docker run -d -p 9997:9997 -p 9996:9996 --name batfish batfish/allinone
 
+# 헬스 확인 (/v2 는 이미지 버전에 따라 404일 수 있어 /v2/version 권장)
+curl -fsS http://127.0.0.1:9996/v2/version
+
 # 스냅샷 초기화 (설정 파일 로드)
 uv run python init_batfish.py
 ```
@@ -425,14 +428,20 @@ graph LR
 
 | 문서                                                            | 설명                               |
 | --------------------------------------------------------------- | ---------------------------------- |
+| [README_ko.md](docs/README_ko.md)                               | 문서 허브(처음 시작/학습 경로/용어) |
 | [architecture.md](docs/architecture.md)                         | 시스템 아키텍처, 데이터 흐름       |
 | [dashboard_design.md](docs/dashboard_design.md)                 | 검증 대시보드 기획 및 UI/UX        |
 | [dashboard_implementation.md](docs/dashboard_implementation.md) | 대시보드 구현 명세 (API, 컴포넌트) |
 | [frontend.md](docs/frontend.md)                                 | 프론트엔드 컴포넌트 가이드         |
 | [web_architecture_beginner_ko.md](docs/web_architecture_beginner_ko.md) | 비웹 개발자용 웹 구조 입문 가이드 |
 | [onboarding_30min_code_walkthrough_ko.md](docs/onboarding_30min_code_walkthrough_ko.md) | 30분 코드 화면 온보딩 가이드 |
+| [pnetlab_deployment_guide.md](docs/pnetlab_deployment_guide.md) | PNETLab Docker Node 배포 가이드 |
+| [pnetlab_wiring_runbook_ko.md](docs/pnetlab_wiring_runbook_ko.md) | NetAlly-NSO-Chromebook 실전 배선/운영 런북 |
+| [testing_runbook_ko.md](docs/testing_runbook_ko.md)             | 실행/테스트/데모 점검 런북 |
 | [backend_api.md](docs/backend_api.md)                           | REST API 레퍼런스                  |
 | [setup_guide.md](docs/setup_guide.md)                           | Docker 배포 및 환경 설정           |
+
+처음 시작은 `docs/README_ko.md`를 권장합니다.
 
 ---
 

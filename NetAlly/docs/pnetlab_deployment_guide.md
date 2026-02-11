@@ -2,6 +2,11 @@
 
 이 문서는 NetAlly 시스템을 PNETLab 환경에서 Docker 노드로 배포하고, 웹 인터페이스에 쉽게 접속할 수 있도록 설정하는 방법을 안내합니다.
 
+문서 허브: `docs/README_ko.md`
+
+실제 데모 운영 기준(스크린샷 기반 설정값, NetAlly-NSO-Chromebook 배선, `docker_options` 완성값)은
+`docs/pnetlab_wiring_runbook_ko.md`를 함께 참고하세요.
+
 ## 📋 개요
 
 NetAlly는 프론트엔드(React)와 백엔드(FastAPI)가 통합된 Docker 이미지로 제공됩니다. PNETLab의 **Docker Node** 기능을 사용하여 VPCS 없이 단독 장비처럼 구동할 수 있으며, 마우스 클릭으로 웹 UI에 바로 접속할 수 있습니다.
@@ -15,7 +20,7 @@ NetAlly는 프론트엔드(React)와 백엔드(FastAPI)가 통합된 Docker 이�
 ### 방법 A: Docker Hub에서 Pull (권장)
 이미지가 Docker Hub에 올라가 있다면 PNETLab 서버의 터미널(SSH)에서 아래 명령어를 실행합니다.
 ```bash
-docker pull your-repo/netally:latest
+docker pull <your-registry>/netally:latest
 ```
 
 ### 방법 B: 직접 빌드 및 전송
@@ -42,7 +47,7 @@ docker load -i netally.tar
 
 | 항목 | 설정값 | 설명 |
 |---|---|---|
-| **Image** | `your-repo/netally:latest` | 방금 추가한 이미지 선택 |
+| **Image** | `netally:latest` | 현재 운영 기준 이미지 |
 | **Name** | `NetAlly-Controller` | 식별하기 쉬운 이름 |
 | **Icon** | `Server.png` 또는 `Desktop.png` | 어울리는 아이콘 선택 |
 | **CPU/RAM** | 1024 / 2048 | 최소 2GB RAM 권장 |
@@ -50,6 +55,20 @@ docker load -i netally.tar
 | **Console Port** | **`8000`** | NetAlly 웹 서비스 포트 |
 
 > **팁**: `Console Type`을 `http`로 설정하는 것이 핵심입니다. 이 설정을 통해 아이콘을 클릭했을 때 Telnet 대신 웹 브라우저가 열립니다.
+
+### 2.1 Docker Options 실전 입력 예시
+
+초기에는 `--privileged`만 넣어도 컨테이너는 뜨지만, 데모 안정성을 위해 아래 옵션까지 한 번에 넣는 것을 권장합니다.
+
+```bash
+--privileged -v /opt/unetlab:/opt/unetlab:ro --add-host=host.docker.internal:host-gateway -e PNETLAB_INVENTORY_BACKEND=labfs_local -e PNETLAB_LAB_NAME=test_nso -e NSO_BASE_URL=http://10.10.10.100:8080/restconf -e BATFISH_HOST=host.docker.internal:9997 -e BATFISH_SNAPSHOT=test_nso -e AUTO_INIT_BATFISH=true -e NETALLY_TOOL_BACKEND=mcp -e NETALLY_MCP_ALLOW_MUTATIONS=true
+```
+
+설명:
+- `PNETLAB_INVENTORY_BACKEND=labfs_local`: 쿠키 없이 `.unl` 기반 토폴로지 복제
+- `NSO_BASE_URL`: NSO RESTCONF 엔드포인트 고정
+- `BATFISH_HOST`: 호스트에서 띄운 Batfish 컨테이너 접속
+- `AUTO_INIT_BATFISH=true`: Prepare 버튼으로 스냅샷 초기화 자동 시도
 
 ---
 
@@ -62,6 +81,17 @@ NetAlly가 PNETLab 내부의 다른 라우터/스위치와 통신하려면 적�
 
 > **중요**: NetAlly가 장비 Telnet 포트에 접근하려면 **장비들도 동일한 관리망(Cloud0/Cloud2 또는 OOB 스위치)**에 연결되어 있어야 합니다.  
 > NetAlly만 관리망에 연결하고 장비들은 미연결이면, Telnet 접근이 실패할 수 있습니다.
+
+### 3.1 NetAlly-NSO-Chromebook 배선 기준
+
+권장 배선:
+- NetAlly Docker Node `eth1` → Management Cloud
+- NSO Node `eth2` → 동일 Management Cloud
+- NSO Node `eth1` ↔ Chromebook `eth1` (관리자 LAN, 예: `192.168.1.0/24`)
+
+이렇게 구성하면:
+- NetAlly는 NSO/Batfish/장비 관리망을 처리
+- Chromebook은 운영자 웹 접속(NSO UI/관리 페이지)에 집중
 
 ---
 
@@ -137,11 +167,50 @@ lab_bootstrap(action="refresh_onboard")  # 신규 장비만 부트스트랩
 1.  PNETLab 내에서 NetAlly 노드의 IP를 확인합니다. (보통 부팅 시 콘솔 로그에 뜨거나, `Cloud0` DHCP로 할당됨)
 2.  브라우저 주소창에 `http://<PNETLAB_BOX_IP>:<MAPPED_PORT>` 또는 (PNETLab 내부망 접근 시) `http://<NODE_IP>:8000`을 직접 입력합니다.
 
+### 로컬 브라우저에서 NSO + NetAlly 같이 접속하는 방법
+
+현재처럼 NSO/NetAlly 컨테이너에 host port publish가 없을 때는 **SSH 터널**이 가장 간단합니다.
+
+```bash
+# 로컬 PC에서 실행
+ssh -N \
+  -L 18080:10.10.10.100:8080 \
+  -L 18111:172.17.0.20:8000 \
+  root@<PNETLAB_VM_IP>
+```
+
+> `172.17.0.20`은 예시입니다. 실제 NetAlly 컨테이너 IP로 바꿔야 합니다.  
+> 확인 명령: `docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <netally_container_name>`
+
+접속:
+- NSO: `http://127.0.0.1:18080`
+- NetAlly: `http://127.0.0.1:18111`
+
+대안:
+- NetAlly Docker Options에 `-p 18111:8000`을 넣어 포트를 직접 노출할 수도 있습니다.
+
 ### Refresh 버튼 (부트스트랩)
 상단의 **Refresh** 버튼은 신규 장비만 자동 부트스트랩합니다.
 - 내부적으로 `lab_bootstrap(action="refresh_onboard")`가 실행됨
 - `device_info.json`이 없으면 PNETLab API로 자동 생성
 - **Settings > Bootstrap Overrides**에서 OOB 인터페이스/그룹/게이트웨이 등을 입력하면 생성 시 반영됨
+
+### Batfish 서버 점검(데모 필수)
+NetAlly Docker Node에서 Batfish까지 실제로 쓰려면, PNETLab 호스트에 Batfish 컨테이너가 떠 있어야 합니다.
+
+```bash
+# PNETLab 호스트(root)에서 1회 실행
+docker run -d --name netally-batfish --restart unless-stopped \
+  -p 9996:9996 -p 9997:9997 batfish/allinone:latest
+
+# 헬스 확인 (/v2는 이미지에 따라 404일 수 있어 /v2/version 권장)
+curl -fsS http://127.0.0.1:9996/v2/version
+```
+
+NetAlly Docker Node `docker_options`에는 아래를 권장합니다.
+- `--add-host=host.docker.internal:host-gateway`
+- `-e BATFISH_HOST=host.docker.internal:9997`
+- `-e AUTO_INIT_BATFISH=true`
 
 ### Prepare 버튼 (Batfish 준비)
 상단의 **Prepare** 버튼은 Batfish 상태를 점검합니다.
@@ -171,3 +240,12 @@ NetAlly의 일부 기능(예: `device_info.json` 자동 생성/부트스트랩)�
 *   NetAlly 노드가 올바른 vSwitch/Bridge에 연결되어 있는지 확인하세요.
 *   Docker 컨테이너 내부의 IP 설정(`ifconfig` 등)이 Lab 네트워크 대역과 일치하는지 확인해야 합니다.
 *   장비 노드도 동일한 관리망(Cloud/OOB)에 연결되어 있는지 확인하세요.
+
+---
+
+## 📚 관련 문서
+
+- 문서 허브: `docs/README_ko.md`
+- 실전 배선/운영: `docs/pnetlab_wiring_runbook_ko.md`
+- 실행/테스트: `docs/testing_runbook_ko.md`
+- API 계약: `docs/backend_api.md`
