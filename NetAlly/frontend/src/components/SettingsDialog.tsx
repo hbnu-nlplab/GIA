@@ -15,7 +15,6 @@ type ApiSettingsSnapshot = {
 
 type SettingsSectionId =
   | 'appearance'
-  | 'lab_behavior'
   | 'bootstrap_overrides'
   | 'api_connections'
   | 'pnetlab_auth'
@@ -33,10 +32,9 @@ const DEFAULT_API_SNAPSHOT: ApiSettingsSnapshot = {
 
 const SECTION_ITEMS: Array<{ id: SettingsSectionId; label: string; description: string }> = [
   { id: 'appearance', label: 'Appearance', description: 'Theme + Language' },
-  { id: 'lab_behavior', label: 'Lab Behavior', description: 'Topology + Onboarding' },
   { id: 'bootstrap_overrides', label: 'Bootstrap', description: 'Optional override values' },
   { id: 'api_connections', label: 'API Connections', description: 'Backend + MCP runtime' },
-  { id: 'pnetlab_auth', label: 'PNETLab Auth', description: 'Cookie/Login credentials' },
+  { id: 'pnetlab_auth', label: 'PNETLab Auth', description: 'API fallback credentials' },
   { id: 'about', label: 'About', description: 'Runtime note' },
 ]
 
@@ -49,12 +47,14 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean; o
   const [pnetlabUser, setPnetlabUser] = useState(localStorage.getItem('pnetlab_user') || '')
   const [pnetlabPass, setPnetlabPass] = useState(localStorage.getItem('pnetlab_pass') || '')
   const [autoLogin, setAutoLogin] = useState(localStorage.getItem('pnetlab_auto_login') === 'true')
-  const [authStatus, setAuthStatus] = useState<'unknown' | 'ok' | 'fail'>('unknown')
+  const [authApplyStatus, setAuthApplyStatus] = useState<'idle' | 'saved' | 'error'>('idle')
 
   const [openaiKey, setOpenaiKey] = useState('')
+  const [openaiTouched, setOpenaiTouched] = useState(false)
   const [nsoBaseUrl, setNsoBaseUrl] = useState('')
   const [nsoUsername, setNsoUsername] = useState('')
   const [nsoPassword, setNsoPassword] = useState('')
+  const [nsoPasswordTouched, setNsoPasswordTouched] = useState(false)
   const [pnetlabUrl, setPnetlabUrl] = useState('')
   const [batfishHost, setBatfishHost] = useState('')
   const [toolBackend, setToolBackend] = useState<'mcp' | 'legacy'>('mcp')
@@ -68,16 +68,8 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean; o
     if (!isOpen) return
 
     setActiveSection('appearance')
-
-    const fetchStatus = async () => {
-      try {
-        const res = await fetch('/api/pnetlab/status')
-        const data = await res.json()
-        setAuthStatus(data?.authenticated ? 'ok' : 'fail')
-      } catch {
-        setAuthStatus('fail')
-      }
-    }
+    setOpenaiTouched(false)
+    setNsoPasswordTouched(false)
 
     const fetchSettings = async () => {
       try {
@@ -107,7 +99,7 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean; o
       }
     }
 
-    fetchStatus()
+    setAuthApplyStatus('idle')
     fetchSettings()
   }, [isOpen])
 
@@ -130,9 +122,9 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean; o
         }),
       })
       const data = await res.json()
-      setAuthStatus(data?.authenticated ? 'ok' : 'fail')
+      setAuthApplyStatus(data?.authenticated ? 'saved' : 'error')
     } catch {
-      setAuthStatus('fail')
+      setAuthApplyStatus('error')
     }
   }
 
@@ -141,10 +133,10 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean; o
     setApiError('')
     try {
       const payload: Record<string, string | boolean> = {}
-      if (openaiKey.trim()) payload.openai_api_key = openaiKey.trim()
+      if (openaiTouched) payload.openai_api_key = openaiKey.trim()
       if (nsoBaseUrl !== initialApiSettings.nsoBaseUrl) payload.nso_base_url = nsoBaseUrl
       if (nsoUsername !== initialApiSettings.nsoUsername) payload.nso_username = nsoUsername
-      if (nsoPassword.trim()) payload.nso_password = nsoPassword.trim()
+      if (nsoPasswordTouched) payload.nso_password = nsoPassword.trim()
       if (pnetlabUrl !== initialApiSettings.pnetlabUrl) payload.pnetlab_url = pnetlabUrl
       if (batfishHost !== initialApiSettings.batfishHost) payload.batfish_host = batfishHost
       if (toolBackend !== initialApiSettings.toolBackend) payload.tool_backend = toolBackend
@@ -175,6 +167,10 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean; o
           mcpServerUrl,
           mcpAllowMutations,
         })
+        setOpenaiTouched(false)
+        setNsoPasswordTouched(false)
+        setOpenaiKey('')
+        setNsoPassword('')
         setApiStatus('saved')
         setTimeout(() => setApiStatus('idle'), 2000)
       } else {
@@ -245,40 +241,6 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean; o
               </button>
             </div>
           </section>
-        </section>
-      )
-    }
-
-    if (activeSection === 'lab_behavior') {
-      return (
-        <section className="space-y-4" data-testid="settings-section-lab-behavior">
-          <h3 className="text-[10px] font-black uppercase tracking-tighter text-primary/80">Laboratory Behavior</h3>
-
-          <div className="flex items-center justify-between group">
-            <div className="space-y-0.5">
-              <div className="text-xs font-bold text-foreground">Topology Labels</div>
-              <div className="text-[10px] text-muted-foreground">Show device names and IP addresses by default.</div>
-            </div>
-            <input
-              type="checkbox"
-              checked={settings.showTopologyLabels}
-              onChange={e => updateSettings({ showTopologyLabels: e.target.checked })}
-              className="w-4 h-4 rounded border-border text-primary focus:ring-primary accent-primary"
-            />
-          </div>
-
-          <div className="flex items-center justify-between group">
-            <div className="space-y-0.5">
-              <div className="text-xs font-bold text-foreground">Auto-Onboarding</div>
-              <div className="text-[10px] text-muted-foreground">Automatically register new PNETLab nodes to NSO.</div>
-            </div>
-            <input
-              type="checkbox"
-              checked={settings.autoOnboard}
-              onChange={e => updateSettings({ autoOnboard: e.target.checked })}
-              className="w-4 h-4 rounded border-border text-primary focus:ring-primary accent-primary"
-            />
-          </div>
         </section>
       )
     }
@@ -363,13 +325,16 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean; o
 
           <div className="space-y-2">
             <label className="text-[10px] text-muted-foreground uppercase tracking-widest">OpenAI API Key</label>
-            <input
-              type="password"
-              value={openaiKey}
-              onChange={e => setOpenaiKey(e.target.value)}
-              placeholder="sk-..."
-              className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
-            />
+              <input
+                type="password"
+                value={openaiKey}
+                onChange={e => {
+                  setOpenaiKey(e.target.value)
+                  setOpenaiTouched(true)
+                }}
+                placeholder="sk-..."
+                className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+              />
           </div>
 
           <div className="space-y-2">
@@ -397,7 +362,10 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean; o
               <input
                 type="password"
                 value={nsoPassword}
-                onChange={e => setNsoPassword(e.target.value)}
+                onChange={e => {
+                  setNsoPassword(e.target.value)
+                  setNsoPasswordTouched(true)
+                }}
                 placeholder="admin"
                 className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
               />
@@ -479,13 +447,14 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean; o
     if (activeSection === 'pnetlab_auth') {
       return (
         <section className="space-y-3" data-testid="settings-section-pnetlab-auth">
-          <h3 className="text-[10px] font-black uppercase tracking-tighter text-primary/80">PNETLab Auth</h3>
+          <h3 className="text-[10px] font-black uppercase tracking-tighter text-primary/80">
+            PNETLab Auth
+            {authApplyStatus === 'saved' && <span className="ml-2 text-emerald-500">✓ Saved</span>}
+            {authApplyStatus === 'error' && <span className="ml-2 text-rose-500">Auth Failed</span>}
+          </h3>
 
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground">Status</span>
-            <span className={`${authStatus === 'ok' ? 'text-emerald-500' : authStatus === 'fail' ? 'text-rose-500' : 'text-slate-500'}`}>
-              {authStatus === 'ok' ? 'Authenticated' : authStatus === 'fail' ? 'Not Authenticated' : 'Unknown'}
-            </span>
+          <div className="rounded-md border border-border bg-muted/20 px-3 py-2 text-[10px] text-muted-foreground">
+            LabFS backend does not require web auth. Use this section only when running PNETLab API fallback mode.
           </div>
 
           <div className="flex items-center justify-between group">

@@ -48,8 +48,6 @@ interface AppState {
   setChatWidth: (width: number) => void
   
   settings: {
-    showTopologyLabels: boolean
-    autoOnboard: boolean
     oobIntf: string
     deviceGroup: string
     pnetlabVmIp: string
@@ -126,8 +124,6 @@ export const useAppStore = create<AppState>((set) => ({
   setChatWidth: (width) => set({ chatWidth: Math.max(300, Math.min(width, 800)) }),
   
   settings: {
-    showTopologyLabels: true,
-    autoOnboard: false,
     oobIntf: localStorage.getItem('lab_oob_intf') || '',
     deviceGroup: localStorage.getItem('lab_device_group') || '',
     pnetlabVmIp: localStorage.getItem('lab_pnetlab_vm_ip') || '',
