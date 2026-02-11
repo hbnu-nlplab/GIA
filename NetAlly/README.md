@@ -9,6 +9,55 @@ NetAlly는 네트워크 운영/검증을 위해 LLM + MCP 도구 + Batfish/NSO/P
 
 ---
 
+## NetAlly를 한 번에 이해하기
+
+### 이 프로젝트가 해결하는 문제
+
+운영자가 보통 겪는 문제는 다음과 같습니다.
+
+- 도구가 분리되어 있음: NSO, Batfish, PNETLab을 각각 따로 열어야 함
+- 질문에서 실행까지 오래 걸림: “A에서 B 통신되나?”를 확인하려면 수동 단계가 많음
+- 데모/랩 환경 불안정: 쿠키 만료, API 인증 문제로 맵/상태가 자주 깨짐
+
+NetAlly는 이 문제를 아래 방식으로 줄입니다.
+
+- 채팅으로 질의 입력 → 백엔드가 필요한 도구를 자동 선택/실행
+- 결과를 단순 텍스트가 아닌 근거(`tool_output`, evidence) 중심으로 제공
+- PNETLab은 LabFS(`.unl`, `wrapper.txt`) 기반으로 읽어 쿠키 의존성을 줄임
+
+### 한 번의 질문이 처리되는 방식 (End-to-End)
+
+예: 사용자가 “PE1에서 CE2까지 도달 가능해?”라고 질문
+
+1. 프론트가 `POST /api/chat` 요청
+2. 백엔드가 `planning` 이벤트 전송 (어떤 도구를 쓸지 계획)
+3. `tool_call` 이벤트 전송 (예: `batfish_reachability`)
+4. 실제 도구 실행 후 `tool_output` 전송
+5. 최종 `answer` 전송
+6. `complete`로 스트림 종료
+
+즉, NetAlly의 핵심은 “LLM이 답을 혼자 만드는 것”이 아니라 “도구를 호출해 근거를 만들고 요약하는 것”입니다.
+
+### 구성 요소 역할
+
+- `frontend/`: 사용자 화면, SSE 수신/렌더링
+- `main.py`: FastAPI 엔드포인트, 런타임 설정 API, 채팅 스트림 입구
+- `agent/graph.py`: 에이전트 흐름(계획/실행 루프)
+- `agent/mcp_server.py`: MCP 도구 카탈로그(코어 16 + 호환 6)
+- `agent/clients/nso.py`: NSO RESTCONF 연동
+- `agent/clients/batfish.py`: Batfish 연동/스냅샷 처리
+- `agent/pnetlab_labfs.py`: PNETLab LabFS 파싱(쿠키 없는 토폴로지 복제)
+
+### 주요 용어 (처음 보는 사람용)
+
+- `MCP`: 모델이 표준 방식으로 외부 도구를 호출하는 계층
+- `LabFS`: PNETLab 파일 시스템을 직접 읽는 방식 (`/opt/unetlab`)
+- `RESTCONF`: NSO와 HTTP 기반으로 통신하는 API 규격
+- `Snapshot`: Batfish가 분석할 설정 데이터 묶음
+- `SSE`: 서버가 이벤트를 순차적으로 스트리밍하는 방식
+
+---
+
 ## 1. 문서 시작점
 
 처음 보는 경우 이 순서로 보는 것을 권장합니다.
@@ -48,6 +97,26 @@ cd frontend && npm ci && cd ..
 - Frontend: `http://127.0.0.1:3000`
 
 이 스크립트는 시작 후 자동으로 `demo_precheck`를 수행합니다.
+
+### 2.4 5분 확인 시나리오
+
+README만 보고 최소 기능을 확인하려면 아래 순서로 진행하면 됩니다.
+
+1. `./scripts/demo_up_local.sh` 실행
+2. 브라우저에서 `http://127.0.0.1:3000` 접속
+3. Header의 `Prepare` 버튼 클릭
+4. Map에서 `🧪 Lab` 또는 `🔬 Batfish` 전환해 노드 렌더 확인
+5. 채팅에 간단한 질의 입력
+   - 예: `PE1에서 CE2까지 reachability 확인해줘`
+6. 채팅 창에서 `planning -> tool_call -> tool_output -> answer` 흐름 확인
+
+### 2.5 처음 실패할 때 체크 순서
+
+1. `GET /api/health` 확인
+2. `GET /api/settings` 확인
+3. `POST /api/lab/prepare` 결과 확인
+4. Map이 비면 `🧪 Lab`로 전환해 LabFS 경로 먼저 확인
+5. 계속 실패하면 `docs/testing_runbook_ko.md`의 장애 섹션 확인
 
 ---
 
@@ -214,6 +283,15 @@ NetAlly/
 
 ---
 
-## 10. 라이선스
+## 10. 현재 범위와 제한
+
+- 실장비 E2E 자동화는 환경별 편차가 있어, 현재는 PNETLab/NSO/Batfish 데모 안정화에 우선순위를 둡니다.
+- PNETLab API 인증(쿠키/자동로그인)은 보조 경로이며, 토폴로지는 LabFS 경로를 우선 권장합니다.
+- Batfish 분석 품질은 스냅샷 입력(설정/장비 정보)의 정확도에 영향을 받습니다.
+- `NETALLY_MCP_ALLOW_MUTATIONS=false` 기본값에서는 변경성 도구가 차단됩니다.
+
+---
+
+## 11. 라이선스
 
 MIT License
