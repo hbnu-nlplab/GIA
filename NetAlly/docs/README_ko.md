@@ -26,6 +26,11 @@
 2. `docs/pnetlab_deployment_guide.md`
 3. `docs/agent_flow.md`
 
+포함 내용:
+- Console Type(`linux`/`http`) 차이와 접속 문제 해결
+- NetAlly CPU/RAM 권장치
+- 로컬 브라우저(NSO+NetAlly 동시 접속) 방법
+
 ### B) “코드를 수정하려고 함”
 
 1. `docs/web_architecture_beginner_ko.md`

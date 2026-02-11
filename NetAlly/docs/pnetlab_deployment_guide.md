@@ -232,9 +232,18 @@ NetAlly의 일부 기능(예: `device_info.json` 자동 생성/부트스트랩)�
 ### Q1. 아이콘을 눌러도 반응이 없거나 에러가 뜹니다.
 *   PNETLab 버전에 따라 `http` 콘솔 타입을 지원하지 않을 수 있습니다. 이 경우 `Console Type`을 `vncp`로 두고, VNC로 접속하여 내부 브라우저(Firefox 등)를 띄우거나, 수동으로 IP를 확인해 접속해야 합니다.
 
+### Q1-1. 더블클릭하면 NetAlly 웹 대신 도커 터미널만 뜹니다.
+*   Node Edit에서 `Console Type`이 `linux`로 되어 있으면 정상적으로 터미널이 뜹니다.
+*   NetAlly 웹 접속 목적이면 `Console Type=http`, `Console Port=8000`으로 변경하고 노드를 재시작하세요.
+
 ### Q2. 접속은 되는데 "Connection Refused"가 뜹니다.
 *   NetAlly 컨테이너가 정상적으로 실행 중인지(`docker ps`) 확인하세요.
 *   NetAlly 애플리케이션이 `0.0.0.0`으로 바인딩되어 있는지 확인합니다. (현재 코드는 `0.0.0.0:8000`으로 설정 완료됨)
+
+### Q2-1. NetAlly CPU/RAM은 얼마나 줘야 하나요?
+*   최소 동작: `1 core / 1024MB`
+*   데모 권장: `2 core / 2048MB`
+*   Batfish를 호스트에서 돌리면 NetAlly 자체 메모리는 줄일 수 있지만, `1GB` 이하는 비권장입니다.
 
 ### Q3. 다른 장비에 Ping이 안 나갑니다.
 *   NetAlly 노드가 올바른 vSwitch/Bridge에 연결되어 있는지 확인하세요.

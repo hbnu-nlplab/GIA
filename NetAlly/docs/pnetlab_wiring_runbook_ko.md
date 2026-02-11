@@ -69,12 +69,23 @@ PNETLab Node 설정 화면에서 아래를 기준으로 맞춥니다.
 |---|---|
 | Image | `netally:latest` |
 | Name | `NetAlly` |
-| CPU | `1` 이상 |
-| RAM | 최소 `256MB` (권장 `1024MB+`) |
+| CPU | 최소 `1`, 권장 `2` |
+| RAM | 최소 `1024MB`, 권장 `2048MB` 이상 |
 | Ethernet | `4` |
 | Console | `http` |
 | Console Port | `8000` |
 | Docker Options (초기) | `--privileged` |
+
+### 3.1 리소스 가이드 (데모 안정성 기준)
+
+- 최소 동작: `1 core / 1024MB`
+- 데모 권장: `2 core / 2048MB`
+- 안정 여유: `2 core / 3072~4096MB`
+
+설명:
+- `1 core / 256MB`는 데모 중 응답 지연/재시작 위험이 큽니다.
+- Batfish를 호스트에서 별도 컨테이너로 돌리더라도, NetAlly 자체에 최소 1GB는 권장합니다.
+- VM 총 메모리는 `NSO + NetAlly + Batfish` 합계를 기준으로 계산해야 합니다.
 
 ---
 
@@ -162,6 +173,10 @@ Chromebook 접속 참고:
 장점:
 - 설정이 단순
 - 데모 중 가장 직관적
+
+문제 해결:
+- 더블클릭했는데 웹 대신 터미널만 뜨면 `Console Type`이 `linux`일 가능성이 큽니다.
+- Node Edit에서 `Console Type=http`, `Console Port=8000`으로 변경 후 재시작하세요.
 
 ### 6.2 방법 B: 로컬 브라우저 + SSH 터널 (권장)
 
