@@ -292,6 +292,41 @@ SSH 키 기본 권장:
 1. (권장) 한 번만 수동으로 연결해서 host key 등록: `ssh root@<PNETLAB_IP>`
 2. 자동 등록이 필요하면: `PNETLAB_SSH_OPTIONS="-o StrictHostKeyChecking=accept-new"`
 
+### PNETLab Docker Node 운영 FAQ (중요)
+
+#### Q1) NetAlly 노드 더블클릭 시 웹이 아니라 도커 터미널만 뜹니다
+
+원인:
+- PNETLab Docker Node의 `Console Type`이 `linux`로 되어 있으면 터미널 콘솔이 열립니다.
+
+해결:
+1. Node Edit 화면 하단에서 `Console Type = http`로 변경
+2. `Console Port = 8000`(또는 `Primary Map Port = 8000`) 설정
+3. Save 후 노드 재시작(Stop/Start)
+
+참고:
+- 버전에 따라 Docker `http` 콘솔 지원이 제한될 수 있습니다.
+- 이 경우 `docs/pnetlab_wiring_runbook_ko.md`의 SSH 터널/로컬 브라우저 방식으로 접속하면 됩니다.
+
+#### Q2) NetAlly 노드 CPU/RAM은 얼마나 줘야 하나요?
+
+권장값:
+- 최소 동작: `1 core / 1024MB`
+- 데모 권장: `2 core / 2048MB`
+- 안정 여유: `2 core / 3072~4096MB`
+
+설명:
+- `1 core / 256MB`는 부팅은 될 수 있어도 데모 중 불안정할 수 있습니다.
+
+#### Q3) Batfish가 호스트에서 돌면 NetAlly 리소스는 줄여도 되나요?
+
+네. Batfish JVM 메모리는 호스트 컨테이너(`netally-batfish`)가 사용하므로,
+NetAlly 컨테이너는 상대적으로 작게 잡아도 됩니다.
+
+다만 주의:
+- VM 전체 RAM은 **NSO + NetAlly + Batfish**를 합쳐 충분해야 합니다.
+- 데모 안정성을 위해 NetAlly는 최소 `1G`, 가능하면 `2G`를 권장합니다.
+
 ### PNETLab 아이콘(Topology) 고정하기 (권장)
 PNETLab 맵을 NetAlly에서 최대한 동일하게 보이게 하려면, `.unl`이 참조하는 아이콘 파일을
 NetAlly 프론트 정적 폴더에 동기화해두는 것이 가장 빠릅니다.
