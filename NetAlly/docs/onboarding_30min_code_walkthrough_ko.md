@@ -71,17 +71,17 @@ cd NetAlly
 ## 10~16분: Settings 저장 흐름 (운영에서 가장 중요)
 
 여는 파일:
-- `frontend/src/components/SettingsDialog.tsx:26`
-- `main.py:350`
+- `frontend/src/components/SettingsDialog.tsx:41`
+- `main.py:590`
 
 집중해서 볼 라인:
-- 다이얼로그 열릴 때 설정 조회: `frontend/src/components/SettingsDialog.tsx:49`
-- `/api/settings` GET 파싱: `frontend/src/components/SettingsDialog.tsx:63`
-- 저장 payload 생성: `frontend/src/components/SettingsDialog.tsx:117`
-- 실제 저장 요청: `frontend/src/components/SettingsDialog.tsx:140`
-- 백엔드 GET 설정 응답: `main.py:350`
-- 백엔드 POST 업데이트 처리: `main.py:369`
-- MCP 재기동 조건: `main.py:426`
+- 다이얼로그 열릴 때 설정 조회: `frontend/src/components/SettingsDialog.tsx:74`
+- `/api/settings` GET 파싱: `frontend/src/components/SettingsDialog.tsx:76`
+- 저장 payload 생성: `frontend/src/components/SettingsDialog.tsx:135`
+- 실제 저장 요청: `frontend/src/components/SettingsDialog.tsx:154`
+- 백엔드 GET 설정 응답: `main.py:590`
+- 백엔드 POST 업데이트 처리: `main.py:617`
+- MCP 재기동 조건: `main.py:724`
 
 이 단계에서 이해할 것:
 1. UI는 변경된 필드만 payload로 보낸다.
@@ -99,15 +99,15 @@ cd NetAlly
 
 여는 파일:
 - `frontend/src/components/ChatPanel.tsx:17`
-- `main.py:455`
+- `main.py:871`
 
 집중해서 볼 라인:
-- 채팅 전송: `frontend/src/components/ChatPanel.tsx:41`
-- `/api/chat` 요청: `frontend/src/components/ChatPanel.tsx:51`
-- SSE 라인 파싱: `frontend/src/components/ChatPanel.tsx:70`
-- planning/tool_call/tool_output/answer 처리: `frontend/src/components/ChatPanel.tsx:75`
-- 백엔드 SSE 생성기: `main.py:455`
-- 이벤트 방출 순서: `main.py:489`, `main.py:507`, `main.py:526`, `main.py:515`, `main.py:532`
+- 채팅 전송: `frontend/src/components/ChatPanel.tsx:43`
+- `/api/chat` 요청: `frontend/src/components/ChatPanel.tsx:54`
+- SSE 라인 파싱: `frontend/src/components/ChatPanel.tsx:72`
+- planning/tool_call/tool_output/answer 처리: `frontend/src/components/ChatPanel.tsx:79`
+- 백엔드 SSE 생성기: `main.py:871`
+- 이벤트 방출 순서: `main.py:899`, `main.py:906`, `main.py:919`, `main.py:939`, `main.py:941`
 
 이 단계에서 이해할 것:
 1. 채팅은 일반 JSON 1회 응답이 아니라 스트리밍 이벤트 흐름이다.
@@ -127,7 +127,7 @@ cd NetAlly
 집중해서 볼 라인:
 - 전역 상태 인터페이스: `frontend/src/store.ts:13`
 - Evidence 적재: `frontend/src/store.ts:73`
-- UI 설정 저장(localStorage): `frontend/src/store.ts:145`
+- UI 설정 저장(localStorage): `frontend/src/store.ts:156`
 
 이 단계에서 이해할 것:
 1. 공통 상태는 `useAppStore` 하나로 모인다.
@@ -142,13 +142,13 @@ cd NetAlly
 ## 26~30분: 테스트와 안정화가 어디서 보장되는지
 
 여는 파일:
-- `tests/test_chat_sse_order.py:33`
+- `tests/test_chat_sse_order.py:18`
 - `tests/test_settings_api_integration.py:33`
 - `frontend/playwright.config.ts:5`
 - `scripts/demo_precheck.sh:6`
 
 집중해서 볼 라인:
-- SSE 이벤트 순서 고정: `tests/test_chat_sse_order.py:47`
+- SSE 이벤트 순서 고정: `tests/test_chat_sse_order.py:32`
 - Settings API 계약 테스트: `tests/test_settings_api_integration.py:34`
 - E2E 실행 환경/서버 자동기동: `frontend/playwright.config.ts:23`
 - 데모 사전점검 계약 체크: `scripts/demo_precheck.sh:45`

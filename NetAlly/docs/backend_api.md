@@ -63,6 +63,12 @@
 현재 런타임 설정 조회 (민감 값은 마스킹).
 
 주요 필드:
+- `nso_base_url`, `nso_username`
+- `pnetlab_url`
+- `pnetlab_inventory_backend`, `pnetlab_lab_name`, `pnetlab_nso_node`
+- `pnetlab_exclude_node_names`
+- `batfish_host`, `batfish_snapshot`
+- `auto_prepare_on_chat`, `auto_init_batfish`
 - `tool_backend`: `mcp | legacy`
 - `agent_backend`: `single_executor | team_multi_adapter | legacy_graph`
 - `agent_prompt_mode`: 현재 `prompt_only`
@@ -74,6 +80,8 @@
 - `mcp_server_url`
 - `mcp_allow_mutations`
 - `bound_tool_count`
+- `runtime_settings_path`
+- `runtime_settings_loaded_keys`
 
 ### POST `/api/settings`
 런타임 설정 변경.
@@ -82,11 +90,18 @@
 - `tool_backend`가 `mcp|legacy` 외 값이면 `422`
 - `agent_backend`가 허용값 외면 `422`
 - `team_multi_dataset_type`가 허용값 외면 `422`
+- `pnetlab_inventory_backend`가 `labfs_local|labfs_ssh|api` 외 값이면 `422`
 
 재초기화:
 - 아래 값 변경 시 에이전트 런타임 invalidate:
   - `openai_api_key`, `tool_backend`, `agent_backend`, `executor_system_prompt`
   - `team_multi_module`, `team_multi_dataset_type`, `team_multi_root`, `team_multi_context_path`
+
+영속화:
+- `POST /api/settings`로 변경한 주요 값은 런타임 설정 파일에 저장됩니다.
+- 기본 경로: `.runtime/settings.runtime.json`
+- 경로 변경: `NETALLY_RUNTIME_SETTINGS_PATH`
+- 주의: 민감값이 포함될 수 있으므로 파일 권한/백업 정책을 운영 기준에 맞게 관리해야 합니다.
 
 ---
 
@@ -134,6 +149,12 @@
   - PNETLab 인증 상태
 - `POST /api/pnetlab/auth`
   - PNETLab 인증 값 반영
+
+응답 주의:
+- `tool_backend=mcp` + `NETALLY_MCP_ALLOW_MUTATIONS=false`에서 변경성 작업을 호출하면 `403` + `code=mutations_blocked`
+- 대상:
+  - `POST /api/lab/refresh`
+  - `POST /api/lab/prepare` with `auto_init_batfish=true`
 
 ---
 

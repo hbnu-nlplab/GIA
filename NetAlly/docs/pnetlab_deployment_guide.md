@@ -26,6 +26,9 @@ docker pull <your-registry>/netally:latest
 ### 방법 B: 직접 빌드 및 전송
 로컬에서 빌드한 이미지를 PNETLab 서버로 전송합니다.
 ```bash
+# 레포 루트에서 빌드 (Dockerfile: NetAlly/Dockerfile)
+docker build -f NetAlly/Dockerfile -t netally:latest .
+
 # 로컬 개발 환경에서 이미지 저장
 docker save -o netally.tar netally:latest
 
@@ -61,14 +64,18 @@ docker load -i netally.tar
 초기에는 `--privileged`만 넣어도 컨테이너는 뜨지만, 데모 안정성을 위해 아래 옵션까지 한 번에 넣는 것을 권장합니다.
 
 ```bash
---privileged -v /opt/unetlab:/opt/unetlab:ro --add-host=host.docker.internal:host-gateway -e PNETLAB_INVENTORY_BACKEND=labfs_local -e PNETLAB_LAB_NAME=test_nso -e NSO_BASE_URL=http://10.10.10.100:8080/restconf -e BATFISH_HOST=host.docker.internal:9997 -e BATFISH_SNAPSHOT=test_nso -e AUTO_INIT_BATFISH=true -e NETALLY_TOOL_BACKEND=mcp -e NETALLY_MCP_ALLOW_MUTATIONS=true
+--privileged -v /opt/unetlab:/opt/unetlab:ro --add-host=host.docker.internal:host-gateway -e PNETLAB_INVENTORY_BACKEND=labfs_local -e PNETLAB_LAB_NAME=test_nso -e PNETLAB_NSO_NODE=NSO -e BATFISH_HOST=host.docker.internal:9997 -e BATFISH_SNAPSHOT=test_nso -e AUTO_INIT_BATFISH=true -e NETALLY_TOOL_BACKEND=mcp -e NETALLY_MCP_ALLOW_MUTATIONS=true
 ```
 
 설명:
 - `PNETLAB_INVENTORY_BACKEND=labfs_local`: 쿠키 없이 `.unl` 기반 토폴로지 복제
-- `NSO_BASE_URL`: NSO RESTCONF 엔드포인트 고정
+- `PNETLAB_NSO_NODE=NSO`: NSO 노드 이름으로 관리 IP 자동 탐색
 - `BATFISH_HOST`: 호스트에서 띄운 Batfish 컨테이너 접속
 - `AUTO_INIT_BATFISH=true`: Prepare 버튼으로 스냅샷 초기화 자동 시도
+
+필요 시(자동 탐색 실패 시):
+- `-e NSO_BASE_URL=http://<REACHABLE_NSO_IP>:8080/restconf`를 추가해 명시 주소로 고정할 수 있습니다.
+- `<REACHABLE_NSO_IP>`는 NetAlly 컨테이너에서 실제로 도달 가능한 주소를 사용합니다.
 
 ---
 
@@ -77,7 +84,7 @@ docker load -i netally.tar
 NetAlly가 PNETLab 내부의 다른 라우터/스위치와 통신하려면 적절한 네트워크에 연결되어야 합니다.
 
 *   **Management Network**: `Cloud0` (ManagementCloud)에 연결하여 외부(사용자 PC)에서 UI 접속 가능하게 합니다.
-*   **Internal Network**: Lab 내부 장비들과 같은 Bridge(예: `pnet2`)에 연결하여 장비들을 제어(Telnet/SSH)합니다.
+*   **Internal Network(선택)**: 특정 실험에서 동일 L2 세그먼트가 필요할 때만 추가합니다.
 
 > **중요**: NetAlly가 장비 Telnet 포트에 접근하려면 **장비들도 동일한 관리망(Cloud0/Cloud2 또는 OOB 스위치)**에 연결되어 있어야 합니다.  
 > NetAlly만 관리망에 연결하고 장비들은 미연결이면, Telnet 접근이 실패할 수 있습니다.
@@ -146,7 +153,7 @@ lab_bootstrap(action="register_nso")
 lab_bootstrap(action="full")
 ```
 
-> `device_info.json`은 **PNETLab API로 자동 생성**됩니다.  
+> `device_info.json`은 **PNETLab API 우선 + LabFS fallback**으로 자동 생성됩니다.  
 > 내부망 기준에서는 `oob_ip` 없이도 동작하도록 구성되어 있습니다.
 
 ### 자동 생성 / Refresh 시나리오
@@ -179,6 +186,7 @@ ssh -N \
   root@<PNETLAB_VM_IP>
 ```
 
+> `10.10.10.100`은 예시입니다. NSO가 Admin망(`192.168.1.1`)에서만 열려 있으면 해당 주소로 바꿔야 합니다.
 > `172.17.0.20`은 예시입니다. 실제 NetAlly 컨테이너 IP로 바꿔야 합니다.  
 > 확인 명령: `docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <netally_container_name>`
 
@@ -192,8 +200,10 @@ ssh -N \
 ### Refresh 버튼 (부트스트랩)
 상단의 **Refresh** 버튼은 신규 장비만 자동 부트스트랩합니다.
 - 내부적으로 `lab_bootstrap(action="refresh_onboard")`가 실행됨
-- `device_info.json`이 없으면 PNETLab API로 자동 생성
+- `device_info.json`이 없으면 PNETLab API 우선, 실패 시 LabFS로 자동 생성
+- 기본적으로 `NSO`, `Docker`, `NetAlly`, `Admin` 노드는 온보딩 대상에서 제외됨
 - **Settings > Bootstrap Overrides**에서 OOB 인터페이스/그룹/게이트웨이 등을 입력하면 생성 시 반영됨
+- `NETALLY_MCP_ALLOW_MUTATIONS=false`이면 `403 (mutations_blocked)`가 반환되므로, 실제 온보딩 시에는 `true`로 설정해야 합니다.
 
 ### Batfish 서버 점검(데모 필수)
 NetAlly Docker Node에서 Batfish까지 실제로 쓰려면, PNETLab 호스트에 Batfish 컨테이너가 떠 있어야 합니다.
@@ -216,6 +226,7 @@ NetAlly Docker Node `docker_options`에는 아래를 권장합니다.
 상단의 **Prepare** 버튼은 Batfish 상태를 점검합니다.
 - `/api/lab/prepare` 호출
 - 상태가 `ready/loaded/initialized`면 분석 가능
+- `auto_init_batfish=true`이고 mutation이 차단된 상태면 `403 (mutations_blocked)` 응답이 반환됩니다.
 
 ### PNETLab API 인증 (선택)
 NetAlly의 일부 기능(예: `device_info.json` 자동 생성/부트스트랩)은 PNETLab API 접근이 필요할 수 있습니다.
@@ -247,8 +258,18 @@ NetAlly의 일부 기능(예: `device_info.json` 자동 생성/부트스트랩)�
 
 ### Q3. 다른 장비에 Ping이 안 나갑니다.
 *   NetAlly 노드가 올바른 vSwitch/Bridge에 연결되어 있는지 확인하세요.
-*   Docker 컨테이너 내부의 IP 설정(`ifconfig` 등)이 Lab 네트워크 대역과 일치하는지 확인해야 합니다.
+*   컨테이너 내부에서 `ifconfig`로 IP를 수동 고정하기 전에, 먼저 NSO 주소 자동탐색(`PNETLAB_NSO_NODE`) 또는 `NSO_BASE_URL` 명시로 해결하세요.
+*   런타임에서 넣은 `ip route add`/`ifconfig` 값은 재시작 시 사라집니다(영구 반영 아님).
 *   장비 노드도 동일한 관리망(Cloud/OOB)에 연결되어 있는지 확인하세요.
+
+### Q4. 실험실을 여러 개 운영하면 충돌이 없나요?
+*   실험실별로 NetAlly 인스턴스를 분리하면 큰 문제 없이 운영 가능합니다.
+*   같은 인스턴스를 공유하면 `PNETLAB_LAB_NAME`, `BATFISH_SNAPSHOT`, 런타임 설정 파일이 서로 덮어써질 수 있습니다.
+*   최소한 아래 값은 실험실별로 분리하세요.
+    * `PNETLAB_LAB_NAME`
+    * `BATFISH_SNAPSHOT`
+    * `NETALLY_RUNTIME_SETTINGS_PATH`
+*   권장 운영은 `랩 A = NetAlly A`, `랩 B = NetAlly B` 형태입니다.
 
 ---
 

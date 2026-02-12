@@ -41,6 +41,12 @@ ffd3e7b71977   pnetlab/pnet-chrome:latest   ...   docker9
 - `docker15`, `docker10`, `docker9` 이름은 노드 ID에 따라 달라질 수 있습니다.
 - 문서에서는 이해를 위해 위 이름을 예시로 사용합니다.
 
+이름 확인(실행 전):
+```bash
+docker ps --format 'table {{.Names}}\t{{.Image}}'
+```
+`<netally_container_name>` 자리는 여기서 확인한 실제 컨테이너 이름으로 바꿔서 실행하세요.
+
 ---
 
 ## 2. PNETLab 노드 배선 (가장 중요)
@@ -94,19 +100,19 @@ PNETLab Node 설정 화면에서 아래를 기준으로 맞춥니다.
 `Docker Options` 입력창은 한 줄 입력이 안정적입니다.
 
 ```bash
---privileged -v /opt/unetlab:/opt/unetlab:ro --add-host=host.docker.internal:host-gateway -e PNETLAB_INVENTORY_BACKEND=labfs_local -e PNETLAB_LAB_NAME=test_nso -e NSO_BASE_URL=http://10.10.10.100:8080/restconf -e BATFISH_HOST=host.docker.internal:9997 -e BATFISH_SNAPSHOT=test_nso -e AUTO_INIT_BATFISH=true -e NETALLY_TOOL_BACKEND=mcp -e NETALLY_MCP_ALLOW_MUTATIONS=true
+--privileged -v /opt/unetlab:/opt/unetlab:ro --add-host=host.docker.internal:host-gateway -e PNETLAB_INVENTORY_BACKEND=labfs_local -e PNETLAB_LAB_NAME=test_nso -e PNETLAB_NSO_NODE=NSO -e BATFISH_HOST=host.docker.internal:9997 -e BATFISH_SNAPSHOT=test_nso -e AUTO_INIT_BATFISH=true -e NETALLY_TOOL_BACKEND=mcp -e NETALLY_MCP_ALLOW_MUTATIONS=true
 ```
 
 설명:
 - `-v /opt/unetlab:/opt/unetlab:ro`: 쿠키 없이 LabFS 토폴로지 복제
 - `PNETLAB_INVENTORY_BACKEND=labfs_local`: VM 내부 실행 최적 경로
-- `NSO_BASE_URL=...10.10.10.100...`: NSO 관리 인터페이스 고정 주소 사용
+- `PNETLAB_NSO_NODE=NSO`: NSO 노드 이름으로 관리 IP를 자동 탐색해 RESTCONF URL을 구성
 - `BATFISH_HOST=host.docker.internal:9997`: 호스트 Batfish 연결
 - `AUTO_INIT_BATFISH=true`: Prepare 시 자동 초기화 시도
 
-대체(NSO 주소가 다를 때):
-- `NSO_BASE_URL`은 실제 NSO 관리망 IP 기준으로 바꿔야 합니다.
-- 임시로 컨테이너 이름 기반(`http://docker10:8080/restconf`)도 가능하지만, 이름이 바뀔 수 있어 IP 고정이 더 안전합니다.
+대체(NSO 주소를 명시해야 할 때):
+- 자동 탐색이 어려우면 `-e NSO_BASE_URL=http://<REACHABLE_NSO_IP>:8080/restconf`를 직접 지정합니다.
+- `<REACHABLE_NSO_IP>`는 NetAlly 컨테이너에서 실제로 닿는 주소를 사용합니다(예: `10.10.10.100` 또는 `192.168.1.1`).
 
 ---
 
@@ -116,18 +122,20 @@ PNETLab Node 설정 화면에서 아래를 기준으로 맞춥니다.
 
 - NetAlly가 NSO RESTCONF에 접근해야 하므로 아래 중 하나가 성공해야 합니다.
   - `http://<NSO_MGMT_IP>:8080/restconf`
+  - `http://<NSO_ADMIN_IP>:8080/restconf`
   - `http://<NSO_CONTAINER_NAME>:8080/restconf` (임시)
 
 중요:
 - 현재 `docker ps` 출력에서 NSO(`docker10`)는 호스트 포트 publish가 없습니다.
-- 그래서 NetAlly는 **관리망 IP(`10.10.10.100`) 기준**으로 붙는 방식을 우선 권장합니다.
+- `NSO_BASE_URL`을 비워두면 NetAlly는 `PNETLAB_NSO_NODE`(기본값 `NSO`) 이름으로 NSO IP를 자동 탐색합니다.
 
 간단 점검(호스트에서):
 ```bash
-docker exec -it docker15 sh -lc 'python - << "PY"
+docker exec -it <netally_container_name> sh -lc 'python - << "PY"
 import urllib.request, urllib.error
 urls = [
     "http://10.10.10.100:8080/restconf",
+    "http://192.168.1.1:8080/restconf",
     "http://docker10:8080/restconf",
 ]
 for u in urls:
@@ -203,7 +211,7 @@ ssh -N \
 
 컨테이너 IP 확인:
 ```bash
-docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' docker15
+docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <netally_container_name>
 ```
 
 컨테이너 IP가 `172.17.0.20`이라면:
@@ -242,7 +250,7 @@ docker ps
 ```
 4. NetAlly 컨테이너에 환경변수 반영 확인
 ```bash
-docker exec -it docker15 env | egrep 'PNETLAB_INVENTORY_BACKEND|PNETLAB_LAB_NAME|NSO_BASE_URL|BATFISH_HOST|AUTO_INIT_BATFISH|NETALLY_MCP_ALLOW_MUTATIONS'
+docker exec -it <netally_container_name> env | egrep 'PNETLAB_INVENTORY_BACKEND|PNETLAB_LAB_NAME|PNETLAB_NSO_NODE|NSO_BASE_URL|BATFISH_HOST|AUTO_INIT_BATFISH|NETALLY_MCP_ALLOW_MUTATIONS'
 ```
 5. Batfish 준비 상태 확인
 ```bash
@@ -254,13 +262,53 @@ curl -fsS http://127.0.0.1:9996/v2/version
 
 추가 검증(권장):
 ```bash
-docker exec -it docker15 curl -fsS http://127.0.0.1:8000/api/health
-docker exec -it docker15 curl -fsS -X POST http://127.0.0.1:8000/api/lab/prepare -H 'Content-Type: application/json' -d '{"auto_init_batfish": true}'
+docker exec -it <netally_container_name> curl -fsS http://127.0.0.1:8000/api/health
+docker exec -it <netally_container_name> curl -fsS -X POST http://127.0.0.1:8000/api/lab/prepare -H 'Content-Type: application/json' -d '{"auto_init_batfish": true}'
+```
+
+### 7.1 로컬 코드 수정 후 재배포 절차 (이미지 재생성 필요할 때)
+
+다음은 **코드를 바꾼 경우에만** 필요합니다.
+
+1. 로컬에서 이미지 빌드
+```bash
+cd /home/yujin/Desktop/Projects/GIA
+docker build -f NetAlly/Dockerfile -t netally:latest .
+```
+2. 이미지 tar로 내보내기
+```bash
+docker save -o netally.tar netally:latest
+```
+3. PNETLab VM으로 전송
+```bash
+scp netally.tar root@192.168.50.60:/root/
+```
+4. PNETLab VM에서 로드
+```bash
+ssh root@192.168.50.60 'docker load -i /root/netally.tar'
+```
+5. PNETLab에서 NetAlly 노드 Stop/Start
+
+중요:
+- **Settings/API 값만 바꿀 때는 이미지 재빌드가 필요 없습니다.**
+- `Settings > API Connections` 또는 `POST /api/settings`로 런타임 반영 가능합니다.
+- 자동화 스크립트 사용 시:
+```bash
+cd NetAlly
+PNETLAB_VM_IP=192.168.50.60 ./scripts/deploy_to_pnetlab.sh
 ```
 
 ---
 
-## 8. 네트워크 변경 후 SSH 단절 시 복구 체크
+## 8. "docker15 IP/route 영구 반영" 의미 정리
+
+- "영구 반영"은 PNETLab 노드 설정(`docker_options`/`config_data`)에 네트워크 명령을 넣어, 컨테이너 재시작 후에도 동일 IP/route가 자동 적용되게 만드는 것을 뜻합니다.
+- 이 문서의 권장값은 **고정 IP 주입이 아니라** `PNETLAB_NSO_NODE` 기반 자동 탐색 또는 `NSO_BASE_URL` 명시값 사용입니다.
+- 실험 중 `ip route add`/`ifconfig`로 넣는 값은 **임시 런타임 변경**이며, 컨테이너 재시작 시 사라집니다.
+
+---
+
+## 9. 네트워크 변경 후 SSH 단절 시 복구 체크
 
 PNETLab VM 콘솔에서:
 
@@ -283,7 +331,26 @@ systemctl restart networking
 
 ---
 
-## 9. 함께 보면 좋은 문서
+## 10. 다중 실험실 운영 시 주의사항
+
+실험실을 여러 개 운영할 때 가장 큰 리스크는 "같은 NetAlly 인스턴스에서 설정이 섞이는 문제"입니다.
+
+문제 포인트:
+- 같은 인스턴스를 공유하면 `PNETLAB_LAB_NAME`, `BATFISH_SNAPSHOT`이 덮어써져 결과가 혼선될 수 있습니다.
+- 런타임 설정 파일을 공용으로 쓰면 실험실 A의 NSO/PNETLab/OpenAI 값이 실험실 B에 남을 수 있습니다.
+- 운영 중 실수로 잘못된 랩에 `register/sync`를 실행할 가능성이 커집니다.
+
+권장:
+1. 실험실당 NetAlly 인스턴스 1개를 권장합니다.
+1. 실험실별로 최소 아래 값을 고유하게 유지합니다.
+   - `PNETLAB_LAB_NAME`
+   - `BATFISH_SNAPSHOT`
+   - `NETALLY_RUNTIME_SETTINGS_PATH` (예: `/data/netally/lab-a.settings.json`)
+1. 같은 인스턴스를 꼭 공유해야 하면, 작업 시작 전에 `POST /api/settings`로 해당 랩 프로필을 강제 적용한 뒤 진행합니다.
+
+---
+
+## 11. 함께 보면 좋은 문서
 
 - 전체 문서 입구: `docs/README_ko.md`
 - 실행/테스트 방법: `docs/testing_runbook_ko.md`

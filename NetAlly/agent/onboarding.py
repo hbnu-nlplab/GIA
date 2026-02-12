@@ -17,6 +17,39 @@ from agent.clients.pnetlab import PnetlabClient
 
 logger = logging.getLogger(__name__)
 
+
+def _csv_set(raw: Optional[str]) -> set[str]:
+    if not raw:
+        return set()
+    return {item.strip().lower() for item in str(raw).split(",") if item.strip()}
+
+
+def should_manage_pnetlab_node(node: Dict[str, Any]) -> bool:
+    """
+    Determine if a PNETLab node should be treated as an onboard target.
+    """
+    name = str(node.get("name") or "").strip()
+    if not name:
+        return False
+
+    include_names = _csv_set(os.getenv("PNETLAB_INCLUDE_NODE_NAMES", ""))
+    if include_names and name.lower() not in include_names:
+        return False
+
+    exclude_names = _csv_set(
+        os.getenv("PNETLAB_EXCLUDE_NODE_NAMES", "NSO,Docker,NetAlly,Admin")
+    )
+    if name.lower() in exclude_names:
+        return False
+
+    exclude_templates = _csv_set(os.getenv("PNETLAB_EXCLUDE_TEMPLATES", ""))
+    template = str(node.get("template") or node.get("type") or "").strip().lower()
+    if template and template in exclude_templates:
+        return False
+
+    return True
+
+
 @dataclass
 class DeviceInfo:
     name: str
@@ -68,9 +101,37 @@ def generate_device_info_from_pnetlab(
     """
     topology = pnetlab.get_session_topology()
     if "error" in topology:
-        raise RuntimeError(f"PNETLab topology error: {topology.get('error')}")
+        from agent.pnetlab_labfs import build_pnetlab_map_from_labfs, resolve_inventory_backend
 
-    nodes = pnetlab.get_nodes_from_topology(topology)
+        backend = resolve_inventory_backend()
+        if backend not in {"labfs_local", "labfs_ssh"}:
+            raise RuntimeError(f"PNETLab topology error: {topology.get('error')}")
+
+        labfs_topology = build_pnetlab_map_from_labfs()
+        if labfs_topology.get("error"):
+            raise RuntimeError(f"PNETLab topology error: {labfs_topology.get('error')}")
+
+        nodes = []
+        for node in labfs_topology.get("nodes", []):
+            if node.get("type") != "device":
+                continue
+            data = node.get("data", {}) if isinstance(node.get("data"), dict) else {}
+            name = str(data.get("label") or node.get("id") or "")
+            if not name:
+                continue
+            telnet_port = int(data.get("telnet_port") or 0)
+            nodes.append(
+                {
+                    "name": name,
+                    "telnet_port": telnet_port,
+                    "template": str(data.get("template") or ""),
+                    "type": str(data.get("kind") or data.get("template") or ""),
+                    # Keep API-compatible meaning: 2 means running.
+                    "status": 2 if telnet_port > 0 else 0,
+                }
+            )
+    else:
+        nodes = pnetlab.get_nodes_from_topology(topology)
     devices = []
     overrides = overrides or {}
 
@@ -85,6 +146,9 @@ def generate_device_info_from_pnetlab(
 
     for node in nodes:
         if node.get("status") != 2:
+            continue
+        if not should_manage_pnetlab_node(node):
+            logger.info("Skipping non-managed node for device_info: %s", node.get("name"))
             continue
         telnet_port = node.get("telnet_port", 0)
         if not telnet_port:
@@ -108,7 +172,7 @@ def generate_device_info_from_pnetlab(
         "admin_password": pick("PNETLAB_ADMIN_PASSWORD", "admin"),
         "domain_name": pick("PNETLAB_DOMAIN_NAME", "lab.local"),
         "nso_authgroup": pick("NSO_AUTHGROUP", "default"),
-        "nso_ned_id": pick("NSO_NED_ID", "cisco-ios-cli-6.110"),
+        "nso_ned_id": pick("NSO_NED_ID", ""),
         "nso_username": pick("NSO_USERNAME", "") or pick("NSO_USER", "admin"),
         "nso_password": pick("NSO_PASSWORD", "") or pick("NSO_PASS", "admin"),
         "batfish_output_dir": pick("BATFISH_EXPORT_DIR", "./snapshot"),
@@ -155,7 +219,7 @@ def parse_config(cfg: Dict[str, Any]) -> tuple[GlobalSettings, List[DeviceInfo]]
         admin_password=g.get("admin_password", "admin"),
         domain_name=g.get("domain_name", "lab.local"),
         nso_authgroup=g.get("nso_authgroup", "default"),
-        nso_ned_id=g.get("nso_ned_id", "cisco-ios-cli-6.110"),
+        nso_ned_id=g.get("nso_ned_id", ""),
         nso_username=g.get("nso_username", "admin"),
         nso_password=g.get("nso_password", "admin"),
     )

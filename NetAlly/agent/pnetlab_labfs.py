@@ -304,9 +304,12 @@ class _SshReader(_Reader):
         self._target = f"{user}@{host}"
 
     def _run(self, cmd: str) -> str:
+        # Some PNETLab shells mishandle argument-passed `sh -c` forms.
+        # Execute as a single remote command string for portability.
+        remote_cmd = f"sh -c {sh_quote(cmd)}"
         res = subprocess.run(
             # Avoid login shells: some PNETLab images print banners to stdout on -l.
-            [*self._base, self._target, "--", "sh", "-c", cmd],
+            [*self._base, self._target, remote_cmd],
             capture_output=True,
             text=True,
         )

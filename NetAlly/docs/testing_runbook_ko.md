@@ -10,6 +10,7 @@
 - `uv`
 - Node.js 18+
 - `npm`
+- 권장: Python 3.12 (CI와 동일 버전)
 
 권장:
 - `docker` (Batfish 확인용)
@@ -136,6 +137,15 @@ cd NetAlly
 확인:
 - `/api/settings` 재조회
 - `/api/health`에서 `tool_backend`, `mcp_health` 확인
+
+### 6.4 Refresh/Prepare가 403으로 실패함 (`mutations_blocked`)
+
+원인:
+- `NETALLY_MCP_ALLOW_MUTATIONS=false` 상태에서 변경성 도구 호출
+
+대응:
+- PNETLab 운영/온보딩 용도라면 `NETALLY_MCP_ALLOW_MUTATIONS=true`로 실행
+- 특히 `/api/lab/refresh` 및 `auto_init_batfish=true`로 `/api/lab/prepare` 호출 시 필요
 
 ---
 

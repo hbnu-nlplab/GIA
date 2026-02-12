@@ -17,6 +17,7 @@ from agent.onboarding import (
     enable_ssh_all,
     check_connectivity,
     register_devices_nso,
+    should_manage_pnetlab_node,
 )
 
 load_dotenv()
@@ -105,6 +106,71 @@ def _discover_nso_base_url() -> Optional[str]:
         return f"{scheme}://{ip}:{port}/{path}"
     except Exception:
         return None
+
+
+def _get_inventory_nodes(pnetlab: PnetlabClient) -> Dict[str, Any]:
+    """
+    Resolve inventory nodes via API first, then LabFS fallback.
+    Returns API-compatible node objects with `name`, `status`, `telnet_port`.
+    """
+    topology = pnetlab.get_session_topology()
+    if "error" not in topology:
+        return {
+            "nodes": pnetlab.get_nodes_from_topology(topology),
+            "lab": {"name": topology.get("name"), "path": topology.get("path")},
+            "source": "api",
+        }
+
+    try:
+        from agent.pnetlab_labfs import build_pnetlab_map_from_labfs, resolve_inventory_backend
+    except Exception:
+        return {"error": f"PNETLab API error: {topology.get('error')}"}
+
+    backend = resolve_inventory_backend()
+    if backend not in {"labfs_local", "labfs_ssh"}:
+        return {"error": f"PNETLab API error: {topology.get('error')}"}
+
+    labfs_topology = build_pnetlab_map_from_labfs()
+    if labfs_topology.get("error"):
+        return {"error": f"PNETLab LabFS error: {labfs_topology.get('error')}"}
+
+    nodes: List[Dict[str, Any]] = []
+    for node in labfs_topology.get("nodes", []):
+        if node.get("type") != "device":
+            continue
+        data = node.get("data", {}) if isinstance(node.get("data"), dict) else {}
+        name = str(data.get("label") or node.get("id") or "")
+        if not name:
+            continue
+        telnet_port = int(data.get("telnet_port") or 0)
+        nodes.append(
+            {
+                "name": name,
+                "telnet_port": telnet_port,
+                "status": 2 if telnet_port > 0 else 0,
+                "template": str(data.get("template") or ""),
+                "type": str(data.get("kind") or data.get("template") or ""),
+            }
+        )
+
+    meta = labfs_topology.get("meta", {}) if isinstance(labfs_topology.get("meta"), dict) else {}
+    return {
+        "nodes": nodes,
+        "lab": {"name": os.getenv("PNETLAB_LAB_NAME"), "path": meta.get("unl_path")},
+        "source": "labfs",
+    }
+
+
+def _call_tool_or_fn(target: Any, kwargs: Dict[str, Any]) -> Any:
+    """
+    Call either a StructuredTool (`invoke`) or a plain function (`**kwargs`).
+    """
+    invoke = getattr(target, "invoke", None)
+    if callable(invoke):
+        return invoke(kwargs)
+    if callable(target):
+        return target(**kwargs)
+    raise TypeError(f"Unsupported callable target: {type(target)}")
 
 
 # =============================================================================
@@ -337,22 +403,32 @@ def lab_manage(
         params = params or {}
         
         if action == "show_inventory":
-            topology = pnetlab.get_session_topology()
-            if "error" in topology:
-                return topology
+            inventory = _get_inventory_nodes(pnetlab)
+            if "error" in inventory:
+                return {"error": inventory.get("error")}
             return {
-                "nodes": pnetlab.get_nodes_from_topology(topology),
-                "lab": {
-                    "name": topology.get("name"),
-                    "path": topology.get("path"),
-                },
+                "nodes": inventory.get("nodes", []),
+                "lab": inventory.get("lab", {}),
+                "source": inventory.get("source", "api"),
             }
             
         elif action == "get_status":
             device = params.get("device")
             status = pnetlab.get_nodes_status()
             if "error" in status:
-                return status
+                inventory = _get_inventory_nodes(pnetlab)
+                if "error" in inventory:
+                    return status
+                nodes = inventory.get("nodes", [])
+                status_nodes = {
+                    str(idx): {
+                        "name": n.get("name"),
+                        "status": n.get("status", 0),
+                        "telnet_port": n.get("telnet_port", 0),
+                    }
+                    for idx, n in enumerate(nodes, start=1)
+                }
+                status = {"data": {"nodes": status_nodes}, "source": inventory.get("source", "labfs")}
             if not device:
                 return status
             # filter by device name if possible
@@ -472,7 +548,9 @@ def scan_and_sync(
         result = {
             "action": action,
             "pnetlab_nodes": [],
+            "ignored_nodes": [],
             "nso_devices": [],
+            "nso_devices_managed": [],
             "missing": [],
             "already_registered": [],
             "removed": [],
@@ -483,11 +561,17 @@ def scan_and_sync(
         }
         
         # 1. PNETLab에서 실행 중인 노드 목록 조회
-        topology = pnetlab.get_session_topology()
-        if "error" in topology:
-            return {"error": f"PNETLab API error: {topology.get('error')}"}
-        
-        pnetlab_nodes = pnetlab.get_nodes_from_topology(topology)
+        inventory = _get_inventory_nodes(pnetlab)
+        if "error" in inventory:
+            return {"error": inventory.get("error")}
+
+        pnetlab_nodes_all = inventory.get("nodes", [])
+        pnetlab_nodes = []
+        for node in pnetlab_nodes_all:
+            if should_manage_pnetlab_node(node):
+                pnetlab_nodes.append(node)
+            else:
+                result["ignored_nodes"].append(node.get("name"))
         pnetlab_name_set = set(node.get("name", "").lower() for node in pnetlab_nodes)
         
         # 실행 중인 노드만 필터링 (status == 2 means running)
@@ -505,9 +589,13 @@ def scan_and_sync(
         # 2. NSO에서 등록된 장비 목록 조회
         nso_devices = nso.get_devices()
         result["nso_devices"] = nso_devices
-        
+        nso_devices_managed = [
+            d for d in nso_devices if should_manage_pnetlab_node({"name": d})
+        ]
+        result["nso_devices_managed"] = nso_devices_managed
+
         # 3. Diff 계산: PNETLab에는 있지만 NSO에 없는 장비
-        nso_device_set = set(d.lower() for d in nso_devices)
+        nso_device_set = set(d.lower() for d in nso_devices_managed)
         
         for node in running_nodes:
             node_name = node["name"]
@@ -517,7 +605,7 @@ def scan_and_sync(
                 result["missing"].append(node)
 
         # 3-b. NSO에는 있으나 PNETLab에 없는 장비
-        removed = [d for d in nso_devices if d.lower() not in pnetlab_name_set]
+        removed = [d for d in nso_devices_managed if d.lower() not in pnetlab_name_set]
         result["removed"] = removed
         
         # 4. Sync (auto_onboard가 True이고 action이 sync 또는 scan_and_sync인 경우)
@@ -716,15 +804,21 @@ def lab_bootstrap(
 
         if action == "diff_report":
             # 1) 신규/삭제 감지 (PNETLab vs NSO)
-            diff = scan_and_sync(
-                action="scan",
-                auto_onboard=False,
-                auto_remove=False,
+            diff = _call_tool_or_fn(
+                scan_and_sync,
+                {
+                    "action": "scan",
+                    "auto_onboard": False,
+                    "auto_remove": False,
+                },
             )
             # 2) 변경 감지 (NSO check-sync)
-            change = lab_bootstrap(
-                action="detect_changes",
-                params={"config_path": config_path, "devices": [d.name for d in devices]},
+            change = _call_tool_or_fn(
+                lab_bootstrap,
+                {
+                    "action": "detect_changes",
+                    "params": {"config_path": config_path, "devices": [d.name for d in devices]},
+                },
             )
             return {
                 "status": "completed",
@@ -751,10 +845,13 @@ def lab_bootstrap(
             return {"status": "completed", "path": config_path, "devices": len(payload.get("devices", []))}
 
         if action == "refresh_onboard":
-            diff = scan_and_sync(
-                action="scan",
-                auto_onboard=False,
-                auto_remove=False,
+            diff = _call_tool_or_fn(
+                scan_and_sync,
+                {
+                    "action": "scan",
+                    "auto_onboard": False,
+                    "auto_remove": False,
+                },
             )
             missing = diff.get("missing", [])
             missing_names = [n.get("name") for n in missing if n.get("name")]

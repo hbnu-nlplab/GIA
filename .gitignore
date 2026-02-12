@@ -91,3 +91,7 @@ docs/slidev-netconfigqa
 # NetAlly frontend test artifacts
 NetAlly/frontend/test-results/
 NetAlly/frontend/playwright-report/
+
+# NetAlly runtime settings/cache
+NetAlly/.runtime/
+NetAlly/.tmp/

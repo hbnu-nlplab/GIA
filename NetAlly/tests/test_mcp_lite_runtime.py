@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+import socket
 
 import pytest
 
@@ -54,15 +55,38 @@ BLOCKED_MUTATING_CALLS = [
 
 
 @asynccontextmanager
-async def running_mcp_server(monkeypatch: pytest.MonkeyPatch, port: int, allow_mutations: bool = False):
-    url = f"http://127.0.0.1:{port}/mcp"
-    monkeypatch.setenv("NETALLY_MCP_SERVER_URL", url)
-    monkeypatch.setenv("NETALLY_MCP_ALLOW_MUTATIONS", "true" if allow_mutations else "false")
-    reset_mcp_client()
-    try:
+async def running_mcp_server(
+    monkeypatch: pytest.MonkeyPatch,
+    allow_mutations: bool = False,
+    port: int | None = None,
+):
+    def pick_free_port() -> int:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            sock.bind(("127.0.0.1", 0))
+            return int(sock.getsockname()[1])
+
+    selected_url: str | None = None
+    last_started = {}
+
+    for _ in range(5):
+        chosen_port = port if port is not None else pick_free_port()
+        url = f"http://127.0.0.1:{chosen_port}/mcp"
+        monkeypatch.setenv("NETALLY_MCP_SERVER_URL", url)
+        monkeypatch.setenv("NETALLY_MCP_ALLOW_MUTATIONS", "true" if allow_mutations else "false")
+        reset_mcp_client()
         started = await start_embedded_mcp_server()
-        assert started.get("started") is True or started.get("already_running") is True
-        yield MCPClient(server_url=url)
+        last_started = started
+        if started.get("started") is True or started.get("already_running") is True:
+            selected_url = url
+            break
+        await stop_embedded_mcp_server()
+        if port is not None:
+            break
+
+    assert selected_url is not None, f"failed to start embedded MCP server: {last_started}"
+
+    try:
+        yield MCPClient(server_url=selected_url)
     finally:
         await stop_embedded_mcp_server()
         reset_mcp_client()
@@ -70,7 +94,7 @@ async def running_mcp_server(monkeypatch: pytest.MonkeyPatch, port: int, allow_m
 
 @pytest.mark.asyncio
 async def test_mcp_server_lists_exact_22_tools(monkeypatch):
-    async with running_mcp_server(monkeypatch, port=18911) as client:
+    async with running_mcp_server(monkeypatch) as client:
         listed = await client.list_tools()
         assert listed.get("ok") is True
         names = {tool["name"] for tool in listed.get("tools", [])}
@@ -80,7 +104,7 @@ async def test_mcp_server_lists_exact_22_tools(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_read_only_tools_not_blocked_when_mutations_disabled(monkeypatch):
-    async with running_mcp_server(monkeypatch, port=18912, allow_mutations=False) as client:
+    async with running_mcp_server(monkeypatch, allow_mutations=False) as client:
         for tool_name, arguments in READ_ONLY_CALLS:
             result = await client.call_tool(tool_name, arguments)
             payload = result.get("result")
@@ -92,7 +116,7 @@ async def test_read_only_tools_not_blocked_when_mutations_disabled(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_mutating_tools_blocked_when_mutations_disabled(monkeypatch):
-    async with running_mcp_server(monkeypatch, port=18913, allow_mutations=False) as client:
+    async with running_mcp_server(monkeypatch, allow_mutations=False) as client:
         for tool_name, arguments in BLOCKED_MUTATING_CALLS:
             result = await client.call_tool(tool_name, arguments)
             payload = result.get("result", {})
@@ -105,7 +129,7 @@ async def test_mutating_tools_blocked_when_mutations_disabled(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_network_query_security_and_acl_categories_are_accepted(monkeypatch):
-    async with running_mcp_server(monkeypatch, port=18914) as client:
+    async with running_mcp_server(monkeypatch) as client:
         for category in ("security", "acl"):
             result = await client.call_tool("network_query", {"category": category})
             payload = result.get("result")

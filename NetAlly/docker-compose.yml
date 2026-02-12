@@ -1,12 +1,11 @@
-version: '3.8'
-
 services:
   # =========================================================================
   # NetAlly Main Service
   # =========================================================================
   netally:
-    build: .
-    container_name: netally
+    build:
+      context: ..
+      dockerfile: NetAlly/Dockerfile
     ports:
       - "8000:8000"  # Web UI + API
     environment:
@@ -52,7 +51,6 @@ services:
   # =========================================================================
   batfish:
     image: batfish/allinone:latest
-    container_name: batfish
     ports:
       - "9996:9996"
       - "9997:9997"
@@ -60,8 +58,8 @@ services:
       - batfish_data:/data
     restart: unless-stopped
     healthcheck:
-      # Recent batfish/allinone images return 404 on /v2, but /v2/version is stable.
-      test: ["CMD", "curl", "-f", "http://localhost:9996/v2/version"]
+      # batfish/allinone image may not include curl. Use python stdlib probe.
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9996/v2/version', timeout=5)"]
       interval: 30s
       timeout: 10s
       retries: 3
