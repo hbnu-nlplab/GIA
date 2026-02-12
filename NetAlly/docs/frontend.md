@@ -38,6 +38,10 @@ interface AppState {
   language: 'en' | 'ko';
   topologySource: 'batfish' | 'pnetlab';  // NEW: Toggle between auto-layout and PNETLab positions
   viewMode: 'dashboard' | 'topology';
+
+  // Topology-to-chat context bridge
+  topologyDevices: TopologyDeviceSummary[]; // device list for slash picker
+  chatContextDevice: ChatContextDevice | null; // pinned device context from map/slash
   
   // Actions
   addEvidence: (e: Omit<Evidence, 'id'>) => void;
@@ -58,7 +62,8 @@ Managed in [TopologyPanel.tsx](file:///home/kilab_pyj/codespace/GIA/NetAlly/fron
   - **Batfish**: Auto-layout with dagre (hierarchical arrangement)
   - **PNETLab**: Real positions from Lab (matches Lab.png layout)
 - **Interactions**: 
-  - `Click`: Select node and open DeviceDetailPanel.
+  - `Left Click`: Select node and pin chat context.
+  - `Right Click`: Open node context menu (`Detail`, `Use As Chat Context`).
   - `Pan/Zoom`: Exploration of large topologies.
 
 ---
@@ -73,6 +78,49 @@ The `ChatPanel` handles the Server-Sent Events stream from the backend.
     - `event: tool_call`: Displays "Executing [Tool]..." in chat.
     - `event: tool_output`: Automatically triggers `addEvidence()` in the Zustand store.
     - `event: answer`: Displays final AI response.
+3. **Reliability Guard (2026-02-12)**:
+    - Uses buffered SSE parsing to prevent `data:` JSON loss when chunk boundaries split an event payload.
+    - Non-2xx `/api/chat` responses are surfaced immediately.
+4. **Answer-linked Viz Snapshots (2026-02-12)**:
+    - Each assistant answer stores the currently active `viz` snapshot.
+    - Clicking any previous answer restores the topology overlay that was shown for that answer.
+5. **Streaming UX**:
+    - During inference, chat explicitly shows `[Thinking..]` status.
+6. **Chat Input UX (2026-02-12)**:
+    - Image upload with thumbnail preview/removal.
+    - Slash command (`/`) opens device quick picker (topology device catalog).
+    - Pinned device context is attached to chat requests and displayed in header.
+
+---
+
+## 4.1 Topology Overlay Reliability Notes (2026-02-12)
+
+- Topology fetch now uses `AbortController` + request sequence guard to avoid stale response overwrite when source/layer toggles quickly.
+- `/api/topology*` payloads that include `error` are surfaced in the topology panel instead of being collapsed into generic empty state.
+- Position data is trusted only when all nodes have valid coordinates; otherwise dagre layout fallback is used.
+- Reachability styling is stored as overlay metadata, preserving base edge style for viz on/off restore.
+
+## 4.2 Explainable Overlay (2026-02-12)
+
+- Topology panel renders an explanation card when `viz` is active.
+- Card includes:
+  - viz title + originating question text
+  - node/edge match counts
+  - mode reason (`focus` vs `path`)
+  - mismatch hints (`unmatched nodes/edges`) to explain why some highlights did not appear.
+
+## 4.3 Chat UX Hardening (2026-02-12)
+
+- IME-safe submit:
+  - Enter submit now guards composition state (`isComposing`, keyCode 229) to prevent accidental send during Korean/Japanese input.
+- Markdown answer rendering:
+  - Assistant messages render Markdown + GFM (lists, code blocks, links) for GPT/Claude-like readability.
+- Perceived streaming improvement:
+  - Final answer is revealed progressively in the bubble, and future `answer_delta/token` SSE events are also handled.
+- Slash picker UX refinement:
+  - Device picker now opens for trailing slash token (not only full-input slash mode).
+  - Selecting a device keeps existing text and pins context.
+  - Added listbox/option ARIA metadata for keyboard/screen-reader friendliness.
 
 ---
 
