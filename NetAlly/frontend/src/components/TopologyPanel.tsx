@@ -12,7 +12,7 @@ import {
 import { Zap, RefreshCcw, AlertCircle, Layers, Network } from 'lucide-react'
 import DeviceNode from './DeviceNode'
 import NetworkNode from './NetworkNode'
-import { useAppStore } from '../store'
+import { useAppStore, ChatContextDevice, TopologyDeviceSummary } from '../store'
 import dagre from 'dagre'
 
 interface ApiNode {
@@ -26,6 +26,36 @@ interface ApiEdge {
   target: string
   label?: string
   style?: Record<string, any>
+}
+
+interface ApiTopologyResponse {
+  nodes?: ApiNode[]
+  edges?: ApiEdge[]
+  error?: string
+}
+
+interface VizInsight {
+  title: string
+  query?: string
+  mode: 'focus' | 'path'
+  requestedNodes: number
+  matchedNodes: number
+  requestedEdges: number
+  matchedEdges: number
+  hubAssistedEdges: number
+  unmatchedNodes: string[]
+  unmatchedEdges: string[]
+  reason?: string
+  source?: string
+  schemaVersion?: number
+  truncated?: boolean
+}
+
+interface NodeContextMenuState {
+  nodeId: string
+  nodeType: string
+  x: number
+  y: number
 }
 
 const nodeTypes: Record<string, any> = {
@@ -116,13 +146,15 @@ const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'TB') => 
 }
 
 export default function TopologyPanel() {
-  const { setSelectedNode, openDetail, theme, topologySource, setTopologySource, viz } = useAppStore(state => ({
+  const { setSelectedNode, openDetail, theme, topologySource, setTopologySource, viz, setTopologyDevices, setChatContextDevice } = useAppStore(state => ({
     setSelectedNode: state.setSelectedNode,
     openDetail: state.openDetail,
     theme: state.theme,
     topologySource: state.topologySource,
     setTopologySource: state.setTopologySource,
     viz: state.viz,
+    setTopologyDevices: state.setTopologyDevices,
+    setChatContextDevice: state.setChatContextDevice,
   }))
 
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
@@ -134,6 +166,11 @@ export default function TopologyPanel() {
   const [analyzingReachability, setAnalyzingReachability] = useState(false)
   const [layer, setLayer] = useState<'l1' | 'l3'>('l1')
   const [topologyRevision, setTopologyRevision] = useState(0)
+  const [vizInsight, setVizInsight] = useState<VizInsight | null>(null)
+  const [nodeContextMenu, setNodeContextMenu] = useState<NodeContextMenuState | null>(null)
+  const fetchSeqRef = useRef(0)
+  const fetchAbortRef = useRef<AbortController | null>(null)
+  const panelRef = useRef<HTMLDivElement | null>(null)
 
   // If the user has never selected a topology source before, we can safely
   // auto-fallback to PNETLab when Batfish returns no nodes (common in demos
@@ -149,7 +186,24 @@ export default function TopologyPanel() {
   const baseEdgeMarkerColor = theme === 'dark' ? '#10b981' : '#059669'
   const vizEdgeColor = viz?.mode === 'path' ? (theme === 'dark' ? '#34d399' : '#059669') : (theme === 'dark' ? '#fb923c' : '#f97316')
 
+  const toChatContext = (node: Node): ChatContextDevice => {
+    const data = (node.data || {}) as Record<string, any>
+    return {
+      id: String(node.id),
+      label: String(data.label || node.id),
+      platform: data.platform ? String(data.platform) : undefined,
+      deviceType: data.device_type ? String(data.device_type) : undefined,
+      source: 'map',
+    }
+  }
+
   const fetchTopology = useCallback(async () => {
+    const requestSeq = fetchSeqRef.current + 1
+    fetchSeqRef.current = requestSeq
+    fetchAbortRef.current?.abort()
+    const controller = new AbortController()
+    fetchAbortRef.current = controller
+
     let switchingSource = false
     setLoading(true)
     setError(null)
@@ -159,9 +213,15 @@ export default function TopologyPanel() {
         ? '/api/topology/pnetlab'
         : `/api/topology?layer=${layer}`
       
-      const res = await fetch(apiUrl)
+      const res = await fetch(apiUrl, { signal: controller.signal })
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`)
-      const data = await res.json()
+      const data: ApiTopologyResponse = await res.json()
+
+      if (requestSeq !== fetchSeqRef.current) return
+
+      if (typeof data?.error === 'string' && data.error.trim()) {
+        throw new Error(data.error)
+      }
 
       if (!data || !Array.isArray(data.nodes)) {
         throw new Error('Invalid topology data format')
@@ -181,15 +241,17 @@ export default function TopologyPanel() {
         return
       }
 
-      // PNETLab 응답에 position이 있는지 확인
-      const hasPositions = data.nodes.some((n: any) => n.position?.x !== undefined)
+      // Position은 모든 노드에 있어야만 raw layout을 신뢰한다.
+      const hasCompletePositions =
+        data.nodes.length > 0 &&
+        data.nodes.every((n: any) => Number.isFinite(n?.position?.x) && Number.isFinite(n?.position?.y))
 
       const flowNodes: Node[] = data.nodes.map((n: ApiNode & { position?: { x: number, y: number } }) => ({
         id: n.id,
         type: n.type === 'network' ? 'network' : 'device',
-        // PNETLab 위치가 있으면 직접 사용, 없으면 (0,0)으로 시작
-        position: hasPositions && n.position 
-          ? { x: n.position.x, y: n.position.y }
+        // Position set이 완전할 때만 원본 좌표를 그대로 사용한다.
+        position: hasCompletePositions && n.position 
+          ? { x: Number(n.position.x), y: Number(n.position.y) }
           : { x: 0, y: 0 },
         data: { 
           label: n.id, 
@@ -212,6 +274,9 @@ export default function TopologyPanel() {
             type: MarkerType.ArrowClosed,
             color: baseEdgeMarkerColor,
           },
+          __baseAnimated: true,
+          __baseLabel: e.label || '',
+          __reachability: null,
         },
         markerEnd: {
           type: MarkerType.ArrowClosed,
@@ -224,33 +289,54 @@ export default function TopologyPanel() {
         labelBgBorderRadius: 4,
       }))
 
-      // PNETLab 위치가 있으면 dagre 건너뛰기
-      if (hasPositions) {
+      const deviceCatalog: TopologyDeviceSummary[] = flowNodes
+        .filter((n) => n.type === 'device' && !String(n.id).startsWith('net:'))
+        .map((n) => ({
+          id: String(n.id),
+          label: String(((n.data || {}) as Record<string, any>).label || n.id),
+          platform: ((n.data || {}) as Record<string, any>).platform
+            ? String(((n.data || {}) as Record<string, any>).platform)
+            : undefined,
+          deviceType: ((n.data || {}) as Record<string, any>).device_type
+            ? String(((n.data || {}) as Record<string, any>).device_type)
+            : undefined,
+        }))
+
+      // Complete position set이 있으면 dagre 건너뛰기
+      if (hasCompletePositions) {
         nodesRef.current = flowNodes
         edgesRef.current = flowEdges
         setNodes(flowNodes)
         setEdges(flowEdges)
+        setTopologyDevices(deviceCatalog)
       } else {
         const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(flowNodes, flowEdges)
         nodesRef.current = layoutedNodes
         edgesRef.current = layoutedEdges
         setNodes(layoutedNodes)
         setEdges(layoutedEdges)
+        setTopologyDevices(deviceCatalog)
       }
       setTopologyRevision((v) => v + 1)
     } catch (err: any) {
+      if (err?.name === 'AbortError') return
+      if (requestSeq !== fetchSeqRef.current) return
       console.error('Failed to fetch topology:', err)
       setError(err.message || 'Failed to load topology')
+      setTopologyDevices([])
     } finally {
-      if (!switchingSource) setLoading(false)
+      if (requestSeq === fetchSeqRef.current && !switchingSource) setLoading(false)
     }
-  }, [layer, topologySource, setNodes, setEdges, baseEdgeMarkerColor, hasPersistedTopologySource, setTopologySource])
+  }, [layer, topologySource, setNodes, setEdges, baseEdgeMarkerColor, hasPersistedTopologySource, setTopologySource, setTopologyDevices])
 
   // Apply visualization overlay to existing nodes/edges whenever viz changes.
   useEffect(() => {
     const currentNodes = nodesRef.current
     const currentEdges = edgesRef.current
-    if (currentNodes.length === 0 && currentEdges.length === 0) return
+    if (currentNodes.length === 0 && currentEdges.length === 0) {
+      setVizInsight(null)
+      return
+    }
 
     const aliasToNodeId = new Map<string, string>()
     for (const node of currentNodes) {
@@ -286,11 +372,21 @@ export default function TopologyPanel() {
 
     const highlightedNodeIds = new Set<string>()
     const highlightedEdgeKeys = new Set<string>()
+    const unmatchedNodeHints: string[] = []
+    const unmatchedEdgeHints: string[] = []
+    let matchedRequestedNodes = 0
+    let matchedRequestedEdges = 0
+    let hubAssistedEdges = 0
 
     if (viz) {
       for (const n of viz.nodes || []) {
         const resolved = resolveNodeId(n)
-        if (resolved) highlightedNodeIds.add(resolved)
+        if (resolved) {
+          highlightedNodeIds.add(resolved)
+          matchedRequestedNodes += 1
+        } else {
+          unmatchedNodeHints.push(String(n))
+        }
       }
 
       for (const edge of viz.edges || []) {
@@ -306,6 +402,7 @@ export default function TopologyPanel() {
         const direct = makeUndirectedEdgeKey(srcKey, dstKey)
         if (direct && existingEdgeKeys.has(direct)) {
           highlightedEdgeKeys.add(direct)
+          matchedRequestedEdges += 1
           continue
         }
 
@@ -324,10 +421,11 @@ export default function TopologyPanel() {
             const hubNodeId = aliasToNodeId.get(hubKey)
             if (hubNodeId) highlightedNodeIds.add(hubNodeId)
           }
+          matchedRequestedEdges += 1
+          hubAssistedEdges += 1
           continue
         }
-
-        if (direct) highlightedEdgeKeys.add(direct)
+        unmatchedEdgeHints.push(`${String(edge.source)} -> ${String(edge.target)}`)
       }
     }
 
@@ -353,27 +451,79 @@ export default function TopologyPanel() {
       const edgeData = ((edge.data || {}) as Record<string, any>)
       const baseStyle = edgeData.__baseStyle || { stroke: 'hsl(var(--border))', strokeWidth: 2 }
       const baseMarker = edgeData.__baseMarker || { type: MarkerType.ArrowClosed, color: baseEdgeMarkerColor }
+      const baseAnimated = typeof edgeData.__baseAnimated === 'boolean' ? edgeData.__baseAnimated : Boolean(edge.animated)
+      const baseLabel = typeof edgeData.__baseLabel === 'string' ? edgeData.__baseLabel : (edge.label || '')
+      const reachability = edgeData.__reachability && typeof edgeData.__reachability === 'object'
+        ? (edgeData.__reachability as Record<string, any>)
+        : null
+      const preVizStyle = reachability?.style && typeof reachability.style === 'object'
+        ? (reachability.style as Record<string, any>)
+        : baseStyle
+      const preVizMarker = reachability?.markerEnd && typeof reachability.markerEnd === 'object'
+        ? (reachability.markerEnd as Record<string, any>)
+        : baseMarker
+      const preVizAnimated = typeof reachability?.animated === 'boolean' ? reachability.animated : baseAnimated
+      const preVizLabel = typeof reachability?.label === 'string' && reachability.label.length > 0
+        ? reachability.label
+        : baseLabel
       const highlighted =
         Boolean(viz) &&
         highlightedEdgeKeys.has(makeUndirectedEdgeKey(edge.source, edge.target))
 
       const style = highlighted
         ? {
-            ...baseStyle,
+            ...preVizStyle,
             stroke: vizEdgeColor,
-            strokeWidth: Math.max(Number(baseStyle.strokeWidth) || 2, 4),
+            strokeWidth: Math.max(Number(preVizStyle.strokeWidth) || 2, 4),
           }
-        : baseStyle
+        : preVizStyle
       const markerEnd = highlighted
-        ? { ...baseMarker, color: vizEdgeColor }
-        : baseMarker
+        ? { ...preVizMarker, color: vizEdgeColor }
+        : preVizMarker
 
       return {
         ...edge,
         style,
         markerEnd,
+        animated: preVizAnimated,
+        label: preVizLabel,
       }
     }))
+
+    if (!viz) {
+      setVizInsight(null)
+      return
+    }
+
+    const unique = (items: string[]): string[] => {
+      const out = new Set<string>()
+      for (const item of items) {
+        const v = String(item || '').trim()
+        if (v) out.add(v)
+      }
+      return Array.from(out)
+    }
+
+    setVizInsight({
+      title: String(viz.title || 'LLM Visualization'),
+      query: typeof viz.query === 'string' ? viz.query : undefined,
+      mode: viz.mode === 'path' ? 'path' : 'focus',
+      requestedNodes: typeof viz.diagnostics?.requestedNodes === 'number'
+        ? viz.diagnostics.requestedNodes
+        : (Array.isArray(viz.nodes) ? viz.nodes.length : 0),
+      matchedNodes: matchedRequestedNodes,
+      requestedEdges: typeof viz.diagnostics?.requestedEdges === 'number'
+        ? viz.diagnostics.requestedEdges
+        : (Array.isArray(viz.edges) ? viz.edges.length : 0),
+      matchedEdges: matchedRequestedEdges,
+      hubAssistedEdges,
+      unmatchedNodes: unique(unmatchedNodeHints).slice(0, 4),
+      unmatchedEdges: unique(unmatchedEdgeHints).slice(0, 4),
+      reason: typeof viz.reason === 'string' ? viz.reason : undefined,
+      source: typeof viz.source === 'string' ? viz.source : undefined,
+      schemaVersion: typeof viz.schemaVersion === 'number' ? viz.schemaVersion : undefined,
+      truncated: viz.diagnostics?.truncated === true,
+    })
   }, [viz, topologyRevision, setNodes, setEdges, vizEdgeColor, baseEdgeMarkerColor])
 
   useEffect(() => {
@@ -388,43 +538,89 @@ export default function TopologyPanel() {
     fetchTopology()
   }, [fetchTopology])
 
+  useEffect(() => {
+    return () => {
+      fetchAbortRef.current?.abort()
+    }
+  }, [])
+
+  useEffect(() => {
+    const close = () => setNodeContextMenu(null)
+    window.addEventListener('click', close)
+    return () => window.removeEventListener('click', close)
+  }, [])
+
   const runReachabilityAnalysis = async () => {
     if (analyzingReachability) return;
     setAnalyzingReachability(true);
 
     try {
       const res = await fetch('/api/dashboard/reachability');
-      const reachData: any[] = await res.json();
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`)
+      const reachDataRaw = await res.json();
+      const reachData: any[] = Array.isArray(reachDataRaw) ? reachDataRaw : [];
 
-      setEdges((prevEdges) => prevEdges.map(edge => {
-        const reach = reachData.find(r => 
+      setEdges((prevEdges) => {
+        const nextEdges = prevEdges.map(edge => {
+          const edgeData = ((edge.data || {}) as Record<string, any>)
+          const baseStyle = edgeData.__baseStyle || edge.style || { stroke: 'hsl(var(--border))', strokeWidth: 2 }
+          const baseMarker = (edgeData.__baseMarker as Record<string, any>) || { type: MarkerType.ArrowClosed, color: baseEdgeMarkerColor }
+          const baseAnimated = typeof edgeData.__baseAnimated === 'boolean' ? edgeData.__baseAnimated : Boolean(edge.animated)
+          const baseLabel = typeof edgeData.__baseLabel === 'string' ? edgeData.__baseLabel : (edge.label || '')
+          const reach = reachData.find(r => 
           (r.source === edge.source && r.target === edge.target) ||
           (r.source === edge.target && r.target === edge.source)
-        );
-        
-        if (reach) {
+          );
+
+          if (!reach) {
+            return {
+              ...edge,
+              animated: baseAnimated,
+              style: baseStyle,
+              markerEnd: baseMarker as any,
+              label: baseLabel,
+              data: {
+                ...edgeData,
+                __reachability: null,
+              },
+            };
+          }
+
           const color = reach.status === 'success' ? '#10b981' : reach.status === 'warning' ? '#f59e0b' : '#ef4444';
-          const edgeData = ((edge.data || {}) as Record<string, any>)
-          const nextStyle = { ...(edgeData.__baseStyle || edge.style || {}), stroke: color, strokeWidth: 3 }
+          const nextStyle = { ...baseStyle, stroke: color, strokeWidth: 3 }
           const nextMarker = {
-            ...((edgeData.__baseMarker as Record<string, any>) || { type: MarkerType.ArrowClosed }),
+            ...baseMarker,
             color,
           }
+          const nextAnimated = reach.status === 'success'
+          const nextLabel =
+            typeof reach.message === 'string' && reach.message.length > 0
+              ? reach.message
+              : baseLabel
+
           return {
             ...edge,
-            animated: reach.status === 'success',
+            animated: nextAnimated,
             style: nextStyle,
             markerEnd: nextMarker as any,
             data: {
               ...edgeData,
-              __baseStyle: nextStyle,
-              __baseMarker: nextMarker,
+              __reachability: {
+                status: reach.status,
+                message: reach.message || '',
+                style: nextStyle,
+                markerEnd: nextMarker,
+                animated: nextAnimated,
+                label: nextLabel,
+              },
             },
-            label: reach.message || edge.label
+            label: nextLabel
           };
-        }
-        return edge;
-      }));
+        })
+        edgesRef.current = nextEdges
+        return nextEdges
+      });
+      setTopologyRevision((v) => v + 1)
     } catch (error) {
       console.error('Reachability analysis failed:', error);
     } finally {
@@ -485,7 +681,67 @@ export default function TopologyPanel() {
   }
 
   return (
-    <div className="flex-1 h-full relative group">
+    <div ref={panelRef} className="flex-1 h-full relative group">
+      {vizInsight && (
+        <div className="absolute top-4 left-4 z-20 max-w-sm p-3 bg-card/85 backdrop-blur-lg border border-border rounded-xl shadow-xl pointer-events-none select-none">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">LLM Overlay</span>
+            <span
+              className={`text-[10px] px-2 py-0.5 rounded-full border ${
+                vizInsight.mode === 'path'
+                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-500'
+                  : 'bg-orange-500/10 border-orange-500/30 text-orange-500'
+              }`}
+            >
+              {vizInsight.mode === 'path' ? 'Path' : 'Focus'}
+            </span>
+          </div>
+
+          <div className="mt-2 text-sm font-semibold text-foreground/95">{vizInsight.title}</div>
+          {vizInsight.query && (
+            <div className="mt-1 text-[11px] text-muted-foreground line-clamp-2">
+              Q: {vizInsight.query}
+            </div>
+          )}
+
+          <div className="mt-3 grid grid-cols-2 gap-2 text-[11px]">
+            <div className="rounded-lg border border-border/70 bg-muted/30 px-2 py-1.5">
+              Node Match: <span className="font-semibold">{vizInsight.matchedNodes}/{vizInsight.requestedNodes}</span>
+            </div>
+            <div className="rounded-lg border border-border/70 bg-muted/30 px-2 py-1.5">
+              Edge Match: <span className="font-semibold">{vizInsight.matchedEdges}/{vizInsight.requestedEdges}</span>
+            </div>
+          </div>
+
+          <div className="mt-2 text-[11px] text-muted-foreground">
+            {vizInsight.reason || (vizInsight.mode === 'path'
+              ? 'Path mode prioritizes route continuity and highlights transit hubs when direct links are hidden.'
+              : 'Focus mode emphasizes related entities around the LLM-selected context.')}
+            {vizInsight.hubAssistedEdges > 0 && ` Hub-assisted edges: ${vizInsight.hubAssistedEdges}.`}
+          </div>
+
+          {(vizInsight.source || vizInsight.schemaVersion || vizInsight.truncated) && (
+            <div className="mt-2 text-[10px] text-muted-foreground/90">
+              {vizInsight.source ? `Source: ${vizInsight.source}` : ''}
+              {vizInsight.schemaVersion ? ` · Viz v${vizInsight.schemaVersion}` : ''}
+              {vizInsight.truncated ? ' · Truncated for display safety' : ''}
+            </div>
+          )}
+
+          {(vizInsight.unmatchedNodes.length > 0 || vizInsight.unmatchedEdges.length > 0) && (
+            <div className="mt-2 text-[11px] text-amber-500/95">
+              Matching hints:
+              {vizInsight.unmatchedNodes.length > 0 && (
+                <div className="mt-1">Unmatched nodes: {vizInsight.unmatchedNodes.join(', ')}</div>
+              )}
+              {vizInsight.unmatchedEdges.length > 0 && (
+                <div className="mt-1">Unmatched edges: {vizInsight.unmatchedEdges.join(', ')}</div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Topology Toolbar */}
       <div className="absolute top-4 right-4 z-20 flex flex-col gap-2">
         <div className="flex gap-2">
@@ -564,9 +820,30 @@ export default function TopologyPanel() {
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
+        onPaneClick={() => setNodeContextMenu(null)}
         onNodeClick={(_, node) => {
+          setNodeContextMenu(null)
           setSelectedNode(node.id)
-          openDetail('device', node.id)
+          if (!String(node.id).startsWith('net:')) {
+            setChatContextDevice(toChatContext(node))
+          }
+        }}
+        onNodeContextMenu={(event, node) => {
+          event.preventDefault()
+          event.stopPropagation()
+          setSelectedNode(node.id)
+          if (!String(node.id).startsWith('net:')) {
+            setChatContextDevice(toChatContext(node))
+          }
+          const panelRect = panelRef.current?.getBoundingClientRect()
+          const x = panelRect ? Math.max(8, event.clientX - panelRect.left) : event.clientX
+          const y = panelRect ? Math.max(8, event.clientY - panelRect.top) : event.clientY
+          setNodeContextMenu({
+            nodeId: String(node.id),
+            nodeType: String(node.type || 'device'),
+            x,
+            y,
+          })
         }}
         nodeTypes={nodeTypes}
         fitView
@@ -580,6 +857,42 @@ export default function TopologyPanel() {
           className="bg-card border-border shadow-2xl scale-90 origin-bottom-left"
         />
       </ReactFlow>
+
+      {nodeContextMenu && (
+        <div
+          className="absolute z-30 min-w-[180px] rounded-xl border border-border bg-card/95 backdrop-blur-md shadow-2xl p-1.5"
+          style={{ left: nodeContextMenu.x, top: nodeContextMenu.y }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="px-2 py-1.5 text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+            {nodeContextMenu.nodeId}
+          </div>
+          <button
+            onClick={() => {
+              if (!String(nodeContextMenu.nodeId).startsWith('net:')) {
+                openDetail('device', nodeContextMenu.nodeId)
+              }
+              setNodeContextMenu(null)
+            }}
+            disabled={String(nodeContextMenu.nodeId).startsWith('net:')}
+            className="w-full text-left px-2.5 py-2 rounded-lg text-sm text-foreground hover:bg-muted/60 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            Detail
+          </button>
+          <button
+            onClick={() => {
+              const nodeHit = nodesRef.current.find((n) => String(n.id) === nodeContextMenu.nodeId)
+              if (nodeHit && !String(nodeHit.id).startsWith('net:')) {
+                setChatContextDevice(toChatContext(nodeHit))
+              }
+              setNodeContextMenu(null)
+            }}
+            className="w-full text-left px-2.5 py-2 rounded-lg text-sm text-foreground hover:bg-muted/60 transition-colors"
+          >
+            Use As Chat Context
+          </button>
+        </div>
+      )}
       
       {/* Legend / Status Overlay */}
       <div className="absolute bottom-6 right-6 p-4 bg-card/60 backdrop-blur-md border border-border rounded-xl shadow-2xl pointer-events-none select-none z-10">

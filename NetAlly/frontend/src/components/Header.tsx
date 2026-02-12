@@ -1,32 +1,127 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import SettingsDialog from './SettingsDialog'
 import { useAppStore } from '../store'
+
+const LONG_TASK_TIMEOUT_MS = 30_000
 
 export default function Header() {
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [isPreparing, setIsPreparing] = useState(false)
   const [prepareStatus, setPrepareStatus] = useState<string | null>(null)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [refreshError, setRefreshError] = useState<string | null>(null)
+  const [prepareError, setPrepareError] = useState<string | null>(null)
+  const [lastRefreshOverrides, setLastRefreshOverrides] = useState<Record<string, string> | null>(null)
+  const [lastPrepareAutoInit, setLastPrepareAutoInit] = useState<boolean>(false)
+  const refreshAbortRef = useRef<AbortController | null>(null)
+  const prepareAbortRef = useRef<AbortController | null>(null)
+  const refreshTimerRef = useRef<number | null>(null)
+  const prepareTimerRef = useRef<number | null>(null)
   const settings = useAppStore(state => state.settings)
   const addEvidence = useAppStore(state => state.addEvidence)
   const setLabPrepare = useAppStore(state => state.setLabPrepare)
   const setLabRefreshResult = useAppStore(state => state.setLabRefreshResult)
+  const runtimeHealth = useAppStore(state => state.runtimeHealth)
+  const setRuntimeHealth = useAppStore(state => state.setRuntimeHealth)
 
-  const handleRefresh = async () => {
+  const clearTaskTimer = (kind: 'refresh' | 'prepare') => {
+    if (kind === 'refresh' && refreshTimerRef.current !== null) {
+      window.clearTimeout(refreshTimerRef.current)
+      refreshTimerRef.current = null
+    }
+    if (kind === 'prepare' && prepareTimerRef.current !== null) {
+      window.clearTimeout(prepareTimerRef.current)
+      prepareTimerRef.current = null
+    }
+  }
+
+  const startTaskTimeout = (kind: 'refresh' | 'prepare', controller: AbortController) => {
+    clearTaskTimer(kind)
+    const timer = window.setTimeout(() => {
+      if (!controller.signal.aborted) controller.abort('timeout')
+    }, LONG_TASK_TIMEOUT_MS)
+    if (kind === 'refresh') refreshTimerRef.current = timer
+    else prepareTimerRef.current = timer
+  }
+
+  const cancelRefresh = () => {
+    if (refreshAbortRef.current && !refreshAbortRef.current.signal.aborted) {
+      refreshAbortRef.current.abort('user_cancel')
+    }
+  }
+
+  const cancelPrepare = () => {
+    if (prepareAbortRef.current && !prepareAbortRef.current.signal.aborted) {
+      prepareAbortRef.current.abort('user_cancel')
+    }
+  }
+
+  useEffect(() => {
+    let cancelled = false
+
+    const fetchRuntimeHealth = async () => {
+      try {
+        const res = await fetch('/api/runtime/health')
+        if (!res.ok) return
+        const data = await res.json()
+        if (cancelled) return
+        setRuntimeHealth({
+          overall: data?.overall === 'healthy' ? 'healthy' : 'degraded',
+          checkedAt: typeof data?.checkedAt === 'string' ? data.checkedAt : undefined,
+          recommendedMode: data?.recommendedMode === 'full' ? 'full' : 'limited',
+          services: data?.services && typeof data.services === 'object' ? data.services : {},
+          notes: Array.isArray(data?.notes) ? data.notes.map((n: any) => String(n)) : [],
+        })
+        const batfishStatus = data?.services?.batfish?.status
+        if (typeof batfishStatus === 'string' && batfishStatus.trim()) {
+          setPrepareStatus(batfishStatus)
+        }
+      } catch {
+        if (cancelled) return
+      }
+    }
+
+    fetchRuntimeHealth()
+    const timer = window.setInterval(fetchRuntimeHealth, 15000)
+    return () => {
+      cancelled = true
+      window.clearInterval(timer)
+      clearTaskTimer('refresh')
+      clearTaskTimer('prepare')
+      if (refreshAbortRef.current && !refreshAbortRef.current.signal.aborted) {
+        refreshAbortRef.current.abort('unmount')
+      }
+      if (prepareAbortRef.current && !prepareAbortRef.current.signal.aborted) {
+        prepareAbortRef.current.abort('unmount')
+      }
+    }
+  }, [setRuntimeHealth])
+
+  const buildRefreshOverrides = (): Record<string, string> => {
+    const overrides: Record<string, string> = {}
+    if (settings.oobIntf) overrides.PNETLAB_OOB_INTF = settings.oobIntf
+    if (settings.deviceGroup) overrides.PNETLAB_DEVICE_GROUP = settings.deviceGroup
+    if (settings.pnetlabVmIp) overrides.PNETLAB_VM_IP = settings.pnetlabVmIp
+    if (settings.gatewayIp) overrides.PNETLAB_GATEWAY_IP = settings.gatewayIp
+    if (settings.nsoAuthgroup) overrides.NSO_AUTHGROUP = settings.nsoAuthgroup
+    if (settings.nsoNedId) overrides.NSO_NED_ID = settings.nsoNedId
+    return overrides
+  }
+
+  const runRefresh = async (overrides: Record<string, string>) => {
+    if (isRefreshing) return
+    setRefreshError(null)
+    setLastRefreshOverrides(overrides)
     setIsRefreshing(true)
+    const controller = new AbortController()
+    refreshAbortRef.current = controller
+    startTaskTimeout('refresh', controller)
     try {
-      const overrides: Record<string, string> = {}
-      if (settings.oobIntf) overrides.PNETLAB_OOB_INTF = settings.oobIntf
-      if (settings.deviceGroup) overrides.PNETLAB_DEVICE_GROUP = settings.deviceGroup
-      if (settings.pnetlabVmIp) overrides.PNETLAB_VM_IP = settings.pnetlabVmIp
-      if (settings.gatewayIp) overrides.PNETLAB_GATEWAY_IP = settings.gatewayIp
-      if (settings.nsoAuthgroup) overrides.NSO_AUTHGROUP = settings.nsoAuthgroup
-      if (settings.nsoNedId) overrides.NSO_NED_ID = settings.nsoNedId
-
       const res = await fetch('/api/lab/refresh', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ overrides })
+        body: JSON.stringify({ overrides }),
+        signal: controller.signal,
       })
       const data = await res.json()
       setLabRefreshResult(data)
@@ -37,20 +132,53 @@ export default function Header() {
         summary: res.ok ? `New devices: ${data?.missing?.length || 0}` : (data?.detail || 'Error'),
         details: data
       })
-    } catch {
-      // best-effort refresh for demo
+      if (!res.ok) {
+        setRefreshError(String(data?.detail || `HTTP ${res.status}`))
+      }
+    } catch (err: any) {
+      const reason = String(controller.signal.reason || '')
+      if (reason === 'user_cancel') {
+        setRefreshError('Refresh cancelled.')
+        addEvidence({
+          type: 'lab_refresh',
+          status: 'warning',
+          title: 'Lab Refresh Cancelled',
+          summary: 'User cancelled refresh operation.',
+          details: { reason: 'user_cancel' },
+        })
+      } else if (reason === 'timeout') {
+        setRefreshError('Refresh timed out. Please retry.')
+        addEvidence({
+          type: 'lab_refresh',
+          status: 'error',
+          title: 'Lab Refresh Timeout',
+          summary: 'Refresh timed out after 30s.',
+          details: { reason: 'timeout' },
+        })
+      } else {
+        setRefreshError(String(err?.message || err || 'Refresh failed'))
+      }
     } finally {
+      clearTaskTimer('refresh')
+      refreshAbortRef.current = null
       setIsRefreshing(false)
     }
   }
 
-  const handlePrepare = async () => {
+  const runPrepare = async (autoInitBatfish: boolean) => {
+    if (isPreparing) return
+    setPrepareError(null)
+    setLastPrepareAutoInit(autoInitBatfish)
     setIsPreparing(true)
+    const controller = new AbortController()
+    prepareAbortRef.current = controller
+    startTaskTimeout('prepare', controller)
     try {
       const res = await fetch('/api/lab/prepare', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ auto_init_batfish: false })
+        body: JSON.stringify({ auto_init_batfish: autoInitBatfish }),
+        signal: controller.signal,
       })
       const data = await res.json()
       setLabPrepare(data?.status || (res.ok ? 'ready' : 'error'), data)
@@ -62,11 +190,56 @@ export default function Header() {
         summary: res.ok ? `Status: ${data?.status}` : (data?.detail || 'Error'),
         details: data
       })
-    } catch {
-      setPrepareStatus('error')
+      if (!res.ok) {
+        setPrepareError(String(data?.detail || `HTTP ${res.status}`))
+      }
+    } catch (err: any) {
+      const reason = String(controller.signal.reason || '')
+      if (reason === 'user_cancel') {
+        setPrepareError('Prepare cancelled.')
+        addEvidence({
+          type: 'lab_prepare',
+          status: 'warning',
+          title: 'Batfish Prepare Cancelled',
+          summary: 'User cancelled prepare operation.',
+          details: { reason: 'user_cancel' },
+        })
+      } else if (reason === 'timeout') {
+        setPrepareError('Prepare timed out. Please retry.')
+        addEvidence({
+          type: 'lab_prepare',
+          status: 'error',
+          title: 'Batfish Prepare Timeout',
+          summary: 'Prepare timed out after 30s.',
+          details: { reason: 'timeout' },
+        })
+      } else {
+        setPrepareError(String(err?.message || err || 'Prepare failed'))
+        setPrepareStatus('error')
+      }
     } finally {
+      clearTaskTimer('prepare')
+      prepareAbortRef.current = null
       setIsPreparing(false)
     }
+  }
+
+  const handleRefresh = async () => {
+    await runRefresh(buildRefreshOverrides())
+  }
+
+  const handlePrepare = async () => {
+    await runPrepare(false)
+  }
+
+  const retryRefresh = async () => {
+    if (!lastRefreshOverrides || isRefreshing) return
+    await runRefresh(lastRefreshOverrides)
+  }
+
+  const retryPrepare = async () => {
+    if (isPreparing) return
+    await runPrepare(lastPrepareAutoInit)
   }
 
   const statusColor = (status: string | null) => {
@@ -74,6 +247,19 @@ export default function Header() {
     if (status === 'ready' || status === 'loaded' || status === 'initialized') return 'bg-emerald-500'
     if (status === 'not_ready') return 'bg-amber-500'
     return 'bg-red-500'
+  }
+
+  const runtimeDotClass = runtimeHealth.overall === 'healthy'
+    ? 'bg-emerald-500'
+    : runtimeHealth.overall === 'degraded'
+      ? 'bg-amber-500'
+      : 'bg-muted-foreground'
+
+  const serviceBadgeClass = (severity?: string) => {
+    if (severity === 'ok') return 'border-emerald-500/30 text-emerald-500 bg-emerald-500/10'
+    if (severity === 'warning') return 'border-amber-500/30 text-amber-500 bg-amber-500/10'
+    if (severity === 'error') return 'border-rose-500/30 text-rose-500 bg-rose-500/10'
+    return 'border-border/70 text-muted-foreground bg-muted/30'
   }
 
   return (
@@ -93,8 +279,9 @@ export default function Header() {
               <span className="text-foreground border-b border-primary/40 pb-0.5">SP-Core-V5</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-muted-foreground/60">Snapshot:</span>
-              <span className="text-foreground">01.29 / 18:24</span>
+              <span className="text-muted-foreground/60">Runtime:</span>
+              <div className={`w-1.5 h-1.5 rounded-full ${runtimeDotClass} animate-pulse`} />
+              <span className="text-foreground">{runtimeHealth.overall}</span>
             </div>
             <div className="flex items-center gap-2">
               <div className={`w-1.5 h-1.5 rounded-full ${statusColor(prepareStatus)} animate-pulse`} />
@@ -102,26 +289,63 @@ export default function Header() {
                 Batfish: {prepareStatus || 'unknown'}
               </span>
             </div>
+            <div className="flex items-center gap-1.5">
+              <span className={`px-2 py-0.5 rounded-full border text-[9px] ${serviceBadgeClass(runtimeHealth.services?.nso?.severity)}`}>
+                NSO {runtimeHealth.services?.nso?.status || 'unknown'}
+              </span>
+              <span className={`px-2 py-0.5 rounded-full border text-[9px] ${serviceBadgeClass(runtimeHealth.services?.pnetlab?.severity)}`}>
+                PNET {runtimeHealth.services?.pnetlab?.status || 'unknown'}
+              </span>
+            </div>
+            {runtimeHealth.overall === 'degraded' && (
+              <span className="text-[9px] px-2 py-0.5 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-500">
+                Limited Mode
+              </span>
+            )}
           </nav>
         </div>
 
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1 bg-muted/30 p-1 rounded-lg border border-border/40">
             <button 
-              onClick={handleRefresh}
-              disabled={isRefreshing}
+              onClick={isRefreshing ? cancelRefresh : handleRefresh}
               className={`h-7 px-3 text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground hover:bg-card/50 rounded-md transition-all ${isRefreshing ? 'animate-pulse opacity-50' : ''}`}
             >
-              {isRefreshing ? 'Syncing...' : 'Refresh'}
+              {isRefreshing ? 'Cancel Sync' : 'Refresh'}
             </button>
             <button
-              onClick={handlePrepare}
-              disabled={isPreparing}
+              onClick={isPreparing ? cancelPrepare : handlePrepare}
               className={`h-7 px-3 text-[10px] font-black uppercase tracking-widest bg-primary text-primary-foreground shadow-lg rounded-md transition-all hover:scale-105 active:scale-95 ${isPreparing ? 'animate-pulse opacity-70' : ''}`}
             >
-              {isPreparing ? 'Preparing...' : 'Prepare'}
+              {isPreparing ? 'Cancel Prep' : 'Prepare'}
             </button>
           </div>
+          {(refreshError || prepareError) && (
+            <div className="flex items-center gap-1.5 text-[9px]">
+              {refreshError && (
+                <button
+                  type="button"
+                  onClick={retryRefresh}
+                  disabled={isRefreshing}
+                  className="px-2 py-1 rounded border border-amber-500/30 bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 disabled:opacity-40"
+                  title={refreshError}
+                >
+                  Retry Refresh
+                </button>
+              )}
+              {prepareError && (
+                <button
+                  type="button"
+                  onClick={retryPrepare}
+                  disabled={isPreparing}
+                  className="px-2 py-1 rounded border border-amber-500/30 bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 disabled:opacity-40"
+                  title={prepareError}
+                >
+                  Retry Prepare
+                </button>
+              )}
+            </div>
+          )}
           
           <div className="w-px h-4 bg-border/50" />
           

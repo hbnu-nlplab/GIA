@@ -151,3 +151,98 @@ npm run build
 결과:
 - build 성공
 - chunk size warning only
+
+Execution Log Addendum (2026-02-12, P0 Grounding + Viz Contract)
+
+완료 작업:
+1. Answer grounding 메타 확장
+   - `tool_output`마다 citation 생성
+   - `answer`에 `citations[]` + `grounding` 포함
+2. Viz 계약 스키마화
+   - backend viz normalize 함수 추가(`schema_version`, `reason`, `source`, `diagnostics`)
+   - 노드/엣지 정규화 및 truncation 보호
+3. Chat/Topology UI 연동
+   - Chat bubble에 grounded 상태 + citation chips 표시
+   - citation→evidence detail 오픈 연결(call_id 매핑 시)
+   - Topology overlay에 reason/source/schema/truncated 정보 표시
+4. 회귀 방지 테스트 추가
+   - `tests/test_chat_sse_contract.py` 신설
+
+검증:
+```bash
+cd NetAlly/frontend
+npm run build
+
+cd ../
+python -m py_compile main.py
+uv run pytest -q tests/test_chat_sse_order.py tests/test_chat_sse_contract.py tests/test_main_runtime_contract.py tests/test_runtime_single_executor.py
+```
+
+결과:
+- frontend build 성공
+- `main.py` 문법 체크 성공
+- targeted pytest 7 passed
+
+Execution Log Addendum (2026-02-12, P1 Session Persistence + Runtime Health)
+
+완료 작업:
+1. Runtime health endpoint 추가
+   - `/api/runtime/health` 구현(Batfish/NSO/PNETLab 서비스 상태 + overall/recommendedMode/notes)
+2. Header 실시간 상태바
+   - 주기 polling으로 healthy/degraded + 서비스 badge 표시
+3. Chat degraded UX
+   - ChatPanel 상단에 degraded 안내 배너 추가
+4. Chat 세션 영속화
+   - 메시지/active viz/pinned context/input localStorage 저장 및 reload 복원
+   - 이미지 dataUrl은 저장 제외(용량 보호)
+5. 회귀 테스트 추가
+   - backend: `tests/test_runtime_health_api.py`
+   - frontend e2e: `e2e/chat-persistence-runtime-health.spec.ts`
+
+검증:
+```bash
+cd NetAlly/frontend
+npm run build
+npx playwright test e2e/chat-persistence-runtime-health.spec.ts
+
+cd ../
+python -m py_compile main.py
+uv run pytest -q tests/test_chat_sse_order.py tests/test_chat_sse_contract.py tests/test_runtime_health_api.py tests/test_main_runtime_contract.py tests/test_runtime_single_executor.py
+```
+
+결과:
+- frontend build 성공
+- playwright e2e 1 passed
+- `main.py` 문법 체크 성공
+- targeted pytest 9 passed
+
+Execution Log Addendum (2026-02-12, P1 Long-Task UX Stability)
+
+완료 작업:
+1. Chat 긴 작업 안정화
+   - 취소 버튼 추가
+   - 전체/idle 타임아웃 도입
+   - retryable 오류 1회 자동 재시도 + 실패 시 수동 Retry 버튼 제공
+2. 운영 버튼 안정화(Header)
+   - Refresh/Prepare 진행 중 Cancel 동작 지원
+   - 30초 타임아웃 가드 추가
+   - 실패 시 Retry Refresh / Retry Prepare 제공
+3. e2e 회귀 테스트
+   - `e2e/chat-long-task-ux.spec.ts` 추가
+
+검증:
+```bash
+cd NetAlly/frontend
+npm run build
+npx playwright test e2e/chat-long-task-ux.spec.ts e2e/chat-persistence-runtime-health.spec.ts
+
+cd ../
+python -m py_compile main.py
+uv run pytest -q tests/test_chat_sse_order.py tests/test_chat_sse_contract.py tests/test_runtime_health_api.py tests/test_main_runtime_contract.py tests/test_runtime_single_executor.py
+```
+
+결과:
+- frontend build 성공
+- playwright e2e 2 passed
+- `main.py` 문법 체크 성공
+- targeted pytest 9 passed
