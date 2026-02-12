@@ -15,6 +15,8 @@
    로컬 실행, 테스트, 데모 전 점검을 어떻게 하는지
 4. `docs/backend_api.md`  
    API 계약(어떤 엔드포인트가 무엇을 반환하는지)
+5. `docs/release_readiness_ko.md`  
+   데모 승인/운영 승인 체크리스트(즉시 실행형)
 
 ---
 
@@ -25,6 +27,7 @@
 1. `docs/pnetlab_wiring_runbook_ko.md`
 2. `docs/pnetlab_deployment_guide.md`
 3. `docs/agent_flow.md`
+4. `docs/release_readiness_ko.md`
 
 포함 내용:
 - Console Type(`linux`/`http`) 차이와 접속 문제 해결

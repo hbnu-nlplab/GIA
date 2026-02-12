@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+import socket
 
 import pytest
 
@@ -32,14 +33,34 @@ WRAPPER_CASES = [
 
 
 @asynccontextmanager
-async def running_mcp_server(monkeypatch: pytest.MonkeyPatch, port: int):
-    url = f"http://127.0.0.1:{port}/mcp"
-    monkeypatch.setenv("NETALLY_MCP_SERVER_URL", url)
-    monkeypatch.setenv("NETALLY_MCP_ALLOW_MUTATIONS", "false")
-    reset_mcp_client()
+async def running_mcp_server(monkeypatch: pytest.MonkeyPatch, port: int | None = None):
+    def pick_free_port() -> int:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            sock.bind(("127.0.0.1", 0))
+            return int(sock.getsockname()[1])
+
+    selected_url: str | None = None
+    last_started = {}
+
+    for _ in range(5):
+        chosen_port = port if port is not None else pick_free_port()
+        url = f"http://127.0.0.1:{chosen_port}/mcp"
+        monkeypatch.setenv("NETALLY_MCP_SERVER_URL", url)
+        monkeypatch.setenv("NETALLY_MCP_ALLOW_MUTATIONS", "false")
+        reset_mcp_client()
+        started = await start_embedded_mcp_server()
+        last_started = started
+        if started.get("started") is True or started.get("already_running") is True:
+            selected_url = url
+            break
+        await stop_embedded_mcp_server()
+        if port is not None:
+            break
+
+    assert selected_url is not None, f"failed to start embedded MCP server: {last_started}"
+
     try:
-        await start_embedded_mcp_server()
-        yield MCPClient(server_url=url)
+        yield MCPClient(server_url=selected_url)
     finally:
         await stop_embedded_mcp_server()
         reset_mcp_client()
@@ -47,7 +68,7 @@ async def running_mcp_server(monkeypatch: pytest.MonkeyPatch, port: int):
 
 @pytest.mark.asyncio
 async def test_deprecated_wrappers_keep_legacy_output_shapes(monkeypatch):
-    async with running_mcp_server(monkeypatch, port=18921) as client:
+    async with running_mcp_server(monkeypatch) as client:
         for wrapper_name, legacy_tool, payload in WRAPPER_CASES:
             legacy_result = legacy_tool.invoke(payload)
             mcp_result = await client.call_tool(wrapper_name, payload)
@@ -57,6 +78,6 @@ async def test_deprecated_wrappers_keep_legacy_output_shapes(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_deprecated_check_logs_returns_plain_text(monkeypatch):
-    async with running_mcp_server(monkeypatch, port=18922) as client:
+    async with running_mcp_server(monkeypatch) as client:
         result = await client.call_tool("check_logs", {"device": "dummy", "lines": 1})
         assert isinstance(result.get("result"), str)

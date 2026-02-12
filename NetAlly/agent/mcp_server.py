@@ -409,7 +409,9 @@ async def start_embedded_mcp_server() -> Dict[str, Any]:
     host, port, _ = _parse_runtime_from_url(_mcp_server_url())
     app = get_mcp_server().streamable_http_app()
 
-    config = uvicorn.Config(app, host=host, port=port, log_level="warning")
+    # Streamable HTTP transport does not require websocket support.
+    # Force ws="none" to avoid importing deprecated websockets.legacy paths.
+    config = uvicorn.Config(app, host=host, port=port, log_level="warning", ws="none")
     server = uvicorn.Server(config)
     task = asyncio.create_task(server.serve())
 

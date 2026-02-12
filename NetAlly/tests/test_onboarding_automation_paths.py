@@ -5,7 +5,12 @@ import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 
 import main
-from agent.onboarding import DeviceInfo, GlobalSettings, register_devices_nso
+from agent.onboarding import (
+    DeviceInfo,
+    GlobalSettings,
+    generate_device_info_from_pnetlab,
+    register_devices_nso,
+)
 import agent.tools as tools
 
 
@@ -83,6 +88,58 @@ def test_register_devices_nso_applies_protocol_and_port_rules():
 
     assert fake_nso.host_key_calls == ["R1"]
     assert fake_nso.sync_calls == ["R1", "R2"]
+
+
+def test_generate_device_info_excludes_default_infra_nodes(tmp_path):
+    class FakePnetlab:
+        def get_session_topology(self):
+            return {"data": {}}
+
+        def get_nodes_from_topology(self, _topology):
+            return [
+                {"name": "NSO", "status": 2, "telnet_port": 30014, "template": "docker"},
+                {"name": "Docker", "status": 2, "telnet_port": 30013, "template": "docker"},
+                {"name": "CE01", "status": 2, "telnet_port": 30005, "template": "iol"},
+            ]
+
+    out = tmp_path / "device_info.json"
+    payload = generate_device_info_from_pnetlab(FakePnetlab(), str(out))
+    names = [d.get("name") for d in payload.get("devices", [])]
+    assert names == ["CE01"]
+
+
+def test_scan_and_sync_ignores_infra_nodes(monkeypatch: pytest.MonkeyPatch):
+    class FakeNso:
+        def get_devices(self):
+            return ["CE01", "NSO", "Docker"]
+
+    monkeypatch.setattr(tools, "get_pnetlab_client", lambda: object())
+    monkeypatch.setattr(
+        tools,
+        "_get_inventory_nodes",
+        lambda _p: {
+            "nodes": [
+                {"name": "CE01", "status": 2, "telnet_port": 30005},
+                {"name": "NSO", "status": 2, "telnet_port": 30014},
+                {"name": "Docker", "status": 2, "telnet_port": 30013},
+            ]
+        },
+    )
+    monkeypatch.setattr(tools, "get_nso_client", lambda: FakeNso())
+
+    result = tools.scan_and_sync.invoke(
+        {
+            "action": "scan",
+            "auto_onboard": False,
+            "auto_remove": False,
+            "oob_ip": "localhost",
+            "protocol": "telnet",
+        }
+    )
+
+    assert result["already_registered"] == ["CE01"]
+    assert result["missing"] == []
+    assert set(result["ignored_nodes"]) == {"NSO", "Docker"}
 
 
 def test_lab_bootstrap_refresh_onboard_only_targets_new_devices(monkeypatch: pytest.MonkeyPatch):
@@ -186,3 +243,52 @@ async def test_lab_refresh_uses_legacy_tool_in_legacy_backend(api_client, monkey
             "overrides": {"NSO_AUTHGROUP": "default"},
         },
     }
+
+
+@pytest.mark.asyncio
+async def test_lab_refresh_returns_403_when_mcp_mutations_blocked(api_client, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setenv("NETALLY_TOOL_BACKEND", "mcp")
+
+    async def fake_call_mcp_tool(tool_name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        return {
+            "error": "bootstrap_refresh_onboard blocked",
+            "tool": tool_name,
+            "raw": {"code": "mutations_blocked", "tool": tool_name, "error": "blocked"},
+        }
+
+    monkeypatch.setattr(main, "call_mcp_tool", fake_call_mcp_tool)
+
+    response = await api_client.post("/api/lab/refresh", json={"config_path": "dummy.json"})
+    assert response.status_code == 403
+    payload = response.json()
+    assert payload["code"] == "mutations_blocked"
+    assert payload["tool"] == "bootstrap_refresh_onboard"
+
+
+@pytest.mark.asyncio
+async def test_lab_prepare_returns_403_when_mcp_mutations_blocked(api_client, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setenv("NETALLY_TOOL_BACKEND", "mcp")
+
+    class DummyBatfishClient:
+        is_available = True
+        _builder = None
+
+        def load_snapshot(self, _snapshot: str) -> bool:
+            return False
+
+    async def fake_call_mcp_tool(tool_name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        return {
+            "error": "lab_init_batfish blocked",
+            "tool": tool_name,
+            "raw": {"code": "mutations_blocked", "tool": tool_name, "error": "blocked"},
+        }
+
+    monkeypatch.setattr(main, "_get_batfish_client", lambda: DummyBatfishClient())
+    monkeypatch.setattr(main, "call_mcp_tool", fake_call_mcp_tool)
+
+    response = await api_client.post("/api/lab/prepare", json={"auto_init_batfish": True})
+    assert response.status_code == 403
+    payload = response.json()
+    assert payload["code"] == "mutations_blocked"
+    assert payload["tool"] == "lab_init_batfish"
+    assert payload["status"] == "blocked"

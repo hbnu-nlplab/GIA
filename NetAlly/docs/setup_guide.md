@@ -12,6 +12,7 @@ For beginner-friendly Korean docs, start at `docs/README_ko.md`.
 - Node.js 18+
 - `npm`
 - Optional: Docker (for Batfish container checks)
+- Recommended for CI parity: Python 3.12
 
 ---
 
@@ -28,6 +29,9 @@ Minimum fields to verify:
 - `BATFISH_HOST`
 - `NSO_BASE_URL`
 - `NETALLY_TOOL_BACKEND` (`mcp` recommended)
+
+When you need onboarding/init actions (`/api/lab/refresh`, auto-init in `/api/lab/prepare`):
+- `NETALLY_MCP_ALLOW_MUTATIONS=true`
 
 For PNETLab VM Docker-node deployments:
 - `PNETLAB_INVENTORY_BACKEND=labfs_local`
@@ -67,7 +71,21 @@ npm run dev -- --host 127.0.0.1 --port 3000
 
 ---
 
-## 4. Test Execution
+## 4. Docker Compose Build/Run
+
+Run from `NetAlly/`:
+
+```bash
+cd NetAlly
+docker compose build netally
+docker compose up -d
+```
+
+`docker-compose.yml` is configured to use repo-root build context (`../`) and `NetAlly/Dockerfile`, so the build works without switching directories.
+
+---
+
+## 5. Test Execution
 
 Backend regression:
 ```bash
@@ -84,7 +102,7 @@ npm run test:e2e
 
 ---
 
-## 5. PNETLab Deployment Path
+## 6. PNETLab Deployment Path
 
 If you run NetAlly as a PNETLab Docker Node, use:
 - `docs/pnetlab_deployment_guide.md`
@@ -98,7 +116,7 @@ These contain:
 
 ---
 
-## 6. Quick Health Checks
+## 7. Quick Health Checks
 
 ```bash
 curl -fsS http://127.0.0.1:8111/api/health
@@ -106,3 +124,5 @@ curl -fsS http://127.0.0.1:8111/api/settings
 curl -fsS -X POST http://127.0.0.1:8111/api/lab/prepare -H 'Content-Type: application/json' -d '{"auto_init_batfish": false}'
 ```
 
+If `/api/lab/refresh` or `/api/lab/prepare` returns `403` with `code=mutations_blocked`, enable:
+- `NETALLY_MCP_ALLOW_MUTATIONS=true`

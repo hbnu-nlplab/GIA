@@ -115,7 +115,10 @@
 - `openai_api_key`
 - `nso_base_url`, `nso_username`, `nso_password`
 - `pnetlab_url`
-- `batfish_host`
+- `pnetlab_inventory_backend`, `pnetlab_lab_name`, `pnetlab_nso_node`
+- `pnetlab_exclude_node_names`
+- `batfish_host`, `batfish_snapshot`
+- `auto_prepare_on_chat`, `auto_init_batfish`
 - `tool_backend` (`mcp` | `legacy`)
 - `mcp_server_url`
 - `mcp_allow_mutations`
@@ -188,23 +191,53 @@
 1. traceroute 질의로 path overlay 확인
 1. Settings의 API Connections 값 변경 후 즉시 반영 확인
 
-## 8. 테스트 전략 (현재 권장)
+## 8. 로컬 코드 변경 vs Settings 변경
 
-### 8.1 백엔드
+### 8.1 컨테이너 재빌드가 필요한 경우
+
+- `main.py`, `agent/*`, `frontend/*` 등 **코드를 수정한 경우**
+- Docker 이미지 자체 의존성/빌드 산출물이 달라지는 경우
+
+절차(요약):
+1. `docker build -f NetAlly/Dockerfile -t netally:latest .`
+1. `docker save -o netally.tar netally:latest`
+1. `scp netally.tar root@<PNETLAB_VM_IP>:/root/`
+1. `ssh root@<PNETLAB_VM_IP> 'docker load -i /root/netally.tar'`
+1. PNETLab에서 NetAlly 노드 Stop/Start
+
+### 8.2 컨테이너 재빌드가 필요 없는 경우
+
+- NSO URL/계정, PNETLab URL/Lab 이름, Batfish host/snapshot, mutation 토글 등 **운영 설정 변경**
+- `Settings > API Connections` 또는 `POST /api/settings`로 즉시 반영 가능
+
+### 8.3 운영 팁
+
+- 데모 직전에는 먼저 Settings/API로 조정하고, 코드 변경이 확정될 때만 이미지 재배포를 수행합니다.
+- `/api/settings`로 반영한 값은 런타임 설정 파일에 저장되며(기본: `.runtime/settings.runtime.json`), 컨테이너 재시작 후 재사용됩니다.
+
+### 8.4 다중 실험실 운영 시 권장
+
+- 실험실별로 `PNETLAB_LAB_NAME`, `BATFISH_SNAPSHOT`을 고유하게 유지하세요.
+- 가능하면 실험실당 NetAlly 인스턴스를 분리해서 설정 충돌을 피하세요.
+- 동일 인스턴스를 공유해야 하면, 실험 시작 전 `/api/settings` 프로필 값을 강제 적용한 뒤 진행하세요.
+
+## 9. 테스트 전략 (현재 권장)
+
+### 9.1 백엔드
 
 ```bash
 cd NetAlly
 uv run pytest -q tests
 ```
 
-### 8.2 프론트엔드
+### 9.2 프론트엔드
 
 ```bash
 cd NetAlly/frontend
 npm run build
 ```
 
-## 9. 최근 검증 결과 (2026-02-11)
+## 10. 최근 검증 결과 (2026-02-11)
 
 - Backend tests: `44 passed`
 - Frontend build: 성공
@@ -213,10 +246,9 @@ npm run build
   - API 문자열 필드 clear 지원
   - 관련 계약 테스트 추가/통과
 
-## 10. 운영 시 주의사항
+## 11. 운영 시 주의사항
 
 1. PNETLab Auth는 LabFS 모드에서 필요하지 않을 수 있음
 1. `mcp_allow_mutations=false`면 일부 onboarding/sync 도구가 차단됨
 1. Batfish snapshot 준비 상태에 따라 chat 도구 결과가 제한될 수 있음
 1. OpenAI API key 미설정 시 chat runtime 로드 실패 가능
-

@@ -27,6 +27,102 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("NetAlly")
 
+# Runtime settings keys that can be persisted/restored across container restarts.
+RUNTIME_SETTINGS_ALLOWED_KEYS = {
+    "OPENAI_API_KEY",
+    "NSO_BASE_URL",
+    "NSO_USERNAME",
+    "NSO_PASSWORD",
+    "PNETLAB_URL",
+    "PNETLAB_INVENTORY_BACKEND",
+    "PNETLAB_LAB_NAME",
+    "PNETLAB_NSO_NODE",
+    "PNETLAB_EXCLUDE_NODE_NAMES",
+    "BATFISH_HOST",
+    "BATFISH_SNAPSHOT",
+    "BATFISH_NETWORK",
+    "AUTO_PREPARE_ON_CHAT",
+    "AUTO_INIT_BATFISH",
+    "NETALLY_TOOL_BACKEND",
+    "NETALLY_AGENT_BACKEND",
+    "NETALLY_EXECUTOR_SYSTEM_PROMPT",
+    "NETALLY_TEAM_MULTI_MODULE",
+    "NETALLY_TEAM_MULTI_DATASET_TYPE",
+    "NETALLY_TEAM_MULTI_ROOT",
+    "NETALLY_TEAM_MULTI_CONTEXT_PATH",
+    "NETALLY_MCP_SERVER_URL",
+    "NETALLY_MCP_ALLOW_MUTATIONS",
+    "PNETLAB_COOKIES",
+    "PNETLAB_AUTO_LOGIN",
+    "PNETLAB_USERNAME",
+    "PNETLAB_PASSWORD",
+}
+
+
+def _runtime_settings_path() -> Path:
+    raw = str(os.getenv("NETALLY_RUNTIME_SETTINGS_PATH", "")).strip()
+    if raw:
+        p = Path(raw).expanduser()
+        if not p.is_absolute():
+            p = (Path(__file__).resolve().parent / p).resolve()
+        return p
+    return Path(__file__).resolve().parent / ".runtime" / "settings.runtime.json"
+
+
+def _read_runtime_settings_file() -> Dict[str, str]:
+    path = _runtime_settings_path()
+    if not path.exists():
+        return {}
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(payload, dict):
+            return {}
+        out: Dict[str, str] = {}
+        for key, value in payload.items():
+            if not isinstance(key, str):
+                continue
+            if key not in RUNTIME_SETTINGS_ALLOWED_KEYS:
+                continue
+            if value is None:
+                continue
+            out[key] = str(value)
+        return out
+    except Exception as e:
+        logger.warning("Failed to read runtime settings file: %s (%s)", path, e)
+        return {}
+
+
+def _write_runtime_settings_file(payload: Dict[str, str]) -> None:
+    path = _runtime_settings_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True),
+        encoding="utf-8",
+    )
+
+
+def _load_runtime_settings_from_file() -> Dict[str, str]:
+    """
+    Load persisted settings and apply them to process env.
+    Values from runtime file intentionally override .env defaults.
+    """
+    payload = _read_runtime_settings_file()
+    for key, value in payload.items():
+        os.environ[key] = value
+    return payload
+
+
+def _persist_runtime_env() -> None:
+    payload = _read_runtime_settings_file()
+    for key in RUNTIME_SETTINGS_ALLOWED_KEYS:
+        value = os.environ.get(key)
+        if value is None:
+            payload.pop(key, None)
+        else:
+            payload[key] = str(value)
+    _write_runtime_settings_file(payload)
+
+
 # =============================================================================
 # Pydantic Models
 # =============================================================================
@@ -70,7 +166,20 @@ class SettingsRequest(BaseModel):
     nso_username: Optional[str] = Field(default=None, description="NSO 계정")
     nso_password: Optional[str] = Field(default=None, description="NSO 비밀번호")
     pnetlab_url: Optional[str] = Field(default=None, description="PNETLab URL")
+    pnetlab_inventory_backend: Optional[str] = Field(
+        default=None,
+        description="PNETLab inventory backend: labfs_local | labfs_ssh | api",
+    )
+    pnetlab_lab_name: Optional[str] = Field(default=None, description="PNETLab lab name")
+    pnetlab_nso_node: Optional[str] = Field(default=None, description="PNETLab NSO node name")
+    pnetlab_exclude_node_names: Optional[str] = Field(
+        default=None,
+        description="Comma-separated onboarding exclude node names",
+    )
     batfish_host: Optional[str] = Field(default=None, description="Batfish 호스트")
+    batfish_snapshot: Optional[str] = Field(default=None, description="Batfish snapshot/network name")
+    auto_prepare_on_chat: Optional[bool] = Field(default=None, description="Auto prepare Batfish on chat")
+    auto_init_batfish: Optional[bool] = Field(default=None, description="Auto init Batfish on prepare")
     tool_backend: Optional[str] = Field(default=None, description="Tool backend: mcp | legacy")
     agent_backend: Optional[str] = Field(
         default=None,
@@ -136,6 +245,18 @@ class SettingsRequest(BaseModel):
             )
         return normalized
 
+    @field_validator("pnetlab_inventory_backend")
+    @classmethod
+    def validate_inventory_backend(cls, value: Optional[str]) -> Optional[str]:
+        if value is None:
+            return value
+        normalized = value.strip().lower()
+        if not normalized:
+            return None
+        if normalized not in {"labfs_local", "labfs_ssh", "api"}:
+            raise ValueError("pnetlab_inventory_backend must be one of: labfs_local, labfs_ssh, api")
+        return normalized
+
 
 class TopologyNode(BaseModel):
     """토폴로지 노드"""
@@ -170,6 +291,8 @@ async def lifespan(app: FastAPI):
     app.state.tool_backend = os.getenv("NETALLY_TOOL_BACKEND", TOOL_BACKEND_DEFAULT).lower()
     app.state.agent_backend = os.getenv("NETALLY_AGENT_BACKEND", AGENT_BACKEND_DEFAULT).lower()
     app.state.mcp_health = {"ok": False, "tool_count": 0}
+    app.state.runtime_settings_path = str(_runtime_settings_path())
+    app.state.runtime_settings_loaded_keys = sorted(_RUNTIME_SETTINGS_BOOT.keys())
     # Agent runtime is intentionally lazy-loaded so the app can boot without LLM creds
     # (topology / settings / PNETLab LabFS features should still work).
     app.state.runtime = None
@@ -219,6 +342,9 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Restore persisted runtime settings (if any) before computing module defaults.
+_RUNTIME_SETTINGS_BOOT = _load_runtime_settings_from_file()
+
 # Snapshot name (Batfish)
 BATFISH_SNAPSHOT = (
     os.getenv("BATFISH_SNAPSHOT")
@@ -230,6 +356,30 @@ AUTO_INIT_BATFISH = os.getenv("AUTO_INIT_BATFISH", "false").lower() == "true"
 TOOL_BACKEND_DEFAULT = os.getenv("NETALLY_TOOL_BACKEND", "mcp").lower()
 AGENT_BACKEND_DEFAULT = os.getenv("NETALLY_AGENT_BACKEND", "single_executor").lower()
 MCP_SERVER_URL_DEFAULT = os.getenv("NETALLY_MCP_SERVER_URL", "http://127.0.0.1:8811/mcp")
+
+
+def _parse_bool(raw: Optional[str], default: bool) -> bool:
+    if raw is None:
+        return default
+    return str(raw).strip().lower() == "true"
+
+
+def get_batfish_snapshot() -> str:
+    env_snapshot = str(os.getenv("BATFISH_SNAPSHOT", "")).strip()
+    if env_snapshot:
+        return env_snapshot
+    env_network = str(os.getenv("BATFISH_NETWORK", "")).strip()
+    if env_network:
+        return env_network
+    return BATFISH_SNAPSHOT
+
+
+def get_auto_prepare_on_chat() -> bool:
+    return _parse_bool(os.getenv("AUTO_PREPARE_ON_CHAT"), AUTO_PREPARE_ON_CHAT)
+
+
+def get_auto_init_batfish() -> bool:
+    return _parse_bool(os.getenv("AUTO_INIT_BATFISH"), AUTO_INIT_BATFISH)
 
 # CORS 설정 (개발용)
 app.add_middleware(
@@ -293,6 +443,39 @@ async def call_mcp_tool(tool_name: str, arguments: Dict[str, Any]) -> Dict[str, 
         return {"result": payload, "content": res.get("content", [])}
 
     return {"error": res.get("error", "MCP call failed"), "tool": tool_name, "raw": res}
+
+
+def _extract_mutations_block(payload: Any) -> Optional[Dict[str, str]]:
+    """
+    Normalize MCP mutation-blocked responses across wrapper shapes.
+    """
+    if not isinstance(payload, dict):
+        return None
+
+    candidates: List[Dict[str, Any]] = [payload]
+    raw = payload.get("raw")
+    if isinstance(raw, dict):
+        candidates.append(raw)
+    nested = payload.get("result")
+    if isinstance(nested, dict):
+        candidates.append(nested)
+
+    for item in candidates:
+        if str(item.get("code", "")).strip() != "mutations_blocked":
+            continue
+        return {
+            "tool": str(item.get("tool") or payload.get("tool") or ""),
+            "error": str(item.get("error") or payload.get("error") or ""),
+        }
+    return None
+
+
+def _mutation_block_hint(tool_name: str) -> str:
+    tool_label = tool_name or "requested tool"
+    return (
+        f"{tool_label} is blocked because MCP mutations are disabled. "
+        "Set NETALLY_MCP_ALLOW_MUTATIONS=true for onboarding/init operations."
+    )
 
 
 # =============================================================================
@@ -419,6 +602,19 @@ async def lab_refresh(request: LabRefreshRequest):
                 "bootstrap_refresh_onboard",
                 {"config_path": params.get("config_path"), "overrides": params.get("overrides")},
             )
+            blocked = _extract_mutations_block(result)
+            if blocked:
+                tool_name = blocked.get("tool") or "bootstrap_refresh_onboard"
+                detail = blocked.get("error") or _mutation_block_hint(tool_name)
+                return JSONResponse(
+                    status_code=403,
+                    content={
+                        "detail": detail,
+                        "code": "mutations_blocked",
+                        "tool": tool_name,
+                        "hint": _mutation_block_hint(tool_name),
+                    },
+                )
         else:
             from agent.tools import lab_bootstrap
 
@@ -434,23 +630,36 @@ async def lab_refresh(request: LabRefreshRequest):
 
 async def ensure_batfish_ready(auto_init: bool) -> Dict[str, Any]:
     batfish = _get_batfish_client()
+    snapshot = get_batfish_snapshot()
     if not batfish.is_available:
         return {"status": "unavailable"}
 
     if batfish._builder:
-        return {"status": "ready", "snapshot": BATFISH_SNAPSHOT}
+        return {"status": "ready", "snapshot": snapshot}
 
-    loaded = await asyncio.to_thread(batfish.load_snapshot, BATFISH_SNAPSHOT)
+    loaded = await asyncio.to_thread(batfish.load_snapshot, snapshot)
     if loaded:
-        return {"status": "loaded", "snapshot": BATFISH_SNAPSHOT}
+        return {"status": "loaded", "snapshot": snapshot}
 
     if auto_init:
         init_params = {
-            "topology_name": BATFISH_SNAPSHOT,
+            "topology_name": snapshot,
             "output_dir": os.getenv("BATFISH_EXPORT_DIR", "./snapshot"),
         }
         if get_tool_backend() == "mcp":
             result = await call_mcp_tool("lab_init_batfish", init_params)
+            blocked = _extract_mutations_block(result)
+            if blocked:
+                tool_name = blocked.get("tool") or "lab_init_batfish"
+                detail = blocked.get("error") or _mutation_block_hint(tool_name)
+                return {
+                    "status": "blocked",
+                    "snapshot": snapshot,
+                    "code": "mutations_blocked",
+                    "tool": tool_name,
+                    "detail": detail,
+                    "hint": _mutation_block_hint(tool_name),
+                }
         else:
             from agent.tools import lab_manage
 
@@ -458,7 +667,7 @@ async def ensure_batfish_ready(auto_init: bool) -> Dict[str, Any]:
                 lab_manage.invoke,
                 {"action": "init_batfish", "params": init_params}
             )
-        return {"status": "initialized", "snapshot": BATFISH_SNAPSHOT, "result": result}
+        return {"status": "initialized", "snapshot": snapshot, "result": result}
 
     return {"status": "not_ready"}
 
@@ -471,8 +680,10 @@ async def lab_prepare(request: LabPrepareRequest):
     try:
         auto_init = request.auto_init_batfish
         if auto_init is None:
-            auto_init = AUTO_INIT_BATFISH
+            auto_init = get_auto_init_batfish()
         result = await ensure_batfish_ready(auto_init=auto_init)
+        if isinstance(result, dict) and result.get("status") == "blocked":
+            return JSONResponse(status_code=403, content=result)
         return result
     except Exception as e:
         logger.error(f"Lab prepare error: {e}")
@@ -515,6 +726,9 @@ async def pnetlab_auth(request: PnetlabAuthRequest):
 
         from agent.tools import reset_pnetlab_client, get_pnetlab_client
         reset_pnetlab_client()
+        _persist_runtime_env()
+        app.state.runtime_settings_path = str(_runtime_settings_path())
+        app.state.runtime_settings_loaded_keys = sorted(_read_runtime_settings_file().keys())
         client = get_pnetlab_client()
         ok = client.is_authenticated
         return {"authenticated": ok}
@@ -539,7 +753,16 @@ async def get_settings():
         "nso_username": os.getenv("NSO_USERNAME"),
         "nso_password": "****" if os.getenv("NSO_PASSWORD") else None,
         "pnetlab_url": os.getenv("PNETLAB_URL"),
+        "pnetlab_inventory_backend": os.getenv("PNETLAB_INVENTORY_BACKEND"),
+        "pnetlab_lab_name": os.getenv("PNETLAB_LAB_NAME"),
+        "pnetlab_nso_node": os.getenv("PNETLAB_NSO_NODE", "NSO"),
+        "pnetlab_exclude_node_names": os.getenv("PNETLAB_EXCLUDE_NODE_NAMES", "NSO,Docker,NetAlly,Admin"),
         "batfish_host": os.getenv("BATFISH_HOST", "batfish"),
+        "batfish_snapshot": get_batfish_snapshot(),
+        "auto_prepare_on_chat": get_auto_prepare_on_chat(),
+        "auto_init_batfish": get_auto_init_batfish(),
+        "runtime_settings_path": str(getattr(app.state, "runtime_settings_path", _runtime_settings_path())),
+        "runtime_settings_loaded_keys": list(getattr(app.state, "runtime_settings_loaded_keys", [])),
         "tool_backend": os.getenv("NETALLY_TOOL_BACKEND", TOOL_BACKEND_DEFAULT),
         "agent_backend": os.getenv("NETALLY_AGENT_BACKEND", AGENT_BACKEND_DEFAULT),
         "agent_prompt_mode": "prompt_only",
@@ -598,10 +821,46 @@ async def update_settings(request: SettingsRequest):
             reset_pnetlab_client()
             updated.append("pnetlab_url")
 
+        if set_or_clear_env("PNETLAB_INVENTORY_BACKEND", request.pnetlab_inventory_backend):
+            reset_pnetlab_client()
+            updated.append("pnetlab_inventory_backend")
+
+        if set_or_clear_env("PNETLAB_LAB_NAME", request.pnetlab_lab_name):
+            reset_pnetlab_client()
+            updated.append("pnetlab_lab_name")
+
+        if set_or_clear_env("PNETLAB_NSO_NODE", request.pnetlab_nso_node):
+            reset_pnetlab_client()
+            reset_nso_client()
+            updated.append("pnetlab_nso_node")
+
+        if set_or_clear_env("PNETLAB_EXCLUDE_NODE_NAMES", request.pnetlab_exclude_node_names):
+            updated.append("pnetlab_exclude_node_names")
+
         if set_or_clear_env("BATFISH_HOST", request.batfish_host):
             reset_batfish_client()
             app.state.batfish_client = None
             updated.append("batfish_host")
+
+        if request.batfish_snapshot is not None:
+            snapshot_val = request.batfish_snapshot.strip()
+            if snapshot_val:
+                os.environ["BATFISH_SNAPSHOT"] = snapshot_val
+                os.environ["BATFISH_NETWORK"] = snapshot_val
+            else:
+                os.environ.pop("BATFISH_SNAPSHOT", None)
+                os.environ.pop("BATFISH_NETWORK", None)
+            reset_batfish_client()
+            app.state.batfish_client = None
+            updated.append("batfish_snapshot")
+
+        if request.auto_prepare_on_chat is not None:
+            os.environ["AUTO_PREPARE_ON_CHAT"] = "true" if request.auto_prepare_on_chat else "false"
+            updated.append("auto_prepare_on_chat")
+
+        if request.auto_init_batfish is not None:
+            os.environ["AUTO_INIT_BATFISH"] = "true" if request.auto_init_batfish else "false"
+            updated.append("auto_init_batfish")
 
         if request.tool_backend:
             os.environ["NETALLY_TOOL_BACKEND"] = request.tool_backend
@@ -689,6 +948,10 @@ async def update_settings(request: SettingsRequest):
         }
         if runtime_sensitive.intersection(updated):
             _invalidate_runtime()
+
+        _persist_runtime_env()
+        app.state.runtime_settings_path = str(_runtime_settings_path())
+        app.state.runtime_settings_loaded_keys = sorted(_read_runtime_settings_file().keys())
         
         logger.info(f"Settings updated: {updated}")
         return {"status": "updated", "updated_fields": updated}
@@ -815,8 +1078,8 @@ async def chat_stream_generator(request: ChatRequest, runtime):
         current_tool_args: Dict[str, Any] = {}
         current_call_id: int = 0
 
-        if AUTO_PREPARE_ON_CHAT:
-            prep = await ensure_batfish_ready(auto_init=AUTO_INIT_BATFISH)
+        if get_auto_prepare_on_chat():
+            prep = await ensure_batfish_ready(auto_init=get_auto_init_batfish())
             if prep.get("status") in ("unavailable", "not_ready"):
                 data = {
                     "type": "answer",
@@ -972,7 +1235,7 @@ async def get_topology(layer: str = "l1"):
         
         if batfish.is_available:
             if not batfish._builder:
-                batfish.load_snapshot(BATFISH_SNAPSHOT)
+                batfish.load_snapshot(get_batfish_snapshot())
             
             if batfish._builder:
                 return get_batfish_l3_topology(batfish, layer=layer)
@@ -1154,7 +1417,7 @@ async def get_dashboard_summary(mode: str = "lab"):
         
         if batfish.is_available:
             if not batfish._builder:
-                batfish.load_snapshot(BATFISH_SNAPSHOT)
+                batfish.load_snapshot(get_batfish_snapshot())
             
             if batfish._builder:
                 return normalize_dashboard_summary(batfish.get_dashboard_data(mode=mode), mode)
@@ -1190,7 +1453,7 @@ async def get_protocol_details(protocol: str):
         
         if batfish.is_available:
             if not batfish._builder:
-                batfish.load_snapshot(BATFISH_SNAPSHOT)
+                batfish.load_snapshot(get_batfish_snapshot())
             
             if protocol == "bgp":
                 return batfish.get_bgp_details()

@@ -124,6 +124,16 @@ README만 보고 최소 기능을 확인하려면 아래 순서로 진행하면 
 4. Map이 비면 `🧪 Lab`로 전환해 LabFS 경로 먼저 확인
 5. 계속 실패하면 `docs/testing_runbook_ko.md`의 장애 섹션 확인
 
+### 2.6 Docker Compose로 컨테이너 실행
+
+```bash
+cd NetAlly
+docker compose build netally
+docker compose up -d
+```
+
+`docker-compose.yml`은 repo-root 컨텍스트(`../`) + `NetAlly/Dockerfile`을 사용하도록 정렬되어 있습니다.
+
 ---
 
 ## 3. PNETLab 배포 핵심 (최신 기준)
@@ -297,7 +307,7 @@ NetAlly/
 - 실장비 E2E 자동화는 환경별 편차가 있어, 현재는 PNETLab/NSO/Batfish 데모 안정화에 우선순위를 둡니다.
 - PNETLab API 인증(쿠키/자동로그인)은 보조 경로이며, 토폴로지는 LabFS 경로를 우선 권장합니다.
 - Batfish 분석 품질은 스냅샷 입력(설정/장비 정보)의 정확도에 영향을 받습니다.
-- `NETALLY_MCP_ALLOW_MUTATIONS=false` 기본값에서는 변경성 도구가 차단됩니다.
+- `NETALLY_MCP_ALLOW_MUTATIONS=false` 기본값에서는 변경성 도구가 차단되며, `/api/lab/refresh` 및 `auto_init_batfish=true`의 `/api/lab/prepare`는 `403 (mutations_blocked)`를 반환합니다.
 
 ---
 

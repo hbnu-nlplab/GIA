@@ -7,7 +7,14 @@ type ApiSettingsSnapshot = {
   nsoBaseUrl: string
   nsoUsername: string
   pnetlabUrl: string
+  pnetlabInventoryBackend: 'labfs_local' | 'labfs_ssh' | 'api'
+  pnetlabLabName: string
+  pnetlabNsoNode: string
+  pnetlabExcludeNodeNames: string
   batfishHost: string
+  batfishSnapshot: string
+  autoPrepareOnChat: boolean
+  autoInitBatfish: boolean
   toolBackend: 'mcp' | 'legacy'
   mcpServerUrl: string
   mcpAllowMutations: boolean
@@ -24,7 +31,14 @@ const DEFAULT_API_SNAPSHOT: ApiSettingsSnapshot = {
   nsoBaseUrl: '',
   nsoUsername: '',
   pnetlabUrl: '',
+  pnetlabInventoryBackend: 'labfs_local',
+  pnetlabLabName: '',
+  pnetlabNsoNode: 'NSO',
+  pnetlabExcludeNodeNames: 'NSO,Docker,NetAlly,Admin',
   batfishHost: '',
+  batfishSnapshot: '',
+  autoPrepareOnChat: false,
+  autoInitBatfish: false,
   toolBackend: 'mcp',
   mcpServerUrl: '',
   mcpAllowMutations: false,
@@ -56,7 +70,14 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean; o
   const [nsoPassword, setNsoPassword] = useState('')
   const [nsoPasswordTouched, setNsoPasswordTouched] = useState(false)
   const [pnetlabUrl, setPnetlabUrl] = useState('')
+  const [pnetlabInventoryBackend, setPnetlabInventoryBackend] = useState<'labfs_local' | 'labfs_ssh' | 'api'>('labfs_local')
+  const [pnetlabLabName, setPnetlabLabName] = useState('')
+  const [pnetlabNsoNode, setPnetlabNsoNode] = useState('NSO')
+  const [pnetlabExcludeNodeNames, setPnetlabExcludeNodeNames] = useState('NSO,Docker,NetAlly,Admin')
   const [batfishHost, setBatfishHost] = useState('')
+  const [batfishSnapshot, setBatfishSnapshot] = useState('')
+  const [autoPrepareOnChat, setAutoPrepareOnChat] = useState(false)
+  const [autoInitBatfish, setAutoInitBatfish] = useState(false)
   const [toolBackend, setToolBackend] = useState<'mcp' | 'legacy'>('mcp')
   const [mcpServerUrl, setMcpServerUrl] = useState('')
   const [mcpAllowMutations, setMcpAllowMutations] = useState(false)
@@ -79,7 +100,18 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean; o
           nsoBaseUrl: data.nso_base_url || '',
           nsoUsername: data.nso_username || '',
           pnetlabUrl: data.pnetlab_url || '',
+          pnetlabInventoryBackend: data.pnetlab_inventory_backend === 'labfs_ssh'
+            ? 'labfs_ssh'
+            : data.pnetlab_inventory_backend === 'api'
+              ? 'api'
+              : 'labfs_local',
+          pnetlabLabName: data.pnetlab_lab_name || '',
+          pnetlabNsoNode: data.pnetlab_nso_node || 'NSO',
+          pnetlabExcludeNodeNames: data.pnetlab_exclude_node_names || 'NSO,Docker,NetAlly,Admin',
           batfishHost: data.batfish_host || '',
+          batfishSnapshot: data.batfish_snapshot || '',
+          autoPrepareOnChat: Boolean(data.auto_prepare_on_chat),
+          autoInitBatfish: Boolean(data.auto_init_batfish),
           toolBackend: data.tool_backend === 'legacy' ? 'legacy' : 'mcp',
           mcpServerUrl: data.mcp_server_url || '',
           mcpAllowMutations: Boolean(data.mcp_allow_mutations),
@@ -88,7 +120,14 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean; o
         setNsoBaseUrl(snapshot.nsoBaseUrl)
         setNsoUsername(snapshot.nsoUsername)
         setPnetlabUrl(snapshot.pnetlabUrl)
+        setPnetlabInventoryBackend(snapshot.pnetlabInventoryBackend)
+        setPnetlabLabName(snapshot.pnetlabLabName)
+        setPnetlabNsoNode(snapshot.pnetlabNsoNode)
+        setPnetlabExcludeNodeNames(snapshot.pnetlabExcludeNodeNames)
         setBatfishHost(snapshot.batfishHost)
+        setBatfishSnapshot(snapshot.batfishSnapshot)
+        setAutoPrepareOnChat(snapshot.autoPrepareOnChat)
+        setAutoInitBatfish(snapshot.autoInitBatfish)
         setToolBackend(snapshot.toolBackend)
         setMcpServerUrl(snapshot.mcpServerUrl)
         setMcpAllowMutations(snapshot.mcpAllowMutations)
@@ -138,7 +177,22 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean; o
       if (nsoUsername !== initialApiSettings.nsoUsername) payload.nso_username = nsoUsername
       if (nsoPasswordTouched) payload.nso_password = nsoPassword.trim()
       if (pnetlabUrl !== initialApiSettings.pnetlabUrl) payload.pnetlab_url = pnetlabUrl
+      if (pnetlabInventoryBackend !== initialApiSettings.pnetlabInventoryBackend) {
+        payload.pnetlab_inventory_backend = pnetlabInventoryBackend
+      }
+      if (pnetlabLabName !== initialApiSettings.pnetlabLabName) payload.pnetlab_lab_name = pnetlabLabName
+      if (pnetlabNsoNode !== initialApiSettings.pnetlabNsoNode) payload.pnetlab_nso_node = pnetlabNsoNode
+      if (pnetlabExcludeNodeNames !== initialApiSettings.pnetlabExcludeNodeNames) {
+        payload.pnetlab_exclude_node_names = pnetlabExcludeNodeNames
+      }
       if (batfishHost !== initialApiSettings.batfishHost) payload.batfish_host = batfishHost
+      if (batfishSnapshot !== initialApiSettings.batfishSnapshot) payload.batfish_snapshot = batfishSnapshot
+      if (autoPrepareOnChat !== initialApiSettings.autoPrepareOnChat) {
+        payload.auto_prepare_on_chat = autoPrepareOnChat
+      }
+      if (autoInitBatfish !== initialApiSettings.autoInitBatfish) {
+        payload.auto_init_batfish = autoInitBatfish
+      }
       if (toolBackend !== initialApiSettings.toolBackend) payload.tool_backend = toolBackend
       if (mcpServerUrl !== initialApiSettings.mcpServerUrl) payload.mcp_server_url = mcpServerUrl
       if (mcpAllowMutations !== initialApiSettings.mcpAllowMutations) {
@@ -158,14 +212,21 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean; o
       })
 
       if (res.ok) {
-        setInitialApiSettings({
-          nsoBaseUrl,
-          nsoUsername,
-          pnetlabUrl,
-          batfishHost,
-          toolBackend,
-          mcpServerUrl,
-          mcpAllowMutations,
+          setInitialApiSettings({
+            nsoBaseUrl,
+            nsoUsername,
+            pnetlabUrl,
+            pnetlabInventoryBackend,
+            pnetlabLabName,
+            pnetlabNsoNode,
+            pnetlabExcludeNodeNames,
+            batfishHost,
+            batfishSnapshot,
+            autoPrepareOnChat,
+            autoInitBatfish,
+            toolBackend,
+            mcpServerUrl,
+            mcpAllowMutations,
         })
         setOpenaiTouched(false)
         setNsoPasswordTouched(false)
@@ -383,11 +444,76 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean; o
           </div>
 
           <div className="space-y-2">
+            <label className="text-[10px] text-muted-foreground uppercase tracking-widest">PNETLab Inventory Backend</label>
+            <div className="flex gap-2 p-1 bg-muted/30 rounded-lg">
+              <button
+                onClick={() => setPnetlabInventoryBackend('labfs_local')}
+                className={`flex-1 py-2 text-xs font-bold rounded-md transition-all ${pnetlabInventoryBackend === 'labfs_local' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+              >
+                labfs_local
+              </button>
+              <button
+                onClick={() => setPnetlabInventoryBackend('labfs_ssh')}
+                className={`flex-1 py-2 text-xs font-bold rounded-md transition-all ${pnetlabInventoryBackend === 'labfs_ssh' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+              >
+                labfs_ssh
+              </button>
+              <button
+                onClick={() => setPnetlabInventoryBackend('api')}
+                className={`flex-1 py-2 text-xs font-bold rounded-md transition-all ${pnetlabInventoryBackend === 'api' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+              >
+                api
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <div className="space-y-2">
+              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">PNETLab Lab Name</label>
+              <input
+                value={pnetlabLabName}
+                onChange={e => setPnetlabLabName(e.target.value)}
+                placeholder="test_nso"
+                className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] text-muted-foreground uppercase tracking-widest">PNETLab NSO Node</label>
+              <input
+                value={pnetlabNsoNode}
+                onChange={e => setPnetlabNsoNode(e.target.value)}
+                placeholder="NSO"
+                className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[10px] text-muted-foreground uppercase tracking-widest">Onboarding Exclude Nodes</label>
+            <input
+              value={pnetlabExcludeNodeNames}
+              onChange={e => setPnetlabExcludeNodeNames(e.target.value)}
+              placeholder="NSO,Docker,NetAlly,Admin"
+              className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+            />
+          </div>
+
+          <div className="space-y-2">
             <label className="text-[10px] text-muted-foreground uppercase tracking-widest">Batfish Host</label>
             <input
               value={batfishHost}
               onChange={e => setBatfishHost(e.target.value)}
               placeholder="batfish (or localhost)"
+              className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[10px] text-muted-foreground uppercase tracking-widest">Batfish Snapshot</label>
+            <input
+              value={batfishSnapshot}
+              onChange={e => setBatfishSnapshot(e.target.value)}
+              placeholder="test_nso"
               className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
             />
           </div>
@@ -429,6 +555,32 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean; o
               type="checkbox"
               checked={mcpAllowMutations}
               onChange={e => setMcpAllowMutations(e.target.checked)}
+              className="w-4 h-4 rounded border-border text-primary focus:ring-primary accent-primary"
+            />
+          </div>
+
+          <div className="flex items-center justify-between group">
+            <div className="space-y-0.5">
+              <div className="text-xs font-bold text-foreground">Auto Prepare on Chat</div>
+              <div className="text-[10px] text-muted-foreground">Run prepare flow automatically before each chat request.</div>
+            </div>
+            <input
+              type="checkbox"
+              checked={autoPrepareOnChat}
+              onChange={e => setAutoPrepareOnChat(e.target.checked)}
+              className="w-4 h-4 rounded border-border text-primary focus:ring-primary accent-primary"
+            />
+          </div>
+
+          <div className="flex items-center justify-between group">
+            <div className="space-y-0.5">
+              <div className="text-xs font-bold text-foreground">Auto Init Batfish</div>
+              <div className="text-[10px] text-muted-foreground">Allow `/api/lab/prepare` to auto-initialize snapshot when missing.</div>
+            </div>
+            <input
+              type="checkbox"
+              checked={autoInitBatfish}
+              onChange={e => setAutoInitBatfish(e.target.checked)}
               className="w-4 h-4 rounded border-border text-primary focus:ring-primary accent-primary"
             />
           </div>
@@ -516,7 +668,7 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean; o
       <section className="pt-1" data-testid="settings-section-about">
         <div className="bg-primary/5 p-3 rounded-lg border border-primary/20">
           <p className="text-[10px] text-primary/80 leading-relaxed italic">
-            Settings are saved locally and applied in real-time. Cloud synchronization is currently disabled.
+            UI preferences are saved locally, and API connection/runtime settings are applied immediately via `/api/settings` without rebuilding the container.
           </p>
         </div>
       </section>
