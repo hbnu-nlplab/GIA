@@ -122,6 +122,42 @@ The `ChatPanel` handles the Server-Sent Events stream from the backend.
   - Selecting a device keeps existing text and pins context.
   - Added listbox/option ARIA metadata for keyboard/screen-reader friendliness.
 
+## 4.4 Answer Grounding + Viz Contract (2026-02-12)
+
+- Answer grounding metadata:
+  - Backend now emits `answer.citations[]` + `answer.grounding`.
+  - Chat bubble shows whether answer is tool-grounded and how many evidence items support it.
+  - Citation chips can open matching evidence detail when call-id mapping is available.
+- Viz contract hardening:
+  - Backend normalizes viz payload into contract-like shape with:
+    - `schema_version`, `mode`, `title`, `nodes`, `edges`, `query`
+    - `reason`, `source`, `diagnostics` (requested vs normalized count, truncation flag)
+  - Topology overlay explanation card now surfaces these fields to improve explainability/debuggability.
+
+## 4.5 Runtime Health + Chat Session Persistence (2026-02-12)
+
+- Runtime health and degraded mode:
+  - Added `/api/runtime/health` for service-oriented status (`batfish`, `nso`, `pnetlab`).
+  - Header polls health periodically and renders runtime badges (`healthy` / `degraded`, per-service severity).
+  - Chat header displays a degraded-mode banner with actionable note.
+- Chat session persistence:
+  - Chat messages, active viz link, pinned context, and draft input are saved to local storage.
+  - Session restores automatically after reload.
+  - Persisted history intentionally strips heavy image payloads to keep storage bounded.
+
+## 4.6 Long-Task UX Stability (2026-02-12)
+
+- Chat long-task controls:
+  - Added user cancel for active chat stream.
+  - Added stream timeouts (overall timeout + idle timeout).
+  - Added retry UX:
+    - transient request retry once automatically for retryable statuses,
+    - explicit `Retry` button for failed requests.
+- Lab operation controls (`Refresh` / `Prepare`):
+  - Added cancel action while in progress.
+  - Added operation timeout guard.
+  - Added quick retry buttons when action fails/cancels/times out.
+
 ---
 
 ## 5. New Features

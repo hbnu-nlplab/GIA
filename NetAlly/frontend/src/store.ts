@@ -10,23 +10,69 @@ export interface Evidence {
   details?: any
 }
 
+export interface VizPayload {
+  nodes: string[]
+  edges: Array<{ source: string; target: string }>
+  mode: 'focus' | 'path'
+  title?: string
+  callId?: number
+  query?: string
+  reason?: string
+  source?: string
+  schemaVersion?: number
+  diagnostics?: {
+    requestedNodes?: number
+    requestedEdges?: number
+    normalizedNodes?: number
+    normalizedEdges?: number
+    truncated?: boolean
+  }
+}
+
+export interface TopologyDeviceSummary {
+  id: string
+  label?: string
+  platform?: string
+  deviceType?: string
+}
+
+export interface ChatContextDevice {
+  id: string
+  label?: string
+  platform?: string
+  deviceType?: string
+  source?: 'map' | 'slash' | 'manual'
+}
+
+export interface RuntimeServiceHealth {
+  status: string
+  severity: 'ok' | 'warning' | 'error'
+  detail?: string
+}
+
+export interface RuntimeHealth {
+  overall: 'healthy' | 'degraded' | 'unknown'
+  checkedAt?: string
+  recommendedMode: 'full' | 'limited' | 'unknown'
+  services: {
+    batfish?: RuntimeServiceHealth
+    nso?: RuntimeServiceHealth
+    pnetlab?: RuntimeServiceHealth
+  }
+  notes: string[]
+}
+
 interface AppState {
   selectedNode: string | null
   setSelectedNode: (node: string | null) => void
 
   // Visualization overlay (rule-based hints from backend / tools)
-  viz: {
-    nodes: string[]
-    edges: Array<{ source: string; target: string }>
-    mode: 'focus' | 'path'
-    title?: string
-    callId?: number
-  } | null
+  viz: VizPayload | null
   setViz: (viz: AppState['viz']) => void
   clearViz: () => void
   
   evidenceList: Evidence[]
-  addEvidence: (evidence: Omit<Evidence, 'id' | 'timestamp'>) => void
+  addEvidence: (evidence: Omit<Evidence, 'id' | 'timestamp'> & { id?: string }) => string
   clearEvidence: () => void
   
   detailView: {
@@ -65,6 +111,16 @@ interface AppState {
   topologySource: 'batfish' | 'pnetlab'
   setTopologySource: (source: 'batfish' | 'pnetlab') => void
 
+  topologyDevices: TopologyDeviceSummary[]
+  setTopologyDevices: (devices: TopologyDeviceSummary[]) => void
+
+  chatContextDevice: ChatContextDevice | null
+  setChatContextDevice: (device: ChatContextDevice | null) => void
+  clearChatContextDevice: () => void
+
+  runtimeHealth: RuntimeHealth
+  setRuntimeHealth: (health: RuntimeHealth) => void
+
   // Lab Operations Status
   labPrepareStatus: string | null
   labPrepareDetail: any | null
@@ -83,16 +139,20 @@ export const useAppStore = create<AppState>((set) => ({
   clearViz: () => set({ viz: null }),
   
   evidenceList: [],
-  addEvidence: (evidence) => set((state) => ({
-    evidenceList: [
-      {
-        ...evidence,
-        id: Math.random().toString(36).substring(7),
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      },
-      ...state.evidenceList
-    ].slice(0, 50)
-  })),
+  addEvidence: (evidence) => {
+    const resolvedId = evidence.id || Math.random().toString(36).substring(7)
+    set((state) => ({
+      evidenceList: [
+        {
+          ...evidence,
+          id: resolvedId,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        },
+        ...state.evidenceList
+      ].slice(0, 50)
+    }))
+    return resolvedId
+  },
   clearEvidence: () => set({ evidenceList: [] }),
   
   detailView: {
@@ -143,6 +203,21 @@ export const useAppStore = create<AppState>((set) => ({
     localStorage.setItem('topologySource', source)
     set({ topologySource: source })
   },
+
+  topologyDevices: [],
+  setTopologyDevices: (devices) => set({ topologyDevices: devices }),
+
+  chatContextDevice: null,
+  setChatContextDevice: (device) => set({ chatContextDevice: device }),
+  clearChatContextDevice: () => set({ chatContextDevice: null }),
+
+  runtimeHealth: {
+    overall: 'unknown',
+    recommendedMode: 'unknown',
+    services: {},
+    notes: [],
+  },
+  setRuntimeHealth: (runtimeHealth) => set({ runtimeHealth }),
 
   labPrepareStatus: null,
   labPrepareDetail: null,

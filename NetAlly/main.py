@@ -8,10 +8,11 @@ NetAlly FastAPI Backend
 import os
 import json
 import asyncio
-from typing import List, Optional, Any, Dict
+from typing import List, Optional, Any, Dict, Set, Tuple
 from contextlib import asynccontextmanager
 from pathlib import Path
 import re
+from datetime import datetime, timezone
 
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -133,11 +134,35 @@ class ChatMessage(BaseModel):
     content: str
 
 
+class ChatAttachment(BaseModel):
+    """Chat image attachment metadata."""
+    name: str = Field(..., description="Original filename")
+    mime_type: str = Field(default="image/png", description="MIME type")
+    size: int = Field(default=0, description="File size in bytes")
+    data_url: Optional[str] = Field(default=None, description="Data URL (optional)")
+
+
+class ChatDeviceContext(BaseModel):
+    """Device context pinned from topology click or slash-command picker."""
+    id: str
+    label: Optional[str] = None
+    platform: Optional[str] = None
+    device_type: Optional[str] = None
+
+
 class ChatRequest(BaseModel):
     """채팅 요청"""
     message: str = Field(..., description="사용자 질문")
     history: List[ChatMessage] = Field(default_factory=list, description="대화 기록")
     answer_type: str = Field(default="text", description="답변 형식: text, numeric, set, map, boolean")
+    context_device: Optional[ChatDeviceContext] = Field(
+        default=None,
+        description="Optional device context pinned from topology UI",
+    )
+    attachments: List[ChatAttachment] = Field(
+        default_factory=list,
+        description="Optional image attachments",
+    )
 
 
 class LabRefreshRequest(BaseModel):
@@ -499,6 +524,158 @@ async def health():
         # backward compatible aliases
         "agent_graph_loaded": runtime_loaded,
         "agent_graph_error": runtime_error,
+    }
+
+
+def _service_health_payload(status: str, severity: str, detail: str = "", extra: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    payload: Dict[str, Any] = {
+        "status": str(status or "unknown"),
+        "severity": str(severity or "warning"),
+        "detail": _truncate_text(detail, limit=220) if detail else "",
+    }
+    if isinstance(extra, dict) and extra:
+        payload.update(extra)
+    return payload
+
+
+async def _runtime_health_nso() -> Dict[str, Any]:
+    base_url = str(os.getenv("NSO_BASE_URL", "") or "").strip()
+    username = str(os.getenv("NSO_USERNAME", "") or "").strip()
+    password = str(os.getenv("NSO_PASSWORD", "") or "").strip()
+    if not base_url:
+        return _service_health_payload(
+            "not_configured",
+            "warning",
+            "NSO_BASE_URL is not configured. Some intent checks may be limited.",
+        )
+
+    try:
+        from agent.clients.nso import NSOClient
+
+        client = NSOClient(
+            base_url=base_url,
+            username=username or "admin",
+            password=password or "admin",
+            timeout=2,
+        )
+        devices = await asyncio.wait_for(asyncio.to_thread(client.get_devices), timeout=3)
+        device_count = len(devices) if isinstance(devices, list) else 0
+        return _service_health_payload(
+            "ok",
+            "ok",
+            f"{device_count} device(s) reachable from NSO.",
+            {"device_count": device_count},
+        )
+    except asyncio.TimeoutError:
+        return _service_health_payload("timeout", "error", "NSO check timed out.")
+    except Exception as e:
+        return _service_health_payload("error", "error", f"NSO check failed: {e}")
+
+
+async def _runtime_health_pnetlab() -> Dict[str, Any]:
+    base_url = str(os.getenv("PNETLAB_URL") or os.getenv("PNETLAB_HOST") or "").strip()
+    username = str(os.getenv("PNETLAB_USERNAME", "") or "").strip()
+    password = str(os.getenv("PNETLAB_PASSWORD", "") or "").strip()
+    if not base_url:
+        return _service_health_payload(
+            "not_configured",
+            "warning",
+            "PNETLAB_URL is not configured. Live lab inventory may be limited.",
+        )
+
+    try:
+        from agent.clients.pnetlab import PnetlabClient
+
+        client = PnetlabClient(base_url=base_url, username=username, password=password, timeout=2)
+        if not client.is_authenticated:
+            return _service_health_payload(
+                "unauthenticated",
+                "warning",
+                "PNETLab session is not authenticated.",
+            )
+
+        topo = await asyncio.wait_for(asyncio.to_thread(client.get_session_topology), timeout=3)
+        if isinstance(topo, dict) and topo.get("error"):
+            return _service_health_payload("error", "error", str(topo.get("error")))
+
+        node_count = 0
+        if isinstance(topo, dict) and isinstance(topo.get("nodes"), dict):
+            node_count = len(topo.get("nodes", {}))
+        return _service_health_payload(
+            "ok",
+            "ok",
+            f"PNETLab topology reachable ({node_count} node records).",
+            {"node_count": node_count},
+        )
+    except asyncio.TimeoutError:
+        return _service_health_payload("timeout", "error", "PNETLab check timed out.")
+    except Exception as e:
+        return _service_health_payload("error", "error", f"PNETLab check failed: {e}")
+
+
+def _runtime_health_batfish() -> Dict[str, Any]:
+    try:
+        batfish = _get_batfish_client()
+        snapshot = get_batfish_snapshot()
+        if not batfish.is_available:
+            return _service_health_payload(
+                "unavailable",
+                "error",
+                "Batfish service is unavailable.",
+                {"snapshot": snapshot},
+            )
+        if batfish._builder:
+            return _service_health_payload(
+                "ready",
+                "ok",
+                f"Batfish snapshot is loaded ({snapshot}).",
+                {"snapshot": snapshot},
+            )
+        return _service_health_payload(
+            "not_ready",
+            "warning",
+            "Batfish is running but snapshot is not loaded. Run Prepare.",
+            {"snapshot": snapshot},
+        )
+    except Exception as e:
+        return _service_health_payload("error", "error", f"Batfish check failed: {e}")
+
+
+@app.get("/api/runtime/health")
+async def runtime_health():
+    """Service-oriented runtime health for degraded-mode UX."""
+    batfish = _runtime_health_batfish()
+    nso = await _runtime_health_nso()
+    pnetlab = await _runtime_health_pnetlab()
+    services = {
+        "batfish": batfish,
+        "nso": nso,
+        "pnetlab": pnetlab,
+    }
+
+    severities = [str(v.get("severity", "warning")) for v in services.values()]
+    has_error = any(s == "error" for s in severities)
+    has_warning = any(s == "warning" for s in severities)
+    overall = "healthy" if not has_error and not has_warning else "degraded"
+    recommended_mode = "full" if overall == "healthy" else "limited"
+
+    notes: List[str] = []
+    if batfish.get("status") == "not_ready":
+        notes.append("Run Prepare to load Batfish snapshot for full path verification.")
+    if batfish.get("status") in {"unavailable", "error", "timeout"}:
+        notes.append("Batfish is unavailable. Path-focused checks may fail.")
+    if nso.get("status") == "not_configured":
+        notes.append("Configure NSO settings for richer device-grounded answers.")
+    if pnetlab.get("status") == "unauthenticated":
+        notes.append("Authenticate PNETLab to use live inventory and topology API.")
+
+    return {
+        "status": "ok",
+        "overall": overall,
+        "recommendedMode": recommended_mode,
+        "checkedAt": datetime.now(timezone.utc).isoformat(),
+        "services": services,
+        "notes": notes,
     }
 
 # =============================================================================
@@ -965,110 +1142,495 @@ async def update_settings(request: SettingsRequest):
 # Chat API (SSE Streaming)
 # =============================================================================
 
-def _build_viz_from_tool_call(tool: str, args: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-    """
-    Build a small visualization hint payload from a tool call.
+def _normalize_node_token(value: Any) -> Optional[str]:
+    if value is None:
+        return None
+    if isinstance(value, (dict, list, tuple, set)):
+        return None
+    token = str(value).strip().strip("'\"`")
+    if not token:
+        return None
+    if len(token) > 80:
+        return None
+    if token.lower() in {"none", "null", "unknown", "n/a", "na"}:
+        return None
+    # Avoid obvious IPs/prefixes in topology node candidates.
+    if re.match(r"^\d{1,3}(?:\.\d{1,3}){3}(?:/\d{1,2})?$", token):
+        return None
+    return token
 
-    This is intentionally rule-based and conservative: we only emit node/edge
-    IDs that we can confidently derive from tool arguments.
-    """
+
+def _append_node(nodes: List[str], value: Any) -> None:
+    token = _normalize_node_token(value)
+    if token:
+        nodes.append(token)
+
+
+def _append_edge(nodes: List[str], edges: List[Dict[str, str]], src: Any, dst: Any) -> None:
+    s = _normalize_node_token(src)
+    t = _normalize_node_token(dst)
+    if not s or not t:
+        return
+    nodes.extend([s, t])
+    edges.append({"source": s, "target": t})
+
+
+def _dedupe_nodes(nodes: List[str]) -> List[str]:
+    seen: Set[str] = set()
+    out: List[str] = []
+    for n in nodes:
+        key = str(n).strip().lower()
+        if not key or key in seen:
+            continue
+        seen.add(key)
+        out.append(str(n).strip())
+    return out
+
+
+def _dedupe_edges(edges: List[Dict[str, str]]) -> List[Dict[str, str]]:
+    seen: Set[Tuple[str, str]] = set()
+    out: List[Dict[str, str]] = []
+    for e in edges:
+        s = _normalize_node_token(e.get("source"))
+        t = _normalize_node_token(e.get("target"))
+        if not s or not t:
+            continue
+        key = tuple(sorted([s.lower(), t.lower()]))
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append({"source": s, "target": t})
+    return out
+
+
+def _extract_viz_candidates(payload: Any) -> Tuple[List[str], List[Dict[str, str]], bool]:
+    nodes: List[str] = []
+    edges: List[Dict[str, str]] = []
+    path_hint = False
+
+    node_keys = {
+        "node", "hostname", "device", "src", "dst", "source", "target",
+        "from", "to", "peer", "remote_node", "node1", "node2", "waypoint",
+        "start", "end",
+    }
+    path_keys = {"path", "paths", "trace", "traces", "hops", "nodes", "affected_nodes"}
+
+    def add_path_from_list(items: List[Any]) -> bool:
+        path_nodes = [_normalize_node_token(x) for x in items]
+        path_nodes = [n for n in path_nodes if n]
+        if len(path_nodes) < 2:
+            return False
+        nodes.extend(path_nodes)
+        for i in range(len(path_nodes) - 1):
+            edges.append({"source": path_nodes[i], "target": path_nodes[i + 1]})
+        return True
+
+    def add_path_from_string(text: str) -> bool:
+        if not isinstance(text, str):
+            return False
+        if "->" not in text and "→" not in text and "=>" not in text:
+            return False
+        parts = re.split(r"\s*(?:->|→|=>)\s*", text)
+        tokens = [_normalize_node_token(p) for p in parts]
+        tokens = [t for t in tokens if t]
+        if len(tokens) < 2:
+            return False
+        nodes.extend(tokens)
+        for i in range(len(tokens) - 1):
+            edges.append({"source": tokens[i], "target": tokens[i + 1]})
+        return True
+
+    def walk(obj: Any, key_hint: str = "", depth: int = 0) -> None:
+        nonlocal path_hint
+        if depth > 5 or obj is None:
+            return
+
+        if isinstance(obj, dict):
+            src = obj.get("source", obj.get("src", obj.get("from", obj.get("node1"))))
+            dst = obj.get("target", obj.get("dst", obj.get("to", obj.get("node2"))))
+            if src is not None and dst is not None:
+                _append_edge(nodes, edges, src, dst)
+
+            if "path" in obj and isinstance(obj.get("path"), list):
+                if add_path_from_list(obj.get("path", [])):
+                    path_hint = True
+
+            for k, v in obj.items():
+                kl = str(k).lower()
+                if kl in node_keys:
+                    _append_node(nodes, v)
+                    continue
+
+                if kl in path_keys:
+                    if isinstance(v, list):
+                        if add_path_from_list(v):
+                            path_hint = True
+                        for item in v:
+                            walk(item, kl, depth + 1)
+                    elif isinstance(v, str):
+                        if add_path_from_string(v):
+                            path_hint = True
+                    else:
+                        walk(v, kl, depth + 1)
+                    continue
+
+                if isinstance(v, (dict, list)):
+                    walk(v, kl, depth + 1)
+                elif isinstance(v, str) and kl in {"summary", "message"}:
+                    if add_path_from_string(v):
+                        path_hint = True
+
+        elif isinstance(obj, list):
+            if add_path_from_list(obj):
+                path_hint = True
+            for item in obj:
+                walk(item, key_hint, depth + 1)
+
+        elif isinstance(obj, str):
+            if add_path_from_string(obj):
+                path_hint = True
+
+    walk(payload)
+    return _dedupe_nodes(nodes), _dedupe_edges(edges), path_hint
+
+
+def _title_for_viz(tool: str, args: Dict[str, Any]) -> str:
+    args = args or {}
+    params = args.get("params") if isinstance(args.get("params"), dict) else {}
+    src = args.get("src", params.get("src"))
+    dst = args.get("dst", params.get("dst"))
+    device = args.get("device", params.get("device"))
+    test_type = args.get("test_type", args.get("analysis_type"))
+
+    if src or dst:
+        return f"{tool}: {src} -> {dst}"
+    if device:
+        return f"{tool}: {device}"
+    if test_type:
+        return f"{tool}: {test_type}"
+    return tool
+
+
+VIZ_SCHEMA_VERSION = 1
+VIZ_MAX_NODES = 40
+VIZ_MAX_EDGES = 80
+
+
+def _truncate_text(value: Any, limit: int = 220) -> str:
+    text = str(value or "").strip()
+    if len(text) <= limit:
+        return text
+    return f"{text[: max(0, limit - 3)]}..."
+
+
+def _normalize_viz_mode(value: Any) -> str:
+    if str(value or "").strip().lower() == "path":
+        return "path"
+    return "focus"
+
+
+def _infer_viz_reason(tool: str, args: Dict[str, Any], mode: str, path_hint: bool = False) -> str:
+    test_type = str((args or {}).get("test_type", "") or "").lower()
+    analysis_type = str((args or {}).get("analysis_type", "") or "").lower()
+    if mode == "path":
+        if "traceroute" in str(tool or "").lower() or test_type == "traceroute":
+            return "Traceroute-style intent detected. Path continuity is prioritized."
+        if analysis_type.endswith("_impact"):
+            return "Impact analysis detected. Transit relationships are highlighted as a path."
+        if path_hint:
+            return "Path-like tokens were detected in tool output."
+        return "Path mode selected to emphasize end-to-end traversal."
+    return "Focus mode selected to highlight directly related entities."
+
+
+def _coerce_viz_contract(
+    raw: Any,
+    *,
+    tool: str = "",
+    args: Optional[Dict[str, Any]] = None,
+    query: str = "",
+    source: str = "",
+    call_id: Optional[int] = None,
+) -> Optional[Dict[str, Any]]:
+    if not isinstance(raw, dict):
+        return None
+
+    args = args or {}
+    raw_nodes = raw.get("nodes")
+    raw_edges = raw.get("edges")
+
+    nodes: List[str] = []
+    edges: List[Dict[str, str]] = []
+
+    if isinstance(raw_nodes, list):
+        for n in raw_nodes:
+            _append_node(nodes, n)
+
+    if isinstance(raw_edges, list):
+        for e in raw_edges:
+            if not isinstance(e, dict):
+                continue
+            _append_edge(nodes, edges, e.get("source"), e.get("target"))
+
+    extra_nodes, extra_edges, path_hint = _extract_viz_candidates(raw)
+    nodes = _dedupe_nodes(nodes + extra_nodes)
+    edges = _dedupe_edges(edges + extra_edges)
+
+    mode = _normalize_viz_mode(raw.get("mode"))
+    if mode == "path" and not edges and len(nodes) >= 2:
+        edges = [{"source": nodes[i], "target": nodes[i + 1]} for i in range(len(nodes) - 1)]
+
+    # Ensure nodes include all edge endpoints.
+    if edges:
+        endpoints: List[str] = []
+        for e in edges:
+            endpoints.append(str(e.get("source", "")))
+            endpoints.append(str(e.get("target", "")))
+        nodes = _dedupe_nodes(nodes + endpoints)
+
+    if not nodes and not edges:
+        return None
+
+    truncated = False
+    if len(nodes) > VIZ_MAX_NODES:
+        nodes = nodes[:VIZ_MAX_NODES]
+        truncated = True
+    if len(edges) > VIZ_MAX_EDGES:
+        edges = edges[:VIZ_MAX_EDGES]
+        truncated = True
+
+    title = _truncate_text(raw.get("title") or _title_for_viz(tool, args) or "LLM Visualization", limit=120)
+    reason = _truncate_text(raw.get("reason") or _infer_viz_reason(tool, args, mode, path_hint), limit=240)
+
+    out: Dict[str, Any] = {
+        "schema_version": VIZ_SCHEMA_VERSION,
+        "mode": mode,
+        "title": title,
+        "nodes": nodes,
+        "edges": edges,
+        "reason": reason,
+        "source": str(raw.get("source") or source or "runtime"),
+        "diagnostics": {
+            "requestedNodes": len(raw_nodes) if isinstance(raw_nodes, list) else 0,
+            "requestedEdges": len(raw_edges) if isinstance(raw_edges, list) else 0,
+            "normalizedNodes": len(nodes),
+            "normalizedEdges": len(edges),
+            "truncated": truncated,
+        },
+    }
+
+    if isinstance(call_id, int):
+        out["call_id"] = call_id
+    elif isinstance(raw.get("call_id"), int):
+        out["call_id"] = int(raw["call_id"])
+
+    q = str(raw.get("query") or query or "").strip()
+    if q:
+        out["query"] = _truncate_text(q, limit=220)
+
+    return out
+
+
+def _tool_output_status(output_text: str, structured: Any = None) -> str:
+    text = str(output_text or "").strip().lower()
+    if isinstance(structured, dict):
+        status = str(structured.get("status", "") or "").strip().lower()
+        if status in {"error", "failed", "failure"}:
+            return "error"
+        if status in {"warning", "warn", "degraded", "partial"}:
+            return "warning"
+        if status in {"ok", "success", "completed", "ready"}:
+            return "success"
+    if "error" in text or "exception" in text or "failed" in text:
+        return "error"
+    if "warning" in text or "degraded" in text or "partial" in text:
+        return "warning"
+    return "success"
+
+
+def _summarize_tool_payload(tool_name: str, structured: Any, raw_text: str) -> str:
+    if isinstance(structured, dict):
+        for key in ("summary", "message", "reason", "detail"):
+            value = structured.get(key)
+            if isinstance(value, str) and value.strip():
+                return _truncate_text(value, limit=180)
+        keys = [k for k in structured.keys() if isinstance(k, str)]
+        if keys:
+            return _truncate_text(f"{tool_name} result keys: {', '.join(keys[:6])}", limit=180)
+    if isinstance(structured, list):
+        return _truncate_text(f"{tool_name} returned list ({len(structured)} items)", limit=180)
+    return _truncate_text(raw_text or f"{tool_name} returned output", limit=180)
+
+
+def _build_answer_citation(
+    *,
+    call_id: Optional[int],
+    tool_name: str,
+    tool_input: Dict[str, Any],
+    raw_output: str,
+    structured_output: Any,
+) -> Dict[str, Any]:
+    args_preview: Dict[str, Any] = {}
+    for k in ("src", "dst", "device", "test_type", "analysis_type"):
+        if k in (tool_input or {}):
+            args_preview[k] = tool_input.get(k)
+
+    summary = _summarize_tool_payload(tool_name, structured_output, raw_output)
+    citation: Dict[str, Any] = {
+        "id": f"tool-call-{call_id}" if isinstance(call_id, int) else f"tool-{tool_name}",
+        "type": "tool_output",
+        "tool": tool_name or "unknown_tool",
+        "status": _tool_output_status(raw_output, structured_output),
+        "summary": summary,
+    }
+    if isinstance(call_id, int):
+        citation["call_id"] = call_id
+    if args_preview:
+        citation["input"] = args_preview
+    return citation
+
+
+def _normalize_answer_citations(raw: Any, fallback: List[Dict[str, Any]], limit: int = 6) -> List[Dict[str, Any]]:
+    items: List[Dict[str, Any]] = []
+    source_items = raw if isinstance(raw, list) else fallback
+
+    for item in source_items:
+        if not isinstance(item, dict):
+            continue
+        tool = str(item.get("tool", "") or "").strip() or "unknown_tool"
+        summary = _truncate_text(item.get("summary") or "", limit=180)
+        if not summary:
+            continue
+        normalized: Dict[str, Any] = {
+            "id": str(item.get("id") or f"{tool}-{len(items)+1}"),
+            "type": str(item.get("type") or "tool_output"),
+            "tool": tool,
+            "summary": summary,
+            "status": str(item.get("status") or "info"),
+        }
+        if isinstance(item.get("call_id"), int):
+            normalized["call_id"] = int(item.get("call_id"))
+        input_val = item.get("input")
+        if isinstance(input_val, dict) and input_val:
+            normalized["input"] = input_val
+        items.append(normalized)
+        if len(items) >= max(1, limit):
+            break
+    return items
+
+
+def _build_grounding_meta(citations: List[Dict[str, Any]]) -> Dict[str, Any]:
+    count = len(citations)
+    return {
+        "schema_version": 1,
+        "supported_by_tools": count > 0,
+        "citation_count": count,
+        "coverage": "tool_trace" if count > 0 else "llm_only",
+        "note": (
+            "Answer is grounded with tool outputs."
+            if count > 0
+            else "No tool evidence was available for this answer."
+        ),
+    }
+
+def _build_viz_from_tool_call(tool: str, args: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    """Build visualization hints from tool-call arguments."""
     try:
         tool = str(tool or "")
         args = args or {}
 
-        nodes: List[str] = []
-        edges: List[Dict[str, str]] = []
-        mode: str = "focus"
-        title: Optional[str] = None
+        nodes, edges, path_hint = _extract_viz_candidates(args)
+        mode = "path" if ("traceroute" in tool or path_hint) else "focus"
 
-        def add_node(val: Any) -> None:
-            if val is None:
-                return
-            s = str(val).strip()
-            if not s:
-                return
-            nodes.append(s)
+        test_type = str(args.get("test_type", "") or "").lower()
+        analysis_type = str(args.get("analysis_type", "") or "").lower()
+        if test_type == "traceroute" or analysis_type.endswith("_impact"):
+            mode = "path"
 
-        if tool in {"batfish_traceroute", "batfish_reachability"}:
-            add_node(args.get("src"))
-            add_node(args.get("dst"))
-            title = f"{tool}: {args.get('src')} -> {args.get('dst')}"
-        elif tool in {"batfish_route_table", "nso_get_device_info", "nso_get_interfaces", "nso_get_routing", "nso_get_logs"}:
-            add_node(args.get("device"))
-            title = f"{tool}: {args.get('device')}"
-        elif tool in {"network_query"}:
-            # wrapper tool: highlight the requested device if present
-            add_node(args.get("device"))
-            title = f"{tool}: {args.get('category')}"
-        elif tool in {"network_verify"}:
-            params = args.get("params") or {}
-            add_node(params.get("src"))
-            add_node(params.get("dst"))
-            title = f"{tool}: {args.get('test_type')}"
-        elif tool in {"lab_get_status"}:
-            add_node(args.get("device"))
-            title = f"{tool}"
-
-        # Dedup while preserving order
-        seen = set()
-        nodes_out = []
-        for n in nodes:
-            key = n.lower()
-            if key in seen:
-                continue
-            seen.add(key)
-            nodes_out.append(n)
-
-        if not nodes_out and not edges:
+        if not nodes and not edges:
             return None
 
-        return {
+        raw_viz = {
             "mode": mode,
-            "title": title,
-            "nodes": nodes_out,
+            "title": _title_for_viz(tool, args),
+            "nodes": nodes,
             "edges": edges,
+            "reason": _infer_viz_reason(tool, args, mode, path_hint),
+            "source": "tool_call",
         }
+        return _coerce_viz_contract(raw_viz, tool=tool, args=args, source="tool_call")
     except Exception:
         return None
 
 
 def _build_viz_from_tool_output(tool: str, args: Dict[str, Any], payload: Any) -> Optional[Dict[str, Any]]:
-    """
-    Build visualization hint from a tool output. Best-effort JSON parsing.
-    """
+    """Build visualization hints from tool outputs with broad best-effort parsing."""
     try:
         tool = str(tool or "")
         args = args or {}
 
-        # Batfish traceroute returns {found, path:[node...], disposition}
-        if tool in {"batfish_traceroute"} and isinstance(payload, dict):
-            path = payload.get("path")
-            if isinstance(path, list) and all(isinstance(x, (str, int)) for x in path) and len(path) >= 2:
-                nodes = [str(x) for x in path]
-                edges = [{"source": nodes[i], "target": nodes[i + 1]} for i in range(len(nodes) - 1)]
-                return {
-                    "mode": "path",
-                    "title": f"traceroute: {args.get('src')} -> {args.get('dst')}",
-                    "nodes": nodes,
-                    "edges": edges,
-                }
+        arg_nodes, arg_edges, arg_path_hint = _extract_viz_candidates(args)
+        out_nodes, out_edges, out_path_hint = _extract_viz_candidates(payload)
 
-        # Reachability doesn't always include a path, but we can at least focus src/dst.
-        if tool in {"batfish_reachability"} and isinstance(payload, dict):
-            src = args.get("src")
-            dst = args.get("dst")
-            if src or dst:
-                nodes = [str(x) for x in (src, dst) if x]
-                return {
-                    "mode": "focus",
-                    "title": f"reachability: {src} -> {dst}",
-                    "nodes": nodes,
-                    "edges": [],
-                }
+        nodes = _dedupe_nodes(arg_nodes + out_nodes)
+        edges = _dedupe_edges(arg_edges + out_edges)
 
-        return None
+        mode = "focus"
+        if "traceroute" in tool or arg_path_hint or out_path_hint:
+            mode = "path"
+
+        test_type = str(args.get("test_type", "") or "").lower()
+        analysis_type = str(args.get("analysis_type", "") or "").lower()
+        if test_type == "traceroute" or analysis_type.endswith("_impact"):
+            mode = "path"
+
+        if mode == "path" and not edges and len(nodes) >= 2:
+            edges = [{"source": nodes[i], "target": nodes[i + 1]} for i in range(len(nodes) - 1)]
+
+        if not nodes and not edges:
+            return None
+
+        raw_viz = {
+            "mode": mode,
+            "title": _title_for_viz(tool, args),
+            "nodes": nodes,
+            "edges": edges,
+            "reason": _infer_viz_reason(tool, args, mode, bool(arg_path_hint or out_path_hint)),
+            "source": "tool_output",
+        }
+        return _coerce_viz_contract(raw_viz, tool=tool, args=args, source="tool_output")
     except Exception:
         return None
+
+
+def _compose_chat_message(request: ChatRequest) -> str:
+    """Compose a single prompt string with optional pinned context and attachment metadata."""
+    base = str(request.message or "").strip()
+    sections: List[str] = [base] if base else []
+
+    if request.context_device:
+        ctx = request.context_device
+        ctx_lines = [f"- id: {ctx.id}"]
+        if ctx.label:
+            ctx_lines.append(f"- label: {ctx.label}")
+        if ctx.platform:
+            ctx_lines.append(f"- platform: {ctx.platform}")
+        if ctx.device_type:
+            ctx_lines.append(f"- device_type: {ctx.device_type}")
+        sections.append("[Pinned Device Context]\\n" + "\\n".join(ctx_lines))
+
+    if request.attachments:
+        lines = []
+        for att in request.attachments[:5]:
+            size_label = f"{int(att.size / 1024)}KB" if att.size else "unknown size"
+            lines.append(f"- {att.name} ({att.mime_type}, {size_label})")
+        sections.append(
+            "[Attached Images]\\n"
+            + "\\n".join(lines)
+            + "\\nUse these image references as user-provided context when answering."
+        )
+
+    return "\\n\\n".join([s for s in sections if s.strip()])
 
 
 async def chat_stream_generator(request: ChatRequest, runtime):
@@ -1077,6 +1639,9 @@ async def chat_stream_generator(request: ChatRequest, runtime):
         current_tool_name: Optional[str] = None
         current_tool_args: Dict[str, Any] = {}
         current_call_id: int = 0
+        latest_viz: Optional[Dict[str, Any]] = None
+        recent_citations: List[Dict[str, Any]] = []
+        query_text = str(request.message or "")
 
         if get_auto_prepare_on_chat():
             prep = await ensure_batfish_ready(auto_init=get_auto_init_batfish())
@@ -1084,14 +1649,17 @@ async def chat_stream_generator(request: ChatRequest, runtime):
                 data = {
                     "type": "answer",
                     "content": "Batfish is not ready. Please run lab_init_batfish (or legacy lab_manage(action=\"init_batfish\")) or enable AUTO_INIT_BATFISH.",
+                    "citations": [],
+                    "grounding": _build_grounding_meta([]),
                     "meta": prep,
                 }
                 yield f"event: answer\ndata: {json.dumps(data)}\n\n"
                 yield f"event: complete\ndata: {json.dumps({'type': 'complete'})}\n\n"
                 return
 
+        composed_message = _compose_chat_message(request)
         runtime_payload = {
-            "message": request.message,
+            "message": composed_message,
             "history": [m.model_dump() for m in request.history],
             "answer_type": request.answer_type,
         }
@@ -1117,7 +1685,17 @@ async def chat_stream_generator(request: ChatRequest, runtime):
                     data["call_id"] = current_call_id
                 viz = _build_viz_from_tool_call(current_tool_name, current_tool_args)
                 if viz:
-                    data["viz"] = viz
+                    normalized_viz = _coerce_viz_contract(
+                        {**viz, "query": query_text},
+                        tool=current_tool_name,
+                        args=current_tool_args,
+                        query=query_text,
+                        source="tool_call",
+                        call_id=current_call_id,
+                    )
+                    if normalized_viz:
+                        latest_viz = normalized_viz
+                        data["viz"] = normalized_viz
 
             if event_type == "tool_output":
                 raw_content = data.get("content", "")
@@ -1126,6 +1704,8 @@ async def chat_stream_generator(request: ChatRequest, runtime):
                     data["content"] = raw_content
                 tool_name = str(data.get("tool", current_tool_name) or "")
                 args = data.get("input", current_tool_args) or {}
+                call_id = data.get("call_id")
+                resolved_call_id = call_id if isinstance(call_id, int) else (current_call_id if current_call_id > 0 else None)
                 structured = None
                 try:
                     structured = json.loads(raw_content)
@@ -1137,7 +1717,56 @@ async def chat_stream_generator(request: ChatRequest, runtime):
                     structured if structured is not None else raw_content,
                 )
                 if viz:
-                    data["viz"] = viz
+                    normalized_viz = _coerce_viz_contract(
+                        {**viz, "query": query_text},
+                        tool=tool_name,
+                        args=args,
+                        query=query_text,
+                        source="tool_output",
+                        call_id=resolved_call_id if isinstance(resolved_call_id, int) else None,
+                    )
+                    if normalized_viz:
+                        latest_viz = normalized_viz
+                        data["viz"] = normalized_viz
+
+                citation = _build_answer_citation(
+                    call_id=resolved_call_id if isinstance(resolved_call_id, int) else None,
+                    tool_name=tool_name,
+                    tool_input=args if isinstance(args, dict) else {},
+                    raw_output=raw_content,
+                    structured_output=structured,
+                )
+                recent_citations = [
+                    c for c in recent_citations
+                    if not (
+                        isinstance(c.get("call_id"), int)
+                        and isinstance(citation.get("call_id"), int)
+                        and int(c.get("call_id")) == int(citation.get("call_id"))
+                    )
+                ]
+                recent_citations.append(citation)
+                recent_citations = recent_citations[-8:]
+                data["citation"] = citation
+
+            if event_type == "answer":
+                raw_viz = data.get("viz")
+                normalized_answer_viz = _coerce_viz_contract(
+                    raw_viz if isinstance(raw_viz, dict) else {},
+                    tool=current_tool_name or "",
+                    args=current_tool_args,
+                    query=query_text,
+                    source="answer",
+                    call_id=current_call_id if current_call_id > 0 else None,
+                ) if isinstance(raw_viz, dict) else None
+                if normalized_answer_viz:
+                    latest_viz = normalized_answer_viz
+                    data["viz"] = normalized_answer_viz
+                elif latest_viz:
+                    data["viz"] = latest_viz
+
+                citations = _normalize_answer_citations(data.get("citations"), recent_citations, limit=6)
+                data["citations"] = citations
+                data["grounding"] = _build_grounding_meta(citations)
 
             yield f"event: {event_type}\ndata: {json.dumps(data)}\n\n"
 
@@ -1642,60 +2271,180 @@ async def get_device_detail(device_id: str):
     """
     try:
         from agent.clients.nso import NSOClient
-        
+
         nso = NSOClient(
             base_url=os.getenv("NSO_BASE_URL", "http://localhost:8080/restconf"),
             username=os.getenv("NSO_USERNAME", "admin"),
             password=os.getenv("NSO_PASSWORD", "admin")
         )
-        
-        # NSO에서 장비 정보
+
         devices = nso.get_devices()
+        resolved_device = device_id
+        lower_map = {str(d).lower(): str(d) for d in devices if d}
         if device_id not in devices:
-            raise HTTPException(status_code=404, detail="Device not found")
-        device_info = nso.get_device_info(device_id)
-        
-        # Batfish에서 인터페이스 및 라우팅 정보
+            resolved_device = lower_map.get(device_id.lower(), device_id)
+
+        device_info = nso.get_device_info(resolved_device) if resolved_device else {}
+        native_config = ""
+        try:
+            native_config = nso.get_native_config(resolved_device) if resolved_device else ""
+        except Exception:
+            native_config = ""
+
+        nso_interfaces_raw = nso.get_interfaces(resolved_device) if resolved_device else []
+        nso_interfaces: List[Dict[str, Any]] = []
+        for iface in nso_interfaces_raw if isinstance(nso_interfaces_raw, list) else []:
+            if not isinstance(iface, dict):
+                continue
+            iface_name = str(
+                iface.get("name")
+                or iface.get("id")
+                or iface.get("interface-name")
+                or iface.get("ifname")
+                or ""
+            )
+            if not iface_name:
+                continue
+
+            status_raw = str(
+                iface.get("status")
+                or iface.get("admin-status")
+                or iface.get("oper-status")
+                or iface.get("enabled")
+                or ""
+            ).lower()
+            status = "up" if status_raw in {"up", "true", "enabled", "connected"} else "down"
+
+            ip = ""
+            ip_data = iface.get("ip")
+            if isinstance(ip_data, dict):
+                addr = ip_data.get("address", {})
+                if isinstance(addr, dict):
+                    primary = addr.get("primary", {})
+                    if isinstance(primary, dict):
+                        p_addr = str(primary.get("address", "") or "")
+                        p_mask = str(primary.get("mask", "") or "")
+                        if p_addr:
+                            ip = f"{p_addr}/{p_mask}" if p_mask else p_addr
+
+            nso_interfaces.append(
+                {
+                    "name": iface_name,
+                    "ip": ip,
+                    "status": status,
+                    "protocol": str(iface.get("protocol", "")),
+                }
+            )
+
+        nso_bgp_neighbors_raw = nso.get_bgp_neighbors(resolved_device) if resolved_device else []
+        nso_bgp_neighbors: List[Dict[str, Any]] = []
+        for n in nso_bgp_neighbors_raw if isinstance(nso_bgp_neighbors_raw, list) else []:
+            if not isinstance(n, dict):
+                continue
+            nso_bgp_neighbors.append(
+                {
+                    "peer": str(
+                        n.get("id")
+                        or n.get("neighbor-id")
+                        or n.get("address")
+                        or n.get("ip")
+                        or ""
+                    ),
+                    "as": str(
+                        n.get("remote-as")
+                        or n.get("peer-as")
+                        or n.get("as")
+                        or "Unknown"
+                    ),
+                    "state": str(n.get("state") or "Configured"),
+                }
+            )
+
         batfish = _get_batfish_client()
-        interfaces = []
-        bgp_neighbors = []
-        
+        bf_interfaces: List[Dict[str, Any]] = []
+        bf_bgp_neighbors: List[Dict[str, Any]] = []
+        bf_routes: List[Dict[str, Any]] = []
+
+        if batfish.is_available:
+            if not batfish._builder:
+                try:
+                    batfish.load_snapshot(get_batfish_snapshot())
+                except Exception:
+                    pass
+
         if batfish.is_available and batfish._builder:
             try:
                 bf = batfish._builder.bf
-                
-                # 인터페이스 속성
-                iface_props = bf.q.interfaceProperties(nodes=device_id).answer().frame()
+
+                iface_props = bf.q.interfaceProperties(nodes=resolved_device).answer().frame()
                 for _, row in iface_props.iterrows():
-                    interfaces.append({
+                    bf_interfaces.append({
                         "name": str(row.get("Interface", "")),
                         "ip": str(row.get("Primary_Address", "")),
                         "status": "up" if row.get("Active", False) else "down",
-                        "protocol": str(row.get("Routing_Protocol", ""))
+                        "protocol": str(row.get("Routing_Protocol", "")),
                     })
-                
-                # BGP 네이버
-                bgp_sessions = batfish.get_bgp_sessions(device_filter=device_id)
+
+                bgp_sessions = batfish.get_bgp_sessions(device_filter=resolved_device)
                 for session in bgp_sessions:
-                    bgp_neighbors.append({
+                    bf_bgp_neighbors.append({
                         "peer": session.get("remote_node", ""),
-                        "as": "Unknown",  # Batfish에서 AS 번호 조회 필요 시 추가
-                        "state": session.get("status", "Unknown")
+                        "as": "Unknown",
+                        "state": session.get("status", "Unknown"),
                     })
+                bf_routes = batfish.get_route_table(resolved_device)
             except Exception as e:
-                logger.warning(f"Batfish detail fetch failed for {device_id}: {e}")
-        
+                logger.warning(f"Batfish detail fetch failed for {resolved_device}: {e}")
+
+        interfaces = bf_interfaces if bf_interfaces else nso_interfaces
+        bgp_neighbors = bf_bgp_neighbors if bf_bgp_neighbors else nso_bgp_neighbors
+
+        routes: List[Dict[str, Any]] = []
+        for r in bf_routes if isinstance(bf_routes, list) else []:
+            if not isinstance(r, dict):
+                continue
+            routes.append(
+                {
+                    "network": str(r.get("network", "")),
+                    "nextHop": str(r.get("next_hop", "")),
+                    "protocol": str(r.get("protocol", "")),
+                    "metric": str(r.get("metric", "")),
+                }
+            )
+
+        platform_val = None
+        version_val = None
+        if isinstance(device_info.get("platform"), dict):
+            platform_val = device_info.get("platform", {}).get("name")
+            version_val = device_info.get("platform", {}).get("version")
+
+        if not platform_val:
+            device_type_data = device_info.get("device-type")
+            if isinstance(device_type_data, dict):
+                cli_data = device_type_data.get("cli")
+                if isinstance(cli_data, dict):
+                    platform_val = cli_data.get("ned-id")
+
         return {
-            "hostname": device_id,
-            "platform": device_info.get("platform", {}).get("name"),
-            "version": device_info.get("platform", {}).get("version"),
+            "name": resolved_device,
+            "hostname": resolved_device,
+            "platform": platform_val,
+            "version": version_val,
             "mgmt_ip": device_info.get("address"),
             "interfaces": interfaces,
             "bgp_neighbors": bgp_neighbors,
-            "routes": len(batfish.get_route_table(device_id)) if batfish.is_available else 0,
-            "configs": None  # 설정 내용은 별도 API로 분리 가능
+            "routes": routes,
+            "routes_count": len(routes),
+            "config": native_config or None,
+            "configs": native_config or None,
+            "source": {
+                "device_id_requested": device_id,
+                "device_id_resolved": resolved_device,
+                "nso_found": bool(device_info),
+                "batfish_available": bool(batfish.is_available and batfish._builder),
+            },
         }
-        
+
     except HTTPException:
         raise
     except Exception as e:
