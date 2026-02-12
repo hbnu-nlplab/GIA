@@ -5,10 +5,20 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 NETALLY_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 REPO_ROOT="$(cd "${NETALLY_DIR}/.." && pwd)"
 
+# Optionally preload variables from .env (or NETALLY_ENV_FILE).
+ENV_FILE="${NETALLY_ENV_FILE:-${NETALLY_DIR}/.env}"
+if [[ -f "${ENV_FILE}" ]]; then
+  echo "[deploy] loading env file: ${ENV_FILE}"
+  set -a
+  # shellcheck source=/dev/null
+  source "${ENV_FILE}"
+  set +a
+fi
+
 PNETLAB_VM_IP="${PNETLAB_VM_IP:-192.168.50.60}"
 PNETLAB_VM_USER="${PNETLAB_VM_USER:-root}"
 PNETLAB_VM_DEST_DIR="${PNETLAB_VM_DEST_DIR:-/root}"
-PNETLAB_SSH_OPTIONS="${PNETLAB_SSH_OPTIONS:-}"
+DEPLOY_SSH_OPTIONS="${DEPLOY_SSH_OPTIONS:-${PNETLAB_SSH_OPTIONS:-}}"
 
 NETALLY_IMAGE_NAME="${NETALLY_IMAGE_NAME:-netally:latest}"
 NETALLY_IMAGE_TAR="${NETALLY_IMAGE_TAR:-${NETALLY_DIR}/.tmp/netally.tar}"
@@ -17,7 +27,7 @@ NETALLY_SKIP_LOAD="${NETALLY_SKIP_LOAD:-false}"
 
 mkdir -p "$(dirname "${NETALLY_IMAGE_TAR}")"
 
-read -r -a SSH_OPTS <<<"${PNETLAB_SSH_OPTIONS}"
+read -r -a SSH_OPTS <<<"${DEPLOY_SSH_OPTIONS}"
 
 echo "[deploy] repo root: ${REPO_ROOT}"
 echo "[deploy] image: ${NETALLY_IMAGE_NAME}"
