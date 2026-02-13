@@ -1,7 +1,8 @@
 # NetAlly: Network Management를 위한 Multi-Agent System
 
-> **목적**: 교수님께 보여드릴 Introduction 초안 + SIGCOMM 요약문  
-> **작성일**: 2026-01-29
+> **목적**: 교수님께 보여드릴 Introduction 초안 + Abstract  
+> **작성일**: 2026-01-29  
+> **최종 수정**: 2026-02-13 (제출 기준 리베이스: v2 공개본 1,128 QA, L1~L5, L6는 이번 제출 제외)
 
 ---
 
@@ -21,7 +22,7 @@
 |---|--------------|
 | **C1** | 네트워크 관리에 특화된 Multi-Agent System(NetAlly) 설계 및 구현: Orchestrator-Executor 구조를 통한 역할 분리와 도구 기반 추론 |
 | **C2** | PNETLab-NSO-Batfish를 통합한 하이브리드 검증 파이프라인: 시뮬레이션 환경에서의 자동 온보딩과 정형 검증(Formal Verification) 연동 |
-| **C3** | NetConfigQA 2.0 벤치마크 데이터셋 구축: 5단계 난이도(L1~L5), 126개 질문 템플릿, 1,300+ QA 쌍으로 구성된 네트워크 구성 Q&A 평가 체계 |
+| **C3** | NetConfigQA 2.0 벤치마크 데이터셋 구축: 제출 기준 **5단계 난이도**(L1~L5), **127개 메트릭**, 공개본 기준 17개 카테고리, **1,128 QA**로 구성된 네트워크 구성 Q&A 평가 체계 + Type-Aware Accuracy 지표 (L6 코드는 보존하되 이번 제출 실험에서 제외) |
 
 ---
 
@@ -49,7 +50,7 @@
 
 ### 6. 평가를 위한 데이터 구축: NetConfigQA 2.0 (1문단)
 
-LLM 기반 네트워크 관리 시스템의 체계적 평가를 위해 NetConfigQA 2.0 벤치마크를 구축하였다. 데이터셋은 5단계 난이도 체계를 따른다: **L1**(단일 장비 조회, 예: "p1의 hostname은?"), **L2**(다중 장비 집계, 예: "SSH가 활성화된 장비 수는?"), **L3**(교차 검증, 예: "iBGP full-mesh가 완성되었는가?"), **L4**(Batfish 도달성 분석, 예: "10.0.0.1에서 192.168.1.1로의 경로는?"), **L5**(What-If 분석, 예: "p1-p2 링크가 끊어지면 어떻게 되는가?"). 총 126개의 질문 템플릿과 10개 장비로 구성된 SP(Service Provider) 토폴로지를 기반으로 1,300개 이상의 QA 쌍을 생성하였다. 각 데이터는 정답뿐 아니라 Batfish 쿼리 파라미터와 검증 로직을 포함하여, 에이전트의 도구 사용 여부까지 평가할 수 있다.
+LLM 기반 네트워크 관리 시스템의 체계적 평가를 위해 NetConfigQA 2.0 벤치마크를 구축하였다. 제출용 데이터셋은 **5단계 난이도(L1~L5)**를 따른다: **L1**(단일 장비 조회, 예: "p1의 hostname은?"), **L2**(다중 장비 집계, 예: "SSH가 활성화된 장비 수는?"), **L3**(교차 검증, 예: "iBGP full-mesh가 완성되었는가?"), **L4**(Batfish 도달성 분석, 예: "10.0.0.1에서 192.168.1.1로의 경로는?"), **L5**(What-If 분석, 예: "p1-p2 링크가 끊어지면 어떻게 되는가?"). 총 127개 메트릭과 10개 장비로 구성된 SP(Service Provider) 토폴로지를 기반으로 공개본 v2 기준 1,128개의 QA 쌍을 사용한다. 각 데이터는 정답뿐 아니라 Batfish 쿼리 파라미터와 검증 로직을 포함하여, 에이전트의 도구 사용 여부까지 평가할 수 있다. Type-Aware Accuracy(TA-Acc)를 도입하여 네트워크 데이터 특성(IP 주소, 경로, 집합 등)에 적합한 평가를 수행하며, **L6 진단 항목은 이번 제출에서 제외**한다(원인: fault별 snapshot/context 관리 부담, baseline 공정성 문제, 재현성 리스크).
 
 ### 7. Contributions (1문단)
 
@@ -71,15 +72,17 @@ We present **NetAlly**, a Multi-Agent System designed for verifiable network con
 
 A novel **scan_and_sync** mechanism automatically reconciles simulation environments with operational tools, enabling seamless transition from lab to production. For dynamic fault analysis, NetAlly leverages Batfish's **fork_snapshot** capability to simulate link and node failures without affecting the actual network.
 
-To systematically evaluate LLM-based network management systems, we introduce **NetConfigQA 2.0**, a benchmark comprising 1,300+ question-answer pairs across five difficulty levels: from single-device queries (L1) to What-If impact analysis (L5). Unlike existing benchmarks that rely on text matching, NetConfigQA 2.0 includes verification logic to assess whether agents correctly utilize network tools.
+To systematically evaluate LLM-based network management systems, we introduce **NetConfigQA 2.0**, using the public v2 benchmark with 1,128 question-answer pairs across **five difficulty levels (L1-L5)** for this submission. Unlike existing benchmarks that rely on text matching, NetConfigQA 2.0 uses **Batfish simulation results as ground truth** and employs **Type-Aware Accuracy (TA-Acc)** to handle network-specific data structures such as IP addresses, routing paths, and device sets; diagnostic L6 is intentionally excluded in this paper due to fault-snapshot management overhead and fairness/reproducibility concerns.
 
-Experimental results demonstrate that NetAlly's multi-agent approach achieves X% higher accuracy on L4-L5 tasks compared to single-agent baselines, while the hybrid verification pipeline successfully detects Y% of configuration inconsistencies that would be missed by LLM-only solutions.
+We validate our approach through five experiments: (1) three-layer dataset verification combining Batfish re-execution, PNETLab cross-validation, and LLM-as-Judge; (2) single LLM baseline evaluation revealing that all models fail at L4/L5 (TA-Acc ≤ 0.3); (3) NetAlly multi-agent evaluation; (4) scalability analysis from 10 to larger topologies; and (5) external benchmark transfer with NIKA as the primary target (NetPress/NetConfEval as optional extensions).
+
+Experimental results confirm that NetAlly's tool-augmented multi-agent approach achieves substantial accuracy improvements on L4-L5 tasks compared to LLM-only baselines, validating the necessity of formal verification tools for network configuration understanding.
 
 ---
 
 ## 다음 단계
 
-1. [ ] 교수님 피드백 반영
-2. [ ] RQ/Contribution 구체화
-3. [ ] 실험 설계 및 결과 추가
-4. [ ] SIGCOMM Extended Abstract 형식으로 변환 (2-4 pages)
+1. [x] 교수님 피드백 반영
+2. [x] RQ/Contribution 구체화 → research_notes.md 에 반영
+3. [ ] 실험 설계 및 결과 추가 → experiment_design.md 참조
+4. [ ] IEEE TNMS 형식으로 본문 작성 시작

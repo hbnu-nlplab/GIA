@@ -184,10 +184,16 @@ def main():
     parser.add_argument("--policies", default="policies.json", help="Path to policies JSON")
     parser.add_argument("--batfish-host", default="localhost", help="Batfish server host (e.g. localhost:8889)")
     parser.add_argument("--min-per-cat", type=int, default=50, help="Minimal questions per category")
+    parser.add_argument(
+        "--include-l6",
+        action="store_true",
+        help="Include L6 diagnostic question generation (disabled by default for IEEE TNMS submission scope).",
+    )
     args = parser.parse_args()
 
     # [Antigravity Mod v3] - 8889 Port & Snapshot Root Fix
     print(f"[Info] NetConfigQA Dataset Generator (Batfish Edition) - v20240129-01")
+    print(f"[Info] L6 generation mode: {'ENABLED (--include-l6)' if args.include_l6 else 'DISABLED (submission default)'}")
     
     lab_path = Path(args.lab_path).resolve()
     if not lab_path.exists():
@@ -685,14 +691,21 @@ def main():
         l5_questions = bf_builder.generate_l5_questions()
         process_builder_questions(l5_questions, "L5")
         print(f"  -> Generated {len(l5_questions)} L5 questions.")
-            
-        # L6 질문 생성 (Diagnostic)
-        print("[3.5.3] Generating L6 questions (Diagnostic Troubleshooting)...")
-        l6_questions = bf_builder.generate_l6_questions()
-        process_builder_questions(l6_questions, "L6")
-        print(f"  -> Generated {len(l6_questions)} L6 questions.")
-            
-        print(f"  -> Total Added: {len(l4_questions)} L4 + {len(l5_questions)} L5 + {len(l6_questions)} L6 questions")
+
+        l6_questions = []
+        if args.include_l6:
+            print("[3.5.3] Generating L6 questions (Diagnostic Troubleshooting)...")
+            l6_questions = bf_builder.generate_l6_questions()
+            process_builder_questions(l6_questions, "L6")
+            print(f"  -> Generated {len(l6_questions)} L6 questions.")
+        else:
+            print("[3.5.3] Skipping L6 question generation.")
+            print("  -> Reason: L6 diagnostic requires per-fault snapshot/context packaging and is out of scope for this IEEE TNMS submission.")
+
+        if args.include_l6:
+            print(f"  -> Total Added: {len(l4_questions)} L4 + {len(l5_questions)} L5 + {len(l6_questions)} L6 questions")
+        else:
+            print(f"  -> Total Added: {len(l4_questions)} L4 + {len(l5_questions)} L5 questions")
 
 
     # 결과 저장 (CSV + JSON)

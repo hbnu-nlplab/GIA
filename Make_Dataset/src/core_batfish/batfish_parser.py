@@ -1,6 +1,6 @@
 
 import pandas as pd
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Tuple
 from pathlib import Path
 import logging
 import re
@@ -10,16 +10,37 @@ from pybatfish.datamodel.answer import *
 from pybatfish.datamodel.flow import *
 
 # 로깅 설정
+logger = logging.getLogger(__name__)
 logging.getLogger("pybatfish").setLevel(logging.WARN)
 
 def get_batfish_session(host: str = "localhost", snapshot_dir: str = None) -> Session:
     """Batfish 세션을 초기화하고 스냅샷을 업로드합니다."""
-    # host:port 형식 처리
+    # host:port 미지정 시 9996 -> 9997 순서로 시도 (환경별 차이 흡수)
+    candidates: List[Tuple[str, int | None]] = []
     if ":" in host:
         base_host, port = host.split(":")
-        bf = Session(host=base_host, port=int(port))
+        candidates.append((base_host, int(port)))
     else:
-        bf = Session(host=host)
+        candidates.append((host, 9996))
+        candidates.append((host, 9997))
+
+    last_error = None
+    bf = None
+    for base_host, port in candidates:
+        try:
+            if port is None:
+                bf = Session(host=base_host)
+            else:
+                bf = Session(host=base_host, port=port)
+            logger.info(f"Connected to Batfish at {base_host}:{port if port is not None else 'default'}")
+            break
+        except Exception as e:
+            last_error = e
+            logger.warning(f"Failed Batfish session init at {base_host}:{port}: {e}")
+
+    if bf is None:
+        raise last_error if last_error else RuntimeError("Failed to initialize Batfish session")
+
     if snapshot_dir:
         bf.set_network("generate_dataset_network")
         # 스냅샷 이름에 타임스탬프나 고유값을 붙이면 좋지만, 여기선 덮어쓰기 모드

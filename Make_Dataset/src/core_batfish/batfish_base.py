@@ -190,12 +190,22 @@ class BatfishBase:
         """Batfish 세션 초기화 및 스냅샷 로드"""
         try:
             logger.info(f"Connecting to Batfish at {self.batfish_host}...")
-            # host:port 형식 처리
+            # host:port 형식 처리 (port 미지정 시 9996 -> 9997 순서로 시도)
             if ":" in self.batfish_host:
                 base_host, port = self.batfish_host.split(":")
                 self.bf = Session(host=base_host, port=int(port))
             else:
-                self.bf = Session(host=self.batfish_host)
+                last_error = None
+                for port in (9996, 9997):
+                    try:
+                        self.bf = Session(host=self.batfish_host, port=port)
+                        logger.info(f"Connected to Batfish at {self.batfish_host}:{port}")
+                        break
+                    except Exception as e:
+                        last_error = e
+                        logger.warning(f"Failed Batfish session init at {self.batfish_host}:{port}: {e}")
+                if self.bf is None:
+                    raise last_error if last_error else RuntimeError("Failed to initialize Batfish session")
             
             logger.info(f"Setting network: {self.network_name}")
             self.bf.set_network(self.network_name)

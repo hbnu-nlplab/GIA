@@ -44,6 +44,69 @@ class L6AnalyzerMixin:
             return self.metrics_metadata[metric].get("template", default)
         return default
 
+    def _safe_text(self, value: Any, default: str = "Unknown") -> str:
+        """None/NaN/공백을 안전한 문자열로 정규화"""
+        if value is None:
+            return default
+        text = str(value).strip()
+        if not text or text.lower() == "nan":
+            return default
+        return text
+
+    def _slug(self, value: Any) -> str:
+        """ID/스냅샷 이름에 안전한 slug 생성"""
+        text = self._safe_text(value, default="unknown")
+        return re.sub(r"[^a-zA-Z0-9_.-]+", "_", text).strip("_") or "unknown"
+
+    def _make_question_id(self, prefix: str, *parts: Any) -> str:
+        """충돌을 줄인 question id 생성기"""
+        head = "_".join([self._slug(prefix)] + [self._slug(p) for p in parts if p is not None])
+        return f"{head}_{int(time.time()*1000)}_{random.randint(1000, 9999)}"
+
+    def _hop_hostname(self, hop: Any) -> str:
+        """Batfish hop 객체에서 hostname 추출"""
+        node = getattr(hop, 'node', None)
+        if node is None:
+            return "Unknown"
+        hostname = getattr(node, 'hostname', None)
+        if hostname:
+            return self._safe_text(hostname)
+        name = getattr(node, 'name', None)
+        if name:
+            return self._safe_text(name)
+        return self._safe_text(node)
+
+    def _same_node(self, a: Any, b: Any) -> bool:
+        """노드명 비교 (대소문자/공백 차이 무시)"""
+        return self._safe_text(a).lower() == self._safe_text(b).lower()
+
+    def _traceroute_frame(self, src_node: str, dst_ip: str, snapshot: Optional[str] = None):
+        """
+        traceroute를 안전하게 실행.
+        1) _fix_start_location(node) 시도
+        2) 실패 시 node 자체로 재시도
+        """
+        last_error = None
+        candidates = [self._fix_start_location(src_node), src_node]
+        tried = set()
+        for start_loc in candidates:
+            if start_loc in tried:
+                continue
+            tried.add(start_loc)
+            try:
+                q = self.bf.q.traceroute(
+                    startLocation=start_loc,
+                    headers=HeaderConstraints(dstIps=dst_ip)
+                )
+                if snapshot:
+                    return q.answer(snapshot=snapshot).frame()
+                return q.answer().frame()
+            except Exception as e:
+                last_error = e
+                logger.debug(f"L6 traceroute retry: start={start_loc}, dst={dst_ip}, snapshot={snapshot}, error={e}")
+
+        raise last_error if last_error else RuntimeError("Traceroute failed with unknown error")
+
     def _inject_fault_interface_down(self, snapshot_name: str, interfaces: List[Any]) -> bool:
         """
         Helper: 특정 인터페이스들을 Deactivate하는 Fault Snapshot 생성
@@ -70,27 +133,28 @@ class L6AnalyzerMixin:
         4. 문제 생성: "A->B 통신 실패. 원인 진단하시오."
         """
         questions = []
-        if not self._initialized:
+        if not self._initialized or HeaderConstraints is None or Interface is None:
             return questions
 
         # 1. 대상 Flow 선정 (Edge 장비 위주)
         candidates = self.nodes if len(self.nodes) >= 2 else []
-
+        if not candidates:
+            return questions
 
         qa_count = 0
-        tried_links = set()
+        tried_fault_targets = set()
 
         # Random Pair Sampling
         test_pairs = []
-        for _ in range(count * 3): # 3배수 후보 선정
+        for _ in range(count * 3):  # 3배수 후보 선정
             src = random.choice(candidates)
             dst = random.choice(candidates)
             if src != dst:
                 test_pairs.append((src, dst))
-        
+
         # 중복 제거
         test_pairs = list(set(test_pairs))
-        
+
         logger.info(f"[L6_LINK] Candidates: {len(candidates)}, Pairs: {len(test_pairs)}")
 
         for src_node, dst_node in test_pairs:
@@ -107,13 +171,7 @@ class L6AnalyzerMixin:
 
             # 2. 정상 경로 확인 (Baseline)
             try:
-                # VRF 보정
-                src_loc = self._fix_start_location(src_node)
-                
-                tr_base = self.bf.q.traceroute(
-                    startLocation=src_loc,
-                    headers=HeaderConstraints(dstIps=dst_ip)
-                ).answer().frame()
+                tr_base = self._traceroute_frame(src_node=src_node, dst_ip=dst_ip)
 
                 if tr_base.empty:
                     logger.debug(f"[L6_LINK] Baseline empty for {src_node}->{dst_node}")
@@ -123,16 +181,13 @@ class L6AnalyzerMixin:
                 disp = getattr(trace, 'disposition', '')
                 if disp != 'ACCEPTED':
                     logger.debug(f"[L6_LINK] Baseline failed ({disp}) for {src_node}->{dst_node}")
-                    continue # 원래 안 되는 경로는 패스
+                    continue  # 원래 안 되는 경로는 패스
 
-                # Ensure src_node is included (Traceroute hops sometimes omit the source)
-                # But more importantly, we need Node and Exit Interface pairs
+                # outgoing interface + 다음 hop node를 함께 추출
+                hops = list(getattr(trace, 'hops', []))
                 path_hops = []
-                for hop in getattr(trace, 'hops', []):
-                    node = getattr(hop, 'node', None)
-                    hostname = getattr(node, 'hostname', str(node))
-                    if hasattr(node, 'name'): hostname = node.name # Backup
-                    
+                for idx, hop in enumerate(hops):
+                    hostname = self._hop_hostname(hop)
                     exit_intf = None
                     for step in getattr(hop, 'steps', []):
                         detail = getattr(step, 'detail', None)
@@ -140,59 +195,51 @@ class L6AnalyzerMixin:
                             exit_intf = getattr(detail, 'outputInterface', None)
                             if not exit_intf and isinstance(detail, dict):
                                 exit_intf = detail.get('outputInterface')
-                        
-                        if exit_intf:
-                            break 
 
-                                # Sometimes it's in receivingInterface for EnterInterface? 
-                                # No, we want outgoing for link failure.
-                    
+                        if exit_intf:
+                            break
+
                     if hostname and exit_intf:
-                        path_hops.append((hostname, exit_intf))
+                        next_hop_name = self._safe_text(dst_node)
+                        if idx + 1 < len(hops):
+                            next_hop_name = self._hop_hostname(hops[idx + 1])
+                        path_hops.append((hostname, str(exit_intf), next_hop_name))
 
                 logger.debug(f"[L6_LINK] Path hops for {src_node}->{dst_node}: {path_hops}")
-                
+
                 if not path_hops:
                     logger.debug(f"[L6_LINK] No valid exit interfaces for {src_node}->{dst_node}. Hops: {len(hops)}")
                     continue
 
-
                 # Select a random hop to fail
                 target_hop = random.choice(path_hops)
-                u_name, intf_u = target_hop
-                
+                u_name, intf_u, v_name = target_hop
+                fault_key = (u_name, intf_u, v_name)
+                if fault_key in tried_fault_targets:
+                    continue
+                tried_fault_targets.add(fault_key)
+
                 # 3. Fault Injection (Snapshot Forking)
                 # Snapshot name cannot contain slashes ('/')
-                safe_intf = intf_u.replace('/', '_')
-                fault_snapshot = f"diag_link_{u_name}_{safe_intf}_{int(time.time()*1000)}"
-                
+                safe_intf = self._slug(intf_u)
+                fault_snapshot = f"diag_link_{self._slug(u_name)}_{safe_intf}_{int(time.time()*1000)}"
+
                 # Use explicit Interface objects for robustness
                 # Pybatfish Interface uses hostname and interface
                 target_iface = Interface(hostname=u_name, interface=intf_u)
                 logger.info(f"[L6_LINK] Injecting fault: {target_iface}")
                 success = self._inject_fault_interface_down(fault_snapshot, [target_iface])
 
-
-                
                 if not success:
                     continue
 
-                # Store who we failed for ground truth
-                # u_name is node, intf_u is interface name (str)
-                v_name = "Unknown" # In interface-based failure, we just know the outgoing end
-                target_link = (u_name, intf_u)
-
-
                 # 4. Symptom Verification (With Fault)
                 # 동일한 경로가 끊겼는지 확인
-                tr_fail = self.bf.q.traceroute(
-                    startLocation=src_loc,
-                    headers=HeaderConstraints(dstIps=dst_ip)
-                ).answer(snapshot=fault_snapshot).frame()
-                
+                tr_fail = self._traceroute_frame(src_node=src_node, dst_ip=dst_ip, snapshot=fault_snapshot)
+
                 is_broken = False
                 fail_disposition = "UNKNOWN"
-                
+
                 if tr_fail.empty:
                     is_broken = True
                     fail_disposition = "NO_ROUTE"
@@ -201,52 +248,54 @@ class L6AnalyzerMixin:
                     fail_disposition = getattr(fail_trace, 'disposition', 'UNKNOWN')
                     if fail_disposition != 'ACCEPTED':
                         is_broken = True
-                
+
                 logger.info(f"[L6_LINK] Fault verification: {u_name}[{intf_u}] DOWN -> Disposition: {fail_disposition} (Broken: {is_broken})")
 
-
-                
                 # 5. 문제 생성 (증상이 확인된 경우만)
                 if is_broken:
                     metric = "diagnostic_link_failure"
                     # 질문 템플릿: 증상(Symptom) 제시
-                    template = self._get_template(metric, 
+                    template = self._get_template(metric,
                         "**네트워크 장애 신고**: 사용자 '{src}'에서 목적지 '{dst}'(IP: {dst_ip})로의 통신이 갑자기 중단되었습니다.\n"
                         "현재 상태에서 Traceroute 결과는 '{disposition}'입니다.\n\n"
                         "**질문**: 이 장애의 근본 원인(Root Cause)이 되는 링크(장비 A - 장비 B)를 진단하십시오.\n"
                         "[답변 형식: '장비A - 장비B' (예: Core1 - Spine2)]")
-                    
+
                     q_text = template.format(
-                        src=src_node, 
-                        dst=dst_node, 
+                        src=src_node,
+                        dst=dst_node,
                         dst_ip=dst_ip,
                         disposition=fail_disposition
                     )
-                    
+
                     # 정답 포맷
                     ground_truth = f"{u_name} - {v_name}"
-                    
+
                     questions.append({
-                        "id": f"DIAG_LINK_{u_name}_{v_name}",
+                        "id": self._make_question_id("DIAG_LINK", src_node, dst_node, u_name, v_name, intf_u),
                         "category": "Diagnostic_Troubleshooting",
                         "level": "L6",
                         "answer_type": "text",
                         "question": q_text,
                         "ground_truth": ground_truth,
                         "explanation": f"Injected Fault: Interface {intf_u} on {u_name} set to administrative down.",
-
                         "evidence_hint": {
                             "scope": {"type": "DIAGNOSTIC_LINK", "src": src_node, "dst": dst_node},
-                            "injected_fault": {"type": "LINK_DOWN", "link": ground_truth},
+                            "injected_fault": {
+                                "type": "LINK_DOWN",
+                                "link": ground_truth,
+                                "node": u_name,
+                                "interface": intf_u
+                            },
                             "symptom": fail_disposition
                         },
                         "academic_reference": "NIKA (SIGCOMM'25): Fault Injection Benchmark"
                     })
                     qa_count += 1
-                
+
                 # Cleanup (Optional: snapshots list grows, maybe delete?)
                 # self.bf.delete_snapshot(fault_snapshot) # pybatfish might not support explicit delete easily in all versions/backends
-                
+
             except Exception as e:
                 logger.warning(f"Error generating diagnostic qa for {src_node}-{dst_node}: {e}")
                 continue
@@ -280,7 +329,7 @@ class L6AnalyzerMixin:
         4. 문제 생성: "A->B 통신 실패. 다운된 장비를 진단하시오."
         """
         questions = []
-        if not self._initialized:
+        if not self._initialized or HeaderConstraints is None:
             return questions
 
         candidates = self.nodes if len(self.nodes) >= 3 else []
@@ -288,7 +337,7 @@ class L6AnalyzerMixin:
             return questions
 
         qa_count = 0
-        tried_nodes = set()
+        tried_fault_targets = set()
 
         test_pairs = []
         for _ in range(count * 3):
@@ -309,11 +358,7 @@ class L6AnalyzerMixin:
             dst_ip = dst_ips[0]
 
             try:
-                src_loc = self._fix_start_location(src_node)
-                tr_base = self.bf.q.traceroute(
-                    startLocation=src_loc,
-                    headers=HeaderConstraints(dstIps=dst_ip)
-                ).answer().frame()
+                tr_base = self._traceroute_frame(src_node=src_node, dst_ip=dst_ip)
 
                 if tr_base.empty:
                     logger.debug(f"[L6_NODE] Baseline empty for {src_node}->{dst_node}")
@@ -329,12 +374,9 @@ class L6AnalyzerMixin:
                 hops = getattr(trace, 'hops', [])
                 path_nodes = []
                 for hop in hops:
-                    n = getattr(hop, 'node', None)
-                    if n:
-                        hostname = getattr(n, 'hostname', str(n))
-                        # 확실하게 제외 (Strict exclusion)
-                        if hostname != src_node and hostname != dst_node:
-                            path_nodes.append(hostname)
+                    hostname = self._hop_hostname(hop)
+                    if not self._same_node(hostname, src_node) and not self._same_node(hostname, dst_node):
+                        path_nodes.append(hostname)
 
                 if not path_nodes:
                     logger.debug(f"[L6_NODE] No intermediate nodes for {src_node}->{dst_node}")
@@ -343,29 +385,27 @@ class L6AnalyzerMixin:
                 logger.debug(f"[L6_NODE] Path nodes for {src_node}->{dst_node}: {path_nodes}")
 
                 # 경로 중간 노드 선택
-                target_node = random.choice(path_nodes)
+                target_node = self._safe_text(random.choice(path_nodes))
                 
                 # Double check to prevent selecting source node
                 logger.info(f"[L6_NODE_DEBUG] Checking: target={repr(target_node)} vs src={repr(src_node)}")
-                if target_node == src_node:
+                if self._same_node(target_node, src_node):
                     logger.debug(f"[L6_NODE] Skipping: target({target_node}) == src({src_node})")
                     continue
                     
-                if target_node in tried_nodes:
+                fault_key = (src_node, dst_node, target_node)
+                if fault_key in tried_fault_targets:
                     continue
-                tried_nodes.add(target_node)
+                tried_fault_targets.add(fault_key)
 
                 # Fault Injection
-                fault_snapshot = f"diag_node_{target_node}_{int(time.time()*1000)}"
+                fault_snapshot = f"diag_node_{self._slug(target_node)}_{int(time.time()*1000)}"
                 success = self._inject_fault_node_down(fault_snapshot, target_node)
                 if not success:
                     continue
 
                 # Symptom Verification
-                tr_fail = self.bf.q.traceroute(
-                    startLocation=src_loc,
-                    headers=HeaderConstraints(dstIps=dst_ip)
-                ).answer(snapshot=fault_snapshot).frame()
+                tr_fail = self._traceroute_frame(src_node=src_node, dst_ip=dst_ip, snapshot=fault_snapshot)
 
                 is_broken = False
                 fail_disposition = "UNKNOWN"
@@ -389,9 +429,9 @@ class L6AnalyzerMixin:
                     q_text = template.format(
                         src=src_node, dst=dst_node, dst_ip=dst_ip, disposition=fail_disposition
                     )
-                    
+
                     questions.append({
-                        "id": f"DIAG_NODE_{target_node}",
+                        "id": self._make_question_id("DIAG_NODE", src_node, dst_node, target_node),
                         "category": "Diagnostic_Troubleshooting",
                         "level": "L6",
                         "answer_type": "text",
@@ -441,17 +481,22 @@ class L6AnalyzerMixin:
                 return questions
 
             qa_count = 0
+            seen_sessions = set()
             for _, row in incompatible.iterrows():
                 if qa_count >= count:
                     break
-                
-                node = row.get('Node', 'Unknown')
-                remote_node = row.get('Remote_Node', 'Unknown')
-                local_ip = row.get('Local_IP', 'N/A')
-                remote_ip = row.get('Remote_IP', 'N/A')
-                status = row.get('Configured_Status', 'UNKNOWN')
-                local_as = row.get('Local_AS', 'N/A')
-                remote_as = row.get('Remote_AS', 'N/A')
+
+                node = self._safe_text(row.get('Node', 'Unknown'))
+                remote_node = self._safe_text(row.get('Remote_Node', 'Unknown'))
+                local_ip = self._safe_text(row.get('Local_IP', 'N/A'), default="N/A")
+                remote_ip = self._safe_text(row.get('Remote_IP', 'N/A'), default="N/A")
+                status = self._safe_text(row.get('Configured_Status', 'UNKNOWN'))
+                local_as = self._safe_text(row.get('Local_AS', 'N/A'), default="N/A")
+                remote_as = self._safe_text(row.get('Remote_AS', 'N/A'), default="N/A")
+                session_key = (node, remote_node, local_ip, remote_ip, status)
+                if session_key in seen_sessions:
+                    continue
+                seen_sessions.add(session_key)
 
                 metric = "diagnostic_bgp_mismatch"
                 template = self._get_template(metric,
@@ -477,7 +522,7 @@ class L6AnalyzerMixin:
                     ground_truth = "인증 불일치"
 
                 questions.append({
-                    "id": f"DIAG_BGP_{node}_{remote_node}",
+                    "id": self._make_question_id("DIAG_BGP", node, remote_node, local_ip, remote_ip),
                     "category": "Diagnostic_Troubleshooting",
                     "level": "L6",
                     "answer_type": "text",
@@ -527,15 +572,20 @@ class L6AnalyzerMixin:
                 return questions
 
             qa_count = 0
+            seen_pairs = set()
             for _, row in incompatible.iterrows():
                 if qa_count >= count:
                     break
-                
+
                 intf = row.get('Interface', {})
                 remote_intf = row.get('Remote_Interface', {})
-                node = getattr(intf, 'hostname', str(intf)) if hasattr(intf, 'hostname') else str(intf)
-                remote_node = getattr(remote_intf, 'hostname', str(remote_intf)) if hasattr(remote_intf, 'hostname') else str(remote_intf)
-                status = row.get('Session_Status', 'UNKNOWN')
+                node = self._safe_text(getattr(intf, 'hostname', str(intf)) if hasattr(intf, 'hostname') else str(intf))
+                remote_node = self._safe_text(getattr(remote_intf, 'hostname', str(remote_intf)) if hasattr(remote_intf, 'hostname') else str(remote_intf))
+                status = self._safe_text(row.get('Session_Status', 'UNKNOWN'))
+                pair_key = (node, remote_node, status)
+                if pair_key in seen_pairs:
+                    continue
+                seen_pairs.add(pair_key)
 
                 metric = "diagnostic_ospf_mismatch"
                 template = self._get_template(metric,
@@ -557,7 +607,7 @@ class L6AnalyzerMixin:
                     ground_truth = "Network Type 불일치"
 
                 questions.append({
-                    "id": f"DIAG_OSPF_{node}_{remote_node}",
+                    "id": self._make_question_id("DIAG_OSPF", node, remote_node),
                     "category": "Diagnostic_Troubleshooting",
                     "level": "L6",
                     "answer_type": "text",
@@ -588,7 +638,7 @@ class L6AnalyzerMixin:
         특정 트래픽이 어떤 ACL 규칙에 의해 차단되는지 분석하고 문제 출제
         """
         questions = []
-        if not self._initialized:
+        if not self._initialized or HeaderConstraints is None:
             return questions
 
         try:
@@ -601,6 +651,7 @@ class L6AnalyzerMixin:
             ]
 
             qa_count = 0
+            seen_acl = set()
             for port, proto, service_name in test_ports:
                 if qa_count >= count:
                     break
@@ -622,9 +673,12 @@ class L6AnalyzerMixin:
                         if qa_count >= count:
                             break
 
-                        node = row.get('Node', 'Unknown')
-                        filter_name = row.get('Filter_Name', 'Unknown')
-                        flow = row.get('Flow', {})
+                        node = self._safe_text(row.get('Node', 'Unknown'))
+                        filter_name = self._safe_text(row.get('Filter_Name', 'Unknown'))
+                        dedup_key = (node, service_name, port, filter_name)
+                        if dedup_key in seen_acl:
+                            continue
+                        seen_acl.add(dedup_key)
 
                         metric = "diagnostic_acl_block"
                         template = self._get_template(metric,
@@ -637,7 +691,7 @@ class L6AnalyzerMixin:
                         )
 
                         questions.append({
-                            "id": f"DIAG_ACL_{node}_{service_name}",
+                            "id": self._make_question_id("DIAG_ACL", node, service_name, port, filter_name),
                             "category": "Diagnostic_Troubleshooting",
                             "level": "L6",
                             "answer_type": "text",

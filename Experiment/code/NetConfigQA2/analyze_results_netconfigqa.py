@@ -741,94 +741,119 @@ class SummaryReportGenerator:
 
 # ==================== Main Analyzer ====================
 
-def analyze_results(json_file: str, verbose: bool = False):
+def normalize_levels(levels: List[str]) -> Set[str]:
+    """Normalize level tokens (e.g., l5 -> L5)."""
+    return {str(level).strip().upper() for level in levels if str(level).strip()}
+
+
+def analyze_results(
+    json_file: str,
+    verbose: bool = False,
+    include_levels: List[str] = None,
+    exclude_levels: List[str] = None,
+):
     """메인 분석 함수"""
-    
+
     with open(json_file, 'r', encoding='utf-8') as f:
-        data = json.load(f)
+        payload = json.load(f)
+
+    if isinstance(payload, dict):
+        rows = payload.get("results", [])
+        meta = payload.get("meta", {})
+    elif isinstance(payload, list):
+        rows = payload
+        meta = {}
+    else:
+        raise ValueError(f"Unsupported JSON structure in {json_file}")
+
+    include_set = normalize_levels(include_levels or [])
+    exclude_set = normalize_levels(exclude_levels or [])
+
+    if include_set:
+        rows = [row for row in rows if str(row.get("level", "L1")).strip().upper() in include_set]
+    if exclude_set:
+        rows = [row for row in rows if str(row.get("level", "L1")).strip().upper() not in exclude_set]
 
     scorer = NetConfigQAScorer()
     trad_calc = TraditionalMetricsCalculator()
     results = []
-    
-    # 통계 수집용
+
     grouped_by_type = defaultdict(list)
     grouped_by_level = defaultdict(list)
     grouped_by_category = defaultdict(list)
     grouped_by_status = defaultdict(list)
-    
-    # Traditional metrics 통계
     trad_metrics_by_type = defaultdict(lambda: defaultdict(list))
-    
+
     error_samples = []
-    
-    # BERTScore를 위한 배치 데이터
     all_preds = []
     all_golds = []
-    
-    print(f"Analyzing {len(data['results'])} results...")
-    print(f"[Step 1/3] Calculating Type-Aware and Traditional metrics...")
 
-    for row in data:
-        # 필드명 호환성 처리 (raw_pred vs pred, answer_type vs type, answer_status vs status)
-        raw_pred = row.get('debate2_answer')
+    print(f"Analyzing {len(rows)} results from {json_file}...")
+    print(
+        f"Level filter: include={sorted(include_set) if include_set else 'ALL'}, "
+        f"exclude={sorted(exclude_set) if exclude_set else 'NONE'}"
+    )
+    print("[Step 1/3] Calculating Type-Aware and Traditional metrics...")
+
+    for idx, row in enumerate(rows):
+        question_id = str(row.get("question_id", row.get("id", idx)))
+        question = row.get("question", "")
         answer_type = canonical_answer_type(row.get('answer_type', row.get('type', 'text')))
-        
-        # 전처리 (answer_type 전달)
-        clean_pred = scorer.clean_prediction(raw_pred, answer_type)
-        clean_gold = scorer.clean_gold(row['gold_answer'])
-        
-        # Type-Aware 점수 계산
-        type_aware_metrics = scorer.score(clean_pred, row['gold_answer'], answer_type)
+        level = str(row.get("level", "L1")).strip().upper()
+        category = row.get("category", "General")
+        status = row.get("answer_status", row.get("status", "OK"))
+
+        raw_pred = row.get("raw_pred", row.get("debate2_answer", row.get("pred", "")))
+        pred_input = row.get("pred", raw_pred)
+        gold_raw = str(row.get("gold", row.get("gold_answer", "")))
+
+        clean_pred = scorer.clean_prediction(str(pred_input), answer_type)
+        clean_gold = scorer.clean_gold(gold_raw)
+
+        type_aware_metrics = scorer.score(clean_pred, gold_raw, answer_type)
         type_aware_score = type_aware_metrics['score']
-        
-        # Traditional metrics 계산
         trad_metrics = trad_calc.calculate_all(clean_pred, clean_gold)
-        
-        # 결과 저장
+
         result = {
-            "question": row['question'],
-            "gold": row['gold_answer'],
+            "question_id": question_id,
+            "level": level,
+            "category": category,
+            "status": status,
+            "question": question,
+            "gold": gold_raw,
             "gold_cleaned": clean_gold,
+            "raw_pred": raw_pred,
+            "pred": clean_pred,
             "type_aware_score": type_aware_score,
             "type": answer_type,
         }
-        
-        # Type-Aware 추가 메트릭 (f1, precision, recall 등)
         result.update({f"type_aware_{k}": v for k, v in type_aware_metrics.items() if k != 'score'})
-        
-        # Traditional metrics 추가
         result.update(trad_metrics)
-        
+
         results.append(result)
-        
-        # 그룹별 통계 (Type-Aware)
+
         grouped_by_type[answer_type].append(type_aware_score)
         grouped_by_level[level].append(type_aware_score)
         grouped_by_category[category].append(type_aware_score)
         grouped_by_status[status].append(type_aware_score)
-        
-        # Traditional metrics 통계
+
         for metric_name, metric_value in trad_metrics.items():
             trad_metrics_by_type[answer_type][metric_name].append(metric_value)
-        
-        # BERTScore 배치용 데이터
+
         all_preds.append(clean_pred if clean_pred else "[empty]")
         all_golds.append(clean_gold if clean_gold else "[empty]")
-        
-        # 오류 샘플 수집
+
         if type_aware_score < 0.99 and len(error_samples) < 20:
             error_samples.append({
-                "question": row['question'][:60] + "..." if len(row['question']) > 60 else row['question'],
+                "id": question_id,
+                "question": question[:60] + "..." if len(question) > 60 else question,
                 "gold": clean_gold[:40] if clean_gold else "(empty)",
                 "pred": clean_pred[:40] if clean_pred else "(empty)",
                 "type": answer_type,
                 "score": type_aware_score
             })
 
-
-    # BERTScore 계산 (배치 처리)
-    print(f"[Step 2/3] Calculating BERTScore (batch processing)...")
+    print("[Step 2/3] Calculating BERTScore (batch processing)...")
     if BERTSCORE_AVAILABLE and all_preds and all_golds:
         try:
             P, R, F1 = bert_score(all_preds, all_golds, lang='en', verbose=False, device='cpu')
@@ -836,8 +861,7 @@ def analyze_results(json_file: str, verbose: bool = False):
                 result['bertscore_precision'] = P[i].item()
                 result['bertscore_recall'] = R[i].item()
                 result['bertscore_f1'] = F1[i].item()
-                
-                # BERTScore 통계에도 추가
+
                 answer_type = result['type']
                 trad_metrics_by_type[answer_type]['bertscore_f1'].append(F1[i].item())
             print(f"   [OK] BERTScore calculated for {len(results)} samples")
@@ -858,14 +882,12 @@ def analyze_results(json_file: str, verbose: bool = False):
     n = len(results)
     total_score = sum(r['type_aware_score'] for r in results)
     avg_acc = total_score / n if n > 0 else 0
-    
-    # Traditional metrics의 overall 평균 계산
+
     overall_trad_metrics = {}
     for metric_name in ['exact_match', 'token_f1', 'rouge1', 'rouge2', 'rougeL', 'bertscore_f1', 'bleu']:
         all_values = [r.get(metric_name, 0.0) for r in results]
         overall_trad_metrics[metric_name] = sum(all_values) / len(all_values) if all_values else 0.0
-    
-    # 통계 빌드
+
     stats = {
         "accuracy": avg_acc,
         "total_samples": n,
@@ -876,20 +898,18 @@ def analyze_results(json_file: str, verbose: bool = False):
         "traditional_metrics": overall_trad_metrics,
         "trad_by_type": {
             atype: {
-                metric: sum(vals)/len(vals) if vals else 0.0 
+                metric: sum(vals)/len(vals) if vals else 0.0
                 for metric, vals in metrics_dict.items()
             }
             for atype, metrics_dict in trad_metrics_by_type.items()
         }
     }
-    
-    # 결과 출력
-    print(f"[Step 3/3] Generating reports...")
+
+    print("[Step 3/3] Generating reports...")
     print("\n" + "="*80)
     print(" " * 25 + "ANALYSIS RESULTS")
     print("="*80)
-    
-    # Overall scores
+
     print(f"\n{'Metric':<25} {'Score':>10}")
     print("-" * 40)
     print(f"{'Type-Aware Accuracy':<25} {avg_acc:>9.2%}")
@@ -900,22 +920,22 @@ def analyze_results(json_file: str, verbose: bool = False):
     print(f"{'ROUGE-L':<25} {overall_trad_metrics.get('rougeL', 0):>9.2%}")
     print(f"{'ROUGE-1':<25} {overall_trad_metrics.get('rouge1', 0):>9.2%}")
     print(f"{'ROUGE-2':<25} {overall_trad_metrics.get('rouge2', 0):>9.2%}")
-    
+
     print(f"\n[Type-Aware Score by Answer Type]")
     for t in sorted(grouped_by_type.keys()):
         scores = grouped_by_type[t]
         print(f"   {t:12s}: {sum(scores)/len(scores):.2%} (n={len(scores)})")
-    
+
     print(f"\n[Type-Aware Score by Level]")
     for lvl in sorted(grouped_by_level.keys()):
         scores = grouped_by_level[lvl]
         print(f"   {lvl:5s}: {sum(scores)/len(scores):.2%} (n={len(scores)})")
-    
+
     print(f"\n[Type-Aware Score by Status]")
-    for status in sorted(grouped_by_status.keys()):
-        scores = grouped_by_status[status]
-        print(f"   {status:15s}: {sum(scores)/len(scores):.2%} (n={len(scores)})")
-    
+    for current_status in sorted(grouped_by_status.keys()):
+        scores = grouped_by_status[current_status]
+        print(f"   {current_status:15s}: {sum(scores)/len(scores):.2%} (n={len(scores)})")
+
     if verbose and error_samples:
         print(f"\n[Sample Errors (first {len(error_samples)})]")
         for i, e in enumerate(error_samples[:10], 1):
@@ -924,24 +944,26 @@ def analyze_results(json_file: str, verbose: bool = False):
             print(f"       Gold: {e['gold']}")
             print(f"       Pred: {e['pred']}")
 
-    # 결과 저장 (JSON)
-    output_file = json_file.replace(".json", "_analyzed.json")
-    if "_raw_" in json_file:
-        output_file = json_file.replace("_raw_", "_analyzed_")
-    
-    meta = data.get("meta", {})
+    if "_raw_" in str(json_file):
+        output_file = str(json_file).replace("_raw_", "_analyzed_")
+    else:
+        output_file = str(json_file).replace(".json", "_analyzed.json")
+
+    meta = dict(meta) if isinstance(meta, dict) else {}
+    meta["include_levels"] = sorted(include_set) if include_set else []
+    meta["exclude_levels"] = sorted(exclude_set) if exclude_set else []
+
     output_data = {
         "meta": meta,
         "stats": stats,
         "results": results
     }
-    
+
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(output_data, f, indent=2, ensure_ascii=False)
-    
+
     print(f"\n[OK] Saved analyzed results to: {output_file}")
 
-    # 에러 결과만 따로 저장 (Manual verification용)
     error_results = [r for r in results if r['type_aware_score'] < 1.0]
     error_output_file = output_file.replace(".json", "_errors.json")
     error_output_data = {
@@ -952,43 +974,40 @@ def analyze_results(json_file: str, verbose: bool = False):
     with open(error_output_file, 'w', encoding='utf-8') as f:
         json.dump(error_output_data, f, indent=2, ensure_ascii=False)
     print(f"[OK] Saved error samples to: {error_output_file}")
-    
-    # CSV 파일 저장 (per-question detailed results)
+
     csv_file = output_file.replace(".json", "_detailed.csv")
     with open(csv_file, 'w', newline='', encoding='utf-8-sig') as csvf:
         if results:
-            fieldnames = ['question_id', 'level', 'category', 'type', 'status', 
+            fieldnames = ['question_id', 'level', 'category', 'type', 'status',
                          'question', 'gold', 'pred',
-                         'type_aware_score', 'exact_match', 'token_f1', 
+                         'type_aware_score', 'exact_match', 'token_f1',
                          'bertscore_f1', 'rougeL', 'rouge1', 'rouge2']
             writer = csv.DictWriter(csvf, fieldnames=fieldnames, extrasaction='ignore')
             writer.writeheader()
             for r in results:
                 writer.writerow(r)
-    
+
     print(f"[OK] Saved detailed CSV to: {csv_file}")
-    
-    # Markdown 채점표 저장
+
     scorecard_file = output_file.replace(".json", "_scorecard.md")
     scorecard_gen = ScorecardGenerator()
     scorecard_md = scorecard_gen.generate(stats, meta, error_samples)
-    
+
     with open(scorecard_file, 'w', encoding='utf-8') as f:
         f.write(scorecard_md)
-    
+
     print(f"[OK] Saved scorecard to: {scorecard_file}")
 
-    # Summary Report 저장 (개별 모델용)
     summary_file = output_file.replace(".json", "_summary.md")
     summary_gen = SummaryReportGenerator()
     summary_md = summary_gen.generate([(stats, meta)])
-    
+
     with open(summary_file, 'w', encoding='utf-8') as f:
         f.write(summary_md)
-    
+
     print(f"[OK] Saved summary report to: {summary_file}")
     print(f"\n[TIP] Run 'python Figure.py \"{output_file}\"' to generate visualizations.")
-    
+
     return stats, results, meta
 
 
@@ -997,27 +1016,37 @@ def main():
     parser.add_argument("json_files", nargs="+", help="Path to results json(s) (raw or already analyzed)")
     parser.add_argument("--verbose", "-v", action="store_true", help="Show detailed error analysis")
     parser.add_argument("--output_summary", "-o", default="comparison_summary.md", help="Output path for combined summary")
+    parser.add_argument(
+        "--include_levels",
+        nargs="+",
+        default=None,
+        help="분석에 포함할 level 목록 (예: --include_levels L1 L2 L3 L4 L5)",
+    )
+    parser.add_argument(
+        "--exclude_levels",
+        nargs="+",
+        default=["L6"],
+        help="분석에서 제외할 level 목록 (기본값: L6)",
+    )
     args = parser.parse_args()
 
-
-    current_dir = Path(__file__).resolve().parent
-    sys.path.append(str(current_dir))
-    BASE_DIR = current_dir.parent
-    sys.path.append(str(BASE_DIR))
-
-
-    json_file = BASE_DIR / "data" / "debate_results" / "full_w_context4" / "netconfig_result2.json"
-        stats, results, meta = analyze_results(json_file, args.verbose)
+    all_results = []
+    for json_file in args.json_files:
+        stats, _, meta = analyze_results(
+            json_file,
+            verbose=args.verbose,
+            include_levels=args.include_levels,
+            exclude_levels=args.exclude_levels,
+        )
         all_results.append((stats, meta))
-    
-    # 여러 파일이 입력된 경우 통합 비교 리포트 생성
-    if len(args.json_files) > 1:
+
+    if len(all_results) > 1:
         summary_gen = SummaryReportGenerator()
         comparison_md = summary_gen.generate(all_results)
-        
+
         with open(args.output_summary, 'w', encoding='utf-8') as f:
             f.write(comparison_md)
-        
+
         print(f"\n" + "="*80)
         print(f"[SUCCESS] Generated combined comparison report: {args.output_summary}")
         print("="*80)
