@@ -60,16 +60,34 @@ class BatfishBase:
         self.snapshot_name = "baseline"
         self._initialized = False
         
-        # Loopback0 존재 여부 캐시 (성능 최적화)
+        # 시작 인터페이스 캐시
+        # - _loopback_cache: 하위 호환을 위해 유지 (True면 루프백 계열 시작 인터페이스 존재)
+        # - _preferred_start_iface_cache: 노드별로 traceroute/reachability startLocation에 붙일 인터페이스
         self._loopback_cache: Dict[str, bool] = {}
+        self._preferred_start_iface_cache: Dict[str, str] = {}
+
+    @staticmethod
+    def _is_loopback_iface_name(iface_name: str) -> bool:
+        """벤더별 표기 차이를 고려해 루프백 계열 인터페이스인지 판별."""
+        lowered = iface_name.lower()
+        return lowered.startswith("loopback") or lowered.startswith("lo")
+
+    @staticmethod
+    def _loopback_iface_rank(iface_name: str) -> Tuple[int, int, str]:
+        """
+        루프백 인터페이스 우선순위.
+        - 1순위: loopback0 / lo0
+        - 2순위: 기타 loopback/lo 인터페이스 (숫자 오름차순)
+        """
+        lowered = iface_name.lower()
+        exact = 0 if lowered in ("loopback0", "lo0") else 1
+        digits = "".join(ch for ch in lowered if ch.isdigit())
+        number = int(digits) if digits else 9999
+        return (exact, number, lowered)
     
     def _populate_loopback_cache(self):
         """
-        모든 노드의 Loopback0 존재 여부를 한 번에 수집 (Batch Loading)
-        
-        성능 최적화: 노드별 개별 쿼리 대신 전체 노드를 한 번에 조회.
-        - Before: 8개 노드 × 3초 = 24초
-        - After: 1번 쿼리 = 3초
+        모든 노드의 선호 시작 인터페이스(루프백 계열)를 한 번에 수집.
         """
         if not self._initialized or not self.bf:
             print("[DEBUG] _populate_loopback_cache: Batfish not initialized")
@@ -91,34 +109,59 @@ class BatfishBase:
             print(f"[DEBUG] _populate_loopback_cache: Query completed in {elapsed:.2f}s")
             print(f"[DEBUG] _populate_loopback_cache: Got {len(iface_props)} interface records")
             
-            # 모든 노드를 False로 초기화
+            # 캐시 초기화
             print("[DEBUG] _populate_loopback_cache: Initializing cache...")
             for node in self.nodes:
                 self._loopback_cache[node] = False
+                self._preferred_start_iface_cache[node] = ""
             
-            # Loopback0이 있는 노드만 True로 변경
-            print("[DEBUG] _populate_loopback_cache: Scanning for Loopback0...")
+            # 루프백 계열 후보 수집 후 노드별 최적 인터페이스 선택
+            print("[DEBUG] _populate_loopback_cache: Scanning loopback-like interfaces...")
             loopback_count = 0
+            candidates: Dict[str, List[str]] = {node: [] for node in self.nodes}
             if not iface_props.empty:
                 for _, row in iface_props.iterrows():
                     iface = row.get('Interface', {})
                     node_name = getattr(iface, 'hostname', '')
                     iface_name = getattr(iface, 'interface', '')
                     
-                    if iface_name.lower() == 'loopback0':
-                        val_active = row.get('Active', False)
-                        val_ip = row.get('Primary_Address')
-                        
-                        # Active 상태이고 IP가 있어야 유효한 Source로 간주
-                        if val_active and val_ip:
-                            self._loopback_cache[node_name] = True
-                            loopback_count += 1
-                            print(f"[DEBUG] _populate_loopback_cache: Found valid Loopback0 on {node_name}")
-                            logger.debug(f"_populate_loopback_cache: Found valid Loopback0 on {node_name}")
-                        else:
-                            print(f"[DEBUG] _populate_loopback_cache: Found Loopback0 on {node_name} but invalid (Active={val_active}, IP={val_ip})")
+                    if not node_name or not iface_name:
+                        continue
+                    if node_name not in candidates:
+                        candidates[node_name] = []
+
+                    if not self._is_loopback_iface_name(iface_name):
+                        continue
+
+                    val_active = row.get('Active', False)
+                    val_ip = row.get('Primary_Address')
+
+                    # Active 상태이고 IP가 있어야 유효한 Source로 간주
+                    if val_active and val_ip:
+                        candidates[node_name].append(iface_name)
+
+                for node_name, ifaces in candidates.items():
+                    if not ifaces:
+                        continue
+                    preferred = min(ifaces, key=self._loopback_iface_rank)
+                    self._preferred_start_iface_cache[node_name] = preferred
+                    self._loopback_cache[node_name] = True
+                    loopback_count += 1
+                    print(
+                        f"[DEBUG] _populate_loopback_cache: "
+                        f"Selected {preferred} for {node_name}"
+                    )
+                    logger.debug(
+                        "_populate_loopback_cache: Selected %s for %s",
+                        preferred,
+                        node_name,
+                    )
             
-            print(f"[DEBUG] _populate_loopback_cache: Completed! Cached {len(self._loopback_cache)} nodes ({loopback_count} with Loopback0)")
+            print(
+                "[DEBUG] _populate_loopback_cache: Completed! "
+                f"Cached {len(self._loopback_cache)} nodes "
+                f"({loopback_count} with loopback-like source)"
+            )
             logger.debug(f"_populate_loopback_cache: Cached {len(self._loopback_cache)} nodes")
             
         except Exception as e:
@@ -129,10 +172,20 @@ class BatfishBase:
             # 에러 발생 시 모든 노드를 False로 설정 (안전한 fallback)
             for node in self.nodes:
                 self._loopback_cache[node] = False
+                self._preferred_start_iface_cache[node] = ""
+
+    def _get_preferred_start_iface(self, node_name: str) -> str:
+        """
+        노드별 선호 시작 인터페이스 반환.
+        반환값이 빈 문자열이면 인터페이스를 명시하지 않고 노드명만 사용.
+        """
+        if not self._preferred_start_iface_cache:
+            self._populate_loopback_cache()
+        return self._preferred_start_iface_cache.get(node_name, "")
     
     def _has_loopback0(self, node_name: str) -> bool:
         """
-        노드에 Loopback0이 있는지 확인 (캐시 사용)
+        노드에 루프백 계열 시작 인터페이스가 있는지 확인 (하위 호환 이름)
         
         첫 호출 시 모든 노드의 정보를 한 번에 수집 (Lazy Batch Loading).
         이후 호출은 캐시에서 즉시 반환.
@@ -141,7 +194,7 @@ class BatfishBase:
             node_name: 확인할 노드 이름
             
         Returns:
-            True if Loopback0 exists, False otherwise
+            True if loopback-like start interface exists, False otherwise
         """
         # 캐시가 비어있으면 한 번만 전체 노드 정보 수집
         if not self._loopback_cache:
@@ -150,17 +203,20 @@ class BatfishBase:
             self._populate_loopback_cache()
             print(f"[DEBUG] _has_loopback0: Batch loading completed")
         
-        # 캐시에서 조회 (즉시 반환)
-        result = self._loopback_cache.get(node_name, False)
-        print(f"[DEBUG] _has_loopback0: {node_name} = {result} (from cache)")
+        preferred_iface = self._get_preferred_start_iface(node_name)
+        result = bool(preferred_iface)
+        print(
+            f"[DEBUG] _has_loopback0: {node_name} = {result} "
+            f"(preferred_iface={preferred_iface or 'none'})"
+        )
         logger.debug(f"_has_loopback0: {node_name} = {result} (from cache)")
         return result
     
     def _fix_start_location(self, location: str) -> str:
         """
-        VRF 문제 방지: Loopback0이 있는 노드만 [Loopback0] 추가
+        VRF 문제 방지: 루프백 계열 인터페이스가 있는 노드만 [인터페이스] 추가
         
-        VRF 환경에서 PE/P 라우터는 Loopback0을 명시하여 global routing table 사용.
+        VRF 환경에서 PE/P 라우터는 루프백 인터페이스를 명시하여 global routing table 사용.
         Leaf 등 Access layer 장비는 Loopback이 없으므로 노드 이름만 사용.
         
         일반성: 모든 네트워크 토폴로지에 자동 적용 (명명 규칙 무관)
@@ -171,18 +227,27 @@ class BatfishBase:
             location: 노드 이름 또는 "노드[인터페이스]" 형식
             
         Returns:
-            Loopback0 있으면: "노드[Loopback0]"
-            Loopback0 없으면: "노드" (첫 번째 활성 인터페이스를 Batfish가 자동 선택)
+            루프백 계열 인터페이스 있으면: "노드[인터페이스]"
+            없으면: "노드" (첫 번째 활성 인터페이스를 Batfish가 자동 선택)
             이미 인터페이스 명시: 그대로 반환
         """
         if '[' not in location:
-            # 해당 노드에 Loopback0이 있는지 확인 (캐시 사용)
-            if self._has_loopback0(location):
-                logger.debug(f"_fix_start_location: {location} -> {location}[Loopback0]")
-                return f"{location}[Loopback0]"
-            else:
-                logger.debug(f"_fix_start_location: {location} -> {location} (no Loopback0)")
-                return location
+            preferred_iface = self._get_preferred_start_iface(location)
+            if preferred_iface:
+                logger.debug(
+                    "_fix_start_location: %s -> %s[%s]",
+                    location,
+                    location,
+                    preferred_iface,
+                )
+                return f"{location}[{preferred_iface}]"
+
+            logger.debug(
+                "_fix_start_location: %s -> %s (no loopback-like interface)",
+                location,
+                location,
+            )
+            return location
         
         return location
     
@@ -216,6 +281,8 @@ class BatfishBase:
             
             # 노드 정보 수집
             self._collect_node_info()
+            self._loopback_cache.clear()
+            self._preferred_start_iface_cache.clear()
             
             self._initialized = True
             logger.info(f"Batfish initialized. Found {len(self.nodes)} nodes.")
