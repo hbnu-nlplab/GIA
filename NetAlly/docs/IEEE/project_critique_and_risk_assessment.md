@@ -183,6 +183,22 @@
 - `NetAlly/eval/` 디렉토리가 있으나 벤치마크 자동 평가 기능은 미구현
 - 비판 문서에서 "기존 랩에서 NetAlly 돌려서 성능 찍기"라고 했으나, **자동화 파이프라인 구현이 Exp.3의 실질적 병목**
 
+#### 🚨 Risk 11: 질문 모호성으로 인한 채점 불안정
+
+- 기존 `compare_*`(L3) 문항이 자유서술(text) 형식이라 모델이 같은 의미를 다른 표기법으로 답하면 오답 처리될 수 있음.
+- `ibgp_fullmesh_ok`도 단일 문항에 다중 의도(상태+누락쌍)가 섞여 있어 정답 비교 안정성이 낮음.
+
+**완화 조치 (2026-02-13 반영 완료)**
+
+1. `compare_bgp_neighbor_count`, `compare_interface_count`, `compare_vrf_count`를 `map_str_int` 구조화 출력으로 고정
+2. `ibgp_fullmesh_ok`를 `deprecated: true`, `submission_excluded: true`로 전환
+3. 정책/데이터셋 검증기 추가:
+   - `Make_Dataset/src/validate_policies.py`
+   - `Make_Dataset/src/validate_dataset_quality.py`
+4. 분석기 map 채점 강화:
+   - strict key 비교 + value 타입 정규화
+   - legacy text fallback은 허용하되 경고(`legacy_map_fallback_count`) 기록
+
 ### 7.3 TNMS 리뷰어 관점에서의 예상 공격 포인트
 
 1. "3-Layer 검증이 실제로 구현되었는가, 아니면 설계 문서만 있는가?"
@@ -197,7 +213,7 @@
 ### P0 (48시간 이내) — 논문 신뢰성 방어선 확보
 
 1. `verify_dataset.py` 최소 기능 구현 (L1-L5 우선, PASS/FAIL/SKIP 재현)
-2. ~~Dataset ID 고유화 + evidence 플레이스홀더 제거~~ ✅ **완료** (`main_batfish.py` 수정 — scope 인스턴스 값 기반 고유 ID + evidence에 실제 scope 값 사용)
+2. ~~Dataset ID 고유화 + evidence 플레이스홀더 제거~~ ✅ **완료** (`main_batfish.py`에 `id_v2`, evidence placeholder 게이트, 품질 게이트 반영)
 3. v2(2026-01-29) 기준 검증 보고서 재생성 (`*_verification.md`, `*_failures.csv`)
 
 ### P1 (3일) — Layer 2 실측 방어력 확보

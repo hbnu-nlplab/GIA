@@ -22,6 +22,23 @@
 - 본 제출 실험은 **L1~L5**로 고정한다.
 - L6는 코드만 유지하고, 이번 제출의 실험/평가/표에서는 제외한다.
 
+### 0.3 Schema/모호성 하드닝 업데이트 (2026-02-13)
+
+이번 라운드에서 질문 모호성 완화와 E2E 정합성을 위해 아래를 반영했다.
+
+| 항목 | 상태 | 구현 파일 |
+|---|:---:|---|
+| 정책 스키마 검증기 도입 | **완료** | `Make_Dataset/src/validate_policies.py` |
+| 정책 메타 통일 (`schema_version=3.1`, `submission_scope=L1-L5`) | **완료** | `Make_Dataset/policies.json` |
+| L3 고위험 `compare_*` 3종 구조화(`map_str_int`) | **완료** | `Make_Dataset/policies.json`, `Make_Dataset/src/core_batfish/builder_core.py` |
+| `ibgp_fullmesh_ok` deprecated + 제출 제외 | **완료** | `Make_Dataset/policies.json`, `Make_Dataset/src/core_batfish/rule_based_generator.py` |
+| 데이터셋 품질 게이트(중복 ID/evidence placeholder/구조화 스키마) | **완료** | `Make_Dataset/src/validate_dataset_quality.py`, `Make_Dataset/src/main_batfish.py` |
+
+검증 실행 순서(권장):
+1. `python3 Make_Dataset/src/validate_policies.py --policies Make_Dataset/policies.json`
+2. `python3 Make_Dataset/src/main_batfish.py ...`
+3. `python3 Make_Dataset/src/validate_dataset_quality.py --dataset <generated_dataset.json>`
+
 ---
 
 ## 1. 문제 정의: "자동 생성된 정답을 어떻게 신뢰할 수 있는가?"

@@ -16,7 +16,7 @@ import os
 import argparse
 import csv
 from pathlib import Path
-from typing import Dict, List, Set
+from typing import Any, Dict, List, Set
 from collections import defaultdict
 from datetime import datetime
 
@@ -35,8 +35,16 @@ def canonical_answer_type(answer_type: str) -> str:
         'float': 'numeric',
         # common dataset schema aliases
         'list_str': 'set',
+        'set_str': 'set',
+        'edge_set': 'set',
         'set_string': 'set',
         'dict': 'map',
+        'map_str_str': 'map',
+        'map_str_int': 'map',
+        'json': 'map',
+        'scalar_int': 'number',
+        'bool': 'boolean',
+        'boolean': 'boolean',
     }
     return aliases.get(atype, atype)
 
@@ -173,6 +181,9 @@ class TraditionalMetricsCalculator:
 
 class NetConfigQAScorer:
     """Handles scoring based on answer types."""
+
+    def __init__(self):
+        self.warnings: List[Dict[str, str]] = []
     
     def clean_prediction(self, pred: str, answer_type: str = None) -> str:
         """
@@ -302,7 +313,7 @@ class NetConfigQAScorer:
             
         return gold
 
-    def score(self, pred: str, gold: str, answer_type: str) -> Dict[str, float]:
+    def score(self, pred: str, gold: str, answer_type: str, question_id: str = "") -> Dict[str, float]:
         """Score prediction against gold answer based on answer type."""
         # Clean prediction with answer_type context
         answer_type = canonical_answer_type(answer_type)
@@ -314,8 +325,8 @@ class NetConfigQAScorer:
                 return self._score_numeric(pred, gold)
             elif answer_type in ["set", "set_str", "list"]:
                 return self._score_set(pred, gold)
-            elif answer_type in ["map", "map_str_str", "dictionary", "json"]:
-                return self._score_map(pred, gold)
+            elif answer_type in ["map", "map_str_str", "map_str_int", "dictionary", "json"]:
+                return self._score_map(pred, gold, question_id=question_id)
             else:  # text
                 return self._score_text(pred, gold)
         except Exception as e:
@@ -444,31 +455,106 @@ class NetConfigQAScorer:
         if '/' in value:
             value = value.split('/')[0].strip()
         return value
+
+    def _parse_legacy_map_text(self, pred: str, expected_keys: List[str] | None = None) -> Dict[str, Any] | None:
+        text = str(pred).strip()
+        if not text:
+            return None
+
+        # Special fallback for structured compare maps (host1_count, host2_count, difference)
+        if expected_keys and set(expected_keys) == {"host1_count", "host2_count", "difference"}:
+            numbers = re.findall(r'[:=]\s*(-?\d+)', text)
+            if len(numbers) < 3:
+                numbers = re.findall(r'-?\d+', text)
+            if len(numbers) >= 3:
+                return {
+                    "host1_count": int(numbers[0]),
+                    "host2_count": int(numbers[1]),
+                    "difference": int(numbers[2]),
+                }
+
+        # Generic key:value extraction
+        pairs = re.findall(r'([A-Za-z0-9_./-]+)\s*[:=]\s*([A-Za-z0-9_./-]+)', text)
+        if pairs:
+            obj: Dict[str, Any] = {}
+            for k, v in pairs:
+                if re.fullmatch(r'-?\d+', v):
+                    obj[k] = int(v)
+                else:
+                    obj[k] = v
+            if obj:
+                return obj
+
+        return None
+
+    def _coerce_to_gold_type(self, pred_value: Any, gold_value: Any) -> Any:
+        if isinstance(gold_value, bool):
+            if isinstance(pred_value, bool):
+                return pred_value
+            sval = str(pred_value).strip().lower()
+            if sval in {"true", "1", "yes"}:
+                return True
+            if sval in {"false", "0", "no"}:
+                return False
+            return pred_value
+        if isinstance(gold_value, int) and not isinstance(gold_value, bool):
+            if isinstance(pred_value, int):
+                return pred_value
+            if isinstance(pred_value, float) and pred_value.is_integer():
+                return int(pred_value)
+            sval = str(pred_value).strip()
+            if re.fullmatch(r'-?\d+', sval):
+                return int(sval)
+            return pred_value
+        if isinstance(gold_value, float):
+            try:
+                return float(pred_value)
+            except Exception:
+                return pred_value
+        # string-like fallback
+        return self._normalize_ip_value(str(pred_value))
     
-    def _score_map(self, pred: str, gold: str) -> Dict[str, float]:
+    def _score_map(self, pred: str, gold: str, question_id: str = "") -> Dict[str, float]:
+        legacy_fallback_used = False
         try:
-            p_obj = json.loads(pred.replace("'", '"'))
             g_obj = json.loads(gold.replace("'", '"'))
         except:
             return {"score": 1.0 if pred.lower() == gold.lower() else 0.0}
+
+        try:
+            p_obj = json.loads(pred.replace("'", '"'))
+        except Exception:
+            p_obj = self._parse_legacy_map_text(pred, expected_keys=list(g_obj.keys()) if isinstance(g_obj, dict) else None)
+            legacy_fallback_used = p_obj is not None
         
         if not isinstance(p_obj, dict) or not isinstance(g_obj, dict):
-            return {"score": 1.0 if str(p_obj) == str(g_obj) else 0.0}
-             
-        common = set(p_obj.keys()) & set(g_obj.keys())
-        all_k = set(p_obj.keys()) | set(g_obj.keys())
-        if not all_k:
-            return {"score": 1.0}
-        
-        # Compare values with IP normalization (removes CIDR notation)
-        val_matches = 0
-        for k in common:
-            pred_val = self._normalize_ip_value(p_obj[k])
-            gold_val = self._normalize_ip_value(g_obj[k])
-            if pred_val == gold_val:
-                val_matches += 1
-        
-        return {"score": (len(common)/len(all_k)*0.5) + (val_matches/len(common)*0.5 if common else 0)}
+            return {"score": 1.0 if str(p_obj) == str(g_obj) else 0.0, "legacy_fallback_used": legacy_fallback_used}
+
+        # Strict key matching for structured map tasks
+        if set(p_obj.keys()) != set(g_obj.keys()):
+            return {"score": 0.0, "legacy_fallback_used": legacy_fallback_used}
+
+        matched = 0
+        total = len(g_obj)
+        for k in g_obj:
+            g_val = g_obj[k]
+            p_val = self._coerce_to_gold_type(p_obj.get(k), g_val)
+            if isinstance(g_val, str):
+                g_norm = self._normalize_ip_value(g_val)
+                p_norm = self._normalize_ip_value(str(p_val))
+                if p_norm == g_norm:
+                    matched += 1
+            else:
+                if p_val == g_val:
+                    matched += 1
+
+        score = (matched / total) if total > 0 else 1.0
+        if legacy_fallback_used:
+            self.warnings.append({
+                "type": "map_legacy_fallback",
+                "question_id": str(question_id),
+            })
+        return {"score": score, "legacy_fallback_used": legacy_fallback_used}
 
     def _normalize_for_comparison(self, text: str) -> str:
         """
@@ -746,6 +832,37 @@ def normalize_levels(levels: List[str]) -> Set[str]:
     return {str(level).strip().upper() for level in levels if str(level).strip()}
 
 
+STRUCTURED_METRICS = {
+    "compare_bgp_neighbor_count",
+    "compare_interface_count",
+    "compare_vrf_count",
+}
+
+
+def infer_metric_name(row: Dict[str, Any]) -> str:
+    metric = row.get("metric") or row.get("source_metric")
+    if metric:
+        return str(metric).strip().lower()
+    qid = str(row.get("question_id", row.get("id", ""))).strip().lower()
+    for m in STRUCTURED_METRICS:
+        if qid.startswith(m) or m in qid:
+            return m
+    return ""
+
+
+def structured_answer_is_valid(gold_raw: str) -> bool:
+    try:
+        obj = json.loads(str(gold_raw).replace("'", '"'))
+    except Exception:
+        return False
+    if not isinstance(obj, dict):
+        return False
+    keys = {"host1_count", "host2_count", "difference"}
+    if set(obj.keys()) != keys:
+        return False
+    return all(isinstance(obj[k], int) for k in keys)
+
+
 def analyze_results(
     json_file: str,
     verbose: bool = False,
@@ -787,6 +904,8 @@ def analyze_results(
     error_samples = []
     all_preds = []
     all_golds = []
+    structured_total = 0
+    structured_valid = 0
 
     print(f"Analyzing {len(rows)} results from {json_file}...")
     print(
@@ -806,11 +925,16 @@ def analyze_results(
         raw_pred = row.get("raw_pred", row.get("debate2_answer", row.get("pred", "")))
         pred_input = row.get("pred", raw_pred)
         gold_raw = str(row.get("gold", row.get("gold_answer", "")))
+        metric_name = infer_metric_name(row)
+        if metric_name in STRUCTURED_METRICS:
+            structured_total += 1
+            if structured_answer_is_valid(gold_raw):
+                structured_valid += 1
 
         clean_pred = scorer.clean_prediction(str(pred_input), answer_type)
         clean_gold = scorer.clean_gold(gold_raw)
 
-        type_aware_metrics = scorer.score(clean_pred, gold_raw, answer_type)
+        type_aware_metrics = scorer.score(clean_pred, gold_raw, answer_type, question_id=question_id)
         type_aware_score = type_aware_metrics['score']
         trad_metrics = trad_calc.calculate_all(clean_pred, clean_gold)
 
@@ -882,6 +1006,8 @@ def analyze_results(
     n = len(results)
     total_score = sum(r['type_aware_score'] for r in results)
     avg_acc = total_score / n if n > 0 else 0
+    structured_coverage = (structured_valid / structured_total) if structured_total > 0 else 1.0
+    legacy_map_fallback_count = len(scorer.warnings)
 
     overall_trad_metrics = {}
     for metric_name in ['exact_match', 'token_f1', 'rouge1', 'rouge2', 'rougeL', 'bertscore_f1', 'bleu']:
@@ -952,11 +1078,16 @@ def analyze_results(
     meta = dict(meta) if isinstance(meta, dict) else {}
     meta["include_levels"] = sorted(include_set) if include_set else []
     meta["exclude_levels"] = sorted(exclude_set) if exclude_set else []
+    meta["schema_version"] = meta.get("schema_version", "unknown")
+    meta["policy_validation_passed"] = meta.get("policy_validation_passed", False)
+    meta["structured_metrics_coverage"] = structured_coverage
+    meta["legacy_map_fallback_count"] = legacy_map_fallback_count
 
     output_data = {
         "meta": meta,
         "stats": stats,
-        "results": results
+        "results": results,
+        "warnings": scorer.warnings,
     }
 
     with open(output_file, 'w', encoding='utf-8') as f:
