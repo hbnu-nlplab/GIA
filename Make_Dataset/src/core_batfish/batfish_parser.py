@@ -47,10 +47,34 @@ def get_batfish_session(host: str = "localhost", snapshot_dir: str = None) -> Se
         bf.init_snapshot(snapshot_dir, name="dataset_snapshot", overwrite=True)
     return bf
 
+
+def _remove_assumed_field(assumed_fields: List[str], field_name: str) -> None:
+    """Explicit config line is found: remove that field from assumed provenance."""
+    try:
+        assumed_fields.remove(field_name)
+    except ValueError:
+        pass
+
+
+def _dedupe_vrfs(vrfs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Deduplicate VRF entries by name while preserving first occurrence."""
+    out: List[Dict[str, Any]] = []
+    seen = set()
+    for vrf in vrfs:
+        if not isinstance(vrf, dict):
+            continue
+        name = str(vrf.get("name") or "").strip()
+        if not name or name in seen:
+            continue
+        seen.add(name)
+        out.append(vrf)
+    return out
+
 def parse_text_config(config_path: Path) -> Dict[str, Any]:
     """
     Config 파일 텍스트를 파싱하여 Batfish가 제공하지 않는 설정(SSH, NTP, Logging 등)을 추출합니다.
     """
+    source_file = str(config_path)
     text_facts = {
         "ssh": {"version": None, "enabled": False},
         "aaa": {"new_model": False, "protocol": "local"},
@@ -67,8 +91,8 @@ def parse_text_config(config_path: Path) -> Dict[str, Any]:
         "banner_motd": "None",
         "banner_login": "None",
         "http_server": False, # Basic check
-        "cdp": True, # Default enabled on Cisco
-        "ip_source_route": True, # Default enabled
+        "cdp": True, # Cisco default (assumed unless explicit line exists)
+        "ip_source_route": True, # Cisco default (assumed unless explicit line exists)
         "snmp_communities": [],
         "loopback_interfaces": [],
         "name_servers": [],
@@ -88,9 +112,23 @@ def parse_text_config(config_path: Path) -> Dict[str, Any]:
         "rip_enabled": False,
         "fhrp_groups": [],
         "multicast_enabled": False,
-        "vrfs": []
+        "vrfs": [],
+        "version": None,
+        "_provenance": {
+            "source_file": source_file,
+            "config_found": True,
+            "parse_warnings": [],
+            "assumed_fields": ["configuration.security.cdp", "configuration.security.ip_source_route"],
+        },
     }
     
+    if not config_path.exists():
+        text_facts["_provenance"]["config_found"] = False
+        text_facts["_provenance"]["parse_warnings"].append(f"config file not found: {source_file}")
+        return text_facts
+
+    assumed_fields = text_facts["_provenance"]["assumed_fields"]
+
     try:
         content = config_path.read_text(encoding="utf-8")
         
@@ -179,12 +217,18 @@ def parse_text_config(config_path: Path) -> Dict[str, Any]:
         # CDP
         if re.search(r"^\s*no cdp run", content, re.MULTILINE):
             text_facts["cdp"] = False
+            _remove_assumed_field(assumed_fields, "configuration.security.cdp")
         elif re.search(r"^\s*cdp run", content, re.MULTILINE):
             text_facts["cdp"] = True
+            _remove_assumed_field(assumed_fields, "configuration.security.cdp")
 
         # IP Source Route
         if re.search(r"^\s*no ip source-route", content, re.MULTILINE):
             text_facts["ip_source_route"] = False
+            _remove_assumed_field(assumed_fields, "configuration.security.ip_source_route")
+        elif re.search(r"^\s*ip source-route", content, re.MULTILINE):
+            text_facts["ip_source_route"] = True
+            _remove_assumed_field(assumed_fields, "configuration.security.ip_source_route")
 
         # Operational & Routing Lists
         text_facts["snmp_communities"] = re.findall(r"^\s*snmp-server community (\S+)", content, re.MULTILINE)
@@ -248,7 +292,7 @@ def parse_text_config(config_path: Path) -> Dict[str, Any]:
 
         # System Version
         version_match = re.search(r'^version\s+([^\s]+)', content, re.MULTILINE)
-        text_facts["version"] = version_match.group(1) if version_match else "15.0"
+        text_facts["version"] = version_match.group(1) if version_match else None
 
         # VRF Details
         vrfs = []
@@ -267,11 +311,17 @@ def parse_text_config(config_path: Path) -> Dict[str, Any]:
         text_facts["vrfs"] = vrfs
 
     except Exception as e:
-        print(f"[Warning] Failed to text parse {config_path}: {e}")
+        msg = f"Failed to text parse {config_path}: {e}"
+        print(f"[Warning] {msg}")
+        text_facts["_provenance"]["parse_warnings"].append(msg)
 
     return text_facts
 
-def parse_batfish_datamodel(configs_dir: Path, batfish_host: str = "localhost") -> Dict[str, Any]:
+def parse_batfish_datamodel(
+    configs_dir: Path,
+    batfish_host: str = "localhost",
+    fail_on_missing_config: bool = False,
+) -> Dict[str, Any]:
     """
     Batfish를 통해 설정을 파싱하고, 기존 parser와 호환되는 facts 구조를 반환합니다.
     """
@@ -285,7 +335,7 @@ def parse_batfish_datamodel(configs_dir: Path, batfish_host: str = "localhost") 
     print(f"[BatfishParser] snapshot_dir: {snapshot_dir} (host: {batfish_host})")
     bf = get_batfish_session(host=batfish_host, snapshot_dir=str(snapshot_dir))
     
-    facts_result = {"devices": []}
+    facts_result = {"devices": [], "parser_warnings": []}
     
     # 2. 데이터 추출
     
@@ -331,14 +381,31 @@ def parse_batfish_datamodel(configs_dir: Path, batfish_host: str = "localhost") 
                 if f.is_file() and f.suffix.lower() == ".cfg" and f.stem.lower() == hostname.lower():
                     cfg_file_path = f
                     break
+        if not cfg_file_path.exists():
+            warn_msg = f"[BatfishParser] Config file not found for node '{hostname}' (expected: {configs_dir / (hostname + '.cfg')})"
+            logger.error(warn_msg)
+            facts_result["parser_warnings"].append(warn_msg)
+            if fail_on_missing_config:
+                raise FileNotFoundError(warn_msg)
         
         text_info = parse_text_config(cfg_file_path)
+        text_prov = text_info.get("_provenance", {}) if isinstance(text_info, dict) else {}
+        assumed_fields = set(text_prov.get("assumed_fields", [])) if isinstance(text_prov, dict) else set()
+        config_found = bool(text_prov.get("config_found", False)) if isinstance(text_prov, dict) else False
+        parse_warnings = text_prov.get("parse_warnings", []) if isinstance(text_prov, dict) else []
+        for warn in parse_warnings:
+            facts_result["parser_warnings"].append(f"{hostname}: {warn}")
+
+        version = text_info.get("version")
+        if not version:
+            version = "15.0"
+            assumed_fields.add("system.version")
 
         device_facts = {
             "vendor": "cisco", 
             "system": {
                 "hostname": hostname,
-                "version": text_info.get("version", "15.0"), 
+                "version": version,
                 "users": text_info["users"],
                 "domain_name": text_info["domain_name"],
                 "timezone": text_info["timezone"]
@@ -408,6 +475,12 @@ def parse_batfish_datamodel(configs_dir: Path, batfish_host: str = "localhost") 
                 }
             },
             "line": text_info.get("line", {"vty": {"transport_input": "", "login_mode": ""}}),
+            "parser_provenance": {
+                "source_file": text_prov.get("source_file", str(cfg_file_path)),
+                "config_found": config_found,
+                "assumed_fields": sorted(assumed_fields),
+                "parse_warnings": parse_warnings,
+            },
             "file": f"{hostname}.cfg" 
         }
         
@@ -512,29 +585,17 @@ def parse_batfish_datamodel(configs_dir: Path, batfish_host: str = "localhost") 
              device_vrfs.append(vrf_obj)
              bgp_vrfs.append(vrf_obj)
         
-        device_facts["services"]["vrf"] = device_vrfs
-        
-        # Merge into existing BGP VRFs or initialize
-        if device_facts["routing"]["bgp"]["vrfs"]:
-             # If BGP VRFs already exist (maybe from batfish parsing), enrich them
-             # But likely they are empty or basic. We'll simply append or overwrite carefully.
-             # Actually, simpler to just use our robust text-parsed list
-             device_facts["routing"]["bgp"]["vrfs"] = bgp_vrfs
-        else:
-             device_facts["routing"]["bgp"]["vrfs"] = bgp_vrfs
-        
         # Fallback/Check interface VRFs
         existing_vrf_names = {v["name"] for v in device_vrfs}
         for i in device_facts["interfaces"]:
             if i["vrf"] and i["vrf"] not in existing_vrf_names:
                 obj = {"name": i["vrf"]}
-                device_facts["services"]["vrf"].append(obj)
-                # Should we add to BGP VRFs too? Yes, for consistency
-                device_facts["routing"]["bgp"]["vrfs"].append(obj)
+                device_vrfs.append(obj)
+                bgp_vrfs.append(obj)
                 existing_vrf_names.add(i["vrf"])
-                
-        device_facts["services"]["vrf"].extend(device_vrfs)
-        device_facts["routing"]["bgp"]["vrfs"].extend(bgp_vrfs)
+
+        device_facts["services"]["vrf"] = _dedupe_vrfs(device_vrfs)
+        device_facts["routing"]["bgp"]["vrfs"] = _dedupe_vrfs(bgp_vrfs)
         
         # --- MPLS (Hybrid/Text for now or LDP check) ---
         # mpls ldp router-id logic via text

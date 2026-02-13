@@ -21,6 +21,18 @@ def pct(part: int, total: int) -> float:
     return (part / total * 100.0) if total > 0 else 0.0
 
 
+def canonical_answer_type(answer_type: str) -> str:
+    at = str(answer_type or "").strip().lower()
+    aliases = {
+        "numeric": "number",
+        "scalar_int": "number",
+        "int": "number",
+        "integer": "number",
+        "float": "number",
+    }
+    return aliases.get(at, at or "unknown")
+
+
 def load_dataset(dataset_path: Path) -> List[Dict[str, Any]]:
     suffix = dataset_path.suffix.lower()
     if suffix == ".csv":
@@ -64,7 +76,7 @@ def analyze_dataset(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
     for row in rows:
         level = str(row.get("level", "Unknown"))
         category = str(row.get("category", "Unknown"))
-        answer_type = str(row.get("answer_type", "Unknown"))
+        answer_type = canonical_answer_type(row.get("answer_type", "Unknown"))
         status = str(row.get("answer_status", row.get("status", "OK")))
 
         stats["by_level"][level] += 1

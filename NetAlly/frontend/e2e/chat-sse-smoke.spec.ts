@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test'
 
 test('Chat SSE 스모크: planning/answer 렌더', async ({ page }) => {
+  let chatRequestCount = 0
   await page.route('**/api/dashboard/summary?**', async route => {
     await route.fulfill({
       status: 200,
@@ -19,16 +20,16 @@ test('Chat SSE 스모크: planning/answer 렌더', async ({ page }) => {
     })
   })
 
-  await page.route('**/api/chat', async route => {
-    const streamBody = [
-      'data: {"type":"planning","reasoning":"smoke plan ready","skills":["core"],"tool_backend":"mcp"}',
-      'data: {"type":"tool_call","tool":"nso_list_devices","input":{}}',
-      'data: {"type":"tool_output","content":"{}"}',
-      'data: {"type":"answer","content":"smoke answer complete"}',
-      'data: {"type":"complete"}',
-      '',
-      '',
-    ].join('\n')
+  await page.route(/\/api\/chat(?:\/)?(?:\?.*)?$/, async route => {
+    chatRequestCount += 1
+    const events = [
+      { type: 'planning', reasoning: 'smoke plan ready', skills: ['core'], tool_backend: 'mcp' },
+      { type: 'tool_call', tool: 'nso_list_devices', input: {} },
+      { type: 'tool_output', content: '{}' },
+      { type: 'answer', content: 'smoke answer complete' },
+      { type: 'complete' },
+    ]
+    const streamBody = `${events.map((event) => `data: ${JSON.stringify(event)}`).join('\n\n')}\n\n`
 
     await route.fulfill({
       status: 200,
@@ -42,10 +43,11 @@ test('Chat SSE 스모크: planning/answer 렌더', async ({ page }) => {
 
   await page.goto('http://127.0.0.1:3000')
 
-  const input = page.getByPlaceholder('Send a message...')
+  const input = page.getByLabel('Message input')
   await input.fill('smoke test')
   await input.press('Enter')
 
   await expect(page.getByText('smoke plan ready')).toBeVisible()
   await expect(page.getByText('smoke answer complete')).toBeVisible()
+  expect(chatRequestCount).toBeGreaterThan(0)
 })
