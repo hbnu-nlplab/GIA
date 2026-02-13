@@ -42,6 +42,7 @@ STRUCTURED_COMPARE_METRICS = {
     "compare_interface_count",
     "compare_vrf_count",
 }
+HANGUL_PATTERN = re.compile(r"[\uac00-\ud7a3]")
 
 
 def _check_placeholder_syntax(template: str) -> Tuple[bool, str]:
@@ -65,7 +66,19 @@ def _check_placeholder_syntax(template: str) -> Tuple[bool, str]:
     return True, ""
 
 
-def _validate_metric(name: str, meta: Dict[str, object], errors: List[str], warnings: List[str]) -> None:
+def _extract_placeholders(template: str) -> set[str]:
+    s = template.replace("{{", "").replace("}}", "")
+    return set(re.findall(r"\{([a-zA-Z_][a-zA-Z0-9_]*)\}", s))
+
+
+def _validate_metric(
+    name: str,
+    meta: Dict[str, object],
+    errors: List[str],
+    warnings: List[str],
+    require_template_en: bool = False,
+    strict_template_en: bool = False,
+) -> None:
     missing = sorted(REQUIRED_FIELDS - set(meta.keys()))
     if missing:
         errors.append(f"{name}: missing required fields: {', '.join(missing)}")
@@ -85,6 +98,29 @@ def _validate_metric(name: str, meta: Dict[str, object], errors: List[str], warn
         if not ok:
             errors.append(f"{name}: template placeholder syntax error: {why}")
 
+    template_en = str(meta.get("template_en", ""))
+    if require_template_en and not template_en.strip():
+        errors.append(f"{name}: missing required field 'template_en'")
+    if template_en:
+        ok_en, why_en = _check_placeholder_syntax(template_en)
+        if not ok_en:
+            errors.append(f"{name}: template_en placeholder syntax error: {why_en}")
+
+        ko_placeholders = _extract_placeholders(template)
+        en_placeholders = _extract_placeholders(template_en)
+        if ko_placeholders != en_placeholders:
+            errors.append(
+                f"{name}: placeholder mismatch template vs template_en "
+                f"(template={sorted(ko_placeholders)}, template_en={sorted(en_placeholders)})"
+            )
+
+        if HANGUL_PATTERN.search(template_en):
+            msg = f"{name}: template_en contains Hangul characters"
+            if strict_template_en:
+                errors.append(msg)
+            else:
+                warnings.append(msg)
+
     if name in STRUCTURED_COMPARE_METRICS:
         if answer_type != "map_str_int":
             errors.append(f"{name}: answer_type must be map_str_int for structured L3 compare")
@@ -103,7 +139,11 @@ def _validate_metric(name: str, meta: Dict[str, object], errors: List[str], warn
             warnings.append(f"{name}: L6 metric is explicitly submission_excluded")
 
 
-def validate_policies(policies_path: Path) -> int:
+def validate_policies(
+    policies_path: Path,
+    require_template_en: bool = False,
+    strict_template_en: bool = False,
+) -> int:
     if not policies_path.exists():
         print(f"[ERROR] policy file not found: {policies_path}")
         return 2
@@ -125,7 +165,14 @@ def validate_policies(policies_path: Path) -> int:
             if not isinstance(metric_meta, dict):
                 errors.append(f"{metric_name}: metadata must be an object")
                 continue
-            _validate_metric(metric_name, metric_meta, errors, warnings)
+            _validate_metric(
+                metric_name,
+                metric_meta,
+                errors,
+                warnings,
+                require_template_en=require_template_en,
+                strict_template_en=strict_template_en,
+            )
 
     if warnings:
         print("[WARN] policy warnings:")
@@ -152,8 +199,22 @@ def main() -> None:
         default=str(Path(__file__).resolve().parents[1] / "policies.json"),
         help="Path to policies.json",
     )
+    parser.add_argument(
+        "--require-template-en",
+        action="store_true",
+        help="Require template_en for every metric and validate placeholder parity.",
+    )
+    parser.add_argument(
+        "--strict-template-en",
+        action="store_true",
+        help="Fail if template_en contains Hangul characters.",
+    )
     args = parser.parse_args()
-    code = validate_policies(Path(args.policies).resolve())
+    code = validate_policies(
+        Path(args.policies).resolve(),
+        require_template_en=args.require_template_en,
+        strict_template_en=args.strict_template_en,
+    )
     raise SystemExit(code)
 
 
