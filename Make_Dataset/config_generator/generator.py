@@ -62,6 +62,8 @@ def generate_configs(topology_file, template_dir, output_dir):
             template_name = 'p_router.j2'
         elif role == 'leaf':
             template_name = 'leaf_switch.j2'
+        elif role == 'asbr':
+            template_name = 'asbr_router.j2'
         else:
             print(f"Skipping {node['name']}: Unknown role {role}")
             continue

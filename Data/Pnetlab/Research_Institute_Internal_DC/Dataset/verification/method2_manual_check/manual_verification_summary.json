@@ -1,0 +1,262 @@
+{
+  "total_samples": 43,
+  "agree": 42,
+  "disagree": 1,
+  "agreement_rate": 0.9767441860465116,
+  "by_level": {
+    "L1": {
+      "total": 10,
+      "agree": 10,
+      "disagree": 0
+    },
+    "L2": {
+      "total": 10,
+      "agree": 10,
+      "disagree": 0
+    },
+    "L3": {
+      "total": 23,
+      "agree": 22,
+      "disagree": 1
+    }
+  },
+  "by_metric": {
+    "bgp_local_as_numeric": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "interface_status_map": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "ntp_server_list": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "rt_export_count": {
+      "total": 2,
+      "agree": 2,
+      "disagree": 0
+    },
+    "rt_import_count": {
+      "total": 2,
+      "agree": 2,
+      "disagree": 0
+    },
+    "snmp_community_list": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "subinterface_count": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "syslog_server_list": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "aaa_enabled_devices": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "aaa_missing_devices": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "devices_with_same_vrf": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "l2vpn_pairs": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "ospf_area0_if_count": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "ospf_area_membership": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "ospf_neighbor_count_per_area": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "ssh_enabled_devices": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "ssh_missing_count": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "ssh_missing_devices": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "all_devices_same_as": {
+      "total": 1,
+      "agree": 0,
+      "disagree": 1
+    },
+    "bgp_as_distribution": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "compare_bgp_as": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "compare_bgp_neighbor_count": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "compare_interface_count": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "compare_ospf_areas": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "compare_vrf_count": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "ibgp_missing_pairs": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "ibgp_missing_pairs_count": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "ibgp_under_peered_count": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "ibgp_under_peered_devices": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "l2vpn_mismatch_count": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "l2vpn_pwid_mismatch_pairs": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "l2vpn_unidirectional_pairs": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "l2vpn_unidir_count": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "max_bgp_peer_device": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "max_interface_device": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "min_interface_device": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "vrf_rt_list_per_device": {
+      "total": 2,
+      "agree": 2,
+      "disagree": 0
+    },
+    "vrf_usage_statistics": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "vrf_without_rt_count": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    },
+    "vrf_without_rt_pairs": {
+      "total": 1,
+      "agree": 1,
+      "disagree": 0
+    }
+  },
+  "by_answer_type": {
+    "number": {
+      "total": 14,
+      "agree": 14
+    },
+    "map": {
+      "total": 1,
+      "agree": 1
+    },
+    "set": {
+      "total": 17,
+      "agree": 17
+    },
+    "text": {
+      "total": 8,
+      "agree": 7
+    },
+    "map_str_int": {
+      "total": 3,
+      "agree": 3
+    }
+  },
+  "disagree_examples": [
+    {
+      "qa_id": "ALL_DEVICES_SAME_AS",
+      "metric": "all_devices_same_as",
+      "level": "L3",
+      "answer_type": "text",
+      "dataset_answer": "\"leaf1: AS None, leaf2: AS None, leaf3: AS None, leaf4: AS None, p1: AS None, p2: AS None, p3: AS None, p4: AS None, pe1: AS 65000, pe2: AS 65000\"",
+      "manual_answer": "pe1: AS 65000, pe2: AS 65000",
+      "verdict": "DISAGREE",
+      "disagreement_type": "DATA_ERROR",
+      "rationale": "Manual: BGP AS numbers found: {'65000'} | [Method1-crossref] all_devices_same_as({'type': 'GLOBAL'}) = pe1: AS 65000, pe2: AS 65000",
+      "verification_procedure": "검증 방법: 1) 전체 장비 목록을 순회하며 각 장비의 Config를 스캔합니다. 2) 'router bgp <AS_NUMBER>' 명령이 있으면 해당 AS 번호를 추출합니다. 3) BGP가 설정되지 않은 장비는 'AS None'으로 표시합니다. 4) 각 장비명과 AS 값을 '장비명: AS 값' 형식으로 만듭니다. 5) 모든 쌍을 쉼표와 공백(', ')으로",
+      "hosts_inspected": "leaf1, leaf2, leaf3, leaf4, p1, p2, p3, p4, pe1, pe2"
+    }
+  ]
+}

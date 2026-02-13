@@ -32,12 +32,31 @@ username admin privilege 15 secret 5 $1$Q7C9$Otrsj2ApS12nJyC5G0yeR1
 !
 redundancy
 !
+{% if node.acls is defined %}
+{% for acl in node.acls %}
+ip access-list extended {{ acl.name }}
+{% for rule in acl.rules %}
+ {{ rule }}
+{% endfor %}
+!
+{% endfor %}
+{% endif %}
+!
 {% for intf in node.interfaces %}
 interface {{ intf.name }}
  ip address {{ intf.ip | ip_address }} {{ intf.ip | netmask }}
+{% if intf.description is defined %}
+ description {{ intf.description }}
+{% endif %}
  duplex auto
  speed auto
  media-type rj45
+{% if intf.acl_in is defined %}
+ ip access-group {{ intf.acl_in }} in
+{% endif %}
+{% if intf.acl_out is defined %}
+ ip access-group {{ intf.acl_out }} out
+{% endif %}
 !
 {% endfor %}
 !
@@ -71,12 +90,6 @@ ip route 0.0.0.0 0.0.0.0 {{ uplink.peer_ip }}
 ! Management Gateway (Control Plane)
 {% if topology.management_gateway is defined %}
 ip route 10.10.10.0 255.255.255.0 {{ topology.management_gateway }}
-! Important: If VRF is not used for Management, default route overlap might occur.
-! Ideally, Mgmt should be in vrf Mgmt-intf, but PNETLab basic images might not support Mgmt VRF easily.
-! Assuming Management Gateway is preferred for 0.0.0.0 if OOB access is priority,
-! BUT Leaf also needs to reach other internal subnets.
-! Strategy: Specific route for Mgmt subnet or accept 2 default routes with metrics.
-! For simplicity here: Just adding the route.
 ip route 0.0.0.0 0.0.0.0 {{ topology.management_gateway }} 250
 {% endif %}
 !

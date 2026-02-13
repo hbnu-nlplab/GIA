@@ -39,6 +39,9 @@ interface Loopback0
 {% for intf in node.interfaces %}
 interface {{ intf.name }}
  ip address {{ intf.ip | ip_address }} {{ intf.ip | netmask }}
+{% if intf.description is defined %}
+ description {{ intf.description }}
+{% endif %}
  duplex auto
  speed auto
  media-type rj45
@@ -61,14 +64,40 @@ interface GigabitEthernet0/{{ topology.management_intf_slot | default(7) }}
 router ospf {{ topology.routing.ospf.process_id }}
  router-id {{ node.loopback | ip_address }}
 {% if topology.routing.ospf.networks == 'auto' %}
- network {{ node.loopback | ip_address }} 0.0.0.0 area {{ topology.routing.ospf.area }}
+ network {{ node.loopback | ip_address }} 0.0.0.0 area {{ node.ospf_area | default(topology.routing.ospf.area) }}
  {% for intf in node.interfaces %}
   {% if not intf.shutdown|default(false) %}
- network {{ intf.ip | network_address }} {{ intf.ip | wildcard_mask }} area {{ topology.routing.ospf.area }}
+ network {{ intf.ip | network_address }} {{ intf.ip | wildcard_mask }} area {{ intf.ospf_area | default(node.ospf_area | default(topology.routing.ospf.area)) }}
   {% endif %}
  {% endfor %}
 {% endif %}
 !
+{% if node.bgp_neighbors is defined %}
+router bgp {{ node.local_as | default(topology.as_number) }}
+ bgp log-neighbor-changes
+{% for neighbor in node.bgp_neighbors %}
+ neighbor {{ neighbor.ip }} remote-as {{ neighbor.as }}
+{% if neighbor.ebgp|default(false) %}
+ neighbor {{ neighbor.ip }} ebgp-multihop 2
+{% else %}
+ neighbor {{ neighbor.ip }} update-source Loopback0
+{% endif %}
+{% if neighbor.next_hop_self|default(false) %}
+ neighbor {{ neighbor.ip }} next-hop-self
+{% endif %}
+{% endfor %}
+ !
+ address-family vpnv4
+{% for neighbor in node.bgp_neighbors %}
+  neighbor {{ neighbor.ip }} activate
+  neighbor {{ neighbor.ip }} send-community both
+{% if neighbor.next_hop_self|default(false) %}
+  neighbor {{ neighbor.ip }} next-hop-self
+{% endif %}
+{% endfor %}
+ exit-address-family
+!
+{% endif %}
 ip forward-protocol nd
 !
 no ip http server

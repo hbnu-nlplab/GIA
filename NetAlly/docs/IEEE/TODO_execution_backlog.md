@@ -1,14 +1,14 @@
 # IEEE TNMS 실행 TODO 백로그
 
-> **작성일**: 2026-02-13  
-> **목적**: 설계 문서를 실제 구현/실험 작업으로 전환하기 위한 실행 체크리스트  
+> **작성일**: 2026-02-13 | **최종 업데이트**: 2026-02-13
+> **목적**: 설계 문서를 실제 구현/실험 작업으로 전환하기 위한 실행 체크리스트
 > **원칙**: 제출 필수(Core) 먼저, 확장(Stretch) 나중
 
 ---
 
 ## 0. 제출 필수 범위 (Scope Freeze)
 
-1. 데이터셋 기준: v2 공개본 **1,128 QA / L1~L5**
+1. 데이터셋 기준: v2 공개본 **~1,048 QA / L1~L5**
 2. 필수 실험: Exp.1 ~ Exp.3 + Exp.4 최소증거(Lab-B)
 3. 외부 벤치마크: NIKA 1개 우선
 4. Lab-C / Lab-D / NetPress / NetConfEval: 확장 항목
@@ -16,137 +16,149 @@
 
 ---
 
-## 0.1 2026-02-13 반영 완료 (통합 계획)
+## 0.1 완료 항목 (2026-02-13)
 
+### 데이터셋 파이프라인
 - [x] `policies.json` 메타 정규화 (`schema_version: 3.1`, `submission_scope: L1-L5`)
 - [x] L3 고위험 `compare_*` 구조화 계약(`map_str_int`) 반영
 - [x] `ibgp_fullmesh_ok` deprecated + submission 제외 처리
 - [x] `validate_policies.py` 신규 추가
 - [x] `validate_dataset_quality.py` 신규 추가
-- [x] `main_batfish.py` 품질 게이트 (`id_v2`, evidence placeholder 차단, structured schema gate, min_per_cat resampling pass) 반영
-- [x] `analyze_results_netconfigqa.py` map 채점 강화 + legacy fallback 경고 기록
+- [x] `main_batfish.py` 품질 게이트 반영
+- [x] `analyze_results_netconfigqa.py` map 채점 강화
 
-남은 핵심 구현:
-1. `verify_dataset.py` / `core_batfish/verifier.py` (Layer 1 재현 검증)
-2. `config_generator/` (Lab-B 확장 생성기) 실제 코드 착수
-3. Layer 2 PNETLab 교차검증 자동화
-
----
-
-## 1. P0 — 검증 파이프라인 구현 (최우선)
-
-### 1.1 Layer 1 검증 코드
-
-- [ ] `Make_Dataset/src/verify_dataset.py` 신규 생성
-- [ ] `Make_Dataset/src/core_batfish/verifier.py` 신규 생성
-- [ ] L1~L3 재현 함수 (BuilderCore 기반) 구현
-- [ ] L4~L5 재현 함수 (BatfishBuilder 기반) 구현
-- [ ] PASS/FAIL/SKIP 판정 및 CSV/MD 보고서 출력 구현
-
-완료 기준:
-- [ ] `*_verification.md` 생성
-- [ ] `*_verification_failures.csv` 생성
-- [ ] 1,128건 전체에 대해 status가 산출됨
-
-### 1.2 데이터셋 메타데이터 위생 정리
-
-- [ ] ID 고유화 규칙 적용 (`id` 중복 제거)
-- [ ] evidence 내 `{host}` 등 placeholder 제거
-- [ ] `answer_type` 정규화 규칙 점검 (`text/number/numeric/set/map/bool`)
-
-완료 기준:
-- [ ] 고유 ID 개수 = 총 row 수
-- [ ] evidence placeholder 포함 row = 0
+### Ground Truth 검증 (Method 1-2 + 통합 파이프라인)
+- [x] `independent_parser.py` — Batfish-free CfgParser + TopologyFacts (~2,100 lines)
+- [x] `compare.py` — TA-Acc 비교 함수 (~300 lines)
+- [x] `run_verification.py` — Method 1 진입점 (L1-L3 전수 검증)
+- [x] `run_manual_verification.py` — Method 2 진입점 (계층화 표본 + 자동 보조)
+- [x] `run_verification_pipeline.py` — **통합 파이프라인** (3 Method 한 번에 실행)
+- [x] Method 1 실행: **99.5%** (796/800), 실질 100%
+- [x] Method 2 자동 보조: **97.7%** (42/43)
+- [x] Method 2 사람 검토 가이드 생성: `human_reviewer_guide.md` + `blank_checklist.csv`
+- [x] Method 3 PNETLab 가이드 생성: `pnetlab_verification_guide.md` + `blank_checklist.csv`
+- [x] 통합 요약: `verification_summary.json`
 
 ---
 
-## 2. P1 — Layer 2/3 검증 구현
+## 1. P0 — 검증 마무리 (사람 실행 필요)
 
-### 2.1 Layer 2 (PNETLab 교차검증)
+### 1.1 Method 2: 사람 검토 (~2-3시간)
 
-- [ ] `Make_Dataset/src/pnetlab_cross_validation.py` 신규 생성
-- [ ] L4 30건 traceroute 비교 자동화
-- [ ] L5 20건 link-failure 비교 자동화
-- [ ] 불일치 원인 분류(모델링/수렴/데이터) 리포트 컬럼 추가
+- [ ] `human_reviewer_guide.md`를 연구자에게 전달
+- [ ] 연구자가 43 QA를 .cfg 파일에서 직접 트레이스
+- [ ] `blank_checklist.csv`에 결과 기입
+- [ ] 작성된 CSV 수거 → 논문 증거
 
-완료 기준:
-- [ ] 50건 결과표(일치/불일치) 생성
-- [ ] 논문 Table용 요약 수치(%) 산출
+실행 위치: `Data/Pnetlab/Research_Institute_Internal_DC/Dataset/verification/method2_manual_check/`
 
-### 2.2 Layer 3 (LLM-as-Judge)
+### 1.2 Method 3: PNETLab 실행 (~4-6시간)
 
-- [ ] `Make_Dataset/src/llm_judge.py` 신규 생성
-- [ ] L1~L5 각 20건 샘플링
-- [ ] 점수 JSON 및 평균표 생성
+- [ ] PNETLab 서버에서 토폴로지 시작 + config 적용
+- [ ] 프로토콜 수렴 확인 (`show ip ospf neighbor`, `show ip bgp summary`)
+- [ ] Phase 1: L4 검증 23 QA (traceroute/ping/show)
+- [ ] Phase 2: L5 검증 21 QA (shutdown + 도달성 + 원복)
+- [ ] `blank_checklist.csv`에 결과 기입
+- [ ] 작성된 CSV 수거 → 논문 증거
 
-완료 기준:
-- [ ] `*_llm_judge_results.json` 생성
-- [ ] Clarity/Correctness/Level/Educational 평균 산출
+실행 위치: `Data/Pnetlab/Research_Institute_Internal_DC/Dataset/verification/method3_pnetlab/`
+
+> **Method 2와 Method 3는 서로 다른 사람이 병렬 실행 가능**
 
 ---
 
-## 3. P1 — Config Generator 구현 (지금부터 착수)
+## 2. P1 — Config Generator 구현
 
-### 3.1 코드 스캐폴딩
+### 2.1 코드 스캐폴딩
 
 - [ ] `Make_Dataset/config_generator/generator.py` 생성
 - [ ] `Make_Dataset/config_generator/topologies/lab_b_20nodes.yaml` 생성
 - [ ] `Make_Dataset/config_generator/templates/*.j2` 최소 템플릿 생성 (`pe`, `p`, `ce`)
 
 완료 기준:
-- [ ] 아래 명령으로 cfg 자동 생성
-
 ```bash
 python Make_Dataset/config_generator/generator.py \
   --topology Make_Dataset/config_generator/topologies/lab_b_20nodes.yaml
 ```
 
-### 3.2 Lab-B 배포/검증
+### 2.2 Lab-B 배포/검증
 
 - [ ] PNETLab에 Lab-B 노드/링크 배치
-- [ ] 생성 cfg 적용
-- [ ] OSPF/BGP/LDP 수렴 확인
-- [ ] `main_batfish.py --lab-path Data/Pnetlab/Lab-B`로 데이터셋 생성
+- [ ] 생성 cfg 적용 + OSPF/BGP/LDP 수렴 확인
+- [ ] `main_batfish.py --lab-path Data/Pnetlab/Lab_B_20nodes/`로 데이터셋 생성
+- [ ] `run_verification_pipeline.py --lab-path Data/Pnetlab/Lab_B_20nodes/`로 검증
 
 완료 기준:
-- [ ] Lab-B 데이터셋 CSV/JSON 산출
+- [ ] Lab-B 데이터셋 생성 + 검증 리포트 산출
 - [ ] Lab-A 대비 스케일 비교표 작성 가능
 
 ---
 
-## 4. P2 — 실험 실행
+## 3. P1 — 실험 실행
 
-### 4.1 Exp.2 재실험 (Single LLM)
+### 3.1 Exp.2 재실험 (Single LLM Baseline)
 
-- [ ] v2(1,128) 재평가 실행
-- [ ] Level별 TA-Acc 테이블 갱신
+- [ ] v2 데이터셋으로 5개 모델 재평가 실행
+- [ ] Level별 TA-Acc 테이블 갱신 (Table V)
 
-### 4.2 Exp.3 재실험 (NetAlly)
+### 3.2 Exp.3 재실험 (NetAlly vs Baseline)
 
 - [ ] Lab-A 기준 NetAlly vs GPT-OSS-20B 비교
 - [ ] Tool call success rate, latency 수집
 
-### 4.3 Exp.4 최소 증거
+### 3.3 Exp.4 최소 증거 (Scalability)
 
 - [ ] Lab-A vs Lab-B 성능 비교 완성
 - [ ] Lab-C는 가능할 때만 preliminary 추가
 
 ---
 
-## 5. P3 — 문서 정합성 정리
+## 4. P2 — 논문 작성
 
-- [ ] README/계획서에서 "L1~L5 제출 범위" 통일
-- [ ] L6는 "이번 제출 제외"로 통일하고 제외 사유(스냅샷 관리/공정성/재현성) 명시
-- [ ] 구현 완료된 파일명/경로를 문서에 실제 경로로 반영
-- [ ] 최종 제출 직전 문서 날짜/버전 일괄 업데이트
+- [ ] Section IV: Dataset Verification (검증 결과 → verification_plan.md 참조)
+- [ ] Section V: Experimental Results (Exp.2/3/4 결과)
+- [ ] Section III: Dataset Construction (파이프라인 설명)
+- [ ] Section I-II: Introduction + Related Work
+- [ ] Abstract + Conclusion
 
 ---
 
-## 6. 빠른 실행 순서 (추천)
+## 5. 빠른 실행 순서 (추천)
 
-1. Layer 1 검증 코드 작성 (`verify_dataset.py`, `verifier.py`)
-2. 데이터셋 위생 정리 (ID/evidence)
-3. Layer 1 전수검증 리포트 생성
-4. Config Generator Lab-B 최소버전 구현
-5. Layer 2 교차검증 50건
-6. Exp.2/Exp.3/Exp.4 표 작성
+```
+[완료] 1. Ground Truth 검증 자동화 (Method 1-2 코드 + 통합 파이프라인)
+[완료] 2. Method 3 가이드 생성
+       3. ★ Method 2 사람 검토 + Method 3 PNETLab 실행 (병렬, 6-9시간)
+       4. Config Generator Lab-B 구현
+       5. Lab-B 데이터셋 생성 + 검증
+       6. Exp.2/3/4 실험 실행
+       7. 논문 본문 작성
+```
+
+---
+
+## 6. 코드 사용법 빠른 참조
+
+```bash
+# 데이터셋 생성
+python Make_Dataset/src/main_batfish.py \
+  --lab-path Data/Pnetlab/<LabName>/ \
+  --policies Make_Dataset/policies.json
+
+# Ground Truth 검증 (통합 파이프라인)
+python Make_Dataset/src/verification/run_verification_pipeline.py \
+  --lab-path Data/Pnetlab/<LabName>/
+
+# Method 1만 실행
+python Make_Dataset/src/verification/run_verification.py \
+  --configs Data/Pnetlab/<LabName>/configs/ \
+  --dataset Data/Pnetlab/<LabName>/Dataset/<dataset>.json
+
+# Method 2만 실행
+python Make_Dataset/src/verification/run_manual_verification.py \
+  --configs Data/Pnetlab/<LabName>/configs/ \
+  --dataset Data/Pnetlab/<LabName>/Dataset/<dataset>.json \
+  --policies Make_Dataset/policies.json \
+  --method1 Data/Pnetlab/<LabName>/Dataset/verification/method1_independent_parser/ \
+  --output Data/Pnetlab/<LabName>/Dataset/verification/method2_manual_check/
+```
