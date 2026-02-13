@@ -584,9 +584,9 @@
             "level": "L3",
             "category": "Comparison_Analysis",
             "answer_type": "text",
-            "template": "모든 장비의 BGP AS 번호를 나열해주세요. [답변 형식: '장비1: AS X, 장비2: AS Y, ...']",
+            "template": "모든 장비의 BGP AS 번호를 나열해주세요. BGP가 미설정된 장비는 'AS None'으로 표시하세요. [답변 형식: '장비1: AS X, 장비2: AS None, ...']",
             "description": "전체 네트워크 자원들의 AS 번호 할당 현황을 한눈에 조망합니다. 멀티 AS 환경인지 단일 AS 환경인지 즉각 파악 가능하며, 의도치 않은 AS 번호가 섞여 있는지 보안 및 구성 검증 시 활용합니다.",
-            "verification": "검증 방법: 1) 전체 장비 목록을 순회하며 각 장비의 Config를 스캔합니다. 2) 'router bgp <AS_NUMBER>' 명령이 있는 장비만 선별합니다. 3) 각 장비명과 해당 AS 번호를 '장비명: AS XXXXX' 형식으로 쌍을 만듭니다. 4) BGP가 설정되지 않은 장비는 '장비명: AS 없음'으로 표시합니다. 5) 모든 쌍을 쉼표와 공백(', ')으로 연결하여 하나의 긴 문자열로 조합합니다. 예: 'PE1: AS 65000, PE2: AS 65000, ASBR1: AS 65001, SW1: AS 없음'.",
+            "verification": "검증 방법: 1) 전체 장비 목록을 순회하며 각 장비의 Config를 스캔합니다. 2) 'router bgp <AS_NUMBER>' 명령이 있으면 해당 AS 번호를 추출합니다. 3) BGP가 설정되지 않은 장비는 'AS None'으로 표시합니다. 4) 각 장비명과 AS 값을 '장비명: AS 값' 형식으로 만듭니다. 5) 모든 쌍을 쉼표와 공백(', ')으로 연결하여 하나의 문자열로 반환합니다. 예: 'PE1: AS 65000, PE2: AS 65000, ASBR1: AS 65001, SW1: AS None'.",
             "logic_ref": "map(device.local_as)"
         },
         "min_interface_device": {
@@ -620,7 +620,7 @@
             "level": "L3",
             "category": "Comparison_Analysis",
             "answer_type": "text",
-            "template": "VRF 사용중인 장비 중에서 각 장비별 VRF 사용 수를 알려주세요. [답변 형식: '장비1: N, 장비2: M']",
+            "template": "VRF 사용중인 장비 중에서 각 장비별 VRF 사용 수를 알려주세요. [답변 형식: '장비1: N개, 장비2: M개']",
             "description": "모든 장비의 VRF 수용 현황을 일괄적으로 비교합니다. 가상화 서비스 부하가 특정 장비에 쏠려 있는지 확인하고, 전체적인 서비스 분산 수용 계획을 수립하거나 검증할 때 기초 자료로 사용됩니다.",
             "verification": "검증 방법: 1) 모든 장비를 순회하며 각 장비에서 'ip vrf' 또는 'vrf definition' 명령을 카운트합니다. 2) 장비별로 중복 제거한 고유 VRF 이름의 개수를 계산합니다. 3) 각 장비명과 VRF 개수를 '장비명: N개' 형식으로 쌍을 만듭니다. 4) 모든 장비의 쌍을 쉼표와 공백으로 연결하여 문자열로 반환합니다. 예: 'PE1: 15개, PE2: 12개, P1: 0개'. VRF가 하나도 없는 장비도 '0개'로 명시하여 포함합니다.",
             "logic_ref": "map(device.vrfs.count)"
@@ -729,18 +729,18 @@
             "level": "L5",
             "category": "What_If_Analysis",
             "answer_type": "text",
-            "template": "설정 변경 후 {src}에서 {dst}까지의 경로 변경 여부와 영향받는 흐름을 알려주세요. [답변 형식: 변경 내역 요약]",
+            "template": "설정 변경 후 {src}에서 {dst}까지의 경로/도달성 변경 여부를 알려주세요. [답변 형식: 'NO_CHANGE' 또는 'CHANGED (N건: 흐름1, 흐름2, ...)']",
             "description": "OSPF 비용 변경, BGP 정책 수정 등 구성 변경이 실제 트래픽 흐름에 미치는 영향을 변경 전/후로 대조 분석합니다. 의도한 대로 경로가 변경되었는지, 혹은 의도치 않은 '사이드 이펙트'로 다른 서비스가 끊기지 않았는지 확인하여 야간 작업이나 대규모 설정 변경의 안정성을 보장합니다.",
-            "verification": "검증 방법: 1) 변경 전(Base)과 변경 후(New) 두 가지 설정 스냅샷을 생성합니다. 2) Batfish 'differentialReachability' 분석을 수행합니다. 3) {src}→{dst} 흐름에 대해 경로상에 추가/제거된 장비나 인터페이스를 식별합니다. 4) 도달 상태의 변화(가능→불가 등)가 있는지 체크합니다. 5) 변경 사항을 요약하여 문자열로 반환합니다.",
+            "verification": "검증 방법: 1) 변경 전(Base)과 변경 후(New) 두 가지 설정 스냅샷을 생성합니다. 2) Batfish 'differentialReachability' 분석을 수행합니다. 3) {src}→{dst} 흐름에 대해 변경된 흐름 수(N)를 계산합니다. 4) N=0이면 'NO_CHANGE'를 반환합니다. 5) N>0이면 'CHANGED (N건: ...)' 형식으로 반환합니다.",
             "logic_ref": "batfish.diff(snapshot_base, snapshot_new)"
         },
         "policy_compliance_check": {
             "level": "L5",
             "category": "What_If_Analysis",
             "answer_type": "text",
-            "template": "'{policy_name}' 정책 준수 여부와 위반 사례를 알려주세요. [답변 형식: '준수' 또는 위반 내역]",
+            "template": "'{policy_name}' 정책 준수 여부와 위반 사례를 알려주세요. [답변 형식: 'COMPLIANT' 또는 'VIOLATION: 흐름1, 흐름2, ...']",
             "description": "사전에 정의된 기업의 네트워크 표준 보안 정책(예: '인터넷에서 내부 DB 서버로 직접 접속 불가')을 현재 설정이 준수하고 있는지 전수 조사합니다. 수천 개의 ACL 룰 사이에서 육안으로 찾기 힘든 보안 홀(Hole)을 분석 엔진이 자동으로 찾아내어 규정 준수(Compliance)를 보장합니다.",
-            "verification": "검증 방법: 1) 분석기에 입력된 {policy_name}의 규칙(Invariant)을 로드합니다. 2) 모든 가능한 트래픽 흐름에 대해 해당 규칙 위반 사례를 시뮬레이션합니다. 3) 위반된 흐름이 발견되면 출발지, 목적지, 차단되지 않은 이유를 리스트업 합니다. 4) 위반 사례가 없으면 '준수', 있으면 '위반 내역'을 반환합니다.",
+            "verification": "검증 방법: 1) 분석기에 입력된 {policy_name}의 규칙(Invariant)을 로드합니다. 2) 모든 가능한 트래픽 흐름에 대해 해당 규칙 위반 사례를 시뮬레이션합니다. 3) 위반 사례가 없으면 'COMPLIANT'를 반환합니다. 4) 위반 사례가 있으면 'VIOLATION: ...' 형식으로 반환합니다.",
             "logic_ref": "batfish.validate_policies()"
         },
         "ospf_area0_routers": {
@@ -756,18 +756,18 @@
             "level": "L5",
             "category": "What_If_Analysis",
             "answer_type": "set_str",
-            "template": "단일 장비 장애 시 통신이 두절되는 구간(SPOF: Single Point of Failure)이 존재합니까? [답변 형식: SPOF 장비 목록 또는 '없음']",
+            "template": "단일 장비 장애 시 통신이 두절되는 구간(SPOF: Single Point of Failure)이 존재합니까? [답변 형식: SPOF 장비 목록 (예: [\"p1\", \"pe1\"]) 또는 빈 목록 []]",
             "description": "장치 한 대만 고장 나도 특정 서비스 구역 전체가 정지되거나 주요 통신 경로가 완전히 끊어지는 '단일 장애점(SPOF)' 장비들을 찾아냅니다. 이는 네트워크의 아킬레스건을 식별하는 작업으로, 이중화가 누락된 위험 지점을 시각화하여 설계를 개선하는 데 활용됩니다.",
-            "verification": "검증 방법: 1) 네트워크 내 각 장비를 하나씩 순차적으로 다운시키는 장애 스냅샷을 생성합니다. 2) 각 케이스에 대해 중요 서비스 흐름(Critical Flows)의 도달성을 체크합니다. 3) 특정 장비가 다운되었을 때 도달 불가능해지는 서비스가 발생한다면, 해당 장비를 SPOF 후보로 기록합니다. 4) 발견된 SPOF 장비명들을 리스트로 반환하며, 없으면 '없음'을 반환합니다.",
+            "verification": "검증 방법: 1) 네트워크 내 각 장비를 하나씩 순차적으로 다운시키는 장애 스냅샷을 생성합니다. 2) 각 케이스에 대해 중요 서비스 흐름(Critical Flows)의 도달성을 체크합니다. 3) 특정 장비가 다운되었을 때 도달 불가능해지는 서비스가 발생한다면, 해당 장비를 SPOF 후보로 기록합니다. 4) 발견된 SPOF 장비명들을 리스트로 반환하며, 없으면 빈 목록 []를 반환합니다.",
             "logic_ref": "batfish.find_spof_nodes()"
         },
         "differential_reachability": {
             "level": "L5",
             "category": "What_If_Analysis",
             "answer_type": "text",
-            "template": "변경 전후 {src}에서 {dst}로의 도달성에 차이가 있습니까? [답변 형식: '차이 없음' 또는 차이 상세]",
+            "template": "변경 전후 {src}에서 {dst}로의 도달성에 차이가 있습니까? [답변 형식: 'NO_DIFF' 또는 'DIFF (N건: 흐름1, 흐름2, ...)']",
             "description": "두 시점 간의 네트워크 전체 도달성 지도를 비교하여, 새롭게 도달 가능해진 경로(New reachability)나 반대로 끊어진 경로(Lost reachability)를 상세히 분석합니다. 이는 대규모 네트워크 이관(Migration)이나 펌웨어 업데이트 시 서비스 영향도를 1:1로 대조 검증할 때 사용합니다.",
-            "verification": "검증 방법: 1) 변경 전(Base)과 변경 후(New) 스냅샷에 대해 전체 reachability 행렬을 계산합니다. 2) {src}→{dst} 쌍에 대해 결과값(Disposition)이 바뀐 케이스를 필터링합니다. 3) 'ACCEPTED'에서 'DENIED'로 바뀌었거나, 그 반대의 경우를 상세 사유와 함께 요약합니다. 4) 변화가 없으면 '차이 없음'을 반환합니다.",
+            "verification": "검증 방법: 1) 변경 전(Base)과 변경 후(New) 스냅샷에 대해 전체 reachability 행렬을 계산합니다. 2) {src}→{dst} 쌍에 대해 결과값(Disposition)이 바뀐 케이스 수(N)를 계산합니다. 3) N=0이면 'NO_DIFF'를 반환합니다. 4) N>0이면 'DIFF (N건: ...)' 형식으로 반환합니다.",
             "logic_ref": "batfish.differential_reachability()"
          },
          "root_cause_analysis": {
@@ -828,7 +828,7 @@
             "level": "L5",
             "category": "What_If_Analysis",
             "answer_type": "text",
-            "template": "(시나리오)'{link1}' 링크와 '{link2}' 링크가 동시에 장애로 다운되었습니다.\n\n**질문**: 이 상황에서 '{test_src}'에서 '{test_dst}'로의 트래픽 전달이 가능합니까?\n\n**답변 형식** (반드시 아래 형식 중 하나로만 답변):\n- 가능한 경우: \"가능 (대체경로: 장비1→장비2→장비3)\"\n- 불가능한 경우: \"불가능 (원인: 차단장비에서 차단사유)\"\n\n**예시**:\n- \"가능 (대체경로: p1→p2→p3)\"\n- \"불가능 (원인: leaf1에서 NO_ROUTE)\"",
+            "template": "(시나리오) '{link1}' 링크와 '{link2}' 링크가 동시에 다운되었습니다. 이 상황에서 '{test_src}'에서 '{test_dst}'로의 트래픽 전달이 가능합니까? [답변 형식: '가능 (대체경로: A→B→C)' 또는 '불가능 (원인: 장비명에서 사유)']",
             "description": "두 개 이상의 링크가 동시에 고장 나는 '복합 장애' 상황에서의 통신 가능 여부와 대체 경로를 분석합니다. 통신이 가능한 경우 대체 경로를 함께 제시합니다. 명확한 답변 형식과 예시를 제공하여 LLM의 정확한 답변 생성을 유도합니다.",
             "verification": "검증 방법: 1) 두 링크를 다운 처리한 상태에서 도달성 시뮬레이션을 수행합니다. 2) 도달 가능하면 '가능'과 함께 대체 경로를 반환합니다. 3) 도달 불가능하면 '불가능'과 원인을 반환합니다.",
             "logic_ref": "batfish.fail_links([l1, l2]).reachability_with_path(s, d)"
@@ -846,7 +846,7 @@
             "level": "L4",
             "category": "Security_Policy",
             "answer_type": "text",
-            "template": "**보안 정책**: 네트워크 설계상 '{src}'에서 '{dst}'로 가는 모든 트래픽은 보안 검사(방화벽/IPS)를 위해 반드시 '{waypoint}' 장비를 경유해야 합니다.\n\n**질문**: 현재 네트워크 구성에서 이 보안 정책을 우회하는 직접 경로가 존재합니까?\n\n**답변 형식** (반드시 아래 형식 중 하나로만 답변):\n- 우회 경로가 있는 경우: \"우회 경로 존재 (경로: 장비1→장비2→장비3)\"\n- 우회 경로가 없는 경우: \"우회 경로 없음 (정책 준수)\"\n\n**예시**:\n- \"우회 경로 존재 (경로: leaf1→leaf2→leaf3)\"\n- \"우회 경로 없음 (정책 준수)\"",
+            "template": "보안 정책상 '{src}'에서 '{dst}'로 가는 모든 트래픽은 반드시 '{waypoint}' 장비를 경유해야 합니다. 현재 구성에서 이 정책을 우회하는 경로가 존재합니까? [답변 형식: '우회 경로 존재 (경로: A→B→C)' 또는 '우회 경로 없음 (정책 준수)']",
             "description": "중요 트래픽이 보안 통제 지점(방화벽 등)인 {waypoint}를 거치지 않고 목적지에 도달할 수 있는 '뒷길(Backdoor)'이 존재하는지 탐지합니다. 이는 네트워크 설계상의 허점으로 인해 보안 정책이 무력화되는 시나리오를 방어하는 데 필수적입니다. 우회 경로가 발견되면 해당 경로는 보안 취약점으로 간주됩니다. 명확한 답변 형식과 예시를 제공하여 LLM의 정확한 답변 생성을 유도합니다.",
             "verification": "검증 방법: 1) {src}에서 {dst}로의 모든 가능한 도달 경로를 Batfish로 분석합니다. 2) 발견된 모든 경로 중, 경로상의 장비 목록에 {waypoint}가 포함되지 않은 경로가 하나라도 있는지 확인합니다. 3) {waypoint}를 거치지 않는 경로가 있다면 '우회 경로 존재'와 함께 해당 경로를 반환하고, 모든 경로가 {waypoint}를 거친다면 '우회 경로 없음'을 반환합니다.",
             "logic_ref": "batfish.find_bypath(src, dst, !waypoint)"
