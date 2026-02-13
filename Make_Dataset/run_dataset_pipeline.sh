@@ -8,6 +8,8 @@ BATFISH_HOST="localhost"
 OUT_DIR=""
 MIN_PER_CAT="50"
 INCLUDE_L6="0"
+QUESTION_LANG="both"
+SEED="42"
 
 usage() {
   cat <<EOF
@@ -19,6 +21,8 @@ Options:
   --batfish-host <host>   Batfish host (default: ${BATFISH_HOST})
   --out-dir <path>        Dataset output directory (default: <lab-path>/Dataset)
   --min-per-cat <int>     Minimum per category target (default: ${MIN_PER_CAT})
+  --seed <int>            Deterministic seed for question instantiation (default: ${SEED})
+  --question-lang <lang>  Question language: ko | en | both (default: ${QUESTION_LANG})
   --include-l6            Include L6 generation (default: disabled)
   -h, --help              Show this help
 EOF
@@ -46,6 +50,14 @@ while [[ $# -gt 0 ]]; do
       MIN_PER_CAT="$2"
       shift 2
       ;;
+    --seed)
+      SEED="$2"
+      shift 2
+      ;;
+    --question-lang)
+      QUESTION_LANG="$2"
+      shift 2
+      ;;
     --include-l6)
       INCLUDE_L6="1"
       shift
@@ -61,6 +73,14 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
+
+case "${QUESTION_LANG}" in
+  ko|en|both) ;;
+  *)
+    echo "[ERROR] Invalid --question-lang: ${QUESTION_LANG} (expected: ko|en|both)"
+    exit 1
+    ;;
+esac
 
 if [[ ! -d "${LAB_PATH}" ]]; then
   echo "[ERROR] Lab path not found: ${LAB_PATH}"
@@ -93,62 +113,86 @@ echo "[INFO] POLICIES_PATH=${POLICIES_PATH}"
 echo "[INFO] BATFISH_HOST=${BATFISH_HOST}"
 echo "[INFO] MIN_PER_CAT=${MIN_PER_CAT}"
 echo "[INFO] INCLUDE_L6=${INCLUDE_L6}"
+echo "[INFO] QUESTION_LANG=${QUESTION_LANG}"
+echo "[INFO] SEED=${SEED}"
 
 echo "[STEP 1/4] Validate policies"
-"${PYTHON_BIN}" "${ROOT_DIR}/Make_Dataset/src/validate_policies.py" --policies "${POLICIES_PATH}"
-
-before_list="$(mktemp)"
-after_list="$(mktemp)"
-trap 'rm -f "${before_list}" "${after_list}"' EXIT
-
-find "${DATASET_DIR}" -maxdepth 2 -type f -name '*_dataset_batfish_*.json' | sort > "${before_list}"
-
-echo "[STEP 2/4] Generate dataset"
-gen_cmd=(
-  "${PYTHON_BIN}" "${ROOT_DIR}/Make_Dataset/src/main_batfish.py"
-  --lab-path "${LAB_PATH}"
+validate_cmd=(
+  "${PYTHON_BIN}" "${ROOT_DIR}/Make_Dataset/src/validate_policies.py"
   --policies "${POLICIES_PATH}"
-  --batfish-host "${BATFISH_HOST}"
-  --min-per-cat "${MIN_PER_CAT}"
 )
-
-if [[ -n "${OUT_DIR}" ]]; then
-  gen_cmd+=(--out-dir "${OUT_DIR}")
+if [[ "${QUESTION_LANG}" != "ko" ]]; then
+  validate_cmd+=(--require-template-en --strict-template-en)
 fi
-if [[ "${INCLUDE_L6}" == "1" ]]; then
-  gen_cmd+=(--include-l6)
+"${validate_cmd[@]}"
+
+RESULT_JSONS=()
+RESULT_CSVS=()
+RESULT_QUALITY_JSONS=()
+RESULT_QUALITY_MDS=()
+RESULT_SUMMARIES=()
+
+run_for_lang() {
+  local lang="$1"
+  echo "[STEP 2/4] Generate dataset (${lang})"
+  gen_cmd=(
+    "${PYTHON_BIN}" "${ROOT_DIR}/Make_Dataset/src/main_batfish.py"
+    --lab-path "${LAB_PATH}"
+    --policies "${POLICIES_PATH}"
+    --batfish-host "${BATFISH_HOST}"
+    --min-per-cat "${MIN_PER_CAT}"
+    --seed "${SEED}"
+    --question-lang "${lang}"
+  )
+
+  if [[ -n "${OUT_DIR}" ]]; then
+    gen_cmd+=(--out-dir "${OUT_DIR}")
+  fi
+  if [[ "${INCLUDE_L6}" == "1" ]]; then
+    gen_cmd+=(--include-l6)
+  fi
+
+  "${gen_cmd[@]}"
+
+  local dataset_json
+  dataset_json="$(find "${DATASET_DIR}" -maxdepth 2 -type f -name "*_dataset_batfish_*_${lang}.json" -printf '%T@ %p\n' | sort -nr | head -n 1 | cut -d' ' -f2-)"
+  if [[ -z "${dataset_json}" ]]; then
+    echo "[ERROR] Could not locate generated dataset JSON for lang=${lang} in ${DATASET_DIR}"
+    exit 1
+  fi
+  echo "[INFO] Generated dataset JSON (${lang}): ${dataset_json}"
+
+  echo "[STEP 3/4] Validate dataset quality + write reports (${lang})"
+  "${PYTHON_BIN}" "${ROOT_DIR}/Make_Dataset/src/validate_dataset_quality.py" --dataset "${dataset_json}"
+
+  local quality_json quality_md dataset_csv summary_md
+  quality_json="${dataset_json%.json}_quality_report.json"
+  quality_md="${dataset_json%.json}_quality_report.md"
+  dataset_csv="${dataset_json%.json}.csv"
+  summary_md="${dataset_json%.json}_statistics.md"
+
+  echo "[STEP 4/4] Generate statistics markdown summary (${lang})"
+  "${PYTHON_BIN}" "${ROOT_DIR}/Make_Dataset/Make_summary.py" "${dataset_csv}" --output "${summary_md}"
+
+  RESULT_JSONS+=("${dataset_json}")
+  RESULT_CSVS+=("${dataset_csv}")
+  RESULT_QUALITY_JSONS+=("${quality_json}")
+  RESULT_QUALITY_MDS+=("${quality_md}")
+  RESULT_SUMMARIES+=("${summary_md}")
+}
+
+if [[ "${QUESTION_LANG}" == "both" ]]; then
+  run_for_lang "ko"
+  run_for_lang "en"
+else
+  run_for_lang "${QUESTION_LANG}"
 fi
 
-"${gen_cmd[@]}"
-
-find "${DATASET_DIR}" -maxdepth 2 -type f -name '*_dataset_batfish_*.json' | sort > "${after_list}"
-NEW_DATASET_JSON="$(comm -13 "${before_list}" "${after_list}" | tail -n 1 || true)"
-
-if [[ -z "${NEW_DATASET_JSON}" ]]; then
-  NEW_DATASET_JSON="$(find "${DATASET_DIR}" -maxdepth 2 -type f -name '*_dataset_batfish_*.json' -printf '%T@ %p\n' | sort -nr | head -n 1 | awk '{print $2}')"
-fi
-
-if [[ -z "${NEW_DATASET_JSON}" ]]; then
-  echo "[ERROR] Could not locate generated dataset JSON in ${DATASET_DIR}"
-  exit 1
-fi
-
-echo "[INFO] Generated dataset JSON: ${NEW_DATASET_JSON}"
-
-echo "[STEP 3/5] Validate dataset quality + write reports"
-"${PYTHON_BIN}" "${ROOT_DIR}/Make_Dataset/src/validate_dataset_quality.py" --dataset "${NEW_DATASET_JSON}"
-
-QUALITY_JSON="${NEW_DATASET_JSON%.json}_quality_report.json"
-QUALITY_MD="${NEW_DATASET_JSON%.json}_quality_report.md"
-DATASET_CSV="${NEW_DATASET_JSON%.json}.csv"
-SUMMARY_MD="${NEW_DATASET_JSON%.json}_statistics.md"
-
-echo "[STEP 4/5] Generate statistics markdown summary"
-"${PYTHON_BIN}" "${ROOT_DIR}/Make_Dataset/Make_summary.py" "${DATASET_CSV}" --output "${SUMMARY_MD}"
-
-echo "[STEP 5/5] Done"
-echo "[RESULT] Dataset JSON : ${NEW_DATASET_JSON}"
-echo "[RESULT] Dataset CSV  : ${DATASET_CSV}"
-echo "[RESULT] Quality JSON : ${QUALITY_JSON}"
-echo "[RESULT] Quality MD   : ${QUALITY_MD}"
-echo "[RESULT] Summary MD   : ${SUMMARY_MD}"
+echo "[DONE] Pipeline completed"
+for i in "${!RESULT_JSONS[@]}"; do
+  echo "[RESULT] Dataset JSON : ${RESULT_JSONS[$i]}"
+  echo "[RESULT] Dataset CSV  : ${RESULT_CSVS[$i]}"
+  echo "[RESULT] Quality JSON : ${RESULT_QUALITY_JSONS[$i]}"
+  echo "[RESULT] Quality MD   : ${RESULT_QUALITY_MDS[$i]}"
+  echo "[RESULT] Summary MD   : ${RESULT_SUMMARIES[$i]}"
+done
