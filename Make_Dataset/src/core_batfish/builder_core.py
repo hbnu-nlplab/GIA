@@ -7,6 +7,24 @@ import random
 from itertools import combinations
 from collections import defaultdict, deque
 
+METRIC_OUTPUT_TYPE: Dict[str, str] = {
+    "compare_bgp_neighbor_count": "map_str_int",
+    "compare_interface_count": "map_str_int",
+    "compare_vrf_count": "map_str_int",
+    "rip_processes": "text",
+}
+
+METRIC_REQUIRED_SCOPE_KEYS: Dict[str, Tuple[str, ...]] = {
+    "compare_bgp_neighbor_count": ("host1", "host2"),
+    "compare_interface_count": ("host1", "host2"),
+    "compare_vrf_count": ("host1", "host2"),
+    "ibgp_fullmesh_ok": ("asn",),
+    "ibgp_missing_pairs": ("asn",),
+    "ibgp_missing_pairs_count": ("asn",),
+    "ibgp_under_peered_devices": ("asn",),
+    "ibgp_under_peered_count": ("asn",),
+}
+
 class BuilderCore:
     """
     Facts → expected_answer 계산 엔진.
@@ -74,6 +92,53 @@ class BuilderCore:
             if not las: continue
             groups.setdefault(las,[]).append(d)
         return groups
+
+    def _default_metric_answer(self, metric: str) -> tuple[str, Any]:
+        metric_type = METRIC_OUTPUT_TYPE.get(metric, "text")
+        if metric in (
+            "compare_bgp_neighbor_count",
+            "compare_interface_count",
+            "compare_vrf_count",
+        ):
+            return metric_type, {"host1_count": 0, "host2_count": 0, "difference": 0}
+        if metric_type in ("map", "map_str_int", "map_str_str"):
+            return metric_type, {}
+        if metric_type in ("set", "set_str", "list"):
+            return metric_type, []
+        if metric_type in ("numeric", "number", "scalar_int"):
+            return metric_type, 0
+        if metric_type in ("boolean", "bool"):
+            return metric_type, False
+        return metric_type, ""
+
+    def _count_bgp_neighbors_total(self, d: Dict[str, Any]) -> int:
+        peers: Set[str] = set()
+        for n in self._bgp_neighbors(d):
+            pid = n.get("id") or n.get("ip")
+            if pid:
+                peers.add(str(pid))
+        for v in self._bgp_vrfs(d):
+            for n in v.get("neighbors") or []:
+                pid = n.get("id") or n.get("ip")
+                if pid:
+                    peers.add(str(pid))
+        return len(peers)
+
+    def _count_vrfs_total(self, d: Dict[str, Any]) -> int:
+        names: Set[str] = set()
+        for v in self._bgp_vrfs(d):
+            name = v.get("name")
+            if name:
+                names.add(str(name))
+        for v in self._services_vrf(d):
+            name = v.get("name")
+            if name:
+                names.add(str(name))
+        for iface in d.get("interfaces") or []:
+            name = iface.get("vrf") or iface.get("l3vrf")
+            if name:
+                names.add(str(name))
+        return len(names)
 
     # ---------- 공통 계산(여러 테스트에서 재활용할 집합/맵) ----------
     def _precompute(self) -> Dict[str, Any]:
@@ -406,6 +471,11 @@ class BuilderCore:
     def _answer_for_metric(self, metric: str, scope: Dict[str,Any], pre: Dict[str,Any]) -> tuple[str, Any]:
         if not hasattr(self, "devices"):
             self.devices = []
+        required_keys = METRIC_REQUIRED_SCOPE_KEYS.get(metric, ())
+        if required_keys:
+            missing = [k for k in required_keys if not scope.get(k)]
+            if missing:
+                return self._default_metric_answer(metric)
 
         if metric == "system_hostname_text":
             host = scope.get("host")
@@ -695,8 +765,8 @@ class BuilderCore:
              for d in self.devices:
                  if host and self._hostname(d) != host: continue
                  val = d.get("configuration", {}).get("advanced", {}).get("rip_enabled")
-                 return "set", ["rip"] if val else []
-             return "set", []
+                 return "text", "Enabled" if val else "Disabled"
+             return "text", "Disabled"
 
         elif metric == "active_ospf_processes":
              host = scope.get("host")
@@ -1195,36 +1265,30 @@ class BuilderCore:
             host2 = scope.get("host2")
             d1 = self.host_index.get(host1)
             d2 = self.host_index.get(host2)
-            if not d1 or not d2:
-                return "text", f"{host1}: Not found, {host2}: Not found, diff: N/A"
-            cnt1 = len(self._bgp_neighbors(d1))
-            cnt2 = len(self._bgp_neighbors(d2))
+            cnt1 = self._count_bgp_neighbors_total(d1) if d1 else 0
+            cnt2 = self._count_bgp_neighbors_total(d2) if d2 else 0
             diff = abs(cnt1 - cnt2)
-            return "text", f"{host1}: {cnt1}, {host2}: {cnt2}, diff: {diff}"
+            return "map_str_int", {"host1_count": cnt1, "host2_count": cnt2, "difference": diff}
         
         elif metric == "compare_interface_count":
             host1 = scope.get("host1")
             host2 = scope.get("host2")
             d1 = self.host_index.get(host1)
             d2 = self.host_index.get(host2)
-            if not d1 or not d2:
-                return "text", f"{host1}: Not found, {host2}: Not found, diff: N/A"
-            cnt1 = len(d1.get("interfaces") or [])
-            cnt2 = len(d2.get("interfaces") or [])
+            cnt1 = len(d1.get("interfaces") or []) if d1 else 0
+            cnt2 = len(d2.get("interfaces") or []) if d2 else 0
             diff = abs(cnt1 - cnt2)
-            return "text", f"{host1}: {cnt1}, {host2}: {cnt2}, diff: {diff}"
+            return "map_str_int", {"host1_count": cnt1, "host2_count": cnt2, "difference": diff}
         
         elif metric == "compare_vrf_count":
             host1 = scope.get("host1")
             host2 = scope.get("host2")
             d1 = self.host_index.get(host1)
             d2 = self.host_index.get(host2)
-            if not d1 or not d2:
-                return "text", f"{host1}: Not found, {host2}: Not found, diff: N/A"
-            cnt1 = len(self._bgp_vrfs(d1))
-            cnt2 = len(self._bgp_vrfs(d2))
+            cnt1 = self._count_vrfs_total(d1) if d1 else 0
+            cnt2 = self._count_vrfs_total(d2) if d2 else 0
             diff = abs(cnt1 - cnt2)
-            return "text", f"{host1}: {cnt1}, {host2}: {cnt2}, diff: {diff}"
+            return "map_str_int", {"host1_count": cnt1, "host2_count": cnt2, "difference": diff}
         
         elif metric == "compare_bgp_as":
             host1 = scope.get("host1")
