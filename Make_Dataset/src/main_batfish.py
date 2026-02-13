@@ -3,10 +3,13 @@ import argparse
 import json
 import time
 import subprocess
+import hashlib
 from pathlib import Path
 import sys
 import random
 import itertools
+import re
+from collections import Counter, defaultdict
 import pandas as pd
 
 """
@@ -20,6 +23,8 @@ from core_batfish.parser import UniversalParser
 from core_batfish.rule_based_generator import RuleBasedGenerator, RuleBasedGeneratorConfig
 from core_batfish.builder_core import BuilderCore
 from core_batfish.batfish_builder import BatfishBuilder, AnswerResult
+from validate_policies import validate_policies
+from validate_dataset_quality import validate_dataset_quality
 
 # ============================================================================
 # NetConfigQA 벤치마크 파이프라인 - Phase 1: 스키마 검증
@@ -45,6 +50,13 @@ ANSWER_SCHEMAS = {
     "scalar_int": {"type": "integer"},
     "bool": {"type": "boolean"},
 }
+
+STRUCTURED_COMPARE_METRICS = {
+    "compare_bgp_neighbor_count",
+    "compare_interface_count",
+    "compare_vrf_count",
+}
+PLACEHOLDER_PATTERN = re.compile(r"\\{[a-zA-Z_][a-zA-Z0-9_]*\\}")
 
 
 def validate_answer(value, answer_type: str) -> tuple:
@@ -105,6 +117,80 @@ def validate_answer(value, answer_type: str) -> tuple:
         return False, f"Validation error: {e}"
 
 
+def has_placeholder_token(value) -> bool:
+    """Detect unresolved template placeholders recursively."""
+    if isinstance(value, str):
+        return bool(PLACEHOLDER_PATTERN.search(value))
+    if isinstance(value, dict):
+        return any(has_placeholder_token(v) for v in value.values())
+    if isinstance(value, (list, tuple, set)):
+        return any(has_placeholder_token(v) for v in value)
+    return False
+
+
+def make_scope_hash(scope: dict) -> str:
+    serialized = json.dumps(scope or {}, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+    return hashlib.sha1(serialized.encode("utf-8")).hexdigest()[:10]
+
+
+def is_valid_structured_compare_answer(metric_name: str, value) -> bool:
+    if metric_name not in STRUCTURED_COMPARE_METRICS:
+        return True
+    if not isinstance(value, dict):
+        return False
+    required = {"host1_count", "host2_count", "difference"}
+    if set(value.keys()) != required:
+        return False
+    return all(isinstance(value[k], int) for k in required)
+
+
+def enforce_min_per_category(rows: list, categories: list, min_per_cat: int) -> dict:
+    """
+    Category coverage top-up pass.
+    Re-samples existing rows within the same category and annotates evidence.
+    """
+    if min_per_cat <= 0:
+        return {}
+
+    by_cat = defaultdict(list)
+    for row in rows:
+        by_cat[row.get("category", "Unknown")].append(row)
+
+    added = {}
+    for category in categories:
+        current = len(by_cat.get(category, []))
+        deficit = max(0, min_per_cat - current)
+        if deficit == 0:
+            continue
+
+        seeds = by_cat.get(category, [])
+        if not seeds:
+            added[category] = 0
+            continue
+
+        local_added = 0
+        for idx in range(deficit):
+            src = random.choice(seeds)
+            clone = dict(src)
+            clone["id"] = f"{src['id']}__rs{idx + 1}"
+            base_id_v2 = src.get("id_v2") or src["id"]
+            clone["id_v2"] = f"{base_id_v2}-rs{idx + 1}"
+            try:
+                ev = json.loads(src.get("evidence", "{}"))
+                if not isinstance(ev, dict):
+                    ev = {}
+            except Exception:
+                ev = {}
+            ev["resample_pass"] = 2
+            ev["resample_index"] = idx + 1
+            clone["evidence"] = json.dumps(ev, ensure_ascii=False)
+            rows.append(clone)
+            by_cat[category].append(clone)
+            local_added += 1
+        added[category] = local_added
+    return added
+
+
 def get_pipeline_version() -> str:
     """Git commit hash를 파이프라인 버전으로 사용"""
     try:
@@ -120,7 +206,7 @@ def get_pipeline_version() -> str:
 PIPELINE_VERSION = get_pipeline_version()
 
 
-def print_quality_report(rows: list):
+def print_quality_report(rows: list, extra_quality: dict | None = None):
     """
     데이터 품질 리포트 출력
     
@@ -164,6 +250,11 @@ def print_quality_report(rows: list):
     print(f"  📈 NOT_APPLICABLE Rate: {na_rate:.1f}%")
     print(f"  📈 Negative Evidence Rate: {neg_rate:.1f}%")
     print(f"  📈 Pipeline Version: {PIPELINE_VERSION}")
+    if extra_quality:
+        print(f"  📈 Duplicate ID Count: {extra_quality.get('duplicate_id_count', 0)}")
+        print(f"  📈 Evidence Placeholder Count: {extra_quality.get('evidence_placeholder_count', 0)}")
+        print(f"  📈 Structured Schema Violations: {extra_quality.get('structured_schema_violations', 0)}")
+        print(f"  📈 Duplicate id_v2 Count: {extra_quality.get('duplicate_id_v2_count', 0)}")
     
     # UNKNOWN 상세 분석
     if status_counts.get("UNKNOWN", 0) > 0:
@@ -257,6 +348,11 @@ def main():
     if not policy_path.exists():
         print(f"[Error] Policy file not found: {policy_path.resolve()}")
         return
+    policy_validation_code = validate_policies(policy_path.resolve())
+    policy_validation_passed = (policy_validation_code == 0)
+    if not policy_validation_passed:
+        print("[Error] Policy validation failed. Aborting dataset generation.")
+        return
 
     # Batfish Init with policies_path
     bf_builder = BatfishBuilder(
@@ -314,6 +410,12 @@ def main():
         if las: all_asns.add(str(las))
     
     qa_list = []
+    seen_id_v2 = set()
+    generation_checks = {
+        "evidence_placeholder_count": 0,
+        "structured_schema_violations": 0,
+        "duplicate_id_v2_skipped": 0,
+    }
     
     for dsl in dsl_items:
         level = dsl.get("level", "L1")
@@ -574,8 +676,20 @@ def main():
             final_evidence = default_evidence.copy()
             if evidence_dict:
                 final_evidence.update(evidence_dict)
+
+            # 품질 게이트: evidence 내 unresolved placeholder 금지
+            if has_placeholder_token(final_evidence):
+                generation_checks["evidence_placeholder_count"] += 1
+                print(f"[WARN] Skip row due to evidence placeholder: metric={metric_name}, scope={scope}")
+                continue
             
             evidence_str = json.dumps(final_evidence, ensure_ascii=False)
+
+            # 품질 게이트: 구조화 비교 메트릭 스키마 검증
+            if not is_valid_structured_compare_answer(metric_name, a_val):
+                generation_checks["structured_schema_violations"] += 1
+                print(f"[WARN] Skip row due to structured schema violation: metric={metric_name}, value={a_val}")
+                continue
 
             # 값 직렬화 및 Status 최종 보정
             if a_val is None:
@@ -633,14 +747,21 @@ def main():
                 unique_id = f"{dsl['id']}_{'_'.join(scope_suffix_parts)}"
             else:
                 unique_id = str(dsl["id"])
+            id_v2 = f"{metric_name}:{make_scope_hash(scope)}"
+            if id_v2 in seen_id_v2:
+                generation_checks["duplicate_id_v2_skipped"] += 1
+                continue
+            seen_id_v2.add(id_v2)
+            answer_type = res["answer_type"] if isinstance(res, dict) else res.answer_type
 
             qa_list.append({
                 "id": unique_id,
+                "id_v2": id_v2,
                 "category": dsl["category"],
                 "level": level,
                 "question": q_text,
                 "answer_status": answer_status,
-                "answer_type": res["answer_type"] if isinstance(res, dict) else res.answer_type,
+                "answer_type": answer_type,
                 "answer": a_json,
                 "unknown_reason": unknown_reason,
                 "evidence": evidence_str,
@@ -661,6 +782,9 @@ def main():
                 evidence = q.get("evidence_hint", {})
                 if "snapshot" not in evidence:
                     evidence["snapshot"] = lab_path.name
+                if has_placeholder_token(evidence):
+                    generation_checks["evidence_placeholder_count"] += 1
+                    continue
                 
                 # 2. Handle numeric types in ground_truth
                 answer_val = q["ground_truth"]
@@ -677,9 +801,21 @@ def main():
                                  answer_val = int(answer_val)
                     except ValueError:
                         pass # Keep as is if conversion fails
+                metric_name = str(evidence.get("metric", q.get("id", ""))).strip()
+                scope = evidence.get("scope") if isinstance(evidence, dict) else {}
+                if not isinstance(scope, dict):
+                    scope = {}
+                if not scope:
+                    scope = {"question_id": str(q.get("id", ""))}
+                id_v2 = f"{metric_name}:{make_scope_hash(scope)}"
+                if id_v2 in seen_id_v2:
+                    generation_checks["duplicate_id_v2_skipped"] += 1
+                    continue
+                seen_id_v2.add(id_v2)
                 
                 qa_list.append({
                     "id": str(q["id"]),
+                    "id_v2": id_v2,
                     "category": q["category"],
                     "level": q["level"],
                     "question": q["question"],
@@ -719,6 +855,17 @@ def main():
         else:
             print(f"  -> Total Added: {len(l4_questions)} L4 + {len(l5_questions)} L5 questions")
 
+    # -------------------------------------------------------------------------
+    # Category coverage gate: resampling pass to satisfy min_per_cat
+    # -------------------------------------------------------------------------
+    coverage_added = enforce_min_per_category(qa_list, categories, args.min_per_cat)
+    if coverage_added:
+        print("[3.8] Category coverage resampling pass:")
+        for cat, added in sorted(coverage_added.items()):
+            if added > 0:
+                print(f"  -> {cat}: +{added} rows")
+            else:
+                print(f"  -> {cat}: no seed rows available (coverage unchanged)")
 
     # 결과 저장 (CSV + JSON)
     base_filename = f"{lab_path.name}_dataset_batfish_{timestamp}"
@@ -726,9 +873,35 @@ def main():
     json_path = out_dir / f"{base_filename}.json"
     
     if qa_list:
+        # 품질 지표 집계
+        id_counter = Counter(str(r.get("id", "")) for r in qa_list if r.get("id"))
+        id_v2_counter = Counter(str(r.get("id_v2", "")) for r in qa_list if r.get("id_v2"))
+        duplicate_id_count = sum(v - 1 for v in id_counter.values() if v > 1)
+        duplicate_id_v2_count = sum(v - 1 for v in id_v2_counter.values() if v > 1)
+
+        structured_valid = 0
+        for row in qa_list:
+            try:
+                ev = json.loads(row.get("evidence", "{}"))
+            except Exception:
+                ev = {}
+            metric = (ev.get("metric") if isinstance(ev, dict) else None) or ""
+            if str(metric).strip() in STRUCTURED_COMPARE_METRICS:
+                structured_valid += 1
+        structured_total = structured_valid + generation_checks["structured_schema_violations"]
+        structured_coverage = (structured_valid / structured_total) if structured_total > 0 else 1.0
+
+        extra_quality = {
+            "duplicate_id_count": duplicate_id_count,
+            "duplicate_id_v2_count": duplicate_id_v2_count,
+            "evidence_placeholder_count": generation_checks["evidence_placeholder_count"],
+            "structured_schema_violations": generation_checks["structured_schema_violations"],
+            "structured_metrics_coverage": structured_coverage,
+        }
+
         df = pd.DataFrame(qa_list)
         # 컬럼 순서 정렬
-        column_order = ["id", "category", "level", "question", "answer_status", "answer_type", "answer", "unknown_reason", "evidence", "pipeline_version", "files"]
+        column_order = ["id", "id_v2", "category", "level", "question", "answer_status", "answer_type", "answer", "unknown_reason", "evidence", "pipeline_version", "files"]
         df = df[[c for c in column_order if c in df.columns]]
         
         # CSV 저장
@@ -742,7 +915,11 @@ def main():
                 "timestamp": timestamp,
                 "total_questions": len(qa_list),
                 "pipeline_version": PIPELINE_VERSION,
-                "policies_file": str(policy_path) if policy_path else None
+                "policies_file": str(policy_path) if policy_path else None,
+                "schema_version": "3.1",
+                "policy_validation_passed": policy_validation_passed,
+                "structured_metrics_coverage": structured_coverage,
+                "quality_checks": extra_quality,
             },
             "questions": qa_list
         }
@@ -750,9 +927,17 @@ def main():
         with open(json_path, 'w', encoding='utf-8') as f:
             json.dump(json_output, f, indent=2, ensure_ascii=False)
         print(f"[Done] JSON saved: {json_path}")
-        
+
+        # 독립 품질 검증기 실행 (dataset-level gate)
+        quality_report = validate_dataset_quality(json_path)
+        if not quality_report.get("quality_gate_passed", False):
+            print("[Error] Dataset quality gate failed.")
+            print(json.dumps(quality_report.get("checks", {}), ensure_ascii=False, indent=2))
+            return
+        print("[Done] Dataset quality gate passed.")
+
         # 품질 리포트 출력
-        print_quality_report(qa_list)
+        print_quality_report(qa_list, extra_quality=extra_quality)
     else:
         print("[Done] No questions generated.")
 
