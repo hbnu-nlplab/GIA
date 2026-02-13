@@ -58,7 +58,7 @@ NetAlly/docs/IEEE/
 | 순서 | 문서 | 내용 | 중요도 |
 |:---:|---|---|:---:|
 | ④ | [experiment_design.md](./experiment_design.md) | 5가지 실험 상세: 검증(Exp.1), Baseline(Exp.2), NetAlly(Exp.3), 스케일러빌리티(Exp.4), 외부 벤치마크(Exp.5). Table/Figure 형식 사전 정의, Threats to Validity | ⭐⭐⭐⭐⭐ |
-| ⑤ | [verification_plan.md](./verification_plan.md) | Ground Truth 검증 설계 문서: Hybrid(Method 1/2/3) 기반 독립성/로직/실환경 검증. 현재는 설계 단계 | ⭐⭐⭐⭐ |
+| ⑤ | [verification_plan.md](./verification_plan.md) | Ground Truth 검증: Hybrid(Method 1/2/3). **Method 1-2 완료** (L1-L3 실질 100%). Method 3 미착수 | ⭐⭐⭐⭐ |
 | ⑥ | [lab_scalability_design.md](./lab_scalability_design.md) | Lab A~D(10~50노드) 토폴로지 설계, Config Generator(YAML+Jinja2), NetAlly 데이터셋 평가 실험, 구현 일정 | ⭐⭐⭐⭐ |
 
 ### 3단계: 평가 & 현황
@@ -104,12 +104,20 @@ flowchart TB
 
 | 항목 | 값 |
 |---|---|
-| 총 QA 쌍 | 1,128 (v2) |
-| 난이도 레벨 | 5 (L1~L5, 공개본 기준) |
-| 카테고리 | 17 (공개본 기준) |
+| 총 QA 쌍 | 1,048 (L1-L5, 최신 데이터셋 기준) |
+| 난이도 레벨 | 5 (L1~L5) |
+| 카테고리 | 17 |
 | 메트릭 | 127 |
 | Answer Type | 5 (text, numeric, set, map, bool) |
 | 토폴로지 | SP MPLS VPN (10 nodes: 4 Leaf + 4 P + 2 PE) |
+
+### Ground Truth 검증 결과
+
+| Method | Scope | Sample | Raw Agreement | Effective |
+|---|---|---:|---:|---:|
+| (1) Independent Parser | L1-L3 전수 | 800 | 99.5% | **100%** |
+| (2) Manual Cfg Trace | L1-L3 표본 | 43 | 97.7% | 97.7% |
+| (3) PNETLab Emulation | L4-L5 표본 | 44 | TBD | TBD |
 
 ### KICS 실험 결과 (Best: GPT-OSS-20B)
 
@@ -138,7 +146,10 @@ flowchart TB
 
 | 작업 | 상태 | 문서 참조 |
 |---|:---:|---|
-| 검증 코드 구현 | ⬜ | verification_plan.md |
+| 검증 코드 구현 (Method 1-2) + 통합 파이프라인 | ✅ | verification_plan.md |
+| 검증 Method 3 가이드 생성 | ✅ | verification_plan.md (44 QA 가이드 완료) |
+| Method 2 사람 검토 (43 QA, ~2-3h) | ⬜ | verification/method2_manual_check/human_reviewer_guide.md |
+| Method 3 PNETLab 실행 (44 QA, ~4-6h) | ⬜ | verification/method3_pnetlab/pnetlab_verification_guide.md |
 | Lab-B Config 생성 | ⬜ | lab_scalability_design.md |
 | v2 데이터셋 재실험 (5 Models) | ⬜ | experiment_design.md Exp.2 |
 | NetAlly 데이터셋 평가 | ⬜ | experiment_design.md Exp.3 |
@@ -149,8 +160,8 @@ flowchart TB
 
 ## 🧭 실행 시작점
 
-1. [TODO_execution_backlog.md](./TODO_execution_backlog.md)에서 P0 항목부터 실행
-2. [verification_plan.md](./verification_plan.md)의 MVP 범위(L1~L5) 먼저 완료
+1. **검증 완료**: Method 2 사람 검토 + Method 3 PNETLab 실행 (병렬 가능, 총 6-9시간)
+2. [TODO_execution_backlog.md](./TODO_execution_backlog.md)에서 P0 항목부터 실행
 3. [lab_scalability_design.md](./lab_scalability_design.md)의 Lab-B 단일 성공 사례 확보
 
 ---
@@ -165,7 +176,24 @@ flowchart TB
 ```bash
 Make_Dataset/run_dataset_pipeline.sh \
   --lab-path Data/Pnetlab/Research_Institute_Internal_DC \
-  --policies Make_Dataset/policies.json
+  --policies Make_Dataset/policies.json \
+  --question-lang both
 ```
 
-산출물은 `Data/Pnetlab/<LabName>/Dataset/<timestamp>/` 하위에 실행별로 분리 저장됩니다.
+산출물은 `Data/Pnetlab/<LabName>/Dataset/<timestamp>/` 하위에 실행별로 분리 저장되며, bilingual 모드에서는 `..._ko.json/csv`와 `..._en.json/csv`가 함께 생성됩니다.
+
+## 🔬 Ground Truth 검증 파이프라인
+
+데이터셋 생성 후 Ground Truth 검증을 단일 명령으로 실행합니다 (3가지 Method 통합):
+
+```bash
+# 전체 파이프라인: Method 1 (자동) + Method 2 가이드 + Method 3 가이드
+python Make_Dataset/src/verification/run_verification_pipeline.py \
+  --lab-path Data/Pnetlab/Research_Institute_Internal_DC/
+
+# 이미 Method 1을 돌린 경우
+python Make_Dataset/src/verification/run_verification_pipeline.py \
+  --lab-path Data/Pnetlab/<LabName>/ --skip-method1
+```
+
+산출물: `Data/Pnetlab/<LabName>/Dataset/verification/` 하위에 Method별로 분리 저장됩니다.
