@@ -16,6 +16,23 @@
 
 ---
 
+## 0.1 2026-02-13 반영 완료 (통합 계획)
+
+- [x] `policies.json` 메타 정규화 (`schema_version: 3.1`, `submission_scope: L1-L5`)
+- [x] L3 고위험 `compare_*` 구조화 계약(`map_str_int`) 반영
+- [x] `ibgp_fullmesh_ok` deprecated + submission 제외 처리
+- [x] `validate_policies.py` 신규 추가
+- [x] `validate_dataset_quality.py` 신규 추가
+- [x] `main_batfish.py` 품질 게이트 (`id_v2`, evidence placeholder 차단, structured schema gate, min_per_cat resampling pass) 반영
+- [x] `analyze_results_netconfigqa.py` map 채점 강화 + legacy fallback 경고 기록
+
+남은 핵심 구현:
+1. `verify_dataset.py` / `core_batfish/verifier.py` (Layer 1 재현 검증)
+2. `config_generator/` (Lab-B 확장 생성기) 실제 코드 착수
+3. Layer 2 PNETLab 교차검증 자동화
+
+---
+
 ## 1. P0 — 검증 파이프라인 구현 (최우선)
 
 ### 1.1 Layer 1 검증 코드
