@@ -48,6 +48,8 @@ ANSWER_SCHEMAS = {
     "enum": {"type": "string"},
     "scalar_str": {"type": "string"},
     "scalar_int": {"type": "integer"},
+    "number": {"type": "integer"},
+    "numeric": {"type": "integer"},
     "bool": {"type": "boolean"},
 }
 
@@ -57,6 +59,22 @@ STRUCTURED_COMPARE_METRICS = {
     "compare_vrf_count",
 }
 PLACEHOLDER_PATTERN = re.compile(r"\\{[a-zA-Z_][a-zA-Z0-9_]*\\}")
+
+
+def canonical_dataset_answer_type(answer_type: str) -> str:
+    """
+    Canonicalize answer_type labels for dataset consistency.
+    - numeric/scalar_int/int/float -> number
+    """
+    at = str(answer_type or "").strip().lower()
+    aliases = {
+        "numeric": "number",
+        "scalar_int": "number",
+        "int": "number",
+        "integer": "number",
+        "float": "number",
+    }
+    return aliases.get(at, at or "text")
 
 
 def validate_answer(value, answer_type: str) -> tuple:
@@ -755,7 +773,9 @@ def main():
                 generation_checks["duplicate_id_v2_skipped"] += 1
                 continue
             seen_id_v2.add(id_v2)
-            answer_type = res["answer_type"] if isinstance(res, dict) else res.answer_type
+            answer_type = canonical_dataset_answer_type(
+                res["answer_type"] if isinstance(res, dict) else res.answer_type
+            )
 
             qa_list.append({
                 "id": unique_id,
@@ -823,7 +843,7 @@ def main():
                     "level": q["level"],
                     "question": q["question"],
                     "answer_status": "OK",
-                    "answer_type": q["answer_type"],
+                    "answer_type": canonical_dataset_answer_type(q["answer_type"]),
                     "answer": json.dumps(answer_val, ensure_ascii=False),
                     "unknown_reason": "",
                     "evidence": json.dumps(evidence, ensure_ascii=False),

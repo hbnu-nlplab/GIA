@@ -25,6 +25,6 @@ test('Dashboard fallback 응답(ospf 누락)에서도 앱이 크래시하지 않
 
   await page.goto('http://127.0.0.1:3000')
   await expect(page.getByText('Network Health')).toBeVisible()
-  await expect(page.getByPlaceholder('Send a message...')).toBeVisible()
+  await expect(page.getByLabel('Message input')).toBeVisible()
   expect(pageErrors).toEqual([])
 })

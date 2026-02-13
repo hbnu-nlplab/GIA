@@ -1,42 +1,46 @@
-# NetConfigQA2.0 — 데이터셋 검증 계획서
+# NetConfigQA2.0 — Ground Truth 검증 계획서 (설계 단계)
 
-> **목적**: IEEE TNMS 논문에서 데이터셋의 Ground Truth 신뢰성을 증명하기 위한 검증 체계
+> **목적**: IEEE TNMS 논문에서 데이터셋 정답(Ground Truth)의 신뢰성을 입증하기 위한 검증 체계 설계
 > **대상**: 데이터셋 v2 (L1~L5, 1,128 QA pairs)
 > **전략**: **Hybrid Validation** (독립 파서 + 수동 로직 검증 + 실환경 에뮬레이션)
-> **최종 산출물**: 논문 Section IV "Dataset Verification" 작성에 필요한 수치 및 근거
+> **최종 산출물**: 논문 Section IV "Dataset Verification"에 들어갈 근거 수치와 증빙 로그
 
 ---
 
-## 0. 문서 상태
+## 0. 문서 상태 및 경계
 
-### 0.1 선행 조건
-
-| 항목 | 상태 | 비고 |
-|---|:---:|---|
-| ID 고유화 및 Evidence 수정 | **완료** | commit 4299eeb |
-| 정책 스키마 검증기 도입 | **완료** | `Make_Dataset/src/validate_policies.py` |
-| 데이터셋 재생성 | **대기** | 검증 로직 확정 후 수행 |
-
-### 0.2 Scope Freeze
+### 0.1 Scope Freeze
 - 본 제출 실험은 **L1~L5**로 고정한다.
 - L6는 코드만 유지하고, 이번 제출의 실험/평가/표에서는 제외한다.
 
+### 0.2 검증 축 구분 (중요)
+
+| 구분 | 목적 | 현재 구현 상태 | 논문에서의 역할 |
+|---|---|---|---|
+| **Dataset Integrity QA** | 스키마/ID/evidence 품질 보장 | 구현 완료 (`validate_policies.py`, `validate_dataset_quality.py`, `run_dataset_pipeline.sh`) | 내부 품질 보증(보조 증거) |
+| **Ground Truth Validation** | 정답 자체의 타당성 입증 | **설계 단계** (본 문서) | 핵심 증거 (본 증거) |
+
+> 즉, 현재 자동 파이프라인은 **데이터셋 오류 검증**이고, 본 문서는 별도의 **Ground Truth 검증 설계 문서**다.
+
+### 0.3 자동화 스크립트 범위
+- 현 시점은 검증 설계 단계이므로 `run_verification_pipeline.sh`를 즉시 만들지 않는다.
+- Method 1/2/3의 실험 프로토콜과 산출물 포맷을 먼저 확정한 뒤, 실행 자동화는 다음 단계에서 통합한다.
+
 ---
 
-## 1. 문제 정의: "자동 생성된 정답을 어떻게 신뢰할 수 있는가?"
+## 1. 문제 정의: "자동 생성 정답을 어떻게 신뢰할 것인가?"
 
-### 1.1 핵심 문제: 순환 논증 (Circular Reasoning)
+### 1.1 핵심 리스크: 순환 논증 (Circular Reasoning)
+NetConfigQA2.0은 Batfish로 정답을 생성한다.  
+리뷰어의 핵심 공격 포인트는 **"Batfish로 만든 정답을 Batfish로만 다시 검증하면, 오류도 일치로 보일 수 있다"**는 점이다.
 
-NetConfigQA2.0은 Batfish를 이용해 정답을 생성합니다.
-리뷰어의 핵심 공격 포인트는 **"Batfish로 만든 정답을 Batfish로 검증하면(Layer 0), 틀린 로직도 '일치'한다고 나올 것"**이라는 점입니다.
-
-이를 방어하기 위해서는 **"생성 도구와 독립적인 제2의 소스(Independent Oracle)"**가 필수적입니다.
+따라서 핵심 방어 전략은 **생성 도구와 독립적인 제2의 오라클(Independent Oracle)** 확보다.
 
 ---
 
-## 2. 검증 전략: "Hybrid Validation"
+## 2. 검증 전략: Hybrid Validation
 
-단일 검증의 한계를 극복하기 위해, **상호보완적인 3가지 검증 방법**을 결합합니다.
+단일 방식의 한계를 줄이기 위해 상호보완적인 3개 방법을 결합한다.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
@@ -45,116 +49,105 @@ NetConfigQA2.0은 Batfish를 이용해 정답을 생성합니다.
 │    (1) Code-based    │    (2) Logic-based     │    (3) Reality-based    │
 │  Independent Parser  │  Metric-wise Manual    │    PNETLab Emulation    │
 ├──────────────────────┼────────────────────────┼─────────────────────────┤
-│ **대상**: L1, L2, L3 │ **대상**: L3 (Complex) │ **대상**: L4, L5        │
-│ **수단**: Regex Code │ **수단**: Human Expert │ **수단**: Actual Device │
-│ **비중**: 수백 건    │ **비중**: 127 metrics  │ **비중**: 50 samples    │
-│ **특징**: 독립성     │ **특징**: 로직 검증    │ **특징**: 실재성        │
+│ 대상: L1/L2/L3       │ 대상: 복잡 로직 metric  │ 대상: L4/L5             │
+│ 수단: Regex/Python   │ 수단: Expert checklist │ 수단: 실제 에뮬레이터   │
+│ 초점: 독립성         │ 초점: 로직 타당성      │ 초점: 외적 타당성       │
 └──────────────────────┴────────────────────────┴─────────────────────────┘
 ```
 
-> **참고**: 기존의 "Layer 0 (Pipeline QA)"는 내부 엔지니어링 무결성 확인용으로만 사용하고, 논문의 핵심 증거로는 위 3가지를 제시합니다.
+> 참고: `run_dataset_pipeline.sh` 결과는 Layer 0 성격의 내부 품질 무결성 증거이며, Ground Truth 본증거는 Method 1/2/3로 제시한다.
 
-### 2.1 관련 연구의 검증 방법론 (Justification)
+### 2.1 관련 연구 근거
 
-우리의 하이브리드 접근법은 최신 연구들의 Best Practice를 통합한 것입니다.
-
-| 연구 | 검증 방법 | 우리의 적용 |
+| 연구 | 검증 방법 | 본 계획에서의 적용 |
 |---|---|---|
-| **TeleQnA** (2023) | **Human Expert Verification**: 자동 생성 후 전문가가 샘플 검증 | Method (2) **Metric-wise Manual Check** 적용 |
-| **NetConfEval** (2024) | **Batfish Simulation**: Batfish를 Ground Truth Oracle로 활용 | Method (1) Batfish와 독립적인 **Regex Parser**로 교차 검증 |
-| **NIKA** (2025) | **Execution/Telemetry**: 실제/가상 환경의 상태 정보를 정답으로 사용 | Method (3) **PNETLab 실환경** 결과와 비교 |
+| **TeleQnA** (2023) | Human Expert Verification | Method 2 (수동 로직 검증) |
+| **NetConfEval** (2024) | Batfish Simulation Oracle | Method 1의 필요성 정당화 (독립 오라클 보완) |
+| **NIKA** (2025) | Environment Telemetry | Method 3 (실환경 동작 비교) |
 
 ---
 
-## 3. Method 1: Independent Config Parser (독립 검증)
+## 3. Method 1: Independent Config Parser
 
 ### 3.1 목적
-> "Batfish에 의존하지 않는 별도의 코드로 정답을 도출하여, Batfish 로직의 편향(Bias)을 제거한다."
+Batfish를 사용하지 않는 별도 코드로 정답을 재도출해, 생성 오라클 편향을 줄인다.
 
-### 3.2 구현 방안
-순수 Python + 정규식(Regex)만을 사용하는 경량 파서를 구현합니다. Batfish 라이브러리를 일절 import하지 않습니다.
+### 3.2 설계
+- 순수 Python + Regex 기반 파서 사용 (Batfish import 금지).
+- 대상: L1/L2 + 일부 L3의 구조화 가능한 metric.
+- 원칙: metric별 파싱 규칙과 실패 규칙을 명시하고, 파싱 불가 metric은 제외 사유를 문서화.
 
-- **대상 메트릭**: L1(단순 조회), L2(단순 집계), L3(텍스트 비교) 등 **구조가 단순한 90%의 질문**
-- **구현 예시**:
-  ```python
-  def verify_l1_hostname(qa):
-      # cfg 파일에서 "hostname X" 패턴을 직접 찾음
-      match = re.search(r"^hostname\s+(\S+)", config_text, re.MULTILINE)
-      independent_answer = match.group(1)
-      return independent_answer == qa['answer']
-  ```
-
-### 3.3 기대 효과
-- L1~L3 질문의 **80~90%**를 "독립적인 코드"로 검증 가능
-- "Self-Validation" 비판 원천 차단
+### 3.3 산출물
+- `independent_parser_results.csv` (metric, qa_id, expected, parsed, match)
+- `independent_parser_mismatch.md` (불일치 원인 분류)
+- 커버리지 수치 (검증 가능 metric/전체 metric)
 
 ---
 
-## 4. Method 2: Metric-wise Manual Verification (로직 검증)
+## 4. Method 2: Metric-wise Manual Verification
 
 ### 4.1 목적
-> "자동화 도구가 놓칠 수 있는 엣지 케이스와 복잡한 로직(L3+)을 사람이 직접 확인한다."
+자동화가 놓칠 수 있는 조건부/예외 로직을 사람 검증으로 보완한다.
 
-### 4.2 수행 절차
-1.  **표본 추출 (Stratified Sampling)**: 127개 메트릭(Metric ID)별로 **무작위 1개**의 QA 쌍을 추출 (총 127건).
-2.  **사람 검증 (Human Inspection)**: 설정 파일(.cfg)을 직접 열어서 육안 확인.
-3.  **엣지 케이스 점검**: 값이 없는 경우(`None`), 리스트가 비어있는 경우(`[]`), 조건부 로직 등.
+### 4.2 설계
+1. 층화 표본 추출: metric 단위 대표 샘플 선정
+2. 검증 체크리스트 기반 육안 확인: cfg, evidence, answer를 동시에 대조
+3. 불일치 분류: 데이터 문제/파서 문제/설계 모호성으로 라벨링
 
-### 4.3 기대 효과
-- "The verification logic itself was validated by human experts on a representative stratified sample (N=127)."
+### 4.3 산출물
+- `manual_checklist.csv` (검수 기록)
+- `manual_disagreement_log.md` (판정 근거)
+- 논문용 문구: human verification protocol 및 adjudication 규칙
 
 ---
 
-## 5. Method 3: PNETLab Real-world Verification (실재성 검증)
+## 5. Method 3: PNETLab Real-world Verification
 
 ### 5.1 목적
-> "시뮬레이션(Batfish) 결과가 실제 네트워크 장비(Cisco IOS)의 동작과 일치하는가?"
+Batfish 예측이 실제 에뮬레이터 동작과 일치하는지 확인한다.
 
-### 5.2 검증 대상: 50건 (L4 30건 + L5 20건)
-L4/L5는 실제 패킷 전송(Forwarding)이 관여하므로, 텍스트 파싱(Method 1)이나 육안 검사(Method 2)로는 불충분합니다.
+### 5.2 설계
+- 대상: L4/L5 중심 샘플
+- 절차:
+1. L4: traceroute 경로/도달성 비교
+2. L5: 링크 장애 주입 후 reroute/disconnect 상태 비교
 
-### 5.3 수행 절차
-1.  **L4 Traceroute**: PNETLab에서 `traceroute` 명령을 실행하여 홉(hop) 경로가 Batfish 예측과 일치하는지 확인.
-2.  **L5 Link Failure**: PNETLab에서 인터페이스를 `shutdown` 시키고, 라우팅 테이블이 Batfish 예측대로 변경(`REROUTED`/`DISCONNECTED`)되는지 확인.
-
-### 5.4 기대 효과
-- 가장 강력한 **External Validity** 확보.
-- "Simulation vs Emulator" 일치율 제시 (목표 90%+).
-
----
-
-## 6. 검증 결과 보고서 형식 (논문용)
-
-### Table: Hybrid Verification Results
-
-| Method | Type | Scope | Sample Size | Agreement | Role |
-|:---:|---|:---:|:---:|:---:|---|
-| **(1)** | Independent Parser | Automatic | ~900 (L1-L3) | 99.X% | **Independence** from Batfish |
-| **(2)** | Manual Check | Human | 127 (All Metrics) | 100% | **Logic Correctness** |
-| **(3)** | PNETLab Emulation | Real Device | 50 (L4-L5) | 9X.X% | **External Validity** |
-
-> **Note**: Layer 0 (Pipeline QA, Batfish 재현) 결과는 Appendix에 "Pipeline Integrity" 증거로 수록.
+### 5.3 산출물
+- `pnetlab_validation_results.csv`
+- CLI 로그 및 명령 기록 (`show ip route`, `traceroute`, interface shutdown/no shutdown)
+- 불일치 케이스 상세 리포트
 
 ---
 
-## 7. 구현 일정
+## 6. 논문용 결과 표 템플릿
 
-| 작업 | 소요 | 비고 |
-|---|:---:|---|
-| **Step 1**: Independent Regex Parser 구현 | 1일 | `verify_regex.py` 구현 |
-| **Step 2**: Parser 전수 검사 실행 | 0.5일 | L1-L3 자동 검증 |
-| **Step 3**: Metric-wise 엑셀 생성 | 0.5일 | `make_checklist.py` |
-| **Step 4**: 수동 검증 수행 (Human Check) | 1일 | 하루면 충분히 함 |
-| **Step 5**: PNETLab 교차 검증 (L4/L5) | 1.5일 | 기존 계획 유지 |
-| **합계** | **4.5일** | |
+| Method | Scope | Sample Size | Agreement | 95% CI | 역할 |
+|---|---:|---:|---:|---:|---|
+| (1) Independent Parser | L1-L3 subset | TBD | TBD | TBD | 독립성 |
+| (2) Manual Check | metric-wise sample | TBD | TBD | TBD | 로직 타당성 |
+| (3) PNETLab Emulation | L4-L5 sample | TBD | TBD | TBD | 외적 타당성 |
+
+> Layer 0(데이터셋 품질 게이트) 결과는 Appendix의 Pipeline Integrity로 수록한다.
 
 ---
 
-## 8. 리뷰어 예상 질문과 대비
+## 7. 실행 로드맵 (설계 단계 기준)
 
-| 예상 질문 | 우리의 답변 | 근거 |
+| 단계 | 내용 | 상태 |
+|---|---|:---:|
+| Stage A | Ground Truth 검증 프로토콜/산출물 형식 확정 | **진행 중** |
+| Stage B | Method 1/2/3 개별 실행 및 로그 수집 | 대기 |
+| Stage C | 필요 시 통합 실행 스크립트화 | 대기 |
+
+> 정리: 지금은 Stage A이므로 문서 확정이 우선이며, 통합 `.sh` 자동화는 Stage B 완료 후 결정한다.
+
+---
+
+## 8. 리뷰어 예상 질문 대응
+
+| 예상 질문 | 답변 전략 | 근거 |
 |---|---|---|
-| "Circular reasoning 아닌가?" | "Batfish 재현(Layer 0)은 내부 품질용이고, 핵심 증거는 **독립 파서(Method 1)**와 **실환경(Method 3)**에서 왔다." | Method 1/3의 독립성 |
-| "독립 파서의 정확도는?" | "Cisco IOS 설정 문법은 명확하므로 Regex 오류율이 낮다. 불일치 시 수동 확인했다." | 불일치 분석 |
-| "50건 샘플이 충분한가?" | "L4/L5 전체 대비 유의미한 비율이며, 층화추출로 대표성을 확보했다." | 통계적 근거 |
-| "사람 검증은 편향될 수 있지 않나?" | "단순 정답 확인이 아니라 **로직(함수) 검증**에 집중했으며, TeleQnA 등 선행 연구도 채택한 방식이다." | TeleQnA 인용 |
+| "Circular reasoning 아닌가?" | Layer 0는 내부 품질용, 핵심 증거는 Method 1/2/3에서 제시 | 독립 오라클 + 실환경 |
+| "run_dataset_pipeline 결과만으로 충분한가?" | 아니오. 그것은 데이터 품질 검증이며 GT 본검증은 별도 수행 | 0.2 검증 축 구분 |
+| "샘플 수 타당성은?" | method별 표본 추출 규칙과 CI를 함께 제시 | Section 6 템플릿 |
+| "사람 검증 편향은?" | 체크리스트/판정 로그/불일치 분류로 재현 가능성 확보 | Method 2 산출물 |

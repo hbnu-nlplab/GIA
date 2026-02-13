@@ -57,7 +57,23 @@
 - **L1~L3**: `{host}`, `{asn}`, `{vrf}`, `{area}`, `{host1}`, `{host2}`
 - **L4/L5**: `{src_ip}`, `{dst_ip}`, `{src_node}`, `{dst_node}`, `{link}`, `{policy_name}`
 
-## 4. 메트릭 추가 방법 (Workflow)
+- **L4/L5**: `{src_ip}`, `{dst_ip}`, `{src_node}`, `{dst_node}`, `{link}`, `{policy_name}`
+
+## 4. 검증 전략 매트릭스 (Verification Strategy Matrix)
+
+모든 데이터셋(1,128건)은 **Hybrid Validation** 정책에 따라 검증됩니다.
+
+| Level | Metrics | 검증 방법 | 구현 상세 |
+|---|---|---|---|
+| **L1** | `_text`, `_list`, `_count` | **(1) Independent Config Parser** | 정규식(Regex)으로 Config 파일 텍스트를 직접 파싱하여 비교 (90% 이상 커버) |
+| **L2** | `_devices`, `_count` | **(1) Independent Config Parser** | 각 Config 파싱 결과를 파이썬으로 집계(`sum`, `len`)하여 검증 |
+| **L3** | `compare_`, `ibgp_` | **(2) Metric-wise Manual Check** | 로직이 복잡한 경우, 샘플(Stratified)을 뽑아 엑셀 시트에서 사람(Expert)이 검증 |
+| **L4** | `traceroute`, `reachability` | **(3) PNETLab Real-world** | 실제 라우터에서 `traceroute` 명령 실행 후 홉(Hop) 경로 비교 |
+| **L5** | `link_failure`, `what_if` | **(3) PNETLab Real-world** | 인터페이스 Shutdown 후 라우팅 테이블 및 도달성 변화 실측 |
+
+> **Note**: `logic_ref` 필드는 내부 구현 참고용이며, 실제 검증 시에는 위 전략을 따릅니다.
+
+## 5. 메트릭 추가 방법 (Workflow)
 
 새로운 메트릭을 추가하려면 다음 2단계만 수행하면 됩니다.
 
