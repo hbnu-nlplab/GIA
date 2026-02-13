@@ -563,10 +563,11 @@ def main():
                 a_val = None
 
             # Evidence 자동 채우기 (기존 정보 보존하며 병합)
+            # scope (인스턴스 값이 반영된 것)를 사용 — scope_template은 {host} 등 placeholder 포함
             default_evidence = {
                 "snapshot": lab_path.name,
                 "metric": metric_name,
-                "scope": scope_template
+                "scope": scope
             }
             # 기존 evidence_dict에 default_evidence 병합 (기존 내용 우선)
             # 단, 기존에 없으면 채워넣기 위해 default_evidence를 base로 하고 update
@@ -621,9 +622,20 @@ def main():
                     a_json = json.dumps(str(a_val), ensure_ascii=False)
             
             # Legacy "정보없음" fallback 제거됨 (a_json은 항상 유효한 JSON 문자열)
-            
+
+            # 고유 ID 생성: 메트릭명 + scope 인스턴스 값 조합
+            scope_suffix_parts = []
+            for k, v in sorted(inst.items()):
+                if k == "type":
+                    continue
+                scope_suffix_parts.append(str(v))
+            if scope_suffix_parts:
+                unique_id = f"{dsl['id']}_{'_'.join(scope_suffix_parts)}"
+            else:
+                unique_id = str(dsl["id"])
+
             qa_list.append({
-                "id": str(dsl["id"]),
+                "id": unique_id,
                 "category": dsl["category"],
                 "level": level,
                 "question": q_text,
