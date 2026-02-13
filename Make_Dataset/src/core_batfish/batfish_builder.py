@@ -923,13 +923,15 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
         logger.info(f"Generated {len(questions)} L6 Diagnostic questions total.")
         return questions
     
-    def generate_all_questions(self) -> Dict[str, List[Dict[str, Any]]]:
-        """모든 L4/L5/L6 문제 생성"""
-        return {
+    def generate_all_questions(self, include_l6: bool = False) -> Dict[str, List[Dict[str, Any]]]:
+        """L4/L5 문제를 생성하고, 필요 시 L6를 추가 생성한다."""
+        result = {
             "Reachability_Analysis": self.generate_l4_questions(),
             "What_If_Analysis": self.generate_l5_questions(),
-            "Diagnostic_Troubleshooting": self.generate_l6_questions()
         }
+        if include_l6:
+            result["Diagnostic_Troubleshooting"] = self.generate_l6_questions()
+        return result
 
 
 # =========================================================================

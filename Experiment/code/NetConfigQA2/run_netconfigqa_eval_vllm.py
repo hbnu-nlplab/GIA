@@ -14,7 +14,7 @@ import logging
 import datetime
 import sys
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Set
 
 import torch
 
@@ -118,6 +118,12 @@ def setup_logger(model_name: str):
 logger = logging.getLogger("NetConfigQA_VLLM") # Global placeholder
 
 # --- Core Logic Reuse ---
+
+def normalize_levels(levels: Optional[List[str]]) -> Set[str]:
+    """Normalize level arguments (e.g., l5 -> L5)."""
+    if not levels:
+        return set()
+    return {str(level).strip().upper() for level in levels if str(level).strip()}
 
 def extract_answer_from_raw(raw_text: str, answer_type: str) -> str:
     """
@@ -504,7 +510,13 @@ REMEMBER: After </think>, output ONLY the answer value on ONE line. Nothing else
             user_msg = messages[1]["content"] if len(messages) > 1 else ""
             return f"{system_msg}\n\n{user_msg}"
 
-    def run(self, csv_path: str, limit: int = None):
+    def run(
+        self,
+        csv_path: str,
+        limit: int = None,
+        include_levels: Optional[List[str]] = None,
+        exclude_levels: Optional[List[str]] = None,
+    ):
         logger.info(f"Loading dataset from {csv_path}")
         if not os.path.exists(csv_path):
             logger.error("Dataset not found.")
@@ -513,9 +525,26 @@ REMEMBER: After </think>, output ONLY the answer value on ONE line. Nothing else
         with open(csv_path, 'r', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             data = list(reader)
-        
-        if limit: data = data[:limit]
-        
+
+        include_set = normalize_levels(include_levels)
+        exclude_set = normalize_levels(exclude_levels)
+        original_count = len(data)
+
+        if include_set:
+            data = [row for row in data if row.get("level", "").strip().upper() in include_set]
+
+        if exclude_set:
+            data = [row for row in data if row.get("level", "").strip().upper() not in exclude_set]
+
+        logger.info(
+            f"Dataset filter applied: original={original_count}, after_filter={len(data)}, "
+            f"include_levels={sorted(include_set) if include_set else 'ALL'}, "
+            f"exclude_levels={sorted(exclude_set) if exclude_set else 'NONE'}"
+        )
+
+        if limit:
+            data = data[:limit]
+
         logger.info("Generating prompts/messages...")
         
         # Load context (Configs or Facts)
@@ -597,6 +626,8 @@ REMEMBER: After </think>, output ONLY the answer value on ONE line. Nothing else
                 "dataset": os.path.basename(csv_path),
                 "total_samples": len(results),
                 "max_tokens": self.max_tokens,
+                "include_levels": sorted(include_set) if include_set else [],
+                "exclude_levels": sorted(exclude_set) if exclude_set else [],
             },
             "results": results,
         }
@@ -622,6 +653,18 @@ def main():
 
     parser.add_argument("--gpu_util", type=float, default=0.9)
     parser.add_argument("--sample", type=int, default=None)
+    parser.add_argument(
+        "--include_levels",
+        nargs="+",
+        default=None,
+        help="평가에 포함할 level 목록 (예: --include_levels L1 L2 L3 L4 L5)",
+    )
+    parser.add_argument(
+        "--exclude_levels",
+        nargs="+",
+        default=["L6"],
+        help="평가에서 제외할 level 목록 (기본값: L6)",
+    )
     args = parser.parse_args()
     
     # 여러 모델 순차 실행
@@ -643,7 +686,12 @@ def main():
                 openai_base_url=args.openai_base_url,
                 max_tokens=args.max_tokens,
             )
-            evaluator.run(args.dataset, args.sample)
+            evaluator.run(
+                args.dataset,
+                args.sample,
+                include_levels=args.include_levels,
+                exclude_levels=args.exclude_levels,
+            )
             
             # 메모리 정리 (중요!)
             del evaluator
