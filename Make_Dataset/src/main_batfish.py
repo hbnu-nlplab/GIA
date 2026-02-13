@@ -317,6 +317,9 @@ def main():
     out_dir.mkdir(parents=True, exist_ok=True)
 
     timestamp = time.strftime("%Y%m%d_%H%M%S")
+    run_dir = out_dir / timestamp
+    run_dir.mkdir(parents=True, exist_ok=True)
+    print(f"[Info] Run output directory: {run_dir}")
     
     # 2. 파싱 (Batfish Engine - Static Facts)
     print(f"[1] Parsing configurations using Batfish from root: {snapshot_root}")
@@ -331,7 +334,7 @@ def main():
         return
 
     # Facts 저장
-    facts_out = out_dir / f"{snapshot_root.name}_batfish_facts_{timestamp}.json"
+    facts_out = run_dir / f"{snapshot_root.name}_batfish_facts_{timestamp}.json"
     facts_out.write_text(json.dumps(facts, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"    -> Saved facts to {facts_out}")
 
@@ -869,8 +872,8 @@ def main():
 
     # 결과 저장 (CSV + JSON)
     base_filename = f"{lab_path.name}_dataset_batfish_{timestamp}"
-    csv_path = out_dir / f"{base_filename}.csv"
-    json_path = out_dir / f"{base_filename}.json"
+    csv_path = run_dir / f"{base_filename}.csv"
+    json_path = run_dir / f"{base_filename}.json"
     
     if qa_list:
         # 품질 지표 집계
