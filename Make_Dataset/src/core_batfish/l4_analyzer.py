@@ -42,6 +42,7 @@ class L4AnalyzerMixin:
     DISPOSITION_PRIORITY = {
         'NO_ROUTE': 1,              # 최우선: 명확한 라우팅 실패
         'NULL_ROUTED': 2,           # 의도적으로 버림 (Null0)
+        'ACL_DENY': 3,              # 정규화된 ACL 차단 상태
         'ACL_IN_DENIED': 3,         # ACL 차단 (Ingress)
         'ACL_OUT_DENIED': 3,        # ACL 차단 (Egress)
         'DENIED': 3,                # 일반 ACL 차단
@@ -49,6 +50,7 @@ class L4AnalyzerMixin:
         'DENIED_OUT': 3,            # ACL 차단 변형
         'NEIGHBOR_UNREACHABLE': 4,  # 이웃 도달 불가
         'LOOP': 5,                  # 라우팅 루프
+        'EXTERNAL': 6,              # 네트워크 외부/정보부족 계열 정규화
         'EXITS_NETWORK': 6,         # 낮은 우선순위: 네트워크를 벗어남 (성공일 수도 있음)
         'INSUFFICIENT_INFO': 6,     # 낮은 우선순위: 정보 불충분 (성공일 수도 있음)
         'UNKNOWN': 7                # 알 수 없는 상태
@@ -57,6 +59,29 @@ class L4AnalyzerMixin:
     def _make_evidence(self, query_name: str, params: dict) -> dict:
         """BatfishBuilder 내부용 evidence 생성 헬퍼"""
         return build_evidence(query_name, params, getattr(self, 'snapshot_name', ''))
+
+    def _normalize_disposition(self, disposition: str) -> str:
+        """
+        Batfish disposition 문자열을 데이터셋 계약용 라벨로 정규화합니다.
+        - 성공: ACCEPTED
+        - 실패: NO_ROUTE / ACL_DENY / EXTERNAL 등
+        """
+        d = str(disposition or "").upper()
+        if "ACCEPTED" in d or "DELIVERED" in d:
+            return "ACCEPTED"
+        if "NO_ROUTE" in d:
+            return "NO_ROUTE"
+        if "NULL_ROUTED" in d:
+            return "NULL_ROUTED"
+        if "DENIED" in d or "BLOCK" in d:
+            return "ACL_DENY"
+        if "NEIGHBOR_UNREACHABLE" in d:
+            return "NEIGHBOR_UNREACHABLE"
+        if "LOOP" in d:
+            return "LOOP"
+        if "EXITS_NETWORK" in d or "INSUFFICIENT_INFO" in d:
+            return "EXTERNAL"
+        return "UNKNOWN"
     
     # =========================================================================
     # 기본 L4 메트릭
@@ -77,12 +102,9 @@ class L4AnalyzerMixin:
             return AnswerResult("NOT_CONFIGURED", [], "path", evidence, "BATFISH_NOT_INITIALIZED")
         
         try:
-            # VRF 문제 해결: 노드 이름만 지정된 경우 [Loopback0] 추가
-            # 이렇게 하면 global routing table (default VRF)을 사용합니다.
-            if '[' not in src_location:
-                src_location_fixed = f"{src_location}[Loopback0]"
-                logger.debug(f"traceroute_path: Fixed src_location from '{src_location}' to '{src_location_fixed}'")
-                src_location = src_location_fixed
+            # 노드별 Loopback0 존재 여부를 고려해 안전하게 startLocation 보정
+            # (Leaf처럼 Loopback0이 없는 장비에서 무조건 [Loopback0]을 붙이면 실패 가능)
+            src_location = self._fix_start_location(src_location)
             
             result = self.bf.q.traceroute(
                 startLocation=src_location,
@@ -123,6 +145,7 @@ class L4AnalyzerMixin:
             return AnswerResult("OK", [], "path", evidence, "")
             
         except Exception as e:
+            logger.warning(f"traceroute_path error: {e}")
             return AnswerResult("UNKNOWN", [], "path", evidence, "BATFISH_QUERY_ERROR")
     
     def reachability_status(self, 
@@ -183,28 +206,16 @@ class L4AnalyzerMixin:
                                 current_path.append(node_name)
                     
                     disposition_str = str(getattr(trace, 'disposition', 'UNKNOWN'))
+                    normalized_disposition = self._normalize_disposition(disposition_str)
                     
                     # Success Cases - 즉시 성공으로 반환
-                    if 'ACCEPTED' in disposition_str.upper() or 'DELIVERED' in disposition_str.upper():
+                    if normalized_disposition == "ACCEPTED":
                         is_reachable = True
                         path = current_path
                         final_disposition = "ACCEPTED"
                         break
                     
                     # Failure Cases - 우선순위와 함께 수집
-                    # Disposition 정규화 및 우선순위 계산
-                    normalized_disposition = disposition_str
-                    if 'NO_ROUTE' in disposition_str or 'NULL_ROUTED' in disposition_str:
-                        normalized_disposition = 'NO_ROUTE'
-                    elif 'DENIED' in disposition_str or 'BLOCK' in disposition_str:
-                        normalized_disposition = 'ACL_DENY'
-                    elif 'INSUFFICIENT_INFO' in disposition_str:
-                        normalized_disposition = 'INSUFFICIENT_INFO'
-                    elif 'EXITS_NETWORK' in disposition_str:
-                        normalized_disposition = 'EXITS_NETWORK'
-                    elif 'NEIGHBOR_UNREACHABLE' in disposition_str:
-                        normalized_disposition = 'NEIGHBOR_UNREACHABLE'
-                    
                     priority = self.DISPOSITION_PRIORITY.get(normalized_disposition, 99)
                     failure_candidates.append((priority, normalized_disposition, current_path))
                 
@@ -212,6 +223,10 @@ class L4AnalyzerMixin:
                 if not is_reachable and failure_candidates:
                     failure_candidates.sort(key=lambda x: x[0])  # 우선순위 오름차순 정렬
                     _, final_disposition, path = failure_candidates[0]
+
+            # 정책 템플릿 계약: 실패 원인은 NO_ROUTE / ACL_DENY / EXTERNAL 중 하나로 제한
+            if not is_reachable and final_disposition not in {"NO_ROUTE", "ACL_DENY", "EXTERNAL"}:
+                final_disposition = "EXTERNAL"
             
             value = {"reachable": is_reachable, "path": path, "disposition": final_disposition}
             return AnswerResult("OK", value, "l4_result", evidence, "")

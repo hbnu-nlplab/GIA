@@ -57,18 +57,57 @@ def _remove_assumed_field(assumed_fields: List[str], field_name: str) -> None:
 
 
 def _dedupe_vrfs(vrfs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """Deduplicate VRF entries by name while preserving first occurrence."""
-    out: List[Dict[str, Any]] = []
-    seen = set()
+    """
+    VRF를 이름 기준으로 dedupe + 병합합니다.
+
+    Batfish/텍스트 파싱 조합에서 동일 VRF가 중복 생성될 수 있어,
+    단순 first-win 제거가 아니라 RT/RD 정보를 합쳐서 보존합니다.
+    """
+    merged: Dict[str, Dict[str, Any]] = {}
+
     for vrf in vrfs:
         if not isinstance(vrf, dict):
             continue
+
         name = str(vrf.get("name") or "").strip()
-        if not name or name in seen:
+        if not name:
             continue
-        seen.add(name)
-        out.append(vrf)
-    return out
+        key = name.lower()
+
+        if key not in merged:
+            merged[key] = {
+                "name": name,
+                "rd": None,
+                "import_rts": [],
+                "export_rts": [],
+                "route_targets": [],
+                # Compatibility keys
+                "rt_import": [],
+                "rt_export": [],
+            }
+
+        cur = merged[key]
+
+        # RD는 비어있지 않은 첫 값을 우선 사용
+        if not cur.get("rd") and vrf.get("rd"):
+            cur["rd"] = vrf.get("rd")
+
+        imp = {str(x).strip() for x in (vrf.get("import_rts") or vrf.get("rt_import") or []) if str(x).strip()}
+        exp = {str(x).strip() for x in (vrf.get("export_rts") or vrf.get("rt_export") or []) if str(x).strip()}
+        rt_all = {str(x).strip() for x in (vrf.get("route_targets") or []) if str(x).strip()}
+
+        if not imp and rt_all:
+            imp = set(rt_all)
+        if not exp and rt_all:
+            exp = set(rt_all)
+
+        cur["import_rts"] = sorted(set(cur["import_rts"]) | imp)
+        cur["export_rts"] = sorted(set(cur["export_rts"]) | exp)
+        cur["rt_import"] = sorted(set(cur["rt_import"]) | imp)
+        cur["rt_export"] = sorted(set(cur["rt_export"]) | exp)
+        cur["route_targets"] = sorted(set(cur["route_targets"]) | rt_all | imp | exp)
+
+    return list(merged.values())
 
 def parse_text_config(config_path: Path) -> Dict[str, Any]:
     """
@@ -304,11 +343,17 @@ def parse_text_config(config_path: Path) -> Dict[str, Any]:
             rd = rd_match.group(1) if rd_match else None
             rt_imports = re.findall(r'^\s*route-target import\s+(\S+)', content_bk, re.MULTILINE)
             rt_exports = re.findall(r'^\s*route-target export\s+(\S+)', content_bk, re.MULTILINE)
+            # route-target both X 는 import/export 모두에 해당
+            rt_both = re.findall(r'^\s*route-target both\s+(\S+)', content_bk, re.MULTILINE)
+            if rt_both:
+                rt_imports.extend(rt_both)
+                rt_exports.extend(rt_both)
             vrfs.append({
                 "name": vrf_name, "rd": rd, "import_rts": rt_imports, "export_rts": rt_exports,
                 "route_targets": list(set(rt_imports + rt_exports))
             })
-        text_facts["vrfs"] = vrfs
+        # 동일 VRF 중복 블록이 존재할 수 있어 name 기준으로 병합
+        text_facts["vrfs"] = _dedupe_vrfs(vrfs)
 
     except Exception as e:
         msg = f"Failed to text parse {config_path}: {e}"

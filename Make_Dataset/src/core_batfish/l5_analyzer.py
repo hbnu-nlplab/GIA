@@ -51,6 +51,7 @@ class L5AnalyzerMixin:
     DISPOSITION_PRIORITY = {
         'NO_ROUTE': 1,              # 최우선: 명확한 라우팅 실패
         'NULL_ROUTED': 2,           # 의도적으로 버림 (Null0)
+        'ACL_DENY': 3,              # 정규화된 ACL 차단 상태
         'ACL_IN_DENIED': 3,         # ACL 차단 (Ingress)
         'ACL_OUT_DENIED': 3,        # ACL 차단 (Egress)
         'DENIED': 3,                # 일반 ACL 차단
@@ -58,6 +59,7 @@ class L5AnalyzerMixin:
         'DENIED_OUT': 3,            # ACL 차단 변형
         'NEIGHBOR_UNREACHABLE': 4,  # 이웃 도달 불가
         'LOOP': 5,                  # 라우팅 루프
+        'EXTERNAL': 6,              # 네트워크 외부/정보부족 계열 정규화
         'EXITS_NETWORK': 6,         # 낮은 우선순위: 네트워크를 벗어남 (성공일 수도 있음)
         'INSUFFICIENT_INFO': 6,     # 낮은 우선순위: 정보 불충분 (성공일 수도 있음)
         'UNKNOWN': 7                # 알 수 없는 상태
@@ -66,6 +68,25 @@ class L5AnalyzerMixin:
     def _make_evidence(self, query_name: str, params: dict) -> dict:
         """BatfishBuilder 내부용 evidence 생성 헬퍼"""
         return build_evidence(query_name, params, getattr(self, 'snapshot_name', ''))
+
+    def _normalize_disposition(self, disposition: str) -> str:
+        """Batfish disposition을 분석/정답용 라벨로 정규화합니다."""
+        d = str(disposition or "").upper()
+        if "ACCEPTED" in d or "DELIVERED" in d:
+            return "ACCEPTED"
+        if "NO_ROUTE" in d:
+            return "NO_ROUTE"
+        if "NULL_ROUTED" in d:
+            return "NULL_ROUTED"
+        if "DENIED" in d or "BLOCK" in d:
+            return "ACL_DENY"
+        if "NEIGHBOR_UNREACHABLE" in d:
+            return "NEIGHBOR_UNREACHABLE"
+        if "LOOP" in d:
+            return "LOOP"
+        if "EXITS_NETWORK" in d or "INSUFFICIENT_INFO" in d:
+            return "EXTERNAL"
+        return "UNKNOWN"
     
 
     
@@ -210,12 +231,14 @@ class L5AnalyzerMixin:
             headers = HeaderConstraints()
             if dst_ip:
                 headers = HeaderConstraints(dstIps=dst_ip)
-            
-            diff = self.bf.q.differentialReachability(
-                headers=headers,
+
+            # Some pybatfish versions do not accept snapshot parameters
+            # at question-construction time; pass them to answer() instead.
+            diff_q = self.bf.q.differentialReachability(headers=headers)
+            diff = diff_q.answer(
                 snapshot=snapshot2,
                 reference_snapshot=snapshot1
-            ).answer().frame()
+            ).frame()
             
             flows = []
             if not diff.empty:
@@ -321,8 +344,20 @@ class L5AnalyzerMixin:
 
             if base_traces.empty:
                 return AnswerResult("NOT_APPLICABLE", {"impact": "NONE", "description": "No base path"}, "link_failure_result", evidence, "NO_BASE_PATH")
-
-            base_trace_obj = base_traces['Traces'].iloc[0][0]
+            base_trace_list = base_traces['Traces'].iloc[0] if 'Traces' in base_traces.columns else []
+            if not base_trace_list:
+                return AnswerResult("NOT_APPLICABLE", {"impact": "NONE", "description": "No base trace"}, "link_failure_result", evidence, "NO_BASE_TRACE")
+            base_trace_obj = base_trace_list[0]
+            base_disposition = self._normalize_disposition(getattr(base_trace_obj, 'disposition', 'UNKNOWN'))
+            # baseline이 이미 불통이면 링크 다운 영향 분석의 기준 자체가 성립하지 않음
+            if base_disposition != "ACCEPTED":
+                return AnswerResult(
+                    "NOT_APPLICABLE",
+                    {"impact": "NONE", "description": f"Baseline not reachable ({base_disposition})"},
+                    "link_failure_result",
+                    evidence,
+                    "BASELINE_NOT_REACHABLE"
+                )
             base_path_nodes = []
             for hop in base_trace_obj.hops:
                  node = getattr(hop, 'node', None)
@@ -345,7 +380,7 @@ class L5AnalyzerMixin:
 
             failure_snapshot_name = f"failure_{node1}_{node2}_{int(time.time())}"
             self.bf.fork_snapshot(
-                base_name=self.bf.snapshot,
+                base_name=self.snapshot_name,
                 name=failure_snapshot_name,
                 deactivate_interfaces=deactivate_list,
                 overwrite=True
@@ -363,19 +398,42 @@ class L5AnalyzerMixin:
                 impact = "DISCONNECTED"
                 desc = "Traffic disconnected after link failure"
             else:
-                fail_trace_obj = fail_traces['Traces'].iloc[0][0]
-                fail_path_nodes = []
-                for hop in fail_trace_obj.hops:
-                     node = getattr(hop, 'node', None)
-                     if node:
-                         fail_path_nodes.append(getattr(node, 'hostname', str(node)))
-                
-                if base_path_nodes == fail_path_nodes:
-                     impact = "NONE"
-                     desc = "Path unchanged"
+                fail_trace_list = fail_traces['Traces'].iloc[0] if 'Traces' in fail_traces.columns else []
+                if not fail_trace_list:
+                    impact = "DISCONNECTED"
+                    desc = "No trace after link failure"
                 else:
-                     impact = "REROUTED"
-                     desc = f"Rerouted: {'->'.join(fail_path_nodes)}"
+                    accepted_paths = []
+                    failure_dispositions = []
+
+                    for fail_trace_obj in fail_trace_list:
+                        raw_disposition = getattr(fail_trace_obj, 'disposition', 'UNKNOWN')
+                        disposition = self._normalize_disposition(raw_disposition)
+
+                        fail_path_nodes = []
+                        for hop in getattr(fail_trace_obj, 'hops', []):
+                            node = getattr(hop, 'node', None)
+                            if node:
+                                fail_path_nodes.append(getattr(node, 'hostname', str(node)))
+
+                        if disposition == "ACCEPTED":
+                            accepted_paths.append(fail_path_nodes)
+                        else:
+                            failure_dispositions.append(disposition)
+
+                    if not accepted_paths:
+                        impact = "DISCONNECTED"
+                        reason = failure_dispositions[0] if failure_dispositions else "UNKNOWN"
+                        desc = f"Traffic unreachable after failure ({reason})"
+                    else:
+                        # 도달 가능한 후보 중 가장 짧은 경로를 대표 경로로 사용
+                        best_path = sorted(accepted_paths, key=len)[0]
+                        if base_path_nodes == best_path:
+                            impact = "NONE"
+                            desc = "Path unchanged"
+                        else:
+                            impact = "REROUTED"
+                            desc = f"Rerouted: {'->'.join(best_path)}"
             
             return AnswerResult("OK", {"impact": impact, "description": desc}, "link_failure_result", evidence, "")
 
@@ -402,10 +460,11 @@ class L5AnalyzerMixin:
              return AnswerResult("NOT_CONFIGURED", {"changed": False, "affected_flows": []}, "config_change_result", evidence, "BATFISH_NOT_INITIALIZED")
         
         try:
-            diff_result = self.bf.q.differentialReachability(
+            diff_q = self.bf.q.differentialReachability()
+            diff_result = diff_q.answer(
                 snapshot=after_snapshot,
                 reference_snapshot=before_snapshot
-            ).answer().frame()
+            ).frame()
             
             if diff_result.empty:
                  return AnswerResult("OK", {"changed": False, "affected_flows": []}, "config_change_result", evidence, "")
@@ -449,7 +508,8 @@ class L5AnalyzerMixin:
                         ipProtocols=["TCP"]
                     ),
                     pathConstraints=PathConstraints(
-                        forbiddenLocations=[waypoint_node]
+                        # Batfish expects a node-spec string, not a list.
+                        forbiddenLocations=waypoint_node
                     )
                 ).answer().frame()
                 
@@ -822,7 +882,8 @@ class L5AnalyzerMixin:
             failure_reasons = []  # (priority, disposition, blocking_node) 튜플 리스트
             
             for trace in traces:
-                disposition = getattr(trace, 'disposition', 'UNKNOWN')
+                raw_disposition = getattr(trace, 'disposition', 'UNKNOWN')
+                disposition = self._normalize_disposition(raw_disposition)
                 
                 # 경로 추출
                 hops = getattr(trace, 'hops', [])
@@ -877,15 +938,6 @@ class L5AnalyzerMixin:
             # 스냅샷 정리는 Batfish 설정에 따름 (일단 유지하거나 추후 자동정리)
             pass
     
-        """
-        L4: ACL 차단 규칙 상세 분석
-        Returns: AnswerResult(value={"blocked": bool, "rules": List[str]}, type="acl_rule_result")
-        """
-        # ... logic ...
-        pass # The previous code ended abruptly in the view, but assumed acl_rule_blocking exists below.
-        # Actually I need to insert the NEW method before the end of the class or in a suitable place. 
-        # I will insert it after multi_link_failure_analysis.
-
     def redundancy_verification(self, node1: str, node2: str) -> AnswerResult:
         """
         L5 고급: 이중 장비 장애(Dual Failure) 시뮬레이션
@@ -958,10 +1010,6 @@ class L5AnalyzerMixin:
     # 추가 메트릭 (L4/L5 혼합)
     # =========================================================================
     
-    def acl_rule_blocking(self, src_ip, dst_ip, dst_port, protocol="tcp"):
-         # ... (existing content, simplified for brevity in replacement) ...
-         pass 
-
     def triple_node_failure(self, node1: str, node2: str, node3: str) -> AnswerResult:
         """
         L5 Advanced: Triple Node Failure Simulation

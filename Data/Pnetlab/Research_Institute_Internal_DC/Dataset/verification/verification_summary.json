@@ -1,0 +1,57 @@
+{
+  "title": "NetConfigQA2.0 Ground Truth Verification Summary",
+  "topology": "Research_Institute_Internal_DC",
+  "date": "2026-02-13",
+  "dataset_total_qa": 1304,
+  "verification_methods": {
+    "method1_independent_parser": {
+      "description": "Batfish-independent .cfg parser (pure Python + Regex) for L1-L3 full verification",
+      "scope": "L1-L3 전수검증 (800 QA)",
+      "total_verified": 800,
+      "match": 796,
+      "mismatch": 4,
+      "agreement_rate_raw": 0.995,
+      "by_level": {
+        "L1": {
+          "total": 640,
+          "match": 636,
+          "mismatch": 4
+        },
+        "L2": {
+          "total": 25,
+          "match": 25,
+          "mismatch": 0
+        },
+        "L3": {
+          "total": 135,
+          "match": 135,
+          "mismatch": 0
+        }
+      },
+      "by_answer_type": {
+        "text": {
+          "total": 256,
+          "match": 256
+        },
+        "set": {
+          "total": 282,
+          "match": 282
+        },
+        "number": {
+          "total": 162,
+          "match": 158
+        },
+        "map": {
+          "total": 100,
+          "match": 100
+        }
+      }
+    },
+    "method3_pnetlab_emulation": {
+      "description": "PNETLab 에뮬레이션 환경에서 traceroute/ping 실행하여 L4-L5 검증",
+      "scope": "L4-L5 표본 (44 QA: L4 23, L5 21)",
+      "status": "GUIDE_GENERATED",
+      "note": "가이드 및 체크리스트 생성 완료. 사람이 PNETLab에서 실행해야 함."
+    }
+  }
+}

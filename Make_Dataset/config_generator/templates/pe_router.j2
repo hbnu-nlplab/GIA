@@ -62,12 +62,25 @@ interface {{ intf.name }}
 {% if intf.vrf is defined %}
  vrf forwarding {{ intf.vrf }}
 {% endif %}
+{% if intf.ip is defined %}
  ip address {{ intf.ip | ip_address }} {{ intf.ip | netmask }}
+{% endif %}
+{% if intf.description is defined %}
+ description {{ intf.description }}
+{% endif %}
  duplex auto
  speed auto
  media-type rj45
 {% if intf.mpls|default(false) %}
  mpls ip
+{% endif %}
+{% if intf.xconnect is defined %}
+ xconnect {{ intf.xconnect.peer_ip }} {{ intf.xconnect.pw_id }} encapsulation mpls
+{% endif %}
+{% if intf.hsrp is defined %}
+ standby {{ intf.hsrp.group }} ip {{ intf.hsrp.vip }}
+ standby {{ intf.hsrp.group }} priority {{ intf.hsrp.priority }}
+ standby {{ intf.hsrp.group }} preempt
 {% endif %}
 !
 {% endfor %}
@@ -83,15 +96,15 @@ router ospf {{ topology.routing.ospf.process_id }}
  router-id {{ node.loopback | ip_address }}
 {% if topology.routing.ospf.networks == 'auto' %}
  ! Auto-generated OSPF networks for Core Interfaces
- network {{ node.loopback | ip_address }} 0.0.0.0 area {{ topology.routing.ospf.area }}
+ network {{ node.loopback | ip_address }} 0.0.0.0 area {{ node.ospf_area | default(topology.routing.ospf.area) }}
  {% for intf in node.interfaces %}
   {% if intf.mpls|default(false) %}
- network {{ intf.ip | network_address }} {{ intf.ip | wildcard_mask }} area {{ topology.routing.ospf.area }}
+ network {{ intf.ip | network_address }} {{ intf.ip | wildcard_mask }} area {{ intf.ospf_area | default(node.ospf_area | default(topology.routing.ospf.area)) }}
   {% endif %}
  {% endfor %}
 {% endif %}
 !
-router bgp {{ topology.as_number }}
+router bgp {{ node.local_as | default(topology.as_number) }}
  bgp log-neighbor-changes
 {% for neighbor in node.bgp_neighbors %}
  neighbor {{ neighbor.ip }} remote-as {{ neighbor.as }}
