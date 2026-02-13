@@ -129,6 +129,10 @@ class RuleBasedGenerator:
             cat = meta.get("category")
             if cat not in categories:
                 continue
+
+            # Submission path default: skip deprecated/excluded metrics.
+            if meta.get("deprecated", False) or meta.get("submission_excluded", False):
+                continue
             
             # Skip L4/L5 metrics for RuleBasedGenerator as they are handled by BatfishBuilder
             # unless we decide to unify generation later.
