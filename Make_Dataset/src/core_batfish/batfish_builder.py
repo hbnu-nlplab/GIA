@@ -65,9 +65,19 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
     - L6AnalyzerMixin: Diagnostic 분석 (Fault Injection, 역추론)
     """
 
-    def __init__(self, network_name: str, snapshot_path: str, policies_path: str = None, batfish_host: str = "localhost"):
+    def __init__(
+        self,
+        network_name: str,
+        snapshot_path: str,
+        policies_path: str = None,
+        batfish_host: str = "localhost",
+        question_lang: str = "ko",
+    ):
         # Fix: Pass arguments by keyword to avoid mismatch with BatfishBase signature
         super().__init__(snapshot_path=snapshot_path, network_name=network_name, batfish_host=batfish_host)
+        self.question_lang = str(question_lang or "ko").strip().lower()
+        if self.question_lang not in {"ko", "en"}:
+            raise ValueError(f"Unsupported question_lang: {self.question_lang}")
         
         self.metrics_metadata = {}
         if policies_path:
@@ -79,8 +89,15 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                 logger.error(f"Failed to load policies from {policies_path}: {e}")
 
     def _get_template(self, metric: str, default: str) -> str:
-        """Get template from metadata or return default."""
+        """Get localized template from metadata or return default."""
         if metric in self.metrics_metadata:
+            if self.question_lang == "en":
+                template_en = str(self.metrics_metadata[metric].get("template_en", "")).strip()
+                if not template_en:
+                    raise ValueError(
+                        f"Metric '{metric}' is missing template_en for question_lang=en"
+                    )
+                return template_en
             return self.metrics_metadata[metric].get("template", default)
         return default
     
@@ -323,7 +340,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                     if vrfs_list:
                         vrf_names.update(vrfs_list)
             
-            vrf_list = list(vrf_names)
+            vrf_list = sorted(vrf_names)
             if len(vrf_list) >= 2:
                 for i, vrf1 in enumerate(vrf_list[:3]):
                     for vrf2 in vrf_list[i+1:4]:
