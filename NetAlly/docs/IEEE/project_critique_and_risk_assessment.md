@@ -40,7 +40,7 @@
 -   **현황**: 실험 설계는 완벽하지만, 코드는 아직 `Make_Dataset/src/` 일부만 존재.
 -   **문제**:
     -   `verify_dataset.py` (Layer 1) 구현 및 1,128개 전수 검사 → **버그 수정에 예상보다 오래 걸릴 수 있음**.
-    -   **Lab-B (20노드)** 구축: Config Generator가 있어도, PNETLab에서 20개 노드를 띄우고 L2 연결(케이블링)을 확인하고, OSPF/BGP가 정상적으로 올라오는지 디버깅하는 데 **최소 3-4일** 소요될 수 있음.
+    -   **Lab-B (20노드)** 구축: .cfg 파일을 PNETLab config에 붙여넣기로 바로 적용 가능하므로, 병목은 토폴로지 설계(IP 체계/AS 구조 등)이며 구현 자체는 빠름. **설계 1~2일 + 구현 반나절** 정도 소요 예상.
     -   **NIKA/NetPress 연동**: 외부 코드를 가져와서 우리 Agent에 맞게 어댑터를 짜는 건 생각보다 복잡함 (환경 설정 헬).
 
 ### 🚨 Risk 2: 검증의 순환 논증 (Circular Reasoning)
@@ -165,6 +165,24 @@
 - `3-Check_Connectivity.py`는 현재 첫 장비 1대만 점검하여 대규모 Lab 검증 지표로는 부족.
 - `lab_scalability_design.md`의 실행 커맨드 일부는 현재 스크립트 인자와 불일치.
 
+#### ⚠️ Risk 8: L2 질문 보강 난이도
+
+- v2 기준 L2 질문이 **21개뿐** (L1: 634, L3: 127 대비 극히 적음)
+- `rule_based_generator.py`의 Scope Expansion이 L1(DEVICE scope)과 L5에만 효과적이고, L2(GLOBAL scope 집계)에는 확장 메커니즘이 약함
+- 목표 50개를 채우려면 `policies.json`에 L2용 메트릭을 수동 추가하거나, GLOBAL scope에서도 집계 변형을 자동 생성하는 로직이 필요
+
+#### ⚠️ Risk 9: TA-Acc 채점 코드 위치 분산
+
+- 채점 코드가 레거시 폴더(`Experiment/code/NetConfigQA2/analyze_results_netconfigqa.py`)에 존재
+- NetAlly 자동 평가(Exp.3)에서 이 채점 로직을 재사용하려면 별도 통합 작업 필요
+- 추론 코드: `Experiment/code/NetConfigQA2/run_netconfigqa_eval_vllm.py`
+
+#### 🚨 Risk 10: Exp.3 NetAlly 자동 평가 파이프라인 부재
+
+- NetAlly는 현재 **채팅 인터페이스 기반** — 1,128건 QA를 자동으로 풀려면 batch evaluation harness가 필요
+- `NetAlly/eval/` 디렉토리가 있으나 벤치마크 자동 평가 기능은 미구현
+- 비판 문서에서 "기존 랩에서 NetAlly 돌려서 성능 찍기"라고 했으나, **자동화 파이프라인 구현이 Exp.3의 실질적 병목**
+
 ### 7.3 TNMS 리뷰어 관점에서의 예상 공격 포인트
 
 1. "3-Layer 검증이 실제로 구현되었는가, 아니면 설계 문서만 있는가?"
@@ -179,7 +197,7 @@
 ### P0 (48시간 이내) — 논문 신뢰성 방어선 확보
 
 1. `verify_dataset.py` 최소 기능 구현 (L1-L5 우선, PASS/FAIL/SKIP 재현)
-2. Dataset ID 고유화 + evidence 플레이스홀더 제거
+2. ~~Dataset ID 고유화 + evidence 플레이스홀더 제거~~ ✅ **완료** (`main_batfish.py` 수정 — scope 인스턴스 값 기반 고유 ID + evidence에 실제 scope 값 사용)
 3. v2(2026-01-29) 기준 검증 보고서 재생성 (`*_verification.md`, `*_failures.csv`)
 
 ### P1 (3일) — Layer 2 실측 방어력 확보
