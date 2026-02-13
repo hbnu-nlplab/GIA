@@ -59,6 +59,7 @@ STRUCTURED_COMPARE_METRICS = {
     "compare_vrf_count",
 }
 PLACEHOLDER_PATTERN = re.compile(r"\\{[a-zA-Z_][a-zA-Z0-9_]*\\}")
+HANGUL_PATTERN = re.compile(r"[가-힣]")
 
 
 def canonical_dataset_answer_type(answer_type: str) -> str:
@@ -75,6 +76,130 @@ def canonical_dataset_answer_type(answer_type: str) -> str:
         "float": "number",
     }
     return aliases.get(at, at or "text")
+
+
+def _normalize_path_text(path: str) -> str:
+    """Normalize path separators to ASCII arrows for language-neutral contracts."""
+    return re.sub(r"\s*→\s*", " -> ", str(path or "").strip())
+
+
+def canonicalize_text_answer(metric_name: str, answer_text: str) -> str:
+    """
+    Canonicalize known Korean text answers into language-neutral contract tokens.
+    Only applies to deterministic/contracted patterns; free-form text is left as-is.
+    """
+    text = str(answer_text or "").strip()
+    if not text:
+        return text
+
+    # Direct token mapping
+    direct = {
+        "미설정": "NOT_CONFIGURED",
+        "없음": "NONE",
+        "경로 없음": "NO_PATH",
+        "허용됨": "ALLOWED",
+        "경유하지 않음": "NOT_TRAVERSED",
+        "예, 완전 분리": "YES_FULLY_DISCONNECTED",
+        "우회 경로 없음 (정책 준수)": "COMPLIANT",
+    }
+    if text in direct:
+        return direct[text]
+
+    # Common contracted patterns
+    m = re.fullmatch(r"(\d+)\s*개", text)
+    if m:
+        return m.group(1)
+
+    m = re.fullmatch(r"(.*)\((\d+)\s*개\)", text)
+    if m:
+        return f"{m.group(1).strip()}({m.group(2)})"
+
+    m = re.fullmatch(r"우회 경로 존재\s*\(경로:\s*(.+)\)", text)
+    if m:
+        return f"VIOLATION (path: {_normalize_path_text(m.group(1))})"
+
+    m = re.fullmatch(r"가능\s*\(대체경로:\s*(.+)\)", text)
+    if m:
+        return f"REROUTED (path: {_normalize_path_text(m.group(1))})"
+
+    m = re.fullmatch(r"불가능\s*\(원인:\s*(.+)\)", text)
+    if m:
+        return f"DISCONNECTED (reason: {m.group(1).strip()})"
+
+    m = re.fullmatch(r"차단됨\s*\(장비:\s*([^,]+),\s*원인:\s*(.+)\)", text)
+    if m:
+        return f"DENIED (device: {m.group(1).strip()}, reason: {m.group(2).strip()})"
+
+    m = re.fullmatch(r"경로:\s*(.+),\s*도달:\s*가능(?:\s*\((.+)\))?", text)
+    if m:
+        suffix = f"; DISPOSITION: {m.group(2).strip()}" if m.group(2) else ""
+        return f"PATH: {_normalize_path_text(m.group(1))}; REACHABLE: TRUE{suffix}"
+
+    m = re.fullmatch(r"경로:\s*(.+),\s*도달:\s*불가\s*\(원인:\s*(.+)\)", text)
+    if m:
+        return (
+            f"PATH: {_normalize_path_text(m.group(1))}; "
+            f"REACHABLE: FALSE; REASON: {m.group(2).strip()}"
+        )
+
+    m = re.fullmatch(r"아니오,\s*(\d+)\s*개 흐름만 영향", text)
+    if m:
+        return f"NO (affected_flows: {m.group(1)})"
+
+    m = re.fullmatch(r"DISCONNECTED\s*\(reason:\s*([A-Za-z0-9_.-]+)에서\s*(.+)\)", text)
+    if m:
+        return f"DISCONNECTED (reason: {m.group(2).strip()} at {m.group(1).strip()})"
+
+    # Metric-guided fallback for link-failure policy contract
+    if metric_name == "link_failure_impact" and text == "불가능":
+        return "DISCONNECTED"
+
+    # Generic fallback: numeric-count token cleanup and arrow normalization.
+    normalized = re.sub(r"(\d+)\s*개", r"\1", text)
+    normalized = re.sub(r"(\d+)\s*건", r"\1 entries", normalized)
+    normalized = normalized.replace("에서", " at ")
+    normalized = normalized.replace("경로:", "PATH:")
+    normalized = normalized.replace("도달:", "REACHABLE:")
+    normalized = normalized.replace("원인:", "REASON:")
+    normalized = normalized.replace("장비:", "DEVICE:")
+    normalized = _normalize_path_text(normalized)
+    return normalized
+
+
+def canonicalize_answers_for_language_neutral_contract(rows: list) -> int:
+    """
+    Normalize text-like answers in-place right before dataset serialization.
+    Returns the number of rows whose answers were changed.
+    """
+    changed = 0
+    text_like_types = {"text", "scalar_str", "enum"}
+    for row in rows:
+        answer_type = canonical_dataset_answer_type(str(row.get("answer_type", "")))
+        if answer_type not in text_like_types:
+            continue
+
+        raw_answer = row.get("answer")
+        try:
+            parsed = json.loads(raw_answer) if isinstance(raw_answer, str) else raw_answer
+        except Exception:
+            continue
+
+        if not isinstance(parsed, str):
+            continue
+
+        metric_name = ""
+        try:
+            evidence = json.loads(row.get("evidence", "{}"))
+            if isinstance(evidence, dict):
+                metric_name = str(evidence.get("metric", "")).strip()
+        except Exception:
+            metric_name = ""
+
+        canonical = canonicalize_text_answer(metric_name, parsed)
+        if canonical != parsed:
+            row["answer"] = json.dumps(canonical, ensure_ascii=False)
+            changed += 1
+    return changed
 
 
 def validate_answer(value, answer_type: str) -> tuple:
@@ -293,6 +418,13 @@ def main():
     parser.add_argument("--policies", default="policies.json", help="Path to policies JSON")
     parser.add_argument("--batfish-host", default="localhost", help="Batfish server host (e.g. localhost:8889)")
     parser.add_argument("--min-per-cat", type=int, default=50, help="Minimal questions per category")
+    parser.add_argument("--seed", type=int, default=42, help="Deterministic seed for question instantiation")
+    parser.add_argument(
+        "--question-lang",
+        choices=["ko", "en"],
+        default="ko",
+        help="Question template language (default: ko)",
+    )
     parser.add_argument(
         "--include-l6",
         action="store_true",
@@ -303,6 +435,9 @@ def main():
     # [Antigravity Mod v3] - 8889 Port & Snapshot Root Fix
     print(f"[Info] NetConfigQA Dataset Generator (Batfish Edition) - v20240129-01")
     print(f"[Info] L6 generation mode: {'ENABLED (--include-l6)' if args.include_l6 else 'DISABLED (submission default)'}")
+    print(f"[Info] Question language: {args.question_lang}")
+    print(f"[Info] Deterministic seed: {args.seed}")
+    random.seed(args.seed)
     
     lab_path = Path(args.lab_path).resolve()
     if not lab_path.exists():
@@ -380,7 +515,8 @@ def main():
         snapshot_path=str(snapshot_root), 
         network_name=snapshot_root.name,
         policies_path=str(policy_path),
-        batfish_host=args.batfish_host
+        batfish_host=args.batfish_host,
+        question_lang=args.question_lang,
     )
     bf_active = bf_builder.initialize()
     if bf_active:
@@ -392,7 +528,11 @@ def main():
     print(f"[2] Generating questions using policies: {policy_path}")
     # (policy_path is already resolved)
         
-    cfg = RuleBasedGeneratorConfig(policies_path=str(policy_path), min_per_cat=args.min_per_cat)
+    cfg = RuleBasedGeneratorConfig(
+        policies_path=str(policy_path),
+        min_per_cat=args.min_per_cat,
+        question_lang=args.question_lang,
+    )
     gen = RuleBasedGenerator(cfg)
     
     categories = [
@@ -424,7 +564,7 @@ def main():
             ips.sort(key=lambda x: 0 if x.startswith("10.255") else 1)
             host_ips[h] = ips
 
-    all_hosts = [d["system"]["hostname"] for d in facts["devices"]]
+    all_hosts = sorted(d["system"]["hostname"] for d in facts["devices"])
     all_asns = set()
     for d in facts["devices"]:
         las = d.get("routing", {}).get("bgp", {}).get("local_as")
@@ -460,7 +600,7 @@ def main():
                 instances.append({"host": h})
                 
         elif scope_type == "AS":
-            for a in all_asns:
+            for a in sorted(all_asns):
                 instances.append({"asn": a})
                 
         elif scope_type == "DEVICE_PAIR":
@@ -475,7 +615,7 @@ def main():
                 ospf = d.get("routing", {}).get("ospf", {})
                 for a in ospf.get("areas", {}):
                     if a is not None: areas.add(str(a))
-            for a in areas:
+            for a in sorted(areas):
                 instances.append({"area": a})
 
         elif scope_type == "VRF":
@@ -484,11 +624,11 @@ def main():
                 bgp_vrfs = d.get("routing", {}).get("bgp", {}).get("vrfs", [])
                 for v in bgp_vrfs:
                     if v.get("name"): vrfs.add(v["name"])
-            for v in vrfs:
+            for v in sorted(vrfs):
                 instances.append({"vrf": v})
 
         elif scope_type == "FLOW": 
-            valid_hosts = [h for h in all_hosts if host_ips.get(h)]
+            valid_hosts = sorted(h for h in all_hosts if host_ips.get(h))
             if len(valid_hosts) >= 2:
                 for _ in range(5): 
                     src, dst = random.sample(valid_hosts, 2)
@@ -505,12 +645,13 @@ def main():
              if bf_active:
                  edges = bf_builder.get_layer3_edges()
                  if edges:
+                     edges = sorted(edges, key=lambda e: (str(e.get("node1", "")), str(e.get("node2", ""))))
                      # Sample edges if too many
                      if len(edges) > 10: edges = random.sample(edges, 10)
                      for edge in edges:
                          # For each link failure, we need a test flow
                          # Randomly pick 3 src-dst pairs
-                         valid_hosts = [h for h in all_hosts if host_ips.get(h)]
+                         valid_hosts = sorted(h for h in all_hosts if host_ips.get(h))
                          if len(valid_hosts) >= 2:
                              for _ in range(3):
                                  t_src, t_dst = random.sample(valid_hosts, 2)
@@ -526,7 +667,7 @@ def main():
         
         elif scope_type == "VRF_PAIR":
             if bf_active:
-                vrfs = bf_builder.get_vrfs()
+                vrfs = sorted(bf_builder.get_vrfs())
                 if len(vrfs) >= 2:
                      pairs = list(itertools.combinations(vrfs, 2))
                      for v1, v2 in pairs:
@@ -566,7 +707,7 @@ def main():
                     elif metric == "loop_detection":
                         res = bf_builder.loop_detection()
                         
-                    elif metric == "blackhole_detection":
+                    elif metric in ("blackhole_detection", "blackhole_destination_list"):
                         res = bf_builder.blackhole_detection()
                         
                     elif metric == "acl_blocking_point":
@@ -575,7 +716,7 @@ def main():
                         if src_ip and dst_ip:
                             res = bf_builder.acl_blocking_point(src_ip, dst_ip)
                             
-                    elif metric == "waypoint_check":
+                    elif metric in ("waypoint_check", "waypoint_traversal_path"):
                          src_ip = inst.get("src_ip")
                          dst_ip = inst.get("dst_ip")
                          waypoint = inst.get("waypoint")
@@ -599,7 +740,7 @@ def main():
                          else:
                              print(f"[DEBUG] bounded_path_length missing params: {inst}")
 
-                    elif metric == "isolation_check":
+                    elif metric in ("isolation_check", "leaked_prefixes_list"):
                          v1 = inst.get("vrf1")
                          v2 = inst.get("vrf2")
                          if v1 and v2:
@@ -615,7 +756,7 @@ def main():
                          if n1 and n2 and ts and td:
                              res = bf_builder.link_failure_impact(n1, n2, ts, td)
 
-                    elif metric == "k_failure_tolerance":
+                    elif metric in ("k_failure_tolerance", "redundant_paths_list"):
                          src = inst.get("src_host") or inst.get("host1")
                          dst_ip = inst.get("dst_ip")
                          # If no dst_ip, lookup host2
@@ -628,9 +769,18 @@ def main():
                              print(f"[DEBUG] k_failure_tolerance missing params: {inst}")
 
                     elif metric == "policy_compliance_check":
-                         res = bf_builder.policy_compliance_check()
+                         # waypoint 미지정 시 transit 노드를 자동 선택해 의미 있는 정책검증 수행
+                         waypoint = inst.get("waypoint")
+                         if not waypoint:
+                             transit = bf_builder.get_transit_nodes()
+                             waypoint = transit[0] if transit else ""
+                         res = bf_builder.policy_compliance_check(
+                             policy_type="waypoint",
+                             waypoint_node=waypoint,
+                             policy_name=inst.get("policy_name", "")
+                         )
 
-                    elif metric == "ospf_backbone_contiguity":
+                    elif metric in ("ospf_backbone_contiguity", "ospf_area0_routers"):
                          res = bf_builder.ospf_backbone_contiguity()
 
                     else:
@@ -776,6 +926,14 @@ def main():
             answer_type = canonical_dataset_answer_type(
                 res["answer_type"] if isinstance(res, dict) else res.answer_type
             )
+            if answer_type in {"text", "scalar_str", "enum"}:
+                try:
+                    parsed_text = json.loads(a_json)
+                except Exception:
+                    parsed_text = None
+                if isinstance(parsed_text, str):
+                    parsed_text = canonicalize_text_answer(metric_name, parsed_text)
+                    a_json = json.dumps(parsed_text, ensure_ascii=False)
 
             qa_list.append({
                 "id": unique_id,
@@ -824,6 +982,13 @@ def main():
                                  answer_val = int(answer_val)
                     except ValueError:
                         pass # Keep as is if conversion fails
+                # 2-b. JSON 타입은 문자열 원문이 들어오면 object로 복원 (이중 직렬화 방지)
+                if q["answer_type"] == "json" and isinstance(answer_val, str):
+                    try:
+                        answer_val = json.loads(answer_val)
+                    except Exception:
+                        # 파싱 불가 시 원문 유지
+                        pass
                 metric_name = str(evidence.get("metric", q.get("id", ""))).strip()
                 scope = evidence.get("scope") if isinstance(evidence, dict) else {}
                 if not isinstance(scope, dict):
@@ -835,6 +1000,9 @@ def main():
                     generation_checks["duplicate_id_v2_skipped"] += 1
                     continue
                 seen_id_v2.add(id_v2)
+                answer_type = canonical_dataset_answer_type(q["answer_type"])
+                if answer_type in {"text", "scalar_str", "enum"} and isinstance(answer_val, str):
+                    answer_val = canonicalize_text_answer(metric_name, answer_val)
                 
                 qa_list.append({
                     "id": str(q["id"]),
@@ -843,7 +1011,7 @@ def main():
                     "level": q["level"],
                     "question": q["question"],
                     "answer_status": "OK",
-                    "answer_type": canonical_dataset_answer_type(q["answer_type"]),
+                    "answer_type": answer_type,
                     "answer": json.dumps(answer_val, ensure_ascii=False),
                     "unknown_reason": "",
                     "evidence": json.dumps(evidence, ensure_ascii=False),
@@ -890,8 +1058,12 @@ def main():
             else:
                 print(f"  -> {cat}: no seed rows available (coverage unchanged)")
 
+    canonicalized_count = canonicalize_answers_for_language_neutral_contract(qa_list)
+    if canonicalized_count:
+        print(f"[3.9] Canonicalized text answers for language-neutral contract: {canonicalized_count} rows")
+
     # 결과 저장 (CSV + JSON)
-    base_filename = f"{lab_path.name}_dataset_batfish_{timestamp}"
+    base_filename = f"{lab_path.name}_dataset_batfish_{timestamp}_{args.question_lang}"
     csv_path = run_dir / f"{base_filename}.csv"
     json_path = run_dir / f"{base_filename}.json"
     
@@ -936,6 +1108,7 @@ def main():
             "meta": {
                 "lab_name": lab_path.name,
                 "timestamp": timestamp,
+                "question_lang": args.question_lang,
                 "total_questions": len(qa_list),
                 "pipeline_version": PIPELINE_VERSION,
                 "policies_file": str(policy_path) if policy_path else None,
