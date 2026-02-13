@@ -140,6 +140,60 @@ class BuilderCore:
                 names.add(str(name))
         return len(names)
 
+    def _merged_bgp_vrfs_for_rt(self, d: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """
+        Batfish/파서 중복으로 동일 VRF가 여러 번 생성되는 경우를 방어하기 위해
+        VRF 이름 기준으로 병합한 뒤 RT(import/export)를 고유 집합으로 정규화합니다.
+
+        왜 필요한가:
+        - 동일 VRF가 2회 이상 등장하면 rt_import_count/rt_export_count가 이중 집계될 수 있음
+        - 본 메서드는 'VRF 중복'과 'RT 중복'을 모두 제거한 canonical view를 제공합니다.
+        """
+        merged: Dict[str, Dict[str, Any]] = {}
+
+        for v in self._bgp_vrfs(d):
+            if not isinstance(v, dict):
+                continue
+
+            name_raw = str(v.get("name") or "").strip()
+            if not name_raw:
+                continue
+            name_key = name_raw.lower()
+
+            if name_key not in merged:
+                merged[name_key] = {
+                    "name": name_raw,
+                    "rt_import": set(),
+                    "rt_export": set(),
+                }
+
+            # 다양한 입력 키를 모두 흡수 (파서/버전 차이 대응)
+            rt_import = v.get("rt_import") or v.get("import_rts") or []
+            rt_export = v.get("rt_export") or v.get("export_rts") or []
+            route_targets = v.get("route_targets") or []
+
+            imp_set = {str(x).strip() for x in rt_import if str(x).strip()}
+            exp_set = {str(x).strip() for x in rt_export if str(x).strip()}
+            rt_set = {str(x).strip() for x in route_targets if str(x).strip()}
+
+            # 방향 정보가 없고 route_targets만 있는 경우(예: route-target both 파싱) fallback
+            if not imp_set and rt_set:
+                imp_set = set(rt_set)
+            if not exp_set and rt_set:
+                exp_set = set(rt_set)
+
+            merged[name_key]["rt_import"].update(imp_set)
+            merged[name_key]["rt_export"].update(exp_set)
+
+        out: List[Dict[str, Any]] = []
+        for item in merged.values():
+            out.append({
+                "name": item["name"],
+                "rt_import": sorted(item["rt_import"]),
+                "rt_export": sorted(item["rt_export"]),
+            })
+        return out
+
     # ---------- 공통 계산(여러 테스트에서 재활용할 집합/맵) ----------
     def _precompute(self) -> Dict[str, Any]:
         pre: Dict[str, Any] = {}
@@ -1042,7 +1096,7 @@ class BuilderCore:
                 if host and self._hostname(d) != host:
                     continue
                 c = 0
-                for v in (((d.get("routing") or {}).get("bgp") or {}).get("vrfs") or []):
+                for v in self._merged_bgp_vrfs_for_rt(d):
                     c += len(v.get("rt_import", []) or [])
                 return "numeric", c
             return "numeric", 0
@@ -1052,7 +1106,7 @@ class BuilderCore:
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
                 c=0
-                for v in (((d.get("routing") or {}).get("bgp") or {}).get("vrfs") or []):
+                for v in self._merged_bgp_vrfs_for_rt(d):
                     c += len(v.get("rt_export", []) or [])
                 return "numeric", c
             return "numeric", 0
@@ -1345,8 +1399,8 @@ class BuilderCore:
             for d in self.devices:
                 host = self._hostname(d)
                 las = self._bgp_local_as(d)
-                if las is not None:
-                    as_info.append(f"{host}: AS {las}")
+                as_value = las if las is not None else "None"
+                as_info.append(f"{host}: AS {as_value}")
             info_str = ", ".join(as_info) if as_info else "No Info"
             return "text", info_str
 
