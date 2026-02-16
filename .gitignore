@@ -95,3 +95,9 @@ NetAlly/frontend/playwright-report/
 # NetAlly runtime settings/cache
 NetAlly/.runtime/
 NetAlly/.tmp/
+
+# Config generator output (auto-generated)
+Make_Dataset/config_generator/output/
+
+# Git backup bundles
+*.bundle
