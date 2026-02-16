@@ -1,6 +1,6 @@
 # IEEE TNMS 논문 준비 — 문서 인덱스
 
-> **최종 업데이트**: 2026-02-13  
+> **최종 업데이트**: 2026-02-14
 > **프로젝트**: NetAlly + NetConfigQA2.0  
 > **학회**: IEEE Transactions on Network and Service Management (TNMS)  
 > **마감**: 2026-02-28
@@ -9,7 +9,7 @@
 > - 공개 v2 데이터셋 기준: **1,128 QA, L1~L5, 17 카테고리**  
 > - L6는 코드 경로는 유지하되, 이번 TNMS 제출에서는 **명시적으로 제외**  
 >   (이유: fault별 스냅샷/관측정보 관리 비용, single-LLM baseline 공정성 저하, 일정 내 재현성 리스크)  
-> - 구현 착수 항목: `verify_dataset.py` 계열, `Make_Dataset/config_generator/` 계열 (현재 미구현)
+> - ~~구현 착수 항목~~: `verify_dataset.py` 계열 ✅, `Make_Dataset/config_generator/` 계열 ✅ (Lab-B/C/D 전부 생성 완료)
 
 ---
 
@@ -30,7 +30,7 @@ NetAlly/docs/IEEE/
 │
 ├── 🧪 실험 설계
 │   ├── experiment_design.md     ← 5가지 실험 상세 설계 (테이블/그래프 형식 포함)
-│   ├── lab_scalability_design.md ← 실험실 확장 설계 (10→20→30→50 노드) + Config Generator
+│   ├── lab_scalability_design.md ← 실험실 확장 설계 (10→20→30→40 노드) + Config Generator
 │   └── verification_plan.md     ← Ground Truth Hybrid 검증 설계 (독립 파서 + 수동 + PNETLab, 설계 단계)
 │
 ├── ✅ 실행 관리
@@ -59,7 +59,7 @@ NetAlly/docs/IEEE/
 |:---:|---|---|:---:|
 | ④ | [experiment_design.md](./experiment_design.md) | 5가지 실험 상세: 검증(Exp.1), Baseline(Exp.2), NetAlly(Exp.3), 스케일러빌리티(Exp.4), 외부 벤치마크(Exp.5). Table/Figure 형식 사전 정의, Threats to Validity | ⭐⭐⭐⭐⭐ |
 | ⑤ | [verification_plan.md](./verification_plan.md) | Ground Truth 검증: Hybrid(Method 1/2/3). **Method 1-2 완료** (L1-L3 실질 100%). Method 3 미착수 | ⭐⭐⭐⭐ |
-| ⑥ | [lab_scalability_design.md](./lab_scalability_design.md) | Lab A~D(10~50노드) 토폴로지 설계, Config Generator(YAML+Jinja2), NetAlly 데이터셋 평가 실험, 구현 일정 | ⭐⭐⭐⭐ |
+| ⑥ | [lab_scalability_design.md](./lab_scalability_design.md) | Lab A~D(10~40노드) 토폴로지 설계, Config Generator(YAML+Jinja2), NetAlly 데이터셋 평가 실험, 구현 일정 | ⭐⭐⭐⭐ |
 
 ### 3단계: 평가 & 현황
 
@@ -104,7 +104,8 @@ flowchart TB
 
 | 항목 | 값 |
 |---|---|
-| 총 QA 쌍 | 1,048 (L1-L5, 최신 데이터셋 기준) |
+| 총 QA 쌍 | 1,128 (L1-L5, v2 기준) |
+| 언어 | 이중언어 (KO/EN) — 질문은 한국어/영어 선택, 정답은 영어 계약 토큰 |
 | 난이도 레벨 | 5 (L1~L5) |
 | 카테고리 | 17 |
 | 메트릭 | 127 |
@@ -146,11 +147,13 @@ flowchart TB
 
 | 작업 | 상태 | 문서 참조 |
 |---|:---:|---|
+| 이중언어 템플릿 품질 교정 (EN L4/L5 + KO 조사 + 답변 힌트 정렬) | ✅ | docs/Policies.md |
 | 검증 코드 구현 (Method 1-2) + 통합 파이프라인 | ✅ | verification_plan.md |
 | 검증 Method 3 가이드 생성 | ✅ | verification_plan.md (44 QA 가이드 완료) |
 | Method 2 사람 검토 (43 QA, ~2-3h) | ⬜ | verification/method2_manual_check/human_reviewer_guide.md |
 | Method 3 PNETLab 실행 (44 QA, ~4-6h) | ⬜ | verification/method3_pnetlab/pnetlab_verification_guide.md |
-| Lab-B Config 생성 | ⬜ | lab_scalability_design.md |
+| Config Generator + Lab-B/C/D cfg 생성 | ✅ | lab_scalability_design.md (20+30+40 = 90 configs) |
+| Lab-B/C/D PNETLab 배포 + 데이터셋 생성 | ⬜ | config_generator/docs/deployment_guide.md |
 | v2 데이터셋 재실험 (5 Models) | ⬜ | experiment_design.md Exp.2 |
 | NetAlly 데이터셋 평가 | ⬜ | experiment_design.md Exp.3 |
 | NIKA 적용 실험 | ⬜ | benchmark_compatibility.md |

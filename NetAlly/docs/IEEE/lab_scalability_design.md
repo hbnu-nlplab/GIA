@@ -1,6 +1,6 @@
 # 실험실 확장 & Config Generator 설계서
 
-> **목적**: 네트워크 규모(10→20→30→50 노드)와 도메인 다양성에 따른 LLM 성능 변화를 분석하기 위한 실험 환경 설계  
+> **목적**: 네트워크 규모(10→20→30→40 노드)와 도메인 다양성에 따른 LLM 성능 변화를 분석하기 위한 실험 환경 설계
 > **핵심 원칙**: 설정 파일만 생성하면 QA 파이프라인이 자동으로 데이터셋 생성 → PNETLab에 복붙하면 바로 적용
 
 ---
@@ -11,9 +11,9 @@
 |---|---|---|
 | Lab-A (10노드) | ✅ 완료 (v2 1,128 QA) | 검증 보강 후 재실험 |
 | Lab-B (20노드) | ✅ Config 생성 완료 (NCN_Basic_SP) | PNETLab 배포 → 데이터셋 생성 |
-| Lab-C (30노드) | 📐 설계 중 | **Phase 2 구현** |
-| Lab-D (40노드) | 📐 설계 중 | **Phase 3 구현** |
-| `config_generator/` | ✅ 구현 완료 (generator.py + 3 templates) | Lab-C/D용 템플릿 확장 |
+| Lab-C (30노드) | ✅ Config 생성 완료 (30/30 cfg) | PNETLab 배포 → 데이터셋 생성 |
+| Lab-D (40노드) | ✅ Config 생성 완료 (40/40 cfg) | PNETLab 배포 → 데이터셋 생성 |
+| `config_generator/` | ✅ 구현 완료 (generator.py + 4 templates) | Lab-B/C/D 전부 생성 가능 |
 
 ### 0.1 제출용 Scope Freeze
 
@@ -56,7 +56,7 @@ TA-Acc
     │    ·━━·
 0.1 ┤        ·━━●━━━━●               (L4-L5 급격 하락)
 0.0 ┤──────────────────────────────
-    10     20     30     50  노드 수
+    10     20     30     40  노드 수
 ```
 
 ---
@@ -96,12 +96,12 @@ TA-Acc
 *   **활성 메트릭**: **~65개** (+15: NTP, SNMP, Syslog, AAA, Banner, Timezone, Password)
 *   **LLM 챌린지**: "AAA가 활성화되지 않은 장비 목록을 알려주세요." → P 8대 + Leaf 8대 = 16대
 
-### 🔒 Lab-C: 보안 강화 + L2VPN 서비스 (Enhanced Security) — 30노드
+### 🔒 Lab-C: 보안 강화 + L2VPN 서비스 (Enhanced Security) — 30노드 ✅
 > **"Multi-AS + L2VPN 전용선 + 보안 정책"**
 
 *   **컨셉**: Lab-B에 보안 관제 센터(Region 3)를 추가. L2VPN 전용선 서비스와 ACL 기반 접근 제어를 도입.
 *   **구조**: Lab-B (20노드) + **Region 3 (10노드, AS 65001)**.
-    *   **ASBR1, ASBR2**: Inter-AS eBGP 피어링
+    *   **ASBR1, ASBR2**: Inter-AS eBGP 피어링 (asbr_router.j2 템플릿)
     *   **PE5, PE6**: `VRF_SEC` (보안관제), `VRF_MIL` (국방) 추가
     *   **P9, P10**: OSPF Area 1 (Area 0과 분리)
     *   **Leaf9~Leaf12**: ACL 적용 대상
@@ -114,23 +114,23 @@ TA-Acc
 *   **활성 메트릭**: **~75개** (+10: L2VPN 5개, ACL, Prefix-List, Route-Map, HSRP, eBGP)
 *   **LLM 챌린지**: "L2VPN Pseudowire가 단방향으로만 설정된 PE 쌍을 식별하세요."
 
-### ⚔️ Lab-D: 멀티 AS + 복합 시나리오 (Multi-AS Complex) — 40노드
+### ⚔️ Lab-D: 멀티 AS + 복합 시나리오 (Multi-AS Complex) — 40노드 ✅
 > **"의도적 오류 + 정책 복합 검증"**
 
-*   **컨셉**: Lab-C에 외부 인터넷 ISP(AS 65002)를 추가. 의도적 설정 오류를 주입하여 LLM의 장애 탐지 능력을 평가.
-*   **구조**: Lab-C (30노드) + **External Zone (10노드, AS 65002)**.
-    *   **INET-R1, INET-R2**: 외부 ISP 라우터 (eBGP)
-    *   **PE7, PE8**: 외부 접속점
-    *   **FW1, FW2**: Waypoint (모든 외부 트래픽 경유 필수)
-    *   **P11, P12**: OSPF Area 2
-    *   **Leaf13~Leaf14**: DMZ 서버 영역
+*   **컨셉**: Lab-C에 외부 ISP Zone(AS 65002)를 추가. 의도적 설정 오류를 주입하여 LLM의 장애 탐지 능력을 평가.
+*   **구조**: Lab-C (30노드) + **Region 4 (10노드, AS 65002, OSPF Area 2)**.
+    *   **FW1, FW2**: Firewall Waypoint (ASBR↔FW eBGP, 모든 트래픽 경유 필수)
+    *   **PE7, PE8**: `VRF_ISP`, `VRF_CDN` + QoS + NetFlow
+    *   **P11, P12**: OSPF Area 2 코어
+    *   **Leaf13~Leaf16**: DMZ 서버 영역
 *   **기술적 차별점 (Lab-C 대비)**:
     *   **3-AS 구조**: AS 65000 / 65001 / 65002
     *   **Waypoint Traversal**: FW1/FW2를 반드시 경유해야 하는 경로 검증
-    *   **의도적 VRF RT 누락**: 일부 VRF에서 route-target 삭제 → 오류 감지
-    *   **의도적 iBGP 누락**: PE7→PE8 iBGP 미설정 → Full-Mesh 오류 감지
-    *   **Null Route (RTBH)**: PE에 블랙홀 정적 경로 설정
-    *   **QoS / NetFlow**: 트래픽 분류 및 모니터링 설정
+    *   **QoS class-map/policy-map**: PE7/PE8에 CLASS_VOICE/VIDEO/DATA + POLICY_QOS_OUT
+    *   **NetFlow**: PE7/PE8에 flow record/exporter/monitor + service-policy/flow-monitor
+    *   **의도적 VRF RT 누락**: PE8 `VRF_ISP_BROKEN` — route-target 완전 누락 → `vrf_without_rt_pairs` 검증
+    *   **의도적 iBGP 비대칭 누락**: PE7→PE8 iBGP 미설정 → `ibgp_missing_pairs` 검증
+    *   **의도적 OSPF cost 비대칭**: FW1→PE7 cost=10, PE7→FW1 cost=20 → `asymmetric_path_comparison` 검증
 *   **활성 메트릭**: **~80개+** (전체 커버리지 97%)
 *   **LLM 챌린지**: "iBGP Full-Mesh가 깨진 PE 쌍과, VRF route-target이 누락된 장비를 모두 찾으세요."
 
@@ -152,16 +152,12 @@ TA-Acc
 
 ## 3. Config Generator 설계
 
-### 3.1 배포 방식 및 도구 선정
-
-PNETLab 환경에 설정을 적용하는 방식은 두 가지가 있습니다.
-
 ### 3.1 배포 방식 및 도구 선정 (NetAlly/NSO 필수 연동)
 
 사용자가 **NetAlly와 NSO를 필수적으로 사용**한다고 명시했으므로, 모든 네트워크 장비는 NSO가 접근할 수 있는 **관리망(Management Network)**에 반드시 연결되어야 합니다.
 
 #### 필수 요구사항: OOB (Out-Of-Band) Management
-*   **구조**: 모든 라우터/스위치의 마지막 인터페이스(예: `Gi0/3`)를 **Cloud0 (Management Cloud)**에 연결.
+*   **구조**: 모든 라우터/스위치의 관리 인터페이스(`Gi0/7`, `management_intf_slot: 7`)를 **Cloud0 (Management Cloud)**에 연결.
 *   **IP 주소**: `10.10.10.x/24` 대역 사용 (고정 IP 권장).
 *   **프로토콜**: SSH + SNMP 활성화 필수.
 *   **NSO 연동**: NSO가 이 관리 IP를 통해 장비를 Reachability 하고 설정을 읽어갈 수 있어야 함.
@@ -177,24 +173,25 @@ PNETLab 환경에 설정을 적용하는 방식은 두 가지가 있습니다.
 
 ```
 Make_Dataset/config_generator/
-├── generator.py           # 메인 생성 엔진
-├── templates/             # Jinja2 config 템플릿
-│   ├── pe_router.j2       # PE 라우터 템플릿
-│   ├── p_router.j2        # P 코어 라우터 템플릿
-│   ├── leaf_switch.j2     # Leaf 스위치 템플릿
-│   ├── firewall.j2        # 방화벽 템플릿
-│   └── server.j2          # 관리 서버 템플릿
-├── topologies/            # 토폴로지 정의 (YAML)
-│   ├── lab_b_20nodes.yaml
-│   ├── lab_c_30nodes.yaml
-│   └── lab_d_50nodes.yaml
-└── output/                # 생성된 config 파일
-    ├── Lab-B/configs/
-    ├── Lab-C/configs/
-    └── Lab-D/configs/
+├── generator.py            # 메인 생성 엔진
+├── templates/              # Jinja2 config 템플릿
+│   ├── pe_router.j2        # PE 라우터 (VRF, BGP, QoS, NetFlow, xconnect, HSRP)
+│   ├── p_router.j2         # P 코어 라우터 (OSPF cost)
+│   ├── asbr_router.j2      # ASBR 라우터 (eBGP, per-intf ospf_area)
+│   └── leaf_switch.j2      # Leaf 스위치 (ACL, Prefix-list, Route-map)
+├── topologies/             # 토폴로지 정의 (YAML)
+│   ├── lab_b_20nodes.yaml  # 20노드 (2 Region, AS 65000)
+│   ├── lab_c_30nodes.yaml  # 30노드 (3 Region, AS 65000+65001)
+│   └── lab_d_40nodes.yaml  # 40노드 (4 Region, AS 65000+65001+65002)
+├── docs/
+│   └── deployment_guide.md # PNETLab 배포 가이드
+└── output/                 # 생성된 config 파일
+    ├── LabB_NCN_Basic_SP_20nodes/configs/       (20 .cfg)
+    ├── LabC_NCN_Security_L2VPN_30nodes/configs/ (30 .cfg)
+    └── LabD_NCN_MultiAS_Complex_40nodes/configs/ (40 .cfg)
 ```
 
-### 3.2 토폴로지 정의 형식 (YAML)
+### 3.3 토폴로지 정의 형식 (YAML)
 
 ```yaml
 # lab_b_20nodes.yaml (NCN_Basic_SP)
@@ -281,7 +278,7 @@ routing:
     protocol: ldp
 ```
 
-### 3.3 Jinja2 템플릿 예시 (PE 라우터)
+### 3.4 Jinja2 템플릿 예시 (PE 라우터)
 
 ```jinja2
 {# pe_router.j2 — NCN (National Converged Network) #}
@@ -326,7 +323,7 @@ interface {{ intf.name }}
 {% endfor %}
 !
 ! Management Interface (OOB)
-interface GigabitEthernet0/3
+interface GigabitEthernet0/{{ topology.management_intf_slot | default(7) }}
  ip address {{ node.management_ip | ip_address }} {{ node.management_ip | netmask }}
 !
 router ospf 1 / router bgp 65000  {# 자동 생성 — 상세 생략 #}
@@ -354,24 +351,22 @@ line vty 0 4
 end
 ```
 
-### 3.4 PNETLab 배포 워크플로우
+### 3.5 PNETLab 배포 워크플로우
+
+> 상세 배포 가이드: [Make_Dataset/config_generator/docs/deployment_guide.md](../../../Make_Dataset/config_generator/docs/deployment_guide.md)
 
 ```
 Step 1: Config Generator로 Lab-B/C/D 설정 파일 생성
-    $ python Make_Dataset/config_generator/generator.py --topology Make_Dataset/config_generator/topologies/lab_b_20nodes.yaml
-    → output/Lab-B/configs/ 에 20개 .cfg 파일 생성
+    $ python Make_Dataset/config_generator/generator.py --topology topologies/lab_b_20nodes.yaml
 
-Step 2: PNETLab에서 노드 생성 + eth 연결
-    (수동: 유진님이 PNETLab UI에서 노드 배치 + 케이블 연결)
+Step 2: PNETLab에서 노드 생성 (Ethernet 어댑터 8개) + 배선 (배선 테이블 참조)
 
-Step 3: 각 노드 콘솔에서 config 복붙
-    (수동: 생성된 .cfg 내용을 각 장비 콘솔에 붙여넣기)
+Step 3: PNETLab Startup Config 에디터에서 .cfg 적용 (노드별 복붙 또는 Import)
 
-Step 4: 연결 확인
-    $ python Make_Dataset/src/3-Check_Connectivity.py
+Step 4: 배포 검증 (OSPF/BGP/MPLS neighbor 확인)
 
 Step 5: Batfish에 snapshot 로드 + QA 생성
-    $ python Make_Dataset/src/main_batfish.py --lab-path Data/Pnetlab/Lab-B
+    $ python Make_Dataset/src/main_batfish.py --lab-path Data/Pnetlab/LabB_NCN_Basic_SP_20nodes
 
 Step 6: 생성된 데이터셋으로 LLM 평가
 ```
@@ -506,11 +501,11 @@ class NetAllyEvaluator:
 
 | 단계 | 작업 | 상태 | 완료 기준 |
 |---|---|:---:|---|
-| Phase 1 | Lab-B Config Generator 구현 + 20개 cfg 생성 | ✅ 완료 | NCN_Basic_SP 20개 cfg |
-| Phase 1 | Lab-B PNETLab 배포 + 데이터셋 생성 | 🔜 진행 중 | OSPF/BGP/LDP 정상 + QA 생성 |
-| Phase 2 | Lab-C 토폴로지 설계 + Config 생성 | 📐 | 30개 cfg + L2VPN/ACL/eBGP |
-| Phase 3 | Lab-D 토폴로지 설계 + Config 생성 | 📐 | 40개 cfg + Multi-AS/Waypoint |
-| Final | NetAlly 평가 (Lab-A → Lab-B → Lab-C) | 🔜 | Level별 TA-Acc 비교표 |
+| Phase 1 | Lab-B Config Generator 구현 + 20개 cfg 생성 | ✅ 완료 | NCN_Basic_SP 20/20 cfg |
+| Phase 2 | Lab-C 토폴로지 + Config 생성 (ASBR, L2VPN, ACL, HSRP) | ✅ 완료 | 30/30 cfg + asbr_router.j2 |
+| Phase 3 | Lab-D 토폴로지 + Config 생성 (FW, QoS, NetFlow, 오류 3종) | ✅ 완료 | 40/40 cfg + 의도적 오류 검증 |
+| Deploy | Lab-B/C/D PNETLab 배포 + 데이터셋 생성 | 🔜 | OSPF/BGP/LDP 정상 + QA 생성 |
+| Final | NetAlly 평가 (Lab-A → Lab-B → Lab-C → Lab-D) | 🔜 | Level별 TA-Acc 비교표 |
 
 ### 현실적 우선순위
 
@@ -518,6 +513,5 @@ class NetAllyEvaluator:
 |:---:|---|---|
 | 🔴 P0 | Lab-A (기존) 검증 + 재실험 | 논문의 최소 요구사항 |
 | 🔴 P1 | Lab-B (20노드) PNETLab 배포 + 실험 | 스케일러빌리티의 최소 증거 |
-| 🟡 P2 | Lab-C (30노드) Config 생성 + 실험 | 메트릭 커버리지 88% 달성 |
-| 🟢 P3 | Lab-D (40노드) | Future Work 권장 |
+| 🟡 P2 | Lab-C/D PNETLab 배포 + 실험 | 메트릭 커버리지 88%→97% |
 | 🔴 P1 | NetAlly 데이터셋 평가 | 논문 핵심 실험 |
