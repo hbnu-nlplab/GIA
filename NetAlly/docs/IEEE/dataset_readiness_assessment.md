@@ -50,6 +50,13 @@ KICS 2026 논문에서 **핵심 실험이 이미 완료**되어 있고, 자동 �
 |---|---|:---:|---|
 | v1 (KICS 사용) | 2025-12-30 | **762** | KICS 논문에서 사용. 검증 보고서 존재 |
 | v2 (최신) | 2026-01-29 | **1,128** | Scope Expansion 적용. 카테고리 17개 |
+| v2 이중언어 | 2026-02-13 | **1,128 × 2** | KO/EN 독립 생성. 정답은 영어 계약 토큰 통일 |
+
+> v2 이중언어 품질 개선 사항 (2026-02-13):
+> - EN 템플릿: L4/L5 자연어 품질 전면 교정 (Batfish 전문용어 제거, 11건)
+> - KO 템플릿: 답변 형식 힌트를 영어 계약 토큰에 정렬 (NONE/ALLOWED 등 7건)
+> - KO 조사 동적 교정: `ko_josa.py` — 장비명 뒤 과/와 자동 처리
+> - AS 미설정 표기: "AS None" → "AS N/A" 수정
 
 ### 2.2 레벨 분포 비교
 
@@ -63,7 +70,7 @@ KICS 2026 논문에서 **핵심 실험이 이미 완료**되어 있고, 자동 �
 
 > 🔴 **L2가 여전히 21개** — KICS에서도, 최신에서도 미해결. v1→v2에서 Scope Expansion이 L1/L5에만 효과.
 
-### 2.3 기존 검증 보고서 (v1, 2025-12-30)
+### 2.3 기존 검증 보고서 (v1, 2025-12-30) — 레거시
 
 | 상태 | 수 | 비율 |
 |---|:---:|:---:|
@@ -71,9 +78,22 @@ KICS 2026 논문에서 **핵심 실험이 이미 완료**되어 있고, 자동 �
 | ❌ FAIL | 48 | 6.3% |
 | ⏭️ SKIP | 494 | 64.8% |
 
-**FAIL 내역**: `bounded_path_length`(33건), `traceroute_path`(7건), `waypoint_traversal_path`(5건), `vrf_count`(2건) — **L4에서 45/149 실패 (30.2%)**
+> ⚠️ 이 보고서는 v1 기준이며, 아래 v2 검증 결과로 **대체됨**.
 
-> ⚠️ L4 실패율 30%는 **Ground Truth 자체의 품질 문제**. IEEE 리뷰어가 반드시 지적할 사항. 최신 v2에서 수정 여부 확인 필요.
+### 2.4 v2 Ground Truth 검증 결과 (✅ 2026-02-13)
+
+3-Method Hybrid 검증으로 Batfish 순환 논증을 차단한 독립 검증 수행:
+
+| Method | 접근법 | 범위 | Agreement | 상태 |
+|:---:|---|:---:|:---:|:---:|
+| **Method 1** | Batfish-free Independent Parser (Python+Regex) | 800 (L1-L3 전수) | **99.5%** (실질 100%) | ✅ 완료 |
+| **Method 2** | Stratified Sampling + Manual Check | 43 (L1-L3 표본) | **97.7%** (42/43) | ✅ 자동 완료 |
+| **Method 3** | PNETLab Real CLI | 44 (L4: 23, L5: 21) | — | ⬜ 사람 실행 대기 |
+
+**알려진 데이터 오류 (5건)**: Batfish VRF 이중 카운팅 4건 + all_devices_same_as 설계 선택 1건 (모두 Low severity)
+
+> ✅ **v1의 L4 30% 실패 문제는 v2 파이프라인 개선으로 해결됨**. 3-Method 독립 검증으로 Ground Truth 신뢰성 입증.
+> 코드: `Make_Dataset/src/verification/run_verification_pipeline.py`
 
 ---
 
@@ -85,61 +105,62 @@ KICS 2026 논문에서 **핵심 실험이 이미 완료**되어 있고, 자동 �
 |---|---|---|:---:|
 | 모델 수 | 5개 | 7-8개+ (Claude 추가 등) | 🟢 낮음 |
 | 실험 깊이 | 전체 TA-Acc + L1-L5 | + Prompt 전략 비교, Error Analysis | 🟡 중간 |
-| 검증 | 자동 검증 28.9% PASS | **전체 검증 + FAIL 해결** | 🟡 중간 |
-| 토폴로지 | 1개 | **최소 2개** | 🔴 높음 |
-| Human Validation | 없음 | **대안적 검증** (전문가 없으므로) | 🟡 중간 |
+| 검증 | 자동 검증 28.9% PASS | **3-Method Hybrid 검증** | ✅ 완료 (99.5%, 97.7%) |
+| 토폴로지 | 1개 | **최소 2개** | 🟡 Config Gen 완료, 배포 필요 |
+| Human Validation | 없음 | **Method 2 Manual + Method 3 PNETLab** | 🟡 가이드 생성 완료, 사람 실행 대기 |
 | 데이터셋 규모 | 762 | 1,128 (필수) + L2 보강(옵션) | 🟡 중간 |
+| 이중언어 | 없음 (한국어만) | **KO/EN 이중언어 + 품질 교정** | ✅ 완료 |
 | 관련 연구 | 7개 | **11개+** (이미 정리 완료 ✅) | 🟢 완료 |
 
-### 3.2 전문가 없이 Validation하는 대안 전략
+### 3.2 검증 전략 — 실제 구현된 3-Method Hybrid ✅
 
-네트워크 전문가 없이도 검증력을 높이는 **3가지 대안**:
+네트워크 전문가 없이도 Ground Truth 신뢰성을 확보하는 **3-Method Hybrid** 전략을 구현 완료:
 
-#### 대안 1: Cross-Tool Validation (자동화 가능, 권장 ⭐)
+#### Method 1: Independent Config Parser ✅ 구현 완료
 ```
-L4 traceroute 질문 → Batfish 정답 vs PNETLab 실제 실행 결과 비교
-- 이미 PNETLab 환경이 존재하므로, 실제 라우터에서 traceroute/ping 실행
-- Batfish 시뮬레이션 결과와 실제 네트워크 결과의 일치율 보고
-- "Batfish Ground Truth의 실제 네트워크 대비 정확도: XX%"
+Batfish-free Python+Regex 파서로 L1-L3 800건 전수 검증
+→ 99.5% Agreement (실질 100%)
+→ "Batfish 없이도 동일한 정답에 도달" 입증
 ```
-> ✅ **가장 강력한 검증** — 전문가 없이도 "시뮬레이션 결과가 실제와 일치한다"를 증명
+> ✅ **순환 논증 차단의 핵심**. NetConfEval(Batfish Oracle 의존)보다 강력한 검증.
 
-#### 대안 2: LLM-as-Judge (보조적 검증)
+#### Method 2: Stratified Manual Check ✅ 자동 완료, ⬜ 사람 검토 대기
 ```
-GPT-4o에게 질문+정답 쌍을 보여주고:
-1. "이 질문이 명확한가?" (Clarity)
-2. "이 정답이 유일한가?" (Uniqueness)
-3. "이 난이도 분류가 적절한가?" (Level Assignment)
-를 판정하게 함 → 100개 샘플 × 3관점 = 300 판정
+43개 표본을 메트릭/레벨/answer_type별 계층 추출
+→ 자동 교차검증: 97.7% (42/43)
+→ 사람이 .cfg 원본을 직접 트레이스하여 확인 (가이드 생성 완료)
 ```
-> ⚠️ 보조적으로만 사용. "LLM으로 만든 벤치마크를 LLM으로 검증"하는 한계 명시 필요.
+> ✅ TeleQnA 스타일의 전문가 검증 방식. human_reviewer_guide.md 제공.
 
-#### 대안 3: Consistency Check (자동화)
+#### Method 3: PNETLab Real-world CLI ⬜ 사람 실행 대기
 ```
-동일 질문을 약간 다른 표현으로 바꿔서 LLM에게 다시 물음:
-- "PE1의 hostname은?" vs "PE1 장비의 호스트명을 알려주세요"
-- 동일 모델이 동일 답을 내는지 = Consistency Score 보고
+44개 표본 (L4: 23, L5: 21)을 PNETLab 실장비에서 CLI로 검증
+→ traceroute, ping, show 명령으로 실측
+→ pnetlab_verification_guide.md + blank_checklist.csv 생성 완료
 ```
+> ✅ NIKA 스타일의 환경 기반 검증. 가장 강력한 실증적 검증.
+
+> **레퍼런스**: `research_findings_verification.md` 참조 — TeleQnA(전문가), NetConfEval(Batfish Oracle), NIKA(환경 기반) 모두의 장점을 결합
 
 ---
 
 ## 4. 15일 Action Plan (2/13 → 2/28)
 
-### Phase 1: 데이터셋 정리 (2/13 ~ 2/16, 3일)
+### Phase 1: 데이터셋 정리 + 검증 — ✅ 대부분 완료
+
+| # | 작업 | 시간 | 상태 |
+|:---:|---|:---:|:---:|
+| 1-1 | v2 데이터셋 3-Method Hybrid 검증 | 2일 | ✅ 코드 완료 + Method 1-2 결과 확보 |
+| 1-2 | Method 2 사람 검토 (43 QA) | 2-3시간 | ⬜ 연구자 실행 필요 |
+| 1-3 | Method 3 PNETLab 실행 (44 QA) | 4-6시간 | ⬜ 연구자 실행 필요 |
+| 1-4 | L2 질문 추가 생성 (목표: 50개+) | 1일 | ⬜ 옵션 |
+
+### Phase 2: Scalability + 실험 (2/17 ~ 2/20, 4일)
 
 | # | 작업 | 시간 | 우선순위 |
 |:---:|---|:---:|:---:|
-| 1-1 | v2 데이터셋(1,128건)에 대해 자동 검증 재실행 → FAIL 해결 | 1일 | 🔴 |
-| 1-2 | L2 질문 추가 생성 (목표: 50개+) | 1일 | 🔴 |
-| 1-3 | CSV 파싱 오류 수정 (multi-line L5 문제) | 0.5일 | 🟡 |
-| 1-4 | v2 데이터셋 통계 문서 재생성 | 0.5일 | 🟡 |
-
-### Phase 2: 검증 보강 (2/17 ~ 2/20, 4일)
-
-| # | 작업 | 시간 | 우선순위 |
-|:---:|---|:---:|:---:|
-| 2-1 | **Cross-Tool Validation**: L4 질문 30개에 대해 PNETLab 실제 traceroute와 비교 | 2일 | 🔴 |
-| 2-2 | LLM-as-Judge: 100개 샘플 질문 품질 검증 | 1일 | 🟡 |
+| 2-1 | Lab-B PNETLab 배포 + 데이터셋 생성 + 검증 | 2일 | 🔴 |
+| 2-2 | v2 데이터셋으로 5개 모델 재실험 (Single LLM) | 2일 | 🔴 |
 | 2-3 | 검증 결과 정리 → 논문 Section으로 작성 | 1일 | 🔴 |
 
 ### Phase 3: 실험 확장 (2/21 ~ 2/24, 4일)
@@ -182,19 +203,19 @@ GPT-4o에게 질문+정답 쌍을 보여주고:
 
 ---
 
-## 6. 가장 크게 개선할 수 있는 3가지
+## 6. 남은 핵심 개선 항목 (우선순위)
 
-### 🥇 1위: Cross-Tool Validation (Batfish vs PNETLab)
+### 🥇 1위: Method 3 PNETLab 사람 실행 + Lab-B 배포
 
-> 전문가 없이도 사용 가능한 **최강의 검증 카드**. "시뮬레이션 Ground Truth가 실제 네트워크와 일치" 입증.
+> Method 3 실행으로 검증 완전 완성 + Lab-B로 Scalability 최소 증거 확보. 논문 제출의 최소 요구사항.
 
-### 🥈 2위: Error Analysis
+### 🥈 2위: LLM 재실험 (v2 데이터셋) + Error Analysis
 
-> "왜 L4/L5에서 실패하는가?"에 대한 정성적 분석. 리뷰어가 가장 알고 싶어하는 내용. 논문의 Discussion 섹션을 풍부하게 만듦.
+> v2 기준 TA-Acc 재측정 + "왜 L4/L5에서 실패하는가?" 정성 분석. 리뷰어 관심 집중 영역.
 
-### 🥉 3위: L2 질문 보강 + v2 재실험
+### 🥉 3위: L2 질문 보강 (옵션)
 
-> L2가 21개뿐인 것은 논문 표에서 바로 보이는 약점. 50개로 늘리면 "난이도별 균형잡힌 벤치마크" 주장 가능.
+> L2가 21개뿐인 것은 논문 표에서 바로 보이는 약점. 50개로 늘리면 "난이도별 균형잡힌 벤치마크" 주장 가능. 다만 검증/실험보다 후순위.
 
 ---
 

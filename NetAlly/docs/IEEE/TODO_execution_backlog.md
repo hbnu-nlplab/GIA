@@ -1,6 +1,6 @@
 # IEEE TNMS 실행 TODO 백로그
 
-> **작성일**: 2026-02-13 | **최종 업데이트**: 2026-02-13
+> **작성일**: 2026-02-13 | **최종 업데이트**: 2026-02-14
 > **목적**: 설계 문서를 실제 구현/실험 작업으로 전환하기 위한 실행 체크리스트
 > **원칙**: 제출 필수(Core) 먼저, 확장(Stretch) 나중
 
@@ -26,6 +26,16 @@
 - [x] `validate_dataset_quality.py` 신규 추가
 - [x] `main_batfish.py` 품질 게이트 반영
 - [x] `analyze_results_netconfigqa.py` map 채점 강화
+
+### 이중언어 품질 개선 (Bilingual Quality)
+- [x] `policies.json` 영어 템플릿 L1-L5 전면 교정 (문법/의미 45+건)
+- [x] L4/L5 영어 템플릿 자연어 개선 (root_cause_analysis, loop_detection 등 11건)
+- [x] 한국어 답변 형식 힌트를 영어 계약 토큰에 정렬 (NONE/ALLOWED/YES/NO 등 7건)
+- [x] `ko_josa.py` 신규 — 한국어 조사(과/와) 동적 교정 유틸리티
+- [x] `batfish_builder.py` 조사 교정 통합 (`_format_question()` 메서드, 20개소)
+- [x] `main_batfish.py` L1-L3 질문 생성 후 조사 교정 호출 추가
+- [x] `builder_core.py` "AS None" → "AS N/A" 수정 (compare_bgp_as, all_devices_same_as)
+- [x] `docs/Policies.md` 이중언어 템플릿 가이드 섹션 추가
 
 ### Ground Truth 검증 (Method 1-2 + 통합 파이프라인)
 - [x] `independent_parser.py` — Batfish-free CfgParser + TopologyFacts (~2,100 lines)
@@ -69,24 +79,25 @@
 
 ## 2. P1 — Config Generator 구현
 
-### 2.1 코드 스캐폴딩
+### 2.1 코드 + Config 생성 ✅ (2026-02-13 완료)
 
-- [ ] `Make_Dataset/config_generator/generator.py` 생성
-- [ ] `Make_Dataset/config_generator/topologies/lab_b_20nodes.yaml` 생성
-- [ ] `Make_Dataset/config_generator/templates/*.j2` 최소 템플릿 생성 (`pe`, `p`, `ce`)
+- [x] `Make_Dataset/config_generator/generator.py` — 메인 생성 엔진
+- [x] `Make_Dataset/config_generator/templates/*.j2` — 4종 (`pe_router`, `p_router`, `asbr_router`, `leaf_switch`)
+- [x] `Make_Dataset/config_generator/topologies/lab_b_20nodes.yaml` — 20노드 (2 Region, AS 65000)
+- [x] `Make_Dataset/config_generator/topologies/lab_c_30nodes.yaml` — 30노드 (3 Region, AS 65000+65001)
+- [x] `Make_Dataset/config_generator/topologies/lab_d_40nodes.yaml` — 40노드 (4 Region, 3-AS, QoS, NetFlow, 의도적 오류 3종)
+- [x] Lab-B: 20/20 cfg 생성 완료
+- [x] Lab-C: 30/30 cfg 생성 완료 (Multi-AS, L2VPN, ACL, HSRP)
+- [x] Lab-D: 40/40 cfg 생성 완료 (FW waypoint, QoS, NetFlow, 의도적 오류 검증 통과)
+- [x] PNETLab 배포 가이드: `config_generator/docs/deployment_guide.md`
 
-완료 기준:
-```bash
-python Make_Dataset/config_generator/generator.py \
-  --topology Make_Dataset/config_generator/topologies/lab_b_20nodes.yaml
-```
+### 2.2 PNETLab 배포 + 데이터셋 생성
 
-### 2.2 Lab-B 배포/검증
-
-- [ ] PNETLab에 Lab-B 노드/링크 배치
-- [ ] 생성 cfg 적용 + OSPF/BGP/LDP 수렴 확인
-- [ ] `main_batfish.py --lab-path Data/Pnetlab/Lab_B_20nodes/`로 데이터셋 생성
-- [ ] `run_verification_pipeline.py --lab-path Data/Pnetlab/Lab_B_20nodes/`로 검증
+- [ ] PNETLab에 Lab-B 노드/링크 배치 (IOSv 이미지, Ethernet 어댑터 8개)
+- [ ] Startup Config 에디터로 cfg 적용 + OSPF/BGP/LDP 수렴 확인
+- [ ] `main_batfish.py --lab-path Data/Pnetlab/LabB_NCN_Basic_SP_20nodes/`로 데이터셋 생성
+- [ ] `run_verification_pipeline.py --lab-path Data/Pnetlab/LabB_NCN_Basic_SP_20nodes/`로 검증
+- [ ] Lab-C/D도 동일 과정 반복 (가능한 범위 내)
 
 완료 기준:
 - [ ] Lab-B 데이터셋 생성 + 검증 리포트 산출
@@ -128,9 +139,9 @@ python Make_Dataset/config_generator/generator.py \
 ```
 [완료] 1. Ground Truth 검증 자동화 (Method 1-2 코드 + 통합 파이프라인)
 [완료] 2. Method 3 가이드 생성
-       3. ★ Method 2 사람 검토 + Method 3 PNETLab 실행 (병렬, 6-9시간)
-       4. Config Generator Lab-B 구현
-       5. Lab-B 데이터셋 생성 + 검증
+[완료] 3. Config Generator 구현 + Lab-B/C/D cfg 전부 생성 + 배포 가이드
+       4. ★ Method 2 사람 검토 + Method 3 PNETLab 실행 (병렬, 6-9시간)
+       5. Lab-B PNETLab 배포 + 데이터셋 생성 + 검증
        6. Exp.2/3/4 실험 실행
        7. 논문 본문 작성
 ```
@@ -140,10 +151,11 @@ python Make_Dataset/config_generator/generator.py \
 ## 6. 코드 사용법 빠른 참조
 
 ```bash
-# 데이터셋 생성
+# 데이터셋 생성 (한국어/영어 선택)
 python Make_Dataset/src/main_batfish.py \
   --lab-path Data/Pnetlab/<LabName>/ \
-  --policies Make_Dataset/policies.json
+  --policies Make_Dataset/policies.json \
+  --question-lang ko   # ko 또는 en
 
 # Ground Truth 검증 (통합 파이프라인)
 python Make_Dataset/src/verification/run_verification_pipeline.py \
