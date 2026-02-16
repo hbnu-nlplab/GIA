@@ -54,6 +54,40 @@ username admin privilege 15 secret 5 $1$1TT7$6NEugkkWBy.AzeNfZi61A1
 !
 redundancy
 !
+{% if node.qos is defined %}
+{% for cm in node.qos.class_maps %}
+class-map match-all {{ cm.name }}
+ match {{ cm.match }}
+!
+{% endfor %}
+{% for pm in node.qos.policy_maps %}
+policy-map {{ pm.name }}
+{% for cls in pm.classes %}
+ class {{ cls.class }}
+  bandwidth percent {{ cls.bandwidth_percent }}
+{% endfor %}
+!
+{% endfor %}
+{% endif %}
+{% if node.netflow is defined %}
+flow record {{ node.netflow.flow_record }}
+ match ipv4 source address
+ match ipv4 destination address
+ match transport source-port
+ match transport destination-port
+ collect counter bytes long
+ collect counter packets long
+!
+flow exporter {{ node.netflow.flow_exporter }}
+ destination {{ node.netflow.exporter_dest }}
+ transport udp 9996
+!
+flow monitor {{ node.netflow.flow_monitor }}
+ record {{ node.netflow.flow_record }}
+ exporter {{ node.netflow.flow_exporter }}
+!
+{% endif %}
+!
 interface Loopback0
  ip address {{ node.loopback | ip_address }} 255.255.255.255
 !
@@ -74,6 +108,9 @@ interface {{ intf.name }}
 {% if intf.mpls|default(false) %}
  mpls ip
 {% endif %}
+{% if intf.ospf_cost is defined %}
+ ip ospf cost {{ intf.ospf_cost }}
+{% endif %}
 {% if intf.xconnect is defined %}
  xconnect {{ intf.xconnect.peer_ip }} {{ intf.xconnect.pw_id }} encapsulation mpls
 {% endif %}
@@ -81,6 +118,12 @@ interface {{ intf.name }}
  standby {{ intf.hsrp.group }} ip {{ intf.hsrp.vip }}
  standby {{ intf.hsrp.group }} priority {{ intf.hsrp.priority }}
  standby {{ intf.hsrp.group }} preempt
+{% endif %}
+{% if intf.service_policy_out is defined %}
+ service-policy output {{ intf.service_policy_out }}
+{% endif %}
+{% if intf.flow_monitor is defined %}
+ ip flow monitor {{ intf.flow_monitor }} input
 {% endif %}
 !
 {% endfor %}

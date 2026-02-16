@@ -1353,8 +1353,8 @@ class BuilderCore:
                 return "text", f"{host1}: No Info, {host2}: No Info"
             as1 = self._bgp_local_as(d1)
             as2 = self._bgp_local_as(d2)
-            as1_str = str(as1) if as1 is not None else "None"
-            as2_str = str(as2) if as2 is not None else "None"
+            as1_str = str(as1) if as1 is not None else "N/A"
+            as2_str = str(as2) if as2 is not None else "N/A"
             return "text", f"{host1}: AS {as1_str}, {host2}: AS {as2_str}"
         
         elif metric == "compare_ospf_areas":
@@ -1399,7 +1399,7 @@ class BuilderCore:
             for d in self.devices:
                 host = self._hostname(d)
                 las = self._bgp_local_as(d)
-                as_value = las if las is not None else "None"
+                as_value = las if las is not None else "N/A"
                 as_info.append(f"{host}: AS {as_value}")
             info_str = ", ".join(as_info) if as_info else "No Info"
             return "text", info_str

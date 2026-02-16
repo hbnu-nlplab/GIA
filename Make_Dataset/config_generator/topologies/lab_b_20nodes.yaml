@@ -1,4 +1,4 @@
-name: "NCN_Basic_SP"
+name: "LabB_NCN_Basic_SP_20nodes"
 description: "National Converged Network (국가 통합 통신망) - 20 Nodes Basic Service Provider"
 # Concept:
 # - Region 1 (본사): 정부기관(GOV), 교육기관(EDU), 연구기관(RND) VPN 서비스
