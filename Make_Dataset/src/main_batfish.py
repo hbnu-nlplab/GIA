@@ -23,6 +23,7 @@ from core_batfish.parser import UniversalParser
 from core_batfish.rule_based_generator import RuleBasedGenerator, RuleBasedGeneratorConfig
 from core_batfish.builder_core import BuilderCore
 from core_batfish.batfish_builder import BatfishBuilder, AnswerResult
+from core_batfish.ko_josa import fix_josa
 from validate_policies import validate_policies
 from validate_dataset_quality import validate_dataset_quality
 
@@ -806,7 +807,9 @@ def main():
             for k, v in inst.items():
                 if isinstance(v, (str, int, float)):
                     q_text = q_text.replace(f"{{{k}}}", str(v))
-            
+            if args.question_lang == "ko":
+                q_text = fix_josa(q_text)
+
             if isinstance(res, dict):
                 a_val = res["value"]
                 # res is dict

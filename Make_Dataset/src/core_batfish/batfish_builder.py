@@ -41,6 +41,7 @@ from .batfish_base import BatfishBase, BATFISH_AVAILABLE
 from .l4_analyzer import L4AnalyzerMixin
 from .l5_analyzer import L5AnalyzerMixin
 from .l6_analyzer import L6AnalyzerMixin
+from .ko_josa import fix_josa
 
 # Batfish 로드 (선택적)
 try:
@@ -100,7 +101,14 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                 return template_en
             return self.metrics_metadata[metric].get("template", default)
         return default
-    
+
+    def _format_question(self, template: str, **kwargs) -> str:
+        """템플릿에 변수를 치환하고, 한국어인 경우 조사를 교정합니다."""
+        q_text = template.format(**kwargs)
+        if self.question_lang == "ko":
+            q_text = fix_josa(q_text)
+        return q_text
+
     # =========================================================================
     # 문제 생성 메서드
     # =========================================================================
@@ -127,7 +135,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                 
                 metric = "traceroute_path"
                 template = self._get_template(metric, "{src_node}에서 {dst_node}({dst_ip})로 가는 패킷의 네트워크 경로를 알려주세요.\n[답변 형식: 화살표(→)로 구분된 장비 목록]")
-                q_text = template.format(src_ip=src_ip_for_q, dst_ip=dst_ips[0], src_node=src_node, dst_node=dst_node)
+                q_text = self._format_question(template, src_ip=src_ip_for_q, dst_ip=dst_ips[0], src_node=src_node, dst_node=dst_node)
 
                 questions.append({
                     "id": f"TRACEROUTE_{src_node}_{dst_node}",
@@ -168,7 +176,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
             metric = "reachability_status"
             # Updated template with explicit classification options for LLM evaluation
             template = self._get_template(metric, "{src_ip}에서 {dst_ip}({dst_port}/{protocol})로의 트래픽 경로와 도달 여부를 알려주세요.\n[답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']")
-            q_text = template.format(src_ip=flow.src_ip, dst_ip=flow.dst_ip, dst_port=flow.dst_port, protocol=flow.protocol, src_location=flow.src_location, dst_location=flow.dst_location)
+            q_text = self._format_question(template, src_ip=flow.src_ip, dst_ip=flow.dst_ip, dst_port=flow.dst_port, protocol=flow.protocol, src_location=flow.src_location, dst_location=flow.dst_location)
 
             questions.append({
                 "id": f"REACH_{flow.src_location}_{flow.dst_location}_{flow.protocol}",
@@ -231,7 +239,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                 
                 metric = "acl_blocking_point"
                 template = self._get_template(metric, "{src_ip}에서 {dst_ip}({dst_port}/TCP)로의 트래픽이 ACL에 의해 차단됩니까? 차단된다면 어느 장비입니까?\\n[답변 형식: '허용됨' 또는 '차단됨 (장비: 장비명, 원인: 사유)']")
-                q_text = template.format(src_ip=flow.src_ip, dst_ip=flow.dst_ip, dst_port=port)
+                q_text = self._format_question(template, src_ip=flow.src_ip, dst_ip=flow.dst_ip, dst_port=port)
                 
                 questions.append({
                     "id": f"ACL_BLOCKING_{flow.src_location}_{flow.dst_location}",
@@ -260,7 +268,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                     
                     metric = "bounded_path_length"
                     template = self._get_template(metric, "{src_host}에서 {dst_ip}로 가는 경로의 홉 수는 몇 개입니까?\n[답변 형식: 숫자]")
-                    q_text = template.format(src_host=src_node, dst_ip=dst_ips[0], src_node=src_node, dst_node=dst_node)
+                    q_text = self._format_question(template, src_host=src_node, dst_ip=dst_ips[0], src_node=src_node, dst_node=dst_node)
 
                     questions.append({
                         "id": f"BOUNDED_PATH_{src_node}_{dst_node}",
@@ -313,7 +321,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                             
                             metric = "waypoint_traversal_path"
                             template = self._get_template(metric, f"{{src_ip}}에서 {{dst_ip}}로의 트래픽이 {{waypoint}} 장비를 경유하는 경로를 알려주세요.\\n[답변 형식: 'A → B → C' 또는 '경유하지 않음']")
-                            q_text = template.format(src_ip=src_ips[0], dst_ip=dst_ips[0], waypoint=waypoint)
+                            q_text = self._format_question(template, src_ip=src_ips[0], dst_ip=dst_ips[0], waypoint=waypoint)
                             
                             questions.append({
                                 "id": f"WAYPOINT_{src_node}_{dst_node}_{waypoint}",
@@ -350,7 +358,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                             
                             metric = "leaked_prefixes_list"
                             template = self._get_template(metric, f"{{vrf1}}과 {{vrf2}} VRF 사이에 누수된 prefix 목록을 알려주세요.\\n[답변 형식: prefix 리스트 또는 빈 리스트 []]")
-                            q_text = template.format(vrf1=vrf1, vrf2=vrf2)
+                            q_text = self._format_question(template, vrf1=vrf1, vrf2=vrf2)
                             
                             questions.append({
                                 "id": f"ISOLATION_{vrf1}_{vrf2}",
@@ -383,7 +391,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                 
                 metric = "asymmetric_path_comparison"
                 template = self._get_template(metric, f"{{host1}}과 {{host2}} 사이의 Forward 경로와 Reverse 경로를 비교해주세요.\\n[답변 형식: 'Forward: A→B, Reverse: B→A']")
-                q_text = template.format(host1=node1, host2=node2)
+                q_text = self._format_question(template, host1=node1, host2=node2)
                 
                 questions.append({
                     "id": f"ASYMMETRIC_{node1}_{node2}",
@@ -410,7 +418,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                 issues = compat_res.value.get("issues", [])
                 metric = "ospf_compatibility_check"
                 template = self._get_template(metric, "{node1}과 {node2} 사이에 OSPF 네이버가 형성되지 않는 경우, 가능한 원인들을 분석하세요.\n[답변 형식: JSON {{\"issues\": [...]}}]")
-                q_text = template.format(node1=node1, node2=node2)
+                q_text = self._format_question(template, node1=node1, node2=node2)
 
                 # 정책 계약(최상위 키=issues)에 맞춘 정답 구조
                 # 주의: dict로 유지해야 main_batfish에서 JSON 문자열로 1회만 직렬화됩니다.
@@ -457,7 +465,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                             
                             metric = "security_policy_bypass_check"
                             template = self._get_template(metric, "보안 정책상 '{src}'에서 '{dst}'로 가는 모든 트래픽은 반드시 '{waypoint}' 장비를 경유해야 합니다. 현재 구성에서 이 정책을 우회하는 경로가 존재합니까? [답변 형식: '우회 경로 존재 (경로: A→B→C)' 또는 '우회 경로 없음 (정책 준수)']")
-                            q_text = template.format(src=src_leaf, dst=dst_leaf, waypoint=required_wp)
+                            q_text = self._format_question(template, src=src_leaf, dst=dst_leaf, waypoint=required_wp)
                             
                             questions.append({
                                 "id": f"SEC_BYPASS_{src_leaf}_{dst_leaf}_{required_wp}",
@@ -509,7 +517,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                     
                     metric = "link_failure_impact"
                     template = self._get_template(metric, "'{link}' 링크가 다운될 경우, '{src}→{dst}' 트래픽에 어떤 영향이 발생합니까?\n[답변 형식: 'NONE', 'REROUTED', 'DISCONNECTED']")
-                    q_text = template.format(link=f"{node1}-{node2}", src=src, dst=dst)
+                    q_text = self._format_question(template, link=f"{node1}-{node2}", src=src, dst=dst)
 
                     questions.append({
                         "id": f"LINK_FAILURE_{node1}_{node2}",
@@ -620,7 +628,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                     metric = "redundant_paths_list"
                     template = self._get_template(metric, f"{{src_node}}에서 {{dst_node}}로의 중복 경로(redundant paths) 목록을 알려주세요.\\n[답변 형식: ['경로1', '경로2'] 형식의 경로 리스트]")
                     # 정책/기본 템플릿 모두 안전하게 채우기 위해 키를 중복 제공
-                    q_text = template.format(src_host=src_node, dst_ip=dst_ips[0], src_node=src_node, dst_node=dst_node)
+                    q_text = self._format_question(template, src_host=src_node, dst_ip=dst_ips[0], src_node=src_node, dst_node=dst_node)
                     
                     questions.append({
                         "id": f"K_FAILURE_{src_node}_{dst_node}",
@@ -649,7 +657,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                 if not reachable and blocking_point:
                     metric = "root_cause_analysis"
                     template = self._get_template(metric, "{src_node}에서 {dst_node}로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]")
-                    q_text = template.format(src_node=src_node, dst_node=dst_node)
+                    q_text = self._format_question(template, src_node=src_node, dst_node=dst_node)
 
                     questions.append({
                         "id": f"ROOT_CAUSE_{src_node}_{dst_node}",
@@ -674,7 +682,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
 
                 metric = "node_failure_impact"
                 template = self._get_template(metric, "'{node}' 장비가 다운되면 몇 개의 트래픽 흐름이 새로 차단됩니까? [답변 형식: 숫자]")
-                q_text = template.format(host=node, node=node)
+                q_text = self._format_question(template, host=node, node=node)
 
                 questions.append({
                     "id": f"NODE_FAILURE_{node}",
@@ -720,7 +728,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                                 gt_text = f"{isolated_count}개"
                             
                             tmpl = self._get_template(redundancy_metric, "'{node1}'과 '{node2}'가 동시에 다운되면 고립되는 흐름이 있습니까? 몇 개입니까? [답변 형식: '없음' 또는 'N개']")
-                            q_text_red = tmpl.format(node1=n1, node2=n2)
+                            q_text_red = self._format_question(tmpl, node1=n1, node2=n2)
                             
                             questions.append({
                                 "id": f"DUAL_FAILURE_{n1}_{n2}",
@@ -760,7 +768,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                         gt_triple = f"아니오, {iso_cnt}개 흐름만 영향"
 
                     tmpl_triple = self._get_template(triple_metric, "'{node1}', '{node2}', '{node3}'가 동시에 다운되면 네트워크가 완전히 분리됩니까? [답변 형식: '예, 완전 분리' 또는 '아니오, N개 흐름만 영향']")
-                    q_text_triple = tmpl_triple.format(node1=n1, node2=n2, node3=n3)
+                    q_text_triple = self._format_question(tmpl_triple, node1=n1, node2=n2, node3=n3)
                     
                     questions.append({
                         "id": f"TRIPLE_FAILURE_{n1}_{n2}_{n3}",
@@ -805,7 +813,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
         
         # 존재하지 않는 장비이므로 영향은 0
         tmpl_neg = self._get_template(neg_metric, "'{fake_node}' 장비가 다운되면 몇 개의 트래픽 흐름이 차단됩니까? [답변 형식: 숫자]")
-        q_text_neg = tmpl_neg.format(host=fake_node, fake_node=fake_node)
+        q_text_neg = self._format_question(tmpl_neg, host=fake_node, fake_node=fake_node)
         
         questions.append({
             "id": "NEGATIVE_TEST_FAKE_NODE",
@@ -864,7 +872,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                 cfg_metric,
                 "설정 변경 후 {src}에서 {dst}까지의 경로/도달성 변경 여부를 알려주세요. [답변 형식: 'NO_CHANGE' 또는 'CHANGED (N건: 흐름1, 흐름2, ...)']"
             )
-            cfg_q = cfg_template.format(src=analysis_src, dst=analysis_dst)
+            cfg_q = self._format_question(cfg_template, src=analysis_src, dst=analysis_dst)
             cfg_res = self.config_change_impact(self.snapshot_name, changed_snapshot, analysis_src, analysis_dst)
             if cfg_res.status == "OK":
                 changed = cfg_res.value.get("changed", False)
@@ -894,7 +902,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                 diff_metric,
                 "변경 전후 {src}에서 {dst}로의 도달성에 차이가 있습니까? [답변 형식: 'NO_DIFF' 또는 'DIFF (N건: 흐름1, 흐름2, ...)']"
             )
-            diff_q = diff_template.format(src=analysis_src, dst=analysis_dst)
+            diff_q = self._format_question(diff_template, src=analysis_src, dst=analysis_dst)
             diff_res = self.differential_reachability(
                 snapshot1=self.snapshot_name,
                 snapshot2=changed_snapshot,
@@ -931,7 +939,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                 policy_metric,
                 "'{policy_name}' 정책 준수 여부와 위반 사례를 알려주세요. [답변 형식: 'COMPLIANT' 또는 'VIOLATION: 흐름1, 흐름2, ...']"
             )
-            policy_q = policy_template.format(policy_name=policy_name)
+            policy_q = self._format_question(policy_template, policy_name=policy_name)
             policy_res = self.policy_compliance_check(
                 policy_type="waypoint",
                 waypoint_node=waypoint,
@@ -1001,7 +1009,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                         
                         metric = "multi_link_failure_reachability"
                         template = self._get_template(metric, "(시나리오) '{link1}' 링크와 '{link2}' 링크가 동시에 다운되었습니다. 이 상황에서 '{test_src}'에서 '{test_dst}'로의 트래픽 전달이 가능합니까? [답변 형식: '가능 (대체경로: A→B→C)' 또는 '불가능 (원인: 장비명에서 사유)']")
-                        q_text = template.format(link1=f"{edge1['node1']}-{edge1['node2']}", link2=f"{edge2['node1']}-{edge2['node2']}", test_src=test_src, test_dst=test_dst)
+                        q_text = self._format_question(template, link1=f"{edge1['node1']}-{edge1['node2']}", link2=f"{edge2['node1']}-{edge2['node2']}", test_src=test_src, test_dst=test_dst)
 
                         questions.append({
                             "id": f"MULTI_FAIL_{edge1['node1']}_{edge1['node2']}_{edge2['node1']}_{edge2['node2']}",

@@ -1,9 +1,10 @@
-name: "LabC_NCN_Security_L2VPN_30nodes"
-description: "National Converged Network (국가 통합 통신망) - 30 Nodes with Security Enhancement & L2VPN"
+name: "LabD_NCN_MultiAS_Complex_40nodes"
+description: "National Converged Network (국가 통합 통신망) - 40 Nodes Multi-AS Complex Scenario"
 # Concept:
 # - Region 1 (본사): 정부기관(GOV), 교육기관(EDU), 연구기관(RND) VPN 서비스
 # - Region 2 (지사): GOV, EDU cross-region 확장 + RND 서비스
 # - Region 3 (보안관제): AS 65001, VRF_SEC(보안관제), VRF_MIL(국방) + L2VPN + ACL
+# - Region 4 (외부 ISP): AS 65002, FW1/FW2 Waypoint, QoS, NetFlow, VRF_ISP, VRF_CDN
 as_number: 65000
 management_gateway: "10.10.10.1"
 management_intf_slot: 7  # Gi0/7 for OOB management (avoids collision with data interfaces)
@@ -413,13 +414,17 @@ nodes:
     management_ip: "10.10.10.41/24"
     local_as: 65001
     bgp_neighbors:
-      # eBGP to Region 2 (AS 65000 via P7's Loopback - but using direct link)
-      # NOTE: For Inter-AS Option B, we peer on link addresses, not loopbacks
+      # eBGP to Region 2 (AS 65000 via P7's link address)
       - ip: "10.0.30.0"  # P7 link address
         as: 65000
         ebgp: true
         next_hop_self: true
         route_map_in: FILTER_EBGP
+      # eBGP to Region 4 (AS 65002 via FW1's link address)
+      - ip: "10.0.40.1"  # FW1 link address
+        as: 65002
+        ebgp: true
+        next_hop_self: true
       # iBGP within AS 65001
       - ip: "10.255.0.33"  # PE5
         as: 65001
@@ -458,6 +463,13 @@ nodes:
         ip: "10.0.31.2/31"
         mpls: true
         ospf_area: 1
+      # Inter-Region 3↔4 to FW1
+      - name: GigabitEthernet0/3
+        peer: FW1
+        ip: "10.0.40.0/31"
+        mpls: true
+        ospf_area: 2
+        description: "Inter-Region Backbone (Region3 ↔ Region4)"
 
   - name: ASBR2
     role: asbr
@@ -472,6 +484,11 @@ nodes:
         ebgp: true
         next_hop_self: true
         route_map_in: FILTER_EBGP
+      # eBGP to Region 4 (AS 65002 via FW2's link address)
+      - ip: "10.0.40.3"  # FW2 link address
+        as: 65002
+        ebgp: true
+        next_hop_self: true
       # iBGP within AS 65001
       - ip: "10.255.0.33"  # PE5
         as: 65001
@@ -510,6 +527,13 @@ nodes:
         ip: "10.0.32.2/31"
         mpls: true
         ospf_area: 1
+      # Inter-Region 3↔4 to FW2
+      - name: GigabitEthernet0/3
+        peer: FW2
+        ip: "10.0.40.2/31"
+        mpls: true
+        ospf_area: 2
+        description: "Inter-Region Backbone (Region3 ↔ Region4)"
 
   # PE Routers (Region 3, AS 65001)
   - name: PE5
@@ -710,6 +734,268 @@ nodes:
         acl_in: BLOCK_SSH_EXTERNAL
 
 
+  # ============================================================
+  # Region 4 (외부 ISP - 10 nodes, AS 65002, OSPF Area 2)
+  # ============================================================
+
+  # FW1/FW2: Firewall Waypoint Routers (role: p, acts as security gateway)
+  - name: FW1
+    role: p
+    region: 4
+    loopback: "10.255.0.41/32"
+    management_ip: "10.10.10.51/24"
+    ospf_area: 2
+    bgp_neighbors:
+      # eBGP to ASBR1 (AS 65001)
+      - ip: "10.0.40.0"  # ASBR1 link address
+        as: 65001
+        ebgp: true
+        next_hop_self: true
+    local_as: 65002
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: ASBR1
+        ip: "10.0.40.1/31"
+        mpls: true
+        description: "Inter-Region Backbone to ASBR1 (Region3)"
+      - name: GigabitEthernet0/1
+        peer: P11
+        ip: "10.0.41.0/31"
+        mpls: true
+      - name: GigabitEthernet0/2
+        peer: PE7
+        ip: "10.0.41.2/31"
+        mpls: true
+        ospf_cost: 10  # Asymmetric: FW1→PE7 cost=10 (direct short path)
+
+  - name: FW2
+    role: p
+    region: 4
+    loopback: "10.255.0.42/32"
+    management_ip: "10.10.10.52/24"
+    ospf_area: 2
+    bgp_neighbors:
+      # eBGP to ASBR2 (AS 65001)
+      - ip: "10.0.40.2"  # ASBR2 link address
+        as: 65001
+        ebgp: true
+        next_hop_self: true
+    local_as: 65002
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: ASBR2
+        ip: "10.0.40.3/31"
+        mpls: true
+        description: "Inter-Region Backbone to ASBR2 (Region3)"
+      - name: GigabitEthernet0/1
+        peer: P12
+        ip: "10.0.42.0/31"
+        mpls: true
+      - name: GigabitEthernet0/2
+        peer: PE8
+        ip: "10.0.42.2/31"
+        mpls: true
+
+  # PE Routers (Region 4, AS 65002 - with QoS and NetFlow)
+  - name: PE7
+    role: pe
+    region: 4
+    loopback: "10.255.0.43/32"
+    management_ip: "10.10.10.53/24"
+    local_as: 65002
+    ospf_area: 2
+    vrfs: [VRF_ISP, VRF_CDN]
+    bgp_neighbors:
+      - ip: "10.255.0.41"  # FW1
+        as: 65002
+      - ip: "10.255.0.42"  # FW2
+        as: 65002
+      # INTENTIONAL ERROR: PE8 iBGP neighbor MISSING → ibgp_missing_pairs
+    qos:
+      class_maps:
+        - name: CLASS_VOICE
+          match: "dscp ef"
+        - name: CLASS_VIDEO
+          match: "dscp af41"
+        - name: CLASS_DATA
+          match: "dscp af21"
+      policy_maps:
+        - name: POLICY_QOS_OUT
+          classes:
+            - class: CLASS_VOICE
+              bandwidth_percent: 30
+            - class: CLASS_VIDEO
+              bandwidth_percent: 20
+            - class: CLASS_DATA
+              bandwidth_percent: 25
+    netflow:
+      flow_record: NCN-FLOW-RECORD
+      flow_exporter: NCN-FLOW-EXPORTER
+      exporter_dest: "10.10.10.1"
+      flow_monitor: NCN-FLOW-MONITOR
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: FW1
+        ip: "10.0.41.3/31"
+        mpls: true
+        ospf_cost: 20  # Asymmetric: PE7→FW1 cost=20 (reverse long path)
+      - name: GigabitEthernet0/1
+        vrf: VRF_ISP
+        ip: "172.19.1.1/24"
+        description: "Link to Leaf13 (ISP 서비스)"
+        service_policy_out: POLICY_QOS_OUT
+        flow_monitor: NCN-FLOW-MONITOR
+      - name: GigabitEthernet0/2
+        vrf: VRF_CDN
+        ip: "172.19.2.1/24"
+        description: "Link to Leaf14 (CDN 서비스)"
+        service_policy_out: POLICY_QOS_OUT
+      - name: GigabitEthernet0/3
+        peer: P12
+        ip: "10.0.44.1/31"
+        mpls: true
+
+  - name: PE8
+    role: pe
+    region: 4
+    loopback: "10.255.0.44/32"
+    management_ip: "10.10.10.54/24"
+    local_as: 65002
+    ospf_area: 2
+    vrfs: [VRF_ISP_BROKEN, VRF_CDN]
+    bgp_neighbors:
+      - ip: "10.255.0.41"  # FW1
+        as: 65002
+      - ip: "10.255.0.42"  # FW2
+        as: 65002
+      - ip: "10.255.0.43"  # PE7 (PE8 has PE7 as neighbor, but PE7 DOESN'T have PE8)
+        as: 65002
+    qos:
+      class_maps:
+        - name: CLASS_VOICE
+          match: "dscp ef"
+        - name: CLASS_VIDEO
+          match: "dscp af41"
+        - name: CLASS_DATA
+          match: "dscp af21"
+      policy_maps:
+        - name: POLICY_QOS_OUT
+          classes:
+            - class: CLASS_VOICE
+              bandwidth_percent: 30
+            - class: CLASS_VIDEO
+              bandwidth_percent: 20
+            - class: CLASS_DATA
+              bandwidth_percent: 25
+    netflow:
+      flow_record: NCN-FLOW-RECORD
+      flow_exporter: NCN-FLOW-EXPORTER
+      exporter_dest: "10.10.10.1"
+      flow_monitor: NCN-FLOW-MONITOR
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: FW2
+        ip: "10.0.42.3/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        vrf: VRF_ISP_BROKEN
+        ip: "172.19.3.1/24"
+        description: "Link to Leaf15 (ISP 서비스 - RT ERROR)"
+        service_policy_out: POLICY_QOS_OUT
+        flow_monitor: NCN-FLOW-MONITOR
+      - name: GigabitEthernet0/2
+        vrf: VRF_CDN
+        ip: "172.19.4.1/24"
+        description: "Link to Leaf16 (CDN 서비스)"
+        service_policy_out: POLICY_QOS_OUT
+      - name: GigabitEthernet0/3
+        peer: P11
+        ip: "10.0.43.3/31"
+        mpls: true
+
+  # P Routers (Region 4, OSPF Area 2)
+  - name: P11
+    role: p
+    region: 4
+    loopback: "10.255.0.51/32"
+    management_ip: "10.10.10.55/24"
+    ospf_area: 2
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: FW1
+        ip: "10.0.41.1/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        peer: P12
+        ip: "10.0.43.0/31"
+        mpls: true
+      - name: GigabitEthernet0/2
+        peer: PE8
+        ip: "10.0.43.2/31"
+        mpls: true
+
+  - name: P12
+    role: p
+    region: 4
+    loopback: "10.255.0.52/32"
+    management_ip: "10.10.10.56/24"
+    ospf_area: 2
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: FW2
+        ip: "10.0.42.1/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        peer: P11
+        ip: "10.0.43.1/31"
+        mpls: true
+      - name: GigabitEthernet0/2
+        peer: PE7
+        ip: "10.0.44.0/31"
+        mpls: true
+
+  # Leaf Switches (Region 4)
+  - name: Leaf13
+    role: leaf
+    region: 4
+    management_ip: "10.10.10.47/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE7
+        peer_ip: "172.19.1.1"
+        ip: "172.19.1.2/24"
+
+  - name: Leaf14
+    role: leaf
+    region: 4
+    management_ip: "10.10.10.48/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE7
+        peer_ip: "172.19.2.1"
+        ip: "172.19.2.2/24"
+
+  - name: Leaf15
+    role: leaf
+    region: 4
+    management_ip: "10.10.10.49/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE8
+        peer_ip: "172.19.3.1"
+        ip: "172.19.3.2/24"
+
+  - name: Leaf16
+    role: leaf
+    region: 4
+    management_ip: "10.10.10.50/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE8
+        peer_ip: "172.19.4.1"
+        ip: "172.19.4.2/24"
+
+
 vrfs:
   # Region 1+2 VRFs (AS 65000)
   VRF_GOV:
@@ -733,6 +1019,20 @@ vrfs:
     rd: "65001:500"
     rt_import: ["65001:500"]
     rt_export: ["65001:500"]
+  # Region 4 VRFs (AS 65002)
+  VRF_ISP:
+    rd: "65002:600"
+    rt_import: ["65002:600"]
+    rt_export: ["65002:600"]
+  # INTENTIONAL ERROR: VRF_ISP_BROKEN has NO route-targets → vrf_without_rt_pairs
+  VRF_ISP_BROKEN:
+    rd: "65002:601"
+    rt_import: []
+    rt_export: []
+  VRF_CDN:
+    rd: "65002:700"
+    rt_import: ["65002:700"]
+    rt_export: ["65002:700"]
 
 routing:
   ospf:
