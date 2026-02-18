@@ -238,6 +238,102 @@ NetAlly의 일부 기능(예: `device_info.json` 자동 생성/부트스트랩)�
 
 ---
 
+## 🔧 6. Config Generator — Startup Config 자동 생성 & Import
+
+대규모 랩(20~40 노드)을 PNETLab에 배포할 때, 수작업 config 입력 대신 **Config Generator**로 일괄 생성하고 PNETLab의 **Import Startup Configuration** 기능으로 한 번에 적용할 수 있습니다.
+
+### 6.1 Config 생성
+
+YAML 토폴로지 파일에서 모든 노드의 .cfg + .txt 파일을 자동 생성합니다.
+
+```bash
+# Lab-B (20 nodes) 예시
+python Make_Dataset/config_generator/generator.py \
+  --topology Make_Dataset/config_generator/topologies/lab_b_20nodes.yaml \
+  --templates Make_Dataset/config_generator/templates \
+  --output Make_Dataset/config_generator/output
+```
+
+산출물:
+```
+output/LabB_NCN_Basic_SP_20nodes/
+├── configs/          ← hostname.cfg (사람이 읽기 편한 이름)
+│   ├── P1.cfg
+│   ├── PE1.cfg
+│   └── ...
+├── txt/              ← node_id.txt (PNETLab Import용)
+│   ├── 1.txt
+│   ├── 2.txt
+│   ├── ...
+│   └── NODE_ID_MAP.md  ← node_id ↔ hostname 매핑 참조
+```
+
+### 6.2 PNETLab Import Startup Configuration
+
+1. `txt/` 폴더의 `.txt` 파일들을 하나의 폴더에 모아둠 (NODE_ID_MAP.md 제외)
+2. PNETLab UI → Lab 열기 → **More Actions** → **Import Startup Configuration**
+3. 폴더 선택 → 자동으로 각 node_id에 맞는 config가 적용됨
+4. 모든 노드 시작 → config 자동 로드
+
+> **주의**: `txt/` 파일의 번호는 YAML의 노드 나열 순서(1부터)입니다.
+> PNETLab에서 노드를 생성한 순서와 일치해야 합니다.
+
+### 6.3 Node ID 재매핑 (순서가 다를 때)
+
+PNETLab에서 노드를 YAML 순서와 다르게 생성했다면, **remap** 기능으로 txt 파일을 재매핑합니다.
+
+**절차:**
+
+```bash
+# Step 1: PNETLab > Left Menu > System Status에서 실제 node_id 확인
+# Step 2: 샘플 CSV 복사 후 왼쪽 숫자를 PNETLab 실제 node_id로 수정
+cp Make_Dataset/config_generator/remap_samples/lab_b_remap.csv my_remap.csv
+# my_remap.csv 편집: 왼쪽 숫자 = PNETLab 실제 node_id
+```
+
+CSV 형식 (`pnetlab_node_id,hostname`):
+```csv
+# PNETLab에서 PE1을 1번째, P1을 3번째로 만든 경우
+1,PE1
+2,PE2
+3,P1
+4,P2
+...
+```
+
+```bash
+# Step 3: 재매핑 실행
+python Make_Dataset/config_generator/generator.py \
+  --remap my_remap.csv \
+  --lab LabB_NCN_Basic_SP_20nodes
+```
+
+이 명령은 `configs/`는 그대로 두고 `txt/` 폴더만 재생성합니다.
+
+**제공된 샘플 CSV** (`Make_Dataset/config_generator/remap_samples/`):
+
+| 파일 | Lab | 노드 수 |
+|---|---|:---:|
+| `lab_b_remap.csv` | Lab-B (Basic SP) | 20 |
+| `lab_c_remap.csv` | Lab-C (Security + L2VPN) | 30 |
+| `lab_d_remap.csv` | Lab-D (Multi-AS Complex) | 40 |
+
+> 샘플 CSV의 기본값은 YAML 순서와 동일합니다. YAML 순서대로 노드를 만들었다면 remap 없이 바로 Import 가능합니다.
+
+### 6.4 IOSv 노드 설정 주의사항
+
+Config Generator가 생성하는 config는 **IOSv** 이미지 기준입니다:
+
+| 항목 | 필수 설정 |
+|---|---|
+| 이미지 | `vios-adventerprisek9-m.vmdk` (IOSv) |
+| Ethernet 어댑터 수 | **8개** (Gi0/0 ~ Gi0/7) |
+| 관리 인터페이스 | GigabitEthernet0/7 → Cloud0 (OOB) |
+
+> IOL 이미지(`i86bi_linux_l2-adventerprisek9`)를 사용하면 인터페이스가 `Ethernet0/x`로 나타나고 4개만 제공되어 config가 적용되지 않습니다.
+
+---
+
 ## ❓ 문제 해결 (Troubleshooting)
 
 ### Q1. 아이콘을 눌러도 반응이 없거나 에러가 뜹니다.

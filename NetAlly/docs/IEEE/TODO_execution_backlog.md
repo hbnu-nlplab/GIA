@@ -79,7 +79,7 @@
 
 ## 2. P1 — Config Generator 구현
 
-### 2.1 코드 + Config 생성 ✅ (2026-02-13 완료)
+### 2.1 코드 + Config 생성 ✅ (2026-02-13 완료) + 추가 작업 ✅ (2026-02-18 완료)
 
 - [x] `Make_Dataset/config_generator/generator.py` — 메인 생성 엔진
 - [x] `Make_Dataset/config_generator/templates/*.j2` — 4종 (`pe_router`, `p_router`, `asbr_router`, `leaf_switch`)
@@ -89,7 +89,18 @@
 - [x] Lab-B: 20/20 cfg 생성 완료
 - [x] Lab-C: 30/30 cfg 생성 완료 (Multi-AS, L2VPN, ACL, HSRP)
 - [x] Lab-D: 40/40 cfg 생성 완료 (FW waypoint, QoS, NetFlow, 의도적 오류 검증 통과)
-- [x] PNETLab 배포 가이드: `config_generator/docs/deployment_guide.md`
+- [x] **Lab-D 버그 수정 (2026-02-18)**: P11/P12 관리 IP 충돌(→10.10.10.55/56), ASBR1/ASBR2 OSPF area 불일치(→area 2) 수정
+- [x] **Remap 기능 (2026-02-18)**: `generator.py --remap --lab` 인자 추가 (PNETLab node_id 순서 불일치 시 txt 재매핑)
+  - CSV 헤더 자동 스킵 (`pnetlab_node_id,hostname` 형식 지원)
+- [x] **Sample Remap CSV (2026-02-18)**: `config_generator/remap_samples/` — lab_b_remap.csv(20), lab_c_remap.csv(30), lab_d_remap.csv(40)
+- [x] **IP 충돌 검증 (2026-02-18)**: Lab-B/C/D 전체 CLEAN — 관리 IP(10.10.10.x), 루프백(10.255.x.x), 데이터 서브넷 중복 없음
+  - Lab-C/D 의 HSRP 172.18.1.0/24 3-endpoint 패턴은 의도된 설계 (PE5/PE6/Leaf9)
+- [x] **PNETLab 배포 가이드 전면 업데이트 (2026-02-18)**: `config_generator/docs/deployment_guide.md`
+  - Lab-D 전체 반영 (하드웨어, Config 생성, device_info.json, 검증 체크리스트, Appendix A.3 배선 테이블 48링크)
+  - ASCII 시각 배치 다이어그램 (Lab-B 2-Region, Lab-C 3-Region, Lab-D 4-Region 2×2)
+  - Config 적용 방법 재구성: Import Startup Config(1위) → Startup Editor(2위) → SSH(3위) → Console(4위)
+  - Remap 절차 포함 (node_id 불일치 시)
+  - Section 7 신규: NSO/NetAlly 연동 (아키텍처 다이어그램, Docker Node 설정, 접속 방법)
 
 ### 2.2 PNETLab 배포 + 데이터셋 생성
 

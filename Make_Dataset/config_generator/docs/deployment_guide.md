@@ -2,8 +2,9 @@
 
 > Config Generator로 생성한 .cfg 파일을 PNETLab에 배포하고, 데이터셋 파이프라인까지 연결하는 전 과정을 기술한다.
 >
-> **대상**: Lab-B (20 nodes), Lab-C (30 nodes), 이후 Lab-D 확장 가능
+> **대상**: Lab-B (20 nodes), Lab-C (30 nodes), Lab-D (40 nodes)
 > **관련 문서**: [lab_scalability_design.md](../../../NetAlly/docs/IEEE/lab_scalability_design.md)
+> **NetAlly 배포**: [pnetlab_wiring_runbook_ko.md](../../../NetAlly/docs/pnetlab_wiring_runbook_ko.md)
 
 ---
 
@@ -12,15 +13,17 @@
 ```
 Step 1. Config 생성     → python generator.py --topology topologies/lab_b_20nodes.yaml
 Step 2. PNETLab 랩 생성  → UI에서 노드 추가 + 배선 (부록 A 참조)
-Step 3. Config 적용      → PNETLab Startup Config 에디터에서 .cfg 복붙
+Step 3. Config 적용      → Import Startup Configuration (txt/ 폴더) 또는 수동 복붙
 Step 4. 검증             → OSPF/BGP/MPLS neighbor 확인
-Step 5. 파이프라인 실행   → main_batfish.py → 데이터셋 생성
+Step 5. NSO/NetAlly 연결 → (선택) NSO 등록 + NetAlly Docker Node 추가
+Step 6. 파이프라인 실행   → main_batfish.py → 데이터셋 생성
 ```
 
 | Lab | 노드 수 | 배선 수 | 예상 소요시간 |
 |-----|---------|---------|-------------|
 | Lab-B | 20 | 22 data + 1 mgmt | ~1.5시간 |
 | Lab-C | 30 | 35 data + 1 mgmt | ~2.5시간 |
+| Lab-D | 40 | 48 data + 1 mgmt | ~3.5시간 |
 
 ---
 
@@ -32,8 +35,9 @@ Step 5. 파이프라인 실행   → main_batfish.py → 데이터셋 생성
 |-----|---------|---------|---------|-----|--------|
 | Lab-B | 20 | 16 GB | 24 GB | 8 cores | 20 GB |
 | Lab-C | 30 | 24 GB | 32 GB | 12 cores | 30 GB |
+| Lab-D | 40 | 32 GB | 48 GB | 16 cores | 40 GB |
 
-> IOSv VM 1대당 약 512 MB RAM 소모. Lab-C는 30 x 512 MB = 15 GB + PNETLab OS 오버헤드.
+> IOSv VM 1대당 약 512 MB RAM 소모. Lab-D는 40 x 512 MB = 20 GB + PNETLab OS + Batfish/NSO/NetAlly 오버헤드.
 
 ### 1.2 소프트웨어
 
@@ -59,12 +63,17 @@ python Make_Dataset/config_generator/generator.py \
 # Lab-C (30 nodes)
 python Make_Dataset/config_generator/generator.py \
   --topology Make_Dataset/config_generator/topologies/lab_c_30nodes.yaml
+
+# Lab-D (40 nodes)
+python Make_Dataset/config_generator/generator.py \
+  --topology Make_Dataset/config_generator/topologies/lab_d_40nodes.yaml
 ```
 
 생성 확인:
 ```bash
 ls Make_Dataset/config_generator/output/LabB_NCN_Basic_SP_20nodes/configs/ | wc -l    # → 20
 ls Make_Dataset/config_generator/output/LabC_NCN_Security_L2VPN_30nodes/configs/ | wc -l  # → 30
+ls Make_Dataset/config_generator/output/LabD_NCN_MultiAS_Complex_40nodes/configs/ | wc -l # → 40
 ```
 
 ---
@@ -88,12 +97,92 @@ Lab-B/C는 **Gi0/7을 OOB 관리 인터페이스**로 사용하므로 반드시 
 - **RAM**: 512 MB (기본값)
 - **CPU**: 1
 
-### 2.3 노드 배치
+### 2.3 노드 배치 (시각 레이아웃 가이드)
 
-각 Lab의 노드 목록은 **부록 A** 참조. 배치 팁:
-- Region별로 시각적 그룹핑 (Region 1 좌측, Region 2 중앙, Region 3 우측)
-- P 코어 라우터를 중앙에, PE를 그 주위에, Leaf를 가장자리에 배치
+**공통 원칙:**
 - **노드 이름은 YAML의 `name` 필드와 정확히 일치**시킬 것 (예: `P1`, `PE1`, `Leaf1`)
+- Region별로 시각적 그룹핑 (색상/위치 구분)
+- P 코어 라우터를 중앙에, PE를 그 주위에, Leaf(CE)를 가장자리에 배치
+- Cloud0 (관리망)은 캔버스 상단 또는 하단에 별도 배치
+
+#### Lab-B 배치 (20 nodes, 2 Regions)
+
+```
+╔═══════════════════════════════════╗    ╔═══════════════════════════════════╗
+║         Region 1 (좌측)            ║    ║         Region 2 (우측)            ║
+║         AS 65000, Area 0          ║    ║         AS 65000, Area 0          ║
+║                                   ║    ║                                   ║
+║  [Leaf1] [Leaf2]   [Leaf3] [Leaf4]║    ║  [Leaf5] [Leaf6]   [Leaf7] [Leaf8]║
+║     \      /          \      /    ║    ║     \      /          \      /    ║
+║     [PE1]              [PE2]      ║    ║     [PE3]              [PE4]      ║
+║       |                  |        ║    ║       |                  |        ║
+║     [P1]----[P2]   [P3]----[P4]   ║    ║     [P5]----[P6]   [P7]----[P8]  ║
+║       \      /       |      /     ║    ║       \             /             ║
+║        \    /        |     /      ║    ║        \           /              ║
+║         \  /         |    /       ║    ║         \         /               ║
+║          \/          |   /        ║    ║          \       /                ║
+║                     [P3]==========║====║==========[P5]                     ║
+║                  Inter-Region     ║    ║       Backbone Link               ║
+╚═══════════════════════════════════╝    ╚═══════════════════════════════════╝
+
+                        [ Cloud0 — 관리망 (10.10.10.0/24) ]
+                          모든 20개 노드의 e7 연결
+```
+
+#### Lab-C 배치 (30 nodes, 3 Regions)
+
+```
+╔════════════════════╗  ╔════════════════════╗  ╔══════════════════════════════╗
+║  Region 1 (좌측)    ║  ║  Region 2 (중앙)    ║  ║    Region 3 (우측)            ║
+║  AS 65000, Area 0  ║  ║  AS 65000, Area 0  ║  ║    AS 65001, Area 1          ║
+║                    ║  ║                    ║  ║                              ║
+║  Leaf1~4           ║  ║  Leaf5~8           ║  ║  Leaf9~12                    ║
+║   |    |           ║  ║   |    |           ║  ║   |    |                     ║
+║  PE1  PE2          ║  ║  PE3  PE4          ║  ║  PE5  PE6 (HSRP on Leaf9)   ║
+║   |    |           ║  ║   |    |           ║  ║   |    |                     ║
+║  P1 P2 P3 P4      ║  ║  P5 P6 P7 P8      ║  ║  P9   P10                    ║
+║        |           ║  ║  |       \    \    ║  ║  |    |                      ║
+╚════════║═══════════╝  ╚══║════════║════║═══╝  ╚══║════║═════════════════════╝
+         P3 ============= P5       P7===ASBR1=====P9   |
+                                   P8===ASBR2===========P10
+                              (eBGP Inter-AS)
+
+                        [ Cloud0 — 관리망 (10.10.10.0/24) ]
+                          모든 30개 노드의 e7 연결
+```
+
+#### Lab-D 배치 (40 nodes, 4 Regions)
+
+```
+╔════════════════════╗  ╔════════════════════╗
+║  Region 1 (좌상)    ║  ║  Region 2 (우상)    ║
+║  AS 65000, Area 0  ║  ║  AS 65000, Area 0  ║
+║  Leaf1~4           ║  ║  Leaf5~8           ║
+║  PE1  PE2          ║  ║  PE3  PE4          ║
+║  P1 P2 P3 P4      ║  ║  P5 P6 P7 P8      ║
+╚═════════╤══════════╝  ╚══╤═══════╤════╤═══╝
+     P3===P5          P7===ASBR1   P8===ASBR2
+     (Intra-AS)            │(eBGP)      │(eBGP)
+╔═════════╧══════════╗  ╔══╧═══════╧════╧═══╗
+║  Region 3 (좌하)    ║  ║  Region 4 (우하)    ║
+║  AS 65001, Area 1  ║  ║  AS 65002, Area 2  ║
+║  Leaf9~12          ║  ║  Leaf13~16         ║
+║  PE5  PE6          ║  ║  PE7  PE8          ║
+║  P9  P10           ║  ║  P11  P12          ║
+║  ASBR1  ASBR2      ║  ║  FW1   FW2         ║
+╚════════════════════╝  ╚════════════════════╝
+     ASBR1===FW1 (eBGP, Inter-AS 65001↔65002)
+     ASBR2===FW2 (eBGP, Inter-AS 65001↔65002)
+
+        [ Cloud0 — 관리망 (10.10.10.0/24) ]
+          모든 40개 노드의 e7 연결
+```
+
+> **PNETLab 배치 팁:**
+> - 각 Region을 PNETLab 캔버스의 사분면에 배치하면 가독성이 좋다
+> - Inter-Region/Inter-AS 링크가 Region 경계를 가로지르도록 배치
+> - Cloud0는 캔버스 하단에 길게 배치하여 모든 노드의 e7과 연결
+> - Lab-D의 경우 4개 Region을 2x2 격자로 배치 (좌상/우상/좌하/우하)
 
 ### 2.4 네트워크 배선
 
@@ -139,16 +228,45 @@ Lab-C에서 PE5와 PE6가 Leaf9의 172.18.1.0/24 서브넷에서 HSRP를 구성�
 
 | 방법 | 속도 (30 nodes) | 난이도 | 권장 |
 |------|----------------|-------|------|
-| **A: PNETLab Startup Config 에디터** | ~30분 | 하 | **권장** |
-| B: SSH 파일시스템 직접 복사 | ~5분 | 중 | 대안 |
-| C: Console Telnet 복붙 | ~90분 | 하 | 비권장 |
+| **A: Import Startup Configuration** | ~5분 | 하 | **최우선** |
+| B: Startup Config 에디터 (수동 복붙) | ~30분 | 하 | 대안 |
+| C: SSH 파일시스템 직접 복사 | ~5분 | 중 | 고급 대안 |
+| D: Console Telnet 복붙 | ~90분 | 하 | 비권장 |
 
-### 3.2 방법 A: PNETLab Startup Config 에디터 (권장)
+> 생성된 .cfg에 SSH, OOB 관리 인터페이스, 기본 라우팅이 이미 포함되어 있으므로
+> `1-SSH_Enable.py` 스크립트가 **불필요**하다.
 
-생성된 .cfg에 SSH, OOB 관리 인터페이스, 기본 라우팅이 이미 포함되어 있으므로
-`1-SSH_Enable.py` 스크립트가 **불필요**하다.
+### 3.2 방법 A: Import Startup Configuration (최우선 권장)
+
+Config Generator가 생성한 `txt/` 폴더를 PNETLab의 Import 기능으로 한 번에 적용한다.
+
+**전제 조건:**
+- PNETLab에서 노드를 **YAML 순서대로** 생성했거나, 또는 `--remap`으로 txt를 재매핑한 상태
 
 **절차:**
+
+1. `txt/` 폴더 내 `.txt` 파일만 별도 폴더에 복사 (NODE_ID_MAP.md 제외)
+   ```bash
+   mkdir -p /tmp/lab_b_import
+   cp output/LabB_NCN_Basic_SP_20nodes/txt/[0-9]*.txt /tmp/lab_b_import/
+   ```
+2. PNETLab UI → 랩 열기 → **More Actions** → **Import Startup Configuration**
+3. 폴더 선택 → 자동으로 각 node_id에 맞는 config 적용
+4. 노드 시작 (Start All) → config 자동 로드
+
+**Node ID가 맞지 않을 때 (Remap):**
+```bash
+# PNETLab System Status에서 실제 node_id 확인 후 CSV 편집
+cp remap_samples/lab_b_remap.csv my_remap.csv
+# my_remap.csv에서 왼쪽 숫자를 PNETLab 실제 node_id로 수정
+
+python generator.py --remap my_remap.csv --lab LabB_NCN_Basic_SP_20nodes
+# → txt/ 폴더가 재매핑된 파일로 재생성됨
+```
+
+### 3.3 방법 B: Startup Config 에디터 (수동 복붙)
+
+Import가 안 되는 환경이거나 소수 노드만 수정할 때 사용한다.
 
 1. PNETLab UI 좌측 메뉴 → **Startup Config** (또는 랩 설정에서 접근)
 2. 좌측 노드 목록에서 노드 선택 (예: `P1`)
@@ -159,14 +277,12 @@ Lab-C에서 PE5와 PE6가 Leaf9의 172.18.1.0/24 서브넷에서 HSRP를 구성�
 6. **Set as Active** 클릭
 7. 노드 시작 (Start All) → config 자동 적용
 
-> **Import 버튼**: PNETLab Startup Config 에디터에 Import 기능이 있다면 .cfg 파일을 직접 Import하여 더 빠르게 적용 가능.
-
 **주의사항:**
 - 노드 이름이 YAML `name`과 일치해야 한다 (예: `P1`, 아닌 `P01`)
 - `version 15.7` 행이 포함되어 있어도 무방 (IOSv가 자동 무시)
 - 붙여넣기 전에 기존 기본 config 내용을 **전부 삭제**할 것
 
-### 3.3 방법 B: SSH 파일시스템 직접 복사 (고급 대안)
+### 3.4 방법 C: SSH 파일시스템 직접 복사 (고급 대안)
 
 PNETLab 서버에 SSH 접속이 가능한 경우, 노드의 startup-config 파일을 직접 교체할 수 있다.
 
@@ -196,7 +312,7 @@ chown -R root:unl /opt/unetlab/tmp/0/<LAB_HASH>/*/startup-config
 
 > node_id ↔ hostname 매핑은 PNETLab API 또는 `.unl` 파일에서 추출 가능.
 
-### 3.4 방법 C: Console 복붙 (Fallback)
+### 3.5 방법 D: Console 복붙 (Fallback)
 
 20+ 노드에서는 비권장. 필요한 경우:
 
@@ -347,6 +463,67 @@ NSO 등록이나 기존 배포 스크립트 연동 시 `device_info.json`이 필
 
 > `telnet_port: 0`은 placeholder. PNETLab에서 노드 생성 후 실제 포트 번호로 교체 필요.
 
+### 4.5 Lab-D device_info.json 템플릿
+
+```json
+{
+  "global_settings": {
+    "pnetlab_vm_ip": "YOUR_PNETLAB_IP",
+    "gateway_ip": "10.10.10.1",
+    "enable_password": "",
+    "admin_password": "admin",
+    "domain_name": "ncn.go.kr",
+    "nso_authgroup": "LabD_NCN_MultiAS_Complex",
+    "nso_ned_id": "cisco-ios-cli-6.110",
+    "nso_username": "admin",
+    "nso_password": "admin",
+    "batfish_output_dir": "Data/Pnetlab/LabD_NCN_MultiAS_Complex_40nodes"
+  },
+  "devices": [
+    { "name": "P1",     "oob_ip": "10.10.10.11", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "P2",     "oob_ip": "10.10.10.12", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "P3",     "oob_ip": "10.10.10.13", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "P4",     "oob_ip": "10.10.10.14", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "P5",     "oob_ip": "10.10.10.15", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "P6",     "oob_ip": "10.10.10.16", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "P7",     "oob_ip": "10.10.10.17", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "P8",     "oob_ip": "10.10.10.18", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "P9",     "oob_ip": "10.10.10.19", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "P10",    "oob_ip": "10.10.10.20", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "P11",    "oob_ip": "10.10.10.55", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "P12",    "oob_ip": "10.10.10.56", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "PE1",    "oob_ip": "10.10.10.21", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "PE2",    "oob_ip": "10.10.10.22", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "PE3",    "oob_ip": "10.10.10.23", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "PE4",    "oob_ip": "10.10.10.24", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "PE5",    "oob_ip": "10.10.10.43", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "PE6",    "oob_ip": "10.10.10.44", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "PE7",    "oob_ip": "10.10.10.53", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "PE8",    "oob_ip": "10.10.10.54", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "ASBR1",  "oob_ip": "10.10.10.41", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "ASBR2",  "oob_ip": "10.10.10.42", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "FW1",    "oob_ip": "10.10.10.51", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "FW2",    "oob_ip": "10.10.10.52", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "Leaf1",  "oob_ip": "10.10.10.31", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "Leaf2",  "oob_ip": "10.10.10.32", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "Leaf3",  "oob_ip": "10.10.10.33", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "Leaf4",  "oob_ip": "10.10.10.34", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "Leaf5",  "oob_ip": "10.10.10.35", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "Leaf6",  "oob_ip": "10.10.10.36", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "Leaf7",  "oob_ip": "10.10.10.37", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "Leaf8",  "oob_ip": "10.10.10.38", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "Leaf9",  "oob_ip": "10.10.10.39", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "Leaf10", "oob_ip": "10.10.10.40", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "Leaf11", "oob_ip": "10.10.10.45", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "Leaf12", "oob_ip": "10.10.10.46", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "Leaf13", "oob_ip": "10.10.10.47", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "Leaf14", "oob_ip": "10.10.10.48", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "Leaf15", "oob_ip": "10.10.10.49", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 },
+    { "name": "Leaf16", "oob_ip": "10.10.10.50", "oob_intf": "GigabitEthernet0/7", "device_group": "LabD", "telnet_port": 0 }
+  ]
+}
+```
+
 ---
 
 ## 5. 배포 검증 체크리스트
@@ -402,7 +579,44 @@ show ip access-lists
 ! BLOCK_SSH_EXTERNAL: deny tcp any any eq 22, permit ip any any
 ```
 
-### 5.4 검증 명령어 모음 (복사-붙여넣기용)
+### 5.4 Lab-D 추가 검증 항목
+
+```cisco
+! Region 4 (AS 65002) 관련
+
+! eBGP 세션 (FW1/FW2 → ASBR1/ASBR2)
+show ip bgp summary
+! FW1: neighbor 10.0.40.0 (ASBR1) AS 65001 → Established
+! FW2: neighbor 10.0.40.2 (ASBR2) AS 65001 → Established
+
+! OSPF Multi-Area (FW1/FW2에서 Area 2 확인)
+show ip ospf interface brief
+! Region 4 인터페이스: Area 2
+
+! QoS Policy (PE7/PE8에서)
+show policy-map interface
+! class VOICE: bandwidth percent 30
+! class VIDEO: bandwidth percent 25
+! class DATA:  bandwidth percent 20
+
+! NetFlow (PE7/PE8에서)
+show flow monitor FLOW_MONITOR_1 statistics
+show flow exporter NETFLOW_EXPORT
+
+! VRF 확인 (PE7/PE8에서)
+show ip route vrf VRF_ISP
+show ip route vrf VRF_CDN
+
+! 의도적 오류 확인 (3가지)
+! 1. VRF_ISP_BROKEN: RT 없음 → 경로 교환 실패
+show ip bgp vpnv4 vrf VRF_ISP_BROKEN summary
+! 2. PE7↔PE8 iBGP 비대칭 (PE8 → PE7 neighbor만 있음)
+show ip bgp vpnv4 unicast summary    ! PE7에서: PE8 neighbor 없음
+! 3. FW1↔PE7 OSPF cost 비대칭 (FW1:10, PE7:100)
+show ip ospf interface GigabitEthernet0/2  ! cost 값 비교
+```
+
+### 5.5 검증 명령어 모음 (복사-붙여넣기용)
 
 ```cisco
 show ip ospf neighbor
@@ -434,9 +648,15 @@ mkdir -p Data/Pnetlab/LabC_NCN_Security_L2VPN_30nodes/configs
 cp Make_Dataset/config_generator/output/LabC_NCN_Security_L2VPN_30nodes/configs/*.cfg \
    Data/Pnetlab/LabC_NCN_Security_L2VPN_30nodes/configs/
 
+# Lab-D
+mkdir -p Data/Pnetlab/LabD_NCN_MultiAS_Complex_40nodes/configs
+cp Make_Dataset/config_generator/output/LabD_NCN_MultiAS_Complex_40nodes/configs/*.cfg \
+   Data/Pnetlab/LabD_NCN_MultiAS_Complex_40nodes/configs/
+
 # device_info.json 복사 (섹션 4에서 작성한 것)
 cp device_info_labB.json Data/Pnetlab/LabB_NCN_Basic_SP_20nodes/device_info.json
 cp device_info_labC.json Data/Pnetlab/LabC_NCN_Security_L2VPN_30nodes/device_info.json
+cp device_info_labD.json Data/Pnetlab/LabD_NCN_MultiAS_Complex_40nodes/device_info.json
 ```
 
 ### 6.2 NSO 등록 (선택: NetAlly 데모 시 필요)
@@ -467,6 +687,11 @@ python Make_Dataset/src/main_batfish.py \
 python Make_Dataset/src/main_batfish.py \
   --lab-path Data/Pnetlab/LabC_NCN_Security_L2VPN_30nodes \
   --policies Make_Dataset/policies.json
+
+# Lab-D 데이터셋 생성
+python Make_Dataset/src/main_batfish.py \
+  --lab-path Data/Pnetlab/LabD_NCN_MultiAS_Complex_40nodes \
+  --policies Make_Dataset/policies.json
 ```
 
 ### 6.4 Config Export (3-Config_Export_Batfish.py) 스킵
@@ -475,6 +700,103 @@ Lab-B/C는 Config Generator가 생성한 .cfg를 **직접** Batfish에 투입하
 NSO를 통한 config export 단계(`3-Config_Export_Batfish.py`)가 **불필요**하다.
 
 > Batfish의 `main_batfish.py`는 `<lab-path>/configs/*.cfg` 파일을 직접 읽어 스냅샷을 생성한다.
+
+---
+
+## 7. NSO / NetAlly 연동 (선택)
+
+Lab-B/C/D에서 NetAlly Multi-Agent System을 사용한 데이터셋 평가 실험(Exp.3)이나 데모를 수행할 때 필요하다.
+Batfish 데이터셋 생성만 할 경우에는 이 섹션을 건너뛰어도 된다.
+
+> **상세 문서**: 아래는 요약이며, 전체 절차는 NetAlly 문서를 참조한다.
+> - [pnetlab_deployment_guide.md](../../../NetAlly/docs/pnetlab_deployment_guide.md) — NetAlly Docker Node 설정
+> - [pnetlab_wiring_runbook_ko.md](../../../NetAlly/docs/pnetlab_wiring_runbook_ko.md) — 실전 배선/운영
+
+### 7.1 전체 구성도
+
+```
+                    ┌─────────────────────────────────────────────────┐
+                    │              PNETLab VM                          │
+                    │                                                 │
+                    │  ┌──────────┐  ┌──────────┐  ┌──────────────┐  │
+                    │  │ NetAlly  │  │   NSO    │  │  Batfish     │  │
+                    │  │ Docker   │  │ Docker   │  │  Docker      │  │
+                    │  │ :8000    │  │ :8080    │  │  :9996/:9997 │  │
+                    │  └────┬─────┘  └────┬─────┘  └──────────────┘  │
+                    │       │             │                           │
+                    │  ─────┴─────────────┴────── Cloud0 ──────────  │
+                    │       │   Management Network (10.10.10.0/24)   │
+                    │       │                                        │
+                    │  ┌────┴───────────────────────────────────┐    │
+                    │  │  Lab 노드들 (P/PE/Leaf/ASBR/FW)         │    │
+                    │  │  각 노드 e7 → Cloud0                    │    │
+                    │  └────────────────────────────────────────┘    │
+                    └─────────────────────────────────────────────────┘
+```
+
+### 7.2 NetAlly Docker Node 추가
+
+PNETLab UI에서 Docker 노드를 추가한다.
+
+| 항목 | 설정값 |
+|------|--------|
+| Image | `netally:latest` |
+| Name | `NetAlly` |
+| CPU/RAM | 2 cores / 2048 MB |
+| Console Type | `http` |
+| Console Port | `8000` |
+| Ethernet | `4` |
+| 배선 | `eth1` → Cloud0 (관리망) |
+
+**Docker Options** (한 줄 복붙):
+```
+--privileged -v /opt/unetlab:/opt/unetlab:ro --add-host=host.docker.internal:host-gateway -e PNETLAB_INVENTORY_BACKEND=labfs_local -e PNETLAB_LAB_NAME=<랩이름> -e PNETLAB_NSO_NODE=NSO -e BATFISH_HOST=host.docker.internal:9997 -e BATFISH_SNAPSHOT=<랩이름> -e AUTO_INIT_BATFISH=true -e NETALLY_TOOL_BACKEND=mcp -e NETALLY_MCP_ALLOW_MUTATIONS=true
+```
+
+| Lab | `PNETLAB_LAB_NAME` | `BATFISH_SNAPSHOT` |
+|-----|--------------------|--------------------|
+| Lab-B | `LabB_NCN_Basic_SP` | `LabB_NCN_Basic_SP` |
+| Lab-C | `LabC_NCN_Security_L2VPN` | `LabC_NCN_Security_L2VPN` |
+| Lab-D | `LabD_NCN_MultiAS_Complex` | `LabD_NCN_MultiAS_Complex` |
+
+> **주의**: 실험실별로 NetAlly 인스턴스를 분리하는 것을 권장한다. 같은 인스턴스를 공유하면 `PNETLAB_LAB_NAME`, `BATFISH_SNAPSHOT`이 충돌할 수 있다.
+
+### 7.3 NSO Docker Node 추가
+
+NSO를 통한 장비 등록/sync-from이 필요한 경우에만 추가한다.
+
+| 항목 | 설정값 |
+|------|--------|
+| Image | `ptthanh1511/nso:latest` |
+| Name | `NSO` |
+| 배선 | `eth2` → Cloud0 (관리망) |
+
+NSO 등록:
+```bash
+# device_info.json 경로를 해당 Lab으로 수정 후 실행
+python Make_Dataset/src/2-NSO_Register.py
+```
+
+### 7.4 Batfish Docker (호스트에서 실행)
+
+Batfish는 PNETLab 호스트에서 별도 컨테이너로 실행한다.
+
+```bash
+# PNETLab 호스트(root)에서 1회 실행
+docker run -d --name netally-batfish --restart unless-stopped \
+  -p 9996:9996 -p 9997:9997 batfish/allinone:latest
+
+# 헬스 확인
+curl -fsS http://127.0.0.1:9996/v2/version
+```
+
+### 7.5 접속 방법
+
+| 방법 | 용도 |
+|------|------|
+| PNETLab 캔버스에서 NetAlly 노드 더블클릭 | 가장 간단 (http console) |
+| SSH 터널 (`ssh -N -L 18111:<NetAlly_IP>:8000 root@<PNETLab_IP>`) | 로컬 브라우저 접속 |
+| Docker Options에 `-p 18111:8000` 추가 | 포트 직접 노출 (데모용) |
 
 ---
 
@@ -655,6 +977,142 @@ L2VPN xconnect (논리적 Pseudowire — 물리 배선 불필요):
 > xconnect 인터페이스(PE1 e3, PE2 e4, PE3 e3, PE5 e3, PE6 e3)는 PNETLab에서 **미연결 상태로 둬도** 무방. Pseudowire는 MPLS 코어를 통해 논리적으로 연결된다.
 
 **관리 네트워크**: 모든 30개 노드의 `e7` → Cloud0 (`10.10.10.0/24`)
+
+---
+
+### A.3 Lab-D (40 Nodes) — 배선 테이블
+
+**노드 목록 (40개)**
+
+| # | Node | Role | Region | AS | OSPF Area | Loopback | Management IP |
+|---|------|------|--------|-----|-----------|----------|---------------|
+| 1 | P1 | P Core | 1 | 65000 | 0 | 10.255.0.1 | 10.10.10.11 |
+| 2 | P2 | P Core | 1 | 65000 | 0 | 10.255.0.2 | 10.10.10.12 |
+| 3 | P3 | P Core | 1 | 65000 | 0 | 10.255.0.3 | 10.10.10.13 |
+| 4 | P4 | P Core | 1 | 65000 | 0 | 10.255.0.4 | 10.10.10.14 |
+| 5 | P5 | P Core | 2 | 65000 | 0 | 10.255.0.5 | 10.10.10.15 |
+| 6 | P6 | P Core | 2 | 65000 | 0 | 10.255.0.6 | 10.10.10.16 |
+| 7 | P7 | P Core | 2 | 65000 | 0 | 10.255.0.7 | 10.10.10.17 |
+| 8 | P8 | P Core | 2 | 65000 | 0 | 10.255.0.8 | 10.10.10.18 |
+| 9 | P9 | P Core | 3 | 65001 | 1 | 10.255.0.9 | 10.10.10.19 |
+| 10 | P10 | P Core | 3 | 65001 | 1 | 10.255.0.10 | 10.10.10.20 |
+| 11 | P11 | P Core | 4 | 65002 | 2 | 10.255.0.51 | 10.10.10.55 |
+| 12 | P12 | P Core | 4 | 65002 | 2 | 10.255.0.52 | 10.10.10.56 |
+| 13 | PE1 | PE | 1 | 65000 | 0 | 10.255.0.11 | 10.10.10.21 |
+| 14 | PE2 | PE | 1 | 65000 | 0 | 10.255.0.12 | 10.10.10.22 |
+| 15 | PE3 | PE | 2 | 65000 | 0 | 10.255.0.21 | 10.10.10.23 |
+| 16 | PE4 | PE | 2 | 65000 | 0 | 10.255.0.22 | 10.10.10.24 |
+| 17 | PE5 | PE | 3 | 65001 | 1 | 10.255.0.33 | 10.10.10.43 |
+| 18 | PE6 | PE | 3 | 65001 | 1 | 10.255.0.34 | 10.10.10.44 |
+| 19 | PE7 | PE | 4 | 65002 | 2 | 10.255.0.43 | 10.10.10.53 |
+| 20 | PE8 | PE | 4 | 65002 | 2 | 10.255.0.44 | 10.10.10.54 |
+| 21 | ASBR1 | ASBR | 3 | 65001 | 0/1/2 | 10.255.0.31 | 10.10.10.41 |
+| 22 | ASBR2 | ASBR | 3 | 65001 | 0/1/2 | 10.255.0.32 | 10.10.10.42 |
+| 23 | FW1 | FW | 4 | 65002 | 2 | 10.255.0.41 | 10.10.10.51 |
+| 24 | FW2 | FW | 4 | 65002 | 2 | 10.255.0.42 | 10.10.10.52 |
+| 25-28 | Leaf1~4 | Leaf | 1 | — | — | — | 10.10.10.31~34 |
+| 29-32 | Leaf5~8 | Leaf | 2 | — | — | — | 10.10.10.35~38 |
+| 33-34 | Leaf9~10 | Leaf | 3 | — | — | — | 10.10.10.39~40 |
+| 35-36 | Leaf11~12 | Leaf | 3 | — | — | — | 10.10.10.45~46 |
+| 37-40 | Leaf13~16 | Leaf | 4 | — | — | — | 10.10.10.47~50 |
+
+**데이터 링크 — Region 1 (AS 65000, OSPF Area 0)**
+
+| # | Node A | Slot A | Node B | Slot B | Subnet | 비고 |
+|---|--------|--------|--------|--------|--------|------|
+| 1 | P1 | e0 | PE1 | e0 | 10.0.1.0/31 | MPLS |
+| 2 | P1 | e1 | P2 | e0 | 10.0.2.0/31 | MPLS |
+| 3 | P1 | e2 | P3 | e0 | 10.0.3.0/31 | MPLS |
+| 4 | P2 | e1 | PE2 | e0 | 10.0.4.0/31 | MPLS |
+| 5 | P2 | e2 | P4 | e0 | 10.0.5.0/31 | MPLS |
+| 6 | P3 | e1 | P4 | e1 | 10.0.6.0/31 | MPLS |
+| 7 | P4 | e2 | PE2 | e1 | 10.0.7.0/31 | MPLS |
+| 8 | PE1 | e1 | Leaf1 | e0 | 172.16.1.0/24 | VRF_GOV |
+| 9 | PE1 | e2 | Leaf2 | e0 | 172.16.2.0/24 | VRF_EDU |
+| 10 | PE2 | e2 | Leaf3 | e0 | 172.16.3.0/24 | VRF_RND |
+| 11 | PE2 | e3 | Leaf4 | e0 | 172.16.4.0/24 | VRF_GOV |
+
+**Inter-Region 1 ↔ 2**
+
+| 12 | P3 | e2 | P5 | e2 | 10.0.20.0/31 | Intra-AS Backbone |
+
+**Region 2 (AS 65000, OSPF Area 0)**
+
+| # | Node A | Slot A | Node B | Slot B | Subnet | 비고 |
+|---|--------|--------|--------|--------|--------|------|
+| 13 | P5 | e0 | PE3 | e0 | 10.0.11.0/31 | MPLS |
+| 14 | P5 | e1 | P6 | e0 | 10.0.12.0/31 | MPLS |
+| 15 | P6 | e1 | PE4 | e0 | 10.0.14.0/31 | MPLS |
+| 16 | P6 | e2 | P7 | e0 | 10.0.15.0/31 | MPLS |
+| 17 | P7 | e1 | P8 | e0 | 10.0.16.0/31 | MPLS |
+| 18 | P8 | e1 | PE4 | e1 | 10.0.17.0/31 | MPLS |
+| 19 | PE3 | e1 | Leaf5 | e0 | 172.17.1.0/24 | VRF_GOV |
+| 20 | PE3 | e2 | Leaf6 | e0 | 172.17.2.0/24 | VRF_EDU |
+| 21 | PE4 | e2 | Leaf7 | e0 | 172.17.3.0/24 | VRF_RND |
+| 22 | PE4 | e3 | Leaf8 | e0 | 172.17.4.0/24 | VRF_GOV |
+
+**Inter-Region 2 ↔ 3 (Inter-AS, eBGP)**
+
+| # | Node A | Slot A | Node B | Slot B | Subnet | 비고 |
+|---|--------|--------|--------|--------|--------|------|
+| 23 | P7 | e2 | ASBR1 | e0 | 10.0.30.0/31 | eBGP 65000↔65001 |
+| 24 | P8 | e2 | ASBR2 | e0 | 10.0.30.2/31 | eBGP 65000↔65001 |
+
+**Region 3 (AS 65001, OSPF Area 1)**
+
+| # | Node A | Slot A | Node B | Slot B | Subnet | 비고 |
+|---|--------|--------|--------|--------|--------|------|
+| 25 | ASBR1 | e1 | P9 | e0 | 10.0.31.0/31 | MPLS, Area 1 |
+| 26 | ASBR1 | e2 | PE5 | e0 | 10.0.31.2/31 | MPLS, Area 1 |
+| 27 | ASBR2 | e1 | P10 | e0 | 10.0.32.0/31 | MPLS, Area 1 |
+| 28 | ASBR2 | e2 | PE6 | e0 | 10.0.32.2/31 | MPLS, Area 1 |
+| 29 | P9 | e1 | P10 | e1 | 10.0.33.0/31 | MPLS |
+| 30 | P9 | e2 | PE6 | e5 | 10.0.33.2/31 | MPLS |
+| 31 | P10 | e2 | PE5 | e4 | 10.0.34.0/31 | MPLS |
+
+**Region 3 Access (VRF + HSRP + ACL)**
+
+| # | Node A | Slot A | Node B | Slot B | Subnet | 비고 |
+|---|--------|--------|--------|--------|--------|------|
+| 32 | PE5 e1 + PE6 e4 + Leaf9 e0 | (공유) | | | 172.18.1.0/24 | **HSRP** VRF_SEC |
+| 33 | PE5 | e2 | Leaf10 | e0 | 172.18.2.0/24 | VRF_MIL |
+| 34 | PE6 | e1 | Leaf11 | e0 | 172.18.3.0/24 | VRF_SEC |
+| 35 | PE6 | e2 | Leaf12 | e0 | 172.18.4.0/24 | VRF_MIL |
+
+**Inter-Region 3 ↔ 4 (Inter-AS, eBGP)**
+
+| # | Node A | Slot A | Node B | Slot B | Subnet | 비고 |
+|---|--------|--------|--------|--------|--------|------|
+| 36 | ASBR1 | e3 | FW1 | e0 | 10.0.40.0/31 | eBGP 65001↔65002, Area 2 |
+| 37 | ASBR2 | e3 | FW2 | e0 | 10.0.40.2/31 | eBGP 65001↔65002, Area 2 |
+
+**Region 4 (AS 65002, OSPF Area 2)**
+
+| # | Node A | Slot A | Node B | Slot B | Subnet | 비고 |
+|---|--------|--------|--------|--------|--------|------|
+| 38 | FW1 | e1 | PE7 | e0 | 10.0.41.0/31 | MPLS |
+| 39 | FW1 | e2 | P11 | e0 | 10.0.43.2/31 | MPLS |
+| 40 | FW2 | e1 | PE8 | e0 | 10.0.42.0/31 | MPLS |
+| 41 | FW2 | e2 | P12 | e0 | 10.0.44.0/31 | MPLS |
+| 42 | P11 | e1 | P12 | e0 | 10.0.43.0/31 | MPLS |
+| 43 | P12 | e1 | PE8 | e1 | 10.0.44.1/31 | MPLS |
+| 44 | P11 | e2 | PE7 | e3 | 10.0.43.3/31 | MPLS |
+
+**Region 4 Access**
+
+| # | Node A | Slot A | Node B | Slot B | Subnet | 비고 |
+|---|--------|--------|--------|--------|--------|------|
+| 45 | PE7 | e1 | Leaf13 | e0 | 172.19.1.0/24 | VRF_ISP |
+| 46 | PE7 | e2 | Leaf14 | e0 | 172.19.2.0/24 | VRF_CDN + QoS + NetFlow |
+| 47 | PE8 | e2 | Leaf15 | e0 | 172.19.3.0/24 | VRF_ISP_BROKEN (의도적 오류) |
+| 48 | PE8 | e3 | Leaf16 | e0 | 172.19.4.0/24 | VRF_CDN |
+
+**관리 네트워크**: 모든 40개 노드의 `e7` → Cloud0 (`10.10.10.0/24`)
+
+**Lab-D 의도적 오류 3가지** (데이터셋 L6 진단 문제용):
+1. **VRF_ISP_BROKEN** (PE8): RT import/export 없음 → 경로 교환 불가
+2. **PE7↔PE8 iBGP 비대칭**: PE8→PE7 neighbor만 설정, PE7→PE8 미설정
+3. **FW1↔PE7 OSPF cost 비대칭**: FW1 Gi0/2 cost=10, PE7 Gi0/2 cost=100
 
 ---
 
