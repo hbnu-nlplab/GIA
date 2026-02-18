@@ -29,7 +29,7 @@
 
 [3] 스케일러빌리티 실험 — 핵심 차별점 ⭐
     ├── 제출 최소증거: 10 → 20 노드 (Lab-A → Lab-B)
-    └── 확장 실험(옵션): 30/50 노드
+    └── 확장 실험(옵션): 30/40 노드
         ├── 장비 수에 따른 LLM 성능 변화 관찰
         └── 파이프라인의 토폴로지 독립성 + 확장성 입증
 
@@ -82,16 +82,20 @@
 
 ### III. NetConfigQA2.0 — Dataset Construction (3p)
 
-#### III-A. 실험 환경 (Experimental Labs)
+#### III-A. 실험 환경 (Experimental Labs) — NCN (National Converged Network) 시리즈
 
-| Lab | 노드 수 | 특징 | 프로토콜 |
-|---|:---:|---|---|
-| SP MPLS VPN | 10 | 기존 (KICS) | OSPF, MP-BGP, LDP, VRF |
-| Security Lab | 15-20 | ACL/Firewall 중심 | Zone-based FW, ACL, NAT |
-| DC Leaf-Spine | 20-30 | 데이터센터 | VXLAN, EVPN, BGP |
-| Large-Scale SP | 40-50 | 대규모 SP | Multi-AS BGP, RSVP-TE |
+| Lab | 노드 수 | 이름 | 핵심 프로토콜 | 활성 메트릭 | 예상 QA | 상태 |
+|---|:---:|---|---|:---:|:---:|:---:|
+| **Lab-A** | **10** | SP MPLS VPN (기존) | OSPF, MP-BGP, LDP, VRF | ~50 | 1,128 | ✅ 데이터셋 완료 |
+| **Lab-B** | **20** | NCN Basic SP | + NTP, SNMP, AAA, Banner | ~65 | ~1,500 | ✅ cfg 완료, ⬜ 배포 |
+| **Lab-C** | **30** | NCN Security + L2VPN | + L2VPN, ACL, eBGP, HSRP | ~75 | ~2,500 | ✅ cfg 완료, ⬜ 배포 |
+| **Lab-D** | **40** | NCN Multi-AS Complex | + Multi-AS, QoS, NetFlow, Waypoint, 의도적 오류 3종 | ~80+ | ~3,500 | ✅ cfg 완료, ⬜ 배포 |
 
-> ⚠️ **현실적으로**: 2/28 마감 내에 4개 모두 어려울 수 있음. **우선순위**: (1) 기존 10노드 확장/검증, (2) L2VPN 활성화로 2번째 토폴로지, (3) 1-2개 추가 가능하면 추가.
+**NCN 시나리오**: "국가 기관들을 연결하는 통합 통신 인프라(ISP)"에서 NetAlly가 네트워크 관제·장애 진단·보안 감사를 수행하는 설정. 단순한 노드 수 증가가 아닌, AS 수(1→2→3)·도메인 복잡도·메트릭 커버리지(52%→67%→88%→97%)의 단계적 확장.
+
+**Config Generator 자동화**: YAML 토폴로지 정의 + Jinja2 템플릿 → `.cfg` 자동 생성 (Lab-B/C/D 90개 완료). PNETLab `Import Startup Configuration`으로 일괄 적용.
+
+> ✅ **Lab-D 버그 수정 완료 (2026-02-18)**: P11/P12 관리 IP 충돌(→10.10.10.55/56), ASBR1/ASBR2 OSPF area 불일치(→area 2) 수정. IP 충돌 검증 전체 CLEAN.
 
 #### III-B. Dual-Path 생성 파이프라인
 
@@ -133,8 +137,8 @@ DIKW 피라미드 기반 설계 철학 (`5_LEVEL_DIFFICULTY_PHILOSOPHY.md` 활�
                  │  동일 파이프라인으로 자동 생성             │
                  └─────────────────────────────────────────┘
                         ↓           ↓           ↓            ↓
-                    10 nodes    20 nodes    30 nodes     50 nodes
-                  (1,128 QA)  (~1,500?)   (~2,500?)    (~4,000?)
+                    10 nodes    20 nodes    30 nodes     40 nodes
+                  (1,128 QA)  (~1,500)    (~2,500)     (~3,500)
                         ↓           ↓           ↓            ↓
                  ┌─────────────────────────────────────────┐
                  │  동일 모델로 평가 → 규모에 따른 성능 변화  │
@@ -191,7 +195,7 @@ DIKW 피라미드 기반 설계 철학 (`5_LEVEL_DIFFICULTY_PHILOSOPHY.md` 활�
 
 #### VI-C. 스케일러빌리티 실험 ⭐
 
-| Model | 10 nodes | 20 nodes | 30 nodes | 50 nodes |
+| Model | 10 nodes | 20 nodes | 30 nodes | 40 nodes |
 |---|:---:|:---:|:---:|:---:|
 | GPT-4o-mini | - | - | - | - |
 | GPT-OSS-20B | - | - | - | - |
@@ -290,7 +294,7 @@ python Make_Dataset/src/verification/run_verification_pipeline.py \
 
 | # | 작업 | 소요 |
 |:---:|---|:---:|
-| 11 | 40/50 노드 확장 | 5일+ |
+| 11 | Lab-C/D PNETLab 배포 + 실험 (30/40 노드) | 5일+ |
 | 12 | 도메인별 실험실 (Security Lab) | 5일+ |
 | 13 | 기존 연구 벤치마크 적용 | 3일+ |
 

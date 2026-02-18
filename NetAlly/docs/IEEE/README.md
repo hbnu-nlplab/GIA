@@ -1,15 +1,18 @@
 # IEEE TNMS 논문 준비 — 문서 인덱스
 
-> **최종 업데이트**: 2026-02-14
+> **최종 업데이트**: 2026-02-18
 > **프로젝트**: NetAlly + NetConfigQA2.0  
 > **학회**: IEEE Transactions on Network and Service Management (TNMS)  
 > **마감**: 2026-02-28
 
-> **실행 기준 (Rebaseline, 2026-02-13)**  
-> - 공개 v2 데이터셋 기준: **1,128 QA, L1~L5, 17 카테고리**  
-> - L6는 코드 경로는 유지하되, 이번 TNMS 제출에서는 **명시적으로 제외**  
->   (이유: fault별 스냅샷/관측정보 관리 비용, single-LLM baseline 공정성 저하, 일정 내 재현성 리스크)  
+> **실행 기준 (Rebaseline, 2026-02-13 → 2026-02-18 갱신)**
+> - 공개 v2 데이터셋 기준: **1,128 QA, L1~L5, 17 카테고리**
+> - L6는 코드 경로는 유지하되, 이번 TNMS 제출에서는 **명시적으로 제외**
+>   (이유: fault별 스냅샷/관측정보 관리 비용, single-LLM baseline 공정성 저하, 일정 내 재현성 리스크)
 > - ~~구현 착수 항목~~: `verify_dataset.py` 계열 ✅, `Make_Dataset/config_generator/` 계열 ✅ (Lab-B/C/D 전부 생성 완료)
+> - ~~배포 가이드~~ ✅: `deployment_guide.md` 대폭 업데이트 (Lab-D, NSO/NetAlly 연동, ASCII 배치 다이어그램, Remap 기능)
+> - ~~Lab-D 버그 수정~~ ✅: P11/P12 관리 IP 충돌 해소, ASBR1/ASBR2 OSPF area 불일치 수정
+> - ~~IP 충돌 검증~~ ✅: Lab-B/C/D 전체 CLEAN (관리 IP·루프백·서브넷 중복 없음)
 
 ---
 
@@ -110,7 +113,7 @@ flowchart TB
 | 카테고리 | 17 |
 | 메트릭 | 127 |
 | Answer Type | 5 (text, numeric, set, map, bool) |
-| 토폴로지 | SP MPLS VPN (10 nodes: 4 Leaf + 4 P + 2 PE) |
+| 토폴로지 | Lab-A(10), Lab-B(20), Lab-C(30), Lab-D(40) — NCN 시리즈 (SP/MPLS/L2VPN/Multi-AS) |
 
 ### Ground Truth 검증 결과
 
@@ -153,6 +156,10 @@ flowchart TB
 | Method 2 사람 검토 (43 QA, ~2-3h) | ⬜ | verification/method2_manual_check/human_reviewer_guide.md |
 | Method 3 PNETLab 실행 (44 QA, ~4-6h) | ⬜ | verification/method3_pnetlab/pnetlab_verification_guide.md |
 | Config Generator + Lab-B/C/D cfg 생성 | ✅ | lab_scalability_design.md (20+30+40 = 90 configs) |
+| Lab-D 버그 수정 (P11/P12 IP, ASBR OSPF area) | ✅ | config_generator/topologies/lab_d_40nodes.yaml |
+| Remap 기능 + Sample CSV (Lab-B/C/D) | ✅ | config_generator/generator.py `--remap`, remap_samples/ |
+| 배포 가이드 전면 업데이트 (Lab-D, NSO/NetAlly, 배치 다이어그램) | ✅ | config_generator/docs/deployment_guide.md |
+| IP 충돌 검증 (Lab-B/C/D 전체) | ✅ | 관리 IP·루프백·서브넷 모두 CLEAN |
 | Lab-B/C/D PNETLab 배포 + 데이터셋 생성 | ⬜ | config_generator/docs/deployment_guide.md |
 | v2 데이터셋 재실험 (5 Models) | ⬜ | experiment_design.md Exp.2 |
 | NetAlly 데이터셋 평가 | ⬜ | experiment_design.md Exp.3 |

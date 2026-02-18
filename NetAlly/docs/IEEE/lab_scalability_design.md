@@ -12,8 +12,10 @@
 | Lab-A (10노드) | ✅ 완료 (v2 1,128 QA) | 검증 보강 후 재실험 |
 | Lab-B (20노드) | ✅ Config 생성 완료 (NCN_Basic_SP) | PNETLab 배포 → 데이터셋 생성 |
 | Lab-C (30노드) | ✅ Config 생성 완료 (30/30 cfg) | PNETLab 배포 → 데이터셋 생성 |
-| Lab-D (40노드) | ✅ Config 생성 완료 (40/40 cfg) | PNETLab 배포 → 데이터셋 생성 |
-| `config_generator/` | ✅ 구현 완료 (generator.py + 4 templates) | Lab-B/C/D 전부 생성 가능 |
+| Lab-D (40노드) | ✅ Config 생성 완료 (40/40 cfg) + 버그 수정 완료 | PNETLab 배포 → 데이터셋 생성 |
+| `config_generator/` | ✅ 구현 완료 (generator.py + 4 templates + Remap 기능) | Lab-B/C/D 전부 생성/재매핑 가능 |
+| IP 충돌 검증 | ✅ 완료 (2026-02-18) — Lab-B/C/D 전체 CLEAN | — |
+| 배포 가이드 | ✅ 완료 (2026-02-18) — Lab-D, NSO/NetAlly, 배치 다이어그램 포함 | — |
 
 ### 0.1 제출용 Scope Freeze
 
@@ -173,7 +175,7 @@ TA-Acc
 
 ```
 Make_Dataset/config_generator/
-├── generator.py            # 메인 생성 엔진
+├── generator.py            # 메인 생성 엔진 (--topology | --remap --lab)
 ├── templates/              # Jinja2 config 템플릿
 │   ├── pe_router.j2        # PE 라우터 (VRF, BGP, QoS, NetFlow, xconnect, HSRP)
 │   ├── p_router.j2         # P 코어 라우터 (OSPF cost)
@@ -182,13 +184,23 @@ Make_Dataset/config_generator/
 ├── topologies/             # 토폴로지 정의 (YAML)
 │   ├── lab_b_20nodes.yaml  # 20노드 (2 Region, AS 65000)
 │   ├── lab_c_30nodes.yaml  # 30노드 (3 Region, AS 65000+65001)
-│   └── lab_d_40nodes.yaml  # 40노드 (4 Region, AS 65000+65001+65002)
+│   └── lab_d_40nodes.yaml  # 40노드 (4 Region, AS 65000+65001+65002) ← 버그수정: P11/P12 IP, ASBR OSPF area
+├── remap_samples/          # PNETLab node_id 불일치 시 재매핑용 CSV
+│   ├── lab_b_remap.csv     # 20 entries (pnetlab_node_id,hostname)
+│   ├── lab_c_remap.csv     # 30 entries
+│   └── lab_d_remap.csv     # 40 entries
 ├── docs/
-│   └── deployment_guide.md # PNETLab 배포 가이드
+│   └── deployment_guide.md # PNETLab 배포 가이드 (Lab-D, NSO/NetAlly, 시각 배치 다이어그램 포함)
 └── output/                 # 생성된 config 파일
-    ├── LabB_NCN_Basic_SP_20nodes/configs/       (20 .cfg)
-    ├── LabC_NCN_Security_L2VPN_30nodes/configs/ (30 .cfg)
-    └── LabD_NCN_MultiAS_Complex_40nodes/configs/ (40 .cfg)
+    ├── LabB_NCN_Basic_SP_20nodes/
+    │   ├── configs/  (20 .cfg)
+    │   └── txt/      (20 .txt + NODE_ID_MAP.md, PNETLab Import용)
+    ├── LabC_NCN_Security_L2VPN_30nodes/
+    │   ├── configs/  (30 .cfg)
+    │   └── txt/      (30 .txt + NODE_ID_MAP.md)
+    └── LabD_NCN_MultiAS_Complex_40nodes/
+        ├── configs/  (40 .cfg)
+        └── txt/      (40 .txt + NODE_ID_MAP.md)
 ```
 
 ### 3.3 토폴로지 정의 형식 (YAML)
@@ -357,18 +369,37 @@ end
 
 ```
 Step 1: Config Generator로 Lab-B/C/D 설정 파일 생성
-    $ python Make_Dataset/config_generator/generator.py --topology topologies/lab_b_20nodes.yaml
+    $ python Make_Dataset/config_generator/generator.py \
+        --topology Make_Dataset/config_generator/topologies/lab_b_20nodes.yaml
+    → output/LabB_NCN_Basic_SP_20nodes/configs/ (20 .cfg)
+    → output/LabB_NCN_Basic_SP_20nodes/txt/ (20 .txt, 순서 기반 node_id)
 
-Step 2: PNETLab에서 노드 생성 (Ethernet 어댑터 8개) + 배선 (배선 테이블 참조)
+Step 2: PNETLab에서 노드 생성 (IOSv, Ethernet 어댑터 8개) + 배선 (배선 테이블 참조)
+    - ASCII 배치 다이어그램: deployment_guide.md Section 2.3 참조
 
-Step 3: PNETLab Startup Config 에디터에서 .cfg 적용 (노드별 복붙 또는 Import)
+Step 2.5 (선택): node_id 불일치 시 Remap
+    - PNETLab System Status에서 실제 node_id 확인
+    - remap_samples/lab_b_remap.csv 수정 후:
+    $ python Make_Dataset/config_generator/generator.py \
+        --remap Make_Dataset/config_generator/remap_samples/lab_b_remap.csv \
+        --lab LabB_NCN_Basic_SP_20nodes
+    → txt/ 파일이 실제 PNETLab node_id 기준으로 재생성됨
+
+Step 3: PNETLab Import Startup Configuration (txt/ 파일 사용) 또는 Startup Config 에디터
+    - 상세 절차: deployment_guide.md Section 3 참조
 
 Step 4: 배포 검증 (OSPF/BGP/MPLS neighbor 확인)
+    - 검증 체크리스트: deployment_guide.md Section 5 참조
 
 Step 5: Batfish에 snapshot 로드 + QA 생성
-    $ python Make_Dataset/src/main_batfish.py --lab-path Data/Pnetlab/LabB_NCN_Basic_SP_20nodes
+    $ python Make_Dataset/src/main_batfish.py \
+        --lab-path Data/Pnetlab/LabB_NCN_Basic_SP_20nodes
 
-Step 6: 생성된 데이터셋으로 LLM 평가
+Step 6: Ground Truth 검증
+    $ python Make_Dataset/src/verification/run_verification_pipeline.py \
+        --lab-path Data/Pnetlab/LabB_NCN_Basic_SP_20nodes/
+
+Step 7: 생성된 데이터셋으로 LLM 평가
 ```
 
 ---
