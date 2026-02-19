@@ -41,6 +41,8 @@ class UnlInterface:
     color: str = ""
     width: str = ""
     fontsize: str = ""
+    linkstyle: str = ""
+    linkcfg: str = ""
 
 
 @dataclass(frozen=True)
@@ -122,6 +124,8 @@ def parse_unl(unl_xml: str) -> Tuple[List[UnlNode], List[UnlNetwork], List[UnlIn
                         color=i.get("color", "") or "",
                         width=i.get("width", "") or "",
                         fontsize=i.get("fontsize", "") or "",
+                        linkstyle=i.get("linkstyle", "") or "",
+                        linkcfg=i.get("linkcfg", "") or "",
                     )
                 )
 
@@ -549,6 +553,7 @@ def build_pnetlab_map_from_labfs() -> Dict[str, Any]:
                     "label": n.name,
                     "template": n.template,
                     "kind": n.kind,
+                    "platform": n.template or n.kind or "",
                     "icon": n.icon,
                     "telnet_port": ports.get(n.node_id, 0),
                 },
@@ -565,6 +570,27 @@ def build_pnetlab_map_from_labfs() -> Dict[str, Any]:
         if i.style.lower() in {"dotted", "dashed"}:
             style["strokeDasharray"] = "4 4" if i.style.lower() == "dotted" else "8 6"
         return style
+
+    def _parse_linkcfg(raw: str) -> Dict[str, Any]:
+        """Parse linkcfg JSON string from UNL, e.g. '{"curviness":150}'."""
+        if not raw or raw == "{}":
+            return {}
+        import json
+        try:
+            cleaned = raw.replace("&quot;", '"')
+            return json.loads(cleaned)
+        except Exception:
+            return {}
+
+    def edge_data_from_iface(i: UnlInterface) -> Dict[str, Any]:
+        """Extract linkstyle and linkcfg for edge data."""
+        data: Dict[str, Any] = {}
+        if i.linkstyle:
+            data["linkstyle"] = i.linkstyle
+        cfg = _parse_linkcfg(i.linkcfg)
+        if cfg:
+            data["linkcfg"] = cfg
+        return data
 
     # Add networks (as nodes) when needed, otherwise connect device<->device directly.
     for net_id, eps in endpoints.items():
@@ -592,6 +618,7 @@ def build_pnetlab_map_from_labfs() -> Dict[str, Any]:
                         "src_iface": a.iface_name,
                         "dst_iface": b.iface_name,
                         "network_id": net_id,
+                        **edge_data_from_iface(a),
                     },
                     "style": edge_style_from_iface(a) or edge_style_from_iface(b),
                 }
@@ -629,6 +656,7 @@ def build_pnetlab_map_from_labfs() -> Dict[str, Any]:
                     "data": {
                         "src_iface": ep.iface_name,
                         "network_id": net_id,
+                        **edge_data_from_iface(ep),
                     },
                     "style": edge_style_from_iface(ep),
                 }

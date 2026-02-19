@@ -67,15 +67,6 @@ export default function DeviceNode({ data, selected }: DeviceNodeProps) {
     return <Network className="w-5 h-5" />
   }
 
-  const getAccentClass = () => {
-    const name = data.label.toLowerCase()
-    if (name.includes('pe') || name.includes('router')) return 'node-accent-blue'
-    if (name.includes('spine')) return 'node-accent-purple'
-    if (name.includes('leaf')) return 'node-accent-green'
-    if (name.includes('server') || name.includes('srv')) return 'node-accent-amber'
-    if (name.includes('nso') || name.includes('docker') || name.includes('netally')) return 'node-accent-amber'
-    return 'node-accent-muted'
-  }
 
   const getIconColor = () => {
     const name = data.label.toLowerCase()
@@ -98,7 +89,7 @@ export default function DeviceNode({ data, selected }: DeviceNodeProps) {
                 ? 'bg-emerald-500/6 border-emerald-400/40 shadow-glow-ok'
                 : 'bg-amber-500/6 border-amber-400/40 shadow-[0_0_10px_-2px_hsl(38_90%_55%/0.2)]'
               )
-            : `bg-card border-border-subtle hover:border-border-strong shadow-elevation-1 hover:shadow-elevation-2 ${getAccentClass()}`
+            : 'bg-card border-border-subtle hover:border-border-strong shadow-elevation-1 hover:shadow-elevation-2'
         }
       `}
     >
