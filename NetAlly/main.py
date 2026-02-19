@@ -934,10 +934,6 @@ async def lab_refresh_stream(request: LabRefreshRequest):
         result_sent = False
         try:
             while True:
-                if await request.is_disconnected():
-                    task.cancel()
-                    break
-
                 try:
                     item = await asyncio.wait_for(queue.get(), timeout=0.35)
                 except asyncio.TimeoutError:
@@ -974,6 +970,8 @@ async def lab_refresh_stream(request: LabRefreshRequest):
                 task.cancel()
             try:
                 await task
+            except asyncio.CancelledError:
+                pass
             except Exception:
                 pass
 
