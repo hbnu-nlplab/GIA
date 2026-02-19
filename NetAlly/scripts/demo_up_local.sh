@@ -8,6 +8,9 @@ FRONTEND_PORT="${NETALLY_FRONTEND_PORT:-3000}"
 RUN_PRECHECK="${NETALLY_RUN_PRECHECK:-true}"
 LOG_DIR="${NETALLY_LOG_DIR:-${ROOT_DIR}/.tmp}"
 
+# Demo mode defaults: allow explicit refresh/onboarding mutation tools unless caller disables it.
+export NETALLY_MCP_ALLOW_MUTATIONS="${NETALLY_MCP_ALLOW_MUTATIONS:-true}"
+
 mkdir -p "${LOG_DIR}"
 BACKEND_LOG="${LOG_DIR}/netally-backend.log"
 FRONTEND_LOG="${LOG_DIR}/netally-frontend.log"
