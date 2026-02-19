@@ -1,7 +1,9 @@
 import os
 import json
 import asyncio
+import socket
 from typing import Dict, Any, List, Optional, Literal
+from urllib.parse import urlparse
 from langchain_core.tools import tool
 from dotenv import load_dotenv
 
@@ -33,17 +35,82 @@ load_dotenv()
 _nso_client: Optional[NSOClient] = None
 _batfish_client: Optional[BatfishClient] = None
 _pnetlab_client: Optional[PnetlabClient] = None
+_LOCAL_LOOPBACKS = {"localhost", "127.0.0.1"}
+
+
+def _is_tcp_open(host: str, port: int, timeout_sec: float = 0.35) -> bool:
+    if not host or port <= 0:
+        return False
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.settimeout(timeout_sec)
+    try:
+        sock.connect((host, port))
+        return True
+    except Exception:
+        return False
+    finally:
+        sock.close()
+
+
+def _maybe_rewrite_local_nso_base_url(base_url: str) -> str:
+    """
+    Local dev fallback:
+    if NSO_BASE_URL points to localhost:8080 but it's closed and SSH tunnel
+    127.0.0.1:18080 is open, transparently switch to the tunnel endpoint.
+    """
+    raw = str(base_url or "").strip()
+    if not raw:
+        return raw
+    try:
+        parsed = urlparse(raw)
+    except Exception:
+        return raw
+
+    host = (parsed.hostname or "").lower()
+    scheme = parsed.scheme or "http"
+    path = parsed.path or "/restconf"
+    port = parsed.port or (443 if scheme == "https" else 80)
+    if host not in _LOCAL_LOOPBACKS or port != 8080:
+        return raw
+
+    tunnel_host = str(os.getenv("NETALLY_NSO_LOCAL_TUNNEL_HOST", "127.0.0.1") or "127.0.0.1").strip()
+    tunnel_port_raw = str(os.getenv("NETALLY_NSO_LOCAL_TUNNEL_PORT", "18080") or "18080").strip()
+    try:
+        tunnel_port = int(tunnel_port_raw)
+    except Exception:
+        tunnel_port = 18080
+
+    # Keep explicit localhost:8080 when it is actually reachable.
+    if _is_tcp_open(host, port):
+        return raw
+    if not _is_tcp_open(tunnel_host, tunnel_port):
+        return raw
+
+    rewritten = f"{scheme}://{tunnel_host}:{tunnel_port}{path}"
+    if parsed.query:
+        rewritten = f"{rewritten}?{parsed.query}"
+    print(
+        f"[lab_bootstrap] NSO localhost fallback: {raw} -> {rewritten} "
+        "(localhost:8080 closed, tunnel detected)"
+    )
+    return rewritten
 
 def get_nso_client() -> NSOClient:
     global _nso_client
     if not _nso_client:
         base_url = os.getenv("NSO_BASE_URL")
+        if base_url:
+            base_url = _maybe_rewrite_local_nso_base_url(base_url)
         if not base_url:
             base_url = _discover_nso_base_url()
         if base_url:
             print(f"[lab_bootstrap] NSO base_url resolved: {base_url}")
         if not base_url:
-            base_url = "http://localhost:8080/restconf"
+            base_url = (
+                "http://127.0.0.1:18080/restconf"
+                if _is_tcp_open("127.0.0.1", 18080)
+                else "http://localhost:8080/restconf"
+            )
         _nso_client = NSOClient(
             base_url=base_url,
             username=os.getenv("NSO_USERNAME") or os.getenv("NSO_USER", "admin"),
