@@ -8,6 +8,7 @@ import logging
 import os
 import re
 import socket
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -34,6 +35,36 @@ def _parse_interface_ip(show_output: str, iface_name: str) -> Optional[str]:
             if match and match.group(1) not in ("0.0.0.0", "127.0.0.1"):
                 return match.group(1)
     return None
+
+
+def _is_ssh_enabled_output(show_output: str) -> bool:
+    """
+    Best-effort parser for `show ip ssh`.
+    IOS variants commonly include lines like:
+      - "SSH Enabled - version 2.0"
+      - "SSH Enabled - version 1.99"
+      - "SSH Disabled - version 1.5"
+    """
+    text = str(show_output or "").lower()
+    if not text:
+        return False
+    if "ssh disabled" in text:
+        return False
+    return "ssh enabled" in text or ("ssh" in text and ("version 2.0" in text or "version 1.99" in text))
+
+
+def _requires_confirm(output: str) -> bool:
+    text = str(output or "").lower()
+    return "yes/no" in text or "[confirm]" in text
+
+
+def _requires_modulus_input(output: str) -> bool:
+    text = str(output or "").lower()
+    return (
+        "how many bits" in text
+        or "modulus" in text and "[" in text
+        or "choose the size of the key modulus" in text
+    )
 
 
 def _resolve_mgmt_network(
@@ -493,13 +524,34 @@ async def enable_ssh_via_telnet(device: DeviceInfo, gs: GlobalSettings) -> bool:
     except Exception:
         return False
 
-    async def send_cmd(cmd: str, sleep_time: float = 1.0) -> None:
+    async def _drain_output(max_wait: float = 1.4, chunk_timeout: float = 0.35) -> str:
+        out: List[str] = []
+        loop = asyncio.get_running_loop()
+        deadline = loop.time() + max_wait
+        while loop.time() < deadline:
+            remaining = max(0.01, deadline - loop.time())
+            timeout = min(chunk_timeout, remaining)
+            try:
+                chunk = await asyncio.wait_for(reader.read(1024), timeout=timeout)
+            except Exception:
+                break
+            if not chunk:
+                break
+            out.append(chunk if isinstance(chunk, str) else str(chunk))
+            if sum(len(x) for x in out) >= 8192:
+                break
+        return "".join(out)
+
+    async def send_cmd(cmd: str, sleep_time: float = 1.0, capture: bool = False) -> str:
         writer.write(cmd + "\r\n")
         await asyncio.sleep(sleep_time)
-        try:
-            await asyncio.wait_for(reader.read(1024), timeout=0.5)
-        except Exception:
-            pass
+        if not capture:
+            try:
+                await asyncio.wait_for(reader.read(1024), timeout=0.5)
+            except Exception:
+                pass
+            return ""
+        return await _drain_output(max_wait=2.2)
 
     try:
         writer.write("\r\n\r\n")
@@ -542,6 +594,7 @@ async def enable_ssh_via_telnet(device: DeviceInfo, gs: GlobalSettings) -> bool:
         ssh_username = str(gs.nso_username or "").strip() or "admin"
         ssh_password = str(gs.nso_password or "").strip() or str(gs.admin_password or "").strip() or "admin"
 
+        # Stage 1: base management config
         await send_cmd("conf t")
         await send_cmd("no ip domain-lookup")
         await send_cmd(f"hostname {device.name}")
@@ -560,11 +613,47 @@ async def enable_ssh_via_telnet(device: DeviceInfo, gs: GlobalSettings) -> bool:
         if gs.domain_name:
             await send_cmd(f"ip domain-name {gs.domain_name}")
 
-        await send_cmd("crypto key zeroize rsa", sleep_time=2.0)
-        writer.write("yes\r\n")
-        await asyncio.sleep(1)
-        writer.write("crypto key generate rsa general-keys modulus 2048\r\n")
-        await asyncio.sleep(10)
+        await send_cmd("end")
+
+        # Stage 2: RSA key generation (IOS image syntax differs; try safe fallbacks).
+        zeroize_out = await send_cmd("crypto key zeroize rsa", sleep_time=1.4, capture=True)
+        if _requires_confirm(zeroize_out):
+            writer.write("yes\r\n")
+            await asyncio.sleep(1.0)
+            await _drain_output(max_wait=1.8)
+
+        keygen_cmds = [
+            "crypto key generate rsa general-keys modulus 2048",
+            "crypto key generate rsa general-keys modulus 1024",
+            "crypto key generate rsa modulus 2048",
+            "crypto key generate rsa modulus 1024",
+            "crypto key generate rsa",
+        ]
+        ssh_ready = False
+        for cmd in keygen_cmds:
+            out = await send_cmd(cmd, sleep_time=2.0, capture=True)
+            if _requires_modulus_input(out):
+                writer.write("1024\r\n")
+                await asyncio.sleep(2.0)
+                out += await _drain_output(max_wait=6.0)
+            if _requires_confirm(out):
+                writer.write("yes\r\n")
+                await asyncio.sleep(1.2)
+                out += await _drain_output(max_wait=3.0)
+
+            show_ssh = await send_cmd("show ip ssh", sleep_time=0.8, capture=True)
+            if _is_ssh_enabled_output(show_ssh):
+                ssh_ready = True
+                break
+
+        if not ssh_ready:
+            logger.error("SSH not enabled after RSA key generation: %s", device.name)
+            writer.close()
+            await writer.wait_closed()
+            return False
+
+        # Stage 3: user + vty hardening for NSO SSH onboarding.
+        await send_cmd("conf t")
 
         # Keep CLI credentials aligned with NSO authgroup credentials.
         await send_cmd(f"username {ssh_username} privilege 15 secret {ssh_password}")
@@ -572,13 +661,19 @@ async def enable_ssh_via_telnet(device: DeviceInfo, gs: GlobalSettings) -> bool:
             admin_pw = str(gs.admin_password or "").strip() or ssh_password
             await send_cmd(f"username admin privilege 15 secret {admin_pw}")
 
-        await send_cmd("line vty 0 4")
+        await send_cmd("line vty 0 15")
         await send_cmd("transport input ssh")
         await send_cmd("login local")
         await send_cmd("exit")
         await send_cmd("ip ssh version 2")
 
         await send_cmd("end")
+        show_ssh = await send_cmd("show ip ssh", sleep_time=0.8, capture=True)
+        if not _is_ssh_enabled_output(show_ssh):
+            logger.error("SSH verification failed after config for %s: %s", device.name, show_ssh[:200])
+            writer.close()
+            await writer.wait_closed()
+            return False
         await send_cmd("write memory", sleep_time=10.0)
         writer.close()
         await writer.wait_closed()
@@ -673,7 +768,29 @@ def register_devices_nso(gs: GlobalSettings, devices: List[DeviceInfo], nso: NSO
             except Exception:
                 logger.exception("Fetch host keys failed: %s", dev.name)
                 pass
-            if nso.sync_from(dev.name):
+            sync_ok = False
+            # SSH onboarding can race briefly with key/daemon readiness on virtual IOS images.
+            # Retry sync-from a few times before marking device failed.
+            max_attempts = 3 if protocol == "ssh" else 1
+            for attempt in range(1, max_attempts + 1):
+                if nso.sync_from(dev.name):
+                    sync_ok = True
+                    break
+                if attempt < max_attempts:
+                    logger.warning(
+                        "Sync-from retry %d/%d for %s",
+                        attempt + 1,
+                        max_attempts,
+                        dev.name,
+                    )
+                    try:
+                        if protocol == "ssh":
+                            nso.fetch_host_keys(dev.name)
+                    except Exception:
+                        pass
+                    # Lightweight backoff to let SSH daemon settle on lab nodes.
+                    time.sleep(2.0)
+            if sync_ok:
                 results["registered"].append(dev.name)
             else:
                 results["failed"].append(dev.name)
