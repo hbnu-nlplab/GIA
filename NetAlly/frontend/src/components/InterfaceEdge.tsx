@@ -1,4 +1,4 @@
-import { BaseEdge, getSmoothStepPath, Position, type EdgeProps } from '@xyflow/react'
+import { BaseEdge, getBezierPath, getStraightPath, Position, type EdgeProps } from '@xyflow/react'
 
 export default function InterfaceEdge({
   id,
@@ -10,23 +10,40 @@ export default function InterfaceEdge({
   targetPosition = Position.Left,
   data,
   style,
-  markerEnd,
   label,
 }: EdgeProps) {
-  const [edgePath, labelX, labelY] = getSmoothStepPath({
-    sourceX,
-    sourceY,
-    sourcePosition,
-    targetX,
-    targetY,
-    targetPosition,
-    borderRadius: 8,
-    offset: 25,
-  })
-
   const edgeData = (data || {}) as Record<string, any>
   const srcIface = edgeData.src_iface || ''
   const dstIface = edgeData.dst_iface || ''
+  const linkstyle = edgeData.linkstyle || 'Bezier'
+  const linkcfg = edgeData.linkcfg || {}
+  const curviness = linkcfg.curviness ?? 0
+
+  // Map PNETLab curviness (pixel offset, 0-300) to ReactFlow curvature (multiplier, 0.0-1.2)
+  const curvature = curviness > 0 ? curviness / 250 : 0.25
+
+  let edgePath: string
+  let labelX: number
+  let labelY: number
+
+  if (linkstyle === 'Straight') {
+    ;[edgePath, labelX, labelY] = getStraightPath({
+      sourceX,
+      sourceY,
+      targetX,
+      targetY,
+    })
+  } else {
+    ;[edgePath, labelX, labelY] = getBezierPath({
+      sourceX,
+      sourceY,
+      sourcePosition,
+      targetX,
+      targetY,
+      targetPosition,
+      curvature,
+    })
+  }
 
   // Compute edge vector for label positioning
   const dx = targetX - sourceX
@@ -58,7 +75,7 @@ export default function InterfaceEdge({
 
   return (
     <>
-      <BaseEdge id={id} path={edgePath} style={style} markerEnd={markerEnd} />
+      <BaseEdge id={id} path={edgePath} style={style} />
       {srcIface && (
         <g>
           <rect
@@ -122,7 +139,7 @@ export default function InterfaceEdge({
             x={labelX}
             y={labelY + 3}
             textAnchor="middle"
-            style={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))', fontWeight: 500 }}
+            style={{ fontSize: 10, fill: strokeColor, fontWeight: 500 }}
           >
             {String(label)}
           </text>

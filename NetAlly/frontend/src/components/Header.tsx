@@ -30,6 +30,8 @@ export default function Header() {
   const labRefreshResult = useAppStore(state => state.labRefreshResult)
   const runtimeHealth = useAppStore(state => state.runtimeHealth)
   const setRuntimeHealth = useAppStore(state => state.setRuntimeHealth)
+  const viewMode = useAppStore(state => state.viewMode)
+  const setViewMode = useAppStore(state => state.setViewMode)
 
   const clearTaskTimer = (kind: 'refresh' | 'prepare') => {
     if (kind === 'refresh' && refreshTimerRef.current !== null) {
@@ -469,6 +471,28 @@ export default function Header() {
         </div>
 
         <div className="flex items-center gap-4">
+          {/* View Mode Toggle */}
+          <div className="flex items-center gap-1 bg-muted p-1 rounded-lg border border-border-subtle">
+            <button
+              onClick={() => setViewMode('dashboard')}
+              className={`h-7 px-3 text-ui-xs font-semibold uppercase tracking-wide rounded-md transition-all ${
+                viewMode === 'dashboard' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground hover:bg-card'
+              }`}
+            >
+              Dashboard
+            </button>
+            <button
+              onClick={() => setViewMode('topology')}
+              className={`h-7 px-3 text-ui-xs font-semibold uppercase tracking-wide rounded-md transition-all ${
+                viewMode === 'topology' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground hover:bg-card'
+              }`}
+            >
+              Map View
+            </button>
+          </div>
+
+          <div className="w-px h-4 bg-border/50" />
+
           <div className="flex items-center gap-1 bg-muted p-1 rounded-lg border border-border-subtle">
             <button
               onClick={isRefreshing ? cancelRefresh : handleRefresh}

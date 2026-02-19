@@ -167,9 +167,26 @@ export const useAppStore = create<AppState>((set) => ({
     detailView: { isOpen: false, type: null, id: null }
   }),
 
-  theme: 'dark',
+  theme: (() => {
+    const t = localStorage.getItem('theme') === 'dark' ? 'dark' : 'light'
+    if (t === 'dark') {
+      document.documentElement.classList.add('dark')
+      document.body.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+      document.body.classList.remove('dark')
+    }
+    localStorage.setItem('theme', t)
+    return t
+  })(),
   setTheme: (theme) => {
-    document.documentElement.classList.toggle('dark', theme === 'dark')
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark')
+      document.body.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+      document.body.classList.remove('dark')
+    }
     localStorage.setItem('theme', theme)
     set({ theme })
   },
@@ -198,7 +215,7 @@ export const useAppStore = create<AppState>((set) => ({
   viewMode: 'dashboard',
   setViewMode: (mode) => set({ viewMode: mode }),
   
-  topologySource: (localStorage.getItem('topologySource') as 'batfish' | 'pnetlab') || 'batfish',
+  topologySource: (localStorage.getItem('topologySource') as 'batfish' | 'pnetlab') || 'pnetlab',
   setTopologySource: (source) => {
     localStorage.setItem('topologySource', source)
     set({ topologySource: source })

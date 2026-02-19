@@ -10,15 +10,14 @@ import { DeviceInspectorContent, EvidenceInspectorContent } from './components/I
 import { useAppStore } from './store'
 
 function App() {
-  const { 
-    selectedNode, 
-    detailView, 
-    closeDetail, 
-    theme, 
-    chatWidth, 
+  const {
+    selectedNode,
+    detailView,
+    closeDetail,
+    theme,
+    chatWidth,
     setChatWidth,
     viewMode,
-    setViewMode
   } = useAppStore((state) => ({
     selectedNode: state.selectedNode,
     detailView: state.detailView,
@@ -27,7 +26,6 @@ function App() {
     chatWidth: state.chatWidth,
     setChatWidth: state.setChatWidth,
     viewMode: state.viewMode,
-    setViewMode: state.setViewMode
   }))
 
   const [localShowEvidence, setLocalShowEvidence] = useState(true)
@@ -70,25 +68,6 @@ function App() {
           <div className="flex-1 relative flex flex-col min-w-0">
             {viewMode === 'dashboard' ? <DashboardPanel /> : <TopologyPanel />}
 
-            {/* View Mode Toggle Switch */}
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 flex bg-surface-raised border border-border-subtle p-1 rounded-lg shadow-elevation-2 z-10">
-              <button
-                onClick={() => setViewMode('dashboard')}
-                className={`px-4 py-1.5 rounded-md text-ui-sm font-semibold transition-all flex items-center gap-2 ${
-                  viewMode === 'dashboard' ? 'bg-primary text-primary-foreground shadow-sm' : 'hover:bg-muted text-muted-foreground'
-                }`}
-              >
-                Dashboard
-              </button>
-              <button
-                onClick={() => setViewMode('topology')}
-                className={`px-4 py-1.5 rounded-md text-ui-sm font-semibold transition-all flex items-center gap-2 ${
-                  viewMode === 'topology' ? 'bg-primary text-primary-foreground shadow-sm' : 'hover:bg-muted text-muted-foreground'
-                }`}
-              >
-                Map View
-              </button>
-            </div>
             
             {/* Overlay Evidence Dashboard (Toggleable) */}
             {localShowEvidence && (

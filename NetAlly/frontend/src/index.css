@@ -5,24 +5,32 @@
 @tailwind utilities;
 
 :root {
-  --background: 0 0% 100%;
-  --foreground: 240 10% 3.9%;
+  --background: 220 14% 97%;
+  --foreground: 220 14% 10%;
   --card: 0 0% 100%;
-  --card-foreground: 240 10% 3.9%;
+  --card-foreground: 220 14% 10%;
   --popover: 0 0% 100%;
-  --popover-foreground: 240 10% 3.9%;
-  --primary: 161 72% 39%;
+  --popover-foreground: 220 14% 10%;
+  --primary: 168 65% 38%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 240 4.8% 95.9%;
-  --secondary-foreground: 240 5.9% 10%;
-  --muted: 240 4.8% 95.9%;
-  --muted-foreground: 240 3.8% 46.1%;
-  --accent: 240 4.8% 95.9%;
-  --accent-foreground: 240 5.9% 10%;
-  --border: 240 5.9% 90%;
-  --input: 240 5.9% 90%;
-  --ring: 161 72% 39%;
+  --secondary: 220 10% 94%;
+  --secondary-foreground: 220 10% 15%;
+  --muted: 220 10% 94%;
+  --muted-foreground: 220 8% 46%;
+  --accent: 220 10% 94%;
+  --accent-foreground: 220 10% 15%;
+  --border: 220 10% 88%;
+  --border-subtle: 220 8% 92%;
+  --border-strong: 220 10% 78%;
+  --input: 220 10% 90%;
+  --ring: 168 65% 38%;
   --radius: 0.5rem;
+  --surface-raised: 220 14% 98%;
+  --surface-sunken: 220 14% 94%;
+  --status-ok: 152 60% 38%;
+  --status-warn: 38 90% 45%;
+  --status-error: 0 72% 50%;
+  --status-info: 210 70% 50%;
 }
 
 .dark {
@@ -121,8 +129,6 @@
 }
 
 .react-flow__edge-path {
-  stroke: hsl(var(--muted-foreground) / 0.3) !important;
-  stroke-width: 1.5 !important;
   transition: stroke 0.2s ease, stroke-width 0.2s ease;
 }
 
