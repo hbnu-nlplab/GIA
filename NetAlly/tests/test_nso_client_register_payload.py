@@ -88,3 +88,76 @@ def test_register_device_falls_back_when_requested_ned_is_invalid():
     assert ok is True
     assert put_neds[0] == "cisco-ios-cli-6.110:cisco-ios-cli-6.110"
     assert put_neds[1] == "cisco-ios-cli-3.8:cisco-ios-cli-3.8"
+
+
+def test_candidate_ned_ids_includes_installed_package_ned_ids():
+    client = _client()
+
+    def fake_request(method: str, path: str, payload=None):
+        if method == "GET" and path == "tailf-ncs:packages":
+            return {
+                "packages": {
+                    "package": [
+                        {
+                            "component": [
+                                {
+                                    "ned": {
+                                        "cli": {
+                                            "ned-id": "cisco-ios-cli-3.8:cisco-ios-cli-3.8"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        if method == "GET" and path.endswith("device?fields=device-type"):
+            return {"device": []}
+        return {"status": "error", "message": "unexpected call"}
+
+    client._request = fake_request  # type: ignore[method-assign]
+
+    candidates = client._candidate_ned_ids("cisco-ios-cli-6.110")
+    assert "cisco-ios-cli-3.8:cisco-ios-cli-3.8" in candidates
+    assert candidates[0] == "cisco-ios-cli-6.110:cisco-ios-cli-6.110"
+
+
+def test_register_device_retries_without_ssh_algorithms_on_schema_error():
+    client = _client()
+    attempts = []
+
+    def fake_request(method: str, path: str, payload=None):
+        if method == "GET" and path in {
+            "tailf-ncs:packages",
+            "tailf-ncs:devices/device?fields=device-type",
+        }:
+            return {"packages": {"package": []}, "device": []}
+        if method == "PUT":
+            body = payload["tailf-ncs:device"]
+            attempts.append(body)
+            if "ssh-algorithms" in body:
+                return {
+                    "status": "error",
+                    "message": "unknown element: ssh-algorithms",
+                }
+            return {"status": "success"}
+        return {"status": "error", "message": "unexpected call"}
+
+    client._request = fake_request  # type: ignore[method-assign]
+
+    ok = client.register_device(
+        {
+            "name": "PE02",
+            "oob_ip": "10.10.10.2",
+            "port": 22,
+            "authgroup": "default",
+            "ned_id": "cisco-ios-cli-3.8",
+            "protocol": "ssh",
+        }
+    )
+
+    assert ok is True
+    assert len(attempts) >= 2
+    assert "ssh-algorithms" in attempts[0]
+    assert "ssh-algorithms" not in attempts[1]
