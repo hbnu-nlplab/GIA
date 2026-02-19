@@ -2,6 +2,7 @@
 Lab bootstrap helpers
 """
 import asyncio
+import ipaddress
 import json
 import logging
 import os
@@ -33,6 +34,128 @@ def _parse_interface_ip(show_output: str, iface_name: str) -> Optional[str]:
             if match and match.group(1) not in ("0.0.0.0", "127.0.0.1"):
                 return match.group(1)
     return None
+
+
+def _resolve_mgmt_network(
+    gs: "GlobalSettings",
+    existing_devices: Optional[List["DeviceInfo"]] = None,
+) -> Optional[ipaddress.IPv4Network]:
+    """
+    Resolve management IPv4 network for OOB assignment.
+    Priority:
+    1) PNETLAB_MGMT_SUBNET / PNETLAB_OOB_SUBNET (CIDR)
+    2) /24 inferred from gateway IP
+    3) /24 inferred from existing OOB IPs
+    """
+    cidr_raw = (
+        os.getenv("PNETLAB_MGMT_SUBNET", "").strip()
+        or os.getenv("PNETLAB_OOB_SUBNET", "").strip()
+    )
+    if cidr_raw:
+        try:
+            net = ipaddress.ip_network(cidr_raw, strict=False)
+            if isinstance(net, ipaddress.IPv4Network):
+                return net
+        except Exception:
+            logger.warning("Invalid management subnet: %s", cidr_raw)
+
+    gateway_ip = str(gs.gateway_ip or "").strip() or os.getenv("PNETLAB_GATEWAY_IP", "").strip()
+    if gateway_ip:
+        try:
+            return ipaddress.ip_network(f"{gateway_ip}/24", strict=False)
+        except Exception:
+            logger.warning("Invalid gateway IP for mgmt subnet inference: %s", gateway_ip)
+
+    for dev in existing_devices or []:
+        candidate = str(dev.oob_ip or "").strip()
+        if not candidate:
+            continue
+        try:
+            return ipaddress.ip_network(f"{candidate}/24", strict=False)
+        except Exception:
+            continue
+    return None
+
+
+def _prefix_to_netmask(prefix_len: int) -> str:
+    try:
+        return str(ipaddress.IPv4Network(f"0.0.0.0/{prefix_len}").netmask)
+    except Exception:
+        return "255.255.255.0"
+
+
+def assign_missing_oob_ips(
+    gs: "GlobalSettings",
+    devices: List["DeviceInfo"],
+    existing_devices: Optional[List["DeviceInfo"]] = None,
+) -> Dict[str, str]:
+    """
+    Assign deterministic OOB IPs for devices that have OOB interface but no OOB IP.
+    Returns {device_name: assigned_ip}.
+    """
+    mgmt_net = _resolve_mgmt_network(gs, existing_devices=existing_devices)
+    if not mgmt_net:
+        return {}
+
+    used: set[ipaddress.IPv4Address] = set()
+
+    def reserve(ip_raw: Optional[str]) -> None:
+        ip_val = str(ip_raw or "").strip()
+        if not ip_val:
+            return
+        try:
+            addr = ipaddress.ip_address(ip_val)
+        except Exception:
+            return
+        if isinstance(addr, ipaddress.IPv4Address) and addr in mgmt_net:
+            used.add(addr)
+
+    reserve(gs.gateway_ip)
+    reserve(gs.pnetlab_vm_ip)
+    for dev in (existing_devices or []):
+        reserve(dev.oob_ip)
+    for dev in devices:
+        reserve(dev.oob_ip)
+
+    start_host_raw = os.getenv("PNETLAB_MGMT_IP_START", "10").strip()
+    try:
+        start_host = max(2, int(start_host_raw))
+    except Exception:
+        start_host = 10
+
+    net_base = int(mgmt_net.network_address)
+    net_last = int(mgmt_net.broadcast_address)
+    max_host_offset = max(2, net_last - net_base - 1)  # avoid network/broadcast
+
+    def iter_candidates() -> List[ipaddress.IPv4Address]:
+        ordered: List[ipaddress.IPv4Address] = []
+        for host in range(start_host, max_host_offset + 1):
+            ordered.append(ipaddress.IPv4Address(net_base + host))
+        for host in range(2, start_host):
+            ordered.append(ipaddress.IPv4Address(net_base + host))
+        return ordered
+
+    pool = iter_candidates()
+    assigned: Dict[str, str] = {}
+    pool_idx = 0
+
+    for dev in sorted(devices, key=lambda d: d.name.lower()):
+        if dev.oob_ip or not dev.oob_intf:
+            continue
+        while pool_idx < len(pool) and pool[pool_idx] in used:
+            pool_idx += 1
+        if pool_idx >= len(pool):
+            logger.warning("No free OOB IP left in mgmt subnet %s", mgmt_net)
+            break
+        picked = pool[pool_idx]
+        pool_idx += 1
+        dev.oob_ip = str(picked)
+        used.add(picked)
+        assigned[dev.name] = dev.oob_ip
+
+    if assigned:
+        logger.info("Assigned missing OOB IPs from %s: %s", mgmt_net, assigned)
+    return assigned
 
 
 def _csv_set(raw: Optional[str]) -> set[str]:
@@ -402,13 +525,30 @@ async def enable_ssh_via_telnet(device: DeviceInfo, gs: GlobalSettings) -> bool:
                 logger.info("Discovered mgmt IP: %s -> %s (%s)",
                             device.name, discovered, device.oob_intf)
 
+        # Fallback allocation if discovery failed but interface is known.
+        if device.oob_intf and not device.oob_ip:
+            assigned = assign_missing_oob_ips(gs, [device])
+            if assigned.get(device.name):
+                logger.info(
+                    "Assigned mgmt IP fallback: %s -> %s (%s)",
+                    device.name,
+                    assigned[device.name],
+                    device.oob_intf,
+                )
+
+        mgmt_net = _resolve_mgmt_network(gs, existing_devices=[device])
+        mgmt_netmask = _prefix_to_netmask(mgmt_net.prefixlen if mgmt_net else 24)
+
+        ssh_username = str(gs.nso_username or "").strip() or "admin"
+        ssh_password = str(gs.nso_password or "").strip() or str(gs.admin_password or "").strip() or "admin"
+
         await send_cmd("conf t")
         await send_cmd("no ip domain-lookup")
         await send_cmd(f"hostname {device.name}")
 
         if device.oob_intf and device.oob_ip:
             await send_cmd(f"interface {device.oob_intf}")
-            await send_cmd(f"ip address {device.oob_ip} 255.255.255.0")
+            await send_cmd(f"ip address {device.oob_ip} {mgmt_netmask}")
             await send_cmd("no shutdown", sleep_time=2.0)
             await send_cmd("exit")
         else:
@@ -426,7 +566,11 @@ async def enable_ssh_via_telnet(device: DeviceInfo, gs: GlobalSettings) -> bool:
         writer.write("crypto key generate rsa general-keys modulus 2048\r\n")
         await asyncio.sleep(10)
 
-        await send_cmd(f"username admin privilege 15 secret {gs.admin_password}")
+        # Keep CLI credentials aligned with NSO authgroup credentials.
+        await send_cmd(f"username {ssh_username} privilege 15 secret {ssh_password}")
+        if ssh_username.lower() != "admin":
+            admin_pw = str(gs.admin_password or "").strip() or ssh_password
+            await send_cmd(f"username admin privilege 15 secret {admin_pw}")
 
         await send_cmd("line vty 0 4")
         await send_cmd("transport input ssh")
