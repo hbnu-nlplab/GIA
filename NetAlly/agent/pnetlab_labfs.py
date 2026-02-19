@@ -238,6 +238,10 @@ class _Reader:
     def stat_mtime(self, path: str) -> float:  # pragma: no cover - interface
         raise NotImplementedError
 
+    def discover_iol_ports(self) -> Dict[str, int]:  # pragma: no cover - interface
+        """Parse running iol_wrapper processes for port discovery (IOL devices have empty wrapper.txt)."""
+        return {}
+
 
 class _LocalReader(_Reader):
     def exists(self, path: str) -> bool:
@@ -269,6 +273,22 @@ class _LocalReader(_Reader):
             return Path(path).stat().st_mtime
         except Exception:
             return 0.0
+
+    def discover_iol_ports(self) -> Dict[str, int]:
+        try:
+            res = subprocess.run(["ps", "aux"], capture_output=True, text=True)
+            out = res.stdout
+        except Exception:
+            return {}
+        ports: Dict[str, int] = {}
+        for line in out.splitlines():
+            if "iol_wrapper" not in line or "grep" in line:
+                continue
+            m_dev = re.search(r"-D\s+(\d+)", line)
+            m_port = re.search(r"-P\s+(\d+)", line)
+            if m_dev and m_port:
+                ports[m_dev.group(1)] = int(m_port.group(1))
+        return ports
 
 
 class _SshReader(_Reader):
@@ -348,6 +368,21 @@ class _SshReader(_Reader):
         except Exception:
             return 0.0
 
+    def discover_iol_ports(self) -> Dict[str, int]:
+        try:
+            out = self._run("ps aux 2>/dev/null || true")
+        except Exception:
+            return {}
+        ports: Dict[str, int] = {}
+        for line in out.splitlines():
+            if "iol_wrapper" not in line or "grep" in line:
+                continue
+            m_dev = re.search(r"-D\s+(\d+)", line)
+            m_port = re.search(r"-P\s+(\d+)", line)
+            if m_dev and m_port:
+                ports[m_dev.group(1)] = int(m_port.group(1))
+        return ports
+
 
 def resolve_unl_path_reader(reader: _Reader, unetlab_root: str) -> Optional[str]:
     direct = os.getenv("PNETLAB_LAB_PATH", "").strip()
@@ -398,7 +433,15 @@ def parse_wrapper_ports_reader(reader: _Reader, tmp_root: str) -> Dict[str, int]
         except Exception:
             continue
 
-    return {k: v[0] for k, v in ports.items()}
+    result = {k: v[0] for k, v in ports.items()}
+
+    # IOL devices have empty wrapper.txt — discover ports from running processes.
+    # These OVERRIDE wrapper.txt because wrapper.txt may contain stale ports from other labs.
+    iol_ports = reader.discover_iol_ports()
+    for node_id, port in iol_ports.items():
+        result[node_id] = port
+
+    return result
 
 
 def resolve_unl_path(unetlab_root: Path) -> Optional[Path]:
@@ -560,3 +603,57 @@ def build_pnetlab_map_from_labfs() -> Dict[str, Any]:
             )
 
     return {"nodes": api_nodes, "edges": api_edges, "meta": {"unl_path": str(unl_path), "backend": backend}}
+
+
+def discover_management_interfaces(
+    nso_node_name: str = "",
+) -> Dict[str, str]:
+    """
+    UNL 토폴로지에서 관리 인터페이스를 범용적으로 감지.
+
+    알고리즘:
+    1. NSO 노드를 찾음 (PNETLAB_NSO_NODE env, 기본값 "NSO")
+    2. NSO가 연결된 네트워크(들)를 찾음 → 관리 네트워크 후보
+    3. 각 장비에서 관리 네트워크에 연결된 인터페이스를 반환
+
+    Returns: {device_name: interface_name}
+    """
+    nso_name = nso_node_name or os.getenv("PNETLAB_NSO_NODE", "NSO")
+
+    backend = resolve_inventory_backend()
+    reader: _Reader = _SshReader() if backend == "labfs_ssh" else _LocalReader()
+
+    unetlab_root = str(resolve_unetlab_root())
+    unl_path = resolve_unl_path_reader(reader, unetlab_root)
+    if not unl_path:
+        return {}
+
+    nodes, networks, ifaces = parse_unl(reader.read_text(unl_path))
+
+    # 1. NSO 노드 ID 찾기
+    nso_node_id = None
+    for n in nodes:
+        if n.name.lower() == nso_name.lower():
+            nso_node_id = n.node_id
+            break
+    if not nso_node_id:
+        return {}
+
+    # 2. NSO가 연결된 네트워크 ID(들) 찾기 → 관리 네트워크
+    mgmt_net_ids: set[str] = set()
+    for i in ifaces:
+        if i.node_id == nso_node_id:
+            mgmt_net_ids.add(i.network_id)
+    if not mgmt_net_ids:
+        return {}
+
+    # 3. 각 장비에서 관리 네트워크에 연결된 인터페이스 찾기
+    node_by_id = {n.node_id: n for n in nodes}
+    result: Dict[str, str] = {}
+    for i in ifaces:
+        if i.network_id in mgmt_net_ids and i.node_id != nso_node_id:
+            node = node_by_id.get(i.node_id)
+            if node and node.name not in result:  # 첫 번째 매치 우선
+                result[node.name] = i.iface_name
+
+    return result

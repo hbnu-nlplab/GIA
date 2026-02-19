@@ -226,7 +226,7 @@ def _build_server() -> FastMCP:
         action: Literal["scan", "sync", "scan_and_sync"] = "scan",
         auto_onboard: bool = False,
         auto_remove: bool = False,
-        oob_ip: str = "localhost",
+        oob_ip: str = "",
         protocol: Literal["telnet", "ssh"] = "telnet",
     ) -> Dict[str, Any]:
         will_mutate = action in {"sync", "scan_and_sync"} and (auto_onboard or auto_remove)
@@ -326,7 +326,7 @@ def _build_server() -> FastMCP:
         action: Literal["scan", "sync", "scan_and_sync"],
         auto_onboard: bool = False,
         auto_remove: bool = False,
-        oob_ip: str = "localhost",
+        oob_ip: str = "",
         protocol: Literal["telnet", "ssh"] = "telnet",
     ) -> Dict[str, Any]:
         will_mutate = action in {"sync", "scan_and_sync"} and (auto_onboard or auto_remove)
