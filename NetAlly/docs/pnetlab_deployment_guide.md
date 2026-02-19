@@ -202,8 +202,16 @@ ssh -N \
 - 내부적으로 `lab_bootstrap(action="refresh_onboard")`가 실행됨
 - `device_info.json`이 없으면 PNETLab API 우선, 실패 시 LabFS로 자동 생성
 - 기본적으로 `NSO`, `Docker`, `NetAlly`, `Admin` 노드는 온보딩 대상에서 제외됨
+- 이미 NSO에 등록된 장비는 건드리지 않음(add-only)
+- 랩에서 사라진 장비는 자동 삭제하지 않고 `removed`로만 리포트
+- SSH 준비 실패 장비는 텔넷 폴백 등록하지 않고 `skipped` 사유로만 리포트
+- `scan_and_sync/sync_scan` 기본값은 scan-only(`auto_onboard=false`)라서 명시적 Refresh/Sync에서만 mutation이 발생
 - **Settings > Bootstrap Overrides**에서 OOB 인터페이스/그룹/게이트웨이 등을 입력하면 생성 시 반영됨
 - `NETALLY_MCP_ALLOW_MUTATIONS=false`이면 `403 (mutations_blocked)`가 반환되므로, 실제 온보딩 시에는 `true`로 설정해야 합니다.
+
+운영 팁:
+- `.env` 또는 Settings에서 `PNETLAB_VM_IP`를 바꾼 경우 백엔드를 재시작하세요.
+- 현재 구현은 텔넷 콘솔 도달성 probe로 실제 콘솔 호스트를 자동 선택합니다.
 
 ### Batfish 서버 점검(데모 필수)
 NetAlly Docker Node에서 Batfish까지 실제로 쓰려면, PNETLab 호스트에 Batfish 컨테이너가 떠 있어야 합니다.
@@ -358,7 +366,28 @@ Config Generator가 생성하는 config는 **IOSv** 이미지 기준입니다:
 *   런타임에서 넣은 `ip route add`/`ifconfig` 값은 재시작 시 사라집니다(영구 반영 아님).
 *   장비 노드도 동일한 관리망(Cloud/OOB)에 연결되어 있는지 확인하세요.
 
-### Q4. 실험실을 여러 개 운영하면 충돌이 없나요?
+### Q4. "Failed to start node (12)" / "invalid reference format" 오류가 납니다.
+
+Docker Options의 `-e` 값에 **등호(`=`) 뒤 공백**이 있으면 발생합니다.
+
+잘못된 예 (공백 포함):
+```
+-e PNETLAB_LAB_NAME= NSO_WEBUI_2
+```
+Docker가 `NSO_WEBUI_2`를 이미지 이름으로 파싱하면서 "repository name must be lowercase" 오류와 함께 노드 시작에 실패합니다.
+
+올바른 예 (공백 없음):
+```
+-e PNETLAB_LAB_NAME=NSO_WEBUI_2
+```
+
+진단 방법: PNETLab 호스트에서 `/opt/unetlab/data/Logs/unl_wrapper.txt` 로그를 확인합니다.
+```bash
+tail -30 /opt/unetlab/data/Logs/unl_wrapper.txt
+```
+`invalid reference format` 메시지가 보이면 Docker Options의 공백 문제입니다.
+
+### Q4-1. 실험실을 여러 개 운영하면 충돌이 없나요?
 *   실험실별로 NetAlly 인스턴스를 분리하면 큰 문제 없이 운영 가능합니다.
 *   같은 인스턴스를 공유하면 `PNETLAB_LAB_NAME`, `BATFISH_SNAPSHOT`, 런타임 설정 파일이 서로 덮어써질 수 있습니다.
 *   최소한 아래 값은 실험실별로 분리하세요.
