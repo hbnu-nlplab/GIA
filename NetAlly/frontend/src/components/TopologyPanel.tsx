@@ -5,6 +5,7 @@ import {
   Controls,
   Node,
   Edge,
+  Position,
   useNodesState,
   useEdgesState,
   MarkerType,
@@ -12,6 +13,7 @@ import {
 import { Zap, RefreshCcw, AlertCircle, Layers, Network } from 'lucide-react'
 import DeviceNode from './DeviceNode'
 import NetworkNode from './NetworkNode'
+import InterfaceEdge from './InterfaceEdge'
 import { useAppStore, ChatContextDevice, TopologyDeviceSummary } from '../store'
 import dagre from 'dagre'
 
@@ -61,6 +63,10 @@ interface NodeContextMenuState {
 const nodeTypes: Record<string, any> = {
   device: DeviceNode,
   network: NetworkNode,
+}
+
+const edgeTypes: Record<string, any> = {
+  interface: InterfaceEdge,
 }
 
 const toNodeKeyVariants = (value: unknown): string[] => {
@@ -116,13 +122,22 @@ const collectAliasCandidates = (node: Node): string[] => {
     .map((v) => String(v))
 }
 
+const NODE_WIDTH = 220
+const NODE_HEIGHT = 80
+const NET_NODE_WIDTH = 160
+const NET_NODE_HEIGHT = 60
+
 const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'TB') => {
   const dagreGraph = new dagre.graphlib.Graph()
   dagreGraph.setDefaultEdgeLabel(() => ({}))
   dagreGraph.setGraph({ rankdir: direction, nodesep: 150, ranksep: 200 })
 
   nodes.forEach((node) => {
-    dagreGraph.setNode(node.id, { width: 220, height: 80 })
+    const isNet = node.type === 'network'
+    dagreGraph.setNode(node.id, {
+      width: isNet ? NET_NODE_WIDTH : NODE_WIDTH,
+      height: isNet ? NET_NODE_HEIGHT : NODE_HEIGHT,
+    })
   });
 
   edges.forEach((edge) => {
@@ -133,16 +148,49 @@ const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'TB') => 
 
   const newNodes = nodes.map((node) => {
     const nodeWithPosition = dagreGraph.node(node.id)
+    const isNet = node.type === 'network'
     return {
       ...node,
       position: {
-        x: nodeWithPosition.x - 110,
-        y: nodeWithPosition.y - 40,
+        x: nodeWithPosition.x - (isNet ? NET_NODE_WIDTH : NODE_WIDTH) / 2,
+        y: nodeWithPosition.y - (isNet ? NET_NODE_HEIGHT : NODE_HEIGHT) / 2,
       },
     }
   })
 
   return { nodes: newNodes, edges }
+}
+
+/**
+ * Compute optimal handle sides based on relative node positions.
+ * Uses atan2 angle from source center to target center, mapped to
+ * the nearest cardinal direction (Top/Right/Bottom/Left).
+ */
+function computeHandleSides(
+  srcX: number, srcY: number, srcW: number, srcH: number,
+  tgtX: number, tgtY: number, tgtW: number, tgtH: number,
+): { sourceHandle: string; targetHandle: string } {
+  const dx = (tgtX + tgtW / 2) - (srcX + srcW / 2)
+  const dy = (tgtY + tgtH / 2) - (srcY + srcH / 2)
+  const angle = Math.atan2(dy, dx) * (180 / Math.PI)
+
+  let srcSide: Position
+  let tgtSide: Position
+
+  if (angle >= -45 && angle < 45) {
+    srcSide = Position.Right; tgtSide = Position.Left
+  } else if (angle >= 45 && angle < 135) {
+    srcSide = Position.Bottom; tgtSide = Position.Top
+  } else if (angle >= -135 && angle < -45) {
+    srcSide = Position.Top; tgtSide = Position.Bottom
+  } else {
+    srcSide = Position.Left; tgtSide = Position.Right
+  }
+
+  return {
+    sourceHandle: `src-${srcSide}`,
+    targetHandle: `tgt-${tgtSide}`,
+  }
 }
 
 export default function TopologyPanel() {
@@ -227,14 +275,12 @@ export default function TopologyPanel() {
         throw new Error('Invalid topology data format')
       }
 
-      // If Batfish returns no nodes and the user hasn't explicitly chosen a
-      // source yet, auto-switch to PNETLab to avoid a confusing "Map view broken"
-      // first impression.
+      // Auto-switch to PNETLab when Batfish returns no useful topology
+      // (no nodes, or nodes but no edges — typical when Batfish snapshot is not loaded).
       if (
         topologySource === 'batfish' &&
-        !hasPersistedTopologySource &&
         Array.isArray(data.nodes) &&
-        data.nodes.length === 0
+        (data.nodes.length === 0 || (data.edges || []).length === 0)
       ) {
         switchingSource = true
         setTopologySource('pnetlab')
@@ -261,33 +307,41 @@ export default function TopologyPanel() {
         },
       }))
 
-      const flowEdges: Edge[] = (data.edges || []).map((e: ApiEdge, i: number) => ({
-        id: `e-${e.source}-${e.target}-${i}`,
-        source: e.source,
-        target: e.target,
-        label: e.label,
-        animated: true,
-        data: {
-          ...((e as any).data || {}),
-          __baseStyle: { stroke: 'hsl(var(--border))', strokeWidth: 2, ...(e.style || {}) },
-          __baseMarker: {
-            type: MarkerType.ArrowClosed,
-            color: baseEdgeMarkerColor,
+      // Build raw edges (handles will be computed after node positioning)
+      const rawEdges: Edge[] = (data.edges || []).map((e: ApiEdge, i: number) => {
+        const backendStyle = (e.style || {}) as Record<string, any>
+        const edgeColor = backendStyle.stroke || 'hsl(var(--border))'
+        const mergedStyle = { stroke: 'hsl(var(--border))', strokeWidth: 2, ...backendStyle }
+        const hasIface = !!(e as any).data?.src_iface
+        return {
+          id: `e-${e.source}-${e.target}-${i}`,
+          source: e.source,
+          target: e.target,
+          label: e.label,
+          type: hasIface ? 'interface' : 'smoothstep',
+          animated: !backendStyle.strokeDasharray,
+          data: {
+            ...((e as any).data || {}),
+            __baseStyle: mergedStyle,
+            __baseMarker: {
+              type: MarkerType.ArrowClosed,
+              color: edgeColor,
+            },
+            __baseAnimated: !backendStyle.strokeDasharray,
+            __baseLabel: e.label || '',
+            __reachability: null,
           },
-          __baseAnimated: true,
-          __baseLabel: e.label || '',
-          __reachability: null,
-        },
-        markerEnd: {
-          type: MarkerType.ArrowClosed,
-          color: baseEdgeMarkerColor,
-        },
-        style: { stroke: 'hsl(var(--border))', strokeWidth: 2, ...(e.style || {}) },
-        labelStyle: { fill: 'hsl(var(--muted-foreground))', fontSize: 10, fontWeight: 600 },
-        labelBgStyle: { fill: 'hsl(var(--card))', fillOpacity: 0.8 },
-        labelBgPadding: [4, 2],
-        labelBgBorderRadius: 4,
-      }))
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: edgeColor,
+          },
+          style: mergedStyle,
+          labelStyle: { fill: 'hsl(var(--muted-foreground))', fontSize: 10, fontWeight: 500 },
+          labelBgStyle: { fill: 'hsl(var(--card))', fillOpacity: 0.8 },
+          labelBgPadding: [4, 2] as [number, number],
+          labelBgBorderRadius: 4,
+        }
+      })
 
       const deviceCatalog: TopologyDeviceSummary[] = flowNodes
         .filter((n) => n.type === 'device' && !String(n.id).startsWith('net:'))
@@ -302,21 +356,43 @@ export default function TopologyPanel() {
             : undefined,
         }))
 
-      // Complete position set이 있으면 dagre 건너뛰기
+      // Position nodes first (raw coords or dagre), then compute handle sides
+      let finalNodes: Node[]
       if (hasCompletePositions) {
-        nodesRef.current = flowNodes
-        edgesRef.current = flowEdges
-        setNodes(flowNodes)
-        setEdges(flowEdges)
-        setTopologyDevices(deviceCatalog)
+        finalNodes = flowNodes
       } else {
-        const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(flowNodes, flowEdges)
-        nodesRef.current = layoutedNodes
-        edgesRef.current = layoutedEdges
-        setNodes(layoutedNodes)
-        setEdges(layoutedEdges)
-        setTopologyDevices(deviceCatalog)
+        const { nodes: layoutedNodes } = getLayoutedElements(flowNodes, rawEdges)
+        finalNodes = layoutedNodes
       }
+
+      // Build position lookup for handle computation
+      const nodePositions = new Map<string, { x: number; y: number; w: number; h: number }>()
+      for (const n of finalNodes) {
+        const isNet = n.type === 'network'
+        nodePositions.set(n.id, {
+          x: n.position.x,
+          y: n.position.y,
+          w: isNet ? NET_NODE_WIDTH : NODE_WIDTH,
+          h: isNet ? NET_NODE_HEIGHT : NODE_HEIGHT,
+        })
+      }
+
+      // Assign optimal sourceHandle/targetHandle per edge
+      const finalEdges = rawEdges.map((edge) => {
+        const src = nodePositions.get(edge.source)
+        const tgt = nodePositions.get(edge.target)
+        if (src && tgt) {
+          const sides = computeHandleSides(src.x, src.y, src.w, src.h, tgt.x, tgt.y, tgt.w, tgt.h)
+          return { ...edge, sourceHandle: sides.sourceHandle, targetHandle: sides.targetHandle }
+        }
+        return edge
+      })
+
+      nodesRef.current = finalNodes
+      edgesRef.current = finalEdges
+      setNodes(finalNodes)
+      setEdges(finalEdges)
+      setTopologyDevices(deviceCatalog)
       setTopologyRevision((v) => v + 1)
     } catch (err: any) {
       if (err?.name === 'AbortError') return
@@ -632,7 +708,7 @@ export default function TopologyPanel() {
     return (
       <div className="h-full flex flex-col items-center justify-center text-muted-foreground gap-4 bg-background">
         <RefreshCcw className="w-8 h-8 animate-spin text-primary" />
-        <div className="text-[10px] font-bold uppercase tracking-widest animate-pulse">Initializing Hierarchical Topology</div>
+        <div className="text-ui-xs font-medium uppercase tracking-wide animate-breathe">Initializing Hierarchical Topology</div>
       </div>
     )
   }
@@ -649,28 +725,28 @@ export default function TopologyPanel() {
     return (
       <div className="h-full flex flex-col items-center justify-center text-muted-foreground gap-3 bg-background">
         <AlertCircle className="w-12 h-12 text-rose-500/50" />
-        <div className="text-xs font-bold uppercase tracking-[0.2em]">{error || 'No nodes detected'}</div>
+        <div className="text-ui-base font-semibold uppercase tracking-wide">{error || 'No nodes detected'}</div>
         {emptyHint && (
-          <div className="text-[11px] text-muted-foreground/90">{emptyHint}</div>
+          <div className="text-ui-sm text-muted-foreground/90">{emptyHint}</div>
         )}
         <div className="mt-4 flex items-center gap-2">
           <button
             onClick={fetchTopology}
-            className="px-4 py-2 bg-primary/10 border border-primary/20 rounded text-[10px] font-bold uppercase hover:bg-primary/20 transition-all flex items-center gap-2"
+            className="px-4 py-2 bg-primary/10 border border-primary/20 rounded text-ui-xs font-semibold uppercase hover:bg-primary/20 transition-all flex items-center gap-2"
           >
             <RefreshCcw className="w-3 h-3" /> Retry Scan
           </button>
           {topologySource === 'batfish' ? (
             <button
               onClick={() => setTopologySource('pnetlab')}
-              className="px-4 py-2 bg-orange-500/10 border border-orange-500/30 rounded text-[10px] font-bold uppercase hover:bg-orange-500/20 transition-all"
+              className="px-4 py-2 bg-orange-500/10 border border-orange-500/30 rounded text-ui-xs font-semibold uppercase hover:bg-orange-500/20 transition-all"
             >
               Switch to Lab Map
             </button>
           ) : (
             <button
               onClick={() => setTopologySource('batfish')}
-              className="px-4 py-2 bg-amber-500/10 border border-amber-500/30 rounded text-[10px] font-bold uppercase hover:bg-amber-500/20 transition-all"
+              className="px-4 py-2 bg-amber-500/10 border border-amber-500/30 rounded text-ui-xs font-semibold uppercase hover:bg-amber-500/20 transition-all"
             >
               Switch to Batfish
             </button>
@@ -683,11 +759,11 @@ export default function TopologyPanel() {
   return (
     <div ref={panelRef} className="flex-1 h-full relative group">
       {vizInsight && (
-        <div className="absolute top-4 left-4 z-20 max-w-sm p-3 bg-card/85 backdrop-blur-lg border border-border rounded-xl shadow-xl pointer-events-none select-none">
+        <div className="absolute top-4 left-4 z-20 max-w-sm p-3 bg-surface-raised border border-border-subtle rounded-xl shadow-elevation-3 pointer-events-none select-none">
           <div className="flex items-center justify-between gap-2">
-            <span className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">LLM Overlay</span>
+            <span className="text-ui-xs uppercase tracking-wide text-muted-foreground">LLM Overlay</span>
             <span
-              className={`text-[10px] px-2 py-0.5 rounded-full border ${
+              className={`text-ui-xs px-2 py-0.5 rounded-full border ${
                 vizInsight.mode === 'path'
                   ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-500'
                   : 'bg-orange-500/10 border-orange-500/30 text-orange-500'
@@ -699,12 +775,12 @@ export default function TopologyPanel() {
 
           <div className="mt-2 text-sm font-semibold text-foreground/95">{vizInsight.title}</div>
           {vizInsight.query && (
-            <div className="mt-1 text-[11px] text-muted-foreground line-clamp-2">
+            <div className="mt-1 text-ui-sm text-muted-foreground line-clamp-2">
               Q: {vizInsight.query}
             </div>
           )}
 
-          <div className="mt-3 grid grid-cols-2 gap-2 text-[11px]">
+          <div className="mt-3 grid grid-cols-2 gap-2 text-ui-sm">
             <div className="rounded-lg border border-border/70 bg-muted/30 px-2 py-1.5">
               Node Match: <span className="font-semibold">{vizInsight.matchedNodes}/{vizInsight.requestedNodes}</span>
             </div>
@@ -713,7 +789,7 @@ export default function TopologyPanel() {
             </div>
           </div>
 
-          <div className="mt-2 text-[11px] text-muted-foreground">
+          <div className="mt-2 text-ui-sm text-muted-foreground">
             {vizInsight.reason || (vizInsight.mode === 'path'
               ? 'Path mode prioritizes route continuity and highlights transit hubs when direct links are hidden.'
               : 'Focus mode emphasizes related entities around the LLM-selected context.')}
@@ -721,7 +797,7 @@ export default function TopologyPanel() {
           </div>
 
           {(vizInsight.source || vizInsight.schemaVersion || vizInsight.truncated) && (
-            <div className="mt-2 text-[10px] text-muted-foreground/90">
+            <div className="mt-2 text-ui-xs text-muted-foreground/90">
               {vizInsight.source ? `Source: ${vizInsight.source}` : ''}
               {vizInsight.schemaVersion ? ` · Viz v${vizInsight.schemaVersion}` : ''}
               {vizInsight.truncated ? ' · Truncated for display safety' : ''}
@@ -729,7 +805,7 @@ export default function TopologyPanel() {
           )}
 
           {(vizInsight.unmatchedNodes.length > 0 || vizInsight.unmatchedEdges.length > 0) && (
-            <div className="mt-2 text-[11px] text-amber-500/95">
+            <div className="mt-2 text-ui-sm text-amber-500/95">
               Matching hints:
               {vizInsight.unmatchedNodes.length > 0 && (
                 <div className="mt-1">Unmatched nodes: {vizInsight.unmatchedNodes.join(', ')}</div>
@@ -750,7 +826,7 @@ export default function TopologyPanel() {
             <div className="flex bg-card p-1 rounded-lg border border-border shadow-lg">
               <button
                 onClick={() => setLayer('l1')}
-                className={`px-3 py-1 text-[10px] font-bold uppercase rounded transition-all flex items-center gap-1.5 ${
+                className={`px-3 py-1 text-ui-xs font-semibold uppercase rounded transition-all flex items-center gap-1.5 ${
                   layer === 'l1' ? 'bg-primary text-primary-foreground shadow-sm' : 'hover:bg-muted text-muted-foreground'
                 }`}
               >
@@ -758,7 +834,7 @@ export default function TopologyPanel() {
               </button>
               <button
                 onClick={() => setLayer('l3')}
-                className={`px-3 py-1 text-[10px] font-bold uppercase rounded transition-all flex items-center gap-1.5 ${
+                className={`px-3 py-1 text-ui-xs font-semibold uppercase rounded transition-all flex items-center gap-1.5 ${
                   layer === 'l3' ? 'bg-blue-500 text-white shadow-sm' : 'hover:bg-muted text-muted-foreground'
                 }`}
               >
@@ -771,7 +847,7 @@ export default function TopologyPanel() {
           <div className="flex bg-card p-1 rounded-lg border border-border shadow-lg">
             <button
               onClick={() => setTopologySource('batfish')}
-              className={`px-3 py-1 text-[10px] font-bold uppercase rounded transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1 text-ui-xs font-semibold uppercase rounded transition-all flex items-center gap-1.5 ${
                 topologySource === 'batfish' ? 'bg-amber-500 text-white shadow-sm' : 'hover:bg-muted text-muted-foreground'
               }`}
               title="Auto-layout from Batfish analysis"
@@ -780,7 +856,7 @@ export default function TopologyPanel() {
             </button>
             <button
               onClick={() => setTopologySource('pnetlab')}
-              className={`px-3 py-1 text-[10px] font-bold uppercase rounded transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1 text-ui-xs font-semibold uppercase rounded transition-all flex items-center gap-1.5 ${
                 topologySource === 'pnetlab' ? 'bg-orange-500 text-white shadow-sm' : 'hover:bg-muted text-muted-foreground'
               }`}
               title="Real positions from PNETLab"
@@ -820,6 +896,7 @@ export default function TopologyPanel() {
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
+        defaultEdgeOptions={{ type: 'smoothstep' }}
         onPaneClick={() => setNodeContextMenu(null)}
         onNodeClick={(_, node) => {
           setNodeContextMenu(null)
@@ -846,13 +923,14 @@ export default function TopologyPanel() {
           })
         }}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         fitView
         colorMode={theme}
         className="bg-background"
         minZoom={0.05}
         maxZoom={2}
       >
-        <Background gap={32} size={1} color={theme === 'dark' ? '#222' : '#eee'} />
+        <Background gap={32} size={1} color={theme === 'dark' ? '#161b26' : '#eee'} />
         <Controls
           className="bg-card border-border shadow-2xl scale-90 origin-bottom-left"
         />
@@ -860,11 +938,11 @@ export default function TopologyPanel() {
 
       {nodeContextMenu && (
         <div
-          className="absolute z-30 min-w-[180px] rounded-xl border border-border bg-card/95 backdrop-blur-md shadow-2xl p-1.5"
+          className="absolute z-30 min-w-[180px] rounded-xl border border-border-subtle bg-surface-raised shadow-elevation-3 p-1.5"
           style={{ left: nodeContextMenu.x, top: nodeContextMenu.y }}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="px-2 py-1.5 text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+          <div className="px-2 py-1.5 text-ui-xs uppercase tracking-wide text-muted-foreground">
             {nodeContextMenu.nodeId}
           </div>
           <button
@@ -895,17 +973,17 @@ export default function TopologyPanel() {
       )}
       
       {/* Legend / Status Overlay */}
-      <div className="absolute bottom-6 right-6 p-4 bg-card/60 backdrop-blur-md border border-border rounded-xl shadow-2xl pointer-events-none select-none z-10">
+      <div className="absolute bottom-6 right-6 p-4 bg-surface-raised/90 border border-border-subtle rounded-xl shadow-elevation-2 pointer-events-none select-none z-10">
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <div className={`w-2 h-2 rounded-full ${layer === 'l1' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]'}`} />
-            <span className="text-[10px] font-bold uppercase tracking-widest text-foreground/80">
+            <span className="text-ui-xs font-semibold uppercase tracking-wide text-foreground/80">
               {layer === 'l1' ? 'L1 Physical Path' : 'L3 Logical Path'}
             </span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full border border-border bg-muted/50" />
-            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Inactive / Standby</span>
+            <span className="text-ui-xs font-semibold uppercase tracking-wide text-muted-foreground">Inactive / Standby</span>
           </div>
         </div>
       </div>
