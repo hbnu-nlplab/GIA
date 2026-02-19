@@ -15,6 +15,7 @@ from agent.onboarding import (
     generate_device_info_from_pnetlab,
     parse_config,
     enable_ssh_all,
+    assign_missing_oob_ips,
     check_connectivity,
     register_devices_nso,
     should_manage_pnetlab_node,
@@ -716,6 +717,9 @@ def scan_and_sync(
             )
 
             if candidates:
+                assigned_oob = assign_missing_oob_ips(gs, candidates, existing_devices=all_devices)
+                if assigned_oob:
+                    result["assigned_oob_ip"] = assigned_oob
                 ssh_results = asyncio.run(enable_ssh_all(gs, candidates))
                 result["ssh_enabled"] = ssh_results
 
@@ -983,6 +987,7 @@ def lab_bootstrap(
             if not candidates:
                 return {"status": "completed", "message": "No onboarding candidates", "missing": missing_names}
 
+            assigned_oob = assign_missing_oob_ips(refresh_gs, candidates, existing_devices=all_devices)
             ssh_result = asyncio.run(enable_ssh_all(refresh_gs, candidates))
             all_updated = list(all_devices)
             existing_names = {d.name for d in all_devices}
@@ -1010,6 +1015,7 @@ def lab_bootstrap(
             return {
                 "status": "completed",
                 "missing": missing_names,
+                "assigned_oob_ip": assigned_oob,
                 "ssh": ssh_result,
                 "nso": reg_result,
                 "skipped": skipped,

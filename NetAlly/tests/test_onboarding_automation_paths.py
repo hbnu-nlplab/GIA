@@ -8,6 +8,7 @@ from httpx import ASGITransport, AsyncClient
 import main
 import agent.mcp_tools as mcp_tools
 from agent.onboarding import (
+    assign_missing_oob_ips,
     DeviceInfo,
     GlobalSettings,
     generate_device_info_from_pnetlab,
@@ -176,6 +177,22 @@ def test_build_missing_device_candidates_overrides_stale_telnet_port():
     assert by_name["R2"].telnet_port == 30022
 
 
+def test_assign_missing_oob_ips_allocates_from_gateway_subnet():
+    gs = _sample_global_settings()
+    existing = [DeviceInfo(name="R1", oob_ip="172.16.10.11", oob_intf="Gig0/0", telnet_port=30011)]
+    candidates = [
+        DeviceInfo(name="R2", oob_ip=None, oob_intf="Gig0/0", telnet_port=30022),
+        DeviceInfo(name="R3", oob_ip=None, oob_intf="Gig0/0", telnet_port=30033),
+    ]
+
+    assigned = assign_missing_oob_ips(gs, candidates, existing_devices=existing)
+
+    assert assigned["R2"] == "172.16.10.12"
+    assert assigned["R3"] == "172.16.10.13"
+    assert candidates[0].oob_ip == "172.16.10.12"
+    assert candidates[1].oob_ip == "172.16.10.13"
+
+
 def test_scan_and_sync_skips_non_ssh_ready_candidates(monkeypatch: pytest.MonkeyPatch):
     gs = _sample_global_settings()
     candidates = [
@@ -208,6 +225,7 @@ def test_scan_and_sync_skips_non_ssh_ready_candidates(monkeypatch: pytest.Monkey
         lambda **_kwargs: (gs, list(candidates), list(candidates)),
     )
     monkeypatch.setattr(tools, "save_device_info", lambda *args, **kwargs: None)
+    monkeypatch.setattr(tools, "assign_missing_oob_ips", lambda *_args, **_kwargs: {})
 
     async def fake_enable_ssh_all(_gs: GlobalSettings, target_devices: List[DeviceInfo]) -> Dict[str, bool]:
         observed["ssh_targets"] = [d.name for d in target_devices]
@@ -276,6 +294,7 @@ def test_lab_bootstrap_refresh_onboard_only_targets_new_devices(monkeypatch: pyt
     monkeypatch.setattr(tools, "get_nso_client", lambda: object())
     monkeypatch.setattr(tools, "register_devices_nso", fake_register_devices_nso)
     monkeypatch.setattr(tools, "save_device_info", lambda *args, **kwargs: None)
+    monkeypatch.setattr(tools, "assign_missing_oob_ips", lambda *_args, **_kwargs: {})
     monkeypatch.setattr(
         tools,
         "_collect_onboarding_candidates",
