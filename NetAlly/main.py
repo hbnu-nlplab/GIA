@@ -476,6 +476,49 @@ async def call_mcp_tool(tool_name: str, arguments: Dict[str, Any]) -> Dict[str, 
     }
 
 
+def _sse_event(event_name: str, payload: Dict[str, Any]) -> str:
+    return f"event: {event_name}\ndata: {json.dumps(payload, ensure_ascii=False)}\n\n"
+
+
+_REFRESH_LOG_PREFIXES = ("agent", "telnetlib3", "NetAlly")
+
+
+class _RefreshStreamLogHandler(logging.Handler):
+    """Capture refresh-related logs and forward them into an asyncio queue."""
+
+    def __init__(self, loop: asyncio.AbstractEventLoop, queue: asyncio.Queue):
+        super().__init__(level=logging.INFO)
+        self._loop = loop
+        self._queue = queue
+
+    def emit(self, record: logging.LogRecord) -> None:
+        logger_name = str(record.name or "")
+        if record.levelno < logging.INFO:
+            return
+        if not any(logger_name.startswith(prefix) for prefix in _REFRESH_LOG_PREFIXES):
+            return
+
+        message = self.format(record) if self.formatter else record.getMessage()
+        payload = {
+            "ts": datetime.fromtimestamp(record.created).strftime("%H:%M:%S"),
+            "level": record.levelname,
+            "logger": logger_name,
+            "message": message,
+        }
+
+        def _enqueue() -> None:
+            try:
+                self._queue.put_nowait({"type": "log", "data": payload})
+            except asyncio.QueueFull:
+                # Drop oldest-ish burst logs instead of failing the refresh stream.
+                pass
+
+        try:
+            self._loop.call_soon_threadsafe(_enqueue)
+        except Exception:
+            pass
+
+
 def _extract_mutations_block(payload: Any) -> Optional[Dict[str, str]]:
     """
     Normalize MCP mutation-blocked responses across wrapper shapes.
@@ -507,6 +550,58 @@ def _mutation_block_hint(tool_name: str) -> str:
         f"{tool_label} is blocked because MCP mutations are disabled. "
         "Set NETALLY_MCP_ALLOW_MUTATIONS=true for onboarding/init operations."
     )
+
+
+def _refresh_logical_error(status_code: int, payload: Any) -> bool:
+    if status_code >= 400:
+        return True
+    if isinstance(payload, dict):
+        if str(payload.get("status", "")).strip().lower() == "failed":
+            return True
+        if payload.get("error") is not None:
+            return True
+    return False
+
+
+async def _run_lab_refresh(request: LabRefreshRequest) -> Tuple[int, Dict[str, Any]]:
+    """
+    Shared refresh execution path used by both JSON and stream endpoints.
+    Returns (status_code, payload).
+    """
+    try:
+        params: Dict[str, Any] = {}
+        if request.config_path:
+            params["config_path"] = request.config_path
+        if request.overrides:
+            params["overrides"] = request.overrides
+
+        if get_tool_backend() == "mcp":
+            result = await call_mcp_tool(
+                "bootstrap_refresh_onboard",
+                {"config_path": params.get("config_path"), "overrides": params.get("overrides")},
+            )
+            blocked = _extract_mutations_block(result)
+            if blocked:
+                tool_name = blocked.get("tool") or "bootstrap_refresh_onboard"
+                detail = blocked.get("error") or _mutation_block_hint(tool_name)
+                return 403, {
+                    "detail": detail,
+                    "code": "mutations_blocked",
+                    "tool": tool_name,
+                    "hint": _mutation_block_hint(tool_name),
+                }
+            return 200, result
+
+        from agent.tools import lab_bootstrap
+
+        result = await asyncio.to_thread(
+            lab_bootstrap.invoke,
+            {"action": "refresh_onboard", "params": params},
+        )
+        return 200, result
+    except Exception as e:
+        logger.error(f"Lab refresh error: {e}")
+        return 500, {"detail": str(e)}
 
 
 # =============================================================================
@@ -773,42 +868,116 @@ async def lab_refresh(request: LabRefreshRequest):
     PNETLab -> 신규 장비 부트스트랩 (Refresh 버튼용)
     - device_info.json이 없으면 API로 자동 생성
     """
-    try:
-        params = {}
-        if request.config_path:
-            params["config_path"] = request.config_path
-        if request.overrides:
-            params["overrides"] = request.overrides
+    status_code, payload = await _run_lab_refresh(request)
+    if status_code >= 400:
+        return JSONResponse(status_code=status_code, content=payload)
+    return payload
 
-        if get_tool_backend() == "mcp":
-            result = await call_mcp_tool(
-                "bootstrap_refresh_onboard",
-                {"config_path": params.get("config_path"), "overrides": params.get("overrides")},
-            )
-            blocked = _extract_mutations_block(result)
-            if blocked:
-                tool_name = blocked.get("tool") or "bootstrap_refresh_onboard"
-                detail = blocked.get("error") or _mutation_block_hint(tool_name)
-                return JSONResponse(
-                    status_code=403,
-                    content={
-                        "detail": detail,
-                        "code": "mutations_blocked",
-                        "tool": tool_name,
-                        "hint": _mutation_block_hint(tool_name),
+
+@app.post("/api/lab/refresh/stream")
+async def lab_refresh_stream(request: LabRefreshRequest):
+    """
+    Refresh workflow with live progress/log SSE.
+    Frontend can open this stream as soon as Refresh starts to show telnet/onboarding progress.
+    """
+    headers = {
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive",
+        "X-Accel-Buffering": "no",
+    }
+
+    async def stream():
+        loop = asyncio.get_running_loop()
+        queue: asyncio.Queue = asyncio.Queue(maxsize=2000)
+        root_logger = logging.getLogger()
+        log_handler = _RefreshStreamLogHandler(loop=loop, queue=queue)
+        log_handler.setFormatter(logging.Formatter("%(message)s"))
+        root_logger.addHandler(log_handler)
+
+        await queue.put(
+            {
+                "type": "status",
+                "data": {
+                    "phase": "started",
+                    "message": "Refresh started. Discovering lab topology and onboarding candidates.",
+                },
+            }
+        )
+
+        async def _runner() -> None:
+            status_code, payload = await _run_lab_refresh(request)
+            failed = _refresh_logical_error(status_code, payload)
+            await queue.put(
+                {
+                    "type": "status",
+                    "data": {
+                        "phase": "failed" if failed else "completed",
+                        "message": (
+                            "Refresh finished with errors. Check diagnostics payload."
+                            if failed
+                            else "Refresh completed successfully."
+                        ),
                     },
-                )
-        else:
-            from agent.tools import lab_bootstrap
-
-            result = await asyncio.to_thread(
-                lab_bootstrap.invoke,
-                {"action": "refresh_onboard", "params": params}
+                }
             )
-        return result
-    except Exception as e:
-        logger.error(f"Lab refresh error: {e}")
-        return JSONResponse(status_code=500, content={"detail": str(e)})
+            await queue.put(
+                {
+                    "type": "result",
+                    "data": {
+                        "status_code": status_code,
+                        "result": payload,
+                    },
+                }
+            )
+
+        task = asyncio.create_task(_runner())
+        result_sent = False
+        try:
+            while True:
+                if await request.is_disconnected():
+                    task.cancel()
+                    break
+
+                try:
+                    item = await asyncio.wait_for(queue.get(), timeout=0.35)
+                except asyncio.TimeoutError:
+                    if task.done() and result_sent:
+                        break
+                    continue
+
+                item_type = str(item.get("type") or "")
+                data = item.get("data")
+                if not isinstance(data, dict):
+                    data = {"message": str(data)}
+
+                if item_type == "status":
+                    yield _sse_event("status", data)
+                elif item_type == "log":
+                    yield _sse_event("log", data)
+                elif item_type == "result":
+                    result_sent = True
+                    yield _sse_event("result", data)
+                    yield _sse_event("complete", {"type": "complete"})
+                    break
+
+            if task.done() and not result_sent:
+                try:
+                    exc = task.exception()
+                except Exception:
+                    exc = None
+                if exc is not None:
+                    yield _sse_event("error", {"type": "error", "message": str(exc)})
+                    yield _sse_event("complete", {"type": "complete"})
+        finally:
+            root_logger.removeHandler(log_handler)
+            if not task.done():
+                task.cancel()
+            try:
+                await task
+            except Exception:
+                pass
+
+    return StreamingResponse(stream(), media_type="text/event-stream", headers=headers)
 
 
 async def ensure_batfish_ready(auto_init: bool) -> Dict[str, Any]:
