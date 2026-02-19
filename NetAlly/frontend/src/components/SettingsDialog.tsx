@@ -24,7 +24,6 @@ type SettingsSectionId =
   | 'appearance'
   | 'bootstrap_overrides'
   | 'api_connections'
-  | 'pnetlab_auth'
   | 'about'
 
 const DEFAULT_API_SNAPSHOT: ApiSettingsSnapshot = {
@@ -48,7 +47,6 @@ const SECTION_ITEMS: Array<{ id: SettingsSectionId; label: string; description: 
   { id: 'appearance', label: 'Appearance', description: 'Theme + Language' },
   { id: 'bootstrap_overrides', label: 'Bootstrap', description: 'Optional override values' },
   { id: 'api_connections', label: 'API Connections', description: 'Backend + MCP runtime' },
-  { id: 'pnetlab_auth', label: 'PNETLab Auth', description: 'API fallback credentials' },
   { id: 'about', label: 'About', description: 'Runtime note' },
 ]
 
@@ -56,12 +54,6 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean; o
   const { theme, setTheme, language, setLanguage, settings, updateSettings } = useAppStore()
   const { t } = useTranslation()
   const [activeSection, setActiveSection] = useState<SettingsSectionId>('appearance')
-
-  const [pnetlabCookies, setPnetlabCookies] = useState(localStorage.getItem('pnetlab_cookies') || '')
-  const [pnetlabUser, setPnetlabUser] = useState(localStorage.getItem('pnetlab_user') || '')
-  const [pnetlabPass, setPnetlabPass] = useState(localStorage.getItem('pnetlab_pass') || '')
-  const [autoLogin, setAutoLogin] = useState(localStorage.getItem('pnetlab_auto_login') === 'true')
-  const [authApplyStatus, setAuthApplyStatus] = useState<'idle' | 'saved' | 'error'>('idle')
 
   const [openaiKey, setOpenaiKey] = useState('')
   const [openaiTouched, setOpenaiTouched] = useState(false)
@@ -138,34 +130,10 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean; o
       }
     }
 
-    setAuthApplyStatus('idle')
     fetchSettings()
   }, [isOpen])
 
   if (!isOpen) return null
-
-  const applyAuth = async () => {
-    localStorage.setItem('pnetlab_cookies', pnetlabCookies)
-    localStorage.setItem('pnetlab_user', pnetlabUser)
-    localStorage.setItem('pnetlab_pass', pnetlabPass)
-    localStorage.setItem('pnetlab_auto_login', autoLogin ? 'true' : 'false')
-    try {
-      const res = await fetch('/api/pnetlab/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          cookies: pnetlabCookies || null,
-          username: pnetlabUser || null,
-          password: pnetlabPass || null,
-          auto_login: autoLogin,
-        }),
-      })
-      const data = await res.json()
-      setAuthApplyStatus(data?.authenticated ? 'saved' : 'error')
-    } catch {
-      setAuthApplyStatus('error')
-    }
-  }
 
   const applyApiSettings = async () => {
     setApiStatus('saving')
@@ -591,74 +559,6 @@ export default function SettingsDialog({ isOpen, onClose }: { isOpen: boolean; o
             className="w-full py-2 text-[11px] font-bold uppercase tracking-widest rounded-md bg-primary text-primary-foreground hover:scale-105 transition-all disabled:opacity-50"
           >
             {apiStatus === 'saving' ? 'Saving...' : 'Apply API Settings'}
-          </button>
-        </section>
-      )
-    }
-
-    if (activeSection === 'pnetlab_auth') {
-      return (
-        <section className="space-y-3" data-testid="settings-section-pnetlab-auth">
-          <h3 className="text-[10px] font-black uppercase tracking-tighter text-primary/80">
-            PNETLab Auth
-            {authApplyStatus === 'saved' && <span className="ml-2 text-emerald-500">✓ Saved</span>}
-            {authApplyStatus === 'error' && <span className="ml-2 text-rose-500">Auth Failed</span>}
-          </h3>
-
-          <div className="rounded-md border border-border bg-muted/20 px-3 py-2 text-[10px] text-muted-foreground">
-            LabFS backend does not require web auth. Use this section only when running PNETLab API fallback mode.
-          </div>
-
-          <div className="flex items-center justify-between group">
-            <div className="space-y-0.5">
-              <div className="text-xs font-bold text-foreground">Auto Login</div>
-              <div className="text-[10px] text-muted-foreground">Use username/password if cookies are not set.</div>
-            </div>
-            <input
-              type="checkbox"
-              checked={autoLogin}
-              onChange={e => setAutoLogin(e.target.checked)}
-              className="w-4 h-4 rounded border-border text-primary focus:ring-primary accent-primary"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-[10px] text-muted-foreground uppercase tracking-widest">Username</label>
-            <input
-              value={pnetlabUser}
-              onChange={e => setPnetlabUser(e.target.value)}
-              placeholder="admin"
-              className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-[10px] text-muted-foreground uppercase tracking-widest">Password</label>
-            <input
-              type="password"
-              value={pnetlabPass}
-              onChange={e => setPnetlabPass(e.target.value)}
-              placeholder="pnetlab"
-              className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-[10px] text-muted-foreground uppercase tracking-widest">Cookies (fallback)</label>
-            <textarea
-              rows={4}
-              value={pnetlabCookies}
-              onChange={e => setPnetlabCookies(e.target.value)}
-              placeholder="token=...; _session=...; XSRF-TOKEN=..."
-              className="w-full px-3 py-2 text-xs rounded-md bg-muted/40 border border-border focus:outline-none focus:ring-1 focus:ring-primary/40"
-            />
-          </div>
-
-          <button
-            onClick={applyAuth}
-            className="w-full py-2 text-[11px] font-bold uppercase tracking-widest rounded-md bg-primary text-primary-foreground hover:scale-105 transition-all"
-          >
-            Apply Auth
           </button>
         </section>
       )

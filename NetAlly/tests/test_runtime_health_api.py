@@ -20,13 +20,14 @@ async def test_runtime_health_degraded_when_batfish_not_ready_and_services_uncon
     monkeypatch.delenv("NSO_BASE_URL", raising=False)
     monkeypatch.delenv("PNETLAB_URL", raising=False)
     monkeypatch.delenv("PNETLAB_HOST", raising=False)
+    monkeypatch.setenv("PNETLAB_INVENTORY_BACKEND", "api")
 
     payload = await main.runtime_health()
     assert payload["overall"] == "degraded"
     assert payload["recommendedMode"] == "limited"
     assert payload["services"]["batfish"]["status"] == "not_ready"
     assert payload["services"]["nso"]["status"] == "not_configured"
-    assert payload["services"]["pnetlab"]["status"] == "not_configured"
+    assert payload["services"]["pnetlab"]["status"] == "disabled"
 
 
 @pytest.mark.asyncio
@@ -62,6 +63,8 @@ async def test_runtime_health_healthy_when_all_services_ok(monkeypatch):
     monkeypatch.setenv("NSO_USERNAME", "admin")
     monkeypatch.setenv("NSO_PASSWORD", "admin")
     monkeypatch.setenv("PNETLAB_URL", "http://pnetlab")
+    monkeypatch.setenv("PNETLAB_INVENTORY_BACKEND", "api")
+    monkeypatch.setenv("PNETLAB_ENABLE_API_AUTH", "true")
 
     monkeypatch.setattr("agent.clients.nso.NSOClient", DummyNSOClient)
     monkeypatch.setattr("agent.clients.pnetlab.PnetlabClient", DummyPnetlabClient)
@@ -72,3 +75,21 @@ async def test_runtime_health_healthy_when_all_services_ok(monkeypatch):
     assert payload["services"]["batfish"]["status"] == "ready"
     assert payload["services"]["nso"]["status"] == "ok"
     assert payload["services"]["pnetlab"]["status"] == "ok"
+
+
+@pytest.mark.asyncio
+async def test_runtime_health_pnetlab_labfs_mode_skips_api_auth(monkeypatch):
+    monkeypatch.setattr(main, "_get_batfish_client", lambda: DummyBatfishReady())
+    monkeypatch.delenv("NSO_BASE_URL", raising=False)
+    monkeypatch.setenv("PNETLAB_INVENTORY_BACKEND", "labfs_local")
+    monkeypatch.setenv("PNETLAB_ENABLE_API_AUTH", "false")
+
+    class ShouldNotConstructPnetlabClient:
+        def __init__(self, *args, **kwargs):
+            raise AssertionError("PnetlabClient should not be constructed in LabFS health mode")
+
+    monkeypatch.setattr("agent.clients.pnetlab.PnetlabClient", ShouldNotConstructPnetlabClient)
+
+    payload = await main.runtime_health()
+    assert payload["services"]["pnetlab"]["status"] == "ok"
+    assert payload["services"]["pnetlab"]["backend"] == "labfs_local"

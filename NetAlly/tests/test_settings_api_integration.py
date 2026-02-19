@@ -200,3 +200,12 @@ async def test_post_settings_persists_runtime_settings_file(api_client, monkeypa
     assert clear_response.status_code == 200
     updated = json.loads(runtime_file.read_text(encoding="utf-8"))
     assert "PNETLAB_LAB_NAME" not in updated
+
+
+@pytest.mark.asyncio
+async def test_pnetlab_auth_disabled_by_default(api_client, monkeypatch):
+    monkeypatch.delenv("PNETLAB_ENABLE_API_AUTH", raising=False)
+    response = await api_client.post("/api/pnetlab/auth", json={"cookies": "token=a; _session=b"})
+    assert response.status_code == 409
+    payload = response.json()
+    assert payload["disabled"] is True

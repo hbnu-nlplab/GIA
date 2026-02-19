@@ -673,7 +673,44 @@ async def _runtime_health_nso() -> Dict[str, Any]:
         return _service_health_payload("error", "error", f"NSO check failed: {e}")
 
 
+def _pnetlab_api_auth_enabled() -> bool:
+    raw = str(os.getenv("PNETLAB_ENABLE_API_AUTH", "false") or "").strip().lower()
+    return raw in {"1", "true", "yes", "on"}
+
+
+def _effective_pnetlab_inventory_backend() -> str:
+    explicit = str(os.getenv("PNETLAB_INVENTORY_BACKEND", "") or "").strip().lower()
+    if explicit in {"labfs_local", "labfs_ssh", "api"}:
+        return explicit
+    try:
+        from agent.pnetlab_labfs import resolve_inventory_backend
+
+        resolved = str(resolve_inventory_backend() or "").strip().lower()
+        if resolved in {"labfs_local", "labfs_ssh", "api"}:
+            return resolved
+    except Exception:
+        pass
+    return explicit or "api"
+
+
 async def _runtime_health_pnetlab() -> Dict[str, Any]:
+    backend = _effective_pnetlab_inventory_backend()
+    if backend in {"labfs_local", "labfs_ssh"}:
+        return _service_health_payload(
+            "ok",
+            "ok",
+            f"PNETLab inventory backend is {backend} (API auth bypassed).",
+            {"backend": backend},
+        )
+
+    if not _pnetlab_api_auth_enabled():
+        return _service_health_payload(
+            "disabled",
+            "warning",
+            "PNETLab API auth is disabled. Use LabFS backend for inventory/refresh.",
+            {"backend": backend},
+        )
+
     base_url = str(os.getenv("PNETLAB_URL") or os.getenv("PNETLAB_HOST") or "").strip()
     username = str(os.getenv("PNETLAB_USERNAME", "") or "").strip()
     password = str(os.getenv("PNETLAB_PASSWORD", "") or "").strip()
@@ -769,6 +806,8 @@ async def runtime_health():
         notes.append("Configure NSO settings for richer device-grounded answers.")
     if pnetlab.get("status") == "unauthenticated":
         notes.append("Authenticate PNETLab to use live inventory and topology API.")
+    if pnetlab.get("status") == "disabled":
+        notes.append("PNETLab API auth is disabled. Keep using LabFS backend (recommended).")
 
     return {
         "status": "ok",
@@ -1046,6 +1085,22 @@ async def pnetlab_status():
     PNETLab 인증 상태 확인
     """
     try:
+        backend = _effective_pnetlab_inventory_backend()
+        if backend in {"labfs_local", "labfs_ssh"}:
+            return {
+                "authenticated": False,
+                "disabled": True,
+                "mode": backend,
+                "detail": "LabFS backend active (PNETLab API auth not required).",
+            }
+        if not _pnetlab_api_auth_enabled():
+            return {
+                "authenticated": False,
+                "disabled": True,
+                "mode": backend,
+                "detail": "PNETLab API auth is disabled. Set PNETLAB_ENABLE_API_AUTH=true only for legacy API mode.",
+            }
+
         from agent.tools import get_pnetlab_client
         client = get_pnetlab_client()
         if not client.is_authenticated:
@@ -1065,6 +1120,19 @@ async def pnetlab_auth(request: PnetlabAuthRequest):
     PNETLab 인증 정보 설정 (쿠키/자동로그인)
     """
     try:
+        if not _pnetlab_api_auth_enabled():
+            return JSONResponse(
+                status_code=409,
+                content={
+                    "authenticated": False,
+                    "disabled": True,
+                    "detail": (
+                        "PNETLab API auth is disabled. Use LabFS backend (labfs_local/labfs_ssh). "
+                        "Set PNETLAB_ENABLE_API_AUTH=true only if you need legacy cookie/API auth."
+                    ),
+                },
+            )
+
         if request.cookies is not None:
             os.environ["PNETLAB_COOKIES"] = request.cookies
         if request.auto_login is not None:
@@ -1104,6 +1172,7 @@ async def get_settings():
         "nso_password": "****" if os.getenv("NSO_PASSWORD") else None,
         "pnetlab_url": os.getenv("PNETLAB_URL"),
         "pnetlab_inventory_backend": os.getenv("PNETLAB_INVENTORY_BACKEND"),
+        "pnetlab_api_auth_enabled": _pnetlab_api_auth_enabled(),
         "pnetlab_lab_name": os.getenv("PNETLAB_LAB_NAME"),
         "pnetlab_nso_node": os.getenv("PNETLAB_NSO_NODE", "NSO"),
         "pnetlab_exclude_node_names": os.getenv("PNETLAB_EXCLUDE_NODE_NAMES", "NSO,Docker,NetAlly,Admin"),
@@ -2100,12 +2169,17 @@ async def get_pnetlab_topology():
         client = PnetlabClient(
             base_url=os.getenv("PNETLAB_URL") or os.getenv("PNETLAB_HOST", "http://100.66.240.82")
         )
-        
-        # 쿠키 설정 (환경변수에서)
-        cookies_str = os.getenv("PNETLAB_COOKIES", "")
-        if cookies_str:
-            client._load_cookies_from_string(cookies_str)
-            client._is_authenticated = True
+
+        if not _pnetlab_api_auth_enabled():
+            return {
+                "error": (
+                    "PNETLab API auth is disabled. Use LabFS mode (recommended): "
+                    "set PNETLAB_INVENTORY_BACKEND=labfs_local (inside PNETLab) "
+                    "or labfs_ssh + PNETLAB_SSH_HOST/PNETLAB_SSH_KEY_PATH."
+                ),
+                "nodes": [],
+                "edges": [],
+            }
         
         if not client._is_authenticated:
             return {

@@ -20,6 +20,11 @@ from urllib.parse import unquote
 logger = logging.getLogger(__name__)
 
 
+def _api_auth_enabled() -> bool:
+    raw = str(os.getenv("PNETLAB_ENABLE_API_AUTH", "false") or "").strip().lower()
+    return raw in {"1", "true", "yes", "on"}
+
+
 class PnetlabClient:
     """
     PNETLab REST API 클라이언트
@@ -63,33 +68,40 @@ class PnetlabClient:
         self._xsrf_token: Optional[str] = None
         self._jwt_token: Optional[str] = None
         self._is_authenticated = False
+        self._api_auth_enabled = _api_auth_enabled()
         
-        # 환경변수에서 인증 정보 자동 로드
-        # 방법 1: 전체 쿠키 문자열 (가장 편함!)
-        cookies_str = os.getenv("PNETLAB_COOKIES")
-        if cookies_str:
-            self._load_cookies_from_string(cookies_str)
-            logger.info("Auth cookies loaded from PNETLAB_COOKIES")
+        # Legacy API auth path (cookies/auto-login) is opt-in only.
+        # Default mode is LabFS inventory, so we keep this disabled unless explicitly requested.
+        if self._api_auth_enabled:
+            # 환경변수에서 인증 정보 자동 로드
+            # 방법 1: 전체 쿠키 문자열 (가장 편함!)
+            cookies_str = os.getenv("PNETLAB_COOKIES")
+            if cookies_str:
+                self._load_cookies_from_string(cookies_str)
+                logger.info("Auth cookies loaded from PNETLAB_COOKIES")
+            else:
+                # 방법 2: 개별 토큰 (하위 호환성)
+                jwt_from_env = os.getenv("PNETLAB_JWT_TOKEN")
+                session_from_env = os.getenv("PNETLAB_SESSION")
+                xsrf_from_env = os.getenv("PNETLAB_XSRF_TOKEN")
+
+                if jwt_from_env and session_from_env and xsrf_from_env:
+                    self.set_session_from_browser(
+                        token=jwt_from_env,
+                        session=session_from_env,
+                        xsrf=xsrf_from_env
+                    )
+                    logger.info("Auth cookies loaded from environment")
+                elif jwt_from_env:
+                    # 토큰만 있는 경우
+                    self.set_jwt_token(jwt_from_env)
+                    logger.warning("Only JWT token loaded - session and XSRF may be needed")
         else:
-            # 방법 2: 개별 토큰 (하위 호환성)
-            jwt_from_env = os.getenv("PNETLAB_JWT_TOKEN")
-            session_from_env = os.getenv("PNETLAB_SESSION")
-            xsrf_from_env = os.getenv("PNETLAB_XSRF_TOKEN")
-            
-            if jwt_from_env and session_from_env and xsrf_from_env:
-                self.set_session_from_browser(
-                    token=jwt_from_env,
-                    session=session_from_env,
-                    xsrf=xsrf_from_env
-                )
-                logger.info("Auth cookies loaded from environment")
-            elif jwt_from_env:
-                # 토큰만 있는 경우
-                self.set_jwt_token(jwt_from_env)
-                logger.warning("Only JWT token loaded - session and XSRF may be needed")
+            if os.getenv("PNETLAB_COOKIES"):
+                logger.info("PNETLAB_COOKIES present but ignored (PNETLAB_ENABLE_API_AUTH=false)")
 
         # 방법 3: 계정 기반 자동 로그인 (선택)
-        auto_login = os.getenv("PNETLAB_AUTO_LOGIN", "false").lower() == "true"
+        auto_login = self._api_auth_enabled and os.getenv("PNETLAB_AUTO_LOGIN", "false").lower() == "true"
         if not self._is_authenticated and auto_login and self.username and self.password:
             login_res = self.login()
             if "error" in login_res:
@@ -115,9 +127,12 @@ class PnetlabClient:
         session = cookies.get('_session', '')
         xsrf = cookies.get('XSRF-TOKEN', '')
         
-        if token and session and xsrf:
+        if token and session:
             self.set_session_from_browser(token=token, session=session, xsrf=xsrf)
-            logger.info("Parsed 3 cookies from string")
+            logger.info(f"Parsed cookies from string (token=yes, session=yes, xsrf={'yes' if xsrf else 'no'})")
+        elif token:
+            self.set_jwt_token(token)
+            logger.warning("Only token found in cookie string, set as JWT")
         else:
             logger.warning(f"Incomplete cookies: token={bool(token)}, session={bool(session)}, xsrf={bool(xsrf)}")
     
@@ -137,48 +152,48 @@ class PnetlabClient:
         logger.info("JWT token set")
     
     def set_session_from_browser(
-        self, 
+        self,
         token: str,
         session: str,
-        xsrf: str
+        xsrf: str = ""
     ) -> None:
         """
         브라우저에서 복사한 쿠키 값들로 세션을 설정합니다.
-        
+
         Args:
             token: JWT 토큰 (쿠키명: token) - URL 인코딩 여부 상관없음
             session: 세션 값 (쿠키명: _session)
-            xsrf: XSRF 토큰 (쿠키명: XSRF-TOKEN) - URL 인코딩된 상태여야 함 (%3D 등 포함)
+            xsrf: XSRF 토큰 (쿠키명: XSRF-TOKEN) - 없어도 GET 요청은 동작함
         """
         if '//' in self.base_url:
             domain = self.base_url.split('//')[1].split(':')[0]
         else:
             domain = self.base_url.split(':')[0]
-        
+
         # 쿠키 설정 (도메인 지정)
         self.session.cookies.set('token', token, domain=domain)
         self.session.cookies.set('_session', session, domain=domain)
-        self.session.cookies.set('XSRF-TOKEN', xsrf, domain=domain)
         self.session.cookies.set('privacy', 'true', domain=domain)
-        
-        # 헤더 설정
-        # 1. XSRF-TOKEN 헤더는 URL 디코딩된 값을 원본값으로 사용
-        from urllib.parse import unquote
-        self._xsrf_token = unquote(xsrf)
-        self.session.headers['X-XSRF-TOKEN'] = self._xsrf_token
-        
-        # 2. 브라우저 모방 헤더
+
+        if xsrf:
+            self.session.cookies.set('XSRF-TOKEN', xsrf, domain=domain)
+            # XSRF-TOKEN 헤더는 URL 디코딩된 값을 원본값으로 사용
+            from urllib.parse import unquote
+            self._xsrf_token = unquote(xsrf)
+            self.session.headers['X-XSRF-TOKEN'] = self._xsrf_token
+
+        # 브라우저 모방 헤더
         self.session.headers.update({
             "Accept": "application/json, text/javascript, */*; q=0.01",
             "X-Requested-With": "XMLHttpRequest",
             "Referer": f"{self.base_url}/legacy/topology",
             "Origin": self.base_url
         })
-        
+
         self._jwt_token = token
         self._is_authenticated = True
-        
-        logger.info("Session set from browser cookies with full headers")
+
+        logger.info(f"Session set from browser cookies (xsrf={'yes' if xsrf else 'no'})")
 
     def login(self) -> Dict[str, Any]:
         """
