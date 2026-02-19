@@ -93,6 +93,49 @@ def test_register_devices_nso_applies_protocol_and_port_rules():
     assert fake_nso.sync_calls == ["R1", "R2"]
 
 
+def test_register_devices_nso_attempts_ssh_remediation_on_sync_failure(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    gs = _sample_global_settings()
+    devices = [
+        DeviceInfo(name="R1", oob_ip="10.0.0.11", oob_intf="Gig0/0", telnet_port=30011),
+    ]
+
+    class FakeNSOAlwaysFail:
+        def __init__(self) -> None:
+            self.host_key_calls: List[str] = []
+            self.sync_calls: List[str] = []
+
+        def create_authgroup(self, group: str, username: str, password: str) -> bool:
+            return True
+
+        def register_device(self, device_info: Dict[str, Any]) -> bool:
+            return True
+
+        def fetch_host_keys(self, device_name: str) -> bool:
+            self.host_key_calls.append(device_name)
+            return True
+
+        def sync_from(self, device_name: str) -> bool:
+            self.sync_calls.append(device_name)
+            return False
+
+    async def fake_enable_ssh_via_telnet(_device: DeviceInfo, _gs: GlobalSettings) -> bool:
+        return True
+
+    monkeypatch.setattr("agent.onboarding.enable_ssh_via_telnet", fake_enable_ssh_via_telnet)
+    fake_nso = FakeNSOAlwaysFail()
+
+    result = register_devices_nso(gs, devices, fake_nso)
+
+    assert result["registered"] == []
+    assert result["failed"] == ["R1"]
+    # 3 base retries + 2 post-remediation retries
+    assert fake_nso.sync_calls == ["R1", "R1", "R1", "R1", "R1"]
+    # Initial fetch + retries(2) + post-remediation fetch
+    assert fake_nso.host_key_calls == ["R1", "R1", "R1", "R1"]
+
+
 def test_generate_device_info_excludes_default_infra_nodes(tmp_path):
     class FakePnetlab:
         def get_session_topology(self):

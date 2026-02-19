@@ -748,6 +748,40 @@ def register_devices_nso(gs: GlobalSettings, devices: List[DeviceInfo], nso: NSO
     logger.info("Registering devices to NSO: %d", len(devices))
     nso.create_authgroup(gs.nso_authgroup, gs.nso_username, gs.nso_password)
 
+    def _rehydrate_ssh_and_resync(target: DeviceInfo) -> bool:
+        """
+        Last-resort recovery path for SSH sync failures:
+        1) Re-apply SSH config through telnet
+        2) Re-fetch host keys
+        3) Retry sync-from
+        """
+        logger.warning("Attempting SSH remediation via telnet: %s", target.name)
+        try:
+            repaired = asyncio.run(enable_ssh_via_telnet(target, gs))
+        except RuntimeError as e:
+            # Defensive fallback when called under an active event loop.
+            logger.error("Cannot run SSH remediation for %s: %s", target.name, e)
+            return False
+        except Exception as e:
+            logger.error("SSH remediation failed for %s: %s", target.name, e)
+            return False
+
+        if not repaired:
+            return False
+
+        try:
+            nso.fetch_host_keys(target.name)
+        except Exception:
+            logger.exception("Fetch host keys after remediation failed: %s", target.name)
+
+        for attempt in range(1, 3):
+            if nso.sync_from(target.name):
+                logger.info("Sync-from recovered after SSH remediation: %s", target.name)
+                return True
+            if attempt < 2:
+                time.sleep(2.0)
+        return False
+
     for dev in devices:
         # 내부망 기준: oob_ip가 없으면 PNETLab VM IP + telnet 포트를 사용
         address = dev.oob_ip or gs.pnetlab_vm_ip
@@ -790,6 +824,8 @@ def register_devices_nso(gs: GlobalSettings, devices: List[DeviceInfo], nso: NSO
                         pass
                     # Lightweight backoff to let SSH daemon settle on lab nodes.
                     time.sleep(2.0)
+            if not sync_ok and protocol == "ssh":
+                sync_ok = _rehydrate_ssh_and_resync(dev)
             if sync_ok:
                 results["registered"].append(dev.name)
             else:
