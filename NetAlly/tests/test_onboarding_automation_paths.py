@@ -168,6 +168,7 @@ def test_build_missing_device_candidates_overrides_stale_telnet_port():
         missing_nodes=missing,
         all_devices=existing,
         mgmt_ifaces={"R1": "Ethernet0/1"},
+        mgmt_ips={},
         oob_intf_fallback="Ethernet0/0",
     )
 
@@ -253,6 +254,35 @@ def test_scan_and_sync_skips_non_ssh_ready_candidates(monkeypatch: pytest.Monkey
     assert result["onboarded"] == ["R1"]
     assert {"device": "R2", "reason": "mgmt_ip_not_discovered"} in result["skipped"]
     assert {"device": "R3", "reason": "console_unreachable"} in result["skipped"]
+
+
+def test_scan_and_sync_returns_actionable_error_when_nso_unreachable(monkeypatch: pytest.MonkeyPatch):
+    class FakeNso:
+        def _request(self, method: str, path: str):
+            return {"status": "error", "message": "connection refused"}
+
+        def get_devices(self):
+            return []
+
+    monkeypatch.setattr(tools, "get_pnetlab_client", lambda: object())
+    monkeypatch.setattr(
+        tools,
+        "_get_inventory_nodes",
+        lambda _p: {"nodes": [{"name": "R1", "status": 2, "telnet_port": 30011}]},
+    )
+    monkeypatch.setattr(tools, "get_nso_client", lambda: FakeNso())
+
+    result = tools.scan_and_sync.invoke(
+        {
+            "action": "scan",
+            "auto_onboard": False,
+            "auto_remove": False,
+        }
+    )
+
+    assert result["code"] == "nso_unreachable"
+    assert "NSO RESTCONF is unreachable" in result["error"]
+    assert result["debug"]["nso_probe"]["ok"] is False
 
 
 def test_lab_bootstrap_refresh_onboard_only_targets_new_devices(monkeypatch: pytest.MonkeyPatch):

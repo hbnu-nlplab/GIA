@@ -203,10 +203,31 @@ def _call_tool_or_fn(target: Any, kwargs: Dict[str, Any]) -> Any:
     raise TypeError(f"Unsupported callable target: {type(target)}")
 
 
+def _probe_nso_connectivity(nso: Any) -> Dict[str, Any]:
+    """
+    Best-effort NSO RESTCONF probe with actionable diagnostics.
+    """
+    req = getattr(nso, "_request", None)
+    if not callable(req):
+        # In tests/mocks we often don't expose _request.
+        return {"ok": True, "checked": False}
+
+    try:
+        res = req("GET", "tailf-ncs:devices/device?fields=name")
+    except Exception as e:
+        return {"ok": False, "checked": True, "error": str(e)}
+
+    if isinstance(res, dict) and res.get("status") == "error":
+        return {"ok": False, "checked": True, "error": str(res.get("message") or "unknown")}
+
+    return {"ok": True, "checked": True}
+
+
 def _build_missing_device_candidates(
     missing_nodes: List[Dict[str, Any]],
     all_devices: List[DeviceInfo],
     mgmt_ifaces: Dict[str, str],
+    mgmt_ips: Dict[str, str],
     oob_intf_fallback: str,
 ) -> List[DeviceInfo]:
     """
@@ -229,6 +250,8 @@ def _build_missing_device_candidates(
         if live_port > 0:
             dev.telnet_port = live_port
         dev.oob_intf = mgmt_ifaces.get(dev.name, oob_intf_fallback or dev.oob_intf)
+        if not dev.oob_ip:
+            dev.oob_ip = mgmt_ips.get(dev.name) or dev.oob_ip
         candidates.append(dev)
         seen_names.add(dev.name)
 
@@ -238,7 +261,7 @@ def _build_missing_device_candidates(
         candidates.append(
             DeviceInfo(
                 name=name,
-                oob_ip=None,
+                oob_ip=mgmt_ips.get(name),
                 oob_intf=mgmt_ifaces.get(name, oob_intf_fallback),
                 telnet_port=int(node.get("telnet_port") or 0),
             )
@@ -253,16 +276,27 @@ def _collect_onboarding_candidates(
     missing_nodes: List[Dict[str, Any]],
     overrides: Optional[Dict[str, Any]] = None,
 ) -> tuple[Any, List[DeviceInfo], List[DeviceInfo]]:
-    from agent.pnetlab_labfs import discover_management_interfaces
+    from agent.pnetlab_labfs import discover_management_endpoints
 
     cfg = ensure_device_info(config_path, pnetlab, overrides=overrides)
     gs, all_devices = parse_config(cfg)
-    mgmt_ifaces = discover_management_interfaces()
+    mgmt_meta = discover_management_endpoints()
+    mgmt_ifaces = {
+        name: str(meta.get("iface") or "")
+        for name, meta in mgmt_meta.items()
+        if str(meta.get("iface") or "")
+    }
+    mgmt_ips = {
+        name: str(meta.get("ip") or "")
+        for name, meta in mgmt_meta.items()
+        if str(meta.get("ip") or "")
+    }
     oob_intf_fallback = os.getenv("PNETLAB_OOB_INTF", "")
     candidates = _build_missing_device_candidates(
         missing_nodes=missing_nodes,
         all_devices=all_devices,
         mgmt_ifaces=mgmt_ifaces,
+        mgmt_ips=mgmt_ips,
         oob_intf_fallback=oob_intf_fallback,
     )
     return gs, all_devices, candidates
@@ -645,6 +679,7 @@ def scan_and_sync(
 
         result = {
             "action": action,
+            "debug": {},
             "pnetlab_nodes": [],
             "ignored_nodes": [],
             "nso_devices": [],
@@ -686,6 +721,18 @@ def scan_and_sync(
         result["pnetlab_nodes"] = running_nodes
         
         # 2. NSO에서 등록된 장비 목록 조회
+        nso_probe = _probe_nso_connectivity(nso)
+        result["debug"]["nso_probe"] = nso_probe
+        if not nso_probe.get("ok", False):
+            return {
+                **result,
+                "code": "nso_unreachable",
+                "error": (
+                    "NSO RESTCONF is unreachable. "
+                    "Check NSO_BASE_URL/credentials/network reachability."
+                ),
+            }
+
         nso_devices = nso.get_devices()
         result["nso_devices"] = nso_devices
         nso_devices_managed = [
@@ -973,6 +1020,13 @@ def lab_bootstrap(
                     "auto_remove": False,
                 },
             )
+            if isinstance(diff, dict) and diff.get("error"):
+                return {
+                    "status": "failed",
+                    "code": str(diff.get("code") or "refresh_scan_failed"),
+                    "error": str(diff.get("error")),
+                    "debug": diff.get("debug", {}),
+                }
             missing = diff.get("missing", [])
             missing_names = [n.get("name") for n in missing if n.get("name")]
             if not missing_names:

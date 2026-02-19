@@ -16,6 +16,7 @@ import os
 import re
 import subprocess
 import shlex
+import ipaddress
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple
@@ -25,6 +26,8 @@ import xml.etree.ElementTree as ET
 
 _PORT_RE = re.compile(r"\b(?:ts_port|port)\s*=\s*(\d{4,6})\b")
 _DEVICE_ID_RE = re.compile(r"\bDevice_id\s*=\s*(\d+)\b")
+_LABEL_IPV4_RE = re.compile(r"\b((?:\d{1,3}\.){3}\d{1,3})(?:/(\d{1,2}))?\b")
+_MGMT_NET_KEYWORDS = ("mgmt", "management", "oob", "admin")
 
 
 @dataclass(frozen=True)
@@ -647,6 +650,22 @@ def discover_management_interfaces(
 
     Returns: {device_name: interface_name}
     """
+    endpoints = discover_management_endpoints(nso_node_name=nso_node_name)
+    return {name: str(meta.get("iface", "")) for name, meta in endpoints.items() if str(meta.get("iface", ""))}
+
+
+def discover_management_endpoints(
+    nso_node_name: str = "",
+) -> Dict[str, Dict[str, Any]]:
+    """
+    Discover management interface metadata from UNL.
+
+    Returns:
+      {
+        "R1": {"iface":"Ethernet0/0","ip":"10.10.10.2","prefix":24,"network_id":"7","source":"label|network|nso"},
+        ...
+      }
+    """
     nso_name = nso_node_name or os.getenv("PNETLAB_NSO_NODE", "NSO")
 
     backend = resolve_inventory_backend()
@@ -657,32 +676,108 @@ def discover_management_interfaces(
     if not unl_path:
         return {}
 
-    nodes, networks, ifaces = parse_unl(reader.read_text(unl_path))
+    try:
+        nodes, networks, ifaces = parse_unl(reader.read_text(unl_path))
+    except Exception:
+        return {}
 
-    # 1. NSO 노드 ID 찾기
-    nso_node_id = None
+    node_by_id = {n.node_id: n for n in nodes if n.node_id}
+    net_by_id = {n.network_id: n for n in networks if n.network_id}
+
+    nso_node_id = ""
     for n in nodes:
         if n.name.lower() == nso_name.lower():
             nso_node_id = n.node_id
             break
-    if not nso_node_id:
+
+    nso_net_ids: set[str] = set()
+    if nso_node_id:
+        for iface in ifaces:
+            if iface.node_id == nso_node_id:
+                nso_net_ids.add(iface.network_id)
+
+    net_has_label_ip: set[str] = set()
+    for iface in ifaces:
+        if _LABEL_IPV4_RE.search(iface.label or ""):
+            net_has_label_ip.add(iface.network_id)
+
+    keyword_net_ids: set[str] = set()
+    for net_id, net in net_by_id.items():
+        lowered = str(net.name or "").lower()
+        if any(k in lowered for k in _MGMT_NET_KEYWORDS):
+            keyword_net_ids.add(net_id)
+
+    candidate_net_ids = nso_net_ids | net_has_label_ip | keyword_net_ids
+    if not candidate_net_ids:
         return {}
 
-    # 2. NSO가 연결된 네트워크 ID(들) 찾기 → 관리 네트워크
-    mgmt_net_ids: set[str] = set()
-    for i in ifaces:
-        if i.node_id == nso_node_id:
-            mgmt_net_ids.add(i.network_id)
-    if not mgmt_net_ids:
-        return {}
+    best_by_node: Dict[str, Dict[str, Any]] = {}
 
-    # 3. 각 장비에서 관리 네트워크에 연결된 인터페이스 찾기
-    node_by_id = {n.node_id: n for n in nodes}
-    result: Dict[str, str] = {}
-    for i in ifaces:
-        if i.network_id in mgmt_net_ids and i.node_id != nso_node_id:
-            node = node_by_id.get(i.node_id)
-            if node and node.name not in result:  # 첫 번째 매치 우선
-                result[node.name] = i.iface_name
+    for iface in ifaces:
+        if iface.network_id not in candidate_net_ids:
+            continue
+        if iface.node_id == nso_node_id:
+            continue
 
-    return result
+        node = node_by_id.get(iface.node_id)
+        if not node:
+            continue
+
+        label = str(iface.label or "")
+        ip_val: Optional[str] = None
+        prefix: Optional[int] = None
+        m = _LABEL_IPV4_RE.search(label)
+        if m:
+            raw_ip = str(m.group(1))
+            raw_prefix = str(m.group(2) or "24")
+            try:
+                addr = ipaddress.IPv4Address(raw_ip)
+                ip_val = raw_ip
+                p = int(raw_prefix)
+                if 0 <= p <= 32:
+                    prefix = p
+                else:
+                    prefix = 24
+                try:
+                    net = ipaddress.IPv4Network(f"{raw_ip}/{prefix}", strict=False)
+                    if net.num_addresses > 2 and (addr == net.network_address or addr == net.broadcast_address):
+                        ip_val = None
+                        prefix = None
+                except Exception:
+                    pass
+            except Exception:
+                ip_val = None
+                prefix = None
+
+        net = net_by_id.get(iface.network_id)
+        net_name = str(net.name or "")
+        score = 0
+        reason: List[str] = []
+        if iface.network_id in nso_net_ids:
+            score += 1
+            reason.append("nso")
+        if iface.network_id in keyword_net_ids:
+            score += 2
+            reason.append("network")
+        if ip_val:
+            score += 3
+            reason.append("label")
+
+        existing = best_by_node.get(node.name)
+        if existing and int(existing.get("_score", -1)) >= score:
+            continue
+
+        best_by_node[node.name] = {
+            "iface": iface.iface_name,
+            "ip": ip_val,
+            "prefix": prefix,
+            "network_id": iface.network_id,
+            "network_name": net_name,
+            "source": "|".join(reason) if reason else "candidate",
+            "_score": score,
+        }
+
+    # strip internal field
+    for meta in best_by_node.values():
+        meta.pop("_score", None)
+    return best_by_node
