@@ -10,6 +10,8 @@ LOG_DIR="${NETALLY_LOG_DIR:-${ROOT_DIR}/.tmp}"
 
 # Demo mode defaults: allow explicit refresh/onboarding mutation tools unless caller disables it.
 export NETALLY_MCP_ALLOW_MUTATIONS="${NETALLY_MCP_ALLOW_MUTATIONS:-true}"
+# Local dev default: prefer SSH tunnel endpoint for NSO RESTCONF.
+export NSO_BASE_URL="${NSO_BASE_URL:-http://127.0.0.1:18080/restconf}"
 
 mkdir -p "${LOG_DIR}"
 BACKEND_LOG="${LOG_DIR}/netally-backend.log"
@@ -17,6 +19,7 @@ FRONTEND_LOG="${LOG_DIR}/netally-frontend.log"
 
 echo "[demo-up] root: ${ROOT_DIR}"
 echo "[demo-up] logs: ${LOG_DIR}"
+echo "[demo-up] nso base url: ${NSO_BASE_URL}"
 
 cleanup() {
   if [[ -n "${FRONTEND_PID:-}" ]] && kill -0 "${FRONTEND_PID}" >/dev/null 2>&1; then
