@@ -19,6 +19,7 @@ import shlex
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple
+from urllib.parse import urlparse
 import xml.etree.ElementTree as ET
 
 
@@ -192,6 +193,34 @@ def parse_wrapper_ports(tmp_root: Path) -> Dict[str, int]:
 def resolve_unetlab_root() -> Path:
     return Path(os.getenv("PNETLAB_UNETLAB_ROOT", "/opt/unetlab"))
 
+
+def resolve_ssh_host() -> str:
+    """
+    Resolve SSH host with practical fallbacks so labfs_ssh works even when only VM IP is set.
+    Priority:
+      1) PNETLAB_SSH_HOST
+      2) PNETLAB_VM_IP
+      3) hostname from PNETLAB_URL / PNETLAB_HOST
+    """
+    host = os.getenv("PNETLAB_SSH_HOST", "").strip()
+    if host:
+        return host
+
+    vm_ip = os.getenv("PNETLAB_VM_IP", "").strip()
+    if vm_ip:
+        return vm_ip
+
+    raw_url = os.getenv("PNETLAB_URL", "").strip() or os.getenv("PNETLAB_HOST", "").strip()
+    if not raw_url:
+        return ""
+
+    try:
+        parsed = urlparse(raw_url if "://" in raw_url else f"http://{raw_url}")
+    except Exception:
+        return ""
+    return str(parsed.hostname or "").strip()
+
+
 def resolve_inventory_backend() -> str:
     """
     Resolve the effective inventory backend with a sane default:
@@ -208,7 +237,7 @@ def resolve_inventory_backend() -> str:
     if (unetlab_root / "labs").exists():
         return "labfs_local"
 
-    if os.getenv("PNETLAB_SSH_HOST", "").strip():
+    if resolve_ssh_host():
         return "labfs_ssh"
 
     return "api"
@@ -295,29 +324,29 @@ class _SshReader(_Reader):
     """
     Minimal SSH reader based on system `ssh`.
 
-    This intentionally requires key-based auth (non-interactive).
+    Key path is optional; users can rely on default SSH agent/key discovery.
     """
 
     def __init__(self) -> None:
-        host = os.getenv("PNETLAB_SSH_HOST", "").strip()
+        host = resolve_ssh_host()
         user = os.getenv("PNETLAB_SSH_USER", "root").strip() or "root"
         port = os.getenv("PNETLAB_SSH_PORT", "22").strip() or "22"
         key = os.getenv("PNETLAB_SSH_KEY_PATH", "").strip()
         if not host:
-            raise RuntimeError("PNETLAB_SSH_HOST is required for labfs_ssh")
-        if not key:
-            raise RuntimeError("PNETLAB_SSH_KEY_PATH is required for labfs_ssh (key-based auth)")
+            raise RuntimeError(
+                "PNETLAB_SSH_HOST is required for labfs_ssh "
+                "(or set PNETLAB_VM_IP / PNETLAB_URL so host can be inferred)"
+            )
 
         extra_opts = os.getenv("PNETLAB_SSH_OPTIONS", "").strip()
         self._base: List[str] = [
             "ssh",
             "-p",
             port,
-            "-i",
-            key,
-            "-o",
-            "BatchMode=yes",
         ]
+        if key:
+            self._base += ["-i", key]
+        self._base += ["-o", "BatchMode=yes"]
         if extra_opts:
             # Allow users to opt into accept-new etc. safely.
             self._base += shlex.split(extra_opts)

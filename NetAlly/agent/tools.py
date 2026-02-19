@@ -112,9 +112,67 @@ def _discover_nso_base_url() -> Optional[str]:
 
 def _get_inventory_nodes(pnetlab: PnetlabClient) -> Dict[str, Any]:
     """
-    Resolve inventory nodes via API first, then LabFS fallback.
+    Resolve inventory nodes with backend-aware priority.
+    - If LabFS backend is explicit (or auto-resolved in auto mode), use LabFS first.
+    - Otherwise try API first, then LabFS fallback.
     Returns API-compatible node objects with `name`, `status`, `telnet_port`.
     """
+    try:
+        from agent.pnetlab_labfs import build_pnetlab_map_from_labfs, resolve_inventory_backend
+    except Exception:
+        build_pnetlab_map_from_labfs = None
+        resolve_inventory_backend = None
+
+    def _from_labfs() -> Dict[str, Any]:
+        if not callable(build_pnetlab_map_from_labfs):
+            return {"error": "PNETLab LabFS module unavailable"}
+        labfs_topology = build_pnetlab_map_from_labfs()
+        if labfs_topology.get("error"):
+            return {"error": f"PNETLab LabFS error: {labfs_topology.get('error')}"}
+
+        nodes: List[Dict[str, Any]] = []
+        for node in labfs_topology.get("nodes", []):
+            if node.get("type") != "device":
+                continue
+            data = node.get("data", {}) if isinstance(node.get("data"), dict) else {}
+            name = str(data.get("label") or node.get("id") or "")
+            if not name:
+                continue
+            telnet_port = int(data.get("telnet_port") or 0)
+            nodes.append(
+                {
+                    "name": name,
+                    "telnet_port": telnet_port,
+                    "status": 2 if telnet_port > 0 else 0,
+                    "template": str(data.get("template") or ""),
+                    "type": str(data.get("kind") or data.get("template") or ""),
+                }
+            )
+
+        meta = labfs_topology.get("meta", {}) if isinstance(labfs_topology.get("meta"), dict) else {}
+        return {
+            "nodes": nodes,
+            "lab": {"name": os.getenv("PNETLAB_LAB_NAME"), "path": meta.get("unl_path")},
+            "source": "labfs",
+        }
+
+    explicit_backend = os.getenv("PNETLAB_INVENTORY_BACKEND", "").strip().lower()
+    resolved_backend = (
+        resolve_inventory_backend() if callable(resolve_inventory_backend) else explicit_backend
+    )
+    prefer_labfs = (
+        explicit_backend in {"labfs_local", "labfs_ssh"}
+        or (not explicit_backend and resolved_backend in {"labfs_local", "labfs_ssh"})
+    )
+
+    if prefer_labfs:
+        labfs_first = _from_labfs()
+        if "error" not in labfs_first:
+            return labfs_first
+        # Explicit LabFS mode should surface LabFS errors directly.
+        if explicit_backend in {"labfs_local", "labfs_ssh"}:
+            return labfs_first
+
     topology = pnetlab.get_session_topology()
     if "error" not in topology:
         return {
@@ -123,44 +181,13 @@ def _get_inventory_nodes(pnetlab: PnetlabClient) -> Dict[str, Any]:
             "source": "api",
         }
 
-    try:
-        from agent.pnetlab_labfs import build_pnetlab_map_from_labfs, resolve_inventory_backend
-    except Exception:
+    if resolved_backend not in {"labfs_local", "labfs_ssh"}:
         return {"error": f"PNETLab API error: {topology.get('error')}"}
 
-    backend = resolve_inventory_backend()
-    if backend not in {"labfs_local", "labfs_ssh"}:
-        return {"error": f"PNETLab API error: {topology.get('error')}"}
-
-    labfs_topology = build_pnetlab_map_from_labfs()
-    if labfs_topology.get("error"):
-        return {"error": f"PNETLab LabFS error: {labfs_topology.get('error')}"}
-
-    nodes: List[Dict[str, Any]] = []
-    for node in labfs_topology.get("nodes", []):
-        if node.get("type") != "device":
-            continue
-        data = node.get("data", {}) if isinstance(node.get("data"), dict) else {}
-        name = str(data.get("label") or node.get("id") or "")
-        if not name:
-            continue
-        telnet_port = int(data.get("telnet_port") or 0)
-        nodes.append(
-            {
-                "name": name,
-                "telnet_port": telnet_port,
-                "status": 2 if telnet_port > 0 else 0,
-                "template": str(data.get("template") or ""),
-                "type": str(data.get("kind") or data.get("template") or ""),
-            }
-        )
-
-    meta = labfs_topology.get("meta", {}) if isinstance(labfs_topology.get("meta"), dict) else {}
-    return {
-        "nodes": nodes,
-        "lab": {"name": os.getenv("PNETLAB_LAB_NAME"), "path": meta.get("unl_path")},
-        "source": "labfs",
-    }
+    labfs_topology = _from_labfs()
+    if "error" in labfs_topology:
+        return labfs_topology
+    return labfs_topology
 
 
 def _call_tool_or_fn(target: Any, kwargs: Dict[str, Any]) -> Any:

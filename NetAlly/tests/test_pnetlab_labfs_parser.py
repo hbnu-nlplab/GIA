@@ -1,6 +1,11 @@
 from pathlib import Path
 
-from agent.pnetlab_labfs import build_pnetlab_map_from_labfs
+from agent.pnetlab_labfs import (
+    _SshReader,
+    build_pnetlab_map_from_labfs,
+    resolve_inventory_backend,
+    resolve_ssh_host,
+)
 
 
 def test_labfs_unl_parser_builds_nodes_and_edges(tmp_path: Path, monkeypatch):
@@ -40,3 +45,28 @@ def test_labfs_unl_parser_builds_nodes_and_edges(tmp_path: Path, monkeypatch):
     # hidden net with 2 endpoints => direct edge
     assert any(e.get("source") == "NSO" and e.get("target") == "R1" for e in payload["edges"])
 
+
+def test_resolve_ssh_host_prefers_vm_ip(monkeypatch):
+    monkeypatch.delenv("PNETLAB_SSH_HOST", raising=False)
+    monkeypatch.setenv("PNETLAB_VM_IP", "192.0.2.10")
+    monkeypatch.setenv("PNETLAB_URL", "http://198.51.100.20")
+    assert resolve_ssh_host() == "192.0.2.10"
+
+
+def test_resolve_inventory_backend_auto_ssh_with_inferred_host(monkeypatch):
+    monkeypatch.delenv("PNETLAB_INVENTORY_BACKEND", raising=False)
+    monkeypatch.delenv("PNETLAB_SSH_HOST", raising=False)
+    monkeypatch.setenv("PNETLAB_VM_IP", "192.0.2.11")
+    monkeypatch.setenv("PNETLAB_UNETLAB_ROOT", "/nonexistent-for-test")
+    assert resolve_inventory_backend() == "labfs_ssh"
+
+
+def test_ssh_reader_allows_default_key_resolution(monkeypatch):
+    monkeypatch.delenv("PNETLAB_SSH_HOST", raising=False)
+    monkeypatch.setenv("PNETLAB_VM_IP", "192.0.2.12")
+    monkeypatch.delenv("PNETLAB_SSH_KEY_PATH", raising=False)
+    monkeypatch.delenv("PNETLAB_SSH_OPTIONS", raising=False)
+
+    reader = _SshReader()
+    assert reader._target == "root@192.0.2.12"
+    assert "-i" not in reader._base
