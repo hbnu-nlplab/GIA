@@ -1,9 +1,11 @@
 /**
- * NetworkNode - Hub/Cloud node (e.g., PNETLab bridge/cloud)
+ * NetworkNode - Hub/Cloud node with Grafana-style NOC visuals
  */
 import { useMemo, useState } from 'react'
 import { Handle, Position } from '@xyflow/react'
 import { Cloud } from 'lucide-react'
+
+const HANDLE_POSITIONS = [Position.Top, Position.Right, Position.Bottom, Position.Left]
 
 export default function NetworkNode({ data, selected }: { data: any; selected?: boolean }) {
   const [staticFailed, setStaticFailed] = useState(false)
@@ -24,32 +26,30 @@ export default function NetworkNode({ data, selected }: { data: any; selected?: 
   return (
     <div
       className={`
-        relative px-3 py-2 rounded-xl border transition-all duration-300
+        relative px-3 py-2 rounded-xl border transition-all duration-200
         ${selected
-          ? 'bg-primary/20 border-primary ring-4 ring-primary/10 shadow-lg shadow-primary/5 scale-105'
+          ? 'bg-primary/8 border-primary shadow-glow-primary scale-[1.03]'
           : highlighted
             ? (isPath
-                ? 'bg-emerald-500/10 border-emerald-500/50 ring-4 ring-emerald-500/10 shadow-lg shadow-emerald-500/10'
-                : 'bg-orange-500/10 border-orange-500/50 ring-4 ring-orange-500/10 shadow-lg shadow-orange-500/10'
+                ? 'bg-emerald-500/6 border-emerald-400/40 shadow-glow-ok'
+                : 'bg-amber-500/6 border-amber-400/40 shadow-[0_0_10px_-2px_hsl(38_90%_55%/0.2)]'
               )
-          : 'bg-card border-border hover:border-muted-foreground/30 shadow-sm hover:shadow-md'
+            : 'bg-card border-border-subtle hover:border-border-strong shadow-elevation-1 hover:shadow-elevation-2'
         }
       `}
     >
-      <Handle type="target" position={Position.Left} className="!opacity-0" />
+      {/* 4-way handles for dynamic edge routing */}
+      {HANDLE_POSITIONS.map((pos) => (
+        <Handle key={`src-${pos}`} type="source" position={pos} id={`src-${pos}`}
+          className="!opacity-0 !w-0 !h-0" />
+      ))}
+      {HANDLE_POSITIONS.map((pos) => (
+        <Handle key={`tgt-${pos}`} type="target" position={pos} id={`tgt-${pos}`}
+          className="!opacity-0 !w-0 !h-0" />
+      ))}
 
       <div className="flex items-center gap-2">
-        <div
-          className={`
-            w-8 h-8 rounded-lg flex items-center justify-center border
-            ${selected
-              ? 'bg-primary/30 border-primary'
-              : highlighted
-                ? (isPath ? 'bg-emerald-500/20 border-emerald-500/40' : 'bg-orange-500/20 border-orange-500/40')
-                : 'bg-muted/40 border-border'
-            }
-          `}
-        >
+        <div className="w-7 h-7 rounded flex items-center justify-center">
           {iconUrl && !staticFailed ? (
             <img
               src={iconUrl}
@@ -70,18 +70,16 @@ export default function NetworkNode({ data, selected }: { data: any; selected?: 
         </div>
 
         <div className="flex flex-col">
-          <span className="text-[12px] font-bold text-foreground/90 leading-none">
+          <span className="text-ui-base font-semibold text-foreground/90 leading-none">
             {data?.label || 'network'}
           </span>
           {data?.network_id && (
-            <span className="text-[10px] font-mono text-muted-foreground/70 leading-none mt-1">
+            <span className="text-ui-xs font-mono text-muted-foreground/70 leading-none mt-1">
               net:{String(data.network_id)}
             </span>
           )}
         </div>
       </div>
-
-      <Handle type="source" position={Position.Right} className="!opacity-0" />
     </div>
   )
 }
