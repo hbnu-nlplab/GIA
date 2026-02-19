@@ -270,41 +270,41 @@ export default function Header() {
 
   return (
     <>
-      <header className="h-12 border-b border-border bg-background/80 backdrop-blur-xl px-6 flex items-center justify-between sticky top-0 z-50">
+      <header className="h-12 border-b border-border-subtle bg-background px-6 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2.5 group cursor-pointer" onClick={() => window.location.reload()}>
             <div className="w-6 h-6 bg-primary rounded-md flex items-center justify-center group-hover:scale-110 transition-transform">
-              <span className="text-xs text-primary-foreground font-black tracking-tighter">NA</span>
+              <span className="text-xs text-primary-foreground font-bold tracking-tight">NA</span>
             </div>
             <span className="font-bold text-sm tracking-tighter uppercase italic">NetAlly</span>
           </div>
           
-          <nav className="flex items-center gap-4 text-[11px] font-bold border-l border-border/50 pl-6 select-none uppercase tracking-widest">
+          <nav className="flex items-center gap-4 text-ui-xs font-semibold border-l border-border-subtle pl-6 select-none uppercase tracking-wide">
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground/60">Lab:</span>
               <span className="text-foreground border-b border-primary/40 pb-0.5">SP-Core-V5</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground/60">Runtime:</span>
-              <div className={`w-1.5 h-1.5 rounded-full ${runtimeDotClass} animate-pulse`} />
+              <div className={`w-1.5 h-1.5 rounded-full ${runtimeDotClass} animate-breathe`} />
               <span className="text-foreground">{runtimeHealth.overall}</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className={`w-1.5 h-1.5 rounded-full ${statusColor(prepareStatus)} animate-pulse`} />
+              <div className={`w-1.5 h-1.5 rounded-full ${statusColor(prepareStatus)} animate-breathe`} />
               <span className="text-foreground/80">
                 Batfish: {prepareStatus || 'unknown'}
               </span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className={`px-2 py-0.5 rounded-full border text-[9px] ${serviceBadgeClass(runtimeHealth.services?.nso?.severity)}`}>
+              <span className={`px-2 py-0.5 rounded border text-ui-xs ${serviceBadgeClass(runtimeHealth.services?.nso?.severity)}`}>
                 NSO {runtimeHealth.services?.nso?.status || 'unknown'}
               </span>
-              <span className={`px-2 py-0.5 rounded-full border text-[9px] ${serviceBadgeClass(runtimeHealth.services?.pnetlab?.severity)}`}>
+              <span className={`px-2 py-0.5 rounded border text-ui-xs ${serviceBadgeClass(runtimeHealth.services?.pnetlab?.severity)}`}>
                 PNET {runtimeHealth.services?.pnetlab?.status || 'unknown'}
               </span>
             </div>
             {runtimeHealth.overall === 'degraded' && (
-              <span className="text-[9px] px-2 py-0.5 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-500">
+              <span className="text-ui-xs px-2 py-0.5 rounded border border-amber-500/40 bg-amber-500/10 text-amber-500">
                 Limited Mode
               </span>
             )}
@@ -312,22 +312,22 @@ export default function Header() {
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1 bg-muted/30 p-1 rounded-lg border border-border/40">
-            <button 
+          <div className="flex items-center gap-1 bg-muted p-1 rounded-lg border border-border-subtle">
+            <button
               onClick={isRefreshing ? cancelRefresh : handleRefresh}
-              className={`h-7 px-3 text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground hover:bg-card/50 rounded-md transition-all ${isRefreshing ? 'animate-pulse opacity-50' : ''}`}
+              className={`h-7 px-3 text-ui-xs font-semibold uppercase tracking-wide text-muted-foreground hover:text-foreground hover:bg-card rounded-md transition-all ${isRefreshing ? 'animate-breathe opacity-50' : ''}`}
             >
               {isRefreshing ? 'Cancel Sync' : 'Refresh'}
             </button>
             <button
               onClick={isPreparing ? cancelPrepare : handlePrepare}
-              className={`h-7 px-3 text-[10px] font-black uppercase tracking-widest bg-primary text-primary-foreground shadow-lg rounded-md transition-all hover:scale-105 active:scale-95 ${isPreparing ? 'animate-pulse opacity-70' : ''}`}
+              className={`h-7 px-3 text-ui-xs font-semibold uppercase tracking-wide bg-primary text-primary-foreground shadow-elevation-1 rounded-md transition-all hover:scale-105 active:scale-95 ${isPreparing ? 'animate-breathe opacity-70' : ''}`}
             >
               {isPreparing ? 'Cancel Prep' : 'Prepare'}
             </button>
           </div>
           {(refreshError || prepareError) && (
-            <div className="flex items-center gap-1.5 text-[9px]">
+            <div className="flex items-center gap-1.5 text-ui-xs">
               {refreshError && (
                 <>
                   <button
@@ -373,7 +373,7 @@ export default function Header() {
             >
               <span className="text-lg">⚙️</span>
             </button>
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-600 to-sky-600 border border-primary/20 shadow-xl" />
+            <div className="w-8 h-8 rounded-full bg-primary border border-primary/30 shadow-elevation-1" />
           </div>
         </div>
       </header>
@@ -381,9 +381,9 @@ export default function Header() {
       <SettingsDialog isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
       {showRefreshLog && (
         <div className="fixed inset-0 z-[120] bg-black/55 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-4xl max-h-[80vh] bg-card border border-border rounded-xl shadow-2xl flex flex-col">
+          <div className="w-full max-w-4xl max-h-[80vh] bg-card border border-border rounded-xl shadow-elevation-3 flex flex-col">
             <div className="px-4 py-3 border-b border-border flex items-center justify-between">
-              <div className="text-sm font-semibold">Refresh Diagnostics</div>
+              <div className="text-ui-lg font-semibold">Refresh Diagnostics</div>
               <button
                 type="button"
                 onClick={() => setShowRefreshLog(false)}
