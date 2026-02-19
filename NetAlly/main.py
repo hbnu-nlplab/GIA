@@ -467,7 +467,13 @@ async def call_mcp_tool(tool_name: str, arguments: Dict[str, Any]) -> Dict[str, 
             return payload
         return {"result": payload, "content": res.get("content", [])}
 
-    return {"error": res.get("error", "MCP call failed"), "tool": tool_name, "raw": res}
+    return {
+        "error": res.get("error", "MCP call failed"),
+        "code": res.get("code"),
+        "tool": tool_name,
+        "result": res.get("result"),
+        "raw": res,
+    }
 
 
 def _extract_mutations_block(payload: Any) -> Optional[Dict[str, str]]:

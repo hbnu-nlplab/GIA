@@ -13,6 +13,7 @@ export default function Header() {
   const [prepareError, setPrepareError] = useState<string | null>(null)
   const [lastRefreshOverrides, setLastRefreshOverrides] = useState<Record<string, string> | null>(null)
   const [lastPrepareAutoInit, setLastPrepareAutoInit] = useState<boolean>(false)
+  const [showRefreshLog, setShowRefreshLog] = useState(false)
   const refreshAbortRef = useRef<AbortController | null>(null)
   const prepareAbortRef = useRef<AbortController | null>(null)
   const refreshTimerRef = useRef<number | null>(null)
@@ -21,6 +22,7 @@ export default function Header() {
   const addEvidence = useAppStore(state => state.addEvidence)
   const setLabPrepare = useAppStore(state => state.setLabPrepare)
   const setLabRefreshResult = useAppStore(state => state.setLabRefreshResult)
+  const labRefreshResult = useAppStore(state => state.labRefreshResult)
   const runtimeHealth = useAppStore(state => state.runtimeHealth)
   const setRuntimeHealth = useAppStore(state => state.setRuntimeHealth)
 
@@ -125,15 +127,19 @@ export default function Header() {
       })
       const data = await res.json()
       setLabRefreshResult(data)
+      const logicalError = !res.ok || data?.status === 'failed' || Boolean(data?.error)
       addEvidence({
         type: 'lab_refresh',
-        status: res.ok ? 'success' : 'error',
-        title: res.ok ? 'Lab Refresh Complete' : 'Lab Refresh Failed',
-        summary: res.ok ? `New devices: ${data?.missing?.length || 0}` : (data?.detail || 'Error'),
+        status: logicalError ? 'error' : 'success',
+        title: logicalError ? 'Lab Refresh Failed' : 'Lab Refresh Complete',
+        summary: logicalError
+          ? String(data?.error || data?.detail || 'Error')
+          : `New devices: ${data?.missing?.length || 0}`,
         details: data
       })
-      if (!res.ok) {
-        setRefreshError(String(data?.detail || `HTTP ${res.status}`))
+      if (logicalError) {
+        setRefreshError(String(data?.error || data?.detail || `HTTP ${res.status}`))
+        setShowRefreshLog(true)
       }
     } catch (err: any) {
       const reason = String(controller.signal.reason || '')
@@ -323,15 +329,25 @@ export default function Header() {
           {(refreshError || prepareError) && (
             <div className="flex items-center gap-1.5 text-[9px]">
               {refreshError && (
-                <button
-                  type="button"
-                  onClick={retryRefresh}
-                  disabled={isRefreshing}
-                  className="px-2 py-1 rounded border border-amber-500/30 bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 disabled:opacity-40"
-                  title={refreshError}
-                >
-                  Retry Refresh
-                </button>
+                <>
+                  <button
+                    type="button"
+                    onClick={retryRefresh}
+                    disabled={isRefreshing}
+                    className="px-2 py-1 rounded border border-amber-500/30 bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 disabled:opacity-40"
+                    title={refreshError}
+                  >
+                    Retry Refresh
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowRefreshLog(true)}
+                    className="px-2 py-1 rounded border border-cyan-500/30 bg-cyan-500/10 text-cyan-500 hover:bg-cyan-500/20"
+                    title="Open latest refresh diagnostics"
+                  >
+                    Refresh Log
+                  </button>
+                </>
               )}
               {prepareError && (
                 <button
@@ -363,6 +379,27 @@ export default function Header() {
       </header>
 
       <SettingsDialog isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
+      {showRefreshLog && (
+        <div className="fixed inset-0 z-[120] bg-black/55 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-4xl max-h-[80vh] bg-card border border-border rounded-xl shadow-2xl flex flex-col">
+            <div className="px-4 py-3 border-b border-border flex items-center justify-between">
+              <div className="text-sm font-semibold">Refresh Diagnostics</div>
+              <button
+                type="button"
+                onClick={() => setShowRefreshLog(false)}
+                className="px-2 py-1 text-xs rounded border border-border hover:bg-muted"
+              >
+                Close
+              </button>
+            </div>
+            <div className="p-4 overflow-auto">
+              <pre className="text-xs leading-5 whitespace-pre-wrap break-words text-foreground/90">
+                {JSON.stringify(labRefreshResult || { detail: refreshError || 'No refresh result yet.' }, null, 2)}
+              </pre>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }
