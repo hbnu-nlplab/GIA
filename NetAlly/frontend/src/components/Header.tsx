@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import SettingsDialog from './SettingsDialog'
 import { useAppStore } from '../store'
 
-const LONG_TASK_TIMEOUT_MS = 30_000
+const REFRESH_TIMEOUT_MS = 8 * 60_000
+const PREPARE_TIMEOUT_MS = 3 * 60_000
 
 export default function Header() {
   const [isRefreshing, setIsRefreshing] = useState(false)
@@ -39,9 +40,10 @@ export default function Header() {
 
   const startTaskTimeout = (kind: 'refresh' | 'prepare', controller: AbortController) => {
     clearTaskTimer(kind)
+    const timeoutMs = kind === 'refresh' ? REFRESH_TIMEOUT_MS : PREPARE_TIMEOUT_MS
     const timer = window.setTimeout(() => {
       if (!controller.signal.aborted) controller.abort('timeout')
-    }, LONG_TASK_TIMEOUT_MS)
+    }, timeoutMs)
     if (kind === 'refresh') refreshTimerRef.current = timer
     else prepareTimerRef.current = timer
   }
@@ -158,7 +160,7 @@ export default function Header() {
           type: 'lab_refresh',
           status: 'error',
           title: 'Lab Refresh Timeout',
-          summary: 'Refresh timed out after 30s.',
+          summary: 'Refresh timed out before completion.',
           details: { reason: 'timeout' },
         })
       } else {
@@ -216,7 +218,7 @@ export default function Header() {
           type: 'lab_prepare',
           status: 'error',
           title: 'Batfish Prepare Timeout',
-          summary: 'Prepare timed out after 30s.',
+          summary: 'Prepare timed out before completion.',
           details: { reason: 'timeout' },
         })
       } else {
