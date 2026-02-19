@@ -18,6 +18,8 @@ from agent.onboarding import (
     check_connectivity,
     register_devices_nso,
     should_manage_pnetlab_node,
+    DeviceInfo,
+    save_device_info,
 )
 
 load_dotenv()
@@ -171,6 +173,71 @@ def _call_tool_or_fn(target: Any, kwargs: Dict[str, Any]) -> Any:
     if callable(target):
         return target(**kwargs)
     raise TypeError(f"Unsupported callable target: {type(target)}")
+
+
+def _build_missing_device_candidates(
+    missing_nodes: List[Dict[str, Any]],
+    all_devices: List[DeviceInfo],
+    mgmt_ifaces: Dict[str, str],
+    oob_intf_fallback: str,
+) -> List[DeviceInfo]:
+    """
+    Build onboarding candidates for missing nodes.
+    Live inventory telnet ports always override stale device_info values.
+    """
+    missing_by_name = {
+        str(node.get("name") or ""): node
+        for node in missing_nodes
+        if str(node.get("name") or "")
+    }
+    candidates: List[DeviceInfo] = []
+    seen_names: set[str] = set()
+
+    for dev in all_devices:
+        live = missing_by_name.get(dev.name)
+        if not live:
+            continue
+        live_port = int(live.get("telnet_port") or 0)
+        if live_port > 0:
+            dev.telnet_port = live_port
+        dev.oob_intf = mgmt_ifaces.get(dev.name, oob_intf_fallback or dev.oob_intf)
+        candidates.append(dev)
+        seen_names.add(dev.name)
+
+    for name, node in missing_by_name.items():
+        if name in seen_names:
+            continue
+        candidates.append(
+            DeviceInfo(
+                name=name,
+                oob_ip=None,
+                oob_intf=mgmt_ifaces.get(name, oob_intf_fallback),
+                telnet_port=int(node.get("telnet_port") or 0),
+            )
+        )
+
+    return candidates
+
+
+def _collect_onboarding_candidates(
+    pnetlab: PnetlabClient,
+    config_path: str,
+    missing_nodes: List[Dict[str, Any]],
+    overrides: Optional[Dict[str, Any]] = None,
+) -> tuple[Any, List[DeviceInfo], List[DeviceInfo]]:
+    from agent.pnetlab_labfs import discover_management_interfaces
+
+    cfg = ensure_device_info(config_path, pnetlab, overrides=overrides)
+    gs, all_devices = parse_config(cfg)
+    mgmt_ifaces = discover_management_interfaces()
+    oob_intf_fallback = os.getenv("PNETLAB_OOB_INTF", "")
+    candidates = _build_missing_device_candidates(
+        missing_nodes=missing_nodes,
+        all_devices=all_devices,
+        mgmt_ifaces=mgmt_ifaces,
+        oob_intf_fallback=oob_intf_fallback,
+    )
+    return gs, all_devices, candidates
 
 
 # =============================================================================
@@ -525,7 +592,7 @@ def scan_and_sync(
     action: Literal["scan", "sync", "scan_and_sync"],
     auto_onboard: bool = False,
     auto_remove: bool = False,
-    oob_ip: str = "localhost",
+    oob_ip: str = "",
     protocol: str = "telnet"
 ) -> Dict[str, Any]:
     """
@@ -541,10 +608,13 @@ def scan_and_sync(
     Returns:
         Dict with pnetlab_nodes, nso_devices, missing, and optionally onboarded results
     """
+    if not oob_ip:
+        oob_ip = os.getenv("PNETLAB_GATEWAY_IP", "") or os.getenv("PNETLAB_VM_IP", "") or os.getenv("PNETLAB_SSH_HOST", "") or "localhost"
+
     try:
         pnetlab = get_pnetlab_client()
         nso = get_nso_client()
-        
+
         result = {
             "action": action,
             "pnetlab_nodes": [],
@@ -557,7 +627,8 @@ def scan_and_sync(
             "deleted": [],
             "delete_failed": [],
             "onboarded": [],
-            "failed": []
+            "failed": [],
+            "skipped": [],
         }
         
         # 1. PNETLab에서 실행 중인 노드 목록 조회
@@ -608,35 +679,53 @@ def scan_and_sync(
         removed = [d for d in nso_devices_managed if d.lower() not in pnetlab_name_set]
         result["removed"] = removed
         
-        # 4. Sync (auto_onboard가 True이고 action이 sync 또는 scan_and_sync인 경우)
+        # 4. Sync: SSH-first 플로우 (관리 인터페이스 감지 → IP 발견 → SSH 활성화 → NSO 등록)
         if action in ["sync", "scan_and_sync"] and auto_onboard and result["missing"]:
-            for node in result["missing"]:
-                device_name = node["name"]
-                telnet_port = node.get("telnet_port", 0)
-                
-                if telnet_port == 0:
-                    result["failed"].append({
-                        "device": device_name,
-                        "error": "No telnet port available"
-                    })
-                    continue
-                
-                # NSO에 자동 등록
-                onboard_result = nso.auto_onboard_from_pnetlab(
-                    device_name=device_name,
-                    telnet_port=telnet_port,
-                    oob_ip=oob_ip,
-                    protocol=protocol
-                )
-                
-                if onboard_result.get("success"):
-                    result["onboarded"].append(device_name)
-                else:
-                    result["failed"].append({
-                        "device": device_name,
-                        "error": onboard_result.get("error", "Unknown error"),
-                        "steps": onboard_result.get("steps", [])
-                    })
+            config_path = os.getenv("PNETLAB_DEVICE_INFO", "device_info.json")
+            gs, all_devices, candidates = _collect_onboarding_candidates(
+                pnetlab=pnetlab,
+                config_path=config_path,
+                missing_nodes=result["missing"],
+            )
+
+            if candidates:
+                ssh_results = asyncio.run(enable_ssh_all(gs, candidates))
+                result["ssh_enabled"] = ssh_results
+
+                # Discovered OOB fields and refreshed telnet ports are persisted for next refresh.
+                all_updated = list(all_devices)
+                existing_names = {d.name for d in all_devices}
+                for dev in candidates:
+                    if dev.name not in existing_names:
+                        all_updated.append(dev)
+                save_device_info(config_path, gs, all_updated)
+
+                ready: List[DeviceInfo] = []
+                for dev in candidates:
+                    if dev.telnet_port <= 0:
+                        result["skipped"].append(
+                            {"device": dev.name, "reason": "console_unreachable"}
+                        )
+                        continue
+                    if not ssh_results.get(dev.name, False):
+                        result["skipped"].append(
+                            {"device": dev.name, "reason": "ssh_enable_failed"}
+                        )
+                        continue
+                    if not dev.oob_ip:
+                        result["skipped"].append(
+                            {"device": dev.name, "reason": "mgmt_ip_not_discovered"}
+                        )
+                        continue
+                    ready.append(dev)
+
+                if ready:
+                    reg_results = register_devices_nso(gs, ready, nso)
+                    result["onboarded"] = reg_results.get("registered", [])
+                    result["failed"] = [
+                        {"device": name, "error": "registration_failed"}
+                        for name in reg_results.get("failed", [])
+                    ]
 
         # 5. Remove (auto_remove가 True이고 action이 sync 또는 scan_and_sync인 경우)
         if action in ["sync", "scan_and_sync"] and auto_remove and result["removed"]:
@@ -858,13 +947,46 @@ def lab_bootstrap(
             if not missing_names:
                 return {"status": "completed", "message": "No new devices", "missing": []}
 
-            filtered = [d for d in devices if d.name in set(missing_names)]
-            if not filtered:
-                return {"status": "completed", "message": "No matching devices in device_info", "missing": missing_names}
-            ssh_result = asyncio.run(enable_ssh_all(gs, filtered))
+            refresh_gs, all_devices, candidates = _collect_onboarding_candidates(
+                pnetlab=pnetlab,
+                config_path=config_path,
+                missing_nodes=missing,
+                overrides=overrides,
+            )
+            if not candidates:
+                return {"status": "completed", "message": "No onboarding candidates", "missing": missing_names}
+
+            ssh_result = asyncio.run(enable_ssh_all(refresh_gs, candidates))
+            all_updated = list(all_devices)
+            existing_names = {d.name for d in all_devices}
+            for dev in candidates:
+                if dev.name not in existing_names:
+                    all_updated.append(dev)
+            save_device_info(config_path, refresh_gs, all_updated)
+
+            ready: List[DeviceInfo] = []
+            skipped: List[Dict[str, str]] = []
+            for dev in candidates:
+                if dev.telnet_port <= 0:
+                    skipped.append({"device": dev.name, "reason": "console_unreachable"})
+                    continue
+                if not ssh_result.get(dev.name, False):
+                    skipped.append({"device": dev.name, "reason": "ssh_enable_failed"})
+                    continue
+                if not dev.oob_ip:
+                    skipped.append({"device": dev.name, "reason": "mgmt_ip_not_discovered"})
+                    continue
+                ready.append(dev)
+
             nso = get_nso_client()
-            reg_result = register_devices_nso(gs, filtered, nso)
-            return {"status": "completed", "missing": missing_names, "ssh": ssh_result, "nso": reg_result}
+            reg_result = register_devices_nso(refresh_gs, ready, nso) if ready else {"registered": [], "failed": []}
+            return {
+                "status": "completed",
+                "missing": missing_names,
+                "ssh": ssh_result,
+                "nso": reg_result,
+                "skipped": skipped,
+            }
         
         return {"error": f"Action {action} not implemented"}
     except Exception as e:

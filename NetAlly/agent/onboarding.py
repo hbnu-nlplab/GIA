@@ -5,6 +5,8 @@ import asyncio
 import json
 import logging
 import os
+import re
+import socket
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -16,6 +18,21 @@ from agent.clients.nso import NSOClient
 from agent.clients.pnetlab import PnetlabClient
 
 logger = logging.getLogger(__name__)
+
+_IP_RE = re.compile(r'(\d+\.\d+\.\d+\.\d+)')
+
+
+def _parse_interface_ip(show_output: str, iface_name: str) -> Optional[str]:
+    """
+    'show ip interface brief' 출력에서 특정 인터페이스의 IP를 추출.
+    예: "Ethernet0/0   10.10.10.5   YES manual up   up" → "10.10.10.5"
+    """
+    for line in show_output.splitlines():
+        if iface_name.lower() in line.lower():
+            match = _IP_RE.search(line)
+            if match and match.group(1) not in ("0.0.0.0", "127.0.0.1"):
+                return match.group(1)
+    return None
 
 
 def _csv_set(raw: Optional[str]) -> set[str]:
@@ -72,6 +89,40 @@ class GlobalSettings:
     nso_password: str
 
 
+def save_device_info(config_path: str, gs: GlobalSettings, devices: List[DeviceInfo]) -> None:
+    """발견된 관리 IP + 인터페이스를 device_info.json에 저장 (다음 실행 시 재발견 불필요)."""
+    payload = {
+        "global_settings": {
+            "pnetlab_vm_ip": gs.pnetlab_vm_ip,
+            "gateway_ip": gs.gateway_ip,
+            "enable_password": gs.enable_password,
+            "admin_password": gs.admin_password,
+            "domain_name": gs.domain_name,
+            "nso_authgroup": gs.nso_authgroup,
+            "nso_ned_id": gs.nso_ned_id,
+            "nso_username": gs.nso_username,
+            "nso_password": gs.nso_password,
+        },
+        "devices": [
+            {
+                "name": d.name,
+                "oob_ip": d.oob_ip,
+                "oob_intf": d.oob_intf,
+                "telnet_port": d.telnet_port,
+                "device_group": d.device_group,
+            }
+            for d in devices
+        ],
+    }
+    path = Path(config_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=2, ensure_ascii=False)
+    logger.info("Saved device_info: %s (%d devices, IPs: %s)",
+                path, len(devices),
+                {d.name: d.oob_ip for d in devices if d.oob_ip})
+
+
 def load_device_info(config_path: str) -> Dict[str, Any]:
     path = Path(config_path)
     logger.info("Loading device_info.json: %s", path)
@@ -89,6 +140,72 @@ def _resolve_pnetlab_vm_ip() -> str:
         if parsed.hostname:
             return parsed.hostname
     return ""
+
+
+def _dedupe_hosts(hosts: List[str]) -> List[str]:
+    out: List[str] = []
+    seen: set[str] = set()
+    for host in hosts:
+        h = str(host or "").strip()
+        if not h or h in seen:
+            continue
+        seen.add(h)
+        out.append(h)
+    return out
+
+
+def _can_connect(host: str, port: int, timeout_sec: float = 1.0) -> bool:
+    if not host or port <= 0:
+        return False
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.settimeout(timeout_sec)
+    try:
+        sock.connect((host, port))
+        return True
+    except Exception:
+        return False
+    finally:
+        sock.close()
+
+
+def resolve_console_host(gs: GlobalSettings, devices: List[DeviceInfo]) -> str:
+    """
+    Pick the most reachable console host across likely candidates.
+    This avoids stale device_info host values when .env/runtime changed.
+    """
+    parsed = urlparse(os.getenv("PNETLAB_URL", ""))
+    candidates = _dedupe_hosts(
+        [
+            os.getenv("PNETLAB_VM_IP", ""),
+            parsed.hostname or "",
+            os.getenv("PNETLAB_SSH_HOST", ""),
+            gs.pnetlab_vm_ip,
+            os.getenv("PNETLAB_GATEWAY_IP", ""),
+        ]
+    )
+    if not candidates:
+        return gs.pnetlab_vm_ip
+
+    ports: List[int] = []
+    for dev in devices:
+        p = int(dev.telnet_port or 0)
+        if p > 0 and p not in ports:
+            ports.append(p)
+    if not ports:
+        return candidates[0]
+
+    sample_ports = ports[:5]
+    best_host = candidates[0]
+    best_score = -1
+    for host in candidates:
+        score = sum(1 for port in sample_ports if _can_connect(host, port))
+        if score > best_score:
+            best_host = host
+            best_score = score
+
+    if best_score <= 0:
+        return gs.pnetlab_vm_ip or best_host
+    return best_host
 
 
 def generate_device_info_from_pnetlab(
@@ -269,6 +386,22 @@ async def enable_ssh_via_telnet(device: DeviceInfo, gs: GlobalSettings) -> bool:
         if gs.enable_password:
             await send_cmd(gs.enable_password)
 
+        # 관리 IP 동적 발견: oob_intf가 있지만 oob_ip가 없으면 show ip interface brief로 발견
+        if device.oob_intf and not device.oob_ip:
+            writer.write("show ip interface brief\r\n")
+            await asyncio.sleep(2)
+            output = ""
+            try:
+                raw = await asyncio.wait_for(reader.read(4096), timeout=3)
+                output = raw if isinstance(raw, str) else str(raw)
+            except (asyncio.TimeoutError, Exception):
+                pass
+            discovered = _parse_interface_ip(output, device.oob_intf)
+            if discovered:
+                device.oob_ip = discovered
+                logger.info("Discovered mgmt IP: %s -> %s (%s)",
+                            device.name, discovered, device.oob_intf)
+
         await send_cmd("conf t")
         await send_cmd("no ip domain-lookup")
         await send_cmd(f"hostname {device.name}")
@@ -316,6 +449,10 @@ async def enable_ssh_via_telnet(device: DeviceInfo, gs: GlobalSettings) -> bool:
 
 async def enable_ssh_all(gs: GlobalSettings, devices: List[DeviceInfo]) -> Dict[str, bool]:
     results: Dict[str, bool] = {}
+    resolved_host = resolve_console_host(gs, devices)
+    if resolved_host and resolved_host != gs.pnetlab_vm_ip:
+        logger.info("Resolved console host: %s -> %s", gs.pnetlab_vm_ip, resolved_host)
+        gs.pnetlab_vm_ip = resolved_host
     logger.info("Enabling SSH for %d devices", len(devices))
     for dev in devices:
         results[dev.name] = await enable_ssh_via_telnet(dev, gs)

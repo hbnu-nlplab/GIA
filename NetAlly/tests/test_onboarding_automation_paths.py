@@ -1,3 +1,4 @@
+import inspect
 from typing import Any, Dict, List
 
 import pytest
@@ -5,6 +6,7 @@ import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 
 import main
+import agent.mcp_tools as mcp_tools
 from agent.onboarding import (
     DeviceInfo,
     GlobalSettings,
@@ -142,6 +144,99 @@ def test_scan_and_sync_ignores_infra_nodes(monkeypatch: pytest.MonkeyPatch):
     assert set(result["ignored_nodes"]) == {"NSO", "Docker"}
 
 
+def test_scan_and_sync_defaults_are_safe_scan_mode():
+    legacy_sig = inspect.signature(tools.scan_and_sync.func)
+    assert legacy_sig.parameters["auto_onboard"].default is False
+    assert legacy_sig.parameters["oob_ip"].default == ""
+
+    mcp_sig = inspect.signature(mcp_tools.sync_scan.coroutine)
+    assert mcp_sig.parameters["auto_onboard"].default is False
+    assert mcp_sig.parameters["oob_ip"].default == ""
+
+
+def test_build_missing_device_candidates_overrides_stale_telnet_port():
+    existing = [
+        DeviceInfo(name="R1", oob_ip=None, oob_intf="Ethernet0/0", telnet_port=12345),
+    ]
+    missing = [
+        {"name": "R1", "telnet_port": 30011},
+        {"name": "R2", "telnet_port": 30022},
+    ]
+
+    candidates = tools._build_missing_device_candidates(
+        missing_nodes=missing,
+        all_devices=existing,
+        mgmt_ifaces={"R1": "Ethernet0/1"},
+        oob_intf_fallback="Ethernet0/0",
+    )
+
+    by_name = {d.name: d for d in candidates}
+    assert by_name["R1"].telnet_port == 30011
+    assert by_name["R1"].oob_intf == "Ethernet0/1"
+    assert by_name["R2"].telnet_port == 30022
+
+
+def test_scan_and_sync_skips_non_ssh_ready_candidates(monkeypatch: pytest.MonkeyPatch):
+    gs = _sample_global_settings()
+    candidates = [
+        DeviceInfo(name="R1", oob_ip="10.0.0.11", oob_intf="Gig0/0", telnet_port=30011),
+        DeviceInfo(name="R2", oob_ip=None, oob_intf="Gig0/0", telnet_port=30022),
+        DeviceInfo(name="R3", oob_ip=None, oob_intf="Gig0/0", telnet_port=0),
+    ]
+    observed: Dict[str, Any] = {}
+
+    class FakeNso:
+        def get_devices(self):
+            return []
+
+    monkeypatch.setattr(tools, "get_pnetlab_client", lambda: object())
+    monkeypatch.setattr(
+        tools,
+        "_get_inventory_nodes",
+        lambda _p: {
+            "nodes": [
+                {"name": "R1", "status": 2, "telnet_port": 30011},
+                {"name": "R2", "status": 2, "telnet_port": 30022},
+                {"name": "R3", "status": 2, "telnet_port": 30033},
+            ]
+        },
+    )
+    monkeypatch.setattr(tools, "get_nso_client", lambda: FakeNso())
+    monkeypatch.setattr(
+        tools,
+        "_collect_onboarding_candidates",
+        lambda **_kwargs: (gs, list(candidates), list(candidates)),
+    )
+    monkeypatch.setattr(tools, "save_device_info", lambda *args, **kwargs: None)
+
+    async def fake_enable_ssh_all(_gs: GlobalSettings, target_devices: List[DeviceInfo]) -> Dict[str, bool]:
+        observed["ssh_targets"] = [d.name for d in target_devices]
+        return {"R1": True, "R2": True, "R3": False}
+
+    def fake_register_devices_nso(
+        _gs: GlobalSettings, target_devices: List[DeviceInfo], _nso: Any
+    ) -> Dict[str, Any]:
+        observed["nso_targets"] = [d.name for d in target_devices]
+        return {"registered": ["R1"], "failed": []}
+
+    monkeypatch.setattr(tools, "enable_ssh_all", fake_enable_ssh_all)
+    monkeypatch.setattr(tools, "register_devices_nso", fake_register_devices_nso)
+
+    result = tools.scan_and_sync.invoke(
+        {
+            "action": "sync",
+            "auto_onboard": True,
+            "auto_remove": False,
+        }
+    )
+
+    assert observed["ssh_targets"] == ["R1", "R2", "R3"]
+    assert observed["nso_targets"] == ["R1"]
+    assert result["onboarded"] == ["R1"]
+    assert {"device": "R2", "reason": "mgmt_ip_not_discovered"} in result["skipped"]
+    assert {"device": "R3", "reason": "console_unreachable"} in result["skipped"]
+
+
 def test_lab_bootstrap_refresh_onboard_only_targets_new_devices(monkeypatch: pytest.MonkeyPatch):
     gs = _sample_global_settings()
     devices = [
@@ -180,14 +275,28 @@ def test_lab_bootstrap_refresh_onboard_only_targets_new_devices(monkeypatch: pyt
     monkeypatch.setattr(tools, "enable_ssh_all", fake_enable_ssh_all)
     monkeypatch.setattr(tools, "get_nso_client", lambda: object())
     monkeypatch.setattr(tools, "register_devices_nso", fake_register_devices_nso)
+    monkeypatch.setattr(tools, "save_device_info", lambda *args, **kwargs: None)
+    monkeypatch.setattr(
+        tools,
+        "_collect_onboarding_candidates",
+        lambda **_kwargs: (
+            gs,
+            devices,
+            [
+                DeviceInfo(name="R2", oob_ip="10.0.0.22", oob_intf="Gig0/0", telnet_port=30022),
+                DeviceInfo(name="R3", oob_ip=None, oob_intf="Gig0/0", telnet_port=30033),
+            ],
+        ),
+    )
 
     result = tools.lab_bootstrap.invoke({"action": "refresh_onboard", "params": {"config_path": "dummy.json"}})
 
     assert result["status"] == "completed"
     assert result["missing"] == ["R2", "R3"]
-    assert observed["ssh_targets"] == ["R2"]
+    assert observed["ssh_targets"] == ["R2", "R3"]
     assert observed["nso_targets"] == ["R2"]
     assert result["nso"]["registered"] == ["R2"]
+    assert {"device": "R3", "reason": "mgmt_ip_not_discovered"} in result["skipped"]
 
 
 @pytest.mark.asyncio

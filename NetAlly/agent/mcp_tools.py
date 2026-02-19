@@ -161,7 +161,7 @@ async def sync_scan(
     action: Literal["scan", "sync", "scan_and_sync"] = "scan",
     auto_onboard: bool = False,
     auto_remove: bool = False,
-    oob_ip: str = "localhost",
+    oob_ip: str = "",
     protocol: Literal["telnet", "ssh"] = "telnet",
 ) -> Dict[str, Any]:
     """[MCP] Scan/sync reconciliation between PNETLab and NSO."""
@@ -241,7 +241,7 @@ async def scan_and_sync(
     action: Literal["scan", "sync", "scan_and_sync"],
     auto_onboard: bool = False,
     auto_remove: bool = False,
-    oob_ip: str = "localhost",
+    oob_ip: str = "",
     protocol: Literal["telnet", "ssh"] = "telnet",
 ) -> Dict[str, Any]:
     """[MCP][Deprecated] Compatibility wrapper for legacy scan_and_sync."""
