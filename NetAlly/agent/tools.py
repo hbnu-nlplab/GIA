@@ -2,6 +2,8 @@ import os
 import json
 import asyncio
 import socket
+import re
+import logging
 from typing import Dict, Any, List, Optional, Literal
 from urllib.parse import urlparse
 from langchain_core.tools import tool
@@ -36,6 +38,54 @@ _nso_client: Optional[NSOClient] = None
 _batfish_client: Optional[BatfishClient] = None
 _pnetlab_client: Optional[PnetlabClient] = None
 _LOCAL_LOOPBACKS = {"localhost", "127.0.0.1"}
+_LEGACY_DEVICE_INFO_PATHS = {
+    "data/pnetlab/research_institute_internal_dc/device_info.json",
+}
+logger = logging.getLogger(__name__)
+
+
+def _slugify_lab_name(raw: str) -> str:
+    text = str(raw or "").strip()
+    if not text:
+        return "default"
+    slug = re.sub(r"[^A-Za-z0-9._-]+", "_", text).strip("._-")
+    return slug or "default"
+
+
+def _normalize_path_for_compare(raw_path: str) -> str:
+    path = str(raw_path or "").strip().replace("\\", "/")
+    while path.startswith("./"):
+        path = path[2:]
+    return path.lower()
+
+
+def _is_legacy_device_info_default(raw_path: str) -> bool:
+    normalized = _normalize_path_for_compare(raw_path)
+    if normalized in _LEGACY_DEVICE_INFO_PATHS:
+        return True
+    return any(normalized.endswith(f"/{legacy}") for legacy in _LEGACY_DEVICE_INFO_PATHS)
+
+
+def _default_device_info_path() -> str:
+    explicit = str(os.getenv("PNETLAB_DEVICE_INFO", "") or "").strip()
+    lab_name = (
+        str(os.getenv("PNETLAB_LAB_NAME", "") or "").strip()
+        or str(os.getenv("BATFISH_SNAPSHOT", "") or "").strip()
+        or "default"
+    )
+    safe_lab = _slugify_lab_name(lab_name)
+
+    if explicit:
+        # Backward compatibility: old hardcoded sample path should not pin all labs.
+        if _is_legacy_device_info_default(explicit) and safe_lab.lower() != "research_institute_internal_dc":
+            logger.info(
+                "Ignoring legacy PNETLAB_DEVICE_INFO path (%s); using lab-scoped default for %s",
+                explicit,
+                safe_lab,
+            )
+        else:
+            return explicit
+    return f"Data/Pnetlab/{safe_lab}/device_info.json"
 
 
 def _is_tcp_open(host: str, port: int, timeout_sec: float = 0.35) -> bool:
@@ -337,17 +387,22 @@ def _build_missing_device_candidates(
     return candidates
 
 
-def _collect_onboarding_candidates(
-    pnetlab: PnetlabClient,
-    config_path: str,
-    missing_nodes: List[Dict[str, Any]],
-    overrides: Optional[Dict[str, Any]] = None,
-) -> tuple[Any, List[DeviceInfo], List[DeviceInfo]]:
-    from agent.pnetlab_labfs import discover_management_endpoints
+def _discover_management_metadata() -> tuple[Dict[str, str], Dict[str, str], str]:
+    mgmt_ifaces: Dict[str, str] = {}
+    mgmt_ips: Dict[str, str] = {}
+    oob_intf_fallback = os.getenv("PNETLAB_OOB_INTF", "")
 
-    cfg = ensure_device_info(config_path, pnetlab, overrides=overrides)
-    gs, all_devices = parse_config(cfg)
-    mgmt_meta = discover_management_endpoints()
+    try:
+        from agent.pnetlab_labfs import discover_management_endpoints
+    except Exception:
+        return mgmt_ifaces, mgmt_ips, oob_intf_fallback
+
+    try:
+        mgmt_meta = discover_management_endpoints()
+    except Exception as e:
+        logger.warning("Failed to discover management endpoints: %s", e)
+        return mgmt_ifaces, mgmt_ips, oob_intf_fallback
+
     mgmt_ifaces = {
         name: str(meta.get("iface") or "")
         for name, meta in mgmt_meta.items()
@@ -358,7 +413,38 @@ def _collect_onboarding_candidates(
         for name, meta in mgmt_meta.items()
         if str(meta.get("ip") or "")
     }
-    oob_intf_fallback = os.getenv("PNETLAB_OOB_INTF", "")
+    logger.info(
+        "Management metadata discovered: endpoints=%d, ifaces=%d, ips=%d",
+        len(mgmt_meta),
+        len(mgmt_ifaces),
+        len(mgmt_ips),
+    )
+    return mgmt_ifaces, mgmt_ips, oob_intf_fallback
+
+
+def _apply_management_metadata(
+    devices: List[DeviceInfo],
+    mgmt_ifaces: Dict[str, str],
+    mgmt_ips: Dict[str, str],
+    oob_intf_fallback: str,
+) -> None:
+    for dev in devices:
+        if not dev.oob_intf:
+            dev.oob_intf = mgmt_ifaces.get(dev.name, oob_intf_fallback or dev.oob_intf)
+        if not dev.oob_ip:
+            dev.oob_ip = mgmt_ips.get(dev.name) or dev.oob_ip
+
+
+def _collect_onboarding_candidates(
+    pnetlab: PnetlabClient,
+    config_path: str,
+    missing_nodes: List[Dict[str, Any]],
+    overrides: Optional[Dict[str, Any]] = None,
+) -> tuple[Any, List[DeviceInfo], List[DeviceInfo]]:
+    cfg = ensure_device_info(config_path, pnetlab, overrides=overrides)
+    gs, all_devices = parse_config(cfg)
+    mgmt_ifaces, mgmt_ips, oob_intf_fallback = _discover_management_metadata()
+    _apply_management_metadata(all_devices, mgmt_ifaces, mgmt_ips, oob_intf_fallback)
     candidates = _build_missing_device_candidates(
         missing_nodes=missing_nodes,
         all_devices=all_devices,
@@ -823,7 +909,7 @@ def scan_and_sync(
         
         # 4. Sync: SSH-first 플로우 (관리 인터페이스 감지 → IP 발견 → SSH 활성화 → NSO 등록)
         if action in ["sync", "scan_and_sync"] and auto_onboard and result["missing"]:
-            config_path = os.getenv("PNETLAB_DEVICE_INFO", "device_info.json")
+            config_path = _default_device_info_path()
             gs, all_devices, candidates = _collect_onboarding_candidates(
                 pnetlab=pnetlab,
                 config_path=config_path,
@@ -954,10 +1040,7 @@ def lab_bootstrap(
     """
     try:
         params = params or {}
-        config_path = params.get("config_path") or os.getenv(
-            "PNETLAB_DEVICE_INFO",
-            "Data/Pnetlab/Research_Institute_Internal_DC/device_info.json"
-        )
+        config_path = params.get("config_path") or _default_device_info_path()
         pnetlab = get_pnetlab_client()
         overrides = params.get("overrides") if params else None
         cfg = ensure_device_info(config_path, pnetlab, overrides=overrides)
@@ -1097,7 +1180,56 @@ def lab_bootstrap(
             missing = diff.get("missing", [])
             missing_names = [n.get("name") for n in missing if n.get("name")]
             if not missing_names:
-                return {"status": "completed", "message": "No new devices", "missing": []}
+                # Even without new devices, reconcile existing out-of-sync devices.
+                nso = get_nso_client()
+                mgmt_ifaces, mgmt_ips, oob_intf_fallback = _discover_management_metadata()
+                _apply_management_metadata(devices, mgmt_ifaces, mgmt_ips, oob_intf_fallback)
+                changed: List[DeviceInfo] = []
+                for dev in devices:
+                    try:
+                        if not nso.check_sync(dev.name):
+                            changed.append(dev)
+                    except Exception:
+                        changed.append(dev)
+
+                if not changed:
+                    return {
+                        "status": "completed",
+                        "message": "No new devices",
+                        "missing": [],
+                        "reconciled": [],
+                    }
+
+                logger.info("Reconciling existing out-of-sync devices: %d", len(changed))
+                assigned_oob = assign_missing_oob_ips(gs, changed, existing_devices=devices)
+                ssh_result = asyncio.run(enable_ssh_all(gs, changed))
+                save_device_info(config_path, gs, devices)
+
+                ready: List[DeviceInfo] = []
+                skipped: List[Dict[str, str]] = []
+                for dev in changed:
+                    if dev.telnet_port <= 0:
+                        skipped.append({"device": dev.name, "reason": "console_unreachable"})
+                        continue
+                    if not ssh_result.get(dev.name, False):
+                        skipped.append({"device": dev.name, "reason": "ssh_enable_failed"})
+                        continue
+                    if not dev.oob_ip:
+                        skipped.append({"device": dev.name, "reason": "mgmt_ip_not_discovered"})
+                        continue
+                    ready.append(dev)
+
+                reg_result = register_devices_nso(gs, ready, nso) if ready else {"registered": [], "failed": []}
+                return {
+                    "status": "completed",
+                    "message": "No new devices; reconciled existing devices",
+                    "missing": [],
+                    "reconciled": [d.name for d in changed],
+                    "assigned_oob_ip": assigned_oob,
+                    "ssh": ssh_result,
+                    "nso": reg_result,
+                    "skipped": skipped,
+                }
 
             refresh_gs, all_devices, candidates = _collect_onboarding_candidates(
                 pnetlab=pnetlab,

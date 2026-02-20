@@ -70,6 +70,7 @@ class NSOClient:
             'Content-Type': 'application/yang-data+json',
             'Accept': 'application/yang-data+json'
         }
+        self._last_sync_error: Dict[str, str] = {}
         
         logger.info(f"NSOClient initialized for {self.base_url}")
 
@@ -506,9 +507,16 @@ class NSOClient:
             success = str(res.get("result", "")).lower() == "true"
             if not success:
                 error_info = res.get("info", "No additional info provided by NSO")
+                self._last_sync_error[device_name] = str(error_info or "")
                 logger.error(f"Sync-from failed for {device_name}. Reason: {error_info}")
+            else:
+                self._last_sync_error.pop(device_name, None)
             return success
+        self._last_sync_error[device_name] = "invalid sync-from response"
         return False
+
+    def get_last_sync_error(self, device_name: str) -> str:
+        return str(self._last_sync_error.get(device_name, "") or "")
 
     def check_sync(self, device_name: str) -> bool:
         """Check-sync 실행"""

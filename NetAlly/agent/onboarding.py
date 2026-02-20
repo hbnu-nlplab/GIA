@@ -37,25 +37,43 @@ def _parse_interface_ip(show_output: str, iface_name: str) -> Optional[str]:
     return None
 
 
-def _is_ssh_enabled_output(show_output: str) -> bool:
+def _ssh_state_from_output(show_output: str) -> Optional[bool]:
     """
-    Best-effort parser for `show ip ssh`.
-    IOS variants commonly include lines like:
-      - "SSH Enabled - version 2.0"
-      - "SSH Enabled - version 1.99"
-      - "SSH Disabled - version 1.5"
+    Parse `show ip ssh` output.
+    Returns:
+      - True: SSH appears enabled
+      - False: SSH appears explicitly disabled
+      - None: command unsupported/unknown/inconclusive output
     """
-    text = str(show_output or "").lower()
+    text = str(show_output or "").strip().lower()
     if not text:
-        return False
+        return None
+    if any(token in text for token in ("invalid input", "incomplete command", "unknown command")):
+        return None
     if "ssh disabled" in text:
         return False
-    return "ssh enabled" in text or ("ssh" in text and ("version 2.0" in text or "version 1.99" in text))
+    if "ssh enabled" in text:
+        return True
+    if "ssh" in text and "version" in text:
+        return False if "disabled" in text else True
+    return None
+
+
+def _is_ssh_enabled_output(show_output: str) -> bool:
+    return _ssh_state_from_output(show_output) is True
 
 
 def _requires_confirm(output: str) -> bool:
     text = str(output or "").lower()
     return "yes/no" in text or "[confirm]" in text
+
+
+def _contains_invalid_command(output: str) -> bool:
+    text = str(output or "").lower()
+    return any(
+        token in text
+        for token in ("invalid input", "incomplete command", "unknown command", "ambiguous command")
+    )
 
 
 def _requires_modulus_input(output: str) -> bool:
@@ -64,6 +82,26 @@ def _requires_modulus_input(output: str) -> bool:
         "how many bits" in text
         or "modulus" in text and "[" in text
         or "choose the size of the key modulus" in text
+    )
+
+
+def _requires_key_name_accept(output: str) -> bool:
+    text = str(output or "").lower()
+    return "the name for the keys will be" in text
+
+
+def _missing_domain_for_keygen(output: str) -> bool:
+    text = str(output or "").lower()
+    return "please define a domain-name first" in text
+
+
+def _is_connection_refused_sync_error(error: str) -> bool:
+    text = str(error or "").strip().lower()
+    if not text:
+        return False
+    return (
+        "connection refused" in text
+        or ("failed to connect to device" in text and "refused" in text)
     )
 
 
@@ -228,6 +266,9 @@ class DeviceInfo:
     oob_intf: str
     telnet_port: int
     device_group: Optional[str] = None
+    # Runtime-only flag (not persisted) used to decide SSH vs telnet onboarding path.
+    # True: SSH explicitly verified, False: SSH inconclusive/unsupported, None: unknown.
+    ssh_verified: Optional[bool] = None
 
 
 @dataclass
@@ -272,14 +313,18 @@ def save_device_info(config_path: str, gs: GlobalSettings, devices: List[DeviceI
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2, ensure_ascii=False)
-    logger.info("Saved device_info: %s (%d devices, IPs: %s)",
-                path, len(devices),
-                {d.name: d.oob_ip for d in devices if d.oob_ip})
+    logger.info(
+        "Saved device_info.json (%d devices, IPs: %s)",
+        len(devices),
+        {d.name: d.oob_ip for d in devices if d.oob_ip},
+    )
+    logger.debug("device_info path: %s", path)
 
 
 def load_device_info(config_path: str) -> Dict[str, Any]:
     path = Path(config_path)
-    logger.info("Loading device_info.json: %s", path)
+    logger.info("Loading device_info.json")
+    logger.debug("device_info path: %s", path)
     with path.open("r", encoding="utf-8") as f:
         return json.load(f)
 
@@ -512,8 +557,10 @@ def parse_config(cfg: Dict[str, Any]) -> tuple[GlobalSettings, List[DeviceInfo]]
 async def enable_ssh_via_telnet(device: DeviceInfo, gs: GlobalSettings) -> bool:
     host = gs.pnetlab_vm_ip
     port = device.telnet_port
+    device.ssh_verified = None
     if not host or not port:
         logger.warning("Missing telnet endpoint for %s (host=%s, port=%s)", device.name, host, port)
+        device.ssh_verified = False
         return False
 
     try:
@@ -522,6 +569,7 @@ async def enable_ssh_via_telnet(device: DeviceInfo, gs: GlobalSettings) -> bool:
             telnetlib3.open_connection(host, port), timeout=10
         )
     except Exception:
+        device.ssh_verified = False
         return False
 
     async def _drain_output(max_wait: float = 1.4, chunk_timeout: float = 0.35) -> str:
@@ -552,6 +600,42 @@ async def enable_ssh_via_telnet(device: DeviceInfo, gs: GlobalSettings) -> bool:
                 pass
             return ""
         return await _drain_output(max_wait=2.2)
+
+    async def probe_ssh_state(probe_wait: float = 0.8) -> tuple[Optional[bool], str]:
+        out = await send_cmd("show ip ssh", sleep_time=probe_wait, capture=True)
+        return _ssh_state_from_output(out), out
+
+    async def wait_for_ssh_state(
+        timeout_sec: float,
+        probe_wait: float = 0.9,
+        interval_sec: float = 1.2,
+    ) -> tuple[Optional[bool], str]:
+        """
+        Poll SSH state with grace period.
+        Returns (state, last_show_output):
+          state=True  -> confirmed enabled
+          state=False -> confirmed disabled after timeout
+          state=None  -> inconclusive/unsupported command
+        """
+        loop = asyncio.get_running_loop()
+        deadline = loop.time() + max(0.5, timeout_sec)
+        last_state: Optional[bool] = None
+        last_out = ""
+
+        while loop.time() < deadline:
+            state, out = await probe_ssh_state(probe_wait=probe_wait)
+            last_state = state
+            last_out = out
+            if state is True:
+                return True, out
+            if state is None:
+                # Unsupported/inconclusive output should not burn full timeout budget.
+                return None, out
+            await asyncio.sleep(interval_sec)
+
+        if last_state is None:
+            return None, last_out
+        return False, last_out
 
     try:
         writer.write("\r\n\r\n")
@@ -630,56 +714,128 @@ async def enable_ssh_via_telnet(device: DeviceInfo, gs: GlobalSettings) -> bool:
             "crypto key generate rsa",
         ]
         ssh_ready = False
+        keygen_debug_last = ""
         for cmd in keygen_cmds:
             out = await send_cmd(cmd, sleep_time=2.0, capture=True)
+            keygen_debug_last = out
             if _requires_modulus_input(out):
                 writer.write("1024\r\n")
                 await asyncio.sleep(2.0)
                 out += await _drain_output(max_wait=6.0)
+                keygen_debug_last = out
+            if _requires_key_name_accept(out):
+                # IOS prompt: "The name for the keys will be ..."
+                writer.write("\r\n")
+                await asyncio.sleep(0.8)
+                out += await _drain_output(max_wait=4.0)
+                keygen_debug_last = out
             if _requires_confirm(out):
                 writer.write("yes\r\n")
                 await asyncio.sleep(1.2)
                 out += await _drain_output(max_wait=3.0)
+                keygen_debug_last = out
+            if _missing_domain_for_keygen(out):
+                # 일부 IOS 이미지는 domain-name 미설정 시 키 생성을 거부합니다.
+                await send_cmd("conf t")
+                await send_cmd(f"ip domain-name {gs.domain_name or 'lab.local'}")
+                await send_cmd("end")
+                continue
+            if _contains_invalid_command(out):
+                continue
 
-            show_ssh = await send_cmd("show ip ssh", sleep_time=0.8, capture=True)
-            if _is_ssh_enabled_output(show_ssh):
+            # RSA generation can take longer on low-spec lab nodes.
+            state, _show_ssh = await wait_for_ssh_state(timeout_sec=20.0, probe_wait=1.0, interval_sec=1.5)
+            if state is True:
                 ssh_ready = True
+                break
+            if state is None:
+                # show ip ssh unsupported/inconclusive on some images; proceed and verify later.
+                break
+            if ssh_ready:
                 break
 
         if not ssh_ready:
-            logger.error("SSH not enabled after RSA key generation: %s", device.name)
-            writer.close()
-            await writer.wait_closed()
-            return False
+            logger.warning(
+                "SSH readiness could not be confirmed right after key generation: %s (last output: %s)",
+                device.name,
+                str(keygen_debug_last).strip().replace("\n", " ")[:220],
+            )
 
         # Stage 3: user + vty hardening for NSO SSH onboarding.
         await send_cmd("conf t")
 
         # Keep CLI credentials aligned with NSO authgroup credentials.
-        await send_cmd(f"username {ssh_username} privilege 15 secret {ssh_password}")
+        user_out = await send_cmd(
+            f"username {ssh_username} privilege 15 secret {ssh_password}",
+            capture=True,
+        )
+        if _contains_invalid_command(user_out):
+            await send_cmd(
+                f"username {ssh_username} privilege 15 password {ssh_password}",
+                capture=False,
+            )
         if ssh_username.lower() != "admin":
             admin_pw = str(gs.admin_password or "").strip() or ssh_password
-            await send_cmd(f"username admin privilege 15 secret {admin_pw}")
+            admin_out = await send_cmd(f"username admin privilege 15 secret {admin_pw}", capture=True)
+            if _contains_invalid_command(admin_out):
+                await send_cmd(f"username admin privilege 15 password {admin_pw}")
 
-        await send_cmd("line vty 0 15")
+        # Ensure console telnet path can authenticate when SSH fallback is needed.
+        con_out = await send_cmd("line con 0", capture=True)
+        if not _contains_invalid_command(con_out):
+            await send_cmd("login local")
+            await send_cmd("exec-timeout 0 0")
+            await send_cmd("exit")
+
+        vty_out = await send_cmd("line vty 0 15", capture=True)
+        if _contains_invalid_command(vty_out):
+            await send_cmd("line vty 0 4")
         await send_cmd("transport input ssh")
         await send_cmd("login local")
         await send_cmd("exit")
-        await send_cmd("ip ssh version 2")
+        await send_cmd("ip ssh version 2", capture=False)
 
         await send_cmd("end")
-        show_ssh = await send_cmd("show ip ssh", sleep_time=0.8, capture=True)
-        if not _is_ssh_enabled_output(show_ssh):
-            logger.error("SSH verification failed after config for %s: %s", device.name, show_ssh[:200])
+
+        final_state, final_show = await wait_for_ssh_state(
+            timeout_sec=25.0,
+            probe_wait=0.8,
+            interval_sec=1.2,
+        )
+        if final_state is False:
+            # Last effort: regenerate lighter key size and re-check.
+            rescue = await send_cmd("crypto key generate rsa modulus 1024", sleep_time=2.0, capture=True)
+            if _requires_modulus_input(rescue):
+                writer.write("1024\r\n")
+                await asyncio.sleep(2.0)
+                rescue += await _drain_output(max_wait=4.0)
+            if _requires_confirm(rescue):
+                writer.write("yes\r\n")
+                await asyncio.sleep(1.0)
+                rescue += await _drain_output(max_wait=2.0)
+            final_state, final_show = await wait_for_ssh_state(
+                timeout_sec=20.0,
+                probe_wait=0.8,
+                interval_sec=1.2,
+            )
+        if final_state is False:
+            logger.error("SSH verification failed after config for %s: %s", device.name, final_show[:200])
             writer.close()
             await writer.wait_closed()
+            device.ssh_verified = False
             return False
+        if final_state is None:
+            logger.warning("SSH verification inconclusive for %s (show ip ssh unsupported/unknown)", device.name)
+            device.ssh_verified = False
+        else:
+            device.ssh_verified = True
         await send_cmd("write memory", sleep_time=10.0)
         writer.close()
         await writer.wait_closed()
         logger.info("SSH enabled via telnet: %s", device.name)
         return True
     except Exception:
+        device.ssh_verified = False
         writer.close()
         await writer.wait_closed()
         logger.exception("SSH enable failed: %s", device.name)
@@ -782,11 +938,54 @@ def register_devices_nso(gs: GlobalSettings, devices: List[DeviceInfo], nso: NSO
                 time.sleep(2.0)
         return False
 
+    def _last_sync_error(device_name: str) -> str:
+        getter = getattr(nso, "get_last_sync_error", None)
+        if callable(getter):
+            try:
+                return str(getter(device_name) or "")
+            except Exception:
+                return ""
+        return ""
+
+    def _register_telnet_console_and_sync(target: DeviceInfo) -> bool:
+        if target.telnet_port <= 0:
+            return False
+        logger.warning(
+            "Falling back to telnet console for %s (host=%s port=%s)",
+            target.name,
+            gs.pnetlab_vm_ip,
+            target.telnet_port,
+        )
+        telnet_info = {
+            "name": target.name,
+            "oob_ip": gs.pnetlab_vm_ip,
+            "port": target.telnet_port,
+            "protocol": "telnet",
+            "authgroup": gs.nso_authgroup,
+            "ned_id": gs.nso_ned_id,
+        }
+        if not nso.register_device(telnet_info):
+            return False
+        for attempt in range(1, 3):
+            if nso.sync_from(target.name):
+                logger.info("Sync-from recovered via telnet console fallback: %s", target.name)
+                return True
+            if attempt < 2:
+                time.sleep(1.5)
+        return False
+
     for dev in devices:
-        # 내부망 기준: oob_ip가 없으면 PNETLab VM IP + telnet 포트를 사용
-        address = dev.oob_ip or gs.pnetlab_vm_ip
-        protocol = "ssh" if dev.oob_ip else "telnet"
-        port = 22 if dev.oob_ip else dev.telnet_port
+        # SSH가 명시적으로 확인된 장비만 SSH 우선 등록.
+        # IOL 이미지에서 show ip ssh가 불명확할 경우 telnet 콘솔로 빠르게 우회.
+        use_ssh = bool(dev.oob_ip) and dev.ssh_verified is not False
+        if bool(dev.oob_ip) and not use_ssh:
+            logger.info(
+                "Using telnet onboarding for %s (ssh verification inconclusive/unsupported)",
+                dev.name,
+            )
+        address = dev.oob_ip if use_ssh else gs.pnetlab_vm_ip
+        protocol = "ssh" if use_ssh else "telnet"
+        port = 22 if use_ssh else dev.telnet_port
         device_info = {
             "name": dev.name,
             "oob_ip": address,
@@ -810,6 +1009,14 @@ def register_devices_nso(gs: GlobalSettings, devices: List[DeviceInfo], nso: NSO
                 if nso.sync_from(dev.name):
                     sync_ok = True
                     break
+                last_err = _last_sync_error(dev.name)
+                if protocol == "ssh" and _is_connection_refused_sync_error(last_err):
+                    logger.warning(
+                        "SSH sync-from refused for %s, skipping remaining SSH retries: %s",
+                        dev.name,
+                        last_err,
+                    )
+                    break
                 if attempt < max_attempts:
                     logger.warning(
                         "Sync-from retry %d/%d for %s",
@@ -825,7 +1032,11 @@ def register_devices_nso(gs: GlobalSettings, devices: List[DeviceInfo], nso: NSO
                     # Lightweight backoff to let SSH daemon settle on lab nodes.
                     time.sleep(2.0)
             if not sync_ok and protocol == "ssh":
-                sync_ok = _rehydrate_ssh_and_resync(dev)
+                last_err = _last_sync_error(dev.name)
+                if _is_connection_refused_sync_error(last_err):
+                    sync_ok = _register_telnet_console_and_sync(dev)
+                if not sync_ok:
+                    sync_ok = _rehydrate_ssh_and_resync(dev)
             if sync_ok:
                 results["registered"].append(dev.name)
             else:
