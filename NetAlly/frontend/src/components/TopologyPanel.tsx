@@ -10,7 +10,7 @@ import {
   useNodesState,
   useEdgesState,
 } from '@xyflow/react'
-import { Zap, RefreshCcw, AlertCircle, Layers, Network } from 'lucide-react'
+import { Zap, RefreshCcw, AlertCircle, Layers, Network, FlaskConical, TestTube2 } from 'lucide-react'
 import DeviceNode from './DeviceNode'
 import NetworkNode from './NetworkNode'
 import InterfaceEdge from './InterfaceEdge'
@@ -34,23 +34,6 @@ interface ApiTopologyResponse {
   nodes?: ApiNode[]
   edges?: ApiEdge[]
   error?: string
-}
-
-interface VizInsight {
-  title: string
-  query?: string
-  mode: 'focus' | 'path'
-  requestedNodes: number
-  matchedNodes: number
-  requestedEdges: number
-  matchedEdges: number
-  hubAssistedEdges: number
-  unmatchedNodes: string[]
-  unmatchedEdges: string[]
-  reason?: string
-  source?: string
-  schemaVersion?: number
-  truncated?: boolean
 }
 
 interface NodeContextMenuState {
@@ -214,7 +197,6 @@ export default function TopologyPanel() {
   const [analyzingReachability, setAnalyzingReachability] = useState(false)
   const [layer, setLayer] = useState<'l1' | 'l3'>('l1')
   const [topologyRevision, setTopologyRevision] = useState(0)
-  const [vizInsight, setVizInsight] = useState<VizInsight | null>(null)
   const [nodeContextMenu, setNodeContextMenu] = useState<NodeContextMenuState | null>(null)
   const fetchSeqRef = useRef(0)
   const fetchAbortRef = useRef<AbortController | null>(null)
@@ -402,7 +384,6 @@ export default function TopologyPanel() {
     const currentNodes = nodesRef.current
     const currentEdges = edgesRef.current
     if (currentNodes.length === 0 && currentEdges.length === 0) {
-      setVizInsight(null)
       return
     }
 
@@ -552,39 +533,8 @@ export default function TopologyPanel() {
     }))
 
     if (!viz) {
-      setVizInsight(null)
       return
     }
-
-    const unique = (items: string[]): string[] => {
-      const out = new Set<string>()
-      for (const item of items) {
-        const v = String(item || '').trim()
-        if (v) out.add(v)
-      }
-      return Array.from(out)
-    }
-
-    setVizInsight({
-      title: String(viz.title || 'LLM Visualization'),
-      query: typeof viz.query === 'string' ? viz.query : undefined,
-      mode: viz.mode === 'path' ? 'path' : 'focus',
-      requestedNodes: typeof viz.diagnostics?.requestedNodes === 'number'
-        ? viz.diagnostics.requestedNodes
-        : (Array.isArray(viz.nodes) ? viz.nodes.length : 0),
-      matchedNodes: matchedRequestedNodes,
-      requestedEdges: typeof viz.diagnostics?.requestedEdges === 'number'
-        ? viz.diagnostics.requestedEdges
-        : (Array.isArray(viz.edges) ? viz.edges.length : 0),
-      matchedEdges: matchedRequestedEdges,
-      hubAssistedEdges,
-      unmatchedNodes: unique(unmatchedNodeHints).slice(0, 4),
-      unmatchedEdges: unique(unmatchedEdgeHints).slice(0, 4),
-      reason: typeof viz.reason === 'string' ? viz.reason : undefined,
-      source: typeof viz.source === 'string' ? viz.source : undefined,
-      schemaVersion: typeof viz.schemaVersion === 'number' ? viz.schemaVersion : undefined,
-      truncated: viz.diagnostics?.truncated === true,
-    })
   }, [viz, topologyRevision, setNodes, setEdges, vizEdgeColor])
 
   useEffect(() => {
@@ -737,132 +687,89 @@ export default function TopologyPanel() {
 
   return (
     <div ref={panelRef} className="flex-1 h-full relative group">
-      {vizInsight && (
-        <div className="absolute top-4 left-4 z-20 max-w-sm p-3 bg-surface-raised border border-border-subtle rounded-xl shadow-elevation-3 pointer-events-none select-none">
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-ui-xs uppercase tracking-wide text-muted-foreground">LLM Overlay</span>
-            <span
-              className={`text-ui-xs px-2 py-0.5 rounded-full border ${vizInsight.mode === 'path'
-                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-500'
-                  : 'bg-orange-500/10 border-orange-500/30 text-orange-500'
-                }`}
-            >
-              {vizInsight.mode === 'path' ? 'Path' : 'Focus'}
-            </span>
-          </div>
-
-          <div className="mt-2 text-sm font-semibold text-foreground/95">{vizInsight.title}</div>
-          {vizInsight.query && (
-            <div className="mt-1 text-ui-sm text-muted-foreground line-clamp-2">
-              Q: {vizInsight.query}
-            </div>
-          )}
-
-          <div className="mt-3 grid grid-cols-2 gap-2 text-ui-sm">
-            <div className="rounded-lg border border-border/70 bg-muted/30 px-2 py-1.5">
-              Node Match: <span className="font-semibold">{vizInsight.matchedNodes}/{vizInsight.requestedNodes}</span>
-            </div>
-            <div className="rounded-lg border border-border/70 bg-muted/30 px-2 py-1.5">
-              Edge Match: <span className="font-semibold">{vizInsight.matchedEdges}/{vizInsight.requestedEdges}</span>
-            </div>
-          </div>
-
-          <div className="mt-2 text-ui-sm text-muted-foreground">
-            {vizInsight.reason || (vizInsight.mode === 'path'
-              ? 'Path mode prioritizes route continuity and highlights transit hubs when direct links are hidden.'
-              : 'Focus mode emphasizes related entities around the LLM-selected context.')}
-            {vizInsight.hubAssistedEdges > 0 && ` Hub-assisted edges: ${vizInsight.hubAssistedEdges}.`}
-          </div>
-
-          {(vizInsight.source || vizInsight.schemaVersion || vizInsight.truncated) && (
-            <div className="mt-2 text-ui-xs text-muted-foreground/90">
-              {vizInsight.source ? `Source: ${vizInsight.source}` : ''}
-              {vizInsight.schemaVersion ? ` · Viz v${vizInsight.schemaVersion}` : ''}
-              {vizInsight.truncated ? ' · Truncated for display safety' : ''}
-            </div>
-          )}
-
-          {(vizInsight.unmatchedNodes.length > 0 || vizInsight.unmatchedEdges.length > 0) && (
-            <div className="mt-2 text-ui-sm text-amber-500/95">
-              Matching hints:
-              {vizInsight.unmatchedNodes.length > 0 && (
-                <div className="mt-1">Unmatched nodes: {vizInsight.unmatchedNodes.join(', ')}</div>
-              )}
-              {vizInsight.unmatchedEdges.length > 0 && (
-                <div className="mt-1">Unmatched edges: {vizInsight.unmatchedEdges.join(', ')}</div>
-              )}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Topology Toolbar */}
-      <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">
-        <div className="flex gap-2">
-          {/* Layer Toggle (L1/L3) - only show for Batfish */}
-          {topologySource === 'batfish' && (
-            <div className="flex bg-card p-1 rounded-lg border border-border shadow-lg">
-              <button
-                onClick={() => setLayer('l1')}
-                className={`px-3 py-1 text-ui-xs font-semibold uppercase rounded transition-all flex items-center gap-1.5 ${layer === 'l1' ? 'bg-primary text-primary-foreground shadow-sm' : 'hover:bg-muted text-muted-foreground'
-                  }`}
-              >
-                <Layers className="w-3 h-3" /> Physical
-              </button>
-              <button
-                onClick={() => setLayer('l3')}
-                className={`px-3 py-1 text-ui-xs font-semibold uppercase rounded transition-all flex items-center gap-1.5 ${layer === 'l3' ? 'bg-blue-500 text-white shadow-sm' : 'hover:bg-muted text-muted-foreground'
-                  }`}
-              >
-                <Network className="w-3 h-3" /> Logical
-              </button>
-            </div>
-          )}
-
-          {/* Source Toggle (Batfish/PNETLab) */}
-          <div className="flex bg-card p-1 rounded-lg border border-border shadow-lg">
+      {/* === Unified control panel (toolbar + viz overlay) === */}
+      <div className="absolute top-4 left-4 z-20 flex flex-col gap-2 max-w-sm">
+        {/* Row 1: Toolbar (always visible) */}
+        <div className="flex items-center gap-1.5 bg-card rounded-xl border border-border-subtle shadow-elevation-2 p-1.5">
+          {/* Source Toggle */}
+          <div className="flex bg-muted/50 rounded-lg p-0.5">
             <button
               onClick={() => setTopologySource('batfish')}
-              className={`px-3 py-1 text-ui-xs font-semibold uppercase rounded transition-all flex items-center gap-1.5 ${topologySource === 'batfish' ? 'bg-amber-500 text-white shadow-sm' : 'hover:bg-muted text-muted-foreground'
-                }`}
+              className={`px-2.5 py-1 text-ui-xs font-semibold rounded transition-all flex items-center gap-1 ${
+                topologySource === 'batfish'
+                  ? 'bg-primary text-primary-foreground shadow-sm'
+                  : 'hover:bg-muted text-muted-foreground'
+              }`}
               title="Auto-layout from Batfish analysis"
             >
-              🔬 Batfish
+              <FlaskConical className="w-3 h-3" /> Batfish
             </button>
             <button
               onClick={() => setTopologySource('pnetlab')}
-              className={`px-3 py-1 text-ui-xs font-semibold uppercase rounded transition-all flex items-center gap-1.5 ${topologySource === 'pnetlab' ? 'bg-orange-500 text-white shadow-sm' : 'hover:bg-muted text-muted-foreground'
-                }`}
+              className={`px-2.5 py-1 text-ui-xs font-semibold rounded transition-all flex items-center gap-1 ${
+                topologySource === 'pnetlab'
+                  ? 'bg-primary text-primary-foreground shadow-sm'
+                  : 'hover:bg-muted text-muted-foreground'
+              }`}
               title="Real positions from PNETLab"
             >
-              🧪 Lab
+              <TestTube2 className="w-3 h-3" /> Lab
             </button>
           </div>
 
+          {/* Layer Toggle (Batfish only) */}
+          {topologySource === 'batfish' && (
+            <div className="flex bg-muted/50 rounded-lg p-0.5">
+              <button
+                onClick={() => setLayer('l1')}
+                className={`px-2 py-1 text-ui-xs font-semibold rounded transition-all flex items-center gap-1 ${
+                  layer === 'l1'
+                    ? 'bg-card text-foreground shadow-sm'
+                    : 'hover:bg-muted text-muted-foreground'
+                }`}
+              >
+                <Layers className="w-3 h-3" /> L1
+              </button>
+              <button
+                onClick={() => setLayer('l3')}
+                className={`px-2 py-1 text-ui-xs font-semibold rounded transition-all flex items-center gap-1 ${
+                  layer === 'l3'
+                    ? 'bg-card text-foreground shadow-sm'
+                    : 'hover:bg-muted text-muted-foreground'
+                }`}
+              >
+                <Network className="w-3 h-3" /> L3
+              </button>
+            </div>
+          )}
+
+          {/* Refresh */}
           <button
             onClick={fetchTopology}
-            className="px-3 py-1.5 rounded-lg border bg-card text-foreground border-border text-xs font-bold shadow-lg hover:bg-muted transition-all active:scale-95 flex items-center gap-1.5"
+            className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
             title="Refresh Topology"
           >
             <RefreshCcw className="w-3.5 h-3.5" />
           </button>
+
+          {/* Divider */}
+          <div className="w-px h-5 bg-border" />
+
+          {/* Reachability */}
+          <button
+            onClick={runReachabilityAnalysis}
+            disabled={analyzingReachability}
+            className={`px-2.5 py-1 rounded-lg text-ui-xs font-semibold transition-all flex items-center gap-1 ${
+              analyzingReachability
+                ? 'text-muted-foreground cursor-not-allowed'
+                : 'text-emerald-500 hover:bg-emerald-500/10 active:scale-95'
+            }`}
+          >
+            <Zap className={`w-3 h-3 ${analyzingReachability ? 'animate-spin' : ''}`} />
+            {analyzingReachability ? 'Analyzing...' : 'Reachability'}
+          </button>
         </div>
 
-        <button
-          onClick={runReachabilityAnalysis}
-          disabled={analyzingReachability}
-          className={`
-            w-full px-3 py-1.5 rounded-lg border text-xs font-bold shadow-lg transition-all
-            ${analyzingReachability
-              ? 'bg-muted text-muted-foreground cursor-not-allowed'
-              : 'bg-emerald-500 text-white border-emerald-600 hover:bg-emerald-600 active:scale-95'
-            }
-            flex items-center justify-center gap-1.5
-          `}
-        >
-          <Zap className={`w-3.5 h-3.5 ${analyzingReachability ? 'animate-spin' : ''}`} />
-          {analyzingReachability ? 'Analyzing...' : 'Reachability Analysis'}
-        </button>
       </div>
 
       <ReactFlow

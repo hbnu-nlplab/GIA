@@ -16,6 +16,9 @@ Experiment\code\NetConfigQA2\NetConfigQA2_Experiment_vllm_colab.ipynb
 # Environment variables (sensitive!)
 .env
 config/.env
+.cursor/
+.serena/
+.venv/
 
 # Python
 __pycache__/
@@ -97,7 +100,7 @@ NetAlly/.runtime/
 NetAlly/.tmp/
 
 # Config generator output (auto-generated)
-Make_Dataset/config_generator/output/
+
 
 # Git backup bundles
 *.bundle

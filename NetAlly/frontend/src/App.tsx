@@ -68,23 +68,26 @@ function App() {
           <div className="flex-1 relative flex flex-col min-w-0">
             {viewMode === 'dashboard' ? <DashboardPanel /> : <TopologyPanel />}
 
-            
-            {/* Overlay Evidence Dashboard (Toggleable) */}
-            {localShowEvidence && (
-              <div className="absolute top-4 right-4 w-80 max-h-[calc(100%-2rem)] z-10 transition-all duration-300">
-                <EvidencePanel onClose={() => setLocalShowEvidence(false)} />
-              </div>
-            )}
-            
-            {!localShowEvidence && (
-              <button 
-                onClick={() => setLocalShowEvidence(true)}
-                className="absolute top-4 right-4 z-10 h-10 w-10 bg-surface-raised border border-border-subtle rounded-lg flex items-center justify-center hover:bg-accent transition-all shadow-elevation-2 hover:scale-110 active:scale-95 text-xl"
-                title="Show Evidence"
-              >
-                📊
-              </button>
-            )}
+            {/* Evidence toggle tab (always visible on right edge) */}
+            <button
+              onClick={() => setLocalShowEvidence((v) => !v)}
+              className={`absolute top-4 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border shadow-elevation-1 text-ui-xs font-semibold transition-all ${
+                localShowEvidence
+                  ? 'right-[21rem] bg-primary text-primary-foreground border-primary/50'
+                  : 'right-4 bg-card text-muted-foreground border-border-subtle hover:text-foreground hover:bg-muted'
+              }`}
+              title={localShowEvidence ? 'Hide Evidence' : 'Show Evidence'}
+            >
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></svg>
+              Evidence
+            </button>
+
+            {/* Slide-in Evidence Panel */}
+            <div className={`absolute top-0 right-0 h-full w-80 z-10 transition-transform duration-300 ease-in-out ${
+              localShowEvidence ? 'translate-x-0' : 'translate-x-full'
+            }`}>
+              <EvidencePanel onClose={() => setLocalShowEvidence(false)} />
+            </div>
             
             {/* Detail Slide-over */}
             {detailView.isOpen && (

@@ -418,6 +418,25 @@ export default function Header() {
     updateRefreshProgressFromLine(text)
   }
 
+  const hasRefreshPayloadFailure = (payload: any): boolean => {
+    if (!payload || typeof payload !== 'object') return false
+    if (String(payload?.status || '').trim().toLowerCase() === 'failed') return true
+    if (payload?.error) return true
+    if (Array.isArray(payload?.failed) && payload.failed.length > 0) return true
+    if (Array.isArray(payload?.delete_failed) && payload.delete_failed.length > 0) return true
+    if (Array.isArray(payload?.nso?.failed) && payload.nso.failed.length > 0) return true
+    if (Array.isArray(payload?.skipped)) {
+      const severe = new Set([
+        'ssh_enable_failed',
+        'mgmt_ip_not_discovered',
+        'console_unreachable',
+        'registration_failed',
+      ])
+      if (payload.skipped.some((s: any) => severe.has(String(s?.reason || '').trim()))) return true
+    }
+    return false
+  }
+
   const runRefresh = async (overrides: Record<string, string>) => {
     if (isRefreshing) return
     setRefreshError(null)
@@ -563,7 +582,7 @@ export default function Header() {
 
       setLabRefreshResult(data)
       setRefreshResultCode(statusCode)
-      const logicalError = statusCode >= 400 || data?.status === 'failed' || Boolean(data?.error)
+      const logicalError = statusCode >= 400 || hasRefreshPayloadFailure(data)
       addEvidence({
         type: 'lab_refresh',
         status: logicalError ? 'error' : 'success',

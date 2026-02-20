@@ -136,6 +136,106 @@ def test_register_devices_nso_attempts_ssh_remediation_on_sync_failure(
     assert fake_nso.host_key_calls == ["R1", "R1", "R1", "R1"]
 
 
+def test_register_devices_nso_falls_back_to_telnet_on_ssh_connection_refused():
+    gs = _sample_global_settings()
+    devices = [
+        DeviceInfo(name="R1", oob_ip="10.0.0.11", oob_intf="Gig0/0", telnet_port=30011),
+    ]
+
+    class FakeNsoConnRefused:
+        def __init__(self) -> None:
+            self.register_calls: List[Dict[str, Any]] = []
+            self.host_key_calls: List[str] = []
+            self.sync_calls: List[str] = []
+            self.protocol_by_device: Dict[str, str] = {}
+            self._last_sync_error: Dict[str, str] = {}
+
+        def create_authgroup(self, group: str, username: str, password: str) -> bool:
+            return True
+
+        def register_device(self, device_info: Dict[str, Any]) -> bool:
+            self.register_calls.append(device_info.copy())
+            name = str(device_info.get("name"))
+            self.protocol_by_device[name] = str(device_info.get("protocol"))
+            return True
+
+        def fetch_host_keys(self, device_name: str) -> bool:
+            self.host_key_calls.append(device_name)
+            return True
+
+        def sync_from(self, device_name: str) -> bool:
+            self.sync_calls.append(device_name)
+            protocol = self.protocol_by_device.get(device_name, "ssh")
+            if protocol == "ssh":
+                self._last_sync_error[device_name] = (
+                    "Failed to connect to device R1: connection refused"
+                )
+                return False
+            self._last_sync_error.pop(device_name, None)
+            return True
+
+        def get_last_sync_error(self, device_name: str) -> str:
+            return self._last_sync_error.get(device_name, "")
+
+    fake_nso = FakeNsoConnRefused()
+
+    result = register_devices_nso(gs, devices, fake_nso)
+
+    assert result["registered"] == ["R1"]
+    assert result["failed"] == []
+    assert len(fake_nso.register_calls) == 2
+    assert fake_nso.register_calls[0]["protocol"] == "ssh"
+    assert fake_nso.register_calls[1]["protocol"] == "telnet"
+    assert fake_nso.register_calls[1]["oob_ip"] == gs.pnetlab_vm_ip
+    assert fake_nso.register_calls[1]["port"] == 30011
+    assert fake_nso.host_key_calls == ["R1"]
+
+
+def test_register_devices_nso_uses_telnet_when_ssh_verification_inconclusive():
+    gs = _sample_global_settings()
+    devices = [
+        DeviceInfo(
+            name="R1",
+            oob_ip="10.0.0.11",
+            oob_intf="Gig0/0",
+            telnet_port=30011,
+            ssh_verified=False,
+        ),
+    ]
+
+    class FakeNsoTelnetFirst:
+        def __init__(self) -> None:
+            self.register_calls: List[Dict[str, Any]] = []
+            self.host_key_calls: List[str] = []
+            self.sync_calls: List[str] = []
+
+        def create_authgroup(self, group: str, username: str, password: str) -> bool:
+            return True
+
+        def register_device(self, device_info: Dict[str, Any]) -> bool:
+            self.register_calls.append(device_info.copy())
+            return True
+
+        def fetch_host_keys(self, device_name: str) -> bool:
+            self.host_key_calls.append(device_name)
+            return True
+
+        def sync_from(self, device_name: str) -> bool:
+            self.sync_calls.append(device_name)
+            return True
+
+    fake_nso = FakeNsoTelnetFirst()
+    result = register_devices_nso(gs, devices, fake_nso)
+
+    assert result["registered"] == ["R1"]
+    assert result["failed"] == []
+    assert len(fake_nso.register_calls) == 1
+    assert fake_nso.register_calls[0]["protocol"] == "telnet"
+    assert fake_nso.register_calls[0]["oob_ip"] == gs.pnetlab_vm_ip
+    assert fake_nso.register_calls[0]["port"] == 30011
+    assert fake_nso.host_key_calls == []
+
+
 def test_generate_device_info_excludes_default_infra_nodes(tmp_path):
     class FakePnetlab:
         def get_session_topology(self):
@@ -328,6 +428,25 @@ def test_scan_and_sync_returns_actionable_error_when_nso_unreachable(monkeypatch
     assert result["debug"]["nso_probe"]["ok"] is False
 
 
+def test_default_device_info_path_prefers_lab_name(monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.delenv("PNETLAB_DEVICE_INFO", raising=False)
+    monkeypatch.setenv("PNETLAB_LAB_NAME", "SP-CORE-V5")
+    assert tools._default_device_info_path() == "Data/Pnetlab/SP-CORE-V5/device_info.json"
+
+    monkeypatch.setenv("PNETLAB_DEVICE_INFO", "Data/Pnetlab/Research_Institute_Internal_DC/device_info.json")
+    monkeypatch.setenv("PNETLAB_LAB_NAME", "NSO_WEBUI_2")
+    assert tools._default_device_info_path() == "Data/Pnetlab/NSO_WEBUI_2/device_info.json"
+
+    monkeypatch.setenv("PNETLAB_LAB_NAME", "Research_Institute_Internal_DC")
+    assert (
+        tools._default_device_info_path()
+        == "Data/Pnetlab/Research_Institute_Internal_DC/device_info.json"
+    )
+
+    monkeypatch.setenv("PNETLAB_DEVICE_INFO", "/tmp/custom/device_info.json")
+    assert tools._default_device_info_path() == "/tmp/custom/device_info.json"
+
+
 def test_lab_bootstrap_refresh_onboard_only_targets_new_devices(monkeypatch: pytest.MonkeyPatch):
     gs = _sample_global_settings()
     devices = [
@@ -389,6 +508,61 @@ def test_lab_bootstrap_refresh_onboard_only_targets_new_devices(monkeypatch: pyt
     assert observed["nso_targets"] == ["R2"]
     assert result["nso"]["registered"] == ["R2"]
     assert {"device": "R3", "reason": "mgmt_ip_not_discovered"} in result["skipped"]
+
+
+def test_lab_bootstrap_refresh_onboard_reconciles_existing_out_of_sync(monkeypatch: pytest.MonkeyPatch):
+    gs = _sample_global_settings()
+    devices = [
+        DeviceInfo(name="R1", oob_ip=None, oob_intf="", telnet_port=30011),
+        DeviceInfo(name="R2", oob_ip=None, oob_intf="", telnet_port=30012),
+    ]
+    observed: Dict[str, Any] = {}
+
+    class FakeNso:
+        def check_sync(self, name: str) -> bool:
+            return name != "R1"
+
+    monkeypatch.setattr(tools, "get_pnetlab_client", lambda: object())
+    monkeypatch.setattr(tools, "ensure_device_info", lambda *args, **kwargs: {"devices": []})
+    monkeypatch.setattr(tools, "parse_config", lambda _cfg: (gs, list(devices)))
+    monkeypatch.setattr(
+        tools,
+        "scan_and_sync",
+        lambda *args, **kwargs: {"missing": []},
+    )
+    monkeypatch.setattr(
+        tools,
+        "_discover_management_metadata",
+        lambda: (
+            {"R1": "e0/0", "R2": "e0/0"},
+            {"R1": "10.0.0.11", "R2": "10.0.0.12"},
+            "",
+        ),
+    )
+    monkeypatch.setattr(tools, "get_nso_client", lambda: FakeNso())
+    monkeypatch.setattr(tools, "assign_missing_oob_ips", lambda *_args, **_kwargs: {})
+    monkeypatch.setattr(tools, "save_device_info", lambda *args, **kwargs: None)
+
+    async def fake_enable_ssh_all(_gs: GlobalSettings, target_devices: List[DeviceInfo]) -> Dict[str, bool]:
+        observed["ssh_targets"] = [d.name for d in target_devices]
+        return {d.name: True for d in target_devices}
+
+    def fake_register_devices_nso(
+        _gs: GlobalSettings, target_devices: List[DeviceInfo], _nso: Any
+    ) -> Dict[str, Any]:
+        observed["nso_targets"] = [d.name for d in target_devices]
+        return {"registered": observed["nso_targets"], "failed": []}
+
+    monkeypatch.setattr(tools, "enable_ssh_all", fake_enable_ssh_all)
+    monkeypatch.setattr(tools, "register_devices_nso", fake_register_devices_nso)
+
+    result = tools.lab_bootstrap.invoke({"action": "refresh_onboard", "params": {"config_path": "dummy.json"}})
+
+    assert result["status"] == "completed"
+    assert result["missing"] == []
+    assert result["reconciled"] == ["R1"]
+    assert observed["ssh_targets"] == ["R1"]
+    assert observed["nso_targets"] == ["R1"]
 
 
 @pytest.mark.asyncio

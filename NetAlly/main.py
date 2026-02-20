@@ -560,6 +560,28 @@ def _refresh_logical_error(status_code: int, payload: Any) -> bool:
             return True
         if payload.get("error") is not None:
             return True
+        failed = payload.get("failed")
+        if isinstance(failed, list) and len(failed) > 0:
+            return True
+        delete_failed = payload.get("delete_failed")
+        if isinstance(delete_failed, list) and len(delete_failed) > 0:
+            return True
+        nso = payload.get("nso")
+        if isinstance(nso, dict):
+            nso_failed = nso.get("failed")
+            if isinstance(nso_failed, list) and len(nso_failed) > 0:
+                return True
+        skipped = payload.get("skipped")
+        if isinstance(skipped, list) and len(skipped) > 0:
+            severe_reasons = {
+                "ssh_enable_failed",
+                "mgmt_ip_not_discovered",
+                "console_unreachable",
+                "registration_failed",
+            }
+            for item in skipped:
+                if isinstance(item, dict) and str(item.get("reason", "")).strip() in severe_reasons:
+                    return True
     return False
 
 

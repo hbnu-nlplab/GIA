@@ -1,0 +1,64 @@
+{
+  "global_settings": {
+    "pnetlab_vm_ip": "192.168.50.61",
+    "gateway_ip": "",
+    "enable_password": "pnet",
+    "admin_password": "admin",
+    "domain_name": "lab.local",
+    "nso_authgroup": "default",
+    "nso_ned_id": "",
+    "nso_username": "admin",
+    "nso_password": "admin"
+  },
+  "devices": [
+    {
+      "name": "P01",
+      "oob_ip": "10.10.10.1",
+      "oob_intf": "e0/0",
+      "telnet_port": 30003,
+      "device_group": null
+    },
+    {
+      "name": "PE02",
+      "oob_ip": "10.10.10.2",
+      "oob_intf": "e0/0",
+      "telnet_port": 30004,
+      "device_group": null
+    },
+    {
+      "name": "PE03",
+      "oob_ip": "10.10.10.3",
+      "oob_intf": "e0/0",
+      "telnet_port": 30005,
+      "device_group": null
+    },
+    {
+      "name": "P04",
+      "oob_ip": "10.10.10.4",
+      "oob_intf": "e0/0",
+      "telnet_port": 30006,
+      "device_group": null
+    },
+    {
+      "name": "CE04",
+      "oob_ip": "10.10.10.104",
+      "oob_intf": "e0/0",
+      "telnet_port": 30007,
+      "device_group": null
+    },
+    {
+      "name": "CE01",
+      "oob_ip": "10.10.10.101",
+      "oob_intf": "e0/0",
+      "telnet_port": 30008,
+      "device_group": null
+    },
+    {
+      "name": "CE03",
+      "oob_ip": "10.10.10.103",
+      "oob_intf": "e0/0",
+      "telnet_port": 30012,
+      "device_group": null
+    }
+  ]
+}
