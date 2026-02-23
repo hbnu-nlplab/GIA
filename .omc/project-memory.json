@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1771493106709,
+  "lastScanned": 1771826712937,
   "projectRoot": "/home/yujin/Desktop/Projects/GIA",
   "techStack": {
     "languages": [
@@ -47,14 +47,14 @@
       "path": "Data",
       "purpose": "Data files",
       "fileCount": 0,
-      "lastAccessed": 1771493106704,
+      "lastAccessed": 1771826712934,
       "keyFiles": []
     },
     "Evaluation": {
       "path": "Evaluation",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1771493106705,
+      "lastAccessed": 1771826712935,
       "keyFiles": [
         "xml_to_docs.ipynb"
       ]
@@ -63,7 +63,7 @@
       "path": "Experiment",
       "purpose": null,
       "fileCount": 4,
-      "lastAccessed": 1771493106706,
+      "lastAccessed": 1771826712936,
       "keyFiles": [
         "Make_Figure.py",
         "NetConfigQA2_Experiment_vllm.ipynb",
@@ -75,7 +75,7 @@
       "path": "Make_Dataset",
       "purpose": null,
       "fileCount": 11,
-      "lastAccessed": 1771493106706,
+      "lastAccessed": 1771826712936,
       "keyFiles": [
         "Make_summary.py",
         "NetConfigQA_영어번역_품질리뷰.md",
@@ -88,7 +88,7 @@
       "path": "MultiAgent",
       "purpose": null,
       "fileCount": 6,
-      "lastAccessed": 1771493106706,
+      "lastAccessed": 1771826712936,
       "keyFiles": [
         "add_answer_type.py",
         "agent_architecture.md",
@@ -100,21 +100,21 @@
     "NetAlly": {
       "path": "NetAlly",
       "purpose": null,
-      "fileCount": 15,
-      "lastAccessed": 1771493106707,
+      "fileCount": 16,
+      "lastAccessed": 1771826712936,
       "keyFiles": [
         "AGENTS.md",
         "Dockerfile",
+        "NSO_WEBUI_2.unl",
         "README.md",
-        "agents.md",
-        "architecture.md"
+        "agents.md"
       ]
     },
     "NetConfigQA1": {
       "path": "NetConfigQA1",
       "purpose": null,
       "fileCount": 3,
-      "lastAccessed": 1771493106707,
+      "lastAccessed": 1771826712936,
       "keyFiles": [
         "NSO_Add_Device.py",
         "__init__.py",
@@ -125,7 +125,7 @@
       "path": "NetConfigQA3",
       "purpose": null,
       "fileCount": 7,
-      "lastAccessed": 1771493106707,
+      "lastAccessed": 1771826712936,
       "keyFiles": [
         "CHANGELOG.md",
         "README.md",
@@ -138,7 +138,7 @@
       "path": "Paper",
       "purpose": null,
       "fileCount": 3,
-      "lastAccessed": 1771493106707,
+      "lastAccessed": 1771826712936,
       "keyFiles": [
         "A Network Arena for Benchmarking AI Agents on Network Troubleshooting.pdf",
         "NIKA.md",
@@ -149,7 +149,7 @@
       "path": "config",
       "purpose": "Configuration files",
       "fileCount": 1,
-      "lastAccessed": 1771493106707,
+      "lastAccessed": 1771826712936,
       "keyFiles": [
         "rollback_history.json"
       ]
@@ -158,7 +158,7 @@
       "path": "debug",
       "purpose": null,
       "fileCount": 8,
-      "lastAccessed": 1771493106707,
+      "lastAccessed": 1771826712936,
       "keyFiles": [
         "analyze_dataset.py",
         "debug_batfish_api.py",
@@ -171,7 +171,7 @@
       "path": "docs",
       "purpose": "Documentation",
       "fileCount": 20,
-      "lastAccessed": 1771493106708,
+      "lastAccessed": 1771826712936,
       "keyFiles": [
         "5_LEVEL_DIFFICULTY_PHILOSOPHY.md",
         "ACADEMIC_FOUNDATION.md",
@@ -184,21 +184,21 @@
       "path": "test_lab",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1771493106708,
+      "lastAccessed": 1771826712936,
       "keyFiles": []
     },
     "Experiment/data": {
       "path": "Experiment/data",
       "purpose": "Data files",
       "fileCount": 0,
-      "lastAccessed": 1771493106708,
+      "lastAccessed": 1771826712937,
       "keyFiles": []
     },
     "MultiAgent/config": {
       "path": "MultiAgent/config",
       "purpose": "Configuration files",
       "fileCount": 3,
-      "lastAccessed": 1771493106708,
+      "lastAccessed": 1771826712937,
       "keyFiles": [
         "__init__.py",
         "debug_env.py",
@@ -209,21 +209,21 @@
       "path": "MultiAgent/data",
       "purpose": "Data files",
       "fileCount": 0,
-      "lastAccessed": 1771493106708,
+      "lastAccessed": 1771826712937,
       "keyFiles": []
     },
     "NetAlly/Data": {
       "path": "NetAlly/Data",
       "purpose": "Data files",
       "fileCount": 0,
-      "lastAccessed": 1771493106709,
+      "lastAccessed": 1771826712937,
       "keyFiles": []
     },
     "NetConfigQA1/utils": {
       "path": "NetConfigQA1/utils",
       "purpose": "Utility functions",
       "fileCount": 4,
-      "lastAccessed": 1771493106709,
+      "lastAccessed": 1771826712937,
       "keyFiles": [
         "__init__.py",
         "config_manager.py",
@@ -234,7 +234,7 @@
       "path": "NetConfigQA3/app",
       "purpose": "Application code",
       "fileCount": 9,
-      "lastAccessed": 1771493106709,
+      "lastAccessed": 1771826712937,
       "keyFiles": [
         "LICENSE",
         "Makefile",
@@ -245,7 +245,7 @@
       "path": "NetConfigQA3/config",
       "purpose": "Configuration files",
       "fileCount": 6,
-      "lastAccessed": 1771493106709,
+      "lastAccessed": 1771826712937,
       "keyFiles": [
         "__init__.py",
         "env_example.txt",
@@ -256,7 +256,7 @@
       "path": "NetConfigQA3/docs",
       "purpose": "Documentation",
       "fileCount": 10,
-      "lastAccessed": 1771493106709,
+      "lastAccessed": 1771826712937,
       "keyFiles": [
         "AGENT_FUNCTIONALITY_TEST_RESULT.md",
         "LANGSMITH_GUIDE.md",
@@ -264,169 +264,6 @@
       ]
     }
   },
-  "hotPaths": [
-    {
-      "path": "NetAlly/frontend/src/components/TopologyPanel.tsx",
-      "accessCount": 72,
-      "lastAccessed": 1771503299666,
-      "type": "file"
-    },
-    {
-      "path": "NetAlly/agent/pnetlab_labfs.py",
-      "accessCount": 12,
-      "lastAccessed": 1771493573657,
-      "type": "file"
-    },
-    {
-      "path": "NetAlly/frontend/src/store.ts",
-      "accessCount": 10,
-      "lastAccessed": 1771502075549,
-      "type": "directory"
-    },
-    {
-      "path": "NetAlly/frontend/src/components/InterfaceEdge.tsx",
-      "accessCount": 10,
-      "lastAccessed": 1771502087964,
-      "type": "file"
-    },
-    {
-      "path": "NetAlly/main.py",
-      "accessCount": 9,
-      "lastAccessed": 1771502084374,
-      "type": "file"
-    },
-    {
-      "path": "NetAlly/frontend/src",
-      "accessCount": 7,
-      "lastAccessed": 1771503205590,
-      "type": "directory"
-    },
-    {
-      "path": "NetAlly/frontend/src/App.tsx",
-      "accessCount": 7,
-      "lastAccessed": 1771503324900,
-      "type": "file"
-    },
-    {
-      "path": "NetAlly/frontend/src/index.css",
-      "accessCount": 6,
-      "lastAccessed": 1771497619193,
-      "type": "file"
-    },
-    {
-      "path": "NetAlly/frontend/src/components/Header.tsx",
-      "accessCount": 6,
-      "lastAccessed": 1771497803501,
-      "type": "file"
-    },
-    {
-      "path": "NetAlly",
-      "accessCount": 6,
-      "lastAccessed": 1771502070113,
-      "type": "directory"
-    },
-    {
-      "path": "NetAlly/frontend/src/components/ChatPanel.tsx",
-      "accessCount": 6,
-      "lastAccessed": 1771502084798,
-      "type": "file"
-    },
-    {
-      "path": "NetAlly/frontend/src/components/DeviceNode.tsx",
-      "accessCount": 4,
-      "lastAccessed": 1771496350801,
-      "type": "directory"
-    },
-    {
-      "path": "NetAlly/agent/clients/batfish.py",
-      "accessCount": 4,
-      "lastAccessed": 1771502081956,
-      "type": "file"
-    },
-    {
-      "path": "NetAlly/frontend/src/components/chat/types.ts",
-      "accessCount": 4,
-      "lastAccessed": 1771502087655,
-      "type": "file"
-    },
-    {
-      "path": "NetAlly/frontend/src/components/DashboardPanel.tsx",
-      "accessCount": 3,
-      "lastAccessed": 1771497780264,
-      "type": "file"
-    },
-    {
-      "path": "NetAlly/frontend/src/components/EvidencePanel.tsx",
-      "accessCount": 3,
-      "lastAccessed": 1771503362566,
-      "type": "file"
-    },
-    {
-      "path": "NetAlly/frontend/src/components/SettingsDialog.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1771495790763,
-      "type": "file"
-    },
-    {
-      "path": "NetAlly/frontend/index.html",
-      "accessCount": 2,
-      "lastAccessed": 1771495851883,
-      "type": "file"
-    },
-    {
-      "path": "NetAlly/frontend/tailwind.config.js",
-      "accessCount": 2,
-      "lastAccessed": 1771497672911,
-      "type": "file"
-    },
-    {
-      "path": "NetAlly/frontend/src/components/chat/ChatEmptyState.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1771501222461,
-      "type": "file"
-    },
-    {
-      "path": "NetAlly/frontend/src/components/chat/ChatMessage.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1771501222918,
-      "type": "file"
-    },
-    {
-      "path": "NetAlly/NSO_WEBUI_2.unl",
-      "accessCount": 1,
-      "lastAccessed": 1771493299637,
-      "type": "file"
-    },
-    {
-      "path": "NetAlly/frontend/src/components",
-      "accessCount": 1,
-      "lastAccessed": 1771493460687,
-      "type": "directory"
-    },
-    {
-      "path": "NetAlly/frontend/src/components/chat/markdown.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1771500925265,
-      "type": "file"
-    },
-    {
-      "path": "NetAlly/frontend/src/components/chat/ChatInput.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1771501005371,
-      "type": "file"
-    },
-    {
-      "path": "NetAlly/tests/test_dashboard_api_contract.py",
-      "accessCount": 1,
-      "lastAccessed": 1771502065418,
-      "type": "file"
-    },
-    {
-      "path": "NetAlly/agent",
-      "accessCount": 1,
-      "lastAccessed": 1771502075438,
-      "type": "directory"
-    }
-  ],
+  "hotPaths": [],
   "userDirectives": []
 }

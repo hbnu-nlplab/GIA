@@ -63,6 +63,28 @@ def _is_ssh_enabled_output(show_output: str) -> bool:
     return _ssh_state_from_output(show_output) is True
 
 
+def _ssh_bootstrap_looks_ready(
+    show_state: Optional[bool],
+    transport_cfg: str,
+    login_cfg: str,
+    users_cfg: str,
+    username: str,
+) -> bool:
+    """
+    Heuristic for "SSH bootstrap already done".
+    Accept explicit show-ip-ssh enabled or running-config evidence.
+    """
+    if show_state is True:
+        return True
+
+    transport_ok = "transport input ssh" in str(transport_cfg or "").lower()
+    login_ok = "login local" in str(login_cfg or "").lower()
+    users_text = str(users_cfg or "").lower()
+    requested_user_ok = f"username {str(username or '').strip().lower()} " in users_text
+    admin_user_ok = "username admin " in users_text
+    return transport_ok and login_ok and (requested_user_ok or admin_user_ok)
+
+
 def _requires_confirm(output: str) -> bool:
     text = str(output or "").lower()
     return "yes/no" in text or "[confirm]" in text
@@ -645,6 +667,28 @@ async def enable_ssh_via_telnet(device: DeviceInfo, gs: GlobalSettings) -> bool:
         if gs.enable_password:
             await send_cmd(gs.enable_password)
 
+        ssh_username = str(gs.nso_username or "").strip() or "admin"
+        ssh_password = str(gs.nso_password or "").strip() or str(gs.admin_password or "").strip() or "admin"
+
+        # Fast path: if SSH bootstrap already exists, skip expensive keygen/config cycle.
+        show_state, _show_out = await probe_ssh_state(probe_wait=0.5)
+        transport_cfg = await send_cmd("show running-config | include transport input", sleep_time=0.4, capture=True)
+        login_cfg = await send_cmd("show running-config | include login local", sleep_time=0.4, capture=True)
+        users_cfg = await send_cmd("show running-config | include ^username", sleep_time=0.4, capture=True)
+        if _ssh_bootstrap_looks_ready(show_state, transport_cfg, login_cfg, users_cfg, ssh_username):
+            if device.oob_intf and not device.oob_ip:
+                show_brief = await send_cmd("show ip interface brief", sleep_time=1.1, capture=True)
+                discovered = _parse_interface_ip(show_brief, device.oob_intf)
+                if discovered:
+                    device.oob_ip = discovered
+            if device.oob_intf and not device.oob_ip:
+                assign_missing_oob_ips(gs, [device])
+            device.ssh_verified = True
+            writer.close()
+            await writer.wait_closed()
+            logger.info("SSH already configured, skipping bootstrap: %s", device.name)
+            return True
+
         # 관리 IP 동적 발견: oob_intf가 있지만 oob_ip가 없으면 show ip interface brief로 발견
         if device.oob_intf and not device.oob_ip:
             writer.write("show ip interface brief\r\n")
@@ -674,9 +718,6 @@ async def enable_ssh_via_telnet(device: DeviceInfo, gs: GlobalSettings) -> bool:
 
         mgmt_net = _resolve_mgmt_network(gs, existing_devices=[device])
         mgmt_netmask = _prefix_to_netmask(mgmt_net.prefixlen if mgmt_net else 24)
-
-        ssh_username = str(gs.nso_username or "").strip() or "admin"
-        ssh_password = str(gs.nso_password or "").strip() or str(gs.admin_password or "").strip() or "admin"
 
         # Stage 1: base management config
         await send_cmd("conf t")
@@ -900,6 +941,7 @@ async def check_connectivity(gs: GlobalSettings, device: DeviceInfo) -> bool:
 
 def register_devices_nso(gs: GlobalSettings, devices: List[DeviceInfo], nso: NSOClient) -> Dict[str, Any]:
     results = {"registered": [], "failed": []}
+    ssh_only = str(os.getenv("NETALLY_ONBOARD_SSH_ONLY", "true") or "true").strip().lower() != "false"
 
     logger.info("Registering devices to NSO: %d", len(devices))
     nso.create_authgroup(gs.nso_authgroup, gs.nso_username, gs.nso_password)
@@ -947,45 +989,15 @@ def register_devices_nso(gs: GlobalSettings, devices: List[DeviceInfo], nso: NSO
                 return ""
         return ""
 
-    def _register_telnet_console_and_sync(target: DeviceInfo) -> bool:
-        if target.telnet_port <= 0:
-            return False
-        logger.warning(
-            "Falling back to telnet console for %s (host=%s port=%s)",
-            target.name,
-            gs.pnetlab_vm_ip,
-            target.telnet_port,
-        )
-        telnet_info = {
-            "name": target.name,
-            "oob_ip": gs.pnetlab_vm_ip,
-            "port": target.telnet_port,
-            "protocol": "telnet",
-            "authgroup": gs.nso_authgroup,
-            "ned_id": gs.nso_ned_id,
-        }
-        if not nso.register_device(telnet_info):
-            return False
-        for attempt in range(1, 3):
-            if nso.sync_from(target.name):
-                logger.info("Sync-from recovered via telnet console fallback: %s", target.name)
-                return True
-            if attempt < 2:
-                time.sleep(1.5)
-        return False
-
     for dev in devices:
-        # SSH가 명시적으로 확인된 장비만 SSH 우선 등록.
-        # IOL 이미지에서 show ip ssh가 불명확할 경우 telnet 콘솔로 빠르게 우회.
-        use_ssh = bool(dev.oob_ip) and dev.ssh_verified is not False
-        if bool(dev.oob_ip) and not use_ssh:
-            logger.info(
-                "Using telnet onboarding for %s (ssh verification inconclusive/unsupported)",
-                dev.name,
-            )
-        address = dev.oob_ip if use_ssh else gs.pnetlab_vm_ip
-        protocol = "ssh" if use_ssh else "telnet"
-        port = 22 if use_ssh else dev.telnet_port
+        if ssh_only and not dev.oob_ip:
+            logger.warning("Skip NSO registration for %s: missing oob_ip in ssh-only mode", dev.name)
+            results["failed"].append(dev.name)
+            continue
+
+        address = dev.oob_ip or gs.pnetlab_vm_ip
+        protocol = "ssh" if (ssh_only or bool(dev.oob_ip)) else "telnet"
+        port = 22 if protocol == "ssh" else dev.telnet_port
         device_info = {
             "name": dev.name,
             "oob_ip": address,
@@ -1032,11 +1044,7 @@ def register_devices_nso(gs: GlobalSettings, devices: List[DeviceInfo], nso: NSO
                     # Lightweight backoff to let SSH daemon settle on lab nodes.
                     time.sleep(2.0)
             if not sync_ok and protocol == "ssh":
-                last_err = _last_sync_error(dev.name)
-                if _is_connection_refused_sync_error(last_err):
-                    sync_ok = _register_telnet_console_and_sync(dev)
-                if not sync_ok:
-                    sync_ok = _rehydrate_ssh_and_resync(dev)
+                sync_ok = _rehydrate_ssh_and_resync(dev)
             if sync_ok:
                 results["registered"].append(dev.name)
             else:

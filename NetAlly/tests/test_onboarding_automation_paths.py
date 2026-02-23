@@ -64,7 +64,8 @@ def _sample_global_settings() -> GlobalSettings:
     )
 
 
-def test_register_devices_nso_applies_protocol_and_port_rules():
+def test_register_devices_nso_applies_protocol_and_port_rules(monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.delenv("NETALLY_ONBOARD_SSH_ONLY", raising=False)
     gs = _sample_global_settings()
     devices = [
         DeviceInfo(name="R1", oob_ip="10.0.0.11", oob_intf="Gig0/0", telnet_port=30011),
@@ -79,18 +80,15 @@ def test_register_devices_nso_applies_protocol_and_port_rules():
     assert len(fake_nso.authgroup_calls) == 1
 
     r1 = next(call for call in fake_nso.register_calls if call["name"] == "R1")
-    r2 = next(call for call in fake_nso.register_calls if call["name"] == "R2")
 
     assert r1["protocol"] == "ssh"
     assert r1["oob_ip"] == "10.0.0.11"
     assert r1["port"] == 22
 
-    assert r2["protocol"] == "telnet"
-    assert r2["oob_ip"] == "172.16.10.10"
-    assert r2["port"] == 30022
+    assert all(call["name"] != "R2" for call in fake_nso.register_calls)
 
     assert fake_nso.host_key_calls == ["R1"]
-    assert fake_nso.sync_calls == ["R1", "R2"]
+    assert fake_nso.sync_calls == ["R1"]
 
 
 def test_register_devices_nso_attempts_ssh_remediation_on_sync_failure(
@@ -136,7 +134,10 @@ def test_register_devices_nso_attempts_ssh_remediation_on_sync_failure(
     assert fake_nso.host_key_calls == ["R1", "R1", "R1", "R1"]
 
 
-def test_register_devices_nso_falls_back_to_telnet_on_ssh_connection_refused():
+def test_register_devices_nso_does_not_fallback_to_telnet_on_ssh_connection_refused(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    monkeypatch.delenv("NETALLY_ONBOARD_SSH_ONLY", raising=False)
     gs = _sample_global_settings()
     devices = [
         DeviceInfo(name="R1", oob_ip="10.0.0.11", oob_intf="Gig0/0", telnet_port=30011),
@@ -147,7 +148,6 @@ def test_register_devices_nso_falls_back_to_telnet_on_ssh_connection_refused():
             self.register_calls: List[Dict[str, Any]] = []
             self.host_key_calls: List[str] = []
             self.sync_calls: List[str] = []
-            self.protocol_by_device: Dict[str, str] = {}
             self._last_sync_error: Dict[str, str] = {}
 
         def create_authgroup(self, group: str, username: str, password: str) -> bool:
@@ -155,8 +155,6 @@ def test_register_devices_nso_falls_back_to_telnet_on_ssh_connection_refused():
 
         def register_device(self, device_info: Dict[str, Any]) -> bool:
             self.register_calls.append(device_info.copy())
-            name = str(device_info.get("name"))
-            self.protocol_by_device[name] = str(device_info.get("protocol"))
             return True
 
         def fetch_host_keys(self, device_name: str) -> bool:
@@ -165,33 +163,34 @@ def test_register_devices_nso_falls_back_to_telnet_on_ssh_connection_refused():
 
         def sync_from(self, device_name: str) -> bool:
             self.sync_calls.append(device_name)
-            protocol = self.protocol_by_device.get(device_name, "ssh")
-            if protocol == "ssh":
-                self._last_sync_error[device_name] = (
-                    "Failed to connect to device R1: connection refused"
-                )
-                return False
-            self._last_sync_error.pop(device_name, None)
-            return True
+            self._last_sync_error[device_name] = (
+                "Failed to connect to device R1: connection refused"
+            )
+            return False
 
         def get_last_sync_error(self, device_name: str) -> str:
             return self._last_sync_error.get(device_name, "")
 
+    async def fake_enable_ssh_via_telnet(_device: DeviceInfo, _gs: GlobalSettings) -> bool:
+        return True
+
+    monkeypatch.setattr("agent.onboarding.enable_ssh_via_telnet", fake_enable_ssh_via_telnet)
     fake_nso = FakeNsoConnRefused()
 
     result = register_devices_nso(gs, devices, fake_nso)
 
-    assert result["registered"] == ["R1"]
-    assert result["failed"] == []
-    assert len(fake_nso.register_calls) == 2
+    assert result["registered"] == []
+    assert result["failed"] == ["R1"]
+    assert len(fake_nso.register_calls) == 1
     assert fake_nso.register_calls[0]["protocol"] == "ssh"
-    assert fake_nso.register_calls[1]["protocol"] == "telnet"
-    assert fake_nso.register_calls[1]["oob_ip"] == gs.pnetlab_vm_ip
-    assert fake_nso.register_calls[1]["port"] == 30011
-    assert fake_nso.host_key_calls == ["R1"]
+    assert fake_nso.host_key_calls == ["R1", "R1"]
+    assert fake_nso.sync_calls == ["R1", "R1", "R1"]
 
 
-def test_register_devices_nso_uses_telnet_when_ssh_verification_inconclusive():
+def test_register_devices_nso_uses_ssh_when_ssh_verification_inconclusive_in_ssh_only_mode(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    monkeypatch.delenv("NETALLY_ONBOARD_SSH_ONLY", raising=False)
     gs = _sample_global_settings()
     devices = [
         DeviceInfo(
@@ -230,10 +229,10 @@ def test_register_devices_nso_uses_telnet_when_ssh_verification_inconclusive():
     assert result["registered"] == ["R1"]
     assert result["failed"] == []
     assert len(fake_nso.register_calls) == 1
-    assert fake_nso.register_calls[0]["protocol"] == "telnet"
-    assert fake_nso.register_calls[0]["oob_ip"] == gs.pnetlab_vm_ip
-    assert fake_nso.register_calls[0]["port"] == 30011
-    assert fake_nso.host_key_calls == []
+    assert fake_nso.register_calls[0]["protocol"] == "ssh"
+    assert fake_nso.register_calls[0]["oob_ip"] == "10.0.0.11"
+    assert fake_nso.register_calls[0]["port"] == 22
+    assert fake_nso.host_key_calls == ["R1"]
 
 
 def test_generate_device_info_excludes_default_infra_nodes(tmp_path):
