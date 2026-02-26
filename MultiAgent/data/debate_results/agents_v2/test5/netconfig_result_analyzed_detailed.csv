@@ -1,0 +1,3 @@
+﻿question_id,level,category,type,status,question,gold,pred,type_aware_score,exact_match,token_f1,bertscore_f1,rougeL,rouge1,rouge2
+,,,text,,What is the hostname of the pe2 equipment? [Answer format: exact value only],pe2,,1.0,1.0,1.0,0.9976428747177124,1.0,1.0,0.0
+,,,text,,What is the hostname of the p2 equipment? [Answer format: exact value only],p2,,1.0,1.0,1.0,0.9925472736358643,1.0,1.0,0.0

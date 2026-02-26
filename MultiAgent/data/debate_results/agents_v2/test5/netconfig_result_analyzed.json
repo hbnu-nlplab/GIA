@@ -1,0 +1,79 @@
+{
+  "meta": {},
+  "stats": {
+    "accuracy": 1.0,
+    "total_samples": 2,
+    "by_type": {
+      "text": 1.0
+    },
+    "by_level": {
+      "L1": 1.0
+    },
+    "by_category": {
+      "Unknown": 1.0
+    },
+    "by_status": {
+      "OK": 1.0
+    },
+    "traditional_metrics": {
+      "exact_match": 1.0,
+      "token_f1": 1.0,
+      "rouge1": 1.0,
+      "rouge2": 0.0,
+      "rougeL": 1.0,
+      "bertscore_f1": 0.9950950741767883,
+      "bleu": 0.1778279410038923
+    },
+    "trad_by_type": {
+      "text": {
+        "exact_match": 1.0,
+        "token_f1": 1.0,
+        "token_precision": 1.0,
+        "token_recall": 1.0,
+        "rouge1": 1.0,
+        "rouge2": 0.0,
+        "rougeL": 1.0,
+        "bleu": 0.1778279410038923,
+        "bertscore_f1": 0.9950950741767883
+      }
+    }
+  },
+  "results": [
+    {
+      "question": "What is the hostname of the pe2 equipment? [Answer format: exact value only]",
+      "gold": "pe2",
+      "gold_cleaned": "pe2",
+      "type_aware_score": 1.0,
+      "type": "text",
+      "exact_match": 1.0,
+      "token_f1": 1.0,
+      "token_precision": 1.0,
+      "token_recall": 1.0,
+      "rouge1": 1.0,
+      "rouge2": 0.0,
+      "rougeL": 1.0,
+      "bleu": 0.1778279410038923,
+      "bertscore_precision": 0.9976428747177124,
+      "bertscore_recall": 0.9976428747177124,
+      "bertscore_f1": 0.9976428747177124
+    },
+    {
+      "question": "What is the hostname of the p2 equipment? [Answer format: exact value only]",
+      "gold": "p2",
+      "gold_cleaned": "p2",
+      "type_aware_score": 1.0,
+      "type": "text",
+      "exact_match": 1.0,
+      "token_f1": 1.0,
+      "token_precision": 1.0,
+      "token_recall": 1.0,
+      "rouge1": 1.0,
+      "rouge2": 0.0,
+      "rougeL": 1.0,
+      "bleu": 0.1778279410038923,
+      "bertscore_precision": 0.9925472736358643,
+      "bertscore_recall": 0.9925472736358643,
+      "bertscore_f1": 0.9925472736358643
+    }
+  ]
+}
