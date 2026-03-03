@@ -200,11 +200,18 @@ class NetConfigQAScorer:
 
         answer_type = canonical_answer_type(answer_type)
 
-        # 1. Remove <think>...</think> blocks (some models output these despite prompt)
-        if '</think>' in pred:
+        # 1. Remove reasoning tokens (model-specific patterns)
+        # GPT-OSS-20B: "analysis...reasoning...assistantfinal ANSWER"
+        if 'assistantfinal' in pred:
+            pred = pred.split('assistantfinal')[-1].strip()
+        # Qwen/GLM: "<think>...reasoning...</think> ANSWER"
+        elif '</think>' in pred:
             pred = pred.split('</think>')[-1].strip()
         elif '<think>' in pred:
             pred = pred.split('<think>')[0].strip()
+        # reasoning delimiter 없이 폭주한 경우 → 답변 추출 불가
+        elif pred.lstrip().startswith('analysis') or len(pred) > 5000:
+            pred = ""
 
         # 2. Strip markdown code blocks (```...```)
         pred = re.sub(r'```[\s\S]*?```', '', pred).strip()
