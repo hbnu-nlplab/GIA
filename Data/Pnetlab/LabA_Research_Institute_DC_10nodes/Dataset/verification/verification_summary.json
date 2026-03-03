@@ -1,0 +1,51 @@
+{
+  "title": "NetConfigQA2.0 Ground Truth Verification Summary",
+  "topology": "LabA_Research_Institute_DC_10nodes",
+  "date": "2026-03-02",
+  "dataset_total_qa": 1264,
+  "verification_methods": {
+    "method1_independent_parser": {
+      "description": "Batfish-independent .cfg parser (pure Python + Regex) for L1-L3 full verification",
+      "scope": "L1-L3 전수검증 (1016 QA)",
+      "total_verified": 1016,
+      "match": 1015,
+      "mismatch": 1,
+      "agreement_rate_raw": 0.9990157480314961,
+      "by_level": {
+        "L1": {
+          "total": 660,
+          "match": 660,
+          "mismatch": 0
+        },
+        "L2": {
+          "total": 104,
+          "match": 104,
+          "mismatch": 0
+        },
+        "L3": {
+          "total": 252,
+          "match": 251,
+          "mismatch": 1
+        }
+      },
+      "by_answer_type": {
+        "text": {
+          "total": 286,
+          "match": 285
+        },
+        "set": {
+          "total": 370,
+          "match": 370
+        },
+        "number": {
+          "total": 253,
+          "match": 253
+        },
+        "map": {
+          "total": 107,
+          "match": 107
+        }
+      }
+    }
+  }
+}

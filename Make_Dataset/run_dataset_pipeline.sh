@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
+export PYTHONUTF8=1
+export PYTHONIOENCODING=utf-8
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-LAB_PATH="${ROOT_DIR}/Data/Pnetlab/Research_Institute_Internal_DC"
+LAB_PATH="${ROOT_DIR}/Data/Pnetlab/LabA_Research_Institute_DC_10nodes"
 POLICIES_PATH="${ROOT_DIR}/Make_Dataset/policies.json"
-BATFISH_HOST="localhost"
+BATFISH_HOST="192.168.146.129"
 OUT_DIR=""
 MIN_PER_CAT="50"
 INCLUDE_L6="0"
-QUESTION_LANG="both"
+QUESTION_LANG="ko"
 SEED="42"
 
 usage() {
@@ -22,7 +24,7 @@ Options:
   --out-dir <path>        Dataset output directory (default: <lab-path>/Dataset)
   --min-per-cat <int>     Minimum per category target (default: ${MIN_PER_CAT})
   --seed <int>            Deterministic seed for question instantiation (default: ${SEED})
-  --question-lang <lang>  Question language: ko | en | both (default: ${QUESTION_LANG})
+  --question-lang <lang>  Question language: ko | en | both (default: ${QUESTION_LANG}, IEEE제출=ko)
   --include-l6            Include L6 generation (default: disabled)
   -h, --help              Show this help
 EOF
@@ -92,7 +94,10 @@ if [[ ! -f "${POLICIES_PATH}" ]]; then
   exit 1
 fi
 
-if [[ -x "${ROOT_DIR}/.venv/bin/python" ]]; then
+# Windows(.venv/Scripts/python.exe) / Linux(.venv/bin/python) 자동 감지
+if [[ -x "${ROOT_DIR}/.venv/Scripts/python.exe" ]]; then
+  PYTHON_BIN="${ROOT_DIR}/.venv/Scripts/python.exe"
+elif [[ -x "${ROOT_DIR}/.venv/bin/python" ]]; then
   PYTHON_BIN="${ROOT_DIR}/.venv/bin/python"
 else
   PYTHON_BIN="python3"

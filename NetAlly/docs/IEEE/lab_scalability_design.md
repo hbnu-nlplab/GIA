@@ -5,17 +5,18 @@
 
 ---
 
-## 0. 구현 상태 리베이스 (2026-02-13)
+## 0. 구현 상태 리베이스 (2026-03-02 갱신)
 
 | 항목 | 현재 상태 | 조치 |
 |---|---|---|
-| Lab-A (10노드) | ✅ 완료 (v2 1,128 QA) | 검증 보강 후 재실험 |
-| Lab-B (20노드) | ✅ Config 생성 완료 (NCN_Basic_SP) | PNETLab 배포 → 데이터셋 생성 |
-| Lab-C (30노드) | ✅ Config 생성 완료 (30/30 cfg) | PNETLab 배포 → 데이터셋 생성 |
-| Lab-D (40노드) | ✅ Config 생성 완료 (40/40 cfg) + 버그 수정 완료 | PNETLab 배포 → 데이터셋 생성 |
+| Lab-A (10노드) | ✅ 완료 (1,264 QA — L1:660, L2:104, L3:252, L4:146, L5:102) | — |
+| Lab-B (20노드) | ✅ **데이터셋 생성 완료** (2,154 QA — L1:1230, L2:101, L3:255, L4:441, L5:127) | — |
+| Lab-C (30노드) | ✅ **데이터셋 생성 완료** (2,673 QA — L1:1230, L2:80, L3:255, L4:954, L5:154) | — |
+| Lab-D (40노드) | ✅ **데이터셋 생성 완료** (3,371 QA — L1:1230, L2:69, L3:253, L4:1657, L5:162) | — |
 | `config_generator/` | ✅ 구현 완료 (generator.py + 4 templates + Remap 기능) | Lab-B/C/D 전부 생성/재매핑 가능 |
 | IP 충돌 검증 | ✅ 완료 (2026-02-18) — Lab-B/C/D 전체 CLEAN | — |
 | 배포 가이드 | ✅ 완료 (2026-02-18) — Lab-D, NSO/NetAlly, 배치 다이어그램 포함 | — |
+| 파이프라인 실행 스크립트 | ✅ `run_dataset_pipeline.sh` — Windows/Linux 자동 감지, UTF-8 안전, 4-Step 자동화 | — |
 
 ### 0.1 제출용 Scope Freeze
 
@@ -35,12 +36,13 @@
 
 ### 1.2 실험 매트릭스
 
-| 실험 | 노드 수 | 컨셉 | 핵심 프로토콜 | 활성 메트릭 | 예상 QA 수 |
+| 실험 | 노드 수 | 컨셉 | 핵심 프로토콜 | 활성 메트릭 | **실제 QA 수** |
 |---|:---:|---|---|:---:|:---:|
-| **Lab-A** | **10** | SP MPLS VPN (기존) | OSPF, BGP, LDP, VRF | 50 | 1,128 |
-| **Lab-B** | **20** | NCN 기본 SP | + NTP, SNMP, AAA, Banner | **65** | ~1,500 |
-| **Lab-C** | **30** | NCN + 보안/L2VPN | + L2VPN, ACL, eBGP, HSRP | **75** | ~2,500 |
-| **Lab-D** | **40** | NCN 멀티 AS 복합 | + Multi-AS, Waypoint, QoS | **80+** | ~3,500 |
+| **Lab-A** | **10** | SP MPLS VPN (기존) | OSPF, BGP, LDP, VRF | 50 | **1,264** |
+| **Lab-B** | **20** | NCN 기본 SP | + NTP, SNMP, AAA, Banner | **65** | **2,154** |
+| **Lab-C** | **30** | NCN + 보안/L2VPN | + L2VPN, ACL, eBGP, HSRP | **75** | **2,673** |
+| **Lab-D** | **40** | NCN 멀티 AS 복합 | + Multi-AS, Waypoint, QoS | **80+** | **3,371** |
+| **합산** | — | — | — | — | **9,462** |
 
 ### 1.3 기대 결과 시각화
 
@@ -439,7 +441,7 @@ Step 7: 생성된 데이터셋으로 LLM 평가
 │  │ 52%     │  │ 67%     │  │ 88%     │  │ 97%     │   │
 │  └────┬────┘  └────┬────┘  └────┬────┘  └────┬────┘   │
 │       ↓            ↓            ↓            ↓         │
-│  1,128 QA     ~1,500 QA    ~2,500 QA    ~3,500 QA     │
+│  1,264 QA     2,154 QA     2,673 QA     3,371 QA      │
 │                                                         │
 │  → "설정 파일만 넣으면 자동 생성, 규모에 비례하여 확장" │
 └─────────────────────────────────────────────────────────┘
@@ -535,7 +537,7 @@ class NetAllyEvaluator:
 | Phase 1 | Lab-B Config Generator 구현 + 20개 cfg 생성 | ✅ 완료 | NCN_Basic_SP 20/20 cfg |
 | Phase 2 | Lab-C 토폴로지 + Config 생성 (ASBR, L2VPN, ACL, HSRP) | ✅ 완료 | 30/30 cfg + asbr_router.j2 |
 | Phase 3 | Lab-D 토폴로지 + Config 생성 (FW, QoS, NetFlow, 오류 3종) | ✅ 완료 | 40/40 cfg + 의도적 오류 검증 |
-| Deploy | Lab-B/C/D PNETLab 배포 + 데이터셋 생성 | 🔜 | OSPF/BGP/LDP 정상 + QA 생성 |
+| Deploy | Lab-B/C/D 데이터셋 생성 (Batfish, `run_dataset_pipeline.sh`) | ✅ **완료** (2026-03-02) | QA 생성 + Quality Gate 통과 |
 | Final | NetAlly 평가 (Lab-A → Lab-B → Lab-C → Lab-D) | 🔜 | Level별 TA-Acc 비교표 |
 
 ### 현실적 우선순위

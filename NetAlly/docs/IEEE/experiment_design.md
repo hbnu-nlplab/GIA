@@ -1,62 +1,89 @@
 # IEEE TNMS 논문 실험 설계서
 
-> **목적**: 논문에 포함될 모든 실험의 상세 설계, 기대 결과, 비교 방법, 결과 테이블 형식을 사전 정의  
+> **목적**: 논문에 포함될 모든 실험의 상세 설계, 기대 결과, 비교 방법, 결과 테이블 형식을 사전 정의
 > **논문 Section**: IV. Experiments → V. Results → VI. Discussion
+> **최종 업데이트**: 2026-03-02
 
 ---
 
 ## 실험 전체 설계
 
-### 실험 매트릭스 — 총 5개 실험
+### 실험 매트릭스 — 총 5개 실험 (재구성)
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                    IEEE TNMS 실험 체계                          │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│  Exp.1                  Exp.2              Exp.3                │
-│  ┌──────────┐          ┌──────────┐       ┌──────────┐         │
-│  │Dataset   │          │Single LLM│       │NetAlly   │         │
-│  │Validation│          │Baseline  │       │MAS Eval  │         │
-│  │(3-Layer) │          │(5 Models)│       │          │         │
-│  └──────────┘          └────┬─────┘       └────┬─────┘         │
-│       │                     │                   │               │
-│       ▼                     ▼                   ▼               │
-│  "Ground Truth"       "LLM의 한계"         "Agent의 효과"      │
+│  Exp.1               Exp.2               Exp.3                  │
+│  ┌──────────┐       ┌──────────┐        ┌──────────┐           │
+│  │Dataset   │       │Single LLM│        │Scalab-   │           │
+│  │Validation│       │Baseline  │        │ility     │           │
+│  │(3-Layer) │       │(7 Models)│        │(A→B→C→D) │           │
+│  └──────────┘       └──────────┘        └──────────┘           │
+│       ↓                  ↓                   ↓                  │
+│  "데이터 신뢰성"    "LLM 혼자의 한계"   "파이프라인 범용성"      │
 │                                                                 │
-│  Exp.4                  Exp.5                                   │
-│  ┌──────────┐          ┌──────────────┐                         │
-│  │Scalab-   │          │External      │                         │
-│  │ility     │          │Benchmarks    │                         │
-│  │(10→50)   │          │(NIKA+NetPress│                         │
-│  │          │          │+NetConfEval) │                         │
-│  └──────────┘          └──────────────┘                         │
-│       ▼                     ▼                                   │
-│  "파이프라인 범용성"    "Agent 일반화 능력"                      │
+│  Exp.4               Exp.5                                      │
+│  ┌──────────────┐   ┌──────────────┐                            │
+│  │Pure MAS      │   │NetAlly MAS   │                            │
+│  │(도구 없음)   │   │(Batfish+NSO) │                            │
+│  │LLM×N만       │   │              │                            │
+│  └──────────────┘   └──────────────┘                            │
+│       ↓                   ↓                                     │
+│  "구조만의 효과"     "도구가 한계를 극복"                        │
 │                                                                 │
+│  ★ 핵심 비교: Exp.2 → Exp.4 → Exp.5                            │
+│    Single LLM → Pure MAS → NetAlly                              │
+│    (구조 효과 분리)  (도구 효과 분리)                            │
 └─────────────────────────────────────────────────────────────────┘
+```
+
+### 논문 핵심 스토리라인
+
+```
+"LLM 혼자는 L4/L5에서 구조적으로 실패한다" (Exp.2)
+    → "Multi-Agent 구조만으로는 해결 불가" (Exp.4)
+    → "도구(Batfish)가 핵심이다" (Exp.5)
+    → "이 파이프라인은 40노드까지 확장 가능하다" (Exp.3)
 ```
 
 ---
 
-## 실행 리베이스 (2026-02-13)
+## 실행 리베이스 (2026-03-02 갱신)
 
-리스크 감사 결과를 반영해, 제출 직전 범위를 아래처럼 고정합니다.
-
-| 구분 | 실험 | 제출 필수 여부 | 실행 기준 |
-|---|---|:---:|---|
-| Core | Exp.1 Dataset Validation | ✅ 필수 | L1~L5 기준 3-Layer 완료 |
-| Core | Exp.2 Single LLM Baseline | ✅ 필수 | v2(1,128) 재실험 완료 |
-| Core | Exp.3 NetAlly MAS Eval | ✅ 필수 | Lab-A 기준 비교표 완성 |
-| Scale | Exp.4 Scalability | ✅ 최소 필수 | **Lab-B(20노드) 단일 증거** 확보 |
-| External | Exp.5 External Benchmark | ⚠️ 선택 | **NIKA 우선 1개** |
+| 구분 | 실험 | 제출 필수 여부 | 실행 기준 | 상태 |
+|---|---|:---:|---|:---:|
+| Core | Exp.1 Dataset Validation | ✅ 필수 | 3-Method Hybrid 완료 | ✅ Method 1-2 완료 |
+| Core | Exp.2 Single LLM Baseline | ✅ 필수 | 7모델 × Lab-A | ⬜ 실험 필요 |
+| Core | Exp.3 Scalability | ✅ 필수 | **Lab A→B→C→D 전부 데이터 완료** | ✅ 데이터 준비 완료 |
+| Core | Exp.4 Pure MAS (도구 없음) | ✅ 필수 | Lab-A, 2모델 | ⬜ 실험 필요 |
+| Core | Exp.5 NetAlly MAS | ✅ 필수 | Lab-A, 2모델 | ⬜ 실험 필요 |
+| Sub | Exp.5b Tool Ablation | 🟡 권장 | Batfish only / NSO only / Full | ⬜ 옵션 |
+| External | Exp.6 External Benchmark | ⚠️ 선택 | NIKA 우선 1개 | ⬜ 선택 |
 
 ### Scope Freeze
 
-1. 제출 본문 데이터셋 범위는 **v2 공개본 L1~L5 (1,128)**로 고정
-2. L6는 이번 논문에서는 **제외** (코드는 보존하되 결과/표/평가에 미포함)
-   - 사유: fault별 snapshot/context 동시 관리 필요, single-LLM baseline 공정성 저하, 일정 내 재현성 확보 어려움
-3. Lab-C/Lab-D, NetPress/NetConfEval은 잔여 시간 기반으로 선택
+1. 데이터셋: **Lab-A 1,264 QA (L1~L5)** 기준으로 Exp.2/4/5 실행
+2. L6는 이번 논문에서는 **제외** (코드 보존, 결과/표/평가 미포함)
+3. Scalability(Exp.3)는 단일 Best 모델 + NetAlly 2가지로 비교
+
+---
+
+## 실험 실행 순서
+
+```
+Step 1: Exp.2 Single LLM (7모델) 실행
+            ↓
+        L4/L5 랭킹 확인 → MAS 백본 2개 선정
+            ↓
+Step 2: Exp.4 Pure MAS (선정된 2모델)
+Step 3: Exp.5 NetAlly MAS (동일 2모델)
+            ↓
+        3-way 비교 테이블 완성
+            ↓
+Step 4: Exp.3 Scalability (Best 모델 1개 × A→D)
+```
 
 ---
 
@@ -70,8 +97,8 @@
 
 | 항목 | 값 |
 |---|---|
-| 데이터셋 | NetConfigQA2.0 v2 (~1,048 QA, L1~L5) |
-| 토폴로지 | Research_Institute_Internal_DC (10 nodes) |
+| 데이터셋 | NetConfigQA2.0 (Lab-A: 1,264 QA, L1~L5) |
+| 토폴로지 | LabA_Research_Institute_DC_10nodes (10 nodes) |
 | Method 1 | Batfish-free Independent Parser (L1-L3 전수 800건) |
 | Method 2 | Stratified Sampling + 자동 교차검증 + 사람 검토 (43건) |
 | Method 3 | PNETLab 실환경 CLI 검증 (L4 23건 + L5 21건) |
@@ -86,7 +113,7 @@ Method 2: 사람이 .cfg 원본을 직접 트레이스 — 수동 로직 검증
 Method 3: PNETLab 실장비 CLI 실행 — 실환경 검증
 ```
 
-### 실행 결과 (✅ Method 1-2 완료, ⬜ Method 3 사람 실행 대기)
+### 실행 결과
 
 **Table 1: Dataset Verification Results**
 
@@ -110,303 +137,380 @@ Method 3: PNETLab 실장비 CLI 실행 — 실환경 검증
 
 > 4건 불일치 모두 Batfish VRF 이중 카운팅 아티팩트 → 독립 파서가 더 정확 → 실질 100%
 
-### 알려진 데이터 오류 (5건)
-
-| # | QA ID | 원인 | 심각도 | 보정 방법 |
-|---|---|---|---|---|
-| 1-4 | RT_IMPORT/EXPORT_COUNT_pe1/pe2 | Batfish VRF 이중 카운팅 (6→3) | Low | 파이프라인 dedup 패치 |
-| 5 | ALL_DEVICES_SAME_AS | BGP 미설정 장비 "AS None" 포함 | Low | 설계 선택으로 문서화 |
-
 ---
 
-## Experiment 2: Single LLM Baseline (KICS 확장)
+## Experiment 2: Single LLM Baseline
 
 ### 목적
 
-> LLM의 네트워크 설정 이해 한계를 계량적으로 입증 (특히 L4/L5)
+> LLM 단독으로 네트워크 설정을 해석할 때의 성능 한계를 계량적으로 입증
 
 ### 설정
 
 | 항목 | 값 |
 |---|---|
-| 데이터셋 | NetConfigQA2.0 v2 (1,128 QA, L1~L5) |
-| 모델 | GPT-4o-mini, GPT-OSS-20B, Llama-3.1-8B, Mistral3-8B, Qwen3-8B |
-| 평가 지표 | TA-Acc (Type-Aware Accuracy) |
+| 데이터셋 | NetConfigQA2.0 Lab-A (1,264 QA, L1~L5) |
+| 평가 지표 | TA-Acc (Type-Aware Accuracy) + **Format Stability Metrics** |
 | 프롬프트 | Zero-shot, 전체 설정 파일 제공 |
 | 반복 | 3회 (평균 ± 표준편차) |
 
-### KICS 2026 기존 결과 (10노드)
+### 추가 지표: Format Stability Metrics
 
-**Table 3: Single LLM Performance (TA-Acc) — Baseline**
+TA-Acc만으로는 "모델이 답을 모르는 것"과 "답을 알지만 포맷을 못 맞추는 것"을 구분할 수 없음.
+Exp.2 로그에서 아래 2개 지표를 추가 측정하여, MAS Executor 적합성 판단 근거로 활용.
 
-| Model | L1 | L2 | L3 | L4 | L5 | Overall |
+**측정 방법**: LLM 원본 출력을 answer_type별 파서에 통과시켜 사후 집계 (추가 실험 불필요)
+
+| answer_type | Parse Success 기준 | Completeness 기준 |
+|---|---|---|
+| `scalar_str/int` | 단일 값 토큰 추출 가능 | — (스칼라) |
+| `bool` | yes/no/true/false 식별 가능 | — |
+| `set_str` | 쉼표/줄바꿈 구분 리스트 파싱 가능 | 기대 원소 수 대비 추출 비율 |
+| `map_str_int` | key:value 쌍 파싱 가능 | 기대 키 수 대비 추출 비율 |
+| `path` | 노드 시퀀스(→ 구분자) 파싱 가능 | 기대 홉 수 대비 추출 비율 |
+
+**Table 3-B (목표): Format Stability — Parse Success Rate per Model**
+
+| Model | scalar | bool | set | map | path | Overall Parse % |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|
-| GPT-4o-mini | 0.806 | 0.806 | 0.494 | 0.211 | 0.141 | 0.611 |
-| GPT-OSS-20B | **0.873** | **0.873** | **0.605** | **0.266** | 0.134 | **0.672** |
-| Llama-3.1-8B | 0.530 | 0.443 | 0.261 | 0.144 | 0.102 | 0.387 |
-| Mistral3-8B | 0.663 | 0.557 | 0.389 | 0.174 | 0.134 | 0.477 |
-| Qwen3-8B | 0.746 | 0.741 | 0.485 | 0.201 | **0.157** | 0.560 |
+| GPT-4o-mini | ? | ? | ? | ? | ? | ? |
+| ... | ... | ... | ... | ... | ... | ... |
 
-### 핵심 관찰
+> **활용**: TA-Acc가 유사한 모델 간에도 형식 안정성 차이가 있음을 보여줌
+> → "MAS Executor로는 형식 안정성이 높은 모델이 유리" 라는 발견 도출 가능
+
+### 모델 선정 (6개) — Ollama 서빙 확정
+
+| # | 모델 | Ollama 태그 | 벤더 | 양자화 | VRAM | Context | 선정 이유 |
+|---|---|---|---|---|:---:|:---:|---|
+| 1 | GPT-4o-mini | (OpenAI API) | OpenAI | — | — | 128K | 유일한 API 모델, 업계 기준선 |
+| 2 | GPT-OSS-20B | `gpt-oss:20b` | OpenAI | MXFP4 (native) | 14GB | — | KICS Best, 비교 앵커 |
+| 3 | Qwen3-Coder | `qwen3-coder:30b-a3b-q4_K_M` | Alibaba | Q4_K_M | 19GB | **256K** | 코딩+Agent 특화, 30B/3.3B active MoE |
+| 4 | Gemma-3-27B | `gemma3:27b-it-q4_K_M` | Google | Q4_K_M | 17GB | 128K | 범용 대형, 벤더 다양성 |
+| 5 | GLM-4.7-Flash | `glm-4.7-flash:q4_K_M` | Zhipu | Q4_K_M | 19GB | **198K** | 범용 MoE, 도구호출 강점 |
+| 6 | Qwen3.5-27B | `qwen3.5:27b` | Alibaba | Q4_K_M | 17GB | **262K** | 최신 로컬 SOTA |
+
+> **벤더 4곳**: OpenAI(2) / Alibaba(2) / Google(1) / Zhipu(1)
+> **서빙**: API 1개 (GPT-4o-mini) + Ollama 5개 (순차 실행, RTX 3090 24GB)
+> **Context 검증**: Lab-D (40노드) 전체 = ~25,000 토큰 → 6개 모델 전부 여유 (최소 128K)
+>
+> **Qwen3-Coder vs GLM-4.7-Flash**: 둘 다 MoE/3B-active이지만 "코딩Agent특화 vs 범용"
+> → "코딩 특화 모델이 네트워크 config 해석에서도 우위를 보이는가?" 연구 질문
+
+### 서빙 환경 및 재현성 설정
+
+**Ollama 버전**: `>= 0.14.3` (GLM-4.7-Flash 지원에 필요, pre-release)
+
+**평가 전용 Modelfile (재현성 확보)**:
+```
+# 평가 파라미터 (run_eval.py Config 클래스에서 관리)
+temperature = 0
+num_ctx = 49,152      # Lab-D 31K input 토큰 커버
+MAX_OUTPUT_TOKENS = 70,000  # reasoning 모델의 내부 추론 토큰 포함
+```
+> `num_ctx=49,152`: Lab-D(40노드) 전체 config = ~31K 토큰 + 시스템 프롬프트 + 출력 여유
+> `MAX_OUTPUT_TOKENS=70,000`: GPT-OSS-20B 등 reasoning 모델이 내부 추론에 최대 ~19K 토큰 사용 관찰 → 넉넉히 설정
+> 모델별 기본 컨텍스트(128K~262K)가 다르므로, **공정 비교를 위해 num_ctx 통일**
+> Ollama native API (`/api/chat`) 사용 — OpenAI 호환 API는 num_ctx 전달 불가
+
+**모델별 eval 래퍼 생성 예시**:
+```bash
+# Modelfile.gemma3-eval
+FROM gemma3:27b-it-q4_K_M
+PARAMETER temperature 0
+PARAMETER top_p 1
+PARAMETER num_ctx 32768
+
+# 생성
+ollama create gemma3-eval -f Modelfile.gemma3-eval
+# 사용
+ollama run gemma3-eval
+```
+
+**Ollama 모델 다운로드 명령어**:
+```bash
+ollama pull gpt-oss:20b
+ollama pull qwen3-coder:30b-a3b-q4_K_M
+ollama pull gemma3:27b-it-q4_K_M
+ollama pull glm-4.7-flash:q4_K_M          # Ollama >= 0.14.3 필요
+ollama pull qwen3.5:27b
+```
+
+### KICS 2026 참조 결과 (10노드, v1 762 QA)
+
+**Table 2: KICS Baseline (참조용 — 모델/데이터 변경으로 직접 비교 불가)**
+
+| Model | L1 | L2 | L3 | L4 | L5 |
+|---|:---:|:---:|:---:|:---:|:---:|
+| GPT-4o-mini | 0.765 | 0.541 | 0.369 | 0.267 | 0.159 |
+| GPT-OSS-20B | **0.873** | **0.873** | **0.605** | **0.266** | 0.134 |
+
+> KICS에서 사용했던 Llama-3.1-8B, Mistral3-8B, Qwen3-8B는 최신 모델로 교체됨
+
+**Table 3 (목표): Single LLM TA-Acc — 6 Models × 4 Labs**
+
+| Model | Lab-A (10) | Lab-B (20) | Lab-C (30) | Lab-D (40) |
+|---|:---:|:---:|:---:|:---:|
+| GPT-4o-mini | ? | ? | ? | ? |
+| GPT-OSS-20B | ? | ? | ? | ? |
+| Qwen3-Coder-Next | ? | ? | ? | ? |
+| Gemma-3-12B | ? | ? | ? | ? |
+| GLM-4.7-Flash | ? | ? | ? | ? |
+| Qwen3.5-27B | ? | ? | ? | ? |
+
+> 가로: Scalability (규모 증가에 따른 성능 변화)
+> 세로: Model Comparison (모델 간 성능 비교)
+> Exp.2와 Exp.3을 하나의 테이블로 통합
+
+### 핵심 관찰 (KICS 기반 예상)
 
 1. **L4 절벽**: 모든 모델이 L3→L4에서 급격한 성능 하락 (평균 0.45 → 0.20)
-2. **L5 바닥**: 최고 모델도 0.157 — 사실상 랜덤 수준
-3. **규모 효과**: L1-L3는 모델 크기가 클수록 유리, L4-L5에서는 크기 무관하게 실패
-4. **BERTScore 무용**: 모든 레벨에서 0.9+ → 변별력 완전 부재
+2. **L5 바닥**: 최고 모델도 0.2 이하 — 사실상 시뮬레이션 불가
+3. **BERTScore 무용**: 모든 레벨에서 0.9+ → 변별력 완전 부재 → TA-Acc 정당성
 
-### 추가 실험 (IEEE TNMS)
+### MAS 백본 선정 규칙
 
-- **v2 데이터셋** (1,128건)으로 재실험 → 동일 트렌드 확인
-- **GPT-4o** 추가 실험 → 최대 모델도 L4/L5 실패 확인
+> **규칙: Exp.2의 Overall TA-Acc Top-1 오픈소스 모델을 Exp.4/5 백본으로 사용한다.**
 
----
+- Overall Top-1을 선택하는 이유: 특정 레벨에 가중치를 두면 cherry-picking 비판이 생김
+- 오픈소스 단독으로 가는 이유: "오픈소스 로컬 모델 + Agent + 도구 = API 모델 단독 수준 도달?" 이라는 연구 질문에 부합
+- GPT-4o-mini / GPT-OSS-20B는 Exp.2 참조선(reference)으로만 사용, Exp.4/5에는 불포함
 
-## Experiment 3: NetAlly MAS Evaluation ⭐ 핵심
-
-### 목적
-
-> NetAlly(Multi-Agent + 도구)가 Single LLM의 L4/L5 한계를 극복할 수 있는가?
-
-### 설정
-
-| 항목 | 값 |
-|---|---|
-| 데이터셋 | NetConfigQA2.0 v2 (1,128 QA, L1~L5) |
-| 시스템 | NetAlly (Orchestrator + Executor + Batfish/NSO/PNETLab) |
-| 비교 대상 | Best Single LLM (GPT-OSS-20B) |
-| 평가 지표 | TA-Acc, 도구 호출 성공률, 응답 시간 |
-| 토폴로지 | Research_Institute_Internal_DC (10 nodes) |
-
-### 기대 결과
-
-**Table 4: NetAlly vs Best Single LLM**
-
-| Level | Single LLM (GPT-OSS-20B) | NetAlly | Δ | p-value |
-|:---:|:---:|:---:|:---:|:---:|
-| L1 | 0.873 | 0.95+ | +0.08 | ? |
-| L2 | 0.873 | 0.95+ | +0.08 | ? |
-| L3 | 0.605 | 0.85+ | +0.25 | ? |
-| L4 | 0.266 | **0.75+** ⭐ | **+0.48** | ? |
-| L5 | 0.134 | **0.60+** ⭐ | **+0.47** | ? |
-| Overall | 0.672 | 0.85+ | +0.18 | ? |
-
-### 세부 분석 테이블
-
-**Table 5: NetAlly Tool Usage Analysis**
-
-| Level | Query Type | Primary Tool | Tool Call Success Rate | Avg. Response Time |
-|:---:|---|---|:---:|:---:|
-| L1 | Config Lookup | NSO / Parser | ? | ? |
-| L2 | Aggregation | NSO + Logic | ? | ? |
-| L3 | Cross-Check | Batfish + Logic | ? | ? |
-| L4 | Reachability | **Batfish traceroute** | ? | ? |
-| L5 | What-If | **Batfish fork_snapshot** | ? | ? |
-
-**Table 6: Error Analysis — Where NetAlly Still Fails**
-
-| Error Type | Count | Example | Root Cause |
-|---|:---:|---|---|
-| Tool Selection Error | ? | L4 질문에 NSO 호출 | Orchestrator 판단 오류 |
-| Tool Execution Error | ? | Batfish 쿼리 파라미터 오류 | Executor 구문 생성 실패 |
-| Answer Formatting Error | ? | 정답 추출 실패 | 출력 파싱 문제 |
-| Genuine Reasoning Error | ? | 복합 경로 추론 실패 | LLM 추론 한계 |
+```
+Exp.2 결과 → Overall TA-Acc 랭킹
+  → Top-1 오픈소스 모델 선택 (예: Qwen3.5-27B 또는 GLM-4.7-Flash)
+  → 동일 모델로 Single(Exp.2) / Pure MAS(Exp.4) / NetAlly(Exp.5) 3-way 비교
+  → 유일한 변수 = "구조" 와 "도구"
+```
 
 ---
 
-## Experiment 4: Scalability Analysis
+## Experiment 3: Scalability Analysis
 
 ### 목적
 
-> 네트워크 규모 증가에 따른 LLM과 NetAlly의 성능 변화를 관찰
+> 동일 파이프라인으로 네트워크 규모(10→40노드)에 따른 QA 생성과 LLM 성능 변화를 관찰
 
-### 설정
+### 데이터셋 현황 (✅ 전부 생성 완료, 2026-03-02)
 
-| Lab | Nodes | QA Count | Domain |
-|---|:---:|:---:|---|
-| Lab-A | 10 | ~1,128 | SP MPLS VPN |
-| Lab-B | 20 | ~2,200 | SP MPLS VPN Extended |
-| Lab-C (옵션) | 30 | ~3,500 | Security-Focused |
-
-> 제출 최소 기준: **Lab-A + Lab-B** 비교 완료  
-> Lab-C는 preliminary 결과가 있을 때만 본문에 포함
+| Lab | Nodes | QA Count | Level Distribution | Domain |
+|---|:---:|:---:|---|---|
+| Lab-A | 10 | **1,264** | L1:660 L2:104 L3:252 L4:146 L5:102 | SP MPLS VPN |
+| Lab-B | 20 | **2,154** | L1:1230 L2:101 L3:255 L4:441 L5:127 | SP Extended |
+| Lab-C | 30 | **2,673** | L1:1230 L2:80 L3:255 L4:954 L5:154 | Security + L2VPN |
+| Lab-D | 40 | **3,371** | L1:1230 L2:69 L3:253 L4:1657 L5:162 | Multi-AS Complex |
 
 ### 결과 테이블 형식
 
-**Table 7: Scalability — Single LLM (GPT-OSS-20B)**
+**Table 4: Scalability — Single LLM (Best Model)**
 
-| Level | 10 nodes | 20 nodes | 30 nodes | Degradation Rate |
-|:---:|:---:|:---:|:---:|:---:|
-| L1 | 0.873 | ? | ? | ? |
-| L2 | 0.873 | ? | ? | ? |
-| L3 | 0.605 | ? | ? | ? |
-| L4 | 0.266 | ? | ? | ? |
-| L5 | 0.134 | ? | ? | ? |
+| Level | 10 nodes | 20 nodes | 30 nodes | 40 nodes | Degradation |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| L1 | ? | ? | ? | ? | ? |
+| L2 | ? | ? | ? | ? | ? |
+| L3 | ? | ? | ? | ? | ? |
+| L4 | ? | ? | ? | ? | ? |
+| L5 | ? | ? | ? | ? | ? |
 
-**Table 8: Scalability — NetAlly**
+**Table 5: Pipeline Scalability — QA Generation**
 
-| Level | 10 nodes | 20 nodes | 30 nodes | Degradation Rate |
-|:---:|:---:|:---:|:---:|:---:|
-| L1 | ? | ? | ? | ? |
-| L2 | ? | ? | ? | ? |
-| L3 | ? | ? | ? | ? |
-| L4 | ? | ? | ? | ? |
-| L5 | ? | ? | ? | ? |
+| Lab | Nodes | Config Files | Total QA | QA/Node |
+|---|:---:|:---:|:---:|:---:|
+| Lab-A | 10 | 10 | **1,264** | **126** |
+| Lab-B | 20 | 20 | **2,154** | **108** |
+| Lab-C | 30 | 30 | **2,673** | **89** |
+| Lab-D | 40 | 40 | **3,371** | **84** |
 
-**기대 그래프**: 
-
-```
-TA-Acc
-  1.0 ┤
-      │  ── NetAlly L1-L3 (안정적)
-  0.8 ┤  ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─
-      │  ── LLM L1-L3 (점진적 하락)
-  0.6 ┤  ·───·───·
-      │  ── NetAlly L4-L5 (도구 덕분에 안정)
-  0.4 ┤  ─ ─ ─ · ─ ─ · ─ ─ · ─ ─
-      │
-  0.2 ┤  ── LLM L4-L5 (급격 하락)
-      │  ·───·
-  0.0 ┤───·──────────────────────
-      10    20    30     Nodes
-```
-
-> **핵심 메시지**: "Single LLM은 규모 증가에 따라 L4/L5 성능이 더욱 하락하지만, NetAlly는 도구를 활용하므로 규모에 robust하다"
-
-### Pipeline Scalability 분석
-
-**Table 9: QA Generation Pipeline Performance**
-
-| Lab | Nodes | Config Files | Total QA | Generation Time | QA/Node |
-|---|:---:|:---:|:---:|:---:|:---:|
-| Lab-A | 10 | 10 | 1,128 | ? | ~113 |
-| Lab-B | 20 | 20 | ~2,200 | ? | ~110 |
-| Lab-C | 30 | 30 | ~3,500 | ? | ~117 |
-
-> "QA/Node 비율이 일정 → 파이프라인이 선형적으로 확장됨을 입증"
+> "QA/Node 비율이 일정(84~126) → 파이프라인이 선형적으로 확장됨을 입증"
+> "동일 policies.json으로 토폴로지만 교체하면 메트릭 커버리지 52% → 97%로 자동 확장"
 
 ---
 
-## Experiment 5: External Benchmark Evaluation
+## Experiment 4: Pure MAS Evaluation (도구 없음) ⭐ 신규
 
 ### 목적
 
-> NetAlly가 내부 데이터셋뿐 아니라 외부 벤치마크에서도 우수한 성능을 보이는가?
+> Multi-Agent 구조 자체의 효과를 도구 효과와 분리하여 측정
+> "구조만으로는 L4/L5 한계를 극복할 수 없다"는 것을 입증
 
-> 제출 최소 기준: **NIKA 1종 우선**  
-> NetPress/NetConfEval은 잔여 시간 확보 시 확장
+### 설계 원칙
 
-### 5.1 NIKA — 장애 진단 벤치마크
+```
+Single LLM (Exp.2)    →    Pure MAS (Exp.4)    →    NetAlly (Exp.5)
+─────────────────          ─────────────────          ─────────────────
+LLM 1개                    Orchestrator LLM           Orchestrator LLM
++ config 파일 전체          + Executor LLM             + Executor LLM
+                            (도구 없음)                + Batfish / NSO
 
-| 항목 | 값 |
-|---|---|
-| 벤치마크 | NIKA (ACM SIGCOMM NGNO 2025) |
-| 태스크 | 네트워크 장애 진단 (Detection → Localization → Root Cause) |
-| 시나리오 수 | 5 (DC ~ ISP) |
-| 인시던트 수 | 640 (54 fault types) |
-| 평가 지표 | Detection Accuracy, Localization Accuracy, Root Cause Identification |
-| 비교 대상 | GPT-4o, GPT-OSS-20B (NIKA 논문 기존 결과) |
+비교 목적:                  Exp.2 → Exp.4:            Exp.4 → Exp.5:
+                            구조의 효과 측정           도구의 효과 측정
+```
 
-**Table 10: NIKA Benchmark — NetAlly vs Baselines**
-
-| Metric | GPT-4o (Published) | GPT-OSS-20B | NetAlly | Δ |
-|---|:---:|:---:|:---:|:---:|
-| Detection | ? | ? | ? | ? |
-| Localization | ? | ? | ? | ? |
-| Root Cause | ? | ? | ? | ? |
-
-### 5.2 NetPress — 동적 벤치마크
+### 설정
 
 | 항목 | 값 |
 |---|---|
-| 벤치마크 | NetPress (arXiv 2025) |
-| 태스크 | 라우팅 오설정 진단 (Routing Misconfiguration) |
-| 쿼리 수 | 1,000 (동적 생성) |
-| 평가 지표 | Correctness, Safety, Latency |
-| 비교 대상 | GPT-4o (~24% correctness, NetPress 논문) |
+| 데이터셋 | NetConfigQA2.0 Lab-A (1,264 QA, L1~L5) |
+| 모델 | Exp.2 결과 기반 선정된 2개 (API 1 + Local Best 1) |
+| 구조 | Orchestrator LLM (질문 분해) + Executor LLM (답변 생성) |
+| 도구 | **없음** — config 파일 텍스트만 참조 |
+| 평가 지표 | TA-Acc per Level |
 
-**Table 11: NetPress Benchmark — Routing Misconfiguration**
+### Pure MAS 구조
 
-| Metric | GPT-4o (Published) | NetAlly | Δ |
-|---|:---:|:---:|:---:|
-| Correctness | ~24% | ? | ? |
-| Safety | ? | ? | ? |
-| Avg. Latency | ? | ? | ? |
+```
+[질문] → Orchestrator LLM
+              ↓ (질문 분해, 필요 정보 파악)
+         "PE1의 Loopback0 IP를 찾아라"
+         "P1-P2 링크가 다운되면..."
+              ↓
+         Executor LLM
+              ↓ (config 파일 텍스트 검색 + 답변)
+         [답변 반환]
+              ↓
+         Orchestrator LLM
+              ↓ (최종 답변 통합)
+         [최종 답변]
+```
 
-### 5.3 NetConfEval — 설정 생성 + Batfish 검증
+> L4/L5에서 Executor가 "config 텍스트로는 traceroute 결과를 알 수 없음" → 실패 예상
 
-| 항목 | 값 |
-|---|---|
-| 벤치마크 | NetConfEval (ACM CoNEXT 2024) |
-| 태스크 | Low-level Config Generation (Task 4) |
-| 워크플로우 | Agent 생성 → Batfish 자동 검증 → Pass/Fail |
-| 평가 지표 | Generation Accuracy, Batfish Validation Pass Rate |
-| 비교 대상 | GPT-4 / GPT-4o (NetConfEval 논문 기존 결과) |
+### 기대 결과
 
-**Table 12: NetConfEval — Config Generation + Validation**
+**Table 6 (목표): Pure MAS vs Single LLM**
 
-| Metric | GPT-4 (Published) | NetAlly | Δ |
-|---|:---:|:---:|:---:|
-| Syntax Correctness | ? | ? | ? |
-| Semantic Correctness (Batfish) | ? | ? | ? |
-| Task 4 Accuracy | ? | ? | ? |
+| Level | Single LLM | Pure MAS | Δ (구조 효과) | 해석 |
+|:---:|:---:|:---:|:---:|---|
+| L1 | ~0.85 | ~0.88 | +0.03 | 질문 분해로 소폭 향상 |
+| L2 | ~0.85 | ~0.87 | +0.02 | 집계 질문 분해 도움 |
+| L3 | ~0.60 | ~0.63 | +0.03 | 정합성 검증 소폭 향상 |
+| L4 | ~0.25 | ~0.27 | **+0.02** | **구조만으로는 무의미** |
+| L5 | ~0.15 | ~0.16 | **+0.01** | **시뮬레이션 불가 → 실패** |
+
+> **핵심 메시지**: L4/L5에서 Pure MAS ≈ Single LLM → 구조가 아니라 도구가 핵심
 
 ---
 
-## 논문 내 Figure 목록 (계획)
+## Experiment 5: NetAlly MAS Evaluation ⭐ 핵심
 
-| Figure # | 내용 | 유형 |
-|:---:|---|---|
-| Fig. 1 | System Architecture (NetAlly + NetConfigQA2.0) | Diagram |
-| Fig. 2 | QA Generation Pipeline (Dual-Path) | Flowchart |
-| Fig. 3 | Difficulty Level vs TA-Acc (전 모델) | Bar Chart |
-| Fig. 4 | Single LLM vs NetAlly (Level별) | Grouped Bar |
-| Fig. 5 | Scalability: TA-Acc vs Node Count | Line Chart |
-| Fig. 6 | Error Analysis (Pie/Bar) | Bar Charts |
-| Fig. 7 | External Benchmark Comparison (Radar) | Radar Chart |
+### 목적
+
+> 도구를 가진 NetAlly가 Pure MAS의 L4/L5 한계를 극복할 수 있는가?
+> "Batfish 도구 호출이 성능 향상의 원천임"을 입증
+
+### 설정
+
+| 항목 | 값 |
+|---|---|
+| 데이터셋 | NetConfigQA2.0 Lab-A (1,264 QA, L1~L5) |
+| 시스템 | NetAlly (Orchestrator + Executor + Batfish/NSO/PNETLab) |
+| 모델 | Exp.2와 동일 2개 (공정 비교) |
+| 평가 지표 | TA-Acc, 도구 호출 성공률, 응답 시간 |
+
+### 핵심 비교 테이블 (논문 메인 테이블)
+
+**Table 7: 3-Way Comparison — Single LLM vs Pure MAS vs NetAlly**
+
+| Level | Single LLM | Pure MAS | **NetAlly** | Δ(구조) | **Δ(도구)** |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| L1 | ~0.85 | ~0.88 | ~0.95 | +0.03 | +0.07 |
+| L2 | ~0.85 | ~0.87 | ~0.95 | +0.02 | +0.08 |
+| L3 | ~0.60 | ~0.63 | ~0.85 | +0.03 | +0.22 |
+| **L4** | **~0.25** | **~0.27** | **~0.75** | +0.02 | **+0.48 ★** |
+| **L5** | **~0.15** | **~0.16** | **~0.60** | +0.01 | **+0.44 ★** |
+
+> L4/L5에서 Δ(도구) >> Δ(구조) → "Multi-Agent 구조보다 도구 접근이 핵심"
+
+### 도구별 기여 분석
+
+**Table 8: NetAlly Tool Usage Analysis**
+
+| Level | Primary Tool | Success Rate | Avg. Latency |
+|:---:|---|:---:|:---:|
+| L1 | NSO / Config Parser | ? | ? |
+| L2 | NSO + Aggregation Logic | ? | ? |
+| L3 | Batfish + Cross-check | ? | ? |
+| L4 | **Batfish traceroute** | ? | ? |
+| L5 | **Batfish fork_snapshot** | ? | ? |
+
+### (옵션) Exp.5b: Tool Ablation
+
+| 설정 | 사용 도구 | 목적 |
+|---|---|---|
+| Batfish only | Batfish만 | L4/L5에서 Batfish 단독 기여 측정 |
+| NSO only | NSO만 | L1-L3에서 NSO 기여 측정 |
+| Full NetAlly | Batfish + NSO | 전체 시스템 |
 
 ---
 
-## 논문 내 Table 목록 (계획)
+## Error Analysis (Discussion 섹션)
+
+> 추가 실험 불필요 — Exp.2 결과 데이터에서 추출
+
+**분류 기준 (L4/L5 실패 사례 30건 이상)**
+
+| 오류 유형 | 예상 비율 | 원인 |
+|---|:---:|---|
+| Data plane 시뮬레이션 불가 | ~50% | LLM은 traceroute를 텍스트로 추론 불가 |
+| Multi-hop 경로 추론 실패 | ~25% | 4+ 홉 경로에서 중간 노드 누락 |
+| Context window 초과 | ~15% | 40노드 config 파일 길이 → L4/L5 답변 퇴화 |
+| 답변 형식 오류 | ~10% | path/set 타입 포매팅 실패 |
+
+> **핵심 주장**: "L4/L5 실패는 프롬프트 전략으로 해결 불가 — 근본적으로 데이터 플레인 시뮬레이션 엔진이 필요"
+
+---
+
+## 논문 핵심 주장 3가지
+
+1. **"LLM은 L4/L5에서 구조적으로 실패한다"**
+   - 근거: Exp.2 (Table 3) — 7개 모델 모두 L4 ≤ 0.3
+   - 원인: Data plane 시뮬레이션 불가, Context overflow
+
+2. **"Multi-Agent 구조만으로는 이 한계를 극복할 수 없다"**
+   - 근거: Exp.4 (Table 6) — Pure MAS ≈ Single LLM at L4/L5
+   - 의미: 구조가 아니라 도구가 핵심임을 역설적으로 입증
+
+3. **"Batfish 도구를 가진 NetAlly가 이 한계를 극복한다"**
+   - 근거: Exp.5 (Table 7) — NetAlly L4 ~0.75+, L5 ~0.60+
+   - 의미: 도구 활용형 MAS의 실용적 가치 입증
+
+---
+
+## 논문 내 Table 목록
 
 | Table # | 내용 | Section | 상태 |
 |:---:|---|---|:---:|
-| Table I | Dataset Statistics (Level × Category × Answer Type) | III-B | 데이터 있음 |
-| Table II | Dataset Verification Results (3-Method Hybrid) | III-C | ✅ 결과 확보 |
-| Table II-B | Method 1 Answer Type별 Agreement | III-C | ✅ 결과 확보 |
-| Table III | Single LLM Baseline (TA-Acc per Level) | IV-A | KICS 결과 있음, v2 재실험 필요 |
-| Table IV | NetAlly vs Best Single LLM | IV-B | ⬜ 실험 필요 |
-| Table V | NetAlly Tool Usage Analysis | IV-B | ⬜ 실험 필요 |
-| Table VI | Error Analysis | IV-C | ⬜ 실험 필요 |
-| Table VII | Scalability — Single LLM | IV-D | ⬜ Lab-B 필요 |
-| Table VIII | Scalability — NetAlly | IV-D | ⬜ Lab-B 필요 |
-| Table IX | Pipeline Scalability | IV-D | 부분 가능 (Config Gen 완료) |
-| Table X-XII | External Benchmarks (NIKA 우선) | IV-E | ⬜ 선택 |
-| Table XIII | Related Work Comparison | II | ✅ research_notes.md 완료 |
+| Table I | Dataset Statistics (Lab별 × Level × Category) | III-B | ✅ 데이터 있음 |
+| Table II | Dataset Verification Results (3-Method Hybrid) | III-C | ✅ Method 1-2 완료 |
+| Table III | Single LLM Baseline — 7모델 TA-Acc | IV-A | ⬜ 실험 필요 |
+| Table IV | Scalability — QA Pipeline (QA/Node 비율) | IV-B | ✅ 계산 완료 |
+| Table V | Scalability — LLM 성능 vs 노드 수 | IV-B | ⬜ Exp.3 필요 |
+| Table VI | Pure MAS vs Single LLM | IV-C | ⬜ Exp.4 필요 |
+| Table VII | **3-Way: Single / Pure MAS / NetAlly** ⭐ | IV-D | ⬜ Exp.4/5 필요 |
+| Table VIII | NetAlly Tool Usage Analysis | IV-D | ⬜ Exp.5 필요 |
+| Table IX | Related Work Comparison | II | ✅ research_notes.md 완료 |
 
 ---
 
-## 분석 계획 (Discussion)
+## 논문 내 Figure 목록
 
-### 핵심 주장 3가지
+| Figure # | 내용 | 유형 |
+|:---:|---|---|
+| Fig. 1 | System Architecture (NetAlly + NetConfigQA2.0 파이프라인) | Diagram |
+| Fig. 2 | QA Generation Pipeline (Dual-Path) | Flowchart |
+| Fig. 3 | TA-Acc vs Difficulty Level (7모델 비교) | Bar Chart |
+| Fig. 4 | **3-Way: Single / Pure MAS / NetAlly (L1~L5)** ⭐ | Grouped Bar |
+| Fig. 5 | Scalability: TA-Acc vs Node Count | Line Chart |
+| Fig. 6 | Error Analysis — L4/L5 실패 유형 분류 | Pie/Bar |
 
-1. **"LLM은 L4/L5에서 구조적으로 실패한다"**
-   - 근거: Exp.2 (Table III) — 모든 모델 ≤ 0.3
-   - 원인 분석: Context Length vs Config Complexity, Data Plane 시뮬레이션 불가능
+---
 
-2. **"도구 활용형 Agent는 이 한계를 극복한다"**
-   - 근거: Exp.3 (Table IV) — NetAlly L4 0.75+, L5 0.60+
-   - 핵심: LLM이 직접 추론하는 것 vs 도구를 호출하여 결과를 해석하는 것의 차이
-
-3. **"파이프라인과 Agent 모두 규모에 확장 가능하다"**
-   - 근거: Exp.4 (Table VII-IX) — QA/Node 비율 일정, NetAlly 성능 안정
-   - 의의: 연구 프로토타입이 아닌 실용적 도구로의 가능성
-
-### Threats to Validity
+## Threats to Validity
 
 | 위협 | 대응 |
 |---|---|
-| 단일 토폴로지 의존 | Exp.4에서 Lab-B(20노드)로 확장 (Lab-C/D는 preliminary) |
-| Batfish Ground Truth 순환 | **3-Method Hybrid 검증 완료**: Method 1 Independent Parser (99.5%), Method 2 Manual (97.7%), Method 3 PNETLab 실환경 (대기) |
 | 단일 벤더 (Cisco IOS) | 명시적 한계로 기술 + Future Work |
-| 소규모 데이터셋 | 확장성 입증 (10→20→40 노드), 동적 생성 파이프라인 |
-| NetAlly unfair advantage | NetAlly는 Batfish를 도구로 사용하지만, Ground Truth도 Batfish로 생성됨 → 이를 논문에서 명시적으로 논의하고, 외부 벤치마크(Exp.5)에서 도구 편향 없는 평가 제공 |
+| Batfish Ground Truth 순환 | **3-Method Hybrid**: Method 1 Independent Parser (99.5%), Method 2 Manual (97.7%), Method 3 PNETLab (대기) |
+| NetAlly unfair advantage | Exp.4 Pure MAS로 도구 효과 분리 측정 — "도구가 핵심"임을 정량화 |
+| 소규모 토폴로지 | Exp.3 Scalability (10→40노드) + QA/Node 선형성 입증 |
+| 단일 언어 (한국어) | KO/EN 이중언어 데이터셋 생성 완료, 정답은 언어 중립 토큰 |
