@@ -1,0 +1,3465 @@
+{
+  "devices": [
+    {
+      "vendor": "cisco",
+      "system": {
+        "hostname": "leaf1",
+        "version": "15.7",
+        "users": [
+          "admin"
+        ],
+        "domain_name": "ncn.go.kr",
+        "timezone": "KST 9"
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": false,
+          "authentication": "local"
+        }
+      },
+      "logging": {
+        "hosts": [
+          "10.10.10.1"
+        ]
+      },
+      "interfaces": [
+        {
+          "name": "GigabitEthernet0/0",
+          "ipv4": "172.16.1.2/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/7",
+          "ipv4": "10.10.10.31/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        }
+      ],
+      "routing": {
+        "bgp": {
+          "local_as": null,
+          "neighbors": [],
+          "vrfs": []
+        },
+        "ospf": {
+          "process_ids": [],
+          "areas": {}
+        }
+      },
+      "services": {
+        "ntp": {
+          "servers": [
+            "10.10.10.1"
+          ]
+        },
+        "vrf": [],
+        "mpls": {
+          "ldp_interfaces": [],
+          "ldp": {}
+        }
+      },
+      "configuration": {
+        "security": {
+          "password_encryption": false,
+          "enable_secret": "None",
+          "console_password": "None",
+          "exec_timeout": "None",
+          "banner_motd": "None",
+          "banner_login": "None",
+          "http_server": false,
+          "cdp": true,
+          "ip_source_route": true
+        },
+        "operational": {
+          "snmp_communities": [],
+          "loopback_interfaces": [],
+          "name_servers": []
+        },
+        "routing": {
+          "ospf_processes": [],
+          "bgp_as": [],
+          "mpls_ldp_enabled": false,
+          "mpls_ldp_rid": null,
+          "default_route_next_hops": [
+            "172.16.1.1",
+            "10.10.10.1"
+          ],
+          "static_routes_count": 3
+        },
+        "advanced": {
+          "acls_count": 0,
+          "acl_interfaces": [],
+          "prefix_lists_count": 0,
+          "route_maps_count": 0,
+          "class_maps": [],
+          "netflow_monitors": [],
+          "missing_descriptions_count": 2,
+          "eigrp_as": [],
+          "rip_enabled": false,
+          "fhrp_groups": [],
+          "multicast_enabled": false
+        }
+      },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
+        }
+      },
+      "parser_provenance": {
+        "source_file": "C:\\Users\\sdlab\\workspace\\GIA\\Data\\Pnetlab\\LabB_NCN_Basic_SP_20nodes\\configs\\leaf1.cfg",
+        "config_found": true,
+        "assumed_fields": [
+          "configuration.security.cdp",
+          "configuration.security.ip_source_route"
+        ],
+        "parse_warnings": []
+      },
+      "file": "leaf1.cfg",
+      "num_interfaces": 2
+    },
+    {
+      "vendor": "cisco",
+      "system": {
+        "hostname": "leaf2",
+        "version": "15.7",
+        "users": [
+          "admin"
+        ],
+        "domain_name": "ncn.go.kr",
+        "timezone": "KST 9"
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": false,
+          "authentication": "local"
+        }
+      },
+      "logging": {
+        "hosts": [
+          "10.10.10.1"
+        ]
+      },
+      "interfaces": [
+        {
+          "name": "GigabitEthernet0/0",
+          "ipv4": "172.16.2.2/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/7",
+          "ipv4": "10.10.10.32/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        }
+      ],
+      "routing": {
+        "bgp": {
+          "local_as": null,
+          "neighbors": [],
+          "vrfs": []
+        },
+        "ospf": {
+          "process_ids": [],
+          "areas": {}
+        }
+      },
+      "services": {
+        "ntp": {
+          "servers": [
+            "10.10.10.1"
+          ]
+        },
+        "vrf": [],
+        "mpls": {
+          "ldp_interfaces": [],
+          "ldp": {}
+        }
+      },
+      "configuration": {
+        "security": {
+          "password_encryption": false,
+          "enable_secret": "None",
+          "console_password": "None",
+          "exec_timeout": "None",
+          "banner_motd": "None",
+          "banner_login": "None",
+          "http_server": false,
+          "cdp": true,
+          "ip_source_route": true
+        },
+        "operational": {
+          "snmp_communities": [],
+          "loopback_interfaces": [],
+          "name_servers": []
+        },
+        "routing": {
+          "ospf_processes": [],
+          "bgp_as": [],
+          "mpls_ldp_enabled": false,
+          "mpls_ldp_rid": null,
+          "default_route_next_hops": [
+            "172.16.2.1",
+            "10.10.10.1"
+          ],
+          "static_routes_count": 3
+        },
+        "advanced": {
+          "acls_count": 0,
+          "acl_interfaces": [],
+          "prefix_lists_count": 0,
+          "route_maps_count": 0,
+          "class_maps": [],
+          "netflow_monitors": [],
+          "missing_descriptions_count": 2,
+          "eigrp_as": [],
+          "rip_enabled": false,
+          "fhrp_groups": [],
+          "multicast_enabled": false
+        }
+      },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
+        }
+      },
+      "parser_provenance": {
+        "source_file": "C:\\Users\\sdlab\\workspace\\GIA\\Data\\Pnetlab\\LabB_NCN_Basic_SP_20nodes\\configs\\leaf2.cfg",
+        "config_found": true,
+        "assumed_fields": [
+          "configuration.security.cdp",
+          "configuration.security.ip_source_route"
+        ],
+        "parse_warnings": []
+      },
+      "file": "leaf2.cfg",
+      "num_interfaces": 2
+    },
+    {
+      "vendor": "cisco",
+      "system": {
+        "hostname": "leaf3",
+        "version": "15.7",
+        "users": [
+          "admin"
+        ],
+        "domain_name": "ncn.go.kr",
+        "timezone": "KST 9"
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": false,
+          "authentication": "local"
+        }
+      },
+      "logging": {
+        "hosts": [
+          "10.10.10.1"
+        ]
+      },
+      "interfaces": [
+        {
+          "name": "GigabitEthernet0/0",
+          "ipv4": "172.16.3.2/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/7",
+          "ipv4": "10.10.10.33/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        }
+      ],
+      "routing": {
+        "bgp": {
+          "local_as": null,
+          "neighbors": [],
+          "vrfs": []
+        },
+        "ospf": {
+          "process_ids": [],
+          "areas": {}
+        }
+      },
+      "services": {
+        "ntp": {
+          "servers": [
+            "10.10.10.1"
+          ]
+        },
+        "vrf": [],
+        "mpls": {
+          "ldp_interfaces": [],
+          "ldp": {}
+        }
+      },
+      "configuration": {
+        "security": {
+          "password_encryption": false,
+          "enable_secret": "None",
+          "console_password": "None",
+          "exec_timeout": "None",
+          "banner_motd": "None",
+          "banner_login": "None",
+          "http_server": false,
+          "cdp": true,
+          "ip_source_route": true
+        },
+        "operational": {
+          "snmp_communities": [],
+          "loopback_interfaces": [],
+          "name_servers": []
+        },
+        "routing": {
+          "ospf_processes": [],
+          "bgp_as": [],
+          "mpls_ldp_enabled": false,
+          "mpls_ldp_rid": null,
+          "default_route_next_hops": [
+            "172.16.3.1",
+            "10.10.10.1"
+          ],
+          "static_routes_count": 3
+        },
+        "advanced": {
+          "acls_count": 0,
+          "acl_interfaces": [],
+          "prefix_lists_count": 0,
+          "route_maps_count": 0,
+          "class_maps": [],
+          "netflow_monitors": [],
+          "missing_descriptions_count": 2,
+          "eigrp_as": [],
+          "rip_enabled": false,
+          "fhrp_groups": [],
+          "multicast_enabled": false
+        }
+      },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
+        }
+      },
+      "parser_provenance": {
+        "source_file": "C:\\Users\\sdlab\\workspace\\GIA\\Data\\Pnetlab\\LabB_NCN_Basic_SP_20nodes\\configs\\leaf3.cfg",
+        "config_found": true,
+        "assumed_fields": [
+          "configuration.security.cdp",
+          "configuration.security.ip_source_route"
+        ],
+        "parse_warnings": []
+      },
+      "file": "leaf3.cfg",
+      "num_interfaces": 2
+    },
+    {
+      "vendor": "cisco",
+      "system": {
+        "hostname": "leaf4",
+        "version": "15.7",
+        "users": [
+          "admin"
+        ],
+        "domain_name": "ncn.go.kr",
+        "timezone": "KST 9"
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": false,
+          "authentication": "local"
+        }
+      },
+      "logging": {
+        "hosts": [
+          "10.10.10.1"
+        ]
+      },
+      "interfaces": [
+        {
+          "name": "GigabitEthernet0/0",
+          "ipv4": "172.16.4.2/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/7",
+          "ipv4": "10.10.10.34/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        }
+      ],
+      "routing": {
+        "bgp": {
+          "local_as": null,
+          "neighbors": [],
+          "vrfs": []
+        },
+        "ospf": {
+          "process_ids": [],
+          "areas": {}
+        }
+      },
+      "services": {
+        "ntp": {
+          "servers": [
+            "10.10.10.1"
+          ]
+        },
+        "vrf": [],
+        "mpls": {
+          "ldp_interfaces": [],
+          "ldp": {}
+        }
+      },
+      "configuration": {
+        "security": {
+          "password_encryption": false,
+          "enable_secret": "None",
+          "console_password": "None",
+          "exec_timeout": "None",
+          "banner_motd": "None",
+          "banner_login": "None",
+          "http_server": false,
+          "cdp": true,
+          "ip_source_route": true
+        },
+        "operational": {
+          "snmp_communities": [],
+          "loopback_interfaces": [],
+          "name_servers": []
+        },
+        "routing": {
+          "ospf_processes": [],
+          "bgp_as": [],
+          "mpls_ldp_enabled": false,
+          "mpls_ldp_rid": null,
+          "default_route_next_hops": [
+            "172.16.4.1",
+            "10.10.10.1"
+          ],
+          "static_routes_count": 3
+        },
+        "advanced": {
+          "acls_count": 0,
+          "acl_interfaces": [],
+          "prefix_lists_count": 0,
+          "route_maps_count": 0,
+          "class_maps": [],
+          "netflow_monitors": [],
+          "missing_descriptions_count": 2,
+          "eigrp_as": [],
+          "rip_enabled": false,
+          "fhrp_groups": [],
+          "multicast_enabled": false
+        }
+      },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
+        }
+      },
+      "parser_provenance": {
+        "source_file": "C:\\Users\\sdlab\\workspace\\GIA\\Data\\Pnetlab\\LabB_NCN_Basic_SP_20nodes\\configs\\leaf4.cfg",
+        "config_found": true,
+        "assumed_fields": [
+          "configuration.security.cdp",
+          "configuration.security.ip_source_route"
+        ],
+        "parse_warnings": []
+      },
+      "file": "leaf4.cfg",
+      "num_interfaces": 2
+    },
+    {
+      "vendor": "cisco",
+      "system": {
+        "hostname": "leaf5",
+        "version": "15.7",
+        "users": [
+          "admin"
+        ],
+        "domain_name": "ncn.go.kr",
+        "timezone": "KST 9"
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": false,
+          "authentication": "local"
+        }
+      },
+      "logging": {
+        "hosts": [
+          "10.10.10.1"
+        ]
+      },
+      "interfaces": [
+        {
+          "name": "GigabitEthernet0/0",
+          "ipv4": "172.17.1.2/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/7",
+          "ipv4": "10.10.10.35/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        }
+      ],
+      "routing": {
+        "bgp": {
+          "local_as": null,
+          "neighbors": [],
+          "vrfs": []
+        },
+        "ospf": {
+          "process_ids": [],
+          "areas": {}
+        }
+      },
+      "services": {
+        "ntp": {
+          "servers": [
+            "10.10.10.1"
+          ]
+        },
+        "vrf": [],
+        "mpls": {
+          "ldp_interfaces": [],
+          "ldp": {}
+        }
+      },
+      "configuration": {
+        "security": {
+          "password_encryption": false,
+          "enable_secret": "None",
+          "console_password": "None",
+          "exec_timeout": "None",
+          "banner_motd": "None",
+          "banner_login": "None",
+          "http_server": false,
+          "cdp": true,
+          "ip_source_route": true
+        },
+        "operational": {
+          "snmp_communities": [],
+          "loopback_interfaces": [],
+          "name_servers": []
+        },
+        "routing": {
+          "ospf_processes": [],
+          "bgp_as": [],
+          "mpls_ldp_enabled": false,
+          "mpls_ldp_rid": null,
+          "default_route_next_hops": [
+            "172.17.1.1",
+            "10.10.10.1"
+          ],
+          "static_routes_count": 3
+        },
+        "advanced": {
+          "acls_count": 0,
+          "acl_interfaces": [],
+          "prefix_lists_count": 0,
+          "route_maps_count": 0,
+          "class_maps": [],
+          "netflow_monitors": [],
+          "missing_descriptions_count": 2,
+          "eigrp_as": [],
+          "rip_enabled": false,
+          "fhrp_groups": [],
+          "multicast_enabled": false
+        }
+      },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
+        }
+      },
+      "parser_provenance": {
+        "source_file": "C:\\Users\\sdlab\\workspace\\GIA\\Data\\Pnetlab\\LabB_NCN_Basic_SP_20nodes\\configs\\leaf5.cfg",
+        "config_found": true,
+        "assumed_fields": [
+          "configuration.security.cdp",
+          "configuration.security.ip_source_route"
+        ],
+        "parse_warnings": []
+      },
+      "file": "leaf5.cfg",
+      "num_interfaces": 2
+    },
+    {
+      "vendor": "cisco",
+      "system": {
+        "hostname": "leaf6",
+        "version": "15.7",
+        "users": [
+          "admin"
+        ],
+        "domain_name": "ncn.go.kr",
+        "timezone": "KST 9"
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": false,
+          "authentication": "local"
+        }
+      },
+      "logging": {
+        "hosts": [
+          "10.10.10.1"
+        ]
+      },
+      "interfaces": [
+        {
+          "name": "GigabitEthernet0/0",
+          "ipv4": "172.17.2.2/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/7",
+          "ipv4": "10.10.10.36/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        }
+      ],
+      "routing": {
+        "bgp": {
+          "local_as": null,
+          "neighbors": [],
+          "vrfs": []
+        },
+        "ospf": {
+          "process_ids": [],
+          "areas": {}
+        }
+      },
+      "services": {
+        "ntp": {
+          "servers": [
+            "10.10.10.1"
+          ]
+        },
+        "vrf": [],
+        "mpls": {
+          "ldp_interfaces": [],
+          "ldp": {}
+        }
+      },
+      "configuration": {
+        "security": {
+          "password_encryption": false,
+          "enable_secret": "None",
+          "console_password": "None",
+          "exec_timeout": "None",
+          "banner_motd": "None",
+          "banner_login": "None",
+          "http_server": false,
+          "cdp": true,
+          "ip_source_route": true
+        },
+        "operational": {
+          "snmp_communities": [],
+          "loopback_interfaces": [],
+          "name_servers": []
+        },
+        "routing": {
+          "ospf_processes": [],
+          "bgp_as": [],
+          "mpls_ldp_enabled": false,
+          "mpls_ldp_rid": null,
+          "default_route_next_hops": [
+            "172.17.2.1",
+            "10.10.10.1"
+          ],
+          "static_routes_count": 3
+        },
+        "advanced": {
+          "acls_count": 0,
+          "acl_interfaces": [],
+          "prefix_lists_count": 0,
+          "route_maps_count": 0,
+          "class_maps": [],
+          "netflow_monitors": [],
+          "missing_descriptions_count": 2,
+          "eigrp_as": [],
+          "rip_enabled": false,
+          "fhrp_groups": [],
+          "multicast_enabled": false
+        }
+      },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
+        }
+      },
+      "parser_provenance": {
+        "source_file": "C:\\Users\\sdlab\\workspace\\GIA\\Data\\Pnetlab\\LabB_NCN_Basic_SP_20nodes\\configs\\leaf6.cfg",
+        "config_found": true,
+        "assumed_fields": [
+          "configuration.security.cdp",
+          "configuration.security.ip_source_route"
+        ],
+        "parse_warnings": []
+      },
+      "file": "leaf6.cfg",
+      "num_interfaces": 2
+    },
+    {
+      "vendor": "cisco",
+      "system": {
+        "hostname": "leaf7",
+        "version": "15.7",
+        "users": [
+          "admin"
+        ],
+        "domain_name": "ncn.go.kr",
+        "timezone": "KST 9"
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": false,
+          "authentication": "local"
+        }
+      },
+      "logging": {
+        "hosts": [
+          "10.10.10.1"
+        ]
+      },
+      "interfaces": [
+        {
+          "name": "GigabitEthernet0/0",
+          "ipv4": "172.17.3.2/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/7",
+          "ipv4": "10.10.10.37/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        }
+      ],
+      "routing": {
+        "bgp": {
+          "local_as": null,
+          "neighbors": [],
+          "vrfs": []
+        },
+        "ospf": {
+          "process_ids": [],
+          "areas": {}
+        }
+      },
+      "services": {
+        "ntp": {
+          "servers": [
+            "10.10.10.1"
+          ]
+        },
+        "vrf": [],
+        "mpls": {
+          "ldp_interfaces": [],
+          "ldp": {}
+        }
+      },
+      "configuration": {
+        "security": {
+          "password_encryption": false,
+          "enable_secret": "None",
+          "console_password": "None",
+          "exec_timeout": "None",
+          "banner_motd": "None",
+          "banner_login": "None",
+          "http_server": false,
+          "cdp": true,
+          "ip_source_route": true
+        },
+        "operational": {
+          "snmp_communities": [],
+          "loopback_interfaces": [],
+          "name_servers": []
+        },
+        "routing": {
+          "ospf_processes": [],
+          "bgp_as": [],
+          "mpls_ldp_enabled": false,
+          "mpls_ldp_rid": null,
+          "default_route_next_hops": [
+            "172.17.3.1",
+            "10.10.10.1"
+          ],
+          "static_routes_count": 3
+        },
+        "advanced": {
+          "acls_count": 0,
+          "acl_interfaces": [],
+          "prefix_lists_count": 0,
+          "route_maps_count": 0,
+          "class_maps": [],
+          "netflow_monitors": [],
+          "missing_descriptions_count": 2,
+          "eigrp_as": [],
+          "rip_enabled": false,
+          "fhrp_groups": [],
+          "multicast_enabled": false
+        }
+      },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
+        }
+      },
+      "parser_provenance": {
+        "source_file": "C:\\Users\\sdlab\\workspace\\GIA\\Data\\Pnetlab\\LabB_NCN_Basic_SP_20nodes\\configs\\leaf7.cfg",
+        "config_found": true,
+        "assumed_fields": [
+          "configuration.security.cdp",
+          "configuration.security.ip_source_route"
+        ],
+        "parse_warnings": []
+      },
+      "file": "leaf7.cfg",
+      "num_interfaces": 2
+    },
+    {
+      "vendor": "cisco",
+      "system": {
+        "hostname": "leaf8",
+        "version": "15.7",
+        "users": [
+          "admin"
+        ],
+        "domain_name": "ncn.go.kr",
+        "timezone": "KST 9"
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": false,
+          "authentication": "local"
+        }
+      },
+      "logging": {
+        "hosts": [
+          "10.10.10.1"
+        ]
+      },
+      "interfaces": [
+        {
+          "name": "GigabitEthernet0/0",
+          "ipv4": "172.17.4.2/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/7",
+          "ipv4": "10.10.10.38/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        }
+      ],
+      "routing": {
+        "bgp": {
+          "local_as": null,
+          "neighbors": [],
+          "vrfs": []
+        },
+        "ospf": {
+          "process_ids": [],
+          "areas": {}
+        }
+      },
+      "services": {
+        "ntp": {
+          "servers": [
+            "10.10.10.1"
+          ]
+        },
+        "vrf": [],
+        "mpls": {
+          "ldp_interfaces": [],
+          "ldp": {}
+        }
+      },
+      "configuration": {
+        "security": {
+          "password_encryption": false,
+          "enable_secret": "None",
+          "console_password": "None",
+          "exec_timeout": "None",
+          "banner_motd": "None",
+          "banner_login": "None",
+          "http_server": false,
+          "cdp": true,
+          "ip_source_route": true
+        },
+        "operational": {
+          "snmp_communities": [],
+          "loopback_interfaces": [],
+          "name_servers": []
+        },
+        "routing": {
+          "ospf_processes": [],
+          "bgp_as": [],
+          "mpls_ldp_enabled": false,
+          "mpls_ldp_rid": null,
+          "default_route_next_hops": [
+            "172.17.4.1",
+            "10.10.10.1"
+          ],
+          "static_routes_count": 3
+        },
+        "advanced": {
+          "acls_count": 0,
+          "acl_interfaces": [],
+          "prefix_lists_count": 0,
+          "route_maps_count": 0,
+          "class_maps": [],
+          "netflow_monitors": [],
+          "missing_descriptions_count": 2,
+          "eigrp_as": [],
+          "rip_enabled": false,
+          "fhrp_groups": [],
+          "multicast_enabled": false
+        }
+      },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
+        }
+      },
+      "parser_provenance": {
+        "source_file": "C:\\Users\\sdlab\\workspace\\GIA\\Data\\Pnetlab\\LabB_NCN_Basic_SP_20nodes\\configs\\leaf8.cfg",
+        "config_found": true,
+        "assumed_fields": [
+          "configuration.security.cdp",
+          "configuration.security.ip_source_route"
+        ],
+        "parse_warnings": []
+      },
+      "file": "leaf8.cfg",
+      "num_interfaces": 2
+    },
+    {
+      "vendor": "cisco",
+      "system": {
+        "hostname": "p1",
+        "version": "15.7",
+        "users": [
+          "admin"
+        ],
+        "domain_name": "ncn.go.kr",
+        "timezone": "KST 9"
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": false,
+          "authentication": "local"
+        }
+      },
+      "logging": {
+        "hosts": [
+          "10.10.10.1"
+        ]
+      },
+      "interfaces": [
+        {
+          "name": "GigabitEthernet0/0",
+          "ipv4": "10.0.1.1/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/1",
+          "ipv4": "10.0.2.0/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/2",
+          "ipv4": "10.0.3.0/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/7",
+          "ipv4": "10.10.10.11/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "Loopback0",
+          "ipv4": "10.255.0.1/32",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        }
+      ],
+      "routing": {
+        "bgp": {
+          "local_as": null,
+          "neighbors": [],
+          "vrfs": []
+        },
+        "ospf": {
+          "process_ids": [
+            "1"
+          ],
+          "areas": {
+            "0": [
+              "Loopback0",
+              "GigabitEthernet0/2",
+              "GigabitEthernet0/1",
+              "GigabitEthernet0/0"
+            ]
+          }
+        }
+      },
+      "services": {
+        "ntp": {
+          "servers": [
+            "10.10.10.1"
+          ]
+        },
+        "vrf": [],
+        "mpls": {
+          "ldp_interfaces": [],
+          "ldp": {
+            "router_id": "10.255.0.1"
+          },
+          "ldp_enabled": true
+        }
+      },
+      "configuration": {
+        "security": {
+          "password_encryption": true,
+          "enable_secret": "None",
+          "console_password": "None",
+          "exec_timeout": "None",
+          "banner_motd": "None",
+          "banner_login": "None",
+          "http_server": false,
+          "cdp": true,
+          "ip_source_route": true
+        },
+        "operational": {
+          "snmp_communities": [
+            "NCN-RO"
+          ],
+          "loopback_interfaces": [
+            "Loopback0"
+          ],
+          "name_servers": []
+        },
+        "routing": {
+          "ospf_processes": [
+            "1"
+          ],
+          "bgp_as": [],
+          "mpls_ldp_enabled": true,
+          "mpls_ldp_rid": "Loopback0",
+          "default_route_next_hops": [
+            "10.10.10.1"
+          ],
+          "static_routes_count": 1
+        },
+        "advanced": {
+          "acls_count": 0,
+          "acl_interfaces": [],
+          "prefix_lists_count": 0,
+          "route_maps_count": 0,
+          "class_maps": [],
+          "netflow_monitors": [],
+          "missing_descriptions_count": 5,
+          "eigrp_as": [],
+          "rip_enabled": false,
+          "fhrp_groups": [],
+          "multicast_enabled": false
+        }
+      },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
+        }
+      },
+      "parser_provenance": {
+        "source_file": "C:\\Users\\sdlab\\workspace\\GIA\\Data\\Pnetlab\\LabB_NCN_Basic_SP_20nodes\\configs\\p1.cfg",
+        "config_found": true,
+        "assumed_fields": [
+          "configuration.security.cdp",
+          "configuration.security.ip_source_route"
+        ],
+        "parse_warnings": []
+      },
+      "file": "p1.cfg",
+      "num_interfaces": 5
+    },
+    {
+      "vendor": "cisco",
+      "system": {
+        "hostname": "p2",
+        "version": "15.7",
+        "users": [
+          "admin"
+        ],
+        "domain_name": "ncn.go.kr",
+        "timezone": "KST 9"
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": false,
+          "authentication": "local"
+        }
+      },
+      "logging": {
+        "hosts": [
+          "10.10.10.1"
+        ]
+      },
+      "interfaces": [
+        {
+          "name": "GigabitEthernet0/0",
+          "ipv4": "10.0.2.1/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/1",
+          "ipv4": "10.0.4.0/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/2",
+          "ipv4": "10.0.5.0/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/7",
+          "ipv4": "10.10.10.12/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "Loopback0",
+          "ipv4": "10.255.0.2/32",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        }
+      ],
+      "routing": {
+        "bgp": {
+          "local_as": null,
+          "neighbors": [],
+          "vrfs": []
+        },
+        "ospf": {
+          "process_ids": [
+            "1"
+          ],
+          "areas": {
+            "0": [
+              "Loopback0",
+              "GigabitEthernet0/0",
+              "GigabitEthernet0/1",
+              "GigabitEthernet0/2"
+            ]
+          }
+        }
+      },
+      "services": {
+        "ntp": {
+          "servers": [
+            "10.10.10.1"
+          ]
+        },
+        "vrf": [],
+        "mpls": {
+          "ldp_interfaces": [],
+          "ldp": {
+            "router_id": "10.255.0.2"
+          },
+          "ldp_enabled": true
+        }
+      },
+      "configuration": {
+        "security": {
+          "password_encryption": true,
+          "enable_secret": "None",
+          "console_password": "None",
+          "exec_timeout": "None",
+          "banner_motd": "None",
+          "banner_login": "None",
+          "http_server": false,
+          "cdp": true,
+          "ip_source_route": true
+        },
+        "operational": {
+          "snmp_communities": [
+            "NCN-RO"
+          ],
+          "loopback_interfaces": [
+            "Loopback0"
+          ],
+          "name_servers": []
+        },
+        "routing": {
+          "ospf_processes": [
+            "1"
+          ],
+          "bgp_as": [],
+          "mpls_ldp_enabled": true,
+          "mpls_ldp_rid": "Loopback0",
+          "default_route_next_hops": [
+            "10.10.10.1"
+          ],
+          "static_routes_count": 1
+        },
+        "advanced": {
+          "acls_count": 0,
+          "acl_interfaces": [],
+          "prefix_lists_count": 0,
+          "route_maps_count": 0,
+          "class_maps": [],
+          "netflow_monitors": [],
+          "missing_descriptions_count": 5,
+          "eigrp_as": [],
+          "rip_enabled": false,
+          "fhrp_groups": [],
+          "multicast_enabled": false
+        }
+      },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
+        }
+      },
+      "parser_provenance": {
+        "source_file": "C:\\Users\\sdlab\\workspace\\GIA\\Data\\Pnetlab\\LabB_NCN_Basic_SP_20nodes\\configs\\p2.cfg",
+        "config_found": true,
+        "assumed_fields": [
+          "configuration.security.cdp",
+          "configuration.security.ip_source_route"
+        ],
+        "parse_warnings": []
+      },
+      "file": "p2.cfg",
+      "num_interfaces": 5
+    },
+    {
+      "vendor": "cisco",
+      "system": {
+        "hostname": "p3",
+        "version": "15.7",
+        "users": [
+          "admin"
+        ],
+        "domain_name": "ncn.go.kr",
+        "timezone": "KST 9"
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": false,
+          "authentication": "local"
+        }
+      },
+      "logging": {
+        "hosts": [
+          "10.10.10.1"
+        ]
+      },
+      "interfaces": [
+        {
+          "name": "GigabitEthernet0/0",
+          "ipv4": "10.0.3.1/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/1",
+          "ipv4": "10.0.6.0/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/2",
+          "ipv4": "10.0.20.0/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/7",
+          "ipv4": "10.10.10.13/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "Loopback0",
+          "ipv4": "10.255.0.3/32",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        }
+      ],
+      "routing": {
+        "bgp": {
+          "local_as": null,
+          "neighbors": [],
+          "vrfs": []
+        },
+        "ospf": {
+          "process_ids": [
+            "1"
+          ],
+          "areas": {
+            "0": [
+              "Loopback0",
+              "GigabitEthernet0/0",
+              "GigabitEthernet0/2",
+              "GigabitEthernet0/1"
+            ]
+          }
+        }
+      },
+      "services": {
+        "ntp": {
+          "servers": [
+            "10.10.10.1"
+          ]
+        },
+        "vrf": [],
+        "mpls": {
+          "ldp_interfaces": [],
+          "ldp": {
+            "router_id": "10.255.0.3"
+          },
+          "ldp_enabled": true
+        }
+      },
+      "configuration": {
+        "security": {
+          "password_encryption": true,
+          "enable_secret": "None",
+          "console_password": "None",
+          "exec_timeout": "None",
+          "banner_motd": "None",
+          "banner_login": "None",
+          "http_server": false,
+          "cdp": true,
+          "ip_source_route": true
+        },
+        "operational": {
+          "snmp_communities": [
+            "NCN-RO"
+          ],
+          "loopback_interfaces": [
+            "Loopback0"
+          ],
+          "name_servers": []
+        },
+        "routing": {
+          "ospf_processes": [
+            "1"
+          ],
+          "bgp_as": [],
+          "mpls_ldp_enabled": true,
+          "mpls_ldp_rid": "Loopback0",
+          "default_route_next_hops": [
+            "10.10.10.1"
+          ],
+          "static_routes_count": 1
+        },
+        "advanced": {
+          "acls_count": 0,
+          "acl_interfaces": [],
+          "prefix_lists_count": 0,
+          "route_maps_count": 0,
+          "class_maps": [],
+          "netflow_monitors": [],
+          "missing_descriptions_count": 4,
+          "eigrp_as": [],
+          "rip_enabled": false,
+          "fhrp_groups": [],
+          "multicast_enabled": false
+        }
+      },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
+        }
+      },
+      "parser_provenance": {
+        "source_file": "C:\\Users\\sdlab\\workspace\\GIA\\Data\\Pnetlab\\LabB_NCN_Basic_SP_20nodes\\configs\\p3.cfg",
+        "config_found": true,
+        "assumed_fields": [
+          "configuration.security.cdp",
+          "configuration.security.ip_source_route"
+        ],
+        "parse_warnings": []
+      },
+      "file": "p3.cfg",
+      "num_interfaces": 5
+    },
+    {
+      "vendor": "cisco",
+      "system": {
+        "hostname": "p4",
+        "version": "15.7",
+        "users": [
+          "admin"
+        ],
+        "domain_name": "ncn.go.kr",
+        "timezone": "KST 9"
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": false,
+          "authentication": "local"
+        }
+      },
+      "logging": {
+        "hosts": [
+          "10.10.10.1"
+        ]
+      },
+      "interfaces": [
+        {
+          "name": "GigabitEthernet0/0",
+          "ipv4": "10.0.5.1/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/1",
+          "ipv4": "10.0.6.1/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/2",
+          "ipv4": "10.0.7.0/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/7",
+          "ipv4": "10.10.10.14/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "Loopback0",
+          "ipv4": "10.255.0.4/32",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        }
+      ],
+      "routing": {
+        "bgp": {
+          "local_as": null,
+          "neighbors": [],
+          "vrfs": []
+        },
+        "ospf": {
+          "process_ids": [
+            "1"
+          ],
+          "areas": {
+            "0": [
+              "GigabitEthernet0/0",
+              "GigabitEthernet0/2",
+              "GigabitEthernet0/1",
+              "Loopback0"
+            ]
+          }
+        }
+      },
+      "services": {
+        "ntp": {
+          "servers": [
+            "10.10.10.1"
+          ]
+        },
+        "vrf": [],
+        "mpls": {
+          "ldp_interfaces": [],
+          "ldp": {
+            "router_id": "10.255.0.4"
+          },
+          "ldp_enabled": true
+        }
+      },
+      "configuration": {
+        "security": {
+          "password_encryption": true,
+          "enable_secret": "None",
+          "console_password": "None",
+          "exec_timeout": "None",
+          "banner_motd": "None",
+          "banner_login": "None",
+          "http_server": false,
+          "cdp": true,
+          "ip_source_route": true
+        },
+        "operational": {
+          "snmp_communities": [
+            "NCN-RO"
+          ],
+          "loopback_interfaces": [
+            "Loopback0"
+          ],
+          "name_servers": []
+        },
+        "routing": {
+          "ospf_processes": [
+            "1"
+          ],
+          "bgp_as": [],
+          "mpls_ldp_enabled": true,
+          "mpls_ldp_rid": "Loopback0",
+          "default_route_next_hops": [
+            "10.10.10.1"
+          ],
+          "static_routes_count": 1
+        },
+        "advanced": {
+          "acls_count": 0,
+          "acl_interfaces": [],
+          "prefix_lists_count": 0,
+          "route_maps_count": 0,
+          "class_maps": [],
+          "netflow_monitors": [],
+          "missing_descriptions_count": 5,
+          "eigrp_as": [],
+          "rip_enabled": false,
+          "fhrp_groups": [],
+          "multicast_enabled": false
+        }
+      },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
+        }
+      },
+      "parser_provenance": {
+        "source_file": "C:\\Users\\sdlab\\workspace\\GIA\\Data\\Pnetlab\\LabB_NCN_Basic_SP_20nodes\\configs\\p4.cfg",
+        "config_found": true,
+        "assumed_fields": [
+          "configuration.security.cdp",
+          "configuration.security.ip_source_route"
+        ],
+        "parse_warnings": []
+      },
+      "file": "p4.cfg",
+      "num_interfaces": 5
+    },
+    {
+      "vendor": "cisco",
+      "system": {
+        "hostname": "p5",
+        "version": "15.7",
+        "users": [
+          "admin"
+        ],
+        "domain_name": "ncn.go.kr",
+        "timezone": "KST 9"
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": false,
+          "authentication": "local"
+        }
+      },
+      "logging": {
+        "hosts": [
+          "10.10.10.1"
+        ]
+      },
+      "interfaces": [
+        {
+          "name": "GigabitEthernet0/0",
+          "ipv4": "10.0.11.1/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/1",
+          "ipv4": "10.0.12.0/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/2",
+          "ipv4": "10.0.20.1/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/7",
+          "ipv4": "10.10.10.15/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "Loopback0",
+          "ipv4": "10.255.0.5/32",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        }
+      ],
+      "routing": {
+        "bgp": {
+          "local_as": null,
+          "neighbors": [],
+          "vrfs": []
+        },
+        "ospf": {
+          "process_ids": [
+            "1"
+          ],
+          "areas": {
+            "0": [
+              "GigabitEthernet0/0",
+              "GigabitEthernet0/2",
+              "GigabitEthernet0/1",
+              "Loopback0"
+            ]
+          }
+        }
+      },
+      "services": {
+        "ntp": {
+          "servers": [
+            "10.10.10.1"
+          ]
+        },
+        "vrf": [],
+        "mpls": {
+          "ldp_interfaces": [],
+          "ldp": {
+            "router_id": "10.255.0.5"
+          },
+          "ldp_enabled": true
+        }
+      },
+      "configuration": {
+        "security": {
+          "password_encryption": true,
+          "enable_secret": "None",
+          "console_password": "None",
+          "exec_timeout": "None",
+          "banner_motd": "None",
+          "banner_login": "None",
+          "http_server": false,
+          "cdp": true,
+          "ip_source_route": true
+        },
+        "operational": {
+          "snmp_communities": [
+            "NCN-RO"
+          ],
+          "loopback_interfaces": [
+            "Loopback0"
+          ],
+          "name_servers": []
+        },
+        "routing": {
+          "ospf_processes": [
+            "1"
+          ],
+          "bgp_as": [],
+          "mpls_ldp_enabled": true,
+          "mpls_ldp_rid": "Loopback0",
+          "default_route_next_hops": [
+            "10.10.10.1"
+          ],
+          "static_routes_count": 1
+        },
+        "advanced": {
+          "acls_count": 0,
+          "acl_interfaces": [],
+          "prefix_lists_count": 0,
+          "route_maps_count": 0,
+          "class_maps": [],
+          "netflow_monitors": [],
+          "missing_descriptions_count": 4,
+          "eigrp_as": [],
+          "rip_enabled": false,
+          "fhrp_groups": [],
+          "multicast_enabled": false
+        }
+      },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
+        }
+      },
+      "parser_provenance": {
+        "source_file": "C:\\Users\\sdlab\\workspace\\GIA\\Data\\Pnetlab\\LabB_NCN_Basic_SP_20nodes\\configs\\p5.cfg",
+        "config_found": true,
+        "assumed_fields": [
+          "configuration.security.cdp",
+          "configuration.security.ip_source_route"
+        ],
+        "parse_warnings": []
+      },
+      "file": "p5.cfg",
+      "num_interfaces": 5
+    },
+    {
+      "vendor": "cisco",
+      "system": {
+        "hostname": "p6",
+        "version": "15.7",
+        "users": [
+          "admin"
+        ],
+        "domain_name": "ncn.go.kr",
+        "timezone": "KST 9"
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": false,
+          "authentication": "local"
+        }
+      },
+      "logging": {
+        "hosts": [
+          "10.10.10.1"
+        ]
+      },
+      "interfaces": [
+        {
+          "name": "GigabitEthernet0/0",
+          "ipv4": "10.0.12.1/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/1",
+          "ipv4": "10.0.14.0/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/2",
+          "ipv4": "10.0.15.0/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/7",
+          "ipv4": "10.10.10.16/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "Loopback0",
+          "ipv4": "10.255.0.6/32",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        }
+      ],
+      "routing": {
+        "bgp": {
+          "local_as": null,
+          "neighbors": [],
+          "vrfs": []
+        },
+        "ospf": {
+          "process_ids": [
+            "1"
+          ],
+          "areas": {
+            "0": [
+              "GigabitEthernet0/2",
+              "GigabitEthernet0/0",
+              "GigabitEthernet0/1",
+              "Loopback0"
+            ]
+          }
+        }
+      },
+      "services": {
+        "ntp": {
+          "servers": [
+            "10.10.10.1"
+          ]
+        },
+        "vrf": [],
+        "mpls": {
+          "ldp_interfaces": [],
+          "ldp": {
+            "router_id": "10.255.0.6"
+          },
+          "ldp_enabled": true
+        }
+      },
+      "configuration": {
+        "security": {
+          "password_encryption": true,
+          "enable_secret": "None",
+          "console_password": "None",
+          "exec_timeout": "None",
+          "banner_motd": "None",
+          "banner_login": "None",
+          "http_server": false,
+          "cdp": true,
+          "ip_source_route": true
+        },
+        "operational": {
+          "snmp_communities": [
+            "NCN-RO"
+          ],
+          "loopback_interfaces": [
+            "Loopback0"
+          ],
+          "name_servers": []
+        },
+        "routing": {
+          "ospf_processes": [
+            "1"
+          ],
+          "bgp_as": [],
+          "mpls_ldp_enabled": true,
+          "mpls_ldp_rid": "Loopback0",
+          "default_route_next_hops": [
+            "10.10.10.1"
+          ],
+          "static_routes_count": 1
+        },
+        "advanced": {
+          "acls_count": 0,
+          "acl_interfaces": [],
+          "prefix_lists_count": 0,
+          "route_maps_count": 0,
+          "class_maps": [],
+          "netflow_monitors": [],
+          "missing_descriptions_count": 5,
+          "eigrp_as": [],
+          "rip_enabled": false,
+          "fhrp_groups": [],
+          "multicast_enabled": false
+        }
+      },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
+        }
+      },
+      "parser_provenance": {
+        "source_file": "C:\\Users\\sdlab\\workspace\\GIA\\Data\\Pnetlab\\LabB_NCN_Basic_SP_20nodes\\configs\\p6.cfg",
+        "config_found": true,
+        "assumed_fields": [
+          "configuration.security.cdp",
+          "configuration.security.ip_source_route"
+        ],
+        "parse_warnings": []
+      },
+      "file": "p6.cfg",
+      "num_interfaces": 5
+    },
+    {
+      "vendor": "cisco",
+      "system": {
+        "hostname": "p7",
+        "version": "15.7",
+        "users": [
+          "admin"
+        ],
+        "domain_name": "ncn.go.kr",
+        "timezone": "KST 9"
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": false,
+          "authentication": "local"
+        }
+      },
+      "logging": {
+        "hosts": [
+          "10.10.10.1"
+        ]
+      },
+      "interfaces": [
+        {
+          "name": "GigabitEthernet0/0",
+          "ipv4": "10.0.15.1/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/1",
+          "ipv4": "10.0.16.0/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/7",
+          "ipv4": "10.10.10.17/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "Loopback0",
+          "ipv4": "10.255.0.7/32",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        }
+      ],
+      "routing": {
+        "bgp": {
+          "local_as": null,
+          "neighbors": [],
+          "vrfs": []
+        },
+        "ospf": {
+          "process_ids": [
+            "1"
+          ],
+          "areas": {
+            "0": [
+              "GigabitEthernet0/1",
+              "GigabitEthernet0/0",
+              "Loopback0"
+            ]
+          }
+        }
+      },
+      "services": {
+        "ntp": {
+          "servers": [
+            "10.10.10.1"
+          ]
+        },
+        "vrf": [],
+        "mpls": {
+          "ldp_interfaces": [],
+          "ldp": {
+            "router_id": "10.255.0.7"
+          },
+          "ldp_enabled": true
+        }
+      },
+      "configuration": {
+        "security": {
+          "password_encryption": true,
+          "enable_secret": "None",
+          "console_password": "None",
+          "exec_timeout": "None",
+          "banner_motd": "None",
+          "banner_login": "None",
+          "http_server": false,
+          "cdp": true,
+          "ip_source_route": true
+        },
+        "operational": {
+          "snmp_communities": [
+            "NCN-RO"
+          ],
+          "loopback_interfaces": [
+            "Loopback0"
+          ],
+          "name_servers": []
+        },
+        "routing": {
+          "ospf_processes": [
+            "1"
+          ],
+          "bgp_as": [],
+          "mpls_ldp_enabled": true,
+          "mpls_ldp_rid": "Loopback0",
+          "default_route_next_hops": [
+            "10.10.10.1"
+          ],
+          "static_routes_count": 1
+        },
+        "advanced": {
+          "acls_count": 0,
+          "acl_interfaces": [],
+          "prefix_lists_count": 0,
+          "route_maps_count": 0,
+          "class_maps": [],
+          "netflow_monitors": [],
+          "missing_descriptions_count": 4,
+          "eigrp_as": [],
+          "rip_enabled": false,
+          "fhrp_groups": [],
+          "multicast_enabled": false
+        }
+      },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
+        }
+      },
+      "parser_provenance": {
+        "source_file": "C:\\Users\\sdlab\\workspace\\GIA\\Data\\Pnetlab\\LabB_NCN_Basic_SP_20nodes\\configs\\p7.cfg",
+        "config_found": true,
+        "assumed_fields": [
+          "configuration.security.cdp",
+          "configuration.security.ip_source_route"
+        ],
+        "parse_warnings": []
+      },
+      "file": "p7.cfg",
+      "num_interfaces": 4
+    },
+    {
+      "vendor": "cisco",
+      "system": {
+        "hostname": "p8",
+        "version": "15.7",
+        "users": [
+          "admin"
+        ],
+        "domain_name": "ncn.go.kr",
+        "timezone": "KST 9"
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": false,
+          "authentication": "local"
+        }
+      },
+      "logging": {
+        "hosts": [
+          "10.10.10.1"
+        ]
+      },
+      "interfaces": [
+        {
+          "name": "GigabitEthernet0/0",
+          "ipv4": "10.0.16.1/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/1",
+          "ipv4": "10.0.17.0/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/7",
+          "ipv4": "10.10.10.18/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "Loopback0",
+          "ipv4": "10.255.0.8/32",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        }
+      ],
+      "routing": {
+        "bgp": {
+          "local_as": null,
+          "neighbors": [],
+          "vrfs": []
+        },
+        "ospf": {
+          "process_ids": [
+            "1"
+          ],
+          "areas": {
+            "0": [
+              "Loopback0",
+              "GigabitEthernet0/1",
+              "GigabitEthernet0/0"
+            ]
+          }
+        }
+      },
+      "services": {
+        "ntp": {
+          "servers": [
+            "10.10.10.1"
+          ]
+        },
+        "vrf": [],
+        "mpls": {
+          "ldp_interfaces": [],
+          "ldp": {
+            "router_id": "10.255.0.8"
+          },
+          "ldp_enabled": true
+        }
+      },
+      "configuration": {
+        "security": {
+          "password_encryption": true,
+          "enable_secret": "None",
+          "console_password": "None",
+          "exec_timeout": "None",
+          "banner_motd": "None",
+          "banner_login": "None",
+          "http_server": false,
+          "cdp": true,
+          "ip_source_route": true
+        },
+        "operational": {
+          "snmp_communities": [
+            "NCN-RO"
+          ],
+          "loopback_interfaces": [
+            "Loopback0"
+          ],
+          "name_servers": []
+        },
+        "routing": {
+          "ospf_processes": [
+            "1"
+          ],
+          "bgp_as": [],
+          "mpls_ldp_enabled": true,
+          "mpls_ldp_rid": "Loopback0",
+          "default_route_next_hops": [
+            "10.10.10.1"
+          ],
+          "static_routes_count": 1
+        },
+        "advanced": {
+          "acls_count": 0,
+          "acl_interfaces": [],
+          "prefix_lists_count": 0,
+          "route_maps_count": 0,
+          "class_maps": [],
+          "netflow_monitors": [],
+          "missing_descriptions_count": 4,
+          "eigrp_as": [],
+          "rip_enabled": false,
+          "fhrp_groups": [],
+          "multicast_enabled": false
+        }
+      },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
+        }
+      },
+      "parser_provenance": {
+        "source_file": "C:\\Users\\sdlab\\workspace\\GIA\\Data\\Pnetlab\\LabB_NCN_Basic_SP_20nodes\\configs\\p8.cfg",
+        "config_found": true,
+        "assumed_fields": [
+          "configuration.security.cdp",
+          "configuration.security.ip_source_route"
+        ],
+        "parse_warnings": []
+      },
+      "file": "p8.cfg",
+      "num_interfaces": 4
+    },
+    {
+      "vendor": "cisco",
+      "system": {
+        "hostname": "pe1",
+        "version": "15.7",
+        "users": [
+          "admin"
+        ],
+        "domain_name": "ncn.go.kr",
+        "timezone": "KST 9"
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": true,
+          "authentication": "local"
+        }
+      },
+      "logging": {
+        "hosts": [
+          "10.10.10.1"
+        ]
+      },
+      "interfaces": [
+        {
+          "name": "GigabitEthernet0/0",
+          "ipv4": "10.0.1.0/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/1",
+          "ipv4": "172.16.1.1/24",
+          "vlan": null,
+          "vrf": "VRF_GOV",
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/2",
+          "ipv4": "172.16.2.1/24",
+          "vlan": null,
+          "vrf": "VRF_EDU",
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/7",
+          "ipv4": "10.10.10.21/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "Loopback0",
+          "ipv4": "10.255.0.11/32",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        }
+      ],
+      "routing": {
+        "bgp": {
+          "local_as": "65000",
+          "neighbors": [
+            {
+              "id": "10.255.0.12",
+              "remote_as": "65000"
+            },
+            {
+              "id": "10.255.0.21",
+              "remote_as": "65000"
+            }
+          ],
+          "vrfs": [
+            {
+              "name": "VRF_GOV",
+              "rd": "65000:100",
+              "import_rts": [
+                "65000:100"
+              ],
+              "export_rts": [
+                "65000:100"
+              ],
+              "route_targets": [
+                "65000:100"
+              ],
+              "rt_import": [
+                "65000:100"
+              ],
+              "rt_export": [
+                "65000:100"
+              ]
+            },
+            {
+              "name": "VRF_EDU",
+              "rd": "65000:200",
+              "import_rts": [
+                "65000:200"
+              ],
+              "export_rts": [
+                "65000:200"
+              ],
+              "route_targets": [
+                "65000:200"
+              ],
+              "rt_import": [
+                "65000:200"
+              ],
+              "rt_export": [
+                "65000:200"
+              ]
+            },
+            {
+              "name": "VRF_RND",
+              "rd": "65000:300",
+              "import_rts": [
+                "65000:300"
+              ],
+              "export_rts": [
+                "65000:300"
+              ],
+              "route_targets": [
+                "65000:300"
+              ],
+              "rt_import": [
+                "65000:300"
+              ],
+              "rt_export": [
+                "65000:300"
+              ]
+            }
+          ]
+        },
+        "ospf": {
+          "process_ids": [
+            "1"
+          ],
+          "areas": {
+            "0": [
+              "GigabitEthernet0/0",
+              "Loopback0"
+            ]
+          }
+        }
+      },
+      "services": {
+        "ntp": {
+          "servers": [
+            "10.10.10.1"
+          ]
+        },
+        "vrf": [
+          {
+            "name": "VRF_GOV",
+            "rd": "65000:100",
+            "import_rts": [
+              "65000:100"
+            ],
+            "export_rts": [
+              "65000:100"
+            ],
+            "route_targets": [
+              "65000:100"
+            ],
+            "rt_import": [
+              "65000:100"
+            ],
+            "rt_export": [
+              "65000:100"
+            ]
+          },
+          {
+            "name": "VRF_EDU",
+            "rd": "65000:200",
+            "import_rts": [
+              "65000:200"
+            ],
+            "export_rts": [
+              "65000:200"
+            ],
+            "route_targets": [
+              "65000:200"
+            ],
+            "rt_import": [
+              "65000:200"
+            ],
+            "rt_export": [
+              "65000:200"
+            ]
+          },
+          {
+            "name": "VRF_RND",
+            "rd": "65000:300",
+            "import_rts": [
+              "65000:300"
+            ],
+            "export_rts": [
+              "65000:300"
+            ],
+            "route_targets": [
+              "65000:300"
+            ],
+            "rt_import": [
+              "65000:300"
+            ],
+            "rt_export": [
+              "65000:300"
+            ]
+          }
+        ],
+        "mpls": {
+          "ldp_interfaces": [],
+          "ldp": {
+            "router_id": "10.255.0.11"
+          },
+          "ldp_enabled": true
+        }
+      },
+      "configuration": {
+        "security": {
+          "password_encryption": true,
+          "enable_secret": "None",
+          "console_password": "None",
+          "exec_timeout": "None",
+          "banner_motd": "None",
+          "banner_login": "None",
+          "http_server": false,
+          "cdp": true,
+          "ip_source_route": true
+        },
+        "operational": {
+          "snmp_communities": [
+            "NCN-RO",
+            "NCN-RW"
+          ],
+          "loopback_interfaces": [
+            "Loopback0"
+          ],
+          "name_servers": []
+        },
+        "routing": {
+          "ospf_processes": [
+            "1"
+          ],
+          "bgp_as": [
+            "65000"
+          ],
+          "mpls_ldp_enabled": true,
+          "mpls_ldp_rid": "Loopback0",
+          "default_route_next_hops": [
+            "10.10.10.1"
+          ],
+          "static_routes_count": 1
+        },
+        "advanced": {
+          "acls_count": 0,
+          "acl_interfaces": [],
+          "prefix_lists_count": 0,
+          "route_maps_count": 0,
+          "class_maps": [],
+          "netflow_monitors": [],
+          "missing_descriptions_count": 3,
+          "eigrp_as": [],
+          "rip_enabled": false,
+          "fhrp_groups": [],
+          "multicast_enabled": false
+        }
+      },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
+        }
+      },
+      "parser_provenance": {
+        "source_file": "C:\\Users\\sdlab\\workspace\\GIA\\Data\\Pnetlab\\LabB_NCN_Basic_SP_20nodes\\configs\\pe1.cfg",
+        "config_found": true,
+        "assumed_fields": [
+          "configuration.security.cdp",
+          "configuration.security.ip_source_route"
+        ],
+        "parse_warnings": []
+      },
+      "file": "pe1.cfg",
+      "num_interfaces": 5
+    },
+    {
+      "vendor": "cisco",
+      "system": {
+        "hostname": "pe2",
+        "version": "15.7",
+        "users": [
+          "admin"
+        ],
+        "domain_name": "ncn.go.kr",
+        "timezone": "KST 9"
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": true,
+          "authentication": "local"
+        }
+      },
+      "logging": {
+        "hosts": [
+          "10.10.10.1"
+        ]
+      },
+      "interfaces": [
+        {
+          "name": "GigabitEthernet0/0",
+          "ipv4": "10.0.4.1/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/1",
+          "ipv4": "10.0.7.1/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/2",
+          "ipv4": "172.16.3.1/24",
+          "vlan": null,
+          "vrf": "VRF_RND",
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/3",
+          "ipv4": "172.16.4.1/24",
+          "vlan": null,
+          "vrf": "VRF_GOV",
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/7",
+          "ipv4": "10.10.10.22/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "Loopback0",
+          "ipv4": "10.255.0.12/32",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        }
+      ],
+      "routing": {
+        "bgp": {
+          "local_as": "65000",
+          "neighbors": [
+            {
+              "id": "10.255.0.11",
+              "remote_as": "65000"
+            },
+            {
+              "id": "10.255.0.22",
+              "remote_as": "65000"
+            }
+          ],
+          "vrfs": [
+            {
+              "name": "VRF_GOV",
+              "rd": "65000:100",
+              "import_rts": [
+                "65000:100"
+              ],
+              "export_rts": [
+                "65000:100"
+              ],
+              "route_targets": [
+                "65000:100"
+              ],
+              "rt_import": [
+                "65000:100"
+              ],
+              "rt_export": [
+                "65000:100"
+              ]
+            },
+            {
+              "name": "VRF_EDU",
+              "rd": "65000:200",
+              "import_rts": [
+                "65000:200"
+              ],
+              "export_rts": [
+                "65000:200"
+              ],
+              "route_targets": [
+                "65000:200"
+              ],
+              "rt_import": [
+                "65000:200"
+              ],
+              "rt_export": [
+                "65000:200"
+              ]
+            },
+            {
+              "name": "VRF_RND",
+              "rd": "65000:300",
+              "import_rts": [
+                "65000:300"
+              ],
+              "export_rts": [
+                "65000:300"
+              ],
+              "route_targets": [
+                "65000:300"
+              ],
+              "rt_import": [
+                "65000:300"
+              ],
+              "rt_export": [
+                "65000:300"
+              ]
+            }
+          ]
+        },
+        "ospf": {
+          "process_ids": [
+            "1"
+          ],
+          "areas": {
+            "0": [
+              "GigabitEthernet0/0",
+              "Loopback0",
+              "GigabitEthernet0/1"
+            ]
+          }
+        }
+      },
+      "services": {
+        "ntp": {
+          "servers": [
+            "10.10.10.1"
+          ]
+        },
+        "vrf": [
+          {
+            "name": "VRF_GOV",
+            "rd": "65000:100",
+            "import_rts": [
+              "65000:100"
+            ],
+            "export_rts": [
+              "65000:100"
+            ],
+            "route_targets": [
+              "65000:100"
+            ],
+            "rt_import": [
+              "65000:100"
+            ],
+            "rt_export": [
+              "65000:100"
+            ]
+          },
+          {
+            "name": "VRF_EDU",
+            "rd": "65000:200",
+            "import_rts": [
+              "65000:200"
+            ],
+            "export_rts": [
+              "65000:200"
+            ],
+            "route_targets": [
+              "65000:200"
+            ],
+            "rt_import": [
+              "65000:200"
+            ],
+            "rt_export": [
+              "65000:200"
+            ]
+          },
+          {
+            "name": "VRF_RND",
+            "rd": "65000:300",
+            "import_rts": [
+              "65000:300"
+            ],
+            "export_rts": [
+              "65000:300"
+            ],
+            "route_targets": [
+              "65000:300"
+            ],
+            "rt_import": [
+              "65000:300"
+            ],
+            "rt_export": [
+              "65000:300"
+            ]
+          }
+        ],
+        "mpls": {
+          "ldp_interfaces": [],
+          "ldp": {
+            "router_id": "10.255.0.12"
+          },
+          "ldp_enabled": true
+        }
+      },
+      "configuration": {
+        "security": {
+          "password_encryption": true,
+          "enable_secret": "None",
+          "console_password": "None",
+          "exec_timeout": "None",
+          "banner_motd": "None",
+          "banner_login": "None",
+          "http_server": false,
+          "cdp": true,
+          "ip_source_route": true
+        },
+        "operational": {
+          "snmp_communities": [
+            "NCN-RO",
+            "NCN-RW"
+          ],
+          "loopback_interfaces": [
+            "Loopback0"
+          ],
+          "name_servers": []
+        },
+        "routing": {
+          "ospf_processes": [
+            "1"
+          ],
+          "bgp_as": [
+            "65000"
+          ],
+          "mpls_ldp_enabled": true,
+          "mpls_ldp_rid": "Loopback0",
+          "default_route_next_hops": [
+            "10.10.10.1"
+          ],
+          "static_routes_count": 1
+        },
+        "advanced": {
+          "acls_count": 0,
+          "acl_interfaces": [],
+          "prefix_lists_count": 0,
+          "route_maps_count": 0,
+          "class_maps": [],
+          "netflow_monitors": [],
+          "missing_descriptions_count": 4,
+          "eigrp_as": [],
+          "rip_enabled": false,
+          "fhrp_groups": [],
+          "multicast_enabled": false
+        }
+      },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
+        }
+      },
+      "parser_provenance": {
+        "source_file": "C:\\Users\\sdlab\\workspace\\GIA\\Data\\Pnetlab\\LabB_NCN_Basic_SP_20nodes\\configs\\pe2.cfg",
+        "config_found": true,
+        "assumed_fields": [
+          "configuration.security.cdp",
+          "configuration.security.ip_source_route"
+        ],
+        "parse_warnings": []
+      },
+      "file": "pe2.cfg",
+      "num_interfaces": 6
+    },
+    {
+      "vendor": "cisco",
+      "system": {
+        "hostname": "pe3",
+        "version": "15.7",
+        "users": [
+          "admin"
+        ],
+        "domain_name": "ncn.go.kr",
+        "timezone": "KST 9"
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": true,
+          "authentication": "local"
+        }
+      },
+      "logging": {
+        "hosts": [
+          "10.10.10.1"
+        ]
+      },
+      "interfaces": [
+        {
+          "name": "GigabitEthernet0/0",
+          "ipv4": "10.0.11.0/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/1",
+          "ipv4": "172.17.1.1/24",
+          "vlan": null,
+          "vrf": "VRF_GOV",
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/2",
+          "ipv4": "172.17.2.1/24",
+          "vlan": null,
+          "vrf": "VRF_EDU",
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/7",
+          "ipv4": "10.10.10.23/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "Loopback0",
+          "ipv4": "10.255.0.21/32",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        }
+      ],
+      "routing": {
+        "bgp": {
+          "local_as": "65000",
+          "neighbors": [
+            {
+              "id": "10.255.0.11",
+              "remote_as": "65000"
+            },
+            {
+              "id": "10.255.0.22",
+              "remote_as": "65000"
+            }
+          ],
+          "vrfs": [
+            {
+              "name": "VRF_GOV",
+              "rd": "65000:100",
+              "import_rts": [
+                "65000:100"
+              ],
+              "export_rts": [
+                "65000:100"
+              ],
+              "route_targets": [
+                "65000:100"
+              ],
+              "rt_import": [
+                "65000:100"
+              ],
+              "rt_export": [
+                "65000:100"
+              ]
+            },
+            {
+              "name": "VRF_EDU",
+              "rd": "65000:200",
+              "import_rts": [
+                "65000:200"
+              ],
+              "export_rts": [
+                "65000:200"
+              ],
+              "route_targets": [
+                "65000:200"
+              ],
+              "rt_import": [
+                "65000:200"
+              ],
+              "rt_export": [
+                "65000:200"
+              ]
+            },
+            {
+              "name": "VRF_RND",
+              "rd": "65000:300",
+              "import_rts": [
+                "65000:300"
+              ],
+              "export_rts": [
+                "65000:300"
+              ],
+              "route_targets": [
+                "65000:300"
+              ],
+              "rt_import": [
+                "65000:300"
+              ],
+              "rt_export": [
+                "65000:300"
+              ]
+            }
+          ]
+        },
+        "ospf": {
+          "process_ids": [
+            "1"
+          ],
+          "areas": {
+            "0": [
+              "GigabitEthernet0/0",
+              "Loopback0"
+            ]
+          }
+        }
+      },
+      "services": {
+        "ntp": {
+          "servers": [
+            "10.10.10.1"
+          ]
+        },
+        "vrf": [
+          {
+            "name": "VRF_GOV",
+            "rd": "65000:100",
+            "import_rts": [
+              "65000:100"
+            ],
+            "export_rts": [
+              "65000:100"
+            ],
+            "route_targets": [
+              "65000:100"
+            ],
+            "rt_import": [
+              "65000:100"
+            ],
+            "rt_export": [
+              "65000:100"
+            ]
+          },
+          {
+            "name": "VRF_EDU",
+            "rd": "65000:200",
+            "import_rts": [
+              "65000:200"
+            ],
+            "export_rts": [
+              "65000:200"
+            ],
+            "route_targets": [
+              "65000:200"
+            ],
+            "rt_import": [
+              "65000:200"
+            ],
+            "rt_export": [
+              "65000:200"
+            ]
+          },
+          {
+            "name": "VRF_RND",
+            "rd": "65000:300",
+            "import_rts": [
+              "65000:300"
+            ],
+            "export_rts": [
+              "65000:300"
+            ],
+            "route_targets": [
+              "65000:300"
+            ],
+            "rt_import": [
+              "65000:300"
+            ],
+            "rt_export": [
+              "65000:300"
+            ]
+          }
+        ],
+        "mpls": {
+          "ldp_interfaces": [],
+          "ldp": {
+            "router_id": "10.255.0.21"
+          },
+          "ldp_enabled": true
+        }
+      },
+      "configuration": {
+        "security": {
+          "password_encryption": true,
+          "enable_secret": "None",
+          "console_password": "None",
+          "exec_timeout": "None",
+          "banner_motd": "None",
+          "banner_login": "None",
+          "http_server": false,
+          "cdp": true,
+          "ip_source_route": true
+        },
+        "operational": {
+          "snmp_communities": [
+            "NCN-RO",
+            "NCN-RW"
+          ],
+          "loopback_interfaces": [
+            "Loopback0"
+          ],
+          "name_servers": []
+        },
+        "routing": {
+          "ospf_processes": [
+            "1"
+          ],
+          "bgp_as": [
+            "65000"
+          ],
+          "mpls_ldp_enabled": true,
+          "mpls_ldp_rid": "Loopback0",
+          "default_route_next_hops": [
+            "10.10.10.1"
+          ],
+          "static_routes_count": 1
+        },
+        "advanced": {
+          "acls_count": 0,
+          "acl_interfaces": [],
+          "prefix_lists_count": 0,
+          "route_maps_count": 0,
+          "class_maps": [],
+          "netflow_monitors": [],
+          "missing_descriptions_count": 5,
+          "eigrp_as": [],
+          "rip_enabled": false,
+          "fhrp_groups": [],
+          "multicast_enabled": false
+        }
+      },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
+        }
+      },
+      "parser_provenance": {
+        "source_file": "C:\\Users\\sdlab\\workspace\\GIA\\Data\\Pnetlab\\LabB_NCN_Basic_SP_20nodes\\configs\\pe3.cfg",
+        "config_found": true,
+        "assumed_fields": [
+          "configuration.security.cdp",
+          "configuration.security.ip_source_route"
+        ],
+        "parse_warnings": []
+      },
+      "file": "pe3.cfg",
+      "num_interfaces": 5
+    },
+    {
+      "vendor": "cisco",
+      "system": {
+        "hostname": "pe4",
+        "version": "15.7",
+        "users": [
+          "admin"
+        ],
+        "domain_name": "ncn.go.kr",
+        "timezone": "KST 9"
+      },
+      "security": {
+        "ssh": {
+          "present": true,
+          "version": "2"
+        },
+        "aaa": {
+          "present": true,
+          "authentication": "local"
+        }
+      },
+      "logging": {
+        "hosts": [
+          "10.10.10.1"
+        ]
+      },
+      "interfaces": [
+        {
+          "name": "GigabitEthernet0/0",
+          "ipv4": "10.0.14.1/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/1",
+          "ipv4": "10.0.17.1/31",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/2",
+          "ipv4": "172.17.3.1/24",
+          "vlan": null,
+          "vrf": "VRF_RND",
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/3",
+          "ipv4": "172.17.4.1/24",
+          "vlan": null,
+          "vrf": "VRF_GOV",
+          "status": "up"
+        },
+        {
+          "name": "GigabitEthernet0/7",
+          "ipv4": "10.10.10.24/24",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        },
+        {
+          "name": "Loopback0",
+          "ipv4": "10.255.0.22/32",
+          "vlan": null,
+          "vrf": null,
+          "status": "up"
+        }
+      ],
+      "routing": {
+        "bgp": {
+          "local_as": "65000",
+          "neighbors": [
+            {
+              "id": "10.255.0.12",
+              "remote_as": "65000"
+            },
+            {
+              "id": "10.255.0.21",
+              "remote_as": "65000"
+            }
+          ],
+          "vrfs": [
+            {
+              "name": "VRF_GOV",
+              "rd": "65000:100",
+              "import_rts": [
+                "65000:100"
+              ],
+              "export_rts": [
+                "65000:100"
+              ],
+              "route_targets": [
+                "65000:100"
+              ],
+              "rt_import": [
+                "65000:100"
+              ],
+              "rt_export": [
+                "65000:100"
+              ]
+            },
+            {
+              "name": "VRF_EDU",
+              "rd": "65000:200",
+              "import_rts": [
+                "65000:200"
+              ],
+              "export_rts": [
+                "65000:200"
+              ],
+              "route_targets": [
+                "65000:200"
+              ],
+              "rt_import": [
+                "65000:200"
+              ],
+              "rt_export": [
+                "65000:200"
+              ]
+            },
+            {
+              "name": "VRF_RND",
+              "rd": "65000:300",
+              "import_rts": [
+                "65000:300"
+              ],
+              "export_rts": [
+                "65000:300"
+              ],
+              "route_targets": [
+                "65000:300"
+              ],
+              "rt_import": [
+                "65000:300"
+              ],
+              "rt_export": [
+                "65000:300"
+              ]
+            }
+          ]
+        },
+        "ospf": {
+          "process_ids": [
+            "1"
+          ],
+          "areas": {
+            "0": [
+              "GigabitEthernet0/1",
+              "GigabitEthernet0/0",
+              "Loopback0"
+            ]
+          }
+        }
+      },
+      "services": {
+        "ntp": {
+          "servers": [
+            "10.10.10.1"
+          ]
+        },
+        "vrf": [
+          {
+            "name": "VRF_GOV",
+            "rd": "65000:100",
+            "import_rts": [
+              "65000:100"
+            ],
+            "export_rts": [
+              "65000:100"
+            ],
+            "route_targets": [
+              "65000:100"
+            ],
+            "rt_import": [
+              "65000:100"
+            ],
+            "rt_export": [
+              "65000:100"
+            ]
+          },
+          {
+            "name": "VRF_EDU",
+            "rd": "65000:200",
+            "import_rts": [
+              "65000:200"
+            ],
+            "export_rts": [
+              "65000:200"
+            ],
+            "route_targets": [
+              "65000:200"
+            ],
+            "rt_import": [
+              "65000:200"
+            ],
+            "rt_export": [
+              "65000:200"
+            ]
+          },
+          {
+            "name": "VRF_RND",
+            "rd": "65000:300",
+            "import_rts": [
+              "65000:300"
+            ],
+            "export_rts": [
+              "65000:300"
+            ],
+            "route_targets": [
+              "65000:300"
+            ],
+            "rt_import": [
+              "65000:300"
+            ],
+            "rt_export": [
+              "65000:300"
+            ]
+          }
+        ],
+        "mpls": {
+          "ldp_interfaces": [],
+          "ldp": {
+            "router_id": "10.255.0.22"
+          },
+          "ldp_enabled": true
+        }
+      },
+      "configuration": {
+        "security": {
+          "password_encryption": true,
+          "enable_secret": "None",
+          "console_password": "None",
+          "exec_timeout": "None",
+          "banner_motd": "None",
+          "banner_login": "None",
+          "http_server": false,
+          "cdp": true,
+          "ip_source_route": true
+        },
+        "operational": {
+          "snmp_communities": [
+            "NCN-RO",
+            "NCN-RW"
+          ],
+          "loopback_interfaces": [
+            "Loopback0"
+          ],
+          "name_servers": []
+        },
+        "routing": {
+          "ospf_processes": [
+            "1"
+          ],
+          "bgp_as": [
+            "65000"
+          ],
+          "mpls_ldp_enabled": true,
+          "mpls_ldp_rid": "Loopback0",
+          "default_route_next_hops": [
+            "10.10.10.1"
+          ],
+          "static_routes_count": 1
+        },
+        "advanced": {
+          "acls_count": 0,
+          "acl_interfaces": [],
+          "prefix_lists_count": 0,
+          "route_maps_count": 0,
+          "class_maps": [],
+          "netflow_monitors": [],
+          "missing_descriptions_count": 6,
+          "eigrp_as": [],
+          "rip_enabled": false,
+          "fhrp_groups": [],
+          "multicast_enabled": false
+        }
+      },
+      "line": {
+        "vty": {
+          "transport_input": "ssh",
+          "login_mode": "local"
+        }
+      },
+      "parser_provenance": {
+        "source_file": "C:\\Users\\sdlab\\workspace\\GIA\\Data\\Pnetlab\\LabB_NCN_Basic_SP_20nodes\\configs\\pe4.cfg",
+        "config_found": true,
+        "assumed_fields": [
+          "configuration.security.cdp",
+          "configuration.security.ip_source_route"
+        ],
+        "parse_warnings": []
+      },
+      "file": "pe4.cfg",
+      "num_interfaces": 6
+    }
+  ],
+  "parser_warnings": []
+}

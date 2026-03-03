@@ -1,0 +1,51 @@
+{
+  "title": "NetConfigQA2.0 Ground Truth Verification Summary",
+  "topology": "LabD_NCN_MultiAS_Complex_40nodes",
+  "date": "2026-03-02",
+  "dataset_total_qa": 3371,
+  "verification_methods": {
+    "method1_independent_parser": {
+      "description": "Batfish-independent .cfg parser (pure Python + Regex) for L1-L3 full verification",
+      "scope": "L1-L3 전수검증 (1552 QA)",
+      "total_verified": 1552,
+      "match": 1436,
+      "mismatch": 116,
+      "agreement_rate_raw": 0.9252577319587629,
+      "by_level": {
+        "L1": {
+          "total": 1230,
+          "match": 1157,
+          "mismatch": 73
+        },
+        "L2": {
+          "total": 69,
+          "match": 63,
+          "mismatch": 6
+        },
+        "L3": {
+          "total": 253,
+          "match": 216,
+          "mismatch": 37
+        }
+      },
+      "by_answer_type": {
+        "text": {
+          "total": 506,
+          "match": 473
+        },
+        "set": {
+          "total": 529,
+          "match": 496
+        },
+        "number": {
+          "total": 377,
+          "match": 336
+        },
+        "map": {
+          "total": 140,
+          "match": 131
+        }
+      }
+    }
+  }
+}

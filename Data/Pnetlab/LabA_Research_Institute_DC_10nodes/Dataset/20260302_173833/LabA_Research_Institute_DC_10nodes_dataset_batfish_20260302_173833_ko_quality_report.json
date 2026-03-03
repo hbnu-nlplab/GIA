@@ -1,0 +1,32 @@
+{
+  "dataset": "C:\\Users\\sdlab\\workspace\\GIA\\Data\\Pnetlab\\LabA_Research_Institute_DC_10nodes\\Dataset\\20260302_173833\\LabA_Research_Institute_DC_10nodes_dataset_batfish_20260302_173833_ko.json",
+  "total_rows": 1264,
+  "meta": {
+    "lab_name": "LabA_Research_Institute_DC_10nodes",
+    "timestamp": "20260302_173833",
+    "question_lang": "ko",
+    "total_questions": 1264,
+    "pipeline_version": "bd1a393",
+    "policies_file": "C:\\Users\\sdlab\\workspace\\GIA\\Make_Dataset\\policies.json",
+    "schema_version": "3.1",
+    "policy_validation_passed": true,
+    "structured_metrics_coverage": 1.0,
+    "quality_checks": {
+      "duplicate_id_count": 0,
+      "duplicate_id_v2_count": 0,
+      "evidence_placeholder_count": 0,
+      "structured_schema_violations": 0,
+      "structured_metrics_coverage": 1.0
+    }
+  },
+  "checks": {
+    "duplicate_id_count": 0,
+    "duplicate_id_examples": [],
+    "evidence_placeholder_count": 0,
+    "unsupported_answer_type_count": 0,
+    "structured_schema_total": 60,
+    "structured_schema_valid": 60,
+    "structured_schema_pass_rate": 1.0
+  },
+  "quality_gate_passed": true
+}

@@ -1,6 +1,6 @@
 # IEEE TNMS 실행 TODO 백로그
 
-> **작성일**: 2026-02-13 | **최종 업데이트**: 2026-02-14
+> **작성일**: 2026-02-13 | **최종 업데이트**: 2026-03-02
 > **목적**: 설계 문서를 실제 구현/실험 작업으로 전환하기 위한 실행 체크리스트
 > **원칙**: 제출 필수(Core) 먼저, 확장(Stretch) 나중
 
@@ -8,7 +8,7 @@
 
 ## 0. 제출 필수 범위 (Scope Freeze)
 
-1. 데이터셋 기준: v2 공개본 **~1,048 QA / L1~L5**
+1. 데이터셋 기준: **Lab-A 1,264 / Lab-B 2,154 / Lab-C 2,673 / Lab-D 3,371 (총 9,462 QA, L1~L5)**
 2. 필수 실험: Exp.1 ~ Exp.3 + Exp.4 최소증거(Lab-B)
 3. 외부 벤치마크: NIKA 1개 우선
 4. Lab-C / Lab-D / NetPress / NetConfEval: 확장 항목
@@ -104,15 +104,15 @@
 
 ### 2.2 PNETLab 배포 + 데이터셋 생성
 
-- [ ] PNETLab에 Lab-B 노드/링크 배치 (IOSv 이미지, Ethernet 어댑터 8개)
-- [ ] Startup Config 에디터로 cfg 적용 + OSPF/BGP/LDP 수렴 확인
-- [ ] `main_batfish.py --lab-path Data/Pnetlab/LabB_NCN_Basic_SP_20nodes/`로 데이터셋 생성
-- [ ] `run_verification_pipeline.py --lab-path Data/Pnetlab/LabB_NCN_Basic_SP_20nodes/`로 검증
-- [ ] Lab-C/D도 동일 과정 반복 (가능한 범위 내)
+- [x] ~~PNETLab에 Lab-B 노드/링크 배치~~ → Batfish 직접 연결로 대체
+- [x] `run_dataset_pipeline.sh --lab-path Data/Pnetlab/LabB_NCN_Basic_SP_20nodes` → **2,154 QA** (2026-03-02)
+- [x] `run_dataset_pipeline.sh --lab-path Data/Pnetlab/LabC_NCN_Security_L2VPN_30nodes` → **2,673 QA** (2026-03-02)
+- [x] `run_dataset_pipeline.sh --lab-path Data/Pnetlab/LabD_NCN_MultiAS_Complex_40nodes` → **3,371 QA** (2026-03-02)
+- [ ] `run_verification_pipeline.py` — Lab-B/C/D Ground Truth 검증 (옵션)
 
 완료 기준:
-- [ ] Lab-B 데이터셋 생성 + 검증 리포트 산출
-- [ ] Lab-A 대비 스케일 비교표 작성 가능
+- [x] Lab-B/C/D 데이터셋 생성 + Quality Gate 통과
+- [x] Lab-A 대비 스케일 비교표 작성 가능 (1,264 → 2,154 → 2,673 → 3,371)
 
 ---
 
@@ -151,8 +151,9 @@
 [완료] 1. Ground Truth 검증 자동화 (Method 1-2 코드 + 통합 파이프라인)
 [완료] 2. Method 3 가이드 생성
 [완료] 3. Config Generator 구현 + Lab-B/C/D cfg 전부 생성 + 배포 가이드
-       4. ★ Method 2 사람 검토 + Method 3 PNETLab 실행 (병렬, 6-9시간)
-       5. Lab-B PNETLab 배포 + 데이터셋 생성 + 검증
+[완료] 4. Lab-B/C/D 데이터셋 생성 (run_dataset_pipeline.sh, 2026-03-02)
+           Lab-A: 1,264 QA | Lab-B: 2,154 QA | Lab-C: 2,673 QA | Lab-D: 3,371 QA
+       5. ★ Method 2 사람 검토 + Method 3 PNETLab 실행 (병렬, 6-9시간)
        6. Exp.2/3/4 실험 실행
        7. 논문 본문 작성
 ```

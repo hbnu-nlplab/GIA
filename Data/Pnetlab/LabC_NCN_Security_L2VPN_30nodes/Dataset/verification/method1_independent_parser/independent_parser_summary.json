@@ -1,0 +1,944 @@
+{
+  "total_rows": 1565,
+  "verifiable": 1565,
+  "match": 1452,
+  "mismatch": 113,
+  "skip": 0,
+  "error": 0,
+  "unsupported": 0,
+  "agreement_rate": 0.9277955271565496,
+  "by_level": {
+    "L1": {
+      "total": 1230,
+      "match": 1157,
+      "mismatch": 73
+    },
+    "L2": {
+      "total": 80,
+      "match": 77,
+      "mismatch": 3
+    },
+    "L3": {
+      "total": 255,
+      "match": 218,
+      "mismatch": 37
+    }
+  },
+  "by_metric": {
+    "system_hostname_text": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "system_version_text": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "system_timezone_text": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "system_user_list": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "system_user_count": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "logging_buffered_severity_text": {
+      "total": 20,
+      "match": 0,
+      "mismatch": 20
+    },
+    "ntp_server_list": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "snmp_community_list": {
+      "total": 20,
+      "match": 9,
+      "mismatch": 11
+    },
+    "syslog_server_list": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "interface_status_map": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "routing_table_entry_count": {
+      "total": 20,
+      "match": 17,
+      "mismatch": 3
+    },
+    "ssh_version_text": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "aaa_authentication_method": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "vty_transport_input_text": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "vty_login_mode_text": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "interface_count": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "interface_ip_map": {
+      "total": 20,
+      "match": 15,
+      "mismatch": 5
+    },
+    "subinterface_count": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "vrf_bind_map": {
+      "total": 20,
+      "match": 17,
+      "mismatch": 3
+    },
+    "bgp_local_as_numeric": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "bgp_neighbor_count": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "neighbor_list_ibgp": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "neighbor_list_ebgp": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "ospf_process_ids_set": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "ospf_area_set": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "ospf_area0_if_list": {
+      "total": 20,
+      "match": 16,
+      "mismatch": 4
+    },
+    "vrf_names_set": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "vrf_count": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "vrf_rd_map": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "rt_import_count": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "rt_export_count": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "mpls_ldp_router_id": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "l2vpn_pw_id_set": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "ssh_enabled_devices": {
+      "total": 3,
+      "match": 3,
+      "mismatch": 0
+    },
+    "ssh_missing_devices": {
+      "total": 2,
+      "match": 2,
+      "mismatch": 0
+    },
+    "ssh_missing_count": {
+      "total": 6,
+      "match": 6,
+      "mismatch": 0
+    },
+    "aaa_enabled_devices": {
+      "total": 4,
+      "match": 4,
+      "mismatch": 0
+    },
+    "aaa_missing_devices": {
+      "total": 2,
+      "match": 2,
+      "mismatch": 0
+    },
+    "devices_with_same_vrf": {
+      "total": 12,
+      "match": 12,
+      "mismatch": 0
+    },
+    "ospf_area_membership": {
+      "total": 2,
+      "match": 2,
+      "mismatch": 0
+    },
+    "ospf_area0_if_count": {
+      "total": 43,
+      "match": 40,
+      "mismatch": 3
+    },
+    "ospf_neighbor_count_per_area": {
+      "total": 5,
+      "match": 5,
+      "mismatch": 0
+    },
+    "l2vpn_pairs": {
+      "total": 1,
+      "match": 1,
+      "mismatch": 0
+    },
+    "l2vpn_unidirectional_pairs": {
+      "total": 1,
+      "match": 1,
+      "mismatch": 0
+    },
+    "l2vpn_unidir_count": {
+      "total": 4,
+      "match": 4,
+      "mismatch": 0
+    },
+    "l2vpn_pwid_mismatch_pairs": {
+      "total": 4,
+      "match": 4,
+      "mismatch": 0
+    },
+    "l2vpn_mismatch_count": {
+      "total": 40,
+      "match": 40,
+      "mismatch": 0
+    },
+    "ibgp_missing_pairs": {
+      "total": 7,
+      "match": 4,
+      "mismatch": 3
+    },
+    "ibgp_missing_pairs_count": {
+      "total": 12,
+      "match": 6,
+      "mismatch": 6
+    },
+    "ibgp_under_peered_devices": {
+      "total": 21,
+      "match": 3,
+      "mismatch": 18
+    },
+    "ibgp_under_peered_count": {
+      "total": 10,
+      "match": 1,
+      "mismatch": 9
+    },
+    "vrf_without_rt_pairs": {
+      "total": 6,
+      "match": 6,
+      "mismatch": 0
+    },
+    "vrf_without_rt_count": {
+      "total": 1,
+      "match": 1,
+      "mismatch": 0
+    },
+    "vrf_rt_list_per_device": {
+      "total": 43,
+      "match": 43,
+      "mismatch": 0
+    },
+    "compare_bgp_neighbor_count": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "compare_interface_count": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "compare_vrf_count": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "compare_bgp_as": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "compare_ospf_areas": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "max_interface_device": {
+      "total": 1,
+      "match": 1,
+      "mismatch": 0
+    },
+    "max_bgp_peer_device": {
+      "total": 1,
+      "match": 1,
+      "mismatch": 0
+    },
+    "all_devices_same_as": {
+      "total": 1,
+      "match": 0,
+      "mismatch": 1
+    },
+    "min_interface_device": {
+      "total": 1,
+      "match": 1,
+      "mismatch": 0
+    },
+    "bgp_as_distribution": {
+      "total": 1,
+      "match": 1,
+      "mismatch": 0
+    },
+    "vrf_usage_statistics": {
+      "total": 1,
+      "match": 1,
+      "mismatch": 0
+    },
+    "password_encryption_config": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "enable_secret_type": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "console_password_val": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "exec_timeout_val": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "banner_motd_content": {
+      "total": 20,
+      "match": 9,
+      "mismatch": 11
+    },
+    "banner_login_content": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "http_server_config": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "cdp_config": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "ip_source_route_config": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "loopback_interfaces_list": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "dns_servers_list": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "configured_bgp_as_numbers": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "mpls_ldp_config": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "default_route_next_hops": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "static_route_count": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "acl_configured_count": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "acl_applied_interfaces_list": {
+      "total": 20,
+      "match": 16,
+      "mismatch": 4
+    },
+    "prefix_list_count": {
+      "total": 20,
+      "match": 19,
+      "mismatch": 1
+    },
+    "route_map_count": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "qos_class_maps_list": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "netflow_monitors_list": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "interfaces_missing_description_count": {
+      "total": 20,
+      "match": 11,
+      "mismatch": 9
+    },
+    "eigrp_as_numbers": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "rip_processes": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "hsrp_groups_list": {
+      "total": 20,
+      "match": 18,
+      "mismatch": 2
+    },
+    "multicast_routing_config": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "serial_interface_devices": {
+      "total": 8,
+      "match": 8,
+      "mismatch": 0
+    },
+    "tunnel_interface_devices": {
+      "total": 6,
+      "match": 6,
+      "mismatch": 0
+    },
+    "port_channel_devices": {
+      "total": 17,
+      "match": 17,
+      "mismatch": 0
+    },
+    "vlan_interface_devices": {
+      "total": 19,
+      "match": 19,
+      "mismatch": 0
+    }
+  },
+  "by_answer_type": {
+    "text": {
+      "total": 506,
+      "match": 474
+    },
+    "set": {
+      "total": 518,
+      "match": 476
+    },
+    "number": {
+      "total": 401,
+      "match": 370
+    },
+    "map": {
+      "total": 140,
+      "match": 132
+    }
+  },
+  "mismatch_examples": [
+    {
+      "id": "LOGGING_BUFFERED_SEVERITY_TEXT_p5",
+      "id_v2": "logging_buffered_severity_text:5991ac5b4f",
+      "level": "L1",
+      "metric": "logging_buffered_severity_text",
+      "answer_type": "text",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "warnings",
+      "dataset_answer": "null",
+      "match": false,
+      "score": 0.0,
+      "detail": "gold_empty"
+    },
+    {
+      "id": "LOGGING_BUFFERED_SEVERITY_TEXT_p4",
+      "id_v2": "logging_buffered_severity_text:8eb660897d",
+      "level": "L1",
+      "metric": "logging_buffered_severity_text",
+      "answer_type": "text",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "warnings",
+      "dataset_answer": "null",
+      "match": false,
+      "score": 0.0,
+      "detail": "gold_empty"
+    },
+    {
+      "id": "LOGGING_BUFFERED_SEVERITY_TEXT_p2",
+      "id_v2": "logging_buffered_severity_text:f84ad4329a",
+      "level": "L1",
+      "metric": "logging_buffered_severity_text",
+      "answer_type": "text",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "warnings",
+      "dataset_answer": "null",
+      "match": false,
+      "score": 0.0,
+      "detail": "gold_empty"
+    },
+    {
+      "id": "LOGGING_BUFFERED_SEVERITY_TEXT_p1",
+      "id_v2": "logging_buffered_severity_text:980d4425bd",
+      "level": "L1",
+      "metric": "logging_buffered_severity_text",
+      "answer_type": "text",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "warnings",
+      "dataset_answer": "null",
+      "match": false,
+      "score": 0.0,
+      "detail": "gold_empty"
+    },
+    {
+      "id": "LOGGING_BUFFERED_SEVERITY_TEXT_p8",
+      "id_v2": "logging_buffered_severity_text:d61ee73c24",
+      "level": "L1",
+      "metric": "logging_buffered_severity_text",
+      "answer_type": "text",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "warnings",
+      "dataset_answer": "null",
+      "match": false,
+      "score": 0.0,
+      "detail": "gold_empty"
+    },
+    {
+      "id": "LOGGING_BUFFERED_SEVERITY_TEXT_p10",
+      "id_v2": "logging_buffered_severity_text:34f07ac92d",
+      "level": "L1",
+      "metric": "logging_buffered_severity_text",
+      "answer_type": "text",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "warnings",
+      "dataset_answer": "null",
+      "match": false,
+      "score": 0.0,
+      "detail": "gold_empty"
+    },
+    {
+      "id": "LOGGING_BUFFERED_SEVERITY_TEXT_leaf2",
+      "id_v2": "logging_buffered_severity_text:6e35c43dba",
+      "level": "L1",
+      "metric": "logging_buffered_severity_text",
+      "answer_type": "text",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "informational",
+      "dataset_answer": "null",
+      "match": false,
+      "score": 0.0,
+      "detail": "gold_empty"
+    },
+    {
+      "id": "LOGGING_BUFFERED_SEVERITY_TEXT_asbr2",
+      "id_v2": "logging_buffered_severity_text:43e487a8cc",
+      "level": "L1",
+      "metric": "logging_buffered_severity_text",
+      "answer_type": "text",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "warnings",
+      "dataset_answer": "null",
+      "match": false,
+      "score": 0.0,
+      "detail": "gold_empty"
+    },
+    {
+      "id": "LOGGING_BUFFERED_SEVERITY_TEXT_leaf1",
+      "id_v2": "logging_buffered_severity_text:f3e677391b",
+      "level": "L1",
+      "metric": "logging_buffered_severity_text",
+      "answer_type": "text",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "informational",
+      "dataset_answer": "null",
+      "match": false,
+      "score": 0.0,
+      "detail": "gold_empty"
+    },
+    {
+      "id": "LOGGING_BUFFERED_SEVERITY_TEXT_pe2",
+      "id_v2": "logging_buffered_severity_text:3603999311",
+      "level": "L1",
+      "metric": "logging_buffered_severity_text",
+      "answer_type": "text",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "warnings",
+      "dataset_answer": "null",
+      "match": false,
+      "score": 0.0,
+      "detail": "gold_empty"
+    },
+    {
+      "id": "LOGGING_BUFFERED_SEVERITY_TEXT_leaf11",
+      "id_v2": "logging_buffered_severity_text:1bde0c35ac",
+      "level": "L1",
+      "metric": "logging_buffered_severity_text",
+      "answer_type": "text",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "informational",
+      "dataset_answer": "null",
+      "match": false,
+      "score": 0.0,
+      "detail": "gold_empty"
+    },
+    {
+      "id": "LOGGING_BUFFERED_SEVERITY_TEXT_leaf8",
+      "id_v2": "logging_buffered_severity_text:a81bf37e92",
+      "level": "L1",
+      "metric": "logging_buffered_severity_text",
+      "answer_type": "text",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "informational",
+      "dataset_answer": "null",
+      "match": false,
+      "score": 0.0,
+      "detail": "gold_empty"
+    },
+    {
+      "id": "LOGGING_BUFFERED_SEVERITY_TEXT_leaf7",
+      "id_v2": "logging_buffered_severity_text:66e16ac9ac",
+      "level": "L1",
+      "metric": "logging_buffered_severity_text",
+      "answer_type": "text",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "informational",
+      "dataset_answer": "null",
+      "match": false,
+      "score": 0.0,
+      "detail": "gold_empty"
+    },
+    {
+      "id": "LOGGING_BUFFERED_SEVERITY_TEXT_pe5",
+      "id_v2": "logging_buffered_severity_text:cf50209904",
+      "level": "L1",
+      "metric": "logging_buffered_severity_text",
+      "answer_type": "text",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "warnings",
+      "dataset_answer": "null",
+      "match": false,
+      "score": 0.0,
+      "detail": "gold_empty"
+    },
+    {
+      "id": "LOGGING_BUFFERED_SEVERITY_TEXT_leaf3",
+      "id_v2": "logging_buffered_severity_text:6a7c231d8b",
+      "level": "L1",
+      "metric": "logging_buffered_severity_text",
+      "answer_type": "text",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "informational",
+      "dataset_answer": "null",
+      "match": false,
+      "score": 0.0,
+      "detail": "gold_empty"
+    },
+    {
+      "id": "LOGGING_BUFFERED_SEVERITY_TEXT_leaf12",
+      "id_v2": "logging_buffered_severity_text:5e0abb2272",
+      "level": "L1",
+      "metric": "logging_buffered_severity_text",
+      "answer_type": "text",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "informational",
+      "dataset_answer": "null",
+      "match": false,
+      "score": 0.0,
+      "detail": "gold_empty"
+    },
+    {
+      "id": "LOGGING_BUFFERED_SEVERITY_TEXT_leaf9",
+      "id_v2": "logging_buffered_severity_text:a49fad1930",
+      "level": "L1",
+      "metric": "logging_buffered_severity_text",
+      "answer_type": "text",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "informational",
+      "dataset_answer": "null",
+      "match": false,
+      "score": 0.0,
+      "detail": "gold_empty"
+    },
+    {
+      "id": "LOGGING_BUFFERED_SEVERITY_TEXT_leaf5",
+      "id_v2": "logging_buffered_severity_text:c889ccb7cb",
+      "level": "L1",
+      "metric": "logging_buffered_severity_text",
+      "answer_type": "text",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "informational",
+      "dataset_answer": "null",
+      "match": false,
+      "score": 0.0,
+      "detail": "gold_empty"
+    },
+    {
+      "id": "LOGGING_BUFFERED_SEVERITY_TEXT_pe1",
+      "id_v2": "logging_buffered_severity_text:4f36bb8808",
+      "level": "L1",
+      "metric": "logging_buffered_severity_text",
+      "answer_type": "text",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "warnings",
+      "dataset_answer": "null",
+      "match": false,
+      "score": 0.0,
+      "detail": "gold_empty"
+    },
+    {
+      "id": "LOGGING_BUFFERED_SEVERITY_TEXT_leaf6",
+      "id_v2": "logging_buffered_severity_text:0f4017add8",
+      "level": "L1",
+      "metric": "logging_buffered_severity_text",
+      "answer_type": "text",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "informational",
+      "dataset_answer": "null",
+      "match": false,
+      "score": 0.0,
+      "detail": "gold_empty"
+    },
+    {
+      "id": "SNMP_COMMUNITY_LIST_p5",
+      "id_v2": "snmp_community_list:5991ac5b4f",
+      "level": "L1",
+      "metric": "snmp_community_list",
+      "answer_type": "set",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "[\"NCN-RO\"]",
+      "dataset_answer": "[]",
+      "match": false,
+      "score": 0.0,
+      "detail": "extra={'ncn-ro'}"
+    },
+    {
+      "id": "SNMP_COMMUNITY_LIST_pe4",
+      "id_v2": "snmp_community_list:a2fc790735",
+      "level": "L1",
+      "metric": "snmp_community_list",
+      "answer_type": "set",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "[\"NCN-RO\", \"NCN-RW\"]",
+      "dataset_answer": "[]",
+      "match": false,
+      "score": 0.0,
+      "detail": "extra={'ncn-ro', 'ncn-rw'}"
+    },
+    {
+      "id": "SNMP_COMMUNITY_LIST_p7",
+      "id_v2": "snmp_community_list:51589f45e8",
+      "level": "L1",
+      "metric": "snmp_community_list",
+      "answer_type": "set",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "[\"NCN-RO\"]",
+      "dataset_answer": "[]",
+      "match": false,
+      "score": 0.0,
+      "detail": "extra={'ncn-ro'}"
+    },
+    {
+      "id": "SNMP_COMMUNITY_LIST_pe3",
+      "id_v2": "snmp_community_list:6ad90347c4",
+      "level": "L1",
+      "metric": "snmp_community_list",
+      "answer_type": "set",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "[\"NCN-RO\", \"NCN-RW\"]",
+      "dataset_answer": "[]",
+      "match": false,
+      "score": 0.0,
+      "detail": "extra={'ncn-ro', 'ncn-rw'}"
+    },
+    {
+      "id": "SNMP_COMMUNITY_LIST_asbr1",
+      "id_v2": "snmp_community_list:1e9e9c7f7a",
+      "level": "L1",
+      "metric": "snmp_community_list",
+      "answer_type": "set",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "[\"NCN-RO\", \"NCN-RW\"]",
+      "dataset_answer": "[]",
+      "match": false,
+      "score": 0.0,
+      "detail": "extra={'ncn-ro', 'ncn-rw'}"
+    },
+    {
+      "id": "SNMP_COMMUNITY_LIST_asbr2",
+      "id_v2": "snmp_community_list:43e487a8cc",
+      "level": "L1",
+      "metric": "snmp_community_list",
+      "answer_type": "set",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "[\"NCN-RO\", \"NCN-RW\"]",
+      "dataset_answer": "[]",
+      "match": false,
+      "score": 0.0,
+      "detail": "extra={'ncn-ro', 'ncn-rw'}"
+    },
+    {
+      "id": "SNMP_COMMUNITY_LIST_pe5",
+      "id_v2": "snmp_community_list:cf50209904",
+      "level": "L1",
+      "metric": "snmp_community_list",
+      "answer_type": "set",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "[\"NCN-RO\", \"NCN-RW\"]",
+      "dataset_answer": "[]",
+      "match": false,
+      "score": 0.0,
+      "detail": "extra={'ncn-ro', 'ncn-rw'}"
+    },
+    {
+      "id": "SNMP_COMMUNITY_LIST_p10",
+      "id_v2": "snmp_community_list:34f07ac92d",
+      "level": "L1",
+      "metric": "snmp_community_list",
+      "answer_type": "set",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "[\"NCN-RO\"]",
+      "dataset_answer": "[]",
+      "match": false,
+      "score": 0.0,
+      "detail": "extra={'ncn-ro'}"
+    },
+    {
+      "id": "SNMP_COMMUNITY_LIST_p4",
+      "id_v2": "snmp_community_list:8eb660897d",
+      "level": "L1",
+      "metric": "snmp_community_list",
+      "answer_type": "set",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "[\"NCN-RO\"]",
+      "dataset_answer": "[]",
+      "match": false,
+      "score": 0.0,
+      "detail": "extra={'ncn-ro'}"
+    },
+    {
+      "id": "SNMP_COMMUNITY_LIST_p2",
+      "id_v2": "snmp_community_list:f84ad4329a",
+      "level": "L1",
+      "metric": "snmp_community_list",
+      "answer_type": "set",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "[\"NCN-RO\"]",
+      "dataset_answer": "[]",
+      "match": false,
+      "score": 0.0,
+      "detail": "extra={'ncn-ro'}"
+    }
+  ]
+}

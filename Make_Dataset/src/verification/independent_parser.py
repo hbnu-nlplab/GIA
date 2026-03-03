@@ -1224,10 +1224,7 @@ class TopologyFacts:
             d = self.host_index.get(host)
             if not d:
                 return "numeric", 0
-            cnt = len(self._bgp_neighbors(d))
-            for v in self._bgp_vrfs(d):
-                cnt += len(v.get("neighbors") or [])
-            return "numeric", cnt
+            return "numeric", self._count_bgp_neighbors_total(d)
 
         if metric in ("neighbor_list_ibgp", "neighbor_list_ebgp"):
             d = self.host_index.get(host)
@@ -1240,14 +1237,14 @@ class TopologyFacts:
                 pid = n.get("id") or n.get("ip")
                 ras = n.get("remote_as")
                 if pid and ras is not None:
-                    if (ras == las) == want_ibgp:
+                    if (str(ras) == str(las)) == want_ibgp:
                         peers.add(pid)
             for v in self._bgp_vrfs(d):
                 for n in v.get("neighbors") or []:
                     pid = n.get("id") or n.get("ip")
                     ras = n.get("remote_as")
                     if pid and ras is not None:
-                        if (ras == las) == want_ibgp:
+                        if (str(ras) == str(las)) == want_ibgp:
                             peers.add(pid)
             return "set", sorted(peers)
 
@@ -1263,7 +1260,16 @@ class TopologyFacts:
             if not d:
                 return "set", []
             areas = self._ospf(d).get("areas", {})
-            return "set", sorted(str(a) for a in areas.keys())
+            if isinstance(areas, dict):
+                return "set", sorted(str(a) for a in areas.keys())
+            elif isinstance(areas, list):
+                ids = set()
+                for area in areas:
+                    if isinstance(area, dict):
+                        aid = area.get("id") or area.get("area")
+                        if aid is not None: ids.add(str(aid))
+                return "set", sorted(ids)
+            return "set", []
 
         if metric == "ospf_area0_if_list":
             d = self.host_index.get(host)
@@ -1287,19 +1293,19 @@ class TopologyFacts:
                 return "set", []
             names = set()
             for v in self._bgp_vrfs(d):
-                if v.get("name"):
-                    names.add(v["name"])
+                if v.get("name"): names.add(v["name"])
+            for sv in self._services_vrf(d):
+                if sv.get("name"): names.add(sv["name"])
+            for iface in d.get("interfaces", []):
+                vrf_name = iface.get("vrf") or iface.get("l3vrf")
+                if vrf_name: names.add(vrf_name)
             return "set", sorted(names)
 
         if metric == "vrf_count":
             d = self.host_index.get(host)
             if not d:
                 return "numeric", 0
-            names = set()
-            for v in self._bgp_vrfs(d):
-                if v.get("name"):
-                    names.add(v["name"])
-            return "numeric", len(names)
+            return "numeric", self._count_vrfs_total(d)
 
         if metric == "vrf_rd_map":
             d = self.host_index.get(host)
@@ -1362,17 +1368,17 @@ class TopologyFacts:
         if metric == "ssh_version_text":
             d = self.host_index.get(host)
             if not d:
-                return "text", "미설정"
+                return "text", ""
             val = d.get("security", {}).get("ssh", {}).get("version")
-            return "text", str(val) if val is not None else "미설정"
+            return "text", str(val) if val is not None else ""
 
         if metric == "aaa_authentication_method":
             d = self.host_index.get(host)
             if not d:
-                return "text", "미설정"
+                return "text", ""
             aaa = d.get("security", {}).get("aaa", {})
             if not aaa.get("present"):
-                return "text", "미설정"
+                return "text", ""
             method = aaa.get("method") or aaa.get("authentication_method") or aaa.get("authentication")
             if not method:
                 method = "local"
@@ -1381,7 +1387,7 @@ class TopologyFacts:
         if metric == "mpls_ldp_router_id":
             d = self.host_index.get(host)
             if not d:
-                return "text", "미설정"
+                return "text", ""
             # Prioritize configuration.routing.mpls_ldp_rid (already resolved to IP)
             rid = d.get("configuration", {}).get("routing", {}).get("mpls_ldp_rid")
             if rid:
@@ -1398,10 +1404,9 @@ class TopologyFacts:
                             ip = (iface.get("ipv4") or "").split("/")[0]
                             if ip:
                                 return "text", ip
-                    return "text", "미설정"
+                    return "text", ""
                 return "text", str(rid2)
-            # No explicit mpls ldp router-id → 미설정 (NO Loopback0 fallback)
-            return "text", "미설정"
+            return "text", ""
 
         # Config-based L1 metrics (from configuration section)
         _cfg_text_metrics = {
@@ -1461,15 +1466,29 @@ class TopologyFacts:
             section, key = _cfg_set_metrics[metric]
             if metric == "ntp_servers_list":
                 servers = d.get("services", {}).get("ntp", {}).get("servers", [])
-                return "set", sorted(set(str(s) for s in servers))
+                result = []
+                for s in servers:
+                    if isinstance(s, dict):
+                        addr = s.get("address") or s.get("server")
+                        if addr: result.append(str(addr))
+                    elif s:
+                        result.append(str(s))
+                return "set", sorted(set(result))
             if metric == "syslog_servers_list":
                 servers = d.get("logging", {}).get("hosts", [])
-                return "set", sorted(set(str(s) for s in servers))
+                result = []
+                for s in servers:
+                    if isinstance(s, dict):
+                        addr = s.get("address") or s.get("host") or s.get("ip")
+                        if addr: result.append(str(addr))
+                    elif s:
+                        result.append(str(s))
+                return "set", sorted(set(result))
             if metric == "loopback_interfaces_list":
                 val = d.get("configuration", {}).get(section, {}).get(key, [])
                 result = []
                 for s in val:
-                    m = re.search(r"Loopback\d+", s)
+                    m = re.search(r'[Ll]oopback\d+', str(s))
                     if m:
                         result.append(m.group(0))
                 return "set", sorted(set(result)) if result else []
@@ -1571,8 +1590,15 @@ class TopologyFacts:
                 h = self._hostname(d)
                 areas = self._ospf(d).get("areas", {})
                 if isinstance(areas, dict):
-                    if area_str in areas:
+                    if area_str in areas or (area_str.isdigit() and int(area_id) in areas):
                         devs_in_area.add(h)
+                elif isinstance(areas, list):
+                    for a in areas:
+                        if isinstance(a, dict):
+                            aid = a.get("id") or a.get("area")
+                            if str(aid) == area_str:
+                                devs_in_area.add(h)
+                                break
             return "set", sorted(devs_in_area)
 
         if metric == "devices_in_as":
@@ -1611,12 +1637,12 @@ class TopologyFacts:
 
         # Interface type device lists (L2)
         _iface_type_metrics = {
-            "port_channel_devices": lambda n: "Port-channel" in n or "Po" in n,
-            "tunnel_interface_devices": lambda n: "Tunnel" in n or "Tu" in n,
+            "port_channel_devices": lambda n: n.startswith("Port-channel") or n.startswith("Po"),
+            "tunnel_interface_devices": lambda n: n.startswith("Tunnel") or n.startswith("Tu"),
             "serial_interface_devices": lambda n: "Serial" in n,
             "vlan_interface_devices": lambda n: "Vlan" in n,
             "gigabit_interface_devices": lambda n: "GigabitEthernet" in n,
-            "ten_gigabit_interface_devices": lambda n: "TenGigabit" in n or "Te" in n,
+            "ten_gigabit_interface_devices": lambda n: n.startswith("TenGigabit") or n.startswith("Te"),
         }
 
         if metric in _iface_type_metrics:
@@ -1701,10 +1727,22 @@ class TopologyFacts:
 
         if metric == "compare_ospf_areas":
             d1, d2 = self.host_index.get(host1), self.host_index.get(host2)
-            areas1 = set(self._ospf(d1 or {}).get("areas", {}).keys())
-            areas2 = set(self._ospf(d2 or {}).get("areas", {}).keys())
-            a1_str = ", ".join(sorted(str(a) for a in areas1)) if areas1 else "None"
-            a2_str = ", ".join(sorted(str(a) for a in areas2)) if areas2 else "None"
+            def _extract_area_ids(ospf_data):
+                areas = (ospf_data or {}).get("areas", {})
+                if isinstance(areas, dict):
+                    return set(str(a) for a in areas.keys() if a is not None)
+                elif isinstance(areas, list):
+                    ids = set()
+                    for area in areas:
+                        if isinstance(area, dict):
+                            aid = area.get("id") or area.get("area")
+                            if aid is not None: ids.add(str(aid))
+                    return ids
+                return set()
+            areas1 = _extract_area_ids(self._ospf(d1 or {}))
+            areas2 = _extract_area_ids(self._ospf(d2 or {}))
+            a1_str = ", ".join(sorted(areas1)) if areas1 else "None"
+            a2_str = ", ".join(sorted(areas2)) if areas2 else "None"
             return "text", f"{host1}: Area {a1_str}, {host2}: Area {a2_str}"
 
         if metric == "max_interface_device":
@@ -1728,7 +1766,7 @@ class TopologyFacts:
         if metric == "max_bgp_peer_device":
             max_cnt, max_h = -1, None
             for d in self.devices:
-                cnt = len(self._bgp_neighbors(d))
+                cnt = self._count_bgp_neighbors_total(d)
                 if cnt > max_cnt:
                     max_cnt = cnt
                     max_h = self._hostname(d)
@@ -1755,8 +1793,7 @@ class TopologyFacts:
             stats: Dict[str, int] = {}
             for d in self.devices:
                 h = self._hostname(d)
-                unique_vrfs = set(v.get("name") for v in self._bgp_vrfs(d) if v.get("name"))
-                stats[h] = len(unique_vrfs)
+                stats[h] = self._count_vrfs_total(d)
             parts = [f"{h}: {cnt}개" for h, cnt in sorted(stats.items())]
             return "text", ", ".join(parts) if parts else "No Info"
 

@@ -106,9 +106,19 @@ def _normalize_str(val: Any) -> str:
     # Strip surrounding quotes
     if len(s) >= 2 and s[0] == s[-1] and s[0] in ('"', "'"):
         s = s[1:-1]
-    # Null aliases
-    if s in ("null", "none", "n/a", "not configured", "not found", "미설정"):
+    # Normalize underscores/hyphens to spaces for comparison
+    s_check = s.replace("_", " ").replace("-", " ").strip()
+    # Null aliases (expanded) — including empty collection representations
+    if s_check in ("null", "none", "n/a", "not configured", "not found",
+                    "no data", "empty", "미설정", ""):
         return ""
+    # Empty collections = null ([] / {} / () / "Not Configured")
+    if s in ("[]", "{}", "()", "set()"):
+        return ""
+    # Normalize "AS N/A" vs "AS None" — both mean "no AS configured"
+    s = re.sub(r'\bAS\s+(N/A|None|null)\b', 'AS N/A', s, flags=re.IGNORECASE)
+    # Remove Korean counters (0개 → 0)
+    s = re.sub(r'(\d+)\s*[개대명건]', r'\1', s)
     return s
 
 
@@ -205,13 +215,33 @@ def _score_map(parser: Any, gold: Any) -> Dict[str, Any]:
             "detail": "; ".join(mismatches) if mismatches else "exact"}
 
 
+def _normalize_timezone(val: str) -> str:
+    """Normalize timezone representations: 'KST 9', 'KST +9 0', 'KST +9' → 'kst 9'."""
+    m = re.match(r'^(\w+)\s+\+?(-?\d+)(?:\s+\d+)?$', val.strip())
+    if m:
+        return f"{m.group(1).lower()} {m.group(2)}"
+    return val.strip().lower()
+
+
 def _score_text(parser: Any, gold: Any) -> Dict[str, Any]:
     p = _normalize_str(parser)
     g = _normalize_str(gold)
+
+    # Both empty (NOT_CONFIGURED case)
+    if not p and not g:
+        return {"match": True, "score": 1.0, "detail": "both_empty"}
+
+    # Direct match after normalization
     if p == g:
         return {"match": True, "score": 1.0, "detail": "exact"}
 
-    # Token F1 fallback
+    # Timezone-specific normalization
+    p_tz = _normalize_timezone(p)
+    g_tz = _normalize_timezone(g)
+    if p_tz == g_tz:
+        return {"match": True, "score": 1.0, "detail": "timezone_normalized"}
+
+    # Token F1 for partial credit (keep for verification — more lenient than eval)
     p_tokens = set(p.split())
     g_tokens = set(g.split())
     if not g_tokens:
