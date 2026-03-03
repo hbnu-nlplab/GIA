@@ -27,7 +27,8 @@
       "Bash(\"/c/Users/sdlab/AppData/Local/Programs/Ollama/ollama.exe\" list:*)",
       "Bash(PYTHONUTF8=1 ../../../.venv/Scripts/python:*)",
       "Bash(cmd.exe:*)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "Bash(pgrep:*)"
     ]
   }
 }
