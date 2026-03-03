@@ -166,11 +166,11 @@ class ConfigManager:
 
 # === Prompt & Stability (재사용) ===
 
-SYSTEM_PROMPT = """You are an expert Network Engineer analyzing network configurations.
+SYSTEM_PROMPT = """You are an expert Network Engineer analyzing network configurations. /no_think
 
 OUTPUT FORMAT RULES (CRITICAL - MUST FOLLOW EXACTLY):
 
-1. First, analyze the configuration carefully to find the answer.
+1. Analyze the configuration carefully, then output ONLY the final answer.
 
 2. Output ONLY the raw answer value in ONE line:
    - text type: Just the text value (e.g., "R1" or "10.0.0.1")
@@ -454,21 +454,41 @@ def run_evaluation(
     duration = time.time() - start_time
     logger.info(f"Inference complete: {len(outputs_text)} samples in {duration:.1f}s ({len(outputs_text)/duration:.1f} req/s)")
 
-    # 6. Process Results
+    # 6. Process Results — reasoning 토큰 제거
     results = []
     format_stats = {}
-    
+
+    def extract_answer(raw: str) -> str:
+        """vLLM raw output에서 reasoning 토큰을 제거하고 답변만 추출."""
+        text = raw.strip()
+        if not text:
+            return ""
+        # GPT-OSS-20B: "analysis...assistantfinal ANSWER"
+        if 'assistantfinal' in text:
+            text = text.split('assistantfinal')[-1].strip()
+        # Qwen/GLM: "<think>...</think> ANSWER"
+        elif '</think>' in text:
+            text = text.split('</think>')[-1].strip()
+        elif '<think>' in text:
+            text = text.split('<think>')[0].strip()
+        # reasoning delimiter 없이 폭주한 경우 → 답변 추출 불가
+        elif text.lstrip().startswith('analysis') or len(text) > 5000:
+            # 추론 루프에 빠진 것으로 간주 — 빈 문자열 반환
+            return ""
+        return text.strip()
+
     for i, raw_output in enumerate(outputs_text):
         row = data[i]
-        
-        format_metrics = measure_format_stability(raw_output, row["answer_type"])
-        
+        cleaned = extract_answer(raw_output)
+
+        format_metrics = measure_format_stability(cleaned, row["answer_type"])
+
         results.append({
             "question_id": row.get("question_id", row.get("id", str(i+1))),
             "question": row["question"],
             "gold": row["answer"],
             "raw_pred": raw_output,
-            "pred": raw_output.strip(), # 채점 스크립트(analyze_results)에서 clean 및 parse 처리
+            "pred": cleaned,
             "level": row.get("level", "L1"),
             "category": row.get("category", "General"),
             "answer_type": row["answer_type"],
