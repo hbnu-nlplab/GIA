@@ -53,16 +53,18 @@ class Config:
     }
 
     # vLLM용 모델 매핑 (명시적 AWQ 양자화 Repo 사용)
+    # max_ctx: 모델 크기에 따라 차등 설정
+    #   - 소형 모델(<10GB): Lab-D 설정 ~23,758 tok 처리 가능 → 40960
+    #   - 대형 모델(>15GB): KV 캐시 부족 → 16384 (입력+출력 ~13K tok 범위)
     MODEL_DICT = {
-        # GPT-OSS-20B: FP16은 ~40GB → A5000 24GB에서 OOM
-        # AWQ 버전이 HuggingFace에 있으면 사용, 없으면 GPTQ 또는 bitsandbytes 4-bit 필요
-        # TODO: HuggingFace에서 AWQ repo 확인 후 hf_path 업데이트
-        "gpt-oss:20b":               {"hf_path": "openai/gpt-oss-20b",                           "display": "GPT-OSS-20B",   "quant": None,  "backend": "vllm_offline"},
-        "qwen3-coder:30b-a3b-AWQ":{"hf_path": "stelterlab/Qwen3-Coder-30B-A3B-Instruct-AWQ",  "display": "Qwen3-Coder",   "quant": "awq", "backend": "vllm_offline"},
-        "gemma3:27b-it-AWQ":      {"hf_path": "gaunernst/gemma-3-27b-it-int4-awq",            "display": "Gemma-3-27B",   "quant": "awq", "backend": "vllm_offline"},
-        "glm-4.7-flash-AWQ":      {"hf_path": "QuantTrio/GLM-4.7-Flash-AWQ",                  "display": "GLM-4.7-Flash", "quant": "awq", "backend": "vllm_offline"},
-        "Qwen3.5-27B-AWQ":      {"hf_path": "cyankiwi/Qwen3.5-27B-AWQ-4bit",                "display": "Qwen3.5-27B",   "quant": "awq", "backend": "vllm_offline"},
-        "gpt-4o-mini":               {"hf_path": "gpt-4o-mini",                                  "display": "GPT-4o-mini",   "quant": None,  "backend": "openai"},
+        "gpt-oss:20b":               {"hf_path": "openai/gpt-oss-20b",                           "display": "GPT-OSS-20B",   "quant": None,  "backend": "vllm_offline", "max_ctx": 40960},
+        "qwen3-coder:30b-a3b-AWQ":{"hf_path": "stelterlab/Qwen3-Coder-30B-A3B-Instruct-AWQ",  "display": "Qwen3-Coder",   "quant": None,  "backend": "vllm_offline", "max_ctx": 40960},
+        # "gemma3:27b-it-AWQ":      {"hf_path": "gaunernst/gemma-3-27b-it-int4-awq",            "display": "Gemma-3-27B",   "quant": None,  "backend": "vllm_offline", "max_ctx": 16384},
+        "glm-4.7-flash-AWQ":      {"hf_path": "QuantTrio/GLM-4.7-Flash-AWQ",                  "display": "GLM-4.7-Flash", "quant": None,  "backend": "vllm_offline", "max_ctx": 32768, "eager": True,
+                                    "env": {"VLLM_USE_DEEP_GEMM": "0", "VLLM_USE_FLASHINFER_MOE_FP16": "1", "VLLM_USE_FLASHINFER_SAMPLER": "0"}},
+        # Qwen3.5-27B: 아키텍처 Qwen3_5ForConditionalGeneration이 vLLM 0.16.0 미지원 → 제외
+        "Qwen3.5-27B-AWQ": {"hf_path": "cyankiwi/Qwen3.5-27B-AWQ-4bit", "display": "Qwen3.5-27B",   "quant": None,  "backend": "vllm_offline", "max_ctx": 40960},
+        "gpt-4o-mini":               {"hf_path": "gpt-4o-mini",                                  "display": "GPT-4o-mini",   "quant": None,  "backend": "openai",        "max_ctx": 128000},
     }
 
     ALL_MODELS = list(MODEL_DICT.keys())
@@ -71,17 +73,20 @@ class Config:
     TEMPERATURE = 0.0
 
     # 레벨별 출력 토큰 차등 — 배치를 레벨 그룹으로 분리하여 효율화
-    # reasoning 모델(GPT-OSS 등)은 내부 추론에 ~19K 토큰 사용 관찰됨
+    # vLLM이 max_tokens를 실제 사용 가능한 범위로 자동 클리핑함
     MAX_OUTPUT_BY_LEVEL = {
-        "L1": 8192,
-        "L2": 8192,
-        "L3": 16384,
-        "L4": 32768,   # reasoning 모델 추론 토큰 포함
-        "L5": 65536,   # 최대 추론 — 장애 영향 분석 등 복잡한 질문
+        "L1": 4096,
+        "L2": 4096,
+        "L3": 8192,
+        "L4": 16384,
+        "L5": 16384,
     }
-    MAX_OUTPUT_DEFAULT = 32768
+    MAX_OUTPUT_DEFAULT = 8192
     
-    NUM_CTX = 49152  # 48K — 입력 컨텍스트 길이 (max_model_len)
+    NUM_CTX = 16384  # ← 대형 모델(>15GB) 기본값 (모델별 max_ctx가 우선)
+                     # 실제 입력: Config(~4192 tok) + System/Q(~400 tok) = ~4600 tok
+                     # 출력 최대 8192 tok → 총 필요 시퀀스 ~12800 tok → 16384로 충분
+                     # (40960 사용 시 KV 캐시 2,912 토큰만 남아 스케줄 데드락 발생)
 
 
 # === Logger ===
@@ -308,17 +313,42 @@ class VLLMEngineManager:
             if LLM is None:
                 raise RuntimeError("vllm is not installed.")
             
-            logger.info(f"Loading vLLM engine: {hf_path} (quant={quantization}, max_model_len={Config.NUM_CTX})")
-            cls._instance = LLM(
+            # 모델별 max_ctx 결정 (MODEL_DICT.max_ctx 우선, 없으면 Config.NUM_CTX)
+            model_max_ctx = model_info.get("max_ctx", Config.NUM_CTX)
+            logger.info(f"Loading vLLM engine: {hf_path} (quant={quantization}, max_model_len={model_max_ctx})")
+            
+            # 멀티모달 모델(Gemma-3, Qwen3.5 등)은 vision 인코더를 비활성화하여 KV 캐시 메모리 확보
+            # Gemma-3-27B-IT: SigLIP 비전 인코더 프로파일링이 OOM 유발 → 텍스트 전용 모드 강제
+            MULTIMODAL_MODEL_KEYS = ["gemma3", "gemma-3", "qwen3.5", "qwen3_5", "llava", "phi-3-v", "pixtral"]
+            mm_limits = {}
+            if any(kw in model_key.lower() or kw in hf_path.lower() for kw in MULTIMODAL_MODEL_KEYS):
+                mm_limits = {"image": 0, "video": 0, "audio": 0}
+                logger.info(f"멀티모달 모델 감지 ({model_key}): vision 인코더 비활성화 (텍스트 전용 모드)")
+            
+            # 모델별 환경 변수 설정 (MoE 등 특수 모델)
+            model_env = model_info.get("env", {})
+            if model_env:
+                for k, v in model_env.items():
+                    os.environ[k] = v
+                logger.info(f"모델 환경 변수 설정: {model_env}")
+            
+            # 모델별 enforce_eager 설정 (MoE 모델은 torch.compile이 매우 느림)
+            use_eager = model_info.get("eager", False)
+            
+            llm_kwargs = dict(
                 model=hf_path,
                 tensor_parallel_size=torch.cuda.device_count(),
                 gpu_memory_utilization=gpu_util,
-                max_model_len=Config.NUM_CTX,  # 48K 컨텍스트 길이 명시적 보장
+                max_model_len=model_max_ctx,
                 trust_remote_code=True,
-                enforce_eager=False,
+                enforce_eager=use_eager,
                 quantization=quantization,
-                enable_prefix_caching=True, # 핵심 성능 최적화!!
+                enable_prefix_caching=True,  # 핵심 성능 최적화!!
             )
+            if mm_limits:
+                llm_kwargs["limit_mm_per_prompt"] = mm_limits
+            
+            cls._instance = LLM(**llm_kwargs)
             cls._current_model_key = model_key
             
         return cls._instance, cls._instance.get_tokenizer()
@@ -437,19 +467,33 @@ def run_evaluation(
                 eta = (elapsed / i) * (len(data) - i) if i > 0 else 0
                 logger.info(f"Progress: {i}/{len(data)} | ETA: {eta/60:.1f}min")
             
+            level = row.get("level", "L1")
+            max_tokens_needed = Config.MAX_OUTPUT_BY_LEVEL.get(level, Config.MAX_OUTPUT_DEFAULT)
             messages = build_messages(row["question"], row["answer_type"], configs_text)
-            try:
-                # Limit tokens for API, 4o-mini supports 16K max output
-                resp = llm.chat.completions.create(
-                    model=openai_model_name,
-                    messages=messages,
-                    temperature=Config.TEMPERATURE,
-                    max_tokens=min(max_tokens_needed, 16383), 
-                )
-                outputs_text.append(resp.choices[0].message.content or "")
-            except Exception as e:
-                logger.error(f"OpenAI API Error on sample {i}: {e}")
-                outputs_text.append("")
+
+            # TPM rate-limit 방지: 요청간 1초 딜레이 (200K TPM / ~4000 TPR ≈ 50 req/min 이내 유지)
+            time.sleep(1.2)
+
+            for attempt in range(4):  # 최대 4회 시도 (1회 + 3회 재시도)
+                try:
+                    resp = llm.chat.completions.create(
+                        model=openai_model_name,
+                        messages=messages,
+                        temperature=Config.TEMPERATURE,
+                        max_tokens=min(max_tokens_needed, 16383),
+                    )
+                    outputs_text[i - 1] = resp.choices[0].message.content or ""
+                    break  # 성공 시 재시도 루프 탈출
+                except Exception as e:
+                    err_str = str(e)
+                    if "429" in err_str and attempt < 3:
+                        wait = 60 * (attempt + 1)  # 60s, 120s, 180s
+                        logger.warning(f"Rate limit on sample {i} (attempt {attempt+1}), waiting {wait}s...")
+                        time.sleep(wait)
+                    else:
+                        logger.error(f"OpenAI API Error on sample {i}: {e}")
+                        outputs_text[i - 1] = ""
+                        break
     
     duration = time.time() - start_time
     logger.info(f"Inference complete: {len(outputs_text)} samples in {duration:.1f}s ({len(outputs_text)/duration:.1f} req/s)")
