@@ -10,6 +10,13 @@
 set -euo pipefail
 export PYTHONUTF8=1
 
+# === 마스터 로그 파일 설정 (전체 stdout+stderr 자동 저장) ===
+LOG_BASE_DIR="$(cd "$(dirname "$0")" && pwd)/logs"
+mkdir -p "${LOG_BASE_DIR}"
+MASTER_LOG="${LOG_BASE_DIR}/vllm_all_$(date '+%Y%m%d_%H%M%S').log"
+exec > >(tee -a "${MASTER_LOG}") 2>&1
+echo "[LOG] 전체 실행 로그: ${MASTER_LOG}"
+
 ROOT_DIR="$(cd "$(dirname "$0")/../../.." && pwd)"
 EVAL_SCRIPT="${ROOT_DIR}/Experiment/code/NetConfigQA2_2/run_eval_vllm_offline.py"
 RESULT_DIR="${ROOT_DIR}/Experiment/code/NetConfigQA2_2/results"
@@ -27,7 +34,7 @@ fi
 MODELS=(
     "gpt-oss:20b"
     "qwen3-coder:30b-a3b-AWQ"
-    "gemma3:27b-it-AWQ"
+    # "gemma3:27b-it-AWQ"
     "glm-4.7-flash-AWQ"
     "Qwen3.5-27B-AWQ"
     "gpt-4o-mini"
@@ -39,7 +46,7 @@ LABS=("A" "B" "C" "D")
 declare -A DISPLAY_NAMES
 DISPLAY_NAMES["gpt-oss:20b"]="GPT-OSS-20B"
 DISPLAY_NAMES["qwen3-coder:30b-a3b-AWQ"]="Qwen3-Coder"
-DISPLAY_NAMES["gemma3:27b-it-AWQ"]="Gemma-3-27B"
+# DISPLAY_NAMES["gemma3:27b-it-AWQ"]="Gemma-3-27B"
 DISPLAY_NAMES["glm-4.7-flash-AWQ"]="GLM-4.7-Flash"
 DISPLAY_NAMES["Qwen3.5-27B-AWQ"]="Qwen3.5-27B"
 DISPLAY_NAMES["gpt-4o-mini"]="GPT-4o-mini"
