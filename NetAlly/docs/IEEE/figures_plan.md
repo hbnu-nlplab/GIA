@@ -7,12 +7,13 @@
 | 도구 | 용도 | 장점 | 단점 |
 |---|---|---|---|
 | **matplotlib + seaborn** | Bar chart, Line chart (Fig.4,5,6) | Python에서 바로 생성, 재현성 | 다이어그램은 불편 |
-| **draw.io (diagrams.net)** | 아키텍처, 파이프라인 (Fig.1,2,3) | GUI, 벡터 PDF 출력, 무료 | 자동화 불가 |
+| **scientific-schematics** | 아키텍처, 파이프라인, 개념도 (Fig.1,2,3,7) | 저널용 도식 자동 생성, 품질 리뷰 내장 | API key 필요 |
+| **draw.io (diagrams.net)** | 아키텍처, 파이프라인 수동 보정 | GUI, 벡터 PDF 출력, 무료 | 자동화 불가 |
 | **Mermaid → SVG** | 간단한 흐름도 | 코드 기반, 버전 관리 | 복잡한 레이아웃 어려움 |
 | **LaTeX tikz** | 최종 논문 내 직접 | IEEE 스타일 일관 | 학습 곡선 높음 |
 
 **추천 워크플로우:**
-- Fig.1,2,3 (다이어그램): **draw.io** → PDF 내보내기
+- Fig.1,2,3,7 (다이어그램): **scientific-schematics**로 초안 생성 → 필요시 draw.io 수동 보정
 - Fig.4,5,6 (차트): **matplotlib** → PDF 저장 (make_figure.py 활용)
 - 최종 LaTeX에서: `\includegraphics[width=\columnwidth]{fig1.pdf}`
 
@@ -23,7 +24,7 @@
 ### Fig. 1: 전체 프레임워크 개요
 - **위치**: Section I or III 첫 페이지
 - **내용**: 왼쪽(데이터셋 생성) → 오른쪽(평가) → 아래(3-way 비교)
-- **도구**: draw.io
+- **도구**: scientific-schematics
 - **크기**: 2-column 전체 폭 (`\begin{figure*}`)
 - **요소**:
   - .cfg files → Dual-Path Pipeline → Dataset (9,462 QA)
@@ -34,7 +35,7 @@
 ### Fig. 2: Dual-Path QA 생성 파이프라인
 - **위치**: Section III.B
 - **내용**: Path A (L1-L3, 규칙) + Path B (L4-L5, 시뮬레이션)
-- **도구**: draw.io
+- **도구**: scientific-schematics
 - **크기**: 1-column
 - **요소**:
   - .cfg → Batfish Parser → Static Facts
@@ -45,7 +46,7 @@
 ### Fig. 3: NetAlly 3-Plane 아키텍처
 - **위치**: Section IV.B
 - **내용**: Orchestrator-Executor + 3 Planes + ReAct Loop
-- **도구**: draw.io
+- **도구**: scientific-schematics
 - **크기**: 1-column
 - **요소**:
   - User Query → Orchestrator (Skill Selection)
@@ -66,6 +67,7 @@
   - L3-L4 사이 점선 + "Simulation Barrier" 라벨
   - 흑백 인쇄 대비: 해칭 패턴 추가
 - **코드**: `make_figure.py`에서 생성
+- **데이터 입력**: `figure_data.json`의 `fig4` 블록에 최종 수치 입력
 
 ### Fig. 5: 3-Way 비교 — 구조 vs 도구
 - **위치**: Section V.C
@@ -76,6 +78,7 @@
   - 3그룹 × 5레벨 Grouped Bar
   - Δ(구조)와 Δ(도구) 화살표 표시
   - L4/L5에서 "Single ≈ Pure MAS << NetAlly" 패턴 강조
+- **데이터 입력**: `figure_data.json`의 `fig5` 블록에 최종 수치 입력
 
 ### Fig. 6: Scalability — 노드 수 vs TA-Acc
 - **위치**: Section V.B 또는 VI.C
@@ -87,20 +90,22 @@
   - Y축: TA-Acc
   - 5개 선 (L1~L5)
   - L1은 평탄, L4/L5는 낮게 유지
+- **데이터 입력**: `figure_data.json`의 `fig6` 블록에 최종 수치 입력
 
 ### Fig. 7 (선택): 5단계 인지 난이도 시각화
 - **위치**: Section III.C
 - **내용**: L1→L5 계단식 + Simulation Barrier
-- **도구**: draw.io
+- **도구**: scientific-schematics
 - **크기**: 1-column
 
 ---
 
 ## 제작 순서
 
-1. 실험 결과 나오기 전: Fig.1, Fig.2, Fig.3 (다이어그램) — draw.io
-2. 실험 결과 나온 후: Fig.4, Fig.5, Fig.6 (차트) — matplotlib
-3. 시간 있으면: Fig.7 (난이도 시각화)
+1. 실험 결과 나오기 전: `schematic_prompts.md` 기반으로 Fig.1, Fig.2, Fig.3 생성
+2. 실험 결과 나온 후: `figure_data.json`에 최종 수치 입력
+3. `python make_figure.py` 실행 후 Fig.4, Fig.5, Fig.6 PDF 재생성
+4. 시간 있으면: Fig.7 (난이도 시각화) 생성
 
 ## 스타일 가이드
 
@@ -113,3 +118,11 @@
 - **흑백 대비**: 해칭 패턴 (///, \\\\, xxx, ooo) 병행
 - **캡션**: self-contained (본문 없이 이해 가능)
 - **번호**: Fig. 1 ~ Fig. 6 (또는 7)
+
+## 최종 점검 체크리스트
+
+- Fig.4는 실제 모델명을 사용하고, Lab-A 기준임을 캡션에 명시
+- Fig.5는 동일 backbone 기준의 3-way 비교임을 본문과 일치시킬 것
+- Fig.6는 best model 또는 명시된 대표 모델 1개만 사용하고 캡션에 그 기준을 적을 것
+- 모든 PDF는 `make_figure.py`로 재생성 후 LaTeX에 반영
+- Fig.1,2,3,7은 `schematic_prompts.md`의 프롬프트와 실제 산출 파일명을 함께 기록

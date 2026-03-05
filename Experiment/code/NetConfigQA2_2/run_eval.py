@@ -412,11 +412,29 @@ def run_evaluation(
     results = []
     start_time = time.time()
 
+    # 결과 폴더 및 파일 경로 설정
+    model_info = Config.MODEL_DICT.get(model_key, {})
+    display_name = model_info.get("display", model_key)
+    clean_display = display_name.replace(" ", "_").replace("/", "_")
+    result_dir = Config.RESULT_DIR / f"{clean_display}" / f"Lab{lab_key}"
+    result_dir.mkdir(parents=True, exist_ok=True)
+
+    output_file = result_dir / f"results_raw_{timestamp}.json"
+    partial_file = result_dir / f"results_partial_{timestamp}.json"
+
     for i, row in enumerate(data, 1):
         if i % 50 == 0 or i == 1:
             elapsed = time.time() - start_time
             eta = (elapsed / i) * (len(data) - i) if i > 0 else 0
             logger.info(f"Progress: {i}/{len(data)} ({i/len(data)*100:.1f}%) | ETA: {eta/60:.1f}min")
+            
+            # 중간 저장 (Checkpointing)
+            if i % 50 == 0:
+                try:
+                    with open(partial_file, 'w', encoding='utf-8') as pf:
+                        json.dump({"progress": i, "total": len(data), "results": results}, pf, ensure_ascii=False)
+                except Exception as e:
+                    logger.warning(f"Checkpoint save failed: {e}")
 
         level = row.get("level", "L1")
         messages = build_messages(row["question"], row["answer_type"], configs_text)
@@ -430,7 +448,7 @@ def run_evaluation(
             "question": row["question"],
             "gold": row["answer"],
             "raw_pred": raw_output,
-            "pred": raw_output.strip(),  # 채점은 analyze에서 clean
+            "pred": raw_output.strip(),
             "level": row.get("level", "L1"),
             "category": row.get("category", "General"),
             "answer_type": row["answer_type"],
@@ -442,53 +460,56 @@ def run_evaluation(
     duration = time.time() - start_time
     logger.info(f"Inference complete: {len(results)} samples in {duration:.1f}s ({len(results)/duration:.1f} req/s)")
 
-    # 결과 저장
-    model_info = Config.MODEL_DICT.get(model_key, {})
-    display_name = model_info.get("display", model_key)
-    # 폴더명: display name 사용 (읽기 쉽게)
-    clean_display = display_name.replace(" ", "_").replace("/", "_")
-
-    result_dir = Config.RESULT_DIR / f"{clean_display}" / f"Lab{lab_key}"
-    result_dir.mkdir(parents=True, exist_ok=True)
-
-    output_file = result_dir / f"results_raw_{timestamp}.json"
-
-    # Format Stability 집계
+    # Format Stability 집계 (방어적 작성)
     format_stats = {}
-    for atype in set(r["answer_type"] for r in results):
-        type_results = [r for r in results if r["answer_type"] == atype]
-        parse_rate = sum(1 for r in type_results if r["format_parseable"]) / len(type_results)
-        avg_completeness = sum(r["format_completeness"] for r in type_results) / len(type_results)
-        format_stats[atype] = {
-            "parse_success_rate": round(parse_rate, 4),
-            "avg_completeness": round(avg_completeness, 4),
-            "count": len(type_results),
-        }
+    try:
+        ans_types = set(r.get("answer_type") for r in results if "answer_type" in r)
+        for atype in ans_types:
+            type_results = [r for r in results if r.get("answer_type") == atype]
+            if not type_results: continue
+            parse_rate = sum(1 for r in type_results if r.get("format_parseable")) / len(type_results)
+            avg_completeness = sum(r.get("format_completeness", 0) for r in type_results) / len(type_results)
+            format_stats[atype] = {
+                "parse_success_rate": round(parse_rate, 4),
+                "avg_completeness": round(avg_completeness, 4),
+                "count": len(type_results),
+            }
+    except Exception as e:
+        logger.error(f"Format stats aggregation failed: {e}")
 
-    output_data = {
-        "meta": {
-            "model": display_name,
-            "model_tag": model_key,
-            "backend": backend,
-            "lab": f"Lab-{lab_key}",
-            "lab_folder": Config.LABS.get(lab_key, ""),
-            "date": str(datetime.datetime.now()),
-            "duration_sec": round(duration, 2),
-            "dataset": str(dataset_path.name),
-            "dataset_path": str(dataset_path),
-            "total_samples": len(results),
-            "temperature": Config.TEMPERATURE,
-            "num_ctx": Config.NUM_CTX,
-            "max_output_tokens": Config.MAX_OUTPUT_TOKENS,
-            "include_levels": sorted(include_set) if include_set else [],
-            "exclude_levels": sorted(exclude_set) if exclude_set else [],
-        },
-        "format_stability": format_stats,
-        "results": results,
-    }
+    # 최종 결과 데이터 구성 (최대한 방어적으로)
+    try:
+        output_data = {
+            "meta": {
+                "model": display_name,
+                "model_tag": model_key,
+                "backend": backend,
+                "lab": f"Lab-{lab_key}",
+                "lab_folder": Config.LABS.get(lab_key, ""),
+                "date": str(datetime.datetime.now()),
+                "duration_sec": round(duration, 2),
+                "dataset": str(dataset_path.name),
+                "total_samples": len(results),
+                "temperature": getattr(Config, "TEMPERATURE", 0.0),
+                "num_ctx": getattr(Config, "NUM_CTX", 0),
+                "max_output_by_level": getattr(Config, "MAX_OUTPUT_BY_LEVEL", {}),
+                "include_levels": sorted(include_set) if include_set else [],
+                "exclude_levels": sorted(exclude_set) if exclude_set else [],
+            },
+            "format_stability": format_stats,
+            "results": results,
+        }
+    except Exception as e:
+        logger.error(f"Metadata construction failed: {e}. Saving raw results only.")
+        output_data = {"meta": {"error": str(e)}, "results": results}
 
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(output_data, f, indent=2, ensure_ascii=False)
+
+    # 성공 시 부분 저장 파일 삭제
+    if partial_file.exists():
+        try: partial_file.unlink()
+        except: pass
 
     logger.info(f"Saved: {output_file}")
     logger.info(f"Format Stability: {json.dumps(format_stats, indent=2)}")
@@ -499,7 +520,14 @@ def run_evaluation(
 # === CLI ===
 
 def main():
-    parser = argparse.ArgumentParser(description="NetConfigQA2.0 Evaluator (Ollama + OpenAI)")
+    # Pre-flight Check: Ensure all required Config attributes exist
+    required_attrs = ["MODEL_DICT", "LABS", "NUM_CTX", "TEMPERATURE", "MAX_OUTPUT_BY_LEVEL", "RESULT_DIR", "DATA_DIR"]
+    missing = [attr for attr in required_attrs if not hasattr(Config, attr)]
+    if missing:
+        print(f"Error: Missing Config attributes: {missing}")
+        sys.exit(1)
+
+    parser = argparse.ArgumentParser(description="NetConfigQA2.0 Evaluator (Ollama + Ollama API)")
 
     parser.add_argument(
         "--model", nargs="+", required=True,
