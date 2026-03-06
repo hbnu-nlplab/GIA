@@ -58,7 +58,7 @@ class Config:
         "GPT-OSS-20B": "GPT-OSS-20B",
         "Qwen3-Coder": "Qwen3-Coder",
         "GLM-4.7-Flash": "GLM-4.7-Flash",
-        "Qwen3.5-27B": "Qwen3.5-27B",
+        "Qwen3.5-9B": "Qwen3.5-9B",
         "gpt-4o-mini": "GPT-4o-mini",
     }
 
