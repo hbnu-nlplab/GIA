@@ -59,11 +59,11 @@ class Config:
     MODEL_DICT = {
         "gpt-oss:20b":               {"hf_path": "openai/gpt-oss-20b",                           "display": "GPT-OSS-20B",   "quant": None,  "backend": "vllm_offline", "max_ctx": 40960},
         "qwen3-coder:30b-a3b-AWQ":{"hf_path": "stelterlab/Qwen3-Coder-30B-A3B-Instruct-AWQ",  "display": "Qwen3-Coder",   "quant": None,  "backend": "vllm_offline", "max_ctx": 40960},
-        # "gemma3:27b-it-AWQ":      {"hf_path": "gaunernst/gemma-3-27b-it-int4-awq",            "display": "Gemma-3-27B",   "quant": None,  "backend": "vllm_offline", "max_ctx": 16384},
         "glm-4.7-flash-AWQ":      {"hf_path": "QuantTrio/GLM-4.7-Flash-AWQ",                  "display": "GLM-4.7-Flash", "quant": None,  "backend": "vllm_offline", "max_ctx": 32768, "eager": True,
-                                    "env": {"VLLM_USE_DEEP_GEMM": "0", "VLLM_USE_FLASHINFER_MOE_FP16": "1", "VLLM_USE_FLASHINFER_SAMPLER": "0"}},
-        # Qwen3.5-27B: 아키텍처 Qwen3_5ForConditionalGeneration이 vLLM 0.16.0 미지원 → 제외
-        "Qwen3.5-27B-AWQ": {"hf_path": "cyankiwi/Qwen3.5-27B-AWQ-4bit", "display": "Qwen3.5-27B",   "quant": None,  "backend": "vllm_offline", "max_ctx": 40960},
+                                    "env": {"VLLM_USE_DEEP_GEMM": "0", "VLLM_USE_FLASHINFER_MOE_FP16": "1", "VLLM_USE_FLASHINFER_SAMPLER": "0", "OMP_NUM_THREADS": "4"},
+                                    "extra_kwargs": {"reasoning_parser": "glm45"}},
+        "Qwen3.5-9B": {"hf_path": "cyankiwi/Qwen3.5-9B-AWQ-4bit", "display": "Qwen3.5-9B",   "quant": None,  "backend": "vllm_offline", "max_ctx": 40960,
+                        "extra_kwargs": {"reasoning_parser": "qwen3"}},
         "gpt-4o-mini":               {"hf_path": "gpt-4o-mini",                                  "display": "GPT-4o-mini",   "quant": None,  "backend": "openai",        "max_ctx": 128000},
     }
 
@@ -345,6 +345,12 @@ class VLLMEngineManager:
             if mm_limits:
                 llm_kwargs["limit_mm_per_prompt"] = mm_limits
             
+            # 모델별 추가 kwarg 적용 (reasoning_parser 등)
+            extra_kwargs = model_info.get("extra_kwargs", {})
+            if extra_kwargs:
+                llm_kwargs.update(extra_kwargs)
+                logger.info(f"모델 추가 파라미터 적용: {extra_kwargs}")
+
             cls._instance = LLM(**llm_kwargs)
             cls._current_model_key = model_key
             
