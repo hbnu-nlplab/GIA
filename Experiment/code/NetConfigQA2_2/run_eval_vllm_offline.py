@@ -446,6 +446,7 @@ def run_evaluation(
 
             sampling_params = SamplingParams(
                 temperature=Config.TEMPERATURE,
+                repetition_penalty=1.05,
                 max_tokens=max_tokens,
                 stop=[
                     "<|eot_id|>",
