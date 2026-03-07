@@ -15,7 +15,7 @@ if [ -z "$1" ]; then
     echo "  gpt-oss      → openai/gpt-oss-20b"
     echo "  qwen3-coder  → stelterlab/Qwen3-Coder-30B-A3B-Instruct-AWQ"
     echo "  glm-flash    → QuantTrio/GLM-4.7-Flash-AWQ"
-    echo "  qwen3.5      → Qwen/Qwen3.5-9B"
+    echo "  qwen3.5      → cyankiwi/Qwen3.5-9B-AWQ-4bit"
     exit 1
 fi
 
@@ -42,7 +42,7 @@ case "$ALIAS" in
         EXTRA_ENV="VLLM_USE_DEEP_GEMM=0"
         ;;
     qwen3.5)
-        HF_PATH="Qwen/Qwen3.5-9B"
+        HF_PATH="cyankiwi/Qwen3.5-9B-AWQ-4bit"
         SERVED_NAME="Qwen3.5-9B"
         EXTRA_FLAGS="--reasoning-parser qwen3"
         ;;

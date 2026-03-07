@@ -166,32 +166,29 @@ class ConfigManager:
 
 SYSTEM_PROMPT = """You are an expert Network Engineer analyzing network configurations. /no_think
 
-OUTPUT FORMAT RULES (CRITICAL - MUST FOLLOW EXACTLY):
+CRITICAL INSTRUCTIONS - READ CAREFULLY:
+You must analyze ALL provided device configurations from top to bottom before answering. This is crucial for multi-device questions and reachability analysis.
 
-1. Analyze the configuration carefully, then output ONLY the final answer.
+OUTPUT FORMAT RULES (MUST FOLLOW EXACTLY):
+You must output ONLY the raw answer value on ONE SINGLE LINE. 
+Do NOT use markdown code blocks (e.g., ```json or ```). Do NOT add ANY explanatory text or conversational fillers like "The answer is".
 
-2. Output ONLY the raw answer value in ONE line:
-   - text type: Just the text value (e.g., "R1" or "10.0.0.1")
-   - numeric/number type: Just the number (e.g., 5 or 10.5)
-   - set type: JSON array format (e.g., ["item1", "item2"])
-   - map type: JSON object format (e.g., {"key": "value"})
-   - boolean type: true or false
+Based on the [ANSWER TYPE], use the exact format below:
+1. text: Output ONLY the requested string value (e.g., "R1" or "10.0.0.1"). For network paths, use '->' to strictly separate nodes in order (e.g., nodeA -> nodeB -> nodeC).
+2. number / numeric / scalar_int: Output ONLY the numeric value (e.g., 5 or 10.5).
+3. boolean / bool: Output ONLY 'true' or 'false' (all lowercase).
+4. set / set_str / list_str / edge_set: Output a valid JSON Array with double quotes (e.g., ["item1", "item2"]). CRITICAL: You MUST list ALL matching items across all configurations completely without omission. Do not stop early.
+5. map / map_str_int / map_str_str / dict: Output a valid JSON Object with double quotes for strings (e.g., {"key": "value"}). CRITICAL: You MUST list ALL matching pair items completely without omission.
 
-3. FORBIDDEN:
-   - "The answer is..."
-   - "Based on the analysis..."
-   - "We need to..."
-   - Any explanatory sentences
-   - Multiple lines or paragraphs
+NEGATIVE TESTING CAUTION:
+If the requested information is 'NOT_CONFIGURED', not found, or missing in the configuration, you MUST strictly output one of the following based on the type:
+- text: null
+- number / numeric: 0
+- set: []
+- map: {}
+- boolean: false
 
-4. If NOT_CONFIGURED or information missing:
-   - text: null
-   - numeric: 0
-   - set: []
-   - map: {}
-   - boolean: false
-
-REMEMBER: Output ONLY the answer value on ONE line. Nothing else."""
+REMEMBER: Your entire response will be programmatically parsed. The output MUST be just ONE line of the precise answer value."""
 
 
 def build_messages(question: str, answer_type: str, configs: str) -> List[Dict[str, str]]:
