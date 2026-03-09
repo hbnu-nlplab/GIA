@@ -47,6 +47,20 @@
         }
       }
     },
+    "method2_manual_check": {
+      "description": "Stratified sampling + raw .cfg trace + policy-based verification",
+      "scope": "L1-L3 계층화 표본추출 (39 QA)",
+      "total_verified": 39,
+      "agree": 39,
+      "disagree": 0,
+      "agreement_rate_raw": 1.0
+    },
+    "method3_pnetlab_emulation": {
+      "description": "PNETLab 에뮬레이션 환경에서 traceroute/ping 실행하여 L4-L5 검증",
+      "scope": "L4-L5 표본 (44 QA: L4 23, L5 21)",
+      "status": "GUIDE_GENERATED",
+      "note": "가이드 및 체크리스트 생성 완료. 사람이 PNETLab에서 실행해야 함."
+    },
     "method4_l45_replay": {
       "description": "Batfish replay verification for L4-L5 using row-level contracts",
       "scope": "L4-L5 자동 재실행 (257 QA)",
