@@ -102,6 +102,14 @@ def _extract_number(val: Any) -> float | None:
 
 def _normalize_str(val: Any) -> str:
     """Normalize a string value for comparison."""
+    if isinstance(val, str):
+        raw = val.strip()
+        try:
+            decoded = json.loads(raw)
+            if isinstance(decoded, str):
+                val = decoded
+        except Exception:
+            pass
     s = str(val).strip().lower()
     # Strip surrounding quotes
     if len(s) >= 2 and s[0] == s[-1] and s[0] in ('"', "'"):

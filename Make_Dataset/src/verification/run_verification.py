@@ -22,6 +22,7 @@ from typing import Any, Dict, List, Tuple
 # Ensure project root importable
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
+from src.ground_truth_contracts import normalize_scope_for_metric
 from src.verification.independent_parser import CfgParser, TopologyFacts
 from src.verification.compare import compare_answers, canonical_answer_type
 
@@ -85,7 +86,7 @@ def run_verification(
 
         evidence = parse_evidence(row)
         metric = evidence.get("metric", "")
-        scope = evidence.get("scope", {})
+        scope = normalize_scope_for_metric(metric, evidence.get("scope", {}))
         answer_type = str(row.get("answer_type", "text"))
         dataset_answer = row.get("answer")
 

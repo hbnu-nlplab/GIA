@@ -1,50 +1,94 @@
 {
   "title": "NetConfigQA2.0 Ground Truth Verification Summary",
   "topology": "LabB_NCN_Basic_SP_20nodes",
-  "date": "2026-03-02",
-  "dataset_total_qa": 2154,
+  "date": "2026-03-09",
+  "dataset_total_qa": 2158,
   "verification_methods": {
     "method1_independent_parser": {
       "description": "Batfish-independent .cfg parser (pure Python + Regex) for L1-L3 full verification",
       "scope": "L1-L3 전수검증 (1586 QA)",
       "total_verified": 1586,
-      "match": 1464,
-      "mismatch": 122,
-      "agreement_rate_raw": 0.9230769230769231,
+      "match": 1586,
+      "mismatch": 0,
+      "agreement_rate_raw": 1.0,
       "by_level": {
         "L1": {
           "total": 1230,
-          "match": 1166,
-          "mismatch": 64
+          "match": 1230,
+          "mismatch": 0
         },
         "L2": {
           "total": 101,
-          "match": 94,
-          "mismatch": 7
+          "match": 101,
+          "mismatch": 0
         },
         "L3": {
           "total": 255,
-          "match": 204,
-          "mismatch": 51
+          "match": 255,
+          "mismatch": 0
         }
       },
       "by_answer_type": {
         "text": {
           "total": 506,
-          "match": 473
+          "match": 506
         },
         "set": {
           "total": 514,
-          "match": 490
+          "match": 514
         },
         "number": {
           "total": 426,
-          "match": 369
+          "match": 426
         },
         "map": {
           "total": 140,
-          "match": 132
+          "match": 140
         }
+      }
+    },
+    "method2_manual_check": {
+      "description": "Stratified sampling + raw .cfg trace + policy-based verification",
+      "scope": "L1-L3 계층화 표본추출 (39 QA)",
+      "total_verified": 39,
+      "agree": 37,
+      "disagree": 2,
+      "agreement_rate_raw": 0.9487179487179487
+    },
+    "method3_pnetlab_emulation": {
+      "description": "PNETLab 에뮬레이션 환경에서 traceroute/ping 실행하여 L4-L5 검증",
+      "scope": "L4-L5 표본 (44 QA: L4 23, L5 21)",
+      "status": "GUIDE_GENERATED",
+      "note": "가이드 및 체크리스트 생성 완료. 사람이 PNETLab에서 실행해야 함."
+    },
+    "method4_l45_replay": {
+      "description": "Batfish replay verification for L4-L5 using row-level contracts",
+      "scope": "L4-L5 자동 재실행 (572 QA)",
+      "total_verified": 572,
+      "match": 572,
+      "mismatch": 0,
+      "error": 0,
+      "quarantined": 0,
+      "agreement_rate_raw": 1.0,
+      "by_level": {
+        "L4": {
+          "total": 443,
+          "match": 443,
+          "mismatch": 0,
+          "error": 0,
+          "quarantined": 0
+        },
+        "L5": {
+          "total": 129,
+          "match": 129,
+          "mismatch": 0,
+          "error": 0,
+          "quarantined": 0
+        }
+      },
+      "paper_ready": {
+        "retained": 2158,
+        "dropped_l45": 0
       }
     }
   }

@@ -352,7 +352,7 @@ P3# traceroute P6
 
 ```
 ! 메트릭: config_change_impact
-! scope: {"type": "SNAPSHOT_DIFF", "src": "leaf6", "dst": "p7"}
+! scope: {"type": "SNAPSHOT_DIFF", "src": "leaf6", "dst": "p7", "base_snapshot": "baseline", "changed_snapshot": "cfg_change_leaf5_1773019079", "change_desc": "node_down:leaf5", "failure_node": "leaf5"}
 ! 적절한 show/ping/traceroute 명령으로 검증
 ```
 - **내 결과**: ________________
@@ -365,7 +365,7 @@ P3# traceroute P6
 
 ```
 ! 메트릭: differential_reachability
-! scope: {"type": "SNAPSHOT_DIFF", "src": "leaf6", "dst": "p7"}
+! scope: {"type": "SNAPSHOT_DIFF", "src": "leaf6", "dst": "p7", "base_snapshot": "baseline", "changed_snapshot": "cfg_change_leaf5_1773019079", "change_desc": "node_down:leaf5", "failure_node": "leaf5", "dst_ip": "10.0.15.1"}
 ! 적절한 show/ping/traceroute 명령으로 검증
 ```
 - **내 결과**: ________________
@@ -597,7 +597,7 @@ LEAF6# traceroute ?
 ### L5-19. SPOF_DETECTION_GLOBAL
 - **메트릭**: `spof_detection`
 - **질문**: 단일 장비 장애 시 통신이 두절되는 구간(SPOF: Single Point of Failure)이 존재합니까? [답변 형식: SPOF 장비 목록 (예: ["p1", "pe1"]) 또는 빈 목록 []]
-- **데이터셋 정답**: `["pe3"]`
+- **데이터셋 정답**: `["pe3", "leaf6"]`
 
 ```
 ! Single Point of Failure 탐지:

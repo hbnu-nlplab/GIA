@@ -6,6 +6,10 @@ import copy
 import random
 from itertools import combinations
 from collections import defaultdict, deque
+try:
+    from src.ground_truth_contracts import normalize_scope_for_metric
+except ImportError:
+    from ground_truth_contracts import normalize_scope_for_metric
 
 METRIC_OUTPUT_TYPE: Dict[str, str] = {
     "compare_bgp_neighbor_count": "map_str_int",
@@ -62,7 +66,11 @@ class BuilderCore:
     def _bgp(self, d):  return d.get("routing",{}).get("bgp",{}) or {}
     def _bgp_neighbors(self, d):  return self._bgp(d).get("neighbors",[]) or []
     def _bgp_vrfs(self, d):  return self._bgp(d).get("vrfs",[]) or []
-    def _bgp_local_as(self, d):  return self._bgp(d).get("local_as")
+    def _bgp_local_as(self, d):
+        value = self._bgp(d).get("local_as")
+        if isinstance(value, str) and value.isdigit():
+            return int(value)
+        return value
     def _ospf(self, d): return d.get("routing",{}).get("ospf",{}) or {}
     def _ssh_on(self,d): return d.get("security",{}).get("ssh",{}).get("present",False)
     def _aaa_on(self,d): return d.get("security",{}).get("aaa",{}).get("present",False)
@@ -525,6 +533,7 @@ class BuilderCore:
     def _answer_for_metric(self, metric: str, scope: Dict[str,Any], pre: Dict[str,Any]) -> tuple[str, Any]:
         if not hasattr(self, "devices"):
             self.devices = []
+        scope = normalize_scope_for_metric(metric, scope)
         required_keys = METRIC_REQUIRED_SCOPE_KEYS.get(metric, ())
         if required_keys:
             missing = [k for k in required_keys if not scope.get(k)]

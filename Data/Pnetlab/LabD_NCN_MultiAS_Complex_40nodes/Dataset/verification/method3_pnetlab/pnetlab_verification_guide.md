@@ -391,7 +391,7 @@ P10# traceroute P11
 
 ```
 ! 메트릭: config_change_impact
-! scope: {"type": "SNAPSHOT_DIFF", "src": "p7", "dst": "fw1"}
+! scope: {"type": "SNAPSHOT_DIFF", "src": "p7", "dst": "fw1", "base_snapshot": "baseline", "changed_snapshot": "cfg_change_asbr1_1773021705", "change_desc": "node_down:asbr1", "failure_node": "asbr1"}
 ! 적절한 show/ping/traceroute 명령으로 검증
 ```
 - **내 결과**: ________________
@@ -404,7 +404,7 @@ P10# traceroute P11
 
 ```
 ! 메트릭: differential_reachability
-! scope: {"type": "SNAPSHOT_DIFF", "src": "p7", "dst": "fw1"}
+! scope: {"type": "SNAPSHOT_DIFF", "src": "p7", "dst": "fw1", "base_snapshot": "baseline", "changed_snapshot": "cfg_change_asbr1_1773021705", "change_desc": "node_down:asbr1", "failure_node": "asbr1", "dst_ip": "10.0.40.1"}
 ! 적절한 show/ping/traceroute 명령으로 검증
 ```
 - **내 결과**: ________________
@@ -458,7 +458,7 @@ P10# traceroute P11
 ### L5-6. K_FAILURE_p7_fw1
 - **메트릭**: `redundant_paths_list`
 - **질문**: p7에서 10.0.40.1로 가는 대체 경로들을 모두 나열해주세요. [답변 형식: 경로 목록 (예: ["A→B→C", "A→D→C"])]
-- **데이터셋 정답**: `["p7"]`
+- **데이터셋 정답**: `["p7 → asbr1 → fw1"]`
 
 ```
 ! 이중화 경로 확인:
@@ -475,7 +475,7 @@ P7# traceroute ?
 
 ```
 ! 메트릭: link_failure_impact
-! scope: {"type": "LINK_FAILURE", "link": "asbr1-p7"}
+! scope: {"type": "LINK_FAILURE", "link": "asbr1-p7", "node1": "asbr1", "node2": "p7", "src": "p7", "dst": "fw1"}
 ! 적절한 show/ping/traceroute 명령으로 검증
 ```
 - **내 결과**: ________________
@@ -484,11 +484,11 @@ P7# traceroute ?
 ### L5-8. LINK_FAILURE_asbr1_p9
 - **메트릭**: `link_failure_impact`
 - **질문**: 'asbr1-p9' 링크가 다운될 경우, 'p7→fw1' 트래픽에 어떤 영향이 발생합니까? [답변 형식: 'NONE', 'REROUTED', 'DISCONNECTED']
-- **데이터셋 정답**: `"REROUTED"`
+- **데이터셋 정답**: `"NONE"`
 
 ```
 ! 메트릭: link_failure_impact
-! scope: {"type": "LINK_FAILURE", "link": "asbr1-p9"}
+! scope: {"type": "LINK_FAILURE", "link": "asbr1-p9", "node1": "asbr1", "node2": "p9", "src": "p7", "dst": "fw1"}
 ! 적절한 show/ping/traceroute 명령으로 검증
 ```
 - **내 결과**: ________________
@@ -501,7 +501,7 @@ P7# traceroute ?
 
 ```
 ! 메트릭: link_failure_impact
-! scope: {"type": "LINK_FAILURE", "link": "asbr1-pe5"}
+! scope: {"type": "LINK_FAILURE", "link": "asbr1-pe5", "node1": "asbr1", "node2": "pe5", "src": "p7", "dst": "fw1"}
 ! 적절한 show/ping/traceroute 명령으로 검증
 ```
 - **내 결과**: ________________
@@ -581,7 +581,7 @@ P7# traceroute ?
 ### L5-15. POLICY_COMPLIANCE_asbr1
 - **메트릭**: `policy_compliance_check`
 - **질문**: 'MANDATORY_WAYPOINT_asbr1' 정책 준수 여부와 위반 사례를 알려주세요. [답변 형식: 'COMPLIANT' 또는 'VIOLATION: 흐름1, 흐름2, ...']
-- **데이터셋 정답**: `"VIOLATION: 10.0.30.3 -> 8.8.8.8, 10.10.10.1 -> 8.8.8.8, 10.0.40.1 -> 8.8.8.8"`
+- **데이터셋 정답**: `"VIOLATION: 10.0.1.0 -> 8.8.8.8, 10.0.1.1 -> 8.8.8.8, 10.0.11.0 -> 8.8.8.8"`
 
 ```
 ! 메트릭: policy_compliance_check
@@ -639,7 +639,7 @@ P7# traceroute ?
 ### L5-19. SPOF_DETECTION_GLOBAL
 - **메트릭**: `spof_detection`
 - **질문**: 단일 장비 장애 시 통신이 두절되는 구간(SPOF: Single Point of Failure)이 존재합니까? [답변 형식: SPOF 장비 목록 (예: ["p1", "pe1"]) 또는 빈 목록 []]
-- **데이터셋 정답**: `["p7"]`
+- **데이터셋 정답**: `["asbr1"]`
 
 ```
 ! Single Point of Failure 탐지:
