@@ -4,6 +4,10 @@
 
 이 문서는 NetConfigQA 데이터셋의 정답 검증 파이프라인을 실제로 어떻게 사용하는지 정리한다.
 
+재생성부터 검증까지 한 번에 다시 수행하는 상세 절차는 아래 문서를 함께 본다.
+
+- [REGEN_AND_VERIFICATION_RUNBOOK_KO.md](/home/kilab_pyj/codespace/GIA/Make_Dataset/docs/REGEN_AND_VERIFICATION_RUNBOOK_KO.md)
+
 현재 파이프라인은 네 가지 검증 방법을 하나로 묶는다.
 
 - Method 1: `L1-L3` 독립 parser 전수 검증
