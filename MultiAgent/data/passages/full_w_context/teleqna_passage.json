@@ -228,7 +228,7 @@
         "question": "What is a blockchain?",
         "gold_answer": "option 2: A distributed and tamper-resistant database that no single entity controls and can be shared by all.",
         "passage": "A blockchain is best described as a distributed and tamper-resistant database that no single entity controls and can be shared by all. This decentralized nature allows multiple participants to maintain a copy of the database, ensuring transparency and security. Each block in the chain contains a list of transactions, and once added, it cannot be altered without consensus from the network, making it resistant to tampering and fraud.",
-        "options": "option 1: A type of computer program used for AI training\noption 2: A distributed ledger for storing information as a chain of data blocks\noption 3: A new wireless communication technology in 6G\noption 4: A technique used for spectrum sharing in 6G\noption 5: A type of consensus algorithm for reaching agreement in a network"
+        "options": "option 1: A centralized and tamper-resistant database controlled by a single entity.\noption 2: A distributed and tamper-resistant database that no single entity controls and can be shared by all\noption 3: A database that can be modified or erased by any entity\noption 4: A database that only allows read access to a single entity"
     },
     {
         "id": 33,
@@ -4085,14 +4085,14 @@
         "question": "Research Papers",
         "gold_answer": "option 4: IEEE 802.11ak",
         "passage": "IEEE 802.11ax, also known as Wi-Fi 6, is a wireless communication standard that enhances the efficiency, capacity, and performance of wireless networks, particularly in dense environments. It operates in both the 2.4 GHz and 5 GHz bands, providing improved data rates and better performance in scenarios with multiple connected devices. Key features of IEEE 802.11ax include Orthogonal Frequency Division Multiple Access (OFDMA), which allows multiple users to share the same channel simultaneously, and Target Wake Time (TWT), which helps in reducing power consumption for connected devices. This standard is designed to meet the growing demand for high-speed internet access and supports applications such as streaming, gaming, and smart home devices.",
-        "options": "option 1: General Processing Unit\noption 2: Graphical Processing Unit\noption 3: Graphics Processing Unit\noption 4: General Purpose Unit\noption 5: Game Processing Unit"
+        "options": "option 1: IEEE 802.11adt\noption 2: IEEE 802.15.4e\noption 3: IEEE 802.11ax\noption 4: IEEE 802.11ak\noption 5: IEEE 802.11ay"
     },
     {
         "id": 584,
         "question": "What is entanglement swapping?",
         "gold_answer": "option 3: The process of consuming entanglement originally distributed over individual sub-links to entangle two network nodes.",
         "passage": "Entanglement swapping is the process of fusing multiple EPR pairs to obtain a multipartite entangled state. This technique allows for the creation of entanglement between two particles that have never interacted directly, by using intermediate particles that are entangled with each of them. This process is crucial in quantum communication and networking, as it enables the extension of entanglement over larger distances and the establishment of entangled states between distant nodes in a quantum network.",
-        "options": "option 1: The transmission of an unknown qubit without any loss\noption 2: The measurement of qubits\noption 3: The transfer of classical information using quantum entanglement\noption 4: The transmission of an unknown qubit through the physical transfer of the particle\noption 5: The distribution of entanglement between remote nodes using intermediate repeaters"
+        "options": "option 1: The process of fusing multiple EPR pairs to obtain a multipartite entangled state\noption 2: The process of distributing imperfect entangled states over multiple network nodes\noption 3: The process of consuming entanglement originally distributed over individual sub-links to entangle two network nodes\noption 4: The process of purifying imperfect entangled states to obtain maximally entangled states"
     },
     {
         "id": 585,
@@ -5646,7 +5646,7 @@
         "question": "Which component is responsible for configuring O-Cloud?",
         "gold_answer": "option 2: SDN-C/R",
         "passage": "The component responsible for configuring O-Cloud is the ONAP (Open Network Automation Platform). ONAP provides a comprehensive framework for automating the management and orchestration of network services and resources, including the configuration of cloud environments like O-Cloud. It integrates various components and tools to enable end-to-end service orchestration and management in a cloud-native environment.",
-        "options": "option 1: PCL rAPP\noption 2: SDN-C/R\noption 3: xAPP\noption 4: A1-controller"
+        "options": "option 1: PCL rAPP\noption 2: SDN-C/R\noption 3: xAPP\noption 4: AI Server\noption 5: ONAP"
     },
     {
         "id": 807,
@@ -6500,7 +6500,7 @@
         "question": "What does GSM stand for?",
         "gold_answer": "option 5: Global System for Mobile Communications",
         "passage": "GSM stands for Global System for Mobile Communications. It is a standard developed to describe protocols for second-generation (2G) digital cellular networks used by mobile phones. GSM is widely recognized for its role in enabling mobile communication and has become a global standard for mobile telephony.",
-        "options": "option 1: Generalized Singular Value Decomposition\noption 2: Grouping Singular Value Decomposition\noption 3: Global System for Mobile Communications\noption 4: Generalized System for Mobile Communications\noption 5: Grouping System for Mobile Communications"
+        "options": "option 1: Group Session and Management\noption 2: GSM/EDGE Radio Access Network\noption 3: GPRS MS and Session\noption 4: Group Controller and Membership\noption 5: Global System for Mobile Communications"
     },
     {
         "id": 929,
@@ -6577,7 +6577,7 @@
         "question": "What is the purpose of the power management module in an RF (Radio frequency) energy harvesting node?",
         "gold_answer": "option 2: To decide whether to store or use the harvested electricity",
         "passage": "The purpose of the power management module in an RF energy harvesting node is primarily to decide whether to store or use the harvested electricity. This module plays a crucial role in optimizing the energy usage by determining the most efficient way to manage the harvested energy, ensuring that it is either utilized immediately for powering devices or stored for future use when needed. This decision-making process is essential for maintaining the functionality and efficiency of the energy harvesting system.",
-        "options": "option 1: To store and manage harvested energy for future use\noption 2: To convert RF signals into DC voltage\noption 3: To process data from the application\noption 4: To match the impedance between the antenna and the voltage multiplier\noption 5: To collect RF signals and convert them into electricity"
+        "options": "option 1: To process data from the application\noption 2: To decide whether to store or use the harvested electricity\noption 3: To reserve the harvested RF energy for future use\noption 4: To convert RF signals into DC voltage"
     },
     {
         "id": 940,
@@ -7270,7 +7270,7 @@
         "question": "What are dApps?",
         "gold_answer": "option 3: Distributed Applications",
         "passage": "Decentralized Applications, commonly referred to as dApps, are applications that run on a blockchain or peer-to-peer network, rather than being hosted on centralized servers. This architecture allows dApps to operate without a single point of failure, enhancing security and user control. They often utilize smart contracts to facilitate and automate processes, making them a key component of the decentralized web.",
-        "options": "option 1: Applications that complement xApps/rApps\noption 2: Applications that bring intelligence at Central Units/Distributed Units\noption 3: Applications that support real-time inference\noption 4: Applications that execute in cloud facilities\noption 5: Applications that reduce latency and overhead"
+        "options": "option 1: Digital Applications\noption 2: Decentralized Applications\noption 3: Distributed Applications\noption 4: Data Applications\noption 5: Dynamic Applications"
     },
     {
         "id": 1039,
@@ -8439,7 +8439,7 @@
         "question": "Research Papers",
         "gold_answer": "option 3: Shadow training",
         "passage": "[NONE]",
-        "options": "option 1: General Processing Unit\noption 2: Graphical Processing Unit\noption 3: Graphics Processing Unit\noption 4: General Purpose Unit\noption 5: Game Processing Unit"
+        "options": "option 1: Backpropagation using spikes\noption 2: Local learning rules\noption 3: Shadow training\noption 4: Backpropagation using spike times"
     },
     {
         "id": 1206,
@@ -10140,7 +10140,7 @@
         "question": "Research Papers",
         "gold_answer": "option 3: Exploiting the received RF signals to extract both information and energy",
         "passage": "NONE",
-        "options": "option 1: General Processing Unit\noption 2: Graphical Processing Unit\noption 3: Graphics Processing Unit\noption 4: General Purpose Unit\noption 5: Game Processing Unit"
+        "options": "option 1: Exploiting the received RF signals to extract only information\noption 2: Exploiting the received RF signals to extract only energy\noption 3: Exploiting the received RF signals to extract both information and energy\noption 4: Exploiting the received RF signals to only transmit information\noption 5: Exploiting the received RF signals to only transmit energy"
     },
     {
         "id": 1449,
@@ -10721,7 +10721,7 @@
         "question": "Research Papers",
         "gold_answer": "option 2: High computational complexity",
         "passage": "[NONE]",
-        "options": "option 1: General Processing Unit\noption 2: Graphical Processing Unit\noption 3: Graphics Processing Unit\noption 4: General Purpose Unit\noption 5: Game Processing Unit"
+        "options": "option 1: Limited spectral efficiency\noption 2: High computational complexity\noption 3: Low accuracy in noisy environmentst\noption 4: Slow convergence speed"
     },
     {
         "id": 1532,
@@ -12765,7 +12765,7 @@
         "question": "Research Papers",
         "gold_answer": "option 4: Quantization-based compression",
         "passage": "[NONE]",
-        "options": "option 1: General Processing Unit\noption 2: Graphical Processing Unit\noption 3: Graphics Processing Unit\noption 4: General Purpose Unit\noption 5: Game Processing Unit"
+        "options": "option 1: Point-to-point compression\noption 2: Compressive sensing (CS) based compression\noption 3:Spatial filtering\noption 4: Quantization-based compression\noption 5: Distributed source coding"
     },
     {
         "id": 1824,
@@ -14830,7 +14830,7 @@
         "question": "What is Federated Learning?",
         "gold_answer": "option 2: A collaborative machine learning framework that requires no centralized training data.",
         "passage": "Federated Learning is a collaborative machine learning framework that requires no centralized training data. Instead of sending raw data to a central server, devices collaboratively learn a shared model while keeping their data localized. This approach enhances privacy and security, as sensitive information remains on the individual devices, and only model updates are shared with the central server for aggregation.",
-        "options": "option 1: Optimizing wireless communication using AI techniques\noption 2: Training DRL agents in a distributed manner\noption 3: Managing the communication and computation resources in MEC systems\noption 4: Deploying intelligent resource management in the MEC system"
+        "options": "option 1: A collaborative machine learning framework that uses centralized training data.\noption 2: A collaborative machine learning framework that requires no centralized training data.\noption 3: A machine learning framework that allows devices to upload their raw data to a central aggregator.\noption 4: A machine learning framework that aims to compromise privacy for improved accuracy.\noption 5: A framework that allows devices to update their models independently without aggregation."
     },
     {
         "id": 2119,
@@ -17378,7 +17378,7 @@
         "question": "What does the acronym OFDM stand for?",
         "gold_answer": "option 5: Orthogonal frequency-division multiplexing",
         "passage": "The acronym OFDM stands for Orthogonal Frequency-Division Multiplexing. It is a method of digital signal modulation that divides a signal into multiple smaller sub-signals that are transmitted simultaneously at different frequencies. This technique is widely used in various communication systems, including wireless networks and digital television, due to its efficiency in handling high data rates and resistance to interference.",
-        "options": "option 1: Received Signal Strength Indicator\noption 2: Quadratic Permutation Polynomial\noption 3: Quadrature Amplitude Modulation\noption 4: Radio Resource Control\noption 5: Orthogonal Frequency Division Multiplexing"
+        "options": "option 1: Open frequency distribution model\noption 2: Optimal frequency division model\noption 3: Optical frequency display method\noption 4: Organic food division mechanism\noption 5: Orthogonal frequency-division multiplexing"
     },
     {
         "id": 2483,
@@ -17483,7 +17483,7 @@
         "question": "What is federated learning?",
         "gold_answer": "option 1: A decentralized learning approach performed over a federation of distributed learners.",
         "passage": "Federated learning is a decentralized learning approach performed over a federation of distributed learners. In this framework, multiple devices or nodes collaboratively train a machine learning model while keeping their data localized, thus enhancing privacy and security. Each learner computes updates to the model based on its local data, and these updates are then aggregated by a central server to improve the global model without the need to share raw data. This method allows for efficient training across diverse datasets while maintaining data confidentiality.",
-        "options": "option 1: A machine learning technique that relies on raw training data stored in the cloud for model training.\noption 2: A centralized machine learning paradigm where mobile devices train a global model with raw training data stored in a central server.\noption 3: A machine learning technique that trains models on user data without considering privacy concerns.\noption 4: A machine learning technique that only uses user data from smart phones for model training.\noption 5: A decentralized machine learning paradigm where mobile devices collaborate to train a global model without centrally storing raw training data."
+        "options": "option 1: A decentralized learning approach performed over a federation of distributed learners.\noption 2: A learning scheme where the aggregator organizes the locally collected data to provide a holistic estimation of the parameters.\noption 3: A learning approach in which multiple learners are combined to improve the overall performance.\noption 4: A learning scheme performed in datacenters where training is done in parallel on subsets of data.\noption 5: None of the above."
     },
     {
         "id": 2498,
@@ -17896,7 +17896,7 @@
         "question": "Research Papers",
         "gold_answer": "option 1: DAM explicitly constructs the target classifier, while CRF makes the target predictions based on the reached consensus from the source classifiers",
         "passage": "NONE",
-        "options": "option 1: General Processing Unit\noption 2: Graphical Processing Unit\noption 3: Graphics Processing Unit\noption 4: General Purpose Unit\noption 5: Game Processing Unit"
+        "options": "option 1: DAM explicitly constructs the target classifier, while CRF makes the target predictions based on the reached consensus from the source classifiers\noption 2: DAM constructs multiple source classifiers, while CRF constructs only one source classifier\noption 3:DAM uses mutual consensuses among the classifiers, while CRF uses a regularizer based on cross-entropy\noption 4: DAM is used for multi-source transfer learning, while CRF is only used for single-source transfer learning"
     },
     {
         "id": 2557,
@@ -18344,7 +18344,7 @@
         "question": "Research Papers",
         "gold_answer": "option 3: Lack of training data",
         "passage": "[NONE]",
-        "options": "option 1: General Processing Unit\noption 2: Graphical Processing Unit\noption 3: Graphics Processing Unit\noption 4: General Purpose Unit\noption 5: Game Processing Unit"
+        "options": "option 1: Vulnerability to adversarial attacks\noption 2: Low interpretability\noption 3: Lack of training data\noption 4: High computational demands\noption 5: Difficulties in finding optimal hyper-parameters"
     },
     {
         "id": 2621,
@@ -20927,7 +20927,7 @@
         "question": "Research Papers",
         "gold_answer": "option 5: They analyze data from a larger population",
         "passage": "[NONE]",
-        "options": "option 1: General Processing Unit\noption 2: Graphical Processing Unit\noption 3: Graphics Processing Unit\noption 4: General Purpose Unit\noption 5: Game Processing Unit"
+        "options": "option 1: They can draw causal conclusions\noption 2: They have smaller sample sizes\noption 3: They provide personalized conclusions\noption 4: They are less expensive than RCTs\noption 5: They analyze data from a larger population"
     },
     {
         "id": 2990,
@@ -22082,7 +22082,7 @@
         "question": "Research Papers",
         "gold_answer": "option 1: Top-notch software and hardware technologies",
         "passage": "[NONE]",
-        "options": "option 1: General Processing Unit\noption 2: Graphical Processing Unit\noption 3: Graphics Processing Unit\noption 4: General Purpose Unit\noption 5: Game Processing Unit"
+        "options": "option 1: Top-notch software and hardware technologies\noption 2: Increased flying height\noption 3: Lightweight design\noption 4: Longer flying time\noption 5: Higher payload capacity"
     },
     {
         "id": 3155,
@@ -23202,7 +23202,7 @@
         "question": "What is a blockchain?",
         "gold_answer": "option 2: A decentralized distributed ledger database system",
         "passage": "A blockchain is best described as a decentralized distributed ledger database system. It allows multiple participants to maintain a shared and immutable record of transactions across a network, ensuring transparency and security without the need for a central authority. Each block in the chain contains a list of transactions, and once added, it cannot be altered, making it a reliable method for recording data.",
-        "options": "option 1: A type of computer program used for AI training\noption 2: A distributed ledger for storing information as a chain of data blocks\noption 3: A new wireless communication technology in 6G\noption 4: A technique used for spectrum sharing in 6G\noption 5: A type of consensus algorithm for reaching agreement in a network"
+        "options": "option 1: A centralized distributed ledger database system\noption 2: A decentralized distributed ledger database system\noption 3: A centralized database system\noption 4: A decentralized database system"
     },
     {
         "id": 3315,
@@ -23944,7 +23944,7 @@
         "question": "What is federated learning?",
         "gold_answer": "option 1: A technique that allows mobile devices to collectively train a global model using their raw data while keeping these data locally stored.",
         "passage": "Federated learning is a technique that allows mobile devices to collectively train a global model using their raw data while keeping these data locally stored. This approach enhances privacy by ensuring that sensitive information does not leave the device, as the model is trained on the device itself and only the model updates are shared with a central server. This method is particularly useful in scenarios where data privacy is a concern, such as in healthcare or personal device applications.",
-        "options": "option 1: A machine learning technique that relies on raw training data stored in the cloud for model training.\noption 2: A centralized machine learning paradigm where mobile devices train a global model with raw training data stored in a central server.\noption 3: A machine learning technique that trains models on user data without considering privacy concerns.\noption 4: A machine learning technique that only uses user data from smart phones for model training.\noption 5: A decentralized machine learning paradigm where mobile devices collaborate to train a global model without centrally storing raw training data."
+        "options": "option 1: A technique that allows mobile devices to collectively train a global model using their raw data while keeping these data locally stored.\noption 2: A technique that collects training data from mobile devices and stores it in a centralized server.\noption 3: A technique that uses distributed Stochastic Gradient Descent (SGD) algorithm to train models.\noption 4: A technique that improves privacy protection of mobile devices through direct access to raw training data."
     },
     {
         "id": 3421,
@@ -24056,7 +24056,7 @@
         "question": "What is the fundamental idea behind the Internet of Things (IoT)?",
         "gold_answer": "option 1: To connect different entities or things to provide ubiquitous connectivity and enhanced services.",
         "passage": "The fundamental idea behind the Internet of Things (IoT) is to connect different entities or things to provide ubiquitous connectivity and enhanced services. This interconnectedness allows for the seamless exchange of data between devices, leading to improved efficiency, automation, and the ability to monitor and control various systems in real-time. By integrating IoT into various sectors, it enhances user experiences and optimizes operations across industries.",
-        "options": "option 1: Connecting different entities or 'things' to provide ubiquitous connectivity and enhanced services\noption 2: Using sensors to monitor temperature, seismic activities, heart rate, etc.\noption 3: Optimizing networks for energy efficient operation\noption 4: Ensuring user privacy in localization and positioning systems\noption 5: Improving the performance of different systems related to health, marketing, automation, monitoring, etc."
+        "options": "option 1: To connect different entities or things to provide ubiquitous connectivity and enhanced services.\noption 2: To create a disruptive civil technology.\noption 3: To generate revenue of $1.3 trillion.\noption 4: To improve the performance of different systems related to health, marketing, automation, monitoring, etc.\noption 5: To incorporate IoT into food packaging and furniture."
     },
     {
         "id": 3437,
@@ -24147,7 +24147,7 @@
         "question": "What is the expected number of mobile devices per km^2 in dense areas in 6G networks?",
         "gold_answer": "option 2: $10^7$",
         "passage": "In dense urban areas, 6G networks are expected to support a significantly higher density of mobile devices compared to previous generations. The anticipated number of mobile devices per square kilometer in these environments is projected to reach up to $10^9$ devices. This high density is driven by the increasing demand for connectivity and the proliferation of Internet of Things (IoT) devices, which require robust and efficient network infrastructure to operate effectively. Therefore, the expected number of mobile devices per km² in dense areas in 6G networks is $10^9$.",
-        "options": "option 1: (10^6 to 10^7)\noption 2: 10^6\noption 3: 10^7\noption 4: 10^8\noption 5: 10^9"
+        "options": "option 1: $10^6$\noption 2: $10^7$\noption 3: $10^8$\noption 4: $10^9$\noption 5: $10^{10}$"
     },
     {
         "id": 3450,
@@ -25050,7 +25050,7 @@
         "question": "What is the purpose of a cellular network?",
         "gold_answer": "option 3: To deliver wireless services over a wide coverage area",
         "passage": "A cellular network serves multiple purposes, primarily to facilitate wireless communication between devices. It achieves this by dividing the coverage area into smaller regions known as cells, each served by a base station. This structure allows for efficient use of the available frequency spectrum and enables the delivery of wireless services over a wide coverage area. Additionally, cellular networks are designed to enable efficient handover between cells, ensuring seamless connectivity as users move. Overall, the primary purpose of a cellular network is to provide reliable and efficient wireless communication for mobile devices.",
-        "options": "option 1: To provide coverage for wired telephone networks\noption 2: To connect mobile users to the internet\noption 3: To allow communication between base-stations\noption 4: To facilitate communication between wireless subscribers\noption 5: To broadcast AM and FM radio signals"
+        "options": "option 1: To divide the coverage area into cells\noption 2: To facilitate wireless communication between devices\noption 3: To deliver wireless services over a wide coverage area\noption 4: To connect multiple base stations to a central processing site\noption 5: o enable efficient handover between cells"
     },
     {
         "id": 3579,
@@ -26401,7 +26401,7 @@
         "question": "What does GERAN stand for?",
         "gold_answer": "option 3: GSM/EDGE Radio Access Network",
         "passage": "GERAN stands for GSM/EDGE Radio Access Network. It refers to the radio access network that supports both GSM (Global System for Mobile Communications) and EDGE (Enhanced Data rates for GSM Evolution) technologies, enabling mobile communication and data services.",
-        "options": "option 1: Global Frequency Division Access Network\noption 2: General Evolution Radio Access Network\noption 3: Global Enhanced Radio Access Network\noption 4: GSM EDGE Radio Access Network\noption 5: Global Evolution Radio Access Network"
+        "options": "option 1: Geographical Routing and Network\noption 2: Group Call Service and Coverage\noption 3: GSM/EDGE Radio Access Network\noption 4: GPRS MS and Session\noption 5: Group Controller and Session"
     },
     {
         "id": 3772,
@@ -27507,7 +27507,7 @@
         "question": "Research Papers",
         "gold_answer": "option 2: To align the interference signals in the same subspace as the desired signal",
         "passage": "[NONE]",
-        "options": "option 1: General Processing Unit\noption 2: Graphical Processing Unit\noption 3: Graphics Processing Unit\noption 4: General Purpose Unit\noption 5: Game Processing Unit"
+        "options": "option 1: To minimize the interference in the network\noption 2: To align the interference signals in the same subspace as the desired signal\noption 3: To maximize the secrecy capacity region\noption 4: To optimize the transmit power allocation"
     },
     {
         "id": 3930,
@@ -30545,7 +30545,7 @@
         "question": "Research Papers",
         "gold_answer": "option 1: Participant Selection",
         "passage": "[NONE]",
-        "options": "option 1: General Processing Unit\noption 2: Graphical Processing Unit\noption 3: Graphics Processing Unit\noption 4: General Purpose Unit\noption 5: Game Processing Unit"
+        "options": "option 1: Participant Selection\noption 2: Joint Radio and Computation Resource Management\noption 3: Adaptive Aggregation\noption 4: Incentive Mechanism"
     },
     {
         "id": 4364,
@@ -33240,7 +33240,7 @@
         "question": "What does the acronym BLE stand for?",
         "gold_answer": "option 2: Bluetooth Low Energy",
         "passage": "The acronym BLE stands for Bluetooth Low Energy. It is a wireless personal area network technology designed for short-range communication, which is optimized for low power consumption, making it ideal for devices that require long battery life, such as wearables and IoT devices. BLE allows for efficient data transfer while maintaining a minimal energy footprint.",
-        "options": "option 1: Branch level encrypted\noption 2: Basic low-energy\noption 3: Binary language environment\noption 4: Bluetooth low-energy\noption 5: Biometric learning engine"
+        "options": "option 1: Bluetooth Light Energy\noption 2: Bluetooth Low Energy\noption 3: Bluetooth Limited Edition\noption 4: Bluetooth Long-range Energy"
     },
     {
         "id": 4749,
@@ -33870,7 +33870,7 @@
         "question": "What is the geometric interpretation of a hyperplane?",
         "gold_answer": "option 5: The set of points with a constant inner product to a given vector",
         "passage": "A hyperplane can be geometrically interpreted as the set of points that satisfy a nontrivial linear equation in a given space. In an n-dimensional space, a hyperplane is an (n-1)-dimensional subset that divides the space into two half-spaces. This means that it can be represented by an equation of the form ax1 + ax2 + ... + axn = b, where not all coefficients are zero. Thus, the correct interpretation aligns with option 3: the set of points satisfying a nontrivial linear equation.",
-        "options": "option 1: The set of points that form a closed halfspace\noption 2: The set of vectors orthogonal to a given vector\noption 3: The set of points satisfying a nontrivial linear equation\noption 4: The set of points with a fixed offset from the origin\noption 5: The set of points with a constant inner product to a given vector"
+        "options": "option 1: The set of points that form a closed halfspace\noption 2: TThe set of vectors orthogonal to a given vector\noption 3: The set of points satisfying a nontrivial linear equation\noption 4: The set of points with a fixed offset from the origin\noption 5: The set of points with a constant inner product to a given vector"
     },
     {
         "id": 4839,
@@ -34304,7 +34304,7 @@
         "question": "What are the advantages of C-RANs?",
         "gold_answer": "option 5: All of the above",
         "passage": "C-RANs, or Cloud Radio Access Networks, offer several advantages that enhance network performance and efficiency. Firstly, they facilitate advanced technology integration, allowing for the deployment of cutting-edge communication standards. Secondly, C-RANs enable resource virtualization and cloudization, which optimizes resource allocation and management. Additionally, they contribute to low energy consumption by centralizing processing and reducing the need for multiple hardware components. Lastly, C-RANs improve interference mitigation through large-scale cooperative processing, enhancing overall network capacity and user experience. Therefore, the correct answer is option 5: All of the above.",
-        "options": "option 1: Higher system capacity and lower power consumption\noption 2: Centralized baseband processing for cooperative processing techniques\noption 3: Efficiency in energy and cost aspects\noption 4: All of the above\noption 5: None of the above"
+        "options": "option 1: Advanced technology facilitation\noption 2: Resource virtualization/cloudization\noption 3: Low energy consumption\noption 4: Efficient interference mitigation through large-scale cooperative processing\noption 5: All of the above"
     },
     {
         "id": 4901,
@@ -34822,7 +34822,7 @@
         "question": "What is game theory?",
         "gold_answer": "option 1: A set of mathematical tools to analyze interactions among players",
         "passage": "Game theory is a set of mathematical tools used to analyze interactions among players, where the decisions of one player affect the outcomes of others. It is primarily applied in economics, political science, and psychology to model strategic situations where individuals or groups make decisions that are interdependent. Game theory helps in understanding competitive and cooperative behaviors in various scenarios, making it a fundamental concept in strategic decision-making. Therefore, the correct option is option 1: A set of mathematical tools to analyze interactions among players.",
-        "options": "option 1: A technique to design energy management schemes\noption 2: A communication system between players in a cooperative game\noption 3: A mathematical tool to analyze strategies of competitive situations\noption 4: A method to schedule energy-related activities\noption 5: A mathematical tool to analyze cooperative games"
+        "options": "option 1: A set of mathematical tools to analyze interactions among players\noption 2: A theory of communication between devices\noption 3:A technique for power control in D2D communication\noption 4: A mechanism for extending coverage in cellular networkss\noption 5: All of the above"
     },
     {
         "id": 4975,
@@ -36691,7 +36691,7 @@
         "question": "Research Papers",
         "gold_answer": "option 1: 396 MHz to 2969 MHz",
         "passage": "[NONE]",
-        "options": "option 1: General Processing Unit\noption 2: Graphical Processing Unit\noption 3: Graphics Processing Unit\noption 4: General Purpose Unit\noption 5: Game Processing Unit"
+        "options": "option 1: 396 MHz to 2969 MHz\noption 2: 324 MHz to 1505 MHz\noption 3: 31 - 31.3 GHz\noption 4: 38 - 39.5 GHz\noption 5: 47.2 – 47.5 GHz"
     },
     {
         "id": 5242,
@@ -37552,7 +37552,7 @@
         "question": "What is the purpose of beam training in mmWave communications?",
         "gold_answer": "option 2: To reduce the alignment overhead",
         "passage": "Beam training in mmWave communications is primarily aimed at reducing the alignment overhead. This process involves determining the optimal direction of the beam between the transmitter and receiver, which is crucial due to the highly directional nature of mmWave signals. By efficiently aligning the beams, the system can enhance signal quality and maintain robust communication links, thereby minimizing the time and resources spent on alignment processes.",
-        "options": "option 1: To identify the most likely beam candidates for disruption\noption 2: To track moving users in slowly time-variant environments\noption 3: To maximize SINR by finding the best beam combination\noption 4: To minimize delays in beam training and tracking\noption 5: To reduce interference and increase reliability"
+        "options": "option 1: To increase the transmission power\noption 2: To reduce the alignment overhead\noption 3: To establish omnidirectional communication\noption 4: To maximize the multiuser interference\noption 5: To reduce the antenna gain"
     },
     {
         "id": 5365,
@@ -38588,7 +38588,7 @@
         "question": "Research Papers",
         "gold_answer": "option 2: Tensorflow",
         "passage": "[NONE]",
-        "options": "option 1: General Processing Unit\noption 2: Graphical Processing Unit\noption 3: Graphics Processing Unit\noption 4: General Purpose Unit\noption 5: Game Processing Unit"
+        "options": "option 1: Caffe\noption 2: Tensorflow\noption 3: Theano\noption 4: MXNet\noption 5: CNTK"
     },
     {
         "id": 5513,
@@ -38679,7 +38679,7 @@
         "question": "What triggers a Probe Response from all 802.11 networks in the area? [IEEE 802.11]",
         "gold_answer": "option 5: A Probe Request frame with a broadcast SSID",
         "passage": "In IEEE 802.11 networks, a Probe Response is triggered by a Probe Request frame that is sent with a broadcast SSID. When a device (station) sends out a Probe Request looking for available networks, all access points (APs) within range that recognize the request will respond with a Probe Response frame. This allows the device to gather information about the networks available in the area. Therefore, the correct answer is option 5: A Probe Request frame with a broadcast SSID.",
-        "options": "option 1: Beacon interval\noption 2: DTIM period\noption 3: Broadcast SSID\noption 4: Probe Request frames"
+        "options": "option 1: A Probe Response frame from a network with a given name\noption 2: A Beacon frame transmitted by an access point\noption 3: A Beacon frame transmitted by a station in the BSS\noption 4: A Probe Delay timer expiring\noption 5: A Probe Request frame with a broadcast SSID"
     },
     {
         "id": 5526,
@@ -39407,7 +39407,7 @@
         "question": "Research Papers",
         "gold_answer": "option 4: Using one spatially widely separated receive antenna for sensing",
         "passage": "[NONE]",
-        "options": "option 1: General Processing Unit\noption 2: Graphical Processing Unit\noption 3: Graphics Processing Unit\noption 4: General Purpose Unit\noption 5: Game Processing Unit"
+        "options": "option 1:Dedicated transmitter for uplink sensing\noption 2: Using full-duplex radios\noption 3: Dedicated receiver for downlink sensing\noption 4: Using one spatially widely separated receive antenna for sensing\noption 5: Use of well-separated transmitting and receiving antennas"
     },
     {
         "id": 5630,
@@ -40730,7 +40730,7 @@
         "question": "Research Papers",
         "gold_answer": "option 4: 300MHz - 300GHz",
         "passage": "[NONE]",
-        "options": "option 1: General Processing Unit\noption 2: Graphical Processing Unit\noption 3: Graphics Processing Unit\noption 4: General Purpose Unit\noption 5: Game Processing Unit"
+        "options": "option 1: 300Hz - 1kHz\noption 2: 1kHz - 100kHz\noption 3: 100kHz - 1MHz\noption 4: 300MHz - 300GHz"
     },
     {
         "id": 5819,
@@ -41479,7 +41479,7 @@
         "question": "Research Papers",
         "gold_answer": "option 1: High signaling requirements",
         "passage": "[NONE]",
-        "options": "option 1: General Processing Unit\noption 2: Graphical Processing Unit\noption 3: Graphics Processing Unit\noption 4: General Purpose Unit\noption 5: Game Processing Unit"
+        "options": "option 1: High signaling requirements\noption 2: Neglect of shadowing effects\noption 3: Inability to handle user scheduling problems"
     },
     {
         "id": 5926,
@@ -45105,7 +45105,7 @@
         "question": "What is the key difference between Digital Twin-based systems and existing network simulation and planning tools?",
         "gold_answer": "option 3: Digital Twin-based systems are connected to deployed physical subsystems",
         "passage": "Digital Twin-based systems are connected to deployed physical subsystems, which is a key difference from existing network simulation and planning tools. This connection allows for real-time data integration and analysis, enabling more accurate modeling and predictive capabilities. In contrast, traditional simulation tools often operate in isolation from the actual physical systems, limiting their effectiveness in reflecting real-world conditions and dynamics.",
-        "options": "option 1: Digital Twin-based systems are not connected to physical subsystems\noption 2: Digital Twin-based systems do not support analytics\noption 3: Digital Twin-based systems are connected to deployed physical subsystems\noption 4: Digital Twin-based systems do not support hybrid-simulation environments\noption 5: Digital Twin-based systems do not support network verification"
+        "options": "option 1: Digital Twin-based systems are not connected to deployed physical subsystems\noption 2: Digital Twin-based systems do not evolve as the deployment proceeds\noption 3: Digital Twin-based systems are connected to deployed physical subsystems and the whole system evolves as the deployment proceeds\noption 4: Digital Twin-based systems do not use Artificial Intelligence"
     },
     {
         "id": 6444,
@@ -47009,7 +47009,7 @@
         "question": "Research Papers",
         "gold_answer": "option 3: To calculate the precise location of an aircraft using hyperbolic positioning",
         "passage": "[NONE]",
-        "options": "option 1: General Processing Unit\noption 2: Graphical Processing Unit\noption 3: Graphics Processing Unit\noption 4: General Purpose Unit\noption 5: Game Processing Unit"
+        "options": "option 1: To establish communication between aircraft and receivers\noption 2: To estimate the distance between known locations and an unidentified location\noption 3: To calculate the precise location of an aircraft using hyperbolic positioning\noption 4: To secure the communication and location data of ADS-B\noption 5: To create redundancy and backup systems for navigation"
     },
     {
         "id": 6716,
@@ -47765,7 +47765,7 @@
         "question": "What is the duality between data compression and data transmission?",
         "gold_answer": "option 2: Both processes add redundancy in a controlled fashion to combat errors",
         "passage": "Data compression and data transmission are closely related processes that serve different purposes in the realm of data management. Data compression focuses on reducing the size of files by eliminating redundancy, which allows for more efficient storage and faster transmission over networks. On the other hand, data transmission involves the transfer of data from one location to another, often requiring the addition of redundancy in a controlled manner to ensure data integrity and combat errors during the transfer process. Therefore, while data compression aims to minimize file size, data transmission prioritizes the reliable delivery of that data, highlighting the duality between the two processes.",
-        "options": "option 1: Data compression removes redundancy, while data transmission adds redundancy to combat errors.\noption 2: Data compression and data transmission involve the same process of removing redundancy.\noption 3: Data compression adds redundancy, while data transmission removes redundancy to combat errors.\noption 4: There is no relationship between data compression and data transmission.\noption 5: Data compression and data transmission are two separate processes with no relation."
+        "options": "option 1: Both processes aim to remove redundancy from the data\noption 2: Both processes add redundancy in a controlled fashion to combat errors\noption 3: Data compression and data transmission are the same process\noption 4: Data compression focuses on reducing file size while data transmission focuses on speed"
     },
     {
         "id": 6824,
@@ -48332,7 +48332,7 @@
         "question": "Research Papers",
         "gold_answer": "option 5: The set of rate-equivocation pairs that can be achieved by any coding scheme.",
         "passage": "In the context of network security and information theory, the set of communication rates that can be achieved while satisfying a secrecy constraint is crucial for ensuring that transmitted information remains confidential. This concept is often explored in research papers focusing on secure communication systems, where the goal is to maximize the rate of information transmission while minimizing the risk of unauthorized access or interception. Therefore, the correct option that aligns with this definition is option 3: \"The set of communication rates that can be achieved while satisfying a secrecy constraint.\" This highlights the balance between effective communication and the need for security in data transmission.",
-        "options": "option 1: General Processing Unit\noption 2: Graphical Processing Unit\noption 3: Graphics Processing Unit\noption 4: General Purpose Unit\noption 5: Game Processing Unit"
+        "options": "option 1: The set of communication rates that can be achieved regardless of the value of the equivocation rate.\noption 2: The set of rate-secrecy pairs that can be achieved by any coding scheme\noption 3: The set of communication rates that can be achieved while satisfying a secrecy constraint\noption 4: The set of communication rates that can be achieved without the use of a secret key\noption 5: The set of rate-equivocation pairs that can be achieved by any coding scheme"
     },
     {
         "id": 6905,
@@ -51167,7 +51167,7 @@
         "question": "Research Papers",
         "gold_answer": "option 5: To reduce the collective prediction errors among several display frames",
         "passage": "[NONE]",
-        "options": "option 1: General Processing Unit\noption 2: Graphical Processing Unit\noption 3: Graphics Processing Unit\noption 4: General Purpose Unit\noption 5: Game Processing Unit"
+        "options": "option 1: To code a future frame in a pyramid coding structure\noption 2: To directly display a frame from the decoded frame buffer\noption 3: To synthesize a frame using temporal filtering\noption 4: To optimize the overall rate-distortion performance\noption 5: To reduce the collective prediction errors among several display frames"
     },
     {
         "id": 7310,
@@ -53589,7 +53589,7 @@
         "question": "Research Papers",
         "gold_answer": "option 2: High data rates and low latency",
         "passage": "[NONE]",
-        "options": "option 1: General Processing Unit\noption 2: Graphical Processing Unit\noption 3: Graphics Processing Unit\noption 4: General Purpose Unit\noption 5: Game Processing Unit"
+        "options": "option 1: Low data rates and high latency\noption 2: High data rates and low latency\noption 3: Low data rates and low latency\noption 4: High data rates and high latency"
     },
     {
         "id": 7656,
@@ -55703,7 +55703,7 @@
         "question": "Research Papers",
         "gold_answer": "option 2: Removing noise at each stage using error-correcting codes",
         "passage": "[NONE]",
-        "options": "option 1: General Processing Unit\noption 2: Graphical Processing Unit\noption 3: Graphics Processing Unit\noption 4: General Purpose Unit\noption 5: Game Processing Unit"
+        "options": "option 1: Encoding and decoding individual packets\noption 2: Removing noise at each stage using error-correcting codes\noption 3: Decoding linear combinations of packets\noption 4: Transmitting waveforms as points of a lattice\noption 5: Efficient function computation using interfering signals"
     },
     {
         "id": 7958,
@@ -57635,7 +57635,7 @@
         "question": "Research Papers",
         "gold_answer": "option 1: The backscatter transmitter with the best transmission condition is selected based on the energy levels of received signals.",
         "passage": "[NONE]",
-        "options": "option 1: General Processing Unit\noption 2: Graphical Processing Unit\noption 3: Graphics Processing Unit\noption 4: General Purpose Unit\noption 5: Game Processing Unit"
+        "options": "option 1: The backscatter transmitter with the best transmission condition is selected based on the energy levels of received signals\noption 2: The backscatter transmitter with the highest transmit power is selected\noption 3: The backscatter transmitter with the lowest transmit power is selected\noption 4: The backscatter transmitter is randomly selected"
     },
     {
         "id": 8234,
@@ -57796,7 +57796,7 @@
         "question": "Research Papers",
         "gold_answer": "option 3: Controlling the peak-to-average power ratio (PAPR)",
         "passage": "In the context of improving network performance and reducing interference, option 1, \"Adding more processing chains to reduce interference,\" is a viable approach. By implementing additional processing chains, networks can better manage and mitigate interference from various sources, leading to improved signal quality and overall system efficiency. This technique is particularly useful in complex environments where multiple signals may overlap, allowing for more effective separation and processing of desired signals. Additionally, option 4, \"Deploying more antennas to improve coverage,\" can also enhance network performance by increasing the spatial diversity and reducing dead zones, further contributing to a more robust network infrastructure.",
-        "options": "option 1: General Processing Unit\noption 2: Graphical Processing Unit\noption 3: Graphics Processing Unit\noption 4: General Purpose Unit\noption 5: Game Processing Unit"
+        "options": "option 1: Adding more processing chains to reduce interference\noption 2: Increasing the out of band leakage\noption 3:Controlling the peak-to-average power ratio (PAPR)\noption 4: Deploying more antennas to improve coverage\noption 5: Increasing the transmit power of each transmission pair"
     },
     {
         "id": 8257,
@@ -57964,7 +57964,7 @@
         "question": "Research Papers",
         "gold_answer": "option 4: By enabling simultaneous transmission and reception",
         "passage": "In the field of wireless communication, research papers often focus on various strategies to enhance system performance. One significant approach is enabling simultaneous transmission and reception, which allows for more efficient use of the available bandwidth and improves overall system throughput. This technique, often referred to as full-duplex communication, can significantly enhance the capacity of wireless systems by allowing devices to send and receive data at the same time, thereby reducing latency and increasing the effective data rate. This advancement is crucial for meeting the growing demands for higher data rates in modern wireless networks.",
-        "options": "option 1: General Processing Unit\noption 2: Graphical Processing Unit\noption 3: Graphics Processing Unit\noption 4: General Purpose Unit\noption 5: Game Processing Unit"
+        "options": "option 1: By reducing the interference between transmit and receive signals\noption 2: By increasing the spectral efficiency of wireless systems\noption 3: By minimizing the circuit power consumption of wireless systems\noption 4:By enabling simultaneous transmission and reception\noption 5: By reducing the peak-to-average power ratio (PAPR) of signals"
     },
     {
         "id": 8281,
@@ -58447,7 +58447,7 @@
         "question": "Research Papers",
         "gold_answer": "option 3: Both option 1 and option 2",
         "passage": "Both high path-loss and directional beamforming can effectively attenuate interference in network management. High path-loss occurs when signals weaken over distance or due to obstacles, reducing the likelihood of interference from unwanted sources. On the other hand, directional beamforming utilizes antennas that focus the signal in specific directions, enhancing the desired signal while minimizing interference from other directions. Therefore, both methods can be employed to improve network performance by reducing interference. \n\nThus, the correct answer is option 3: Both option 1 and option 2.",
-        "options": "option 1: General Processing Unit\noption 2: Graphical Processing Unit\noption 3: Graphics Processing Unit\noption 4: General Purpose Unit\noption 5: Game Processing Unit"
+        "options": "option 1: High path-loss attenuates interference\noption 2: Directional beamforming attenuates interference\noption 3: Both option 1 and option 2\noption 4: Neither option 1 nor option 2"
     },
     {
         "id": 8350,
@@ -60134,7 +60134,7 @@
         "question": "Research Papers",
         "gold_answer": "option 3: Graphics Processing Unit",
         "passage": "The correct term for the component commonly used for rendering graphics in computers and gaming consoles is \"Graphics Processing Unit,\" often abbreviated as GPU. This specialized processor is designed to accelerate the creation of images in a frame buffer intended for output to a display. While the term \"Graphical Processing Unit\" (option 2) is sometimes used interchangeably, the more widely accepted and recognized term is \"Graphics Processing Unit\" (option 3). The GPU plays a crucial role in modern computing, particularly in applications that require high-performance graphics rendering, such as video games, simulations, and graphic design.",
-        "options": "option 1: General Processing Unit\noption 2: Graphical Processing Unit\noption 3: Graphics Processing Unit\noption 4: General Purpose Unit\noption 5: Game Processing Unit"
+        "options": "option 1: General Processing Unit\noption 2: Graphical Processing Unit\noption 3: Graphics Processing Unit\noption 4:General Purpose Unit\noption 5: Game Processing Unit"
     },
     {
         "id": 8591,
@@ -62745,7 +62745,7 @@
         "question": "What are the main characteristics of Visible Light Communications?",
         "gold_answer": "option 4: Non-coherent transmission and limited coverage range",
         "passage": "Visible Light Communications (VLC) primarily utilize light from LEDs to transmit data, offering several key characteristics. One of the main advantages is the potential for high data rates, as VLC can achieve speeds significantly faster than traditional radio frequency communications. Additionally, VLC is known for its low latency, making it suitable for applications requiring real-time data transmission. However, it is important to note that VLC typically has limited coverage range due to its reliance on line-of-sight and the inability to penetrate obstacles effectively. Therefore, while VLC presents exciting opportunities for high-speed communication, its deployment may be constrained by environmental factors.",
-        "options": "option 1: Visible Light Communications require an illumination source, have limited coverage range, and need to be complemented by Radio Frequency for the uplink.\noption 2: Visible Light Communications have unlimited coverage range, do not require an illumination source, and do not need to be complemented by Radio Frequency for the uplink.\noption 3: Visible Light Communications have limited coverage range, do not require an illumination source, and do not need to be complemented by Radio Frequency for the uplink.\noption 4: Visible Light Communications have unlimited coverage range, require an illumination source, and do not need to be complemented by Radio Frequency for the uplink.\noption 5: Visible Light Communications have limited coverage range, require an illumination source, and need to be complemented by Radio Frequency for the uplink."
+        "options": "option 1: High data rates and long range\noption 2: Low cost and ubiquitous deployment\noption 3: Coherent transmission and low latency\noption 4: Non-coherent transmission and limited coverage range\noption 5: Outdoor deployment and resistance to interference"
     },
     {
         "id": 8964,

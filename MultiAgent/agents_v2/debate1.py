@@ -1,6 +1,7 @@
 import re
 from agents_v2.model_loader import get_models
-
+import threading
+gpu_lock = threading.Lock()
 def _get_text(response):
     return response.content if hasattr(response, 'content') else str(response)
 
@@ -57,11 +58,16 @@ def collector_node(state: dict):
 
         "multiple_choice": "Identify and extract all parts of the context that relate to the provided options (A, B, C, D) to compare them.",
 
-        "netconfig": """First find the device(or hostname) related to the question then, extract the configuration of that device. Strictly identify the target device's configuration block. Do not add any additional information.
-        1. Locate the block starting with '[{state.get('target_device', 'TARGET')}.cfg]'.
-        2. Search for the requested value (e.g., BSP, Hostname, IP) STRICTLY within that block first.
-        3. If and only if the answer depends on a neighbor's IP or route, search other blocks, but clearly label them.
-        4. If the target block exists but the specific setting is missing, do not borrow a similar setting from another device. Just report missing."""
+        "netconfig": """
+1. Target Identification: Identify the EXACT device (hostname) mentioned in the question.
+2. Direct Extraction: Extract the raw configuration lines of that device only. 
+3. Strict Boundary: Start from the hostname declaration and include all relevant parameters for that specific device block.
+4. No Paraphrasing: DO NOT convert the configuration into natural language sentences. 
+5. No Additions: Do not add any commentary, explanations, or metadata.
+6. Format: Output ONLY the raw configuration text as it appears in the source.
+
+Write [NONE] if you cannot write a answer.
+"""
     }
 
     base_strategy = COLLECTOR_PROMPTS.get(dataset_type, COLLECTOR_PROMPTS["descriptive"])
@@ -84,7 +90,8 @@ Context:
 
     if dataset_type == "multiple_choice" and options_str:
         prompt += f"Options: {options_str}\n"
-    response = llm.invoke(prompt)
+    with gpu_lock:
+        response = llm.invoke(prompt)
     raw_res = _get_text(response)
     
     # [중요] 여기서 즉시 파싱하여 raw_data에 'Context:'가 없는 순수 데이터만 저장
@@ -105,11 +112,16 @@ def verifier_node(state: dict):
     llm = models['A']
 
     system_prompt = """You are a Network Info Verifier.
-TASK: Remove noise from the 'Extracted Context'.
-- Keep only the technical facts directly required to answer the question.
-- If the Collector provided unrelated device info, delete it.
-- Maintain the original wording for the remaining parts.
-- Don't answer the question. Just remove the noise.
+TASK: Filter irrelevant lines from the 'Extracted Context'.
+
+RULES:
+1. STRICT RESTRAINT: Do NOT change a single character of the original text.
+2. DO NOT paraphrase. DO NOT create sentences.
+3. If a line is irrelevant to the device or question, DELETE the entire line.
+4. If a line is relevant, KEEP it exactly as it is (Raw Config Format).
+5. Output must be a collection of RAW CONFIGURATION LINES, not a summary.
+
+Write [NONE] if you cannot write a answer.
 
 ### OUTPUT FORMAT:
 [START]
@@ -121,7 +133,8 @@ Passage:
     options_str = state.get('options', '')
     if dataset_type == "multiple_choice" and options_str:
         prompt += f"Options: {options_str}\n"
-    response = _get_text(llm.invoke(prompt))
+    with gpu_lock:
+        response = _get_text(llm.invoke(prompt))
     refined = _extract_from_tags(response)
     return {"current_passage": refined}
 
@@ -136,7 +149,7 @@ def synthesizer_node(state: dict):
 
     # 데이터셋별 정답 생성 규칙 (Rules)
     PROMPTS = {
-        "descriptive": """You are a Network Info Collector for descriptive questions.
+        "descriptive": """You are a Network Info Synthesizer for descriptive questions.
 TASK: Answer the question based on the provided passage.
 
 RULES:
@@ -145,16 +158,17 @@ RULES:
 3. If the answer involves configurations, include the exact syntax (CLI, YAML, etc.) along with a brief explanation.
 4. Match the expert-level depth and completeness expected in professional network engineering documentation.""",
 
-        "short_answer": """You are a Network Info Collector for short-answer questions.
+        "short_answer": """You are a Network Info Synthesizer for short-answer questions.
 TASK: Answer the question based on the provided passage.
         
 RULES:
 1. Find the exact answer span in the context.
 2. Output ONLY the extracted text in answer - no explanations, no reasoning, no thoughts.
 3. Do NOT paraphrase - use exact wording from context.
-4. If the answer is a value with a unit, include both.""",
+4. If the answer is a value with a unit, include both.
+5. You must answer using the information provided in the passage.""",
 
-        "multiple_choice": """You are a Network Info Collector for multiple-choice questions.
+        "multiple_choice": """You are a Network Info Synthesizer for multiple-choice questions.
 TASK: Answer the question based on the provided passage.
 
 RULES:
@@ -163,10 +177,12 @@ RULES:
 3. Output your answer in this exact format: "option N: [answer text]"
 4. Do NOT include any reasoning, thoughts, or explanations in answer.""",
 
-        "netconfig": """You are a Network Info Collector for short-answer questions.
+        "netconfig": """You are a Network Info Synthesizer for short-answer questions.
         TASK:
     1. Search the Context for the specific value requested.
     2. If the Context is "[NONE]" or the information is not found, the Passage must be "[NONE]". 
+    If the passage is [NONE] or you cannot find accurate information, answer [NONE]
+
     Answer FORMAT RULES (CRITICAL - MUST FOLLOW EXACTLY):
 
 1. output the raw answer value in ONE line:
@@ -194,10 +210,6 @@ RULES:
 
     base_system = PROMPTS.get(dataset_type, PROMPTS["descriptive"])
     system_prompt = base_system + """
-
-### INSTRUCTIONS:
-- If the passage is [NONE] or you cannot find accurate information, answer [NONE].
-
 ### OUTPUT FORMAT:
 [START]
 Answer: 
@@ -208,7 +220,8 @@ Answer:
     if dataset_type == "multiple_choice" and options_str:
         prompt += f"Options: {options_str}\n"
         
-    response = _get_text(llm.invoke(prompt))
+    with gpu_lock:
+        response = _get_text(llm.invoke(prompt))
     # [중요] 'Answer:' 레이블을 떼고 정답만 추출
     answer_val = _extract_from_tags(response)
 

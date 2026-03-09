@@ -127,6 +127,7 @@ class NetAgentState(TypedDict):
 
 def process_item(app, item, index, total, dataset_type, global_context=None):
     q_text = item.get('question', '')
+    item_id = item.get('id', '')
     
     context = ""
     if dataset_type == "netconfig" and isinstance(global_context, dict):
@@ -140,15 +141,16 @@ def process_item(app, item, index, total, dataset_type, global_context=None):
         else:
             context = item.get('gold_context', '') or item.get('context', '')
             if not context:
-                context = "[NONE]"
+                 context = "[NONE]"
 
     elif isinstance(global_context, str) and global_context:
         context = global_context
     else:
         context = item.get('gold_context', '') or item.get('context', '')
 
-    # [핵심 수정] NetAgentState의 모든 필드를 명시적으로 초기화
+
     initial_state = {
+        "id": item_id,
         "question": q_text, 
         "context": context,
         "dataset_type": dataset_type,
@@ -170,12 +172,10 @@ def process_item(app, item, index, total, dataset_type, global_context=None):
     start_time = time.time()
     try:
         out = app.invoke(initial_state)
-        
-        # [수정] Agent 4가 답을 수정하지 않으므로, 
-        # 최종 답변은 Agent 3이 생성한 candidate_answer를 기본으로 가져옵니다.
         ans = out.get('candidate_answer', '')
         
         res = {
+            "id": item_id,
             "question": q_text,
             "gold_answer": item.get('gold_answer'),
             "debate1_passage": out.get('current_passage', ''),
@@ -188,54 +188,15 @@ def process_item(app, item, index, total, dataset_type, global_context=None):
         }
         
         if dataset_type == "netconfig":
-            res["level"] = item.get('level', '')
-            res["answer_type"] = item.get('answer_type', '')
-            res["answer_status"] = item.get('answer_status', '')
-            
+            res.update({
+                "level": item.get('level', ''),
+                "answer_type": item.get('answer_type', ''),
+                "answer_status": item.get('answer_status', '')
+            })
         return res
     except Exception as e:
         print(f"Error processing item {index}: {e}")
         traceback.print_exc() # 에러 추적을 위해 추가
-        return None
-    
-    MAX_RETRIES = 3
-    FORBIDDEN_PATTERNS = [
-        re.compile(r"the user is asking", re.IGNORECASE),
-        re.compile(r"the supporter['']s argument", re.IGNORECASE),
-        re.compile(r"critique\s*[:\-]", re.IGNORECASE),
-        re.compile(r"the user wants", re.IGNORECASE),
-        re.compile(r"the candidate answer is", re.IGNORECASE),
-        re.compile(r"the provided context", re.IGNORECASE),
-        re.compile(r"\[?NONE\]?", re.IGNORECASE),
-        re.compile(r"Final Answer\s*[:\-]", re.IGNORECASE),
-    ]
-    
-    start_time = time.time()
-    try:
-        out = app.invoke(initial_state)
-        # final_answer가 비어있을 경우 candidate_answer를 대체 사용
-        ans = out.get('final_answer') or out.get('candidate_answer', '')
-        
-        res = {
-            "question": q_text,
-            "gold_answer": item.get('gold_answer'),
-            "debate1_passage": out.get('current_passage', ''),
-            "debate1_answer": out.get('debate1_answer', ''),
-            "proponent_responses": out.get('proponent_responses', []),
-            "critic_feedbacks": out.get('critic_feedbacks', []),
-            "debate2_answer": ans,
-            "debate2_rounds": out.get('inner_turn_count', 0),
-            "duration": time.time() - start_time
-        }
-        
-        if dataset_type == "netconfig":
-            res["level"] = item.get('level', '')
-            res["answer_type"] = item.get('answer_type', '')
-            res["answer_status"] = item.get('answer_status', '')
-            
-        return res
-    except Exception as e:
-        print(f"Error processing item {index}: {e}")
         return None
 
 class Tee:
@@ -261,15 +222,15 @@ def main():
     sys.stdout = Tee(log_dir / "debate_execution_full_w_context.log", "a")
 
     print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] Initializing Models...")
+   
     init_models()
-    
     app = build_graph()
     
-    # input_path = BASE_DIR / "data" / "passages"  / "full_w_context" / "netconfig_en.json"
+    # input_path = BASE_DIR / "data" / "passages"  / "full_w_context" / "netconfig_en2.json"
     # output_path = BASE_DIR / "data" / "debate_results" / "agents_v2" / "test2" / "netconfig_result.json"
     
     input_path = BASE_DIR / "data" / "passages"  / "full_w_context" / "netbench_passage.json"
-    output_path = BASE_DIR / "data" / "debate_results" / "agents_v2" / "full_w_context" / "netbench" / "netbench_result.json"
+    output_path = BASE_DIR / "data" / "debate_results" / "agents_v2" / "full_w_context3" / "netbench" / "netbench_result.json"
     
     if not input_path.exists():
         print(f"Input file not found: {input_path}")
@@ -278,7 +239,6 @@ def main():
     # 1. 입력 데이터 로드
     with open(input_path, 'r', encoding='utf-8') as f:
         loaded_data = json.load(f)
-    
     # [수정] raw_data 대신 loaded_data를 사용하고, 리스트 형식인지 보장합니다.
     if isinstance(loaded_data, dict):
         data = [loaded_data]
@@ -296,27 +256,21 @@ def main():
         try:
             with open(output_path, 'r', encoding='utf-8') as f:
                 loaded_results = json.load(f)
-                if isinstance(loaded_results, list):
-                    for r in loaded_results:
-                        # target_answer_type이 지정된 경우, 일치하는 기존 결과는 로드하지 않음 (새로 돌려서 덮어쓰기 위함)
-                        if target_answer_type and r.get('answer_type') == target_answer_type:
-                            continue
-                        
-                        # normalize_key를 사용하여 질문을 키로 저장
-                        q_key = normalize_key(r.get('question', ''))
-                        existing_results_map[q_key] = r
-            print(f"Loaded {len(existing_results_map)} existing results.")
-        except Exception as e:
-            print(f"Error reading existing output: {e}. Starting fresh.")
-
-    # 3. 데이터 동기화 (기존 코드를 더 안전하게 수정)
+                for r in loaded_results:
+                    res_id = str(r.get('id', ''))
+                    if res_id:
+                        existing_results_map[res_id] = r
+            print(f"✅ Loaded {len(existing_results_map)} existing results from disk.")
+        except Exception:
+            print("⚠️ Error reading existing output. Starting fresh.")
+    
     for item in data:
         if not isinstance(item, dict): continue
+        item_id = item.get('id', '')
         q_raw = item.get('question', '')
         q_key = normalize_key(q_raw)
-        # 이미 존재하는 결과가 있다면 해당 객체를 유지
         if q_key in existing_results_map:
-            existing_results_map[q_key]['question'] = clean_text_for_save(q_raw)
+            existing_results_map[q_key]['id'] = clean_text_for_save(q_raw)
 
     dataset_type = "descriptive"
     global_context = None
@@ -329,32 +283,63 @@ def main():
         dataset_type = "netconfig"
         print("NetConfig dataset detected: Loading config files...")
         global_context = load_netconfigs(BASE_DIR)
+        print("======================================global context:", global_context[:20])
     elif "netbench" in input_path.name.lower():
         dataset_type = "descriptive"
 
     print(f"Dataset type detected: {dataset_type}")
 
-    # --- [수정됨] 재실행 대상 선정 로직 ---
+    # --- [수정됨] 재실행 대상 선정 로직 (align.py의 빠진 번호 기준) ---
+    existing_int_ids = []
+    for res_id in existing_results_map.keys():
+        try:
+            existing_int_ids.append(int(res_id))
+        except ValueError:
+            pass
+
+    missing_ids_set = set()
+    if existing_int_ids:
+        min_id = min(existing_int_ids)
+        max_id = max(existing_int_ids)
+        expected = set(range(min_id, max_id + 1))
+        actual = set(existing_int_ids)
+        missing = sorted(list(expected - actual))
+        if missing:
+            print(f"빠진 ID 개수: {len(missing)}개")
+            print(f"빠진 ID 목록: {missing}")
+            missing_ids_set = set(missing)
+        else:
+            print("빠진 ID가 없습니다.")
+    else:
+        print("정수형 ID를 찾을 수 없습니다.")
+
     items_to_process = []
     skipped_count = 0
+    none_retry_count = 0
     
     for item in data:
-        # target_answer_type이 설정된 경우 해당 타입이 아닌 항목은 건너뜀
-        if target_answer_type and item.get('answer_type') != target_answer_type:
+        item_id = str(item.get('id', ''))
+        
+        # 조건 1: 결과 파일에 해당 ID가 없는 경우 (새 데이터 또는 누락 데이터)
+        if item_id not in existing_results_map:
+            items_to_process.append(item)
             continue
             
-        q_raw = item.get('question', '') or item.get('question_en', '')
-        q_key = normalize_key(q_raw)
+        # 조건 2: 결과는 있지만 답변이 [NONE]인 경우 (재시도)
+        existing_res = existing_results_map[item_id]
+        pred_ans = str(existing_res.get('debate2_answer', '')).strip().upper()
         
-        # 1. 기존 결과가 없는 경우(빠진 데이터) -> 실행
-        if q_key not in existing_results_map:
+        if pred_ans == "[NONE]":
             items_to_process.append(item)
-        else: 
+            none_retry_count += 1
+        else:
             skipped_count += 1
 
-    print(f"Skipping {skipped_count} already processed items.")
-    print(f"Queueing {len(items_to_process)} missing items for processing.")
-
+    print(f"📊 원본 데이터 총합: {len(data)}")
+    print(f"⏭️ 스킵 (정상 처리됨): {skipped_count}")
+    print(f"🔄 재시도 ([NONE] 답변): {none_retry_count}")
+    print(f"🚀 최종 실행 대기: {len(items_to_process)}")
+    
     MAX_WORKERS = 50
     start_total_time = time.time()
     os.makedirs(output_path.parent, exist_ok=True)
@@ -367,31 +352,23 @@ def main():
             for i, item in enumerate(items_to_process)
         }
         
-        # 완료되는 대로 all_results_map 업데이트 및 저장
         processed_count = 0
         for future in tqdm(as_completed(future_to_item), total=len(items_to_process), desc="Processing"):
             res = future.result()
             if res:
-                q_key = res['question']
-                # 딕셔너리에 새 결과 업데이트 (덮어쓰기)
-                existing_results_map[q_key] = res
+                res_id = str(res['id'])
+                existing_results_map[res_id] = res
                 processed_count += 1
                 
+                # 주기적 저장
                 if processed_count % 10 == 0:
-                    # 중간 저장: 맵의 값들을 리스트로 변환하여 저장
-                    current_list = list(existing_results_map.values())
                     with open(output_path, 'w', encoding='utf-8') as f:
-                        json.dump(current_list, f, indent=4, ensure_ascii=False)
-
-    total_duration = time.time() - start_total_time
-    print(f"\nAll Done! Total time: {total_duration:.2f} seconds")
-
-    # 최종 저장
+                        json.dump(list(existing_results_map.values()), f, indent=4, ensure_ascii=False)
     final_list = list(existing_results_map.values())
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(final_list, f, indent=4, ensure_ascii=False)
     
-    print(f"Saved {len(final_list)} results to {output_path}")
+    print(f"✅ Done! Saved total {len(final_list)} results to {output_path}")
 
 if __name__ == "__main__":
     main()

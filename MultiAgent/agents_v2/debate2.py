@@ -1,7 +1,9 @@
+
 import json
 import re
 from agents_v2.model_loader import get_models
-
+import threading
+gpu_lock = threading.Lock()
 def _get_text(response):
     """LangChain 객체 또는 일반 텍스트에서 문자열만 안전하게 추출"""
     return response.content if hasattr(response, 'content') else str(response)
@@ -41,7 +43,8 @@ OUTPUT FORMAT:
     if dataset_type == "multiple_choice" and options_str:
         prompt += f"Options: {options_str}\n"
 
-    response = llm.invoke(prompt)
+    with gpu_lock:
+        response = llm.invoke(prompt)
     response_text = _get_text(response)
     
     # 의견(Argument) 추출
@@ -63,21 +66,27 @@ def skeptic_node(state: dict):
     llm = models.get('B', models['A']) 
     
     # 수정 포인트: Proponent의 옹호 의견까지 참고하여 Agent 3의 답변을 비판적으로 검토
-    system_prompt = """You are a Skeptical Network Auditor. 
-Review Agent 3's Answer and Agent 4's Defense based on the Passage.
+    system_prompt = """You are a Highly Critical Network Auditor. 
+Your primary mission is to detect technical errors, hallucinations, and data collection failures. 
+Do not be polite. If there is even a slight mismatch or missing evidence, REJECT the answer.
 
-DECISION CRITERIA:
-1. ACCEPT: The answer is perfectly supported by the Passage.
-2. CONTINUE_DEBATE: The answer or the defense has logical flaws that need more discussion.
-3. NEED_MORE_INFO: The Passage itself lacks the information to verify the answer.
+### CRITICAL AUDIT RULES:
+1. **Empty Passage Penalty**: If the 'Passage' is empty, whitespace-only, or says "no information," you MUST set status to "NEED_MORE_INFO". NEVER 'ACCEPT' an empty passage.
+2. **Anti-Hallucination**: Check if the 'Candidate Answer' contains specific values (IPs, version numbers) NOT found in the 'Passage'. If the answer contains sequential patterns (e.g., .1, .2, .3...) that aren't explicitly in the raw text, set status to "CONTINUE_DEBATE" and flag it as a hallucination.
+3. **Refusal is not an Answer**: If Agent 3 says "I cannot answer" or "Please provide context," this is a failure. Set status to "NEED_MORE_INFO".
+4. **Entity Alignment**: Ensure the device in the Question (e.g., leaf1) matches the device in the Passage. If the Passage describes 'leaf2' instead, set status to "NEED_MORE_INFO".
 
-OUTPUT FORMAT:
-You MUST output ONLY a valid JSON object. Do not include any other text, markdown formatting, or preamble.
-The JSON must have the following structure:
+### DECISION CRITERIA:
+1. **ACCEPT**: Only if the answer is a specific technical value 100% supported by the EXACT wording in the Passage.
+2. **CONTINUE_DEBATE**: If the answer has logical leaps, contains suspected hallucinations, or if Agent 4's defense is just "the passage is missing info."
+3. **NEED_MORE_INFO**: If the Passage is missing, irrelevant to the target device, or insufficient to prove the answer.
+
+### OUTPUT FORMAT:
+You MUST output ONLY a valid JSON object. No markdown, no preamble.
 {
     "status": "ACCEPT" | "CONTINUE_DEBATE" | "NEED_MORE_INFO",
-    "con_argument": "Your technical critique of the answer and the proponent's defense",
-    "feedback_to_agent1": "If status is NEED_MORE_INFO, specify what is missing"
+    "con_argument": "Detailed technical critique of why the answer is wrong or why the passage is insufficient.",
+    "feedback_to_agent1": "Specific instructions for Agent 1 to find the missing data (e.g., 'Look for hostname leaf1 and BGP neighbor commands')."
 }"""
 
     prompt = f"""{system_prompt}
@@ -92,7 +101,8 @@ Proponent's Defense (Agent 4): {state.get('pro_argument')}"""
     if dataset_type == "multiple_choice" and options_str:
         prompt += f"Options: {options_str}\n"
         
-    response = llm.invoke(prompt)
+    with gpu_lock:
+        response = llm.invoke(prompt)
     response_text = _get_text(response)
     
     try:

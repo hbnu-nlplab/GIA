@@ -565,7 +565,7 @@ class ScorecardGenerator:
         lines.append("## 📊 Overall Performance\n")
         lines.append("| Metric | Value |")
         lines.append("|--------|-------|")
-        lines.append(f"| **Type-Aware Accuracy** | **{stats['accuracy']:.2f}** |")
+        lines.append(f"| **Type-Aware Accuracy** | **{stats['accuracy']:.4f}** |")
         
         trad_metrics = stats.get('traditional_metrics', {})
         lines.append(f"| Exact Match (EM) | {trad_metrics.get('exact_match', 0):.4f} |")
@@ -1021,8 +1021,8 @@ def main():
     files_to_process = args.json_files
     if not files_to_process:
         # Default file if none provided
-        # default_file = BASE_DIR / "data" / "debate_results" / "agents_v2" / "full_w_context" / "netbench" / "netbench_result.json"
-        default_file = BASE_DIR / "data" / "debate_results" / "agents_v2" / "full_w_context" / "telequad" / "telequad_result.json"
+        # default_file = BASE_DIR / "data" / "debate_results" / "agents_v2" / "full_w_context3" / "netconfig" / "netconfig_result.json"
+        default_file = BASE_DIR / "data" / "debate_results" / "agents_v2" / "full_w_context3" / "netbench" / "netbench_result.json"
         if default_file.exists():
             files_to_process = [str(default_file)]
         else:
