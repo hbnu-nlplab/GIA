@@ -82,6 +82,30 @@
 
 - 영어를 `HSRP/VRRP group IDs`로 정렬
 
+### 5. answer-format 예시의 영어 통일
+
+기존:
+
+- `리스트`, `숫자`, `장비명`, `경로 목록`, `경유하지 않음`, `흐름1` 같은 한국어 예시가 answer-format에 섞여 있었음
+
+문제:
+
+- 실제 dataset answer는 영어 canonical form을 사용함
+- 템플릿 예시가 한국어면 평가 설명과 정답 예시가 서로 어긋남
+
+수정:
+
+- `리스트` -> `JSON array`
+- `숫자` -> `integer`
+- `장비명` -> `hostname`
+- `경로 예시` -> `A -> B -> C`
+- `경유하지 않음` -> `NOT_TRAVERSED`
+- `흐름1, 흐름2` -> `flow1, flow2`
+
+결과:
+
+- 현재 `policies.json`의 모든 `[답변 형식: ...]` 예시는 한글 answer token 없이 영어 기준으로 통일됨
+
 ## 현재 남아 있는 항목
 
 구조적 오류는 없지만, 일부 레거시 metric은 문체가 조금 어색하다.
