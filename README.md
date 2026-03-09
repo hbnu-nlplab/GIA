@@ -79,14 +79,23 @@ python 3-Config_Export_Batfish.py
 ### 3. 데이터셋 생성
 
 ```bash
-# L1-L5 전체 데이터셋 생성
-python main_batfish.py --lab-path ../../Data/Pnetlab/Research_Institute_Internal_DC
+# 권장: 정책 검증 + 데이터셋 생성 + 품질검증 + 통계리포트까지 원샷 실행
+cd ../..
+Make_Dataset/run_dataset_pipeline.sh \
+  --lab-path Data/Pnetlab/Research_Institute_Internal_DC \
+  --policies Make_Dataset/policies.json
+
+# (직접 실행 옵션) 생성기만 실행할 경우
+# python Make_Dataset/src/main_batfish.py --lab-path Data/Pnetlab/Research_Institute_Internal_DC --policies Make_Dataset/policies.json
 ```
 
-**출력 결과**: `Data/Pnetlab/[LabName]/Dataset/` 폴더에 다음 파일이 생성됩니다.
+**출력 결과**: `Data/Pnetlab/[LabName]/Dataset/<timestamp>/` 폴더에 다음 파일이 생성됩니다.
 
-- `dataset.csv`: 전체 Q&A 데이터셋
-- `facts.json`: 파싱된 네트워크 팩트 정보
+- `*_dataset_batfish_<timestamp>.csv`: 전체 Q&A 데이터셋
+- `*_dataset_batfish_<timestamp>.json`: 구조화 데이터셋(JSON)
+- `*_dataset_batfish_<timestamp>_quality_report.json/.md`: 품질 게이트 리포트
+- `*_dataset_batfish_<timestamp>_statistics.md`: 통계 요약 리포트
+- `*_batfish_facts_<timestamp>.json`: 파싱된 네트워크 팩트 정보
 
 ---
 
@@ -109,13 +118,18 @@ python main_batfish.py --lab-path ../../Data/Pnetlab/Research_Institute_Internal
 ```text
 GIA/
 ├── Make_Dataset/           # 데이터셋 생성 파이트라인
-│   └── src/
+│   ├── src/
 │       ├── core_batfish/   # Batfish 분석 엔진 (L4/L5)
 │       ├── main_batfish.py # 메인 실행 스크립트
-│       └── 1-SSH_Enable.py # PnetLab SSH 설정
+│       ├── validate_policies.py
+│       └── validate_dataset_quality.py
+│   ├── Make_summary.py
+│   └── run_dataset_pipeline.sh  # 원샷 실행 스크립트
+│   └── (legacy helper scripts: 1-SSH_Enable.py 등)
 ├── Data/                   # 실험 데이터
 │   └── Pnetlab/
 │       └── [LabName]/      # 실험 토폴로지별 데이터
+│           └── Dataset/<timestamp>/  # 실행별 산출물 분리 저장
 ├── Experiment/             # LLM 평가 실험
 │   └── run_evaluation.py   # 평가 스크립트
 └── docs/                   # 문서

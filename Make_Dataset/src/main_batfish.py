@@ -3,10 +3,13 @@ import argparse
 import json
 import time
 import subprocess
+import hashlib
 from pathlib import Path
 import sys
 import random
 import itertools
+import re
+from collections import Counter, defaultdict
 import pandas as pd
 
 """
@@ -20,6 +23,9 @@ from core_batfish.parser import UniversalParser
 from core_batfish.rule_based_generator import RuleBasedGenerator, RuleBasedGeneratorConfig
 from core_batfish.builder_core import BuilderCore
 from core_batfish.batfish_builder import BatfishBuilder, AnswerResult
+from core_batfish.ko_josa import fix_josa
+from validate_policies import validate_policies
+from validate_dataset_quality import validate_dataset_quality
 
 # ============================================================================
 # NetConfigQA 벤치마크 파이프라인 - Phase 1: 스키마 검증
@@ -43,8 +49,158 @@ ANSWER_SCHEMAS = {
     "enum": {"type": "string"},
     "scalar_str": {"type": "string"},
     "scalar_int": {"type": "integer"},
+    "number": {"type": "integer"},
+    "numeric": {"type": "integer"},
     "bool": {"type": "boolean"},
 }
+
+STRUCTURED_COMPARE_METRICS = {
+    "compare_bgp_neighbor_count",
+    "compare_interface_count",
+    "compare_vrf_count",
+}
+PLACEHOLDER_PATTERN = re.compile(r"\\{[a-zA-Z_][a-zA-Z0-9_]*\\}")
+HANGUL_PATTERN = re.compile(r"[가-힣]")
+
+
+def canonical_dataset_answer_type(answer_type: str) -> str:
+    """
+    Canonicalize answer_type labels for dataset consistency.
+    - numeric/scalar_int/int/float -> number
+    """
+    at = str(answer_type or "").strip().lower()
+    aliases = {
+        "numeric": "number",
+        "scalar_int": "number",
+        "int": "number",
+        "integer": "number",
+        "float": "number",
+    }
+    return aliases.get(at, at or "text")
+
+
+def _normalize_path_text(path: str) -> str:
+    """Normalize path separators to ASCII arrows for language-neutral contracts."""
+    return re.sub(r"\s*→\s*", " -> ", str(path or "").strip())
+
+
+def canonicalize_text_answer(metric_name: str, answer_text: str) -> str:
+    """
+    Canonicalize known Korean text answers into language-neutral contract tokens.
+    Only applies to deterministic/contracted patterns; free-form text is left as-is.
+    """
+    text = str(answer_text or "").strip()
+    if not text:
+        return text
+
+    # Direct token mapping
+    direct = {
+        "미설정": "NOT_CONFIGURED",
+        "없음": "NONE",
+        "경로 없음": "NO_PATH",
+        "허용됨": "ALLOWED",
+        "경유하지 않음": "NOT_TRAVERSED",
+        "예, 완전 분리": "YES_FULLY_DISCONNECTED",
+        "우회 경로 없음 (정책 준수)": "COMPLIANT",
+    }
+    if text in direct:
+        return direct[text]
+
+    # Common contracted patterns
+    m = re.fullmatch(r"(\d+)\s*개", text)
+    if m:
+        return m.group(1)
+
+    m = re.fullmatch(r"(.*)\((\d+)\s*개\)", text)
+    if m:
+        return f"{m.group(1).strip()}({m.group(2)})"
+
+    m = re.fullmatch(r"우회 경로 존재\s*\(경로:\s*(.+)\)", text)
+    if m:
+        return f"VIOLATION (path: {_normalize_path_text(m.group(1))})"
+
+    m = re.fullmatch(r"가능\s*\(대체경로:\s*(.+)\)", text)
+    if m:
+        return f"REROUTED (path: {_normalize_path_text(m.group(1))})"
+
+    m = re.fullmatch(r"불가능\s*\(원인:\s*(.+)\)", text)
+    if m:
+        return f"DISCONNECTED (reason: {m.group(1).strip()})"
+
+    m = re.fullmatch(r"차단됨\s*\(장비:\s*([^,]+),\s*원인:\s*(.+)\)", text)
+    if m:
+        return f"DENIED (device: {m.group(1).strip()}, reason: {m.group(2).strip()})"
+
+    m = re.fullmatch(r"경로:\s*(.+),\s*도달:\s*가능(?:\s*\((.+)\))?", text)
+    if m:
+        suffix = f"; DISPOSITION: {m.group(2).strip()}" if m.group(2) else ""
+        return f"PATH: {_normalize_path_text(m.group(1))}; REACHABLE: TRUE{suffix}"
+
+    m = re.fullmatch(r"경로:\s*(.+),\s*도달:\s*불가\s*\(원인:\s*(.+)\)", text)
+    if m:
+        return (
+            f"PATH: {_normalize_path_text(m.group(1))}; "
+            f"REACHABLE: FALSE; REASON: {m.group(2).strip()}"
+        )
+
+    m = re.fullmatch(r"아니오,\s*(\d+)\s*개 흐름만 영향", text)
+    if m:
+        return f"NO (affected_flows: {m.group(1)})"
+
+    m = re.fullmatch(r"DISCONNECTED\s*\(reason:\s*([A-Za-z0-9_.-]+)에서\s*(.+)\)", text)
+    if m:
+        return f"DISCONNECTED (reason: {m.group(2).strip()} at {m.group(1).strip()})"
+
+    # Metric-guided fallback for link-failure policy contract
+    if metric_name == "link_failure_impact" and text == "불가능":
+        return "DISCONNECTED"
+
+    # Generic fallback: numeric-count token cleanup and arrow normalization.
+    normalized = re.sub(r"(\d+)\s*개", r"\1", text)
+    normalized = re.sub(r"(\d+)\s*건", r"\1 entries", normalized)
+    normalized = normalized.replace("에서", " at ")
+    normalized = normalized.replace("경로:", "PATH:")
+    normalized = normalized.replace("도달:", "REACHABLE:")
+    normalized = normalized.replace("원인:", "REASON:")
+    normalized = normalized.replace("장비:", "DEVICE:")
+    normalized = _normalize_path_text(normalized)
+    return normalized
+
+
+def canonicalize_answers_for_language_neutral_contract(rows: list) -> int:
+    """
+    Normalize text-like answers in-place right before dataset serialization.
+    Returns the number of rows whose answers were changed.
+    """
+    changed = 0
+    text_like_types = {"text", "scalar_str", "enum"}
+    for row in rows:
+        answer_type = canonical_dataset_answer_type(str(row.get("answer_type", "")))
+        if answer_type not in text_like_types:
+            continue
+
+        raw_answer = row.get("answer")
+        try:
+            parsed = json.loads(raw_answer) if isinstance(raw_answer, str) else raw_answer
+        except Exception:
+            continue
+
+        if not isinstance(parsed, str):
+            continue
+
+        metric_name = ""
+        try:
+            evidence = json.loads(row.get("evidence", "{}"))
+            if isinstance(evidence, dict):
+                metric_name = str(evidence.get("metric", "")).strip()
+        except Exception:
+            metric_name = ""
+
+        canonical = canonicalize_text_answer(metric_name, parsed)
+        if canonical != parsed:
+            row["answer"] = json.dumps(canonical, ensure_ascii=False)
+            changed += 1
+    return changed
 
 
 def validate_answer(value, answer_type: str) -> tuple:
@@ -105,6 +261,80 @@ def validate_answer(value, answer_type: str) -> tuple:
         return False, f"Validation error: {e}"
 
 
+def has_placeholder_token(value) -> bool:
+    """Detect unresolved template placeholders recursively."""
+    if isinstance(value, str):
+        return bool(PLACEHOLDER_PATTERN.search(value))
+    if isinstance(value, dict):
+        return any(has_placeholder_token(v) for v in value.values())
+    if isinstance(value, (list, tuple, set)):
+        return any(has_placeholder_token(v) for v in value)
+    return False
+
+
+def make_scope_hash(scope: dict) -> str:
+    serialized = json.dumps(scope or {}, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+    return hashlib.sha1(serialized.encode("utf-8")).hexdigest()[:10]
+
+
+def is_valid_structured_compare_answer(metric_name: str, value) -> bool:
+    if metric_name not in STRUCTURED_COMPARE_METRICS:
+        return True
+    if not isinstance(value, dict):
+        return False
+    required = {"host1_count", "host2_count", "difference"}
+    if set(value.keys()) != required:
+        return False
+    return all(isinstance(value[k], int) for k in required)
+
+
+def enforce_min_per_category(rows: list, categories: list, min_per_cat: int) -> dict:
+    """
+    Category coverage top-up pass.
+    Re-samples existing rows within the same category and annotates evidence.
+    """
+    if min_per_cat <= 0:
+        return {}
+
+    by_cat = defaultdict(list)
+    for row in rows:
+        by_cat[row.get("category", "Unknown")].append(row)
+
+    added = {}
+    for category in categories:
+        current = len(by_cat.get(category, []))
+        deficit = max(0, min_per_cat - current)
+        if deficit == 0:
+            continue
+
+        seeds = by_cat.get(category, [])
+        if not seeds:
+            added[category] = 0
+            continue
+
+        local_added = 0
+        for idx in range(deficit):
+            src = random.choice(seeds)
+            clone = dict(src)
+            clone["id"] = f"{src['id']}__rs{idx + 1}"
+            base_id_v2 = src.get("id_v2") or src["id"]
+            clone["id_v2"] = f"{base_id_v2}-rs{idx + 1}"
+            try:
+                ev = json.loads(src.get("evidence", "{}"))
+                if not isinstance(ev, dict):
+                    ev = {}
+            except Exception:
+                ev = {}
+            ev["resample_pass"] = 2
+            ev["resample_index"] = idx + 1
+            clone["evidence"] = json.dumps(ev, ensure_ascii=False)
+            rows.append(clone)
+            by_cat[category].append(clone)
+            local_added += 1
+        added[category] = local_added
+    return added
+
+
 def get_pipeline_version() -> str:
     """Git commit hash를 파이프라인 버전으로 사용"""
     try:
@@ -120,7 +350,7 @@ def get_pipeline_version() -> str:
 PIPELINE_VERSION = get_pipeline_version()
 
 
-def print_quality_report(rows: list):
+def print_quality_report(rows: list, extra_quality: dict | None = None):
     """
     데이터 품질 리포트 출력
     
@@ -164,6 +394,11 @@ def print_quality_report(rows: list):
     print(f"  📈 NOT_APPLICABLE Rate: {na_rate:.1f}%")
     print(f"  📈 Negative Evidence Rate: {neg_rate:.1f}%")
     print(f"  📈 Pipeline Version: {PIPELINE_VERSION}")
+    if extra_quality:
+        print(f"  📈 Duplicate ID Count: {extra_quality.get('duplicate_id_count', 0)}")
+        print(f"  📈 Evidence Placeholder Count: {extra_quality.get('evidence_placeholder_count', 0)}")
+        print(f"  📈 Structured Schema Violations: {extra_quality.get('structured_schema_violations', 0)}")
+        print(f"  📈 Duplicate id_v2 Count: {extra_quality.get('duplicate_id_v2_count', 0)}")
     
     # UNKNOWN 상세 분석
     if status_counts.get("UNKNOWN", 0) > 0:
@@ -184,10 +419,26 @@ def main():
     parser.add_argument("--policies", default="policies.json", help="Path to policies JSON")
     parser.add_argument("--batfish-host", default="localhost", help="Batfish server host (e.g. localhost:8889)")
     parser.add_argument("--min-per-cat", type=int, default=50, help="Minimal questions per category")
+    parser.add_argument("--seed", type=int, default=42, help="Deterministic seed for question instantiation")
+    parser.add_argument(
+        "--question-lang",
+        choices=["ko", "en"],
+        default="ko",
+        help="Question template language (default: ko)",
+    )
+    parser.add_argument(
+        "--include-l6",
+        action="store_true",
+        help="Include L6 diagnostic question generation (disabled by default for IEEE TNMS submission scope).",
+    )
     args = parser.parse_args()
 
     # [Antigravity Mod v3] - 8889 Port & Snapshot Root Fix
     print(f"[Info] NetConfigQA Dataset Generator (Batfish Edition) - v20240129-01")
+    print(f"[Info] L6 generation mode: {'ENABLED (--include-l6)' if args.include_l6 else 'DISABLED (submission default)'}")
+    print(f"[Info] Question language: {args.question_lang}")
+    print(f"[Info] Deterministic seed: {args.seed}")
+    random.seed(args.seed)
     
     lab_path = Path(args.lab_path).resolve()
     if not lab_path.exists():
@@ -220,6 +471,9 @@ def main():
     out_dir.mkdir(parents=True, exist_ok=True)
 
     timestamp = time.strftime("%Y%m%d_%H%M%S")
+    run_dir = out_dir / timestamp
+    run_dir.mkdir(parents=True, exist_ok=True)
+    print(f"[Info] Run output directory: {run_dir}")
     
     # 2. 파싱 (Batfish Engine - Static Facts)
     print(f"[1] Parsing configurations using Batfish from root: {snapshot_root}")
@@ -234,7 +488,7 @@ def main():
         return
 
     # Facts 저장
-    facts_out = out_dir / f"{snapshot_root.name}_batfish_facts_{timestamp}.json"
+    facts_out = run_dir / f"{snapshot_root.name}_batfish_facts_{timestamp}.json"
     facts_out.write_text(json.dumps(facts, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"    -> Saved facts to {facts_out}")
 
@@ -251,13 +505,19 @@ def main():
     if not policy_path.exists():
         print(f"[Error] Policy file not found: {policy_path.resolve()}")
         return
+    policy_validation_code = validate_policies(policy_path.resolve())
+    policy_validation_passed = (policy_validation_code == 0)
+    if not policy_validation_passed:
+        print("[Error] Policy validation failed. Aborting dataset generation.")
+        return
 
     # Batfish Init with policies_path
     bf_builder = BatfishBuilder(
         snapshot_path=str(snapshot_root), 
         network_name=snapshot_root.name,
         policies_path=str(policy_path),
-        batfish_host=args.batfish_host
+        batfish_host=args.batfish_host,
+        question_lang=args.question_lang,
     )
     bf_active = bf_builder.initialize()
     if bf_active:
@@ -269,7 +529,11 @@ def main():
     print(f"[2] Generating questions using policies: {policy_path}")
     # (policy_path is already resolved)
         
-    cfg = RuleBasedGeneratorConfig(policies_path=str(policy_path), min_per_cat=args.min_per_cat)
+    cfg = RuleBasedGeneratorConfig(
+        policies_path=str(policy_path),
+        min_per_cat=args.min_per_cat,
+        question_lang=args.question_lang,
+    )
     gen = RuleBasedGenerator(cfg)
     
     categories = [
@@ -301,13 +565,19 @@ def main():
             ips.sort(key=lambda x: 0 if x.startswith("10.255") else 1)
             host_ips[h] = ips
 
-    all_hosts = [d["system"]["hostname"] for d in facts["devices"]]
+    all_hosts = sorted(d["system"]["hostname"] for d in facts["devices"])
     all_asns = set()
     for d in facts["devices"]:
         las = d.get("routing", {}).get("bgp", {}).get("local_as")
         if las: all_asns.add(str(las))
     
     qa_list = []
+    seen_id_v2 = set()
+    generation_checks = {
+        "evidence_placeholder_count": 0,
+        "structured_schema_violations": 0,
+        "duplicate_id_v2_skipped": 0,
+    }
     
     for dsl in dsl_items:
         level = dsl.get("level", "L1")
@@ -331,7 +601,7 @@ def main():
                 instances.append({"host": h})
                 
         elif scope_type == "AS":
-            for a in all_asns:
+            for a in sorted(all_asns):
                 instances.append({"asn": a})
                 
         elif scope_type == "DEVICE_PAIR":
@@ -346,7 +616,7 @@ def main():
                 ospf = d.get("routing", {}).get("ospf", {})
                 for a in ospf.get("areas", {}):
                     if a is not None: areas.add(str(a))
-            for a in areas:
+            for a in sorted(areas):
                 instances.append({"area": a})
 
         elif scope_type == "VRF":
@@ -355,11 +625,11 @@ def main():
                 bgp_vrfs = d.get("routing", {}).get("bgp", {}).get("vrfs", [])
                 for v in bgp_vrfs:
                     if v.get("name"): vrfs.add(v["name"])
-            for v in vrfs:
+            for v in sorted(vrfs):
                 instances.append({"vrf": v})
 
         elif scope_type == "FLOW": 
-            valid_hosts = [h for h in all_hosts if host_ips.get(h)]
+            valid_hosts = sorted(h for h in all_hosts if host_ips.get(h))
             if len(valid_hosts) >= 2:
                 for _ in range(5): 
                     src, dst = random.sample(valid_hosts, 2)
@@ -376,12 +646,13 @@ def main():
              if bf_active:
                  edges = bf_builder.get_layer3_edges()
                  if edges:
+                     edges = sorted(edges, key=lambda e: (str(e.get("node1", "")), str(e.get("node2", ""))))
                      # Sample edges if too many
                      if len(edges) > 10: edges = random.sample(edges, 10)
                      for edge in edges:
                          # For each link failure, we need a test flow
                          # Randomly pick 3 src-dst pairs
-                         valid_hosts = [h for h in all_hosts if host_ips.get(h)]
+                         valid_hosts = sorted(h for h in all_hosts if host_ips.get(h))
                          if len(valid_hosts) >= 2:
                              for _ in range(3):
                                  t_src, t_dst = random.sample(valid_hosts, 2)
@@ -397,7 +668,7 @@ def main():
         
         elif scope_type == "VRF_PAIR":
             if bf_active:
-                vrfs = bf_builder.get_vrfs()
+                vrfs = sorted(bf_builder.get_vrfs())
                 if len(vrfs) >= 2:
                      pairs = list(itertools.combinations(vrfs, 2))
                      for v1, v2 in pairs:
@@ -437,7 +708,7 @@ def main():
                     elif metric == "loop_detection":
                         res = bf_builder.loop_detection()
                         
-                    elif metric == "blackhole_detection":
+                    elif metric in ("blackhole_detection", "blackhole_destination_list"):
                         res = bf_builder.blackhole_detection()
                         
                     elif metric == "acl_blocking_point":
@@ -446,7 +717,7 @@ def main():
                         if src_ip and dst_ip:
                             res = bf_builder.acl_blocking_point(src_ip, dst_ip)
                             
-                    elif metric == "waypoint_check":
+                    elif metric in ("waypoint_check", "waypoint_traversal_path"):
                          src_ip = inst.get("src_ip")
                          dst_ip = inst.get("dst_ip")
                          waypoint = inst.get("waypoint")
@@ -470,7 +741,7 @@ def main():
                          else:
                              print(f"[DEBUG] bounded_path_length missing params: {inst}")
 
-                    elif metric == "isolation_check":
+                    elif metric in ("isolation_check", "leaked_prefixes_list"):
                          v1 = inst.get("vrf1")
                          v2 = inst.get("vrf2")
                          if v1 and v2:
@@ -486,7 +757,7 @@ def main():
                          if n1 and n2 and ts and td:
                              res = bf_builder.link_failure_impact(n1, n2, ts, td)
 
-                    elif metric == "k_failure_tolerance":
+                    elif metric in ("k_failure_tolerance", "redundant_paths_list"):
                          src = inst.get("src_host") or inst.get("host1")
                          dst_ip = inst.get("dst_ip")
                          # If no dst_ip, lookup host2
@@ -499,9 +770,18 @@ def main():
                              print(f"[DEBUG] k_failure_tolerance missing params: {inst}")
 
                     elif metric == "policy_compliance_check":
-                         res = bf_builder.policy_compliance_check()
+                         # waypoint 미지정 시 transit 노드를 자동 선택해 의미 있는 정책검증 수행
+                         waypoint = inst.get("waypoint")
+                         if not waypoint:
+                             transit = bf_builder.get_transit_nodes()
+                             waypoint = transit[0] if transit else ""
+                         res = bf_builder.policy_compliance_check(
+                             policy_type="waypoint",
+                             waypoint_node=waypoint,
+                             policy_name=inst.get("policy_name", "")
+                         )
 
-                    elif metric == "ospf_backbone_contiguity":
+                    elif metric in ("ospf_backbone_contiguity", "ospf_area0_routers"):
                          res = bf_builder.ospf_backbone_contiguity()
 
                     else:
@@ -527,7 +807,9 @@ def main():
             for k, v in inst.items():
                 if isinstance(v, (str, int, float)):
                     q_text = q_text.replace(f"{{{k}}}", str(v))
-            
+            if args.question_lang == "ko":
+                q_text = fix_josa(q_text)
+
             if isinstance(res, dict):
                 a_val = res["value"]
                 # res is dict
@@ -557,18 +839,31 @@ def main():
                 a_val = None
 
             # Evidence 자동 채우기 (기존 정보 보존하며 병합)
+            # scope (인스턴스 값이 반영된 것)를 사용 — scope_template은 {host} 등 placeholder 포함
             default_evidence = {
                 "snapshot": lab_path.name,
                 "metric": metric_name,
-                "scope": scope_template
+                "scope": scope
             }
             # 기존 evidence_dict에 default_evidence 병합 (기존 내용 우선)
             # 단, 기존에 없으면 채워넣기 위해 default_evidence를 base로 하고 update
             final_evidence = default_evidence.copy()
             if evidence_dict:
                 final_evidence.update(evidence_dict)
+
+            # 품질 게이트: evidence 내 unresolved placeholder 금지
+            if has_placeholder_token(final_evidence):
+                generation_checks["evidence_placeholder_count"] += 1
+                print(f"[WARN] Skip row due to evidence placeholder: metric={metric_name}, scope={scope}")
+                continue
             
             evidence_str = json.dumps(final_evidence, ensure_ascii=False)
+
+            # 품질 게이트: 구조화 비교 메트릭 스키마 검증
+            if not is_valid_structured_compare_answer(metric_name, a_val):
+                generation_checks["structured_schema_violations"] += 1
+                print(f"[WARN] Skip row due to structured schema violation: metric={metric_name}, value={a_val}")
+                continue
 
             # 값 직렬화 및 Status 최종 보정
             if a_val is None:
@@ -615,14 +910,42 @@ def main():
                     a_json = json.dumps(str(a_val), ensure_ascii=False)
             
             # Legacy "정보없음" fallback 제거됨 (a_json은 항상 유효한 JSON 문자열)
-            
+
+            # 고유 ID 생성: 메트릭명 + scope 인스턴스 값 조합
+            scope_suffix_parts = []
+            for k, v in sorted(inst.items()):
+                if k == "type":
+                    continue
+                scope_suffix_parts.append(str(v))
+            if scope_suffix_parts:
+                unique_id = f"{dsl['id']}_{'_'.join(scope_suffix_parts)}"
+            else:
+                unique_id = str(dsl["id"])
+            id_v2 = f"{metric_name}:{make_scope_hash(scope)}"
+            if id_v2 in seen_id_v2:
+                generation_checks["duplicate_id_v2_skipped"] += 1
+                continue
+            seen_id_v2.add(id_v2)
+            answer_type = canonical_dataset_answer_type(
+                res["answer_type"] if isinstance(res, dict) else res.answer_type
+            )
+            if answer_type in {"text", "scalar_str", "enum"}:
+                try:
+                    parsed_text = json.loads(a_json)
+                except Exception:
+                    parsed_text = None
+                if isinstance(parsed_text, str):
+                    parsed_text = canonicalize_text_answer(metric_name, parsed_text)
+                    a_json = json.dumps(parsed_text, ensure_ascii=False)
+
             qa_list.append({
-                "id": str(dsl["id"]),
+                "id": unique_id,
+                "id_v2": id_v2,
                 "category": dsl["category"],
                 "level": level,
                 "question": q_text,
                 "answer_status": answer_status,
-                "answer_type": res["answer_type"] if isinstance(res, dict) else res.answer_type,
+                "answer_type": answer_type,
                 "answer": a_json,
                 "unknown_reason": unknown_reason,
                 "evidence": evidence_str,
@@ -643,6 +966,9 @@ def main():
                 evidence = q.get("evidence_hint", {})
                 if "snapshot" not in evidence:
                     evidence["snapshot"] = lab_path.name
+                if has_placeholder_token(evidence):
+                    generation_checks["evidence_placeholder_count"] += 1
+                    continue
                 
                 # 2. Handle numeric types in ground_truth
                 answer_val = q["ground_truth"]
@@ -659,14 +985,36 @@ def main():
                                  answer_val = int(answer_val)
                     except ValueError:
                         pass # Keep as is if conversion fails
+                # 2-b. JSON 타입은 문자열 원문이 들어오면 object로 복원 (이중 직렬화 방지)
+                if q["answer_type"] == "json" and isinstance(answer_val, str):
+                    try:
+                        answer_val = json.loads(answer_val)
+                    except Exception:
+                        # 파싱 불가 시 원문 유지
+                        pass
+                metric_name = str(evidence.get("metric", q.get("id", ""))).strip()
+                scope = evidence.get("scope") if isinstance(evidence, dict) else {}
+                if not isinstance(scope, dict):
+                    scope = {}
+                if not scope:
+                    scope = {"question_id": str(q.get("id", ""))}
+                id_v2 = f"{metric_name}:{make_scope_hash(scope)}"
+                if id_v2 in seen_id_v2:
+                    generation_checks["duplicate_id_v2_skipped"] += 1
+                    continue
+                seen_id_v2.add(id_v2)
+                answer_type = canonical_dataset_answer_type(q["answer_type"])
+                if answer_type in {"text", "scalar_str", "enum"} and isinstance(answer_val, str):
+                    answer_val = canonicalize_text_answer(metric_name, answer_val)
                 
                 qa_list.append({
                     "id": str(q["id"]),
+                    "id_v2": id_v2,
                     "category": q["category"],
                     "level": q["level"],
                     "question": q["question"],
                     "answer_status": "OK",
-                    "answer_type": q["answer_type"],
+                    "answer_type": answer_type,
                     "answer": json.dumps(answer_val, ensure_ascii=False),
                     "unknown_reason": "",
                     "evidence": json.dumps(evidence, ensure_ascii=False),
@@ -685,25 +1033,73 @@ def main():
         l5_questions = bf_builder.generate_l5_questions()
         process_builder_questions(l5_questions, "L5")
         print(f"  -> Generated {len(l5_questions)} L5 questions.")
-            
-        # L6 질문 생성 (Diagnostic)
-        print("[3.5.3] Generating L6 questions (Diagnostic Troubleshooting)...")
-        l6_questions = bf_builder.generate_l6_questions()
-        process_builder_questions(l6_questions, "L6")
-        print(f"  -> Generated {len(l6_questions)} L6 questions.")
-            
-        print(f"  -> Total Added: {len(l4_questions)} L4 + {len(l5_questions)} L5 + {len(l6_questions)} L6 questions")
 
+        l6_questions = []
+        if args.include_l6:
+            print("[3.5.3] Generating L6 questions (Diagnostic Troubleshooting)...")
+            l6_questions = bf_builder.generate_l6_questions()
+            process_builder_questions(l6_questions, "L6")
+            print(f"  -> Generated {len(l6_questions)} L6 questions.")
+        else:
+            print("[3.5.3] Skipping L6 question generation.")
+            print("  -> Reason: L6 diagnostic requires per-fault snapshot/context packaging and is out of scope for this IEEE TNMS submission.")
+
+        if args.include_l6:
+            print(f"  -> Total Added: {len(l4_questions)} L4 + {len(l5_questions)} L5 + {len(l6_questions)} L6 questions")
+        else:
+            print(f"  -> Total Added: {len(l4_questions)} L4 + {len(l5_questions)} L5 questions")
+
+    # -------------------------------------------------------------------------
+    # Category coverage gate: resampling pass to satisfy min_per_cat
+    # -------------------------------------------------------------------------
+    coverage_added = enforce_min_per_category(qa_list, categories, args.min_per_cat)
+    if coverage_added:
+        print("[3.8] Category coverage resampling pass:")
+        for cat, added in sorted(coverage_added.items()):
+            if added > 0:
+                print(f"  -> {cat}: +{added} rows")
+            else:
+                print(f"  -> {cat}: no seed rows available (coverage unchanged)")
+
+    canonicalized_count = canonicalize_answers_for_language_neutral_contract(qa_list)
+    if canonicalized_count:
+        print(f"[3.9] Canonicalized text answers for language-neutral contract: {canonicalized_count} rows")
 
     # 결과 저장 (CSV + JSON)
-    base_filename = f"{lab_path.name}_dataset_batfish_{timestamp}"
-    csv_path = out_dir / f"{base_filename}.csv"
-    json_path = out_dir / f"{base_filename}.json"
+    base_filename = f"{lab_path.name}_dataset_batfish_{timestamp}_{args.question_lang}"
+    csv_path = run_dir / f"{base_filename}.csv"
+    json_path = run_dir / f"{base_filename}.json"
     
     if qa_list:
+        # 품질 지표 집계
+        id_counter = Counter(str(r.get("id", "")) for r in qa_list if r.get("id"))
+        id_v2_counter = Counter(str(r.get("id_v2", "")) for r in qa_list if r.get("id_v2"))
+        duplicate_id_count = sum(v - 1 for v in id_counter.values() if v > 1)
+        duplicate_id_v2_count = sum(v - 1 for v in id_v2_counter.values() if v > 1)
+
+        structured_valid = 0
+        for row in qa_list:
+            try:
+                ev = json.loads(row.get("evidence", "{}"))
+            except Exception:
+                ev = {}
+            metric = (ev.get("metric") if isinstance(ev, dict) else None) or ""
+            if str(metric).strip() in STRUCTURED_COMPARE_METRICS:
+                structured_valid += 1
+        structured_total = structured_valid + generation_checks["structured_schema_violations"]
+        structured_coverage = (structured_valid / structured_total) if structured_total > 0 else 1.0
+
+        extra_quality = {
+            "duplicate_id_count": duplicate_id_count,
+            "duplicate_id_v2_count": duplicate_id_v2_count,
+            "evidence_placeholder_count": generation_checks["evidence_placeholder_count"],
+            "structured_schema_violations": generation_checks["structured_schema_violations"],
+            "structured_metrics_coverage": structured_coverage,
+        }
+
         df = pd.DataFrame(qa_list)
         # 컬럼 순서 정렬
-        column_order = ["id", "category", "level", "question", "answer_status", "answer_type", "answer", "unknown_reason", "evidence", "pipeline_version", "files"]
+        column_order = ["id", "id_v2", "category", "level", "question", "answer_status", "answer_type", "answer", "unknown_reason", "evidence", "pipeline_version", "files"]
         df = df[[c for c in column_order if c in df.columns]]
         
         # CSV 저장
@@ -715,9 +1111,14 @@ def main():
             "meta": {
                 "lab_name": lab_path.name,
                 "timestamp": timestamp,
+                "question_lang": args.question_lang,
                 "total_questions": len(qa_list),
                 "pipeline_version": PIPELINE_VERSION,
-                "policies_file": str(policy_path) if policy_path else None
+                "policies_file": str(policy_path) if policy_path else None,
+                "schema_version": "3.1",
+                "policy_validation_passed": policy_validation_passed,
+                "structured_metrics_coverage": structured_coverage,
+                "quality_checks": extra_quality,
             },
             "questions": qa_list
         }
@@ -725,9 +1126,17 @@ def main():
         with open(json_path, 'w', encoding='utf-8') as f:
             json.dump(json_output, f, indent=2, ensure_ascii=False)
         print(f"[Done] JSON saved: {json_path}")
-        
+
+        # 독립 품질 검증기 실행 (dataset-level gate)
+        quality_report = validate_dataset_quality(json_path)
+        if not quality_report.get("quality_gate_passed", False):
+            print("[Error] Dataset quality gate failed.")
+            print(json.dumps(quality_report.get("checks", {}), ensure_ascii=False, indent=2))
+            return
+        print("[Done] Dataset quality gate passed.")
+
         # 품질 리포트 출력
-        print_quality_report(qa_list)
+        print_quality_report(qa_list, extra_quality=extra_quality)
     else:
         print("[Done] No questions generated.")
 

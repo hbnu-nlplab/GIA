@@ -16,9 +16,23 @@ from typing import Dict, Any, List, Optional, Union
 
 # Make_Dataset/src 경로 추가 (BatfishBuilder 사용)
 import sys
-# agent/clients/batfish.py -> agent/clients -> agent -> LabMate -> GIA
-MAKE_DATASET_PATH = Path(__file__).parent.parent.parent.parent / "Make_Dataset" / "src"
-sys.path.insert(0, str(MAKE_DATASET_PATH))
+# Resolve Make_Dataset/src robustly for both:
+# - local dev: <repo>/NetAlly/agent/clients/batfish.py
+# - docker image: /app/agent/clients/batfish.py + /app/Make_Dataset/src
+def _resolve_make_dataset_path() -> Path:
+    this_file = Path(__file__).resolve()
+    for ancestor in this_file.parents:
+        candidate = ancestor / "Make_Dataset" / "src"
+        if candidate.exists():
+            return candidate
+    # Fallback to the previous relative assumption
+    return this_file.parent.parent.parent.parent / "Make_Dataset" / "src"
+
+
+MAKE_DATASET_PATH = _resolve_make_dataset_path()
+if str(MAKE_DATASET_PATH) not in sys.path:
+    # Avoid prepending external paths to prevent import shadowing (e.g. "main").
+    sys.path.append(str(MAKE_DATASET_PATH))
 
 try:
     from core_batfish.batfish_builder import BatfishBuilder
@@ -108,7 +122,8 @@ class BatfishClient:
         try:
             self._builder = BatfishBuilder(
                 snapshot_path=str(topology_dir),
-                network_name=topology_name
+                network_name=topology_name,
+                batfish_host=self.host,
             )
             
             if self._builder.initialize():
@@ -142,7 +157,8 @@ class BatfishClient:
             self._current_topology = topology_name
             self._builder = BatfishBuilder(
                 snapshot_path=str(topology_dir),
-                network_name=topology_name
+                network_name=topology_name,
+                batfish_host=self.host,
             )
             
             # 반드시 initialize()를 호출하여 Batfish 세션 연결

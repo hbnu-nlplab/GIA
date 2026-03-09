@@ -51,11 +51,15 @@ class RuleBasedGeneratorConfig:
     policies_path: str
     min_per_cat: int = 4
     scenario_type: str = "normal"
+    question_lang: str = "ko"
 
 
 class RuleBasedGenerator:
     def __init__(self, cfg: RuleBasedGeneratorConfig):
         self.cfg = cfg
+        self.question_lang = str(getattr(cfg, "question_lang", "ko")).strip().lower()
+        if self.question_lang not in {"ko", "en"}:
+            raise ValueError(f"Unsupported question_lang: {self.question_lang}")
         self._bundle = json.loads(
             Path(self.cfg.policies_path).read_text(encoding="utf-8"))
         
@@ -84,10 +88,19 @@ class RuleBasedGenerator:
             return "text"
         return "set" # set_str, edge_set etc map to set
 
-    def _get_scope_from_meta(self, metric: str) -> tuple:
-        """Determine scope based on metric metadata or naming convention."""
-        meta = self.metadata.get(metric, {})
-        template = meta.get("template", "")
+    def _select_template(self, metric: str, meta: Dict[str, Any]) -> str:
+        """Select localized template for the configured question language."""
+        if self.question_lang == "en":
+            template = str(meta.get("template_en", "")).strip()
+            if not template:
+                raise ValueError(
+                    f"Metric '{metric}' is missing template_en for question_lang=en"
+                )
+            return template
+        return str(meta.get("template", "")).strip()
+
+    def _get_scope_from_template(self, template: str) -> tuple:
+        """Determine scope based on template placeholder set."""
         
         # Implicit scope inference from template variables
         if "{host1}" in template and "{host2}" in template:
@@ -129,6 +142,10 @@ class RuleBasedGenerator:
             cat = meta.get("category")
             if cat not in categories:
                 continue
+
+            # Submission path default: skip deprecated/excluded metrics.
+            if meta.get("deprecated", False) or meta.get("submission_excluded", False):
+                continue
             
             # Skip L4/L5 metrics for RuleBasedGenerator as they are handled by BatfishBuilder
             # unless we decide to unify generation later.
@@ -136,9 +153,9 @@ class RuleBasedGenerator:
             if lvl in ["L4", "L5"]:
                 continue
 
-            template = meta.get("template")
+            template = self._select_template(metric, meta)
             agg = self._get_metric_agg_type(metric)
-            scope, placeholders = self._get_scope_from_meta(metric)
+            scope, placeholders = self._get_scope_from_template(template)
             
             dsl.append({
                 "id": metric.upper(),
@@ -149,7 +166,7 @@ class RuleBasedGenerator:
                     "aggregation": agg,
                     "placeholders": placeholders
                 },
-                "pattern": template.strip(),
+                "pattern": template,
                 "scenario": scen_label,
                 "level": lvl,
                 "goal": "extraction", # Default goal for simple L1-L3

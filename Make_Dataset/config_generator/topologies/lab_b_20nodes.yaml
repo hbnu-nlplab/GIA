@@ -1,0 +1,373 @@
+name: "LabB_NCN_Basic_SP_20nodes"
+description: "National Converged Network (국가 통합 통신망) - 20 Nodes Basic Service Provider"
+# Concept:
+# - Region 1 (본사): 정부기관(GOV), 교육기관(EDU), 연구기관(RND) VPN 서비스
+# - Region 2 (지사): GOV, EDU cross-region 확장 + RND 서비스
+as_number: 65000
+management_gateway: "10.10.10.1"
+management_intf_slot: 7  # Gi0/7 for OOB management (avoids collision with data interfaces)
+
+nodes:
+  # --- Region 1 (Existing 10 nodes) ---
+  # P Routers
+  - name: P1
+    role: p
+    region: 1
+    loopback: "10.255.0.1/32"
+    management_ip: "10.10.10.11/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE1
+        ip: "10.0.1.1/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        peer: P2
+        ip: "10.0.2.0/31"
+        mpls: true
+      - name: GigabitEthernet0/2
+        peer: P3
+        ip: "10.0.3.0/31"
+        mpls: true
+
+  - name: P2
+    role: p
+    region: 1
+    loopback: "10.255.0.2/32"
+    management_ip: "10.10.10.12/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: P1
+        ip: "10.0.2.1/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        peer: PE2
+        ip: "10.0.4.0/31"
+        mpls: true
+      - name: GigabitEthernet0/2
+        peer: P4
+        ip: "10.0.5.0/31"
+        mpls: true
+
+  - name: P3
+    role: p
+    region: 1
+    loopback: "10.255.0.3/32"
+    management_ip: "10.10.10.13/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: P1
+        ip: "10.0.3.1/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        peer: P4
+        ip: "10.0.6.0/31"
+        mpls: true
+      - name: GigabitEthernet0/2
+        peer: P5
+        ip: "10.0.20.0/31"
+        mpls: true
+        description: "Inter-Region Backbone (Region1 ↔ Region2)"
+
+  - name: P4
+    role: p
+    region: 1
+    loopback: "10.255.0.4/32"
+    management_ip: "10.10.10.14/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: P2
+        ip: "10.0.5.1/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        peer: P3
+        ip: "10.0.6.1/31"
+        mpls: true
+      - name: GigabitEthernet0/2
+        peer: PE2
+        ip: "10.0.7.0/31"
+        mpls: true
+
+  # PE Routers
+  - name: PE1
+    role: pe
+    region: 1
+    loopback: "10.255.0.11/32"
+    management_ip: "10.10.10.21/24"
+    vrfs: [VRF_GOV, VRF_EDU, VRF_RND]
+    bgp_neighbors:
+      - ip: "10.255.0.12"
+        as: 65000
+      - ip: "10.255.0.21" # Peer with Region 2 PE3
+        as: 65000
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: P1
+        ip: "10.0.1.0/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        vrf: VRF_GOV
+        ip: "172.16.1.1/24"
+        description: "Link to Leaf1 (정부기관)"
+      - name: GigabitEthernet0/2
+        vrf: VRF_EDU
+        ip: "172.16.2.1/24"
+        description: "Link to Leaf2 (교육기관)"
+
+  - name: PE2
+    role: pe
+    region: 1
+    loopback: "10.255.0.12/32"
+    management_ip: "10.10.10.22/24"
+    vrfs: [VRF_GOV, VRF_EDU, VRF_RND]
+    bgp_neighbors:
+      - ip: "10.255.0.11"
+        as: 65000
+      - ip: "10.255.0.22" # Peer with Region 2 PE4
+        as: 65000
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: P2
+        ip: "10.0.4.1/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        peer: P4
+        ip: "10.0.7.1/31"
+        mpls: true
+      - name: GigabitEthernet0/2
+        vrf: VRF_RND
+        ip: "172.16.3.1/24"
+        description: "Link to Leaf3 (연구기관) via PE2"
+      - name: GigabitEthernet0/3
+        vrf: VRF_GOV
+        ip: "172.16.4.1/24"
+        description: "Link to Leaf4 (정부기관)"
+
+  # Leaf Switches (Region 1)
+  - name: Leaf1
+    role: leaf
+    region: 1
+    management_ip: "10.10.10.31/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE1
+        peer_ip: "172.16.1.1"
+        ip: "172.16.1.2/24"
+
+  - name: Leaf2
+    role: leaf
+    region: 1
+    management_ip: "10.10.10.32/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE1
+        peer_ip: "172.16.2.1"
+        ip: "172.16.2.2/24"
+
+  - name: Leaf3
+    role: leaf
+    region: 1
+    management_ip: "10.10.10.33/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE2
+        peer_ip: "172.16.3.1"
+        ip: "172.16.3.2/24"
+
+  - name: Leaf4
+    role: leaf
+    region: 1
+    management_ip: "10.10.10.34/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE2
+        peer_ip: "172.16.4.1"
+        ip: "172.16.4.2/24"
+
+
+  # --- Region 2 (New Extension - 10 nodes) ---
+  # P Routers (P5-P8)
+  - name: P5
+    role: p
+    region: 2
+    loopback: "10.255.0.5/32"
+    management_ip: "10.10.10.15/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE3
+        ip: "10.0.11.1/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        peer: P6
+        ip: "10.0.12.0/31"
+        mpls: true
+      - name: GigabitEthernet0/2
+        peer: P3
+        ip: "10.0.20.1/31"
+        mpls: true
+        description: "Inter-Region Backbone (Region2 ↔ Region1)"
+
+  - name: P6
+    role: p
+    region: 2
+    loopback: "10.255.0.6/32"
+    management_ip: "10.10.10.16/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: P5
+        ip: "10.0.12.1/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        peer: PE4
+        ip: "10.0.14.0/31"
+        mpls: true
+      - name: GigabitEthernet0/2
+        peer: P7
+        ip: "10.0.15.0/31"
+        mpls: true
+
+  - name: P7
+    role: p
+    region: 2
+    loopback: "10.255.0.7/32"
+    management_ip: "10.10.10.17/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: P6
+        ip: "10.0.15.1/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        peer: P8
+        ip: "10.0.16.0/31"
+        mpls: true
+
+  - name: P8
+    role: p
+    region: 2
+    loopback: "10.255.0.8/32"
+    management_ip: "10.10.10.18/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: P7
+        ip: "10.0.16.1/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        peer: PE4
+        ip: "10.0.17.0/31"
+        mpls: true
+
+  # PE Routers (Region 2)
+  - name: PE3
+    role: pe
+    region: 2
+    loopback: "10.255.0.21/32"
+    management_ip: "10.10.10.23/24"
+    vrfs: [VRF_GOV, VRF_EDU, VRF_RND]
+    bgp_neighbors:
+      - ip: "10.255.0.11" # Peer with Region 1 PE1
+        as: 65000
+      - ip: "10.255.0.22" # Peer with Region 2 PE4
+        as: 65000
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: P5
+        ip: "10.0.11.0/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        vrf: VRF_GOV
+        ip: "172.17.1.1/24"  # Region 2 subnet 172.17.x.x
+      - name: GigabitEthernet0/2
+        vrf: VRF_EDU
+        ip: "172.17.2.1/24"
+
+  - name: PE4
+    role: pe
+    region: 2
+    loopback: "10.255.0.22/32"
+    management_ip: "10.10.10.24/24"
+    vrfs: [VRF_GOV, VRF_EDU, VRF_RND]
+    bgp_neighbors:
+      - ip: "10.255.0.12" # Peer with Region 1 PE2
+        as: 65000
+      - ip: "10.255.0.21" # Peer with Region 2 PE3
+        as: 65000
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: P6
+        ip: "10.0.14.1/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        peer: P8
+        ip: "10.0.17.1/31"
+        mpls: true
+      - name: GigabitEthernet0/2
+        vrf: VRF_RND
+        ip: "172.17.3.1/24"
+      - name: GigabitEthernet0/3
+        vrf: VRF_GOV
+        ip: "172.17.4.1/24"
+
+  # Leaf Switches (Region 2)
+  - name: Leaf5
+    role: leaf
+    region: 2
+    management_ip: "10.10.10.35/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE3
+        peer_ip: "172.17.1.1"
+        ip: "172.17.1.2/24"
+
+  - name: Leaf6
+    role: leaf
+    region: 2
+    management_ip: "10.10.10.36/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE3
+        peer_ip: "172.17.2.1"
+        ip: "172.17.2.2/24"
+
+  - name: Leaf7
+    role: leaf
+    region: 2
+    management_ip: "10.10.10.37/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE4
+        peer_ip: "172.17.3.1"
+        ip: "172.17.3.2/24"
+
+  - name: Leaf8
+    role: leaf
+    region: 2
+    management_ip: "10.10.10.38/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE4
+        peer_ip: "172.17.4.1"
+        ip: "172.17.4.2/24"
+
+vrfs:
+  VRF_GOV:
+    rd: "65000:100"
+    rt_import: ["65000:100"]
+    rt_export: ["65000:100"]
+  VRF_EDU:
+    rd: "65000:200"
+    rt_import: ["65000:200"]
+    rt_export: ["65000:200"]
+  VRF_RND:
+    rd: "65000:300"
+    rt_import: ["65000:300"]
+    rt_export: ["65000:300"]
+
+routing:
+  ospf:
+    process_id: 1
+    area: 0
+    networks: auto
+  bgp:
+    address_families: [vpnv4]
+  mpls:
+    protocol: ldp
+

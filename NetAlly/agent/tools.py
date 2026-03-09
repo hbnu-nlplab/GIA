@@ -1,7 +1,11 @@
 import os
 import json
 import asyncio
+import socket
+import re
+import logging
 from typing import Dict, Any, List, Optional, Literal
+from urllib.parse import urlparse
 from langchain_core.tools import tool
 from dotenv import load_dotenv
 
@@ -15,8 +19,12 @@ from agent.onboarding import (
     generate_device_info_from_pnetlab,
     parse_config,
     enable_ssh_all,
+    assign_missing_oob_ips,
     check_connectivity,
     register_devices_nso,
+    should_manage_pnetlab_node,
+    DeviceInfo,
+    save_device_info,
 )
 
 load_dotenv()
@@ -29,17 +37,130 @@ load_dotenv()
 _nso_client: Optional[NSOClient] = None
 _batfish_client: Optional[BatfishClient] = None
 _pnetlab_client: Optional[PnetlabClient] = None
+_LOCAL_LOOPBACKS = {"localhost", "127.0.0.1"}
+_LEGACY_DEVICE_INFO_PATHS = {
+    "data/pnetlab/research_institute_internal_dc/device_info.json",
+}
+logger = logging.getLogger(__name__)
+
+
+def _slugify_lab_name(raw: str) -> str:
+    text = str(raw or "").strip()
+    if not text:
+        return "default"
+    slug = re.sub(r"[^A-Za-z0-9._-]+", "_", text).strip("._-")
+    return slug or "default"
+
+
+def _normalize_path_for_compare(raw_path: str) -> str:
+    path = str(raw_path or "").strip().replace("\\", "/")
+    while path.startswith("./"):
+        path = path[2:]
+    return path.lower()
+
+
+def _is_legacy_device_info_default(raw_path: str) -> bool:
+    normalized = _normalize_path_for_compare(raw_path)
+    if normalized in _LEGACY_DEVICE_INFO_PATHS:
+        return True
+    return any(normalized.endswith(f"/{legacy}") for legacy in _LEGACY_DEVICE_INFO_PATHS)
+
+
+def _default_device_info_path() -> str:
+    explicit = str(os.getenv("PNETLAB_DEVICE_INFO", "") or "").strip()
+    lab_name = (
+        str(os.getenv("PNETLAB_LAB_NAME", "") or "").strip()
+        or str(os.getenv("BATFISH_SNAPSHOT", "") or "").strip()
+        or "default"
+    )
+    safe_lab = _slugify_lab_name(lab_name)
+
+    if explicit:
+        # Backward compatibility: old hardcoded sample path should not pin all labs.
+        if _is_legacy_device_info_default(explicit) and safe_lab.lower() != "research_institute_internal_dc":
+            logger.info(
+                "Ignoring legacy PNETLAB_DEVICE_INFO path (%s); using lab-scoped default for %s",
+                explicit,
+                safe_lab,
+            )
+        else:
+            return explicit
+    return f"Data/Pnetlab/{safe_lab}/device_info.json"
+
+
+def _is_tcp_open(host: str, port: int, timeout_sec: float = 0.35) -> bool:
+    if not host or port <= 0:
+        return False
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.settimeout(timeout_sec)
+    try:
+        sock.connect((host, port))
+        return True
+    except Exception:
+        return False
+    finally:
+        sock.close()
+
+
+def _maybe_rewrite_local_nso_base_url(base_url: str) -> str:
+    """
+    Local dev fallback:
+    if NSO_BASE_URL points to localhost:8080 but it's closed and SSH tunnel
+    127.0.0.1:18080 is open, transparently switch to the tunnel endpoint.
+    """
+    raw = str(base_url or "").strip()
+    if not raw:
+        return raw
+    try:
+        parsed = urlparse(raw)
+    except Exception:
+        return raw
+
+    host = (parsed.hostname or "").lower()
+    scheme = parsed.scheme or "http"
+    path = parsed.path or "/restconf"
+    port = parsed.port or (443 if scheme == "https" else 80)
+    if host not in _LOCAL_LOOPBACKS or port != 8080:
+        return raw
+
+    tunnel_host = str(os.getenv("NETALLY_NSO_LOCAL_TUNNEL_HOST", "127.0.0.1") or "127.0.0.1").strip()
+    tunnel_port_raw = str(os.getenv("NETALLY_NSO_LOCAL_TUNNEL_PORT", "18080") or "18080").strip()
+    try:
+        tunnel_port = int(tunnel_port_raw)
+    except Exception:
+        tunnel_port = 18080
+
+    # Keep explicit localhost:8080 when it is actually reachable.
+    if _is_tcp_open(host, port):
+        return raw
+    if not _is_tcp_open(tunnel_host, tunnel_port):
+        return raw
+
+    rewritten = f"{scheme}://{tunnel_host}:{tunnel_port}{path}"
+    if parsed.query:
+        rewritten = f"{rewritten}?{parsed.query}"
+    print(
+        f"[lab_bootstrap] NSO localhost fallback: {raw} -> {rewritten} "
+        "(localhost:8080 closed, tunnel detected)"
+    )
+    return rewritten
 
 def get_nso_client() -> NSOClient:
     global _nso_client
     if not _nso_client:
         base_url = os.getenv("NSO_BASE_URL")
+        if base_url:
+            base_url = _maybe_rewrite_local_nso_base_url(base_url)
         if not base_url:
             base_url = _discover_nso_base_url()
         if base_url:
             print(f"[lab_bootstrap] NSO base_url resolved: {base_url}")
         if not base_url:
-            base_url = "http://localhost:8080/restconf"
+            base_url = (
+                "http://127.0.0.1:18080/restconf"
+                if _is_tcp_open("127.0.0.1", 18080)
+                else "http://localhost:8080/restconf"
+            )
         _nso_client = NSOClient(
             base_url=base_url,
             username=os.getenv("NSO_USERNAME") or os.getenv("NSO_USER", "admin"),
@@ -71,6 +192,18 @@ def reset_pnetlab_client() -> None:
     _pnetlab_client = None
 
 
+def reset_nso_client() -> None:
+    """NSO 클라이언트 싱글톤 리셋 (설정 변경 시 호출)"""
+    global _nso_client
+    _nso_client = None
+
+
+def reset_batfish_client() -> None:
+    """Batfish 클라이언트 싱글톤 리셋 (설정 변경 시 호출)"""
+    global _batfish_client
+    _batfish_client = None
+
+
 def _discover_nso_base_url() -> Optional[str]:
     """
     PNETLab API에서 NSO 노드의 관리 IP를 찾아 RESTCONF URL을 생성합니다.
@@ -93,6 +226,233 @@ def _discover_nso_base_url() -> Optional[str]:
         return f"{scheme}://{ip}:{port}/{path}"
     except Exception:
         return None
+
+
+def _get_inventory_nodes(pnetlab: PnetlabClient) -> Dict[str, Any]:
+    """
+    Resolve inventory nodes with backend-aware priority.
+    - If LabFS backend is explicit (or auto-resolved in auto mode), use LabFS first.
+    - Otherwise try API first, then LabFS fallback.
+    Returns API-compatible node objects with `name`, `status`, `telnet_port`.
+    """
+    try:
+        from agent.pnetlab_labfs import build_pnetlab_map_from_labfs, resolve_inventory_backend
+    except Exception:
+        build_pnetlab_map_from_labfs = None
+        resolve_inventory_backend = None
+
+    def _from_labfs() -> Dict[str, Any]:
+        if not callable(build_pnetlab_map_from_labfs):
+            return {"error": "PNETLab LabFS module unavailable"}
+        labfs_topology = build_pnetlab_map_from_labfs()
+        if labfs_topology.get("error"):
+            return {"error": f"PNETLab LabFS error: {labfs_topology.get('error')}"}
+
+        nodes: List[Dict[str, Any]] = []
+        for node in labfs_topology.get("nodes", []):
+            if node.get("type") != "device":
+                continue
+            data = node.get("data", {}) if isinstance(node.get("data"), dict) else {}
+            name = str(data.get("label") or node.get("id") or "")
+            if not name:
+                continue
+            telnet_port = int(data.get("telnet_port") or 0)
+            nodes.append(
+                {
+                    "name": name,
+                    "telnet_port": telnet_port,
+                    "status": 2 if telnet_port > 0 else 0,
+                    "template": str(data.get("template") or ""),
+                    "type": str(data.get("kind") or data.get("template") or ""),
+                }
+            )
+
+        meta = labfs_topology.get("meta", {}) if isinstance(labfs_topology.get("meta"), dict) else {}
+        return {
+            "nodes": nodes,
+            "lab": {"name": os.getenv("PNETLAB_LAB_NAME"), "path": meta.get("unl_path")},
+            "source": "labfs",
+        }
+
+    explicit_backend = os.getenv("PNETLAB_INVENTORY_BACKEND", "").strip().lower()
+    resolved_backend = (
+        resolve_inventory_backend() if callable(resolve_inventory_backend) else explicit_backend
+    )
+    prefer_labfs = (
+        explicit_backend in {"labfs_local", "labfs_ssh"}
+        or (not explicit_backend and resolved_backend in {"labfs_local", "labfs_ssh"})
+    )
+
+    if prefer_labfs:
+        labfs_first = _from_labfs()
+        if "error" not in labfs_first:
+            return labfs_first
+        # Explicit LabFS mode should surface LabFS errors directly.
+        if explicit_backend in {"labfs_local", "labfs_ssh"}:
+            return labfs_first
+
+    topology = pnetlab.get_session_topology()
+    if "error" not in topology:
+        return {
+            "nodes": pnetlab.get_nodes_from_topology(topology),
+            "lab": {"name": topology.get("name"), "path": topology.get("path")},
+            "source": "api",
+        }
+
+    if resolved_backend not in {"labfs_local", "labfs_ssh"}:
+        return {"error": f"PNETLab API error: {topology.get('error')}"}
+
+    labfs_topology = _from_labfs()
+    if "error" in labfs_topology:
+        return labfs_topology
+    return labfs_topology
+
+
+def _call_tool_or_fn(target: Any, kwargs: Dict[str, Any]) -> Any:
+    """
+    Call either a StructuredTool (`invoke`) or a plain function (`**kwargs`).
+    """
+    invoke = getattr(target, "invoke", None)
+    if callable(invoke):
+        return invoke(kwargs)
+    if callable(target):
+        return target(**kwargs)
+    raise TypeError(f"Unsupported callable target: {type(target)}")
+
+
+def _probe_nso_connectivity(nso: Any) -> Dict[str, Any]:
+    """
+    Best-effort NSO RESTCONF probe with actionable diagnostics.
+    """
+    req = getattr(nso, "_request", None)
+    if not callable(req):
+        # In tests/mocks we often don't expose _request.
+        return {"ok": True, "checked": False}
+
+    try:
+        res = req("GET", "tailf-ncs:devices/device?fields=name")
+    except Exception as e:
+        return {"ok": False, "checked": True, "error": str(e)}
+
+    if isinstance(res, dict) and res.get("status") == "error":
+        return {"ok": False, "checked": True, "error": str(res.get("message") or "unknown")}
+
+    return {"ok": True, "checked": True}
+
+
+def _build_missing_device_candidates(
+    missing_nodes: List[Dict[str, Any]],
+    all_devices: List[DeviceInfo],
+    mgmt_ifaces: Dict[str, str],
+    mgmt_ips: Dict[str, str],
+    oob_intf_fallback: str,
+) -> List[DeviceInfo]:
+    """
+    Build onboarding candidates for missing nodes.
+    Live inventory telnet ports always override stale device_info values.
+    """
+    missing_by_name = {
+        str(node.get("name") or ""): node
+        for node in missing_nodes
+        if str(node.get("name") or "")
+    }
+    candidates: List[DeviceInfo] = []
+    seen_names: set[str] = set()
+
+    for dev in all_devices:
+        live = missing_by_name.get(dev.name)
+        if not live:
+            continue
+        live_port = int(live.get("telnet_port") or 0)
+        if live_port > 0:
+            dev.telnet_port = live_port
+        dev.oob_intf = mgmt_ifaces.get(dev.name, oob_intf_fallback or dev.oob_intf)
+        if not dev.oob_ip:
+            dev.oob_ip = mgmt_ips.get(dev.name) or dev.oob_ip
+        candidates.append(dev)
+        seen_names.add(dev.name)
+
+    for name, node in missing_by_name.items():
+        if name in seen_names:
+            continue
+        candidates.append(
+            DeviceInfo(
+                name=name,
+                oob_ip=mgmt_ips.get(name),
+                oob_intf=mgmt_ifaces.get(name, oob_intf_fallback),
+                telnet_port=int(node.get("telnet_port") or 0),
+            )
+        )
+
+    return candidates
+
+
+def _discover_management_metadata() -> tuple[Dict[str, str], Dict[str, str], str]:
+    mgmt_ifaces: Dict[str, str] = {}
+    mgmt_ips: Dict[str, str] = {}
+    oob_intf_fallback = os.getenv("PNETLAB_OOB_INTF", "")
+
+    try:
+        from agent.pnetlab_labfs import discover_management_endpoints
+    except Exception:
+        return mgmt_ifaces, mgmt_ips, oob_intf_fallback
+
+    try:
+        mgmt_meta = discover_management_endpoints()
+    except Exception as e:
+        logger.warning("Failed to discover management endpoints: %s", e)
+        return mgmt_ifaces, mgmt_ips, oob_intf_fallback
+
+    mgmt_ifaces = {
+        name: str(meta.get("iface") or "")
+        for name, meta in mgmt_meta.items()
+        if str(meta.get("iface") or "")
+    }
+    mgmt_ips = {
+        name: str(meta.get("ip") or "")
+        for name, meta in mgmt_meta.items()
+        if str(meta.get("ip") or "")
+    }
+    logger.info(
+        "Management metadata discovered: endpoints=%d, ifaces=%d, ips=%d",
+        len(mgmt_meta),
+        len(mgmt_ifaces),
+        len(mgmt_ips),
+    )
+    return mgmt_ifaces, mgmt_ips, oob_intf_fallback
+
+
+def _apply_management_metadata(
+    devices: List[DeviceInfo],
+    mgmt_ifaces: Dict[str, str],
+    mgmt_ips: Dict[str, str],
+    oob_intf_fallback: str,
+) -> None:
+    for dev in devices:
+        if not dev.oob_intf:
+            dev.oob_intf = mgmt_ifaces.get(dev.name, oob_intf_fallback or dev.oob_intf)
+        if not dev.oob_ip:
+            dev.oob_ip = mgmt_ips.get(dev.name) or dev.oob_ip
+
+
+def _collect_onboarding_candidates(
+    pnetlab: PnetlabClient,
+    config_path: str,
+    missing_nodes: List[Dict[str, Any]],
+    overrides: Optional[Dict[str, Any]] = None,
+) -> tuple[Any, List[DeviceInfo], List[DeviceInfo]]:
+    cfg = ensure_device_info(config_path, pnetlab, overrides=overrides)
+    gs, all_devices = parse_config(cfg)
+    mgmt_ifaces, mgmt_ips, oob_intf_fallback = _discover_management_metadata()
+    _apply_management_metadata(all_devices, mgmt_ifaces, mgmt_ips, oob_intf_fallback)
+    candidates = _build_missing_device_candidates(
+        missing_nodes=missing_nodes,
+        all_devices=all_devices,
+        mgmt_ifaces=mgmt_ifaces,
+        mgmt_ips=mgmt_ips,
+        oob_intf_fallback=oob_intf_fallback,
+    )
+    return gs, all_devices, candidates
 
 
 # =============================================================================
@@ -139,6 +499,28 @@ def network_query(
         elif category == "vrf":
             if not device: return {"error": "device required"}
             return {"vrfs": nso.get_vrf_list(device)}
+
+        elif category == "security":
+            if not device:
+                return {"error": "device required"}
+            return {
+                "ssh": nso.get_ssh_config(device),
+                "aaa": nso.get_aaa_config(device),
+            }
+
+        elif category == "acl":
+            if not device:
+                return {"error": "device required"}
+            # Prefer structured RESTCONF subtree first.
+            acl = nso._fetch_config(device, "ip/access-list")
+            if isinstance(acl, dict) and acl.get("status") == "error":
+                native = nso.get_native_config(device)
+                acl_lines = [
+                    line for line in native.splitlines()
+                    if line.strip().startswith("ip access-list")
+                ]
+                return {"acl": acl_lines}
+            return {"acl": acl}
             
         return {"error": f"Category {category} not implemented in stub"}
         
@@ -303,22 +685,32 @@ def lab_manage(
         params = params or {}
         
         if action == "show_inventory":
-            topology = pnetlab.get_session_topology()
-            if "error" in topology:
-                return topology
+            inventory = _get_inventory_nodes(pnetlab)
+            if "error" in inventory:
+                return {"error": inventory.get("error")}
             return {
-                "nodes": pnetlab.get_nodes_from_topology(topology),
-                "lab": {
-                    "name": topology.get("name"),
-                    "path": topology.get("path"),
-                },
+                "nodes": inventory.get("nodes", []),
+                "lab": inventory.get("lab", {}),
+                "source": inventory.get("source", "api"),
             }
             
         elif action == "get_status":
             device = params.get("device")
             status = pnetlab.get_nodes_status()
             if "error" in status:
-                return status
+                inventory = _get_inventory_nodes(pnetlab)
+                if "error" in inventory:
+                    return status
+                nodes = inventory.get("nodes", [])
+                status_nodes = {
+                    str(idx): {
+                        "name": n.get("name"),
+                        "status": n.get("status", 0),
+                        "telnet_port": n.get("telnet_port", 0),
+                    }
+                    for idx, n in enumerate(nodes, start=1)
+                }
+                status = {"data": {"nodes": status_nodes}, "source": inventory.get("source", "labfs")}
             if not device:
                 return status
             # filter by device name if possible
@@ -415,7 +807,7 @@ def scan_and_sync(
     action: Literal["scan", "sync", "scan_and_sync"],
     auto_onboard: bool = False,
     auto_remove: bool = False,
-    oob_ip: str = "localhost",
+    oob_ip: str = "",
     protocol: str = "telnet"
 ) -> Dict[str, Any]:
     """
@@ -431,29 +823,42 @@ def scan_and_sync(
     Returns:
         Dict with pnetlab_nodes, nso_devices, missing, and optionally onboarded results
     """
+    if not oob_ip:
+        oob_ip = os.getenv("PNETLAB_GATEWAY_IP", "") or os.getenv("PNETLAB_VM_IP", "") or os.getenv("PNETLAB_SSH_HOST", "") or "localhost"
+
     try:
         pnetlab = get_pnetlab_client()
         nso = get_nso_client()
-        
+
         result = {
             "action": action,
+            "debug": {},
             "pnetlab_nodes": [],
+            "ignored_nodes": [],
             "nso_devices": [],
+            "nso_devices_managed": [],
             "missing": [],
             "already_registered": [],
             "removed": [],
             "deleted": [],
             "delete_failed": [],
             "onboarded": [],
-            "failed": []
+            "failed": [],
+            "skipped": [],
         }
         
         # 1. PNETLab에서 실행 중인 노드 목록 조회
-        topology = pnetlab.get_session_topology()
-        if "error" in topology:
-            return {"error": f"PNETLab API error: {topology.get('error')}"}
-        
-        pnetlab_nodes = pnetlab.get_nodes_from_topology(topology)
+        inventory = _get_inventory_nodes(pnetlab)
+        if "error" in inventory:
+            return {"error": inventory.get("error")}
+
+        pnetlab_nodes_all = inventory.get("nodes", [])
+        pnetlab_nodes = []
+        for node in pnetlab_nodes_all:
+            if should_manage_pnetlab_node(node):
+                pnetlab_nodes.append(node)
+            else:
+                result["ignored_nodes"].append(node.get("name"))
         pnetlab_name_set = set(node.get("name", "").lower() for node in pnetlab_nodes)
         
         # 실행 중인 노드만 필터링 (status == 2 means running)
@@ -469,11 +874,27 @@ def scan_and_sync(
         result["pnetlab_nodes"] = running_nodes
         
         # 2. NSO에서 등록된 장비 목록 조회
+        nso_probe = _probe_nso_connectivity(nso)
+        result["debug"]["nso_probe"] = nso_probe
+        if not nso_probe.get("ok", False):
+            return {
+                **result,
+                "code": "nso_unreachable",
+                "error": (
+                    "NSO RESTCONF is unreachable. "
+                    "Check NSO_BASE_URL/credentials/network reachability."
+                ),
+            }
+
         nso_devices = nso.get_devices()
         result["nso_devices"] = nso_devices
-        
+        nso_devices_managed = [
+            d for d in nso_devices if should_manage_pnetlab_node({"name": d})
+        ]
+        result["nso_devices_managed"] = nso_devices_managed
+
         # 3. Diff 계산: PNETLab에는 있지만 NSO에 없는 장비
-        nso_device_set = set(d.lower() for d in nso_devices)
+        nso_device_set = set(d.lower() for d in nso_devices_managed)
         
         for node in running_nodes:
             node_name = node["name"]
@@ -483,38 +904,59 @@ def scan_and_sync(
                 result["missing"].append(node)
 
         # 3-b. NSO에는 있으나 PNETLab에 없는 장비
-        removed = [d for d in nso_devices if d.lower() not in pnetlab_name_set]
+        removed = [d for d in nso_devices_managed if d.lower() not in pnetlab_name_set]
         result["removed"] = removed
         
-        # 4. Sync (auto_onboard가 True이고 action이 sync 또는 scan_and_sync인 경우)
+        # 4. Sync: SSH-first 플로우 (관리 인터페이스 감지 → IP 발견 → SSH 활성화 → NSO 등록)
         if action in ["sync", "scan_and_sync"] and auto_onboard and result["missing"]:
-            for node in result["missing"]:
-                device_name = node["name"]
-                telnet_port = node.get("telnet_port", 0)
-                
-                if telnet_port == 0:
-                    result["failed"].append({
-                        "device": device_name,
-                        "error": "No telnet port available"
-                    })
-                    continue
-                
-                # NSO에 자동 등록
-                onboard_result = nso.auto_onboard_from_pnetlab(
-                    device_name=device_name,
-                    telnet_port=telnet_port,
-                    oob_ip=oob_ip,
-                    protocol=protocol
-                )
-                
-                if onboard_result.get("success"):
-                    result["onboarded"].append(device_name)
-                else:
-                    result["failed"].append({
-                        "device": device_name,
-                        "error": onboard_result.get("error", "Unknown error"),
-                        "steps": onboard_result.get("steps", [])
-                    })
+            config_path = _default_device_info_path()
+            gs, all_devices, candidates = _collect_onboarding_candidates(
+                pnetlab=pnetlab,
+                config_path=config_path,
+                missing_nodes=result["missing"],
+            )
+
+            if candidates:
+                assigned_oob = assign_missing_oob_ips(gs, candidates, existing_devices=all_devices)
+                if assigned_oob:
+                    result["assigned_oob_ip"] = assigned_oob
+                ssh_results = asyncio.run(enable_ssh_all(gs, candidates))
+                result["ssh_enabled"] = ssh_results
+
+                # Discovered OOB fields and refreshed telnet ports are persisted for next refresh.
+                all_updated = list(all_devices)
+                existing_names = {d.name for d in all_devices}
+                for dev in candidates:
+                    if dev.name not in existing_names:
+                        all_updated.append(dev)
+                save_device_info(config_path, gs, all_updated)
+
+                ready: List[DeviceInfo] = []
+                for dev in candidates:
+                    if dev.telnet_port <= 0:
+                        result["skipped"].append(
+                            {"device": dev.name, "reason": "console_unreachable"}
+                        )
+                        continue
+                    if not ssh_results.get(dev.name, False):
+                        result["skipped"].append(
+                            {"device": dev.name, "reason": "ssh_enable_failed"}
+                        )
+                        continue
+                    if not dev.oob_ip:
+                        result["skipped"].append(
+                            {"device": dev.name, "reason": "mgmt_ip_not_discovered"}
+                        )
+                        continue
+                    ready.append(dev)
+
+                if ready:
+                    reg_results = register_devices_nso(gs, ready, nso)
+                    result["onboarded"] = reg_results.get("registered", [])
+                    result["failed"] = [
+                        {"device": name, "error": "registration_failed"}
+                        for name in reg_results.get("failed", [])
+                    ]
 
         # 5. Remove (auto_remove가 True이고 action이 sync 또는 scan_and_sync인 경우)
         if action in ["sync", "scan_and_sync"] and auto_remove and result["removed"]:
@@ -598,10 +1040,7 @@ def lab_bootstrap(
     """
     try:
         params = params or {}
-        config_path = params.get("config_path") or os.getenv(
-            "PNETLAB_DEVICE_INFO",
-            "Data/Pnetlab/Research_Institute_Internal_DC/device_info.json"
-        )
+        config_path = params.get("config_path") or _default_device_info_path()
         pnetlab = get_pnetlab_client()
         overrides = params.get("overrides") if params else None
         cfg = ensure_device_info(config_path, pnetlab, overrides=overrides)
@@ -682,15 +1121,21 @@ def lab_bootstrap(
 
         if action == "diff_report":
             # 1) 신규/삭제 감지 (PNETLab vs NSO)
-            diff = scan_and_sync(
-                action="scan",
-                auto_onboard=False,
-                auto_remove=False,
+            diff = _call_tool_or_fn(
+                scan_and_sync,
+                {
+                    "action": "scan",
+                    "auto_onboard": False,
+                    "auto_remove": False,
+                },
             )
             # 2) 변경 감지 (NSO check-sync)
-            change = lab_bootstrap(
-                action="detect_changes",
-                params={"config_path": config_path, "devices": [d.name for d in devices]},
+            change = _call_tool_or_fn(
+                lab_bootstrap,
+                {
+                    "action": "detect_changes",
+                    "params": {"config_path": config_path, "devices": [d.name for d in devices]},
+                },
             )
             return {
                 "status": "completed",
@@ -717,23 +1162,117 @@ def lab_bootstrap(
             return {"status": "completed", "path": config_path, "devices": len(payload.get("devices", []))}
 
         if action == "refresh_onboard":
-            diff = scan_and_sync(
-                action="scan",
-                auto_onboard=False,
-                auto_remove=False,
+            diff = _call_tool_or_fn(
+                scan_and_sync,
+                {
+                    "action": "scan",
+                    "auto_onboard": False,
+                    "auto_remove": False,
+                },
             )
+            if isinstance(diff, dict) and diff.get("error"):
+                return {
+                    "status": "failed",
+                    "code": str(diff.get("code") or "refresh_scan_failed"),
+                    "error": str(diff.get("error")),
+                    "debug": diff.get("debug", {}),
+                }
             missing = diff.get("missing", [])
             missing_names = [n.get("name") for n in missing if n.get("name")]
             if not missing_names:
-                return {"status": "completed", "message": "No new devices", "missing": []}
+                # Even without new devices, reconcile existing out-of-sync devices.
+                nso = get_nso_client()
+                mgmt_ifaces, mgmt_ips, oob_intf_fallback = _discover_management_metadata()
+                _apply_management_metadata(devices, mgmt_ifaces, mgmt_ips, oob_intf_fallback)
+                changed: List[DeviceInfo] = []
+                for dev in devices:
+                    try:
+                        if not nso.check_sync(dev.name):
+                            changed.append(dev)
+                    except Exception:
+                        changed.append(dev)
 
-            filtered = [d for d in devices if d.name in set(missing_names)]
-            if not filtered:
-                return {"status": "completed", "message": "No matching devices in device_info", "missing": missing_names}
-            ssh_result = asyncio.run(enable_ssh_all(gs, filtered))
+                if not changed:
+                    return {
+                        "status": "completed",
+                        "message": "No new devices",
+                        "missing": [],
+                        "reconciled": [],
+                    }
+
+                logger.info("Reconciling existing out-of-sync devices: %d", len(changed))
+                assigned_oob = assign_missing_oob_ips(gs, changed, existing_devices=devices)
+                ssh_result = asyncio.run(enable_ssh_all(gs, changed))
+                save_device_info(config_path, gs, devices)
+
+                ready: List[DeviceInfo] = []
+                skipped: List[Dict[str, str]] = []
+                for dev in changed:
+                    if dev.telnet_port <= 0:
+                        skipped.append({"device": dev.name, "reason": "console_unreachable"})
+                        continue
+                    if not ssh_result.get(dev.name, False):
+                        skipped.append({"device": dev.name, "reason": "ssh_enable_failed"})
+                        continue
+                    if not dev.oob_ip:
+                        skipped.append({"device": dev.name, "reason": "mgmt_ip_not_discovered"})
+                        continue
+                    ready.append(dev)
+
+                reg_result = register_devices_nso(gs, ready, nso) if ready else {"registered": [], "failed": []}
+                return {
+                    "status": "completed",
+                    "message": "No new devices; reconciled existing devices",
+                    "missing": [],
+                    "reconciled": [d.name for d in changed],
+                    "assigned_oob_ip": assigned_oob,
+                    "ssh": ssh_result,
+                    "nso": reg_result,
+                    "skipped": skipped,
+                }
+
+            refresh_gs, all_devices, candidates = _collect_onboarding_candidates(
+                pnetlab=pnetlab,
+                config_path=config_path,
+                missing_nodes=missing,
+                overrides=overrides,
+            )
+            if not candidates:
+                return {"status": "completed", "message": "No onboarding candidates", "missing": missing_names}
+
+            assigned_oob = assign_missing_oob_ips(refresh_gs, candidates, existing_devices=all_devices)
+            ssh_result = asyncio.run(enable_ssh_all(refresh_gs, candidates))
+            all_updated = list(all_devices)
+            existing_names = {d.name for d in all_devices}
+            for dev in candidates:
+                if dev.name not in existing_names:
+                    all_updated.append(dev)
+            save_device_info(config_path, refresh_gs, all_updated)
+
+            ready: List[DeviceInfo] = []
+            skipped: List[Dict[str, str]] = []
+            for dev in candidates:
+                if dev.telnet_port <= 0:
+                    skipped.append({"device": dev.name, "reason": "console_unreachable"})
+                    continue
+                if not ssh_result.get(dev.name, False):
+                    skipped.append({"device": dev.name, "reason": "ssh_enable_failed"})
+                    continue
+                if not dev.oob_ip:
+                    skipped.append({"device": dev.name, "reason": "mgmt_ip_not_discovered"})
+                    continue
+                ready.append(dev)
+
             nso = get_nso_client()
-            reg_result = register_devices_nso(gs, filtered, nso)
-            return {"status": "completed", "missing": missing_names, "ssh": ssh_result, "nso": reg_result}
+            reg_result = register_devices_nso(refresh_gs, ready, nso) if ready else {"registered": [], "failed": []}
+            return {
+                "status": "completed",
+                "missing": missing_names,
+                "assigned_oob_ip": assigned_oob,
+                "ssh": ssh_result,
+                "nso": reg_result,
+                "skipped": skipped,
+            }
         
         return {"error": f"Action {action} not implemented"}
     except Exception as e:

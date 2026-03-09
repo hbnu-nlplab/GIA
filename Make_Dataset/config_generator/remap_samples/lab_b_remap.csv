@@ -1,0 +1,28 @@
+# Lab-B (20 nodes) PNETLab Node ID Remap
+# 형식: pnetlab_node_id,hostname
+# 사용법:
+#   1. PNETLab > Left Menu > System Status 에서 실제 node_id 확인
+#   2. 아래 왼쪽 숫자를 PNETLab 실제 node_id로 수정
+#   3. python generator.py --remap remap_samples/lab_b_remap.csv --lab LabB_NCN_Basic_SP_20nodes
+#
+# 현재 값은 YAML 기본 순서입니다. PNETLab에서 이 순서대로 노드를 만들었다면 수정 불필요.
+1,P1
+2,P2
+3,P3
+4,P4
+5,PE1
+6,PE2
+7,Leaf1
+8,Leaf2
+9,Leaf3
+10,Leaf4
+11,P5
+12,P6
+13,P7
+14,P8
+15,PE3
+16,PE4
+17,Leaf5
+18,Leaf6
+19,Leaf7
+20,Leaf8

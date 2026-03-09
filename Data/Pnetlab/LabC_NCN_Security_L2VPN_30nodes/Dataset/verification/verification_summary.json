@@ -1,0 +1,51 @@
+{
+  "title": "NetConfigQA2.0 Ground Truth Verification Summary",
+  "topology": "LabC_NCN_Security_L2VPN_30nodes",
+  "date": "2026-03-02",
+  "dataset_total_qa": 2673,
+  "verification_methods": {
+    "method1_independent_parser": {
+      "description": "Batfish-independent .cfg parser (pure Python + Regex) for L1-L3 full verification",
+      "scope": "L1-L3 전수검증 (1565 QA)",
+      "total_verified": 1565,
+      "match": 1452,
+      "mismatch": 113,
+      "agreement_rate_raw": 0.9277955271565496,
+      "by_level": {
+        "L1": {
+          "total": 1230,
+          "match": 1157,
+          "mismatch": 73
+        },
+        "L2": {
+          "total": 80,
+          "match": 77,
+          "mismatch": 3
+        },
+        "L3": {
+          "total": 255,
+          "match": 218,
+          "mismatch": 37
+        }
+      },
+      "by_answer_type": {
+        "text": {
+          "total": 506,
+          "match": 474
+        },
+        "set": {
+          "total": 518,
+          "match": 476
+        },
+        "number": {
+          "total": 401,
+          "match": 370
+        },
+        "map": {
+          "total": 140,
+          "match": 132
+        }
+      }
+    }
+  }
+}

@@ -60,16 +60,34 @@ class BatfishBase:
         self.snapshot_name = "baseline"
         self._initialized = False
         
-        # Loopback0 존재 여부 캐시 (성능 최적화)
+        # 시작 인터페이스 캐시
+        # - _loopback_cache: 하위 호환을 위해 유지 (True면 루프백 계열 시작 인터페이스 존재)
+        # - _preferred_start_iface_cache: 노드별로 traceroute/reachability startLocation에 붙일 인터페이스
         self._loopback_cache: Dict[str, bool] = {}
+        self._preferred_start_iface_cache: Dict[str, str] = {}
+
+    @staticmethod
+    def _is_loopback_iface_name(iface_name: str) -> bool:
+        """벤더별 표기 차이를 고려해 루프백 계열 인터페이스인지 판별."""
+        lowered = iface_name.lower()
+        return lowered.startswith("loopback") or lowered.startswith("lo")
+
+    @staticmethod
+    def _loopback_iface_rank(iface_name: str) -> Tuple[int, int, str]:
+        """
+        루프백 인터페이스 우선순위.
+        - 1순위: loopback0 / lo0
+        - 2순위: 기타 loopback/lo 인터페이스 (숫자 오름차순)
+        """
+        lowered = iface_name.lower()
+        exact = 0 if lowered in ("loopback0", "lo0") else 1
+        digits = "".join(ch for ch in lowered if ch.isdigit())
+        number = int(digits) if digits else 9999
+        return (exact, number, lowered)
     
     def _populate_loopback_cache(self):
         """
-        모든 노드의 Loopback0 존재 여부를 한 번에 수집 (Batch Loading)
-        
-        성능 최적화: 노드별 개별 쿼리 대신 전체 노드를 한 번에 조회.
-        - Before: 8개 노드 × 3초 = 24초
-        - After: 1번 쿼리 = 3초
+        모든 노드의 선호 시작 인터페이스(루프백 계열)를 한 번에 수집.
         """
         if not self._initialized or not self.bf:
             print("[DEBUG] _populate_loopback_cache: Batfish not initialized")
@@ -91,34 +109,59 @@ class BatfishBase:
             print(f"[DEBUG] _populate_loopback_cache: Query completed in {elapsed:.2f}s")
             print(f"[DEBUG] _populate_loopback_cache: Got {len(iface_props)} interface records")
             
-            # 모든 노드를 False로 초기화
+            # 캐시 초기화
             print("[DEBUG] _populate_loopback_cache: Initializing cache...")
             for node in self.nodes:
                 self._loopback_cache[node] = False
+                self._preferred_start_iface_cache[node] = ""
             
-            # Loopback0이 있는 노드만 True로 변경
-            print("[DEBUG] _populate_loopback_cache: Scanning for Loopback0...")
+            # 루프백 계열 후보 수집 후 노드별 최적 인터페이스 선택
+            print("[DEBUG] _populate_loopback_cache: Scanning loopback-like interfaces...")
             loopback_count = 0
+            candidates: Dict[str, List[str]] = {node: [] for node in self.nodes}
             if not iface_props.empty:
                 for _, row in iface_props.iterrows():
                     iface = row.get('Interface', {})
                     node_name = getattr(iface, 'hostname', '')
                     iface_name = getattr(iface, 'interface', '')
                     
-                    if iface_name.lower() == 'loopback0':
-                        val_active = row.get('Active', False)
-                        val_ip = row.get('Primary_Address')
-                        
-                        # Active 상태이고 IP가 있어야 유효한 Source로 간주
-                        if val_active and val_ip:
-                            self._loopback_cache[node_name] = True
-                            loopback_count += 1
-                            print(f"[DEBUG] _populate_loopback_cache: Found valid Loopback0 on {node_name}")
-                            logger.debug(f"_populate_loopback_cache: Found valid Loopback0 on {node_name}")
-                        else:
-                            print(f"[DEBUG] _populate_loopback_cache: Found Loopback0 on {node_name} but invalid (Active={val_active}, IP={val_ip})")
+                    if not node_name or not iface_name:
+                        continue
+                    if node_name not in candidates:
+                        candidates[node_name] = []
+
+                    if not self._is_loopback_iface_name(iface_name):
+                        continue
+
+                    val_active = row.get('Active', False)
+                    val_ip = row.get('Primary_Address')
+
+                    # Active 상태이고 IP가 있어야 유효한 Source로 간주
+                    if val_active and val_ip:
+                        candidates[node_name].append(iface_name)
+
+                for node_name, ifaces in candidates.items():
+                    if not ifaces:
+                        continue
+                    preferred = min(ifaces, key=self._loopback_iface_rank)
+                    self._preferred_start_iface_cache[node_name] = preferred
+                    self._loopback_cache[node_name] = True
+                    loopback_count += 1
+                    print(
+                        f"[DEBUG] _populate_loopback_cache: "
+                        f"Selected {preferred} for {node_name}"
+                    )
+                    logger.debug(
+                        "_populate_loopback_cache: Selected %s for %s",
+                        preferred,
+                        node_name,
+                    )
             
-            print(f"[DEBUG] _populate_loopback_cache: Completed! Cached {len(self._loopback_cache)} nodes ({loopback_count} with Loopback0)")
+            print(
+                "[DEBUG] _populate_loopback_cache: Completed! "
+                f"Cached {len(self._loopback_cache)} nodes "
+                f"({loopback_count} with loopback-like source)"
+            )
             logger.debug(f"_populate_loopback_cache: Cached {len(self._loopback_cache)} nodes")
             
         except Exception as e:
@@ -129,10 +172,20 @@ class BatfishBase:
             # 에러 발생 시 모든 노드를 False로 설정 (안전한 fallback)
             for node in self.nodes:
                 self._loopback_cache[node] = False
+                self._preferred_start_iface_cache[node] = ""
+
+    def _get_preferred_start_iface(self, node_name: str) -> str:
+        """
+        노드별 선호 시작 인터페이스 반환.
+        반환값이 빈 문자열이면 인터페이스를 명시하지 않고 노드명만 사용.
+        """
+        if not self._preferred_start_iface_cache:
+            self._populate_loopback_cache()
+        return self._preferred_start_iface_cache.get(node_name, "")
     
     def _has_loopback0(self, node_name: str) -> bool:
         """
-        노드에 Loopback0이 있는지 확인 (캐시 사용)
+        노드에 루프백 계열 시작 인터페이스가 있는지 확인 (하위 호환 이름)
         
         첫 호출 시 모든 노드의 정보를 한 번에 수집 (Lazy Batch Loading).
         이후 호출은 캐시에서 즉시 반환.
@@ -141,7 +194,7 @@ class BatfishBase:
             node_name: 확인할 노드 이름
             
         Returns:
-            True if Loopback0 exists, False otherwise
+            True if loopback-like start interface exists, False otherwise
         """
         # 캐시가 비어있으면 한 번만 전체 노드 정보 수집
         if not self._loopback_cache:
@@ -150,17 +203,20 @@ class BatfishBase:
             self._populate_loopback_cache()
             print(f"[DEBUG] _has_loopback0: Batch loading completed")
         
-        # 캐시에서 조회 (즉시 반환)
-        result = self._loopback_cache.get(node_name, False)
-        print(f"[DEBUG] _has_loopback0: {node_name} = {result} (from cache)")
+        preferred_iface = self._get_preferred_start_iface(node_name)
+        result = bool(preferred_iface)
+        print(
+            f"[DEBUG] _has_loopback0: {node_name} = {result} "
+            f"(preferred_iface={preferred_iface or 'none'})"
+        )
         logger.debug(f"_has_loopback0: {node_name} = {result} (from cache)")
         return result
     
     def _fix_start_location(self, location: str) -> str:
         """
-        VRF 문제 방지: Loopback0이 있는 노드만 [Loopback0] 추가
+        VRF 문제 방지: 루프백 계열 인터페이스가 있는 노드만 [인터페이스] 추가
         
-        VRF 환경에서 PE/P 라우터는 Loopback0을 명시하여 global routing table 사용.
+        VRF 환경에서 PE/P 라우터는 루프백 인터페이스를 명시하여 global routing table 사용.
         Leaf 등 Access layer 장비는 Loopback이 없으므로 노드 이름만 사용.
         
         일반성: 모든 네트워크 토폴로지에 자동 적용 (명명 규칙 무관)
@@ -171,18 +227,27 @@ class BatfishBase:
             location: 노드 이름 또는 "노드[인터페이스]" 형식
             
         Returns:
-            Loopback0 있으면: "노드[Loopback0]"
-            Loopback0 없으면: "노드" (첫 번째 활성 인터페이스를 Batfish가 자동 선택)
+            루프백 계열 인터페이스 있으면: "노드[인터페이스]"
+            없으면: "노드" (첫 번째 활성 인터페이스를 Batfish가 자동 선택)
             이미 인터페이스 명시: 그대로 반환
         """
         if '[' not in location:
-            # 해당 노드에 Loopback0이 있는지 확인 (캐시 사용)
-            if self._has_loopback0(location):
-                logger.debug(f"_fix_start_location: {location} -> {location}[Loopback0]")
-                return f"{location}[Loopback0]"
-            else:
-                logger.debug(f"_fix_start_location: {location} -> {location} (no Loopback0)")
-                return location
+            preferred_iface = self._get_preferred_start_iface(location)
+            if preferred_iface:
+                logger.debug(
+                    "_fix_start_location: %s -> %s[%s]",
+                    location,
+                    location,
+                    preferred_iface,
+                )
+                return f"{location}[{preferred_iface}]"
+
+            logger.debug(
+                "_fix_start_location: %s -> %s (no loopback-like interface)",
+                location,
+                location,
+            )
+            return location
         
         return location
     
@@ -190,12 +255,22 @@ class BatfishBase:
         """Batfish 세션 초기화 및 스냅샷 로드"""
         try:
             logger.info(f"Connecting to Batfish at {self.batfish_host}...")
-            # host:port 형식 처리
+            # host:port 형식 처리 (port 미지정 시 9996 -> 9997 순서로 시도)
             if ":" in self.batfish_host:
                 base_host, port = self.batfish_host.split(":")
                 self.bf = Session(host=base_host, port=int(port))
             else:
-                self.bf = Session(host=self.batfish_host)
+                last_error = None
+                for port in (9996, 9997):
+                    try:
+                        self.bf = Session(host=self.batfish_host, port=port)
+                        logger.info(f"Connected to Batfish at {self.batfish_host}:{port}")
+                        break
+                    except Exception as e:
+                        last_error = e
+                        logger.warning(f"Failed Batfish session init at {self.batfish_host}:{port}: {e}")
+                if self.bf is None:
+                    raise last_error if last_error else RuntimeError("Failed to initialize Batfish session")
             
             logger.info(f"Setting network: {self.network_name}")
             self.bf.set_network(self.network_name)
@@ -206,6 +281,8 @@ class BatfishBase:
             
             # 노드 정보 수집
             self._collect_node_info()
+            self._loopback_cache.clear()
+            self._preferred_start_iface_cache.clear()
             
             self._initialized = True
             logger.info(f"Batfish initialized. Found {len(self.nodes)} nodes.")
@@ -332,18 +409,151 @@ class BatfishBase:
             logger.warning(f"get_vrfs error: {e}")
             return []
             
+    # =========================================================================
+    # Topology-Inferred Node Role Detection
+    # =========================================================================
+    # 이전: 이름 기반 휴리스틱 ('ce' in name.lower()) — 다른 토폴로지에서 실패
+    # 현재: Batfish BGP 세션 분석 + Edge Degree로 역할 추론 → 토폴로지 독립적
+    # Fallback: Batfish 데이터 없으면 이름 기반 휴리스틱 사용
+    # =========================================================================
+    
+    _node_roles_cache: Optional[Dict[str, str]] = None
+
+    def _infer_node_roles(self) -> Dict[str, str]:
+        """
+        Batfish BGP 세션 + L3 Edge Degree를 분석하여 노드 역할을 추론합니다.
+        
+        분류 기준:
+        - 'edge' (CE/Leaf): eBGP 세션만 있거나, L3 연결이 1~2개인 단말 노드
+        - 'provider_edge' (PE/Spine): eBGP + iBGP 세션 모두 보유한 경계 노드
+        - 'core' (P/Transit): iBGP 세션만 있고, L3 연결이 3개 이상인 중계 노드
+        - 'unknown': 분류 불가
+        
+        Returns:
+            Dict[str, str]: {node_name: role} 매핑
+        """
+        if self._node_roles_cache is not None:
+            return self._node_roles_cache
+        
+        roles: Dict[str, str] = {n: 'unknown' for n in self.nodes}
+        
+        if not self._initialized or not self.bf:
+            # Batfish 미초기화 시 이름 기반 fallback
+            logger.debug("_infer_node_roles: Batfish not initialized, using name-based fallback")
+            roles = self._name_based_fallback()
+            self._node_roles_cache = roles
+            return roles
+        
+        try:
+            # Step 1: BGP 세션 정보로 eBGP/iBGP 관계 파악
+            bgp_sessions = self.bf.q.bgpSessionCompatibility().answer().frame()
+            
+            node_has_ebgp: set = set()
+            node_has_ibgp: set = set()
+            
+            if not bgp_sessions.empty:
+                for _, row in bgp_sessions.iterrows():
+                    node = getattr(row.get('Node', ''), 'hostname', str(row.get('Node', '')))
+                    session_type = str(row.get('Session_Type', ''))
+                    
+                    if 'ebgp' in session_type.lower():
+                        node_has_ebgp.add(node)
+                    elif 'ibgp' in session_type.lower():
+                        node_has_ibgp.add(node)
+            
+            # Step 2: L3 Edge Degree 파악
+            edges = self.get_layer3_edges()
+            degree: Dict[str, int] = {n: 0 for n in self.nodes}
+            for e in edges:
+                n1, n2 = e.get('node1', ''), e.get('node2', '')
+                if n1 in degree:
+                    degree[n1] += 1
+                if n2 in degree:
+                    degree[n2] += 1
+            
+            # Step 3: 역할 분류
+            for node in self.nodes:
+                has_ebgp = node in node_has_ebgp
+                has_ibgp = node in node_has_ibgp
+                deg = degree.get(node, 0)
+                
+                if has_ebgp and not has_ibgp:
+                    # eBGP만 → Customer Edge (외부 AS에만 연결)
+                    roles[node] = 'edge'
+                elif has_ebgp and has_ibgp:
+                    # eBGP + iBGP → Provider Edge (내외부 경계)
+                    roles[node] = 'provider_edge'
+                elif has_ibgp and not has_ebgp:
+                    if deg >= 3:
+                        # iBGP만 + 높은 연결도 → Core Transit
+                        roles[node] = 'core'
+                    else:
+                        # iBGP만 + 낮은 연결도 → Provider Edge
+                        roles[node] = 'provider_edge'
+                else:
+                    # BGP 없는 노드 → Degree 기반 추론
+                    if deg <= 2:
+                        roles[node] = 'edge'
+                    else:
+                        roles[node] = 'core'
+            
+            logger.info(f"_infer_node_roles: Inferred roles: {roles}")
+            
+        except Exception as e:
+            logger.warning(f"_infer_node_roles: Topology inference failed ({e}), using name-based fallback")
+            roles = self._name_based_fallback()
+        
+        self._node_roles_cache = roles
+        return roles
+    
+    def _name_based_fallback(self) -> Dict[str, str]:
+        """이름 기반 역할 추론 (Fallback)"""
+        roles: Dict[str, str] = {}
+        for n in self.nodes:
+            nl = n.lower()
+            if 'ce' in nl or 'leaf' in nl:
+                roles[n] = 'edge'
+            elif 'pe' in nl or 'spine' in nl:
+                roles[n] = 'provider_edge'
+            elif nl.startswith('p') and not nl.startswith('pe'):
+                roles[n] = 'core'
+            else:
+                roles[n] = 'unknown'
+        return roles
+    
+    def get_edge_nodes(self) -> List[str]:
+        """Edge 노드(CE/Leaf) 목록 반환 — 토폴로지 추론 기반"""
+        roles = self._infer_node_roles()
+        return [n for n, r in roles.items() if r == 'edge']
+    
+    def get_provider_edge_nodes(self) -> List[str]:
+        """Provider Edge 노드(PE/Spine) 목록 반환 — 토폴로지 추론 기반"""
+        roles = self._infer_node_roles()
+        return [n for n, r in roles.items() if r == 'provider_edge']
+    
+    def get_core_nodes(self) -> List[str]:
+        """Core Transit 노드(P) 목록 반환 — 토폴로지 추론 기반"""
+        roles = self._infer_node_roles()
+        return [n for n, r in roles.items() if r == 'core']
+    
+    def get_transit_nodes(self) -> List[str]:
+        """Transit 노드(PE + P, 즉 Spine/PE/P) 목록 반환 — 토폴로지 추론 기반"""
+        roles = self._infer_node_roles()
+        return [n for n, r in roles.items() if r in ('provider_edge', 'core')]
+
+    # Backward-compatible aliases
     def get_pe_nodes(self) -> List[str]:
-        """PE 장비(Edge Router) 목록 반환 (이름 기반)"""
-        return [n for n in self.nodes if 'pe' in n.lower()]
+        """PE 장비 목록 반환 — 토폴로지 추론 기반 (이전: 이름 기반)"""
+        return self.get_provider_edge_nodes()
     
     def get_ce_nodes(self) -> List[str]:
-        """CE 장비(Customer Edge) 목록 반환 (이름 기반)"""
-        return [n for n in self.nodes if 'ce' in n.lower()]
+        """CE 장비 목록 반환 — 토폴로지 추론 기반 (이전: 이름 기반)"""
+        return self.get_edge_nodes()
     
     def get_spine_nodes(self) -> List[str]:
-        """Spine 장비 목록 반환 (이름 기반)"""
-        return [n for n in self.nodes if 'spine' in n.lower()]
+        """Spine 장비 목록 반환 — 토폴로지 추론 기반 (이전: 이름 기반)"""
+        return self.get_provider_edge_nodes()
     
     def get_leaf_nodes(self) -> List[str]:
-        """Leaf 장비 목록 반환 (이름 기반)"""
-        return [n for n in self.nodes if 'leaf' in n.lower()]
+        """Leaf 장비 목록 반환 — 토폴로지 추론 기반 (이전: 이름 기반)"""
+        return self.get_edge_nodes()

@@ -11,11 +11,16 @@ FROM node:20-alpine AS frontend-builder
 WORKDIR /app/frontend
 
 # 패키지 설치 (캐시 활용)
-COPY frontend/package*.json ./
+#
+# NOTE: This Dockerfile expects the *repo root* as build context.
+# Build command:
+#   docker build -f NetAlly/Dockerfile -t netally:latest .
+#
+COPY NetAlly/frontend/package*.json ./
 RUN npm ci --silent
 
 # 소스 복사 및 빌드
-COPY frontend/ ./
+COPY NetAlly/frontend/ ./
 RUN npm run build
 
 
@@ -29,14 +34,15 @@ WORKDIR /app
 # 시스템 의존성
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
+    openssh-client \
     && rm -rf /var/lib/apt/lists/*
 
 # 애플리케이션 코드 복사
-COPY pyproject.toml ./
-COPY agent/ ./agent/
-COPY eval/ ./eval/
-COPY skills/ ./skills/
-COPY main.py ./
+COPY NetAlly/pyproject.toml ./
+COPY NetAlly/agent/ ./agent/
+COPY NetAlly/eval/ ./eval/
+COPY NetAlly/skills/ ./skills/
+COPY NetAlly/main.py ./
 COPY Make_Dataset/src ./Make_Dataset/src
 
 # Python 의존성 설치

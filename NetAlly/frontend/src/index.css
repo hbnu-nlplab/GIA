@@ -5,44 +5,76 @@
 @tailwind utilities;
 
 :root {
-  --background: 0 0% 100%;
-  --foreground: 240 10% 3.9%;
+  --background: 220 14% 97%;
+  --foreground: 220 14% 10%;
   --card: 0 0% 100%;
-  --card-foreground: 240 10% 3.9%;
+  --card-foreground: 220 14% 10%;
   --popover: 0 0% 100%;
-  --popover-foreground: 240 10% 3.9%;
-  --primary: 161 72% 39%;
+  --popover-foreground: 220 14% 10%;
+  --primary: 168 65% 38%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 240 4.8% 95.9%;
-  --secondary-foreground: 240 5.9% 10%;
-  --muted: 240 4.8% 95.9%;
-  --muted-foreground: 240 3.8% 46.1%;
-  --accent: 240 4.8% 95.9%;
-  --accent-foreground: 240 5.9% 10%;
-  --border: 240 5.9% 90%;
-  --input: 240 5.9% 90%;
-  --ring: 161 72% 39%;
+  --secondary: 220 10% 94%;
+  --secondary-foreground: 220 10% 15%;
+  --muted: 220 10% 94%;
+  --muted-foreground: 220 8% 46%;
+  --accent: 220 10% 94%;
+  --accent-foreground: 220 10% 15%;
+  --border: 220 10% 88%;
+  --border-subtle: 220 8% 92%;
+  --border-strong: 220 10% 78%;
+  --input: 220 10% 90%;
+  --ring: 168 65% 38%;
   --radius: 0.5rem;
+  --surface-raised: 220 14% 98%;
+  --surface-sunken: 220 14% 94%;
+  --status-ok: 152 60% 38%;
+  --status-warn: 38 90% 45%;
+  --status-error: 0 72% 50%;
+  --status-info: 210 70% 50%;
 }
 
 .dark {
-  --background: 240 10% 3.9%;
-  --foreground: 0 0% 98%;
-  --card: 240 10% 5.9%;
-  --card-foreground: 0 0% 98%;
-  --popover: 240 10% 3.9%;
-  --popover-foreground: 0 0% 98%;
-  --primary: 161 72% 39%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 240 3.7% 15.9%;
-  --secondary-foreground: 0 0% 98%;
-  --muted: 240 3.7% 15.9%;
-  --muted-foreground: 240 5% 64.9%;
-  --accent: 240 3.7% 15.9%;
-  --accent-foreground: 0 0% 98%;
-  --border: 240 3.7% 15.9%;
-  --input: 240 3.7% 15.9%;
-  --ring: 161 72% 39%;
+  /* --- 4-tier surface depth system (NOC/Grafana style) --- */
+  --background: 220 14% 4%;
+  --foreground: 210 20% 95%;
+
+  --card: 220 13% 7%;
+  --card-foreground: 210 20% 95%;
+
+  --popover: 220 13% 9%;
+  --popover-foreground: 210 20% 95%;
+
+  /* --- Semantic surfaces --- */
+  --muted: 220 10% 12%;
+  --muted-foreground: 215 12% 55%;
+
+  --secondary: 220 10% 14%;
+  --secondary-foreground: 210 15% 90%;
+
+  --accent: 220 10% 14%;
+  --accent-foreground: 210 15% 90%;
+
+  /* --- Primary: cooler teal for authority --- */
+  --primary: 168 65% 38%;
+  --primary-foreground: 168 10% 98%;
+
+  /* --- 3-tier border system --- */
+  --border: 220 10% 14%;
+  --border-subtle: 220 8% 11%;
+  --border-strong: 220 10% 20%;
+
+  --input: 220 10% 10%;
+  --ring: 168 65% 38%;
+
+  /* --- Surface elevation overlays --- */
+  --surface-raised: 220 13% 9%;
+  --surface-sunken: 220 14% 3%;
+
+  /* --- Status colors tuned for dark backgrounds --- */
+  --status-ok: 152 60% 48%;
+  --status-warn: 38 90% 55%;
+  --status-error: 0 72% 58%;
+  --status-info: 210 70% 60%;
 }
 
 @layer base {
@@ -75,12 +107,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--muted));
+  background: hsl(var(--border));
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--muted-foreground));
+  background: hsl(var(--border-strong, var(--border)));
 }
 
 /* React Flow Styles Overrides */
@@ -89,21 +121,21 @@
 }
 
 .react-flow__handle {
-  width: 6px !important;
-  height: 6px !important;
-  background: hsl(var(--muted-foreground)) !important;
+  width: 5px !important;
+  height: 5px !important;
+  background: hsl(var(--muted-foreground) / 0.4) !important;
   border: none !important;
+  transition: background 0.15s ease;
 }
 
 .react-flow__edge-path {
-  stroke: hsl(var(--border)) !important;
-  stroke-width: 1.5 !important;
+  transition: stroke 0.2s ease, stroke-width 0.2s ease;
 }
 
 .react-flow__controls {
   background: hsl(var(--card)) !important;
-  border: 1px solid hsl(var(--border)) !important;
-  box-shadow: none !important;
+  border: 1px solid hsl(var(--border-subtle, var(--border))) !important;
+  box-shadow: 0 2px 6px 0 rgba(0,0,0,0.35), 0 1px 2px 0 rgba(0,0,0,0.2) !important;
   border-radius: 8px !important;
   overflow: hidden;
 }
@@ -121,3 +153,20 @@
 .react-flow__controls-button:hover {
   background: hsl(var(--accent)) !important;
 }
+
+/* --- Breathe animation (replaces animate-pulse on indicators) --- */
+@keyframes breathe {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.animate-breathe {
+  animation: breathe 3s ease-in-out infinite;
+}
+
+/* --- Node left-accent helpers (Grafana-style role indicators) --- */
+.node-accent-blue   { box-shadow: inset 3px 0 0 hsl(217 80% 55%); }
+.node-accent-purple { box-shadow: inset 3px 0 0 hsl(270 60% 55%); }
+.node-accent-green  { box-shadow: inset 3px 0 0 hsl(152 60% 48%); }
+.node-accent-amber  { box-shadow: inset 3px 0 0 hsl(38 90% 55%); }
+.node-accent-muted  { box-shadow: inset 3px 0 0 hsl(215 12% 40%); }

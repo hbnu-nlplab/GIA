@@ -8,6 +8,7 @@ Cisco NSO와 통신하는 LLM-Friendly 클라이언트
 import requests
 import logging
 import re
+import os
 import subprocess
 from pathlib import Path
 from typing import Dict, Any, List, Optional
@@ -69,6 +70,7 @@ class NSOClient:
             'Content-Type': 'application/yang-data+json',
             'Accept': 'application/yang-data+json'
         }
+        self._last_sync_error: Dict[str, str] = {}
         
         logger.info(f"NSOClient initialized for {self.base_url}")
 
@@ -139,6 +141,20 @@ class NSOClient:
             logger.info(f"API Call Success: {method} {path}")
             return clean_data
 
+        except requests.exceptions.HTTPError as e:
+            body = ""
+            response = getattr(e, "response", None)
+            if response is not None:
+                try:
+                    body = str(response.text or "").strip()
+                except Exception:
+                    body = ""
+            message = str(e)
+            if body:
+                message = f"{message} | {body[:1000]}"
+            logger.error(f"API Connection Error: {message}")
+            return {"status": "error", "message": message}
+
         except requests.exceptions.RequestException as e:
             logger.error(f"API Connection Error: {str(e)}")
             return {"status": "error", "message": str(e)}
@@ -146,6 +162,137 @@ class NSOClient:
     def _normalize_path(self, path: str) -> str:
         """경로 정규화"""
         return re.sub(r'/+', '/', path.strip('/'))
+
+    def _normalize_ned_id(self, ned_id: str) -> str:
+        """NSO identityref 형식으로 NED ID를 정규화합니다."""
+        value = str(ned_id or "").strip()
+        if not value:
+            return value
+        if ":" in value:
+            return value
+        return f"{value}:{value}"
+
+    def _get_known_ned_ids(self) -> List[str]:
+        """
+        NSO에 이미 등록된 장비에서 사용 중인 NED ID를 수집합니다.
+        """
+        res = self._request("GET", f"{self.PATHS['devices']}/device?fields=device-type")
+        if not isinstance(res, dict) or res.get("status") in ("error", "not_found"):
+            return []
+
+        out: List[str] = []
+        devices = res.get("device", [])
+        if not isinstance(devices, list):
+            return out
+
+        for dev in devices:
+            if not isinstance(dev, dict):
+                continue
+            dev_type = dev.get("device-type", {})
+            if not isinstance(dev_type, dict):
+                continue
+            cli = dev_type.get("cli", {})
+            if not isinstance(cli, dict):
+                continue
+            ned = cli.get("ned-id")
+            if not ned:
+                continue
+            normalized = self._normalize_ned_id(str(ned))
+            if normalized:
+                out.append(normalized)
+
+        deduped: List[str] = []
+        seen = set()
+        for item in out:
+            if item in seen:
+                continue
+            seen.add(item)
+            deduped.append(item)
+        return deduped
+
+    def _get_installed_ned_ids(self) -> List[str]:
+        """
+        NSO packages에서 설치된 NED ID를 수집합니다.
+        """
+        res = self._request("GET", "tailf-ncs:packages")
+        if not isinstance(res, dict) or res.get("status") in ("error", "not_found"):
+            return []
+
+        root = res.get("packages")
+        if not isinstance(root, dict):
+            return []
+        packages = root.get("package", [])
+        if not isinstance(packages, list):
+            return []
+
+        out: List[str] = []
+        for pkg in packages:
+            if not isinstance(pkg, dict):
+                continue
+            components = pkg.get("component", [])
+            if not isinstance(components, list):
+                continue
+            for comp in components:
+                if not isinstance(comp, dict):
+                    continue
+                ned = comp.get("ned", {})
+                if not isinstance(ned, dict):
+                    continue
+                cli = ned.get("cli", {})
+                if not isinstance(cli, dict):
+                    continue
+                ned_id = cli.get("ned-id")
+                if not ned_id:
+                    continue
+                normalized = self._normalize_ned_id(str(ned_id))
+                if normalized:
+                    out.append(normalized)
+
+        deduped: List[str] = []
+        seen = set()
+        for item in out:
+            if item in seen:
+                continue
+            seen.add(item)
+            deduped.append(item)
+        return deduped
+
+    def _candidate_ned_ids(self, requested_ned: str) -> List[str]:
+        """
+        Build ordered candidate NED IDs for registration.
+        """
+        raw_candidates: List[str] = []
+        if requested_ned:
+            raw_candidates.append(requested_ned)
+
+        env_ned = str(os.getenv("NSO_NED_ID", "")).strip()
+        if env_ned:
+            raw_candidates.append(env_ned)
+
+        raw_candidates.extend(self._get_installed_ned_ids())
+        raw_candidates.extend(self._get_known_ned_ids())
+        # Common Cisco IOS NEDs used in lab environments.
+        raw_candidates.extend(["cisco-ios-cli-3.8", "cisco-ios-cli-6.110"])
+
+        normalized: List[str] = []
+        seen = set()
+        for raw in raw_candidates:
+            ned = self._normalize_ned_id(raw)
+            if not ned or ned in seen:
+                continue
+            seen.add(ned)
+            normalized.append(ned)
+        return normalized
+
+    @staticmethod
+    def _is_invalid_ned_error(message: str) -> bool:
+        text = str(message or "").lower()
+        return "ned-id" in text and "valid value" in text
+
+    @staticmethod
+    def _is_unsupported_ssh_algorithms_error(message: str) -> bool:
+        text = str(message or "").lower()
+        return "unknown element: ssh-algorithms" in text
 
     def get_native_config(self, device: str) -> str:
         """
@@ -257,45 +404,77 @@ class NSOClient:
         address = device_info["oob_ip"]
         port = device_info.get("port", 22)
         authgroup = device_info.get("authgroup", "default")
-        ned_id = device_info.get("ned_id", "cisco-ios-cli-6.110")
+        requested_ned = str(device_info.get("ned_id", "")).strip()
         protocol = device_info.get("protocol", "ssh")
-        
-        # 장비 등록 Payload
-        device_data = {
-            "name": name,
-            "address": address,
-            "port": port,
-            "authgroup": authgroup,
-            "device-type": {
-                "cli": {
-                    "ned-id": ned_id,
-                    "protocol": protocol
+
+        last_error = ""
+        include_ssh_algorithms = protocol == "ssh"
+        for ned_id in self._candidate_ned_ids(requested_ned):
+            for use_ssh_algorithms in ([include_ssh_algorithms, False] if include_ssh_algorithms else [False]):
+                # 장비 등록 Payload
+                device_data = {
+                    "name": name,
+                    "address": address,
+                    "port": port,
+                    "authgroup": authgroup,
+                    "device-type": {
+                        "cli": {
+                            "ned-id": ned_id,
+                            "protocol": protocol
+                        }
+                    },
+                    "state": {
+                        "admin-state": "unlocked"
+                    }
                 }
-            },
-            "state": {
-                "admin-state": "unlocked"
-            }
-        }
-        
-        # SSH일 경우에만 알고리즘 설정 추가
-        if protocol == "ssh":
-            device_data["ssh-algorithms"] = {
-                "public-key": ["ssh-rsa"] 
-            }
-        
-        payload = {
-            "tailf-ncs:device": [device_data]
-        }
-        
-        # PUT을 사용하여 생성 또는 덮어쓰기 (Create or Replace)
-        # NSO RESTCONF에서 개별 장비 경로는 devices/device={name}
-        res = self._request("PUT", f"tailf-ncs:devices/device={name}", payload={"tailf-ncs:device": device_data})
-        
-        if isinstance(res, dict) and res.get("status") == "error":
-            logger.error(f"Failed to register/update device {name}: {res.get('message')}")
-            return False
-            
-        return True
+
+                # SSH일 경우에만 알고리즘 설정 추가 (구형 NSO에서는 거부될 수 있음)
+                if use_ssh_algorithms:
+                    device_data["ssh-algorithms"] = {
+                        "public-key": ["ssh-rsa"]
+                    }
+
+                # PUT을 사용하여 생성 또는 덮어쓰기 (Create or Replace)
+                # NSO RESTCONF에서 개별 장비 경로는 devices/device={name}
+                res = self._request(
+                    "PUT",
+                    f"tailf-ncs:devices/device={name}",
+                    payload={"tailf-ncs:device": device_data},
+                )
+
+                if not (isinstance(res, dict) and res.get("status") == "error"):
+                    if requested_ned and self._normalize_ned_id(requested_ned) != ned_id:
+                        logger.info(
+                            "NED fallback applied for %s: requested=%s effective=%s",
+                            name,
+                            requested_ned,
+                            ned_id,
+                        )
+                    if include_ssh_algorithms and not use_ssh_algorithms:
+                        logger.info(
+                            "ssh-algorithms omitted for %s due NSO schema compatibility",
+                            name,
+                        )
+                    return True
+
+                err = str(res.get("message", ""))
+                last_error = err
+                if self._is_unsupported_ssh_algorithms_error(err) and use_ssh_algorithms:
+                    logger.warning(
+                        "ssh-algorithms rejected for %s, retrying without ssh-algorithms",
+                        name,
+                    )
+                    continue
+
+                if self._is_invalid_ned_error(err):
+                    logger.warning("NED rejected for %s with %s, trying fallback", name, ned_id)
+                    break
+
+                logger.error(f"Failed to register/update device {name}: {err}")
+                return False
+
+        logger.error(f"Failed to register/update device {name}: {last_error}")
+        return False
 
     def fetch_host_keys(self, device_name: str) -> bool:
         """SSH 호스트 키 가져오기 (SSH 프로토콜인 경우만 실행)"""
@@ -328,9 +507,16 @@ class NSOClient:
             success = str(res.get("result", "")).lower() == "true"
             if not success:
                 error_info = res.get("info", "No additional info provided by NSO")
+                self._last_sync_error[device_name] = str(error_info or "")
                 logger.error(f"Sync-from failed for {device_name}. Reason: {error_info}")
+            else:
+                self._last_sync_error.pop(device_name, None)
             return success
+        self._last_sync_error[device_name] = "invalid sync-from response"
         return False
+
+    def get_last_sync_error(self, device_name: str) -> str:
+        return str(self._last_sync_error.get(device_name, "") or "")
 
     def check_sync(self, device_name: str) -> bool:
         """Check-sync 실행"""
@@ -1038,4 +1224,3 @@ if __name__ == "__main__":
         device = devices[0]
         print(f"\nDevice info for {device}:")
         print(client.get_device_info(device))
-

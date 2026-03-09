@@ -1,0 +1,31 @@
+{
+  "dataset": "/home/yujin/Desktop/Projects/GIA/Data/Pnetlab/Research_Institute_Internal_DC/Dataset/20260213_191829/Research_Institute_Internal_DC_dataset_batfish_20260213_191829.json",
+  "total_rows": 1304,
+  "meta": {
+    "lab_name": "Research_Institute_Internal_DC",
+    "timestamp": "20260213_191829",
+    "total_questions": 1304,
+    "pipeline_version": "cdbe5a9",
+    "policies_file": "/home/yujin/Desktop/Projects/GIA/Make_Dataset/policies.json",
+    "schema_version": "3.1",
+    "policy_validation_passed": true,
+    "structured_metrics_coverage": 1.0,
+    "quality_checks": {
+      "duplicate_id_count": 0,
+      "duplicate_id_v2_count": 0,
+      "evidence_placeholder_count": 0,
+      "structured_schema_violations": 0,
+      "structured_metrics_coverage": 1.0
+    }
+  },
+  "checks": {
+    "duplicate_id_count": 0,
+    "duplicate_id_examples": [],
+    "evidence_placeholder_count": 0,
+    "unsupported_answer_type_count": 0,
+    "structured_schema_total": 60,
+    "structured_schema_valid": 60,
+    "structured_schema_pass_rate": 1.0
+  },
+  "quality_gate_passed": true
+}

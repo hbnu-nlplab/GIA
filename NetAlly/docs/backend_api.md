@@ -1,105 +1,186 @@
-# Backend API Specification
+# NetAlly Backend API
 
-NetAlly's backend is a specialized FastAPI server designed for high-concurrency network analysis and real-time streaming.
+문서 허브: `docs/README_ko.md`
 
 ---
 
-## 1. Chat API (SSE)
+## 1. Chat SSE API
 
-**Endpoint**: `POST /api/chat`
+### Endpoint
+- `POST /api/chat`
 
-Handles conversational intent and orchestrates tool execution. Uses **Server-Sent Events (SSE)** to stream the reasoning process and tool outputs.
-
-### Request Body
+### Request body
 ```json
 {
-  "message": "Verify reachability between PE1 and PE2",
-  "history": [],
+  "message": "PE1에서 CE2까지 reachability 확인해줘",
+  "history": [
+    {"role": "user", "content": "이전 질문"},
+    {"role": "assistant", "content": "이전 답변"}
+  ],
   "answer_type": "text"
 }
 ```
 
-### Event Stream Format
-| Event Type | Data Payload Example | Description |
-|------------|----------------------|-------------|
-| `planning` | `{"reasoning": "...", "skills": [...]}` | Initial plan from Orchestrator. |
-| `tool_call`| `{"tool": "execute_reachability", "args": {...}}`| Notification before tool execution. |
-| `tool_output`| `{"content": "Reachability: SUCCESS", ...}`| Raw result from tool (e.g., Batfish/NSO). |
-| `answer` | `{"content": "..."}` | Final AI summary. |
-| `complete` | `{"type": "complete"}` | End of stream signal. |
+### SSE event order (fixed contract)
+1. `planning`
+2. `tool_call` (0회 이상)
+3. `tool_output` (tool_call과 쌍)
+4. `answer`
+5. `complete`
+
+### Event payload highlights
+- `planning`
+  - `mode`: `prompt_only | team_multi_adapter | legacy_graph`
+  - `tool_backend`: `mcp | legacy | team_multi`
+  - `agent_backend`: `single_executor | team_multi_adapter | legacy_graph`
+  - `bound_tool_count`: 바인딩된 도구 수
+  - `skills`: 하위 호환을 위해 항상 포함 (기본 `[]`)
+- `tool_call`
+  - `tool`, `input`, `call_id`
+- `tool_output`
+  - `tool`, `content`, `call_id`
+- `answer`
+  - `content`
+
+### Runtime-specific behavior
+- `single_executor`
+  - 기본 런타임
+  - MCP 사용 시 Core 16 도구만 바인딩
+  - 도구 루프 최대 10 step
+  - step limit 도달 시 고정 답변 반환:
+    - `도구 호출 한도 도달, 추가 범위 축소 질의 필요`
+- `team_multi_adapter`
+  - 외부 MultiAgent 그래프 호출
+  - `tool_call/tool_output`는 `team_multi_invoke` synthetic 이벤트로 송신
+- `legacy_graph`
+  - 기존 LangGraph 경로 (롤백용)
 
 ---
 
-## 2. Topology API
+## 2. Settings API
 
-### **Endpoint**: `GET /api/topology`
+### GET `/api/settings`
+현재 런타임 설정 조회 (민감 값은 마스킹).
 
-Provides network topology from Batfish analysis with L1/L3 layer filtering.
+주요 필드:
+- `nso_base_url`, `nso_username`
+- `pnetlab_url`
+- `pnetlab_inventory_backend`, `pnetlab_lab_name`, `pnetlab_nso_node`
+- `pnetlab_exclude_node_names`
+- `batfish_host`, `batfish_snapshot`
+- `auto_prepare_on_chat`, `auto_init_batfish`
+- `tool_backend`: `mcp | legacy`
+- `agent_backend`: `single_executor | team_multi_adapter | legacy_graph`
+- `agent_prompt_mode`: 현재 `prompt_only`
+- `executor_system_prompt`: single executor 프롬프트 override
+- `team_multi_module`: team adapter 대상 Python module
+- `team_multi_dataset_type`: `netconfig | descriptive | multiple_choice | short_answer`
+- `team_multi_root`: 외부 MultiAgent 루트 경로
+- `team_multi_context_path`: team adapter 컨텍스트 파일 경로
+- `mcp_server_url`
+- `mcp_allow_mutations`
+- `bound_tool_count`
+- `runtime_settings_path`
+- `runtime_settings_loaded_keys`
 
-**Query Parameters**:
-- `layer`: `l1` (Physical) or `l3` (Logical) - default: `l1`
+### POST `/api/settings`
+런타임 설정 변경.
 
-### **Endpoint**: `GET /api/topology/pnetlab` **(NEW)**
+검증:
+- `tool_backend`가 `mcp|legacy` 외 값이면 `422`
+- `agent_backend`가 허용값 외면 `422`
+- `team_multi_dataset_type`가 허용값 외면 `422`
+- `pnetlab_inventory_backend`가 `labfs_local|labfs_ssh|api` 외 값이면 `422`
 
-Returns topology with real node positions from PNETLab for Lab.png-style visualization.
+재초기화:
+- 아래 값 변경 시 에이전트 런타임 invalidate:
+  - `openai_api_key`, `tool_backend`, `agent_backend`, `executor_system_prompt`
+  - `team_multi_module`, `team_multi_dataset_type`, `team_multi_root`, `team_multi_context_path`
 
-### Response Format
-```json
-{
-  "nodes": [
-    {
-      "id": "PE1",
-      "type": "router",
-      "data": { "mgmt_ip": "10.0.0.1", "platform": "ios" },
-      "position": { "x": 100, "y": 100 }
-    }
-  ],
-  "edges": [
-    {
-      "id": "e-PE1-PE2",
-      "source": "PE1",
-      "target": "PE2",
-      "label": "Gi0/0 ↔ Gi0/0",
-      "animated": true
-    }
-  ]
-}
-```
-
----
-
-## 3. Dashboard API
-
-### **Endpoint**: `GET /api/dashboard/summary`
-
-Returns network health summary with protocol status and active insights.
-
-### **Endpoint**: `GET /api/dashboard/reachability` **(NEW)**
-
-Returns reachability matrix between devices using Batfish traceroute.
-
-### **Endpoint**: `GET /api/device/{device_id}`
-
-Returns detailed device information including configuration, routes, and interfaces.
+영속화:
+- `POST /api/settings`로 변경한 주요 값은 런타임 설정 파일에 저장됩니다.
+- 기본 경로: `.runtime/settings.runtime.json`
+- 경로 변경: `NETALLY_RUNTIME_SETTINGS_PATH`
+- 주의: 민감값이 포함될 수 있으므로 파일 권한/백업 정책을 운영 기준에 맞게 관리해야 합니다.
 
 ---
 
-## 4. Agent Architecture (LangGraph)
+## 3. Health API
 
-The backend utilizes a **state-graph** to manage multi-step reasoning:
+### GET `/api/health`
 
-1. **Orchestrator**: Analyzes user input and selects necessary "skills" (groups of tools).
-2. **Executor**: A loop that performs tool calls and handles exceptions.
-3. **Refiner**: (Optional) Summarizes intermediate outputs into a coherent final answer.
+주요 필드:
+- `status`
+- `tool_backend`
+- `agent_backend`
+- `mcp_health`
+- `agent_runtime_loaded`
+- `agent_runtime_error`
+- `bound_tool_count`
 
-### Integrated Tools
-- `network_query`: Fetch data from NSO.
-- `network_verify`: Perform Batfish analysis.
-- `lab_manage`: Interaction with PNETLab API.
-- `onboard_device`: Auto-register PNETLab nodes to NSO.
+하위 호환 alias:
+- `agent_graph_loaded`
+- `agent_graph_error`
 
 ---
 
-## 5. Evidence Persistence
+## 4. Topology and Device APIs
 
-Tool results are captured as **Evidence Packs** and can be persisted (via `/api/evidence/{run_id}`) for later review or audit trails.
+### GET `/api/topology?layer=l1|l3`
+- Batfish snapshot이 준비되면 Batfish 기반 토폴로지 사용
+- Batfish 미준비 시 NSO fallback 사용
+- NSO fallback은 `get_devices(): List[str]` + `get_device_info(device)` 조합으로 노드 생성
+
+### GET `/api/topology/pnetlab`
+- LabFS(`.unl`, `wrapper.txt`) 기반 토폴로지 복제
+
+### GET `/api/device/{device_id}`
+- NSO + Batfish 장비 상세 조회
+
+---
+
+## 5. Lab / PNETLab APIs
+
+- `POST /api/lab/refresh`
+  - 신규 장비 refresh/onboard
+- `POST /api/lab/prepare`
+  - Batfish 준비 확인/초기화
+- `GET /api/pnetlab/status`
+  - PNETLab 인증 상태
+- `POST /api/pnetlab/auth`
+  - PNETLab 인증 값 반영
+
+응답 주의:
+- `tool_backend=mcp` + `NETALLY_MCP_ALLOW_MUTATIONS=false`에서 변경성 작업을 호출하면 `403` + `code=mutations_blocked`
+- 대상:
+  - `POST /api/lab/refresh`
+  - `POST /api/lab/prepare` with `auto_init_batfish=true`
+
+---
+
+## 6. Tool Catalog (MCP)
+
+### Core 16 (default bind target)
+- NSO: `nso_list_devices`, `nso_get_device_info`, `nso_get_interfaces`, `nso_get_routing`, `nso_get_logs`
+- Batfish: `batfish_reachability`, `batfish_traceroute`, `batfish_bgp_sessions`, `batfish_route_table`, `batfish_advanced_verify`
+- Lab/Sync: `lab_show_inventory`, `lab_get_status`, `lab_export_configs`, `lab_init_batfish`, `sync_scan`, `bootstrap_refresh_onboard`
+
+### Compatibility 6 (deprecated, registry에는 유지)
+- `network_query`, `network_verify`, `lab_manage`, `scan_and_sync`, `check_logs`, `lab_bootstrap`
+
+주의:
+- single executor 기본 바인딩은 Core 16만 사용
+- mutation은 `NETALLY_MCP_ALLOW_MUTATIONS=false` 기본 차단
+
+---
+
+## 7. Demo Defaults and Rollback
+
+권장 기본값:
+- `NETALLY_AGENT_BACKEND=single_executor`
+- `NETALLY_TOOL_BACKEND=mcp`
+- `NETALLY_MCP_ALLOW_MUTATIONS=false`
+
+즉시 롤백:
+- `agent_backend=legacy_graph`
+- 필요 시 `tool_backend=legacy`

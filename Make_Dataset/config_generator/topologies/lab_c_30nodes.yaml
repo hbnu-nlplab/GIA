@@ -1,0 +1,745 @@
+name: "LabC_NCN_Security_L2VPN_30nodes"
+description: "National Converged Network (국가 통합 통신망) - 30 Nodes with Security Enhancement & L2VPN"
+# Concept:
+# - Region 1 (본사): 정부기관(GOV), 교육기관(EDU), 연구기관(RND) VPN 서비스
+# - Region 2 (지사): GOV, EDU cross-region 확장 + RND 서비스
+# - Region 3 (보안관제): AS 65001, VRF_SEC(보안관제), VRF_MIL(국방) + L2VPN + ACL
+as_number: 65000
+management_gateway: "10.10.10.1"
+management_intf_slot: 7  # Gi0/7 for OOB management (avoids collision with data interfaces)
+
+nodes:
+  # ============================================================
+  # Region 1 (본사 - 10 nodes, AS 65000, OSPF Area 0)
+  # ============================================================
+
+  # P Routers (Region 1)
+  - name: P1
+    role: p
+    region: 1
+    loopback: "10.255.0.1/32"
+    management_ip: "10.10.10.11/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE1
+        ip: "10.0.1.1/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        peer: P2
+        ip: "10.0.2.0/31"
+        mpls: true
+      - name: GigabitEthernet0/2
+        peer: P3
+        ip: "10.0.3.0/31"
+        mpls: true
+
+  - name: P2
+    role: p
+    region: 1
+    loopback: "10.255.0.2/32"
+    management_ip: "10.10.10.12/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: P1
+        ip: "10.0.2.1/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        peer: PE2
+        ip: "10.0.4.0/31"
+        mpls: true
+      - name: GigabitEthernet0/2
+        peer: P4
+        ip: "10.0.5.0/31"
+        mpls: true
+
+  - name: P3
+    role: p
+    region: 1
+    loopback: "10.255.0.3/32"
+    management_ip: "10.10.10.13/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: P1
+        ip: "10.0.3.1/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        peer: P4
+        ip: "10.0.6.0/31"
+        mpls: true
+      - name: GigabitEthernet0/2
+        peer: P5
+        ip: "10.0.20.0/31"
+        mpls: true
+        description: "Inter-Region Backbone (Region1 ↔ Region2)"
+
+  - name: P4
+    role: p
+    region: 1
+    loopback: "10.255.0.4/32"
+    management_ip: "10.10.10.14/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: P2
+        ip: "10.0.5.1/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        peer: P3
+        ip: "10.0.6.1/31"
+        mpls: true
+      - name: GigabitEthernet0/2
+        peer: PE2
+        ip: "10.0.7.0/31"
+        mpls: true
+
+  # PE Routers (Region 1)
+  - name: PE1
+    role: pe
+    region: 1
+    loopback: "10.255.0.11/32"
+    management_ip: "10.10.10.21/24"
+    vrfs: [VRF_GOV, VRF_EDU, VRF_RND]
+    bgp_neighbors:
+      - ip: "10.255.0.12"
+        as: 65000
+      - ip: "10.255.0.21"  # PE3 (Region 2)
+        as: 65000
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: P1
+        ip: "10.0.1.0/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        vrf: VRF_GOV
+        ip: "172.16.1.1/24"
+        description: "Link to Leaf1 (정부기관)"
+      - name: GigabitEthernet0/2
+        vrf: VRF_EDU
+        ip: "172.16.2.1/24"
+        description: "Link to Leaf2 (교육기관)"
+      # L2VPN xconnect: PE1 ↔ PE5 (PW-100, 양방향 정상)
+      - name: GigabitEthernet0/3
+        description: "L2VPN PW to PE5 (PWID 100)"
+        xconnect:
+          peer_ip: "10.255.0.33"  # PE5 Loopback
+          pw_id: 100
+
+  - name: PE2
+    role: pe
+    region: 1
+    loopback: "10.255.0.12/32"
+    management_ip: "10.10.10.22/24"
+    vrfs: [VRF_GOV, VRF_EDU, VRF_RND]
+    bgp_neighbors:
+      - ip: "10.255.0.11"
+        as: 65000
+      - ip: "10.255.0.22"  # PE4 (Region 2)
+        as: 65000
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: P2
+        ip: "10.0.4.1/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        peer: P4
+        ip: "10.0.7.1/31"
+        mpls: true
+      - name: GigabitEthernet0/2
+        vrf: VRF_RND
+        ip: "172.16.3.1/24"
+        description: "Link to Leaf3 (연구기관) via PE2"
+      - name: GigabitEthernet0/3
+        vrf: VRF_GOV
+        ip: "172.16.4.1/24"
+        description: "Link to Leaf4 (정부기관)"
+      # L2VPN xconnect: PE2 → ??? (PW-300, 단방향만 — 의도적 오류!)
+      - name: GigabitEthernet0/4
+        description: "L2VPN PW-300 (INTENTIONAL ERROR: unidirectional only)"
+        xconnect:
+          peer_ip: "10.255.0.33"  # PE5를 향하지만 PE5에는 PW-300 미설정
+          pw_id: 300
+
+  # Leaf Switches (Region 1)
+  - name: Leaf1
+    role: leaf
+    region: 1
+    management_ip: "10.10.10.31/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE1
+        peer_ip: "172.16.1.1"
+        ip: "172.16.1.2/24"
+
+  - name: Leaf2
+    role: leaf
+    region: 1
+    management_ip: "10.10.10.32/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE1
+        peer_ip: "172.16.2.1"
+        ip: "172.16.2.2/24"
+
+  - name: Leaf3
+    role: leaf
+    region: 1
+    management_ip: "10.10.10.33/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE2
+        peer_ip: "172.16.3.1"
+        ip: "172.16.3.2/24"
+
+  - name: Leaf4
+    role: leaf
+    region: 1
+    management_ip: "10.10.10.34/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE2
+        peer_ip: "172.16.4.1"
+        ip: "172.16.4.2/24"
+
+
+  # ============================================================
+  # Region 2 (지사 - 10 nodes, AS 65000, OSPF Area 0)
+  # ============================================================
+
+  # P Routers (Region 2: P5-P8)
+  - name: P5
+    role: p
+    region: 2
+    loopback: "10.255.0.5/32"
+    management_ip: "10.10.10.15/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE3
+        ip: "10.0.11.1/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        peer: P6
+        ip: "10.0.12.0/31"
+        mpls: true
+      - name: GigabitEthernet0/2
+        peer: P3
+        ip: "10.0.20.1/31"
+        mpls: true
+        description: "Inter-Region Backbone (Region2 ↔ Region1)"
+
+  - name: P6
+    role: p
+    region: 2
+    loopback: "10.255.0.6/32"
+    management_ip: "10.10.10.16/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: P5
+        ip: "10.0.12.1/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        peer: PE4
+        ip: "10.0.14.0/31"
+        mpls: true
+      - name: GigabitEthernet0/2
+        peer: P7
+        ip: "10.0.15.0/31"
+        mpls: true
+
+  - name: P7
+    role: p
+    region: 2
+    loopback: "10.255.0.7/32"
+    management_ip: "10.10.10.17/24"
+    bgp_neighbors:
+      # eBGP to ASBR1 (AS 65001) via direct link
+      - ip: "10.0.30.1"  # ASBR1 link address
+        as: 65001
+        ebgp: true
+        next_hop_self: true
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: P6
+        ip: "10.0.15.1/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        peer: P8
+        ip: "10.0.16.0/31"
+        mpls: true
+      # Inter-Region 2↔3 backbone to ASBR1
+      - name: GigabitEthernet0/2
+        peer: ASBR1
+        ip: "10.0.30.0/31"
+        mpls: true
+        description: "Inter-Region Backbone (Region2 ↔ Region3)"
+
+  - name: P8
+    role: p
+    region: 2
+    loopback: "10.255.0.8/32"
+    management_ip: "10.10.10.18/24"
+    bgp_neighbors:
+      # eBGP to ASBR2 (AS 65001) via direct link
+      - ip: "10.0.30.3"  # ASBR2 link address
+        as: 65001
+        ebgp: true
+        next_hop_self: true
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: P7
+        ip: "10.0.16.1/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        peer: PE4
+        ip: "10.0.17.0/31"
+        mpls: true
+      # Inter-Region 2↔3 backbone to ASBR2
+      - name: GigabitEthernet0/2
+        peer: ASBR2
+        ip: "10.0.30.2/31"
+        mpls: true
+        description: "Inter-Region Backbone (Region2 ↔ Region3)"
+
+  # PE Routers (Region 2)
+  - name: PE3
+    role: pe
+    region: 2
+    loopback: "10.255.0.21/32"
+    management_ip: "10.10.10.23/24"
+    vrfs: [VRF_GOV, VRF_EDU, VRF_RND]
+    bgp_neighbors:
+      - ip: "10.255.0.11"  # PE1 (Region 1)
+        as: 65000
+      - ip: "10.255.0.22"  # PE4 (Region 2)
+        as: 65000
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: P5
+        ip: "10.0.11.0/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        vrf: VRF_GOV
+        ip: "172.17.1.1/24"
+        description: "Link to Leaf5 (정부기관, Region2)"
+      - name: GigabitEthernet0/2
+        vrf: VRF_EDU
+        ip: "172.17.2.1/24"
+        description: "Link to Leaf6 (교육기관, Region2)"
+      # L2VPN xconnect: PE3 ↔ PE6 (PW-200 vs 201 — 의도적 PWID 불일치!)
+      - name: GigabitEthernet0/3
+        description: "L2VPN PW to PE6 (PWID 200 - MISMATCH with PE6's 201)"
+        xconnect:
+          peer_ip: "10.255.0.34"  # PE6 Loopback
+          pw_id: 200
+
+  - name: PE4
+    role: pe
+    region: 2
+    loopback: "10.255.0.22/32"
+    management_ip: "10.10.10.24/24"
+    vrfs: [VRF_GOV, VRF_EDU, VRF_RND]
+    bgp_neighbors:
+      - ip: "10.255.0.12"  # PE2 (Region 1)
+        as: 65000
+      - ip: "10.255.0.21"  # PE3 (Region 2)
+        as: 65000
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: P6
+        ip: "10.0.14.1/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        peer: P8
+        ip: "10.0.17.1/31"
+        mpls: true
+      - name: GigabitEthernet0/2
+        vrf: VRF_RND
+        ip: "172.17.3.1/24"
+        description: "Link to Leaf7 (연구기관, Region2)"
+      - name: GigabitEthernet0/3
+        vrf: VRF_GOV
+        ip: "172.17.4.1/24"
+        description: "Link to Leaf8 (정부기관, Region2)"
+
+  # Leaf Switches (Region 2)
+  - name: Leaf5
+    role: leaf
+    region: 2
+    management_ip: "10.10.10.35/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE3
+        peer_ip: "172.17.1.1"
+        ip: "172.17.1.2/24"
+
+  - name: Leaf6
+    role: leaf
+    region: 2
+    management_ip: "10.10.10.36/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE3
+        peer_ip: "172.17.2.1"
+        ip: "172.17.2.2/24"
+
+  - name: Leaf7
+    role: leaf
+    region: 2
+    management_ip: "10.10.10.37/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE4
+        peer_ip: "172.17.3.1"
+        ip: "172.17.3.2/24"
+
+  - name: Leaf8
+    role: leaf
+    region: 2
+    management_ip: "10.10.10.38/24"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE4
+        peer_ip: "172.17.4.1"
+        ip: "172.17.4.2/24"
+
+
+  # ============================================================
+  # Region 3 (보안관제 - 10 nodes, AS 65001, OSPF Area 1)
+  # ============================================================
+
+  # ASBR Routers (Inter-AS boundary)
+  - name: ASBR1
+    role: asbr
+    region: 3
+    loopback: "10.255.0.31/32"
+    management_ip: "10.10.10.41/24"
+    local_as: 65001
+    bgp_neighbors:
+      # eBGP to Region 2 (AS 65000 via P7's Loopback - but using direct link)
+      # NOTE: For Inter-AS Option B, we peer on link addresses, not loopbacks
+      - ip: "10.0.30.0"  # P7 link address
+        as: 65000
+        ebgp: true
+        next_hop_self: true
+        route_map_in: FILTER_EBGP
+      # iBGP within AS 65001
+      - ip: "10.255.0.33"  # PE5
+        as: 65001
+      - ip: "10.255.0.34"  # PE6
+        as: 65001
+      - ip: "10.255.0.32"  # ASBR2
+        as: 65001
+    prefix_lists:
+      - name: DENY_DEFAULT
+        seq: 5
+        action: deny
+        prefix: "0.0.0.0/0"
+      - name: DENY_DEFAULT
+        seq: 10
+        action: permit
+        prefix: "0.0.0.0/0"
+        le: 32
+    route_maps:
+      - name: FILTER_EBGP
+        action: permit
+        seq: 10
+        match: DENY_DEFAULT
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: P7
+        ip: "10.0.30.1/31"
+        mpls: true
+        description: "Inter-AS link to Region2 P7"
+      - name: GigabitEthernet0/1
+        peer: P9
+        ip: "10.0.31.0/31"
+        mpls: true
+        ospf_area: 1
+      - name: GigabitEthernet0/2
+        peer: PE5
+        ip: "10.0.31.2/31"
+        mpls: true
+        ospf_area: 1
+
+  - name: ASBR2
+    role: asbr
+    region: 3
+    loopback: "10.255.0.32/32"
+    management_ip: "10.10.10.42/24"
+    local_as: 65001
+    bgp_neighbors:
+      # eBGP to Region 2 (AS 65000 via P8's link address)
+      - ip: "10.0.30.2"  # P8 link address
+        as: 65000
+        ebgp: true
+        next_hop_self: true
+        route_map_in: FILTER_EBGP
+      # iBGP within AS 65001
+      - ip: "10.255.0.33"  # PE5
+        as: 65001
+      - ip: "10.255.0.34"  # PE6
+        as: 65001
+      - ip: "10.255.0.31"  # ASBR1
+        as: 65001
+    prefix_lists:
+      - name: DENY_DEFAULT
+        seq: 5
+        action: deny
+        prefix: "0.0.0.0/0"
+      - name: DENY_DEFAULT
+        seq: 10
+        action: permit
+        prefix: "0.0.0.0/0"
+        le: 32
+    route_maps:
+      - name: FILTER_EBGP
+        action: permit
+        seq: 10
+        match: DENY_DEFAULT
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: P8
+        ip: "10.0.30.3/31"
+        mpls: true
+        description: "Inter-AS link to Region2 P8"
+      - name: GigabitEthernet0/1
+        peer: P10
+        ip: "10.0.32.0/31"
+        mpls: true
+        ospf_area: 1
+      - name: GigabitEthernet0/2
+        peer: PE6
+        ip: "10.0.32.2/31"
+        mpls: true
+        ospf_area: 1
+
+  # PE Routers (Region 3, AS 65001)
+  - name: PE5
+    role: pe
+    region: 3
+    loopback: "10.255.0.33/32"
+    management_ip: "10.10.10.43/24"
+    local_as: 65001
+    ospf_area: 1
+    vrfs: [VRF_SEC, VRF_MIL]
+    bgp_neighbors:
+      - ip: "10.255.0.31"  # ASBR1
+        as: 65001
+      - ip: "10.255.0.32"  # ASBR2
+        as: 65001
+      - ip: "10.255.0.34"  # PE6
+        as: 65001
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: ASBR1
+        ip: "10.0.31.3/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        vrf: VRF_SEC
+        ip: "172.18.1.1/24"
+        description: "Link to Leaf9 (보안관제) + HSRP Active"
+        hsrp:
+          group: 10
+          vip: "172.18.1.254"
+          priority: 110
+      - name: GigabitEthernet0/2
+        vrf: VRF_MIL
+        ip: "172.18.2.1/24"
+        description: "Link to Leaf10 (국방)"
+      # L2VPN xconnect: PE5 ↔ PE1 (PW-100, 양방향 정상)
+      - name: GigabitEthernet0/3
+        description: "L2VPN PW from PE1 (PWID 100)"
+        xconnect:
+          peer_ip: "10.255.0.11"  # PE1 Loopback
+          pw_id: 100
+      - name: GigabitEthernet0/4
+        peer: P10
+        ip: "10.0.34.1/31"
+        mpls: true
+
+  - name: PE6
+    role: pe
+    region: 3
+    loopback: "10.255.0.34/32"
+    management_ip: "10.10.10.44/24"
+    local_as: 65001
+    ospf_area: 1
+    vrfs: [VRF_SEC, VRF_MIL]
+    bgp_neighbors:
+      - ip: "10.255.0.31"  # ASBR1
+        as: 65001
+      - ip: "10.255.0.32"  # ASBR2
+        as: 65001
+      - ip: "10.255.0.33"  # PE5
+        as: 65001
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: ASBR2
+        ip: "10.0.32.3/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        vrf: VRF_SEC
+        ip: "172.18.3.1/24"
+        description: "Link to Leaf11 (보안관제)"
+      - name: GigabitEthernet0/2
+        vrf: VRF_MIL
+        ip: "172.18.4.1/24"
+        description: "Link to Leaf12 (국방)"
+      # L2VPN xconnect: PE6 ↔ PE3 (PW-201 — 의도적 PWID 불일치! PE3은 200)
+      - name: GigabitEthernet0/3
+        description: "L2VPN PW from PE3 (PWID 201 - INTENTIONAL MISMATCH)"
+        xconnect:
+          peer_ip: "10.255.0.21"  # PE3 Loopback
+          pw_id: 201
+      # HSRP Standby for VRF_SEC shared subnet with PE5
+      - name: GigabitEthernet0/4
+        vrf: VRF_SEC
+        ip: "172.18.1.3/24"
+        description: "HSRP Standby for Leaf9 shared subnet"
+        hsrp:
+          group: 10
+          vip: "172.18.1.254"
+          priority: 100
+      - name: GigabitEthernet0/5
+        peer: P9
+        ip: "10.0.33.3/31"
+        mpls: true
+
+  # P Routers (Region 3, OSPF Area 1)
+  - name: P9
+    role: p
+    region: 3
+    loopback: "10.255.0.9/32"
+    management_ip: "10.10.10.19/24"
+    ospf_area: 1
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: ASBR1
+        ip: "10.0.31.1/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        peer: P10
+        ip: "10.0.33.0/31"
+        mpls: true
+      - name: GigabitEthernet0/2
+        peer: PE6
+        ip: "10.0.33.2/31"
+        mpls: true
+
+  - name: P10
+    role: p
+    region: 3
+    loopback: "10.255.0.10/32"
+    management_ip: "10.10.10.20/24"
+    ospf_area: 1
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: ASBR2
+        ip: "10.0.32.1/31"
+        mpls: true
+      - name: GigabitEthernet0/1
+        peer: P9
+        ip: "10.0.33.1/31"
+        mpls: true
+      - name: GigabitEthernet0/2
+        peer: PE5
+        ip: "10.0.34.0/31"
+        mpls: true
+
+  # Leaf Switches (Region 3 - with ACL)
+  - name: Leaf9
+    role: leaf
+    region: 3
+    management_ip: "10.10.10.39/24"
+    acls:
+      - name: BLOCK_SSH_EXTERNAL
+        rules:
+          - "deny   tcp any any eq 22"
+          - "permit ip any any"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE5
+        peer_ip: "172.18.1.254"  # HSRP VIP as gateway
+        ip: "172.18.1.2/24"
+        acl_in: BLOCK_SSH_EXTERNAL
+
+  - name: Leaf10
+    role: leaf
+    region: 3
+    management_ip: "10.10.10.40/24"
+    acls:
+      - name: BLOCK_SSH_EXTERNAL
+        rules:
+          - "deny   tcp any any eq 22"
+          - "permit ip any any"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE5
+        peer_ip: "172.18.2.1"
+        ip: "172.18.2.2/24"
+        acl_in: BLOCK_SSH_EXTERNAL
+
+  - name: Leaf11
+    role: leaf
+    region: 3
+    management_ip: "10.10.10.45/24"
+    acls:
+      - name: BLOCK_SSH_EXTERNAL
+        rules:
+          - "deny   tcp any any eq 22"
+          - "permit ip any any"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE6
+        peer_ip: "172.18.3.1"
+        ip: "172.18.3.2/24"
+        acl_in: BLOCK_SSH_EXTERNAL
+
+  - name: Leaf12
+    role: leaf
+    region: 3
+    management_ip: "10.10.10.46/24"
+    acls:
+      - name: BLOCK_SSH_EXTERNAL
+        rules:
+          - "deny   tcp any any eq 22"
+          - "permit ip any any"
+    interfaces:
+      - name: GigabitEthernet0/0
+        peer: PE6
+        peer_ip: "172.18.4.1"
+        ip: "172.18.4.2/24"
+        acl_in: BLOCK_SSH_EXTERNAL
+
+
+vrfs:
+  # Region 1+2 VRFs (AS 65000)
+  VRF_GOV:
+    rd: "65000:100"
+    rt_import: ["65000:100"]
+    rt_export: ["65000:100"]
+  VRF_EDU:
+    rd: "65000:200"
+    rt_import: ["65000:200"]
+    rt_export: ["65000:200"]
+  VRF_RND:
+    rd: "65000:300"
+    rt_import: ["65000:300"]
+    rt_export: ["65000:300"]
+  # Region 3 VRFs (AS 65001)
+  VRF_SEC:
+    rd: "65001:400"
+    rt_import: ["65001:400"]
+    rt_export: ["65001:400"]
+  VRF_MIL:
+    rd: "65001:500"
+    rt_import: ["65001:500"]
+    rt_export: ["65001:500"]
+
+routing:
+  ospf:
+    process_id: 1
+    area: 0
+    networks: auto
+  bgp:
+    address_families: [vpnv4]
+  mpls:
+    protocol: ldp

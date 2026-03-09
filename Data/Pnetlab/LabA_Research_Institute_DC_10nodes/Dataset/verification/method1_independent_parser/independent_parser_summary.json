@@ -1,0 +1,538 @@
+{
+  "total_rows": 1016,
+  "verifiable": 1016,
+  "match": 1015,
+  "mismatch": 1,
+  "skip": 0,
+  "error": 0,
+  "unsupported": 0,
+  "agreement_rate": 0.9990157480314961,
+  "by_level": {
+    "L1": {
+      "total": 660,
+      "match": 660,
+      "mismatch": 0
+    },
+    "L2": {
+      "total": 104,
+      "match": 104,
+      "mismatch": 0
+    },
+    "L3": {
+      "total": 252,
+      "match": 251,
+      "mismatch": 1
+    }
+  },
+  "by_metric": {
+    "system_hostname_text": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "system_version_text": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "system_timezone_text": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "system_user_list": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "system_user_count": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "logging_buffered_severity_text": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "ntp_server_list": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "snmp_community_list": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "syslog_server_list": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "interface_status_map": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "routing_table_entry_count": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "ssh_version_text": {
+      "total": 12,
+      "match": 12,
+      "mismatch": 0
+    },
+    "aaa_authentication_method": {
+      "total": 14,
+      "match": 14,
+      "mismatch": 0
+    },
+    "vty_transport_input_text": {
+      "total": 12,
+      "match": 12,
+      "mismatch": 0
+    },
+    "vty_login_mode_text": {
+      "total": 12,
+      "match": 12,
+      "mismatch": 0
+    },
+    "interface_count": {
+      "total": 11,
+      "match": 11,
+      "mismatch": 0
+    },
+    "interface_ip_map": {
+      "total": 12,
+      "match": 12,
+      "mismatch": 0
+    },
+    "subinterface_count": {
+      "total": 12,
+      "match": 12,
+      "mismatch": 0
+    },
+    "vrf_bind_map": {
+      "total": 15,
+      "match": 15,
+      "mismatch": 0
+    },
+    "bgp_local_as_numeric": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "bgp_neighbor_count": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "neighbor_list_ibgp": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "neighbor_list_ebgp": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "ospf_process_ids_set": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "ospf_area_set": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "ospf_area0_if_list": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "vrf_names_set": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "vrf_count": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "vrf_rd_map": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "rt_import_count": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "rt_export_count": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "mpls_ldp_router_id": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "l2vpn_pw_id_set": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "ssh_enabled_devices": {
+      "total": 6,
+      "match": 6,
+      "mismatch": 0
+    },
+    "ssh_missing_devices": {
+      "total": 7,
+      "match": 7,
+      "mismatch": 0
+    },
+    "ssh_missing_count": {
+      "total": 9,
+      "match": 9,
+      "mismatch": 0
+    },
+    "aaa_enabled_devices": {
+      "total": 1,
+      "match": 1,
+      "mismatch": 0
+    },
+    "aaa_missing_devices": {
+      "total": 19,
+      "match": 19,
+      "mismatch": 0
+    },
+    "devices_with_same_vrf": {
+      "total": 8,
+      "match": 8,
+      "mismatch": 0
+    },
+    "ospf_area_membership": {
+      "total": 2,
+      "match": 2,
+      "mismatch": 0
+    },
+    "ospf_area0_if_count": {
+      "total": 39,
+      "match": 39,
+      "mismatch": 0
+    },
+    "ospf_neighbor_count_per_area": {
+      "total": 9,
+      "match": 9,
+      "mismatch": 0
+    },
+    "l2vpn_pairs": {
+      "total": 4,
+      "match": 4,
+      "mismatch": 0
+    },
+    "l2vpn_unidirectional_pairs": {
+      "total": 6,
+      "match": 6,
+      "mismatch": 0
+    },
+    "l2vpn_unidir_count": {
+      "total": 8,
+      "match": 8,
+      "mismatch": 0
+    },
+    "l2vpn_pwid_mismatch_pairs": {
+      "total": 26,
+      "match": 26,
+      "mismatch": 0
+    },
+    "l2vpn_mismatch_count": {
+      "total": 6,
+      "match": 6,
+      "mismatch": 0
+    },
+    "ibgp_missing_pairs": {
+      "total": 5,
+      "match": 5,
+      "mismatch": 0
+    },
+    "ibgp_missing_pairs_count": {
+      "total": 21,
+      "match": 21,
+      "mismatch": 0
+    },
+    "ibgp_under_peered_devices": {
+      "total": 7,
+      "match": 7,
+      "mismatch": 0
+    },
+    "ibgp_under_peered_count": {
+      "total": 17,
+      "match": 17,
+      "mismatch": 0
+    },
+    "vrf_without_rt_pairs": {
+      "total": 2,
+      "match": 2,
+      "mismatch": 0
+    },
+    "vrf_without_rt_count": {
+      "total": 1,
+      "match": 1,
+      "mismatch": 0
+    },
+    "vrf_rt_list_per_device": {
+      "total": 47,
+      "match": 47,
+      "mismatch": 0
+    },
+    "compare_bgp_neighbor_count": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "compare_interface_count": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "compare_vrf_count": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "compare_bgp_as": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "compare_ospf_areas": {
+      "total": 20,
+      "match": 20,
+      "mismatch": 0
+    },
+    "max_interface_device": {
+      "total": 1,
+      "match": 1,
+      "mismatch": 0
+    },
+    "max_bgp_peer_device": {
+      "total": 1,
+      "match": 1,
+      "mismatch": 0
+    },
+    "all_devices_same_as": {
+      "total": 1,
+      "match": 0,
+      "mismatch": 1
+    },
+    "min_interface_device": {
+      "total": 1,
+      "match": 1,
+      "mismatch": 0
+    },
+    "bgp_as_distribution": {
+      "total": 1,
+      "match": 1,
+      "mismatch": 0
+    },
+    "vrf_usage_statistics": {
+      "total": 1,
+      "match": 1,
+      "mismatch": 0
+    },
+    "password_encryption_config": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "enable_secret_type": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "console_password_val": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "exec_timeout_val": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "banner_motd_content": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "banner_login_content": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "http_server_config": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "cdp_config": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "ip_source_route_config": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "loopback_interfaces_list": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "dns_servers_list": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "configured_bgp_as_numbers": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "mpls_ldp_config": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "default_route_next_hops": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "static_route_count": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "acl_configured_count": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "acl_applied_interfaces_list": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "prefix_list_count": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "route_map_count": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "qos_class_maps_list": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "netflow_monitors_list": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "interfaces_missing_description_count": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "eigrp_as_numbers": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "rip_processes": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "hsrp_groups_list": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "multicast_routing_config": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0
+    },
+    "serial_interface_devices": {
+      "total": 13,
+      "match": 13,
+      "mismatch": 0
+    },
+    "tunnel_interface_devices": {
+      "total": 3,
+      "match": 3,
+      "mismatch": 0
+    },
+    "port_channel_devices": {
+      "total": 31,
+      "match": 31,
+      "mismatch": 0
+    },
+    "vlan_interface_devices": {
+      "total": 3,
+      "match": 3,
+      "mismatch": 0
+    }
+  },
+  "by_answer_type": {
+    "text": {
+      "total": 286,
+      "match": 285
+    },
+    "set": {
+      "total": 370,
+      "match": 370
+    },
+    "number": {
+      "total": 253,
+      "match": 253
+    },
+    "map": {
+      "total": 107,
+      "match": 107
+    }
+  },
+  "mismatch_examples": [
+    {
+      "id": "ALL_DEVICES_SAME_AS",
+      "id_v2": "all_devices_same_as:566d4b6821",
+      "level": "L3",
+      "metric": "all_devices_same_as",
+      "answer_type": "text",
+      "status": "MISMATCH",
+      "reason": "",
+      "parser_answer": "pe1: AS 65000, pe2: AS 65000",
+      "dataset_answer": "\"leaf1: AS N/A, leaf2: AS N/A, leaf3: AS N/A, leaf4: AS N/A, p1: AS N/A, p2: AS N/A, p3: AS N/A, p4: AS N/A, pe1: AS 65000, pe2: AS 65000\"",
+      "match": false,
+      "score": 0.5,
+      "detail": "token_f1=0.500"
+    }
+  ]
+}

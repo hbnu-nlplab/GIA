@@ -16,6 +16,9 @@ Experiment\code\NetConfigQA2\NetConfigQA2_Experiment_vllm_colab.ipynb
 # Environment variables (sensitive!)
 .env
 config/.env
+.cursor/
+.serena/
+.venv/
 
 # Python
 __pycache__/
@@ -83,6 +86,21 @@ dmypy.json
 # OS
 Thumbs.db
 NetAlly/frontend/node_modules
+NetAlly/frontend/*.tsbuildinfo
 
 # Slidev
 docs/slidev-netconfigqa
+
+# NetAlly frontend test artifacts
+NetAlly/frontend/test-results/
+NetAlly/frontend/playwright-report/
+
+# NetAlly runtime settings/cache
+NetAlly/.runtime/
+NetAlly/.tmp/
+
+# Config generator output (auto-generated)
+
+
+# Git backup bundles
+*.bundle

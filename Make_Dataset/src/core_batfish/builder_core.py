@@ -7,6 +7,24 @@ import random
 from itertools import combinations
 from collections import defaultdict, deque
 
+METRIC_OUTPUT_TYPE: Dict[str, str] = {
+    "compare_bgp_neighbor_count": "map_str_int",
+    "compare_interface_count": "map_str_int",
+    "compare_vrf_count": "map_str_int",
+    "rip_processes": "text",
+}
+
+METRIC_REQUIRED_SCOPE_KEYS: Dict[str, Tuple[str, ...]] = {
+    "compare_bgp_neighbor_count": ("host1", "host2"),
+    "compare_interface_count": ("host1", "host2"),
+    "compare_vrf_count": ("host1", "host2"),
+    "ibgp_fullmesh_ok": ("asn",),
+    "ibgp_missing_pairs": ("asn",),
+    "ibgp_missing_pairs_count": ("asn",),
+    "ibgp_under_peered_devices": ("asn",),
+    "ibgp_under_peered_count": ("asn",),
+}
+
 class BuilderCore:
     """
     Facts → expected_answer 계산 엔진.
@@ -74,6 +92,107 @@ class BuilderCore:
             if not las: continue
             groups.setdefault(las,[]).append(d)
         return groups
+
+    def _default_metric_answer(self, metric: str) -> tuple[str, Any]:
+        metric_type = METRIC_OUTPUT_TYPE.get(metric, "text")
+        if metric in (
+            "compare_bgp_neighbor_count",
+            "compare_interface_count",
+            "compare_vrf_count",
+        ):
+            return metric_type, {"host1_count": 0, "host2_count": 0, "difference": 0}
+        if metric_type in ("map", "map_str_int", "map_str_str"):
+            return metric_type, {}
+        if metric_type in ("set", "set_str", "list"):
+            return metric_type, []
+        if metric_type in ("numeric", "number", "scalar_int"):
+            return metric_type, 0
+        if metric_type in ("boolean", "bool"):
+            return metric_type, False
+        return metric_type, ""
+
+    def _count_bgp_neighbors_total(self, d: Dict[str, Any]) -> int:
+        peers: Set[str] = set()
+        for n in self._bgp_neighbors(d):
+            pid = n.get("id") or n.get("ip")
+            if pid:
+                peers.add(str(pid))
+        for v in self._bgp_vrfs(d):
+            for n in v.get("neighbors") or []:
+                pid = n.get("id") or n.get("ip")
+                if pid:
+                    peers.add(str(pid))
+        return len(peers)
+
+    def _count_vrfs_total(self, d: Dict[str, Any]) -> int:
+        names: Set[str] = set()
+        for v in self._bgp_vrfs(d):
+            name = v.get("name")
+            if name:
+                names.add(str(name))
+        for v in self._services_vrf(d):
+            name = v.get("name")
+            if name:
+                names.add(str(name))
+        for iface in d.get("interfaces") or []:
+            name = iface.get("vrf") or iface.get("l3vrf")
+            if name:
+                names.add(str(name))
+        return len(names)
+
+    def _merged_bgp_vrfs_for_rt(self, d: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """
+        Batfish/파서 중복으로 동일 VRF가 여러 번 생성되는 경우를 방어하기 위해
+        VRF 이름 기준으로 병합한 뒤 RT(import/export)를 고유 집합으로 정규화합니다.
+
+        왜 필요한가:
+        - 동일 VRF가 2회 이상 등장하면 rt_import_count/rt_export_count가 이중 집계될 수 있음
+        - 본 메서드는 'VRF 중복'과 'RT 중복'을 모두 제거한 canonical view를 제공합니다.
+        """
+        merged: Dict[str, Dict[str, Any]] = {}
+
+        for v in self._bgp_vrfs(d):
+            if not isinstance(v, dict):
+                continue
+
+            name_raw = str(v.get("name") or "").strip()
+            if not name_raw:
+                continue
+            name_key = name_raw.lower()
+
+            if name_key not in merged:
+                merged[name_key] = {
+                    "name": name_raw,
+                    "rt_import": set(),
+                    "rt_export": set(),
+                }
+
+            # 다양한 입력 키를 모두 흡수 (파서/버전 차이 대응)
+            rt_import = v.get("rt_import") or v.get("import_rts") or []
+            rt_export = v.get("rt_export") or v.get("export_rts") or []
+            route_targets = v.get("route_targets") or []
+
+            imp_set = {str(x).strip() for x in rt_import if str(x).strip()}
+            exp_set = {str(x).strip() for x in rt_export if str(x).strip()}
+            rt_set = {str(x).strip() for x in route_targets if str(x).strip()}
+
+            # 방향 정보가 없고 route_targets만 있는 경우(예: route-target both 파싱) fallback
+            if not imp_set and rt_set:
+                imp_set = set(rt_set)
+            if not exp_set and rt_set:
+                exp_set = set(rt_set)
+
+            merged[name_key]["rt_import"].update(imp_set)
+            merged[name_key]["rt_export"].update(exp_set)
+
+        out: List[Dict[str, Any]] = []
+        for item in merged.values():
+            out.append({
+                "name": item["name"],
+                "rt_import": sorted(item["rt_import"]),
+                "rt_export": sorted(item["rt_export"]),
+            })
+        return out
 
     # ---------- 공통 계산(여러 테스트에서 재활용할 집합/맵) ----------
     def _precompute(self) -> Dict[str, Any]:
@@ -406,6 +525,11 @@ class BuilderCore:
     def _answer_for_metric(self, metric: str, scope: Dict[str,Any], pre: Dict[str,Any]) -> tuple[str, Any]:
         if not hasattr(self, "devices"):
             self.devices = []
+        required_keys = METRIC_REQUIRED_SCOPE_KEYS.get(metric, ())
+        if required_keys:
+            missing = [k for k in required_keys if not scope.get(k)]
+            if missing:
+                return self._default_metric_answer(metric)
 
         if metric == "system_hostname_text":
             host = scope.get("host")
@@ -506,14 +630,6 @@ class BuilderCore:
                 return "text", val or ""
             return "text", ""
 
-        elif metric == "enable_secret_type":
-             host = scope.get("host")
-             for d in self.devices:
-                 if host and self._hostname(d) != host: continue
-                 val = d.get("configuration", {}).get("security", {}).get("enable_secret")
-                 return "text", val or ""
-             return "text", ""
-
         elif metric == "console_password_val":
              host = scope.get("host")
              for d in self.devices:
@@ -530,29 +646,13 @@ class BuilderCore:
                  return "text", val or ""
              return "text", ""
 
-        elif metric == "password_encryption_config":
+        elif metric == "dns_servers_list":
              host = scope.get("host")
              for d in self.devices:
                  if host and self._hostname(d) != host: continue
-                 val = d.get("configuration", {}).get("security", {}).get("password_encryption")
-                 return "text", "Enabled" if val else "Disabled"
-             return "text", "Disabled"
-
-        elif metric == "http_server_config":
-             host = scope.get("host")
-             for d in self.devices:
-                 if host and self._hostname(d) != host: continue
-                 val = d.get("configuration", {}).get("security", {}).get("http_server")
-                 return "text", "Enabled" if val else "Disabled"
-             return "text", "Disabled"
-             
-        elif metric == "cdp_config":
-             host = scope.get("host")
-             for d in self.devices:
-                 if host and self._hostname(d) != host: continue
-                 val = d.get("configuration", {}).get("security", {}).get("cdp")
-                 return "text", "Enabled" if val else "Disabled"
-             return "text", "Disabled"
+                 val = d.get("configuration", {}).get("operational", {}).get("name_servers")
+                 return "set", sorted(val) if isinstance(val, list) else []
+             return "set", []
 
         elif metric == "ip_source_route_config":
              host = scope.get("host")
@@ -561,195 +661,15 @@ class BuilderCore:
                  val = d.get("configuration", {}).get("security", {}).get("ip_source_route")
                  return "text", "Enabled" if val else "Disabled"
              return "text", "Disabled"
-             
-        elif metric == "mpls_ldp_config":
-             host = scope.get("host")
-             for d in self.devices:
-                 if host and self._hostname(d) != host: continue
-                 val = d.get("configuration", {}).get("routing", {}).get("mpls_ldp_enabled")
-                 return "text", "Enabled" if val else "Disabled"
-             return "text", "Disabled"
-
-        elif metric == "multicast_routing_config":
-             host = scope.get("host")
-             for d in self.devices:
-                 if host and self._hostname(d) != host: continue
-                 val = d.get("configuration", {}).get("advanced", {}).get("multicast_enabled")
-                 return "text", "Enabled" if val else "Disabled"
-             return "text", "Disabled"
-
-        elif metric == "snmp_server_communities":
-             host = scope.get("host")
-             for d in self.devices:
-                 if host and self._hostname(d) != host: continue
-                 val = d.get("configuration", {}).get("operational", {}).get("snmp_communities")
-                 return "set", sorted(val) if isinstance(val, list) else []
-             return "set", []
-
-        elif metric == "loopback_interfaces_list":
-             host = scope.get("host")
-             for d in self.devices:
-                 if host and self._hostname(d) != host: continue
-                 val = d.get("configuration", {}).get("operational", {}).get("loopback_interfaces")
-                 return "set", sorted(val) if isinstance(val, list) else []
-             return "set", []
-
-        elif metric == "dns_servers_list":
-             host = scope.get("host")
-             for d in self.devices:
-                 if host and self._hostname(d) != host: continue
-                 val = d.get("configuration", {}).get("operational", {}).get("name_servers")
-                 return "set", sorted(val) if isinstance(val, list) else []
-             return "set", []
-        
-        elif metric == "netflow_monitors_list":
-             host = scope.get("host")
-             for d in self.devices:
-                 if host and self._hostname(d) != host: continue
-                 val = d.get("configuration", {}).get("advanced", {}).get("netflow_monitors")
-                 return "set", sorted(val) if isinstance(val, list) else []
-             return "set", []
-
-        elif metric == "qos_class_maps_list":
-             host = scope.get("host")
-             for d in self.devices:
-                 if host and self._hostname(d) != host: continue
-                 val = d.get("configuration", {}).get("advanced", {}).get("class_maps")
-                 return "set", sorted(val) if isinstance(val, list) else []
-             return "set", []
-
-        elif metric == "static_route_count":
-             host = scope.get("host")
-             for d in self.devices:
-                 if host and self._hostname(d) != host: continue
-                 val = d.get("configuration", {}).get("routing", {}).get("static_routes_count")
-                 return "numeric", int(val) if val is not None else 0
-             return "numeric", 0
-
-        elif metric == "default_route_next_hops":
-             host = scope.get("host")
-             for d in self.devices:
-                 if host and self._hostname(d) != host: continue
-                 val = d.get("configuration", {}).get("routing", {}).get("default_route_next_hops")
-                 return "set", sorted(val) if isinstance(val, list) else []
-             return "set", []
-
-        elif metric == "acl_configured_count":
-             host = scope.get("host")
-             for d in self.devices:
-                 if host and self._hostname(d) != host: continue
-                 val = d.get("configuration", {}).get("advanced", {}).get("acls_count")
-                 return "numeric", int(val) if val is not None else 0
-             return "numeric", 0
-             
-        elif metric == "acl_applied_interfaces_list":
-             host = scope.get("host")
-             for d in self.devices:
-                 if host and self._hostname(d) != host: continue
-                 val = d.get("configuration", {}).get("advanced", {}).get("acl_interfaces")
-                 return "set", sorted(val) if isinstance(val, list) else []
-             return "set", []
-
-        elif metric == "prefix_list_count":
-             host = scope.get("host")
-             for d in self.devices:
-                 if host and self._hostname(d) != host: continue
-                 val = d.get("configuration", {}).get("advanced", {}).get("prefix_lists_count")
-                 return "numeric", int(val) if val is not None else 0
-             return "numeric", 0
-
-        elif metric == "route_map_count":
-             host = scope.get("host")
-             for d in self.devices:
-                 if host and self._hostname(d) != host: continue
-                 val = d.get("configuration", {}).get("advanced", {}).get("route_maps_count")
-                 return "numeric", int(val) if val is not None else 0
-             return "numeric", 0
-
-        elif metric == "interfaces_missing_description_count":
-             host = scope.get("host")
-             for d in self.devices:
-                 if host and self._hostname(d) != host: continue
-                 val = d.get("configuration", {}).get("advanced", {}).get("missing_descriptions_count")
-                 return "numeric", int(val) if val is not None else 0
-             return "numeric", 0
-
-        elif metric == "configured_bgp_as_numbers":
-             host = scope.get("host")
-             for d in self.devices:
-                 if host and self._hostname(d) != host: continue
-                 val = d.get("configuration", {}).get("routing", {}).get("bgp_as")
-                 return "set", sorted([str(x) for x in val]) if isinstance(val, list) else []
-             return "set", []
-
-        elif metric == "eigrp_as_numbers":
-             host = scope.get("host")
-             for d in self.devices:
-                 if host and self._hostname(d) != host: continue
-                 val = d.get("configuration", {}).get("advanced", {}).get("eigrp_as")
-                 return "set", sorted([str(x) for x in val]) if isinstance(val, list) else []
-             return "set", []
-
-        elif metric == "rip_processes":
-             host = scope.get("host")
-             for d in self.devices:
-                 if host and self._hostname(d) != host: continue
-                 val = d.get("configuration", {}).get("advanced", {}).get("rip_enabled")
-                 return "set", ["rip"] if val else []
-             return "set", []
-
-        elif metric == "active_ospf_processes":
-             host = scope.get("host")
-             for d in self.devices:
-                 if host and self._hostname(d) != host: continue
-                 val = d.get("configuration", {}).get("routing", {}).get("ospf_processes")
-                 return "set", sorted([str(x) for x in val]) if isinstance(val, list) else []
-             return "set", []
-
-        elif metric == "port_channel_devices":
-            host = scope.get("host")
-            devices_with_pc = set()
-            for d in self.devices:
-                # Global Check if host is not specified
-                if host and self._hostname(d) != host: continue
-                
-                has_pc = any("Port-Channel" in i.get("name", "") for i in d.get("interfaces", []))
-                if has_pc:
-                    devices_with_pc.add(self._hostname(d))
-            return "set", sorted(list(devices_with_pc))
-
-        elif metric == "tunnel_interface_devices":
-            host = scope.get("host")
-            devices_with_tunnel = set()
-            for d in self.devices:
-                if host and self._hostname(d) != host: continue
-                
-                has_tunnel = any("Tunnel" in i.get("name", "") for i in d.get("interfaces", []))
-                if has_tunnel:
-                    devices_with_tunnel.add(self._hostname(d))
-            return "set", sorted(list(devices_with_tunnel))
-        
-        elif metric == "serial_interface_devices":
-            host = scope.get("host")
-            devices_with_serial = set()
-            for d in self.devices:
-                if host and self._hostname(d) != host: continue
-                
-                has_serial = any("Serial" in i.get("name", "") for i in d.get("interfaces", []))
-                if has_serial:
-                    devices_with_serial.add(self._hostname(d))
-            return "set", sorted(list(devices_with_serial))
 
         elif metric == "vlan_interface_devices":
-            host = scope.get("host")
-            devices_with_vlan = set()
+            hosts = set()
             for d in self.devices:
-                if host and self._hostname(d) != host: continue
-                
-                has_vlan = any("Vlan" in i.get("name", "") for i in d.get("interfaces", []))
-                if has_vlan:
-                    devices_with_vlan.add(self._hostname(d))
-            return "set", sorted(list(devices_with_vlan))
+                for i in (d.get("interfaces") or []):
+                    if "Vlan" in i.get("name", ""):
+                        hosts.add(self._hostname(d))
+            return "set", sorted(list(hosts))
+
         elif metric == "system_version_text":
             host = scope.get("host")
             for d in self.devices:
@@ -788,15 +708,15 @@ class BuilderCore:
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
                 users = (d.get("system") or {}).get("users") or []
-                names = []
+                names = set()
                 for u in users:
                     if isinstance(u, dict):
                         nm = u.get("name")
                         if nm:
-                            names.append(nm)
-                    elif isinstance(u, str):
-                        names.append(u)
-                return "numeric", len([n for n in names if n])
+                            names.add(nm)
+                    elif isinstance(u, str) and u:
+                        names.add(u)
+                return "numeric", len(names)
             return "numeric", 0
 
         elif metric == "ssh_version_text":
@@ -804,8 +724,8 @@ class BuilderCore:
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
                 val = ((d.get("security") or {}).get("ssh") or {}).get("version")
-                return "text", str(val) if val is not None else "미설정"
-            return "text", "미설정"
+                return "text", str(val) if val is not None else ""
+            return "text", ""
 
         elif metric == "aaa_authentication_method":
             host = scope.get("host")
@@ -816,8 +736,8 @@ class BuilderCore:
                 method = aaa_info.get("method") or aaa_info.get("authentication_method")
                 if not method and aaa_info.get("present"):
                     method = "local"  # Default to local if AAA is present but method not specified
-                return "text", method if method else "미설정"
-            return "text", "미설정"
+                return "text", method if method else ""
+            return "text", ""
 
         elif metric == "mpls_ldp_router_id":
             host = scope.get("host")
@@ -898,14 +818,17 @@ class BuilderCore:
             host = scope.get("host")
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
-                cnt=0
+                # 고유 peer IP/ID 기준으로 카운트 (_count_bgp_neighbors_total과 동일 방식)
+                peers = set()
                 bgp = ((d.get("routing") or {}).get("bgp") or {})
                 for n in (bgp.get("neighbors") or []):
-                    cnt+=1
+                    pid = n.get("id") or n.get("ip")
+                    if pid: peers.add(pid)
                 for v in (bgp.get("vrfs") or []):
                     for n in (v.get("neighbors") or []):
-                        cnt+=1
-                return "numeric", cnt
+                        pid = n.get("id") or n.get("ip")
+                        if pid: peers.add(pid)
+                return "numeric", len(peers)
             return "numeric", 0
 
         elif metric == "ospf_process_ids_set":
@@ -927,8 +850,14 @@ class BuilderCore:
                 s=set()
                 ospf = ((d.get("routing") or {}).get("ospf") or {})
                 areas = ospf.get("areas") or {}
-                for aid in areas.keys():
-                    if aid is not None: s.add(str(aid))
+                if isinstance(areas, dict):
+                    for aid in areas.keys():
+                        if aid is not None: s.add(str(aid))
+                elif isinstance(areas, list):
+                    for area in areas:
+                        if isinstance(area, dict):
+                            aid = area.get("id") or area.get("area")
+                            if aid is not None: s.add(str(aid))
                 return "set", sorted(s)
             return "set", []
 
@@ -937,9 +866,13 @@ class BuilderCore:
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
                 s=set()
-                for v in (((d.get("routing") or {}).get("bgp") or {}).get("vrfs") or []):
-                    nm = v.get("name");  
-                    if nm: s.add(nm)
+                for v in self._bgp_vrfs(d):
+                    if v.get("name"): s.add(v["name"])
+                for sv in self._services_vrf(d):
+                    if sv.get("name"): s.add(sv["name"])
+                for iface in d.get("interfaces") or []:
+                    vrf_name = iface.get("vrf") or iface.get("l3vrf")
+                    if vrf_name: s.add(vrf_name)
                 return "set", sorted(s)
             return "set", []
 
@@ -947,10 +880,7 @@ class BuilderCore:
             host = scope.get("host")
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
-                s=set()
-                for v in (((d.get("routing") or {}).get("bgp") or {}).get("vrfs") or []):
-                    if v.get("name"): s.add(v.get("name"))
-                return "numeric", len(s)
+                return "numeric", self._count_vrfs_total(d)
             return "numeric", 0
 
         elif metric == "vrf_rd_map":
@@ -972,7 +902,7 @@ class BuilderCore:
                 if host and self._hostname(d) != host:
                     continue
                 c = 0
-                for v in (((d.get("routing") or {}).get("bgp") or {}).get("vrfs") or []):
+                for v in self._merged_bgp_vrfs_for_rt(d):
                     c += len(v.get("rt_import", []) or [])
                 return "numeric", c
             return "numeric", 0
@@ -982,7 +912,7 @@ class BuilderCore:
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
                 c=0
-                for v in (((d.get("routing") or {}).get("bgp") or {}).get("vrfs") or []):
+                for v in self._merged_bgp_vrfs_for_rt(d):
                     c += len(v.get("rt_export", []) or [])
                 return "numeric", c
             return "numeric", 0
@@ -1012,7 +942,7 @@ class BuilderCore:
                     ras = n.get("remote_as")
                     if not pid or ras is None:
                         continue
-                    if (ras == las) == want_ibgp:
+                    if (str(ras) == str(las)) == want_ibgp:
                         peers.add(pid)
                 for v in self._bgp_vrfs(d):
                     for n in v.get("neighbors") or []:
@@ -1020,7 +950,7 @@ class BuilderCore:
                         ras = n.get("remote_as")
                         if not pid or ras is None:
                             continue
-                        if (ras == las) == want_ibgp:
+                        if (str(ras) == str(las)) == want_ibgp:
                             peers.add(pid)
                 return "set", sorted(peers)
             return "set", []
@@ -1172,7 +1102,7 @@ class BuilderCore:
                 ospf = self._ospf(d)
                 areas = ospf.get("areas") or {}
                 if isinstance(areas, dict):
-                    if area_str in areas or int(area_id) in areas if area_str.isdigit() else False:
+                    if area_str in areas or (area_str.isdigit() and int(area_id) in areas):
                         devices_in_area.add(host)
                 elif isinstance(areas, list):
                     for a in areas:
@@ -1195,36 +1125,30 @@ class BuilderCore:
             host2 = scope.get("host2")
             d1 = self.host_index.get(host1)
             d2 = self.host_index.get(host2)
-            if not d1 or not d2:
-                return "text", f"{host1}: Not found, {host2}: Not found, diff: N/A"
-            cnt1 = len(self._bgp_neighbors(d1))
-            cnt2 = len(self._bgp_neighbors(d2))
+            cnt1 = self._count_bgp_neighbors_total(d1) if d1 else 0
+            cnt2 = self._count_bgp_neighbors_total(d2) if d2 else 0
             diff = abs(cnt1 - cnt2)
-            return "text", f"{host1}: {cnt1}, {host2}: {cnt2}, diff: {diff}"
+            return "map_str_int", {"host1_count": cnt1, "host2_count": cnt2, "difference": diff}
         
         elif metric == "compare_interface_count":
             host1 = scope.get("host1")
             host2 = scope.get("host2")
             d1 = self.host_index.get(host1)
             d2 = self.host_index.get(host2)
-            if not d1 or not d2:
-                return "text", f"{host1}: Not found, {host2}: Not found, diff: N/A"
-            cnt1 = len(d1.get("interfaces") or [])
-            cnt2 = len(d2.get("interfaces") or [])
+            cnt1 = len(d1.get("interfaces") or []) if d1 else 0
+            cnt2 = len(d2.get("interfaces") or []) if d2 else 0
             diff = abs(cnt1 - cnt2)
-            return "text", f"{host1}: {cnt1}, {host2}: {cnt2}, diff: {diff}"
+            return "map_str_int", {"host1_count": cnt1, "host2_count": cnt2, "difference": diff}
         
         elif metric == "compare_vrf_count":
             host1 = scope.get("host1")
             host2 = scope.get("host2")
             d1 = self.host_index.get(host1)
             d2 = self.host_index.get(host2)
-            if not d1 or not d2:
-                return "text", f"{host1}: Not found, {host2}: Not found, diff: N/A"
-            cnt1 = len(self._bgp_vrfs(d1))
-            cnt2 = len(self._bgp_vrfs(d2))
+            cnt1 = self._count_vrfs_total(d1) if d1 else 0
+            cnt2 = self._count_vrfs_total(d2) if d2 else 0
             diff = abs(cnt1 - cnt2)
-            return "text", f"{host1}: {cnt1}, {host2}: {cnt2}, diff: {diff}"
+            return "map_str_int", {"host1_count": cnt1, "host2_count": cnt2, "difference": diff}
         
         elif metric == "compare_bgp_as":
             host1 = scope.get("host1")
@@ -1235,8 +1159,8 @@ class BuilderCore:
                 return "text", f"{host1}: No Info, {host2}: No Info"
             as1 = self._bgp_local_as(d1)
             as2 = self._bgp_local_as(d2)
-            as1_str = str(as1) if as1 is not None else "None"
-            as2_str = str(as2) if as2 is not None else "None"
+            as1_str = str(as1) if as1 is not None else "N/A"
+            as2_str = str(as2) if as2 is not None else "N/A"
             return "text", f"{host1}: AS {as1_str}, {host2}: AS {as2_str}"
         
         elif metric == "compare_ospf_areas":
@@ -1246,10 +1170,22 @@ class BuilderCore:
             d2 = self.host_index.get(host2)
             if not d1 or not d2:
                 return "text", f"{host1}: No Info, {host2}: No Info"
-            areas1 = set((self._ospf(d1).get("areas") or {}).keys())
-            areas2 = set((self._ospf(d2).get("areas") or {}).keys())
-            areas1_str = ", ".join(sorted(str(a) for a in areas1)) if areas1 else "None"
-            areas2_str = ", ".join(sorted(str(a) for a in areas2)) if areas2 else "None"
+            def _extract_area_ids(ospf_data):
+                areas = ospf_data.get("areas") or {}
+                if isinstance(areas, dict):
+                    return set(str(a) for a in areas.keys() if a is not None)
+                elif isinstance(areas, list):
+                    ids = set()
+                    for area in areas:
+                        if isinstance(area, dict):
+                            aid = area.get("id") or area.get("area")
+                            if aid is not None: ids.add(str(aid))
+                    return ids
+                return set()
+            areas1 = _extract_area_ids(self._ospf(d1))
+            areas2 = _extract_area_ids(self._ospf(d2))
+            areas1_str = ", ".join(sorted(areas1)) if areas1 else "None"
+            areas2_str = ", ".join(sorted(areas2)) if areas2 else "None"
             return "text", f"{host1}: Area {areas1_str}, {host2}: Area {areas2_str}"
         
         elif metric == "max_interface_device":
@@ -1268,7 +1204,7 @@ class BuilderCore:
             max_count = -1
             max_host = None
             for d in self.devices:
-                cnt = len(self._bgp_neighbors(d))
+                cnt = self._count_bgp_neighbors_total(d)
                 if cnt > max_count:
                     max_count = cnt
                     max_host = self._hostname(d)
@@ -1281,8 +1217,8 @@ class BuilderCore:
             for d in self.devices:
                 host = self._hostname(d)
                 las = self._bgp_local_as(d)
-                if las is not None:
-                    as_info.append(f"{host}: AS {las}")
+                as_value = las if las is not None else "N/A"
+                as_info.append(f"{host}: AS {as_value}")
             info_str = ", ".join(as_info) if as_info else "No Info"
             return "text", info_str
 
@@ -1387,10 +1323,8 @@ class BuilderCore:
             vrf_stats = {}
             for d in self.devices:
                 host = self._hostname(d)
-                # VRF 중복 제거: 동일한 name을 가진 VRF는 1개로 카운트
-                vrf_list = self._bgp_vrfs(d)
-                unique_vrfs = set([v.get('name') for v in vrf_list if v.get('name')])
-                vrf_count = len(unique_vrfs)
+                # _count_vrfs_total() uses all 3 VRF sources (bgp + services + interfaces)
+                vrf_count = self._count_vrfs_total(d)
                 # policies.json: "VRF가 하나도 없는 장비도 '0개'로 명시하여 포함"
                 vrf_stats[host] = vrf_count  # 0개도 포함
             # 형식: '장비1: N개, 장비2: M개' (policies.json 예시와 일치)
@@ -1451,18 +1385,30 @@ class BuilderCore:
         elif metric == "ntp_servers_list": # Replaces/augments old ntp_server_list
             host = scope.get("host")
             d = self.host_index.get(host, {})
-            # Prefer parsed text config first
             servers = ((d.get("services") or {}).get("ntp") or {}).get("servers") or []
-            # Normalize list of strings
-            result = sorted(list(set(str(s) for s in servers)))
-            return "set", result
+            # Normalize: handle both dict and str entries
+            result = []
+            for s in servers:
+                if isinstance(s, dict):
+                    addr = s.get("address") or s.get("server")
+                    if addr: result.append(str(addr))
+                elif s:
+                    result.append(str(s))
+            return "set", sorted(set(result))
 
         elif metric == "syslog_servers_list":
             host = scope.get("host")
             d = self.host_index.get(host, {})
             servers = (d.get("logging") or {}).get("hosts") or []
-            result = sorted(list(set(str(s) for s in servers)))
-            return "set", result
+            # Normalize: handle both dict and str entries
+            result = []
+            for s in servers:
+                if isinstance(s, dict):
+                    addr = s.get("address") or s.get("host") or s.get("ip")
+                    if addr: result.append(str(addr))
+                elif s:
+                    result.append(str(s))
+            return "set", sorted(set(result))
 
         elif metric == "snmp_server_communities":
             host = scope.get("host")
@@ -1472,9 +1418,12 @@ class BuilderCore:
         elif metric == "loopback_interfaces_list":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("operational") or {}).get("loopback_interfaces") or []
-            # Extract just number or full name? Question asks for list.
-            # val is list of strings like "Loopback0"
-            result = [re.search(r"Loopback(\d+)", s).group(0) for s in val if re.search(r"Loopback(\d+)", s)]
+            # Case-insensitive match for Loopback interfaces
+            result = []
+            for s in val:
+                m = re.search(r'[Ll]oopback(\d+)', str(s))
+                if m:
+                    result.append(m.group(0))
             return "set", sorted(list(set(result))) if result else []
 
         elif metric == "name_servers_list":
@@ -1496,17 +1445,18 @@ class BuilderCore:
             if las:
                 return "text", str(las)
             val = ((d.get("configuration") or {}).get("routing") or {}).get("bgp_as")
-            return "text", str(val[0]) if val else "Not Configured"
+            if isinstance(val, (list, tuple)) and val:
+                return "text", str(val[0])
+            elif val:
+                return "text", str(val)
+            return "text", "Not Configured"
 
         elif metric == "mpls_ldp_config":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("routing") or {}).get("mpls_ldp_enabled")
             return "text", "Enabled" if val else "Disabled"
 
-        elif metric == "mpls_ldp_router_id":
-            host = scope.get("host")
-            val = ((self.host_index.get(host, {}).get("configuration") or {}).get("routing") or {}).get("mpls_ldp_rid")
-            return "text", str(val) if val else "Not Configured"
+        # NOTE: mpls_ldp_router_id dead code removed — handled by earlier elif at L742
 
         elif metric == "default_route_next_hops":
             host = scope.get("host")
@@ -1557,7 +1507,11 @@ class BuilderCore:
         elif metric == "eigrp_as_numbers":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("eigrp_as")
-            return "text", str(val[0]) if val else "Not Configured"
+            if isinstance(val, (list, tuple)) and val:
+                return "text", str(val[0])
+            elif val:
+                return "text", str(val)
+            return "text", "Not Configured"
 
         elif metric == "rip_processes":
              host = scope.get("host")
@@ -1596,7 +1550,7 @@ class BuilderCore:
             for d in self.devices:
                 for i in (d.get("interfaces") or []):
                     name = i.get("name", "")
-                    if "Tunnel" in name or "Tu" in name: 
+                    if name.startswith("Tunnel") or name.startswith("Tu"): 
                          hosts.add(self._hostname(d))
             return "set", sorted(list(hosts))
             
@@ -1605,7 +1559,7 @@ class BuilderCore:
             for d in self.devices:
                 for i in (d.get("interfaces") or []):
                     name = i.get("name", "")
-                    if "Port-channel" in name or "Po" in name: 
+                    if name.startswith("Port-channel") or name.startswith("Po"): 
                          hosts.add(self._hostname(d))
             return "set", sorted(list(hosts))
             
@@ -1618,15 +1572,11 @@ class BuilderCore:
                          hosts.add(self._hostname(d))
             return "set", sorted(list(hosts))
 
-        elif metric == "vlan_interface_devices":
-            hosts = set()
-            for d in self.devices:
-                for i in (d.get("interfaces") or []):
-                    if "Vlan" in i.get("name", ""):
-                        hosts.add(self._hostname(d))
-            return "set", sorted(list(hosts))
 
+        # 미인식 메트릭: 경고 출력 후 None 반환
+        print(f"[WARNING] _answer_for_metric: unrecognized metric '{metric}' (scope={scope}). Returning None.")
         return "text", None
+
 
     # ---------- DSL → 테스트 인스턴스 확장 ----------
     def expand_from_dsl(self, dsl: List[Dict[str,Any]], k_variant: int = 1, 
@@ -1660,8 +1610,16 @@ class BuilderCore:
         ospf_areas: Set[str] = set()
         for d in self.devices:
             ospf = self._ospf(d)
-            for area in ospf.get("areas", {}):
-                ospf_areas.add(area)
+            areas = ospf.get("areas", {})
+            if isinstance(areas, dict):
+                for area_key in areas:
+                    ospf_areas.add(str(area_key))
+            elif isinstance(areas, list):
+                for area in areas:
+                    if isinstance(area, dict):
+                        aid = area.get("id") or area.get("area")
+                        if aid is not None:
+                            ospf_areas.add(str(aid))
         area_list = sorted(list(ospf_areas))
 
         # 인터페이스 후보
@@ -1719,7 +1677,27 @@ class BuilderCore:
                 for l_src, l_dst in sorted(list(links)):
                     # 테스트 트래픽: 임의의 두 장비 (장애 링크와 무관할 수도 있음)
                     # CE 장비 우선 선택 (실제 트래픽 흐름 모사)
-                    ce_hosts = [h for h in hosts if "ce" in h.lower()]
+                    # Edge 노드 우선 선택: eBGP neighbor가 있는 노드 = Provider Edge와 연결된 CE
+                    # Fallback: 이름 기반 ('ce' in name)
+                    ce_hosts = []
+                    for h in hosts:
+                        d = self.host_index.get(h, {})
+                        bgp = (d.get("routing") or {}).get("bgp") or {}
+                        neighbors = bgp.get("neighbors") or []
+                        local_as = bgp.get("local_as")
+                        # eBGP neighbor가 있으면 edge 노드
+                        has_ebgp = any(
+                            n.get("remote_as") and str(n.get("remote_as")) != str(local_as)
+                            for n in neighbors
+                        )
+                        if has_ebgp and not any(
+                            str(n.get("remote_as")) == str(local_as)
+                            for n in neighbors
+                        ):
+                            ce_hosts.append(h)
+                    if not ce_hosts:
+                        # Fallback: 이름 기반
+                        ce_hosts = [h for h in hosts if "ce" in h.lower()]
                     candidates = ce_hosts if len(ce_hosts) >= 2 else hosts
                     if len(candidates) >= 2:
                         fs, fd = rng.sample(candidates, 2)
@@ -1886,11 +1864,20 @@ SUPPORTED_METRICS: List[str] = [
     "configured_bgp_as_numbers", "eigrp_as_numbers", "rip_processes",
     "active_ospf_processes", "port_channel_devices", "tunnel_interface_devices",
     "serial_interface_devices", "vlan_interface_devices", "mpls_ldp_config", "multicast_routing_config",
+    "hsrp_groups_list",
 
+    # --- Phase 4: Missing metrics (policies.json에 있지만 SUPPORTED_METRICS에 누락) ---
+    "aaa_authentication_method",
+    "interface_status_map",
+    "routing_table_entry_count",
+    "mpls_ldp_router_id",
+    "ntp_servers_list",
+    "syslog_servers_list",
     
     # === L2: OSPF Consistency ===
     "ospf_area_membership",
     "ospf_area0_if_count",
+    "ospf_neighbor_count_per_area",
     
     # === L2: L2VPN Consistency ===
     "l2vpn_pairs",
@@ -1923,6 +1910,9 @@ SUPPORTED_METRICS: List[str] = [
     "max_interface_device",
     "max_bgp_peer_device",
     "all_devices_same_as",
+    "min_interface_device",
+    "bgp_as_distribution",
+    "vrf_usage_statistics",
     
     # === L4/L5: Batfish-based (placeholder) ===
     "find_alternative_path",
@@ -2083,7 +2073,7 @@ def execute_intent(intent: Dict[str, Any], facts: Any) -> Dict[str, Any]:
         print(f"[WARNING] unsupported metric: {metric}, trying anyway...")
 
     # scope 키 검증 (관대하게 수정)
-    allowed_scope_keys = {"host","asn","vrf","vrf_name","if","interface","peer","_q"}
+    allowed_scope_keys = {"host","host1","host2","asn","vrf","vrf_name","if","interface","peer","_q","area","type","link","down_link","node1","node2","test_src","test_dst","src","dst"}
     for k in scope.keys():
         if k not in allowed_scope_keys:
             print(f"[WARNING] unusual scope key: {k}, continuing...")

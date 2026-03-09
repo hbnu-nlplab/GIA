@@ -13,7 +13,12 @@ class UniversalParser:
     def __init__(self):
         pass
 
-    def parse_dir(self, xml_dir: str, batfish_host: str = "localhost") -> Dict[str, Any]:
+    def parse_dir(
+        self,
+        xml_dir: str,
+        batfish_host: str = "localhost",
+        fail_on_missing_config: bool = False,
+    ) -> Dict[str, Any]:
         """
         xml_dir: Lab root or configs directory.
         """
@@ -31,4 +36,8 @@ class UniversalParser:
             configs_dir = path
 
         print(f"[UniversalParser] Using configs_dir: {configs_dir}")
-        return batfish_parser.parse_batfish_datamodel(configs_dir, batfish_host=batfish_host)
+        return batfish_parser.parse_batfish_datamodel(
+            configs_dir,
+            batfish_host=batfish_host,
+            fail_on_missing_config=fail_on_missing_config,
+        )

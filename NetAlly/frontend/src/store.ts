@@ -10,12 +10,69 @@ export interface Evidence {
   details?: any
 }
 
+export interface VizPayload {
+  nodes: string[]
+  edges: Array<{ source: string; target: string }>
+  mode: 'focus' | 'path'
+  title?: string
+  callId?: number
+  query?: string
+  reason?: string
+  source?: string
+  schemaVersion?: number
+  diagnostics?: {
+    requestedNodes?: number
+    requestedEdges?: number
+    normalizedNodes?: number
+    normalizedEdges?: number
+    truncated?: boolean
+  }
+}
+
+export interface TopologyDeviceSummary {
+  id: string
+  label?: string
+  platform?: string
+  deviceType?: string
+}
+
+export interface ChatContextDevice {
+  id: string
+  label?: string
+  platform?: string
+  deviceType?: string
+  source?: 'map' | 'slash' | 'manual'
+}
+
+export interface RuntimeServiceHealth {
+  status: string
+  severity: 'ok' | 'warning' | 'error'
+  detail?: string
+}
+
+export interface RuntimeHealth {
+  overall: 'healthy' | 'degraded' | 'unknown'
+  checkedAt?: string
+  recommendedMode: 'full' | 'limited' | 'unknown'
+  services: {
+    batfish?: RuntimeServiceHealth
+    nso?: RuntimeServiceHealth
+    pnetlab?: RuntimeServiceHealth
+  }
+  notes: string[]
+}
+
 interface AppState {
   selectedNode: string | null
   setSelectedNode: (node: string | null) => void
+
+  // Visualization overlay (rule-based hints from backend / tools)
+  viz: VizPayload | null
+  setViz: (viz: AppState['viz']) => void
+  clearViz: () => void
   
   evidenceList: Evidence[]
-  addEvidence: (evidence: Omit<Evidence, 'id' | 'timestamp'>) => void
+  addEvidence: (evidence: Omit<Evidence, 'id' | 'timestamp'> & { id?: string }) => string
   clearEvidence: () => void
   
   detailView: {
@@ -37,8 +94,6 @@ interface AppState {
   setChatWidth: (width: number) => void
   
   settings: {
-    showTopologyLabels: boolean
-    autoOnboard: boolean
     oobIntf: string
     deviceGroup: string
     pnetlabVmIp: string
@@ -56,6 +111,16 @@ interface AppState {
   topologySource: 'batfish' | 'pnetlab'
   setTopologySource: (source: 'batfish' | 'pnetlab') => void
 
+  topologyDevices: TopologyDeviceSummary[]
+  setTopologyDevices: (devices: TopologyDeviceSummary[]) => void
+
+  chatContextDevice: ChatContextDevice | null
+  setChatContextDevice: (device: ChatContextDevice | null) => void
+  clearChatContextDevice: () => void
+
+  runtimeHealth: RuntimeHealth
+  setRuntimeHealth: (health: RuntimeHealth) => void
+
   // Lab Operations Status
   labPrepareStatus: string | null
   labPrepareDetail: any | null
@@ -68,18 +133,26 @@ interface AppState {
 export const useAppStore = create<AppState>((set) => ({
   selectedNode: null,
   setSelectedNode: (node) => set({ selectedNode: node }),
+
+  viz: null,
+  setViz: (viz) => set({ viz }),
+  clearViz: () => set({ viz: null }),
   
   evidenceList: [],
-  addEvidence: (evidence) => set((state) => ({
-    evidenceList: [
-      {
-        ...evidence,
-        id: Math.random().toString(36).substring(7),
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      },
-      ...state.evidenceList
-    ].slice(0, 50)
-  })),
+  addEvidence: (evidence) => {
+    const resolvedId = evidence.id || Math.random().toString(36).substring(7)
+    set((state) => ({
+      evidenceList: [
+        {
+          ...evidence,
+          id: resolvedId,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        },
+        ...state.evidenceList
+      ].slice(0, 50)
+    }))
+    return resolvedId
+  },
   clearEvidence: () => set({ evidenceList: [] }),
   
   detailView: {
@@ -94,9 +167,26 @@ export const useAppStore = create<AppState>((set) => ({
     detailView: { isOpen: false, type: null, id: null }
   }),
 
-  theme: 'dark',
+  theme: (() => {
+    const t = localStorage.getItem('theme') === 'dark' ? 'dark' : 'light'
+    if (t === 'dark') {
+      document.documentElement.classList.add('dark')
+      document.body.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+      document.body.classList.remove('dark')
+    }
+    localStorage.setItem('theme', t)
+    return t
+  })(),
   setTheme: (theme) => {
-    document.documentElement.classList.toggle('dark', theme === 'dark')
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark')
+      document.body.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+      document.body.classList.remove('dark')
+    }
     localStorage.setItem('theme', theme)
     set({ theme })
   },
@@ -111,8 +201,6 @@ export const useAppStore = create<AppState>((set) => ({
   setChatWidth: (width) => set({ chatWidth: Math.max(300, Math.min(width, 800)) }),
   
   settings: {
-    showTopologyLabels: true,
-    autoOnboard: false,
     oobIntf: localStorage.getItem('lab_oob_intf') || '',
     deviceGroup: localStorage.getItem('lab_device_group') || '',
     pnetlabVmIp: localStorage.getItem('lab_pnetlab_vm_ip') || '',
@@ -127,11 +215,26 @@ export const useAppStore = create<AppState>((set) => ({
   viewMode: 'dashboard',
   setViewMode: (mode) => set({ viewMode: mode }),
   
-  topologySource: (localStorage.getItem('topologySource') as 'batfish' | 'pnetlab') || 'batfish',
+  topologySource: (localStorage.getItem('topologySource') as 'batfish' | 'pnetlab') || 'pnetlab',
   setTopologySource: (source) => {
     localStorage.setItem('topologySource', source)
     set({ topologySource: source })
   },
+
+  topologyDevices: [],
+  setTopologyDevices: (devices) => set({ topologyDevices: devices }),
+
+  chatContextDevice: null,
+  setChatContextDevice: (device) => set({ chatContextDevice: device }),
+  clearChatContextDevice: () => set({ chatContextDevice: null }),
+
+  runtimeHealth: {
+    overall: 'unknown',
+    recommendedMode: 'unknown',
+    services: {},
+    notes: [],
+  },
+  setRuntimeHealth: (runtimeHealth) => set({ runtimeHealth }),
 
   labPrepareStatus: null,
   labPrepareDetail: null,

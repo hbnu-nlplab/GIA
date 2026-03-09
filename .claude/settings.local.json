@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cp:*)",
+      "Bash(ping:*)",
+      "Bash(ssh:*)",
+      "Bash(sshpass:*)",
+      "Bash(python:*)",
+      "Bash(uv run:*)",
+      "Bash(uv add:*)",
+      "Bash(curl:*)",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(uv sync:*)",
+      "Bash(uv:*)",
+      "Bash(.venv/Scripts/python:*)",
+      "Bash(BATFISH_HOST=192.168.146.129 .venv/Scripts/python:*)",
+      "Bash(bash:*)",
+      "WebSearch",
+      "Bash(head:*)",
+      "Bash(cut:*)",
+      "mcp__plugin_serena_serena__replace_content",
+      "Bash(PYTHONUTF8=1 .venv/Scripts/python:*)",
+      "Bash(rm:*)",
+      "Bash(do echo:*)",
+      "Bash(ollama list:*)",
+      "Bash(\"/c/Users/sdlab/AppData/Local/Programs/Ollama/ollama.exe\" list:*)",
+      "Bash(PYTHONUTF8=1 ../../../.venv/Scripts/python:*)",
+      "Bash(cmd.exe:*)",
+      "Bash(pkill:*)",
+      "Bash(pgrep:*)"
+    ]
+  }
+}

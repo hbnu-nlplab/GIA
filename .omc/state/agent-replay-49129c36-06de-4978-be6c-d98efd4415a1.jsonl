@@ -1,0 +1,5 @@
+{"t":0,"agent":"a666f68","agent_type":"unknown","event":"agent_stop","success":true}
+{"t":0,"agent":"system","event":"skill_invoked","skill_name":"hud"}
+{"t":0,"agent":"system","event":"skill_invoked","skill_name":"oh-my-claudecode:mcp-setup"}
+{"t":0,"agent":"afdee11","agent_type":"unknown","event":"agent_stop","success":true}
+{"t":0,"agent":"a70f0ea","agent_type":"unknown","event":"agent_stop","success":true}

@@ -1,12 +1,11 @@
-version: '3.8'
-
 services:
   # =========================================================================
   # NetAlly Main Service
   # =========================================================================
   netally:
-    build: .
-    container_name: netally
+    build:
+      context: ..
+      dockerfile: NetAlly/Dockerfile
     ports:
       - "8000:8000"  # Web UI + API
     environment:
@@ -38,6 +37,8 @@ services:
     volumes:
       - netally_data:/data
       - ./results:/app/results
+      # When running on the PNETLab VM, mount UNetLab files read-only to enable cookie-less LabFS topology parsing:
+      # - /opt/unetlab:/opt/unetlab:ro
     
     depends_on:
       batfish:
@@ -50,7 +51,6 @@ services:
   # =========================================================================
   batfish:
     image: batfish/allinone:latest
-    container_name: batfish
     ports:
       - "9996:9996"
       - "9997:9997"
@@ -58,7 +58,8 @@ services:
       - batfish_data:/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9996/v2"]
+      # batfish/allinone image may not include curl. Use python stdlib probe.
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9996/v2/version', timeout=5)"]
       interval: 30s
       timeout: 10s
       retries: 3
