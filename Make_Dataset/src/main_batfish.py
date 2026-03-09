@@ -24,6 +24,7 @@ from core_batfish.rule_based_generator import RuleBasedGenerator, RuleBasedGener
 from core_batfish.builder_core import BuilderCore
 from core_batfish.batfish_builder import BatfishBuilder, AnswerResult
 from core_batfish.ko_josa import fix_josa
+from l45_contracts import build_l45_contract
 from validate_policies import validate_policies
 from validate_dataset_quality import validate_dataset_quality
 
@@ -201,6 +202,25 @@ def canonicalize_answers_for_language_neutral_contract(rows: list) -> int:
             row["answer"] = json.dumps(canonical, ensure_ascii=False)
             changed += 1
     return changed
+
+
+def build_eval_answer(answer_status: str, answer_json: str) -> str:
+    """Build evaluation-facing gold answer.
+
+    Internal answers stay typed for verification. For hallucination scoring,
+    NOT_CONFIGURED must be explicit and must not silently equal blank/null/[].
+    """
+    if str(answer_status or "").strip().upper() == "NOT_CONFIGURED":
+        return "NOT_CONFIGURED"
+
+    try:
+        parsed = json.loads(answer_json)
+    except Exception:
+        return str(answer_json)
+
+    if isinstance(parsed, str):
+        return parsed
+    return json.dumps(parsed, ensure_ascii=False, sort_keys=True)
 
 
 def validate_answer(value, answer_type: str) -> tuple:
@@ -572,6 +592,7 @@ def main():
         if las: all_asns.add(str(las))
     
     qa_list = []
+    seen_ids = set()
     seen_id_v2 = set()
     generation_checks = {
         "evidence_placeholder_count": 0,
@@ -938,17 +959,31 @@ def main():
                     parsed_text = canonicalize_text_answer(metric_name, parsed_text)
                     a_json = json.dumps(parsed_text, ensure_ascii=False)
 
+            row_id = unique_id
+            if row_id in seen_ids:
+                row_id = f"{row_id}__{make_scope_hash(scope)[:8]}"
+            seen_ids.add(row_id)
+
             qa_list.append({
-                "id": unique_id,
+                "id": row_id,
                 "id_v2": id_v2,
+                "metric": metric_name,
+                "scope": scope,
                 "category": dsl["category"],
                 "level": level,
                 "question": q_text,
                 "answer_status": answer_status,
                 "answer_type": answer_type,
                 "answer": a_json,
+                "eval_answer": build_eval_answer(answer_status, a_json),
                 "unknown_reason": unknown_reason,
                 "evidence": evidence_str,
+                "scenario": None,
+                "query_contract": None,
+                "verification_contract": None,
+                "oracle_source": "builder_core",
+                "verification_status": "pending",
+                "quarantine_reason": "",
                 "pipeline_version": PIPELINE_VERSION,
                 "files": str(res.get("files", []) if isinstance(res, dict) else [])
             })
@@ -1006,21 +1041,39 @@ def main():
                 answer_type = canonical_dataset_answer_type(q["answer_type"])
                 if answer_type in {"text", "scalar_str", "enum"} and isinstance(answer_val, str):
                     answer_val = canonicalize_text_answer(metric_name, answer_val)
+                contract = {}
+                if level in {"L4", "L5"}:
+                    contract = build_l45_contract(q, bf_builder)
                 
-                qa_list.append({
-                    "id": str(q["id"]),
+                row_id = str(q["id"])
+                if row_id in seen_ids:
+                    row_id = f"{row_id}__{id_v2.split(':', 1)[-1][:8]}"
+                seen_ids.add(row_id)
+
+                row = {
+                    "id": row_id,
                     "id_v2": id_v2,
+                    "metric": metric_name,
+                    "scope": scope,
                     "category": q["category"],
                     "level": q["level"],
                     "question": q["question"],
                     "answer_status": "OK",
                     "answer_type": answer_type,
                     "answer": json.dumps(answer_val, ensure_ascii=False),
+                    "eval_answer": build_eval_answer("OK", json.dumps(answer_val, ensure_ascii=False)),
                     "unknown_reason": "",
                     "evidence": json.dumps(evidence, ensure_ascii=False),
+                    "scenario": contract.get("scenario"),
+                    "query_contract": contract.get("query_contract"),
+                    "verification_contract": contract.get("verification_contract"),
+                    "oracle_source": contract.get("oracle_source", "batfish_replay" if level in {"L4", "L5"} else "builder"),
+                    "verification_status": contract.get("verification_status", "pending"),
+                    "quarantine_reason": contract.get("quarantine_reason", ""),
                     "pipeline_version": PIPELINE_VERSION,
                     "files": "[]"
-                })
+                }
+                qa_list.append(row)
 
         # L4 질문 생성
         print("[3.5.1] Generating L4 questions (Reachability, Traceroute, Advanced)...")
@@ -1099,7 +1152,13 @@ def main():
 
         df = pd.DataFrame(qa_list)
         # 컬럼 순서 정렬
-        column_order = ["id", "id_v2", "category", "level", "question", "answer_status", "answer_type", "answer", "unknown_reason", "evidence", "pipeline_version", "files"]
+        column_order = [
+            "id", "id_v2", "metric", "scope", "category", "level", "question",
+            "answer_status", "answer_type", "answer", "eval_answer", "unknown_reason",
+            "evidence", "scenario", "query_contract", "verification_contract",
+            "oracle_source", "verification_status", "quarantine_reason",
+            "pipeline_version", "files"
+        ]
         df = df[[c for c in column_order if c in df.columns]]
         
         # CSV 저장

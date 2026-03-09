@@ -40,6 +40,6 @@
 39,ROOT_CAUSE_leaf1_p4,L5,root_cause_analysis,text,"leaf1에서 p4로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe1""",,,
 40,ROOT_CAUSE_leaf6_p3,L5,root_cause_analysis,text,"leaf6에서 p3로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe3""",,,
 41,ROOT_CAUSE_leaf6_pe1,L5,root_cause_analysis,text,"leaf6에서 pe1로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]","""pe3""",,,
-42,SPOF_DETECTION_GLOBAL,L5,spof_detection,set_str,"단일 장비 장애 시 통신이 두절되는 구간(SPOF: Single Point of Failure)이 존재합니까? [답변 형식: SPOF 장비 목록 (예: [""p1"", ""pe1""]) 또는 빈 목록 []]","[""pe3""]",,,
+42,SPOF_DETECTION_GLOBAL,L5,spof_detection,set_str,"단일 장비 장애 시 통신이 두절되는 구간(SPOF: Single Point of Failure)이 존재합니까? [답변 형식: SPOF 장비 목록 (예: [""p1"", ""pe1""]) 또는 빈 목록 []]","[""pe3"", ""leaf6""]",,,
 43,TRIPLE_FAILURE_leaf1_leaf2_leaf3,L5,triple_node_failure,text,"leaf1, leaf2, leaf3가 동시에 다운되면 네트워크가 완전히 분리됩니까? [답변 형식: 'YES' 또는 'NO (affected_flows: N)']","""NO (affected_flows: 29)""",,,
 44,WORST_CASE_FAILURE,L5,worst_case_failure_analysis,text,단일 장비 장애 시 가장 큰 영향을 주는 장비는? [답변 형식: 'device_name (N)'],"""p3(30)""",,,

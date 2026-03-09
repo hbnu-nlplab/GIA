@@ -37,28 +37,28 @@
         },
         {
           "name": "GigabitEthernet0/0",
-          "ipv4": null,
+          "ipv4": "10.0.30.1/31",
           "vlan": null,
           "vrf": null,
           "status": "up"
         },
         {
           "name": "GigabitEthernet0/1",
-          "ipv4": null,
+          "ipv4": "10.0.31.0/31",
           "vlan": null,
           "vrf": null,
           "status": "up"
         },
         {
           "name": "GigabitEthernet0/2",
-          "ipv4": null,
+          "ipv4": "10.0.31.2/31",
           "vlan": null,
           "vrf": null,
           "status": "up"
         },
         {
           "name": "GigabitEthernet0/3",
-          "ipv4": null,
+          "ipv4": "10.0.40.0/31",
           "vlan": null,
           "vrf": null,
           "status": "up"
@@ -109,10 +109,16 @@
           ],
           "areas": {
             "0": [
+              "GigabitEthernet0/0",
               "Loopback0"
             ],
-            "1": [],
-            "2": []
+            "1": [
+              "GigabitEthernet0/1",
+              "GigabitEthernet0/2"
+            ],
+            "2": [
+              "GigabitEthernet0/3"
+            ]
           }
         }
       },
@@ -130,7 +136,12 @@
         },
         "vrf": [],
         "mpls": {
-          "ldp_interfaces": [],
+          "ldp_interfaces": [
+            "GigabitEthernet0/0",
+            "GigabitEthernet0/1",
+            "GigabitEthernet0/2",
+            "GigabitEthernet0/3"
+          ],
           "ldp": {
             "router_id": "Loopback0"
           }
@@ -142,7 +153,7 @@
           "enable_secret": "None",
           "console_password": "None",
           "exec_timeout": "None",
-          "banner_motd": "Configured",
+          "banner_motd": "*** NCN ASBR ASBR1 - Inter-AS Gateway ***\n*** Authorized Access Only - All activities are monitored ***",
           "banner_login": "None",
           "http_server": false,
           "cdp": true,
@@ -175,11 +186,11 @@
         "advanced": {
           "acls_count": 0,
           "acl_interfaces": [],
-          "prefix_lists_count": 2,
+          "prefix_lists_count": 1,
           "route_maps_count": 1,
           "class_maps": [],
           "netflow_monitors": [],
-          "missing_descriptions_count": 6,
+          "missing_descriptions_count": 4,
           "eigrp_as": [],
           "rip_enabled": false,
           "fhrp_groups": [],
@@ -232,28 +243,28 @@
         },
         {
           "name": "GigabitEthernet0/0",
-          "ipv4": null,
+          "ipv4": "10.0.30.3/31",
           "vlan": null,
           "vrf": null,
           "status": "up"
         },
         {
           "name": "GigabitEthernet0/1",
-          "ipv4": null,
+          "ipv4": "10.0.32.0/31",
           "vlan": null,
           "vrf": null,
           "status": "up"
         },
         {
           "name": "GigabitEthernet0/2",
-          "ipv4": null,
+          "ipv4": "10.0.32.2/31",
           "vlan": null,
           "vrf": null,
           "status": "up"
         },
         {
           "name": "GigabitEthernet0/3",
-          "ipv4": null,
+          "ipv4": "10.0.40.2/31",
           "vlan": null,
           "vrf": null,
           "status": "up"
@@ -304,10 +315,16 @@
           ],
           "areas": {
             "0": [
+              "GigabitEthernet0/0",
               "Loopback0"
             ],
-            "1": [],
-            "2": []
+            "1": [
+              "GigabitEthernet0/1",
+              "GigabitEthernet0/2"
+            ],
+            "2": [
+              "GigabitEthernet0/3"
+            ]
           }
         }
       },
@@ -325,7 +342,12 @@
         },
         "vrf": [],
         "mpls": {
-          "ldp_interfaces": [],
+          "ldp_interfaces": [
+            "GigabitEthernet0/0",
+            "GigabitEthernet0/1",
+            "GigabitEthernet0/2",
+            "GigabitEthernet0/3"
+          ],
           "ldp": {
             "router_id": "Loopback0"
           }
@@ -337,7 +359,7 @@
           "enable_secret": "None",
           "console_password": "None",
           "exec_timeout": "None",
-          "banner_motd": "Configured",
+          "banner_motd": "*** NCN ASBR ASBR2 - Inter-AS Gateway ***\n*** Authorized Access Only - All activities are monitored ***",
           "banner_login": "None",
           "http_server": false,
           "cdp": true,
@@ -370,11 +392,11 @@
         "advanced": {
           "acls_count": 0,
           "acl_interfaces": [],
-          "prefix_lists_count": 2,
+          "prefix_lists_count": 1,
           "route_maps_count": 1,
           "class_maps": [],
           "netflow_monitors": [],
-          "missing_descriptions_count": 6,
+          "missing_descriptions_count": 4,
           "eigrp_as": [],
           "rip_enabled": false,
           "fhrp_groups": [],
@@ -493,7 +515,11 @@
         },
         "vrf": [],
         "mpls": {
-          "ldp_interfaces": [],
+          "ldp_interfaces": [
+            "GigabitEthernet0/0",
+            "GigabitEthernet0/1",
+            "GigabitEthernet0/2"
+          ],
           "ldp": {
             "router_id": "Loopback0"
           }
@@ -505,7 +531,7 @@
           "enable_secret": "None",
           "console_password": "None",
           "exec_timeout": "None",
-          "banner_motd": "Configured",
+          "banner_motd": "*** NCN Core Router FW1 - Authorized Access Only ***",
           "banner_login": "None",
           "http_server": false,
           "cdp": true,
@@ -541,7 +567,7 @@
           "route_maps_count": 0,
           "class_maps": [],
           "netflow_monitors": [],
-          "missing_descriptions_count": 5,
+          "missing_descriptions_count": 4,
           "eigrp_as": [],
           "rip_enabled": false,
           "fhrp_groups": [],
@@ -660,7 +686,11 @@
         },
         "vrf": [],
         "mpls": {
-          "ldp_interfaces": [],
+          "ldp_interfaces": [
+            "GigabitEthernet0/0",
+            "GigabitEthernet0/1",
+            "GigabitEthernet0/2"
+          ],
           "ldp": {
             "router_id": "Loopback0"
           }
@@ -672,7 +702,7 @@
           "enable_secret": "None",
           "console_password": "None",
           "exec_timeout": "None",
-          "banner_motd": "Configured",
+          "banner_motd": "*** NCN Core Router FW2 - Authorized Access Only ***",
           "banner_login": "None",
           "http_server": false,
           "cdp": true,
@@ -708,7 +738,7 @@
           "route_maps_count": 0,
           "class_maps": [],
           "netflow_monitors": [],
-          "missing_descriptions_count": 5,
+          "missing_descriptions_count": 4,
           "eigrp_as": [],
           "rip_enabled": false,
           "fhrp_groups": [],
@@ -943,7 +973,9 @@
         },
         "advanced": {
           "acls_count": 1,
-          "acl_interfaces": [],
+          "acl_interfaces": [
+            "GigabitEthernet0/0"
+          ],
           "prefix_lists_count": 0,
           "route_maps_count": 0,
           "class_maps": [],
@@ -1063,7 +1095,9 @@
         },
         "advanced": {
           "acls_count": 1,
-          "acl_interfaces": [],
+          "acl_interfaces": [
+            "GigabitEthernet0/0"
+          ],
           "prefix_lists_count": 0,
           "route_maps_count": 0,
           "class_maps": [],
@@ -1183,7 +1217,9 @@
         },
         "advanced": {
           "acls_count": 1,
-          "acl_interfaces": [],
+          "acl_interfaces": [
+            "GigabitEthernet0/0"
+          ],
           "prefix_lists_count": 0,
           "route_maps_count": 0,
           "class_maps": [],
@@ -2623,7 +2659,9 @@
         },
         "advanced": {
           "acls_count": 1,
-          "acl_interfaces": [],
+          "acl_interfaces": [
+            "GigabitEthernet0/0"
+          ],
           "prefix_lists_count": 0,
           "route_maps_count": 0,
           "class_maps": [],
@@ -2741,7 +2779,11 @@
         },
         "vrf": [],
         "mpls": {
-          "ldp_interfaces": [],
+          "ldp_interfaces": [
+            "GigabitEthernet0/0",
+            "GigabitEthernet0/1",
+            "GigabitEthernet0/2"
+          ],
           "ldp": {
             "router_id": "Loopback0"
           }
@@ -2753,7 +2795,7 @@
           "enable_secret": "None",
           "console_password": "None",
           "exec_timeout": "None",
-          "banner_motd": "Configured",
+          "banner_motd": "*** NCN Core Router P1 - Authorized Access Only ***",
           "banner_login": "None",
           "http_server": false,
           "cdp": true,
@@ -2900,7 +2942,11 @@
         },
         "vrf": [],
         "mpls": {
-          "ldp_interfaces": [],
+          "ldp_interfaces": [
+            "GigabitEthernet0/0",
+            "GigabitEthernet0/1",
+            "GigabitEthernet0/2"
+          ],
           "ldp": {
             "router_id": "Loopback0"
           }
@@ -2912,7 +2958,7 @@
           "enable_secret": "None",
           "console_password": "None",
           "exec_timeout": "None",
-          "banner_motd": "Configured",
+          "banner_motd": "*** NCN Core Router P10 - Authorized Access Only ***",
           "banner_login": "None",
           "http_server": false,
           "cdp": true,
@@ -3059,7 +3105,11 @@
         },
         "vrf": [],
         "mpls": {
-          "ldp_interfaces": [],
+          "ldp_interfaces": [
+            "GigabitEthernet0/0",
+            "GigabitEthernet0/1",
+            "GigabitEthernet0/2"
+          ],
           "ldp": {
             "router_id": "Loopback0"
           }
@@ -3071,7 +3121,7 @@
           "enable_secret": "None",
           "console_password": "None",
           "exec_timeout": "None",
-          "banner_motd": "Configured",
+          "banner_motd": "*** NCN Core Router P11 - Authorized Access Only ***",
           "banner_login": "None",
           "http_server": false,
           "cdp": true,
@@ -3218,7 +3268,11 @@
         },
         "vrf": [],
         "mpls": {
-          "ldp_interfaces": [],
+          "ldp_interfaces": [
+            "GigabitEthernet0/0",
+            "GigabitEthernet0/1",
+            "GigabitEthernet0/2"
+          ],
           "ldp": {
             "router_id": "Loopback0"
           }
@@ -3230,7 +3284,7 @@
           "enable_secret": "None",
           "console_password": "None",
           "exec_timeout": "None",
-          "banner_motd": "Configured",
+          "banner_motd": "*** NCN Core Router P12 - Authorized Access Only ***",
           "banner_login": "None",
           "http_server": false,
           "cdp": true,
@@ -3377,7 +3431,11 @@
         },
         "vrf": [],
         "mpls": {
-          "ldp_interfaces": [],
+          "ldp_interfaces": [
+            "GigabitEthernet0/0",
+            "GigabitEthernet0/1",
+            "GigabitEthernet0/2"
+          ],
           "ldp": {
             "router_id": "Loopback0"
           }
@@ -3389,7 +3447,7 @@
           "enable_secret": "None",
           "console_password": "None",
           "exec_timeout": "None",
-          "banner_motd": "Configured",
+          "banner_motd": "*** NCN Core Router P2 - Authorized Access Only ***",
           "banner_login": "None",
           "http_server": false,
           "cdp": true,
@@ -3536,7 +3594,11 @@
         },
         "vrf": [],
         "mpls": {
-          "ldp_interfaces": [],
+          "ldp_interfaces": [
+            "GigabitEthernet0/0",
+            "GigabitEthernet0/1",
+            "GigabitEthernet0/2"
+          ],
           "ldp": {
             "router_id": "Loopback0"
           }
@@ -3548,7 +3610,7 @@
           "enable_secret": "None",
           "console_password": "None",
           "exec_timeout": "None",
-          "banner_motd": "Configured",
+          "banner_motd": "*** NCN Core Router P3 - Authorized Access Only ***",
           "banner_login": "None",
           "http_server": false,
           "cdp": true,
@@ -3582,7 +3644,7 @@
           "route_maps_count": 0,
           "class_maps": [],
           "netflow_monitors": [],
-          "missing_descriptions_count": 5,
+          "missing_descriptions_count": 4,
           "eigrp_as": [],
           "rip_enabled": false,
           "fhrp_groups": [],
@@ -3695,7 +3757,11 @@
         },
         "vrf": [],
         "mpls": {
-          "ldp_interfaces": [],
+          "ldp_interfaces": [
+            "GigabitEthernet0/0",
+            "GigabitEthernet0/1",
+            "GigabitEthernet0/2"
+          ],
           "ldp": {
             "router_id": "Loopback0"
           }
@@ -3707,7 +3773,7 @@
           "enable_secret": "None",
           "console_password": "None",
           "exec_timeout": "None",
-          "banner_motd": "Configured",
+          "banner_motd": "*** NCN Core Router P4 - Authorized Access Only ***",
           "banner_login": "None",
           "http_server": false,
           "cdp": true,
@@ -3854,7 +3920,11 @@
         },
         "vrf": [],
         "mpls": {
-          "ldp_interfaces": [],
+          "ldp_interfaces": [
+            "GigabitEthernet0/0",
+            "GigabitEthernet0/1",
+            "GigabitEthernet0/2"
+          ],
           "ldp": {
             "router_id": "Loopback0"
           }
@@ -3866,7 +3936,7 @@
           "enable_secret": "None",
           "console_password": "None",
           "exec_timeout": "None",
-          "banner_motd": "Configured",
+          "banner_motd": "*** NCN Core Router P5 - Authorized Access Only ***",
           "banner_login": "None",
           "http_server": false,
           "cdp": true,
@@ -3900,7 +3970,7 @@
           "route_maps_count": 0,
           "class_maps": [],
           "netflow_monitors": [],
-          "missing_descriptions_count": 5,
+          "missing_descriptions_count": 4,
           "eigrp_as": [],
           "rip_enabled": false,
           "fhrp_groups": [],
@@ -4013,7 +4083,11 @@
         },
         "vrf": [],
         "mpls": {
-          "ldp_interfaces": [],
+          "ldp_interfaces": [
+            "GigabitEthernet0/0",
+            "GigabitEthernet0/1",
+            "GigabitEthernet0/2"
+          ],
           "ldp": {
             "router_id": "Loopback0"
           }
@@ -4025,7 +4099,7 @@
           "enable_secret": "None",
           "console_password": "None",
           "exec_timeout": "None",
-          "banner_motd": "Configured",
+          "banner_motd": "*** NCN Core Router P6 - Authorized Access Only ***",
           "banner_login": "None",
           "http_server": false,
           "cdp": true,
@@ -4178,7 +4252,11 @@
         },
         "vrf": [],
         "mpls": {
-          "ldp_interfaces": [],
+          "ldp_interfaces": [
+            "GigabitEthernet0/0",
+            "GigabitEthernet0/1",
+            "GigabitEthernet0/2"
+          ],
           "ldp": {
             "router_id": "Loopback0"
           }
@@ -4190,7 +4268,7 @@
           "enable_secret": "None",
           "console_password": "None",
           "exec_timeout": "None",
-          "banner_motd": "Configured",
+          "banner_motd": "*** NCN Core Router P7 - Authorized Access Only ***",
           "banner_login": "None",
           "http_server": false,
           "cdp": true,
@@ -4226,7 +4304,7 @@
           "route_maps_count": 0,
           "class_maps": [],
           "netflow_monitors": [],
-          "missing_descriptions_count": 5,
+          "missing_descriptions_count": 4,
           "eigrp_as": [],
           "rip_enabled": false,
           "fhrp_groups": [],
@@ -4345,7 +4423,11 @@
         },
         "vrf": [],
         "mpls": {
-          "ldp_interfaces": [],
+          "ldp_interfaces": [
+            "GigabitEthernet0/0",
+            "GigabitEthernet0/1",
+            "GigabitEthernet0/2"
+          ],
           "ldp": {
             "router_id": "Loopback0"
           }
@@ -4357,7 +4439,7 @@
           "enable_secret": "None",
           "console_password": "None",
           "exec_timeout": "None",
-          "banner_motd": "Configured",
+          "banner_motd": "*** NCN Core Router P8 - Authorized Access Only ***",
           "banner_login": "None",
           "http_server": false,
           "cdp": true,
@@ -4393,7 +4475,7 @@
           "route_maps_count": 0,
           "class_maps": [],
           "netflow_monitors": [],
-          "missing_descriptions_count": 5,
+          "missing_descriptions_count": 4,
           "eigrp_as": [],
           "rip_enabled": false,
           "fhrp_groups": [],
@@ -4506,7 +4588,11 @@
         },
         "vrf": [],
         "mpls": {
-          "ldp_interfaces": [],
+          "ldp_interfaces": [
+            "GigabitEthernet0/0",
+            "GigabitEthernet0/1",
+            "GigabitEthernet0/2"
+          ],
           "ldp": {
             "router_id": "Loopback0"
           }
@@ -4518,7 +4604,7 @@
           "enable_secret": "None",
           "console_password": "None",
           "exec_timeout": "None",
-          "banner_motd": "Configured",
+          "banner_motd": "*** NCN Core Router P9 - Authorized Access Only ***",
           "banner_login": "None",
           "http_server": false,
           "cdp": true,
@@ -4605,23 +4691,23 @@
         },
         {
           "name": "GigabitEthernet0/0",
-          "ipv4": null,
+          "ipv4": "10.0.1.0/31",
           "vlan": null,
           "vrf": null,
           "status": "up"
         },
         {
           "name": "GigabitEthernet0/1",
-          "ipv4": null,
+          "ipv4": "172.16.1.1/24",
           "vlan": null,
-          "vrf": null,
+          "vrf": "VRF_GOV",
           "status": "up"
         },
         {
           "name": "GigabitEthernet0/2",
-          "ipv4": null,
+          "ipv4": "172.16.2.1/24",
           "vlan": null,
-          "vrf": null,
+          "vrf": "VRF_EDU",
           "status": "up"
         },
         {
@@ -4696,6 +4782,7 @@
           ],
           "areas": {
             "0": [
+              "GigabitEthernet0/0",
               "Loopback0"
             ]
           }
@@ -4755,7 +4842,9 @@
           }
         ],
         "mpls": {
-          "ldp_interfaces": [],
+          "ldp_interfaces": [
+            "GigabitEthernet0/0"
+          ],
           "ldp": {
             "router_id": "Loopback0"
           }
@@ -4767,7 +4856,7 @@
           "enable_secret": "None",
           "console_password": "None",
           "exec_timeout": "None",
-          "banner_motd": "Configured",
+          "banner_motd": "*** National Converged Network - PE Router PE1 ***\n*** Authorized Access Only - All activities are monitored ***",
           "banner_login": "None",
           "http_server": false,
           "cdp": true,
@@ -4804,7 +4893,7 @@
           "route_maps_count": 0,
           "class_maps": [],
           "netflow_monitors": [],
-          "missing_descriptions_count": 6,
+          "missing_descriptions_count": 3,
           "eigrp_as": [],
           "rip_enabled": false,
           "fhrp_groups": [],
@@ -4857,30 +4946,30 @@
         },
         {
           "name": "GigabitEthernet0/0",
-          "ipv4": null,
+          "ipv4": "10.0.4.1/31",
           "vlan": null,
           "vrf": null,
           "status": "up"
         },
         {
           "name": "GigabitEthernet0/1",
-          "ipv4": null,
+          "ipv4": "10.0.7.1/31",
           "vlan": null,
           "vrf": null,
           "status": "up"
         },
         {
           "name": "GigabitEthernet0/2",
-          "ipv4": null,
+          "ipv4": "172.16.3.1/24",
           "vlan": null,
-          "vrf": null,
+          "vrf": "VRF_RND",
           "status": "up"
         },
         {
           "name": "GigabitEthernet0/3",
-          "ipv4": null,
+          "ipv4": "172.16.4.1/24",
           "vlan": null,
-          "vrf": null,
+          "vrf": "VRF_GOV",
           "status": "up"
         },
         {
@@ -4955,6 +5044,8 @@
           ],
           "areas": {
             "0": [
+              "GigabitEthernet0/0",
+              "GigabitEthernet0/1",
               "Loopback0"
             ]
           }
@@ -5014,7 +5105,10 @@
           }
         ],
         "mpls": {
-          "ldp_interfaces": [],
+          "ldp_interfaces": [
+            "GigabitEthernet0/0",
+            "GigabitEthernet0/1"
+          ],
           "ldp": {
             "router_id": "Loopback0"
           }
@@ -5026,7 +5120,7 @@
           "enable_secret": "None",
           "console_password": "None",
           "exec_timeout": "None",
-          "banner_motd": "Configured",
+          "banner_motd": "*** National Converged Network - PE Router PE2 ***\n*** Authorized Access Only - All activities are monitored ***",
           "banner_login": "None",
           "http_server": false,
           "cdp": true,
@@ -5063,7 +5157,7 @@
           "route_maps_count": 0,
           "class_maps": [],
           "netflow_monitors": [],
-          "missing_descriptions_count": 7,
+          "missing_descriptions_count": 4,
           "eigrp_as": [],
           "rip_enabled": false,
           "fhrp_groups": [],
@@ -5116,23 +5210,23 @@
         },
         {
           "name": "GigabitEthernet0/0",
-          "ipv4": null,
+          "ipv4": "10.0.11.0/31",
           "vlan": null,
           "vrf": null,
           "status": "up"
         },
         {
           "name": "GigabitEthernet0/1",
-          "ipv4": null,
+          "ipv4": "172.17.1.1/24",
           "vlan": null,
-          "vrf": null,
+          "vrf": "VRF_GOV",
           "status": "up"
         },
         {
           "name": "GigabitEthernet0/2",
-          "ipv4": null,
+          "ipv4": "172.17.2.1/24",
           "vlan": null,
-          "vrf": null,
+          "vrf": "VRF_EDU",
           "status": "up"
         },
         {
@@ -5207,6 +5301,7 @@
           ],
           "areas": {
             "0": [
+              "GigabitEthernet0/0",
               "Loopback0"
             ]
           }
@@ -5266,7 +5361,9 @@
           }
         ],
         "mpls": {
-          "ldp_interfaces": [],
+          "ldp_interfaces": [
+            "GigabitEthernet0/0"
+          ],
           "ldp": {
             "router_id": "Loopback0"
           }
@@ -5278,7 +5375,7 @@
           "enable_secret": "None",
           "console_password": "None",
           "exec_timeout": "None",
-          "banner_motd": "Configured",
+          "banner_motd": "*** National Converged Network - PE Router PE3 ***\n*** Authorized Access Only - All activities are monitored ***",
           "banner_login": "None",
           "http_server": false,
           "cdp": true,
@@ -5315,7 +5412,7 @@
           "route_maps_count": 0,
           "class_maps": [],
           "netflow_monitors": [],
-          "missing_descriptions_count": 6,
+          "missing_descriptions_count": 3,
           "eigrp_as": [],
           "rip_enabled": false,
           "fhrp_groups": [],
@@ -5368,30 +5465,30 @@
         },
         {
           "name": "GigabitEthernet0/0",
-          "ipv4": null,
+          "ipv4": "10.0.14.1/31",
           "vlan": null,
           "vrf": null,
           "status": "up"
         },
         {
           "name": "GigabitEthernet0/1",
-          "ipv4": null,
+          "ipv4": "10.0.17.1/31",
           "vlan": null,
           "vrf": null,
           "status": "up"
         },
         {
           "name": "GigabitEthernet0/2",
-          "ipv4": null,
+          "ipv4": "172.17.3.1/24",
           "vlan": null,
-          "vrf": null,
+          "vrf": "VRF_RND",
           "status": "up"
         },
         {
           "name": "GigabitEthernet0/3",
-          "ipv4": null,
+          "ipv4": "172.17.4.1/24",
           "vlan": null,
-          "vrf": null,
+          "vrf": "VRF_GOV",
           "status": "up"
         },
         {
@@ -5459,6 +5556,8 @@
           ],
           "areas": {
             "0": [
+              "GigabitEthernet0/0",
+              "GigabitEthernet0/1",
               "Loopback0"
             ]
           }
@@ -5518,7 +5617,10 @@
           }
         ],
         "mpls": {
-          "ldp_interfaces": [],
+          "ldp_interfaces": [
+            "GigabitEthernet0/0",
+            "GigabitEthernet0/1"
+          ],
           "ldp": {
             "router_id": "Loopback0"
           }
@@ -5530,7 +5632,7 @@
           "enable_secret": "None",
           "console_password": "None",
           "exec_timeout": "None",
-          "banner_motd": "Configured",
+          "banner_motd": "*** National Converged Network - PE Router PE4 ***\n*** Authorized Access Only - All activities are monitored ***",
           "banner_login": "None",
           "http_server": false,
           "cdp": true,
@@ -5567,7 +5669,7 @@
           "route_maps_count": 0,
           "class_maps": [],
           "netflow_monitors": [],
-          "missing_descriptions_count": 6,
+          "missing_descriptions_count": 4,
           "eigrp_as": [],
           "rip_enabled": false,
           "fhrp_groups": [],
@@ -5620,23 +5722,23 @@
         },
         {
           "name": "GigabitEthernet0/0",
-          "ipv4": null,
+          "ipv4": "10.0.31.3/31",
           "vlan": null,
           "vrf": null,
           "status": "up"
         },
         {
           "name": "GigabitEthernet0/1",
-          "ipv4": null,
+          "ipv4": "172.18.1.1/24",
           "vlan": null,
-          "vrf": null,
+          "vrf": "VRF_SEC",
           "status": "up"
         },
         {
           "name": "GigabitEthernet0/2",
-          "ipv4": null,
+          "ipv4": "172.18.2.1/24",
           "vlan": null,
-          "vrf": null,
+          "vrf": "VRF_MIL",
           "status": "up"
         },
         {
@@ -5648,7 +5750,7 @@
         },
         {
           "name": "GigabitEthernet0/4",
-          "ipv4": null,
+          "ipv4": "10.0.34.1/31",
           "vlan": null,
           "vrf": null,
           "status": "up"
@@ -5712,6 +5814,8 @@
           ],
           "areas": {
             "1": [
+              "GigabitEthernet0/0",
+              "GigabitEthernet0/4",
               "Loopback0"
             ]
           }
@@ -5758,7 +5862,10 @@
           }
         ],
         "mpls": {
-          "ldp_interfaces": [],
+          "ldp_interfaces": [
+            "GigabitEthernet0/0",
+            "GigabitEthernet0/4"
+          ],
           "ldp": {
             "router_id": "Loopback0"
           }
@@ -5770,7 +5877,7 @@
           "enable_secret": "None",
           "console_password": "None",
           "exec_timeout": "None",
-          "banner_motd": "Configured",
+          "banner_motd": "*** National Converged Network - PE Router PE5 ***\n*** Authorized Access Only - All activities are monitored ***",
           "banner_login": "None",
           "http_server": false,
           "cdp": true,
@@ -5807,10 +5914,12 @@
           "route_maps_count": 0,
           "class_maps": [],
           "netflow_monitors": [],
-          "missing_descriptions_count": 7,
+          "missing_descriptions_count": 4,
           "eigrp_as": [],
           "rip_enabled": false,
-          "fhrp_groups": [],
+          "fhrp_groups": [
+            "10"
+          ],
           "multicast_enabled": false
         }
       },
@@ -5860,23 +5969,23 @@
         },
         {
           "name": "GigabitEthernet0/0",
-          "ipv4": null,
+          "ipv4": "10.0.32.3/31",
           "vlan": null,
           "vrf": null,
           "status": "up"
         },
         {
           "name": "GigabitEthernet0/1",
-          "ipv4": null,
+          "ipv4": "172.18.3.1/24",
           "vlan": null,
-          "vrf": null,
+          "vrf": "VRF_SEC",
           "status": "up"
         },
         {
           "name": "GigabitEthernet0/2",
-          "ipv4": null,
+          "ipv4": "172.18.4.1/24",
           "vlan": null,
-          "vrf": null,
+          "vrf": "VRF_MIL",
           "status": "up"
         },
         {
@@ -5888,14 +5997,14 @@
         },
         {
           "name": "GigabitEthernet0/4",
-          "ipv4": null,
+          "ipv4": "172.18.1.3/24",
           "vlan": null,
-          "vrf": null,
+          "vrf": "VRF_SEC",
           "status": "up"
         },
         {
           "name": "GigabitEthernet0/5",
-          "ipv4": null,
+          "ipv4": "10.0.33.3/31",
           "vlan": null,
           "vrf": null,
           "status": "up"
@@ -5959,6 +6068,8 @@
           ],
           "areas": {
             "1": [
+              "GigabitEthernet0/0",
+              "GigabitEthernet0/5",
               "Loopback0"
             ]
           }
@@ -6005,7 +6116,10 @@
           }
         ],
         "mpls": {
-          "ldp_interfaces": [],
+          "ldp_interfaces": [
+            "GigabitEthernet0/0",
+            "GigabitEthernet0/5"
+          ],
           "ldp": {
             "router_id": "Loopback0"
           }
@@ -6017,7 +6131,7 @@
           "enable_secret": "None",
           "console_password": "None",
           "exec_timeout": "None",
-          "banner_motd": "Configured",
+          "banner_motd": "*** National Converged Network - PE Router PE6 ***\n*** Authorized Access Only - All activities are monitored ***",
           "banner_login": "None",
           "http_server": false,
           "cdp": true,
@@ -6054,10 +6168,12 @@
           "route_maps_count": 0,
           "class_maps": [],
           "netflow_monitors": [],
-          "missing_descriptions_count": 8,
+          "missing_descriptions_count": 4,
           "eigrp_as": [],
           "rip_enabled": false,
-          "fhrp_groups": [],
+          "fhrp_groups": [
+            "10"
+          ],
           "multicast_enabled": false
         }
       },
@@ -6107,28 +6223,28 @@
         },
         {
           "name": "GigabitEthernet0/0",
-          "ipv4": null,
+          "ipv4": "10.0.41.3/31",
           "vlan": null,
           "vrf": null,
           "status": "up"
         },
         {
           "name": "GigabitEthernet0/1",
-          "ipv4": null,
+          "ipv4": "172.19.1.1/24",
           "vlan": null,
-          "vrf": null,
+          "vrf": "VRF_ISP",
           "status": "up"
         },
         {
           "name": "GigabitEthernet0/2",
-          "ipv4": null,
+          "ipv4": "172.19.2.1/24",
           "vlan": null,
-          "vrf": null,
+          "vrf": "VRF_CDN",
           "status": "up"
         },
         {
           "name": "GigabitEthernet0/3",
-          "ipv4": null,
+          "ipv4": "10.0.44.1/31",
           "vlan": null,
           "vrf": null,
           "status": "up"
@@ -6187,6 +6303,8 @@
           ],
           "areas": {
             "2": [
+              "GigabitEthernet0/0",
+              "GigabitEthernet0/3",
               "Loopback0"
             ]
           }
@@ -6233,7 +6351,10 @@
           }
         ],
         "mpls": {
-          "ldp_interfaces": [],
+          "ldp_interfaces": [
+            "GigabitEthernet0/0",
+            "GigabitEthernet0/3"
+          ],
           "ldp": {
             "router_id": "Loopback0"
           }
@@ -6245,7 +6366,7 @@
           "enable_secret": "None",
           "console_password": "None",
           "exec_timeout": "None",
-          "banner_motd": "Configured",
+          "banner_motd": "*** National Converged Network - PE Router PE7 ***\n*** Authorized Access Only - All activities are monitored ***",
           "banner_login": "None",
           "http_server": false,
           "cdp": true,
@@ -6288,7 +6409,7 @@
           "netflow_monitors": [
             "NCN-FLOW-MONITOR"
           ],
-          "missing_descriptions_count": 6,
+          "missing_descriptions_count": 4,
           "eigrp_as": [],
           "rip_enabled": false,
           "fhrp_groups": [],
@@ -6341,28 +6462,28 @@
         },
         {
           "name": "GigabitEthernet0/0",
-          "ipv4": null,
+          "ipv4": "10.0.42.3/31",
           "vlan": null,
           "vrf": null,
           "status": "up"
         },
         {
           "name": "GigabitEthernet0/1",
-          "ipv4": null,
+          "ipv4": "172.19.3.1/24",
           "vlan": null,
-          "vrf": null,
+          "vrf": "VRF_ISP_BROKEN",
           "status": "up"
         },
         {
           "name": "GigabitEthernet0/2",
-          "ipv4": null,
+          "ipv4": "172.19.4.1/24",
           "vlan": null,
-          "vrf": null,
+          "vrf": "VRF_CDN",
           "status": "up"
         },
         {
           "name": "GigabitEthernet0/3",
-          "ipv4": null,
+          "ipv4": "10.0.43.3/31",
           "vlan": null,
           "vrf": null,
           "status": "up"
@@ -6422,6 +6543,8 @@
           ],
           "areas": {
             "2": [
+              "GigabitEthernet0/0",
+              "GigabitEthernet0/3",
               "Loopback0"
             ]
           }
@@ -6462,7 +6585,10 @@
           }
         ],
         "mpls": {
-          "ldp_interfaces": [],
+          "ldp_interfaces": [
+            "GigabitEthernet0/0",
+            "GigabitEthernet0/3"
+          ],
           "ldp": {
             "router_id": "Loopback0"
           }
@@ -6474,7 +6600,7 @@
           "enable_secret": "None",
           "console_password": "None",
           "exec_timeout": "None",
-          "banner_motd": "Configured",
+          "banner_motd": "*** National Converged Network - PE Router PE8 ***\n*** Authorized Access Only - All activities are monitored ***",
           "banner_login": "None",
           "http_server": false,
           "cdp": true,
@@ -6517,7 +6643,7 @@
           "netflow_monitors": [
             "NCN-FLOW-MONITOR"
           ],
-          "missing_descriptions_count": 6,
+          "missing_descriptions_count": 4,
           "eigrp_as": [],
           "rip_enabled": false,
           "fhrp_groups": [],

@@ -391,7 +391,7 @@ P10# traceroute P4
 
 ```
 ! 메트릭: config_change_impact
-! scope: {"type": "SNAPSHOT_DIFF", "src": "p7", "dst": "p8"}
+! scope: {"type": "SNAPSHOT_DIFF", "src": "p7", "dst": "p8", "base_snapshot": "baseline", "changed_snapshot": "cfg_change_p10_1773019515", "change_desc": "node_down:p10", "failure_node": "p10"}
 ! 적절한 show/ping/traceroute 명령으로 검증
 ```
 - **내 결과**: ________________
@@ -404,7 +404,7 @@ P10# traceroute P4
 
 ```
 ! 메트릭: differential_reachability
-! scope: {"type": "SNAPSHOT_DIFF", "src": "p7", "dst": "p8"}
+! scope: {"type": "SNAPSHOT_DIFF", "src": "p7", "dst": "p8", "base_snapshot": "baseline", "changed_snapshot": "cfg_change_p10_1773019515", "change_desc": "node_down:p10", "failure_node": "p10", "dst_ip": "10.0.16.1"}
 ! 적절한 show/ping/traceroute 명령으로 검증
 ```
 - **내 결과**: ________________
@@ -475,7 +475,7 @@ P7# traceroute ?
 
 ```
 ! 메트릭: link_failure_impact
-! scope: {"type": "LINK_FAILURE", "link": "asbr1-p7"}
+! scope: {"type": "LINK_FAILURE", "link": "asbr1-p7", "node1": "asbr1", "node2": "p7", "src": "p7", "dst": "p8"}
 ! 적절한 show/ping/traceroute 명령으로 검증
 ```
 - **내 결과**: ________________
@@ -488,7 +488,7 @@ P7# traceroute ?
 
 ```
 ! 메트릭: link_failure_impact
-! scope: {"type": "LINK_FAILURE", "link": "asbr1-p9"}
+! scope: {"type": "LINK_FAILURE", "link": "asbr1-p9", "node1": "asbr1", "node2": "p9", "src": "p7", "dst": "p8"}
 ! 적절한 show/ping/traceroute 명령으로 검증
 ```
 - **내 결과**: ________________
@@ -501,7 +501,7 @@ P7# traceroute ?
 
 ```
 ! 메트릭: link_failure_impact
-! scope: {"type": "LINK_FAILURE", "link": "asbr1-pe5"}
+! scope: {"type": "LINK_FAILURE", "link": "asbr1-pe5", "node1": "asbr1", "node2": "pe5", "src": "p7", "dst": "p8"}
 ! 적절한 show/ping/traceroute 명령으로 검증
 ```
 - **내 결과**: ________________

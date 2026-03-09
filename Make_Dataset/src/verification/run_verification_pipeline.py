@@ -32,6 +32,11 @@ Outputs:
     │   ├── pnetlab_verification_guide.md
     │   ├── blank_checklist.csv
     │   └── sample_selection.md
+    ├── method4_l45_replay/           (L4-L5 Batfish replay 자동 검증)
+    │   ├── l45_replay_results.csv
+    │   ├── l45_replay_summary.json
+    │   ├── l45_replay_mismatch.md
+    │   └── paper_ready_dataset.json
     └── verification_summary.json     (통합 요약)
 """
 
@@ -470,6 +475,40 @@ def run_method3_generation(
     print(f"  Method 3: {len(samples)} samples selected (L4: {l4_count}, L5: {l5_count})")
 
     return {"total": len(samples), "l4": l4_count, "l5": l5_count, "samples": samples}
+
+
+def run_method4_replay(
+    lab_path: Path,
+    dataset_path: Path,
+    policies_path: Path,
+    output_dir: Path,
+    batfish_host: str = "localhost",
+) -> Dict[str, Any]:
+    """Run Method 4: automatic L4-L5 Batfish replay verification."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    from src.verification.run_l45_replay_verification import (
+        run_l45_replay_verification,
+        save_csv as m4_save_csv,
+        generate_summary as m4_generate_summary,
+        save_summary_json as m4_save_summary_json,
+        save_mismatch_report as m4_save_mismatch_report,
+        save_paper_dataset,
+    )
+
+    results = run_l45_replay_verification(lab_path, dataset_path, policies_path, batfish_host=batfish_host)
+    m4_save_csv(results, output_dir / "l45_replay_results.csv")
+    summary = m4_generate_summary(results)
+    m4_save_summary_json(summary, output_dir / "l45_replay_summary.json")
+    m4_save_mismatch_report(results, output_dir / "l45_replay_mismatch.md")
+    retained = save_paper_dataset(dataset_path, results, output_dir / "paper_ready_dataset.json")
+    summary["paper_ready"] = retained
+    m4_save_summary_json(summary, output_dir / "l45_replay_summary.json")
+    print(
+        f"  Method 4: {summary.get('match', 0)}/{summary.get('total', 0)} MATCH "
+        f"({summary.get('agreement_rate', 0):.1%}), quarantined={summary.get('quarantined', 0)}"
+    )
+    return summary
 
 
 def _select_l4_l5_samples(rows: List[Dict]) -> List[Dict]:
@@ -946,6 +985,7 @@ def generate_unified_summary(
     m1_summary: Optional[Dict],
     m2_info: Optional[Dict],
     m3_info: Optional[Dict],
+    m4_info: Optional[Dict],
     output_path: Path,
 ) -> None:
     """Generate unified verification_summary.json combining all methods."""
@@ -995,6 +1035,20 @@ def generate_unified_summary(
             "note": "가이드 및 체크리스트 생성 완료. 사람이 PNETLab에서 실행해야 함.",
         }
 
+    if m4_info and m4_info.get("total", 0) > 0:
+        summary["verification_methods"]["method4_l45_replay"] = {
+            "description": "Batfish replay verification for L4-L5 using row-level contracts",
+            "scope": f"L4-L5 자동 재실행 ({m4_info['total']} QA)",
+            "total_verified": m4_info["total"],
+            "match": m4_info.get("match", 0),
+            "mismatch": m4_info.get("mismatch", 0),
+            "error": m4_info.get("error", 0),
+            "quarantined": m4_info.get("quarantined", 0),
+            "agreement_rate_raw": m4_info.get("agreement_rate", 0),
+            "by_level": m4_info.get("by_level", {}),
+            "paper_ready": m4_info.get("paper_ready", {}),
+        }
+
     output_path.write_text(
         json.dumps(summary, indent=2, ensure_ascii=False, default=str),
         encoding="utf-8",
@@ -1028,6 +1082,8 @@ def main() -> None:
     parser.add_argument("--skip-method1", action="store_true", help="Skip Method 1 (use existing results)")
     parser.add_argument("--skip-method2", action="store_true", help="Skip Method 2")
     parser.add_argument("--skip-method3", action="store_true", help="Skip Method 3")
+    parser.add_argument("--skip-method4", action="store_true", help="Skip Method 4")
+    parser.add_argument("--batfish-host", default="localhost", help="Batfish host for Method 4 replay")
     args = parser.parse_args()
 
     lab_path = Path(args.lab_path).resolve()
@@ -1061,10 +1117,12 @@ def main() -> None:
     m1_dir = verification_dir / "method1_independent_parser"
     m2_dir = verification_dir / "method2_manual_check"
     m3_dir = verification_dir / "method3_pnetlab"
+    m4_dir = verification_dir / "method4_l45_replay"
 
     m1_summary = None
     m2_info = None
     m3_info = None
+    m4_info = None
 
     # ── Method 1 ─────────────────────────────────
     if args.skip_method1:
@@ -1109,12 +1167,27 @@ def main() -> None:
             m3_info = run_method3_generation(configs_dir, dataset_path, policies_path, m3_dir, info["lab_name"])
             print()
 
+    # ── Method 4 ─────────────────────────────────
+    if args.skip_method4:
+        print("[Method 4] 스킵 (--skip-method4)")
+        print()
+    else:
+        l4l5_count = sum(1 for r in all_rows if r.get("level") in ("L4", "L5"))
+        if l4l5_count == 0:
+            print("[Method 4] L4-L5 QA 없음 — 스킵")
+            print()
+        else:
+            print(f"[Method 4] L4-L5 Replay Verification ({l4l5_count} QA)")
+            print("-" * 50)
+            m4_info = run_method4_replay(lab_path, dataset_path, policies_path, m4_dir, batfish_host=args.batfish_host)
+            print()
+
     # ── Unified Summary ──────────────────────────
     print("[Summary] 통합 검증 요약 생성")
     summary_path = verification_dir / "verification_summary.json"
     generate_unified_summary(
         info["lab_name"], dataset_total,
-        m1_summary, m2_info, m3_info,
+        m1_summary, m2_info, m3_info, m4_info,
         summary_path,
     )
     print(f"  → {summary_path}")
@@ -1141,6 +1214,10 @@ def main() -> None:
         tree.append(f"  ├── method3_pnetlab/               📋 {m3_info['total']} samples")
         tree.append(f"  │   ├── pnetlab_verification_guide.md  ← PNETLab에서 실행")
         tree.append(f"  │   └── blank_checklist.csv       ← Excel로 작성")
+    if m4_info and m4_info.get("total", 0) > 0:
+        tree.append(f"  ├── method4_l45_replay/           ✅ {m4_info.get('agreement_rate', 0):.1%}")
+        tree.append(f"  │   ├── l45_replay_mismatch.md    ← 자동 mismatch/quarantine")
+        tree.append(f"  │   └── paper_ready_dataset.json  ← 논문용 retained set")
     tree.append(f"  └── verification_summary.json     📊 통합 요약")
 
     for line in tree:

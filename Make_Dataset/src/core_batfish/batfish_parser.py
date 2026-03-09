@@ -109,6 +109,17 @@ def _dedupe_vrfs(vrfs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
 
     return list(merged.values())
 
+
+def _extract_banner(content: str, banner_type: str) -> str | None:
+    pattern = re.compile(
+        rf"^\s*banner\s+{re.escape(banner_type)}\s+(?P<delim>\S)(?P<body>.*?)(?:\n(?P=delim)|(?P=delim)$)",
+        re.IGNORECASE | re.MULTILINE | re.DOTALL,
+    )
+    match = pattern.search(content)
+    if not match:
+        return None
+    return match.group("body").strip()
+
 def parse_text_config(config_path: Path) -> Dict[str, Any]:
     """
     Config 파일 텍스트를 파싱하여 Batfish가 제공하지 않는 설정(SSH, NTP, Logging 등)을 추출합니다.
@@ -117,7 +128,7 @@ def parse_text_config(config_path: Path) -> Dict[str, Any]:
     text_facts = {
         "ssh": {"version": None, "enabled": False},
         "aaa": {"new_model": False, "protocol": "local"},
-        "logging": {"hosts": []},
+        "logging": {"hosts": [], "buffered_severity": None},
         "ntp": {"servers": []},
         "users": [],
         "domain_name": None,
@@ -205,6 +216,16 @@ def parse_text_config(config_path: Path) -> Dict[str, Any]:
         
         # 3. Logging & NTP & Users & Domain
         text_facts["logging"]["hosts"] = re.findall(r"^\s*logging host (\S+)", content, re.MULTILINE)
+        text_facts["logging"]["hosts"].extend(
+            re.findall(r"^\s*logging\s+(\d+\.\d+\.\d+\.\d+)\b", content, re.MULTILINE)
+        )
+        sev_match = re.search(
+            r"^\s*logging\s+buffered(?:\s+\d+)?\s+(emergencies|alerts|critical|errors|warnings|notifications|informational|debugging)\b",
+            content,
+            re.IGNORECASE | re.MULTILINE,
+        )
+        if sev_match:
+            text_facts["logging"]["buffered_severity"] = sev_match.group(1).lower()
         text_facts["ntp"]["servers"] = re.findall(r"^\s*ntp server (\S+)", content, re.MULTILINE)
         text_facts["users"] = re.findall(r"^\s*username (\S+)", content, re.MULTILINE)
         
@@ -241,11 +262,13 @@ def parse_text_config(config_path: Path) -> Dict[str, Any]:
             text_facts["exec_timeout"] = exec_match.group(1)
 
         # Banners
-        motd_match = re.search(r"banner motd \^C(.*?)\^C", content, re.DOTALL)
-        if motd_match: text_facts["banner_motd"] = motd_match.group(1).strip()
-        
-        login_match = re.search(r"banner login \^C(.*?)\^C", content, re.DOTALL)
-        if login_match: text_facts["banner_login"] = login_match.group(1).strip()
+        motd_banner = _extract_banner(content, "motd")
+        if motd_banner:
+            text_facts["banner_motd"] = motd_banner
+
+        login_banner = _extract_banner(content, "login")
+        if login_banner:
+            text_facts["banner_login"] = login_banner
 
         # HTTP Server
         if re.search(r"^\s*no ip http server", content, re.MULTILINE):
@@ -476,6 +499,7 @@ def parse_batfish_datamodel(
             "services": {
                 # BuilderCore expects NTP in services
                 "ntp": text_info["ntp"],
+                "snmp": {"communities": text_info["snmp_communities"]},
                 "vrf": [],
                 "mpls": {"ldp_interfaces": [], "ldp": {}} # LDP info here
             },
@@ -570,7 +594,7 @@ def parse_batfish_datamodel(
                  local_as = node_peers.iloc[0]["Local_AS"]
         
         if local_as:
-            device_facts["routing"]["bgp"]["local_as"] = str(local_as)
+            device_facts["routing"]["bgp"]["local_as"] = int(local_as)
             
         # 2. Neighbors
         if not node_peers.empty:

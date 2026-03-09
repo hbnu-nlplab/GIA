@@ -1,7 +1,7 @@
 # Method 2 — Human Reviewer Guide
 
 > **목적**: 데이터셋 정답(Ground Truth)의 신뢰성을 사람이 직접 검증
-> **대상**: L1-L3 계층화 표본 67개 QA
+> **대상**: L1-L3 계층화 표본 39개 QA
 > **소요 시간**: 약 2-3시간 (QA당 3-5분)
 > **필요 도구**: 텍스트 에디터 (VS Code 권장)
 
@@ -11,7 +11,7 @@
 
 ### 1. Config 파일 위치
 ```
-Pnetlab\LabA_Research_Institute_DC_10nodes\configs/
+Pnetlab/LabA_Research_Institute_DC_10nodes/configs/
   Leaf1.cfg  Leaf2.cfg  Leaf3.cfg  Leaf4.cfg  P1.cfg  P2.cfg  P3.cfg  P4.cfg  PE1.cfg  PE2.cfg
 ```
 
@@ -45,7 +45,7 @@ DISAGREE인 경우 분류:
 
 ---
 
-## 검증 체크리스트 (67개 QA)
+## 검증 체크리스트 (39개 QA)
 
 ### 1. BGP_LOCAL_AS_NUMERIC_p2
 - **Level**: L1 | **Type**: number
@@ -58,29 +58,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 2. CONFIGURED_BGP_AS_NUMBERS_leaf2
-- **Level**: L1 | **Type**: text
-- **질문**: leaf2 장비에 설정된 BGP AS 번호는? [답변 형식: AS번호 리스트]
-- **데이터셋 정답**: `"Not Configured"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 'router bgp' 설정 확인.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 3. CONFIGURED_BGP_AS_NUMBERS_p2
-- **Level**: L1 | **Type**: text
-- **질문**: p2 장비에 설정된 BGP AS 번호는? [답변 형식: AS번호 리스트]
-- **데이터셋 정답**: `"Not Configured"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 'router bgp' 설정 확인.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 4. INTERFACE_STATUS_MAP_p1
+### 2. INTERFACE_STATUS_MAP_p1
 - **Level**: L1 | **Type**: map
 - **질문**: p1 장비의 각 인터페이스 상태를 알려주세요. [답변 형식: {{'인터페이스명': '상태'}}]
 - **데이터셋 정답**: `{"GigabitEthernet0/0": "up", "GigabitEthernet0/1": "up", "GigabitEthernet0/2": "up", "GigabitEthernet0/3": "down", "Loopback0": "up"}`
@@ -91,84 +69,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 5. MPLS_LDP_ROUTER_ID_leaf1
-- **Level**: L1 | **Type**: text
-- **질문**: leaf1 장비의 MPLS LDP Router-ID는 무엇입니까? [답변 형식: IP 주소 (예: 10.255.0.1) 또는 빈 값]
-- **데이터셋 정답**: `"NOT_CONFIGURED"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 1) Config에서 'mpls ldp router-id' 명령을 검색합니다. 2) 'mpls ldp router-id Loopback0' 형식에서 인터페이스를 추출합니다. 3) 해당 인터페이스의 IP 주소를 반환합니다. 4) 설정이 없으면 빈 값을 반환합니다.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 6. MPLS_LDP_ROUTER_ID_leaf2
-- **Level**: L1 | **Type**: text
-- **질문**: leaf2 장비의 MPLS LDP Router-ID는 무엇입니까? [답변 형식: IP 주소 (예: 10.255.0.1) 또는 빈 값]
-- **데이터셋 정답**: `"NOT_CONFIGURED"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 1) Config에서 'mpls ldp router-id' 명령을 검색합니다. 2) 'mpls ldp router-id Loopback0' 형식에서 인터페이스를 추출합니다. 3) 해당 인터페이스의 IP 주소를 반환합니다. 4) 설정이 없으면 빈 값을 반환합니다.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 7. MPLS_LDP_ROUTER_ID_leaf3
-- **Level**: L1 | **Type**: text
-- **질문**: leaf3 장비의 MPLS LDP Router-ID는 무엇입니까? [답변 형식: IP 주소 (예: 10.255.0.1) 또는 빈 값]
-- **데이터셋 정답**: `"NOT_CONFIGURED"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 1) Config에서 'mpls ldp router-id' 명령을 검색합니다. 2) 'mpls ldp router-id Loopback0' 형식에서 인터페이스를 추출합니다. 3) 해당 인터페이스의 IP 주소를 반환합니다. 4) 설정이 없으면 빈 값을 반환합니다.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 8. MPLS_LDP_ROUTER_ID_leaf4
-- **Level**: L1 | **Type**: text
-- **질문**: leaf4 장비의 MPLS LDP Router-ID는 무엇입니까? [답변 형식: IP 주소 (예: 10.255.0.1) 또는 빈 값]
-- **데이터셋 정답**: `"NOT_CONFIGURED"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 1) Config에서 'mpls ldp router-id' 명령을 검색합니다. 2) 'mpls ldp router-id Loopback0' 형식에서 인터페이스를 추출합니다. 3) 해당 인터페이스의 IP 주소를 반환합니다. 4) 설정이 없으면 빈 값을 반환합니다.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 9. MPLS_LDP_ROUTER_ID_p4
-- **Level**: L1 | **Type**: text
-- **질문**: p4 장비의 MPLS LDP Router-ID는 무엇입니까? [답변 형식: IP 주소 (예: 10.255.0.1) 또는 빈 값]
-- **데이터셋 정답**: `"NOT_CONFIGURED"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 1) Config에서 'mpls ldp router-id' 명령을 검색합니다. 2) 'mpls ldp router-id Loopback0' 형식에서 인터페이스를 추출합니다. 3) 해당 인터페이스의 IP 주소를 반환합니다. 4) 설정이 없으면 빈 값을 반환합니다.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 10. MPLS_LDP_ROUTER_ID_pe1
-- **Level**: L1 | **Type**: text
-- **질문**: pe1 장비의 MPLS LDP Router-ID는 무엇입니까? [답변 형식: IP 주소 (예: 10.255.0.1) 또는 빈 값]
-- **데이터셋 정답**: `"NOT_CONFIGURED"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 1) Config에서 'mpls ldp router-id' 명령을 검색합니다. 2) 'mpls ldp router-id Loopback0' 형식에서 인터페이스를 추출합니다. 3) 해당 인터페이스의 IP 주소를 반환합니다. 4) 설정이 없으면 빈 값을 반환합니다.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 11. MPLS_LDP_ROUTER_ID_pe2
-- **Level**: L1 | **Type**: text
-- **질문**: pe2 장비의 MPLS LDP Router-ID는 무엇입니까? [답변 형식: IP 주소 (예: 10.255.0.1) 또는 빈 값]
-- **데이터셋 정답**: `"NOT_CONFIGURED"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 1) Config에서 'mpls ldp router-id' 명령을 검색합니다. 2) 'mpls ldp router-id Loopback0' 형식에서 인터페이스를 추출합니다. 3) 해당 인터페이스의 IP 주소를 반환합니다. 4) 설정이 없으면 빈 값을 반환합니다.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 12. NTP_SERVER_LIST_p2
+### 3. NTP_SERVER_LIST_p2
 - **Level**: L1 | **Type**: set
 - **질문**: p2 장비에 설정된 NTP 서버 목록을 알려주세요. [답변 형식: 리스트]
 - **데이터셋 정답**: `[]`
@@ -179,7 +80,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 13. SNMP_COMMUNITY_LIST_leaf1
+### 4. SNMP_COMMUNITY_LIST_leaf1
 - **Level**: L1 | **Type**: set
 - **질문**: leaf1 장비에 설정된 SNMP 커뮤니티 목록을 알려주세요. [답변 형식: 리스트]
 - **데이터셋 정답**: `[]`
@@ -190,7 +91,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 14. SUBINTERFACE_COUNT_p1
+### 5. SUBINTERFACE_COUNT_p1
 - **Level**: L1 | **Type**: number
 - **질문**: p1 장비에 설정된 서브인터페이스는 총 몇 개입니까? [답변 형식: 숫자]
 - **데이터셋 정답**: `0`
@@ -201,7 +102,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 15. SYSLOG_SERVER_LIST_p3
+### 6. SYSLOG_SERVER_LIST_p3
 - **Level**: L1 | **Type**: set
 - **질문**: p3 장비에 설정된 Syslog 서버 목록을 알려주세요. [답변 형식: 리스트]
 - **데이터셋 정답**: `[]`
@@ -212,7 +113,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 16. AAA_ENABLED_DEVICES
+### 7. AAA_ENABLED_DEVICES
 - **Level**: L2 | **Type**: set
 - **질문**: AAA 기능이 활성화된 장비 목록을 알려주세요. [답변 형식: 리스트]
 - **데이터셋 정답**: `[]`
@@ -223,7 +124,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 17. AAA_MISSING_DEVICES
+### 8. AAA_MISSING_DEVICES
 - **Level**: L2 | **Type**: set
 - **질문**: AAA 기능이 비활성화된 장비 목록을 알려주세요. [답변 형식: 리스트]
 - **데이터셋 정답**: `["leaf1", "leaf2", "leaf3", "leaf4", "p1", "p2", "p3", "p4", "pe1", "pe2"]`
@@ -234,7 +135,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 18. DEVICES_WITH_SAME_VRF_VRF_BIO
+### 9. DEVICES_WITH_SAME_VRF_VRF_BIO
 - **Level**: L2 | **Type**: set
 - **질문**: VRF_BIO VRF를 사용하는 장비 목록을 알려주세요. [답변 형식: 리스트]
 - **데이터셋 정답**: `["pe1", "pe2"]`
@@ -245,7 +146,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 19. L2VPN_PAIRS
+### 10. L2VPN_PAIRS
 - **Level**: L2 | **Type**: set
 - **질문**: 구성된 L2VPN pseudowire 회선(장비쌍) 목록을 알려주세요. [답변 형식: ['A<->B', ...]]
 - **데이터셋 정답**: `[]`
@@ -256,7 +157,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 20. OSPF_AREA0_IF_COUNT_leaf4
+### 11. OSPF_AREA0_IF_COUNT_leaf4
 - **Level**: L2 | **Type**: number
 - **질문**: leaf4 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까? [답변 형식: 숫자]
 - **데이터셋 정답**: `0`
@@ -267,7 +168,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 21. OSPF_AREA_MEMBERSHIP_0
+### 12. OSPF_AREA_MEMBERSHIP_0
 - **Level**: L2 | **Type**: set
 - **질문**: OSPF Area 0에 속한 장비 목록을 알려주세요. [답변 형식: 리스트]
 - **데이터셋 정답**: `["p1", "p2", "p3", "p4", "pe1", "pe2"]`
@@ -278,7 +179,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 22. OSPF_NEIGHBOR_COUNT_PER_AREA_0
+### 13. OSPF_NEIGHBOR_COUNT_PER_AREA_0
 - **Level**: L2 | **Type**: number
 - **질문**: OSPF Area 0의 이웃 관계는 총 몇 개입니까? [답변 형식: 숫자]
 - **데이터셋 정답**: `0`
@@ -289,7 +190,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 23. SSH_ENABLED_DEVICES
+### 14. SSH_ENABLED_DEVICES
 - **Level**: L2 | **Type**: set
 - **질문**: SSH 접속이 가능한 장비 목록을 알려주세요. [답변 형식: 리스트]
 - **데이터셋 정답**: `["leaf1", "leaf2", "leaf3", "leaf4", "p1", "p2", "p3", "p4", "pe1", "pe2"]`
@@ -300,7 +201,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 24. SSH_MISSING_COUNT
+### 15. SSH_MISSING_COUNT
 - **Level**: L2 | **Type**: number
 - **질문**: SSH 접속이 불가능한 장비는 총 몇 대입니까? [답변 형식: 숫자]
 - **데이터셋 정답**: `0`
@@ -311,7 +212,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 25. SSH_MISSING_DEVICES
+### 16. SSH_MISSING_DEVICES
 - **Level**: L2 | **Type**: set
 - **질문**: SSH 접속이 불가능한 장비 목록을 알려주세요. [답변 형식: 리스트]
 - **데이터셋 정답**: `[]`
@@ -322,7 +223,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 26. ALL_DEVICES_SAME_AS
+### 17. ALL_DEVICES_SAME_AS
 - **Level**: L3 | **Type**: text
 - **질문**: 모든 장비의 BGP AS 번호를 나열해주세요. BGP가 미설정된 장비는 'AS None'으로 표시하세요. [답변 형식: '장비1: AS X, 장비2: AS None, ...']
 - **데이터셋 정답**: `"leaf1: AS N/A, leaf2: AS N/A, leaf3: AS N/A, leaf4: AS N/A, p1: AS N/A, p2: AS N/A, p3: AS N/A, p4: AS N/A, pe1: AS 65000, pe2: AS 65000"`
@@ -333,7 +234,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 27. BGP_AS_DISTRIBUTION
+### 18. BGP_AS_DISTRIBUTION
 - **Level**: L3 | **Type**: text
 - **질문**: 각 AS별 장비 수 분포를 알려주세요. [답변 형식: 'AS X: N대, AS Y: M대']
 - **데이터셋 정답**: `"AS 65000: 2 devices"`
@@ -344,73 +245,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 28. COMPARE_BGP_AS_leaf1_leaf3
-- **Level**: L3 | **Type**: text
-- **질문**: leaf1과 leaf3의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf1: AS X, leaf3: AS Y']
-- **데이터셋 정답**: `"leaf1: AS N/A, leaf3: AS N/A"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 1) {host1}의 설정 파일에서 'router bgp <AS_NUMBER>' 라인을 찾습니다 (예: 'router bgp 65000'). 2) 해당 라인에서 AS 번호 X를 추출합니다. 3) {host2}에 대해 동일한 1~2 과정을 반복하여 AS 번호 Y를 추출합니다. 4) '{host1}: AS X, {host2}: AS Y' 형식으로 문자열을 조합하여 반환합니다. 예: 'PE1: AS 65000, PE2: AS 65000' 또는 'PE1: AS 65000, ASBR1: AS 65001'. 주의: BGP 설정이 없는 장비는 'AS None' 또는 '설정 없음'으로 표시합니다.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 29. COMPARE_BGP_AS_leaf1_p1
-- **Level**: L3 | **Type**: text
-- **질문**: leaf1과 p1의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf1: AS X, p1: AS Y']
-- **데이터셋 정답**: `"leaf1: AS N/A, p1: AS N/A"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 1) {host1}의 설정 파일에서 'router bgp <AS_NUMBER>' 라인을 찾습니다 (예: 'router bgp 65000'). 2) 해당 라인에서 AS 번호 X를 추출합니다. 3) {host2}에 대해 동일한 1~2 과정을 반복하여 AS 번호 Y를 추출합니다. 4) '{host1}: AS X, {host2}: AS Y' 형식으로 문자열을 조합하여 반환합니다. 예: 'PE1: AS 65000, PE2: AS 65000' 또는 'PE1: AS 65000, ASBR1: AS 65001'. 주의: BGP 설정이 없는 장비는 'AS None' 또는 '설정 없음'으로 표시합니다.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 30. COMPARE_BGP_AS_leaf1_p2
-- **Level**: L3 | **Type**: text
-- **질문**: leaf1과 p2의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf1: AS X, p2: AS Y']
-- **데이터셋 정답**: `"leaf1: AS N/A, p2: AS N/A"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 1) {host1}의 설정 파일에서 'router bgp <AS_NUMBER>' 라인을 찾습니다 (예: 'router bgp 65000'). 2) 해당 라인에서 AS 번호 X를 추출합니다. 3) {host2}에 대해 동일한 1~2 과정을 반복하여 AS 번호 Y를 추출합니다. 4) '{host1}: AS X, {host2}: AS Y' 형식으로 문자열을 조합하여 반환합니다. 예: 'PE1: AS 65000, PE2: AS 65000' 또는 'PE1: AS 65000, ASBR1: AS 65001'. 주의: BGP 설정이 없는 장비는 'AS None' 또는 '설정 없음'으로 표시합니다.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 31. COMPARE_BGP_AS_leaf1_pe1
-- **Level**: L3 | **Type**: text
-- **질문**: leaf1과 pe1의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf1: AS X, pe1: AS Y']
-- **데이터셋 정답**: `"leaf1: AS N/A, pe1: AS 65000"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 1) {host1}의 설정 파일에서 'router bgp <AS_NUMBER>' 라인을 찾습니다 (예: 'router bgp 65000'). 2) 해당 라인에서 AS 번호 X를 추출합니다. 3) {host2}에 대해 동일한 1~2 과정을 반복하여 AS 번호 Y를 추출합니다. 4) '{host1}: AS X, {host2}: AS Y' 형식으로 문자열을 조합하여 반환합니다. 예: 'PE1: AS 65000, PE2: AS 65000' 또는 'PE1: AS 65000, ASBR1: AS 65001'. 주의: BGP 설정이 없는 장비는 'AS None' 또는 '설정 없음'으로 표시합니다.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 32. COMPARE_BGP_AS_leaf1_pe2
-- **Level**: L3 | **Type**: text
-- **질문**: leaf1과 pe2의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf1: AS X, pe2: AS Y']
-- **데이터셋 정답**: `"leaf1: AS N/A, pe2: AS 65000"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 1) {host1}의 설정 파일에서 'router bgp <AS_NUMBER>' 라인을 찾습니다 (예: 'router bgp 65000'). 2) 해당 라인에서 AS 번호 X를 추출합니다. 3) {host2}에 대해 동일한 1~2 과정을 반복하여 AS 번호 Y를 추출합니다. 4) '{host1}: AS X, {host2}: AS Y' 형식으로 문자열을 조합하여 반환합니다. 예: 'PE1: AS 65000, PE2: AS 65000' 또는 'PE1: AS 65000, ASBR1: AS 65001'. 주의: BGP 설정이 없는 장비는 'AS None' 또는 '설정 없음'으로 표시합니다.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 33. COMPARE_BGP_AS_leaf2_p1
-- **Level**: L3 | **Type**: text
-- **질문**: leaf2와 p1의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf2: AS X, p1: AS Y']
-- **데이터셋 정답**: `"leaf2: AS N/A, p1: AS N/A"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 1) {host1}의 설정 파일에서 'router bgp <AS_NUMBER>' 라인을 찾습니다 (예: 'router bgp 65000'). 2) 해당 라인에서 AS 번호 X를 추출합니다. 3) {host2}에 대해 동일한 1~2 과정을 반복하여 AS 번호 Y를 추출합니다. 4) '{host1}: AS X, {host2}: AS Y' 형식으로 문자열을 조합하여 반환합니다. 예: 'PE1: AS 65000, PE2: AS 65000' 또는 'PE1: AS 65000, ASBR1: AS 65001'. 주의: BGP 설정이 없는 장비는 'AS None' 또는 '설정 없음'으로 표시합니다.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 34. COMPARE_BGP_AS_leaf2_p3
+### 19. COMPARE_BGP_AS_leaf2_p3
 - **Level**: L3 | **Type**: text
 - **질문**: leaf2와 p3의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf2: AS X, p3: AS Y']
 - **데이터셋 정답**: `"leaf2: AS N/A, p3: AS N/A"`
@@ -421,150 +256,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 35. COMPARE_BGP_AS_leaf2_pe2
-- **Level**: L3 | **Type**: text
-- **질문**: leaf2와 pe2의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf2: AS X, pe2: AS Y']
-- **데이터셋 정답**: `"leaf2: AS N/A, pe2: AS 65000"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 1) {host1}의 설정 파일에서 'router bgp <AS_NUMBER>' 라인을 찾습니다 (예: 'router bgp 65000'). 2) 해당 라인에서 AS 번호 X를 추출합니다. 3) {host2}에 대해 동일한 1~2 과정을 반복하여 AS 번호 Y를 추출합니다. 4) '{host1}: AS X, {host2}: AS Y' 형식으로 문자열을 조합하여 반환합니다. 예: 'PE1: AS 65000, PE2: AS 65000' 또는 'PE1: AS 65000, ASBR1: AS 65001'. 주의: BGP 설정이 없는 장비는 'AS None' 또는 '설정 없음'으로 표시합니다.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 36. COMPARE_BGP_AS_leaf3_leaf4
-- **Level**: L3 | **Type**: text
-- **질문**: leaf3과 leaf4의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf3: AS X, leaf4: AS Y']
-- **데이터셋 정답**: `"leaf3: AS N/A, leaf4: AS N/A"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 1) {host1}의 설정 파일에서 'router bgp <AS_NUMBER>' 라인을 찾습니다 (예: 'router bgp 65000'). 2) 해당 라인에서 AS 번호 X를 추출합니다. 3) {host2}에 대해 동일한 1~2 과정을 반복하여 AS 번호 Y를 추출합니다. 4) '{host1}: AS X, {host2}: AS Y' 형식으로 문자열을 조합하여 반환합니다. 예: 'PE1: AS 65000, PE2: AS 65000' 또는 'PE1: AS 65000, ASBR1: AS 65001'. 주의: BGP 설정이 없는 장비는 'AS None' 또는 '설정 없음'으로 표시합니다.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 37. COMPARE_BGP_AS_leaf3_p1
-- **Level**: L3 | **Type**: text
-- **질문**: leaf3과 p1의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf3: AS X, p1: AS Y']
-- **데이터셋 정답**: `"leaf3: AS N/A, p1: AS N/A"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 1) {host1}의 설정 파일에서 'router bgp <AS_NUMBER>' 라인을 찾습니다 (예: 'router bgp 65000'). 2) 해당 라인에서 AS 번호 X를 추출합니다. 3) {host2}에 대해 동일한 1~2 과정을 반복하여 AS 번호 Y를 추출합니다. 4) '{host1}: AS X, {host2}: AS Y' 형식으로 문자열을 조합하여 반환합니다. 예: 'PE1: AS 65000, PE2: AS 65000' 또는 'PE1: AS 65000, ASBR1: AS 65001'. 주의: BGP 설정이 없는 장비는 'AS None' 또는 '설정 없음'으로 표시합니다.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 38. COMPARE_BGP_AS_leaf3_p2
-- **Level**: L3 | **Type**: text
-- **질문**: leaf3과 p2의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf3: AS X, p2: AS Y']
-- **데이터셋 정답**: `"leaf3: AS N/A, p2: AS N/A"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 1) {host1}의 설정 파일에서 'router bgp <AS_NUMBER>' 라인을 찾습니다 (예: 'router bgp 65000'). 2) 해당 라인에서 AS 번호 X를 추출합니다. 3) {host2}에 대해 동일한 1~2 과정을 반복하여 AS 번호 Y를 추출합니다. 4) '{host1}: AS X, {host2}: AS Y' 형식으로 문자열을 조합하여 반환합니다. 예: 'PE1: AS 65000, PE2: AS 65000' 또는 'PE1: AS 65000, ASBR1: AS 65001'. 주의: BGP 설정이 없는 장비는 'AS None' 또는 '설정 없음'으로 표시합니다.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 39. COMPARE_BGP_AS_leaf3_p4
-- **Level**: L3 | **Type**: text
-- **질문**: leaf3과 p4의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf3: AS X, p4: AS Y']
-- **데이터셋 정답**: `"leaf3: AS N/A, p4: AS N/A"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 1) {host1}의 설정 파일에서 'router bgp <AS_NUMBER>' 라인을 찾습니다 (예: 'router bgp 65000'). 2) 해당 라인에서 AS 번호 X를 추출합니다. 3) {host2}에 대해 동일한 1~2 과정을 반복하여 AS 번호 Y를 추출합니다. 4) '{host1}: AS X, {host2}: AS Y' 형식으로 문자열을 조합하여 반환합니다. 예: 'PE1: AS 65000, PE2: AS 65000' 또는 'PE1: AS 65000, ASBR1: AS 65001'. 주의: BGP 설정이 없는 장비는 'AS None' 또는 '설정 없음'으로 표시합니다.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 40. COMPARE_BGP_AS_leaf3_pe1
-- **Level**: L3 | **Type**: text
-- **질문**: leaf3과 pe1의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf3: AS X, pe1: AS Y']
-- **데이터셋 정답**: `"leaf3: AS N/A, pe1: AS 65000"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 1) {host1}의 설정 파일에서 'router bgp <AS_NUMBER>' 라인을 찾습니다 (예: 'router bgp 65000'). 2) 해당 라인에서 AS 번호 X를 추출합니다. 3) {host2}에 대해 동일한 1~2 과정을 반복하여 AS 번호 Y를 추출합니다. 4) '{host1}: AS X, {host2}: AS Y' 형식으로 문자열을 조합하여 반환합니다. 예: 'PE1: AS 65000, PE2: AS 65000' 또는 'PE1: AS 65000, ASBR1: AS 65001'. 주의: BGP 설정이 없는 장비는 'AS None' 또는 '설정 없음'으로 표시합니다.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 41. COMPARE_BGP_AS_leaf4_p2
-- **Level**: L3 | **Type**: text
-- **질문**: leaf4와 p2의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'leaf4: AS X, p2: AS Y']
-- **데이터셋 정답**: `"leaf4: AS N/A, p2: AS N/A"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 1) {host1}의 설정 파일에서 'router bgp <AS_NUMBER>' 라인을 찾습니다 (예: 'router bgp 65000'). 2) 해당 라인에서 AS 번호 X를 추출합니다. 3) {host2}에 대해 동일한 1~2 과정을 반복하여 AS 번호 Y를 추출합니다. 4) '{host1}: AS X, {host2}: AS Y' 형식으로 문자열을 조합하여 반환합니다. 예: 'PE1: AS 65000, PE2: AS 65000' 또는 'PE1: AS 65000, ASBR1: AS 65001'. 주의: BGP 설정이 없는 장비는 'AS None' 또는 '설정 없음'으로 표시합니다.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 42. COMPARE_BGP_AS_p1_p4
-- **Level**: L3 | **Type**: text
-- **질문**: p1과 p4의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'p1: AS X, p4: AS Y']
-- **데이터셋 정답**: `"p1: AS N/A, p4: AS N/A"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 1) {host1}의 설정 파일에서 'router bgp <AS_NUMBER>' 라인을 찾습니다 (예: 'router bgp 65000'). 2) 해당 라인에서 AS 번호 X를 추출합니다. 3) {host2}에 대해 동일한 1~2 과정을 반복하여 AS 번호 Y를 추출합니다. 4) '{host1}: AS X, {host2}: AS Y' 형식으로 문자열을 조합하여 반환합니다. 예: 'PE1: AS 65000, PE2: AS 65000' 또는 'PE1: AS 65000, ASBR1: AS 65001'. 주의: BGP 설정이 없는 장비는 'AS None' 또는 '설정 없음'으로 표시합니다.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 43. COMPARE_BGP_AS_p1_pe2
-- **Level**: L3 | **Type**: text
-- **질문**: p1과 pe2의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'p1: AS X, pe2: AS Y']
-- **데이터셋 정답**: `"p1: AS N/A, pe2: AS 65000"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 1) {host1}의 설정 파일에서 'router bgp <AS_NUMBER>' 라인을 찾습니다 (예: 'router bgp 65000'). 2) 해당 라인에서 AS 번호 X를 추출합니다. 3) {host2}에 대해 동일한 1~2 과정을 반복하여 AS 번호 Y를 추출합니다. 4) '{host1}: AS X, {host2}: AS Y' 형식으로 문자열을 조합하여 반환합니다. 예: 'PE1: AS 65000, PE2: AS 65000' 또는 'PE1: AS 65000, ASBR1: AS 65001'. 주의: BGP 설정이 없는 장비는 'AS None' 또는 '설정 없음'으로 표시합니다.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 44. COMPARE_BGP_AS_p2_p4
-- **Level**: L3 | **Type**: text
-- **질문**: p2와 p4의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'p2: AS X, p4: AS Y']
-- **데이터셋 정답**: `"p2: AS N/A, p4: AS N/A"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 1) {host1}의 설정 파일에서 'router bgp <AS_NUMBER>' 라인을 찾습니다 (예: 'router bgp 65000'). 2) 해당 라인에서 AS 번호 X를 추출합니다. 3) {host2}에 대해 동일한 1~2 과정을 반복하여 AS 번호 Y를 추출합니다. 4) '{host1}: AS X, {host2}: AS Y' 형식으로 문자열을 조합하여 반환합니다. 예: 'PE1: AS 65000, PE2: AS 65000' 또는 'PE1: AS 65000, ASBR1: AS 65001'. 주의: BGP 설정이 없는 장비는 'AS None' 또는 '설정 없음'으로 표시합니다.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 45. COMPARE_BGP_AS_p4_pe1
-- **Level**: L3 | **Type**: text
-- **질문**: p4와 pe1의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'p4: AS X, pe1: AS Y']
-- **데이터셋 정답**: `"p4: AS N/A, pe1: AS 65000"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 1) {host1}의 설정 파일에서 'router bgp <AS_NUMBER>' 라인을 찾습니다 (예: 'router bgp 65000'). 2) 해당 라인에서 AS 번호 X를 추출합니다. 3) {host2}에 대해 동일한 1~2 과정을 반복하여 AS 번호 Y를 추출합니다. 4) '{host1}: AS X, {host2}: AS Y' 형식으로 문자열을 조합하여 반환합니다. 예: 'PE1: AS 65000, PE2: AS 65000' 또는 'PE1: AS 65000, ASBR1: AS 65001'. 주의: BGP 설정이 없는 장비는 'AS None' 또는 '설정 없음'으로 표시합니다.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 46. COMPARE_BGP_AS_p4_pe2
-- **Level**: L3 | **Type**: text
-- **질문**: p4와 pe2의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'p4: AS X, pe2: AS Y']
-- **데이터셋 정답**: `"p4: AS N/A, pe2: AS 65000"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 1) {host1}의 설정 파일에서 'router bgp <AS_NUMBER>' 라인을 찾습니다 (예: 'router bgp 65000'). 2) 해당 라인에서 AS 번호 X를 추출합니다. 3) {host2}에 대해 동일한 1~2 과정을 반복하여 AS 번호 Y를 추출합니다. 4) '{host1}: AS X, {host2}: AS Y' 형식으로 문자열을 조합하여 반환합니다. 예: 'PE1: AS 65000, PE2: AS 65000' 또는 'PE1: AS 65000, ASBR1: AS 65001'. 주의: BGP 설정이 없는 장비는 'AS None' 또는 '설정 없음'으로 표시합니다.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 47. COMPARE_BGP_AS_pe1_pe2
-- **Level**: L3 | **Type**: text
-- **질문**: pe1과 pe2의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'pe1: AS X, pe2: AS Y']
-- **데이터셋 정답**: `"pe1: AS 65000, pe2: AS 65000"`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 1) {host1}의 설정 파일에서 'router bgp <AS_NUMBER>' 라인을 찾습니다 (예: 'router bgp 65000'). 2) 해당 라인에서 AS 번호 X를 추출합니다. 3) {host2}에 대해 동일한 1~2 과정을 반복하여 AS 번호 Y를 추출합니다. 4) '{host1}: AS X, {host2}: AS Y' 형식으로 문자열을 조합하여 반환합니다. 예: 'PE1: AS 65000, PE2: AS 65000' 또는 'PE1: AS 65000, ASBR1: AS 65001'. 주의: BGP 설정이 없는 장비는 'AS None' 또는 '설정 없음'으로 표시합니다.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 48. COMPARE_BGP_NEIGHBOR_COUNT_leaf2_leaf3
+### 20. COMPARE_BGP_NEIGHBOR_COUNT_leaf2_leaf3
 - **Level**: L3 | **Type**: map_str_int
 - **질문**: leaf2와 leaf3의 BGP 피어 수를 비교하세요. [답변 형식: JSON {{"host1_count": <int>, "host2_count": <int>, "difference": <int>}}]
 - **데이터셋 정답**: `{"difference": 0, "host1_count": 0, "host2_count": 0}`
@@ -575,7 +267,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 49. COMPARE_INTERFACE_COUNT_leaf1_p1
+### 21. COMPARE_INTERFACE_COUNT_leaf1_p1
 - **Level**: L3 | **Type**: map_str_int
 - **질문**: leaf1과 p1의 인터페이스 수를 비교하세요. [답변 형식: JSON {{"host1_count": <int>, "host2_count": <int>, "difference": <int>}}]
 - **데이터셋 정답**: `{"difference": 1, "host1_count": 4, "host2_count": 5}`
@@ -586,7 +278,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 50. COMPARE_OSPF_AREAS_leaf3_p4
+### 22. COMPARE_OSPF_AREAS_leaf3_p4
 - **Level**: L3 | **Type**: text
 - **질문**: leaf3과 p4가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'leaf3: Area 0, 1, p4: Area 0, 2']
 - **데이터셋 정답**: `"leaf3: Area None, p4: Area 0"`
@@ -597,7 +289,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 51. COMPARE_VRF_COUNT_leaf2_p1
+### 23. COMPARE_VRF_COUNT_leaf2_p1
 - **Level**: L3 | **Type**: map_str_int
 - **질문**: leaf2와 p1의 VRF 수를 비교하세요. [답변 형식: JSON {{"host1_count": <int>, "host2_count": <int>, "difference": <int>}}]
 - **데이터셋 정답**: `{"difference": 0, "host1_count": 0, "host2_count": 0}`
@@ -608,7 +300,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 52. IBGP_MISSING_PAIRS_65000
+### 24. IBGP_MISSING_PAIRS_65000
 - **Level**: L3 | **Type**: set
 - **질문**: AS 65000의 iBGP Full-Mesh에서 누락된 장비쌍 목록을 알려주세요. [답변 형식: 리스트]
 - **데이터셋 정답**: `[]`
@@ -619,7 +311,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 53. IBGP_MISSING_PAIRS_COUNT_65000
+### 25. IBGP_MISSING_PAIRS_COUNT_65000
 - **Level**: L3 | **Type**: number
 - **질문**: AS 65000의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까? [답변 형식: 숫자]
 - **데이터셋 정답**: `0`
@@ -630,7 +322,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 54. IBGP_UNDER_PEERED_COUNT_65000
+### 26. IBGP_UNDER_PEERED_COUNT_65000
 - **Level**: L3 | **Type**: number
 - **질문**: AS 65000에서 iBGP 피어 수가 부족한 장비는 총 몇 대입니까? [답변 형식: 숫자]
 - **데이터셋 정답**: `0`
@@ -641,7 +333,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 55. IBGP_UNDER_PEERED_DEVICES_65000
+### 27. IBGP_UNDER_PEERED_DEVICES_65000
 - **Level**: L3 | **Type**: set
 - **질문**: AS 65000에서 iBGP 피어 수가 부족한 장비 목록을 알려주세요. [답변 형식: 리스트]
 - **데이터셋 정답**: `[]`
@@ -652,7 +344,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 56. L2VPN_MISMATCH_COUNT
+### 28. L2VPN_MISMATCH_COUNT
 - **Level**: L3 | **Type**: number
 - **질문**: PW-ID 불일치 또는 단방향 L2VPN 회선은 총 몇 개입니까? [답변 형식: 숫자]
 - **데이터셋 정답**: `0`
@@ -663,7 +355,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 57. L2VPN_PWID_MISMATCH_PAIRS
+### 29. L2VPN_PWID_MISMATCH_PAIRS
 - **Level**: L3 | **Type**: set
 - **질문**: PW-ID가 불일치하는 L2VPN 회선(장비쌍) 목록을 알려주세요. [답변 형식: 리스트]
 - **데이터셋 정답**: `[]`
@@ -674,7 +366,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 58. L2VPN_UNIDIRECTIONAL_PAIRS
+### 30. L2VPN_UNIDIRECTIONAL_PAIRS
 - **Level**: L3 | **Type**: set
 - **질문**: 단방향으로만 설정된 L2VPN 회선(장비쌍) 목록을 알려주세요. [답변 형식: 리스트]
 - **데이터셋 정답**: `[]`
@@ -685,7 +377,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 59. L2VPN_UNIDIR_COUNT
+### 31. L2VPN_UNIDIR_COUNT
 - **Level**: L3 | **Type**: number
 - **질문**: 단방향으로만 설정된 L2VPN 회선은 총 몇 개입니까? [답변 형식: 숫자]
 - **데이터셋 정답**: `0`
@@ -696,7 +388,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 60. MAX_BGP_PEER_DEVICE
+### 32. MAX_BGP_PEER_DEVICE
 - **Level**: L3 | **Type**: text
 - **질문**: BGP 피어가 가장 많은 장비와 그 개수를 알려주세요. [답변 형식: '장비명: N개']
 - **데이터셋 정답**: `"pe1: 1"`
@@ -707,7 +399,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 61. MAX_INTERFACE_DEVICE
+### 33. MAX_INTERFACE_DEVICE
 - **Level**: L3 | **Type**: text
 - **질문**: 인터페이스 수가 가장 많은 장비와 그 개수를 알려주세요. [답변 형식: '장비명: N개']
 - **데이터셋 정답**: `"p1: 5"`
@@ -718,7 +410,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 62. MIN_INTERFACE_DEVICE
+### 34. MIN_INTERFACE_DEVICE
 - **Level**: L3 | **Type**: text
 - **질문**: 인터페이스 수가 가장 적은 장비와 그 개수를 알려주세요. [답변 형식: '장비명: N개']
 - **데이터셋 정답**: `"leaf1: 4"`
@@ -729,7 +421,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 63. VRF_RT_LIST_PER_DEVICE_p4
+### 35. VRF_RT_LIST_PER_DEVICE_p4
 - **Level**: L3 | **Type**: set
 - **질문**: p4 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요. [답변 형식: 리스트]
 - **데이터셋 정답**: `[]`
@@ -740,7 +432,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 64. VRF_RT_LIST_PER_DEVICE_pe2
+### 36. VRF_RT_LIST_PER_DEVICE_pe2
 - **Level**: L3 | **Type**: set
 - **질문**: pe2 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요. [답변 형식: 리스트]
 - **데이터셋 정답**: `["65000:1", "65000:2", "65000:3"]`
@@ -751,7 +443,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 65. VRF_USAGE_STATISTICS
+### 37. VRF_USAGE_STATISTICS
 - **Level**: L3 | **Type**: text
 - **질문**: VRF 사용중인 장비 중에서 각 장비별 VRF 사용 수를 알려주세요. [답변 형식: '장비1: N개, 장비2: M개']
 - **데이터셋 정답**: `"leaf1: 0, leaf2: 0, leaf3: 0, leaf4: 0, p1: 0, p2: 0, p3: 0, p4: 0, pe1: 3, pe2: 3"`
@@ -762,7 +454,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 66. VRF_WITHOUT_RT_COUNT
+### 38. VRF_WITHOUT_RT_COUNT
 - **Level**: L3 | **Type**: number
 - **질문**: route-target이 없는 VRF(장비/VRF)는 총 몇 개입니까? [답변 형식: 숫자]
 - **데이터셋 정답**: `0`
@@ -773,7 +465,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 67. VRF_WITHOUT_RT_PAIRS
+### 39. VRF_WITHOUT_RT_PAIRS
 - **Level**: L3 | **Type**: set
 - **질문**: route-target이 없는 VRF(장비/VRF) 목록을 알려주세요. [답변 형식: 리스트]
 - **데이터셋 정답**: `[]`
