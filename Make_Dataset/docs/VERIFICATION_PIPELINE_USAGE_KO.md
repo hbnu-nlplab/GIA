@@ -145,3 +145,18 @@ Method 4가 끝나면 다음 파일이 생성된다.
 - `L1-L3 were exhaustively verified by an independent parser.`
 - `L4-L5 were exhaustively replay-verified using Batfish row contracts.`
 - `A stratified subset of L4-L5 was externally validated in PNETLab.`
+
+## 현재 남은 필수 작업
+
+코드와 자동 검증 기준으로는 현재 known blocking issue가 없다.
+
+즉 실제로 남은 필수 작업은 다음 하나다.
+
+- `Method 3 reviewed_checklist.csv`를 사람이 채워 외부 검증을 완료하는 것
+
+다만 이것은 `버그가 절대 0개`라는 뜻이 아니다.
+현재 상태는 다음처럼 이해해야 한다.
+
+- 내부 정합성: 확보됨
+- replay 가능성: 확보됨
+- 외부 현실 검증: 아직 사람이 수행해야 함
