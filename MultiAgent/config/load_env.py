@@ -1,8 +1,12 @@
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
+# MultiAgent 루트의 .env를 명시적으로 로드 (nika/.env보다 우선)
+_ROOT_ENV = Path(__file__).resolve().parent.parent / ".env"
+
 def load_louter():
-    load_dotenv()
+    load_dotenv(dotenv_path=_ROOT_ENV, override=True)
     api_key = os.getenv("OPENROUTER_API_KEY")
     base_url = os.getenv("OPENROUTER_BASE_URL")
     model1 = os.getenv("OPENROUTER_MODEL1")

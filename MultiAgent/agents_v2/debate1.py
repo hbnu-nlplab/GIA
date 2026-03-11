@@ -1,56 +1,104 @@
+"""
+debate1.py
+----------
+1차 토론(Debate 1) 에이전트 정의 모듈.
+
+파이프라인: Collector → Verifier → Synthesizer
+
+- Agent 1 (Collector):   질문에 관련된 원시 정보를 컨텍스트에서 추출
+- Agent 2 (Verifier):    추출된 정보에서 불필요한 내용을 제거하여 정제
+- Agent 3 (Synthesizer): 정제된 패시지를 바탕으로 후보 답변 생성
+"""
+
 import re
 from agents_v2.model_loader import get_models
 import threading
+
+# GPU 접근 직렬화를 위한 전역 락 (로컬 모드에서 동시 GPU 접근 방지)
 gpu_lock = threading.Lock()
+
+
 def _get_text(response):
+    """LangChain 응답 객체 또는 일반 문자열에서 텍스트 내용만 안전하게 추출한다."""
     return response.content if hasattr(response, 'content') else str(response)
 
-# --- [수정] 모든 레이블(Context, Passage, Answer)을 처리하는 파싱 함수 ---
+
 def _extract_from_tags(text: str, start_tag="[START]", end_tag="[DONE]") -> str:
+    """
+    LLM 응답에서 [START]...[DONE] 태그 사이의 내용을 추출하고 정제한다.
+
+    처리 순서:
+    1. <think>...</think> 블록 제거 (Qwen3 등 reasoning 모델의 사고 과정 제거)
+    2. 두 번째 [START] 이후 내용 추출 (모델이 예시를 먼저 출력하는 경우 대응)
+    3. [DONE] 이전까지만 사용
+    4. "Context:", "Passage:", "Answer:" 등 레이블 헤더 제거
+
+    Args:
+        text: LLM 원시 응답 텍스트
+        start_tag: 추출 시작 태그 (기본값: "[START]")
+        end_tag: 추출 종료 태그 (기본값: "[DONE]")
+    Returns:
+        str: 정제된 내용 (레이블 없는 순수 값)
+    """
     print("=" * 100)
     print("Full Content:", text)
-    
-    # 2번째 [START] 찾기 로직
+
+    # Step 1: <think>...</think> 블록 제거
+    text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
+
+    # Step 2: [START] 기준으로 분할하여 두 번째 등장 이후 내용 선택
+    # (모델이 포맷 예시를 먼저 출력한 뒤 실제 답을 출력하는 경우 대응)
     start_parts = text.split(start_tag)
-    
     target_content = ""
     if len(start_parts) >= 3:
-        # [START]가 2개 이상이면 2번째 [START] 이후의 내용을 취함
-        target_content = start_parts[2]
+        target_content = start_parts[2]   # 두 번째 [START] 이후
     elif len(start_parts) == 2:
-        # [START]가 1개뿐이면 그거라도 취함
-        target_content = start_parts[1]
+        target_content = start_parts[1]   # 첫 번째 [START] 이후
     else:
-        # [START]가 없으면 전체 사용
-        target_content = text
+        target_content = text             # [START]가 없으면 전체 사용
 
-    # [DONE] 이전까지만 사용
+    # Step 3: [DONE] 이전까지만 사용
     if end_tag in target_content:
         target_content = target_content.split(end_tag)[0]
-        
     target_content = target_content.strip()
-    
+
     print("-" * 50)
     print("Target Content for Parsing:", target_content)
 
-    cleaned = re.sub(r"^\s*(Context|Passage|Answer|Result)\s*:\s*", "", target_content, flags=re.IGNORECASE | re.MULTILINE)
+    # Step 4: "Context:", "Passage:", "Answer:", "Result:" 등 레이블 헤더 제거
+    cleaned = re.sub(r"^\s*(Context|Passage|Answer|Result)\s*:\s*", "", target_content,
+                     flags=re.IGNORECASE | re.MULTILINE)
     cleaned = cleaned.strip()
-    
+
     print("=" * 100)
     print("Parsed Content:", cleaned)
-    
+
     return cleaned
+
 
 # ==========================================
 # 🕵️ Agent 1: Collector Node
 # ==========================================
 def collector_node(state: dict):
+    """
+    컨텍스트(설정 파일 전체)에서 질문과 관련된 원시 정보를 추출한다.
+
+    데이터셋 타입별로 다른 수집 전략을 사용한다:
+    - descriptive:     포괄적인 기술 설명과 인과관계 수집
+    - short_answer:    정확한 사실 값이 담긴 문장/단락 직접 복사
+    - multiple_choice: 선택지(A~D) 각각과 관련된 내용 추출
+    - netconfig:       질문에서 언급된 특정 장비의 원시 설정 블록만 추출
+
+    상태 업데이트:
+        raw_data (str): 추출된 원시 정보
+        outer_loop_count (int): 외부 루프 카운터 +1 (Collector 재호출 횟수 추적)
+    """
     print(f"\n🕵️ [Agent 1: Collector] Strategy for: {state.get('dataset_type')}")
     models = get_models()
-    llm = models.get('B', models['A']) 
+    llm = models.get('B', models['A'])  # B 모델 우선 사용, 없으면 A 폴백
     dataset_type = state.get("dataset_type", "descriptive")
 
-    # Agent 1용 데이터셋별 수집 전략 프롬프트
+    # 데이터셋 타입별 수집 전략 프롬프트
     COLLECTOR_PROMPTS = {
         "descriptive": """Focus on gathering comprehensive technical explanations and cause-effect relationships from the context.""",
 
@@ -60,9 +108,9 @@ def collector_node(state: dict):
 
         "netconfig": """
 1. Target Identification: Identify the EXACT device (hostname) mentioned in the question.
-2. Direct Extraction: Extract the raw configuration lines of that device only. 
+2. Direct Extraction: Extract the raw configuration lines of that device only.
 3. Strict Boundary: Start from the hostname declaration and include all relevant parameters for that specific device block.
-4. No Paraphrasing: DO NOT convert the configuration into natural language sentences. 
+4. No Paraphrasing: DO NOT convert the configuration into natural language sentences.
 5. No Additions: Do not add any commentary, explanations, or metadata.
 6. Format: Output ONLY the raw configuration text as it appears in the source.
 
@@ -71,42 +119,55 @@ Write [NONE] if you cannot write a answer.
     }
 
     base_strategy = COLLECTOR_PROMPTS.get(dataset_type, COLLECTOR_PROMPTS["descriptive"])
-    
+
     system_prompt = f"""You are a Network Info Collector.
 TASK: {base_strategy}
-- Extract all relevant information VERBATIM. 
+- Extract all relevant information VERBATIM.
 - Do not summarize or lose technical precision.
 
-### OUTPUT FORMAT: 
+### OUTPUT FORMAT:
 [START]
 Context:
 [DONE]"""
 
+    # Critic으로부터 받은 피드백이 있으면 프롬프트에 포함 (재수집 루프)
     feedback = state.get("feedback_to_collector", "")
     options_str = state.get('options', '')
     feedback_str = f"\n[Critic Feedback]: {feedback}" if feedback else ""
     prompt = f"{system_prompt}\n\nQuestion: {state['question']}\nContext: {state['context']}"
-    # print(" +++++++++++++ given context: ", state['context'][:100])
 
     if dataset_type == "multiple_choice" and options_str:
         prompt += f"Options: {options_str}\n"
+
+    # GPU 락을 사용하여 동시 접근 방지 (로컬 모드에서 필요)
     with gpu_lock:
         response = llm.invoke(prompt)
     raw_res = _get_text(response)
-    
-    # [중요] 여기서 즉시 파싱하여 raw_data에 'Context:'가 없는 순수 데이터만 저장
+
+    # 즉시 파싱하여 "Context:" 레이블이 없는 순수 데이터만 저장
     extracted = _extract_from_tags(raw_res)
-    
-    # outer_loop_count를 증가시켜 루프 제어
+
     return {
         "raw_data": extracted,
-        "outer_loop_count": state.get("outer_loop_count", 0) + 1
+        "outer_loop_count": state.get("outer_loop_count", 0) + 1  # 외부 루프 카운터 증가
     }
+
 
 # ==========================================
 # ✂️ Agent 2: Verifier Node
 # ==========================================
 def verifier_node(state: dict):
+    """
+    Collector가 추출한 원시 정보(raw_data)에서 질문과 무관한 줄을 제거한다.
+
+    핵심 규칙:
+    - 원본 텍스트를 한 글자도 수정하지 않음 (파라프레이징 금지)
+    - 관련 있는 줄은 그대로 유지, 무관한 줄만 삭제
+    - 출력은 요약이 아닌 원시 설정 라인들의 집합
+
+    상태 업데이트:
+        current_passage (str): 정제된 패시지 (Synthesizer에서 사용)
+    """
     print("✂️ [Agent 2: Verifier] Cleaning irrelevant data...")
     models = get_models()
     llm = models['A']
@@ -133,21 +194,37 @@ Passage:
     options_str = state.get('options', '')
     if dataset_type == "multiple_choice" and options_str:
         prompt += f"Options: {options_str}\n"
+
     with gpu_lock:
         response = _get_text(llm.invoke(prompt))
     refined = _extract_from_tags(response)
     return {"current_passage": refined}
 
+
 # ==========================================
 # 💡 Agent 3: Synthesizer Node
 # ==========================================
 def synthesizer_node(state: dict):
+    """
+    Verifier가 정제한 패시지(current_passage)를 기반으로 최종 후보 답변을 생성한다.
+
+    데이터셋 타입별 출력 형식:
+    - descriptive:     1-2문장의 기술적 설명
+    - short_answer:    컨텍스트에서 정확히 추출한 값 (패라프레이징 금지)
+    - multiple_choice: "option N: [답변 텍스트]" 형식
+    - netconfig:       answer_type에 맞는 형식 (text/numeric/set/map/bool/ip)
+                       정보 없으면 타입별 기본값 반환 (null/0/[]/{}/ false/"No path")
+
+    상태 업데이트:
+        candidate_answer (str): 생성된 후보 답변
+        debate1_answer (str):   1차 토론 답변 스냅샷 (나중에 비교용)
+    """
     print("💡 [Agent 3: Synthesizer] Generating Answer...")
     models = get_models()
     llm = models['A']
     dataset_type = state.get("dataset_type", "descriptive")
 
-    # 데이터셋별 정답 생성 규칙 (Rules)
+    # 데이터셋별 답변 생성 규칙 프롬프트
     PROMPTS = {
         "descriptive": """You are a Network Info Synthesizer for descriptive questions.
 TASK: Answer the question based on the provided passage.
@@ -160,7 +237,7 @@ RULES:
 
         "short_answer": """You are a Network Info Synthesizer for short-answer questions.
 TASK: Answer the question based on the provided passage.
-        
+
 RULES:
 1. Find the exact answer span in the context.
 2. Output ONLY the extracted text in answer - no explanations, no reasoning, no thoughts.
@@ -180,7 +257,7 @@ RULES:
         "netconfig": """You are a Network Info Synthesizer for short-answer questions.
         TASK:
     1. Search the Context for the specific value requested.
-    2. If the Context is "[NONE]" or the information is not found, the Passage must be "[NONE]". 
+    2. If the Context is "[NONE]" or the information is not found, the Passage must be "[NONE]".
     If the passage is [NONE] or you cannot find accurate information, answer [NONE]
 
     Answer FORMAT RULES (CRITICAL - MUST FOLLOW EXACTLY):
@@ -206,28 +283,26 @@ RULES:
    - boolean: false
    - path: No path
    """
-}
+    }
 
     base_system = PROMPTS.get(dataset_type, PROMPTS["descriptive"])
     system_prompt = base_system + """
 ### OUTPUT FORMAT:
 [START]
-Answer: 
+Answer:
 [DONE]"""
 
     prompt = f"{system_prompt}\n\nQuestion: {state['question']}\nOptions: {state.get('options', 'N/A')}\nContext (Passage): {state.get('current_passage', '')}"
     options_str = state.get('options', '')
     if dataset_type == "multiple_choice" and options_str:
         prompt += f"Options: {options_str}\n"
-        
+
     with gpu_lock:
         response = _get_text(llm.invoke(prompt))
-    # [중요] 'Answer:' 레이블을 떼고 정답만 추출
+    # "Answer:" 레이블을 제거하고 순수 답변 값만 추출
     answer_val = _extract_from_tags(response)
 
     return {
         "candidate_answer": answer_val,
-        "debate1_answer": answer_val
+        "debate1_answer": answer_val  # 1차 답변 스냅샷 저장
     }
-
-

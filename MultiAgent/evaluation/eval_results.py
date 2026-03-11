@@ -782,7 +782,13 @@ def analyze_results(json_file: str, verbose: bool = False):
         level = row.get('level', 'Unknown')
         category = row.get('category', 'Unknown')
         status = row.get('answer_status', row.get('status', 'Unknown'))
+        clean_pred = scorer.clean_prediction(raw_pred, answer_type)
         
+        if not clean_pred or clean_pred.strip() == "":
+            print(f"\n🚨 [CRITICAL] Cleaning failed!")
+            print(f"ID: {row.get('id')} | Raw: '{raw_pred}'")
+            print(f"Type: {answer_type} | Cleaned: '{clean_pred}'")
+
         # 전처리 (answer_type 전달)
         clean_pred = scorer.clean_prediction(raw_pred, answer_type)
         clean_gold = scorer.clean_gold(row['gold_answer'])
@@ -1022,7 +1028,7 @@ def main():
     if not files_to_process:
         # Default file if none provided
         # default_file = BASE_DIR / "data" / "debate_results" / "agents_v2" / "full_w_context3" / "netconfig" / "netconfig_result.json"
-        default_file = BASE_DIR / "data" / "debate_results" / "agents_v2" / "full_w_context3" / "netbench" / "netbench_result.json"
+        default_file = BASE_DIR / "data" / "debate_results" / "agents_v2" / "full_w_context5" / "netconfig" / "netconfig_result.json"
         if default_file.exists():
             files_to_process = [str(default_file)]
         else:

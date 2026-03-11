@@ -226,9 +226,7 @@ def main():
     init_models()
     app = build_graph()
     
-    # input_path = BASE_DIR / "data" / "passages"  / "full_w_context" / "netconfig_en2.json"
-    # output_path = BASE_DIR / "data" / "debate_results" / "agents_v2" / "test2" / "netconfig_result.json"
-    
+    # 여기서 데이터셋 경로 설정 
     input_path = BASE_DIR / "data" / "passages"  / "full_w_context" / "telequad_passage.json"
     output_path = BASE_DIR / "data" / "debate_results" / "agents_v2" / "full_w_context3" / "telequad" / "telequad_result.json"
     
@@ -239,7 +237,8 @@ def main():
     # 1. 입력 데이터 로드
     with open(input_path, 'r', encoding='utf-8') as f:
         loaded_data = json.load(f)
-    # [수정] raw_data 대신 loaded_data를 사용하고, 리스트 형식인지 보장합니다.
+        # loaded_data = json.load(f)[:10]  테스트로 10개 돌려보기
+        
     if isinstance(loaded_data, dict):
         data = [loaded_data]
     elif isinstance(loaded_data, list):
@@ -275,6 +274,7 @@ def main():
     dataset_type = "descriptive"
     global_context = None
 
+    # 데이터셋별로 다른 프롬프트를 쓰기 때문에 데이터셋 설정(정답 생성, teleqna-options 추가 부분에서 다른 프롬프트 사용을 위해)
     if "teleqna" in input_path.name.lower():
         dataset_type = "multiple_choice"
     elif "telequad" in input_path.name.lower():
@@ -296,7 +296,9 @@ def main():
             existing_int_ids.append(int(res_id))
         except ValueError:
             pass
-
+    
+    # 빠진 id가 있을 경우 해당 번호를 돌리는 코드
+    # 우선 빠진 id를 찾음
     missing_ids_set = set()
     if existing_int_ids:
         min_id = min(existing_int_ids)
@@ -317,6 +319,7 @@ def main():
     skipped_count = 0
     none_retry_count = 0
     
+    # 데이터 재실행 부분
     for item in data:
         item_id = str(item.get('id', ''))
         
@@ -340,6 +343,7 @@ def main():
     print(f"🔄 재시도 ([NONE] 답변): {none_retry_count}")
     print(f"🚀 최종 실행 대기: {len(items_to_process)}")
     
+    # 병렬처리 
     MAX_WORKERS = 50
     start_total_time = time.time()
     os.makedirs(output_path.parent, exist_ok=True)
