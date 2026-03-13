@@ -1010,7 +1010,7 @@ LINK_FAILURE_leaf1_leaf8,link_failure_impact:88e12b215d,L5,link_failure_impact,t
 LINK_FAILURE_leaf1_leaf9,link_failure_impact:740dded4a9,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
 LINK_FAILURE_leaf1_p1,link_failure_impact:7636b9072b,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
 LINK_FAILURE_leaf1_p10,link_failure_impact:7aca01325e,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
-SPOF_DETECTION_GLOBAL,spof_detection:566d4b6821,L5,spof_detection,set_str,MATCH,,"[""p7""]","[""p7""]",True,1.0,exact
+SPOF_DETECTION_GLOBAL,spof_detection:566d4b6821,L5,spof_detection,set_str,MISMATCH,,[],"[""p7""]",False,0.0,missing={'p7'}
 OSPF_AREA0_ROUTERS_GLOBAL,ospf_area0_routers:566d4b6821,L5,ospf_area0_routers,set,MATCH,,"[""asbr1"", ""asbr2"", ""p6"", ""p7"", ""p8""]","[""asbr1"", ""asbr2"", ""p6"", ""p7"", ""p8""]",True,1.0,exact
 K_FAILURE_p7_p8,redundant_paths_list:f5e3f80c63,L5,redundant_paths_list,set,MATCH,,"[""p7 → p8""]","[""p7 → p8""]",True,1.0,exact
 ROOT_CAUSE_leaf10_leaf6,root_cause_analysis:cac48b5fa5,L5,root_cause_analysis,text,MATCH,,pe5,"""pe5""",True,1.0,exact
@@ -1091,7 +1091,7 @@ WORST_CASE_FAILURE,worst_case_failure_analysis:566d4b6821,L5,worst_case_failure_
 NEGATIVE_TEST_FAKE_NODE,non_existent_node_check:4816fc9823,L5,non_existent_node_check,number,MATCH,,0,0,True,1.0,"parser=0.0, gold=0.0"
 CONFIG_CHANGE_BASELINE,config_change_impact:e0ae13cbdc,L5,config_change_impact,text,MATCH,,"CHANGED (70 entries: 10.0.30.1 -> 10.0.32.1, 10.10.10.1 -> 10.0.32.1, 10.0.30.3 -> 10.0.32.1)","""CHANGED (70 entries: 10.0.30.1 -> 10.0.32.1, 10.10.10.1 -> 10.0.32.1, 10.0.30.3 -> 10.0.32.1)""",True,1.0,exact
 DIFF_REACH_BASELINE,differential_reachability:21ab5d5d26,L5,differential_reachability,text,MATCH,,NO_DIFF,"""NO_DIFF""",True,1.0,exact
-POLICY_COMPLIANCE_p10,policy_compliance_check:da0910f0db,L5,policy_compliance_check,text,MATCH,,"VIOLATION: 10.0.30.1 -> 8.8.8.8, 10.10.10.1 -> 8.8.8.8, 10.0.30.3 -> 8.8.8.8","""VIOLATION: 10.0.30.1 -> 8.8.8.8, 10.10.10.1 -> 8.8.8.8, 10.0.30.3 -> 8.8.8.8""",True,1.0,exact
+POLICY_COMPLIANCE_p10,policy_compliance_check:da0910f0db,L5,policy_compliance_check,text,MISMATCH,,"VIOLATION: 10.0.1.0 -> 8.8.8.8, 10.0.1.1 -> 8.8.8.8, 10.0.11.0 -> 8.8.8.8","""VIOLATION: 10.0.30.1 -> 8.8.8.8, 10.10.10.1 -> 8.8.8.8, 10.0.30.3 -> 8.8.8.8""",False,0.5714285714285714,token_f1=0.571
 SEC_BYPASS_p8_p7_p10__rs5,security_policy_bypass_check:6e9ef5078d-rs5,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p8 -> p7),"""VIOLATION (path: p8 -> p7)""",True,1.0,exact
 SEC_BYPASS_p7_p8_pe1__rs7,security_policy_bypass_check:f23075fa11-rs7,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p7 -> p8),"""VIOLATION (path: p7 -> p8)""",True,1.0,exact
 SEC_BYPASS_p7_p8_p10__rs9,security_policy_bypass_check:d129441350-rs9,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p7 -> p8),"""VIOLATION (path: p7 -> p8)""",True,1.0,exact

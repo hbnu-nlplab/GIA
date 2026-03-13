@@ -1,10 +1,10 @@
 {
   "total": 572,
-  "match": 572,
-  "mismatch": 0,
+  "match": 570,
+  "mismatch": 2,
   "error": 0,
   "quarantined": 0,
-  "agreement_rate": 1.0,
+  "agreement_rate": 0.9965034965034965,
   "by_level": {
     "L4": {
       "total": 443,
@@ -15,8 +15,8 @@
     },
     "L5": {
       "total": 129,
-      "match": 129,
-      "mismatch": 0,
+      "match": 127,
+      "mismatch": 2,
       "error": 0,
       "quarantined": 0
     }
@@ -87,8 +87,8 @@
     },
     "spof_detection": {
       "total": 1,
-      "match": 1,
-      "mismatch": 0,
+      "match": 0,
+      "mismatch": 1,
       "error": 0,
       "quarantined": 0
     },
@@ -164,8 +164,8 @@
     },
     "policy_compliance_check": {
       "total": 1,
-      "match": 1,
-      "mismatch": 0,
+      "match": 0,
+      "mismatch": 1,
       "error": 0,
       "quarantined": 0
     },
@@ -178,7 +178,7 @@
     }
   },
   "paper_ready": {
-    "retained": 2158,
-    "dropped_l45": 0
+    "retained": 2156,
+    "dropped_l45": 2
   }
 }

@@ -57,8 +57,9 @@ class Config:
     DISPLAY_NAMES = {
         "GPT-OSS-20B": "GPT-OSS-20B",
         "Qwen3-Coder": "Qwen3-Coder",
-        "GLM-4.7-Flash": "GLM-4.7-Flash",
         "Qwen3.5-9B": "Qwen3.5-9B",
+        "Qwen3.5-4B": "Qwen3.5-4B",
+        "Foundation-Sec-8B": "Foundation-Sec-8B",
         "gpt-4o-mini": "GPT-4o-mini",
     }
 
@@ -66,11 +67,11 @@ class Config:
 
     # 레벨별 출력 토큰 차등
     MAX_OUTPUT_BY_LEVEL = {
-        "L1": 4096,
-        "L2": 4096,
-        "L3": 8192,
-        "L4": 16384,
-        "L5": 16384,
+        "L1": 2048,
+        "L2": 2048,
+        "L3": 3072,
+        "L4": 4096,
+        "L5": 4096,
     }
     MAX_OUTPUT_DEFAULT = 8192
 
@@ -304,6 +305,7 @@ async def infer_single(
                 if not is_openai:
                     kwargs["extra_body"] = {
                         "stop": ["Question:", "=== QUESTION ==="],
+                        "repetition_penalty": 1.05,
                     }
                 else:
                     kwargs["stop"] = ["Question:", "=== QUESTION ==="]
@@ -313,6 +315,28 @@ async def infer_single(
 
             except Exception as e:
                 err_str = str(e)
+                # 컨텍스트 길이 초과 (Error 400)로 인한 실패 시 max_tokens 동적 축소
+                if "maximum input length of" in err_str and "input_tokens" in err_str:
+                    # 정규식 패턴 예: "You passed 24577 input tokens... context length is only 40960... maximum input length of 24576"
+                    match_ctx = re.search(r"context length is only (\d+)", err_str)
+                    match_val = re.search(r"value=(\d+)", err_str)
+                    if match_ctx and match_val:
+                        ctx_len = int(match_ctx.group(1))
+                        inp_len = int(match_val.group(1))
+                        allowed_max = ctx_len - inp_len
+                        if allowed_max > 0:
+                            max_tokens = allowed_max
+                        else:
+                            max_tokens = int(max_tokens * 0.8)
+                    else:
+                        max_tokens = int(max_tokens * 0.8) # 기본적으로 20% 축소
+                    
+                    if max_tokens < 100:
+                        return f"[ERROR] Prompt too long (max_tokens reduced too much: {err_str})"
+                        
+                    # 약간의 딜레이 후 다시 시도 (재시도 횟수 소진 방지는 x)
+                    continue
+                    
                 if attempt < 3:
                     if "429" in err_str:
                         wait = 60 * (attempt + 1)
