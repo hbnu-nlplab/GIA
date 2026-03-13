@@ -442,7 +442,7 @@ ASYMMETRIC_leaf5_leaf4,asymmetric_path_comparison:184f5df8ab,L4,asymmetric_path_
 ASYMMETRIC_p8_pe1,asymmetric_path_comparison:f5547e25be,L4,asymmetric_path_comparison,text,MATCH,,"Forward: p8 -> p7 -> p6 -> p5 -> p3 -> p1 -> pe1, Reverse: pe1 -> p1 -> p3 -> p5 -> p6 -> p7 -> p8","""Forward: p8 -> p7 -> p6 -> p5 -> p3 -> p1 -> pe1, Reverse: pe1 -> p1 -> p3 -> p5 -> p6 -> p7 -> p8""",True,1.0,exact
 ASYMMETRIC_leaf5_p6,asymmetric_path_comparison:8966f44a3f,L4,asymmetric_path_comparison,text,MATCH,,"Forward: leaf5 -> pe3, Reverse: p6","""Forward: leaf5 -> pe3, Reverse: p6""",True,1.0,exact
 ASYMMETRIC_leaf4_leaf3,asymmetric_path_comparison:0ddace8e5f,L4,asymmetric_path_comparison,text,MATCH,,"Forward: leaf4 -> pe2, Reverse: leaf3 -> pe2","""Forward: leaf4 -> pe2, Reverse: leaf3 -> pe2""",True,1.0,exact
-SPOF_DETECTION_GLOBAL,spof_detection:566d4b6821,L5,spof_detection,set_str,MATCH,,"[""pe3"", ""leaf6""]","[""pe3"", ""leaf6""]",True,1.0,exact
+SPOF_DETECTION_GLOBAL,spof_detection:566d4b6821,L5,spof_detection,set_str,MISMATCH,,"[""pe3""]","[""pe3"", ""leaf6""]",False,0.6666666666666666,missing={'leaf6'}
 OSPF_AREA0_ROUTERS_GLOBAL,ospf_area0_routers:566d4b6821,L5,ospf_area0_routers,set,MATCH,,"[""p1"", ""p4"", ""p7"", ""pe1"", ""pe2""]","[""p1"", ""p4"", ""p7"", ""pe1"", ""pe2""]",True,1.0,exact
 K_FAILURE_leaf6_p7,redundant_paths_list:7078fb371d,L5,redundant_paths_list,set,MATCH,,"[""leaf6 → pe3""]","[""leaf6 → pe3""]",True,1.0,exact
 ROOT_CAUSE_leaf6_p3,root_cause_analysis:52bdef7e3c,L5,root_cause_analysis,text,MATCH,,pe3,"""pe3""",True,1.0,exact
@@ -520,7 +520,7 @@ WORST_CASE_FAILURE,worst_case_failure_analysis:566d4b6821,L5,worst_case_failure_
 NEGATIVE_TEST_FAKE_NODE,non_existent_node_check:4816fc9823,L5,non_existent_node_check,number,MATCH,,0,0,True,1.0,"parser=0.0, gold=0.0"
 CONFIG_CHANGE_BASELINE,config_change_impact:9a83a2b519,L5,config_change_impact,text,MATCH,,"CHANGED (47 entries: 10.10.10.31 -> 10.10.10.35, 172.16.1.3 -> 10.10.10.35, 10.10.10.1 -> 10.10.10.35)","""CHANGED (47 entries: 10.10.10.31 -> 10.10.10.35, 172.16.1.3 -> 10.10.10.35, 10.10.10.1 -> 10.10.10.35)""",True,1.0,exact
 DIFF_REACH_BASELINE,differential_reachability:7ede142c8f,L5,differential_reachability,text,MATCH,,NO_DIFF,"""NO_DIFF""",True,1.0,exact
-POLICY_COMPLIANCE_leaf6,policy_compliance_check:55fdaa2721,L5,policy_compliance_check,text,MATCH,,"VIOLATION: 10.10.10.31 -> 10.10.10.0, 172.16.1.3 -> 10.10.10.0, 10.10.10.1 -> 10.10.10.0","""VIOLATION: 10.10.10.31 -> 10.10.10.0, 172.16.1.3 -> 10.10.10.0, 10.10.10.1 -> 10.10.10.0""",True,1.0,exact
+POLICY_COMPLIANCE_leaf6,policy_compliance_check:55fdaa2721,L5,policy_compliance_check,text,MISMATCH,,"VIOLATION: 10.0.1.0 -> 8.8.8.8, 10.0.1.1 -> 8.8.8.8, 10.0.11.0 -> 8.8.8.8","""VIOLATION: 10.10.10.31 -> 10.10.10.0, 172.16.1.3 -> 10.10.10.0, 10.10.10.1 -> 10.10.10.0""",False,0.2857142857142857,token_f1=0.286
 MULTI_FAIL_leaf1_pe1_leaf2_leaf7,multi_link_failure_reachability:e06180a477,L5,multi_link_failure_reachability,text,MATCH,,DISCONNECTED (reason: NO_ROUTE at pe3),"""DISCONNECTED (reason: NO_ROUTE at pe3)""",True,1.0,exact
 MULTI_FAIL_leaf1_leaf7_leaf2_leaf3,multi_link_failure_reachability:bb2f6dab37,L5,multi_link_failure_reachability,text,MATCH,,DISCONNECTED (reason: NO_ROUTE at pe3),"""DISCONNECTED (reason: NO_ROUTE at pe3)""",True,1.0,exact
 MULTI_FAIL_leaf1_pe3_leaf2_leaf4,multi_link_failure_reachability:609fda6971,L5,multi_link_failure_reachability,text,MATCH,,DISCONNECTED (reason: NO_ROUTE at pe3),"""DISCONNECTED (reason: NO_ROUTE at pe3)""",True,1.0,exact

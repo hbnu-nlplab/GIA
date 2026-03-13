@@ -17,8 +17,8 @@
       "structured_metrics_coverage": 1.0
     },
     "paper_ready_filter": {
-      "l45_retained": 572,
-      "l45_dropped": 0
+      "l45_retained": 570,
+      "l45_dropped": 2
     }
   },
   "questions": [
@@ -53116,40 +53116,6 @@
       "files": "[]"
     },
     {
-      "id": "SPOF_DETECTION_GLOBAL",
-      "id_v2": "spof_detection:566d4b6821",
-      "metric": "spof_detection",
-      "scope": {
-        "type": "GLOBAL"
-      },
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "question": "단일 장비 장애 시 통신이 두절되는 구간(SPOF: Single Point of Failure)이 존재합니까? [답변 형식: SPOF 장비 목록 (예: [\"p1\", \"pe1\"]) 또는 빈 목록 []]",
-      "answer_status": "OK",
-      "answer_type": "set_str",
-      "answer": "[\"pe3\", \"leaf6\"]",
-      "eval_answer": "[\"pe3\", \"leaf6\"]",
-      "unknown_reason": "",
-      "evidence": "{\"scope\": {\"type\": \"GLOBAL\"}, \"metric\": \"spof_detection\", \"snapshot\": \"LabB_NCN_Basic_SP_20nodes\"}",
-      "scenario": {
-        "base_snapshot": "baseline",
-        "fork_ops": []
-      },
-      "query_contract": {
-        "replay_method": "spof_detection",
-        "params": {}
-      },
-      "verification_contract": {
-        "answer_shape": "set_str",
-        "compare_mode": "canonical"
-      },
-      "oracle_source": "batfish_replay",
-      "verification_status": "passed",
-      "quarantine_reason": "",
-      "pipeline_version": "db62dec",
-      "files": "[]"
-    },
-    {
       "id": "OSPF_AREA0_ROUTERS_GLOBAL",
       "id_v2": "ospf_area0_routers:566d4b6821",
       "metric": "ospf_area0_routers",
@@ -56193,45 +56159,6 @@
           "snapshot2": "cfg_change_leaf5_1773019079",
           "src_node": "leaf6",
           "dst_ip": "10.0.15.1"
-        }
-      },
-      "verification_contract": {
-        "answer_shape": "text",
-        "compare_mode": "canonical"
-      },
-      "oracle_source": "batfish_replay",
-      "verification_status": "passed",
-      "quarantine_reason": "",
-      "pipeline_version": "db62dec",
-      "files": "[]"
-    },
-    {
-      "id": "POLICY_COMPLIANCE_leaf6",
-      "id_v2": "policy_compliance_check:55fdaa2721",
-      "metric": "policy_compliance_check",
-      "scope": {
-        "type": "POLICY",
-        "policy_name": "MANDATORY_WAYPOINT_leaf6"
-      },
-      "category": "What_If_Analysis",
-      "level": "L5",
-      "question": "'MANDATORY_WAYPOINT_leaf6' 정책 준수 여부와 위반 사례를 알려주세요. [답변 형식: 'COMPLIANT' 또는 'VIOLATION: 흐름1, 흐름2, ...']",
-      "answer_status": "OK",
-      "answer_type": "text",
-      "answer": "\"VIOLATION: 10.10.10.31 -> 10.10.10.0, 172.16.1.3 -> 10.10.10.0, 10.10.10.1 -> 10.10.10.0\"",
-      "eval_answer": "VIOLATION: 10.10.10.31 -> 10.10.10.0, 172.16.1.3 -> 10.10.10.0, 10.10.10.1 -> 10.10.10.0",
-      "unknown_reason": "",
-      "evidence": "{\"scope\": {\"type\": \"POLICY\", \"policy_name\": \"MANDATORY_WAYPOINT_leaf6\"}, \"metric\": \"policy_compliance_check\", \"snapshot\": \"LabB_NCN_Basic_SP_20nodes\"}",
-      "scenario": {
-        "base_snapshot": "baseline",
-        "fork_ops": []
-      },
-      "query_contract": {
-        "replay_method": "policy_compliance_check",
-        "params": {
-          "policy_type": "waypoint",
-          "waypoint_node": "leaf6",
-          "policy_name": "MANDATORY_WAYPOINT_leaf6"
         }
       },
       "verification_contract": {

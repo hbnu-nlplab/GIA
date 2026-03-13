@@ -245,7 +245,7 @@
       "verdict": "DISAGREE",
       "disagreement_type": "INVESTIGATION_NEEDED",
       "rationale": "AS 65000 devices: ['p7', 'p8', 'pe1', 'pe2', 'pe3', 'pe4'], missing pairs: ['p7/p8', 'p7/pe1', 'p7/pe2', 'p7/pe3', 'p7/pe4', 'p8/p7', 'p8/pe1', 'p8/pe2', 'p8/pe3', 'p8/pe4', 'pe1/p7', 'pe1/p8', 'pe1/pe4', 'pe2/p7', 'pe2/p8', 'pe2/pe3', 'pe3/p7', 'pe3/p8', 'pe3/pe2', 'pe4/p7', 'pe4/p8', 'pe4/pe1'], under-peered: ['p7', 'p8', 'pe1', 'pe2', 'pe3', 'pe4']",
-      "verification_procedure": "검증 방법: 1) AS {asn}에 소속된 모든 BGP 라우터 목록을 작성합니다(N대). 2) 이론적으로 필요한 모든 쌍(N*(N-1)/2개)을 생성합니다. 3) 실제 Config 내 'neighbor' 설정과 비교하여 없는 쌍을 찾아냅니다. 4) 누락된 쌍들을 'A<->B' 형식의 리스트로 만들어 반환합니다.",
+      "verification_procedure": "검증 방법: 1) AS {asn}에 소속된 모든 BGP 라우터 목록을 작성합니다(N대). 2) 이론적으로 필요한 모든 쌍(N*(N-1)/2개)을 생성합니다. 3) 실제 Config 내 'neighbor' 설정과 비교하여 없는 쌍을 찾아냅니다. 4) 누락된 쌍들을 'A<->B' 형식의 JSON array로 만들어 반환합니다.",
       "hosts_inspected": "p7, p8, pe1, pe2, pe3, pe4"
     },
     {
