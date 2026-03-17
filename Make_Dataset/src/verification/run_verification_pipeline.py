@@ -32,6 +32,11 @@ Outputs:
     │   ├── pnetlab_verification_guide.md
     │   ├── blank_checklist.csv
     │   └── sample_selection.md
+    ├── method4_l45_replay/           (L4-L5 Batfish replay 자동 검증)
+    │   ├── l45_replay_results.csv
+    │   ├── l45_replay_summary.json
+    │   ├── l45_replay_mismatch.md
+    │   └── paper_ready_dataset.json
     └── verification_summary.json     (통합 요약)
 """
 
@@ -119,6 +124,25 @@ def _serialize(val: Any) -> str:
     if isinstance(val, (dict, list, set, tuple)):
         return json.dumps(val, ensure_ascii=False, sort_keys=True)
     return str(val) if val is not None else ""
+
+
+def _load_existing_unified_summary(verification_dir: Path) -> Dict[str, Any]:
+    path = verification_dir / "verification_summary.json"
+    if not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8")).get("verification_methods", {})
+    except Exception:
+        return {}
+
+
+def _safe_load_json(path: Path) -> Dict[str, Any]:
+    if not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
 
 
 # ════════════════════════════════════════════════════════════════
@@ -464,12 +488,117 @@ def run_method3_generation(
     _generate_pnetlab_guide(samples, policies, link_map, lab_name, configs_dir, output_dir)
     _generate_method3_blank_checklist(samples, output_dir)
     _generate_method3_sample_selection(samples, output_dir)
+    _generate_method3_manifest(samples, output_dir)
+    _generate_method3_review_protocol(output_dir)
 
     l4_count = sum(1 for s in samples if s.get("level") == "L4")
     l5_count = sum(1 for s in samples if s.get("level") == "L5")
     print(f"  Method 3: {len(samples)} samples selected (L4: {l4_count}, L5: {l5_count})")
 
     return {"total": len(samples), "l4": l4_count, "l5": l5_count, "samples": samples}
+
+
+def _normalize_method3_verdict(raw: str) -> str:
+    value = str(raw or "").strip().lower()
+    if value in {"agree", "match", "ok", "pass", "passed", "yes", "y", "일치", "정답"}:
+        return "AGREE"
+    if value in {"disagree", "mismatch", "fail", "failed", "no", "n", "불일치", "오답"}:
+        return "DISAGREE"
+    if value in {"skip", "skipped", "n/a", "na", "not_sure", "uncertain", "보류"}:
+        return "SKIP"
+    return ""
+
+
+def summarize_method3_review(checklist_path: Path, output_dir: Path) -> Optional[Dict[str, Any]]:
+    """Parse a human-completed Method 3 checklist and persist a summary."""
+    if not checklist_path.exists():
+        return None
+
+    with checklist_path.open("r", encoding="utf-8-sig", newline="") as f:
+        rows = list(csv.DictReader(f))
+
+    reviewed = 0
+    agree = 0
+    disagree = 0
+    skipped = 0
+    by_level: Dict[str, Dict[str, int]] = defaultdict(lambda: {"total": 0, "agree": 0, "disagree": 0, "skip": 0})
+    by_metric: Dict[str, Dict[str, int]] = defaultdict(lambda: {"total": 0, "agree": 0, "disagree": 0, "skip": 0})
+
+    for row in rows:
+        verdict = _normalize_method3_verdict(row.get("verdict", ""))
+        if not verdict:
+            continue
+        reviewed += 1
+        level = str(row.get("level", "")).strip() or "UNKNOWN"
+        metric = str(row.get("metric", "")).strip() or "UNKNOWN"
+        by_level[level]["total"] += 1
+        by_metric[metric]["total"] += 1
+        if verdict == "AGREE":
+            agree += 1
+            by_level[level]["agree"] += 1
+            by_metric[metric]["agree"] += 1
+        elif verdict == "DISAGREE":
+            disagree += 1
+            by_level[level]["disagree"] += 1
+            by_metric[metric]["disagree"] += 1
+        else:
+            skipped += 1
+            by_level[level]["skip"] += 1
+            by_metric[metric]["skip"] += 1
+
+    if reviewed == 0:
+        return None
+
+    summary = {
+        "status": "REVIEWED",
+        "checklist_path": str(checklist_path),
+        "total_reviewed": reviewed,
+        "agree": agree,
+        "disagree": disagree,
+        "skip": skipped,
+        "agreement_rate_raw": (agree / reviewed) if reviewed else 0.0,
+        "by_level": dict(by_level),
+        "by_metric": dict(by_metric),
+    }
+    (output_dir / "method3_verification_summary.json").write_text(
+        json.dumps(summary, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
+    return summary
+
+
+def run_method4_replay(
+    lab_path: Path,
+    dataset_path: Path,
+    policies_path: Path,
+    output_dir: Path,
+    batfish_host: str = "localhost",
+) -> Dict[str, Any]:
+    """Run Method 4: automatic L4-L5 Batfish replay verification."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    from src.verification.run_l45_replay_verification import (
+        run_l45_replay_verification,
+        save_csv as m4_save_csv,
+        generate_summary as m4_generate_summary,
+        save_summary_json as m4_save_summary_json,
+        save_mismatch_report as m4_save_mismatch_report,
+        save_paper_dataset,
+    )
+
+    results = run_l45_replay_verification(lab_path, dataset_path, policies_path, batfish_host=batfish_host)
+    m4_save_csv(results, output_dir / "l45_replay_results.csv")
+    summary = m4_generate_summary(results)
+    m4_save_summary_json(summary, output_dir / "l45_replay_summary.json")
+    m4_save_mismatch_report(results, output_dir / "l45_replay_mismatch.md")
+    retained = save_paper_dataset(dataset_path, results, output_dir / "paper_ready_dataset.json")
+    summary["paper_ready"] = retained
+    m4_save_summary_json(summary, output_dir / "l45_replay_summary.json")
+    print(
+        f"  Method 4: {summary.get('match', 0)}/{summary.get('total', 0)} MATCH "
+        f"({summary.get('agreement_rate', 0):.1%}), quarantined={summary.get('quarantined', 0)}"
+    )
+    return summary
 
 
 def _select_l4_l5_samples(rows: List[Dict]) -> List[Dict]:
@@ -910,6 +1039,69 @@ def _generate_method3_blank_checklist(samples: List[Dict], output_dir: Path) -> 
             })
 
 
+def _generate_method3_manifest(samples: List[Dict], output_dir: Path) -> None:
+    manifest = []
+    for i, s in enumerate(samples, 1):
+        ev = _parse_evidence(s)
+        manifest.append({
+            "index": i,
+            "qa_id": s.get("id", ""),
+            "id_v2": s.get("id_v2", ""),
+            "level": s.get("level", ""),
+            "metric": ev.get("metric", ""),
+            "answer_type": s.get("answer_type", ""),
+            "question": s.get("question", ""),
+            "dataset_answer": s.get("answer", ""),
+            "scope": ev.get("scope", {}),
+        })
+    (output_dir / "sample_manifest.json").write_text(
+        json.dumps(manifest, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+
+def _generate_method3_review_protocol(output_dir: Path) -> None:
+    lines = [
+        "# Method 3 Review Protocol",
+        "",
+        "## 목적",
+        "- PNETLab에서 실제 CLI 결과를 확인한 뒤 L4-L5 표본 QA의 외부 타당성을 기록한다.",
+        "- `blank_checklist.csv`를 복사해 `reviewed_checklist.csv`로 저장한 뒤 결과를 채운다.",
+        "",
+        "## 파일 규칙",
+        "- 입력 템플릿: `blank_checklist.csv`",
+        "- 권장 결과 파일명: `reviewed_checklist.csv`",
+        "- 파이프라인 연동: `--method3-review <csv>` 또는 같은 디렉터리의 `reviewed_checklist.csv` 자동 감지",
+        "",
+        "## verdict 허용값",
+        "- `AGREE`: dataset answer와 실환경 결과가 일치",
+        "- `DISAGREE`: dataset answer와 실환경 결과가 불일치",
+        "- `SKIP`: 장비 문제, 시간 부족, 조건 불충분 등으로 판정 보류",
+        "",
+        "## my_result 작성 규칙",
+        "- 실제 CLI 결과를 간결하게 적는다.",
+        "- 경로형 답변은 hop 순서를 유지한다.",
+        "- 장애 주입이 필요한 경우 `memo`에 shutdown/no shutdown 여부를 기록한다.",
+        "",
+        "## 권장 판정 기준",
+        "- 경로 질문: source와 destination이 같고 핵심 hop 순서가 같으면 `AGREE`",
+        "- reachability 질문: reachable/unreachable 판정이 같으면 `AGREE`",
+        "- root cause 질문: blocking point 또는 원인 장비가 같으면 `AGREE`",
+        "- what-if 질문: 장애 후 `NONE/REROUTED/DISCONNECTED` 판정이 같으면 `AGREE`",
+        "",
+        "## 파이프라인 반영",
+        "```bash",
+        "python Make_Dataset/src/verification/run_verification_pipeline.py \\",
+        "  --lab-path Data/Pnetlab/<LAB_NAME> \\",
+        "  --skip-method1 --skip-method2 --skip-method4 \\",
+        "  --method3-review Data/Pnetlab/<LAB_NAME>/Dataset/verification/method3_pnetlab/reviewed_checklist.csv",
+        "```",
+        "",
+        "성공 시 `method3_verification_summary.json`과 `verification_summary.json`에 외부 검증 수치가 반영된다.",
+    ]
+    (output_dir / "review_protocol.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
 def _generate_method3_sample_selection(samples: List[Dict], output_dir: Path) -> None:
     by_metric: Dict[str, int] = defaultdict(int)
     l4_count = 0
@@ -946,6 +1138,7 @@ def generate_unified_summary(
     m1_summary: Optional[Dict],
     m2_info: Optional[Dict],
     m3_info: Optional[Dict],
+    m4_info: Optional[Dict],
     output_path: Path,
 ) -> None:
     """Generate unified verification_summary.json combining all methods."""
@@ -988,11 +1181,38 @@ def generate_unified_summary(
 
     # Method 3
     if m3_info and m3_info.get("total", 0) > 0:
-        summary["verification_methods"]["method3_pnetlab_emulation"] = {
+        method3_summary = {
             "description": "PNETLab 에뮬레이션 환경에서 traceroute/ping 실행하여 L4-L5 검증",
             "scope": f"L4-L5 표본 ({m3_info['total']} QA: L4 {m3_info['l4']}, L5 {m3_info['l5']})",
-            "status": "GUIDE_GENERATED",
-            "note": "가이드 및 체크리스트 생성 완료. 사람이 PNETLab에서 실행해야 함.",
+            "status": m3_info.get("status", "GUIDE_GENERATED"),
+        }
+        if method3_summary["status"] == "REVIEWED":
+            method3_summary.update({
+                "total_reviewed": m3_info.get("total_reviewed", 0),
+                "agree": m3_info.get("agree", 0),
+                "disagree": m3_info.get("disagree", 0),
+                "skip": m3_info.get("skip", 0),
+                "agreement_rate_raw": m3_info.get("agreement_rate_raw", 0.0),
+                "by_level": m3_info.get("by_level", {}),
+                "by_metric": m3_info.get("by_metric", {}),
+                "checklist_path": m3_info.get("checklist_path", ""),
+            })
+        else:
+            method3_summary["note"] = "가이드 및 체크리스트 생성 완료. 사람이 PNETLab에서 실행해야 함."
+        summary["verification_methods"]["method3_pnetlab_emulation"] = method3_summary
+
+    if m4_info and m4_info.get("total", 0) > 0:
+        summary["verification_methods"]["method4_l45_replay"] = {
+            "description": "Batfish replay verification for L4-L5 using row-level contracts",
+            "scope": f"L4-L5 자동 재실행 ({m4_info['total']} QA)",
+            "total_verified": m4_info["total"],
+            "match": m4_info.get("match", 0),
+            "mismatch": m4_info.get("mismatch", 0),
+            "error": m4_info.get("error", 0),
+            "quarantined": m4_info.get("quarantined", 0),
+            "agreement_rate_raw": m4_info.get("agreement_rate", 0),
+            "by_level": m4_info.get("by_level", {}),
+            "paper_ready": m4_info.get("paper_ready", {}),
         }
 
     output_path.write_text(
@@ -1028,6 +1248,9 @@ def main() -> None:
     parser.add_argument("--skip-method1", action="store_true", help="Skip Method 1 (use existing results)")
     parser.add_argument("--skip-method2", action="store_true", help="Skip Method 2")
     parser.add_argument("--skip-method3", action="store_true", help="Skip Method 3")
+    parser.add_argument("--skip-method4", action="store_true", help="Skip Method 4")
+    parser.add_argument("--method3-review", default=None, help="Completed Method 3 checklist CSV to ingest")
+    parser.add_argument("--batfish-host", default="localhost", help="Batfish host for Method 4 replay")
     args = parser.parse_args()
 
     lab_path = Path(args.lab_path).resolve()
@@ -1061,10 +1284,13 @@ def main() -> None:
     m1_dir = verification_dir / "method1_independent_parser"
     m2_dir = verification_dir / "method2_manual_check"
     m3_dir = verification_dir / "method3_pnetlab"
+    m4_dir = verification_dir / "method4_l45_replay"
+    existing_unified = _load_existing_unified_summary(verification_dir)
 
     m1_summary = None
     m2_info = None
     m3_info = None
+    m4_info = None
 
     # ── Method 1 ─────────────────────────────────
     if args.skip_method1:
@@ -1083,6 +1309,17 @@ def main() -> None:
     # ── Method 2 ─────────────────────────────────
     if args.skip_method2:
         print("[Method 2] 스킵 (--skip-method2)")
+        existing_m2 = existing_unified.get("method2_manual_check")
+        if not existing_m2:
+            existing_m2 = _safe_load_json(m2_dir / "manual_verification_summary.json")
+        if existing_m2:
+            m2_info = {
+                "total": existing_m2.get("total_verified", existing_m2.get("total_samples", 0)),
+                "agree": existing_m2.get("agree", existing_m2.get("agreed_samples", 0)),
+                "disagree": existing_m2.get("disagree", existing_m2.get("disagreed_samples", 0)),
+                "rate": existing_m2.get("agreement_rate_raw", existing_m2.get("agreement_rate", 0.0)),
+            }
+            print(f"  기존 결과 로드: {m2_info['rate']:.1%}")
         print()
     else:
         if m1_summary is None:
@@ -1097,6 +1334,38 @@ def main() -> None:
     # ── Method 3 ─────────────────────────────────
     if args.skip_method3:
         print("[Method 3] 스킵 (--skip-method3)")
+        existing_m3 = existing_unified.get("method3_pnetlab_emulation")
+        if not existing_m3:
+            existing_m3 = _safe_load_json(m3_dir / "method3_verification_summary.json")
+        if existing_m3:
+            m3_info = {
+                "total": 0,
+                "l4": 0,
+                "l5": 0,
+                "status": existing_m3.get("status", "GUIDE_GENERATED"),
+            }
+            scope = str(existing_m3.get("scope", ""))
+            match = re.search(r"L4\s+(\d+),\s*L5\s+(\d+)", scope)
+            total_match = re.search(r"\((\d+)\s+QA", scope)
+            if total_match:
+                m3_info["total"] = int(total_match.group(1))
+            if match:
+                m3_info["l4"] = int(match.group(1))
+                m3_info["l5"] = int(match.group(2))
+            if m3_info["status"] == "REVIEWED":
+                m3_info.update({
+                    "total_reviewed": existing_m3.get("total_reviewed", 0),
+                    "agree": existing_m3.get("agree", 0),
+                    "disagree": existing_m3.get("disagree", 0),
+                    "skip": existing_m3.get("skip", 0),
+                    "agreement_rate_raw": existing_m3.get("agreement_rate_raw", 0.0),
+                    "by_level": existing_m3.get("by_level", {}),
+                    "by_metric": existing_m3.get("by_metric", {}),
+                    "checklist_path": existing_m3.get("checklist_path", ""),
+                })
+                print(f"  기존 결과 로드: {m3_info['agreement_rate_raw']:.1%}")
+            else:
+                print("  기존 가이드 상태 로드")
         print()
     else:
         l4l5_count = sum(1 for r in all_rows if r.get("level") in ("L4", "L5"))
@@ -1107,6 +1376,51 @@ def main() -> None:
             print(f"[Method 3] PNETLab Guide — L4-L5 ({l4l5_count} QA)")
             print("-" * 50)
             m3_info = run_method3_generation(configs_dir, dataset_path, policies_path, m3_dir, info["lab_name"])
+            review_candidate = None
+            if args.method3_review:
+                review_candidate = Path(args.method3_review).resolve()
+            else:
+                default_review = m3_dir / "reviewed_checklist.csv"
+                if default_review.exists():
+                    review_candidate = default_review
+            if review_candidate:
+                reviewed = summarize_method3_review(review_candidate, m3_dir)
+                if reviewed:
+                    m3_info = {**m3_info, **reviewed}
+                    print(
+                        f"  Method 3 Review: {reviewed['agree']}/{reviewed['total_reviewed']} AGREE "
+                        f"({reviewed['agreement_rate_raw']:.1%})"
+                    )
+            print()
+
+    # ── Method 4 ─────────────────────────────────
+    if args.skip_method4:
+        print("[Method 4] 스킵 (--skip-method4)")
+        existing_m4 = existing_unified.get("method4_l45_replay")
+        if not existing_m4:
+            existing_m4 = _safe_load_json(m4_dir / "l45_replay_summary.json")
+        if existing_m4:
+            m4_info = {
+                "total": existing_m4.get("total_verified", existing_m4.get("total", 0)),
+                "match": existing_m4.get("match", 0),
+                "mismatch": existing_m4.get("mismatch", 0),
+                "error": existing_m4.get("error", 0),
+                "quarantined": existing_m4.get("quarantined", 0),
+                "agreement_rate": existing_m4.get("agreement_rate_raw", existing_m4.get("agreement_rate", 0.0)),
+                "by_level": existing_m4.get("by_level", {}),
+                "paper_ready": existing_m4.get("paper_ready", {}),
+            }
+            print(f"  기존 결과 로드: {m4_info['agreement_rate']:.1%}")
+        print()
+    else:
+        l4l5_count = sum(1 for r in all_rows if r.get("level") in ("L4", "L5"))
+        if l4l5_count == 0:
+            print("[Method 4] L4-L5 QA 없음 — 스킵")
+            print()
+        else:
+            print(f"[Method 4] L4-L5 Replay Verification ({l4l5_count} QA)")
+            print("-" * 50)
+            m4_info = run_method4_replay(lab_path, dataset_path, policies_path, m4_dir, batfish_host=args.batfish_host)
             print()
 
     # ── Unified Summary ──────────────────────────
@@ -1114,7 +1428,7 @@ def main() -> None:
     summary_path = verification_dir / "verification_summary.json"
     generate_unified_summary(
         info["lab_name"], dataset_total,
-        m1_summary, m2_info, m3_info,
+        m1_summary, m2_info, m3_info, m4_info,
         summary_path,
     )
     print(f"  → {summary_path}")
@@ -1138,9 +1452,18 @@ def main() -> None:
         tree.append(f"  │   ├── human_reviewer_guide.md   ← 사람에게 전달")
         tree.append(f"  │   └── blank_checklist.csv       ← Excel로 작성")
     if m3_info and m3_info.get("total", 0) > 0:
-        tree.append(f"  ├── method3_pnetlab/               📋 {m3_info['total']} samples")
-        tree.append(f"  │   ├── pnetlab_verification_guide.md  ← PNETLab에서 실행")
-        tree.append(f"  │   └── blank_checklist.csv       ← Excel로 작성")
+        if m3_info.get("status") == "REVIEWED":
+            tree.append(f"  ├── method3_pnetlab/               ✅ {m3_info.get('agreement_rate_raw', 0):.1%} on {m3_info.get('total_reviewed', 0)} reviewed")
+            tree.append(f"  │   ├── pnetlab_verification_guide.md")
+            tree.append(f"  │   └── method3_verification_summary.json")
+        else:
+            tree.append(f"  ├── method3_pnetlab/               📋 {m3_info['total']} samples")
+            tree.append(f"  │   ├── pnetlab_verification_guide.md  ← PNETLab에서 실행")
+            tree.append(f"  │   └── blank_checklist.csv       ← Excel로 작성")
+    if m4_info and m4_info.get("total", 0) > 0:
+        tree.append(f"  ├── method4_l45_replay/           ✅ {m4_info.get('agreement_rate', 0):.1%}")
+        tree.append(f"  │   ├── l45_replay_mismatch.md    ← 자동 mismatch/quarantine")
+        tree.append(f"  │   └── paper_ready_dataset.json  ← 논문용 retained set")
     tree.append(f"  └── verification_summary.json     📊 통합 요약")
 
     for line in tree:

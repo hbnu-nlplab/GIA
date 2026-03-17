@@ -16,6 +16,10 @@ import re
 from ipaddress import IPv4Network
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
+try:
+    from src.ground_truth_contracts import normalize_scope_for_metric
+except ImportError:
+    from ground_truth_contracts import normalize_scope_for_metric
 
 
 # ════════════════════════════════════════════════════════════════════
@@ -34,6 +38,17 @@ class CfgParser:
     @staticmethod
     def _stem(filename: str) -> str:
         return Path(filename).stem.lower() if filename else "unknown"
+
+    @staticmethod
+    def _extract_banner(raw: str, banner_type: str) -> Optional[str]:
+        pattern = re.compile(
+            rf"^\s*banner\s+{re.escape(banner_type)}\s+(?P<delim>\S)(?P<body>.*?)(?:\n(?P=delim)|(?P=delim)$)",
+            re.IGNORECASE | re.MULTILINE | re.DOTALL,
+        )
+        match = pattern.search(raw)
+        if not match:
+            return None
+        return match.group("body").strip()
 
     # ── Public API ──────────────────────────────────────────────────
 
@@ -245,9 +260,15 @@ class CfgParser:
         )
 
         for line in self.lines:
-            # Skip comments and empty
             stripped = line.rstrip()
-            if not stripped or stripped.startswith("!"):
+            # Empty lines inside a section are common in generated configs.
+            # Keep them instead of prematurely terminating the current block.
+            if not stripped:
+                if current_header is not None:
+                    current_body.append("")
+                continue
+
+            if stripped.startswith("!"):
                 if current_header:
                     sections.append((current_header, current_body))
                     current_header = None
@@ -614,11 +635,12 @@ class CfgParser:
                 cdp = False
             if re.match(r'^no\s+ip\s+source-route', stripped, re.IGNORECASE):
                 ip_source_route = False
-            # Banner detection
-            if re.match(r'^banner\s+motd\s', stripped, re.IGNORECASE):
-                banner_motd = "Configured"
-            if re.match(r'^banner\s+login\s', stripped, re.IGNORECASE):
-                banner_login = "Configured"
+        motd = self._extract_banner(self.raw, "motd")
+        if motd:
+            banner_motd = motd
+        login = self._extract_banner(self.raw, "login")
+        if login:
+            banner_login = login
 
         # Console password: check line con 0 section
         in_con = False
@@ -747,7 +769,7 @@ class CfgParser:
         acls_count = 0
         acl_names: Set[str] = set()
         acl_interfaces: List[str] = []
-        prefix_lists_count = 0
+        prefix_list_names: Set[str] = set()
         route_maps_count = 0
         class_maps: List[str] = []
         netflow_monitors: List[str] = []
@@ -766,8 +788,9 @@ class CfgParser:
             if m:
                 acl_names.add(m.group(1))
             # Prefix lists
-            if re.match(r'^ip\s+prefix-list\s+', stripped, re.IGNORECASE):
-                prefix_lists_count += 1
+            m = re.match(r'^ip\s+prefix-list\s+(\S+)', stripped, re.IGNORECASE)
+            if m:
+                prefix_list_names.add(m.group(1))
             # Route maps
             if re.match(r'^route-map\s+', stripped, re.IGNORECASE):
                 route_maps_count += 1
@@ -787,7 +810,7 @@ class CfgParser:
             if re.match(r'^router\s+rip', stripped, re.IGNORECASE):
                 rip_enabled = True
             # FHRP
-            m = re.match(r'^\s+standby\s+(\d+)', stripped, re.IGNORECASE)
+            m = re.match(r'^standby\s+(\d+)', stripped, re.IGNORECASE)
             if m:
                 fhrp_groups.append(m.group(1))
             # Multicast
@@ -807,7 +830,7 @@ class CfgParser:
         return {
             "acls_count": acls_count,
             "acl_interfaces": sorted(set(acl_interfaces)),
-            "prefix_lists_count": prefix_lists_count,
+            "prefix_lists_count": len(prefix_list_names),
             "route_maps_count": route_maps_count,
             "class_maps": sorted(set(class_maps)),
             "netflow_monitors": sorted(set(netflow_monitors)),
@@ -1094,6 +1117,7 @@ class TopologyFacts:
         This method mirrors BuilderCore._answer_for_metric for L1-L3 metrics.
         """
         pre = self._pre
+        scope = normalize_scope_for_metric(metric, scope)
 
         # ──── L1 Device-scoped metrics ────────────────────────
         host = scope.get("host")
@@ -1776,8 +1800,8 @@ class TopologyFacts:
             parts = []
             for d in self.devices:
                 las = self._bgp_local_as(d)
-                if las is not None:
-                    parts.append(f"{self._hostname(d)}: AS {las}")
+                as_value = las if las is not None else "N/A"
+                parts.append(f"{self._hostname(d)}: AS {as_value}")
             return "text", ", ".join(parts) if parts else "No Info"
 
         if metric == "bgp_as_distribution":
