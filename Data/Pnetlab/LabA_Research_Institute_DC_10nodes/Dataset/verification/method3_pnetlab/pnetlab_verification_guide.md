@@ -355,7 +355,7 @@ PE2# traceroute LEAF3
 
 ```
 ! 메트릭: config_change_impact
-! scope: {"type": "SNAPSHOT_DIFF", "src": "leaf1", "dst": "p3"}
+! scope: {"type": "SNAPSHOT_DIFF", "src": "leaf1", "dst": "p3", "base_snapshot": "baseline", "changed_snapshot": "cfg_change_leaf2_1773016118", "change_desc": "node_down:leaf2", "failure_node": "leaf2"}
 ! 적절한 show/ping/traceroute 명령으로 검증
 ```
 - **내 결과**: ________________
@@ -368,7 +368,7 @@ PE2# traceroute LEAF3
 
 ```
 ! 메트릭: differential_reachability
-! scope: {"type": "SNAPSHOT_DIFF", "src": "leaf1", "dst": "p3"}
+! scope: {"type": "SNAPSHOT_DIFF", "src": "leaf1", "dst": "p3", "base_snapshot": "baseline", "changed_snapshot": "cfg_change_leaf2_1773016118", "change_desc": "node_down:leaf2", "failure_node": "leaf2", "dst_ip": "10.0.0.3"}
 ! 적절한 show/ping/traceroute 명령으로 검증
 ```
 - **내 결과**: ________________

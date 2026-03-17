@@ -110,7 +110,9 @@ class L5AnalyzerMixin:
         try:
             # 1. 라우팅 테이블에 경로 존재 확인
             try:
-                routes = self.bf.q.routes(nodes=src_node, network=dst_ip).answer().frame()
+                routes = self.bf.q.routes(nodes=src_node, network=dst_ip).answer(
+                    snapshot=self.snapshot_name
+                ).frame()
                 result["has_route"] = not routes.empty
                 
                 if result["has_route"]:
@@ -123,12 +125,16 @@ class L5AnalyzerMixin:
             # 2. 활성 라우팅 프로토콜 확인
             # BGP 확인
             try:
-                bgp_proc = self.bf.q.bgpProcessConfiguration(nodes=src_node).answer().frame()
+                bgp_proc = self.bf.q.bgpProcessConfiguration(nodes=src_node).answer(
+                    snapshot=self.snapshot_name
+                ).frame()
                 if not bgp_proc.empty:
                     result["active_protocols"].append("BGP")
                     
                     # BGP neighbor 확인
-                    bgp_peers = self.bf.q.bgpPeerConfiguration(nodes=src_node).answer().frame()
+                    bgp_peers = self.bf.q.bgpPeerConfiguration(nodes=src_node).answer(
+                        snapshot=self.snapshot_name
+                    ).frame()
                     if bgp_peers.empty:
                         result["diagnosis"] = "NO_BGP_NEIGHBORS"
                         return result
@@ -137,7 +143,9 @@ class L5AnalyzerMixin:
             
             # OSPF 확인
             try:
-                ospf_proc = self.bf.q.ospfProcessConfiguration(nodes=src_node).answer().frame()
+                ospf_proc = self.bf.q.ospfProcessConfiguration(nodes=src_node).answer(
+                    snapshot=self.snapshot_name
+                ).frame()
                 if not ospf_proc.empty:
                     result["active_protocols"].append("OSPF")
             except Exception as e:
@@ -145,7 +153,9 @@ class L5AnalyzerMixin:
             
             # Static route 확인
             try:
-                all_routes = self.bf.q.routes(nodes=src_node).answer().frame()
+                all_routes = self.bf.q.routes(nodes=src_node).answer(
+                    snapshot=self.snapshot_name
+                ).frame()
                 if not all_routes.empty:
                     static_routes = all_routes[all_routes['Protocol'] == 'static']
                     if not static_routes.empty:
@@ -265,6 +275,7 @@ class L5AnalyzerMixin:
              return AnswerResult("NOT_CONFIGURED", {"detected": False, "spof_nodes": []}, "spof_result", evidence, "BATFISH_NOT_INITIALIZED")
             
         try:
+            self.bf.set_snapshot(self.snapshot_name)
             spof_nodes = []
             if len(self.nodes) < 3:
                 return AnswerResult("OK", {"detected": False, "spof_nodes": []}, "spof_result", evidence, "TOO_FEW_NODES")
@@ -274,6 +285,7 @@ class L5AnalyzerMixin:
                 src, dst = ce_nodes[0], ce_nodes[-1]
             else:
                 src, dst = self.nodes[0], self.nodes[-1]
+            src_name, dst_name = src, dst
                 
             src_ips = self.node_ips.get(src, [])
             dst_ips = self.node_ips.get(dst, [])
@@ -287,7 +299,7 @@ class L5AnalyzerMixin:
             traceroute = self.bf.q.traceroute(
                 startLocation=src,
                 headers=HeaderConstraints(dstIps=dst_ips[0])
-            ).answer().frame()
+            ).answer(snapshot=self.snapshot_name).frame()
             
             if traceroute.empty:
                 return AnswerResult("OK", {"detected": False, "spof_nodes": []}, "spof_result", evidence, "")
@@ -308,11 +320,11 @@ class L5AnalyzerMixin:
             total_paths = len(traces)
             if total_paths == 1:
                 for node in path_nodes:
-                    if node.lower() != src.lower() and node.lower() != dst.lower():
+                    if node.lower() != src_name.lower() and node.lower() != dst_name.lower():
                         spof_nodes.append(node)
             
             detected = len(spof_nodes) > 0
-            return AnswerResult("OK", {"detected": detected, "spof_nodes": list(set(spof_nodes))}, "spof_result", evidence, "")
+            return AnswerResult("OK", {"detected": detected, "spof_nodes": sorted(set(spof_nodes))}, "spof_result", evidence, "")
             
         except Exception as e:
             logger.warning(f"spof_detection error: {e}")
@@ -329,6 +341,7 @@ class L5AnalyzerMixin:
             return AnswerResult("NOT_CONFIGURED", {"impact": "UNKNOWN", "description": "Batfish not initialized"}, "link_failure_result", evidence, "BATFISH_NOT_INITIALIZED")
 
         try:
+            self.bf.set_snapshot(self.snapshot_name)
             # VRF 문제 방지: [Loopback0] 추가
             test_src = self._fix_start_location(test_src)
             
@@ -340,7 +353,7 @@ class L5AnalyzerMixin:
             base_traces = self.bf.q.traceroute(
                 startLocation=test_src,
                 headers=HeaderConstraints(dstIps=test_dst_ip)
-            ).answer().frame()
+            ).answer(snapshot=self.snapshot_name).frame()
 
             if base_traces.empty:
                 return AnswerResult("NOT_APPLICABLE", {"impact": "NONE", "description": "No base path"}, "link_failure_result", evidence, "NO_BASE_PATH")
@@ -364,7 +377,7 @@ class L5AnalyzerMixin:
                  if node:
                      base_path_nodes.append(getattr(node, 'hostname', str(node)))
             
-            edges = self.bf.q.layer3Edges().answer().frame()
+            edges = self.bf.q.layer3Edges().answer(snapshot=self.snapshot_name).frame()
             
             deactivate_list = []
             if not edges.empty:
@@ -501,6 +514,7 @@ class L5AnalyzerMixin:
             dst_ports = ["80", "443"]
         
         try:
+            self.bf.set_snapshot(self.snapshot_name)
             if policy_type == "waypoint" and waypoint_node:
                 violations = self.bf.q.reachability(
                     headers=HeaderConstraints(
@@ -511,7 +525,7 @@ class L5AnalyzerMixin:
                         # Batfish expects a node-spec string, not a list.
                         forbiddenLocations=waypoint_node
                     )
-                ).answer().frame()
+                ).answer(snapshot=self.snapshot_name).frame()
                 
                 if violations.empty:
                     return AnswerResult("OK", {"compliant": True, "violations": []}, "policy_result", evidence, "")
@@ -523,6 +537,7 @@ class L5AnalyzerMixin:
                     dst_ip = getattr(flow, 'dstIp', '') if hasattr(flow, 'dstIp') else ''
                     if src_ip and dst_ip:
                         violation_flows.append(f"{src_ip}→{dst_ip}")
+                violation_flows = sorted(set(violation_flows))
                 
                 return AnswerResult("OK", {"compliant": False, "violations": violation_flows}, "policy_result", evidence, "VIOLATIONS_FOUND")
             
@@ -639,7 +654,7 @@ class L5AnalyzerMixin:
             traceroute = self.bf.q.traceroute(
                 startLocation=src_node,
                 headers=HeaderConstraints(dstIps=dst_ips[0])
-            ).answer().frame()
+            ).answer(snapshot=self.snapshot_name).frame()
             
             # Traceroute 결과가 없으면 라우팅 실패
             if traceroute.empty:

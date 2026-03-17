@@ -187,7 +187,15 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                 "ground_truth": result_text,
                 "explanation": f"metric `{metric}` on src={flow.src_ip}, dst={flow.dst_ip}",
                 "evidence_hint": {
-                    "scope": {"type": "FLOW", "src_ip": flow.src_ip, "dst_ip": flow.dst_ip},
+                    "scope": {
+                        "type": "FLOW",
+                        "src_ip": flow.src_ip,
+                        "dst_ip": flow.dst_ip,
+                        "dst_port": flow.dst_port,
+                        "protocol": flow.protocol,
+                        "src_location": flow.src_location,
+                        "dst_location": flow.dst_location,
+                    },
                     "metric": metric
                 },
                 "academic_reference": "HSA (NSDI'12), VeriFlow (NSDI'13), Batfish (NSDI'15)"
@@ -249,7 +257,18 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                     "question": q_text,
                     "ground_truth": result_text,
                     "explanation": f"metric `{metric}` analysis",
-                    "evidence_hint": {"scope": {"type": "FLOW", "src_ip": flow.src_ip, "dst_ip": flow.dst_ip}, "metric": metric},
+                    "evidence_hint": {
+                        "scope": {
+                            "type": "FLOW",
+                            "src_ip": flow.src_ip,
+                            "dst_ip": flow.dst_ip,
+                            "dst_port": port,
+                            "protocol": "TCP",
+                            "src_location": flow.src_location,
+                            "dst_location": flow.dst_location,
+                        },
+                        "metric": metric,
+                    },
                     "academic_reference": "ACL Reachability Analysis"
                 })
                 acl_q_count += 1
@@ -528,7 +547,17 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                         # 정책 템플릿 계약: enum 값만 반환
                         "ground_truth": impact,
                         "explanation": f"metric `{metric}` on {node1}-{node2}->({src}->{dst})",
-                        "evidence_hint": {"scope": {"type": "LINK_FAILURE", "link": f"{node1}-{node2}"}, "metric": metric},
+                        "evidence_hint": {
+                            "scope": {
+                                "type": "LINK_FAILURE",
+                                "link": f"{node1}-{node2}",
+                                "node1": node1,
+                                "node2": node2,
+                                "src": src,
+                                "dst": dst,
+                            },
+                            "metric": metric,
+                        },
                         "academic_reference": "DNA (NSDI'22), Minesweeper (SIGCOMM'17)"
                     })
                     link_count += 1
@@ -601,11 +630,12 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                 try:
                     # VRF 문제 방지: [Loopback0] 추가
                     src_node_fixed = self._fix_start_location(src_node)
+                    self.bf.set_snapshot(self.snapshot_name)
                     
                     traces_result = self.bf.q.traceroute(
                         startLocation=src_node_fixed,
                         headers=HeaderConstraints(dstIps=dst_ips[0])
-                    ).answer().frame()
+                    ).answer(snapshot=self.snapshot_name).frame()
                     
                     redundant_paths = []
                     if not traces_result.empty:
@@ -624,6 +654,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                                     path_str = " → ".join(path_nodes)
                                     if path_str not in redundant_paths:
                                         redundant_paths.append(path_str)
+                    redundant_paths = sorted(redundant_paths)
                     
                     metric = "redundant_paths_list"
                     template = self._get_template(metric, f"{{src_node}}에서 {{dst_node}}로의 중복 경로(redundant paths) 목록을 알려주세요.\\n[답변 형식: ['경로1', '경로2'] 형식의 경로 리스트]")
@@ -738,7 +769,10 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                                 "question": q_text_red,
                                 "ground_truth": gt_text,
                                 "explanation": f"metric `{redundancy_metric}` on {n1}, {n2}",
-                                "evidence_hint": {"scope": {"type": "NODE_PAIR", "src": n1, "dst": n2}, "metric": redundancy_metric},
+                                "evidence_hint": {
+                                    "scope": {"type": "NODE_PAIR", "src": n1, "dst": n2, "nodes": [n1, n2]},
+                                    "metric": redundancy_metric,
+                                },
                                 "academic_reference": "현업: 이중화(HA) 구조 검증"
                             })
 
@@ -842,6 +876,7 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
         # 실패 시 baseline vs baseline으로 안전하게 fallback
         changed_snapshot = self.snapshot_name
         change_desc = "baseline_vs_baseline"
+        failure_node = ""
         if self.nodes:
             exclude_nodes = {analysis_src, analysis_dst}
             candidate_nodes: List[str] = []
@@ -890,7 +925,18 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                     "question": cfg_q,
                     "ground_truth": cfg_gt,
                     "explanation": f"metric `{cfg_metric}` scenario={change_desc}",
-                    "evidence_hint": {"scope": {"type": "SNAPSHOT_DIFF", "src": analysis_src, "dst": analysis_dst}, "metric": cfg_metric},
+                    "evidence_hint": {
+                        "scope": {
+                            "type": "SNAPSHOT_DIFF",
+                            "src": analysis_src,
+                            "dst": analysis_dst,
+                            "base_snapshot": self.snapshot_name,
+                            "changed_snapshot": changed_snapshot,
+                            "change_desc": change_desc,
+                            "failure_node": failure_node if change_desc.startswith("node_down:") else "",
+                        },
+                        "metric": cfg_metric,
+                    },
                     "academic_reference": "Differential Analysis"
                 })
 
@@ -925,7 +971,19 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                     "question": diff_q,
                     "ground_truth": diff_gt,
                     "explanation": f"metric `{diff_metric}` scenario={change_desc}",
-                    "evidence_hint": {"scope": {"type": "SNAPSHOT_DIFF", "src": analysis_src, "dst": analysis_dst}, "metric": diff_metric},
+                    "evidence_hint": {
+                        "scope": {
+                            "type": "SNAPSHOT_DIFF",
+                            "src": analysis_src,
+                            "dst": analysis_dst,
+                            "base_snapshot": self.snapshot_name,
+                            "changed_snapshot": changed_snapshot,
+                            "change_desc": change_desc,
+                            "failure_node": failure_node if change_desc.startswith("node_down:") else "",
+                            "dst_ip": dst_ips_for_analysis[0],
+                        },
+                        "metric": diff_metric,
+                    },
                     "academic_reference": "DNA (NSDI'22)"
                 })
 
@@ -1019,7 +1077,20 @@ class BatfishBuilder(BatfishBase, L4AnalyzerMixin, L5AnalyzerMixin, L6AnalyzerMi
                             "question": q_text,
                             "ground_truth": gt_text,
                             "explanation": f"metric `{metric}` result: {gt_text}",
-                            "evidence_hint": {"scope": {"type": "MULTI_LINK_FAILURE", "link1": f"{edge1['node1']}-{edge1['node2']}", "link2": f"{edge2['node1']}-{edge2['node2']}"}, "metric": metric},
+                            "evidence_hint": {
+                                "scope": {
+                                    "type": "MULTI_LINK_FAILURE",
+                                    "link1": f"{edge1['node1']}-{edge1['node2']}",
+                                    "link2": f"{edge2['node1']}-{edge2['node2']}",
+                                    "link1_iface1": edge1['interface1'],
+                                    "link1_iface2": edge1['interface2'],
+                                    "link2_iface1": edge2['interface1'],
+                                    "link2_iface2": edge2['interface2'],
+                                    "test_src": test_src,
+                                    "test_dst": test_dst,
+                                },
+                                "metric": metric,
+                            },
                             "academic_reference": "Minesweeper (SIGCOMM'17): k-failure tolerance"
                         })
                         mlf_q_count += 1

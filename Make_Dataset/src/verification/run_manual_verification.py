@@ -25,6 +25,8 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+from src.ground_truth_contracts import normalize_scope_for_metric
+
 # ════════════════════════════════════════════════════════════════
 #  Stratified Sampler
 # ════════════════════════════════════════════════════════════════
@@ -176,7 +178,7 @@ class ManualVerifier:
         """Perform manual verification for a single QA."""
         ev = _parse_evidence(row)
         metric = ev.get("metric", "")
-        scope = ev.get("scope", {})
+        scope = normalize_scope_for_metric(metric, ev.get("scope", {}))
         level = row.get("level", "")
         answer_type = row.get("answer_type", "")
         dataset_answer = row.get("answer", "")
@@ -334,10 +336,15 @@ class ManualVerifier:
 
         if metric == "logging_buffered_severity_text":
             for i, line in enumerate(lines):
-                m = re.match(r'^logging\s+buffered\s+(\S+)', line.strip(), re.IGNORECASE)
+                m = re.match(
+                    r'^logging\s+buffered(?:\s+\d+)?\s+(emergencies|alerts|critical|errors|warnings|notifications|informational|debugging)\b',
+                    line.strip(),
+                    re.IGNORECASE,
+                )
                 if m:
-                    rationale.append(f"{host}.cfg line {i+1}: logging buffered {m.group(1)}")
-                    return m.group(1), rationale
+                    value = m.group(1).lower()
+                    rationale.append(f"{host}.cfg line {i+1}: logging buffered severity {value}")
+                    return value, rationale
             rationale.append(f"No logging buffered in {host}.cfg → 미설정")
             return "미설정", rationale
 
@@ -368,7 +375,7 @@ class ManualVerifier:
         if metric == "syslog_server_list":
             servers = []
             for i, line in enumerate(lines):
-                m = re.match(r'^logging\s+(\d+\.\d+\.\d+\.\d+)', line.strip(), re.IGNORECASE)
+                m = re.match(r'^logging(?:\s+host)?\s+(\d+\.\d+\.\d+\.\d+)', line.strip(), re.IGNORECASE)
                 if m:
                     servers.append(m.group(1))
                     rationale.append(f"{host}.cfg line {i+1}: logging host {m.group(1)}")

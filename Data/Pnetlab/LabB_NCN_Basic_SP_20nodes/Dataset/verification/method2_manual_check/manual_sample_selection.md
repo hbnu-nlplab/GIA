@@ -1,6 +1,6 @@
 # Method 2 — Stratified Sample Selection
 
-Total samples selected: 69
+Total samples selected: 39
 
 ## Selection Criteria
 
@@ -14,7 +14,7 @@ Total samples selected: 69
 
 ### By Level
 
-- L1: 36
+- L1: 6
 - L2: 10
 - L3: 23
 
@@ -24,7 +24,7 @@ Total samples selected: 69
 - map_str_int: 3
 - number: 11
 - set: 16
-- text: 38
+- text: 8
 
 ### By Metric
 
@@ -50,7 +50,6 @@ Total samples selected: 69
 - l2vpn_pwid_mismatch_pairs: 1
 - l2vpn_unidir_count: 1
 - l2vpn_unidirectional_pairs: 1
-- logging_buffered_severity_text: 10
 - max_bgp_peer_device: 1
 - max_interface_device: 1
 - min_interface_device: 1
@@ -63,7 +62,6 @@ Total samples selected: 69
 - ssh_missing_count: 1
 - ssh_missing_devices: 1
 - subinterface_count: 1
-- system_timezone_text: 20
 - vrf_rt_list_per_device: 2
 - vrf_usage_statistics: 1
 - vrf_without_rt_count: 1
@@ -76,69 +74,39 @@ Total samples selected: 69
 | 1 | BGP_LOCAL_AS_NUMERIC_p6 | L1 | bgp_local_as_numeric | number |
 | 2 | BGP_NEIGHBOR_COUNT_leaf8 | L1 | bgp_neighbor_count | number |
 | 3 | INTERFACE_STATUS_MAP_leaf1 | L1 | interface_status_map | map |
-| 4 | LOGGING_BUFFERED_SEVERITY_TEXT_leaf1 | L1 | logging_buffered_severity_text | text |
-| 5 | LOGGING_BUFFERED_SEVERITY_TEXT_leaf2 | L1 | logging_buffered_severity_text | text |
-| 6 | LOGGING_BUFFERED_SEVERITY_TEXT_leaf4 | L1 | logging_buffered_severity_text | text |
-| 7 | LOGGING_BUFFERED_SEVERITY_TEXT_leaf6 | L1 | logging_buffered_severity_text | text |
-| 8 | LOGGING_BUFFERED_SEVERITY_TEXT_p1 | L1 | logging_buffered_severity_text | text |
-| 9 | LOGGING_BUFFERED_SEVERITY_TEXT_p2 | L1 | logging_buffered_severity_text | text |
-| 10 | LOGGING_BUFFERED_SEVERITY_TEXT_p4 | L1 | logging_buffered_severity_text | text |
-| 11 | LOGGING_BUFFERED_SEVERITY_TEXT_p5 | L1 | logging_buffered_severity_text | text |
-| 12 | LOGGING_BUFFERED_SEVERITY_TEXT_p6 | L1 | logging_buffered_severity_text | text |
-| 13 | LOGGING_BUFFERED_SEVERITY_TEXT_p7 | L1 | logging_buffered_severity_text | text |
-| 14 | NEIGHBOR_LIST_IBGP_leaf5 | L1 | neighbor_list_ibgp | set |
-| 15 | SNMP_COMMUNITY_LIST_p6 | L1 | snmp_community_list | set |
-| 16 | SUBINTERFACE_COUNT_leaf7 | L1 | subinterface_count | number |
-| 17 | SYSTEM_TIMEZONE_TEXT_leaf1 | L1 | system_timezone_text | text |
-| 18 | SYSTEM_TIMEZONE_TEXT_leaf2 | L1 | system_timezone_text | text |
-| 19 | SYSTEM_TIMEZONE_TEXT_leaf3 | L1 | system_timezone_text | text |
-| 20 | SYSTEM_TIMEZONE_TEXT_leaf4 | L1 | system_timezone_text | text |
-| 21 | SYSTEM_TIMEZONE_TEXT_leaf5 | L1 | system_timezone_text | text |
-| 22 | SYSTEM_TIMEZONE_TEXT_leaf6 | L1 | system_timezone_text | text |
-| 23 | SYSTEM_TIMEZONE_TEXT_leaf7 | L1 | system_timezone_text | text |
-| 24 | SYSTEM_TIMEZONE_TEXT_leaf8 | L1 | system_timezone_text | text |
-| 25 | SYSTEM_TIMEZONE_TEXT_p1 | L1 | system_timezone_text | text |
-| 26 | SYSTEM_TIMEZONE_TEXT_p2 | L1 | system_timezone_text | text |
-| 27 | SYSTEM_TIMEZONE_TEXT_p3 | L1 | system_timezone_text | text |
-| 28 | SYSTEM_TIMEZONE_TEXT_p4 | L1 | system_timezone_text | text |
-| 29 | SYSTEM_TIMEZONE_TEXT_p5 | L1 | system_timezone_text | text |
-| 30 | SYSTEM_TIMEZONE_TEXT_p6 | L1 | system_timezone_text | text |
-| 31 | SYSTEM_TIMEZONE_TEXT_p7 | L1 | system_timezone_text | text |
-| 32 | SYSTEM_TIMEZONE_TEXT_p8 | L1 | system_timezone_text | text |
-| 33 | SYSTEM_TIMEZONE_TEXT_pe1 | L1 | system_timezone_text | text |
-| 34 | SYSTEM_TIMEZONE_TEXT_pe2 | L1 | system_timezone_text | text |
-| 35 | SYSTEM_TIMEZONE_TEXT_pe3 | L1 | system_timezone_text | text |
-| 36 | SYSTEM_TIMEZONE_TEXT_pe4 | L1 | system_timezone_text | text |
-| 37 | AAA_ENABLED_DEVICES | L2 | aaa_enabled_devices | set |
-| 38 | AAA_MISSING_DEVICES | L2 | aaa_missing_devices | set |
-| 39 | DEVICES_WITH_SAME_VRF_VRF_GOV | L2 | devices_with_same_vrf | set |
-| 40 | L2VPN_PAIRS | L2 | l2vpn_pairs | set |
-| 41 | OSPF_AREA0_IF_COUNT_p3 | L2 | ospf_area0_if_count | number |
-| 42 | OSPF_AREA_MEMBERSHIP_0 | L2 | ospf_area_membership | set |
-| 43 | OSPF_NEIGHBOR_COUNT_PER_AREA_0 | L2 | ospf_neighbor_count_per_area | number |
-| 44 | SSH_ENABLED_DEVICES | L2 | ssh_enabled_devices | set |
-| 45 | SSH_MISSING_COUNT | L2 | ssh_missing_count | number |
-| 46 | SSH_MISSING_DEVICES | L2 | ssh_missing_devices | set |
-| 47 | ALL_DEVICES_SAME_AS | L3 | all_devices_same_as | text |
-| 48 | BGP_AS_DISTRIBUTION | L3 | bgp_as_distribution | text |
-| 49 | COMPARE_BGP_AS_p7_pe4 | L3 | compare_bgp_as | text |
-| 50 | COMPARE_BGP_NEIGHBOR_COUNT_leaf1_leaf8 | L3 | compare_bgp_neighbor_count | map_str_int |
-| 51 | COMPARE_INTERFACE_COUNT_pe2_pe3 | L3 | compare_interface_count | map_str_int |
-| 52 | COMPARE_OSPF_AREAS_p3_p6 | L3 | compare_ospf_areas | text |
-| 53 | COMPARE_VRF_COUNT_leaf8_pe2 | L3 | compare_vrf_count | map_str_int |
-| 54 | IBGP_MISSING_PAIRS_65000 | L3 | ibgp_missing_pairs | set |
-| 55 | IBGP_MISSING_PAIRS_COUNT_65000 | L3 | ibgp_missing_pairs_count | number |
-| 56 | IBGP_UNDER_PEERED_COUNT_65000 | L3 | ibgp_under_peered_count | number |
-| 57 | IBGP_UNDER_PEERED_DEVICES_65000 | L3 | ibgp_under_peered_devices | set |
-| 58 | L2VPN_MISMATCH_COUNT | L3 | l2vpn_mismatch_count | number |
-| 59 | L2VPN_PWID_MISMATCH_PAIRS | L3 | l2vpn_pwid_mismatch_pairs | set |
-| 60 | L2VPN_UNIDIRECTIONAL_PAIRS | L3 | l2vpn_unidirectional_pairs | set |
-| 61 | L2VPN_UNIDIR_COUNT | L3 | l2vpn_unidir_count | number |
-| 62 | MAX_BGP_PEER_DEVICE | L3 | max_bgp_peer_device | text |
-| 63 | MAX_INTERFACE_DEVICE | L3 | max_interface_device | text |
-| 64 | MIN_INTERFACE_DEVICE | L3 | min_interface_device | text |
-| 65 | VRF_RT_LIST_PER_DEVICE_p3 | L3 | vrf_rt_list_per_device | set |
-| 66 | VRF_RT_LIST_PER_DEVICE_pe2 | L3 | vrf_rt_list_per_device | set |
-| 67 | VRF_USAGE_STATISTICS | L3 | vrf_usage_statistics | text |
-| 68 | VRF_WITHOUT_RT_COUNT | L3 | vrf_without_rt_count | number |
-| 69 | VRF_WITHOUT_RT_PAIRS | L3 | vrf_without_rt_pairs | set |
+| 4 | NEIGHBOR_LIST_IBGP_leaf5 | L1 | neighbor_list_ibgp | set |
+| 5 | SNMP_COMMUNITY_LIST_leaf6 | L1 | snmp_community_list | set |
+| 6 | SUBINTERFACE_COUNT_leaf7 | L1 | subinterface_count | number |
+| 7 | AAA_ENABLED_DEVICES | L2 | aaa_enabled_devices | set |
+| 8 | AAA_MISSING_DEVICES | L2 | aaa_missing_devices | set |
+| 9 | DEVICES_WITH_SAME_VRF_VRF_GOV | L2 | devices_with_same_vrf | set |
+| 10 | L2VPN_PAIRS | L2 | l2vpn_pairs | set |
+| 11 | OSPF_AREA0_IF_COUNT_p3 | L2 | ospf_area0_if_count | number |
+| 12 | OSPF_AREA_MEMBERSHIP_0 | L2 | ospf_area_membership | set |
+| 13 | OSPF_NEIGHBOR_COUNT_PER_AREA_0 | L2 | ospf_neighbor_count_per_area | number |
+| 14 | SSH_ENABLED_DEVICES | L2 | ssh_enabled_devices | set |
+| 15 | SSH_MISSING_COUNT | L2 | ssh_missing_count | number |
+| 16 | SSH_MISSING_DEVICES | L2 | ssh_missing_devices | set |
+| 17 | ALL_DEVICES_SAME_AS | L3 | all_devices_same_as | text |
+| 18 | BGP_AS_DISTRIBUTION | L3 | bgp_as_distribution | text |
+| 19 | COMPARE_BGP_AS_p7_pe4 | L3 | compare_bgp_as | text |
+| 20 | COMPARE_BGP_NEIGHBOR_COUNT_leaf1_leaf8 | L3 | compare_bgp_neighbor_count | map_str_int |
+| 21 | COMPARE_INTERFACE_COUNT_pe2_pe3 | L3 | compare_interface_count | map_str_int |
+| 22 | COMPARE_OSPF_AREAS_p3_p6 | L3 | compare_ospf_areas | text |
+| 23 | COMPARE_VRF_COUNT_leaf8_pe2 | L3 | compare_vrf_count | map_str_int |
+| 24 | IBGP_MISSING_PAIRS_65000 | L3 | ibgp_missing_pairs | set |
+| 25 | IBGP_MISSING_PAIRS_COUNT_65000 | L3 | ibgp_missing_pairs_count | number |
+| 26 | IBGP_UNDER_PEERED_COUNT_65000 | L3 | ibgp_under_peered_count | number |
+| 27 | IBGP_UNDER_PEERED_DEVICES_65000 | L3 | ibgp_under_peered_devices | set |
+| 28 | L2VPN_MISMATCH_COUNT | L3 | l2vpn_mismatch_count | number |
+| 29 | L2VPN_PWID_MISMATCH_PAIRS | L3 | l2vpn_pwid_mismatch_pairs | set |
+| 30 | L2VPN_UNIDIRECTIONAL_PAIRS | L3 | l2vpn_unidirectional_pairs | set |
+| 31 | L2VPN_UNIDIR_COUNT | L3 | l2vpn_unidir_count | number |
+| 32 | MAX_BGP_PEER_DEVICE | L3 | max_bgp_peer_device | text |
+| 33 | MAX_INTERFACE_DEVICE | L3 | max_interface_device | text |
+| 34 | MIN_INTERFACE_DEVICE | L3 | min_interface_device | text |
+| 35 | VRF_RT_LIST_PER_DEVICE_p3 | L3 | vrf_rt_list_per_device | set |
+| 36 | VRF_RT_LIST_PER_DEVICE_pe2 | L3 | vrf_rt_list_per_device | set |
+| 37 | VRF_USAGE_STATISTICS | L3 | vrf_usage_statistics | text |
+| 38 | VRF_WITHOUT_RT_COUNT | L3 | vrf_without_rt_count | number |
+| 39 | VRF_WITHOUT_RT_PAIRS | L3 | vrf_without_rt_pairs | set |

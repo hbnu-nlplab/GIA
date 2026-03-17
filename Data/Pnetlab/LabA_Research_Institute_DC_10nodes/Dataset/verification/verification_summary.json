@@ -1,16 +1,16 @@
 {
   "title": "NetConfigQA2.0 Ground Truth Verification Summary",
   "topology": "LabA_Research_Institute_DC_10nodes",
-  "date": "2026-03-02",
-  "dataset_total_qa": 1264,
+  "date": "2026-03-09",
+  "dataset_total_qa": 1273,
   "verification_methods": {
     "method1_independent_parser": {
       "description": "Batfish-independent .cfg parser (pure Python + Regex) for L1-L3 full verification",
       "scope": "L1-L3 전수검증 (1016 QA)",
       "total_verified": 1016,
-      "match": 1015,
-      "mismatch": 1,
-      "agreement_rate_raw": 0.9990157480314961,
+      "match": 1016,
+      "mismatch": 0,
+      "agreement_rate_raw": 1.0,
       "by_level": {
         "L1": {
           "total": 660,
@@ -24,14 +24,14 @@
         },
         "L3": {
           "total": 252,
-          "match": 251,
-          "mismatch": 1
+          "match": 252,
+          "mismatch": 0
         }
       },
       "by_answer_type": {
         "text": {
           "total": 286,
-          "match": 285
+          "match": 286
         },
         "set": {
           "total": 370,
@@ -45,6 +45,50 @@
           "total": 107,
           "match": 107
         }
+      }
+    },
+    "method2_manual_check": {
+      "description": "Stratified sampling + raw .cfg trace + policy-based verification",
+      "scope": "L1-L3 계층화 표본추출 (39 QA)",
+      "total_verified": 39,
+      "agree": 39,
+      "disagree": 0,
+      "agreement_rate_raw": 1.0
+    },
+    "method3_pnetlab_emulation": {
+      "description": "PNETLab 에뮬레이션 환경에서 traceroute/ping 실행하여 L4-L5 검증",
+      "scope": "L4-L5 표본 (44 QA: L4 23, L5 21)",
+      "status": "GUIDE_GENERATED",
+      "note": "가이드 및 체크리스트 생성 완료. 사람이 PNETLab에서 실행해야 함."
+    },
+    "method4_l45_replay": {
+      "description": "Batfish replay verification for L4-L5 using row-level contracts",
+      "scope": "L4-L5 자동 재실행 (257 QA)",
+      "total_verified": 257,
+      "match": 256,
+      "mismatch": 1,
+      "error": 0,
+      "quarantined": 0,
+      "agreement_rate_raw": 0.9961089494163424,
+      "by_level": {
+        "L4": {
+          "total": 153,
+          "match": 153,
+          "mismatch": 0,
+          "error": 0,
+          "quarantined": 0
+        },
+        "L5": {
+          "total": 104,
+          "match": 103,
+          "mismatch": 1,
+          "error": 0,
+          "quarantined": 0
+        }
+      },
+      "paper_ready": {
+        "retained": 1272,
+        "dropped_l45": 1
       }
     }
   }

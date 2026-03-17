@@ -1,0 +1,716 @@
+[
+  {
+    "index": 1,
+    "qa_id": "ACL_BLOCKING_leaf2_p6",
+    "id_v2": "acl_blocking_point:4e445956e9",
+    "level": "L4",
+    "metric": "acl_blocking_point",
+    "answer_type": "text",
+    "question": "172.16.2.2에서 10.0.12.1로 트래픽이 차단된다면 차단 지점을 알려주세요. [답변 형식: 차단 장비명 또는 'ALLOWED']",
+    "dataset_answer": "\"ALLOWED\"",
+    "scope": {
+      "type": "FLOW",
+      "src_ip": "172.16.2.2",
+      "dst_ip": "10.0.12.1",
+      "dst_port": 22,
+      "protocol": "TCP",
+      "src_location": "leaf2",
+      "dst_location": "p6"
+    }
+  },
+  {
+    "index": 2,
+    "qa_id": "ACL_BLOCKING_leaf7_p6",
+    "id_v2": "acl_blocking_point:8093f54112",
+    "level": "L4",
+    "metric": "acl_blocking_point",
+    "answer_type": "text",
+    "question": "172.17.3.2에서 10.0.12.1로 트래픽이 차단된다면 차단 지점을 알려주세요. [답변 형식: 차단 장비명 또는 'ALLOWED']",
+    "dataset_answer": "\"ALLOWED\"",
+    "scope": {
+      "type": "FLOW",
+      "src_ip": "172.17.3.2",
+      "dst_ip": "10.0.12.1",
+      "dst_port": 22,
+      "protocol": "TCP",
+      "src_location": "leaf7",
+      "dst_location": "p6"
+    }
+  },
+  {
+    "index": 3,
+    "qa_id": "ACL_BLOCKING_p2_p7",
+    "id_v2": "acl_blocking_point:245568c642",
+    "level": "L4",
+    "metric": "acl_blocking_point",
+    "answer_type": "text",
+    "question": "10.0.2.1에서 10.0.15.1로 트래픽이 차단된다면 차단 지점을 알려주세요. [답변 형식: 차단 장비명 또는 'ALLOWED']",
+    "dataset_answer": "\"ALLOWED\"",
+    "scope": {
+      "type": "FLOW",
+      "src_ip": "10.0.2.1",
+      "dst_ip": "10.0.15.1",
+      "dst_port": 22,
+      "protocol": "TCP",
+      "src_location": "p2",
+      "dst_location": "p7"
+    }
+  },
+  {
+    "index": 4,
+    "qa_id": "ASYMMETRIC_leaf7_leaf1",
+    "id_v2": "asymmetric_path_comparison:5e3b56526f",
+    "level": "L4",
+    "metric": "asymmetric_path_comparison",
+    "answer_type": "text",
+    "question": "leaf7과 leaf1 사이의 Forward/Reverse 경로를 비교해주세요. [답변 형식: 'Forward: A→B→C, Reverse: C→D→A' 형식]",
+    "dataset_answer": "\"Forward: leaf7 -> pe4, Reverse: leaf1 -> pe1\"",
+    "scope": {
+      "type": "NODE_PAIR",
+      "node1": "leaf7",
+      "node2": "leaf1"
+    }
+  },
+  {
+    "index": 5,
+    "qa_id": "ASYMMETRIC_p3_pe3",
+    "id_v2": "asymmetric_path_comparison:92cee86677",
+    "level": "L4",
+    "metric": "asymmetric_path_comparison",
+    "answer_type": "text",
+    "question": "p3과 pe3 사이의 Forward/Reverse 경로를 비교해주세요. [답변 형식: 'Forward: A→B→C, Reverse: C→D→A' 형식]",
+    "dataset_answer": "\"Forward: p3 -> p5 -> pe3, Reverse: pe3 -> p5 -> p3\"",
+    "scope": {
+      "type": "NODE_PAIR",
+      "node1": "p3",
+      "node2": "pe3"
+    }
+  },
+  {
+    "index": 6,
+    "qa_id": "ASYMMETRIC_pe3_leaf4",
+    "id_v2": "asymmetric_path_comparison:f4be0e03c9",
+    "level": "L4",
+    "metric": "asymmetric_path_comparison",
+    "answer_type": "text",
+    "question": "pe3과 leaf4 사이의 Forward/Reverse 경로를 비교해주세요. [답변 형식: 'Forward: A→B→C, Reverse: C→D→A' 형식]",
+    "dataset_answer": "\"Forward: pe3, Reverse: leaf4 -> pe2\"",
+    "scope": {
+      "type": "NODE_PAIR",
+      "node1": "pe3",
+      "node2": "leaf4"
+    }
+  },
+  {
+    "index": 7,
+    "qa_id": "BLACKHOLE_DETECTION_GLOBAL",
+    "id_v2": "blackhole_destination_list:566d4b6821",
+    "level": "L4",
+    "metric": "blackhole_destination_list",
+    "answer_type": "set",
+    "question": "네트워크에서 블랙홀이 발생하는 목적지 prefix 목록을 알려주세요. [답변 형식: prefix 목록 (예: [\"10.0.0.0/8\", \"192.168.1.0/24\"]) 또는 빈 목록 []]",
+    "dataset_answer": "[]",
+    "scope": {
+      "type": "GLOBAL"
+    }
+  },
+  {
+    "index": 8,
+    "qa_id": "BOUNDED_PATH_leaf2_p6",
+    "id_v2": "bounded_path_length:64f66e428c",
+    "level": "L4",
+    "metric": "bounded_path_length",
+    "answer_type": "number",
+    "question": "leaf2에서 10.0.12.1로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자]",
+    "dataset_answer": "2",
+    "scope": {
+      "type": "NODE_PAIR",
+      "src": "leaf2",
+      "dst": "p6"
+    }
+  },
+  {
+    "index": 9,
+    "qa_id": "BOUNDED_PATH_leaf2_pe1",
+    "id_v2": "bounded_path_length:9bcc27e256",
+    "level": "L4",
+    "metric": "bounded_path_length",
+    "answer_type": "number",
+    "question": "leaf2에서 10.0.1.0로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자]",
+    "dataset_answer": "2",
+    "scope": {
+      "type": "NODE_PAIR",
+      "src": "leaf2",
+      "dst": "pe1"
+    }
+  },
+  {
+    "index": 10,
+    "qa_id": "BOUNDED_PATH_p2_leaf7",
+    "id_v2": "bounded_path_length:659f26ebd4",
+    "level": "L4",
+    "metric": "bounded_path_length",
+    "answer_type": "number",
+    "question": "p2에서 172.17.3.2로 가는 경로의 홉 수는 몇 개입니까? [답변 형식: 숫자]",
+    "dataset_answer": "1",
+    "scope": {
+      "type": "NODE_PAIR",
+      "src": "p2",
+      "dst": "leaf7"
+    }
+  },
+  {
+    "index": 11,
+    "qa_id": "ISOLATION_VRF_EDU_VRF_GOV",
+    "id_v2": "leaked_prefixes_list:92a0325284",
+    "level": "L4",
+    "metric": "leaked_prefixes_list",
+    "answer_type": "set",
+    "question": "VRF_EDU와 VRF_GOV 사이에 누수된 prefix 목록은 무엇입니까? [답변 형식: prefix 목록 (예: [\"10.10.10.0/24\"]) 또는 빈 목록 []]",
+    "dataset_answer": "[]",
+    "scope": {
+      "type": "VRF_PAIR",
+      "vrf1": "VRF_EDU",
+      "vrf2": "VRF_GOV"
+    }
+  },
+  {
+    "index": 12,
+    "qa_id": "ISOLATION_VRF_EDU_VRF_RND",
+    "id_v2": "leaked_prefixes_list:c4d3693e73",
+    "level": "L4",
+    "metric": "leaked_prefixes_list",
+    "answer_type": "set",
+    "question": "VRF_EDU와 VRF_RND 사이에 누수된 prefix 목록은 무엇입니까? [답변 형식: prefix 목록 (예: [\"10.10.10.0/24\"]) 또는 빈 목록 []]",
+    "dataset_answer": "[]",
+    "scope": {
+      "type": "VRF_PAIR",
+      "vrf1": "VRF_EDU",
+      "vrf2": "VRF_RND"
+    }
+  },
+  {
+    "index": 13,
+    "qa_id": "ISOLATION_VRF_EDU_default",
+    "id_v2": "leaked_prefixes_list:2ae202f817",
+    "level": "L4",
+    "metric": "leaked_prefixes_list",
+    "answer_type": "set",
+    "question": "VRF_EDU와 default 사이에 누수된 prefix 목록은 무엇입니까? [답변 형식: prefix 목록 (예: [\"10.10.10.0/24\"]) 또는 빈 목록 []]",
+    "dataset_answer": "[]",
+    "scope": {
+      "type": "VRF_PAIR",
+      "vrf1": "VRF_EDU",
+      "vrf2": "default"
+    }
+  },
+  {
+    "index": 14,
+    "qa_id": "LOOP_DETECTION_GLOBAL",
+    "id_v2": "loop_detection:566d4b6821",
+    "level": "L4",
+    "metric": "loop_detection",
+    "answer_type": "text",
+    "question": "네트워크에 포워딩 루프가 존재합니까? [답변 형식: 'NONE' 또는 'Found: A→B→C→A']",
+    "dataset_answer": "\"NONE\"",
+    "scope": {
+      "type": "GLOBAL"
+    }
+  },
+  {
+    "index": 15,
+    "qa_id": "REACH_leaf5_leaf3_ICMP",
+    "id_v2": "reachability_status:771fbdddc3",
+    "level": "L4",
+    "metric": "reachability_status",
+    "answer_type": "text",
+    "question": "172.17.1.2에서 172.16.3.2(0/ICMP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']",
+    "dataset_answer": "\"PATH: leaf5 -> pe3; REACHABLE: FALSE; REASON: NO_ROUTE\"",
+    "scope": {
+      "type": "FLOW",
+      "src_ip": "172.17.1.2",
+      "dst_ip": "172.16.3.2",
+      "dst_port": 0,
+      "protocol": "ICMP",
+      "src_location": "leaf5",
+      "dst_location": "leaf3"
+    }
+  },
+  {
+    "index": 16,
+    "qa_id": "REACH_leaf5_pe4_ICMP",
+    "id_v2": "reachability_status:28a0bc0ee7",
+    "level": "L4",
+    "metric": "reachability_status",
+    "answer_type": "text",
+    "question": "172.17.1.2에서 10.0.14.1(0/ICMP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']",
+    "dataset_answer": "\"PATH: leaf5 -> pe3; REACHABLE: FALSE; REASON: NO_ROUTE\"",
+    "scope": {
+      "type": "FLOW",
+      "src_ip": "172.17.1.2",
+      "dst_ip": "10.0.14.1",
+      "dst_port": 0,
+      "protocol": "ICMP",
+      "src_location": "leaf5",
+      "dst_location": "pe4"
+    }
+  },
+  {
+    "index": 17,
+    "qa_id": "REACH_p8_leaf2_TCP",
+    "id_v2": "reachability_status:ede7d663e8",
+    "level": "L4",
+    "metric": "reachability_status",
+    "answer_type": "text",
+    "question": "10.0.16.1에서 172.16.2.2(22/TCP)로의 트래픽 경로와 도달 여부를 알려주세요. [답변 형식: '경로: A → B → C, 도달: 가능' 또는 '경로: ..., 도달: 불가 (원인: NO_ROUTE, ACL_DENY, EXTERNAL 중 택1)']",
+    "dataset_answer": "\"PATH: p8; REACHABLE: FALSE; REASON: EXTERNAL\"",
+    "scope": {
+      "type": "FLOW",
+      "src_ip": "10.0.16.1",
+      "dst_ip": "172.16.2.2",
+      "dst_port": 22,
+      "protocol": "TCP",
+      "src_location": "p8",
+      "dst_location": "leaf2"
+    }
+  },
+  {
+    "index": 18,
+    "qa_id": "TRACEROUTE_leaf6_p3",
+    "id_v2": "traceroute_path:52bdef7e3c",
+    "level": "L4",
+    "metric": "traceroute_path",
+    "answer_type": "text",
+    "question": "172.17.2.2에서 10.0.3.1까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)]",
+    "dataset_answer": "\"leaf6 -> pe3\"",
+    "scope": {
+      "type": "NODE_PAIR",
+      "src": "leaf6",
+      "dst": "p3"
+    }
+  },
+  {
+    "index": 19,
+    "qa_id": "TRACEROUTE_leaf6_pe1",
+    "id_v2": "traceroute_path:49bef6c809",
+    "level": "L4",
+    "metric": "traceroute_path",
+    "answer_type": "text",
+    "question": "172.17.2.2에서 10.0.1.0까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)]",
+    "dataset_answer": "\"leaf6 -> pe3\"",
+    "scope": {
+      "type": "NODE_PAIR",
+      "src": "leaf6",
+      "dst": "pe1"
+    }
+  },
+  {
+    "index": 20,
+    "qa_id": "TRACEROUTE_p3_p6",
+    "id_v2": "traceroute_path:b3d3071467",
+    "level": "L4",
+    "metric": "traceroute_path",
+    "answer_type": "text",
+    "question": "10.0.3.1에서 10.0.12.1까지의 네트워크 경로(장비 순서)를 나열해주세요. [답변 형식: 화살표(→)로 구분된 장비이름 목록(IP 주소 아님)]",
+    "dataset_answer": "\"p3 -> p5 -> p6\"",
+    "scope": {
+      "type": "NODE_PAIR",
+      "src": "p3",
+      "dst": "p6"
+    }
+  },
+  {
+    "index": 21,
+    "qa_id": "WAYPOINT_leaf6_p7_leaf5",
+    "id_v2": "waypoint_traversal_path:67c26c84f2",
+    "level": "L4",
+    "metric": "waypoint_traversal_path",
+    "answer_type": "text",
+    "question": "172.17.2.2에서 10.0.15.1로 가는 트래픽이 leaf5를 경유할 때의 전체 경로는 무엇입니까? [답변 형식: 'A → B → C' 형식 또는 '경유하지 않음']",
+    "dataset_answer": "\"NOT_TRAVERSED\"",
+    "scope": {
+      "type": "WAYPOINT",
+      "src": "172.17.2.2",
+      "dst": "10.0.15.1",
+      "waypoint": "leaf5"
+    }
+  },
+  {
+    "index": 22,
+    "qa_id": "WAYPOINT_leaf6_p7_leaf6",
+    "id_v2": "waypoint_traversal_path:bea14708f3",
+    "level": "L4",
+    "metric": "waypoint_traversal_path",
+    "answer_type": "text",
+    "question": "172.17.2.2에서 10.0.15.1로 가는 트래픽이 leaf6를 경유할 때의 전체 경로는 무엇입니까? [답변 형식: 'A → B → C' 형식 또는 '경유하지 않음']",
+    "dataset_answer": "\"leaf6 -> pe3\"",
+    "scope": {
+      "type": "WAYPOINT",
+      "src": "172.17.2.2",
+      "dst": "10.0.15.1",
+      "waypoint": "leaf6"
+    }
+  },
+  {
+    "index": 23,
+    "qa_id": "WAYPOINT_leaf6_p7_p2",
+    "id_v2": "waypoint_traversal_path:b1a126fa99",
+    "level": "L4",
+    "metric": "waypoint_traversal_path",
+    "answer_type": "text",
+    "question": "172.17.2.2에서 10.0.15.1로 가는 트래픽이 p2를 경유할 때의 전체 경로는 무엇입니까? [답변 형식: 'A → B → C' 형식 또는 '경유하지 않음']",
+    "dataset_answer": "\"NOT_TRAVERSED\"",
+    "scope": {
+      "type": "WAYPOINT",
+      "src": "172.17.2.2",
+      "dst": "10.0.15.1",
+      "waypoint": "p2"
+    }
+  },
+  {
+    "index": 24,
+    "qa_id": "CONFIG_CHANGE_BASELINE",
+    "id_v2": "config_change_impact:9a83a2b519",
+    "level": "L5",
+    "metric": "config_change_impact",
+    "answer_type": "text",
+    "question": "설정 변경 후 leaf6에서 p7까지의 경로/도달성 변경 여부를 알려주세요. [답변 형식: 'NO_CHANGE' 또는 'CHANGED (N건: 흐름1, 흐름2, ...)']",
+    "dataset_answer": "\"CHANGED (47 entries: 10.10.10.31 -> 10.10.10.35, 172.16.1.3 -> 10.10.10.35, 10.10.10.1 -> 10.10.10.35)\"",
+    "scope": {
+      "type": "SNAPSHOT_DIFF",
+      "src": "leaf6",
+      "dst": "p7",
+      "base_snapshot": "baseline",
+      "changed_snapshot": "cfg_change_leaf5_1773019079",
+      "change_desc": "node_down:leaf5",
+      "failure_node": "leaf5"
+    }
+  },
+  {
+    "index": 25,
+    "qa_id": "DIFF_REACH_BASELINE",
+    "id_v2": "differential_reachability:7ede142c8f",
+    "level": "L5",
+    "metric": "differential_reachability",
+    "answer_type": "text",
+    "question": "변경 전후 leaf6에서 p7로의 도달성에 차이가 있습니까? [답변 형식: 'NO_DIFF' 또는 'DIFF (N건: 흐름1, 흐름2, ...)']",
+    "dataset_answer": "\"NO_DIFF\"",
+    "scope": {
+      "type": "SNAPSHOT_DIFF",
+      "src": "leaf6",
+      "dst": "p7",
+      "base_snapshot": "baseline",
+      "changed_snapshot": "cfg_change_leaf5_1773019079",
+      "change_desc": "node_down:leaf5",
+      "failure_node": "leaf5",
+      "dst_ip": "10.0.15.1"
+    }
+  },
+  {
+    "index": 26,
+    "qa_id": "DUAL_FAILURE_leaf1_leaf2",
+    "id_v2": "redundancy_verification:b24f7175b1",
+    "level": "L5",
+    "metric": "redundancy_verification",
+    "answer_type": "text",
+    "question": "leaf1과 leaf2가 동시에 다운되면 고립되는 흐름이 있습니까? 몇 개입니까? [답변 형식: 'NONE' 또는 숫자]",
+    "dataset_answer": "\"29\"",
+    "scope": {
+      "type": "NODE_PAIR",
+      "src": "leaf1",
+      "dst": "leaf2",
+      "nodes": [
+        "leaf1",
+        "leaf2"
+      ]
+    }
+  },
+  {
+    "index": 27,
+    "qa_id": "DUAL_FAILURE_leaf3_leaf4",
+    "id_v2": "redundancy_verification:52145e3ff9",
+    "level": "L5",
+    "metric": "redundancy_verification",
+    "answer_type": "text",
+    "question": "leaf3과 leaf4가 동시에 다운되면 고립되는 흐름이 있습니까? 몇 개입니까? [답변 형식: 'NONE' 또는 숫자]",
+    "dataset_answer": "\"29\"",
+    "scope": {
+      "type": "NODE_PAIR",
+      "src": "leaf3",
+      "dst": "leaf4",
+      "nodes": [
+        "leaf3",
+        "leaf4"
+      ]
+    }
+  },
+  {
+    "index": 28,
+    "qa_id": "DUAL_FAILURE_leaf5_leaf6",
+    "id_v2": "redundancy_verification:66737a0610",
+    "level": "L5",
+    "metric": "redundancy_verification",
+    "answer_type": "text",
+    "question": "leaf5와 leaf6가 동시에 다운되면 고립되는 흐름이 있습니까? 몇 개입니까? [답변 형식: 'NONE' 또는 숫자]",
+    "dataset_answer": "\"29\"",
+    "scope": {
+      "type": "NODE_PAIR",
+      "src": "leaf5",
+      "dst": "leaf6",
+      "nodes": [
+        "leaf5",
+        "leaf6"
+      ]
+    }
+  },
+  {
+    "index": 29,
+    "qa_id": "K_FAILURE_leaf6_p7",
+    "id_v2": "redundant_paths_list:7078fb371d",
+    "level": "L5",
+    "metric": "redundant_paths_list",
+    "answer_type": "set",
+    "question": "leaf6에서 10.0.15.1로 가는 대체 경로들을 모두 나열해주세요. [답변 형식: 경로 목록 (예: [\"A→B→C\", \"A→D→C\"])]",
+    "dataset_answer": "[\"leaf6 → pe3\"]",
+    "scope": {
+      "type": "NODE_PAIR",
+      "src": "leaf6",
+      "dst": "p7"
+    }
+  },
+  {
+    "index": 30,
+    "qa_id": "MULTI_FAIL_leaf1_leaf7_leaf2_leaf3",
+    "id_v2": "multi_link_failure_reachability:bb2f6dab37",
+    "level": "L5",
+    "metric": "multi_link_failure_reachability",
+    "answer_type": "text",
+    "question": "(시나리오) 'leaf1-leaf7' 링크와 'leaf2-leaf3' 링크가 동시에 다운되었습니다. 이 상황에서 'leaf6'에서 'p7'로의 트래픽 전달이 가능합니까? [답변 형식: 'REROUTED (path: A→B→C)' 또는 'DISCONNECTED (reason: ...)']",
+    "dataset_answer": "\"DISCONNECTED (reason: NO_ROUTE at pe3)\"",
+    "scope": {
+      "type": "MULTI_LINK_FAILURE",
+      "link1": "leaf1-leaf7",
+      "link2": "leaf2-leaf3",
+      "link1_iface1": "leaf1[GigabitEthernet0/7]",
+      "link1_iface2": "leaf7[GigabitEthernet0/7]",
+      "link2_iface1": "leaf2[GigabitEthernet0/7]",
+      "link2_iface2": "leaf3[GigabitEthernet0/7]",
+      "test_src": "leaf6",
+      "test_dst": "p7"
+    }
+  },
+  {
+    "index": 31,
+    "qa_id": "MULTI_FAIL_leaf1_pe1_leaf2_leaf7",
+    "id_v2": "multi_link_failure_reachability:e06180a477",
+    "level": "L5",
+    "metric": "multi_link_failure_reachability",
+    "answer_type": "text",
+    "question": "(시나리오) 'leaf1-pe1' 링크와 'leaf2-leaf7' 링크가 동시에 다운되었습니다. 이 상황에서 'leaf6'에서 'p7'로의 트래픽 전달이 가능합니까? [답변 형식: 'REROUTED (path: A→B→C)' 또는 'DISCONNECTED (reason: ...)']",
+    "dataset_answer": "\"DISCONNECTED (reason: NO_ROUTE at pe3)\"",
+    "scope": {
+      "type": "MULTI_LINK_FAILURE",
+      "link1": "leaf1-pe1",
+      "link2": "leaf2-leaf7",
+      "link1_iface1": "leaf1[GigabitEthernet0/7]",
+      "link1_iface2": "pe1[GigabitEthernet0/7]",
+      "link2_iface1": "leaf2[GigabitEthernet0/7]",
+      "link2_iface2": "leaf7[GigabitEthernet0/7]",
+      "test_src": "leaf6",
+      "test_dst": "p7"
+    }
+  },
+  {
+    "index": 32,
+    "qa_id": "MULTI_FAIL_leaf1_pe3_leaf2_leaf4",
+    "id_v2": "multi_link_failure_reachability:609fda6971",
+    "level": "L5",
+    "metric": "multi_link_failure_reachability",
+    "answer_type": "text",
+    "question": "(시나리오) 'leaf1-pe3' 링크와 'leaf2-leaf4' 링크가 동시에 다운되었습니다. 이 상황에서 'leaf6'에서 'p7'로의 트래픽 전달이 가능합니까? [답변 형식: 'REROUTED (path: A→B→C)' 또는 'DISCONNECTED (reason: ...)']",
+    "dataset_answer": "\"DISCONNECTED (reason: NO_ROUTE at pe3)\"",
+    "scope": {
+      "type": "MULTI_LINK_FAILURE",
+      "link1": "leaf1-pe3",
+      "link2": "leaf2-leaf4",
+      "link1_iface1": "leaf1[GigabitEthernet0/7]",
+      "link1_iface2": "pe3[GigabitEthernet0/7]",
+      "link2_iface1": "leaf2[GigabitEthernet0/7]",
+      "link2_iface2": "leaf4[GigabitEthernet0/7]",
+      "test_src": "leaf6",
+      "test_dst": "p7"
+    }
+  },
+  {
+    "index": 33,
+    "qa_id": "NEGATIVE_TEST_FAKE_NODE",
+    "id_v2": "non_existent_node_check:4816fc9823",
+    "level": "L5",
+    "metric": "non_existent_node_check",
+    "answer_type": "number",
+    "question": "non_existent_router_999 장비가 다운되면 몇 개의 트래픽 흐름이 차단됩니까? [답변 형식: 숫자]",
+    "dataset_answer": "0",
+    "scope": {
+      "type": "FAKE_NODE",
+      "node": "non_existent_router_999"
+    }
+  },
+  {
+    "index": 34,
+    "qa_id": "NODE_FAILURE_leaf6",
+    "id_v2": "node_failure_impact:cf69a70b20",
+    "level": "L5",
+    "metric": "node_failure_impact",
+    "answer_type": "number",
+    "question": "leaf6 장비가 다운되면 몇 개의 트래픽 흐름이 새로 차단됩니까? [답변 형식: 숫자]",
+    "dataset_answer": "29",
+    "scope": {
+      "type": "NODE",
+      "node": "leaf6"
+    }
+  },
+  {
+    "index": 35,
+    "qa_id": "NODE_FAILURE_p3",
+    "id_v2": "node_failure_impact:43af57bf8f",
+    "level": "L5",
+    "metric": "node_failure_impact",
+    "answer_type": "number",
+    "question": "p3 장비가 다운되면 몇 개의 트래픽 흐름이 새로 차단됩니까? [답변 형식: 숫자]",
+    "dataset_answer": "30",
+    "scope": {
+      "type": "NODE",
+      "node": "p3"
+    }
+  },
+  {
+    "index": 36,
+    "qa_id": "NODE_FAILURE_p5",
+    "id_v2": "node_failure_impact:4607498818",
+    "level": "L5",
+    "metric": "node_failure_impact",
+    "answer_type": "number",
+    "question": "p5 장비가 다운되면 몇 개의 트래픽 흐름이 새로 차단됩니까? [답변 형식: 숫자]",
+    "dataset_answer": "30",
+    "scope": {
+      "type": "NODE",
+      "node": "p5"
+    }
+  },
+  {
+    "index": 37,
+    "qa_id": "OSPF_AREA0_ROUTERS_GLOBAL",
+    "id_v2": "ospf_area0_routers:566d4b6821",
+    "level": "L5",
+    "metric": "ospf_area0_routers",
+    "answer_type": "set",
+    "question": "OSPF Backbone Area(Area 0)에 속한 라우터 목록은 무엇입니까? [답변 형식: 라우터 이름 목록 (예: [\"spine1\", \"spine2\", \"p1\"])]",
+    "dataset_answer": "[\"p1\", \"p4\", \"p7\", \"pe1\", \"pe2\"]",
+    "scope": {
+      "type": "GLOBAL"
+    }
+  },
+  {
+    "index": 38,
+    "qa_id": "POLICY_COMPLIANCE_leaf6",
+    "id_v2": "policy_compliance_check:55fdaa2721",
+    "level": "L5",
+    "metric": "policy_compliance_check",
+    "answer_type": "text",
+    "question": "'MANDATORY_WAYPOINT_leaf6' 정책 준수 여부와 위반 사례를 알려주세요. [답변 형식: 'COMPLIANT' 또는 'VIOLATION: 흐름1, 흐름2, ...']",
+    "dataset_answer": "\"VIOLATION: 10.10.10.31 -> 10.10.10.0, 172.16.1.3 -> 10.10.10.0, 10.10.10.1 -> 10.10.10.0\"",
+    "scope": {
+      "type": "POLICY",
+      "policy_name": "MANDATORY_WAYPOINT_leaf6"
+    }
+  },
+  {
+    "index": 39,
+    "qa_id": "ROOT_CAUSE_leaf1_p4",
+    "id_v2": "root_cause_analysis:7286e34e9e",
+    "level": "L5",
+    "metric": "root_cause_analysis",
+    "answer_type": "text",
+    "question": "leaf1에서 p4로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]",
+    "dataset_answer": "\"pe1\"",
+    "scope": {
+      "type": "NODE_PAIR",
+      "src": "leaf1",
+      "dst": "p4"
+    }
+  },
+  {
+    "index": 40,
+    "qa_id": "ROOT_CAUSE_leaf6_p3",
+    "id_v2": "root_cause_analysis:52bdef7e3c",
+    "level": "L5",
+    "metric": "root_cause_analysis",
+    "answer_type": "text",
+    "question": "leaf6에서 p3로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]",
+    "dataset_answer": "\"pe3\"",
+    "scope": {
+      "type": "NODE_PAIR",
+      "src": "leaf6",
+      "dst": "p3"
+    }
+  },
+  {
+    "index": 41,
+    "qa_id": "ROOT_CAUSE_leaf6_pe1",
+    "id_v2": "root_cause_analysis:49bef6c809",
+    "level": "L5",
+    "metric": "root_cause_analysis",
+    "answer_type": "text",
+    "question": "leaf6에서 pe1로의 통신이 실패할 때, 어느 장비에서 차단됩니까? [답변 형식: 장비명]",
+    "dataset_answer": "\"pe3\"",
+    "scope": {
+      "type": "NODE_PAIR",
+      "src": "leaf6",
+      "dst": "pe1"
+    }
+  },
+  {
+    "index": 42,
+    "qa_id": "SPOF_DETECTION_GLOBAL",
+    "id_v2": "spof_detection:566d4b6821",
+    "level": "L5",
+    "metric": "spof_detection",
+    "answer_type": "set_str",
+    "question": "단일 장비 장애 시 통신이 두절되는 구간(SPOF: Single Point of Failure)이 존재합니까? [답변 형식: SPOF 장비 목록 (예: [\"p1\", \"pe1\"]) 또는 빈 목록 []]",
+    "dataset_answer": "[\"pe3\", \"leaf6\"]",
+    "scope": {
+      "type": "GLOBAL"
+    }
+  },
+  {
+    "index": 43,
+    "qa_id": "TRIPLE_FAILURE_leaf1_leaf2_leaf3",
+    "id_v2": "triple_node_failure:cccbd0e03e",
+    "level": "L5",
+    "metric": "triple_node_failure",
+    "answer_type": "text",
+    "question": "leaf1, leaf2, leaf3가 동시에 다운되면 네트워크가 완전히 분리됩니까? [답변 형식: 'YES' 또는 'NO (affected_flows: N)']",
+    "dataset_answer": "\"NO (affected_flows: 29)\"",
+    "scope": {
+      "type": "NODE_TRIPLET",
+      "nodes": [
+        "leaf1",
+        "leaf2",
+        "leaf3"
+      ]
+    }
+  },
+  {
+    "index": 44,
+    "qa_id": "WORST_CASE_FAILURE",
+    "id_v2": "worst_case_failure_analysis:566d4b6821",
+    "level": "L5",
+    "metric": "worst_case_failure_analysis",
+    "answer_type": "text",
+    "question": "단일 장비 장애 시 가장 큰 영향을 주는 장비는? [답변 형식: 'device_name (N)']",
+    "dataset_answer": "\"p3(30)\"",
+    "scope": {
+      "type": "GLOBAL"
+    }
+  }
+]

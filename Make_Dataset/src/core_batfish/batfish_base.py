@@ -8,6 +8,7 @@ BatfishBase:
 """
 
 import logging
+import re
 from typing import Dict, List, Optional, Tuple
 from itertools import combinations
 
@@ -84,10 +85,33 @@ class BatfishBase:
         digits = "".join(ch for ch in lowered if ch.isdigit())
         number = int(digits) if digits else 9999
         return (exact, number, lowered)
+
+    @staticmethod
+    def _generic_iface_rank(iface_name: str) -> Tuple[int, Tuple[int, ...], str]:
+        """
+        활성 L3 인터페이스 선택 우선순위.
+        - 1순위: loopback 계열
+        - 2순위: 일반 데이터플레인 인터페이스
+        - 3순위: management / null 계열
+        숫자 토큰을 분리해 GigabitEthernet0/0 < GigabitEthernet0/7 같은 순서를 유지한다.
+        """
+        lowered = iface_name.lower()
+        if BatfishBase._is_loopback_iface_name(iface_name):
+            return (0, BatfishBase._loopback_iface_rank(iface_name)[:2], lowered)
+
+        if any(token in lowered for token in ("mgmt", "management", "null", "dialer")):
+            kind_rank = 2
+        else:
+            kind_rank = 1
+
+        numeric_parts = tuple(int(part) for part in re.findall(r"\d+", lowered)) or (9999,)
+        return (kind_rank, numeric_parts, lowered)
     
     def _populate_loopback_cache(self):
         """
-        모든 노드의 선호 시작 인터페이스(루프백 계열)를 한 번에 수집.
+        모든 노드의 traceroute/reachability용 선호 시작 인터페이스를 한 번에 수집.
+        루프백 계열이 있으면 최우선으로 사용하고, 없으면 활성 L3 인터페이스 중
+        가장 일반적인 데이터플레인 인터페이스를 fallback으로 선택한다.
         """
         if not self._initialized or not self.bf:
             print("[DEBUG] _populate_loopback_cache: Batfish not initialized")
@@ -112,41 +136,43 @@ class BatfishBase:
             # 캐시 초기화
             print("[DEBUG] _populate_loopback_cache: Initializing cache...")
             for node in self.nodes:
-                self._loopback_cache[node] = False
-                self._preferred_start_iface_cache[node] = ""
+                node_key = str(node).lower()
+                self._loopback_cache[node_key] = False
+                self._preferred_start_iface_cache[node_key] = ""
             
-            # 루프백 계열 후보 수집 후 노드별 최적 인터페이스 선택
-            print("[DEBUG] _populate_loopback_cache: Scanning loopback-like interfaces...")
+            # 활성 L3 인터페이스 후보 수집 후 노드별 최적 인터페이스 선택
+            print("[DEBUG] _populate_loopback_cache: Scanning active L3 interfaces...")
             loopback_count = 0
-            candidates: Dict[str, List[str]] = {node: [] for node in self.nodes}
+            preferred_count = 0
+            candidates: Dict[str, List[str]] = {str(node).lower(): [] for node in self.nodes}
             if not iface_props.empty:
                 for _, row in iface_props.iterrows():
                     iface = row.get('Interface', {})
                     node_name = getattr(iface, 'hostname', '')
                     iface_name = getattr(iface, 'interface', '')
+                    node_key = str(node_name).lower()
                     
                     if not node_name or not iface_name:
                         continue
-                    if node_name not in candidates:
-                        candidates[node_name] = []
-
-                    if not self._is_loopback_iface_name(iface_name):
-                        continue
+                    if node_key not in candidates:
+                        candidates[node_key] = []
 
                     val_active = row.get('Active', False)
                     val_ip = row.get('Primary_Address')
 
                     # Active 상태이고 IP가 있어야 유효한 Source로 간주
                     if val_active and val_ip:
-                        candidates[node_name].append(iface_name)
+                        candidates[node_key].append(iface_name)
 
                 for node_name, ifaces in candidates.items():
                     if not ifaces:
                         continue
-                    preferred = min(ifaces, key=self._loopback_iface_rank)
+                    preferred = min(ifaces, key=self._generic_iface_rank)
                     self._preferred_start_iface_cache[node_name] = preferred
-                    self._loopback_cache[node_name] = True
-                    loopback_count += 1
+                    preferred_count += 1
+                    if any(self._is_loopback_iface_name(iface) for iface in ifaces):
+                        self._loopback_cache[node_name] = True
+                        loopback_count += 1
                     print(
                         f"[DEBUG] _populate_loopback_cache: "
                         f"Selected {preferred} for {node_name}"
@@ -160,7 +186,8 @@ class BatfishBase:
             print(
                 "[DEBUG] _populate_loopback_cache: Completed! "
                 f"Cached {len(self._loopback_cache)} nodes "
-                f"({loopback_count} with loopback-like source)"
+                f"({loopback_count} with loopback-like source, "
+                f"{preferred_count} with explicit active source)"
             )
             logger.debug(f"_populate_loopback_cache: Cached {len(self._loopback_cache)} nodes")
             
@@ -181,7 +208,7 @@ class BatfishBase:
         """
         if not self._preferred_start_iface_cache:
             self._populate_loopback_cache()
-        return self._preferred_start_iface_cache.get(node_name, "")
+        return self._preferred_start_iface_cache.get(str(node_name).lower(), "")
     
     def _has_loopback0(self, node_name: str) -> bool:
         """
@@ -204,7 +231,7 @@ class BatfishBase:
             print(f"[DEBUG] _has_loopback0: Batch loading completed")
         
         preferred_iface = self._get_preferred_start_iface(node_name)
-        result = bool(preferred_iface)
+        result = self._loopback_cache.get(str(node_name).lower(), False)
         print(
             f"[DEBUG] _has_loopback0: {node_name} = {result} "
             f"(preferred_iface={preferred_iface or 'none'})"

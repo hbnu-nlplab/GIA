@@ -1,0 +1,184 @@
+{
+  "total": 572,
+  "match": 570,
+  "mismatch": 2,
+  "error": 0,
+  "quarantined": 0,
+  "agreement_rate": 0.9965034965034965,
+  "by_level": {
+    "L4": {
+      "total": 443,
+      "match": 443,
+      "mismatch": 0,
+      "error": 0,
+      "quarantined": 0
+    },
+    "L5": {
+      "total": 129,
+      "match": 127,
+      "mismatch": 2,
+      "error": 0,
+      "quarantined": 0
+    }
+  },
+  "by_metric": {
+    "traceroute_path": {
+      "total": 190,
+      "match": 190,
+      "mismatch": 0,
+      "error": 0,
+      "quarantined": 0
+    },
+    "reachability_status": {
+      "total": 30,
+      "match": 30,
+      "mismatch": 0,
+      "error": 0,
+      "quarantined": 0
+    },
+    "loop_detection": {
+      "total": 1,
+      "match": 1,
+      "mismatch": 0,
+      "error": 0,
+      "quarantined": 0
+    },
+    "acl_blocking_point": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0,
+      "error": 0,
+      "quarantined": 0
+    },
+    "bounded_path_length": {
+      "total": 190,
+      "match": 190,
+      "mismatch": 0,
+      "error": 0,
+      "quarantined": 0
+    },
+    "blackhole_destination_list": {
+      "total": 1,
+      "match": 1,
+      "mismatch": 0,
+      "error": 0,
+      "quarantined": 0
+    },
+    "waypoint_traversal_path": {
+      "total": 5,
+      "match": 5,
+      "mismatch": 0,
+      "error": 0,
+      "quarantined": 0
+    },
+    "leaked_prefixes_list": {
+      "total": 6,
+      "match": 6,
+      "mismatch": 0,
+      "error": 0,
+      "quarantined": 0
+    },
+    "asymmetric_path_comparison": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0,
+      "error": 0,
+      "quarantined": 0
+    },
+    "spof_detection": {
+      "total": 1,
+      "match": 0,
+      "mismatch": 1,
+      "error": 0,
+      "quarantined": 0
+    },
+    "ospf_area0_routers": {
+      "total": 1,
+      "match": 1,
+      "mismatch": 0,
+      "error": 0,
+      "quarantined": 0
+    },
+    "redundant_paths_list": {
+      "total": 1,
+      "match": 1,
+      "mismatch": 0,
+      "error": 0,
+      "quarantined": 0
+    },
+    "root_cause_analysis": {
+      "total": 50,
+      "match": 50,
+      "mismatch": 0,
+      "error": 0,
+      "quarantined": 0
+    },
+    "node_failure_impact": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0,
+      "error": 0,
+      "quarantined": 0
+    },
+    "redundancy_verification": {
+      "total": 10,
+      "match": 10,
+      "mismatch": 0,
+      "error": 0,
+      "quarantined": 0
+    },
+    "triple_node_failure": {
+      "total": 1,
+      "match": 1,
+      "mismatch": 0,
+      "error": 0,
+      "quarantined": 0
+    },
+    "worst_case_failure_analysis": {
+      "total": 1,
+      "match": 1,
+      "mismatch": 0,
+      "error": 0,
+      "quarantined": 0
+    },
+    "non_existent_node_check": {
+      "total": 1,
+      "match": 1,
+      "mismatch": 0,
+      "error": 0,
+      "quarantined": 0
+    },
+    "config_change_impact": {
+      "total": 1,
+      "match": 1,
+      "mismatch": 0,
+      "error": 0,
+      "quarantined": 0
+    },
+    "differential_reachability": {
+      "total": 1,
+      "match": 1,
+      "mismatch": 0,
+      "error": 0,
+      "quarantined": 0
+    },
+    "policy_compliance_check": {
+      "total": 1,
+      "match": 0,
+      "mismatch": 1,
+      "error": 0,
+      "quarantined": 0
+    },
+    "multi_link_failure_reachability": {
+      "total": 50,
+      "match": 50,
+      "mismatch": 0,
+      "error": 0,
+      "quarantined": 0
+    }
+  },
+  "paper_ready": {
+    "retained": 2156,
+    "dropped_l45": 2
+  }
+}

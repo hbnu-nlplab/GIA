@@ -184,6 +184,7 @@ class NetConfigQAScorer:
 
     def __init__(self):
         self.warnings: List[Dict[str, str]] = []
+        self.explicit_negative_token = "NOT_CONFIGURED"
     
     def clean_prediction(self, pred: str, answer_type: str = None) -> str:
         """
@@ -243,27 +244,33 @@ class NetConfigQAScorer:
         if len(pred) >= 2 and pred[0] == pred[-1] and pred[0] in ('"', "'"):
             pred = pred[1:-1]
 
-        # 6. Normalize null values
-        if pred.lower() in ['null', 'none', 'n/a', 'not configured', 'not found', '']:
-            pred = ""
+        # 6. Normalize explicit negative answers, but do not reward blank output.
+        if pred.lower() in ['null', 'none', 'n/a', 'not configured', 'not_configured', '미설정']:
+            pred = self.explicit_negative_token
 
         return pred.strip()
 
-    def clean_gold(self, gold: str) -> str:
+    def clean_gold(self, gold: str, status: str = "OK") -> str:
         """Clean gold answer with same normalization as prediction."""
         gold = str(gold).strip()
+
+        if str(status).strip().upper() == "NOT_CONFIGURED":
+            return self.explicit_negative_token
         
         # Unquote gold
         if len(gold) >= 2 and ((gold.startswith('"') and gold.endswith('"')) or \
                                (gold.startswith("'") and gold.endswith("'"))):
             gold = gold[1:-1]
-        
-        if gold.lower() in ['null', 'none', 'n/a', 'not configured', '']:
-            gold = ""
             
         return gold
 
-    def score(self, pred: str, gold: str, answer_type: str, question_id: str = "") -> Dict[str, float]:
+    def _score_negative_abstention(self, pred: str) -> Dict[str, float]:
+        pred_norm = pred.strip().lower().replace("-", "_").replace(" ", "_")
+        if pred_norm == "not_configured":
+            return {"score": 1.0, "detail": "explicit_not_configured"}
+        return {"score": 0.0, "detail": "missing_explicit_not_configured"}
+
+    def score(self, pred: str, gold: str, answer_type: str, status: str = "OK", question_id: str = "") -> Dict[str, float]:
         """Score prediction against gold answer based on answer type.
 
         TA-Acc 정의 (IEEE TNMS):
@@ -277,7 +284,10 @@ class NetConfigQAScorer:
         # Clean prediction with answer_type context
         answer_type = canonical_answer_type(answer_type)
         pred = self.clean_prediction(pred, answer_type)
-        gold = self.clean_gold(gold)
+        gold = self.clean_gold(gold, status=status)
+
+        if str(status).strip().upper() == "NOT_CONFIGURED":
+            return self._score_negative_abstention(pred)
 
         try:
             if answer_type in ["numeric", "scalar_int", "number"]:
@@ -946,9 +956,9 @@ def analyze_results(
                 structured_valid += 1
 
         clean_pred = scorer.clean_prediction(str(pred_input), answer_type)
-        clean_gold = scorer.clean_gold(gold_raw)
+        clean_gold = scorer.clean_gold(gold_raw, status=status)
 
-        type_aware_metrics = scorer.score(clean_pred, gold_raw, answer_type, question_id=question_id)
+        type_aware_metrics = scorer.score(clean_pred, gold_raw, answer_type, status=status, question_id=question_id)
         type_aware_score = type_aware_metrics['score']
         trad_metrics = trad_calc.calculate_all(clean_pred, clean_gold)
 

@@ -472,7 +472,7 @@ COMPARE_OSPF_AREAS_p3_p4,compare_ospf_areas:44508e5cd8,L3,compare_ospf_areas,tex
 COMPARE_OSPF_AREAS_p2_p3,compare_ospf_areas:b2a7c14989,L3,compare_ospf_areas,text,MATCH,,"p2: Area 0, p3: Area 0","""p2: Area 0, p3: Area 0""",True,1.0,exact
 MAX_INTERFACE_DEVICE,max_interface_device:566d4b6821,L3,max_interface_device,text,MATCH,,p1: 5,"""p1: 5""",True,1.0,exact
 MAX_BGP_PEER_DEVICE,max_bgp_peer_device:566d4b6821,L3,max_bgp_peer_device,text,MATCH,,pe1: 1,"""pe1: 1""",True,1.0,exact
-ALL_DEVICES_SAME_AS,all_devices_same_as:566d4b6821,L3,all_devices_same_as,text,MISMATCH,,"pe1: AS 65000, pe2: AS 65000","""leaf1: AS N/A, leaf2: AS N/A, leaf3: AS N/A, leaf4: AS N/A, p1: AS N/A, p2: AS N/A, p3: AS N/A, p4: AS N/A, pe1: AS 65000, pe2: AS 65000""",False,0.5,token_f1=0.500
+ALL_DEVICES_SAME_AS,all_devices_same_as:566d4b6821,L3,all_devices_same_as,text,MATCH,,"leaf1: AS N/A, leaf2: AS N/A, leaf3: AS N/A, leaf4: AS N/A, p1: AS N/A, p2: AS N/A, p3: AS N/A, p4: AS N/A, pe1: AS 65000, pe2: AS 65000","""leaf1: AS N/A, leaf2: AS N/A, leaf3: AS N/A, leaf4: AS N/A, p1: AS N/A, p2: AS N/A, p3: AS N/A, p4: AS N/A, pe1: AS 65000, pe2: AS 65000""",True,1.0,exact
 MIN_INTERFACE_DEVICE,min_interface_device:566d4b6821,L3,min_interface_device,text,MATCH,,leaf1: 4,"""leaf1: 4""",True,1.0,exact
 BGP_AS_DISTRIBUTION,bgp_as_distribution:566d4b6821,L3,bgp_as_distribution,text,MATCH,,AS 65000: 2 devices,"""AS 65000: 2 devices""",True,1.0,exact
 VRF_USAGE_STATISTICS,vrf_usage_statistics:566d4b6821,L3,vrf_usage_statistics,text,MATCH,,"leaf1: 0개, leaf2: 0개, leaf3: 0개, leaf4: 0개, p1: 0개, p2: 0개, p3: 0개, p4: 0개, pe1: 3개, pe2: 3개","""leaf1: 0, leaf2: 0, leaf3: 0, leaf4: 0, p1: 0, p2: 0, p3: 0, p4: 0, pe1: 3, pe2: 3""",True,1.0,exact

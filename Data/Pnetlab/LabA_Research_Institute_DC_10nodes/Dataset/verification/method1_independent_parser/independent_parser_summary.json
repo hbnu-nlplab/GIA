@@ -1,12 +1,12 @@
 {
   "total_rows": 1016,
   "verifiable": 1016,
-  "match": 1015,
-  "mismatch": 1,
+  "match": 1016,
+  "mismatch": 0,
   "skip": 0,
   "error": 0,
   "unsupported": 0,
-  "agreement_rate": 0.9990157480314961,
+  "agreement_rate": 1.0,
   "by_level": {
     "L1": {
       "total": 660,
@@ -20,8 +20,8 @@
     },
     "L3": {
       "total": 252,
-      "match": 251,
-      "mismatch": 1
+      "match": 252,
+      "mismatch": 0
     }
   },
   "by_metric": {
@@ -332,8 +332,8 @@
     },
     "all_devices_same_as": {
       "total": 1,
-      "match": 0,
-      "mismatch": 1
+      "match": 1,
+      "mismatch": 0
     },
     "min_interface_device": {
       "total": 1,
@@ -504,7 +504,7 @@
   "by_answer_type": {
     "text": {
       "total": 286,
-      "match": 285
+      "match": 286
     },
     "set": {
       "total": 370,
@@ -519,20 +519,5 @@
       "match": 107
     }
   },
-  "mismatch_examples": [
-    {
-      "id": "ALL_DEVICES_SAME_AS",
-      "id_v2": "all_devices_same_as:566d4b6821",
-      "level": "L3",
-      "metric": "all_devices_same_as",
-      "answer_type": "text",
-      "status": "MISMATCH",
-      "reason": "",
-      "parser_answer": "pe1: AS 65000, pe2: AS 65000",
-      "dataset_answer": "\"leaf1: AS N/A, leaf2: AS N/A, leaf3: AS N/A, leaf4: AS N/A, p1: AS N/A, p2: AS N/A, p3: AS N/A, p4: AS N/A, pe1: AS 65000, pe2: AS 65000\"",
-      "match": false,
-      "score": 0.5,
-      "detail": "token_f1=0.500"
-    }
-  ]
+  "mismatch_examples": []
 }

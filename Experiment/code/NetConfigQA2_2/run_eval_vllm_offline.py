@@ -59,11 +59,12 @@ class Config:
     MODEL_DICT = {
         "gpt-oss:20b":               {"hf_path": "openai/gpt-oss-20b",                           "display": "GPT-OSS-20B",   "quant": None,  "backend": "vllm_offline", "max_ctx": 40960},
         "qwen3-coder:30b-a3b-AWQ":{"hf_path": "stelterlab/Qwen3-Coder-30B-A3B-Instruct-AWQ",  "display": "Qwen3-Coder",   "quant": None,  "backend": "vllm_offline", "max_ctx": 40960},
-        "glm-4.7-flash-AWQ":      {"hf_path": "QuantTrio/GLM-4.7-Flash-AWQ",                  "display": "GLM-4.7-Flash", "quant": None,  "backend": "vllm_offline", "max_ctx": 32768, "eager": True,
-                                    "env": {"VLLM_USE_DEEP_GEMM": "0", "VLLM_USE_FLASHINFER_MOE_FP16": "1", "VLLM_USE_FLASHINFER_SAMPLER": "0", "OMP_NUM_THREADS": "4", "PYTORCH_CUDA_ALLOC_CONF": "expandable_segments:True"},
-                                    "extra_kwargs": {"reasoning_parser": "glm45", "gpu_memory_utilization": 0.85, "max_num_batched_tokens": 2048}},
         "Qwen3.5-9B": {"hf_path": "cyankiwi/Qwen3.5-9B-AWQ-4bit", "display": "Qwen3.5-9B",   "quant": None,  "backend": "vllm_offline", "max_ctx": 40960,
                         "extra_kwargs": {"reasoning_parser": "qwen3"}},
+        "Qwen3.5-4B": {"hf_path": "cyankiwi/Qwen3.5-4B-AWQ-4bit", "display": "Qwen3.5-4B", "quant": None, "backend": "vllm_offline", "max_ctx": 32768,
+                        "env": {"PYTORCH_CUDA_ALLOC_CONF": "expandable_segments:True"},
+                        "extra_kwargs": {"reasoning_parser": "qwen3", "gpu_memory_utilization": 0.82}},
+        "Foundation-Sec-8B": {"hf_path": "fdtn-ai/Foundation-Sec-1.1-8B-Instruct", "display": "Foundation-Sec-8B", "quant": None, "backend": "vllm_offline", "max_ctx": 42000},
         "gpt-4o-mini":               {"hf_path": "gpt-4o-mini",                                  "display": "GPT-4o-mini",   "quant": None,  "backend": "openai",        "max_ctx": 128000},
     }
 
@@ -75,9 +76,9 @@ class Config:
     # 레벨별 출력 토큰 차등 — 배치를 레벨 그룹으로 분리하여 효율화
     # vLLM이 max_tokens를 실제 사용 가능한 범위로 자동 클리핑함
     MAX_OUTPUT_BY_LEVEL = {
-        "L1": 1024,
-        "L2": 1024,
-        "L3": 2048,
+        "L1": 2048,
+        "L2": 2048,
+        "L3": 3072,
         "L4": 4096,
         "L5": 4096,
     }
