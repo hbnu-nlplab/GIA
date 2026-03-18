@@ -655,6 +655,52 @@ async def health():
     }
 
 
+@app.post("/api/tool/invoke")
+async def tool_invoke(request: Request):
+    """
+    Direct tool invocation for external MAS integration (agents_v2).
+    Bypasses LLM — calls MCP tool directly and returns result.
+
+    Body: {"tool": "batfish_traceroute", "args": {"src": "P1", "dst": "PE3"}}
+    Returns: {"ok": true, "result": {...}} or {"ok": false, "error": "..."}
+    """
+    try:
+        body = await request.json()
+        tool_name = body.get("tool", "")
+        tool_args = body.get("args", {})
+
+        if not tool_name:
+            return JSONResponse({"ok": False, "error": "Missing 'tool' field"}, status_code=400)
+
+        # Validate tool name (prevent injection)
+        import re
+        if not re.match(r'^[\w_]+$', tool_name):
+            return JSONResponse({"ok": False, "error": f"Invalid tool name: {tool_name}"}, status_code=400)
+
+        # Load tools
+        from agent.mcp_tools import get_core_tools
+        tools = get_core_tools()
+        tool_map = {t.name: t for t in tools}
+
+        tool = tool_map.get(tool_name)
+        if not tool:
+            available = sorted(tool_map.keys())
+            return JSONResponse({"ok": False, "error": f"Unknown tool: {tool_name}", "available": available}, status_code=404)
+
+        # Invoke
+        try:
+            result = await tool.ainvoke(tool_args)
+        except Exception:
+            import asyncio
+            result = await asyncio.to_thread(tool.invoke, tool_args)
+
+        return JSONResponse({"ok": True, "tool": tool_name, "result": result})
+
+    except Exception as e:
+        logger.error("tool_invoke failed: %s", e)
+        return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
+
 def _service_health_payload(status: str, severity: str, detail: str = "", extra: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     payload: Dict[str, Any] = {
         "status": str(status or "unknown"),
