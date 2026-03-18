@@ -25,6 +25,7 @@ from core_batfish.builder_core import BuilderCore
 from core_batfish.batfish_builder import BatfishBuilder, AnswerResult
 from core_batfish.ko_josa import fix_josa
 from l45_contracts import build_l45_contract
+from ground_truth_contracts import infer_oracle_source
 from validate_policies import validate_policies
 from validate_dataset_quality import validate_dataset_quality
 
@@ -363,7 +364,7 @@ def get_pipeline_version() -> str:
             cwd=Path(__file__).parent.parent.parent,
             stderr=subprocess.DEVNULL
         ).decode().strip()
-    except:
+    except Exception:
         return "unknown"
 
 
@@ -594,6 +595,7 @@ def main():
     qa_list = []
     seen_ids = set()
     seen_id_v2 = set()
+    l45_errors = 0
     generation_checks = {
         "evidence_placeholder_count": 0,
         "structured_schema_violations": 0,
@@ -808,9 +810,8 @@ def main():
                     else:
                         continue
                 except Exception as e:
-                    print(f"[DEBUG] Exception in metric {metric}: {e}")
-                    import traceback
-                    traceback.print_exc()
+                    l45_errors += 1
+                    print(f"[ERROR] L4/L5 metric '{metric}' failed: {e}")
                     continue
             else:
                 res = builder.compute(intent)
@@ -968,7 +969,7 @@ def main():
                 "id": row_id,
                 "id_v2": id_v2,
                 "metric": metric_name,
-                "scope": scope,
+                "scope": json.dumps(scope, ensure_ascii=False, default=str),
                 "category": dsl["category"],
                 "level": level,
                 "question": q_text,
@@ -981,12 +982,14 @@ def main():
                 "scenario": None,
                 "query_contract": None,
                 "verification_contract": None,
-                "oracle_source": "builder_core",
+                "oracle_source": infer_oracle_source(metric_name, level),
                 "verification_status": "pending",
                 "quarantine_reason": "",
                 "pipeline_version": PIPELINE_VERSION,
                 "files": str(res.get("files", []) if isinstance(res, dict) else [])
             })
+
+    print(f"[WARN] L4/L5 generation: {l45_errors} errors out of {len(dsl_items)} metrics")
 
     # =========================================================================
     # L4/L5 추가 질문 생성 (BatfishBuilder 자체 생성 함수 활용)
