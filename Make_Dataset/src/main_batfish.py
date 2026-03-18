@@ -972,6 +972,7 @@ def main():
                 "scope": json.dumps(scope, ensure_ascii=False, default=str),
                 "category": dsl["category"],
                 "level": level,
+                "question_type": dsl.get("question_type", "unknown"),
                 "question": q_text,
                 "answer_status": answer_status,
                 "answer_type": answer_type,
@@ -1060,6 +1061,7 @@ def main():
                     "scope": scope,
                     "category": q["category"],
                     "level": q["level"],
+                    "question_type": q.get("question_type", "unknown"),
                     "question": q["question"],
                     "answer_status": "OK",
                     "answer_type": answer_type,
@@ -1156,7 +1158,7 @@ def main():
         df = pd.DataFrame(qa_list)
         # 컬럼 순서 정렬
         column_order = [
-            "id", "id_v2", "metric", "scope", "category", "level", "question",
+            "id", "id_v2", "metric", "scope", "category", "level", "question_type", "question",
             "answer_status", "answer_type", "answer", "eval_answer", "unknown_reason",
             "evidence", "scenario", "query_contract", "verification_contract",
             "oracle_source", "verification_status", "quarantine_reason",
