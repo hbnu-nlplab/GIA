@@ -21,6 +21,26 @@ from collections import defaultdict
 from datetime import datetime
 
 
+# Network domain labels for answer types (RFC 6020 YANG / RFC 2578 SNMP)
+ANSWER_TYPE_LABEL = {
+    "text": "Scalar Attribute",
+    "scalar_str": "Scalar Attribute",
+    "scalar_int": "Scalar Counter",
+    "number": "Scalar Counter",
+    "numeric": "Scalar Counter",
+    "set_str": "Resource Inventory",
+    "set": "Resource Inventory",
+    "edge_set": "Resource Inventory",
+    "bool": "Configuration State",
+    "boolean": "Configuration State",
+    "path": "Forwarding Sequence",
+    "map_str_str": "Property Table",
+    "map_str_int": "Metric Table",
+    "map": "Property Table",
+    "json": "Property Table",
+}
+
+
 def canonical_answer_type(answer_type: str) -> str:
     """Normalize answer_type values to a canonical set used by the scorer/reports."""
     if answer_type is None:
@@ -742,10 +762,11 @@ class ScorecardGenerator:
         
         # By Answer Type
         lines.append("## 📝 Accuracy by Answer Type\n")
-        lines.append("| Type | Accuracy |")
-        lines.append("|------|----------|")
+        lines.append("| Type | Label | Accuracy |")
+        lines.append("|------|-------|----------|")
         for atype, acc in sorted(stats['by_type'].items(), key=lambda x: x[1], reverse=True):
-            lines.append(f"| {atype} | {acc*100:.1f}% |")
+            label = ANSWER_TYPE_LABEL.get(atype, atype)
+            lines.append(f"| {atype} | {label} | {acc*100:.1f}% |")
         lines.append("")
         
         # By Status (Positive/Negative Testing)
@@ -1074,7 +1095,8 @@ def analyze_results(
     print(f"\n[Type-Aware Score by Answer Type]")
     for t in sorted(grouped_by_type.keys()):
         scores = grouped_by_type[t]
-        print(f"   {t:12s}: {sum(scores)/len(scores):.2%} (n={len(scores)})")
+        label = ANSWER_TYPE_LABEL.get(t, t)
+        print(f"   {t:12s} ({label}): {sum(scores)/len(scores):.2%} (n={len(scores)})")
 
     print(f"\n[Type-Aware Score by Level]")
     for lvl in sorted(grouped_by_level.keys()):
