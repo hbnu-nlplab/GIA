@@ -504,6 +504,8 @@ export default function ChatPanel({ selectedNode }: ChatPanelProps) {
       throw new Error('Chat request failed after retry')
     }
 
+    // TODO: health check could be added here before initiating the stream,
+    // e.g. GET /api/health to display backend status before sending the request.
     try {
       const response = await fetchChatStream()
       const reader = response.body?.getReader()
@@ -607,6 +609,10 @@ export default function ChatPanel({ selectedNode }: ChatPanelProps) {
               } else {
                 revealAssistantAnswer(finalAnswer, answerViz, citations, grounding)
               }
+            } else if (resolvedType === 'tool_error') {
+              const toolName = data.tool || 'unknown'
+              const errorMsg = data.error || 'Tool execution failed'
+              pushSystemMessage(`⚠ Tool "${toolName}" failed: ${errorMsg}`, 'error')
             } else if (resolvedType === 'error') {
               pushSystemMessage(String(data.message || 'Stream error'), 'error')
             }

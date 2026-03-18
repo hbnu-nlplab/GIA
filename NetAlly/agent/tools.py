@@ -823,6 +823,7 @@ def scan_and_sync(
     Returns:
         Dict with pnetlab_nodes, nso_devices, missing, and optionally onboarded results
     """
+    logger.warning("DEPRECATED: scan_and_sync is deprecated. Use deploy scripts (Make_Dataset/src/deploy/) instead.")
     if not oob_ip:
         oob_ip = os.getenv("PNETLAB_GATEWAY_IP", "") or os.getenv("PNETLAB_VM_IP", "") or os.getenv("PNETLAB_SSH_HOST", "") or "localhost"
 

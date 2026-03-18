@@ -888,7 +888,7 @@ async def enable_ssh_all(gs: GlobalSettings, devices: List[DeviceInfo]) -> Dict[
     resolved_host = resolve_console_host(gs, devices)
     if resolved_host and resolved_host != gs.pnetlab_vm_ip:
         logger.info("Resolved console host: %s -> %s", gs.pnetlab_vm_ip, resolved_host)
-        gs.pnetlab_vm_ip = resolved_host
+        gs = dataclasses.replace(gs, pnetlab_vm_ip=resolved_host)
     logger.info("Enabling SSH for %d devices", len(devices))
     for dev in devices:
         results[dev.name] = await enable_ssh_via_telnet(dev, gs)

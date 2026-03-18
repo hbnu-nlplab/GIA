@@ -942,8 +942,9 @@ class PnetlabClient:
     def get_inventory(self) -> Dict[str, Any]:
         """전체 장비 목록 및 상세 정보 (High-level)"""
         if not self.is_authenticated:
-            if not self.login():
-                return {"error": "Authentication failed"}
+            result = self.login()
+            if isinstance(result, dict) and result.get("error"):
+                return result
             
         topology = self.get_session_topology()
         if "error" in topology:

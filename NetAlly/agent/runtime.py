@@ -4,8 +4,12 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 import os
+import time
 from typing import Any, AsyncIterator, Dict, List, Mapping, Optional, Protocol
+
+logger = logging.getLogger(__name__)
 
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
 
@@ -24,6 +28,22 @@ Rules:
 2. Keep the answer concise and grounded in tool outputs.
 3. Respect the answer_type format strictly.
 4. If information is insufficient, ask for a narrower follow-up question.
+
+answer_type: {answer_type}
+"""
+
+PURE_MAS_PROMPT = """You are NetAlly, a network configuration analysis assistant.
+
+You are operating in Pure MAS mode (no external tools available).
+Analyze the network configuration context provided and answer the question
+using your knowledge of networking protocols (OSPF, BGP, MPLS, VRF, etc.).
+
+Rules:
+1. Analyze the provided configuration context carefully.
+2. Apply your knowledge of Cisco IOS configuration semantics.
+3. Reason step-by-step about protocol behavior.
+4. Keep the answer concise and respect the answer_type format strictly.
+5. If the configuration context is insufficient, state what is missing.
 
 answer_type: {answer_type}
 """
@@ -96,7 +116,10 @@ class SingleExecutorRuntime:
         self.prompt_override = prompt_override
         self.step_limit = step_limit
 
-        if self.tool_backend == "legacy":
+        if self.tool_backend == "none":
+            self.tools = []
+            logger.info("Tool backend=none: Pure MAS mode (no tools)")
+        elif self.tool_backend == "legacy":
             self.tools = get_legacy_tools()
         else:
             self.tools = get_core_tools()
@@ -111,7 +134,12 @@ class SingleExecutorRuntime:
         self._llm_with_tools = self._llm.bind_tools(self.tools) if self.tools else self._llm
 
     def _system_prompt(self, answer_type: str) -> str:
-        template = self.prompt_override or DEFAULT_EXECUTOR_PROMPT
+        if self.prompt_override:
+            template = self.prompt_override
+        elif self.tool_backend == "none":
+            template = PURE_MAS_PROMPT
+        else:
+            template = DEFAULT_EXECUTOR_PROMPT
         if "{answer_type}" in template:
             return template.format(answer_type=answer_type)
         return f"{template}\n\nanswer_type: {answer_type}"
@@ -119,15 +147,26 @@ class SingleExecutorRuntime:
     async def _invoke_tool(self, name: str, args: Dict[str, Any]) -> Any:
         tool = self._tool_by_name.get(name)
         if tool is None:
-            return {"error": f"Unknown tool: {name}"}
-
+            logger.warning("TOOL_UNKNOWN name=%s", name)
+            return {"error": f"Unknown tool: {name}", "tool": name, "_is_error": True}
+        start = time.monotonic()
         try:
-            return await tool.ainvoke(args or {})
+            result = await tool.ainvoke(args or {})
+            elapsed_ms = (time.monotonic() - start) * 1000
+            logger.info("TOOL_OK name=%s elapsed_ms=%.1f args=%s",
+                       name, elapsed_ms, json.dumps(args or {}, default=str)[:200])
+            return result
         except Exception:
             try:
-                return await asyncio.to_thread(tool.invoke, args or {})
+                result = await asyncio.to_thread(tool.invoke, args or {})
+                elapsed_ms = (time.monotonic() - start) * 1000
+                logger.info("TOOL_OK_SYNC name=%s elapsed_ms=%.1f", name, elapsed_ms)
+                return result
             except Exception as e:
-                return {"error": str(e), "tool": name}
+                elapsed_ms = (time.monotonic() - start) * 1000
+                logger.error("TOOL_FAIL name=%s elapsed_ms=%.1f error=%s",
+                           name, elapsed_ms, str(e))
+                return {"error": str(e), "tool": name, "_is_error": True}
 
     async def astream(self, request: Mapping[str, Any]) -> AsyncIterator[Dict[str, Any]]:
         question = str(request.get("message", "")).strip()
@@ -149,17 +188,35 @@ class SingleExecutorRuntime:
         messages.append(HumanMessage(content=question))
 
         call_id = 0
-        for _ in range(self.step_limit):
-            response = await asyncio.to_thread(self._llm_with_tools.invoke, messages)
+        llm_calls = 0
+        total_tool_calls = 0
+        tool_errors = 0
+        stream_start = time.monotonic()
+
+        for step in range(self.step_limit):
+            llm_calls += 1
+            response = await self._llm_with_tools.ainvoke(messages)
             messages.append(response)
 
             tool_calls = getattr(response, "tool_calls", None) or []
             if not tool_calls:
-                yield {"type": "answer", "content": str(getattr(response, "content", "") or "")}
+                elapsed_ms = (time.monotonic() - stream_start) * 1000
+                yield {
+                    "type": "answer",
+                    "content": str(getattr(response, "content", "") or ""),
+                    "metrics": {
+                        "llm_calls": llm_calls,
+                        "tool_calls": total_tool_calls,
+                        "tool_errors": tool_errors,
+                        "steps": step + 1,
+                        "total_ms": round(elapsed_ms, 1),
+                    },
+                }
                 return
 
             for tc in tool_calls:
                 call_id += 1
+                total_tool_calls += 1
                 tool_name = str(tc.get("name", ""))
                 tool_args = tc.get("args", {}) or {}
                 yield {
@@ -174,16 +231,28 @@ class SingleExecutorRuntime:
                 tool_call_id = str(tc.get("id") or f"call_{call_id}")
                 messages.append(ToolMessage(content=output_text, tool_call_id=tool_call_id))
 
-                yield {
-                    "type": "tool_output",
-                    "tool": tool_name,
-                    "content": output_text,
-                    "call_id": call_id,
-                }
+                if isinstance(output, dict) and output.get("_is_error"):
+                    tool_errors += 1
+                    yield {"type": "tool_error", "tool": tc.get("name"), "error": output.get("error", ""), "content": json.dumps(output)}
+                else:
+                    yield {
+                        "type": "tool_output",
+                        "tool": tool_name,
+                        "content": output_text,
+                        "call_id": call_id,
+                    }
 
+        elapsed_ms = (time.monotonic() - stream_start) * 1000
         yield {
             "type": "answer",
             "content": "도구 호출 한도 도달, 추가 범위 축소 질의 필요",
+            "metrics": {
+                "llm_calls": llm_calls,
+                "tool_calls": total_tool_calls,
+                "tool_errors": tool_errors,
+                "steps": self.step_limit,
+                "total_ms": round(elapsed_ms, 1),
+            },
         }
 
 
@@ -214,54 +283,59 @@ class LegacyGraphRuntime:
         answered = False
         call_id = 0
         current_tool_name: Optional[str] = None
-        async for event in self._graph.astream(initial_state, stream_mode="updates"):
-            for node_name, node_output in event.items():
-                if node_name == "orchestrator":
-                    yield {
-                        "type": "planning",
-                        "skills": node_output.get("selected_skills", []),
-                        "reasoning": node_output.get("reasoning", ""),
-                        "mode": self.mode,
-                        "agent_backend": self.agent_backend,
-                    }
-                    continue
-
-                if node_name == "executor":
-                    messages = node_output.get("messages", [])
-                    if not messages:
-                        continue
-                    last_msg = messages[-1]
-                    tool_calls = getattr(last_msg, "tool_calls", None) or []
-                    if tool_calls:
-                        for tc in tool_calls:
-                            current_tool_name = str(tc.get("name", ""))
-                            call_id += 1
-                            yield {
-                                "type": "tool_call",
-                                "tool": current_tool_name,
-                                "input": tc.get("args", {}) or {},
-                                "call_id": call_id,
-                            }
-                    elif node_output.get("is_complete"):
-                        answered = True
+        try:
+            async for event in self._graph.astream(initial_state, stream_mode="updates"):
+                for node_name, node_output in event.items():
+                    if node_name == "orchestrator":
                         yield {
-                            "type": "answer",
-                            "content": str(node_output.get("final_answer", "")),
+                            "type": "planning",
+                            "skills": node_output.get("selected_skills", []),
+                            "reasoning": node_output.get("reasoning", ""),
+                            "mode": self.mode,
+                            "agent_backend": self.agent_backend,
                         }
-                    continue
-
-                if node_name == "tools":
-                    messages = node_output.get("messages", [])
-                    if not messages:
                         continue
-                    last_msg = messages[-1]
-                    raw_content = last_msg.content if hasattr(last_msg, "content") else last_msg
-                    yield {
-                        "type": "tool_output",
-                        "tool": current_tool_name,
-                        "content": str(raw_content),
-                        "call_id": call_id,
-                    }
+
+                    if node_name == "executor":
+                        messages = node_output.get("messages", [])
+                        if not messages:
+                            continue
+                        last_msg = messages[-1]
+                        tool_calls = getattr(last_msg, "tool_calls", None) or []
+                        if tool_calls:
+                            for tc in tool_calls:
+                                current_tool_name = str(tc.get("name", ""))
+                                call_id += 1
+                                yield {
+                                    "type": "tool_call",
+                                    "tool": current_tool_name,
+                                    "input": tc.get("args", {}) or {},
+                                    "call_id": call_id,
+                                }
+                        elif node_output.get("is_complete"):
+                            answered = True
+                            yield {
+                                "type": "answer",
+                                "content": str(node_output.get("final_answer", "")),
+                            }
+                        continue
+
+                    if node_name == "tools":
+                        messages = node_output.get("messages", [])
+                        if not messages:
+                            continue
+                        last_msg = messages[-1]
+                        raw_content = last_msg.content if hasattr(last_msg, "content") else last_msg
+                        yield {
+                            "type": "tool_output",
+                            "tool": current_tool_name,
+                            "content": str(raw_content),
+                            "call_id": call_id,
+                        }
+        except Exception as e:
+            logger.error("LegacyGraphRuntime graph stream failed: %s", e)
+            yield {"type": "tool_error", "tool": None, "error": str(e), "content": json.dumps({"error": str(e)})}
+            return
 
         if not answered:
             yield {

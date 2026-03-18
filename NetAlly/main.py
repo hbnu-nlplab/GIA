@@ -409,7 +409,12 @@ def get_auto_init_batfish() -> bool:
 # CORS 설정 (개발용)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 프로덕션에서는 특정 origin으로 제한
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:8111",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:8111",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -2032,12 +2037,23 @@ async def chat_stream_generator(request: ChatRequest, runtime):
                 data["citations"] = citations
                 data["grounding"] = _build_grounding_meta(citations)
 
-            yield f"event: {event_type}\ndata: {json.dumps(data)}\n\n"
+            if data.get("type") == "tool_error":
+                yield f"event: tool_error\ndata: {json.dumps(data)}\n\n"
+            else:
+                yield f"event: {event_type}\ndata: {json.dumps(data)}\n\n"
 
         yield f"event: complete\ndata: {json.dumps({'type': 'complete'})}\n\n"
 
     except Exception as e:
-        error_data = {"type": "error", "message": str(e)}
+        err_str = str(e).lower()
+        if "api" in err_str or "key" in err_str or "auth" in err_str:
+            error_code = "LLM_AUTH_ERROR"
+        elif "timeout" in err_str or "rate" in err_str:
+            error_code = "LLM_RATE_LIMIT"
+        else:
+            error_code = "RUNTIME_ERROR"
+        logger.error("Chat stream error: %s", e, exc_info=True)
+        error_data = {"type": "error", "code": error_code, "message": str(e)[:300]}
         yield f"event: error\ndata: {json.dumps(error_data)}\n\n"
         yield f"event: complete\ndata: {json.dumps({'type': 'complete'})}\n\n"
 
