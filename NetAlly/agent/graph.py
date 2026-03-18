@@ -5,6 +5,9 @@ Agent 1: Orchestrator (작은 모델) - Skills 선택
 Agent 2: Executor (큰 모델) - 도구 실행
 """
 import os
+import json
+import logging
+import re
 from typing import List, Dict, Any, Literal, Optional
 from typing_extensions import TypedDict
 from dotenv import load_dotenv
@@ -93,16 +96,15 @@ def create_orchestrator_node(llm):
         content = response.content
         
         # JSON 파싱
-        import json
-        import re
-        
+        logger = logging.getLogger(__name__)
         json_match = re.search(r'\{[^{}]*\}', content, re.DOTALL)
         if json_match:
             try:
                 result = json.loads(json_match.group())
                 selected = result.get("selected_skills", ["core"])
                 reasoning = result.get("reasoning", "")
-            except:
+            except (json.JSONDecodeError, KeyError, ValueError) as e:
+                logger.warning("Orchestrator JSON parse failed: %s", e)
                 selected = ["core"]
                 reasoning = "Parse error, using core only"
         else:
@@ -290,13 +292,19 @@ def create_orchestrated_graph(
 # Default Graph (LangGraph Studio용)
 # =============================================================================
 
-# 기본 설정으로 그래프 생성
-graph = create_orchestrated_graph(
-    orchestrator_backend="openai",
-    orchestrator_model="gpt-4o-mini",
-    executor_backend="openai",  # vLLM이 없으면 OpenAI 사용
-    executor_model="gpt-4o-mini",
-)
+# 기본 설정으로 그래프 생성 (lazy initialization)
+_graph_instance = None
+
+def get_orchestrated_graph():
+    global _graph_instance
+    if _graph_instance is None:
+        _graph_instance = create_orchestrated_graph(
+            orchestrator_backend="openai",
+            orchestrator_model="gpt-4o-mini",
+            executor_backend="openai",  # vLLM이 없으면 OpenAI 사용
+            executor_model="gpt-4o-mini",
+        )
+    return _graph_instance
 
 
 # =============================================================================
@@ -318,7 +326,7 @@ async def run_question(question: str, answer_type: str = "text") -> str:
         "is_complete": False,
     }
     
-    result = await graph.ainvoke(initial_state)
+    result = await get_orchestrated_graph().ainvoke(initial_state)
     return result.get("final_answer", "")
 
 
