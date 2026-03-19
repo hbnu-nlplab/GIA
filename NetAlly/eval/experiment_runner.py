@@ -89,6 +89,7 @@ class ExperimentRunner:
 
         answer = ""
         tools = []
+        _tool_start_times = {}
         metrics = {}
         current_event = ""
         start = time.monotonic()
@@ -117,20 +118,20 @@ class ExperimentRunner:
                                     args=val.get("input", val.get("args", {})),
                                     latency_ms=0.0,
                                 ))
-                                # Track tool start time
-                                tools[-1]._start = time.monotonic()
+                                _tool_start_times[len(tools) - 1] = time.monotonic()
                             elif evt_type == "tool_output":
                                 if tools:
                                     content = val.get("content", val.get("output", ""))
                                     tools[-1].output = str(content)[:500]
-                                    # Calculate per-tool latency
-                                    if hasattr(tools[-1], '_start'):
-                                        tools[-1].latency_ms = (time.monotonic() - tools[-1]._start) * 1000
+                                    idx = len(tools) - 1
+                                    if idx in _tool_start_times:
+                                        tools[idx].latency_ms = (time.monotonic() - _tool_start_times[idx]) * 1000
                             elif evt_type == "tool_error":
                                 if tools:
                                     tools[-1].error = val.get("error", "")
-                                    if hasattr(tools[-1], '_start'):
-                                        tools[-1].latency_ms = (time.monotonic() - tools[-1]._start) * 1000
+                                    idx = len(tools) - 1
+                                    if idx in _tool_start_times:
+                                        tools[idx].latency_ms = (time.monotonic() - _tool_start_times[idx]) * 1000
                             elif evt_type == "answer":
                                 answer = val.get("content", "")
                                 metrics = val.get("metrics", {})
