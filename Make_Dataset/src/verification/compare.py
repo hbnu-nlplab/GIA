@@ -8,10 +8,13 @@ This module compares independent-parser answers against Batfish-generated datase
 from __future__ import annotations
 
 import json
+import logging
 import re
 import sys
 import os
 from typing import Any, Dict, Set
+
+logger = logging.getLogger(__name__)
 
 # Import canonical_answer_type from ground_truth_contracts (single source of truth)
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
@@ -305,6 +308,7 @@ def compare_answers(parser_answer: Any, dataset_answer: Any, answer_type: str) -
         else:
             result = _score_text(parser_answer, dataset_answer)
     except Exception as e:
+        logger.warning("Scoring error (atype=%s): %s", atype, e, exc_info=True)
         result = {"match": False, "score": 0.0, "detail": f"error: {e}"}
     result["answer_type"] = atype
     return result

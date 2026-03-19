@@ -41,6 +41,24 @@ ANSWER_TYPE_LABEL = {
 }
 
 
+# Unified alias dict — keep in sync with ground_truth_contracts._CANONICAL_TYPE_ALIASES
+_CANONICAL_ALIASES = {
+    # number
+    'numeric': 'number', 'num': 'number', 'numbers': 'number',
+    'int': 'number', 'integer': 'number', 'float': 'number', 'scalar_int': 'number',
+    # set
+    'list_str': 'set', 'set_str': 'set', 'edge_set': 'set', 'set_string': 'set', 'list': 'set',
+    # map
+    'dict': 'map', 'map_str_str': 'map', 'map_str_int': 'map', 'json': 'map',
+    # text
+    'scalar_str': 'text', 'enum': 'text',
+    # boolean
+    'bool': 'boolean', 'boolean': 'boolean',
+    # path (identity)
+    'path': 'path',
+}
+
+
 def canonical_answer_type(answer_type: str) -> str:
     """Normalize answer_type values to a canonical set used by the scorer/reports.
 
@@ -50,37 +68,7 @@ def canonical_answer_type(answer_type: str) -> str:
     if answer_type is None:
         return 'text'
     atype = str(answer_type).strip().lower()
-    # Unified alias dict — keep in sync with ground_truth_contracts._CANONICAL_TYPE_ALIASES
-    _ALIASES = {
-        # number
-        'numeric': 'number',
-        'num': 'number',
-        'numbers': 'number',
-        'int': 'number',
-        'integer': 'number',
-        'float': 'number',
-        'scalar_int': 'number',
-        # set
-        'list_str': 'set',
-        'set_str': 'set',
-        'edge_set': 'set',
-        'set_string': 'set',
-        'list': 'set',
-        # map
-        'dict': 'map',
-        'map_str_str': 'map',
-        'map_str_int': 'map',
-        'json': 'map',
-        # text
-        'scalar_str': 'text',
-        'enum': 'text',
-        # boolean
-        'bool': 'boolean',
-        'boolean': 'boolean',
-        # path (identity)
-        'path': 'path',
-    }
-    return _ALIASES.get(atype, atype)
+    return _CANONICAL_ALIASES.get(atype, atype)
 
 # Traditional metrics
 try:
@@ -677,7 +665,8 @@ class NetConfigQAScorer:
             if "->" in text:
                 nodes = [n.strip().lower() for n in text.split("->") if n.strip()]
             else:
-                nodes = [text.strip().lower()]
+                stripped = text.strip().lower()
+                nodes = [stripped] if stripped else []
             return nodes
 
         pred_nodes = extract_nodes(pred)
