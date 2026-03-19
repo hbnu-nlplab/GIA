@@ -152,8 +152,8 @@ class ChatDeviceContext(BaseModel):
 
 class ChatRequest(BaseModel):
     """채팅 요청"""
-    message: str = Field(..., description="사용자 질문")
-    history: List[ChatMessage] = Field(default_factory=list, description="대화 기록")
+    message: str = Field(..., max_length=8000, description="사용자 질문")
+    history: List[ChatMessage] = Field(default_factory=list, max_length=50, description="대화 기록")
     answer_type: str = Field(default="text", description="답변 형식: text, numeric, set, map, boolean")
     context_device: Optional[ChatDeviceContext] = Field(
         default=None,
@@ -416,8 +416,8 @@ app.add_middleware(
         "http://127.0.0.1:8111",
     ],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
 )
 
 # 정적 파일 서빙 (프론트엔드 빌드 결과)
@@ -598,6 +598,11 @@ async def _run_lab_refresh(request: LabRefreshRequest) -> Tuple[int, Dict[str, A
     try:
         params: Dict[str, Any] = {}
         if request.config_path:
+            # Path traversal 방지: ".." 포함 시 거부
+            from pathlib import Path as _P
+            _cp = _P(request.config_path).resolve()
+            if ".." in request.config_path or not str(_cp).startswith("/"):
+                return 400, {"detail": "Invalid config_path: path traversal not allowed"}
             params["config_path"] = request.config_path
         if request.overrides:
             params["overrides"] = request.overrides
@@ -717,8 +722,8 @@ async def tool_invoke(request: Request):
         return JSONResponse({"ok": True, "tool": tool_name, "result": result})
 
     except Exception as e:
-        logger.error("tool_invoke failed: %s", e)
-        return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+        logger.error("tool_invoke failed: %s", e, exc_info=True)
+        return JSONResponse({"ok": False, "error": "Tool invocation failed"}, status_code=500)
 
 
 def _service_health_payload(status: str, severity: str, detail: str = "", extra: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
