@@ -83,6 +83,49 @@ class L5Result:
 # 상수 정의
 # ============================================================================
 
+# Batfish Disposition 우선순위 (낮을수록 더 중요한 실패 원인)
+DISPOSITION_PRIORITY = {
+    'NO_ROUTE': 1,              # 최우선: 명확한 라우팅 실패
+    'NULL_ROUTED': 2,           # 의도적으로 버림 (Null0)
+    'ACL_DENY': 3,              # 정규화된 ACL 차단 상태
+    'ACL_IN_DENIED': 3,         # ACL 차단 (Ingress)
+    'ACL_OUT_DENIED': 3,        # ACL 차단 (Egress)
+    'DENIED': 3,                # 일반 ACL 차단
+    'DENIED_IN': 3,             # ACL 차단 변형
+    'DENIED_OUT': 3,            # ACL 차단 변형
+    'NEIGHBOR_UNREACHABLE': 4,  # 이웃 도달 불가
+    'LOOP': 5,                  # 라우팅 루프
+    'EXTERNAL': 6,              # 네트워크 외부/정보부족 계열 정규화
+    'EXITS_NETWORK': 6,         # 낮은 우선순위: 네트워크를 벗어남 (성공일 수도 있음)
+    'INSUFFICIENT_INFO': 6,     # 낮은 우선순위: 정보 불충분 (성공일 수도 있음)
+    'UNKNOWN': 7                # 알 수 없는 상태
+}
+
+
+def normalize_disposition(raw: str) -> str:
+    """
+    Batfish disposition 문자열을 데이터셋 계약용 라벨로 정규화합니다.
+    - 성공: ACCEPTED
+    - 실패: NO_ROUTE / ACL_DENY / EXTERNAL 등
+    """
+    d = str(raw or "").upper()
+    if "ACCEPTED" in d or "DELIVERED" in d:
+        return "ACCEPTED"
+    if "NO_ROUTE" in d:
+        return "NO_ROUTE"
+    if "NULL_ROUTED" in d:
+        return "NULL_ROUTED"
+    if "DENIED" in d or "BLOCK" in d:
+        return "ACL_DENY"
+    if "NEIGHBOR_UNREACHABLE" in d:
+        return "NEIGHBOR_UNREACHABLE"
+    if "LOOP" in d:
+        return "LOOP"
+    if "EXITS_NETWORK" in d or "INSUFFICIENT_INFO" in d:
+        return "EXTERNAL"
+    return "UNKNOWN"
+
+
 # 각 프로토콜의 "Configured" 판정 기준
 CONFIGURED_RULES = {
     "OSPF": "router ospf 프로세스 존재 여부 (via ospfProcessConfiguration)",

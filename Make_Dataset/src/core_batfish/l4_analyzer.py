@@ -19,7 +19,7 @@ L4 Metrics (Reachability Analysis):
 import logging
 from typing import Dict, List, Any
 
-from .models import AnswerResult, build_evidence
+from .models import AnswerResult, build_evidence, DISPOSITION_PRIORITY, normalize_disposition
 
 logger = logging.getLogger(__name__)
 
@@ -38,50 +38,9 @@ class L4AnalyzerMixin:
     필요한 속성: bf, _initialized, nodes, node_ips, interfaces, snapshot_name
     """
     
-    # Batfish Disposition 우선순위 (낮을수록 더 중요한 실패 원인)
-    DISPOSITION_PRIORITY = {
-        'NO_ROUTE': 1,              # 최우선: 명확한 라우팅 실패
-        'NULL_ROUTED': 2,           # 의도적으로 버림 (Null0)
-        'ACL_DENY': 3,              # 정규화된 ACL 차단 상태
-        'ACL_IN_DENIED': 3,         # ACL 차단 (Ingress)
-        'ACL_OUT_DENIED': 3,        # ACL 차단 (Egress)
-        'DENIED': 3,                # 일반 ACL 차단
-        'DENIED_IN': 3,             # ACL 차단 변형
-        'DENIED_OUT': 3,            # ACL 차단 변형
-        'NEIGHBOR_UNREACHABLE': 4,  # 이웃 도달 불가
-        'LOOP': 5,                  # 라우팅 루프
-        'EXTERNAL': 6,              # 네트워크 외부/정보부족 계열 정규화
-        'EXITS_NETWORK': 6,         # 낮은 우선순위: 네트워크를 벗어남 (성공일 수도 있음)
-        'INSUFFICIENT_INFO': 6,     # 낮은 우선순위: 정보 불충분 (성공일 수도 있음)
-        'UNKNOWN': 7                # 알 수 없는 상태
-    }
-    
     def _make_evidence(self, query_name: str, params: dict) -> dict:
         """BatfishBuilder 내부용 evidence 생성 헬퍼"""
         return build_evidence(query_name, params, getattr(self, 'snapshot_name', ''))
-
-    def _normalize_disposition(self, disposition: str) -> str:
-        """
-        Batfish disposition 문자열을 데이터셋 계약용 라벨로 정규화합니다.
-        - 성공: ACCEPTED
-        - 실패: NO_ROUTE / ACL_DENY / EXTERNAL 등
-        """
-        d = str(disposition or "").upper()
-        if "ACCEPTED" in d or "DELIVERED" in d:
-            return "ACCEPTED"
-        if "NO_ROUTE" in d:
-            return "NO_ROUTE"
-        if "NULL_ROUTED" in d:
-            return "NULL_ROUTED"
-        if "DENIED" in d or "BLOCK" in d:
-            return "ACL_DENY"
-        if "NEIGHBOR_UNREACHABLE" in d:
-            return "NEIGHBOR_UNREACHABLE"
-        if "LOOP" in d:
-            return "LOOP"
-        if "EXITS_NETWORK" in d or "INSUFFICIENT_INFO" in d:
-            return "EXTERNAL"
-        return "UNKNOWN"
     
     # =========================================================================
     # 기본 L4 메트릭
@@ -109,8 +68,8 @@ class L4AnalyzerMixin:
             result = self.bf.q.traceroute(
                 startLocation=src_location,
                 headers=HeaderConstraints(dstIps=dst_ip)
-            ).answer().frame()
-            
+            ).answer(snapshot=self.snapshot_name).frame()
+
             if result.empty:
                 return AnswerResult("OK", [], "path", evidence, "")
             
@@ -186,7 +145,7 @@ class L4AnalyzerMixin:
             
             # VRF 문제 방지: [Loopback0] 추가
             src_node = self._fix_start_location(src_node)
-            trace_result = self.bf.q.traceroute(startLocation=src_node, headers=headers).answer().frame()
+            trace_result = self.bf.q.traceroute(startLocation=src_node, headers=headers).answer(snapshot=self.snapshot_name).frame()
             
             path = []
             is_reachable = False
@@ -206,7 +165,7 @@ class L4AnalyzerMixin:
                                 current_path.append(node_name)
                     
                     disposition_str = str(getattr(trace, 'disposition', 'UNKNOWN'))
-                    normalized_disposition = self._normalize_disposition(disposition_str)
+                    normalized_disposition = normalize_disposition(disposition_str)
                     
                     # Success Cases - 즉시 성공으로 반환
                     if normalized_disposition == "ACCEPTED":
@@ -256,8 +215,8 @@ class L4AnalyzerMixin:
                     dstPorts=[str(dst_port)],
                     ipProtocols=["TCP"]
                 )
-            ).answer().frame()
-            
+            ).answer(snapshot=self.snapshot_name).frame()
+
             if result.empty:
                 return AnswerResult("OK", {"blocked": False, "node": "", "reason": "NO_PATH"}, "acl_result", evidence, "")
             
@@ -296,7 +255,7 @@ class L4AnalyzerMixin:
             return AnswerResult("NOT_CONFIGURED", {"detected": False, "loops": []}, "loop_result", evidence, "BATFISH_NOT_INITIALIZED")
 
         try:
-            result = self.bf.q.detectLoops().answer().frame()
+            result = self.bf.q.detectLoops().answer(snapshot=self.snapshot_name).frame()
 
             if result.empty:
                 return AnswerResult("OK", {"detected": False, "loops": []}, "loop_result", evidence, "")
@@ -326,8 +285,8 @@ class L4AnalyzerMixin:
         try:
             result = self.bf.q.reachability(
                 headers=HeaderConstraints(dstIps=dst_prefix)
-            ).answer().frame()
-            
+            ).answer(snapshot=self.snapshot_name).frame()
+
             if result.empty:
                 return AnswerResult("OK", {"detected": False, "blackholes": []}, "blackhole_result", evidence, "")
             
@@ -386,7 +345,7 @@ class L4AnalyzerMixin:
             result = self.bf.q.traceroute(
                 startLocation=src_node,
                 headers=HeaderConstraints(dstIps=dst_ip)
-            ).answer().frame()
+            ).answer(snapshot=self.snapshot_name).frame()
 
             if result.empty:
                 return AnswerResult("OK", {"passes_through": False, "path": []}, "waypoint_result", evidence, "")
@@ -431,7 +390,7 @@ class L4AnalyzerMixin:
             result = self.bf.q.traceroute(
                 startLocation=src_location,
                 headers=HeaderConstraints(dstIps=dst_ip)
-            ).answer().frame()
+            ).answer(snapshot=self.snapshot_name).frame()
 
             if result.empty:
                 return AnswerResult("OK", {"hops": 0}, "hop_count", evidence, "NO_ROUTE")
@@ -462,7 +421,7 @@ class L4AnalyzerMixin:
             return AnswerResult("NOT_CONFIGURED", {"isolated": True, "leaked_prefixes": []}, "isolation_result", evidence, "BATFISH_NOT_INITIALIZED")
 
         try:
-            df_props = self.bf.q.interfaceProperties().answer().frame()
+            df_props = self.bf.q.interfaceProperties().answer(snapshot=self.snapshot_name).frame()
             vrf1_interfaces = df_props[df_props['VRF'] == vrf1]
             vrf2_interfaces = df_props[df_props['VRF'] == vrf2]
 
@@ -497,7 +456,7 @@ class L4AnalyzerMixin:
                     try:
                         reach_result = self.bf.q.reachability(
                             headers=HeaderConstraints(srcIps=src_ip, dstIps=dst_ip)
-                        ).answer().frame()
+                        ).answer(snapshot=self.snapshot_name).frame()
 
                         if not reach_result.empty:
                             if 'TraceCount' in reach_result.columns:
@@ -544,12 +503,12 @@ class L4AnalyzerMixin:
             forward_result = self.bf.q.traceroute(
                 startLocation=node1,
                 headers=HeaderConstraints(dstIps=node2_ips[0])
-            ).answer().frame()
+            ).answer(snapshot=self.snapshot_name).frame()
 
             reverse_result = self.bf.q.traceroute(
                 startLocation=node2,
                 headers=HeaderConstraints(dstIps=node1_ips[0])
-            ).answer().frame()
+            ).answer(snapshot=self.snapshot_name).frame()
 
             forward_nodes = []
             reverse_nodes = []
@@ -590,11 +549,11 @@ class L4AnalyzerMixin:
              return AnswerResult("NOT_CONFIGURED", {"detected": False, "mismatches": []}, "mtu_result", evidence, "BATFISH_NOT_INITIALIZED")
             
         try:
-            interfaces = self.bf.q.interfaceProperties().answer().frame()
+            interfaces = self.bf.q.interfaceProperties().answer(snapshot=self.snapshot_name).frame()
             if interfaces.empty:
                 return AnswerResult("OK", {"detected": False, "mismatches": []}, "mtu_result", evidence, "")
             
-            edges = self.bf.q.layer3Edges().answer().frame()
+            edges = self.bf.q.layer3Edges().answer(snapshot=self.snapshot_name).frame()
             mismatches = []
             
             if not edges.empty:
@@ -647,7 +606,7 @@ class L4AnalyzerMixin:
         try:
             issues = []
             
-            ospf_ifaces = self.bf.q.ospfInterfaceConfiguration(nodes=f"{node1}|{node2}").answer().frame()
+            ospf_ifaces = self.bf.q.ospfInterfaceConfiguration(nodes=f"{node1}|{node2}").answer(snapshot=self.snapshot_name).frame()
             
             if ospf_ifaces.empty:
                 return AnswerResult("NOT_CONFIGURED", {"compatible": True, "issues": ["No OSPF config"]}, "ospf_compat_result", evidence, "OSPF_NOT_CONFIGURED")
@@ -706,7 +665,7 @@ class L4AnalyzerMixin:
             traceroute = self.bf.q.traceroute(
                 startLocation=src_node,
                 headers=HeaderConstraints(dstIps=dst_ips[0])
-            ).answer().frame()
+            ).answer(snapshot=self.snapshot_name).frame()
             
             if traceroute.empty:
                 return AnswerResult("OK", {"bypass_exists": False, "bypass_path": []}, "security_bypass_result", evidence, "")

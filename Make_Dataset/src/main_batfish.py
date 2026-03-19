@@ -4,6 +4,7 @@ import json
 import time
 import subprocess
 import hashlib
+import copy
 from pathlib import Path
 import sys
 import random
@@ -11,6 +12,14 @@ import itertools
 import re
 from collections import Counter, defaultdict
 import pandas as pd
+
+# C3: count=0이 "미설정"을 의미하는 순수 존재/인벤토리 메트릭 화이트리스트
+_ZERO_MEANS_NOT_CONFIGURED = frozenset({
+    "system_user_count", "vrf_count", "acl_configured_count",
+    "prefix_list_count", "route_map_count", "netflow_monitors_count",
+    "qos_class_maps_count", "interfaces_missing_description_count",
+    "static_route_count", "hsrp_groups_count",
+})
 
 """
 python Make_Dataset\\src\\main_batfish.py --lab-path Data\\Pnetlab\\Research_Institute_Internal_DC --policies Make_Dataset\\policies.json
@@ -337,9 +346,9 @@ def enforce_min_per_category(rows: list, categories: list, min_per_cat: int) -> 
         for idx in range(deficit):
             src = random.choice(seeds)
             clone = dict(src)
-            clone["id"] = f"{src['id']}__rs{idx + 1}"
+            clone["id"] = f"{src['id']}__rs_{category}_{idx + 1}"
             base_id_v2 = src.get("id_v2") or src["id"]
-            clone["id_v2"] = f"{base_id_v2}-rs{idx + 1}"
+            clone["id_v2"] = f"{base_id_v2}-rs_{category}_{idx + 1}"
             try:
                 ev = json.loads(src.get("evidence", "{}"))
                 if not isinstance(ev, dict):
@@ -706,7 +715,7 @@ def main():
 
         for inst in instances:
             intent = intent_template.copy()
-            scope = scope_template.copy()
+            scope = copy.deepcopy(scope_template)
             for k, v in inst.items():
                 scope[k] = v
             intent["scope"] = scope
@@ -906,8 +915,8 @@ def main():
                         is_empty = True
                     elif isinstance(a_val, str) and a_val in ["Disabled", "Not Configured", "None", ""]:
                         is_empty = True
-                    elif isinstance(a_val, (int, float)) and a_val == 0:
-                        # 0이어도 유효한 경우가 있을 수 있으나, Inventory/Check에서는 '없음'을 의미하므로 NOT_CONFIGURED 처리
+                    elif isinstance(a_val, (int, float)) and a_val == 0 and metric_name in _ZERO_MEANS_NOT_CONFIGURED:
+                        # C3: 화이트리스트에 있는 메트릭만 0을 NOT_CONFIGURED로 처리
                         is_empty = True
                     
                     if is_empty:

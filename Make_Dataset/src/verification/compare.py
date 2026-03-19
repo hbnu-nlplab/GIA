@@ -9,24 +9,13 @@ from __future__ import annotations
 
 import json
 import re
+import sys
+import os
 from typing import Any, Dict, Set
 
-
-# ── Type Normalization ──────────────────────────────────────────────
-
-CANONICAL_TYPE_MAP = {
-    "numbers": "number", "num": "number", "int": "number", "integer": "number",
-    "float": "number", "scalar_int": "number", "numeric": "number",
-    "list_str": "set", "set_str": "set", "edge_set": "set", "set_string": "set",
-    "dict": "map", "map_str_str": "map", "map_str_int": "map", "json": "map",
-    "bool": "boolean",
-}
-
-
-def canonical_answer_type(answer_type: str | None) -> str:
-    if answer_type is None:
-        return "text"
-    return CANONICAL_TYPE_MAP.get(str(answer_type).strip().lower(), str(answer_type).strip().lower())
+# Import canonical_answer_type from ground_truth_contracts (single source of truth)
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+from ground_truth_contracts import canonical_answer_type  # noqa: E402
 
 
 # ── Parsing Helpers ─────────────────────────────────────────────────
@@ -278,6 +267,20 @@ def _score_boolean(parser: Any, gold: Any) -> Dict[str, Any]:
     return {"match": match, "score": 1.0 if match else 0.0, "detail": "str_fallback"}
 
 
+def _score_path(parser: Any, gold: Any) -> Dict[str, Any]:
+    """Ordered exact match for path answers (e.g. P1 -> P2 -> PE1)."""
+    def _extract_nodes(text: str) -> list:
+        t = str(text).replace("→", "->").replace("=>", "->").strip().strip("\"'")
+        if "->" in t:
+            return [n.strip().lower() for n in t.split("->") if n.strip()]
+        return [t.strip().lower()] if t.strip() else []
+
+    p_nodes = _extract_nodes(parser)
+    g_nodes = _extract_nodes(gold)
+    match = p_nodes == g_nodes
+    return {"match": match, "score": 1.0 if match else 0.0, "detail": f"path_ordered={match}"}
+
+
 # ── Main Entry Point ────────────────────────────────────────────────
 
 def compare_answers(parser_answer: Any, dataset_answer: Any, answer_type: str) -> Dict[str, Any]:
@@ -297,6 +300,8 @@ def compare_answers(parser_answer: Any, dataset_answer: Any, answer_type: str) -
             result = _score_map(parser_answer, dataset_answer)
         elif atype in ("boolean",):
             result = _score_boolean(parser_answer, dataset_answer)
+        elif atype in ("path",):
+            result = _score_path(parser_answer, dataset_answer)
         else:
             result = _score_text(parser_answer, dataset_answer)
     except Exception as e:
