@@ -655,6 +655,9 @@ async def health():
     }
 
 
+_tool_invoke_cache: dict = {}
+
+
 @app.post("/api/tool/invoke")
 async def tool_invoke(request: Request):
     """
@@ -673,16 +676,15 @@ async def tool_invoke(request: Request):
             return JSONResponse({"ok": False, "error": "Missing 'tool' field"}, status_code=400)
 
         # Validate tool name (prevent injection)
-        import re
         if not re.match(r'^[\w_]+$', tool_name):
             return JSONResponse({"ok": False, "error": f"Invalid tool name: {tool_name}"}, status_code=400)
 
-        # Load tools
-        from agent.mcp_tools import get_core_tools
-        tools = get_core_tools()
-        tool_map = {t.name: t for t in tools}
+        # Load tools (cached)
+        if not _tool_invoke_cache:
+            from agent.mcp_tools import get_core_tools
+            _tool_invoke_cache.update({t.name: t for t in get_core_tools()})
 
-        tool = tool_map.get(tool_name)
+        tool = _tool_invoke_cache.get(tool_name)
         if not tool:
             available = sorted(tool_map.keys())
             return JSONResponse({"ok": False, "error": f"Unknown tool: {tool_name}", "available": available}, status_code=404)

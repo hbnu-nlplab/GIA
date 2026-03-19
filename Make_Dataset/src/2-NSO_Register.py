@@ -1,3 +1,6 @@
+# DEPRECATED: Use Make_Dataset/src/deploy/3_register_nso.py instead.
+# This script uses NSO CLI via docker exec. The new script uses RESTCONF API.
+
 import json
 import subprocess
 import time

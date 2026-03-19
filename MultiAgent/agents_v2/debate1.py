@@ -45,8 +45,8 @@ def _extract_from_tags(text: str, start_tag="[START]", end_tag="[DONE]") -> str:
     Returns:
         str: 정제된 내용 (레이블 없는 순수 값)
     """
-    print("=" * 100)
-    print("Full Content:", text)
+    logger.debug("=" * 100)
+    logger.debug("Full Content: %s", text)
 
     # Step 1: <think>...</think> 블록 제거
     text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
@@ -67,16 +67,15 @@ def _extract_from_tags(text: str, start_tag="[START]", end_tag="[DONE]") -> str:
         target_content = target_content.split(end_tag)[0]
     target_content = target_content.strip()
 
-    print("-" * 50)
-    print("Target Content for Parsing:", target_content)
+    logger.debug("Target Content for Parsing: %s", target_content)
 
     # Step 4: "Context:", "Passage:", "Answer:", "Result:" 등 레이블 헤더 제거
     cleaned = re.sub(r"^\s*(Context|Passage|Answer|Result)\s*:\s*", "", target_content,
                      flags=re.IGNORECASE | re.MULTILINE)
     cleaned = cleaned.strip()
 
-    print("=" * 100)
-    print("Parsed Content:", cleaned)
+    logger.debug("=" * 100)
+    logger.debug("Parsed Content: %s", cleaned)
 
     return cleaned
 
