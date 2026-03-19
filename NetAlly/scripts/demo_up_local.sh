@@ -7,6 +7,14 @@ BACKEND_PORT="${NETALLY_BACKEND_PORT:-8111}"
 FRONTEND_PORT="${NETALLY_FRONTEND_PORT:-3000}"
 RUN_PRECHECK="${NETALLY_RUN_PRECHECK:-true}"
 LOG_DIR="${NETALLY_LOG_DIR:-${ROOT_DIR}/.tmp}"
+ENV_FILE="${NETALLY_ENV_FILE:-${ROOT_DIR}/.env}"
+
+if [[ -f "${ENV_FILE}" ]]; then
+  set -a
+  # Load .env first so demo defaults don't override the Tailscale config.
+  source "${ENV_FILE}"
+  set +a
+fi
 
 # Demo mode defaults: allow explicit refresh/onboarding mutation tools unless caller disables it.
 export NETALLY_MCP_ALLOW_MUTATIONS="${NETALLY_MCP_ALLOW_MUTATIONS:-true}"

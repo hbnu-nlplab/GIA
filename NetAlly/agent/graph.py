@@ -23,6 +23,8 @@ from agent.skill_loader import get_skill_catalog, load_skills, get_loader
 
 load_dotenv()
 
+logger = logging.getLogger(__name__)
+
 
 # =============================================================================
 # State
@@ -96,7 +98,6 @@ def create_orchestrator_node(llm):
         content = response.content
         
         # JSON 파싱
-        logger = logging.getLogger(__name__)
         json_match = re.search(r'\{[^{}]*\}', content, re.DOTALL)
         if json_match:
             try:

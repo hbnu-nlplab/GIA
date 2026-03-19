@@ -2,6 +2,7 @@
 Lab bootstrap helpers
 """
 import asyncio
+import concurrent.futures
 import ipaddress
 import json
 import logging
@@ -884,14 +885,26 @@ async def enable_ssh_via_telnet(device: DeviceInfo, gs: GlobalSettings) -> bool:
 
 
 async def enable_ssh_all(gs: GlobalSettings, devices: List[DeviceInfo]) -> Dict[str, bool]:
-    results: Dict[str, bool] = {}
     resolved_host = resolve_console_host(gs, devices)
     if resolved_host and resolved_host != gs.pnetlab_vm_ip:
         logger.info("Resolved console host: %s -> %s", gs.pnetlab_vm_ip, resolved_host)
         gs = dataclasses.replace(gs, pnetlab_vm_ip=resolved_host)
     logger.info("Enabling SSH for %d devices", len(devices))
-    for dev in devices:
-        results[dev.name] = await enable_ssh_via_telnet(dev, gs)
+
+    sem = asyncio.Semaphore(5)  # limit concurrent telnet sessions
+
+    async def _enable_one(dev: DeviceInfo) -> bool:
+        async with sem:
+            return await enable_ssh_via_telnet(dev, gs)
+
+    outcomes = await asyncio.gather(*[_enable_one(dev) for dev in devices], return_exceptions=True)
+    results: Dict[str, bool] = {}
+    for dev, outcome in zip(devices, outcomes):
+        if isinstance(outcome, Exception):
+            logger.warning("SSH enable failed for %s: %s", dev.name, outcome)
+            results[dev.name] = False
+        else:
+            results[dev.name] = bool(outcome)
     return results
 
 
@@ -989,11 +1002,11 @@ def register_devices_nso(gs: GlobalSettings, devices: List[DeviceInfo], nso: NSO
                 return ""
         return ""
 
-    for dev in devices:
+    def _register_one(dev: DeviceInfo) -> tuple[str, bool]:
+        """Register a single device to NSO; returns (name, success)."""
         if ssh_only and not dev.oob_ip:
             logger.warning("Skip NSO registration for %s: missing oob_ip in ssh-only mode", dev.name)
-            results["failed"].append(dev.name)
-            continue
+            return dev.name, False
 
         address = dev.oob_ip or gs.pnetlab_vm_ip
         protocol = "ssh" if (ssh_only or bool(dev.oob_ip)) else "telnet"
@@ -1006,51 +1019,63 @@ def register_devices_nso(gs: GlobalSettings, devices: List[DeviceInfo], nso: NSO
             "authgroup": gs.nso_authgroup,
             "ned_id": gs.nso_ned_id,
         }
-        if nso.register_device(device_info):
+        if not nso.register_device(device_info):
+            return dev.name, False
+
+        try:
+            if protocol == "ssh":
+                nso.fetch_host_keys(dev.name)
+        except Exception:
+            logger.exception("Fetch host keys failed: %s", dev.name)
+
+        sync_ok = False
+        # SSH onboarding can race briefly with key/daemon readiness on virtual IOS images.
+        # Retry sync-from a few times before marking device failed.
+        max_attempts = 3 if protocol == "ssh" else 1
+        for attempt in range(1, max_attempts + 1):
+            if nso.sync_from(dev.name):
+                sync_ok = True
+                break
+            last_err = _last_sync_error(dev.name)
+            if protocol == "ssh" and _is_connection_refused_sync_error(last_err):
+                logger.warning(
+                    "SSH sync-from refused for %s, skipping remaining SSH retries: %s",
+                    dev.name,
+                    last_err,
+                )
+                break
+            if attempt < max_attempts:
+                logger.warning(
+                    "Sync-from retry %d/%d for %s",
+                    attempt + 1,
+                    max_attempts,
+                    dev.name,
+                )
+                try:
+                    if protocol == "ssh":
+                        nso.fetch_host_keys(dev.name)
+                except Exception:
+                    pass
+                # Lightweight backoff to let SSH daemon settle on lab nodes.
+                time.sleep(2.0)
+        if not sync_ok and protocol == "ssh":
+            sync_ok = _rehydrate_ssh_and_resync(dev)
+        return dev.name, sync_ok
+
+    max_workers = min(5, len(devices)) if devices else 1
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as pool:
+        futures = {pool.submit(_register_one, dev): dev for dev in devices}
+        for fut in concurrent.futures.as_completed(futures):
+            dev = futures[fut]
             try:
-                if protocol == "ssh":
-                    nso.fetch_host_keys(dev.name)
-            except Exception:
-                logger.exception("Fetch host keys failed: %s", dev.name)
-                pass
-            sync_ok = False
-            # SSH onboarding can race briefly with key/daemon readiness on virtual IOS images.
-            # Retry sync-from a few times before marking device failed.
-            max_attempts = 3 if protocol == "ssh" else 1
-            for attempt in range(1, max_attempts + 1):
-                if nso.sync_from(dev.name):
-                    sync_ok = True
-                    break
-                last_err = _last_sync_error(dev.name)
-                if protocol == "ssh" and _is_connection_refused_sync_error(last_err):
-                    logger.warning(
-                        "SSH sync-from refused for %s, skipping remaining SSH retries: %s",
-                        dev.name,
-                        last_err,
-                    )
-                    break
-                if attempt < max_attempts:
-                    logger.warning(
-                        "Sync-from retry %d/%d for %s",
-                        attempt + 1,
-                        max_attempts,
-                        dev.name,
-                    )
-                    try:
-                        if protocol == "ssh":
-                            nso.fetch_host_keys(dev.name)
-                    except Exception:
-                        pass
-                    # Lightweight backoff to let SSH daemon settle on lab nodes.
-                    time.sleep(2.0)
-            if not sync_ok and protocol == "ssh":
-                sync_ok = _rehydrate_ssh_and_resync(dev)
-            if sync_ok:
-                results["registered"].append(dev.name)
+                name, success = fut.result()
+            except Exception as exc:
+                logger.warning("NSO registration raised for %s: %s", dev.name, exc)
+                name, success = dev.name, False
+            if success:
+                results["registered"].append(name)
             else:
-                results["failed"].append(dev.name)
-        else:
-            results["failed"].append(dev.name)
+                results["failed"].append(name)
 
     logger.info("NSO registration results: %s", results)
     return results

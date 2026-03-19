@@ -27,7 +27,6 @@ Step 3: NSO Device Registration via RESTCONF
   python -m deploy.3_register_nso --status
 """
 
-import json
 import argparse
 import sys
 import time
@@ -39,8 +38,7 @@ try:
 except ImportError:
     sys.exit("[ERROR] pip install requests")
 
-ROOT = Path(__file__).resolve().parents[3]
-DEFAULT_INFO = ROOT / "Data/Pnetlab/LabB_NCN_Basic_SP_20nodes/device_info.json"
+from deploy._common import add_common_args, load_and_filter_devices
 
 HEADERS = {
     "Content-Type": "application/yang-data+json",
@@ -171,8 +169,7 @@ class NSORegistrar:
 
 def main():
     parser = argparse.ArgumentParser(description="Step 3: Register devices in NSO")
-    parser.add_argument("--device-info", type=Path, default=DEFAULT_INFO)
-    parser.add_argument("--only", help="P1,PE1,Leaf1")
+    add_common_args(parser)
     parser.add_argument("--no-sync", action="store_true",
                         help="등록만, sync-from 제외")
     parser.add_argument("--status", action="store_true",
@@ -181,9 +178,8 @@ def main():
     parser.add_argument("--nso-url", help="NSO RESTCONF URL 오버라이드")
     args = parser.parse_args()
 
-    cfg = json.loads(args.device_info.read_text(encoding="utf-8"))
+    cfg, devices = load_and_filter_devices(args)
     gs = cfg["global_settings"]
-    devices = cfg["devices"]
 
     # NSO 접속 정보: nso_ip (Cloud0 관리망) 우선
     required = ["nso_ip", "nso_username", "nso_password", "nso_authgroup", "nso_ned_id", "admin_password"]
@@ -201,10 +197,6 @@ def main():
     admin_pw = gs["admin_password"]
 
     print(f"  [warn] HTTP(평문) 사용 중 — 연구실 내부망 전용", file=sys.stderr)
-
-    if args.only:
-        only = set(args.only.split(","))
-        devices = [d for d in devices if d["name"] in only]
 
     print(f"\n{'='*55}")
     print(f"  STEP 3: NSO REGISTRATION — {len(devices)} devices")
@@ -238,7 +230,7 @@ def main():
 
     # ── Phase 1: Authgroup 생성 ──
     print(f"\n--- Phase 1: Create Authgroup '{authgroup}' ---")
-    if nso.create_authgroup(authgroup, "admin", admin_pw):
+    if nso.create_authgroup(authgroup, gs.get("nso_device_username", gs["nso_username"]), admin_pw):
         print(f"  [✓] Authgroup '{authgroup}' 생성/갱신 완료")
     else:
         print(f"  [!] Authgroup 생성 실패 (이미 존재할 수 있음, 계속 진행)")

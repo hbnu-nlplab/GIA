@@ -68,15 +68,42 @@ fi
 echo "[SYNC] NetAlly dependencies..."
 cd "${PROJECT_ROOT}/NetAlly"
 if [ -f "pyproject.toml" ]; then
-    uv sync --extra dev 2>&1 | tail -3
+    if ! uv sync --extra dev 2>&1 | tail -3; then
+        echo "[ERROR] NetAlly Python dependency sync failed"
+        exit 1
+    fi
     echo "[OK] NetAlly Python dependencies synced"
+fi
+
+# Node.js / npm
+echo "[CHECK] Node.js & npm..."
+if command -v node &>/dev/null && command -v npm &>/dev/null; then
+    echo "[OK] Node.js installed: $(node --version)"
+    echo "[OK] npm installed: $(npm --version)"
+else
+    echo "[INSTALL] Installing Node.js 20 LTS..."
+    sudo apt-get update
+    sudo apt-get install -y ca-certificates curl gnupg
+    sudo mkdir -p /etc/apt/keyrings
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
+        | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" \
+        | sudo tee /etc/apt/sources.list.d/nodesource.list >/dev/null
+    sudo apt-get update
+    sudo apt-get install -y nodejs
+    echo "[OK] Node.js installed: $(node --version)"
+    echo "[OK] npm installed: $(npm --version)"
 fi
 
 # Frontend 의존성
 echo "[SYNC] Frontend dependencies..."
 cd "${PROJECT_ROOT}/NetAlly/frontend"
 if [ -f "package.json" ]; then
-    npm ci --silent 2>&1 | tail -3
+    if ! npm ci --silent 2>&1 | tail -3; then
+        echo "[ERROR] Frontend dependency install failed"
+        echo "[HINT] If you see a WSL version error, ensure this distro is running on WSL 2 and Node.js is installed correctly"
+        exit 1
+    fi
     echo "[OK] Frontend dependencies installed"
 fi
 cd "${PROJECT_ROOT}"

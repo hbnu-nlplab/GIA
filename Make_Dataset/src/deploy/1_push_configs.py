@@ -20,7 +20,6 @@ Config Generator가 생성한 .cfg 파일을 PNETLab 장비에 자동 적용.
     --configs-dir Make_Dataset/config_generator/output/LabC_.../configs
 """
 
-import json
 import asyncio
 import argparse
 import re
@@ -33,9 +32,9 @@ try:
 except ImportError:
     sys.exit("[ERROR] pip install telnetlib3")
 
+from deploy._common import ROOT, DEFAULT_DEVICE_INFO, add_common_args, load_and_filter_devices
+
 # ── 기본 경로 ──
-ROOT = Path(__file__).resolve().parents[3]  # GIA/
-DEFAULT_INFO = ROOT / "Data/Pnetlab/LabB_NCN_Basic_SP_20nodes/device_info.json"
 DEFAULT_CFGS = ROOT / "Make_Dataset/config_generator/output/LabB_NCN_Basic_SP_20nodes/configs"
 
 # ── .cfg 파서: configure terminal에서 실행할 명령어만 추출 ──
@@ -155,21 +154,15 @@ async def push_one(host: str, port: int, name: str, cmds: list[str],
 
 async def main():
     parser = argparse.ArgumentParser(description="Step 1: Push .cfg to PNETLab devices")
-    parser.add_argument("--device-info", type=Path, default=DEFAULT_INFO)
+    add_common_args(parser)
     parser.add_argument("--configs-dir", type=Path, default=DEFAULT_CFGS)
-    parser.add_argument("--only", help="P1,PE1,Leaf1")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
-    cfg = json.loads(args.device_info.read_text(encoding="utf-8"))
+    cfg, devices = load_and_filter_devices(args)
     gs = cfg["global_settings"]
     host = gs["pnetlab_vm_ip"]
     enable_pw = gs.get("enable_password", "")
-    devices = cfg["devices"]
-
-    if args.only:
-        only = set(args.only.split(","))
-        devices = [d for d in devices if d["name"] in only]
 
     print(f"\n{'='*55}")
     print(f"  STEP 1: CONFIG PUSH — {len(devices)} devices")

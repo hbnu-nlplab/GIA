@@ -15,7 +15,6 @@ Config push 후 모든 장비의 연결 상태 + 라우팅 프로토콜 검증.
   python -m deploy.2_verify --only P1,PE1
 """
 
-import json
 import asyncio
 import argparse
 import subprocess
@@ -27,8 +26,7 @@ try:
 except ImportError:
     sys.exit("[ERROR] pip install telnetlib3")
 
-ROOT = Path(__file__).resolve().parents[3]
-DEFAULT_INFO = ROOT / "Data/Pnetlab/LabB_NCN_Basic_SP_20nodes/device_info.json"
+from deploy._common import add_common_args, load_and_filter_devices
 
 
 async def run_show_cmd(host: str, port: int, enable_pw: str,
@@ -89,20 +87,14 @@ def ping_check(ip: str) -> bool:
 
 async def main():
     parser = argparse.ArgumentParser(description="Step 2: Verify deployment")
-    parser.add_argument("--device-info", type=Path, default=DEFAULT_INFO)
-    parser.add_argument("--only", help="P1,PE1,Leaf1")
+    add_common_args(parser)
     parser.add_argument("--ping-only", action="store_true")
     args = parser.parse_args()
 
-    cfg = json.loads(args.device_info.read_text(encoding="utf-8"))
+    cfg, devices = load_and_filter_devices(args)
     gs = cfg["global_settings"]
     host = gs["pnetlab_vm_ip"]
     enable_pw = gs.get("enable_password", "")
-    devices = cfg["devices"]
-
-    if args.only:
-        only = set(args.only.split(","))
-        devices = [d for d in devices if d["name"] in only]
 
     print(f"\n{'='*55}")
     print(f"  STEP 2: VERIFY — {len(devices)} devices")
@@ -110,7 +102,7 @@ async def main():
     print(f"{'='*55}")
 
     # ── Phase 1: Ping (관리망) ──
-    print(f"\n--- Phase 1: Management Ping (10.10.10.x) ---")
+    print(f"\n--- Phase 1: Management Ping ---")
     ping_ok, ping_fail = [], []
     for d in devices:
         ok = ping_check(d["oob_ip"])

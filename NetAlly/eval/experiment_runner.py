@@ -122,7 +122,10 @@ class ExperimentRunner:
                             elif evt_type == "tool_output":
                                 if tools:
                                     content = val.get("content", val.get("output", ""))
-                                    tools[-1].output = str(content)[:500]
+                                    content_str = str(content)
+                                    if len(content_str) > 500:
+                                        logger.warning("Tool output truncated: %d → 500 chars", len(content_str))
+                                    tools[-1].output = content_str[:500]
                                     idx = len(tools) - 1
                                     if idx in _tool_start_times:
                                         tools[idx].latency_ms = (time.monotonic() - _tool_start_times[idx]) * 1000
@@ -256,7 +259,6 @@ class ExperimentRunner:
         output = {
             "meta": {
                 "model": os.getenv("NETALLY_EXECUTOR_LLM_MODEL", "unknown"),
-                "model_tag": os.getenv("NETALLY_EXECUTOR_LLM_MODEL", "unknown"),
                 "backend": f"netally_{'pure_mas' if os.getenv('NETALLY_TOOL_BACKEND') == 'none' else 'mas'}",
                 "lab": self._detect_lab(results),
                 "total_samples": len(results),
