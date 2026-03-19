@@ -22,7 +22,7 @@ import re
 import random
 from typing import Dict, List, Any
 
-from .models import AnswerResult, build_evidence
+from .models import AnswerResult, build_evidence, DISPOSITION_PRIORITY, normalize_disposition
 
 logger = logging.getLogger(__name__)
 
@@ -47,47 +47,10 @@ class L5AnalyzerMixin:
     필요한 속성: bf, _initialized, nodes, node_ips, interfaces, snapshot_name
     """
     
-    # Batfish Disposition 우선순위 (낮을수록 더 중요한 실패 원인)
-    DISPOSITION_PRIORITY = {
-        'NO_ROUTE': 1,              # 최우선: 명확한 라우팅 실패
-        'NULL_ROUTED': 2,           # 의도적으로 버림 (Null0)
-        'ACL_DENY': 3,              # 정규화된 ACL 차단 상태
-        'ACL_IN_DENIED': 3,         # ACL 차단 (Ingress)
-        'ACL_OUT_DENIED': 3,        # ACL 차단 (Egress)
-        'DENIED': 3,                # 일반 ACL 차단
-        'DENIED_IN': 3,             # ACL 차단 변형
-        'DENIED_OUT': 3,            # ACL 차단 변형
-        'NEIGHBOR_UNREACHABLE': 4,  # 이웃 도달 불가
-        'LOOP': 5,                  # 라우팅 루프
-        'EXTERNAL': 6,              # 네트워크 외부/정보부족 계열 정규화
-        'EXITS_NETWORK': 6,         # 낮은 우선순위: 네트워크를 벗어남 (성공일 수도 있음)
-        'INSUFFICIENT_INFO': 6,     # 낮은 우선순위: 정보 불충분 (성공일 수도 있음)
-        'UNKNOWN': 7                # 알 수 없는 상태
-    }
-    
     def _make_evidence(self, query_name: str, params: dict) -> dict:
         """BatfishBuilder 내부용 evidence 생성 헬퍼"""
         return build_evidence(query_name, params, getattr(self, 'snapshot_name', ''))
 
-    def _normalize_disposition(self, disposition: str) -> str:
-        """Batfish disposition을 분석/정답용 라벨로 정규화합니다."""
-        d = str(disposition or "").upper()
-        if "ACCEPTED" in d or "DELIVERED" in d:
-            return "ACCEPTED"
-        if "NO_ROUTE" in d:
-            return "NO_ROUTE"
-        if "NULL_ROUTED" in d:
-            return "NULL_ROUTED"
-        if "DENIED" in d or "BLOCK" in d:
-            return "ACL_DENY"
-        if "NEIGHBOR_UNREACHABLE" in d:
-            return "NEIGHBOR_UNREACHABLE"
-        if "LOOP" in d:
-            return "LOOP"
-        if "EXITS_NETWORK" in d or "INSUFFICIENT_INFO" in d:
-            return "EXTERNAL"
-        return "UNKNOWN"
-    
 
     
     def _analyze_routing_failure(self, src_node: str, dst_ip: str) -> dict:
@@ -201,7 +164,7 @@ class L5AnalyzerMixin:
             
         try:
             # Batfish의 ospfAreaConfiguration 질문을 통해 Area 0 정보를 가져옴
-            area_config = self.bf.q.ospfAreaConfiguration().answer().frame()
+            area_config = self.bf.q.ospfAreaConfiguration().answer(snapshot=self.snapshot_name).frame()
             
             backbone_nodes = []
             if not area_config.empty:
@@ -275,7 +238,6 @@ class L5AnalyzerMixin:
              return AnswerResult("NOT_CONFIGURED", {"detected": False, "spof_nodes": []}, "spof_result", evidence, "BATFISH_NOT_INITIALIZED")
             
         try:
-            self.bf.set_snapshot(self.snapshot_name)
             spof_nodes = []
             if len(self.nodes) < 3:
                 return AnswerResult("OK", {"detected": False, "spof_nodes": []}, "spof_result", evidence, "TOO_FEW_NODES")
@@ -341,7 +303,6 @@ class L5AnalyzerMixin:
             return AnswerResult("NOT_CONFIGURED", {"impact": "UNKNOWN", "description": "Batfish not initialized"}, "link_failure_result", evidence, "BATFISH_NOT_INITIALIZED")
 
         try:
-            self.bf.set_snapshot(self.snapshot_name)
             # VRF 문제 방지: [Loopback0] 추가
             test_src = self._fix_start_location(test_src)
             
@@ -361,7 +322,7 @@ class L5AnalyzerMixin:
             if not base_trace_list:
                 return AnswerResult("NOT_APPLICABLE", {"impact": "NONE", "description": "No base trace"}, "link_failure_result", evidence, "NO_BASE_TRACE")
             base_trace_obj = base_trace_list[0]
-            base_disposition = self._normalize_disposition(getattr(base_trace_obj, 'disposition', 'UNKNOWN'))
+            base_disposition = normalize_disposition(getattr(base_trace_obj, 'disposition', 'UNKNOWN'))
             # baseline이 이미 불통이면 링크 다운 영향 분석의 기준 자체가 성립하지 않음
             if base_disposition != "ACCEPTED":
                 return AnswerResult(
@@ -398,57 +359,63 @@ class L5AnalyzerMixin:
                 deactivate_interfaces=deactivate_list,
                 overwrite=True
             )
-            
-            fail_traces = self.bf.q.traceroute(
-                startLocation=test_src,
-                headers=HeaderConstraints(dstIps=test_dst_ip)
-            ).answer(snapshot=failure_snapshot_name).frame()
-            
-            impact = "NONE"
-            desc = ""
-            
-            if fail_traces.empty:
-                impact = "DISCONNECTED"
-                desc = "Traffic disconnected after link failure"
-            else:
-                fail_trace_list = fail_traces['Traces'].iloc[0] if 'Traces' in fail_traces.columns else []
-                if not fail_trace_list:
+
+            try:
+                fail_traces = self.bf.q.traceroute(
+                    startLocation=test_src,
+                    headers=HeaderConstraints(dstIps=test_dst_ip)
+                ).answer(snapshot=failure_snapshot_name).frame()
+
+                impact = "NONE"
+                desc = ""
+
+                if fail_traces.empty:
                     impact = "DISCONNECTED"
-                    desc = "No trace after link failure"
+                    desc = "Traffic disconnected after link failure"
                 else:
-                    accepted_paths = []
-                    failure_dispositions = []
-
-                    for fail_trace_obj in fail_trace_list:
-                        raw_disposition = getattr(fail_trace_obj, 'disposition', 'UNKNOWN')
-                        disposition = self._normalize_disposition(raw_disposition)
-
-                        fail_path_nodes = []
-                        for hop in getattr(fail_trace_obj, 'hops', []):
-                            node = getattr(hop, 'node', None)
-                            if node:
-                                fail_path_nodes.append(getattr(node, 'hostname', str(node)))
-
-                        if disposition == "ACCEPTED":
-                            accepted_paths.append(fail_path_nodes)
-                        else:
-                            failure_dispositions.append(disposition)
-
-                    if not accepted_paths:
+                    fail_trace_list = fail_traces['Traces'].iloc[0] if 'Traces' in fail_traces.columns else []
+                    if not fail_trace_list:
                         impact = "DISCONNECTED"
-                        reason = failure_dispositions[0] if failure_dispositions else "UNKNOWN"
-                        desc = f"Traffic unreachable after failure ({reason})"
+                        desc = "No trace after link failure"
                     else:
-                        # 도달 가능한 후보 중 가장 짧은 경로를 대표 경로로 사용
-                        best_path = sorted(accepted_paths, key=len)[0]
-                        if base_path_nodes == best_path:
-                            impact = "NONE"
-                            desc = "Path unchanged"
+                        accepted_paths = []
+                        failure_dispositions = []
+
+                        for fail_trace_obj in fail_trace_list:
+                            raw_disposition = getattr(fail_trace_obj, 'disposition', 'UNKNOWN')
+                            disposition = normalize_disposition(raw_disposition)
+
+                            fail_path_nodes = []
+                            for hop in getattr(fail_trace_obj, 'hops', []):
+                                node = getattr(hop, 'node', None)
+                                if node:
+                                    fail_path_nodes.append(getattr(node, 'hostname', str(node)))
+
+                            if disposition == "ACCEPTED":
+                                accepted_paths.append(fail_path_nodes)
+                            else:
+                                failure_dispositions.append(disposition)
+
+                        if not accepted_paths:
+                            impact = "DISCONNECTED"
+                            reason = failure_dispositions[0] if failure_dispositions else "UNKNOWN"
+                            desc = f"Traffic unreachable after failure ({reason})"
                         else:
-                            impact = "REROUTED"
-                            desc = f"Rerouted: {'->'.join(best_path)}"
-            
-            return AnswerResult("OK", {"impact": impact, "description": desc}, "link_failure_result", evidence, "")
+                            # 도달 가능한 후보 중 가장 짧은 경로를 대표 경로로 사용
+                            best_path = sorted(accepted_paths, key=len)[0]
+                            if base_path_nodes == best_path:
+                                impact = "NONE"
+                                desc = "Path unchanged"
+                            else:
+                                impact = "REROUTED"
+                                desc = f"Rerouted: {'->'.join(best_path)}"
+
+                return AnswerResult("OK", {"impact": impact, "description": desc}, "link_failure_result", evidence, "")
+            finally:
+                try:
+                    self.bf.delete_snapshot(failure_snapshot_name)
+                except Exception:
+                    logger.warning("Failed to delete snapshot: %s", failure_snapshot_name)
 
         except Exception as e:
             err_msg = str(e)
@@ -514,7 +481,6 @@ class L5AnalyzerMixin:
             dst_ports = ["80", "443"]
         
         try:
-            self.bf.set_snapshot(self.snapshot_name)
             if policy_type == "waypoint" and waypoint_node:
                 violations = self.bf.q.reachability(
                     headers=HeaderConstraints(
@@ -569,18 +535,18 @@ class L5AnalyzerMixin:
 
             baseline = self.bf.q.reachability(
                 headers=HeaderConstraints(srcIps=src_ip, dstIps=dst_ip)
-            ).answer().frame()
+            ).answer(snapshot=self.snapshot_name).frame()
 
             if baseline.empty:
                 return AnswerResult("OK", {"path_count": 0, "paths": []}, "measure_k_failure", evidence, "")
 
             # VRF 문제 방지: [Loopback0] 추가
             src_node = self._fix_start_location(src_node)
-            
+
             trace_result = self.bf.q.traceroute(
                 startLocation=src_node,
                 headers=HeaderConstraints(dstIps=dst_ip)
-            ).answer().frame()
+            ).answer(snapshot=self.snapshot_name).frame()
 
             if trace_result.empty:
                 return AnswerResult("OK", {"path_count": 0, "paths": []}, "measure_k_failure", evidence, "")
@@ -782,47 +748,53 @@ class L5AnalyzerMixin:
                     overwrite=True
                 )
             except Exception as e:
-                 print(f"DEBUG ERROR in fork_snapshot (blast_radius): {e}")
+                 logger.error("fork_snapshot failed (blast_radius): %s", e)
                  logger.warning(f"Fork snapshot failed: {e}")
                  return AnswerResult("UNKNOWN", {}, "node_failure_result", evidence, f"FORK_FAILED: {e}")
 
-            # 2. Differential Reachability
-            # 변경 전(self.snapshot_name) -> 변경 후(failure_snapshot)
-            # reference_snapshot (basis) -> snapshot (new)
-            # We want to find flows that were accepted in reference but dropped/unreachable in snapshot.
-            
-            diff_q = self.bf.q.differentialReachability()
-            diff_result = diff_q.answer(
-                snapshot=failure_snapshot,
-                reference_snapshot=self.snapshot_name
-            ).frame()
-            
-            newly_blocked = []
-            
-            if not diff_result.empty:
-                # 'Flow' column contains the flow details
-                for _, row in diff_result.iterrows():
-                    flow = row.get('Flow')
-                    if flow:
-                        src_ip = getattr(flow, 'srcIp', 'unknown')
-                        dst_ip = getattr(flow, 'dstIp', 'unknown')
-                        ip_prot = getattr(flow, 'ipProtocol', 'unknown')
-                        newly_blocked.append(f"{src_ip} -> {dst_ip} ({ip_prot})")
-            
-            # Limit results
-            # Remove duplicated strings if any
-            newly_blocked = list(set(newly_blocked))
-            affected_count = len(newly_blocked)
-            display_flows = newly_blocked[:15] # Top 15
-            
-            return AnswerResult("OK", {
-                "affected_count": affected_count,
-                "newly_blocked_flows": display_flows,
-                "still_reachable_count": -1 # Not calculated for performance
-            }, "node_failure_result", evidence, "")
+            try:
+                # 2. Differential Reachability
+                # 변경 전(self.snapshot_name) -> 변경 후(failure_snapshot)
+                # reference_snapshot (basis) -> snapshot (new)
+                # We want to find flows that were accepted in reference but dropped/unreachable in snapshot.
+
+                diff_q = self.bf.q.differentialReachability()
+                diff_result = diff_q.answer(
+                    snapshot=failure_snapshot,
+                    reference_snapshot=self.snapshot_name
+                ).frame()
+
+                newly_blocked = []
+
+                if not diff_result.empty:
+                    # 'Flow' column contains the flow details
+                    for _, row in diff_result.iterrows():
+                        flow = row.get('Flow')
+                        if flow:
+                            src_ip = getattr(flow, 'srcIp', 'unknown')
+                            dst_ip = getattr(flow, 'dstIp', 'unknown')
+                            ip_prot = getattr(flow, 'ipProtocol', 'unknown')
+                            newly_blocked.append(f"{src_ip} -> {dst_ip} ({ip_prot})")
+
+                # Limit results
+                # Remove duplicated strings if any
+                newly_blocked = list(set(newly_blocked))
+                affected_count = len(newly_blocked)
+                display_flows = newly_blocked[:15] # Top 15
+
+                return AnswerResult("OK", {
+                    "affected_count": affected_count,
+                    "newly_blocked_flows": display_flows,
+                    "still_reachable_count": -1 # Not calculated for performance
+                }, "node_failure_result", evidence, "")
+            finally:
+                try:
+                    self.bf.delete_snapshot(failure_snapshot)
+                except Exception:
+                    logger.warning("Failed to delete snapshot: %s", failure_snapshot)
             
         except Exception as e:
-            print(f"DEBUG ERROR in blast_radius_estimation: {e}")
+            logger.error("blast_radius_estimation failed: %s", e)
             logger.warning(f"blast_radius_estimation error: {e}")
             return AnswerResult("UNKNOWN", {
                 "affected_count": 0,
@@ -898,7 +870,7 @@ class L5AnalyzerMixin:
             
             for trace in traces:
                 raw_disposition = getattr(trace, 'disposition', 'UNKNOWN')
-                disposition = self._normalize_disposition(raw_disposition)
+                disposition = normalize_disposition(raw_disposition)
                 
                 # 경로 추출
                 hops = getattr(trace, 'hops', [])
@@ -913,7 +885,7 @@ class L5AnalyzerMixin:
                     accepted_paths.append(path_nodes)
                 else:
                     # 실패 원인 분석 - 우선순위와 함께 저장
-                    priority = self.DISPOSITION_PRIORITY.get(disposition, 99)  # 정의되지 않은 disposition은 99
+                    priority = DISPOSITION_PRIORITY.get(disposition, 99)  # 정의되지 않은 disposition은 99
                     blocking_node = path_nodes[-1] if path_nodes else "Unknown"
                     failure_reasons.append((priority, disposition, blocking_node))
             
@@ -950,8 +922,10 @@ class L5AnalyzerMixin:
             logger.warning(f"multi_link_failure_analysis (dynamic) error: {e}")
             return AnswerResult("UNKNOWN", {"isolated": False, "new_path": [], "path_change": "ERROR"}, "multi_failure_result", evidence, f"SIMULATION_ERROR: {e}")
         finally:
-            # 스냅샷 정리는 Batfish 설정에 따름 (일단 유지하거나 추후 자동정리)
-            pass
+            try:
+                self.bf.delete_snapshot(failure_snapshot)
+            except Exception:
+                logger.warning("Failed to delete snapshot: %s", failure_snapshot)
     
     def redundancy_verification(self, node1: str, node2: str) -> AnswerResult:
         """
@@ -984,37 +958,43 @@ class L5AnalyzerMixin:
                     overwrite=True
                 )
             except Exception as e:
-                 print(f"DEBUG ERROR in fork_snapshot (dual): {e}")
+                 logger.error("fork_snapshot failed (dual_node_failure): %s", e)
                  logger.warning(f"Fork snapshot (dual) failed: {e}")
                  return AnswerResult("UNKNOWN", {}, "dual_failure_result", evidence, f"FORK_FAILED: {e}")
 
-            # 2. Differential Reachability
-            # Reference(Base) -> Snapshot(Dual Fail) 비교
-            diff_q = self.bf.q.differentialReachability()
-            diff_result = diff_q.answer(
-                snapshot=failure_snapshot,
-                reference_snapshot=self.snapshot_name
-            ).frame()
-            
-            isolated_flows = []
-            if not diff_result.empty:
-                for _, row in diff_result.iterrows():
-                    flow = row.get('Flow')
-                    if flow:
-                        src_ip = getattr(flow, 'srcIp', 'unknown')
-                        dst_ip = getattr(flow, 'dstIp', 'unknown')
-                        ip_prot = getattr(flow, 'ipProtocol', 'unknown')
-                        isolated_flows.append(f"{src_ip} -> {dst_ip} ({ip_prot})")
-            
-            isolated_flows = list(set(isolated_flows))
-            
-            return AnswerResult("OK", {
-                "isolated_flow_count": len(isolated_flows),
-                "isolated_flows": isolated_flows[:15] # Top 15
-            }, "dual_failure_result", evidence, "")
+            try:
+                # 2. Differential Reachability
+                # Reference(Base) -> Snapshot(Dual Fail) 비교
+                diff_q = self.bf.q.differentialReachability()
+                diff_result = diff_q.answer(
+                    snapshot=failure_snapshot,
+                    reference_snapshot=self.snapshot_name
+                ).frame()
+
+                isolated_flows = []
+                if not diff_result.empty:
+                    for _, row in diff_result.iterrows():
+                        flow = row.get('Flow')
+                        if flow:
+                            src_ip = getattr(flow, 'srcIp', 'unknown')
+                            dst_ip = getattr(flow, 'dstIp', 'unknown')
+                            ip_prot = getattr(flow, 'ipProtocol', 'unknown')
+                            isolated_flows.append(f"{src_ip} -> {dst_ip} ({ip_prot})")
+
+                isolated_flows = list(set(isolated_flows))
+
+                return AnswerResult("OK", {
+                    "isolated_flow_count": len(isolated_flows),
+                    "isolated_flows": isolated_flows[:15] # Top 15
+                }, "dual_failure_result", evidence, "")
+            finally:
+                try:
+                    self.bf.delete_snapshot(failure_snapshot)
+                except Exception:
+                    logger.warning("Failed to delete snapshot: %s", failure_snapshot)
             
         except Exception as e:
-            print(f"DEBUG ERROR in redundancy_verification: {e}")
+            logger.error("redundancy_verification failed: %s", e)
             logger.warning(f"redundancy_verification error: {e}")
             return AnswerResult("UNKNOWN", {
                 "isolated_flow_count": 0,
@@ -1048,29 +1028,35 @@ class L5AnalyzerMixin:
                  logger.warning(f"Fork snapshot (triple) failed: {e}")
                  return AnswerResult("UNKNOWN", {}, "triple_failure_result", evidence, f"FORK_FAILED: {e}")
 
-            # 2. Differential Reachability
-            diff_q = self.bf.q.differentialReachability()
-            diff_result = diff_q.answer(
-                snapshot=failure_snapshot,
-                reference_snapshot=self.snapshot_name
-            ).frame()
-            
-            isolated_flows = []
-            if not diff_result.empty:
-                for _, row in diff_result.iterrows():
-                    flow = row.get('Flow')
-                    if flow:
-                        src_ip = getattr(flow, 'srcIp', 'unknown')
-                        dst_ip = getattr(flow, 'dstIp', 'unknown')
-                        ip_prot = getattr(flow, 'ipProtocol', 'unknown')
-                        isolated_flows.append(f"{src_ip} -> {dst_ip} ({ip_prot})")
-            
-            isolated_flows = list(set(isolated_flows))
-            
-            return AnswerResult("OK", {
-                "isolated_flow_count": len(isolated_flows),
-                "isolated_flows": isolated_flows[:15]
-            }, "triple_failure_result", evidence, "")
+            try:
+                # 2. Differential Reachability
+                diff_q = self.bf.q.differentialReachability()
+                diff_result = diff_q.answer(
+                    snapshot=failure_snapshot,
+                    reference_snapshot=self.snapshot_name
+                ).frame()
+
+                isolated_flows = []
+                if not diff_result.empty:
+                    for _, row in diff_result.iterrows():
+                        flow = row.get('Flow')
+                        if flow:
+                            src_ip = getattr(flow, 'srcIp', 'unknown')
+                            dst_ip = getattr(flow, 'dstIp', 'unknown')
+                            ip_prot = getattr(flow, 'ipProtocol', 'unknown')
+                            isolated_flows.append(f"{src_ip} -> {dst_ip} ({ip_prot})")
+
+                isolated_flows = list(set(isolated_flows))
+
+                return AnswerResult("OK", {
+                    "isolated_flow_count": len(isolated_flows),
+                    "isolated_flows": isolated_flows[:15]
+                }, "triple_failure_result", evidence, "")
+            finally:
+                try:
+                    self.bf.delete_snapshot(failure_snapshot)
+                except Exception:
+                    logger.warning("Failed to delete snapshot: %s", failure_snapshot)
             
         except Exception as e:
             logger.warning(f"triple_node_failure error: {e}")
@@ -1141,7 +1127,7 @@ class L5AnalyzerMixin:
                 headers=HeaderConstraints(
                     srcIps=src_ip, dstIps=dst_ip, dstPorts=[str(dst_port)], ipProtocols=[protocol]
                 )
-            ).answer().frame()
+            ).answer(snapshot=self.snapshot_name).frame()
             
             if filter_result.empty:
                 return AnswerResult("OK", {"blocked": False, "rules": []}, "acl_rule_result", evidence, "")
@@ -1177,7 +1163,7 @@ class L5AnalyzerMixin:
              return AnswerResult("NOT_CONFIGURED", {"detected": False, "conflicts": []}, "ip_conflict_result", evidence, "BATFISH_NOT_INITIALIZED")
             
         try:
-            interfaces = self.bf.q.interfaceProperties().answer().frame()
+            interfaces = self.bf.q.interfaceProperties().answer(snapshot=self.snapshot_name).frame()
             if interfaces.empty:
                  return AnswerResult("OK", {"detected": False, "conflicts": []}, "ip_conflict_result", evidence, "")
             

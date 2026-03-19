@@ -13,19 +13,29 @@ from typing import Any, Dict, Iterable, Mapping
 
 
 _CANONICAL_TYPE_ALIASES = {
+    # number
     "numeric": "number",
     "scalar_int": "number",
     "int": "number",
     "integer": "number",
     "float": "number",
+    # set
     "set_str": "set",
     "list": "set",
+    "edge_set": "set",
+    "list_str": "set",
+    # map
     "map_str_int": "map",
     "map_str_str": "map",
     "json": "map",
+    "dict": "map",
+    # text
     "scalar_str": "text",
     "enum": "text",
+    # boolean
     "bool": "boolean",
+    # path (identity — explicit, for cross-module consistency)
+    "path": "path",
 }
 
 _TEXT_CONFIG_METRICS = {

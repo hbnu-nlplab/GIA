@@ -42,31 +42,45 @@ ANSWER_TYPE_LABEL = {
 
 
 def canonical_answer_type(answer_type: str) -> str:
-    """Normalize answer_type values to a canonical set used by the scorer/reports."""
+    """Normalize answer_type values to a canonical set used by the scorer/reports.
+
+    Canonical set: {text, number, set, map, boolean, path}
+    Source of truth: Make_Dataset/src/ground_truth_contracts.py (_CANONICAL_TYPE_ALIASES)
+    """
     if answer_type is None:
         return 'text'
     atype = str(answer_type).strip().lower()
-    aliases = {
-        # observed plural/variant forms
+    # Unified alias dict — keep in sync with ground_truth_contracts._CANONICAL_TYPE_ALIASES
+    _ALIASES = {
+        # number
+        'numeric': 'number',
+        'num': 'number',
         'numbers': 'number',
-        'num': 'numeric',
         'int': 'number',
         'integer': 'number',
-        'float': 'numeric',
-        # common dataset schema aliases
+        'float': 'number',
+        'scalar_int': 'number',
+        # set
         'list_str': 'set',
         'set_str': 'set',
         'edge_set': 'set',
         'set_string': 'set',
+        'list': 'set',
+        # map
         'dict': 'map',
         'map_str_str': 'map',
         'map_str_int': 'map',
         'json': 'map',
-        'scalar_int': 'number',
+        # text
+        'scalar_str': 'text',
+        'enum': 'text',
+        # boolean
         'bool': 'boolean',
         'boolean': 'boolean',
+        # path (identity)
+        'path': 'path',
     }
-    return aliases.get(atype, atype)
+    return _ALIASES.get(atype, atype)
 
 # Traditional metrics
 try:
@@ -301,9 +315,8 @@ class NetConfigQAScorer:
         - bool / boolean    → 정규화 비교
         - map_str_int / map → Key-Value F1
         """
-        # Clean prediction with answer_type context
+        # Expects pre-cleaned pred (caller must call clean_prediction beforehand)
         answer_type = canonical_answer_type(answer_type)
-        pred = self.clean_prediction(pred, answer_type)
         gold = self.clean_gold(gold, status=status)
 
         if str(status).strip().upper() == "NOT_CONFIGURED":
@@ -318,8 +331,10 @@ class NetConfigQAScorer:
                 return self._score_map(pred, gold, question_id=question_id)
             elif answer_type in ["boolean"]:
                 return self._score_boolean(pred, gold)
+            elif answer_type in ["path"]:
+                return self._score_path(pred, gold)
             elif answer_type in ["text"]:
-                # Path 감지: "->" 또는 "→"가 gold에 포함되면 ordered match
+                # Path 감지 fallback: answer_type이 text인데 gold에 "->"/"→" 포함
                 if "->" in gold or "→" in gold:
                     return self._score_path(pred, gold)
                 return self._score_text(pred, gold)
@@ -519,8 +534,10 @@ class NetConfigQAScorer:
         legacy_fallback_used = False
         try:
             g_obj = json.loads(gold.replace("'", '"'))
-        except:
-            return {"score": 1.0 if pred.lower() == gold.lower() else 0.0}
+        except Exception:
+            g_obj = self._parse_legacy_map_text(gold, expected_keys=None)
+            if g_obj is None:
+                return {"score": 0.0, "parse_error": "gold_map_unparseable"}
 
         try:
             p_obj = json.loads(pred.replace("'", '"'))
@@ -629,8 +646,8 @@ class NetConfigQAScorer:
         Score boolean answers with normalization.
         논문 정의: bool → 정규화 비교
         """
-        TRUTHY = {"true", "yes", "1", "예"}
-        FALSY = {"false", "no", "0", "아니오", "아니오"}
+        TRUTHY = {"true", "yes", "1", "예", "enabled", "up", "configured", "active", "established"}
+        FALSY = {"false", "no", "0", "아니오", "disabled", "down", "not configured", "inactive"}
 
         pred_lower = pred.strip().lower()
         gold_lower = gold.strip().lower()
