@@ -8,6 +8,8 @@ NetAlly FastAPI Backend
 import os
 import json
 import asyncio
+import threading
+import time as _time
 from typing import List, Optional, Any, Dict, Set, Tuple
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -451,15 +453,24 @@ def _invalidate_runtime() -> None:
     app.state.bound_tool_count = 0
 
 
+_batfish_lock = threading.Lock()
+
+
 def _get_batfish_client():
     from agent.clients.batfish import BatfishClient
 
     desired_host = os.getenv("BATFISH_HOST", "localhost")
     current = getattr(app.state, "batfish_client", None)
-    if current is None or getattr(current, "host", None) != desired_host:
+    if current is not None and getattr(current, "host", None) == desired_host:
+        return current
+    with _batfish_lock:
+        # Double-check after acquiring lock
+        current = getattr(app.state, "batfish_client", None)
+        if current is not None and getattr(current, "host", None) == desired_host:
+            return current
         current = BatfishClient(host=desired_host)
         app.state.batfish_client = current
-    return current
+        return current
 
 
 async def call_mcp_tool(tool_name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -877,9 +888,18 @@ def _runtime_health_batfish() -> Dict[str, Any]:
         return _service_health_payload("error", "error", f"Batfish check failed: {e}")
 
 
+_health_cache: Dict[str, Any] = {}
+_health_cache_ts: float = 0.0
+_HEALTH_CACHE_TTL: float = 5.0
+
+
 @app.get("/api/runtime/health")
 async def runtime_health():
-    """Service-oriented runtime health for degraded-mode UX."""
+    """Service-oriented runtime health for degraded-mode UX (5s TTL cache)."""
+    global _health_cache, _health_cache_ts
+    if _health_cache and (_time.monotonic() - _health_cache_ts) < _HEALTH_CACHE_TTL:
+        return _health_cache
+
     batfish = _runtime_health_batfish()
     nso = await _runtime_health_nso()
     pnetlab = await _runtime_health_pnetlab()
@@ -907,7 +927,7 @@ async def runtime_health():
     if pnetlab.get("status") == "disabled":
         notes.append("PNETLab API auth is disabled. Keep using LabFS backend (recommended).")
 
-    return {
+    result = {
         "status": "ok",
         "overall": overall,
         "recommendedMode": recommended_mode,
@@ -915,6 +935,10 @@ async def runtime_health():
         "services": services,
         "notes": notes,
     }
+    _health_cache.clear()
+    _health_cache.update(result)
+    _health_cache_ts = _time.monotonic()
+    return result
 
 # =============================================================================
 # PNETLab Icon Proxy (for topology replication)
@@ -999,16 +1023,22 @@ async def get_pnetlab_icon(icon_name: str):
     return FileResponse(str(cached), media_type="image/png")
 
 
+_refresh_lock = asyncio.Lock()
+
+
 @app.post("/api/lab/refresh")
 async def lab_refresh(request: LabRefreshRequest):
     """
     PNETLab -> 신규 장비 부트스트랩 (Refresh 버튼용)
     - device_info.json이 없으면 API로 자동 생성
     """
-    status_code, payload = await _run_lab_refresh(request)
-    if status_code >= 400:
-        return JSONResponse(status_code=status_code, content=payload)
-    return payload
+    if _refresh_lock.locked():
+        return JSONResponse(status_code=409, content={"detail": "Refresh already in progress"})
+    async with _refresh_lock:
+        status_code, payload = await _run_lab_refresh(request)
+        if status_code >= 400:
+            return JSONResponse(status_code=status_code, content=payload)
+        return payload
 
 
 @app.post("/api/lab/refresh/stream")
@@ -1017,6 +1047,8 @@ async def lab_refresh_stream(request: LabRefreshRequest):
     Refresh workflow with live progress/log SSE.
     Frontend can open this stream as soon as Refresh starts to show telnet/onboarding progress.
     """
+    if _refresh_lock.locked():
+        return JSONResponse(status_code=409, content={"detail": "Refresh already in progress"})
     headers = {
         "Cache-Control": "no-cache",
         "Connection": "keep-alive",
