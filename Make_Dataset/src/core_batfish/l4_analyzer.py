@@ -175,7 +175,7 @@ class L4AnalyzerMixin:
                         break
                     
                     # Failure Cases - 우선순위와 함께 수집
-                    priority = self.DISPOSITION_PRIORITY.get(normalized_disposition, 99)
+                    priority = DISPOSITION_PRIORITY.get(normalized_disposition, 99)
                     failure_candidates.append((priority, normalized_disposition, current_path))
                 
                 # 성공하지 못한 경우, 가장 중요한 실패 원인 선택
