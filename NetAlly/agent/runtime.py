@@ -19,6 +19,8 @@ from agent.team_multi_bridge import run_team_multi_query
 from agent.tools import get_tools as get_legacy_tools
 
 
+_ANSWER_TYPE_FOOTER = "answer_type: {answer_type}"
+
 DEFAULT_EXECUTOR_PROMPT = """You are NetAlly, a network troubleshooting assistant.
 
 Use available tools to answer the user query with evidence-first reasoning.
@@ -29,8 +31,7 @@ Rules:
 3. Respect the answer_type format strictly.
 4. If information is insufficient, ask for a narrower follow-up question.
 
-answer_type: {answer_type}
-"""
+""" + _ANSWER_TYPE_FOOTER + "\n"
 
 PURE_MAS_PROMPT = """You are NetAlly, a network configuration analysis assistant.
 
@@ -45,8 +46,7 @@ Rules:
 4. Keep the answer concise and respect the answer_type format strictly.
 5. If the configuration context is insufficient, state what is missing.
 
-answer_type: {answer_type}
-"""
+""" + _ANSWER_TYPE_FOOTER + "\n"
 
 
 def _normalize_role(role: str) -> str:
@@ -72,6 +72,16 @@ def _history_to_messages(history: List[Any]) -> List[Any]:
         else:
             messages.append(HumanMessage(content=content))
     return messages
+
+
+def _build_metrics(llm_calls: int, tool_calls: int, tool_errors: int, steps: int, elapsed_ms: float) -> Dict[str, Any]:
+    return {
+        "llm_calls": llm_calls,
+        "tool_calls": tool_calls,
+        "tool_errors": tool_errors,
+        "steps": steps,
+        "total_ms": round(elapsed_ms, 1),
+    }
 
 
 def _stringify_tool_output(payload: Any) -> str:
@@ -204,13 +214,7 @@ class SingleExecutorRuntime:
                 yield {
                     "type": "answer",
                     "content": str(getattr(response, "content", "") or ""),
-                    "metrics": {
-                        "llm_calls": llm_calls,
-                        "tool_calls": total_tool_calls,
-                        "tool_errors": tool_errors,
-                        "steps": step + 1,
-                        "total_ms": round(elapsed_ms, 1),
-                    },
+                    "metrics": _build_metrics(llm_calls, total_tool_calls, tool_errors, step + 1, elapsed_ms),
                 }
                 return
 
@@ -246,13 +250,7 @@ class SingleExecutorRuntime:
         yield {
             "type": "answer",
             "content": "도구 호출 한도 도달, 추가 범위 축소 질의 필요",
-            "metrics": {
-                "llm_calls": llm_calls,
-                "tool_calls": total_tool_calls,
-                "tool_errors": tool_errors,
-                "steps": self.step_limit,
-                "total_ms": round(elapsed_ms, 1),
-            },
+            "metrics": _build_metrics(llm_calls, total_tool_calls, tool_errors, self.step_limit, elapsed_ms),
         }
 
 

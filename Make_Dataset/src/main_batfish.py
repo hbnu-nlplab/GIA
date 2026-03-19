@@ -1058,7 +1058,7 @@ def main():
                     "id": row_id,
                     "id_v2": id_v2,
                     "metric": metric_name,
-                    "scope": scope,
+                    "scope": json.dumps(scope, ensure_ascii=False, default=str),
                     "category": q["category"],
                     "level": q["level"],
                     "question_type": q.get("question_type", "unknown"),

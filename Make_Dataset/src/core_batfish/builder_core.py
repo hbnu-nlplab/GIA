@@ -14,6 +14,18 @@ try:
 except ImportError:
     from ground_truth_contracts import normalize_scope_for_metric
 
+# Answer type constants
+AT_TEXT = "text"
+AT_SET_STR = "set_str"
+AT_SCALAR_INT = "scalar_int"
+AT_SCALAR_STR = "scalar_str"
+AT_BOOL = "bool"
+AT_MAP_STR_INT = "map_str_int"
+AT_MAP_STR_STR = "map_str_str"
+AT_PATH = "path"
+AT_NUMBER = "number"
+AT_ERROR = "error"
+
 METRIC_OUTPUT_TYPE: Dict[str, str] = {
     "compare_bgp_neighbor_count": "map_str_int",
     "compare_interface_count": "map_str_int",
@@ -512,7 +524,7 @@ class BuilderCore:
             operator = intent.get("operator")
 
             if not all([metric, len(scopes) >= 2, operator]):
-                return "error", {"error": "Invalid comparison intent schema"}
+                return AT_ERROR, {"error": "Invalid comparison intent schema"}
 
             # 각 scope에 대해 _answer_for_metric을 호출하여 값들을 수집
             values = []
@@ -533,7 +545,7 @@ class BuilderCore:
         # (향후 다른 복합 intent type 추가 가능, 예: 'causality')
 
         # 처리할 수 없는 타입이면 에러 반환
-        return "error", {"error": f"Unknown composite intent type: {intent_type}"}
+        return AT_ERROR, {"error": f"Unknown composite intent type: {intent_type}"}
 
     # ---------- DSL 지원: metric → expected_answer 계산 ----------
     def _answer_for_metric(self, metric: str, scope: Dict[str,Any], pre: Dict[str,Any]) -> tuple[str, Any]:
@@ -550,16 +562,16 @@ class BuilderCore:
             host = scope.get("host")
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
-                return "text", self._hostname(d)
-            return "text", ""
+                return AT_TEXT, self._hostname(d)
+            return AT_TEXT, ""
 
         elif metric == "logging_buffered_severity_text":
             host = scope.get("host")
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
                 val = ((d.get("logging") or {}).get("buffered_severity"))
-                return "text", val or ""
-            return "text", ""
+                return AT_TEXT, val or ""
+            return AT_TEXT, ""
         
         # ---- New L1 metrics: NTP, SNMP, Syslog ----
         elif metric == "ntp_server_list":
@@ -570,9 +582,9 @@ class BuilderCore:
                 ntp = (d.get("services") or {}).get("ntp") or {}
                 servers = ntp.get("servers") or []
                 if isinstance(servers, list):
-                    return "set_str", sorted([str(s.get("address") if isinstance(s, dict) else s) for s in servers if s])
-                return "set_str", []
-            return "set_str", []
+                    return AT_SET_STR, sorted([str(s.get("address") if isinstance(s, dict) else s) for s in servers if s])
+                return AT_SET_STR, []
+            return AT_SET_STR, []
         
         elif metric == "snmp_community_list":
             host = scope.get("host")
@@ -590,9 +602,9 @@ class BuilderCore:
                                 result.append(str(name))
                         elif isinstance(c, str):
                             result.append(c)
-                    return "set_str", sorted(set(result))
-                return "set_str", []
-            return "set_str", []
+                    return AT_SET_STR, sorted(set(result))
+                return AT_SET_STR, []
+            return AT_SET_STR, []
         
         elif metric == "syslog_server_list":
             host = scope.get("host")
@@ -610,23 +622,23 @@ class BuilderCore:
                                 result.append(str(addr))
                         elif isinstance(s, str):
                             result.append(s)
-                    return "set_str", sorted(set(result))
-                return "set_str", []
-            return "set_str", []
+                    return AT_SET_STR, sorted(set(result))
+                return AT_SET_STR, []
+            return AT_SET_STR, []
         elif metric == "vty_login_mode_text":
             host = scope.get("host")
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
                 vty = ((d.get("line") or {}).get("vty") or {})
-                return "text", (vty.get("login_mode") or "")
-            return "text", ""
+                return AT_TEXT, (vty.get("login_mode") or "")
+            return AT_TEXT, ""
         elif metric == "vty_transport_input_text":
             host = scope.get("host")
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
                 vty = ((d.get("line") or {}).get("vty") or {})
-                return "text", (vty.get("transport_input") or "")
-            return "text", ""
+                return AT_TEXT, (vty.get("transport_input") or "")
+            return AT_TEXT, ""
 
         # --- Additional L1 Metrics (Implemented in Phase 3) ---
         elif metric == "banner_motd_content":
@@ -634,48 +646,48 @@ class BuilderCore:
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
                 val = d.get("configuration", {}).get("security", {}).get("banner_motd")
-                return "text", val or ""
-            return "text", ""
+                return AT_TEXT, val or ""
+            return AT_TEXT, ""
         
         elif metric == "banner_login_content":
             host = scope.get("host")
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
                 val = d.get("configuration", {}).get("security", {}).get("banner_login")
-                return "text", val or ""
-            return "text", ""
+                return AT_TEXT, val or ""
+            return AT_TEXT, ""
 
         elif metric == "console_password_val":
              host = scope.get("host")
              for d in self.devices:
                  if host and self._hostname(d) != host: continue
                  val = d.get("configuration", {}).get("security", {}).get("console_password")
-                 return "text", val or ""
-             return "text", ""
+                 return AT_TEXT, val or ""
+             return AT_TEXT, ""
 
         elif metric == "exec_timeout_val":
              host = scope.get("host")
              for d in self.devices:
                  if host and self._hostname(d) != host: continue
                  val = d.get("configuration", {}).get("security", {}).get("exec_timeout")
-                 return "text", val or ""
-             return "text", ""
+                 return AT_TEXT, val or ""
+             return AT_TEXT, ""
 
         elif metric == "dns_servers_list":
              host = scope.get("host")
              for d in self.devices:
                  if host and self._hostname(d) != host: continue
                  val = d.get("configuration", {}).get("operational", {}).get("name_servers")
-                 return "set_str", sorted(val) if isinstance(val, list) else []
-             return "set_str", []
+                 return AT_SET_STR, sorted(val) if isinstance(val, list) else []
+             return AT_SET_STR, []
 
         elif metric == "ip_source_route_config":
              host = scope.get("host")
              for d in self.devices:
                  if host and self._hostname(d) != host: continue
                  val = d.get("configuration", {}).get("security", {}).get("ip_source_route")
-                 return "text", "Enabled" if val else "Disabled"
-             return "text", "Disabled"
+                 return AT_TEXT, "Enabled" if val else "Disabled"
+             return AT_TEXT, "Disabled"
 
         elif metric == "vlan_interface_devices":
             hosts = set()
@@ -683,23 +695,23 @@ class BuilderCore:
                 for i in (d.get("interfaces") or []):
                     if "Vlan" in i.get("name", ""):
                         hosts.add(self._hostname(d))
-            return "set_str", sorted(list(hosts))
+            return AT_SET_STR, sorted(hosts)
 
         elif metric == "system_version_text":
             host = scope.get("host")
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
                 val = (d.get("system") or {}).get("version") or ""
-                return "text", val
-            return "text", ""
+                return AT_TEXT, val
+            return AT_TEXT, ""
 
         elif metric == "system_timezone_text":
             host = scope.get("host")
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
                 val = (d.get("system") or {}).get("timezone") or ""
-                return "text", val
-            return "text", ""
+                return AT_TEXT, val
+            return AT_TEXT, ""
 
         elif metric == "system_user_list":
             host = scope.get("host")
@@ -715,8 +727,8 @@ class BuilderCore:
                     elif isinstance(u, str):
                         names.append(u)
                 names = [n for n in names if n]
-                return "set_str", sorted(set(names))
-            return "set_str", []
+                return AT_SET_STR, sorted(set(names))
+            return AT_SET_STR, []
 
         elif metric == "system_user_count":
             host = scope.get("host")
@@ -731,16 +743,16 @@ class BuilderCore:
                             names.add(nm)
                     elif isinstance(u, str) and u:
                         names.add(u)
-                return "scalar_int", len(names)
-            return "scalar_int", 0
+                return AT_SCALAR_INT, len(names)
+            return AT_SCALAR_INT, 0
 
         elif metric == "ssh_version_text":
             host = scope.get("host")
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
                 val = ((d.get("security") or {}).get("ssh") or {}).get("version")
-                return "text", str(val) if val is not None else ""
-            return "text", ""
+                return AT_TEXT, str(val) if val is not None else ""
+            return AT_TEXT, ""
 
         elif metric == "aaa_authentication_method":
             host = scope.get("host")
@@ -751,8 +763,8 @@ class BuilderCore:
                 method = aaa_info.get("method") or aaa_info.get("authentication_method")
                 if not method and aaa_info.get("present"):
                     method = "local"  # Default to local if AAA is present but method not specified
-                return "text", method if method else ""
-            return "text", ""
+                return AT_TEXT, method if method else ""
+            return AT_TEXT, ""
 
         elif metric == "mpls_ldp_router_id":
             host = scope.get("host")
@@ -764,7 +776,7 @@ class BuilderCore:
                 # Extract router-id from LDP configuration
                 router_id = ldp_info.get("router_id") or mpls.get("ldp_router_id")
                 if router_id:
-                    return "text", str(router_id)
+                    return AT_TEXT, str(router_id)
                 # If no explicit router-id, check if LDP is enabled and return loopback IP
                 if ldp_info or mpls.get("ldp_interfaces") or mpls.get("ldp_enabled"):
                     # Try to get loopback0 IP as fallback
@@ -772,17 +784,17 @@ class BuilderCore:
                         if iface.get("name", "").lower().startswith("loopback0"):
                             ip = iface.get("ipv4") or iface.get("ip")
                             if ip:
-                                return "text", ip.split("/")[0]  # Remove CIDR notation
-                return "text", "미설정"
-            return "text", "미설정"
+                                return AT_TEXT, ip.split("/")[0]  # Remove CIDR notation
+                return AT_TEXT, "미설정"
+            return AT_TEXT, "미설정"
 
         elif metric == "interface_count":
             host = scope.get("host")
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
                 arr = d.get("interfaces") or []
-                return "scalar_int", len(arr)
-            return "scalar_int", 0
+                return AT_SCALAR_INT, len(arr)
+            return AT_SCALAR_INT, 0
 
         elif metric == "interface_ip_map":
             host = scope.get("host")
@@ -793,8 +805,8 @@ class BuilderCore:
                     name=i.get("name") or i.get("id") or ""
                     ip  =(i.get("ipv4") or i.get("ip") or "")
                     if name: mp[name]=ip
-                return "map_str_str", mp
-            return "map_str_str", {}
+                return AT_MAP_STR_STR, mp
+            return AT_MAP_STR_STR, {}
 
         elif metric == "subinterface_count":
             host = scope.get("host")
@@ -802,8 +814,8 @@ class BuilderCore:
                 if host and self._hostname(d) != host: continue
                 c = sum(1 for i in (d.get("interfaces") or []) if "." in (i.get("name") or ""))
                 
-                return "scalar_int", c
-            return "scalar_int", 0
+                return AT_SCALAR_INT, c
+            return AT_SCALAR_INT, 0
 
         elif metric == "vrf_bind_map":
             host = scope.get("host")
@@ -815,8 +827,8 @@ class BuilderCore:
                     vrf = i.get("vrf") or i.get("l3vrf")
                     if name:
                         mp[name] = vrf if vrf else "default"
-                return "map_str_str", mp
-            return "map_str_str", {}
+                return AT_MAP_STR_STR, mp
+            return AT_MAP_STR_STR, {}
 
         elif metric == "bgp_local_as_numeric":
             host = scope.get("host")
@@ -824,10 +836,10 @@ class BuilderCore:
                 if host and self._hostname(d) != host: continue
                 las = ((d.get("routing") or {}).get("bgp") or {}).get("local_as")
                 try:
-                    return "scalar_int", int(las) if las is not None else 0
+                    return AT_SCALAR_INT, int(las) if las is not None else 0
                 except Exception:
-                    return "scalar_int", 0
-            return "scalar_int", 0
+                    return AT_SCALAR_INT, 0
+            return AT_SCALAR_INT, 0
 
         elif metric == "bgp_neighbor_count":
             host = scope.get("host")
@@ -843,8 +855,8 @@ class BuilderCore:
                     for n in (v.get("neighbors") or []):
                         pid = n.get("id") or n.get("ip")
                         if pid: peers.add(pid)
-                return "scalar_int", len(peers)
-            return "scalar_int", 0
+                return AT_SCALAR_INT, len(peers)
+            return AT_SCALAR_INT, 0
 
         elif metric == "ospf_process_ids_set":
             host = scope.get("host")
@@ -855,8 +867,8 @@ class BuilderCore:
                 for pid in (ospf.get("process_ids") or []):
                     s.add(str(pid))
 
-                return "set_str", sorted(s)
-            return "set_str", []
+                return AT_SET_STR, sorted(s)
+            return AT_SET_STR, []
 
         elif metric == "ospf_area_set":
             host = scope.get("host")
@@ -873,8 +885,8 @@ class BuilderCore:
                         if isinstance(area, dict):
                             aid = area.get("id") or area.get("area")
                             if aid is not None: s.add(str(aid))
-                return "set_str", sorted(s)
-            return "set_str", []
+                return AT_SET_STR, sorted(s)
+            return AT_SET_STR, []
 
         elif metric == "vrf_names_set":
             host = scope.get("host")
@@ -888,15 +900,15 @@ class BuilderCore:
                 for iface in d.get("interfaces") or []:
                     vrf_name = iface.get("vrf") or iface.get("l3vrf")
                     if vrf_name: s.add(vrf_name)
-                return "set_str", sorted(s)
-            return "set_str", []
+                return AT_SET_STR, sorted(s)
+            return AT_SET_STR, []
 
         elif metric == "vrf_count":
             host = scope.get("host")
             for d in self.devices:
                 if host and self._hostname(d) != host: continue
-                return "scalar_int", self._count_vrfs_total(d)
-            return "scalar_int", 0
+                return AT_SCALAR_INT, self._count_vrfs_total(d)
+            return AT_SCALAR_INT, 0
 
         elif metric == "vrf_rd_map":
             host = scope.get("host")
@@ -908,8 +920,8 @@ class BuilderCore:
                     nm = v.get("name"); rd = v.get("rd")
                     if nm:
                         mp[nm] = rd or ""
-                return "map_str_str", mp
-            return "map_str_str", {}
+                return AT_MAP_STR_STR, mp
+            return AT_MAP_STR_STR, {}
 
         elif metric == "rt_import_count":
             host = scope.get("host")
@@ -919,8 +931,8 @@ class BuilderCore:
                 c = 0
                 for v in self._merged_bgp_vrfs_for_rt(d):
                     c += len(v.get("rt_import", []) or [])
-                return "scalar_int", c
-            return "scalar_int", 0
+                return AT_SCALAR_INT, c
+            return AT_SCALAR_INT, 0
 
         elif metric == "rt_export_count": 
             host = scope.get("host")
@@ -929,8 +941,8 @@ class BuilderCore:
                 c=0
                 for v in self._merged_bgp_vrfs_for_rt(d):
                     c += len(v.get("rt_export", []) or [])
-                return "scalar_int", c
-            return "scalar_int", 0
+                return AT_SCALAR_INT, c
+            return AT_SCALAR_INT, 0
 
         elif metric == "l2vpn_pw_id_set":
             host = scope.get("host")
@@ -941,8 +953,8 @@ class BuilderCore:
                 for xc in self._l2vpns(d):
                     if xc.get("pw_id") is not None:
                         s.add(str(xc.get("pw_id")))
-                return "set_str", sorted(s)
-            return "set_str", []
+                return AT_SET_STR, sorted(s)
+            return AT_SET_STR, []
 
         elif metric in ("neighbor_list_ibgp","neighbor_list_ebgp"):
             host = scope.get("host")
@@ -967,81 +979,81 @@ class BuilderCore:
                             continue
                         if (str(ras) == str(las)) == want_ibgp:
                             peers.add(pid)
-                return "set_str", sorted(peers)
-            return "set_str", []
+                return AT_SET_STR, sorted(peers)
+            return AT_SET_STR, []
 
         elif metric == "vrf_interface_bind_count":
             host = scope.get("host"); vrf = scope.get("vrf")
             cnt = 0
             if not vrf:
-                return "scalar_int", 0  # VRF 미지정이면 0
+                return AT_SCALAR_INT, 0  # VRF 미지정이면 0
             for d in self.devices:
                 if host and (d.get("system",{}).get("hostname") != host):
                     continue
                 for iface in (d.get("interfaces") or []):
                     if (iface.get("vrf") or iface.get("l3vrf")) == vrf:
                         cnt += 1
-            return "scalar_int", cnt
+            return AT_SCALAR_INT, cnt
 
 
         elif metric == "ibgp_fullmesh_ok":
             asn = scope.get("asn")
             miss = pre["bgp_missing_pairs_by_as"].get(asn, set())
             if len(miss) == 0:
-                return "text", "OK"
+                return AT_TEXT, "OK"
             else:
                 # 누락된 피어링 목록 표시 (최대 5개)
-                miss_list = sorted(list(miss))[:5]
+                miss_list = sorted(miss)[:5]
                 miss_str = ", ".join(miss_list)
                 if len(miss) > 5:
                     miss_str += f" and {len(miss) - 5} more"
-                return "text", f"Missing: {miss_str}"
+                return AT_TEXT, f"Missing: {miss_str}"
         elif metric == "ibgp_missing_pairs":
             asn = scope.get("asn")
-            miss = sorted(list(pre["bgp_missing_pairs_by_as"].get(asn, set())))
-            return "set_str", miss
+            miss = sorted(pre["bgp_missing_pairs_by_as"].get(asn, set()))
+            return AT_SET_STR, miss
         elif metric == "ibgp_missing_pairs_count":
             asn = scope.get("asn")
             miss = pre["bgp_missing_pairs_by_as"].get(asn, set())
-            return "scalar_int", len(miss)
+            return AT_SCALAR_INT, len(miss)
         elif metric == "ibgp_under_peered_devices":
             asn = scope.get("asn")
-            under = sorted(list(pre["bgp_under_by_as"].get(asn, set())))
-            return "set_str", under
+            under = sorted(pre["bgp_under_by_as"].get(asn, set()))
+            return AT_SET_STR, under
         elif metric == "ibgp_under_peered_count":
             asn = scope.get("asn")
             under = pre["bgp_under_by_as"].get(asn, set())
-            return "scalar_int", len(under)
+            return AT_SCALAR_INT, len(under)
 
         elif metric == "vrf_without_rt_pairs":
-            return "set_str", sorted(list(pre["vrf_without_rt_pairs"]))
+            return AT_SET_STR, sorted(pre["vrf_without_rt_pairs"])
         elif metric == "vrf_without_rt_count":
-            return "scalar_int", len(pre["vrf_without_rt_pairs"])
+            return AT_SCALAR_INT, len(pre["vrf_without_rt_pairs"])
         elif metric == "vrf_rt_list_per_device":
             host = scope.get("host")
             d = self.host_index.get(host)
-            if not d: return "set_str", []
+            if not d: return AT_SET_STR, []
             rts: List[str] = []
             for v in self._services_vrf(d):
                 if v.get("route_targets"):
                     rts.extend(v.get("route_targets"))
-            return "set_str", sorted(list(set(rts)))
+            return AT_SET_STR, sorted(set(rts))
 
         elif metric == "l2vpn_pairs":
-            return "set_str", sorted(list(pre["l2vpn_pairs"]))
+            return AT_SET_STR, sorted(pre["l2vpn_pairs"])
         elif metric == "l2vpn_unidirectional_pairs":
-            return "set_str", sorted(list(pre["l2vpn_unidir"]))
+            return AT_SET_STR, sorted(pre["l2vpn_unidir"])
         elif metric == "l2vpn_unidir_count":
-            return "scalar_int", len(pre["l2vpn_unidir"]) 
+            return AT_SCALAR_INT, len(pre["l2vpn_unidir"]) 
         elif metric == "l2vpn_pwid_mismatch_pairs":
-            return "set_str", sorted(list(pre["l2vpn_mismatch"]))
+            return AT_SET_STR, sorted(pre["l2vpn_mismatch"])
         elif metric == "l2vpn_mismatch_count":
-            return "scalar_int", len(pre["l2vpn_mismatch"]) 
+            return AT_SCALAR_INT, len(pre["l2vpn_mismatch"]) 
 
         elif metric == "ospf_area0_if_list":
             host = scope.get("host")
             d = self.host_index.get(host)
-            if not d: return "set_str", []
+            if not d: return AT_SET_STR, []
             areas = self._ospf(d).get("areas",{}) or {}
             if isinstance(areas, dict):
                 intfs = areas.get("0") or areas.get(0) or []
@@ -1053,11 +1065,11 @@ class BuilderCore:
                         break
             else:
                 intfs = []
-            return "set_str", sorted(intfs)
+            return AT_SET_STR, sorted(intfs)
         elif metric == "ospf_area0_if_count":
             host = scope.get("host")
             d = self.host_index.get(host)
-            if not d: return "scalar_int", 0
+            if not d: return AT_SCALAR_INT, 0
             areas = self._ospf(d).get("areas",{}) or {}
             if isinstance(areas, dict):
                 intfs = areas.get("0") or areas.get(0) or []
@@ -1069,23 +1081,23 @@ class BuilderCore:
                         break
             else:
                 intfs = []
-            return "scalar_int", len(intfs)
+            return AT_SCALAR_INT, len(intfs)
         elif metric == "ssh_enabled_devices":
-            return "set_str", sorted(list(pre["ssh_enabled"]))
+            return AT_SET_STR, sorted(pre["ssh_enabled"])
         elif metric == "ssh_missing_devices":
-            return "set_str", sorted(list(pre["ssh_missing"]))
+            return AT_SET_STR, sorted(pre["ssh_missing"])
         elif metric == "ssh_missing_count":
-            return "scalar_int", len(pre["ssh_missing"])
+            return AT_SCALAR_INT, len(pre["ssh_missing"])
         elif metric == "aaa_enabled_devices":
-            return "set_str", sorted(list(pre["aaa_enabled"]))
+            return AT_SET_STR, sorted(pre["aaa_enabled"])
         elif metric == "aaa_missing_devices":
-            return "set_str", sorted(list(pre["aaa_missing"]))
+            return AT_SET_STR, sorted(pre["aaa_missing"])
         
         # ---- New L2 metrics: devices_with_same_vrf, ospf_area_membership ----
         elif metric == "devices_with_same_vrf":
             vrf_name = scope.get("vrf")
             if not vrf_name:
-                return "set_str", []
+                return AT_SET_STR, []
             devices_with_vrf = set()
             for d in self.devices:
                 host = self._hostname(d)
@@ -1104,12 +1116,12 @@ class BuilderCore:
                     if (iface.get("vrf") or iface.get("l3vrf")) == vrf_name:
                         devices_with_vrf.add(host)
                         break
-            return "set_str", sorted(devices_with_vrf)
+            return AT_SET_STR, sorted(devices_with_vrf)
         
         elif metric == "ospf_area_membership":
             area_id = scope.get("area")
             if area_id is None:
-                return "set_str", []
+                return AT_SET_STR, []
             area_str = str(area_id)
             devices_in_area = set()
             for d in self.devices:
@@ -1126,7 +1138,7 @@ class BuilderCore:
                             if str(aid) == area_str:
                                 devices_in_area.add(host)
                                 break
-            return "set_str", sorted(devices_in_area)
+            return AT_SET_STR, sorted(devices_in_area)
         elif metric == "find_alternative_path":
             dl = scope.get("down_link") or scope.get("link")
             if isinstance(dl, (list, tuple)) and len(dl) == 2:
@@ -1143,7 +1155,7 @@ class BuilderCore:
             cnt1 = self._count_bgp_neighbors_total(d1) if d1 else 0
             cnt2 = self._count_bgp_neighbors_total(d2) if d2 else 0
             diff = abs(cnt1 - cnt2)
-            return "map_str_int", {"host1_count": cnt1, "host2_count": cnt2, "difference": diff}
+            return AT_MAP_STR_INT, {"host1_count": cnt1, "host2_count": cnt2, "difference": diff}
         
         elif metric == "compare_interface_count":
             host1 = scope.get("host1")
@@ -1153,7 +1165,7 @@ class BuilderCore:
             cnt1 = len(d1.get("interfaces") or []) if d1 else 0
             cnt2 = len(d2.get("interfaces") or []) if d2 else 0
             diff = abs(cnt1 - cnt2)
-            return "map_str_int", {"host1_count": cnt1, "host2_count": cnt2, "difference": diff}
+            return AT_MAP_STR_INT, {"host1_count": cnt1, "host2_count": cnt2, "difference": diff}
         
         elif metric == "compare_vrf_count":
             host1 = scope.get("host1")
@@ -1163,7 +1175,7 @@ class BuilderCore:
             cnt1 = self._count_vrfs_total(d1) if d1 else 0
             cnt2 = self._count_vrfs_total(d2) if d2 else 0
             diff = abs(cnt1 - cnt2)
-            return "map_str_int", {"host1_count": cnt1, "host2_count": cnt2, "difference": diff}
+            return AT_MAP_STR_INT, {"host1_count": cnt1, "host2_count": cnt2, "difference": diff}
         
         elif metric == "compare_bgp_as":
             host1 = scope.get("host1")
@@ -1171,12 +1183,12 @@ class BuilderCore:
             d1 = self.host_index.get(host1)
             d2 = self.host_index.get(host2)
             if not d1 or not d2:
-                return "text", f"{host1}: No Info, {host2}: No Info"
+                return AT_TEXT, f"{host1}: No Info, {host2}: No Info"
             as1 = self._bgp_local_as(d1)
             as2 = self._bgp_local_as(d2)
             as1_str = str(as1) if as1 is not None else "N/A"
             as2_str = str(as2) if as2 is not None else "N/A"
-            return "text", f"{host1}: AS {as1_str}, {host2}: AS {as2_str}"
+            return AT_TEXT, f"{host1}: AS {as1_str}, {host2}: AS {as2_str}"
         
         elif metric == "compare_ospf_areas":
             host1 = scope.get("host1")
@@ -1184,7 +1196,7 @@ class BuilderCore:
             d1 = self.host_index.get(host1)
             d2 = self.host_index.get(host2)
             if not d1 or not d2:
-                return "text", f"{host1}: No Info, {host2}: No Info"
+                return AT_TEXT, f"{host1}: No Info, {host2}: No Info"
             def _extract_area_ids(ospf_data):
                 areas = ospf_data.get("areas") or {}
                 if isinstance(areas, dict):
@@ -1201,7 +1213,7 @@ class BuilderCore:
             areas2 = _extract_area_ids(self._ospf(d2))
             areas1_str = ", ".join(sorted(areas1)) if areas1 else "None"
             areas2_str = ", ".join(sorted(areas2)) if areas2 else "None"
-            return "text", f"{host1}: Area {areas1_str}, {host2}: Area {areas2_str}"
+            return AT_TEXT, f"{host1}: Area {areas1_str}, {host2}: Area {areas2_str}"
         
         elif metric == "max_interface_device":
             max_count = -1
@@ -1212,8 +1224,8 @@ class BuilderCore:
                     max_count = cnt
                     max_host = self._hostname(d)
             if max_host:
-                return "text", f"{max_host}: {max_count}"
-            return "text", "No Info"
+                return AT_TEXT, f"{max_host}: {max_count}"
+            return AT_TEXT, "No Info"
         
         elif metric == "max_bgp_peer_device":
             max_count = -1
@@ -1224,8 +1236,8 @@ class BuilderCore:
                     max_count = cnt
                     max_host = self._hostname(d)
             if max_host:
-                return "text", f"{max_host}: {max_count}"
-            return "text", "No Info"
+                return AT_TEXT, f"{max_host}: {max_count}"
+            return AT_TEXT, "No Info"
         
         elif metric == "all_devices_same_as":
             as_info = []
@@ -1235,7 +1247,7 @@ class BuilderCore:
                 as_value = las if las is not None else "N/A"
                 as_info.append(f"{host}: AS {as_value}")
             info_str = ", ".join(as_info) if as_info else "No Info"
-            return "text", info_str
+            return AT_TEXT, info_str
 
         # ---- New L1 metrics ----
         elif metric == "interface_status_map":
@@ -1248,8 +1260,8 @@ class BuilderCore:
                     status = i.get("status") or i.get("state") or "unknown"
                     if name:
                         status_map[name] = status
-                return "map_str_str", status_map
-            return "map_str_str", {}
+                return AT_MAP_STR_STR, status_map
+            return AT_MAP_STR_STR, {}
 
         elif metric == "routing_table_entry_count":
             host = scope.get("host")
@@ -1266,36 +1278,36 @@ class BuilderCore:
                         connected_count += 1
                 
                 total_entries = static_count + connected_count
-                return "number", total_entries
-            return "number", 0
+                return AT_NUMBER, total_entries
+            return AT_NUMBER, 0
 
         # ---- New L2 metrics ----
         elif metric == "devices_in_as":
             asn = scope.get("asn")
             if not asn:
-                return "set_str", []
+                return AT_SET_STR, []
             devices_in_as = set()
             for d in self.devices:
                 las = self._bgp_local_as(d)
                 if str(las) == str(asn):
                     devices_in_as.add(self._hostname(d))
-            return "set_str", sorted(devices_in_as)
+            return AT_SET_STR, sorted(devices_in_as)
 
         elif metric == "interfaces_in_vrf":
             vrf_name = scope.get("vrf")
             if not vrf_name:
-                return "number", 0
+                return AT_NUMBER, 0
             count = 0
             for d in self.devices:
                 for iface in d.get("interfaces", []):
                     if iface.get("vrf") == vrf_name or iface.get("l3vrf") == vrf_name:
                         count += 1
-            return "number", count
+            return AT_NUMBER, count
 
         elif metric == "ospf_neighbor_count_per_area":
             area_id = scope.get("area")
             if area_id is None:
-                return "number", 0
+                return AT_NUMBER, 0
             total_neighbors = 0
             for d in self.devices:
                 ospf = self._ospf(d)
@@ -1309,7 +1321,7 @@ class BuilderCore:
                         if isinstance(area, dict) and (area.get("id") == area_id or area.get("area") == area_id):
                             total_neighbors += len(area.get("neighbors", []))
                             break
-            return "number", total_neighbors
+            return AT_NUMBER, total_neighbors
 
         # ---- New L3 metrics ----
         elif metric == "min_interface_device":
@@ -1321,8 +1333,8 @@ class BuilderCore:
                     min_count = cnt
                     min_host = self._hostname(d)
             if min_host:
-                return "text", f"{min_host}: {min_count}"
-            return "text", "No Info"
+                return AT_TEXT, f"{min_host}: {min_count}"
+            return AT_TEXT, "No Info"
 
         elif metric == "bgp_as_distribution":
             as_counts = {}
@@ -1332,7 +1344,7 @@ class BuilderCore:
                     as_counts[las] = as_counts.get(las, 0) + 1
             # 형식: 'AS X: N대, AS Y: M대'
             dist_parts = [f"AS {asn}: {cnt} devices" for asn, cnt in sorted(as_counts.items())]
-            return "text", ", ".join(dist_parts) if dist_parts else "No Info"
+            return AT_TEXT, ", ".join(dist_parts) if dist_parts else "No Info"
 
         elif metric == "vrf_usage_statistics":
             vrf_stats = {}
@@ -1344,7 +1356,7 @@ class BuilderCore:
                 vrf_stats[host] = vrf_count  # 0개도 포함
             # 형식: '장비1: N개, 장비2: M개' (policies.json 예시와 일치)
             stats_parts = [f"{host}: {cnt}개" for host, cnt in sorted(vrf_stats.items())]
-            return "text", ", ".join(stats_parts) if stats_parts else "No Info"
+            return AT_TEXT, ", ".join(stats_parts) if stats_parts else "No Info"
 
         # =========================================================
         # NEW L1 Configuration Metrics (Extracted from Text)
@@ -1354,47 +1366,47 @@ class BuilderCore:
         elif metric == "password_encryption_config":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("security") or {}).get("password_encryption")
-            return "text", "Enabled" if val else "Disabled"
+            return AT_TEXT, "Enabled" if val else "Disabled"
             
         elif metric == "enable_secret_type":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("security") or {}).get("enable_secret")
-            return "text", str(val) if val else "Not Configured"
+            return AT_TEXT, str(val) if val else "Not Configured"
 
         elif metric == "console_password_config":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("security") or {}).get("console_password")
-            return "text", str(val) if val and val != "None" else "Not Configured"
+            return AT_TEXT, str(val) if val and val != "None" else "Not Configured"
 
         elif metric == "exec_timeout_config":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("security") or {}).get("exec_timeout")
-            return "text", str(val) if val and val != "None" else "Not Configured"
+            return AT_TEXT, str(val) if val and val != "None" else "Not Configured"
 
         elif metric == "banner_motd_config":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("security") or {}).get("banner_motd")
-            return "text", "Configured" if val and val != "None" else "Not Configured"
+            return AT_TEXT, "Configured" if val and val != "None" else "Not Configured"
 
         elif metric == "banner_login_config":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("security") or {}).get("banner_login")
-            return "text", "Configured" if val and val != "None" else "Not Configured"
+            return AT_TEXT, "Configured" if val and val != "None" else "Not Configured"
 
         elif metric == "http_server_config":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("security") or {}).get("http_server")
-            return "text", "Enabled" if val else "Disabled"
+            return AT_TEXT, "Enabled" if val else "Disabled"
 
         elif metric == "cdp_config":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("security") or {}).get("cdp")
-            return "text", "Enabled" if val else "Disabled"
+            return AT_TEXT, "Enabled" if val else "Disabled"
 
         elif metric == "source_route_config":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("security") or {}).get("ip_source_route")
-            return "text", "Enabled" if val else "Disabled"
+            return AT_TEXT, "Enabled" if val else "Disabled"
 
         # --- Operational ---
         elif metric == "ntp_servers_list": # Replaces/augments old ntp_server_list
@@ -1409,7 +1421,7 @@ class BuilderCore:
                     if addr: result.append(str(addr))
                 elif s:
                     result.append(str(s))
-            return "set_str", sorted(set(result))
+            return AT_SET_STR, sorted(set(result))
 
         elif metric == "syslog_servers_list":
             host = scope.get("host")
@@ -1423,12 +1435,12 @@ class BuilderCore:
                     if addr: result.append(str(addr))
                 elif s:
                     result.append(str(s))
-            return "set_str", sorted(set(result))
+            return AT_SET_STR, sorted(set(result))
 
         elif metric == "snmp_server_communities":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("operational") or {}).get("snmp_communities") or []
-            return "set_str", sorted(list(set(str(s) for s in val)))
+            return AT_SET_STR, sorted(set(str(s) for s in val))
 
         elif metric == "loopback_interfaces_list":
             host = scope.get("host")
@@ -1439,18 +1451,18 @@ class BuilderCore:
                 m = re.search(r'[Ll]oopback(\d+)', str(s))
                 if m:
                     result.append(m.group(0))
-            return "set_str", sorted(list(set(result))) if result else []
+            return AT_SET_STR, sorted(set(result)) if result else []
 
         elif metric == "name_servers_list":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("operational") or {}).get("name_servers") or []
-            return "set_str", sorted(list(set(str(s) for s in val)))
+            return AT_SET_STR, sorted(set(str(s) for s in val))
             
         # --- Routing ---
         elif metric == "active_ospf_processes":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("routing") or {}).get("ospf_processes") or []
-            return "set_str", sorted(list(set(str(s) for s in val)))
+            return AT_SET_STR, sorted(set(str(s) for s in val))
 
         elif metric == "configured_bgp_as_numbers":
             host = scope.get("host")
@@ -1458,90 +1470,90 @@ class BuilderCore:
             d = self.host_index.get(host, {})
             las = self._bgp_local_as(d)
             if las:
-                return "text", str(las)
+                return AT_TEXT, str(las)
             val = ((d.get("configuration") or {}).get("routing") or {}).get("bgp_as")
             if isinstance(val, (list, tuple)) and val:
-                return "text", str(val[0])
+                return AT_TEXT, str(val[0])
             elif val:
-                return "text", str(val)
-            return "text", "Not Configured"
+                return AT_TEXT, str(val)
+            return AT_TEXT, "Not Configured"
 
         elif metric == "mpls_ldp_config":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("routing") or {}).get("mpls_ldp_enabled")
-            return "text", "Enabled" if val else "Disabled"
+            return AT_TEXT, "Enabled" if val else "Disabled"
 
         # NOTE: mpls_ldp_router_id dead code removed — handled by earlier elif at L742
 
         elif metric == "default_route_next_hops":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("routing") or {}).get("default_route_next_hops") or []
-            return "set_str", sorted(list(set(str(s) for s in val)))
+            return AT_SET_STR, sorted(set(str(s) for s in val))
 
         elif metric == "static_route_count":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("routing") or {}).get("static_routes_count")
-            return "number", val if val is not None else 0
+            return AT_NUMBER, val if val is not None else 0
 
         # --- Advanced / ACL ---
         elif metric == "acl_configured_count":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("acls_count")
-            return "number", val if val is not None else 0
+            return AT_NUMBER, val if val is not None else 0
 
         elif metric == "acl_applied_interfaces_list":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("acl_interfaces") or []
-            return "set_str", sorted(list(set(str(s) for s in val)))
+            return AT_SET_STR, sorted(set(str(s) for s in val))
 
         elif metric == "prefix_list_count":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("prefix_lists_count")
-            return "number", val if val is not None else 0
+            return AT_NUMBER, val if val is not None else 0
 
         elif metric == "route_map_count":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("route_maps_count")
-            return "number", val if val is not None else 0
+            return AT_NUMBER, val if val is not None else 0
 
         elif metric == "qos_class_maps_list":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("class_maps") or []
-            return "set_str", sorted(list(set(str(s) for s in val)))
+            return AT_SET_STR, sorted(set(str(s) for s in val))
 
         elif metric == "netflow_monitors_list":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("netflow_monitors") or []
-            return "set_str", sorted(list(set(str(s) for s in val)))
+            return AT_SET_STR, sorted(set(str(s) for s in val))
 
         elif metric == "interfaces_missing_description_count":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("missing_descriptions_count")
-            return "number", val if val is not None else 0
+            return AT_NUMBER, val if val is not None else 0
 
         elif metric == "eigrp_as_numbers":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("eigrp_as")
             if isinstance(val, (list, tuple)) and val:
-                return "text", str(val[0])
+                return AT_TEXT, str(val[0])
             elif val:
-                return "text", str(val)
-            return "text", "Not Configured"
+                return AT_TEXT, str(val)
+            return AT_TEXT, "Not Configured"
 
         elif metric == "rip_processes":
              host = scope.get("host")
              val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("rip_enabled")
-             return "text", "Enabled" if val else "Disabled"
+             return AT_TEXT, "Enabled" if val else "Disabled"
              
         elif metric == "hsrp_groups_list":
             host = scope.get("host")
             val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("fhrp_groups") or []
-            return "set_str", sorted(list(set(str(s) for s in val)))
+            return AT_SET_STR, sorted(set(str(s) for s in val))
             
         elif metric == "multicast_routing_config":
              host = scope.get("host")
              val = ((self.host_index.get(host, {}).get("configuration") or {}).get("advanced") or {}).get("multicast_enabled")
-             return "text", "Enabled" if val else "Disabled"
+             return AT_TEXT, "Enabled" if val else "Disabled"
 
         # --- Hardware / Interface Inventory (Global) ---
         elif metric == "serial_interface_devices":
@@ -1550,7 +1562,7 @@ class BuilderCore:
                 for i in (d.get("interfaces") or []):
                     if "Serial" in i.get("name", ""):
                         hosts.add(self._hostname(d))
-            return "set_str", sorted(list(hosts))
+            return AT_SET_STR, sorted(hosts)
 
         elif metric == "gigabit_interface_devices":
             hosts = set()
@@ -1558,7 +1570,7 @@ class BuilderCore:
                 for i in (d.get("interfaces") or []):
                     if "GigabitEthernet" in i.get("name", ""):
                         hosts.add(self._hostname(d))
-            return "set_str", sorted(list(hosts))
+            return AT_SET_STR, sorted(hosts)
             
         elif metric == "tunnel_interface_devices":
             hosts = set()
@@ -1567,7 +1579,7 @@ class BuilderCore:
                     name = i.get("name", "")
                     if name.startswith("Tunnel") or name.startswith("Tu"): 
                          hosts.add(self._hostname(d))
-            return "set_str", sorted(list(hosts))
+            return AT_SET_STR, sorted(hosts)
             
         elif metric == "port_channel_devices":
             hosts = set()
@@ -1576,7 +1588,7 @@ class BuilderCore:
                     name = i.get("name", "")
                     if name.startswith("Port-channel") or name.startswith("Po"): 
                          hosts.add(self._hostname(d))
-            return "set_str", sorted(list(hosts))
+            return AT_SET_STR, sorted(hosts)
             
         elif metric == "ten_gigabit_interface_devices":
             hosts = set()
@@ -1585,12 +1597,12 @@ class BuilderCore:
                     name = i.get("name", "")
                     if "TenGigabit" in name or "Te" in name: # Approximate check
                          hosts.add(self._hostname(d))
-            return "set_str", sorted(list(hosts))
+            return AT_SET_STR, sorted(hosts)
 
 
         # 미인식 메트릭: 경고 출력 후 None 반환
         print(f"[WARNING] _answer_for_metric: unrecognized metric '{metric}' (scope={scope}). Returning None.")
-        return "text", None
+        return AT_TEXT, None
 
 
     # ---------- DSL → 테스트 인스턴스 확장 ----------
@@ -1611,7 +1623,7 @@ class BuilderCore:
         rng = random.Random(seed)
 
         # 후보 값들
-        asns = sorted(list(self._as_groups().keys())) or []
+        asns = sorted(self._as_groups().keys()) or []
         hosts = list(self.host_index.keys())
         vrfs: Set[str] = set()
         for d in self.devices:
@@ -1619,7 +1631,7 @@ class BuilderCore:
                 if v.get("name"): vrfs.add(v["name"])
             for sv in self._services_vrf(d):
                 if sv.get("name"): vrfs.add(sv["name"])
-        vrf_list = sorted(list(vrfs))
+        vrf_list = sorted(vrfs)
 
         # OSPF Area 후보
         ospf_areas: Set[str] = set()
@@ -1635,7 +1647,7 @@ class BuilderCore:
                         aid = area.get("id") or area.get("area")
                         if aid is not None:
                             ospf_areas.add(str(aid))
-        area_list = sorted(list(ospf_areas))
+        area_list = sorted(ospf_areas)
 
         # 인터페이스 후보
         iface_names: List[str] = []
@@ -1643,7 +1655,7 @@ class BuilderCore:
             for i in (d.get("interfaces") or []):
                 if i.get("name"):
                     iface_names.append(i["name"])
-        iface_names = sorted(list(set(iface_names)))
+        iface_names = sorted(set(iface_names))
         
         # L1 샘플링: 랜덤하게 장비 선택
         l1_sample_count = max(1, int(len(hosts) * l1_sample_ratio))
@@ -1689,7 +1701,7 @@ class BuilderCore:
                             links.add(tuple(sorted((h1, h2_name))))
                 
                 # 링크별 테스트 시나리오 생성
-                for l_src, l_dst in sorted(list(links)):
+                for l_src, l_dst in sorted(links):
                     # 테스트 트래픽: 임의의 두 장비 (장애 링크와 무관할 수도 있음)
                     # CE 장비 우선 선택 (실제 트래픽 흐름 모사)
                     # Edge 노드 우선 선택: eBGP neighbor가 있는 노드 = Provider Edge와 연결된 CE
@@ -1935,7 +1947,7 @@ SUPPORTED_METRICS: List[str] = [
 
 
 def list_available_metrics() -> List[str]:
-    return sorted(list(set(SUPPORTED_METRICS)))
+    return sorted(set(SUPPORTED_METRICS))
 
 
 # // GIA/utils/builder_core.py

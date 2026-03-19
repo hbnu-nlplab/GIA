@@ -311,7 +311,7 @@ class TopologyResponse(BaseModel):
 async def lifespan(app: FastAPI):
     """앱 시작/종료 시 실행"""
     # Startup
-    print("[NetAlly] Starting up...")
+    logger.info("[NetAlly] Starting up...")
 
     app.state.tool_backend = os.getenv("NETALLY_TOOL_BACKEND", TOOL_BACKEND_DEFAULT).lower()
     app.state.agent_backend = os.getenv("NETALLY_AGENT_BACKEND", AGENT_BACKEND_DEFAULT).lower()
@@ -342,7 +342,7 @@ async def lifespan(app: FastAPI):
         except Exception as e:
             logger.error(f"MCP runtime startup failed: {e}")
 
-    print("[NetAlly] Startup complete (agent runtime lazy-loaded).")
+    logger.info("[NetAlly] Startup complete (agent runtime lazy-loaded).")
     
     yield
     
@@ -353,7 +353,7 @@ async def lifespan(app: FastAPI):
             await stop_embedded_mcp_server()
         except Exception as e:
             logger.warning(f"MCP runtime shutdown warning: {e}")
-    print("[NetAlly] Shutting down...")
+    logger.info("[NetAlly] Shutting down...")
 
 
 # =============================================================================
@@ -655,7 +655,25 @@ async def health():
     }
 
 
+def _classify_llm_error(exc: Exception) -> tuple[str, int]:
+    """Classify LLM exception into (error_code, http_status)."""
+    err_str = str(exc).lower()
+    if "api_key" in err_str or "apikey" in err_str or "auth" in err_str:
+        return "LLM_AUTH_ERROR", 401
+    elif "rate" in err_str or "limit" in err_str:
+        return "LLM_RATE_LIMIT", 429
+    elif "timeout" in err_str:
+        return "LLM_TIMEOUT", 504
+    return "LLM_ERROR", 502
+
+
+def _make_sse_event(event_type: str, data: dict) -> str:
+    """Format a Server-Sent Event string."""
+    return f"event: {event_type}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n"
+
+
 _tool_invoke_cache: dict = {}
+_tool_invoke_lock = asyncio.Lock()
 
 
 @app.post("/api/tool/invoke")
@@ -680,20 +698,20 @@ async def tool_invoke(request: Request):
             return JSONResponse({"ok": False, "error": f"Invalid tool name: {tool_name}"}, status_code=400)
 
         # Load tools (cached)
-        if not _tool_invoke_cache:
-            from agent.mcp_tools import get_core_tools
-            _tool_invoke_cache.update({t.name: t for t in get_core_tools()})
+        async with _tool_invoke_lock:
+            if not _tool_invoke_cache:
+                from agent.mcp_tools import get_core_tools
+                _tool_invoke_cache.update({t.name: t for t in get_core_tools()})
 
         tool = _tool_invoke_cache.get(tool_name)
         if not tool:
-            available = sorted(tool_map.keys())
+            available = sorted(_tool_invoke_cache.keys())
             return JSONResponse({"ok": False, "error": f"Unknown tool: {tool_name}", "available": available}, status_code=404)
 
-        # Invoke
+        # Invoke (fallback to sync only if ainvoke not available)
         try:
             result = await tool.ainvoke(tool_args)
-        except Exception:
-            import asyncio
+        except (AttributeError, NotImplementedError):
             result = await asyncio.to_thread(tool.invoke, tool_args)
 
         return JSONResponse({"ok": True, "tool": tool_name, "result": result})
@@ -1970,8 +1988,8 @@ async def chat_stream_generator(request: ChatRequest, runtime):
                     "grounding": _build_grounding_meta([]),
                     "meta": prep,
                 }
-                yield f"event: answer\ndata: {json.dumps(data)}\n\n"
-                yield f"event: complete\ndata: {json.dumps({'type': 'complete'})}\n\n"
+                yield _make_sse_event("answer", data)
+                yield _make_sse_event("complete", {"type": "complete"})
                 return
 
         composed_message = _compose_chat_message(request)
@@ -2085,25 +2103,16 @@ async def chat_stream_generator(request: ChatRequest, runtime):
                 data["citations"] = citations
                 data["grounding"] = _build_grounding_meta(citations)
 
-            if data.get("type") == "tool_error":
-                yield f"event: tool_error\ndata: {json.dumps(data)}\n\n"
-            else:
-                yield f"event: {event_type}\ndata: {json.dumps(data)}\n\n"
+            yield _make_sse_event(event_type, data)
 
-        yield f"event: complete\ndata: {json.dumps({'type': 'complete'})}\n\n"
+        yield _make_sse_event("complete", {"type": "complete"})
 
     except Exception as e:
-        err_str = str(e).lower()
-        if "api" in err_str or "key" in err_str or "auth" in err_str:
-            error_code = "LLM_AUTH_ERROR"
-        elif "timeout" in err_str or "rate" in err_str:
-            error_code = "LLM_RATE_LIMIT"
-        else:
-            error_code = "RUNTIME_ERROR"
+        error_code, _ = _classify_llm_error(e)
         logger.error("Chat stream error: %s", e, exc_info=True)
         error_data = {"type": "error", "code": error_code, "message": str(e)[:300]}
-        yield f"event: error\ndata: {json.dumps(error_data)}\n\n"
-        yield f"event: complete\ndata: {json.dumps({'type': 'complete'})}\n\n"
+        yield _make_sse_event("error", error_data)
+        yield _make_sse_event("complete", {"type": "complete"})
 
 
 @app.post("/api/chat")
@@ -2169,8 +2178,8 @@ async def chat(request: ChatRequest):
             code = "RUNTIME_LOAD_FAILED"
 
         async def error_stream():
-            yield f"event: error\ndata: {json.dumps({'type': 'error', 'code': code, 'message': message})}\n\n"
-            yield f"event: complete\ndata: {json.dumps({'type': 'complete'})}\n\n"
+            yield _make_sse_event("error", {"type": "error", "code": code, "message": message})
+            yield _make_sse_event("complete", {"type": "complete"})
 
         return StreamingResponse(error_stream(), media_type="text/event-stream", headers=headers)
 

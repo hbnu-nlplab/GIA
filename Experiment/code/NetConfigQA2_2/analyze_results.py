@@ -765,7 +765,7 @@ class ScorecardGenerator:
         lines.append("| Type | Label | Accuracy |")
         lines.append("|------|-------|----------|")
         for atype, acc in sorted(stats['by_type'].items(), key=lambda x: x[1], reverse=True):
-            label = ANSWER_TYPE_LABEL.get(atype, atype)
+            label = ANSWER_TYPE_LABEL.get(canonical_answer_type(atype), atype)
             lines.append(f"| {atype} | {label} | {acc*100:.1f}% |")
         lines.append("")
         
