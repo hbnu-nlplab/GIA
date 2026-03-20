@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Paper-Ready Topology (Lab-B)</title>
+  <style>
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background-color: #f3f4f6; /* Paper-like background */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    h1 {
+      color: #1f2937;
+      margin-bottom: 5px;
+    }
+    p {
+      color: #4b5563;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+    .canvas-container {
+      background-color: #ffffff;
+      border: 1px solid #d1d5db;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .btn-wrap {
+      margin-top: 20px;
+    }
+    button {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(37,99,235,0.3);
+    }
+    button:hover {
+      background-color: #1d4ed8;
+    }
+    
+    /* SVG Styles */
+    .bg-region { fill: #f8fafc; stroke: #94a3b8; stroke-width: 2; stroke-dasharray: 6 6; rx: 15; }
+    .region-title { font-size: 18px; font-weight: bold; fill: #64748b; font-family: sans-serif; }
+    
+    .link-mpls { stroke: #3b82f6; stroke-width: 2.5; }
+    .link-backbone { stroke: #ef4444; stroke-width: 4; }
+    .link-vrf { stroke: #f59e0b; stroke-width: 2; stroke-dasharray: 5 4; }
+    
+    .node-p { fill: #e0f2fe; stroke: #0284c7; stroke-width: 2.5; }
+    .node-pe { fill: #f3e8ff; stroke: #7e22ce; stroke-width: 2.5; rx: 8; }
+    .node-leaf { fill: #fef3c7; stroke: #d97706; stroke-width: 2.5; }
+    
+    .text-node { font-size: 14px; font-weight: bold; font-family: sans-serif; text-anchor: middle; dominant-baseline: middle; }
+    .text-p { fill: #0369a1; }
+    .text-pe { fill: #6b21a8; }
+    .text-leaf { fill: #b45309; }
+
+    .legend-box { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1; rx: 5; }
+    .legend-text { font-size: 13px; fill: #334155; font-family: sans-serif;}
+  </style>
+</head>
+<body>
+
+  <h1>Figure 1. Network Topology Architecture (Lab-B)</h1>
+  <p>Hierarchical Plane: Core (MPLS) - Provider Edge (BGP) - Access Leaf (VRF)</p>
+
+  <div class="canvas-container" id="svgContainer">
+    <!-- SVG Canvas -->
+    <svg id="networkSvg" width="1280" height="850" xmlns="http://www.w3.org/2000/svg">
+      
+      <!-- Regions Background -->
+      <rect class="bg-region" x="220" y="80" width="340" height="700" />
+      <text class="region-title" x="390" y="110" text-anchor="middle">Region 1 (AS 65000, Area 0)</text>
+      
+      <rect class="bg-region" x="580" y="80" width="480" height="700" />
+      <text class="region-title" x="820" y="110" text-anchor="middle">Region 2 (AS 65000, Area 0)</text>
+
+      <!-- ================= LINKS ================= -->
+      <!-- Backbone -->
+      <line class="link-backbone" x1="500" y1="400" x2="700" y2="400" />
+      
+      <!-- Region 1 MPLS Core Links -->
+      <line class="link-mpls" x1="350" y1="400" x2="500" y2="400" /> <!-- P1 - P3 -->
+      <line class="link-mpls" x1="350" y1="400" x2="350" y2="520" /> <!-- P1 - P2 -->
+      <line class="link-mpls" x1="350" y1="520" x2="500" y2="520" /> <!-- P2 - P4 -->
+      <line class="link-mpls" x1="500" y1="400" x2="500" y2="520" /> <!-- P3 - P4 -->
+      
+      <!-- Region 1 PE Links -->
+      <line class="link-mpls" x1="350" y1="400" x2="350" y2="280" /> <!-- P1 - PE1 -->
+      <line class="link-mpls" x1="350" y1="520" x2="425" y2="640" /> <!-- P2 - PE2 -->
+      <line class="link-mpls" x1="500" y1="520" x2="425" y2="640" /> <!-- P4 - PE2 -->
+
+      <!-- Region 1 VRF Access Links -->
+      <line class="link-vrf" x1="350" y1="280" x2="280" y2="180" /> <!-- PE1 - Leaf1 -->
+      <line class="link-vrf" x1="350" y1="280" x2="420" y2="180" /> <!-- PE1 - Leaf2 -->
+      <line class="link-vrf" x1="425" y1="640" x2="355" y2="740" /> <!-- PE2 - Leaf3 -->
+      <line class="link-vrf" x1="425" y1="640" x2="495" y2="740" /> <!-- PE2 - Leaf4 -->
+
+      <!-- Region 2 MPLS Core Links -->
+      <line class="link-mpls" x1="700" y1="400" x2="850" y2="400" /> <!-- P5 - P6 -->
+      <line class="link-mpls" x1="850" y1="400" x2="1000" y2="400" /> <!-- P6 - P7 -->
+      <line class="link-mpls" x1="1000" y1="400" x2="1000" y2="520" /> <!-- P7 - P8 -->
+      
+      <!-- Region 2 PE Links -->
+      <line class="link-mpls" x1="700" y1="400" x2="700" y2="280" /> <!-- P5 - PE3 -->
+      <line class="link-mpls" x1="850" y1="400" x2="850" y2="520" /> <!-- P6 - PE4 -->
+      <line class="link-mpls" x1="1000" y1="520" x2="850" y2="520" /> <!-- P8 - PE4 -->
+
+      <!-- Region 2 VRF Access Links -->
+      <line class="link-vrf" x1="700" y1="280" x2="630" y2="180" /> <!-- PE3 - Leaf5 -->
+      <line class="link-vrf" x1="700" y1="280" x2="770" y2="180" /> <!-- PE3 - Leaf6 -->
+      <line class="link-vrf" x1="850" y1="520" x2="780" y2="640" /> <!-- PE4 - Leaf7 -->
+      <line class="link-vrf" x1="850" y1="520" x2="920" y2="640" /> <!-- PE4 - Leaf8 -->
+
+
+      <!-- ================= NODES ================= -->
+      <!-- Helper Macro for SVG shapes
+           P Nodes: Circle r=24
+           PE Nodes: Rect 60x40 rx=8
+           Leaf Nodes: Ellipse rx=28 ry=20
+      -->
+      
+      <!-- Region 1 Core -->
+      <circle class="node-p" cx="350" cy="400" r="24" /><text class="text-node text-p" x="350" y="400">P1</text>
+      <circle class="node-p" cx="350" cy="520" r="24" /><text class="text-node text-p" x="350" y="520">P2</text>
+      <circle class="node-p" cx="500" cy="400" r="24" /><text class="text-node text-p" x="500" y="400">P3</text>
+      <circle class="node-p" cx="500" cy="520" r="24" /><text class="text-node text-p" x="500" y="520">P4</text>
+      
+      <!-- Region 1 PE -->
+      <rect class="node-pe" x="320" y="260" width="60" height="40" /><text class="text-node text-pe" x="350" y="280">PE1</text>
+      <rect class="node-pe" x="395" y="620" width="60" height="40" /><text class="text-node text-pe" x="425" y="640">PE2</text>
+      
+      <!-- Region 1 Leaf -->
+      <ellipse class="node-leaf" cx="280" cy="180" rx="30" ry="22" /><text class="text-node text-leaf" x="280" y="180">Leaf1</text>
+      <ellipse class="node-leaf" cx="420" cy="180" rx="30" ry="22" /><text class="text-node text-leaf" x="420" y="180">Leaf2</text>
+      <ellipse class="node-leaf" cx="355" cy="740" rx="30" ry="22" /><text class="text-node text-leaf" x="355" y="740">Leaf3</text>
+      <ellipse class="node-leaf" cx="495" cy="740" rx="30" ry="22" /><text class="text-node text-leaf" x="495" y="740">Leaf4</text>
+
+      <!-- Region 2 Core -->
+      <circle class="node-p" cx="700" cy="400" r="24" /><text class="text-node text-p" x="700" y="400">P5</text>
+      <circle class="node-p" cx="850" cy="400" r="24" /><text class="text-node text-p" x="850" y="400">P6</text>
+      <circle class="node-p" cx="1000" cy="400" r="24" /><text class="text-node text-p" x="1000" y="400">P7</text>
+      <circle class="node-p" cx="1000" cy="520" r="24" /><text class="text-node text-p" x="1000" y="520">P8</text>
+
+      <!-- Region 2 PE -->
+      <rect class="node-pe" x="670" y="260" width="60" height="40" /><text class="text-node text-pe" x="700" y="280">PE3</text>
+      <rect class="node-pe" x="820" y="500" width="60" height="40" /><text class="text-node text-pe" x="850" y="520">PE4</text>
+
+      <!-- Region 2 Leaf -->
+      <ellipse class="node-leaf" cx="630" cy="180" rx="30" ry="22" /><text class="text-node text-leaf" x="630" y="180">Leaf5</text>
+      <ellipse class="node-leaf" cx="770" cy="180" rx="30" ry="22" /><text class="text-node text-leaf" x="770" y="180">Leaf6</text>
+      <ellipse class="node-leaf" cx="780" cy="640" rx="30" ry="22" /><text class="text-node text-leaf" x="780" y="640">Leaf7</text>
+      <ellipse class="node-leaf" cx="920" cy="640" rx="30" ry="22" /><text class="text-node text-leaf" x="920" y="640">Leaf8</text>
+
+      <!-- ================= LEGEND ================= -->
+      <rect class="legend-box" x="40" y="650" width="160" height="150" />
+      <text x="120" y="670" text-anchor="middle" font-weight="bold" font-family="sans-serif" font-size="14" fill="#1f2937">Legend</text>
+      
+      <!-- Node icons -->
+      <circle class="node-p" cx="65" cy="700" r="10" />
+      <text class="legend-text" x="85" y="705">P Node (Core)</text>
+      
+      <rect class="node-pe" x="55" y="725" width="20" height="14" />
+      <text class="legend-text" x="85" y="737">PE Node (Edge)</text>
+
+      <ellipse class="node-leaf" cx="65" cy="765" rx="12" ry="8" />
+      <text class="legend-text" x="85" y="769">CE Node (Leaf)</text>
+
+      <!-- Link styles -->
+      <line class="link-backbone" x1="40" y1="40" x2="70" y2="40" />
+      <text class="legend-text" x="85" y="45" style="transform: translate(0, 770px);">Inter-Region</text>
+      <line class="link-backbone" x1="50" y1="810" x2="75" y2="810" />
+
+      <line class="link-mpls" x1="50" y1="835" x2="75" y2="835" />
+      <text class="legend-text" x="85" y="839">MPLS/OSPF</text>
+
+      <line class="link-vrf" x1="50" y1="860" x2="75" y2="860" />
+      <text class="legend-text" x="85" y="864" style="transform: translate(0, -900px);"><!-- Fix position -->VRF (Access)</text>
+
+      <!-- Adjusted Legend Link lines explicitly -->
+      <g transform="translate(0, -660)">
+         <line class="link-backbone" x1="50" y1="1455" x2="75" y2="1455" />
+         <text class="legend-text" x="85" y="1460">Inter-Region</text>
+
+         <line class="link-mpls" x1="50" y1="1480" x2="75" y2="1480" />
+         <text class="legend-text" x="85" y="1485">MPLS Core</text>
+
+         <line class="link-vrf" x1="50" y1="1505" x2="75" y2="1505" />
+         <text class="legend-text" x="85" y="1510">VRF Access</text>
+      </g>
+      <!-- hide duplicate texts above -->
+      <rect fill="white" x="80" y="805" width="100" height="80"/> 
+      <!-- proper clean legend override -->
+      <rect class="legend-box" x="40" y="650" width="160" height="150" />
+      <text x="120" y="670" text-anchor="middle" font-weight="bold" font-family="sans-serif" font-size="14" fill="#1f2937">Legend</text>
+      
+      <circle class="node-p" cx="65" cy="695" r="10" />
+      <text class="legend-text" x="85" y="700">P Core (OSPF)</text>
+      
+      <rect class="node-pe" x="55" y="718" width="20" height="14" />
+      <text class="legend-text" x="85" y="730">PE Edge (BGP)</text>
+
+      <ellipse class="node-leaf" cx="65" cy="755" rx="12" ry="8" />
+      <text class="legend-text" x="85" y="760">Leaf (Customer)</text>
+
+      <line class="link-mpls" x1="55" y1="785" x2="75" y2="785" />
+      <text class="legend-text" x="85" y="789">Intra-Region</text>
+
+      <line class="link-backbone" x1="55" y1="810" x2="75" y2="810" />
+      <text class="legend-text" x="85" y="814">Inter-Region</text>
+      
+    </svg>
+  </div>
+
+  <div class="btn-wrap">
+    <button onclick="downloadSVG()">SVG로 다운로드 (논문 화질 유지)</button>
+    <button onclick="downloadPNG()" style="background-color: #059669; margin-left: 10px;">PNG로 캡처</button>
+  </div>
+
+  <script>
+    function downloadSVG() {
+      const svg = document.getElementById('networkSvg');
+      const serializer = new XMLSerializer();
+      let source = serializer.serializeToString(svg);
+      
+      // 이름공간 추가
+      if(!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)){
+          source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+      }
+      if(!source.match(/^<svg[^>]+"http\:\/\/www\.w3\.org\/1999\/xlink"/)){
+          source = source.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"');
+      }
+      
+      const url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(source);
+      const link = document.createElement("a");
+      link.download = "Lab-B_Topology.svg";
+      link.href = url;
+      link.click();
+    }
+
+    function downloadPNG() {
+      const svg = document.getElementById('networkSvg');
+      const serializer = new XMLSerializer();
+      let source = serializer.serializeToString(svg);
+      const img = new Image();
+      const svgBlob = new Blob([source], {type: "image/svg+xml;charset=utf-8"});
+      const url = URL.createObjectURL(svgBlob);
+      
+      img.onload = function () {
+        const canvas = document.createElement("canvas");
+        canvas.width = svg.width.baseVal.value * 2; // 2x resolution for retina
+        canvas.height = svg.height.baseVal.value * 2;
+        const ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.scale(2, 2);
+        ctx.drawImage(img, 0, 0);
+        URL.revokeObjectURL(url);
+        
+        const imgURI = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+        const link = document.createElement("a");
+        link.download = "Lab-B_Topology.png";
+        link.href = imgURI;
+        link.click();
+      };
+      img.src = url;
+    }
+  </script>
+</body>
+</html>

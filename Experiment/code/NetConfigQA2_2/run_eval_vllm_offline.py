@@ -46,7 +46,7 @@ class Config:
 
     # Lab 경로 매핑 (최신 NetConfigQA2_2 기준)
     LABS = {
-        "A": "LabA_Research_Institute_DC_10nodes",
+        "A": "Research_Institute_Internal_DC",
         "B": "LabB_NCN_Basic_SP_20nodes",
         "C": "LabC_NCN_Security_L2VPN_30nodes",
         "D": "LabD_NCN_MultiAS_Complex_40nodes",
@@ -63,7 +63,7 @@ class Config:
                         "extra_kwargs": {"reasoning_parser": "qwen3"}},
         "Qwen3.5-4B": {"hf_path": "cyankiwi/Qwen3.5-4B-AWQ-4bit", "display": "Qwen3.5-4B", "quant": None, "backend": "vllm_offline", "max_ctx": 32768,
                         "env": {"PYTORCH_CUDA_ALLOC_CONF": "expandable_segments:True"},
-                        "extra_kwargs": {"reasoning_parser": "qwen3", "gpu_memory_utilization": 0.82}},
+                        "extra_kwargs": {"reasoning_parser": "qwen3", "gpu_memory_utilization": 0.7, "enforce_eager": True}},
         "Foundation-Sec-8B": {"hf_path": "fdtn-ai/Foundation-Sec-1.1-8B-Instruct", "display": "Foundation-Sec-8B", "quant": None, "backend": "vllm_offline", "max_ctx": 42000},
         "gpt-4o-mini":               {"hf_path": "gpt-4o-mini",                                  "display": "GPT-4o-mini",   "quant": None,  "backend": "openai",        "max_ctx": 128000},
     }

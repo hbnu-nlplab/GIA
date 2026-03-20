@@ -1,6 +1,6 @@
 {
-  "total": 1819,
-  "match": 1819,
+  "total": 1818,
+  "match": 1818,
   "mismatch": 0,
   "error": 0,
   "quarantined": 0,
@@ -14,8 +14,8 @@
       "quarantined": 0
     },
     "L5": {
-      "total": 162,
-      "match": 162,
+      "total": 161,
+      "match": 161,
       "mismatch": 0,
       "error": 0,
       "quarantined": 0
@@ -106,13 +106,6 @@
       "error": 0,
       "quarantined": 0
     },
-    "ospf_area0_routers": {
-      "total": 1,
-      "match": 1,
-      "mismatch": 0,
-      "error": 0,
-      "quarantined": 0
-    },
     "redundant_paths_list": {
       "total": 1,
       "match": 1,
@@ -185,7 +178,7 @@
     }
   },
   "paper_ready": {
-    "retained": 3371,
+    "retained": 3370,
     "dropped_l45": 0
   }
 }

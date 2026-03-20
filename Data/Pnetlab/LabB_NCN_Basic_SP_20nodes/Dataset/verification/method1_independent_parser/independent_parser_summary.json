@@ -1,21 +1,21 @@
 {
   "total_rows": 1586,
-  "verifiable": 1586,
-  "match": 1586,
+  "verifiable": 1585,
+  "match": 1585,
   "mismatch": 0,
   "skip": 0,
   "error": 0,
-  "unsupported": 0,
+  "unsupported": 1,
   "agreement_rate": 1.0,
   "by_level": {
     "L1": {
-      "total": 1230,
-      "match": 1230,
+      "total": 1274,
+      "match": 1274,
       "mismatch": 0
     },
     "L2": {
-      "total": 101,
-      "match": 101,
+      "total": 57,
+      "match": 56,
       "mismatch": 0
     },
     "L3": {
@@ -221,8 +221,8 @@
       "mismatch": 0
     },
     "ospf_area_membership": {
-      "total": 4,
-      "match": 4,
+      "total": 2,
+      "match": 2,
       "mismatch": 0
     },
     "ospf_area0_if_count": {
@@ -231,8 +231,8 @@
       "mismatch": 0
     },
     "ospf_neighbor_count_per_area": {
-      "total": 2,
-      "match": 2,
+      "total": 3,
+      "match": 3,
       "mismatch": 0
     },
     "l2vpn_pairs": {
@@ -271,13 +271,13 @@
       "mismatch": 0
     },
     "ibgp_under_peered_devices": {
-      "total": 5,
-      "match": 5,
+      "total": 38,
+      "match": 38,
       "mismatch": 0
     },
     "ibgp_under_peered_count": {
-      "total": 40,
-      "match": 40,
+      "total": 7,
+      "match": 7,
       "mismatch": 0
     },
     "vrf_without_rt_pairs": {
@@ -348,6 +348,11 @@
     "vrf_usage_statistics": {
       "total": 1,
       "match": 1,
+      "mismatch": 0
+    },
+    "ospf_area0_routers": {
+      "total": 1,
+      "match": 0,
       "mismatch": 0
     },
     "password_encryption_config": {
@@ -503,16 +508,16 @@
   },
   "by_answer_type": {
     "text": {
-      "total": 506,
+      "total": 507,
       "match": 506
     },
     "set": {
-      "total": 514,
-      "match": 514
+      "total": 545,
+      "match": 545
     },
     "number": {
-      "total": 426,
-      "match": 426
+      "total": 394,
+      "match": 394
     },
     "map": {
       "total": 140,

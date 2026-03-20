@@ -1,7 +1,7 @@
 # Method 2 — Human Reviewer Guide
 
 > **목적**: 데이터셋 정답(Ground Truth)의 신뢰성을 사람이 직접 검증
-> **대상**: L1-L3 계층화 표본 39개 QA
+> **대상**: L1-L3 계층화 표본 38개 QA
 > **소요 시간**: 약 2-3시간 (QA당 3-5분)
 > **필요 도구**: 텍스트 에디터 (VS Code 권장)
 
@@ -45,11 +45,11 @@ DISAGREE인 경우 분류:
 
 ---
 
-## 검증 체크리스트 (39개 QA)
+## 검증 체크리스트 (38개 QA)
 
 ### 1. BGP_LOCAL_AS_NUMERIC_p6
 - **Level**: L1 | **Type**: number
-- **질문**: p6 장비의 BGP Local-AS 번호는 무엇입니까? [답변 형식: 숫자]
+- **질문**: p6 장비의 BGP Local-AS 번호는 무엇입니까? [답변 형식: integer]
 - **데이터셋 정답**: `0`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -60,7 +60,7 @@ DISAGREE인 경우 분류:
 
 ### 2. BGP_NEIGHBOR_COUNT_leaf8
 - **Level**: L1 | **Type**: number
-- **질문**: leaf8 장비의 BGP 피어(이웃)는 총 몇 개입니까? [답변 형식: 숫자]
+- **질문**: leaf8 장비의 BGP 피어(이웃)는 총 몇 개입니까? [답변 형식: integer]
 - **데이터셋 정답**: `0`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -69,20 +69,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 3. INTERFACE_STATUS_MAP_leaf1
-- **Level**: L1 | **Type**: map
-- **질문**: leaf1 장비의 각 인터페이스 상태를 알려주세요. [답변 형식: {{'인터페이스명': '상태'}}]
-- **데이터셋 정답**: `{"GigabitEthernet0/0": "up", "GigabitEthernet0/7": "up"}`
-- **확인할 파일**: 전체 configs/*.cfg
-- **검증 절차**:
-  > 검증 방법: 1) Config에서 모든 'interface'로 시작하는 블록을 찾습니다. 2) 각 interface 블록 내에서 'shutdown' 명령이 있는지 확인합니다. 3) 'shutdown' 명령이 있으면 'down', 없으면 'up'입니다(기본값은 up). 4) 'no shutdown'은 명시적으로 up 상태를 의미합니다. 5) 모든 인터페이스와 상태를 {{'interface_name': 'status'}} 형식의 딕셔너리로 반환합니다.
-- **내 답**: ________________
-- **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
-- **메모**: 
-
-### 4. NEIGHBOR_LIST_IBGP_leaf5
-- **Level**: L1 | **Type**: set
-- **질문**: leaf5 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: 리스트]
+### 3. NEIGHBOR_LIST_IBGP_leaf5
+- **Level**: L1 | **Type**: set_str
+- **질문**: leaf5 장비와 iBGP로 연결된 피어들의 IP 주소 목록을 알려주세요. [답변 형식: JSON array]
 - **데이터셋 정답**: `[]`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -91,9 +80,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 5. SNMP_COMMUNITY_LIST_leaf6
-- **Level**: L1 | **Type**: set
-- **질문**: leaf6 장비에 설정된 SNMP 커뮤니티 목록을 알려주세요. [답변 형식: 리스트]
+### 4. SNMP_COMMUNITY_LIST_leaf6
+- **Level**: L1 | **Type**: set_str
+- **질문**: leaf6 장비에 설정된 SNMP 커뮤니티 목록을 알려주세요. [답변 형식: JSON array]
 - **데이터셋 정답**: `[]`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -102,9 +91,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 6. SUBINTERFACE_COUNT_leaf7
+### 5. SUBINTERFACE_COUNT_leaf7
 - **Level**: L1 | **Type**: number
-- **질문**: leaf7 장비에 설정된 서브인터페이스는 총 몇 개입니까? [답변 형식: 숫자]
+- **질문**: leaf7 장비에 설정된 서브인터페이스는 총 몇 개입니까? [답변 형식: integer]
 - **데이터셋 정답**: `0`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -113,9 +102,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 7. AAA_ENABLED_DEVICES
-- **Level**: L2 | **Type**: set
-- **질문**: AAA 기능이 활성화된 장비 목록을 알려주세요. [답변 형식: 리스트]
+### 6. AAA_ENABLED_DEVICES
+- **Level**: L2 | **Type**: set_str
+- **질문**: AAA 기능이 활성화된 장비 목록을 알려주세요. [답변 형식: JSON array]
 - **데이터셋 정답**: `["pe1", "pe2", "pe3", "pe4"]`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -124,9 +113,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 8. AAA_MISSING_DEVICES
-- **Level**: L2 | **Type**: set
-- **질문**: AAA 기능이 비활성화된 장비 목록을 알려주세요. [답변 형식: 리스트]
+### 7. AAA_MISSING_DEVICES
+- **Level**: L2 | **Type**: set_str
+- **질문**: AAA 기능이 비활성화된 장비 목록을 알려주세요. [답변 형식: JSON array]
 - **데이터셋 정답**: `["leaf1", "leaf2", "leaf3", "leaf4", "leaf5", "leaf6", "leaf7", "leaf8", "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8"]`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -135,9 +124,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 9. DEVICES_WITH_SAME_VRF_VRF_GOV
-- **Level**: L2 | **Type**: set
-- **질문**: VRF_GOV VRF를 사용하는 장비 목록을 알려주세요. [답변 형식: 리스트]
+### 8. DEVICES_WITH_SAME_VRF_VRF_GOV
+- **Level**: L2 | **Type**: set_str
+- **질문**: VRF_GOV VRF를 사용하는 장비 목록을 알려주세요. [답변 형식: JSON array]
 - **데이터셋 정답**: `["pe1", "pe2", "pe3", "pe4"]`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -146,8 +135,8 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 10. L2VPN_PAIRS
-- **Level**: L2 | **Type**: set
+### 9. L2VPN_PAIRS
+- **Level**: L2 | **Type**: set_str
 - **질문**: 구성된 L2VPN pseudowire 회선(장비쌍) 목록을 알려주세요. [답변 형식: ['A<->B', ...]]
 - **데이터셋 정답**: `[]`
 - **확인할 파일**: 전체 configs/*.cfg
@@ -157,20 +146,20 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 11. OSPF_AREA0_IF_COUNT_p3
-- **Level**: L2 | **Type**: number
-- **질문**: p3 장비의 OSPF Area 0에 연결된 인터페이스는 총 몇 개입니까? [답변 형식: 숫자]
-- **데이터셋 정답**: `4`
+### 10. OSPF_AREA0_ROUTERS
+- **Level**: L2 | **Type**: text
+- **질문**: OSPF Backbone Area(Area 0)에 속한 라우터 목록은 무엇입니까? [답변 형식: JSON array of router names (e.g., ["spine1", "spine2", "p1"])]
+- **데이터셋 정답**: `null`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
-  > 검증 방법: 1) 지정된 장비({host})의 OSPF 설정을 분석합니다. 2) 'network ... area 0' 범위에 포함되는 IP를 가진 인터페이스들을 식별하거나, 인터페이스 직접 설정 방식을 확인합니다. 3) 식별된 인터페이스의 총 개수를 카운트하여 반환합니다. Loopback 인터페이스가 포함되었는지도 확인이 필요합니다.
+  > 검증 방법: 1) 전체 네트워크 토폴로지에서 OSPF Area 0에 참여하는 장비 노드들을 추출합니다. 2) Batfish 'ospfAreaConfiguration' 질문을 실행합니다. 3) Area 0에 해당하는 노드 목록을 반환합니다.
 - **내 답**: ________________
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 12. OSPF_AREA_MEMBERSHIP_0
-- **Level**: L2 | **Type**: set
-- **질문**: OSPF Area 0에 속한 장비 목록을 알려주세요. [답변 형식: 리스트]
+### 11. OSPF_AREA_MEMBERSHIP_0
+- **Level**: L2 | **Type**: set_str
+- **질문**: OSPF Area 0에 속한 장비 목록을 알려주세요. [답변 형식: JSON array]
 - **데이터셋 정답**: `["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "pe1", "pe2", "pe3", "pe4"]`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -179,9 +168,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 13. OSPF_NEIGHBOR_COUNT_PER_AREA_0
+### 12. OSPF_NEIGHBOR_COUNT_PER_AREA_0
 - **Level**: L2 | **Type**: number
-- **질문**: OSPF Area 0의 이웃 관계는 총 몇 개입니까? [답변 형식: 숫자]
+- **질문**: OSPF Area 0의 이웃 관계는 총 몇 개입니까? [답변 형식: integer]
 - **데이터셋 정답**: `0`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -190,9 +179,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 14. SSH_ENABLED_DEVICES
-- **Level**: L2 | **Type**: set
-- **질문**: SSH 접속이 가능한 장비 목록을 알려주세요. [답변 형식: 리스트]
+### 13. SSH_ENABLED_DEVICES
+- **Level**: L2 | **Type**: set_str
+- **질문**: SSH 접속이 가능한 장비 목록을 알려주세요. [답변 형식: JSON array]
 - **데이터셋 정답**: `["leaf1", "leaf2", "leaf3", "leaf4", "leaf5", "leaf6", "leaf7", "leaf8", "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "pe1", "pe2", "pe3", "pe4"]`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -201,9 +190,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 15. SSH_MISSING_COUNT
+### 14. SSH_MISSING_COUNT
 - **Level**: L2 | **Type**: number
-- **질문**: SSH 접속이 불가능한 장비는 총 몇 대입니까? [답변 형식: 숫자]
+- **질문**: SSH 접속이 불가능한 장비는 총 몇 대입니까? [답변 형식: integer]
 - **데이터셋 정답**: `0`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -212,9 +201,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 16. SSH_MISSING_DEVICES
-- **Level**: L2 | **Type**: set
-- **질문**: SSH 접속이 불가능한 장비 목록을 알려주세요. [답변 형식: 리스트]
+### 15. SSH_MISSING_DEVICES
+- **Level**: L2 | **Type**: set_str
+- **질문**: SSH 접속이 불가능한 장비 목록을 알려주세요. [답변 형식: JSON array]
 - **데이터셋 정답**: `[]`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -223,9 +212,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 17. ALL_DEVICES_SAME_AS
+### 16. ALL_DEVICES_SAME_AS
 - **Level**: L3 | **Type**: text
-- **질문**: 모든 장비의 BGP AS 번호를 나열해주세요. BGP가 미설정된 장비는 'AS None'으로 표시하세요. [답변 형식: '장비1: AS X, 장비2: AS None, ...']
+- **질문**: 모든 장비의 BGP AS 번호를 나열해주세요. BGP가 미설정된 장비는 'AS None'으로 표시하세요. [답변 형식: "host1: AS X, host2: AS None, ..."]
 - **데이터셋 정답**: `"leaf1: AS N/A, leaf2: AS N/A, leaf3: AS N/A, leaf4: AS N/A, leaf5: AS N/A, leaf6: AS N/A, leaf7: AS N/A, leaf8: AS N/A, p1: AS N/A, p2: AS N/A, p3: AS N/A, p4: AS N/A, p5: AS N/A, p6: AS N/A, p7: AS N/A, p8: AS N/A, pe1: AS 65000, pe2: AS 65000, pe3: AS 65000, pe4: AS 65000"`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -234,9 +223,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 18. BGP_AS_DISTRIBUTION
+### 17. BGP_AS_DISTRIBUTION
 - **Level**: L3 | **Type**: text
-- **질문**: 각 AS별 장비 수 분포를 알려주세요. [답변 형식: 'AS X: N대, AS Y: M대']
+- **질문**: 각 AS별 장비 수 분포를 알려주세요. [답변 형식: "AS X: N, AS Y: M"]
 - **데이터셋 정답**: `"AS 65000: 4 devices"`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -245,7 +234,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 19. COMPARE_BGP_AS_p7_pe4
+### 18. COMPARE_BGP_AS_p7_pe4
 - **Level**: L3 | **Type**: text
 - **질문**: p7과 pe4의 BGP Local AS 번호를 각각 알려주세요. [답변 형식: 'p7: AS X, pe4: AS Y']
 - **데이터셋 정답**: `"p7: AS N/A, pe4: AS 65000"`
@@ -256,7 +245,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 20. COMPARE_BGP_NEIGHBOR_COUNT_leaf1_leaf8
+### 19. COMPARE_BGP_NEIGHBOR_COUNT_leaf1_leaf8
 - **Level**: L3 | **Type**: map_str_int
 - **질문**: leaf1과 leaf8의 BGP 피어 수를 비교하세요. [답변 형식: JSON {{"host1_count": <int>, "host2_count": <int>, "difference": <int>}}]
 - **데이터셋 정답**: `{"difference": 0, "host1_count": 0, "host2_count": 0}`
@@ -267,7 +256,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 21. COMPARE_INTERFACE_COUNT_pe2_pe3
+### 20. COMPARE_INTERFACE_COUNT_pe2_pe3
 - **Level**: L3 | **Type**: map_str_int
 - **질문**: pe2와 pe3의 인터페이스 수를 비교하세요. [답변 형식: JSON {{"host1_count": <int>, "host2_count": <int>, "difference": <int>}}]
 - **데이터셋 정답**: `{"difference": 1, "host1_count": 6, "host2_count": 5}`
@@ -278,7 +267,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 22. COMPARE_OSPF_AREAS_p3_p6
+### 21. COMPARE_OSPF_AREAS_p3_p6
 - **Level**: L3 | **Type**: text
 - **질문**: p3과 p6가 참여하는 OSPF Area 목록을 각각 알려주세요. [답변 형식: 'p3: Area 0, 1, p6: Area 0, 2']
 - **데이터셋 정답**: `"p3: Area 0, p6: Area 0"`
@@ -289,7 +278,7 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 23. COMPARE_VRF_COUNT_leaf8_pe2
+### 22. COMPARE_VRF_COUNT_leaf8_pe2
 - **Level**: L3 | **Type**: map_str_int
 - **질문**: leaf8과 pe2의 VRF 수를 비교하세요. [답변 형식: JSON {{"host1_count": <int>, "host2_count": <int>, "difference": <int>}}]
 - **데이터셋 정답**: `{"difference": 3, "host1_count": 0, "host2_count": 3}`
@@ -300,9 +289,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 24. IBGP_MISSING_PAIRS_65000
-- **Level**: L3 | **Type**: set
-- **질문**: AS 65000의 iBGP Full-Mesh에서 누락된 장비쌍 목록을 알려주세요. [답변 형식: 리스트]
+### 23. IBGP_MISSING_PAIRS_65000
+- **Level**: L3 | **Type**: set_str
+- **질문**: AS 65000의 iBGP Full-Mesh에서 누락된 장비쌍 목록을 알려주세요. [답변 형식: JSON array]
 - **데이터셋 정답**: `["pe1<->pe4", "pe2<->pe3"]`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -311,9 +300,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 25. IBGP_MISSING_PAIRS_COUNT_65000
+### 24. IBGP_MISSING_PAIRS_COUNT_65000
 - **Level**: L3 | **Type**: number
-- **질문**: AS 65000의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까? [답변 형식: 숫자]
+- **질문**: AS 65000의 iBGP Full-Mesh에서 누락된 링크는 총 몇 개입니까? [답변 형식: integer]
 - **데이터셋 정답**: `2`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -322,9 +311,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 26. IBGP_UNDER_PEERED_COUNT_65000
+### 25. IBGP_UNDER_PEERED_COUNT_65000
 - **Level**: L3 | **Type**: number
-- **질문**: AS 65000에서 iBGP 피어 수가 부족한 장비는 총 몇 대입니까? [답변 형식: 숫자]
+- **질문**: AS 65000에서 iBGP 피어 수가 부족한 장비는 총 몇 대입니까? [답변 형식: integer]
 - **데이터셋 정답**: `4`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -333,9 +322,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 27. IBGP_UNDER_PEERED_DEVICES_65000
-- **Level**: L3 | **Type**: set
-- **질문**: AS 65000에서 iBGP 피어 수가 부족한 장비 목록을 알려주세요. [답변 형식: 리스트]
+### 26. IBGP_UNDER_PEERED_DEVICES_65000
+- **Level**: L3 | **Type**: set_str
+- **질문**: AS 65000에서 iBGP 피어 수가 부족한 장비 목록을 알려주세요. [답변 형식: JSON array]
 - **데이터셋 정답**: `["pe1", "pe2", "pe3", "pe4"]`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -344,9 +333,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 28. L2VPN_MISMATCH_COUNT
+### 27. L2VPN_MISMATCH_COUNT
 - **Level**: L3 | **Type**: number
-- **질문**: PW-ID 불일치 또는 단방향 L2VPN 회선은 총 몇 개입니까? [답변 형식: 숫자]
+- **질문**: PW-ID 불일치 또는 단방향 L2VPN 회선은 총 몇 개입니까? [답변 형식: integer]
 - **데이터셋 정답**: `0`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -355,9 +344,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 29. L2VPN_PWID_MISMATCH_PAIRS
-- **Level**: L3 | **Type**: set
-- **질문**: PW-ID가 불일치하는 L2VPN 회선(장비쌍) 목록을 알려주세요. [답변 형식: 리스트]
+### 28. L2VPN_PWID_MISMATCH_PAIRS
+- **Level**: L3 | **Type**: set_str
+- **질문**: PW-ID가 불일치하는 L2VPN 회선(장비쌍) 목록을 알려주세요. [답변 형식: JSON array]
 - **데이터셋 정답**: `[]`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -366,9 +355,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 30. L2VPN_UNIDIRECTIONAL_PAIRS
-- **Level**: L3 | **Type**: set
-- **질문**: 단방향으로만 설정된 L2VPN 회선(장비쌍) 목록을 알려주세요. [답변 형식: 리스트]
+### 29. L2VPN_UNIDIRECTIONAL_PAIRS
+- **Level**: L3 | **Type**: set_str
+- **질문**: 단방향으로만 설정된 L2VPN 회선(장비쌍) 목록을 알려주세요. [답변 형식: JSON array]
 - **데이터셋 정답**: `[]`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -377,9 +366,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 31. L2VPN_UNIDIR_COUNT
+### 30. L2VPN_UNIDIR_COUNT
 - **Level**: L3 | **Type**: number
-- **질문**: 단방향으로만 설정된 L2VPN 회선은 총 몇 개입니까? [답변 형식: 숫자]
+- **질문**: 단방향으로만 설정된 L2VPN 회선은 총 몇 개입니까? [답변 형식: integer]
 - **데이터셋 정답**: `0`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -388,9 +377,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 32. MAX_BGP_PEER_DEVICE
+### 31. MAX_BGP_PEER_DEVICE
 - **Level**: L3 | **Type**: text
-- **질문**: BGP 피어가 가장 많은 장비와 그 개수를 알려주세요. [답변 형식: '장비명: N개']
+- **질문**: BGP 피어가 가장 많은 장비와 그 개수를 알려주세요. [답변 형식: "hostname: N"]
 - **데이터셋 정답**: `"pe1: 2"`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -399,9 +388,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 33. MAX_INTERFACE_DEVICE
+### 32. MAX_INTERFACE_DEVICE
 - **Level**: L3 | **Type**: text
-- **질문**: 인터페이스 수가 가장 많은 장비와 그 개수를 알려주세요. [답변 형식: '장비명: N개']
+- **질문**: 인터페이스 수가 가장 많은 장비와 그 개수를 알려주세요. [답변 형식: "hostname: N"]
 - **데이터셋 정답**: `"pe2: 6"`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -410,9 +399,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 34. MIN_INTERFACE_DEVICE
+### 33. MIN_INTERFACE_DEVICE
 - **Level**: L3 | **Type**: text
-- **질문**: 인터페이스 수가 가장 적은 장비와 그 개수를 알려주세요. [답변 형식: '장비명: N개']
+- **질문**: 인터페이스 수가 가장 적은 장비와 그 개수를 알려주세요. [답변 형식: "hostname: N"]
 - **데이터셋 정답**: `"leaf1: 2"`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -421,9 +410,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 35. VRF_RT_LIST_PER_DEVICE_p3
-- **Level**: L3 | **Type**: set
-- **질문**: p3 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요. [답변 형식: 리스트]
+### 34. VRF_RT_LIST_PER_DEVICE_p3
+- **Level**: L3 | **Type**: set_str
+- **질문**: p3 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요. [답변 형식: JSON array]
 - **데이터셋 정답**: `[]`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -432,9 +421,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 36. VRF_RT_LIST_PER_DEVICE_pe2
-- **Level**: L3 | **Type**: set
-- **질문**: pe2 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요. [답변 형식: 리스트]
+### 35. VRF_RT_LIST_PER_DEVICE_pe2
+- **Level**: L3 | **Type**: set_str
+- **질문**: pe2 장비에 설정된 route-target(중복 제거) 전체 목록을 알려주세요. [답변 형식: JSON array]
 - **데이터셋 정답**: `["65000:100", "65000:200", "65000:300"]`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -443,9 +432,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 37. VRF_USAGE_STATISTICS
+### 36. VRF_USAGE_STATISTICS
 - **Level**: L3 | **Type**: text
-- **질문**: VRF 사용중인 장비 중에서 각 장비별 VRF 사용 수를 알려주세요. [답변 형식: '장비1: N개, 장비2: M개']
+- **질문**: VRF 사용중인 장비 중에서 각 장비별 VRF 사용 수를 알려주세요. [답변 형식: "host1: N, host2: M"]
 - **데이터셋 정답**: `"leaf1: 0, leaf2: 0, leaf3: 0, leaf4: 0, leaf5: 0, leaf6: 0, leaf7: 0, leaf8: 0, p1: 0, p2: 0, p3: 0, p4: 0, p5: 0, p6: 0, p7: 0, p8: 0, pe1: 3, pe2: 3, pe3: 3, pe4: 3"`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -454,9 +443,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 38. VRF_WITHOUT_RT_COUNT
+### 37. VRF_WITHOUT_RT_COUNT
 - **Level**: L3 | **Type**: number
-- **질문**: route-target이 없는 VRF(장비/VRF)는 총 몇 개입니까? [답변 형식: 숫자]
+- **질문**: route-target이 없는 VRF(장비/VRF)는 총 몇 개입니까? [답변 형식: integer]
 - **데이터셋 정답**: `0`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:
@@ -465,9 +454,9 @@ DISAGREE인 경우 분류:
 - **판정**: [ ] AGREE  [ ] DISAGREE → 분류: ____________
 - **메모**: 
 
-### 39. VRF_WITHOUT_RT_PAIRS
-- **Level**: L3 | **Type**: set
-- **질문**: route-target이 없는 VRF(장비/VRF) 목록을 알려주세요. [답변 형식: 리스트]
+### 38. VRF_WITHOUT_RT_PAIRS
+- **Level**: L3 | **Type**: set_str
+- **질문**: route-target이 없는 VRF(장비/VRF) 목록을 알려주세요. [답변 형식: JSON array]
 - **데이터셋 정답**: `[]`
 - **확인할 파일**: 전체 configs/*.cfg
 - **검증 절차**:

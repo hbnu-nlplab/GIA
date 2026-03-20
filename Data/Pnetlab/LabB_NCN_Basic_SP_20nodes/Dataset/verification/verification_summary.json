@@ -1,25 +1,25 @@
 {
   "title": "NetConfigQA2.0 Ground Truth Verification Summary",
   "topology": "LabB_NCN_Basic_SP_20nodes",
-  "date": "2026-03-09",
-  "dataset_total_qa": 2158,
+  "date": "2026-03-19",
+  "dataset_total_qa": 2157,
   "verification_methods": {
     "method1_independent_parser": {
       "description": "Batfish-independent .cfg parser (pure Python + Regex) for L1-L3 full verification",
-      "scope": "L1-L3 전수검증 (1586 QA)",
-      "total_verified": 1586,
-      "match": 1586,
+      "scope": "L1-L3 전수검증 (1585 QA)",
+      "total_verified": 1585,
+      "match": 1585,
       "mismatch": 0,
       "agreement_rate_raw": 1.0,
       "by_level": {
         "L1": {
-          "total": 1230,
-          "match": 1230,
+          "total": 1274,
+          "match": 1274,
           "mismatch": 0
         },
         "L2": {
-          "total": 101,
-          "match": 101,
+          "total": 57,
+          "match": 56,
           "mismatch": 0
         },
         "L3": {
@@ -30,16 +30,16 @@
       },
       "by_answer_type": {
         "text": {
-          "total": 506,
+          "total": 507,
           "match": 506
         },
         "set": {
-          "total": 514,
-          "match": 514
+          "total": 545,
+          "match": 545
         },
         "number": {
-          "total": 426,
-          "match": 426
+          "total": 394,
+          "match": 394
         },
         "map": {
           "total": 140,
@@ -49,11 +49,11 @@
     },
     "method2_manual_check": {
       "description": "Stratified sampling + raw .cfg trace + policy-based verification",
-      "scope": "L1-L3 계층화 표본추출 (39 QA)",
-      "total_verified": 39,
-      "agree": 37,
+      "scope": "L1-L3 계층화 표본추출 (38 QA)",
+      "total_verified": 38,
+      "agree": 36,
       "disagree": 2,
-      "agreement_rate_raw": 0.9487179487179487
+      "agreement_rate_raw": 0.9473684210526315
     },
     "method3_pnetlab_emulation": {
       "description": "PNETLab 에뮬레이션 환경에서 traceroute/ping 실행하여 L4-L5 검증",
@@ -63,13 +63,13 @@
     },
     "method4_l45_replay": {
       "description": "Batfish replay verification for L4-L5 using row-level contracts",
-      "scope": "L4-L5 자동 재실행 (572 QA)",
-      "total_verified": 572,
-      "match": 570,
-      "mismatch": 2,
+      "scope": "L4-L5 자동 재실행 (571 QA)",
+      "total_verified": 571,
+      "match": 571,
+      "mismatch": 0,
       "error": 0,
       "quarantined": 0,
-      "agreement_rate_raw": 0.9965034965034965,
+      "agreement_rate_raw": 1.0,
       "by_level": {
         "L4": {
           "total": 443,
@@ -79,16 +79,16 @@
           "quarantined": 0
         },
         "L5": {
-          "total": 129,
-          "match": 127,
-          "mismatch": 2,
+          "total": 128,
+          "match": 128,
+          "mismatch": 0,
           "error": 0,
           "quarantined": 0
         }
       },
       "paper_ready": {
-        "retained": 2156,
-        "dropped_l45": 2
+        "retained": 2157,
+        "dropped_l45": 0
       }
     }
   }

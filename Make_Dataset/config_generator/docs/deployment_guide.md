@@ -379,7 +379,7 @@ HSRP:  net_hsrp_sec (공유 Bridge)
 | C: SSH 파일시스템 직접 복사 | ~5분 | 중 | 고급 대안 |
 | D: Console Telnet 복붙 | ~90분 | 하 | 비권장 |
 
-> 생성된 .cfg에 SSH, OOB 관리 인터페이스, 기본 라우팅이 이미 포함되어 있으므로
+> 생성된 .cfg에 SSH, OOB 관리 인터페이스, 기본 라우팅이 이미 포함되어 ********있으**므로**
 > `1-SSH_Enable.py` 스크립트가 **불필요**하다.
 
 ### 3.2 방법 A: Import Startup Configuration (최우선 권장)

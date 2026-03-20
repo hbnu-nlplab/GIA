@@ -1,10 +1,10 @@
 {
-  "total": 572,
-  "match": 570,
-  "mismatch": 2,
+  "total": 571,
+  "match": 571,
+  "mismatch": 0,
   "error": 0,
   "quarantined": 0,
-  "agreement_rate": 0.9965034965034965,
+  "agreement_rate": 1.0,
   "by_level": {
     "L4": {
       "total": 443,
@@ -14,9 +14,9 @@
       "quarantined": 0
     },
     "L5": {
-      "total": 129,
-      "match": 127,
-      "mismatch": 2,
+      "total": 128,
+      "match": 128,
+      "mismatch": 0,
       "error": 0,
       "quarantined": 0
     }
@@ -86,13 +86,6 @@
       "quarantined": 0
     },
     "spof_detection": {
-      "total": 1,
-      "match": 0,
-      "mismatch": 1,
-      "error": 0,
-      "quarantined": 0
-    },
-    "ospf_area0_routers": {
       "total": 1,
       "match": 1,
       "mismatch": 0,
@@ -164,8 +157,8 @@
     },
     "policy_compliance_check": {
       "total": 1,
-      "match": 0,
-      "mismatch": 1,
+      "match": 1,
+      "mismatch": 0,
       "error": 0,
       "quarantined": 0
     },
@@ -178,7 +171,7 @@
     }
   },
   "paper_ready": {
-    "retained": 2156,
-    "dropped_l45": 2
+    "retained": 2157,
+    "dropped_l45": 0
   }
 }
