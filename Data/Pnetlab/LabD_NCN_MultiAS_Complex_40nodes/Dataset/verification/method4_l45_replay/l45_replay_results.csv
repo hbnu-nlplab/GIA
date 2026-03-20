@@ -1716,7 +1716,6 @@ LINK_FAILURE_asbr2_p9,link_failure_impact:02411758c6,L5,link_failure_impact,text
 LINK_FAILURE_asbr2_pe1,link_failure_impact:f3a8fef50d,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
 LINK_FAILURE_asbr2_pe2,link_failure_impact:ea322aad9b,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
 SPOF_DETECTION_GLOBAL,spof_detection:566d4b6821,L5,spof_detection,set_str,MATCH,,"[""asbr1""]","[""asbr1""]",True,1.0,exact
-OSPF_AREA0_ROUTERS_GLOBAL,ospf_area0_routers:566d4b6821,L5,ospf_area0_routers,set,MATCH,,"[""asbr1"", ""asbr2"", ""p6"", ""p7"", ""p8""]","[""asbr1"", ""asbr2"", ""p6"", ""p7"", ""p8""]",True,1.0,exact
 K_FAILURE_p7_fw1,redundant_paths_list:37127eeb33,L5,redundant_paths_list,set,MATCH,,"[""p7 → asbr1 → fw1""]","[""p7 → asbr1 → fw1""]",True,1.0,exact
 ROOT_CAUSE_leaf10_leaf7,root_cause_analysis:1c463ed4fb,L5,root_cause_analysis,text,MATCH,,pe5,"""pe5""",True,1.0,exact
 ROOT_CAUSE_p10_leaf9,root_cause_analysis:154b76c999,L5,root_cause_analysis,text,MATCH,,p10,"""p10""",True,1.0,exact
@@ -1801,20 +1800,20 @@ DUAL_FAILURE_fw1_fw2,redundancy_verification:16feb46b84,L5,redundancy_verificati
 TRIPLE_FAILURE_leaf1_leaf2_leaf3,triple_node_failure:cccbd0e03e,L5,triple_node_failure,text,MATCH,,NO (affected_flows: 57),"""NO (affected_flows: 57)""",True,1.0,exact
 WORST_CASE_FAILURE,worst_case_failure_analysis:566d4b6821,L5,worst_case_failure_analysis,text,MATCH,,pe6(59),"""pe6(59)""",True,1.0,exact
 NEGATIVE_TEST_FAKE_NODE,non_existent_node_check:4816fc9823,L5,non_existent_node_check,number,MATCH,,0,0,True,1.0,"parser=0.0, gold=0.0"
-CONFIG_CHANGE_BASELINE,config_change_impact:c3ada6c6ea,L5,config_change_impact,text,MATCH,,"CHANGED (94 entries: 10.0.30.3 -> 10.0.30.1, 10.10.10.1 -> 10.0.30.1, 10.0.40.1 -> 10.0.30.1)","""CHANGED (94 entries: 10.0.30.3 -> 10.0.30.1, 10.10.10.1 -> 10.0.30.1, 10.0.40.1 -> 10.0.30.1)""",True,1.0,exact
-DIFF_REACH_BASELINE,differential_reachability:a7f89a3127,L5,differential_reachability,text,MATCH,,NO_DIFF,"""NO_DIFF""",True,1.0,exact
+CONFIG_CHANGE_BASELINE,config_change_impact:ef1ac95dff,L5,config_change_impact,text,MATCH,,"CHANGED (94 entries: 10.0.30.3 -> 10.0.30.1, 10.10.10.1 -> 10.0.30.1, 10.0.40.1 -> 10.0.30.1)","""CHANGED (94 entries: 10.0.30.3 -> 10.0.30.1, 10.10.10.1 -> 10.0.30.1, 10.0.40.1 -> 10.0.30.1)""",True,1.0,exact
+DIFF_REACH_BASELINE,differential_reachability:7436b7ab91,L5,differential_reachability,text,MATCH,,NO_DIFF,"""NO_DIFF""",True,1.0,exact
 POLICY_COMPLIANCE_asbr1,policy_compliance_check:a013a4d8a2,L5,policy_compliance_check,text,MATCH,,"VIOLATION: 10.0.1.0 -> 8.8.8.8, 10.0.1.1 -> 8.8.8.8, 10.0.11.0 -> 8.8.8.8","""VIOLATION: 10.0.1.0 -> 8.8.8.8, 10.0.1.1 -> 8.8.8.8, 10.0.11.0 -> 8.8.8.8""",True,1.0,exact
-SEC_BYPASS_p7_fw1_asbr1__rs1,security_policy_bypass_check:5342ccd5dc-rs1,L4,security_policy_bypass_check,text,MATCH,,COMPLIANT,"""COMPLIANT""",True,1.0,exact
-SEC_BYPASS_fw2_fw1_leaf14__rs2,security_policy_bypass_check:71fa6692c6-rs2,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: fw2 -> p12 -> p11 -> fw1),"""VIOLATION (path: fw2 -> p12 -> p11 -> fw1)""",True,1.0,exact
-SEC_BYPASS_p8_p7_leaf14__rs3,security_policy_bypass_check:1ab4001b9b-rs3,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p8 -> p7),"""VIOLATION (path: p8 -> p7)""",True,1.0,exact
-SEC_BYPASS_fw2_p7_leaf14__rs4,security_policy_bypass_check:a579080122-rs4,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: fw2 -> asbr2 -> p8 -> p7),"""VIOLATION (path: fw2 -> asbr2 -> p8 -> p7)""",True,1.0,exact
-SEC_BYPASS_fw2_fw1_asbr1__rs7,security_policy_bypass_check:5a0032b7e4-rs7,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: fw2 -> p12 -> p11 -> fw1),"""VIOLATION (path: fw2 -> p12 -> p11 -> fw1)""",True,1.0,exact
-SEC_BYPASS_p7_p8_asbr1__rs8,security_policy_bypass_check:e74aa3cb9b-rs8,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p7 -> p8),"""VIOLATION (path: p7 -> p8)""",True,1.0,exact
-SEC_BYPASS_p7_fw2_leaf14__rs9,security_policy_bypass_check:e68cc6151c-rs9,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p7 -> p8 -> asbr2 -> fw2),"""VIOLATION (path: p7 -> p8 -> asbr2 -> fw2)""",True,1.0,exact
-SEC_BYPASS_p7_fw1_asbr1__rs10,security_policy_bypass_check:5342ccd5dc-rs10,L4,security_policy_bypass_check,text,MATCH,,COMPLIANT,"""COMPLIANT""",True,1.0,exact
-SEC_BYPASS_p8_p7_asbr1__rs11,security_policy_bypass_check:7c7cb7e05c-rs11,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p8 -> p7),"""VIOLATION (path: p8 -> p7)""",True,1.0,exact
-SEC_BYPASS_p7_fw1_asbr1__rs10__rs12,security_policy_bypass_check:5342ccd5dc-rs10-rs12,L4,security_policy_bypass_check,text,MATCH,,COMPLIANT,"""COMPLIANT""",True,1.0,exact
-SEC_BYPASS_fw1_fw2_asbr1__rs14,security_policy_bypass_check:60f159da1b-rs14,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: fw1 -> p11 -> p12 -> fw2),"""VIOLATION (path: fw1 -> p11 -> p12 -> fw2)""",True,1.0,exact
-SEC_BYPASS_fw2_fw1_leaf14__rs15,security_policy_bypass_check:71fa6692c6-rs15,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: fw2 -> p12 -> p11 -> fw1),"""VIOLATION (path: fw2 -> p12 -> p11 -> fw1)""",True,1.0,exact
-SEC_BYPASS_p8_p7_leaf14__rs3__rs16,security_policy_bypass_check:1ab4001b9b-rs3-rs16,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p8 -> p7),"""VIOLATION (path: p8 -> p7)""",True,1.0,exact
-SEC_BYPASS_p7_fw1_asbr1__rs1__rs17,security_policy_bypass_check:5342ccd5dc-rs1-rs17,L4,security_policy_bypass_check,text,MATCH,,COMPLIANT,"""COMPLIANT""",True,1.0,exact
+SEC_BYPASS_p7_fw1_asbr1__rs_Security_Policy_1,security_policy_bypass_check:5342ccd5dc-rs_Security_Policy_1,L4,security_policy_bypass_check,text,MATCH,,COMPLIANT,"""COMPLIANT""",True,1.0,exact
+SEC_BYPASS_fw2_fw1_leaf14__rs_Security_Policy_2,security_policy_bypass_check:71fa6692c6-rs_Security_Policy_2,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: fw2 -> p12 -> p11 -> fw1),"""VIOLATION (path: fw2 -> p12 -> p11 -> fw1)""",True,1.0,exact
+SEC_BYPASS_p8_p7_leaf14__rs_Security_Policy_3,security_policy_bypass_check:1ab4001b9b-rs_Security_Policy_3,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p8 -> p7),"""VIOLATION (path: p8 -> p7)""",True,1.0,exact
+SEC_BYPASS_fw2_p7_leaf14__rs_Security_Policy_4,security_policy_bypass_check:a579080122-rs_Security_Policy_4,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: fw2 -> asbr2 -> p8 -> p7),"""VIOLATION (path: fw2 -> asbr2 -> p8 -> p7)""",True,1.0,exact
+SEC_BYPASS_fw2_fw1_asbr1__rs_Security_Policy_7,security_policy_bypass_check:5a0032b7e4-rs_Security_Policy_7,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: fw2 -> p12 -> p11 -> fw1),"""VIOLATION (path: fw2 -> p12 -> p11 -> fw1)""",True,1.0,exact
+SEC_BYPASS_p7_p8_asbr1__rs_Security_Policy_8,security_policy_bypass_check:e74aa3cb9b-rs_Security_Policy_8,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p7 -> p8),"""VIOLATION (path: p7 -> p8)""",True,1.0,exact
+SEC_BYPASS_p7_fw2_leaf14__rs_Security_Policy_9,security_policy_bypass_check:e68cc6151c-rs_Security_Policy_9,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p7 -> p8 -> asbr2 -> fw2),"""VIOLATION (path: p7 -> p8 -> asbr2 -> fw2)""",True,1.0,exact
+SEC_BYPASS_p7_fw1_asbr1__rs_Security_Policy_10,security_policy_bypass_check:5342ccd5dc-rs_Security_Policy_10,L4,security_policy_bypass_check,text,MATCH,,COMPLIANT,"""COMPLIANT""",True,1.0,exact
+SEC_BYPASS_p8_p7_asbr1__rs_Security_Policy_11,security_policy_bypass_check:7c7cb7e05c-rs_Security_Policy_11,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p8 -> p7),"""VIOLATION (path: p8 -> p7)""",True,1.0,exact
+SEC_BYPASS_p7_fw1_asbr1__rs_Security_Policy_10__rs_Security_Policy_12,security_policy_bypass_check:5342ccd5dc-rs_Security_Policy_10-rs_Security_Policy_12,L4,security_policy_bypass_check,text,MATCH,,COMPLIANT,"""COMPLIANT""",True,1.0,exact
+SEC_BYPASS_fw1_fw2_asbr1__rs_Security_Policy_14,security_policy_bypass_check:60f159da1b-rs_Security_Policy_14,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: fw1 -> p11 -> p12 -> fw2),"""VIOLATION (path: fw1 -> p11 -> p12 -> fw2)""",True,1.0,exact
+SEC_BYPASS_fw2_fw1_leaf14__rs_Security_Policy_15,security_policy_bypass_check:71fa6692c6-rs_Security_Policy_15,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: fw2 -> p12 -> p11 -> fw1),"""VIOLATION (path: fw2 -> p12 -> p11 -> fw1)""",True,1.0,exact
+SEC_BYPASS_p8_p7_leaf14__rs_Security_Policy_3__rs_Security_Policy_16,security_policy_bypass_check:1ab4001b9b-rs_Security_Policy_3-rs_Security_Policy_16,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p8 -> p7),"""VIOLATION (path: p8 -> p7)""",True,1.0,exact
+SEC_BYPASS_p7_fw1_asbr1__rs_Security_Policy_1__rs_Security_Policy_17,security_policy_bypass_check:5342ccd5dc-rs_Security_Policy_1-rs_Security_Policy_17,L4,security_policy_bypass_check,text,MATCH,,COMPLIANT,"""COMPLIANT""",True,1.0,exact

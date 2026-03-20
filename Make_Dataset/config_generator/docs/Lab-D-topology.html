@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Lab-D PNETLab Wiring Diagram</title>
+<style>
+:root{--bg:#0c1222;--card:#141d30;--border:#1e2d4a;--text:#c8d6e5;--dim:#4a5568;--blue:#60a5fa;--purple:#a78bfa;--amber:#fbbf24;--red:#f87171;--teal:#2dd4bf;--green:#34d399;--cyan:#22d3ee;--orange:#fb923c;--pink:#f472b6}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);font-family:'Inter','Segoe UI',system-ui,sans-serif;color:var(--text);overflow-x:hidden}
+.header{text-align:center;padding:16px 20px 0}
+.header h1{font-size:20px;color:#f1f5f9;font-weight:700;letter-spacing:-.5px}
+.header .sub{font-size:12px;color:var(--dim);margin-top:3px}
+.controls{display:flex;justify-content:center;gap:6px;padding:10px 20px;flex-wrap:wrap}
+.btn{background:var(--card);border:1px solid var(--border);color:var(--dim);font-size:11px;padding:4px 10px;border-radius:6px;cursor:pointer;transition:all .15s;font-family:inherit}
+.btn:hover{border-color:var(--blue);color:var(--blue)}
+.btn.on{background:#1e3a5f;border-color:var(--blue);color:var(--blue)}
+.btn.rst{border-color:#4a2020;color:var(--red)}
+.btn.rst:hover{background:#2a1515;border-color:var(--red)}
+.wrap{display:flex;gap:0;justify-content:center;padding:0 8px}
+.svg-box{flex:1;max-width:1520px}
+svg{width:100%;height:auto;display:block;background:var(--card);border-radius:14px;border:1px solid var(--border)}
+.pnl{width:340px;background:var(--card);border-left:1px solid var(--border);padding:12px;font-size:11px;max-height:880px;overflow-y:auto;flex-shrink:0;border-radius:0 14px 14px 0}
+.pnl h3{color:var(--dim);font-size:11px;font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.pnl input{background:var(--bg);border:1px solid var(--border);color:var(--text);font-size:11px;padding:5px 8px;border-radius:5px;width:100%;margin-bottom:6px;outline:none;font-family:inherit}
+.pnl input:focus{border-color:var(--blue)}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;color:var(--dim);font-size:10px;padding:3px 4px;border-bottom:1px solid var(--border);font-weight:500}
+td{padding:3px 4px;font-size:10px;color:var(--text);border-bottom:1px solid #0f1829;cursor:pointer}
+tr.hl td{background:#1e3a5f!important}
+tr:hover td{background:#1a2540}
+.cm{color:var(--blue)}.cv{color:var(--amber)}.cb{color:var(--red);font-weight:700}.ce{color:var(--orange);font-weight:700}.ch{color:var(--green);font-weight:700}
+.tip{position:fixed;background:#080d1a;color:var(--text);padding:10px 14px;border-radius:8px;font-size:11px;pointer-events:none;opacity:0;transition:opacity .1s;z-index:99;line-height:1.6;border:1px solid var(--border);box-shadow:0 12px 40px rgba(0,0,0,.6);max-width:360px}
+.tip b{color:#f1f5f9}.tip .dm{color:var(--dim);font-size:10px}
+.dev{cursor:pointer;transition:filter .12s}.dev:hover{filter:brightness(1.25)}
+.dev.dim{opacity:.12;pointer-events:none}
+.net{cursor:pointer;transition:transform .12s}.net:hover{transform:scale(1.3)}
+.net.dim{opacity:.08;pointer-events:none}
+.wire{transition:opacity .15s}.wire.dim{opacity:.05}
+.slbl{transition:opacity .15s}.slbl.dim{opacity:.05}
+.stats{display:flex;gap:6px;justify-content:center;padding:0 20px 6px;flex-wrap:wrap}
+.s{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:11px;color:var(--dim)}
+.s b{color:#f1f5f9;font-size:13px;margin-right:2px}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Lab-D PNETLab Wiring Diagram</h1>
+  <p class="sub">AS 65000/65001/65002 &bull; OSPF Area 0/1/2 &bull; 40 Devices + 49 Networks = 89 PNETLab Objects</p>
+</div>
+<div class="controls">
+  <button class="btn on" id="tSlot" onclick="tog('slot')">eX Slots</button>
+  <button class="btn" id="tSub" onclick="tog('sub')">Subnets</button>
+  <button class="btn on" id="tNet" onclick="tog('net')">Net Labels</button>
+  <button class="btn rst" onclick="rstHL()">Reset</button>
+</div>
+<div class="stats">
+  <div class="s"><b>40</b>Devices</div>
+  <div class="s"><b>48</b>Data Nets</div>
+  <div class="s"><b>1</b>Mgmt Net</div>
+  <div class="s"><b>89</b>Total Objects</div>
+  <div class="s"><b>4</b>Regions</div>
+  <div class="s"><b>3</b>AS Numbers</div>
+</div>
+
+<div class="wrap">
+<div class="svg-box">
+<svg id="sv" viewBox="0 0 1500 1050"></svg>
+</div>
+<div class="pnl">
+  <h3>PNETLab Wiring Table</h3>
+  <input id="q" placeholder="Search: P3, net_, backbone, HSRP..." oninput="bTbl(this.value)"/>
+  <table><thead><tr><th>#</th><th>Network</th><th>A(slot)</th><th>B(slot)</th><th>Subnet</th></tr></thead><tbody id="tbl"></tbody></table>
+</div>
+</div>
+<div class="tip" id="tip"></div>
+
+<script>
+// ═══════════════════ DATA ═══════════════════
+const D=[ // Devices: 40 nodes across 4 regions
+  // Region 1 (top-left) — AS 65000, Area 0
+  {id:"P1",  r:"p", rg:1,x:130,y:260, lo:"10.255.0.1", m:"10.10.10.11"},
+  {id:"P2",  r:"p", rg:1,x:260,y:260, lo:"10.255.0.2", m:"10.10.10.12"},
+  {id:"P3",  r:"p", rg:1,x:130,y:360, lo:"10.255.0.3", m:"10.10.10.13"},
+  {id:"P4",  r:"p", rg:1,x:260,y:360, lo:"10.255.0.4", m:"10.10.10.14"},
+  {id:"PE1", r:"pe",rg:1,x:195,y:150, lo:"10.255.0.11",m:"10.10.10.21"},
+  {id:"PE2", r:"pe",rg:1,x:340,y:420, lo:"10.255.0.12",m:"10.10.10.22"},
+  {id:"Leaf1",r:"lf",rg:1,x:110,y:75, v:"VRF_GOV",m:"10.10.10.31"},
+  {id:"Leaf2",r:"lf",rg:1,x:280,y:75, v:"VRF_EDU",m:"10.10.10.32"},
+  {id:"Leaf3",r:"lf",rg:1,x:280,y:435,v:"VRF_RND",m:"10.10.10.33"},
+  {id:"Leaf4",r:"lf",rg:1,x:400,y:435,v:"VRF_GOV",m:"10.10.10.34"},
+
+  // Region 2 (top-right) — AS 65000, Area 0
+  {id:"P5",  r:"p", rg:2,x:530,y:260, lo:"10.255.0.5", m:"10.10.10.15"},
+  {id:"P6",  r:"p", rg:2,x:660,y:260, lo:"10.255.0.6", m:"10.10.10.16"},
+  {id:"P7",  r:"p", rg:2,x:530,y:360, lo:"10.255.0.7", m:"10.10.10.17"},
+  {id:"P8",  r:"p", rg:2,x:660,y:360, lo:"10.255.0.8", m:"10.10.10.18"},
+  {id:"PE3", r:"pe",rg:2,x:595,y:150, lo:"10.255.0.21",m:"10.10.10.23"},
+  {id:"PE4", r:"pe",rg:2,x:740,y:420, lo:"10.255.0.22",m:"10.10.10.24"},
+  {id:"Leaf5",r:"lf",rg:2,x:510,y:75, v:"VRF_GOV",m:"10.10.10.35"},
+  {id:"Leaf6",r:"lf",rg:2,x:680,y:75, v:"VRF_EDU",m:"10.10.10.36"},
+  {id:"Leaf7",r:"lf",rg:2,x:680,y:435,v:"VRF_RND",m:"10.10.10.37"},
+  {id:"Leaf8",r:"lf",rg:2,x:800,y:435,v:"VRF_GOV",m:"10.10.10.38"},
+
+  // Region 3 (bottom-left) — AS 65001, Area 1
+  {id:"ASBR1",r:"ab",rg:3,x:130,y:560, lo:"10.255.0.31",m:"10.10.10.41"},
+  {id:"ASBR2",r:"ab",rg:3,x:300,y:560, lo:"10.255.0.32",m:"10.10.10.42"},
+  {id:"P9",  r:"p", rg:3,x:130,y:680, lo:"10.255.0.9", m:"10.10.10.19"},
+  {id:"P10", r:"p", rg:3,x:300,y:680, lo:"10.255.0.10",m:"10.10.10.20"},
+  {id:"PE5", r:"pe",rg:3,x:215,y:770, lo:"10.255.0.33",m:"10.10.10.43"},
+  {id:"PE6", r:"pe",rg:3,x:395,y:770, lo:"10.255.0.34",m:"10.10.10.44"},
+  {id:"Leaf9", r:"lf",rg:3,x:130,y:870,v:"VRF_SEC",m:"10.10.10.39"},
+  {id:"Leaf10",r:"lf",rg:3,x:260,y:870,v:"VRF_MIL",m:"10.10.10.40"},
+  {id:"Leaf11",r:"lf",rg:3,x:390,y:870,v:"VRF_SEC",m:"10.10.10.45"},
+  {id:"Leaf12",r:"lf",rg:3,x:480,y:870,v:"VRF_MIL",m:"10.10.10.46"},
+
+  // Region 4 (bottom-right) — AS 65002, Area 2
+  {id:"FW1", r:"fw",rg:4,x:610,y:560, lo:"10.255.0.41",m:"10.10.10.51"},
+  {id:"FW2", r:"fw",rg:4,x:780,y:560, lo:"10.255.0.42",m:"10.10.10.52"},
+  {id:"P11", r:"p", rg:4,x:660,y:680, lo:"10.255.0.51",m:"10.10.10.55"},
+  {id:"P12", r:"p", rg:4,x:830,y:680, lo:"10.255.0.52",m:"10.10.10.56"},
+  {id:"PE7", r:"pe",rg:4,x:710,y:770, lo:"10.255.0.43",m:"10.10.10.53"},
+  {id:"PE8", r:"pe",rg:4,x:900,y:770, lo:"10.255.0.44",m:"10.10.10.54"},
+  {id:"Leaf13",r:"lf",rg:4,x:630,y:870,v:"VRF_ISP",m:"10.10.10.47"},
+  {id:"Leaf14",r:"lf",rg:4,x:750,y:870,v:"VRF_CDN",m:"10.10.10.48"},
+  {id:"Leaf15",r:"lf",rg:4,x:870,y:870,v:"VRF_ISP_B",m:"10.10.10.49"},
+  {id:"Leaf16",r:"lf",rg:4,x:980,y:870,v:"VRF_CDN",m:"10.10.10.50"},
+];
+const W=[ // Wires (48 data links)
+  // Region 1 Core (#1-#7)
+  {n:1, a:"P1",sA:"e0",b:"PE1", sB:"e0",t:"m",sn:"10.0.1.0/31",  net:"net_P1_PE1"},
+  {n:2, a:"P1",sA:"e1",b:"P2",  sB:"e0",t:"m",sn:"10.0.2.0/31",  net:"net_P1_P2"},
+  {n:3, a:"P1",sA:"e2",b:"P3",  sB:"e0",t:"m",sn:"10.0.3.0/31",  net:"net_P1_P3"},
+  {n:4, a:"P2",sA:"e1",b:"PE2", sB:"e0",t:"m",sn:"10.0.4.0/31",  net:"net_P2_PE2"},
+  {n:5, a:"P2",sA:"e2",b:"P4",  sB:"e0",t:"m",sn:"10.0.5.0/31",  net:"net_P2_P4"},
+  {n:6, a:"P3",sA:"e1",b:"P4",  sB:"e1",t:"m",sn:"10.0.6.0/31",  net:"net_P3_P4"},
+  {n:7, a:"P4",sA:"e2",b:"PE2", sB:"e1",t:"m",sn:"10.0.7.0/31",  net:"net_P4_PE2"},
+  // Region 1 Access (#8-#11)
+  {n:8, a:"PE1",sA:"e1",b:"Leaf1",sB:"e0",t:"v",sn:"172.16.1.0/24",net:"net_PE1_L1"},
+  {n:9, a:"PE1",sA:"e2",b:"Leaf2",sB:"e0",t:"v",sn:"172.16.2.0/24",net:"net_PE1_L2"},
+  {n:10,a:"PE2",sA:"e2",b:"Leaf3",sB:"e0",t:"v",sn:"172.16.3.0/24",net:"net_PE2_L3"},
+  {n:11,a:"PE2",sA:"e3",b:"Leaf4",sB:"e0",t:"v",sn:"172.16.4.0/24",net:"net_PE2_L4"},
+  // Inter-Region 1↔2 (#12)
+  {n:12,a:"P3", sA:"e2",b:"P5",  sB:"e2",t:"b",sn:"10.0.20.0/31", net:"net_BACKBONE_R1R2"},
+  // Region 2 Core (#13-#18)
+  {n:13,a:"P5", sA:"e0",b:"PE3", sB:"e0",t:"m",sn:"10.0.11.0/31", net:"net_P5_PE3"},
+  {n:14,a:"P5", sA:"e1",b:"P6",  sB:"e0",t:"m",sn:"10.0.12.0/31", net:"net_P5_P6"},
+  {n:15,a:"P6", sA:"e1",b:"PE4", sB:"e0",t:"m",sn:"10.0.14.0/31", net:"net_P6_PE4"},
+  {n:16,a:"P6", sA:"e2",b:"P7",  sB:"e0",t:"m",sn:"10.0.15.0/31", net:"net_P6_P7"},
+  {n:17,a:"P7", sA:"e1",b:"P8",  sB:"e0",t:"m",sn:"10.0.16.0/31", net:"net_P7_P8"},
+  {n:18,a:"P8", sA:"e1",b:"PE4", sB:"e1",t:"m",sn:"10.0.17.0/31", net:"net_P8_PE4"},
+  // Region 2 Access (#19-#22)
+  {n:19,a:"PE3",sA:"e1",b:"Leaf5",sB:"e0",t:"v",sn:"172.17.1.0/24",net:"net_PE3_L5"},
+  {n:20,a:"PE3",sA:"e2",b:"Leaf6",sB:"e0",t:"v",sn:"172.17.2.0/24",net:"net_PE3_L6"},
+  {n:21,a:"PE4",sA:"e2",b:"Leaf7",sB:"e0",t:"v",sn:"172.17.3.0/24",net:"net_PE4_L7"},
+  {n:22,a:"PE4",sA:"e3",b:"Leaf8",sB:"e0",t:"v",sn:"172.17.4.0/24",net:"net_PE4_L8"},
+  // Inter-Region 2↔3 eBGP (#23-#24)
+  {n:23,a:"P7", sA:"e2",b:"ASBR1",sB:"e0",t:"e",sn:"10.0.30.0/31",net:"net_P7_ASBR1"},
+  {n:24,a:"P8", sA:"e2",b:"ASBR2",sB:"e0",t:"e",sn:"10.0.30.2/31",net:"net_P8_ASBR2"},
+  // Region 3 Core (#25-#31)
+  {n:25,a:"ASBR1",sA:"e1",b:"P9",  sB:"e0",t:"m",sn:"10.0.31.0/31",net:"net_ASBR1_P9"},
+  {n:26,a:"ASBR1",sA:"e2",b:"PE5", sB:"e0",t:"m",sn:"10.0.31.2/31",net:"net_ASBR1_PE5"},
+  {n:27,a:"ASBR2",sA:"e1",b:"P10", sB:"e0",t:"m",sn:"10.0.32.0/31",net:"net_ASBR2_P10"},
+  {n:28,a:"ASBR2",sA:"e2",b:"PE6", sB:"e0",t:"m",sn:"10.0.32.2/31",net:"net_ASBR2_PE6"},
+  {n:29,a:"P9",  sA:"e1",b:"P10", sB:"e1",t:"m",sn:"10.0.33.0/31",net:"net_P9_P10"},
+  {n:30,a:"P9",  sA:"e2",b:"PE6", sB:"e5",t:"m",sn:"10.0.33.2/31",net:"net_P9_PE6"},
+  {n:31,a:"P10", sA:"e2",b:"PE5", sB:"e4",t:"m",sn:"10.0.34.0/31",net:"net_P10_PE5"},
+  // Region 3 Access HSRP (#32) + normal (#33-#35)
+  {n:32,a:"PE5", sA:"e1",b:"Leaf9",sB:"e0",t:"h",sn:"172.18.1.0/24",net:"net_hsrp_sec",extra:"PE6(e4)"},
+  {n:33,a:"PE5", sA:"e2",b:"Leaf10",sB:"e0",t:"v",sn:"172.18.2.0/24",net:"net_PE5_L10"},
+  {n:34,a:"PE6", sA:"e1",b:"Leaf11",sB:"e0",t:"v",sn:"172.18.3.0/24",net:"net_PE6_L11"},
+  {n:35,a:"PE6", sA:"e2",b:"Leaf12",sB:"e0",t:"v",sn:"172.18.4.0/24",net:"net_PE6_L12"},
+  // Inter-Region 3↔4 eBGP (#36-#37)
+  {n:36,a:"ASBR1",sA:"e3",b:"FW1", sB:"e0",t:"e",sn:"10.0.40.0/31",net:"net_ASBR1_FW1"},
+  {n:37,a:"ASBR2",sA:"e3",b:"FW2", sB:"e0",t:"e",sn:"10.0.40.2/31",net:"net_ASBR2_FW2"},
+  // Region 4 Core (#38-#44)
+  {n:38,a:"FW1", sA:"e1",b:"P11", sB:"e0",t:"m",sn:"10.0.41.0/31",net:"net_FW1_P11"},
+  {n:39,a:"FW1", sA:"e2",b:"PE7", sB:"e0",t:"m",sn:"10.0.41.2/31",net:"net_FW1_PE7"},
+  {n:40,a:"FW2", sA:"e1",b:"P12", sB:"e0",t:"m",sn:"10.0.42.0/31",net:"net_FW2_P12"},
+  {n:41,a:"FW2", sA:"e2",b:"PE8", sB:"e0",t:"m",sn:"10.0.42.2/31",net:"net_FW2_PE8"},
+  {n:42,a:"P11", sA:"e1",b:"P12", sB:"e1",t:"m",sn:"10.0.43.0/31",net:"net_P11_P12"},
+  {n:43,a:"P11", sA:"e2",b:"PE8", sB:"e3",t:"m",sn:"10.0.43.2/31",net:"net_P11_PE8"},
+  {n:44,a:"P12", sA:"e2",b:"PE7", sB:"e3",t:"m",sn:"10.0.44.0/31",net:"net_P12_PE7"},
+  // Region 4 Access (#45-#48)
+  {n:45,a:"PE7", sA:"e1",b:"Leaf13",sB:"e0",t:"v",sn:"172.19.1.0/24",net:"net_PE7_L13"},
+  {n:46,a:"PE7", sA:"e2",b:"Leaf14",sB:"e0",t:"v",sn:"172.19.2.0/24",net:"net_PE7_L14"},
+  {n:47,a:"PE8", sA:"e1",b:"Leaf15",sB:"e0",t:"v",sn:"172.19.3.0/24",net:"net_PE8_L15"},
+  {n:48,a:"PE8", sA:"e2",b:"Leaf16",sB:"e0",t:"v",sn:"172.19.4.0/24",net:"net_PE8_L16"},
+];
+
+// ═══════════════════ STYLE ═══════════════════
+const DS={
+  p: {fill:"#152a4a",stk:"#3b82f6",txt:"#93c5fd",w:68,h:36,rx:8,fs:15},
+  pe:{fill:"#1f1145",stk:"#8b5cf6",txt:"#c4b5fd",w:76,h:38,rx:8,fs:15},
+  lf:{fill:"#2a1800",stk:"#f59e0b",txt:"#fde68a",w:64,h:28,rx:13,fs:12},
+  ab:{fill:"#1a2e1a",stk:"#34d399",txt:"#a7f3d0",w:80,h:38,rx:8,fs:13},
+  fw:{fill:"#2d1515",stk:"#f87171",txt:"#fecaca",w:68,h:36,rx:8,fs:15},
+};
+// Network node colors by type: m=MPLS, v=VRF, b=Backbone, e=eBGP, h=HSRP
+const NC={m:"#0e7490",v:"#b45309",b:"#dc2626",e:"#059669",h:"#7c3aed"};
+const NS={m:"#22d3ee",v:"#fbbf24",b:"#f87171",e:"#34d399",h:"#a78bfa"};
+const NR={m:10,v:9,b:14,e:12,h:12};
+const WC={m:"#1e5f8a",v:"#78520f",b:"#991b1b",e:"#065f46",h:"#4c1d95"};
+const WW={m:1.5,v:1.2,b:2.5,e:2,h:2};
+const WD={m:"",v:"5,3",b:"",e:"8,4",h:"4,2"};
+const TNAME={m:"MPLS",v:"VRF",b:"Backbone",e:"eBGP",h:"HSRP"};
+
+const dm={};D.forEach(d=>dm[d.id]=d);
+const sv=document.getElementById("sv");
+const tip=document.getElementById("tip");
+const vis={slot:true,sub:false,net:true};
+
+function tog(k){vis[k]=!vis[k];document.getElementById("t"+k[0].toUpperCase()+k.slice(1)).classList.toggle("on");rVis()}
+function rVis(){
+  sv.querySelectorAll(".sl").forEach(e=>e.style.display=vis.slot?"":"none");
+  sv.querySelectorAll(".sbl").forEach(e=>e.style.display=vis.sub?"":"none");
+  sv.querySelectorAll(".nl").forEach(e=>e.style.display=vis.net?"":"none");
+}
+const E=(t,a={})=>{const e=document.createElementNS("http://www.w3.org/2000/svg",t);Object.entries(a).forEach(([k,v])=>e.setAttribute(k,v));return e};
+const TX=(x,y,s,a={})=>{const e=E("text",{x,y,...a});e.textContent=s;return e};
+const sT=(h,ev)=>{tip.innerHTML=h;tip.style.opacity=1;tip.style.left=ev.clientX+16+"px";tip.style.top=ev.clientY-10+"px"};
+const hT=()=>{tip.style.opacity=0};
+
+// ═══════════════════ RENDER ═══════════════════
+
+// Defs
+(()=>{
+  const d=E("defs");
+  [["#3b82f6",0],["#8b5cf6",1],["#f59e0b",2],["#22d3ee",3],["#f87171",4],["#34d399",5],["#a78bfa",6]].forEach(([c,i])=>{
+    const f=E("filter",{id:"g"+i,x:"-40%",y:"-40%",width:"180%",height:"180%"});
+    f.appendChild(E("feGaussianBlur",{stdDeviation:"3",in:"SourceGraphic",result:"b"}));
+    f.appendChild(E("feFlood",{"flood-color":c,"flood-opacity":"0.25",result:"f"}));
+    f.appendChild(E("feComposite",{in:"f",in2:"b",operator:"in",result:"r"}));
+    const m=E("feMerge");m.appendChild(E("feMergeNode",{in:"r"}));m.appendChild(E("feMergeNode",{in:"SourceGraphic"}));
+    f.appendChild(m);d.appendChild(f);
+  });
+  sv.appendChild(d);
+})();
+
+// Background + zones (2x2 grid)
+(()=>{
+  const g=E("g");
+  g.appendChild(E("rect",{x:0,y:0,width:1500,height:1050,fill:"#0c1222"}));
+  // Region 1 (top-left)
+  g.appendChild(E("rect",{x:50,y:40,width:420,height:440,rx:16,fill:"none",stroke:"#1e3a5f","stroke-width":1,"stroke-dasharray":"6,5",opacity:.35}));
+  g.appendChild(TX(260,470,"Region 1 (AS 65000, Area 0)",{"text-anchor":"middle",fill:"#2563eb","font-size":"12","font-family":"inherit","font-weight":"600",opacity:.25}));
+  // Region 2 (top-right)
+  g.appendChild(E("rect",{x:480,y:40,width:430,height:440,rx:16,fill:"none",stroke:"#065f46","stroke-width":1,"stroke-dasharray":"6,5",opacity:.35}));
+  g.appendChild(TX(695,470,"Region 2 (AS 65000, Area 0)",{"text-anchor":"middle",fill:"#059669","font-size":"12","font-family":"inherit","font-weight":"600",opacity:.25}));
+  // Region 3 (bottom-left)
+  g.appendChild(E("rect",{x:50,y:510,width:480,height:400,rx:16,fill:"none",stroke:"#7c3aed","stroke-width":1,"stroke-dasharray":"6,5",opacity:.35}));
+  g.appendChild(TX(290,900,"Region 3 (AS 65001, Area 1)",{"text-anchor":"middle",fill:"#7c3aed","font-size":"12","font-family":"inherit","font-weight":"600",opacity:.25}));
+  // Region 4 (bottom-right)
+  g.appendChild(E("rect",{x:550,y:510,width:470,height:400,rx:16,fill:"none",stroke:"#dc2626","stroke-width":1,"stroke-dasharray":"6,5",opacity:.35}));
+  g.appendChild(TX(785,900,"Region 4 (AS 65002, Area 2)",{"text-anchor":"middle",fill:"#dc2626","font-size":"12","font-family":"inherit","font-weight":"600",opacity:.25}));
+  // Tier labels
+  [{y:75,t:"ACCESS"},{y:200,t:"AGGREG."},{y:310,t:"CORE"},{y:560,t:"BORDER"},{y:680,t:"CORE"},{y:770,t:"AGGREG."},{y:870,t:"ACCESS"}].forEach(({y,t})=>{
+    g.appendChild(TX(22,y,t,{fill:"#1a2540","font-size":"7","font-family":"inherit","font-weight":"600",transform:`rotate(-90,22,${y})`,"text-anchor":"middle"}));
+  });
+  sv.appendChild(g);
+})();
+
+// Cloud0 management network
+(()=>{
+  const g=E("g");
+  const cx=500,cy=1020;
+  g.appendChild(E("rect",{x:cx-260,y:cy-16,width:520,height:32,rx:16,fill:"#1a1a10",stroke:"#fbbf24","stroke-width":1.5,opacity:.9}));
+  g.appendChild(TX(cx,cy+4,"Cloud0  |  Mgmt Net (10.10.10.0/24)  |  All 40 nodes e7",{"text-anchor":"middle",fill:"#fbbf24","font-size":"11","font-family":"inherit","font-weight":"500"}));
+  // Dotted lines from representative columns
+  const xSet=new Set();D.forEach(d=>xSet.add(d.x));
+  [...xSet].forEach(x=>{
+    g.appendChild(E("line",{x1:x,y1:900,x2:Math.min(Math.max(x*.7+cx*.3,280),720),y2:cy-16,stroke:"#fbbf24","stroke-width":.4,"stroke-dasharray":"2,4",opacity:.1}));
+  });
+  sv.appendChild(g);
+})();
+
+// ═══════ Wires + Network Nodes ═══════
+const netEls=[],wireEls=[];
+(()=>{
+  const gW=E("g");
+  const gN=E("g");
+  const gL=E("g");
+
+  W.forEach((w,i)=>{
+    const da=dm[w.a],db=dm[w.b];
+    if(!da||!db)return;
+    const col=WC[w.t],scol=NS[w.t],ncol=NC[w.t];
+    const lw=WW[w.t],ld=WD[w.t];
+
+    let nx=(da.x+db.x)/2, ny=(da.y+db.y)/2;
+    if(w.t==="m" && da.r==="p" && db.r==="p"){
+      const dx=db.x-da.x,dy=db.y-da.y,ln=Math.sqrt(dx*dx+dy*dy)||1;
+      nx+=(-dy/ln)*12; ny+=(dx/ln)*12;
+    }
+    // Nudge eBGP links that cross regions
+    if(w.t==="e"){
+      const dx=db.x-da.x,dy=db.y-da.y,ln=Math.sqrt(dx*dx+dy*dy)||1;
+      nx+=(-dy/ln)*10; ny+=(dx/ln)*10;
+    }
+
+    const wA=E("line",{x1:da.x,y1:da.y,x2:nx,y2:ny,stroke:col,"stroke-width":lw,"stroke-linecap":"round",class:"wire","data-i":i,opacity:.6});
+    if(ld)wA.setAttribute("stroke-dasharray",ld);
+    gW.appendChild(wA);
+    const wB=E("line",{x1:nx,y1:ny,x2:db.x,y2:db.y,stroke:col,"stroke-width":lw,"stroke-linecap":"round",class:"wire","data-i":i,opacity:.6});
+    if(ld)wB.setAttribute("stroke-dasharray",ld);
+    gW.appendChild(wB);
+    wireEls.push({a:wA,b:wB,w,i});
+
+    // HSRP: extra wire from PE6(e4) to network node
+    if(w.t==="h" && w.extra){
+      const pe6=dm["PE6"];
+      if(pe6){
+        const wC=E("line",{x1:pe6.x,y1:pe6.y,x2:nx,y2:ny,stroke:col,"stroke-width":lw,"stroke-linecap":"round",class:"wire","data-i":i,opacity:.6,"stroke-dasharray":"4,2"});
+        gW.appendChild(wC);
+      }
+    }
+
+    const nr=NR[w.t];
+    const gfi={m:3,v:2,b:4,e:5,h:6}[w.t]||3;
+    const ng=E("g",{class:"net","data-i":i,transform:`translate(${nx},${ny})`});
+    ng.appendChild(E("circle",{cx:0,cy:0,r:nr+3,fill:scol,opacity:.06,filter:`url(#g${gfi})`}));
+    ng.appendChild(E("circle",{cx:0,cy:0,r:nr,fill:ncol,stroke:scol,"stroke-width":w.t==="b"||w.t==="e"?2:1.3}));
+
+    let lbl=`${w.n}`;
+    if(w.t==="b")lbl="BB";
+    if(w.t==="e")lbl="eB";
+    if(w.t==="h")lbl="HS";
+    const lblClr={m:"#e0f2fe",v:"#fde68a",b:"#fecaca",e:"#d1fae5",h:"#ede9fe"}[w.t]||"#e0f2fe";
+    ng.appendChild(TX(0,1,lbl,{"text-anchor":"middle","dominant-baseline":"middle",fill:lblClr,"font-size":w.t==="b"||w.t==="e"||w.t==="h"?8:8,"font-weight":"700","font-family":"inherit"}));
+
+    const nlbl=TX(0,nr+11,w.net,{"text-anchor":"middle",fill:scol,"font-size":"6.5","font-family":"inherit",opacity:.7,class:"nl","data-i":i});
+    ng.appendChild(nlbl);
+
+    ng.addEventListener("mouseenter",ev=>{
+      let h=`<b>${w.net}</b> <span class="dm">PNETLab Network #${w.n}</span><br><br>`+
+        `<b>${w.a}</b> port <b>${w.sA}</b> \u2500\u2500 [${w.net}] \u2500\u2500 <b>${w.b}</b> port <b>${w.sB}</b><br>`;
+      if(w.extra)h+=`<b>${w.extra}</b> also connected (HSRP shared bridge)<br>`;
+      h+=`<br>Subnet: <b>${w.sn}</b><br>Type: <b>${TNAME[w.t]}</b><br><br>`+
+        `<span class="dm">PNETLab: Create network "${w.net}",<br>connect ${w.a}(${w.sA}) and ${w.b}(${w.sB}) to it</span>`;
+      sT(h,ev);
+    });
+    ng.addEventListener("mousemove",ev=>{tip.style.left=ev.clientX+16+"px";tip.style.top=ev.clientY-10+"px"});
+    ng.addEventListener("mouseleave",hT);
+    ng.addEventListener("click",()=>hlW(i));
+    gN.appendChild(ng);
+    netEls.push({el:ng,w,i,nx,ny});
+
+    const dx=db.x-da.x,dy=db.y-da.y,ln=Math.sqrt(dx*dx+dy*dy)||1;
+    const ux=dx/ln,uy=dy/ln;
+    const pA=da.r==="lf"?20:28, pB=db.r==="lf"?20:28;
+    const px=-uy*9,py=ux*9;
+    gL.appendChild(TX(da.x+ux*pA+px,da.y+uy*pA+py+3,w.sA,{"text-anchor":"middle",fill:scol,"font-size":"8","font-family":"monospace",opacity:.8,class:"sl","data-i":i}));
+    gL.appendChild(TX(db.x-ux*pB+px,db.y-uy*pB+py+3,w.sB,{"text-anchor":"middle",fill:scol,"font-size":"8","font-family":"monospace",opacity:.8,class:"sl","data-i":i}));
+
+    const sbl=TX(nx,ny-nr-6,w.sn,{"text-anchor":"middle",fill:scol,"font-size":"7","font-family":"inherit",opacity:.55,class:"sbl","data-i":i});
+    sbl.style.display="none";gL.appendChild(sbl);
+  });
+
+  sv.appendChild(gW);
+  sv.appendChild(gL);
+  sv.appendChild(gN);
+})();
+
+// ═══════ Device Nodes ═══════
+const devEls={};
+(()=>{
+  D.forEach(d=>{
+    const s=DS[d.r];
+    const g=E("g",{class:"dev",transform:`translate(${d.x},${d.y})`,"data-id":d.id});
+
+    const gi={p:0,pe:1,lf:2,ab:5,fw:4}[d.r];
+    g.appendChild(E("rect",{x:-s.w/2-2,y:-s.h/2-2,width:s.w+4,height:s.h+4,rx:s.rx+2,fill:s.stk,opacity:.05,filter:`url(#g${gi})`}));
+    g.appendChild(E("rect",{x:-s.w/2,y:-s.h/2,width:s.w,height:s.h,rx:s.rx,fill:s.fill,stroke:s.stk,"stroke-width":2}));
+    g.appendChild(TX(0,1,d.id,{"text-anchor":"middle","dominant-baseline":"middle",fill:s.txt,"font-size":s.fs,"font-weight":"700","font-family":"inherit"}));
+
+    if(d.v){
+      const vw=Math.max(d.v.length*5.5+4,44);
+      g.appendChild(E("rect",{x:-vw/2,y:s.h/2+3,width:vw,height:13,rx:4,fill:s.stk,opacity:.15}));
+      g.appendChild(TX(0,s.h/2+12,d.v,{"text-anchor":"middle",fill:s.stk,"font-size":"7","font-weight":"600","font-family":"inherit"}));
+    }
+    if(d.r!=="lf"){
+      g.appendChild(TX(0,s.h/2+(d.v?26:14),d.m,{"text-anchor":"middle",fill:"#2a3550","font-size":"7.5","font-family":"monospace"}));
+    }
+
+    const conns=W.filter(w=>w.a===d.id||w.b===d.id||(w.extra&&w.extra.startsWith(d.id)));
+    conns.forEach((w)=>{
+      const peer=w.a===d.id?dm[w.b]:dm[w.a];
+      if(!peer)return;
+      const dx=peer.x-d.x,dy=peer.y-d.y,ln=Math.sqrt(dx*dx+dy*dy)||1;
+      const px=(dx/ln)*(s.w/2+1),py=(dy/ln)*(s.h/2+1);
+      g.appendChild(E("circle",{cx:px,cy:py,r:2.5,fill:NS[w.t],opacity:.7}));
+    });
+
+    g.addEventListener("mouseenter",ev=>{
+      const cls=W.filter(w=>w.a===d.id||w.b===d.id||(w.extra&&w.extra.startsWith(d.id)));
+      const roleNames={p:"P Core Router",pe:"Provider Edge",lf:"Leaf/CE",ab:"ASBR (AS Boundary)",fw:"Firewall Waypoint"};
+      let h=`<b>${d.id}</b> <span class="dm">${roleNames[d.r]||d.r} &bull; Region ${d.rg}</span><br>`;
+      if(d.lo)h+=`Loopback: <b>${d.lo}</b><br>`;
+      h+=`Mgmt: <b>${d.m}</b> (e7 \u2192 Cloud0)<br>`;
+      if(d.v)h+=`VRF: <b>${d.v}</b><br>`;
+      h+=`<br><span class="dm">PNETLab Connections (${cls.length} data + 1 mgmt):</span><br>`;
+      cls.forEach(w=>{
+        const isA=w.a===d.id;
+        const isExtra=w.extra&&w.extra.startsWith(d.id);
+        if(isExtra){
+          h+=`&nbsp;\u2022 <b>${w.extra.split("(")[1]?.replace(")","")}</b> \u2192 [${w.net}] \u2192 HSRP shared<br>`;
+        } else {
+          h+=`&nbsp;\u2022 <b>${isA?w.sA:w.sB}</b> \u2192 [${w.net}] \u2192 ${isA?w.b:w.a}<br>`;
+        }
+      });
+      h+=`&nbsp;\u2022 <b>e7</b> \u2192 [Cloud0] \u2192 Mgmt`;
+      sT(h,ev);
+    });
+    g.addEventListener("mousemove",ev=>{tip.style.left=ev.clientX+16+"px";tip.style.top=ev.clientY-10+"px"});
+    g.addEventListener("mouseleave",hT);
+    g.addEventListener("click",()=>hlD(d.id));
+
+    devEls[d.id]=g;
+    sv.appendChild(g);
+  });
+})();
+
+// Legend
+(()=>{
+  const g=E("g",{transform:"translate(60,980)"});
+  const items=[
+    {l:"P Core",fill:"#152a4a",stk:"#3b82f6",sh:"r"},
+    {l:"PE",fill:"#1f1145",stk:"#8b5cf6",sh:"r"},
+    {l:"ASBR",fill:"#1a2e1a",stk:"#34d399",sh:"r"},
+    {l:"Firewall",fill:"#2d1515",stk:"#f87171",sh:"r"},
+    {l:"Leaf",fill:"#2a1800",stk:"#f59e0b",sh:"r"},
+    {l:"MPLS",fill:"#0e7490",stk:"#22d3ee",sh:"c"},
+    {l:"VRF",fill:"#b45309",stk:"#fbbf24",sh:"c"},
+    {l:"Backbone",fill:"#dc2626",stk:"#f87171",sh:"c"},
+    {l:"eBGP",fill:"#059669",stk:"#34d399",sh:"c"},
+    {l:"HSRP",fill:"#7c3aed",stk:"#a78bfa",sh:"c"},
+  ];
+  let cx=0;
+  items.forEach(it=>{
+    if(it.sh==="r"){
+      g.appendChild(E("rect",{x:cx,y:-7,width:16,height:14,rx:3,fill:it.fill,stroke:it.stk,"stroke-width":1.5}));
+    } else {
+      g.appendChild(E("circle",{cx:cx+8,cy:0,r:7,fill:it.fill,stroke:it.stk,"stroke-width":1.3}));
+    }
+    g.appendChild(TX(cx+22,3,it.l,{fill:"#64748b","font-size":"9.5","font-family":"inherit"}));
+    cx+=it.l.length*6+38;
+  });
+  sv.appendChild(g);
+})();
+
+// ═══════ HIGHLIGHT ═══════
+let hlOn=false;
+function hlD(id){
+  rstHL();hlOn=true;
+  const conn=new Set([id]),ci=new Set();
+  W.forEach((w,i)=>{
+    if(w.a===id||w.b===id||(w.extra&&w.extra.startsWith(id))){conn.add(w.a);conn.add(w.b);ci.add(i)}
+  });
+  Object.entries(devEls).forEach(([k,e])=>{if(!conn.has(k))e.classList.add("dim")});
+  sv.querySelectorAll(".wire").forEach(e=>{if(!ci.has(+e.dataset.i))e.classList.add("dim")});
+  sv.querySelectorAll(".net").forEach(e=>{if(!ci.has(+e.dataset.i))e.classList.add("dim")});
+  sv.querySelectorAll(".sl,.sbl,.nl").forEach(e=>{if(!ci.has(+e.dataset.i))e.classList.add("dim")});
+  document.querySelectorAll("#tbl tr").forEach(tr=>{if(tr.dataset.i!==undefined&&ci.has(+tr.dataset.i))tr.classList.add("hl")});
+}
+function hlW(idx){
+  rstHL();hlOn=true;
+  const w=W[idx],conn=new Set([w.a,w.b]),ci=new Set([idx]);
+  Object.entries(devEls).forEach(([k,e])=>{if(!conn.has(k))e.classList.add("dim")});
+  sv.querySelectorAll(".wire").forEach(e=>{if(!ci.has(+e.dataset.i))e.classList.add("dim")});
+  sv.querySelectorAll(".net").forEach(e=>{if(!ci.has(+e.dataset.i))e.classList.add("dim")});
+  sv.querySelectorAll(".sl,.sbl,.nl").forEach(e=>{if(!ci.has(+e.dataset.i))e.classList.add("dim")});
+  document.querySelectorAll("#tbl tr").forEach(tr=>{if(tr.dataset.i!==undefined&&ci.has(+tr.dataset.i))tr.classList.add("hl")});
+}
+function rstHL(){
+  hlOn=false;
+  sv.querySelectorAll(".dim").forEach(e=>e.classList.remove("dim"));
+  document.querySelectorAll("#tbl tr.hl").forEach(e=>e.classList.remove("hl"));
+}
+
+// ═══════ TABLE ═══════
+function bTbl(q=""){
+  const t=document.getElementById("tbl");t.innerHTML="";
+  const f=q.toLowerCase();
+  if(!f||"cloud0 mgmt e7".includes(f)){
+    const r=document.createElement("tr");
+    r.innerHTML=`<td style="color:var(--amber)">M</td><td style="color:var(--amber)">Cloud0</td><td colspan=2 style="color:var(--dim)">All 40 \u00d7 e7</td><td style="color:var(--dim)">10.10.10.0/24</td>`;
+    t.appendChild(r);
+  }
+  W.forEach((w,i)=>{
+    const s=`${w.n} ${w.net} ${w.a} ${w.b} ${w.sA} ${w.sB} ${w.sn} ${w.t} ${w.extra||""}`.toLowerCase();
+    if(f&&!s.includes(f))return;
+    const cc={m:"cm",v:"cv",b:"cb",e:"ce",h:"ch"}[w.t]||"cm";
+    const r=document.createElement("tr");r.dataset.i=i;
+    let col2=`${w.a}(${w.sA})`;
+    let col3=`${w.b}(${w.sB})`;
+    if(w.extra)col3+=` + ${w.extra}`;
+    r.innerHTML=`<td class="${cc}">${w.n}</td><td class="${cc}">${w.net}</td><td>${col2}</td><td>${col3}</td><td style="color:var(--dim)">${w.sn}</td>`;
+    r.addEventListener("click",()=>hlW(i));
+    t.appendChild(r);
+  });
+}
+bTbl();rVis();
+</script>
+</body>
+</html>

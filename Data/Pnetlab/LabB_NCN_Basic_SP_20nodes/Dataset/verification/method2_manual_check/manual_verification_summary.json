@@ -1,12 +1,12 @@
 {
-  "total_samples": 39,
-  "agree": 37,
+  "total_samples": 38,
+  "agree": 36,
   "disagree": 2,
-  "agreement_rate": 0.9487179487179487,
+  "agreement_rate": 0.9473684210526315,
   "by_level": {
     "L1": {
-      "total": 6,
-      "agree": 6,
+      "total": 5,
+      "agree": 5,
       "disagree": 0
     },
     "L2": {
@@ -27,11 +27,6 @@
       "disagree": 0
     },
     "bgp_neighbor_count": {
-      "total": 1,
-      "agree": 1,
-      "disagree": 0
-    },
-    "interface_status_map": {
       "total": 1,
       "agree": 1,
       "disagree": 0
@@ -71,7 +66,7 @@
       "agree": 1,
       "disagree": 0
     },
-    "ospf_area0_if_count": {
+    "ospf_area0_routers": {
       "total": 1,
       "agree": 1,
       "disagree": 0
@@ -214,20 +209,16 @@
   },
   "by_answer_type": {
     "number": {
-      "total": 11,
-      "agree": 10
+      "total": 10,
+      "agree": 9
     },
-    "map": {
-      "total": 1,
-      "agree": 1
-    },
-    "set": {
+    "set_str": {
       "total": 16,
       "agree": 15
     },
     "text": {
-      "total": 8,
-      "agree": 8
+      "total": 9,
+      "agree": 9
     },
     "map_str_int": {
       "total": 3,
@@ -239,7 +230,7 @@
       "qa_id": "IBGP_MISSING_PAIRS_65000",
       "metric": "ibgp_missing_pairs",
       "level": "L3",
-      "answer_type": "set",
+      "answer_type": "set_str",
       "dataset_answer": "[\"pe1<->pe4\", \"pe2<->pe3\"]",
       "manual_answer": "[\"pe1/pe4\", \"pe2/pe3\", \"pe3/pe2\", \"pe4/pe1\"]",
       "verdict": "DISAGREE",

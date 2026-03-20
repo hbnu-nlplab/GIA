@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Lab-A PNETLab Wiring Diagram</title>
+<style>
+:root{--bg:#0c1222;--card:#141d30;--border:#1e2d4a;--text:#c8d6e5;--dim:#4a5568;--blue:#60a5fa;--purple:#a78bfa;--amber:#fbbf24;--red:#f87171;--teal:#2dd4bf;--green:#34d399;--cyan:#22d3ee}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);font-family:'Inter','Segoe UI',system-ui,sans-serif;color:var(--text);overflow-x:hidden}
+.header{text-align:center;padding:16px 20px 0}
+.header h1{font-size:20px;color:#f1f5f9;font-weight:700;letter-spacing:-.5px}
+.header .sub{font-size:12px;color:var(--dim);margin-top:3px}
+.controls{display:flex;justify-content:center;gap:6px;padding:10px 20px;flex-wrap:wrap}
+.btn{background:var(--card);border:1px solid var(--border);color:var(--dim);font-size:11px;padding:4px 10px;border-radius:6px;cursor:pointer;transition:all .15s;font-family:inherit}
+.btn:hover{border-color:var(--blue);color:var(--blue)}
+.btn.on{background:#1e3a5f;border-color:var(--blue);color:var(--blue)}
+.btn.rst{border-color:#4a2020;color:var(--red)}
+.btn.rst:hover{background:#2a1515;border-color:var(--red)}
+.wrap{display:flex;gap:0;justify-content:center;padding:0 8px}
+.svg-box{flex:1;max-width:820px}
+svg{width:100%;height:auto;display:block;background:var(--card);border-radius:14px;border:1px solid var(--border)}
+.pnl{width:300px;background:var(--card);border-left:1px solid var(--border);padding:12px;font-size:11px;max-height:720px;overflow-y:auto;flex-shrink:0;border-radius:0 14px 14px 0}
+.pnl h3{color:var(--dim);font-size:11px;font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.pnl input{background:var(--bg);border:1px solid var(--border);color:var(--text);font-size:11px;padding:5px 8px;border-radius:5px;width:100%;margin-bottom:6px;outline:none;font-family:inherit}
+.pnl input:focus{border-color:var(--blue)}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;color:var(--dim);font-size:10px;padding:3px 4px;border-bottom:1px solid var(--border);font-weight:500}
+td{padding:3px 4px;font-size:10px;color:var(--text);border-bottom:1px solid #0f1829;cursor:pointer}
+tr.hl td{background:#1e3a5f!important}
+tr:hover td{background:#1a2540}
+.cm{color:var(--blue)}.cv{color:var(--amber)}.cb{color:var(--red);font-weight:700}
+.tip{position:fixed;background:#080d1a;color:var(--text);padding:10px 14px;border-radius:8px;font-size:11px;pointer-events:none;opacity:0;transition:opacity .1s;z-index:99;line-height:1.6;border:1px solid var(--border);box-shadow:0 12px 40px rgba(0,0,0,.6);max-width:320px}
+.tip b{color:#f1f5f9}.tip .dm{color:var(--dim);font-size:10px}
+.dev{cursor:pointer;transition:filter .12s}.dev:hover{filter:brightness(1.25)}
+.dev.dim{opacity:.12;pointer-events:none}
+.net{cursor:pointer;transition:transform .12s}.net:hover{transform:scale(1.3)}
+.net.dim{opacity:.08;pointer-events:none}
+.wire{transition:opacity .15s}.wire.dim{opacity:.05}
+.slbl{transition:opacity .15s}.slbl.dim{opacity:.05}
+.stats{display:flex;gap:6px;justify-content:center;padding:0 20px 6px;flex-wrap:wrap}
+.s{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:11px;color:var(--dim)}
+.s b{color:#f1f5f9;font-size:13px;margin-right:2px}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Lab-A PNETLab Wiring Diagram</h1>
+  <p class="sub">AS 65000 &bull; OSPF Area 0 &bull; Research Institute Internal DC &bull; 10 Devices</p>
+</div>
+<div class="controls">
+  <button class="btn on" id="tSlot" onclick="tog('slot')">GiX/Y Slots</button>
+  <button class="btn" id="tSub" onclick="tog('sub')">Subnets</button>
+  <button class="btn on" id="tNet" onclick="tog('net')">Net Labels</button>
+  <button class="btn rst" onclick="rstHL()">Reset</button>
+</div>
+<div class="stats">
+  <div class="s"><b>10</b>Devices</div>
+  <div class="s"><b>10</b>Data Nets</div>
+  <div class="s"><b>1</b>Mgmt Net</div>
+  <div class="s"><b>21</b>Total Objects</div>
+</div>
+
+<div class="wrap">
+<div class="svg-box">
+<svg id="sv" viewBox="0 0 800 700"></svg>
+</div>
+<div class="pnl">
+  <h3>PNETLab Wiring Table</h3>
+  <input id="q" placeholder="Search: P3, net_, VRF..." oninput="bTbl(this.value)"/>
+  <table><thead><tr><th>#</th><th>Network</th><th>A(slot)</th><th>B(slot)</th><th>Subnet</th></tr></thead><tbody id="tbl"></tbody></table>
+</div>
+</div>
+<div class="tip" id="tip"></div>
+
+<script>
+// ═══════════════════ DATA ═══════════════════
+const D=[ // Devices: id, role, x, y, loopback, mgmt IP, oob interface, VRF (for leaf)
+  // Core P routers (diamond layout)
+  {id:"P1",  r:"p", x:245,y:250, lo:"10.255.0.1", m:"10.10.10.11", oob:"Gi0/2"},
+  {id:"P2",  r:"p", x:440,y:250, lo:"10.255.0.2", m:"10.10.10.12", oob:"Gi0/3"},
+  {id:"P3",  r:"p", x:245,y:380, lo:"10.255.0.3", m:"10.10.10.13", oob:"Gi0/3"},
+  {id:"P4",  r:"p", x:440,y:380, lo:"10.255.0.4", m:"10.10.10.14", oob:"Gi0/2"},
+  // PE routers
+  {id:"PE1", r:"pe",x:340,y:140, lo:"10.255.0.11",m:"10.10.10.21", oob:"Gi0/3"},
+  {id:"PE2", r:"pe",x:500,y:490, lo:"10.255.0.12",m:"10.10.10.22", oob:"Gi0/3"},
+  // Leaf / CE
+  {id:"Leaf1",r:"lf",x:220,y:55, v:"VRF_AI",  m:"10.10.10.31", oob:"Gi0/3"},
+  {id:"Leaf2",r:"lf",x:420,y:55, v:"VRF_BIO", m:"10.10.10.32", oob:"Gi0/3"},
+  {id:"Leaf3",r:"lf",x:420,y:610,v:"VRF_HPC", m:"10.10.10.33", oob:"Gi0/2"},
+  {id:"Leaf4",r:"lf",x:590,y:610,v:"VRF_AI",  m:"10.10.10.34", oob:"Gi0/2"},
+];
+const W=[ // Wires: network #, device A, slot A, device B, slot B, type (m=MPLS, v=VRF), subnet, PNETLab net name
+  {n:1, a:"P1",  sA:"Gi0/0",b:"P2",   sB:"Gi0/0",t:"m",sn:"10.0.0.0/31",   net:"net_P1_P2"},
+  {n:2, a:"P1",  sA:"Gi0/1",b:"P4",   sB:"Gi0/1",t:"m",sn:"10.0.0.6/31",   net:"net_P1_P4"},
+  {n:3, a:"P2",  sA:"Gi0/1",b:"P3",   sB:"Gi0/0",t:"m",sn:"10.0.0.2/31",   net:"net_P2_P3"},
+  {n:4, a:"P2",  sA:"Gi0/2",b:"PE1",  sB:"Gi0/0",t:"m",sn:"10.0.1.0/31",   net:"net_P2_PE1"},
+  {n:5, a:"P3",  sA:"Gi0/1",b:"P4",   sB:"Gi0/0",t:"m",sn:"10.0.0.4/31",   net:"net_P3_P4"},
+  {n:6, a:"P3",  sA:"Gi0/2",b:"PE2",  sB:"Gi0/0",t:"m",sn:"10.0.1.2/31",   net:"net_P3_PE2"},
+  {n:7, a:"PE1", sA:"Gi0/1",b:"Leaf1",sB:"Gi0/0",t:"v",sn:"172.16.1.0/24", net:"net_PE1_Leaf1"},
+  {n:8, a:"PE1", sA:"Gi0/2",b:"Leaf2",sB:"Gi0/0",t:"v",sn:"172.16.2.0/24", net:"net_PE1_Leaf2"},
+  {n:9, a:"PE2", sA:"Gi0/1",b:"Leaf3",sB:"Gi0/0",t:"v",sn:"172.16.3.0/24", net:"net_PE2_Leaf3"},
+  {n:10,a:"PE2", sA:"Gi0/2",b:"Leaf4",sB:"Gi0/0",t:"v",sn:"172.16.4.0/24", net:"net_PE2_Leaf4"},
+];
+
+// ═══════════════════ STYLE ═══════════════════
+const DS={
+  p: {fill:"#152a4a",stk:"#3b82f6",txt:"#93c5fd",w:68,h:36,rx:8,fs:15},
+  pe:{fill:"#1f1145",stk:"#8b5cf6",txt:"#c4b5fd",w:76,h:38,rx:8,fs:15},
+  lf:{fill:"#2a1800",stk:"#f59e0b",txt:"#fde68a",w:64,h:28,rx:13,fs:12},
+};
+const NC={m:"#0e7490",v:"#b45309"};
+const NS={m:"#22d3ee",v:"#fbbf24"};
+const NR={m:10,v:9};
+const WC={m:"#1e5f8a",v:"#78520f"};
+const WW={m:1.5,v:1.2};
+const WD={m:"",v:"5,3"};
+const TNAME={m:"MPLS Core",v:"VRF Access"};
+
+const dm={};D.forEach(d=>dm[d.id]=d);
+const sv=document.getElementById("sv");
+const tip=document.getElementById("tip");
+const vis={slot:true,sub:false,net:true};
+
+function tog(k){vis[k]=!vis[k];document.getElementById("t"+k[0].toUpperCase()+k.slice(1)).classList.toggle("on");rVis()}
+function rVis(){
+  sv.querySelectorAll(".sl").forEach(e=>e.style.display=vis.slot?"":"none");
+  sv.querySelectorAll(".sbl").forEach(e=>e.style.display=vis.sub?"":"none");
+  sv.querySelectorAll(".nl").forEach(e=>e.style.display=vis.net?"":"none");
+}
+const E=(t,a={})=>{const e=document.createElementNS("http://www.w3.org/2000/svg",t);Object.entries(a).forEach(([k,v])=>e.setAttribute(k,v));return e};
+const TX=(x,y,s,a={})=>{const e=E("text",{x,y,...a});e.textContent=s;return e};
+const sT=(h,ev)=>{tip.innerHTML=h;tip.style.opacity=1;tip.style.left=ev.clientX+16+"px";tip.style.top=ev.clientY-10+"px"};
+const hT=()=>{tip.style.opacity=0};
+
+// ═══════════════════ RENDER ═══════════════════
+
+// Defs (glow filters)
+(()=>{
+  const d=E("defs");
+  [["#3b82f6",0],["#8b5cf6",1],["#f59e0b",2],["#22d3ee",3],["#f87171",4]].forEach(([c,i])=>{
+    const f=E("filter",{id:"g"+i,x:"-40%",y:"-40%",width:"180%",height:"180%"});
+    f.appendChild(E("feGaussianBlur",{stdDeviation:"3",in:"SourceGraphic",result:"b"}));
+    f.appendChild(E("feFlood",{"flood-color":c,"flood-opacity":"0.25",result:"f"}));
+    f.appendChild(E("feComposite",{in:"f",in2:"b",operator:"in",result:"r"}));
+    const m=E("feMerge");m.appendChild(E("feMergeNode",{in:"r"}));m.appendChild(E("feMergeNode",{in:"SourceGraphic"}));
+    f.appendChild(m);d.appendChild(f);
+  });
+  sv.appendChild(d);
+})();
+
+// Background + single region zone
+(()=>{
+  const g=E("g");
+  g.appendChild(E("rect",{x:0,y:0,width:800,height:700,fill:"#0c1222"}));
+  // Single region zone
+  g.appendChild(E("rect",{x:55,y:20,width:700,height:640,rx:16,fill:"none",stroke:"#1e3a5f","stroke-width":1,"stroke-dasharray":"6,5",opacity:.35}));
+  g.appendChild(TX(400,678,"AS 65000 / OSPF Area 0",{"text-anchor":"middle",fill:"#2563eb","font-size":"13","font-family":"inherit","font-weight":"600",opacity:.25}));
+  // Tier labels
+  [{y:55,t:"ACCESS"},{y:140,t:"PE EDGE"},{y:315,t:"CORE"},{y:490,t:"PE EDGE"},{y:610,t:"ACCESS"}].forEach(({y,t})=>{
+    g.appendChild(TX(30,y,t,{fill:"#1a2540","font-size":"8","font-family":"inherit","font-weight":"600",transform:`rotate(-90,30,${y})`,"text-anchor":"middle"}));
+  });
+  // Protocol badges
+  g.appendChild(E("rect",{x:600,y:230,width:120,height:75,rx:8,fill:"#0f172a",stroke:"#1e3a5f","stroke-width":1,opacity:.6}));
+  g.appendChild(TX(660,248,"Protocols",{"text-anchor":"middle",fill:"#475569","font-size":"10","font-weight":"600","font-family":"inherit"}));
+  g.appendChild(TX(660,264,"OSPF Area 0",{"text-anchor":"middle",fill:"#3b82f6","font-size":"9","font-family":"inherit"}));
+  g.appendChild(TX(660,278,"MPLS LDP",{"text-anchor":"middle",fill:"#22d3ee","font-size":"9","font-family":"inherit"}));
+  g.appendChild(TX(660,292,"iBGP vpnv4",{"text-anchor":"middle",fill:"#a78bfa","font-size":"9","font-family":"inherit"}));
+  // VRF info
+  g.appendChild(E("rect",{x:600,y:320,width:120,height:62,rx:8,fill:"#0f172a",stroke:"#1e3a5f","stroke-width":1,opacity:.6}));
+  g.appendChild(TX(660,338,"VRFs",{"text-anchor":"middle",fill:"#475569","font-size":"10","font-weight":"600","font-family":"inherit"}));
+  g.appendChild(TX(660,354,"VRF_AI  (65000:1)",{"text-anchor":"middle",fill:"#fbbf24","font-size":"8.5","font-family":"inherit"}));
+  g.appendChild(TX(660,367,"VRF_BIO (65000:2)",{"text-anchor":"middle",fill:"#fbbf24","font-size":"8.5","font-family":"inherit"}));
+  g.appendChild(TX(660,380,"VRF_HPC (65000:3)",{"text-anchor":"middle",fill:"#fbbf24","font-size":"8.5","font-family":"inherit"}));
+  sv.appendChild(g);
+})();
+
+// Cloud0 management network
+(()=>{
+  const g=E("g");
+  const cx=340,cy=690;
+  g.appendChild(E("rect",{x:cx-200,y:cy-16,width:400,height:32,rx:16,fill:"#1a1a10",stroke:"#fbbf24","stroke-width":1.5,opacity:.9}));
+  g.appendChild(TX(cx,cy+4,"Cloud0  |  Mgmt Net (10.10.10.0/24)  |  All 10 nodes OOB",{"text-anchor":"middle",fill:"#fbbf24","font-size":"11","font-family":"inherit","font-weight":"500"}));
+  // Dotted lines from representative columns
+  [245,340,440,500,220,420,590].forEach(x=>{
+    g.appendChild(E("line",{x1:x,y1:630,x2:Math.min(Math.max(x*.8+cx*.2,180),500),y2:cy-16,stroke:"#fbbf24","stroke-width":.5,"stroke-dasharray":"2,4",opacity:.15}));
+  });
+  sv.appendChild(g);
+})();
+
+// ═══════ Wires + Network Nodes ═══════
+const netEls=[],wireEls=[];
+(()=>{
+  const gW=E("g"); // wires
+  const gN=E("g"); // net nodes
+  const gL=E("g"); // labels
+
+  W.forEach((w,i)=>{
+    const da=dm[w.a],db=dm[w.b];
+    if(!da||!db)return;
+    const col=WC[w.t],scol=NS[w.t],ncol=NC[w.t];
+    const lw=WW[w.t],ld=WD[w.t];
+
+    // Network node position (midpoint with offset for P-P links)
+    let nx=(da.x+db.x)/2, ny=(da.y+db.y)/2;
+    if(w.t==="m" && da.r==="p" && db.r==="p"){
+      const dx=db.x-da.x,dy=db.y-da.y,ln=Math.sqrt(dx*dx+dy*dy)||1;
+      nx+=(-dy/ln)*18; ny+=(dx/ln)*18;
+    }
+
+    // Wire A -> Net
+    const wA=E("line",{x1:da.x,y1:da.y,x2:nx,y2:ny,stroke:col,"stroke-width":lw,"stroke-linecap":"round",class:"wire","data-i":i,opacity:.6});
+    if(ld)wA.setAttribute("stroke-dasharray",ld);
+    gW.appendChild(wA);
+    // Wire Net -> B
+    const wB=E("line",{x1:nx,y1:ny,x2:db.x,y2:db.y,stroke:col,"stroke-width":lw,"stroke-linecap":"round",class:"wire","data-i":i,opacity:.6});
+    if(ld)wB.setAttribute("stroke-dasharray",ld);
+    gW.appendChild(wB);
+    wireEls.push({a:wA,b:wB,w,i});
+
+    // Network node (circle)
+    const nr=NR[w.t];
+    const ng=E("g",{class:"net","data-i":i,transform:`translate(${nx},${ny})`});
+    const gfi=3; // cyan glow
+    ng.appendChild(E("circle",{cx:0,cy:0,r:nr+3,fill:scol,opacity:.06,filter:`url(#g${gfi})`}));
+    ng.appendChild(E("circle",{cx:0,cy:0,r:nr,fill:ncol,stroke:scol,"stroke-width":1.3}));
+    ng.appendChild(TX(0,1,`${w.n}`,{"text-anchor":"middle","dominant-baseline":"middle",fill:"#e0f2fe","font-size":8,"font-weight":"700","font-family":"inherit"}));
+
+    // Net label
+    const nlbl=TX(0,nr+11,w.net,{"text-anchor":"middle",fill:scol,"font-size":"7","font-family":"inherit",opacity:.7,class:"nl","data-i":i});
+    ng.appendChild(nlbl);
+
+    // Tooltip
+    ng.addEventListener("mouseenter",ev=>{
+      sT(`<b>${w.net}</b> <span class="dm">PNETLab Network #${w.n}</span><br><br>`+
+        `<b>${w.a}</b> port <b>${w.sA}</b> \u2500\u2500 [${w.net}] \u2500\u2500 <b>${w.b}</b> port <b>${w.sB}</b><br><br>`+
+        `Subnet: <b>${w.sn}</b><br>`+
+        `Type: <b>${TNAME[w.t]}</b><br><br>`+
+        `<span class="dm">PNETLab: Create network "${w.net}",<br>connect ${w.a}(${w.sA}) and ${w.b}(${w.sB}) to it</span>`,ev);
+    });
+    ng.addEventListener("mousemove",ev=>{tip.style.left=ev.clientX+16+"px";tip.style.top=ev.clientY-10+"px"});
+    ng.addEventListener("mouseleave",hT);
+    ng.addEventListener("click",()=>hlW(i));
+    gN.appendChild(ng);
+    netEls.push({el:ng,w,i,nx,ny});
+
+    // Slot labels near devices
+    const dx=db.x-da.x,dy=db.y-da.y,ln=Math.sqrt(dx*dx+dy*dy)||1;
+    const ux=dx/ln,uy=dy/ln;
+    const pA=da.r==="lf"?20:28, pB=db.r==="lf"?20:28;
+    const px=-uy*9,py=ux*9;
+    gL.appendChild(TX(da.x+ux*pA+px,da.y+uy*pA+py+3,w.sA,{"text-anchor":"middle",fill:scol,"font-size":"8","font-family":"monospace",opacity:.8,class:"sl","data-i":i}));
+    gL.appendChild(TX(db.x-ux*pB+px,db.y-uy*pB+py+3,w.sB,{"text-anchor":"middle",fill:scol,"font-size":"8","font-family":"monospace",opacity:.8,class:"sl","data-i":i}));
+
+    // Subnet label (hidden by default)
+    const sbl=TX(nx,ny-nr-6,w.sn,{"text-anchor":"middle",fill:scol,"font-size":"7.5","font-family":"inherit",opacity:.55,class:"sbl","data-i":i});
+    sbl.style.display="none";gL.appendChild(sbl);
+  });
+
+  sv.appendChild(gW);
+  sv.appendChild(gL);
+  sv.appendChild(gN);
+})();
+
+// ═══════ Device Nodes ═══════
+const devEls={};
+(()=>{
+  D.forEach(d=>{
+    const s=DS[d.r];
+    const g=E("g",{class:"dev",transform:`translate(${d.x},${d.y})`,"data-id":d.id});
+
+    // glow
+    const gi={p:0,pe:1,lf:2}[d.r];
+    g.appendChild(E("rect",{x:-s.w/2-2,y:-s.h/2-2,width:s.w+4,height:s.h+4,rx:s.rx+2,fill:s.stk,opacity:.05,filter:`url(#g${gi})`}));
+    // shape
+    g.appendChild(E("rect",{x:-s.w/2,y:-s.h/2,width:s.w,height:s.h,rx:s.rx,fill:s.fill,stroke:s.stk,"stroke-width":2}));
+    // label
+    g.appendChild(TX(0,1,d.id,{"text-anchor":"middle","dominant-baseline":"middle",fill:s.txt,"font-size":s.fs,"font-weight":"700","font-family":"inherit"}));
+
+    // VRF badge
+    if(d.v){
+      g.appendChild(E("rect",{x:-26,y:s.h/2+3,width:52,height:13,rx:4,fill:s.stk,opacity:.15}));
+      g.appendChild(TX(0,s.h/2+12,d.v,{"text-anchor":"middle",fill:s.stk,"font-size":"7.5","font-weight":"600","font-family":"inherit"}));
+    }
+    // Loopback + Mgmt IP
+    if(d.lo){
+      g.appendChild(TX(0,s.h/2+(d.v?26:14),"Lo0: "+d.lo,{"text-anchor":"middle",fill:"#2a3550","font-size":"7.5","font-family":"monospace"}));
+    }
+
+    // Port indicator dots
+    const conns=W.filter(w=>w.a===d.id||w.b===d.id);
+    conns.forEach(w=>{
+      const peer=w.a===d.id?dm[w.b]:dm[w.a];
+      if(!peer)return;
+      const ddx=peer.x-d.x,ddy=peer.y-d.y,ln=Math.sqrt(ddx*ddx+ddy*ddy)||1;
+      const px=(ddx/ln)*(s.w/2+1),py=(ddy/ln)*(s.h/2+1);
+      g.appendChild(E("circle",{cx:px,cy:py,r:2.5,fill:NS[w.t],opacity:.7}));
+    });
+
+    // Tooltip
+    g.addEventListener("mouseenter",ev=>{
+      const cls=W.filter(w=>w.a===d.id||w.b===d.id);
+      let h=`<b>${d.id}</b> <span class="dm">${({p:"P Core Router",pe:"Provider Edge",lf:"Leaf/CE"})[d.r]}</span><br>`;
+      if(d.lo)h+=`Loopback0: <b>${d.lo}</b><br>`;
+      h+=`Mgmt: <b>${d.m}</b> (${d.oob} \u2192 Cloud0)<br>`;
+      if(d.v)h+=`VRF: <b>${d.v}</b><br>`;
+      if(d.r==="pe")h+=`BGP: <b>iBGP AS 65000 vpnv4</b><br>MPLS LDP: <b>enabled</b><br>`;
+      if(d.r==="p")h+=`MPLS LDP: <b>enabled</b><br>`;
+      h+=`<br><span class="dm">Connections (${cls.length} data + 1 mgmt):</span><br>`;
+      cls.forEach(w=>{
+        const isA=w.a===d.id;
+        h+=`&nbsp;\u2022 <b>${isA?w.sA:w.sB}</b> \u2192 [${w.net}] \u2192 ${isA?w.b:w.a}<br>`;
+      });
+      h+=`&nbsp;\u2022 <b>${d.oob}</b> \u2192 [Cloud0] \u2192 Mgmt`;
+      sT(h,ev);
+    });
+    g.addEventListener("mousemove",ev=>{tip.style.left=ev.clientX+16+"px";tip.style.top=ev.clientY-10+"px"});
+    g.addEventListener("mouseleave",hT);
+    g.addEventListener("click",()=>hlD(d.id));
+
+    devEls[d.id]=g;
+    sv.appendChild(g);
+  });
+})();
+
+// Legend
+(()=>{
+  const g=E("g",{transform:"translate(75,660)"});
+  const items=[
+    {l:"P Core",fill:"#152a4a",stk:"#3b82f6",sh:"r"},
+    {l:"PE",fill:"#1f1145",stk:"#8b5cf6",sh:"r"},
+    {l:"Leaf/CE",fill:"#2a1800",stk:"#f59e0b",sh:"r"},
+    {l:"MPLS Net",fill:"#0e7490",stk:"#22d3ee",sh:"c"},
+    {l:"VRF Net",fill:"#b45309",stk:"#fbbf24",sh:"c"},
+  ];
+  let cx=0;
+  items.forEach(it=>{
+    if(it.sh==="r"){
+      g.appendChild(E("rect",{x:cx,y:-7,width:16,height:14,rx:3,fill:it.fill,stroke:it.stk,"stroke-width":1.5}));
+    } else {
+      g.appendChild(E("circle",{cx:cx+8,cy:0,r:7,fill:it.fill,stroke:it.stk,"stroke-width":1.3}));
+    }
+    g.appendChild(TX(cx+22,3,it.l,{fill:"#64748b","font-size":"10","font-family":"inherit"}));
+    cx+=it.l.length*6+40;
+  });
+  g.appendChild(TX(cx+10,3,"Device(GiX/Y) \u2500 [Network] \u2500 Device(GiX/Y)",{fill:"#475569","font-size":"9","font-family":"monospace"}));
+  sv.appendChild(g);
+})();
+
+// ═══════ HIGHLIGHT ═══════
+let hlOn=false;
+function hlD(id){
+  rstHL();hlOn=true;
+  const conn=new Set([id]),ci=new Set();
+  W.forEach((w,i)=>{if(w.a===id||w.b===id){conn.add(w.a);conn.add(w.b);ci.add(i)}});
+  Object.entries(devEls).forEach(([k,e])=>{if(!conn.has(k))e.classList.add("dim")});
+  sv.querySelectorAll(".wire").forEach(e=>{if(!ci.has(+e.dataset.i))e.classList.add("dim")});
+  sv.querySelectorAll(".net").forEach(e=>{if(!ci.has(+e.dataset.i))e.classList.add("dim")});
+  sv.querySelectorAll(".sl,.sbl,.nl").forEach(e=>{if(!ci.has(+e.dataset.i))e.classList.add("dim")});
+  document.querySelectorAll("#tbl tr").forEach(tr=>{if(tr.dataset.i!==undefined&&ci.has(+tr.dataset.i))tr.classList.add("hl")});
+}
+function hlW(idx){
+  rstHL();hlOn=true;
+  const w=W[idx],conn=new Set([w.a,w.b]),ci=new Set([idx]);
+  Object.entries(devEls).forEach(([k,e])=>{if(!conn.has(k))e.classList.add("dim")});
+  sv.querySelectorAll(".wire").forEach(e=>{if(!ci.has(+e.dataset.i))e.classList.add("dim")});
+  sv.querySelectorAll(".net").forEach(e=>{if(!ci.has(+e.dataset.i))e.classList.add("dim")});
+  sv.querySelectorAll(".sl,.sbl,.nl").forEach(e=>{if(!ci.has(+e.dataset.i))e.classList.add("dim")});
+  document.querySelectorAll("#tbl tr").forEach(tr=>{if(tr.dataset.i!==undefined&&ci.has(+tr.dataset.i))tr.classList.add("hl")});
+}
+function rstHL(){
+  hlOn=false;
+  sv.querySelectorAll(".dim").forEach(e=>e.classList.remove("dim"));
+  document.querySelectorAll("#tbl tr.hl").forEach(e=>e.classList.remove("hl"));
+}
+
+// ═══════ TABLE ═══════
+function bTbl(q=""){
+  const t=document.getElementById("tbl");t.innerHTML="";
+  const f=q.toLowerCase();
+  if(!f||"cloud0 mgmt oob".includes(f)){
+    const r=document.createElement("tr");
+    r.innerHTML=`<td style="color:var(--amber)">M</td><td style="color:var(--amber)">Cloud0</td><td colspan=2 style="color:var(--dim)">All 10 x OOB port</td><td style="color:var(--dim)">10.10.10.0/24</td>`;
+    t.appendChild(r);
+  }
+  W.forEach((w,i)=>{
+    const s=`${w.n} ${w.net} ${w.a} ${w.b} ${w.sA} ${w.sB} ${w.sn} ${w.t}`.toLowerCase();
+    if(f&&!s.includes(f))return;
+    const c=w.t==="v"?"cv":"cm";
+    const r=document.createElement("tr");r.dataset.i=i;
+    r.innerHTML=`<td class="${c}">${w.n}</td><td class="${c}">${w.net}</td><td>${w.a}(${w.sA})</td><td>${w.b}(${w.sB})</td><td style="color:var(--dim)">${w.sn}</td>`;
+    r.addEventListener("click",()=>hlW(i));
+    t.appendChild(r);
+  });
+}
+bTbl();rVis();
+</script>
+</body>
+</html>

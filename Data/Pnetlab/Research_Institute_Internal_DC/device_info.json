@@ -1,10 +1,12 @@
 {
     "global_settings": {
-        "pnetlab_vm_ip": "100.66.240.82",
+        "pnetlab_vm_ip": "100.85.92.121",
         "gateway_ip": "10.10.10.1",
         "enable_password": "",
         "admin_password": "admin",
         "domain_name": "mylab.local",
+        "nso_ip": "10.10.10.100",
+        "nso_port": 8080,
         "nso_authgroup": "Research_Institute_Internal_DC",
         "nso_ned_id": "cisco-ios-cli-6.110",
         "nso_username": "admin",

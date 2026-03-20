@@ -1,12 +1,12 @@
 # Method 2 — Disagreement Log
 
-Total disagreements: 2 / 43
+Total disagreements: 2 / 42
 
 ## IBGP_MISSING_PAIRS_65002
 
 - **Metric**: ibgp_missing_pairs
 - **Level**: L3
-- **Answer Type**: set
+- **Answer Type**: set_str
 - **Dataset Answer**: `["fw1<->fw2", "fw1<->pe7", "fw1<->pe8", "fw2<->pe7", "fw2<->pe8", "pe7<->pe8"]`
 - **Manual Answer**: `["fw1/fw2", "fw1/pe7", "fw1/pe8", "fw2/fw1", "fw2/pe7", "fw2/pe8", "pe7/pe8"]`
 - **Classification**: INVESTIGATION_NEEDED

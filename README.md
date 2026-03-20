@@ -61,41 +61,68 @@ cd NetAlly/frontend
 npm install
 ```
 
-### 2. 데이터 준비 (PnetLab → NSO → Batfish)
+### 2. 데이터 준비
+
+두 가지 방식이 있습니다:
+
+#### 방식 A: Config Generator (Lab-B/C/D — 권장)
+
+```bash
+# Config 자동 생성
+python Make_Dataset/config_generator/generator.py \
+  --topology Make_Dataset/config_generator/topologies/lab_b_20nodes.yaml
+
+# PNETLab에 자동 배포 (telnet push + 검증 + NSO 등록)
+cd Make_Dataset/src
+python -m deploy.1_push_configs    # .cfg 자동 적용
+python -m deploy.2_verify          # OSPF/BGP/MPLS 검증
+python -m deploy.3_register_nso    # NSO RESTCONF 등록
+```
+
+> 상세: [Config Generator 배포 가이드](Make_Dataset/config_generator/docs/deployment_guide.md)
+
+#### 방식 B: 수동 (Lab-A — 기존 방식)
 
 ```bash
 cd Make_Dataset/src
-
-# Step 1: SSH 활성화 (PnetLab 장비)
-python 1-SSH_Enable.py
-
-# Step 2: NSO 장비 등록
-python 2-NSO_Register.py
-
-# Step 3: Config 추출 (Batfish 스냅샷 생성)
-python 3-Config_Export_Batfish.py
+python 1-SSH_Enable.py             # PnetLab 장비 SSH 활성화
+python 2-NSO_Register.py           # NSO 장비 등록 (deprecated → deploy/3 권장)
+python 3-Config_Export_Batfish.py  # Config 추출
 ```
 
 ### 3. 데이터셋 생성
 
 ```bash
-# 권장: 정책 검증 + 데이터셋 생성 + 품질검증 + 통계리포트까지 원샷 실행
-cd ../..
-Make_Dataset/run_dataset_pipeline.sh \
+# Lab-A (10 nodes)
+python Make_Dataset/src/main_batfish.py \
   --lab-path Data/Pnetlab/Research_Institute_Internal_DC \
   --policies Make_Dataset/policies.json
 
-# (직접 실행 옵션) 생성기만 실행할 경우
-# python Make_Dataset/src/main_batfish.py --lab-path Data/Pnetlab/Research_Institute_Internal_DC --policies Make_Dataset/policies.json
+# Lab-B (20 nodes)
+python Make_Dataset/src/main_batfish.py \
+  --lab-path Data/Pnetlab/LabB_NCN_Basic_SP_20nodes \
+  --policies Make_Dataset/policies.json
+
+# Lab-C (30 nodes)
+python Make_Dataset/src/main_batfish.py \
+  --lab-path Data/Pnetlab/LabC_NCN_Security_L2VPN_30nodes \
+  --policies Make_Dataset/policies.json
+
+# Lab-D (40 nodes)
+python Make_Dataset/src/main_batfish.py \
+  --lab-path Data/Pnetlab/LabD_NCN_MultiAS_Complex_40nodes \
+  --policies Make_Dataset/policies.json
 ```
 
-**출력 결과**: `Data/Pnetlab/[LabName]/Dataset/<timestamp>/` 폴더에 다음 파일이 생성됩니다.
+**출력**: `Data/Pnetlab/[LabName]/Dataset/<timestamp>/`
 
-- `*_dataset_batfish_<timestamp>.csv`: 전체 Q&A 데이터셋
-- `*_dataset_batfish_<timestamp>.json`: 구조화 데이터셋(JSON)
-- `*_dataset_batfish_<timestamp>_quality_report.json/.md`: 품질 게이트 리포트
-- `*_dataset_batfish_<timestamp>_statistics.md`: 통계 요약 리포트
-- `*_batfish_facts_<timestamp>.json`: 파싱된 네트워크 팩트 정보
+| 파일 | 내용 |
+|------|------|
+| `*_dataset_batfish_*.csv` | 전체 Q&A 데이터셋 (question_type 컬럼 포함) |
+| `*_dataset_batfish_*.json` | 구조화 데이터셋 (JSON) |
+| `*_quality_report.md` | 품질 게이트 리포트 |
+| `*_statistics.md` | 통계 요약 |
+| `*_batfish_facts_*.json` | 파싱된 네트워크 팩트 |
 
 ---
 
@@ -117,22 +144,41 @@ Make_Dataset/run_dataset_pipeline.sh \
 
 ```text
 GIA/
-├── Make_Dataset/           # 데이터셋 생성 파이트라인
+├── Make_Dataset/                   # 데이터셋 생성 파이프라인
 │   ├── src/
-│       ├── core_batfish/   # Batfish 분석 엔진 (L4/L5)
-│       ├── main_batfish.py # 메인 실행 스크립트
-│       ├── validate_policies.py
-│       └── validate_dataset_quality.py
-│   ├── Make_summary.py
-│   └── run_dataset_pipeline.sh  # 원샷 실행 스크립트
-│   └── (legacy helper scripts: 1-SSH_Enable.py 등)
-├── Data/                   # 실험 데이터
-│   └── Pnetlab/
-│       └── [LabName]/      # 실험 토폴로지별 데이터
-│           └── Dataset/<timestamp>/  # 실행별 산출물 분리 저장
-├── Experiment/             # LLM 평가 실험
-│   └── run_evaluation.py   # 평가 스크립트
-└── docs/                   # 문서
+│   │   ├── main_batfish.py         # 메인 생성 스크립트
+│   │   ├── core_batfish/           # Batfish 분석 엔진 (L1-L5)
+│   │   │   ├── builder_core.py     # L1-L3 정답 생성
+│   │   │   ├── l4_analyzer.py      # L4 traceroute/reachability
+│   │   │   └── l5_analyzer.py      # L5 fork_snapshot/what-if
+│   │   └── deploy/                 # PNETLab 자동 배포 (Lab-B/C/D)
+│   │       ├── 1_push_configs.py   # Telnet config push
+│   │       ├── 2_verify.py         # 연결/프로토콜 검증
+│   │       └── 3_register_nso.py   # NSO RESTCONF 등록
+│   ├── config_generator/           # Config 자동 생성
+│   │   ├── generator.py            # YAML → .cfg 생성
+│   │   ├── topologies/             # Lab-B/C/D YAML 정의
+│   │   └── docs/                   # 배포 가이드, 토폴로지 시각화
+│   └── policies.json               # 127개 메트릭 정의 (question_type 포함)
+├── Data/Pnetlab/                   # 실험 데이터
+│   ├── Research_Institute_Internal_DC/  # Lab-A (10 nodes)
+│   ├── LabB_NCN_Basic_SP_20nodes/       # Lab-B (20 nodes)
+│   ├── LabC_NCN_Security_L2VPN_30nodes/ # Lab-C (30 nodes)
+│   └── LabD_NCN_MultiAS_Complex_40nodes/# Lab-D (40 nodes)
+├── NetAlly/                        # Multi-Agent System (FastAPI + React)
+│   ├── agent/runtime.py            # 에이전트 런타임
+│   ├── agent/mcp_server.py         # MCP 도구 16개
+│   ├── eval/experiment_runner.py   # Exp.4/5 배치 실행기
+│   └── frontend/                   # React + React Flow 토폴로지
+├── MultiAgent/agents_v2/           # 토론 기반 MAS (팀원 설계)
+│   ├── debate1.py                  # Collector/Verifier/Synthesizer
+│   ├── debate2.py                  # Supporter/Skeptic
+│   └── main_netconfig.py           # NetConfigQA 실행
+├── Experiment/code/NetConfigQA2_2/ # 평가 도구
+│   ├── run_eval_vllm_offline.py    # Exp.2 vLLM 배치 평가
+│   ├── analyze_results.py          # TA-Acc 채점 (1,211줄)
+│   └── make_figure.py              # 논문 Figure 4종
+└── docs/                           # 문서
 ```
 
 ---
@@ -148,3 +194,19 @@ GIA/
 | [정책 파일 가이드](docs/Policies.md)                               | policies.json 작성 가이드         |
 | [고난도 질문 설계](docs/HARD_QUESTIONS.md)                         | L4/L5 질문 설계 원칙              |
 | [L4-L5 상세](docs/L4-5.md)                                         | Batfish 기반 분석 상세            |
+
+### NetAlly (Multi-Agent System)
+
+| 문서 | 설명 |
+| --- | --- |
+| [NetAlly README](NetAlly/README.md) | 아키텍처, 빠른 시작, 환경변수, 트러블슈팅 |
+| [배포 가이드](Make_Dataset/config_generator/docs/deployment_guide.md) | PNETLab 배포 절차 (배선 체크시트 포함) |
+| [Deploy 스크립트](Make_Dataset/src/deploy/README.md) | Lab-B/C/D 자동 배포 3단계 |
+
+### 실험 (Experiments)
+
+| 문서 | 설명 |
+| --- | --- |
+| [실험 설계](NetAlly/docs/IEEE/experiment_design.md) | Exp.2/4/5 설계, 평가 메트릭 |
+| [Lab-B 토폴로지](Make_Dataset/config_generator/docs/Lab-B-topology.html) | 인터랙티브 토폴로지 시각화 |
+| [수정 계획](/.planning/) | NetAlly Fix, Experiment Gap, Dataset Fix 계획 |
