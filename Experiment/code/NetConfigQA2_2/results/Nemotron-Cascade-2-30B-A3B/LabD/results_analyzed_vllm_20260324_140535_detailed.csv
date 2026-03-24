@@ -1,0 +1,11 @@
+﻿question_id,level,category,type,status,question,gold,pred,type_aware_score,exact_match,token_f1,bertscore_f1,rougeL,rouge1,rouge2
+1,L5,What_If_Analysis,text,OK,"'asbr1-p7' 링크가 다운될 경우, 'p7→fw1' 트래픽에 어떤 영향이 발생합니까? [답변 형식: 'NONE', 'REROUTED', 'DISCONNECTED']","""REROUTED""",REROUTED,1.0,1.0,1.0,0.9999998807907104,1.0,1.0,0.0
+2,L5,What_If_Analysis,text,OK,"'asbr1-p9' 링크가 다운될 경우, 'p7→fw1' 트래픽에 어떤 영향이 발생합니까? [답변 형식: 'NONE', 'REROUTED', 'DISCONNECTED']","""NONE""",,0.0,0.0,0.0,0.80460524559021,0,0.0,0.0
+3,L5,What_If_Analysis,text,OK,"'asbr1-pe5' 링크가 다운될 경우, 'p7→fw1' 트래픽에 어떤 영향이 발생합니까? [답변 형식: 'NONE', 'REROUTED', 'DISCONNECTED']","""NONE""",REROUTED,0.0,0.0,0.0,0.8212770223617554,0.0,0.0,0.0
+4,L5,What_If_Analysis,text,OK,"'asbr1-fw1' 링크가 다운될 경우, 'p7→fw1' 트래픽에 어떤 영향이 발생합니까? [답변 형식: 'NONE', 'REROUTED', 'DISCONNECTED']","""DISCONNECTED""",,0.0,0.0,0.0,0.767026424407959,0,0.0,0.0
+5,L5,What_If_Analysis,text,OK,"'asbr1-asbr2' 링크가 다운될 경우, 'p7→fw1' 트래픽에 어떤 영향이 발생합니까? [답변 형식: 'NONE', 'REROUTED', 'DISCONNECTED']","""NONE""",,0.0,0.0,0.0,0.80460524559021,0,0.0,0.0
+6,L5,What_If_Analysis,text,OK,"'asbr1-fw2' 링크가 다운될 경우, 'p7→fw1' 트래픽에 어떤 영향이 발생합니까? [답변 형식: 'NONE', 'REROUTED', 'DISCONNECTED']","""NONE""",,0.0,0.0,0.0,0.80460524559021,0,0.0,0.0
+7,L5,What_If_Analysis,text,OK,"'asbr1-leaf1' 링크가 다운될 경우, 'p7→fw1' 트래픽에 어떤 영향이 발생합니까? [답변 형식: 'NONE', 'REROUTED', 'DISCONNECTED']","""NONE""",,0.0,0.0,0.0,0.80460524559021,0,0.0,0.0
+8,L5,What_If_Analysis,text,OK,"'asbr1-leaf10' 링크가 다운될 경우, 'p7→fw1' 트래픽에 어떤 영향이 발생합니까? [답변 형식: 'NONE', 'REROUTED', 'DISCONNECTED']","""NONE""",,0.0,0.0,0.0,0.80460524559021,0,0.0,0.0
+9,L5,What_If_Analysis,text,OK,"'asbr1-leaf11' 링크가 다운될 경우, 'p7→fw1' 트래픽에 어떤 영향이 발생합니까? [답변 형식: 'NONE', 'REROUTED', 'DISCONNECTED']","""NONE""",NOT_CONFIGURED,0.0,0.0,0.0,0.8173168301582336,0.0,0.0,0.0
+10,L5,What_If_Analysis,text,OK,"'asbr1-leaf12' 링크가 다운될 경우, 'p7→fw1' 트래픽에 어떤 영향이 발생합니까? [답변 형식: 'NONE', 'REROUTED', 'DISCONNECTED']","""NONE""",,0.0,0.0,0.0,0.80460524559021,0,0.0,0.0

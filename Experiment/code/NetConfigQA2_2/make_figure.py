@@ -1,12 +1,12 @@
 """
 NetConfigQA Evaluation Visualizer
 
-reanalyze_results.py가 생성한 analyzed JSON 파일을 입력받아
-논문용 고품질 Figure를 생성합니다.
+ analyze_results.py가 생성한 analyzed JSON 파일을 입력받아
+ 논문용 고품질 Figure를 생성합니다.
 
 Usage:
-    python Figure.py results_analyzed_*.json
-    python Figure.py results_analyzed_*.json --output ./figures
+    python make_figure.py results_analyzed_*.json
+    python make_figure.py results_analyzed_*.json --output ./figures
 """
 
 import json
@@ -248,10 +248,14 @@ class AcademicFigureGenerator:
             return
         
         df = pd.DataFrame(results)
+        score_col = "type_aware_score" if "type_aware_score" in df.columns else "score"
+        if score_col not in df.columns:
+            print("  ⚠ Skipped heatmap: No score column found in analyzed results")
+            return
         
         # 피벗 테이블 생성
         pivot = df.pivot_table(
-            values='score', 
+            values=score_col,
             index='level', 
             columns='category', 
             aggfunc='mean'

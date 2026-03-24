@@ -59,6 +59,28 @@ _CANONICAL_ALIASES = {
 }
 
 
+def display_answer_type(answer_type: str) -> str:
+    """Normalize answer types for reporting while preserving numeric vs number split."""
+    if answer_type is None:
+        return "text"
+    atype = str(answer_type).strip().lower()
+    if atype == "numeric":
+        return "numeric"
+    if atype in {"num", "numbers", "int", "integer", "float", "scalar_int", "number"}:
+        return "number"
+    if atype in {"list_str", "set_str", "edge_set", "set_string", "list", "set"}:
+        return "set"
+    if atype in {"dict", "map_str_str", "map_str_int", "json", "map"}:
+        return "map"
+    if atype in {"scalar_str", "enum", "text"}:
+        return "text"
+    if atype in {"bool", "boolean"}:
+        return "boolean"
+    if atype == "path":
+        return "path"
+    return canonical_answer_type(atype)
+
+
 def canonical_answer_type(answer_type: str) -> str:
     """Normalize answer_type values to a canonical set used by the scorer/reports.
 
@@ -92,6 +114,11 @@ try:
 except ImportError:
     NLTK_AVAILABLE = False
     print("[WARNING] nltk not available. Install with: pip install nltk")
+
+try:
+    import torch
+except ImportError:
+    torch = None
 
 
 # ==================== Traditional Metrics Calculator ====================
@@ -145,9 +172,9 @@ class TraditionalMetricsCalculator:
         """Calculate ROUGE-1, ROUGE-2, ROUGE-L scores."""
         if not ROUGE_AVAILABLE or not self.rouge_scorer:
             return {
-                "rouge1": 0.0,
-                "rouge2": 0.0,
-                "rougeL": 0.0
+                "rouge1": None,
+                "rouge2": None,
+                "rougeL": None
             }
         
         try:
@@ -158,12 +185,12 @@ class TraditionalMetricsCalculator:
                 "rougeL": scores['rougeL'].fmeasure
             }
         except:
-            return {"rouge1": 0.0, "rouge2": 0.0, "rougeL": 0.0}
+            return {"rouge1": None, "rouge2": None, "rougeL": None}
     
     def calculate_bleu(self, pred: str, gold: str) -> float:
         """Calculate BLEU score."""
         if not NLTK_AVAILABLE:
-            return 0.0
+            return None
         
         pred_tokens = self.normalize_text(pred).split()
         gold_tokens = [self.normalize_text(gold).split()]
@@ -690,6 +717,9 @@ class ScorecardGenerator:
     
     def generate(self, stats: dict, meta: dict, error_samples: list = None) -> str:
         """Generate a comprehensive Markdown scorecard."""
+        def fmt_pct(value) -> str:
+            return "N/A" if value is None else f"{value*100:.2f}%"
+
         lines = []
         
         # Header
@@ -707,14 +737,15 @@ class ScorecardGenerator:
         lines.append(f"| **Type-Aware Accuracy** | **{stats['accuracy']*100:.2f}%** |")
         
         trad_metrics = stats.get('traditional_metrics', {})
-        lines.append(f"| Exact Match (EM) | {trad_metrics.get('exact_match', 0)*100:.2f}% |")
-        lines.append(f"| Token F1 | {trad_metrics.get('token_f1', 0)*100:.2f}% |")
-        lines.append(f"| BERTScore F1 | {trad_metrics.get('bertscore_f1', 0)*100:.2f}% |")
-        lines.append(f"| ROUGE-L | {trad_metrics.get('rougeL', 0)*100:.2f}% |")
-        lines.append(f"| ROUGE-1 | {trad_metrics.get('rouge1', 0)*100:.2f}% |")
-        lines.append(f"| ROUGE-2 | {trad_metrics.get('rouge2', 0)*100:.2f}% |")
+        lines.append(f"| Exact Match (EM) | {fmt_pct(trad_metrics.get('exact_match'))} |")
+        lines.append(f"| Token F1 | {fmt_pct(trad_metrics.get('token_f1'))} |")
+        lines.append(f"| BLEU | {fmt_pct(trad_metrics.get('bleu'))} |")
+        lines.append(f"| BERTScore F1 | {fmt_pct(trad_metrics.get('bertscore_f1'))} |")
+        lines.append(f"| ROUGE-L | {fmt_pct(trad_metrics.get('rougeL'))} |")
+        lines.append(f"| ROUGE-1 | {fmt_pct(trad_metrics.get('rouge1'))} |")
+        lines.append(f"| ROUGE-2 | {fmt_pct(trad_metrics.get('rouge2'))} |")
         lines.append(f"| Total Samples | {stats['total_samples']} |")
-        lines.append(f"| Inference Time | {meta.get('duration', 0):.1f}s |")
+        lines.append(f"| Inference Time | {meta.get('duration_sec', meta.get('duration', 0)):.1f}s |")
         lines.append("")
         
         # Metric Comparison by Answer Type
@@ -726,7 +757,8 @@ class ScorecardGenerator:
         # Type-Aware row
         ta_row = "| **Type-Aware** |"
         for atype in ['number', 'numeric', 'set', 'map', 'text']:
-            ta_row += f" {stats['by_type'].get(atype, 0)*100:.1f}% |"
+            ta_val = stats['by_type'].get(atype)
+            ta_row += f" {('N/A' if ta_val is None else f'{ta_val*100:.1f}%')} |"
         ta_row += f" **{stats['accuracy']*100:.1f}%** |"
         lines.append(ta_row)
         
@@ -740,10 +772,10 @@ class ScorecardGenerator:
         ]:
             row = f"| {metric_label} |"
             for atype in ['number', 'numeric', 'set', 'map', 'text']:
-                val = trad_by_type.get(atype, {}).get(metric_name, 0) * 100
-                row += f" {val:.1f}% |"
-            overall_val = trad_metrics.get(metric_name, 0) * 100
-            row += f" {overall_val:.1f}% |"
+                val = trad_by_type.get(atype, {}).get(metric_name)
+                row += f" {('N/A' if val is None else f'{val*100:.1f}%')} |"
+            overall_val = trad_metrics.get(metric_name)
+            row += f" {('N/A' if overall_val is None else f'{overall_val*100:.1f}%')} |"
             lines.append(row)
         
         lines.append("")
@@ -810,6 +842,9 @@ class SummaryReportGenerator:
         Generate a comparison report for multiple models.
         all_stats_meta: List of (stats, meta) tuples
         """
+        def fmt_pct(value) -> str:
+            return "N/A" if value is None else f"{value*100:.2f}"
+
         lines = []
         lines.append(f"# NetConfigQA Comparison Report\n")
         lines.append(f"> **Generated on**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
@@ -822,16 +857,19 @@ class SummaryReportGenerator:
         for stats, meta in all_stats_meta:
             model_name = meta.get("model", "Unknown")
             trad = stats.get('traditional_metrics', {})
-            r1 = trad.get('rouge1', 0) * 100
-            r2 = trad.get('rouge2', 0) * 100
-            rl = trad.get('rougeL', 0) * 100
-            em = trad.get('exact_match', 0) * 100
-            bleu = trad.get('bleu', 0) * 100
-            bs = trad.get('bertscore_f1', 0) * 100
-            f1 = trad.get('token_f1', 0) * 100
-            ta_acc = stats.get('accuracy', 0) * 100
+            r1 = trad.get('rouge1')
+            r2 = trad.get('rouge2')
+            rl = trad.get('rougeL')
+            em = trad.get('exact_match')
+            bleu = trad.get('bleu')
+            bs = trad.get('bertscore_f1')
+            f1 = trad.get('token_f1')
+            ta_acc = stats.get('accuracy', 0)
             
-            lines.append(f"| {model_name} | {r1:.2f} | {r2:.2f} | {rl:.2f} | {em:.2f} | {bleu:.2f} | {bs:.2f} | {f1:.2f} | {ta_acc:.2f} |")
+            lines.append(
+                f"| {model_name} | {fmt_pct(r1)} | {fmt_pct(r2)} | {fmt_pct(rl)} | "
+                f"{fmt_pct(em)} | {fmt_pct(bleu)} | {fmt_pct(bs)} | {fmt_pct(f1)} | {fmt_pct(ta_acc)} |"
+            )
         
         lines.append("\n---\n")
         
@@ -843,13 +881,16 @@ class SummaryReportGenerator:
         for stats, meta in all_stats_meta:
             model_name = meta.get("model", "Unknown")
             by_type = stats.get('by_type', {})
-            m_score = by_type.get('map', 0) * 100
-            n_score = by_type.get('numeric', 0) * 100
-            t_score = by_type.get('text', 0) * 100
-            num_score = by_type.get('number', 0) * 100
-            s_score = by_type.get('set', 0) * 100
+            m_score = by_type.get('map')
+            n_score = by_type.get('numeric')
+            t_score = by_type.get('text')
+            num_score = by_type.get('number')
+            s_score = by_type.get('set')
             
-            lines.append(f"| {model_name} | {m_score:.2f} | {n_score:.2f} | {t_score:.2f} | {num_score:.2f} | {s_score:.2f} |")
+            lines.append(
+                f"| {model_name} | {fmt_pct(m_score)} | {fmt_pct(n_score)} | {fmt_pct(t_score)} | "
+                f"{fmt_pct(num_score)} | {fmt_pct(s_score)} |"
+            )
 
         lines.append("\n> Note: `number`는 주로 정수/카운트(개수) 유형, `numeric`은 수치값(스칼라/실수 가능) 유형입니다. 둘 다 동일한 숫자 채점 로직으로 평가되지만 분석을 위해 분리 집계합니다.\n")
         
@@ -968,7 +1009,9 @@ def analyze_results(
     for idx, row in enumerate(rows):
         question_id = str(row.get("question_id", row.get("id", idx)))
         question = row.get("question", "")
-        answer_type = canonical_answer_type(row.get('answer_type', row.get('type', 'text')))
+        raw_answer_type = row.get('answer_type', row.get('type', 'text'))
+        answer_type = canonical_answer_type(raw_answer_type)
+        report_type = display_answer_type(raw_answer_type)
         level = str(row.get("level", "L1")).strip().upper()
         category = row.get("category", "General")
         status = row.get("answer_status", row.get("status", "OK"))
@@ -1000,20 +1043,22 @@ def analyze_results(
             "raw_pred": raw_pred,
             "pred": clean_pred,
             "type_aware_score": type_aware_score,
-            "type": answer_type,
+            "type": report_type,
+            "canonical_type": answer_type,
         }
         result.update({f"type_aware_{k}": v for k, v in type_aware_metrics.items() if k != 'score'})
         result.update(trad_metrics)
 
         results.append(result)
 
-        grouped_by_type[answer_type].append(type_aware_score)
+        grouped_by_type[report_type].append(type_aware_score)
         grouped_by_level[level].append(type_aware_score)
         grouped_by_category[category].append(type_aware_score)
         grouped_by_status[status].append(type_aware_score)
 
         for metric_name, metric_value in trad_metrics.items():
-            trad_metrics_by_type[answer_type][metric_name].append(metric_value)
+            if metric_value is not None:
+                trad_metrics_by_type[report_type][metric_name].append(metric_value)
 
         all_preds.append(clean_pred if clean_pred else "[empty]")
         all_golds.append(clean_gold if clean_gold else "[empty]")
@@ -1024,14 +1069,23 @@ def analyze_results(
                 "question": question[:60] + "..." if len(question) > 60 else question,
                 "gold": clean_gold[:40] if clean_gold else "(empty)",
                 "pred": clean_pred[:40] if clean_pred else "(empty)",
-                "type": answer_type,
+                "type": report_type,
                 "score": type_aware_score
             })
 
     print("[Step 2/3] Calculating BERTScore (batch processing)...")
     if BERTSCORE_AVAILABLE and all_preds and all_golds:
         try:
-            P, R, F1 = bert_score(all_preds, all_golds, lang='en', verbose=False, device='cpu')
+            bert_device = "cuda" if torch is not None and torch.cuda.is_available() else "cpu"
+            print(f"   [INFO] BERTScore device: {bert_device}")
+            try:
+                P, R, F1 = bert_score(all_preds, all_golds, lang='en', verbose=False, device=bert_device)
+            except RuntimeError as e:
+                if bert_device == "cuda" and "out of memory" in str(e).lower():
+                    print("   [WARNING] BERTScore CUDA OOM, retrying on CPU...")
+                    P, R, F1 = bert_score(all_preds, all_golds, lang='en', verbose=False, device='cpu')
+                else:
+                    raise
             for i, result in enumerate(results):
                 result['bertscore_precision'] = P[i].item()
                 result['bertscore_recall'] = R[i].item()
@@ -1043,16 +1097,16 @@ def analyze_results(
         except Exception as e:
             print(f"   [WARNING] BERTScore calculation failed: {e}")
             for result in results:
-                result['bertscore_precision'] = 0.0
-                result['bertscore_recall'] = 0.0
-                result['bertscore_f1'] = 0.0
+                result['bertscore_precision'] = None
+                result['bertscore_recall'] = None
+                result['bertscore_f1'] = None
     else:
         if not BERTSCORE_AVAILABLE:
             print("   [WARNING] BERTScore not available (install with: pip install bert-score)")
         for result in results:
-            result['bertscore_precision'] = 0.0
-            result['bertscore_recall'] = 0.0
-            result['bertscore_f1'] = 0.0
+            result['bertscore_precision'] = None
+            result['bertscore_recall'] = None
+            result['bertscore_f1'] = None
 
     n = len(results)
     total_score = sum(r['type_aware_score'] for r in results)
@@ -1062,8 +1116,8 @@ def analyze_results(
 
     overall_trad_metrics = {}
     for metric_name in ['exact_match', 'token_f1', 'rouge1', 'rouge2', 'rougeL', 'bertscore_f1', 'bleu']:
-        all_values = [r.get(metric_name, 0.0) for r in results]
-        overall_trad_metrics[metric_name] = sum(all_values) / len(all_values) if all_values else 0.0
+        all_values = [r.get(metric_name) for r in results if r.get(metric_name) is not None]
+        overall_trad_metrics[metric_name] = sum(all_values) / len(all_values) if all_values else None
 
     stats = {
         "accuracy": avg_acc,
@@ -1075,7 +1129,7 @@ def analyze_results(
         "traditional_metrics": overall_trad_metrics,
         "trad_by_type": {
             atype: {
-                metric: sum(vals)/len(vals) if vals else 0.0
+                metric: sum(vals)/len(vals) if vals else None
                 for metric, vals in metrics_dict.items()
             }
             for atype, metrics_dict in trad_metrics_by_type.items()
@@ -1090,13 +1144,18 @@ def analyze_results(
     print(f"\n{'Metric':<25} {'Score':>10}")
     print("-" * 40)
     print(f"{'Type-Aware Accuracy':<25} {avg_acc:>9.2%}")
-    print(f"{'Exact Match':<25} {overall_trad_metrics.get('exact_match', 0):>9.2%}")
-    print(f"{'Token F1':<25} {overall_trad_metrics.get('token_f1', 0):>9.2%}")
-    print(f"{'BLEU':<25} {overall_trad_metrics.get('bleu', 0):>9.2%}")
-    print(f"{'BERTScore F1':<25} {overall_trad_metrics.get('bertscore_f1', 0):>9.2%}")
-    print(f"{'ROUGE-L':<25} {overall_trad_metrics.get('rougeL', 0):>9.2%}")
-    print(f"{'ROUGE-1':<25} {overall_trad_metrics.get('rouge1', 0):>9.2%}")
-    print(f"{'ROUGE-2':<25} {overall_trad_metrics.get('rouge2', 0):>9.2%}")
+    def _print_metric(name: str, key: str):
+        value = overall_trad_metrics.get(key)
+        rendered = "N/A" if value is None else f"{value:>9.2%}"
+        print(f"{name:<25} {rendered}")
+
+    _print_metric('Exact Match', 'exact_match')
+    _print_metric('Token F1', 'token_f1')
+    _print_metric('BLEU', 'bleu')
+    _print_metric('BERTScore F1', 'bertscore_f1')
+    _print_metric('ROUGE-L', 'rougeL')
+    _print_metric('ROUGE-1', 'rouge1')
+    _print_metric('ROUGE-2', 'rouge2')
 
     print(f"\n[Type-Aware Score by Answer Type]")
     for t in sorted(grouped_by_type.keys()):
@@ -1189,7 +1248,7 @@ def analyze_results(
         f.write(summary_md)
 
     print(f"[OK] Saved summary report to: {summary_file}")
-    print(f"\n[TIP] Run 'python Figure.py \"{output_file}\"' to generate visualizations.")
+    print(f"\n[TIP] Run 'python make_figure.py \"{output_file}\"' to generate visualizations.")
 
     return stats, results, meta
 
