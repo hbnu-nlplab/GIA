@@ -1,6 +1,7 @@
 from typing import TypedDict, List, Optional
 
 class AgentState(TypedDict):
+    item_id: str
     question: str
     original_passage: str
     gold_answer: str

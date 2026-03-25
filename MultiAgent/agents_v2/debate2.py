@@ -16,11 +16,21 @@ debate2.py
 
 import json
 import re
-from agents_v2.model_loader import get_models
+from contextlib import contextmanager
+from agents_v2.model_loader import get_models, USE_LOCAL
 import threading
 
-# GPU 접근 직렬화를 위한 전역 락
-gpu_lock = threading.Lock()
+# GPU 접근 직렬화 락 — 로컬 GPU 모드에서만 유효 (클라우드 API 모드에서는 사용 안 함)
+_gpu_lock = threading.Lock()
+
+@contextmanager
+def gpu_lock():
+    """USE_LOCAL=True일 때만 락을 획득한다. 클라우드 모드에서는 즉시 통과."""
+    if USE_LOCAL:
+        with _gpu_lock:
+            yield
+    else:
+        yield
 
 
 def _get_text(response):
@@ -74,7 +84,7 @@ OUTPUT FORMAT:
     if dataset_type == "multiple_choice" and options_str:
         prompt += f"Options: {options_str}\n"
 
-    with gpu_lock:
+    with gpu_lock():
         response = llm.invoke(prompt)
     response_text = _get_text(response)
 
@@ -131,16 +141,22 @@ Read the Question and Passage only. Ask yourself:
 - Can I find the exact value or configuration line in the Passage that directly answers the Question?
 - Does the device mentioned in the Question match the device described in the Passage?
 
-### STEP 2 — MANDATORY QUOTATION TEST
-To give status "ACCEPT", you MUST copy-paste the exact line(s) from the Passage that prove the answer.
-If you CANNOT find such a line → status MUST be "NEED_MORE_INFO" or "CONTINUE_DEBATE". No exceptions.
+### STEP 2 — QUOTATION TEST
+To give status "ACCEPT", find the line(s) from the Passage that support the answer and copy them into evidence_quote.
+If the answer is a simple value (hostname, version number, etc.) and it clearly appears in the Passage → ACCEPT immediately.
 
 ### HARD RULES (override everything, including Agent 4's defense):
 1. **Empty/Irrelevant Passage**: If Passage is empty, "[NONE]", whitespace-only, or describes a different device than the Question → NEED_MORE_INFO. Agent 4's defense CANNOT override this.
-2. **Unverifiable Values**: If the Candidate Answer contains IPs, numbers, or identifiers that do NOT appear verbatim in the Passage → CONTINUE_DEBATE.
+2. **Unverifiable Values**: If the Candidate Answer contains IPs or identifiers that do NOT appear verbatim in the Passage → CONTINUE_DEBATE.
 3. **Wrong Device**: If the Passage config block belongs to a different device than asked → NEED_MORE_INFO.
 4. **Refusal Answer**: If the Candidate Answer says "I cannot answer", "no information", "[NONE]" → NEED_MORE_INFO.
 5. **Agent 4 says "passage is missing"**: If Agent 4's defense admits the passage lacks info → NEED_MORE_INFO immediately.
+6. **Simple match = ACCEPT**: If the question asks for a single value (hostname, version, AS number, etc.) and that exact value appears in the Passage → ACCEPT. Do NOT apply extra scrutiny to obvious matches.
+6. **Null for text type**: If the Candidate Answer is "null" but the Passage does NOT contain "[FEATURE_NOT_FOUND]" and is not empty → CONTINUE_DEBATE. "null" is only valid when the passage explicitly shows the feature is absent.
+7. **Empty map for map type**: If the Candidate Answer is "{}" (empty object) but the Passage contains interface configuration lines → NEED_MORE_INFO. An empty map is only valid if the passage is also empty.
+8. **Unknown/null values in map**: If the Candidate Answer is a map that contains "unknown" or "null" as any value → CONTINUE_DEBATE. The agent must infer values from config (e.g., VRF default, shutdown state) instead of using placeholders.
+9. **Zero for numeric type**: If the Candidate Answer is 0 but the Passage contains countable items (interface lines, route lines, vrf blocks, etc.) → CONTINUE_DEBATE. Zero is only valid when the passage is empty or the feature is genuinely absent.
+10. **Undercounting check**: For numeric answers, verify the count against the passage. If the passage visibly contains more items than the answer claims → CONTINUE_DEBATE.
 
 ### DECISION CRITERIA:
 - **ACCEPT**: You found the exact supporting line in Passage AND the answer matches it precisely.
@@ -173,7 +189,7 @@ Proponent's Defense (Agent 4): {state.get('pro_argument')}"""
     if dataset_type == "multiple_choice" and options_str:
         prompt += f"Options: {options_str}\n"
 
-    with gpu_lock:
+    with gpu_lock():
         response = llm.invoke(prompt)
     response_text = _get_text(response)
 
@@ -221,6 +237,7 @@ Proponent's Defense (Agent 4): {state.get('pro_argument')}"""
         "status": status,
         "critic_feedback": con_argument,       # 다음 Supporter에게 전달할 비판 내용
         "con_argument": con_argument,          # 비판 의견 전용 필드 (결과 저장용)
+        "feedback_to_collector": feedback_to_agent1,  # Collector 재수집 지시사항 (NEED_MORE_INFO 시 사용)
         "critic_feedbacks": state.get("critic_feedbacks", []) + [response_text],  # 누적 이력
         "final_answer": state.get('candidate_answer') if status == "ACCEPT" else "",  # ACCEPT만 확정
         "inner_turn_count": state.get("inner_turn_count", 0) + 1   # 내부 루프 카운터 증가

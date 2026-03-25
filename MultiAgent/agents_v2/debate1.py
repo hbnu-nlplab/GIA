@@ -11,16 +11,21 @@ debate1.py
 """
 
 import re
-import os
-import requests
-import logging
-from agents_v2.model_loader import get_models
+from contextlib import contextmanager
+from agents_v2.model_loader import get_models, USE_LOCAL
 import threading
 
-logger = logging.getLogger(__name__)
+# GPU 접근 직렬화 락 — 로컬 GPU 모드에서만 유효 (클라우드 API 모드에서는 사용 안 함)
+_gpu_lock = threading.Lock()
 
-# GPU 접근 직렬화를 위한 전역 락 (로컬 모드에서 동시 GPU 접근 방지)
-gpu_lock = threading.Lock()
+@contextmanager
+def gpu_lock():
+    """USE_LOCAL=True일 때만 락을 획득한다. 클라우드 모드에서는 즉시 통과."""
+    if USE_LOCAL:
+        with _gpu_lock:
+            yield
+    else:
+        yield
 
 
 def _get_text(response):
@@ -45,8 +50,8 @@ def _extract_from_tags(text: str, start_tag="[START]", end_tag="[DONE]") -> str:
     Returns:
         str: 정제된 내용 (레이블 없는 순수 값)
     """
-    logger.debug("=" * 100)
-    logger.debug("Full Content: %s", text)
+    print("=" * 100)
+    print("Full Content:", text)
 
     # Step 1: <think>...</think> 블록 제거
     text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
@@ -67,69 +72,18 @@ def _extract_from_tags(text: str, start_tag="[START]", end_tag="[DONE]") -> str:
         target_content = target_content.split(end_tag)[0]
     target_content = target_content.strip()
 
-    logger.debug("Target Content for Parsing: %s", target_content)
+    print("-" * 50)
+    print("Target Content for Parsing:", target_content)
 
     # Step 4: "Context:", "Passage:", "Answer:", "Result:" 등 레이블 헤더 제거
     cleaned = re.sub(r"^\s*(Context|Passage|Answer|Result)\s*:\s*", "", target_content,
                      flags=re.IGNORECASE | re.MULTILINE)
     cleaned = cleaned.strip()
 
-    logger.debug("=" * 100)
-    logger.debug("Parsed Content: %s", cleaned)
+    print("=" * 100)
+    print("Parsed Content:", cleaned)
 
     return cleaned
-
-
-def _call_netally_tool(base_url: str, tool_name: str, args: dict) -> str:
-    """Call NetAlly /api/tool/invoke and return result as text."""
-    try:
-        resp = requests.post(
-            f"{base_url}/api/tool/invoke",
-            json={"tool": tool_name, "args": args},
-            timeout=60,
-        )
-        data = resp.json()
-        if data.get("ok"):
-            import json
-            return json.dumps(data["result"], ensure_ascii=False, default=str)[:2000]
-        else:
-            return f"[TOOL_ERROR] {data.get('error', 'unknown')}"
-    except Exception as e:
-        logger.warning("NetAlly tool call failed: %s", e)
-        return f"[TOOL_UNAVAILABLE] {e}"
-
-
-def _select_tools_for_question(question: str) -> list:
-    """Determine which NetAlly tools to call based on question keywords."""
-    q = question.lower()
-    tools = []
-
-    # Path/reachability questions → traceroute
-    if any(kw in q for kw in ["경로", "path", "traceroute", "도달", "reachability", "reach"]):
-        # Try to extract src/dst from question
-        tools.append(("batfish_traceroute", {}))  # args filled by caller
-
-    # Interface questions
-    if any(kw in q for kw in ["인터페이스", "interface", "ip address"]):
-        tools.append(("nso_get_interfaces", {}))
-
-    # BGP questions
-    if any(kw in q for kw in ["bgp", "as ", "autonomous", "neighbor"]):
-        tools.append(("batfish_bgp_sessions", {}))
-
-    # Routing questions
-    if any(kw in q for kw in ["ospf", "routing", "라우팅", "route"]):
-        tools.append(("nso_get_routing", {}))
-
-    # Route table
-    if any(kw in q for kw in ["라우팅 테이블", "route table", "경로 테이블"]):
-        tools.append(("batfish_route_table", {}))
-
-    # Device info (fallback)
-    if not tools:
-        tools.append(("nso_list_devices", {}))
-
-    return tools
 
 
 # ==========================================
@@ -150,29 +104,6 @@ def collector_node(state: dict):
         outer_loop_count (int): 외부 루프 카운터 +1 (Collector 재호출 횟수 추적)
     """
     print(f"\n🕵️ [Agent 1: Collector] Strategy for: {state.get('dataset_type')}")
-
-    # === Tool Mode Branching ===
-    tool_mode = state.get("tool_mode", os.getenv("AGENTS_TOOL_MODE", "none"))
-
-    if tool_mode == "netally":
-        base_url = state.get("netally_base_url", os.getenv("NETALLY_BASE_URL", "http://localhost:8111"))
-        question = state["question"]
-        feedback = state.get("feedback_to_collector", "")
-
-        # Select and call tools
-        tool_calls = _select_tools_for_question(question + " " + feedback)
-        results = []
-        for tool_name, default_args in tool_calls:
-            # Build args from question context
-            args = default_args.copy()
-            result = _call_netally_tool(base_url, tool_name, args)
-            results.append(f"[{tool_name}]\n{result}")
-            logger.info("TOOL_CALL tool=%s result_len=%d", tool_name, len(result))
-
-        raw_data = "\n\n".join(results) if results else "[NO_TOOL_RESULTS]"
-        return {"raw_data": raw_data, "tool_results": raw_data}
-
-    # === Original Logic (tool_mode=none, Exp.4) ===
     models = get_models()
     llm = models.get('B', models['A'])  # B 모델 우선 사용, 없으면 A 폴백
     dataset_type = state.get("dataset_type", "descriptive")
@@ -183,21 +114,54 @@ def collector_node(state: dict):
 
         "short_answer": """Focus on finding the exact sentence or paragraph that contains the specific factual answer. Do not miss technical values. Do not rephrase the sentence; copy the relevant content directly from the context.""",
 
-        "multiple_choice": "Identify and extract all parts of the context that relate to the provided options (A, B, C, D) to compare them.",
+        "multiple_choice": "Identify and extract all parts of the context that relate to the provided question and options (A, B, C, D) to compare them based on your knowledge.",
 
         "netconfig": """
 1. Target Identification: Identify the EXACT device (hostname) mentioned in the question.
+   - If multiple devices are mentioned, extract ALL relevant device blocks.
 2. Direct Extraction: Extract the raw configuration lines of that device only.
-3. Strict Boundary: Start from the hostname declaration and include all relevant parameters for that specific device block.
-4. No Paraphrasing: DO NOT convert the configuration into natural language sentences.
-5. No Additions: Do not add any commentary, explanations, or metadata.
-6. Format: Output ONLY the raw configuration text as it appears in the source.
+3. Strict Boundary: The context provided is ALREADY scoped to the target device. Extract ALL lines from top to bottom — including lines that appear BEFORE the hostname declaration (e.g., "version 15.7", "boot" lines). Do NOT skip the first few lines.
+4. Include Negation: If a feature is DISABLED (e.g., "no aaa new-model", "no ip routing", "no mpls ip"), extract that line too — it is relevant evidence of absence.
+5. Absent Feature: If the specific command/feature is not found at all in the target device block, write: "[FEATURE_NOT_FOUND]"
+6. For COUNT/NUMBER-type questions (e.g., "how many interfaces/routes/VRFs/hops"):
+   - Extract EVERY line that could be counted: all "interface X", "ip route", "network", "vrf definition", "route-target", "router bgp", "neighbor" lines.
+   - For hop-count questions: extract the full interface and routing config of ALL devices in the passage (not just one device) to enable path tracing.
+   - Do NOT stop at the first relevant line — completeness is critical for counting.
+7. For MAP-type questions (e.g., "list all interfaces and their X"):
+   - Extract EVERY interface block (GigabitEthernet, FastEthernet, Loopback, etc.) completely.
+   - Include "shutdown" lines — they indicate interface state (shutdown = down, no shutdown or absent = up).
+   - Include "ip vrf forwarding" lines — their absence means the interface belongs to VRF "default".
+   - Include "ip address" lines — their absence means the interface has no IP address (empty string "").
+   - Do NOT skip interfaces just because they lack a specific attribute.
+7. No Paraphrasing: DO NOT convert the configuration into natural language sentences.
+8. No Additions: Do not add any commentary, explanations, or metadata.
+9. Format: Output ONLY the raw configuration text as it appears in the source.
+""",
 
-Write [NONE] if you cannot write a answer.
+        "netconfig_topo": """
+This is a TOPOLOGY-LEVEL question (L4/L5) requiring full network simulation from static configs.
+
+CRITICAL: The context contains configurations of ALL devices in the topology. You MUST extract ALL of them completely.
+
+1. Extract EVERY device's configuration block in full — do NOT filter by device name.
+2. For each device, include ALL of the following (they are essential for routing simulation):
+   - hostname
+   - ALL interface blocks with ip address, mpls ip, shutdown, vrf forwarding
+   - ALL static routes (ip route ...)
+   - ALL routing protocol config: router ospf, router bgp, neighbor, network, redistribute
+   - ALL VRF definitions and route-targets
+3. Preserve device boundaries clearly so the passage shows which config belongs to which device.
+4. No Paraphrasing. No additions. Output ONLY raw configuration text.
 """
     }
 
-    base_strategy = COLLECTOR_PROMPTS.get(dataset_type, COLLECTOR_PROMPTS["descriptive"])
+    # L4/L5는 전체 토폴로지 추출 전략 사용
+    level = state.get("level", "")
+    if dataset_type == "netconfig" and level in ("L4", "L5"):
+        effective_type = "netconfig_topo"
+    else:
+        effective_type = dataset_type
+    base_strategy = COLLECTOR_PROMPTS.get(effective_type, COLLECTOR_PROMPTS["descriptive"])
 
     system_prompt = f"""You are a Network Info Collector.
 TASK: {base_strategy}
@@ -212,14 +176,14 @@ Context:
     # Critic으로부터 받은 피드백이 있으면 프롬프트에 포함 (재수집 루프)
     feedback = state.get("feedback_to_collector", "")
     options_str = state.get('options', '')
-    feedback_str = f"\n[Critic Feedback]: {feedback}" if feedback else ""
-    prompt = f"{system_prompt}\n\nQuestion: {state['question']}\nContext: {state['context']}"
+    feedback_str = f"\n[Critic Feedback - Re-extract based on this]: {feedback}" if feedback else ""
+    prompt = f"{system_prompt}\n\nQuestion: {state['question']}\nContext: {state['context']}{feedback_str}"
 
     if dataset_type == "multiple_choice" and options_str:
         prompt += f"Options: {options_str}\n"
 
-    # GPU 락을 사용하여 동시 접근 방지 (로컬 모드에서 필요)
-    with gpu_lock:
+    # GPU 락을 사용하여 동시 접근 방지 (로컬 모드에서 필요) 램 용량 부족 이슈
+    with gpu_lock():
         response = llm.invoke(prompt)
     raw_res = _get_text(response)
 
@@ -248,6 +212,19 @@ def verifier_node(state: dict):
         current_passage (str): 정제된 패시지 (Synthesizer에서 사용)
     """
     print("✂️ [Agent 2: Verifier] Cleaning irrelevant data...")
+
+    # raw_data가 비어있으면 LLM 호출 없이 즉시 반환 (메타 응답 방지)
+    raw_data = state.get('raw_data', '').strip()
+    if not raw_data or raw_data in ('[NONE]', '[FEATURE_NOT_FOUND]'):
+        print("  ⏭️ Verifier skipped: raw_data is empty or [NONE]")
+        return {"current_passage": raw_data}
+
+    # L4/L5는 전체 토폴로지 config가 필요하므로 Verifier 필터링 없이 그대로 통과
+    level = state.get("level", "")
+    if level in ("L4", "L5"):
+        print(f"  ⏭️ Verifier skipped: level={level}, preserving full topology context")
+        return {"current_passage": raw_data}
+
     models = get_models()
     llm = models['A']
 
@@ -257,11 +234,14 @@ TASK: Filter irrelevant lines from the 'Extracted Context'.
 RULES:
 1. STRICT RESTRAINT: Do NOT change a single character of the original text.
 2. DO NOT paraphrase. DO NOT create sentences.
-3. If a line is irrelevant to the device or question, DELETE the entire line.
+3. WHEN IN DOUBT, KEEP THE LINE. Only delete a line if you are certain it is completely unrelated to the question. Missing a relevant line is far worse than keeping an extra line.
 4. If a line is relevant, KEEP it exactly as it is (Raw Config Format).
 5. Output must be a collection of RAW CONFIGURATION LINES, not a summary.
-
-Write [NONE] if you cannot write a answer.
+6. Keep negation lines (e.g., "no aaa new-model", "no ip routing") if they are relevant to the question — they indicate a feature is disabled.
+7. If the Extracted Context contains "[FEATURE_NOT_FOUND]", keep it as-is.
+8. Only write [NONE] if the Extracted Context is completely empty or entirely unrelated to the question.
+9. TOPOLOGY/PATH/LINK-FAILURE questions: If the question asks about a network path, route from A to B, or what happens when links go down, keep ALL device configuration blocks intact. Do NOT filter out routing tables, static routes, or configs of intermediate devices — every device's config is needed to trace the path.
+10. VALUE-EXTRACTION questions: If the question asks for a specific config value (e.g., hostname, version, timezone, clock, AS number, interface IP, VRF name, authentication method), keep the ENTIRE section that could contain that value. Do NOT delete a line just because its keyword does not exactly match the question — the answer may appear in an adjacent or parent line.
 
 ### OUTPUT FORMAT:
 [START]
@@ -274,7 +254,7 @@ Passage:
     if dataset_type == "multiple_choice" and options_str:
         prompt += f"Options: {options_str}\n"
 
-    with gpu_lock:
+    with gpu_lock():
         response = _get_text(llm.invoke(prompt))
     refined = _extract_from_tags(response)
     return {"current_passage": refined}
@@ -342,12 +322,37 @@ RULES:
     Answer FORMAT RULES (CRITICAL - MUST FOLLOW EXACTLY):
 
 1. output the raw answer value in ONE line:
-   - text type: Just the text value (e.g., "R1" or "10.0.0.1")
-   - numeric/number type: Just the number (e.g., 5 or 10.5)
+   - text type: Output the EXACT value as it appears in the config. PRESERVE original case (e.g., "Leaf1" not "leaf1", "PE1" not "pe1").
+     * Feature absent/disabled: If the feature command is NOT present in the config (e.g., no `clock timezone` command → timezone is null; `no aaa new-model` or no `aaa authentication` command → AAA is "not set"). Do NOT hallucinate default values (e.g., do NOT output "UTC" for timezone, do NOT output "local" for AAA auth if the command is missing).
+     * If "[FEATURE_NOT_FOUND]" is in the passage, output: not set
+     * If the feature is explicitly negated (e.g., "no aaa new-model"), output: not configured
+     * NETWORK PATH questions (e.g., "list the path from X to Y", "order of devices"): Output ONLY device hostnames separated by → (e.g., "pe2→p3→p2→pe1"). Use EXACT hostname case from configs. Do NOT include IP addresses. If destination is directly reachable from source (single hop), output just the source device name (e.g., "pe2"). If no route exists at all, output: No path
+     * LINK FAILURE / CONNECTIVITY questions (e.g., "The 'X-Y' link ... is down. Is it possible to communicate..."): Output EXACTLY "Possible" OR "Impossible (Reason: <FAILURE_TYPE> at <device>)". Example: "Impossible (Reason: NO_ROUTE at pe1)". Do NOT output "true", "false", "yes", "no".
+     * AGGREGATE questions (e.g., "device with the most/fewest interfaces", "BGP AS numbers of all devices", "iBGP Full-Mesh status"): Compute the answer across ALL device configs in the passage and format as specified in the question (e.g., "pe1: AS 65000, pe2: AS 65000" or "OK").
+     * If the question is about the leaf and there is none, output: (e.g. "leafX: AS None")
+   - numeric/number type: Count carefully using these rules:
+     * Interface count: Count ALL interface entries in the config (GigabitEthernet, FastEthernet, Loopback, Tunnel, etc.) — do NOT skip any interface type. Each "interface X" line = 1 interface.
+     * Routing table entries: Count ALL route sources — each "network" statement + each "ip route" (static) + each redistributed protocol block. Connected interfaces also contribute routes.
+     * Route Target count: Count BOTH "route-target import" AND "route-target export" lines together (NOT just one direction).
+     * VRF count: Count all "vrf definition X" or "ip vrf X" blocks.
+     * BGP AS number: Extract the number directly after "router bgp" (e.g., "router bgp 65000" → 65000). This is a single value, not a count.
+     * Hop count (path from A to B): Trace the path step by step using next-hop / neighbor information across all device configs in the passage. Count each intermediate device as 1 hop.
+     * Output ONLY the final integer or decimal. No units, no explanation.
    - set type: JSON array format (e.g., ["item1", "item2"])
-   - map type: JSON object format (e.g., {"key": "value"})
+     * ORDERING: List physical interfaces first (GigabitEthernet, FastEthernet, etc.), Loopback interfaces LAST.
+       e.g., ["GigabitEthernet0/0", "GigabitEthernet0/1", "Loopback0"]
+   - map type: JSON object format. Build the map by enumerating ALL interfaces. Apply these inference rules:
+     * Interface STATUS map: if "shutdown" is present → "down", if absent or "no shutdown" → "up"
+     * VRF BINDING map: if "ip vrf forwarding X" is present → X, if absent → "default" (every interface not explicitly assigned is in the default VRF)
+     * IP ADDRESS map: if "ip address A.B.C.D M.M.M.M" → "A.B.C.D/prefix", if absent → "" (empty string)
+     * Route-target/VRF map: extract key-value pairs explicitly from config
+     * NEVER output "unknown" or "null" as a value — apply the inference rules above instead.
+     * Include ALL interfaces (GigabitEthernet, Loopback, etc.). Do NOT skip interfaces.
+     * Empty map {} is forbidden — if passage is relevant, you MUST enumerate the interfaces.
+     * ORDERING: List physical interfaces first (GigabitEthernet, FastEthernet, etc.), Loopback interfaces LAST.
+       e.g., {"GigabitEthernet0/0": "...", "GigabitEthernet0/1": "...", "Loopback0": "..."}
    - boolean type: true or false
-   - ip type: example: "ip address 172.16.1.2 255.255.255.0" -> Output: "172.16.1.2/24"
+   - ip type: example: "ip address 172.16.1.2 255.255.255.0" -> Output: "172.16.1.2/24". If there is a Loopback interface, use the Loopback IP and list it LAST. If there's no Setting: "GigabitEthernet0/0: "
 
 2. CORE SEARCH RULES (CRITICAL)
 - **Scope Restriction**: Identify the target device and search ONLY within its specific configuration block (e.g., between `<Leaf1.cfg>` and the next tag). IGNORE content outside this block.
@@ -361,10 +366,64 @@ RULES:
    - map: {}
    - boolean: false
    - path: No path
-   """
+   """,
+
+        "netconfig_topo": """You are a Network Routing Simulator. Your task is to answer L4/L5 network analysis questions by simulating routing behavior from static device configurations.
+
+CONTEXT: You are given the complete configuration of ALL devices in the network topology. Use them to simulate routing.
+
+SIMULATION RULES:
+1. ROUTING PATH (L4) — "list the path from X to Y":
+   - Start at the SOURCE device. Check its routing table (static routes: "ip route", dynamic: BGP/OSPF neighbors, default route: "ip route 0.0.0.0 0.0.0.0 <next-hop>").
+   - Identify which interface the next-hop IP belongs to, and which device is connected on that subnet.
+   - Repeat hop-by-hop until you reach the destination IP or hit a dead end.
+   - Output: device hostnames separated by → (e.g., "leaf2→pe1→p2→p3"). Use EXACT hostname case. Do NOT include IPs.
+   - If no route exists to reach the destination: output "No path"
+   - If destination IP belongs to an interface of a directly connected device: that device is the last hop.
+
+2. WHAT-IF / FAULT ANALYSIS (L5) — "when link X-Y fails / device X is down":
+   Follow these steps IN ORDER before writing the answer:
+
+   [Step 1] Build the normal topology.
+   - List every device and its active interfaces with IP/subnet.
+   - List every routing entry (static "ip route", BGP neighbor, OSPF network) per device.
+
+   [Step 2] Identify the normal path from source to destination.
+   - Trace hop-by-hop using the routing tables built in Step 1.
+   - Write the path as: src→...→dst
+
+   [Step 3] Apply the failure.
+   - Remove the specified link (both directions) or device from the topology.
+   - Mark all interfaces/routes that become unavailable as a result.
+
+   [Step 4] Re-trace the path after failure.
+   - Starting from the source again, follow routing tables with the failed components removed.
+   - If a device has no valid next-hop toward the destination → it has NO_ROUTE.
+   - If an alternative path exists via a different next-hop → trace it fully.
+
+   [Step 5] Determine the answer.
+   - Blocking device: the first device in the path that has NO_ROUTE after failure.
+   - Connectivity: "Possible (Alternative route: X→Y→Z)" if alternative path found, else "Impossible (Reason: NO_ROUTE at <device>)".
+   - Count: count the number of affected routes/devices.
+
+   [Step 6] Output ONE LINE — the final answer only (no steps, no explanation).
+
+3. OUTPUT: ONE LINE answer only. No explanation. No reasoning. Just the answer value.
+   - Path: "leaf2→pe1" or "No path"
+   - Device: "pe1"
+   - Connectivity: "Possible (Alternative route: p1→p2→p3)" or "Impossible (Reason: NO_ROUTE at pe1)"
+   - Count: integer (e.g., "18")
+"""
     }
 
-    base_system = PROMPTS.get(dataset_type, PROMPTS["descriptive"])
+    # L4/L5는 토폴로지 시뮬레이션 전략 사용
+    level = state.get("level", "")
+    if dataset_type == "netconfig" and level in ("L4", "L5"):
+        effective_type = "netconfig_topo"
+    else:
+        effective_type = dataset_type
+
+    base_system = PROMPTS.get(effective_type, PROMPTS["descriptive"])
     system_prompt = base_system + """
 ### OUTPUT FORMAT:
 [START]
@@ -376,7 +435,7 @@ Answer:
     if dataset_type == "multiple_choice" and options_str:
         prompt += f"Options: {options_str}\n"
 
-    with gpu_lock:
+    with gpu_lock():
         response = _get_text(llm.invoke(prompt))
     # "Answer:" 레이블을 제거하고 순수 답변 값만 추출
     answer_val = _extract_from_tags(response)

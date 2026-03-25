@@ -1,57 +1,198 @@
-🚀 NetAgent: 5-Stage Multi-Agent System for Network Operations
-NetAgent는 네트워크 환경에서 발생하는 설정 오류와 장애를 진단하기 위해 설계된 **5단계 다중 에이전트 프레임워크(5-Stage Multi-Agent Framework)**입니다.
+# NetAgent (agents_v2): 5-Stage Multi-Agent System for Network Configuration QA
 
-기존 LLM이 방대한 네트워크 설정을 한 번에 처리할 때 발생하는 '환각(Hallucination)'과 '문맥 누수(Context Leakage)'를 원천 차단하기 위해, 단일 모델(Single Model) 기반의 엄격한 패시지(Passage) 생성 파이프라인과 Debate 2 (찬반 토론) 메커니즘을 결합하여 인간 엔지니어 수준의 신뢰성을 확보합니다.
+NetAgent는 네트워크 설정 파일(.cfg)로부터 LLM이 정확한 답변을 추론하도록 설계된 **5단계 다중 에이전트 프레임워크**입니다.
 
-👥 Core Agent Roles (5 에이전트 역할 구성)
-NetAgent는 명확히 분리된 5개의 에이전트로 구성됩니다. 실험의 통제와 일관성을 위해 전체 시스템은 단일 LLM 백본(All-Local 또는 All-API) 위에서 구동되며, 각 에이전트는 독립된 시스템 프롬프트를 통해 자신의 역할만을 수행합니다.
+단일 LLM이 방대한 네트워크 설정을 한 번에 처리할 때 발생하는 **환각(Hallucination)**과 **문맥 누수(Context Leakage)**를 차단하기 위해, Debate 1 (정보 정제) + Debate 2 (찬반 검증) 구조를 결합합니다.
 
-1️⃣ Agent 1: Information Extractor (정보 추출 에이전트)
-시스템의 첫 관문으로, 사용자의 질의를 분석하여 원시 데이터(Raw Data)를 수집합니다.
+---
 
-Our Dataset (동적 환경): MCP(Model Context Protocol) 툴을 능동적으로 호출하여 필요한 장비의 전체 설정이나 상태 정보를 Fetch 합니다.
+## 에이전트 역할
 
-Other Benchmarks (정적 환경): 툴 사용 없이, 데이터셋이 제공하는 전체 긴 Context 문서를 읽어들입니다.
+| Agent | 이름 | 역할 | 사용 모델 |
+|---|---|---|---|
+| Agent 1 | Collector | 질문과 관련된 config 라인 추출 | Model B (GPT-4o mini) |
+| Agent 2 | Verifier | 추출된 정보에서 무관한 라인 필터링 → 고순도 패시지 생성 | Model A (gemini-flash) |
+| Agent 3 | Synthesizer | 정제된 패시지로부터 후보 답변 생성 | Model A (gemini-flash) |
+| Agent 4 | Proponent | 후보 답변 방어 논리 제시 | Model A (gemini-flash) |
+| Agent 5 | Critic | 패시지 대비 답변의 정확성 검증, 판정 출력 | Model B (GPT-4o mini) |
 
-2️⃣ Agent 2: Passage Generator (패시지 생성 에이전트)
-가장 중요한 환각 방어선입니다. Agent 1이 수집한 방대한 원시 데이터에서 노이즈를 제거하고, 정답 도출에 결정적인 **10~20줄의 고순도 패시지(Passage)**만을 엄격하게 추출/생성합니다.
+> **Hetero 구성**: A = gemini-3.1-flash-lite, B = GPT-4o mini
+> 비용 효율을 위해 추론 부담이 낮은 에이전트(Verifier, Synthesizer, Proponent)에 경량 모델 A를,
+> 판단 정확도가 중요한 에이전트(Collector, Critic)에 강력한 모델 B를 배치.
 
-3️⃣ Agent 3: Answer Deriver (초기 정답 도출 에이전트)
-Agent 2가 전달한 '정제된 패시지'만을 기반으로 네트워크 상태를 분석하여 논리적인 초기 결론(Candidate Answer)을 도출합니다. 전체 문맥을 보지 않기 때문에 문맥 누수(Context Leakage)가 발생하지 않습니다.
+---
 
-4️⃣ Agent 4: Proponent (Debate 2 - 찬성 측 에이전트)
-이후 진행되는 Debate 2 토론 단계에서 찬성 및 방어(Advocate) 역할을 맡습니다. Agent 3이 도출한 초기 정답의 논리를 강화하고, 상대측의 공격에 맞서 정답의 타당성을 증명합니다.
+## 전체 파이프라인
 
-5️⃣ Agent 5: Critic (Debate 2 - 비판 측 에이전트)
-시스템 내에서 의도적인 회의론자(Skeptic) 역할을 수행합니다. Agent 3의 정답과 Agent 4의 논리에 네트워크 프로토콜 위배(예: BGP AS 불일치 등)나 논리적 비약이 없는지 비판(Critique)하고 반박 논거를 제시합니다.
+```
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │                     DEBATE 1 (Extraction)                           │
+  │                                                                     │
+  │  Raw Context                                                        │
+  │      │                                                              │
+  │      ▼                                                              │
+  │  ┌──────────┐  raw_data  ┌──────────────────────────┐              │
+  │  │ Agent 1  │ ─────────► │        Agent 2           │              │
+  │  │Collector │            │        Verifier           │              │
+  │  └──────────┘            │  ┌────────────────────┐  │              │
+  │       ▲                  │  │ L1/L2/L3: 필터링    │  │              │
+  │       │ NEED_MORE_INFO   │  │ L4/L5: BYPASS      │  │              │
+  │       │ (outer ≤3)       │  └────────────────────┘  │              │
+  │       │ + feedback       └────────────┬─────────────┘              │
+  │       │                   current_passage                           │
+  │       │                              ▼                              │
+  │       │                      ┌──────────────┐                      │
+  │       │                      │   Agent 3    │                      │
+  │       │                      │ Synthesizer  │                      │
+  │       │                      └──────┬───────┘                      │
+  │       │                             │ candidate_answer              │
+  └───────┼─────────────────────────────┼────────────────────────────  ┘
+          │                             ▼
+  ┌───────┼──────────────────────────────────────────────────────────────┐
+  │       │                  DEBATE 2 (Verification)                     │
+  │       │                                                              │
+  │       │                    ┌────────────────────────────┐           │
+  │       │    CONTINUE_DEBATE │        Agent 4             │           │
+  │       │    ┌──────────────►│       Proponent            │           │
+  │       │    │  (inner ≤3)   │  후보 답변 방어 논리 제시   │           │
+  │       │    │               └──────────────┬─────────────┘           │
+  │       │    │                    DEFEND     │                         │
+  │       │    │                    (방어)     ▼                         │
+  │       │    │               ┌──────────────────┐                     │
+  │       │ NEED_MORE_INFO     │     Agent 5       │                     │
+  │       └────────────────────│      Critic       │                     │
+  │         (feedback 포함)    └──────────┬────────┘                    │
+  │                   CONTINUE_DEBATE     │                              │
+  │                   (inner ≤3) ─────────┘                             │
+  │                                       │                             │
+  │                   ACCEPT ──► Final Answer                           │
+  └──────────────────────────────────────────────────────────────────────┘
+```
 
-🔄 Multi-Agent Workflow: The "Debate 2" Process
-NetAgent의 문제 해결 과정은 단방향 출력이 아닌, 정보 정제부터 치열한 찬반 토론으로 이어지는 5단계 파이프라인을 따릅니다.
+### 라우팅 규칙
 
-📍 Step 1: Raw Information Extraction (원시 정보 추출)
-Agent 1이 질의를 분석하고 환경(동적/정적)에 맞춰 원시 네트워크 데이터를 수집하여 전달합니다.
+| Critic 판정 | 조건 | 다음 노드 |
+|---|---|---|
+| ACCEPT | — | END (최종 답변 확정) |
+| CONTINUE_DEBATE | inner_turn_count < 3 | Proponent |
+| CONTINUE_DEBATE | inner_turn_count ≥ 3 | END (강제 종료) |
+| NEED_MORE_INFO | outer_loop_count < 3 | Collector (feedback 전달) |
+| NEED_MORE_INFO | outer_loop_count ≥ 3 | END (강제 종료) |
 
-📍 Step 2: Strict Context Scoping (패시지 생성)
-Agent 2가 원시 데이터를 필터링하여 오직 답변에 필요한 '핵심 Passage'만 생성합니다. 다른 장비의 무관한 설정은 이 단계에서 모두 버려집니다.
+---
 
-📍 Step 3: Initial Answer Generation (초기 정답 생성)
-Agent 3이 고순도 Passage를 분석하여 "장애 원인은 OSPF Area 불일치이다"와 같은 초기 정답(Draft)을 도출합니다.
+## 레벨별 처리 전략
 
-📍 Step 4: Debate 2 - The Pro/Con Clash (핵심 찬반 토론) 🔥
-시스템의 신뢰성을 극대화하는 Debate 2 단계가 시작됩니다.
+| Level | 질문 유형 | Collector | Verifier | Synthesizer 전략 |
+|---|---|---|---|---|
+| L1/L2 | 단일 장비 fact 추출 | 해당 장비 config 추출 | 필터링 적용 | 정확한 config 값 직접 추출 |
+| L3 | 다중 장비 cross-비교 | 관련 장비 config 추출 | 필터링 적용 | 장비 간 비교 추론 |
+| L4 | 경로 추적 (traceroute) | 전체 토폴로지 추출 | **BYPASS** | hop-by-hop 라우팅 시뮬레이션 |
+| L5 | 장애 분석 (what-if) | 전체 토폴로지 추출 | **BYPASS** | **6단계 fault analysis** |
 
-Con (공격): Agent 5 (Critic)가 "Passage를 보면 OSPF Area는 일치한다. 문제는 인터페이스 Down이다"라며 논리적 허점을 찌릅니다.
+### L5 Synthesizer 6단계 추론
 
-Pro (방어/수정): Agent 4 (Proponent)는 비판을 분석하여 "네 말이 맞다. 인터페이스 상태를 간과했다"라며 논리를 수정하거나, "아니다, 가상 링크가 설정되어 있어 Area 0과 연결된다"라며 방어합니다.
+```
+[Step 1] 정상 토폴로지 구축 — 모든 장비의 인터페이스 + 라우팅 테이블 나열
+[Step 2] 정상 경로 추적 — hop-by-hop으로 src→dst 경로 확인
+[Step 3] 장애 적용 — 지정된 링크/장비 제거, 영향 인터페이스/라우트 표시
+[Step 4] 장애 후 경로 재추적 — NO_ROUTE 지점 또는 대안 경로 탐색
+[Step 5] 답 결정 — Blocking device / Possible / Impossible / count
+[Step 6] 최종 한 줄 출력
+```
 
-피드백 루프: 두 에이전트가 주어진 Passage만으로 결론을 내지 못하면, 파이프라인 앞단(Agent 1, 2)에 추가 정보 탐색을 요청합니다.
+> **근거**: homo(all GPT-4o mini) L5=48.5% vs hetero full L5=18.1%. 단계적 추론 없이는
+> gemini-flash-lite가 복잡한 fault analysis를 처리하지 못함. 6단계 명시로 추론 구조 제공.
 
-📍 Step 5: Consensus & Final Output (합의 및 최종 정답 도출)
-Agent 4와 5가 오류 없음에 합의(Consensus)하거나 지정된 토론 턴(Max Turns)이 종료되면, 가장 논리적으로 완벽하게 검증된 **최종 정답(Final Answer)**을 출력합니다.
+---
 
-⚙️ Experimental Setup (실험 환경 세팅)
-본 연구는 통제된 실험을 위해 모델을 섞어 쓰지 않고, 5개의 에이전트 파이프라인 전체를 단일 체급의 모델로 고정하여 두 가지 세팅으로 비교 평가합니다.
+## 답변 타입별 출력 규칙
 
-Setup A (All-Local Mode): Agent 1~5 모두 vLLM (AWQ 4bit) 기반의 로컬 모델 하나만 사용하여 구동. (비용 0, 프라이버시 유지, 빠른 처리 속도 입증 목적)
+| answer_type | 출력 형식 | 특이사항 |
+|---|---|---|
+| text | 정확한 config 값 (원문 그대로) | case 보존 필수 (e.g. "PE1" not "pe1") |
+| numeric | 정수 또는 소수 | 단위 없음, 설명 없음 |
+| number | 정수 | 카운팅 결과 |
+| set | JSON 배열 `["a","b"]` | **Loopback 마지막** |
+| map | JSON 객체 `{"k":"v"}` | **Loopback 마지막**, 추론 규칙 적용 |
+| boolean | `true` or `false` | |
+| path | `A→B→C` or `No path` | 정확한 hostname case 사용 |
 
-Setup B (All-API Mode): Agent 1~5 모두 OpenRouter (GLM-4.7-flash) 외부 API 하나만 사용하여 구동. (최고 수준의 논리 추론 및 Debate 2 성능 확인 목적)
+> **Loopback 순서 규칙**: set/map 타입에서 물리 인터페이스(GigabitEthernet 등) 먼저,
+> Loopback 인터페이스 마지막. e.g. `{"GigabitEthernet0/0": "...", "Loopback0": "..."}`
+
+---
+
+## Verifier 필터링 철학
+
+```
+기존: "무관한 줄은 삭제" → 공격적 필터링 → Text 타입 정답 라인 소실
+개선: "의심스러우면 보존" → 보수적 필터링
+```
+
+핵심 규칙:
+- **Rule 3**: "WHEN IN DOUBT, KEEP THE LINE. Only delete if certain."
+- **Rule 10**: Value-extraction 질문(hostname, version, AS number 등)은 관련 섹션 전체 보존
+
+---
+
+## 실험 결과 (NetConfigQA 2.0, TA-Acc)
+
+### 전체 성능
+
+| Configuration | EM | TA-Acc | 비고 |
+|---|---|---|---|
+| Single LLM (GPT-4o mini) | 0.3976 | 51.51 | baseline |
+| NetAgent homo (GPT-4o mini) | 0.4869 | 56.06 | 전 에이전트 동일 모델 |
+| NetAgent D1 Only | 0.4921 | 59.75 | Debate-2 없음 |
+| NetAgent D2 Only | 0.5866 | **67.33** | Debate-1 없음, raw context |
+| **NetAgent hetero (agents_v2)** | **0.6260** | 65.79 | Full pipeline |
+
+### 타입별 TA-Acc
+
+| Configuration | Map | Numeric | Text | Number | Set |
+|---|---|---|---|---|---|
+| Single LLM | 61.8 | 68.3 | 42.6 | 19.4 | 73.3 |
+| homo | 15.0 | 78.2 | 48.4 | 19.4 | 86.1 |
+| D1 Only | 12.5 | **95.0** | 51.6 | 3.0 | 92.7 |
+| D2 Only | 17.5 | 94.1 | **60.5** | 29.9 | **95.1** |
+| **hetero (agents_v2)** | **85.0** | 94.1 | 49.7 | **37.3** | 94.1 |
+
+### 난이도별 TA-Acc
+
+| Configuration | L1 | L2 | L3 | L4 | L5 |
+|---|---|---|---|---|---|
+| Single LLM | 76.5 | 54.1 | 36.9 | 26.7 | 15.9 |
+| homo | 72.0 | 54.7 | 70.6 | 10.1 | **48.5** |
+| D1 Only | 80.7 | 87.9 | 73.5 | 18.8 | 21.5 |
+| D2 Only | 84.3 | 87.3 | **81.9** | **34.5** | 32.2 |
+| **hetero (agents_v2)** | **89.2** | **89.9** | 74.3 | 30.3 | 18.1 |
+
+---
+
+## 분석: Full Pipeline vs D2Only
+
+D2Only(67.33%) > Full hetero(65.79%)인 원인:
+
+| 원인 | 영향 |
+|---|---|
+| Verifier가 Text 답변 라인 삭제 | Text -10.8% |
+| Anchor Bias: Proponent가 오답을 그대로 방어 | L3/L4/L5 하락 |
+| L5 Synthesizer 추론 부족 | L5 -14% vs homo |
+| Collector NEED_MORE_INFO 재추출 시 context 손실 | L4/L5 하락 |
+
+> **Full이 D2Only 대비 강점**: Map +67.5%, Number +7.4%, L1/L2 +3~5%
+> Debate-1 Collector의 구조화 추출 효과는 Map 타입에서 명확히 입증됨.
+
+---
+
+## 실험 환경
+
+| 항목 | 설정 |
+|---|---|
+| Model A | gemini-3.1-flash-lite (Verifier, Synthesizer, Proponent) |
+| Model B | GPT-4o mini (Collector, Critic) |
+| 데이터셋 | NetConfigQA 2.0 (762 QA, L1~L5, 127 메트릭) |
+| 평가 지표 | TA-Acc (Type-Aware Accuracy), EM, BertScore |
+| 병렬 처리 | ThreadPoolExecutor (MAX_WORKERS=50) |
+| Recursion limit | 25 (LangGraph 기본값) |

@@ -13,6 +13,7 @@ class NetAgentState(TypedDict):
     context: str           # 원본 컨텍스트 (설정 파일 전체 등)
     dataset_type: str      # 데이터셋 종류: "netconfig" | "multiple_choice" | "short_answer" | "descriptive"
     options: Optional[str] # 객관식 선택지 (multiple_choice일 때만 사용)
+    level: Optional[str]   # 난이도 레벨: "L1"~"L5" (netconfig 전용, L4/L5는 전체 토폴로지 컨텍스트 사용)
 
     # 2. 에이전트 간 공유 데이터
     raw_data: str          # Agent 1(Collector)이 추출한 원시 정보
@@ -36,12 +37,7 @@ class NetAgentState(TypedDict):
     critic_feedback: str     # Critic이 Synthesizer/Supporter에게 전달하는 비판 내용
     feedback_to_collector:str # Critic이 Collector에게 전달하는 재수집 지시사항
 
-    # 5. 도구 연동 (NetAlly MCP Tools)
-    tool_mode: str               # "none" (Exp.4: context만) | "netally" (Exp.5: 도구 호출)
-    tool_results: str            # NetAlly 도구 호출 결과 (tool_mode=netally일 때)
-    netally_base_url: str        # NetAlly API URL (기본: http://localhost:8111)
-
-    # 6. 이력 및 기타
+    # 5. 이력 및 기타
     history: List[dict]          # 전체 대화 이력 (현재 미사용)
     device_db: dict              # 이전 코드와의 호환성을 위해 유지 (사용하지 않더라도 에러 방지용)
     next_hop_device: Optional[str]  # 레거시 호환용 필드

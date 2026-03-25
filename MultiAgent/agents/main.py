@@ -78,7 +78,7 @@ def build_graph():
 
 def process_item(app, item, index, total, dataset_type, global_context=None):
     q_text = item.get('question', '')
-    
+    item_id = item.get('id', '')
     # Context 설정
     context = ""
     if dataset_type == "netconfig" and isinstance(global_context, dict):
@@ -100,6 +100,7 @@ def process_item(app, item, index, total, dataset_type, global_context=None):
         context = item.get('gold_context', '') or item.get('context', '')
 
     initial_state = {
+        "id": item_id,
         "question": q_text,
         "original_passage": item.get('passage', ''),
         "current_passage": item.get('passage', ''),
@@ -152,6 +153,7 @@ def process_item(app, item, index, total, dataset_type, global_context=None):
         duration = end_time - start_time
         
         result_item = {
+            "id": id,
             "question": q_text,
             "gold_answer": item.get('gold_answer'),
             "debate1_passage": out['current_passage'],
@@ -240,6 +242,7 @@ def main():
     for item in data:
         q = item.get('question', '')
         gold_ans = item.get('gold_answer', '')
+        item_id = item.get('id')
         
         # 1. 기존 결과가 없는 경우 -> 실행
         if q not in all_results_map:

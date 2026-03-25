@@ -565,15 +565,15 @@ class ScorecardGenerator:
         lines.append("## 📊 Overall Performance\n")
         lines.append("| Metric | Value |")
         lines.append("|--------|-------|")
-        lines.append(f"| **Type-Aware Accuracy** | **{stats['accuracy']*100:.2f}%** |")
+        lines.append(f"| **Type-Aware Accuracy** | **{stats['accuracy']:.4f}** |")
         
         trad_metrics = stats.get('traditional_metrics', {})
-        lines.append(f"| Exact Match (EM) | {trad_metrics.get('exact_match', 0)*100:.2f}% |")
-        lines.append(f"| Token F1 | {trad_metrics.get('token_f1', 0)*100:.2f}% |")
-        lines.append(f"| BERTScore F1 | {trad_metrics.get('bertscore_f1', 0)*100:.2f}% |")
-        lines.append(f"| ROUGE-L | {trad_metrics.get('rougeL', 0)*100:.2f}% |")
-        lines.append(f"| ROUGE-1 | {trad_metrics.get('rouge1', 0)*100:.2f}% |")
-        lines.append(f"| ROUGE-2 | {trad_metrics.get('rouge2', 0)*100:.2f}% |")
+        lines.append(f"| Exact Match (EM) | {trad_metrics.get('exact_match', 0):.4f} |")
+        lines.append(f"| Token F1 | {trad_metrics.get('token_f1', 0):.4f} |")
+        lines.append(f"| BERTScore F1 | {trad_metrics.get('bertscore_f1', 0):.4f} |")
+        lines.append(f"| ROUGE-L | {trad_metrics.get('rougeL', 0) :.4f} |")
+        lines.append(f"| ROUGE-1 | {trad_metrics.get('rouge1', 0):.4f} |")
+        lines.append(f"| ROUGE-2 | {trad_metrics.get('rouge2', 0):.4f} |")
         lines.append(f"| Total Samples | {stats['total_samples']} |")
         lines.append(f"| Inference Time | {meta.get('duration', 0):.1f}s |")
         lines.append("")
@@ -652,7 +652,7 @@ class ScorecardGenerator:
             for e in error_samples[:15]:
                 gold_short = e['gold'][:25] + "..." if len(e['gold']) > 25 else e['gold']
                 pred_short = e['pred'][:25] + "..." if len(e['pred']) > 25 else e['pred']
-                lines.append(f"| {e['id']} | {e['type']} | `{gold_short}` | `{pred_short}` | {e['score']:.2f} |")
+                lines.append(f" | {e['type']} | `{gold_short}` | `{pred_short}` | {e['score']:.2f} |")
             lines.append("")
         
         # Footer
@@ -682,13 +682,13 @@ class SummaryReportGenerator:
         for stats, meta in all_stats_meta:
             model_name = meta.get("model", "Unknown")
             trad = stats.get('traditional_metrics', {})
-            r1 = trad.get('rouge1', 0) * 100
-            r2 = trad.get('rouge2', 0) * 100
-            rl = trad.get('rougeL', 0) * 100
-            em = trad.get('exact_match', 0) * 100
-            bleu = trad.get('bleu', 0) * 100
-            bs = trad.get('bertscore_f1', 0) * 100
-            f1 = trad.get('token_f1', 0) * 100
+            r1 = trad.get('rouge1', 0)
+            r2 = trad.get('rouge2', 0)
+            rl = trad.get('rougeL', 0)
+            em = trad.get('exact_match', 0)
+            bleu = trad.get('bleu', 0)
+            bs = trad.get('bertscore_f1', 0)
+            f1 = trad.get('token_f1', 0)
             ta_acc = stats.get('accuracy', 0) * 100
             
             lines.append(f"| {model_name} | {r1:.2f} | {r2:.2f} | {rl:.2f} | {em:.2f} | {bleu:.2f} | {bs:.2f} | {f1:.2f} | {ta_acc:.2f} |")
@@ -759,7 +759,7 @@ def analyze_results(json_file: str, verbose: bool = False):
     
     # 통계 수집용
     grouped_by_type = defaultdict(list)
-    # grouped_by_level = defaultdict(list)
+    grouped_by_level = defaultdict(list)
     grouped_by_category = defaultdict(list)
     grouped_by_status = defaultdict(list)
     
@@ -779,7 +779,16 @@ def analyze_results(json_file: str, verbose: bool = False):
         # 필드명 호환성 처리 (raw_pred vs pred, answer_type vs type, answer_status vs status)
         raw_pred = row.get('debate2_answer')
         answer_type = canonical_answer_type(row.get('answer_type', row.get('type', 'text')))
+        level = row.get('level', 'Unknown')
+        category = row.get('category', 'Unknown')
+        status = row.get('answer_status', row.get('status', 'Unknown'))
+        clean_pred = scorer.clean_prediction(raw_pred, answer_type)
         
+        if not clean_pred or clean_pred.strip() == "":
+            print(f"\n🚨 [CRITICAL] Cleaning failed!")
+            print(f"ID: {row.get('id')} | Raw: '{raw_pred}'")
+            print(f"Type: {answer_type} | Cleaned: '{clean_pred}'")
+
         # 전처리 (answer_type 전달)
         clean_pred = scorer.clean_prediction(raw_pred, answer_type)
         clean_gold = scorer.clean_gold(row['gold_answer'])
@@ -796,6 +805,7 @@ def analyze_results(json_file: str, verbose: bool = False):
             "question": row['question'],
             "gold": row['gold_answer'],
             "gold_cleaned": clean_gold,
+            "answer": raw_pred,
             "type_aware_score": type_aware_score,
             "type": answer_type,
         }
@@ -910,17 +920,17 @@ def analyze_results(json_file: str, verbose: bool = False):
     print(f"\n[Type-Aware Score by Answer Type]")
     for t in sorted(grouped_by_type.keys()):
         scores = grouped_by_type[t]
-        print(f"   {t:12s}: {sum(scores)/len(scores):.2%} (n={len(scores)})")
+        print(f"   {t:12s}: {sum(scores)/len(scores):.2f} (n={len(scores)})")
     
     print(f"\n[Type-Aware Score by Level]")
     for lvl in sorted(grouped_by_level.keys()):
         scores = grouped_by_level[lvl]
-        print(f"   {lvl:5s}: {sum(scores)/len(scores):.2%} (n={len(scores)})")
+        print(f"   {lvl:5s}: {sum(scores)/len(scores):.2f} (n={len(scores)})")
     
     print(f"\n[Type-Aware Score by Status]")
     for status in sorted(grouped_by_status.keys()):
         scores = grouped_by_status[status]
-        print(f"   {status:15s}: {sum(scores)/len(scores):.2%} (n={len(scores)})")
+        print(f"   {status:15s}: {sum(scores)/len(scores):.2f} (n={len(scores)})")
     
     if verbose and error_samples:
         print(f"\n[Sample Errors (first {len(error_samples)})]")
@@ -1017,7 +1027,8 @@ def main():
     files_to_process = args.json_files
     if not files_to_process:
         # Default file if none provided
-        default_file = BASE_DIR / "data" / "debate_results" / "full_w_context4" / "netconfig_result2.json"
+        default_file = BASE_DIR / "data" / "debate_results" / "agents_v2" / "single_model" / "gemini3.1" / "netconfig_result.json"
+        # default_file = BASE_DIR / "data" / "debate_results" / "ablation" / "d2only" / "netconfig" / "netconfig_result.json"
         if default_file.exists():
             files_to_process = [str(default_file)]
         else:

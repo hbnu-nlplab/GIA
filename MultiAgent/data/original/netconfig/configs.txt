@@ -1,4 +1,5 @@
-<Leaf1.cfg>!
+[Leaf1.cfg]
+!
 ! Last configuration change at 15:18:14 UTC Wed Dec 17 2025
 !
 version 15.7
@@ -110,7 +111,8 @@ line vty 0 4
 no scheduler allocate
 !
 end
-<Leaf2.cfg>
+
+[Leaf2.cfg]
 !
 ! Last configuration change at 15:19:03 UTC Wed Dec 17 2025
 !
@@ -223,7 +225,8 @@ line vty 0 4
 no scheduler allocate
 !
 end
-<Leaf3.cfg>
+
+[Leaf3.cfg]
 !
 ! Last configuration change at 15:19:35 UTC Wed Dec 17 2025
 !
@@ -337,8 +340,8 @@ line vty 0 4
 no scheduler allocate
 !
 end
-<Leaf4.cfg>
 
+[Leaf4.cfg]
 !
 ! Last configuration change at 15:20:29 UTC Wed Dec 17 2025
 !
@@ -453,7 +456,7 @@ no scheduler allocate
 !
 end
 
-<P1.cfg>
+[P1.cfg]
 !
 ! Last configuration change at 15:14:09 UTC Wed Dec 17 2025
 !
@@ -577,8 +580,7 @@ no scheduler allocate
 !
 end
 
-
-<P2.cfg>
+[P2.cfg]
 !
 ! Last configuration change at 15:14:23 UTC Wed Dec 17 2025
 !
@@ -703,7 +705,7 @@ no scheduler allocate
 !
 end
 
-<P3.cfg>
+[P3.cfg]
 !
 ! Last configuration change at 15:15:00 UTC Wed Dec 17 2025
 !
@@ -828,7 +830,7 @@ no scheduler allocate
 !
 end
 
-<P4.cfg>
+[P4.cfg]
 !
 ! Last configuration change at 15:16:15 UTC Wed Dec 17 2025
 !
@@ -951,7 +953,7 @@ no scheduler allocate
 !
 end
 
-<PE1.cfg>
+[PE1.cfg]
 !
 ! Last configuration change at 15:16:31 UTC Wed Dec 17 2025
 !
@@ -1116,7 +1118,7 @@ no scheduler allocate
 !
 end
 
-<PE2.cfg>
+[PE2.cfg]
 !
 ! Last configuration change at 15:17:20 UTC Wed Dec 17 2025
 !
