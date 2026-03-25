@@ -155,10 +155,10 @@ def build_graph():
         if status == "ACCEPT":
             return "end"
         elif status == "CONTINUE_DEBATE":
-            # 내부 반복 3회 초과 시 강제 종료
+            # 내부 반복 2회 초과 시 강제 종료
             return "end" if state.get("inner_turn_count", 0) >= 3 else "continue_inner"
         elif status == "NEED_MORE_INFO":
-            # 외부 반복 3회 초과 시 강제 종료
+            # 외부 반복 2회 초과 시 강제 종료
             return "end" if state.get("outer_loop_count", 0) >= 3 else "backtrack_outer"
         return "end"
 
@@ -198,21 +198,35 @@ def process_item(app, item, index, total, dataset_type, global_context=None):
     item_id = item.get('id', '')
 
     # 컨텍스트 결정
+    item_level = item.get('level', '')
     context = ""
     if dataset_type == "netconfig" and isinstance(global_context, dict):
-        # 질문에 언급된 장비명과 일치하는 설정 블록만 추출
-        found_configs = []
-        for device_name, config_content in global_context.items():
-            if device_name.lower() in q_text.lower():
-                found_configs.append(config_content)
+        # L4/L5는 항상 전체 토폴로지 context 사용 (시뮬레이션/What-If 질문)
+        # 그 외: answer_type이 'number'이거나 경로/홉 키워드가 있으면 전체 config 사용
+        answer_type = item.get('answer_type', '')
+        topo_keywords = ('hop', 'path', 'route', 'block', 'flow', 'reach', 'traceroute')
+        needs_full_topo = (
+            item_level in ('L4', 'L5') or
+            answer_type == 'number' or
+            any(kw in q_text.lower() for kw in topo_keywords)
+        )
 
-        if found_configs:
-            context = "\n".join(found_configs)
+        if needs_full_topo:
+            # 전체 장비 config 제공
+            context = "\n".join(global_context.values())
         else:
-            # 장비명 매칭 실패 시 폴백
-            context = item.get('gold_context', '') or item.get('context', '')
-            if not context:
-                context = "[NONE]"
+            # 질문에 언급된 장비명과 일치하는 설정 블록만 추출
+            found_configs = []
+            for device_name, config_content in global_context.items():
+                if device_name.lower() in q_text.lower():
+                    found_configs.append(config_content)
+
+            if found_configs:
+                context = "\n".join(found_configs)
+            else:
+                # 장비명 매칭 실패 시 → 전체 토폴로지 컨텍스트 사용
+                # (집계/전체 장비 대상 질문: iBGP full-mesh, 가장 많은 인터페이스 등)
+                context = "\n".join(global_context.values())
     elif isinstance(global_context, str) and global_context:
         context = global_context
     else:
@@ -225,6 +239,7 @@ def process_item(app, item, index, total, dataset_type, global_context=None):
         "context": context,
         "dataset_type": dataset_type,
         "options": item.get('options', ''),
+        "level": item_level,
         "raw_data": "",
         "current_passage": "",
         "candidate_answer": "",
@@ -254,12 +269,16 @@ def process_item(app, item, index, total, dataset_type, global_context=None):
             "id": item_id,
             "question": q_text,
             "gold_answer": item.get('gold_answer'),
-            "debate1_passage": out.get('current_passage', ''),    # Verifier 정제 패시지
-            "debate1_answer": out.get('debate1_answer', ''),       # 1차 토론 답변
-            "proponent_defense": out.get('pro_argument', ''),      # Supporter 옹호 의견
-            "critic_critique": out.get('con_argument', ''),        # Critic 비판 의견
-            "debate2_answer": ans,                                 # 최종 답변
-            "debate2_rounds": out.get('inner_turn_count', 0),      # 내부 토론 라운드 수
+            "debate1_passage": out.get('current_passage', ''),          # Verifier 정제 패시지
+            "debate1_answer": out.get('debate1_answer', ''),             # 1차 토론 답변
+            "proponent_defense": out.get('pro_argument', ''),            # Supporter 마지막 의견
+            "critic_critique": out.get('con_argument', ''),              # Critic 마지막 비판
+            "feedback_to_collector": out.get('feedback_to_collector', ''), # Collector 재수집 지시
+            "proponent_history": out.get('proponent_responses', []),     # Supporter 전체 이력
+            "critic_history": out.get('critic_feedbacks', []),           # Critic 전체 이력
+            "final_status": out.get('status', ''),                       # 최종 판정 (ACCEPT 등)
+            "debate2_answer": ans,                                       # 최종 답변
+            "debate2_rounds": out.get('inner_turn_count', 0),            # 내부 토론 라운드 수
             "duration": time.time() - start_time
         }
 
@@ -315,7 +334,8 @@ def main():
     6. 병렬 처리 (ThreadPoolExecutor)
     7. 결과 저장
     """
-    target_answer_type = None  # 특정 answer_type만 처리하려면 지정 (예: "map"), None이면 전체 처리
+    target_answer_type = None # None이면 전체 실행, 문자열이면 해당 타입만 실행
+    FORCE_RERUN = False  # True로 설정하면 [NONE]이 아닌 기존 결과도 재실행
 
     # 로그 디렉토리 생성 및 Tee 설정
     log_dir = BASE_DIR / "data" / "log"
@@ -329,7 +349,8 @@ def main():
 
     # 입력/출력 경로 설정
     input_path = BASE_DIR / "data" / "passages" / "full_w_context" / "netconfig_en2.json"
-    output_path = BASE_DIR / "data" / "debate_results" / "agents_v2" / "full_w_context5" / "netconfig" / "netconfig_result.json"
+    # output_path = BASE_DIR / "data" / "debate_results" / "ablation" / "single" / "netconfig" / "netconfig_result.json"
+    output_path = BASE_DIR / "data" / "debate_results" / "agents_v2" / "full_w_context10" / "netconfig" / "netconfig_result.json"
 
     # 다른 데이터셋으로 전환 시 위 경로를 주석처리하고 아래 사용
     # input_path = BASE_DIR / "data" / "passages" / "full_w_context" / "netbench_passage.json"
@@ -427,15 +448,20 @@ def main():
     for item in data:
         item_id = str(item.get('id', ''))
 
+        # target_answer_type이 지정된 경우 해당 타입만 처리
+        if target_answer_type and item.get('answer_type') != target_answer_type:
+            skipped_count += 1
+            continue
+
         if item_id not in existing_results_map:
             # 미처리 항목
             items_to_process.append(item)
             continue
 
-        # 기존 결과가 있지만 [NONE]인 경우 재시도
+        # 기존 결과가 있지만 [NONE]이거나 강제 재실행인 경우 재시도
         existing_res = existing_results_map[item_id]
         pred_ans = str(existing_res.get('debate2_answer', '')).strip().upper()
-        if pred_ans == "[NONE]":
+        if pred_ans == "[NONE]" or FORCE_RERUN:
             items_to_process.append(item)
             none_retry_count += 1
         else:
@@ -447,7 +473,7 @@ def main():
     print(f"🚀 최종 실행 대기: {len(items_to_process)}")
 
     # Step 6: 병렬 처리
-    MAX_WORKERS = 50  # 동시 처리 스레드 수 (API 호출 기반이므로 높게 설정 가능)
+    MAX_WORKERS = 50 # 동시 처리 스레드 수 (과도한 병렬 요청은 rate limit 유발)
     start_total_time = time.time()
     os.makedirs(output_path.parent, exist_ok=True)
 

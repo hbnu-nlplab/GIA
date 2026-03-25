@@ -920,17 +920,17 @@ def analyze_results(json_file: str, verbose: bool = False):
     print(f"\n[Type-Aware Score by Answer Type]")
     for t in sorted(grouped_by_type.keys()):
         scores = grouped_by_type[t]
-        print(f"   {t:12s}: {sum(scores)/len(scores):.2%} (n={len(scores)})")
+        print(f"   {t:12s}: {sum(scores)/len(scores):.2f} (n={len(scores)})")
     
     print(f"\n[Type-Aware Score by Level]")
     for lvl in sorted(grouped_by_level.keys()):
         scores = grouped_by_level[lvl]
-        print(f"   {lvl:5s}: {sum(scores)/len(scores):.2%} (n={len(scores)})")
+        print(f"   {lvl:5s}: {sum(scores)/len(scores):.2f} (n={len(scores)})")
     
     print(f"\n[Type-Aware Score by Status]")
     for status in sorted(grouped_by_status.keys()):
         scores = grouped_by_status[status]
-        print(f"   {status:15s}: {sum(scores)/len(scores):.2%} (n={len(scores)})")
+        print(f"   {status:15s}: {sum(scores)/len(scores):.2f} (n={len(scores)})")
     
     if verbose and error_samples:
         print(f"\n[Sample Errors (first {len(error_samples)})]")
@@ -1027,8 +1027,8 @@ def main():
     files_to_process = args.json_files
     if not files_to_process:
         # Default file if none provided
-        # default_file = BASE_DIR / "data" / "debate_results" / "agents_v2" / "full_w_context3" / "netconfig" / "netconfig_result.json"
-        default_file = BASE_DIR / "data" / "debate_results" / "agents_v2" / "full_w_context5" / "netconfig" / "netconfig_result.json"
+        default_file = BASE_DIR / "data" / "debate_results" / "agents_v2" / "full_w_context10" / "netconfig" / "netconfig_result.json"
+        # default_file = BASE_DIR / "data" / "debate_results" / "ablation" / "d2only" / "netconfig" / "netconfig_result.json"
         if default_file.exists():
             files_to_process = [str(default_file)]
         else:

@@ -7,7 +7,233 @@ agents_v2의 debate graph를 연동하여 640개 케이스를 자동으로 실�
 
 ---
 
-## agents_v2 vs NIKA 아키텍처 비교
+## 아키텍처 비교: 원본 NIKA vs agents_v2 단독 vs MAS 연동
+
+### 3가지 아키텍처 구성 요소 비교표
+
+| 항목 | agents_v2 단독 (NetConfigQA) | 원본 NIKA (ReAct) | MAS 연동 NIKA (DebateAgent) |
+|---|---|---|---|
+| **목적** | QA 데이터셋 문제 풀이 | 네트워크 장애 RCA | 네트워크 장애 RCA |
+| **에이전트 클래스** | 없음 (LangGraph 직접 실행) | `DiagnosisAgent` | `DebateAgent` |
+| **에이전트 패러다임** | 고정 그래프 (debate) | ReAct (자율적 도구 선택) | 고정 컨텍스트 수집 → debate 그래프 |
+| **입력** | question + context (정적 텍스트) | task_description | task_description |
+| **컨텍스트 출처** | 미리 준비된 passage (정적) | 에이전트가 런타임에 동적 수집 | `_collect_context()`가 사전 수집 후 고정 |
+| **MCP 도구 사용** | 없음 | 있음 — 에이전트가 자율 결정 | 있음 — 수집 단계에서 고정 순서로 호출 |
+| **사용 MCP 서버** | 없음 | base + frr + bmv2 + telemetry | base + frr (수집 단계) / task (제출 단계) |
+| **LangGraph 노드** | Collector → Verifier → Synthesizer → Supporter → Skeptic | 없음 (ReAct 루프) | diagnosis → submission |
+| **내부 debate 그래프** | 있음 (메인 실행 단위) | 없음 | 있음 (`_run_debate()` 내에서 실행) |
+| **출력** | `candidate_answer` (자유 텍스트) | `diagnosis_report` | `submission.json` (is_anomaly / faulty_devices / root_cause_name) |
+| **최종 제출 처리** | 없음 | 없음 (별도 처리) | `SubmissionAgent` (ReAct, task MCP 사용) |
+
+---
+
+### 아키텍처 흐름 시각화
+
+#### 원본 NIKA (ReAct — DiagnosisAgent)
+
+```
+task_description
+       │
+       ▼
+  DiagnosisAgent (ReAct 루프)
+  ┌────────────────────────────────────────────┐
+  │  LLM이 추론 → 도구 선택 → 결과 관찰 → 반복   │
+  │                                            │
+  │  Step 1: get_reachability()                │
+  │  Step 2: get_host_net_config(host_x)       │  ← 에이전트가 자율적으로
+  │  Step 3: frr_show_ip_route(router_y)       │    필요한 도구를 선택
+  │  Step n: ...                               │
+  └────────────────────────────────────────────┘
+       │
+       ▼
+  diagnosis_report (자유 텍스트)
+       │
+       ▼
+  (별도 SubmissionAgent 처리)
+```
+
+#### MAS 연동 NIKA (DebateAgent)
+
+```
+task_description
+       │
+       ▼
+[Phase 1: 사전 컨텍스트 수집 — _collect_context()]
+  ┌────────────────────────────────────────────┐
+  │  고정 순서로 MCP 도구 일괄 호출              │
+  │                                            │
+  │  1. get_reachability()                     │
+  │  2. get_host_net_config(host_1)            │  ← task_description에서
+  │     get_host_net_config(host_2)  ...       │    hosts/routers 파싱 후
+  │  3. frr_get_bgp_conf(router_1)             │    순서 고정, 결과 문자열 조합
+  │     frr_get_bgp_conf(router_2)   ...       │
+  │  4. frr_get_ospf_conf(router_1)  ...       │
+  │  5. list_avail_problems()                  │
+  └────────────────────────────────────────────┘
+       │ context 문자열 (수백~수천 토큰)
+       ▼
+[Phase 2: Debate Graph — _run_debate()]
+  ┌─────────────────────────────────────────────────────┐
+  │  agents_v2 debate graph (도구 호출 없음, LLM만 사용) │
+  │                                                     │
+  │  Collector → Verifier → Synthesizer                 │
+  │      → Supporter → Skeptic → [라우터] → ...         │
+  └─────────────────────────────────────────────────────┘
+       │ candidate_answer (root cause 이름)
+       ▼
+[Phase 3: 제출 — SubmissionAgent (ReAct)]
+  ┌────────────────────────────────────────────┐
+  │  task_mcp_server 도구만 사용                │
+  │  1. list_avail_problems() — 검증용          │
+  │  2. submit(is_anomaly, faulty_devices,     │
+  │            root_cause_name)                │
+  └────────────────────────────────────────────┘
+       │
+       ▼
+  submission.json 저장
+```
+
+#### agents_v2 단독 (NetConfigQA 평가용)
+
+```
+JSON 파일 (question + context)
+       │
+       ▼
+[Debate Graph — build_graph()]
+  ┌─────────────────────────────────────────────────────┐
+  │  도구 호출 없음 — 정적 텍스트만 처리                   │
+  │                                                     │
+  │  Collector → Verifier → Synthesizer                 │
+  │      → Supporter → Skeptic → [라우터] → ...         │
+  └─────────────────────────────────────────────────────┘
+       │ candidate_answer
+       ▼
+  netconfig_result.json 저장 (ThreadPoolExecutor 병렬)
+```
+
+---
+
+## MCP 도구 호출 상세
+
+### 어느 단계에서, 어떻게 호출되는가
+
+| 단계 | 호출 주체 | 호출 방식 | 사용 도구 | 도구 결정 방식 |
+|---|---|---|---|---|
+| Phase 1: 컨텍스트 수집 | `_collect_context()` | 고정 순서, 비동기 일괄 호출 | base + frr MCP | 코드에 하드코딩 (자율 아님) |
+| Phase 2: Debate | 각 노드 (LLM) | 없음 | — | 도구 없음 |
+| Phase 3: 제출 | `SubmissionAgent` (ReAct) | LLM이 자율 선택 | task MCP | LLM이 결정 |
+
+### Phase 1 — `_collect_context()` 상세 (`debate_agent.py`)
+
+```python
+async def _collect_context(self, task_description: str) -> str:
+    mcp_config = MCPServerConfig().load_config(if_submit=False)
+    hosts, routers = _parse_nodes(task_description)  # task 텍스트에서 파싱
+    sections = [f"[Task]\n{task_description}"]
+
+    client = MultiServerMCPClient(mcp_config)
+    tools = {t.name: t for t in await client.get_tools()}
+    # tools: kathara_base + kathara_frr + kathara_bmv2 + kathara_telemetry의 모든 도구
+
+    # 1. 전체 연결성 — 항상 호출
+    if "get_reachability" in tools:
+        sections.append(f"[Reachability]\n{await _call(tools['get_reachability'], {})}")
+
+    # 2. 호스트별 네트워크 설정 — task_description에 파싱된 hosts 수만큼
+    if "get_host_net_config" in tools:
+        for host in hosts:
+            sections.append(f"[Host Config: {host}]\n"
+                            f"{await _call(tools['get_host_net_config'], {'machine_name': host})}")
+
+    # 3. 라우터별 BGP 설정
+    if "frr_get_bgp_conf" in tools:
+        for router in routers:
+            sections.append(f"[BGP Config: {router}]\n"
+                            f"{await _call(tools['frr_get_bgp_conf'], {'machine_name': router})}")
+
+    # 4. 라우터별 OSPF 설정
+    if "frr_get_ospf_conf" in tools:
+        for router in routers:
+            sections.append(f"[OSPF Config: {router}]\n"
+                            f"{await _call(tools['frr_get_ospf_conf'], {'machine_name': router})}")
+
+    # 5. 풀 수 있는 장애 목록 — Skeptic의 정답 레이블 검증에 활용
+    if "list_avail_problems" in tools:
+        sections.append(f"[Available Problem Names]\n"
+                        f"{await _call(tools['list_avail_problems'], {})}")
+
+    return "\n\n".join(sections)
+    # → 이 문자열이 debate graph의 state["context"]로 주입됨
+```
+
+> **핵심 포인트**: Phase 1에서 도구 호출 순서·종류는 코드에 고정되어 있다.
+> LLM이 "어떤 정보가 필요할지" 결정하는 것이 아니라, 항상 동일한 정보를 수집한 뒤 debate에 넘긴다.
+
+### Phase 1 vs 원본 NIKA ReAct 비교
+
+```
+[원본 NIKA - ReAct]                        [MAS 연동 - DebateAgent]
+
+task_description                           task_description
+      │                                          │
+      ▼                                          ▼ (고정 순서)
+LLM: "먼저 연결성 확인"                     get_reachability()  ──┐
+      │                                    get_host_net_config()  │ 코드에
+      ▼                                    frr_get_bgp_conf()    │ 하드코딩,
+get_reachability()                         frr_get_ospf_conf()   │ 병렬 가능
+      │                                    list_avail_problems() ─┘
+      ▼                                          │
+LLM: "router_1 라우팅 테이블 확인 필요"          ▼
+      │                               context 문자열 조합
+      ▼                                          │
+frr_show_ip_route(router_1)                      ▼
+      │                                   debate graph 실행
+      ▼                                   (도구 없음, LLM만)
+LLM: "BGP 설정 의심스러움"
+      │
+      ▼
+frr_get_bgp_conf(router_1)
+      │
+      ▼
+ ...반복...
+      │
+      ▼
+diagnosis_report
+
+← LLM이 매 스텝 어떤 도구를    ← 컨텍스트는 사전에 일괄 수집,
+  호출할지 동적으로 결정          debate 노드는 도구 없이 텍스트만 처리
+```
+
+### Phase 3 — SubmissionAgent 도구 호출
+
+SubmissionAgent는 `task_mcp_server`만 사용하는 소형 ReAct 에이전트다.
+도구는 2개뿐이며 LLM이 순서를 결정한다:
+
+```
+SubmissionAgent (ReAct)
+  Step 1: list_avail_problems()
+          → ["dns_record_error", "bgp_misconfiguration", ...]
+  Step 2: submit(
+            is_anomaly=True,
+            faulty_devices=["router_1"],
+            root_cause_name=["dns_record_error"]
+          )
+          → submission.json 파일 저장
+```
+
+### 사용 MCP 서버와 도구 목록
+
+| MCP 서버 | 주요 도구 | 사용 단계 |
+|---|---|---|
+| `kathara_base_mcp_server` | get_reachability, ping_pair, get_host_net_config, netstat, exec_shell, curl_web_test, iperf_test | Phase 1 (수집) |
+| `kathara_frr_mcp_server` | frr_get_bgp_conf, frr_get_ospf_conf, frr_show_ip_route, frr_show_running_config, frr_exec | Phase 1 (수집) |
+| `kathara_bmv2_mcp_server` | P4 BMv2 관련 | Phase 1 (수집, P4 시나리오) |
+| `kathara_telemetry_mcp_server` | 텔레메트리 관련 | Phase 1 (수집) |
+| `task_mcp_server` | list_avail_problems, submit | Phase 3 (제출) |
+
+---
+
+## agents_v2 vs NIKA 상세 비교표
 
 ### 구성 요소 비교표
 
@@ -28,63 +254,12 @@ agents_v2의 debate graph를 연동하여 640개 케이스를 자동으로 실�
 | **루프 제어** | inner (최대 3회) + outer (최대 3회) | 동일 |
 | **평가 방식** | TA-Acc (Type-Aware Accuracy) | Det.Acc / Loc.Acc / RCA.Acc + LLM Judge |
 
-### 핵심 차이: 정적 컨텍스트 vs 동적 컨텍스트
-
-```
-[ agents_v2 단독 사용 ]                 [ NIKA + debate_agent 연동 ]
-
-  미리 준비된 context(또는 없음)             실시간 네트워크 장비
-       │                                        │
-       ▼                                        ▼
-  Collector                               MCP Tools 호출
-  (텍스트에서 관련 정보 추출)                 get_reachability()
-       │                                get_host_net_config()
-       ▼                                 frr_get_bgp_conf()
-  Verifier → Synthesizer                 frr_get_ospf_conf()
-  → Supporter → Skeptic                        │
-       │                                       ▼
-       ▼                               context 문자열 조합
-  candidate_answer                             │
-  (자유 텍스트)                                   ▼
-                                       Collector → ... → Skeptic
-                                               │
-                                               ▼
-                                       SubmissionAgent
-                                       (JSON 포맷 제출)
-```
-
 ---
 
 ## 동적 컨텍스트 수집 상세 (`_collect_context`)
 
 agents_v2는 원래 정적 텍스트(context)를 받아서 동작하도록 설계되었습니다.
 NIKA 연동 시 이 context를 **MCP 도구로 실시간 수집한 네트워크 상태**로 대체합니다.
-
-```python
-# debate_agent.py: _collect_context()
-async def _collect_context(self, task_description: str) -> str:
-    client = MultiServerMCPClient(mcp_config)
-    tools = {t.name: t for t in await client.get_tools()}
-
-    sections = [f"[Task]\n{task_description}"]
-
-    # 1. 전체 연결성 확인
-    sections.append(f"[Reachability]\n{await _call(tools['get_reachability'], {})}")
-
-    # 2. 호스트별 네트워크 설정
-    for host in hosts:
-        sections.append(f"[Host Config: {host}]\n{await _call(tools['get_host_net_config'], {'machine_name': host})}")
-
-    # 3. 라우터별 BGP/OSPF 설정
-    for router in routers:
-        sections.append(f"[BGP Config: {router}]\n{await _call(tools['frr_get_bgp_conf'], {'machine_name': router})}")
-        sections.append(f"[OSPF Config: {router}]\n{await _call(tools['frr_get_ospf_conf'], {'machine_name': router})}")
-
-    # 4. 풀 수 있는 장애 목록 (Skeptic이 정답 레이블 검증에 활용)
-    sections.append(f"[Available Problem Names]\n{await _call(tools['list_avail_problems'], {})}")
-
-    return "\n\n".join(sections)
-```
 
 수집된 문자열이 debate graph의 `context` 필드로 주입되어 Collector가 분석합니다.
 
@@ -146,22 +321,6 @@ Collector → Verifier → Synthesizer → Supporter → Skeptic
                                                      END
 ```
 
-### 정적 엣지 vs 동적 라우터
-
-```python
-# 정적 엣지 (항상 동일한 순서, 조건 없음)
-workflow.add_edge("Collector",   "Verifier")
-workflow.add_edge("Verifier",    "Synthesizer")
-workflow.add_edge("Synthesizer", "Supporter")
-workflow.add_edge("Supporter",   "Skeptic")
-
-# 동적 라우터 (Skeptic 판정에 따라 분기)
-workflow.add_conditional_edges("Skeptic", _check, {...})
-```
-
-정적 엣지 구간(Collector→Verifier→Synthesizer→Supporter)은 순서가 고정되어 있고,
-동적 라우터(Skeptic 이후)는 LLM의 판정 결과를 상태(state)에서 읽어 런타임에 경로를 결정합니다.
-
 ---
 
 ## 디렉토리 구조
@@ -178,13 +337,22 @@ data/nika/
 └── src/
     ├── agent/
     │   ├── debate_agent.py     # agents_v2 연동 브릿지 (핵심)
+    │   ├── domain_agents/
+    │   │   ├── diagnosis_agent.py   # 원본 ReAct 에이전트 (현재 미사용)
+    │   │   └── submission_agent.py  # 제출 에이전트 (debate_agent가 호출)
     │   ├── llm/model_factory.py
-    │   └── domain_agents/submission_agent.py
+    │   └── utils/mcp_servers.py     # MCPServerConfig (서버 경로/세션 env 설정)
     └── scripts/
         ├── step1_net_env_start.py
         ├── step2_failure_inject.py
-        ├── step3_agent_run.py
+        ├── step3_agent_run.py       # DebateAgent 선택 및 실행
         └── step4_result_eval.py
+    └── nika/service/mcp_server/
+        ├── kathara_base_mcp_server.py   # 네트워크 기본 도구 (ping, netstat 등)
+        ├── kathara_frr_mcp_server.py    # FRR 라우터 도구 (BGP, OSPF 등)
+        ├── kathara_bmv2_mcp_server.py   # P4 BMv2 도구
+        ├── kathara_telemetry_mcp_server.py
+        └── task_mcp_server.py           # 제출 도구 (list_avail_problems, submit)
 ```
 
 ---
@@ -282,11 +450,25 @@ run_benchmark.py (CSV 순회, skip 로직 포함)
        ├─ Step 2: inject_failure()     # 장애 주입
        ├─ Step 3: start_agent()
        │    └─ DebateAgent.run()
-       │         ├─ _collect_context() # MCP tools로 실시간 네트워크 상태 수집
-       │         ├─ _run_debate()      # agents_v2 debate graph 실행
-       │         │    └─ Collector → Verifier → Synthesizer
-       │         │         → Supporter → Skeptic → [라우터] → ...
-       │         └─ SubmissionAgent    # debate 결과 → JSON 포맷 제출 (--backend-model)
+       │         │
+       │         ├─ [Phase 1] _diagnosis_node()
+       │         │    ├─ _collect_context()    # MCP tools로 네트워크 상태 사전 수집
+       │         │    │    ├─ get_reachability()
+       │         │    │    ├─ get_host_net_config(host_x) × N
+       │         │    │    ├─ frr_get_bgp_conf(router_x) × M
+       │         │    │    ├─ frr_get_ospf_conf(router_x) × M
+       │         │    │    └─ list_avail_problems()
+       │         │    └─ _run_debate(context)  # debate graph 실행 (도구 없음)
+       │         │         └─ Collector → Verifier → Synthesizer
+       │         │              → Supporter → Skeptic → [라우터] → ...
+       │         │                                  → candidate_answer
+       │         │
+       │         └─ [Phase 3] _submission_node()
+       │              └─ SubmissionAgent (ReAct, task MCP 사용)
+       │                   ├─ list_avail_problems()
+       │                   └─ submit(is_anomaly, faulty_devices, root_cause_name)
+       │                        └─ submission.json 저장
+       │
        └─ Step 4: eval_results()       # LLM judge 평가 (--judge-model)
 ```
 

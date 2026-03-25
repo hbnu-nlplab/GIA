@@ -1,7 +1,7 @@
 import json
 
-file_path="/home/leehj/network/GIA/MultiAgent/data/debate_results/agents_v2/full_w_context3/netbench/netbench_result.json"
-# file_path="/home/leehj/network/GIA/MultiAgent/data/debate_results/agents_v2/full_w_context3/netconfig/netconfig_result.json"
+# file_path="/home/leehj/network/GIA/MultiAgent/data/debate_results/agents_v2/full_w_context6/netbench/netbench_result.json"
+file_path="/home/leehj/network/GIA/MultiAgent/data/debate_results/agents_v2/full_w_context6/netconfig/netconfig_result.json"
 
 with open(file_path, 'r') as f:
     data = json.load(f)

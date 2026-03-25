@@ -13,6 +13,7 @@ class NetAgentState(TypedDict):
     context: str           # 원본 컨텍스트 (설정 파일 전체 등)
     dataset_type: str      # 데이터셋 종류: "netconfig" | "multiple_choice" | "short_answer" | "descriptive"
     options: Optional[str] # 객관식 선택지 (multiple_choice일 때만 사용)
+    level: Optional[str]   # 난이도 레벨: "L1"~"L5" (netconfig 전용, L4/L5는 전체 토폴로지 컨텍스트 사용)
 
     # 2. 에이전트 간 공유 데이터
     raw_data: str          # Agent 1(Collector)이 추출한 원시 정보

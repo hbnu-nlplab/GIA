@@ -217,8 +217,8 @@ def main():
     
     app = build_graph()
     
-    input_path = BASE_DIR / "data" / "passages" / "full_w_context" / "netconfig_passage2.json"
-    output_path = BASE_DIR / "data" / "debate_results" / "full_w_context4" / "netconfig_result2.json"
+    input_path = BASE_DIR / "data" / "passages" / "full_w_context" / "netconfig_en2.json"
+    output_path = BASE_DIR / "data" / "debate_results" / "full_w_context6" / "netconfig_result.json"
     
     if not input_path.exists():
         print(f"Input file not found: {input_path}")
@@ -226,7 +226,7 @@ def main():
 
     # 1. 입력 데이터 로드
     with open(input_path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
+        data = json.load(f)[:20]
     print(f"Loaded {len(data)} items from input.")
 
     # 2. 기존 결과 로드
@@ -266,7 +266,7 @@ def main():
     skipped_count = 0
     
     # 재실행 대상 타입 설정
-    target_types = ['map', 'set']
+    target_types = "text"
     
     print(f"Filtering logic: Process if missing OR (Type is {target_types} AND Answer differs)...")
 
