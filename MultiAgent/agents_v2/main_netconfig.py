@@ -350,7 +350,7 @@ def main():
     # 입력/출력 경로 설정
     input_path = BASE_DIR / "data" / "passages" / "full_w_context" / "netconfig_en2.json"
     # output_path = BASE_DIR / "data" / "debate_results" / "ablation" / "single" / "netconfig" / "netconfig_result.json"
-    output_path = BASE_DIR / "data" / "debate_results" / "agents_v2" / "full_w_context10" / "netconfig" / "netconfig_result.json"
+    output_path = BASE_DIR / "data" / "debate_results" / "agents_v2" / "single_model" / "gemini3.1" / "netconfig_result.json"
 
     # 다른 데이터셋으로 전환 시 위 경로를 주석처리하고 아래 사용
     # input_path = BASE_DIR / "data" / "passages" / "full_w_context" / "netbench_passage.json"

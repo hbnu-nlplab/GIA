@@ -1027,7 +1027,7 @@ def main():
     files_to_process = args.json_files
     if not files_to_process:
         # Default file if none provided
-        default_file = BASE_DIR / "data" / "debate_results" / "agents_v2" / "full_w_context10" / "netconfig" / "netconfig_result.json"
+        default_file = BASE_DIR / "data" / "debate_results" / "agents_v2" / "single_model" / "gemini3.1" / "netconfig_result.json"
         # default_file = BASE_DIR / "data" / "debate_results" / "ablation" / "d2only" / "netconfig" / "netconfig_result.json"
         if default_file.exists():
             files_to_process = [str(default_file)]
