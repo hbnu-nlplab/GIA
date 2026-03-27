@@ -110,13 +110,14 @@ def collector_node(state: dict):
     if tool_catalog:
         from agents_netally.tool_dispatch import (
             plan_tool_calls, execute_tool_calls, format_tool_results,
-            get_registered_tools,
+            get_registered_tools, _normalize_device_args,
         )
         tools = get_registered_tools()
         if tools:
             feedback = state.get("feedback_to_collector", "")
             level = state.get("level", "")
             plans = plan_tool_calls(llm, state["question"], tool_catalog, level, feedback)
+            plans = _normalize_device_args(plans)
             print(f"  📋 Tool plan: {[p.get('tool') for p in plans]}")
 
             if plans:

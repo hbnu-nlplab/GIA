@@ -100,6 +100,7 @@ LEVEL: {level}
 RULES:
 - L1: ONE call to nso_get_device_info(device="<name>"). Extract device name from question.
 - L2: ONE call to nso_get_all_device_info() or nso_get_all_interfaces().
+- IMPORTANT: Device names in NSO are UPPERCASE (PE1, P2, Leaf3). Always capitalize device names.
 
 Output ONLY the JSON array, nothing else. Example: [{{"tool": "nso_get_device_info", "args": {{"device": "PE1"}}}}]
 """
@@ -156,6 +157,27 @@ def plan_tool_calls(
 
     logger.warning(f"Tool planning failed to parse: {text[:200]}")
     return []
+
+
+def _normalize_device_args(plans: List[Dict]) -> List[Dict]:
+    """Normalize device names to match NSO registration (PE1, P2, Leaf3, ASBR1)."""
+    # prefix → NSO canonical form (uppercase prefix + number)
+    PREFIX_MAP = {
+        "pe": "PE", "p": "P", "leaf": "Leaf",
+        "asbr": "ASBR", "ce": "CE", "fw": "FW",
+    }
+    for plan in plans:
+        args = plan.get("args", {})
+        device = args.get("device", "")
+        if not device:
+            continue
+        dl = device.lower()
+        for prefix, canonical in sorted(PREFIX_MAP.items(), key=lambda x: -len(x[0])):
+            if dl.startswith(prefix):
+                suffix = device[len(prefix):]
+                args["device"] = canonical + suffix
+                break
+    return plans
 
 
 # ---------------------------------------------------------------------------
