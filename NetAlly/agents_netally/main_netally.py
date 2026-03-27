@@ -59,9 +59,9 @@ def build_graph():
         if status == "ACCEPT":
             return "end"
         elif status == "CONTINUE_DEBATE":
-            return "continue_inner" if inner < 3 else "end"
+            return "continue_inner" if inner < 2 else "end"
         elif status == "NEED_MORE_INFO":
-            return "backtrack_outer" if outer < 3 else "end"
+            return "backtrack_outer" if outer < 2 else "end"
         return "end"
 
     workflow.add_conditional_edges(

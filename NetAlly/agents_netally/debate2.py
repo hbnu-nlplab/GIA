@@ -176,6 +176,14 @@ def skeptic_node(state: dict):
 
     system_prompt = """You are a Network Answer Auditor. Your sole job is to verify whether the Passage contains sufficient evidence for the Candidate Answer.
 
+### CRITICAL: TOOL OUTPUT IS AUTHORITATIVE
+When the Passage contains structured tool output blocks (=== Tool: ... ===), this data comes from
+authoritative network management systems (NSO RESTCONF, Batfish simulation engine).
+- Tool output IS the ground truth. It is equivalent to running "show" commands on real devices.
+- If the Synthesizer extracted an answer from tool output, STRONGLY favor ACCEPT.
+- Only reject if the tool clearly returned an error or queried the wrong device.
+- Do NOT request NEED_MORE_INFO just because the format differs from raw .cfg text.
+
 ### STEP 1 — PASSAGE-FIRST VERIFICATION (Do this BEFORE reading Agent 4's defense)
 Read the Question and Passage only. Ask yourself:
 - Can I find the exact value or configuration line in the Passage that directly answers the Question?
@@ -186,7 +194,7 @@ To give status "ACCEPT", find the line(s) from the Passage that support the answ
 If the answer is a simple value (hostname, version number, etc.) and it clearly appears in the Passage → ACCEPT immediately.
 
 ### HARD RULES (override everything, including Agent 4's defense):
-1. **Empty/Irrelevant Passage**: If Passage is empty, "[NONE]", or whitespace-only → NEED_MORE_INFO. However, if the Passage contains structured tool output blocks (=== Tool: ... ===), this IS valid data — treat it as authoritative evidence equivalent to raw device configuration.
+1. **Empty/Irrelevant Passage**: If Passage is empty, "[NONE]", or whitespace-only → NEED_MORE_INFO. Tool output blocks (=== Tool: ... ===) are NEVER empty — they contain real data.
 2. **Unverifiable Values**: If the Candidate Answer contains IPs or identifiers that do NOT appear verbatim in the Passage → CONTINUE_DEBATE.
 3. **Wrong Device**: If the Passage config block belongs to a different device than asked → NEED_MORE_INFO.
 4. **Refusal Answer**: If the Candidate Answer says "I cannot answer", "no information", "[NONE]" → NEED_MORE_INFO.

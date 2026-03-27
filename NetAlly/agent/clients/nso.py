@@ -540,14 +540,39 @@ class NSOClient:
         return []
 
     def get_device_info(self, device: str) -> Dict[str, Any]:
-        """장비의 기본 정보 반환"""
+        """장비의 기본 정보 + config 요약 반환"""
         path = f"{self.PATHS['device']}={device}"
         info = self._request("GET", f"{path}?fields=name;address;port;authgroup;device-type")
+        result = {}
         if isinstance(info, dict) and "device" in info:
             devices = info.get("device", [])
             if devices and isinstance(devices, list):
-                return devices[0]
-        return {}
+                result = devices[0]
+
+        # config 요약 추가 (hostname, version, users, interfaces, routing 등)
+        try:
+            config = self._fetch_config(device)
+            if isinstance(config, dict):
+                result["config_summary"] = {
+                    "hostname": config.get("hostname", ""),
+                    "version": config.get("version", ""),
+                    "users": config.get("username", []),
+                    "domain_name": config.get("ip", {}).get("domain", {}).get("name", "") if isinstance(config.get("ip"), dict) else "",
+                    "vrf_list": [v.get("name", "") for v in config.get("vrf", {}).get("definition", [])] if isinstance(config.get("vrf", {}).get("definition"), list) else [],
+                    "interface_types": list(config.get("interface", {}).keys()) if isinstance(config.get("interface"), dict) else [],
+                    "routing_protocols": list(config.get("router", {}).keys()) if isinstance(config.get("router"), dict) else [],
+                    "mpls_enabled": bool(config.get("mpls")),
+                    "ssh_version": config.get("ip", {}).get("ssh", {}).get("version") if isinstance(config.get("ip"), dict) else None,
+                    "clock_timezone": config.get("clock", {}).get("timezone", {}).get("zone", "") if isinstance(config.get("clock"), dict) else "",
+                    "banner_motd": bool(config.get("banner", {}).get("motd")) if isinstance(config.get("banner"), dict) else False,
+                    "logging": bool(config.get("logging")),
+                    "ntp": bool(config.get("ntp")),
+                    "snmp": bool(config.get("snmp-server")),
+                }
+        except Exception:
+            pass
+
+        return result
 
     # --- Interface Management ---
 
