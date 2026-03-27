@@ -23,8 +23,8 @@ def init_models():
     if _LLM_DICT:
         return _LLM_DICT
 
-    # Prefer OPENAI_API_KEY (works for both OpenAI direct and OpenRouter)
-    api_key = os.getenv("OPENAI_API_KEY") or os.getenv("OPENROUTER_API_KEY", "")
+    # Prefer OPENROUTER_API_KEY if available (cheaper, more models)
+    api_key = os.getenv("OPENROUTER_API_KEY") or os.getenv("OPENAI_API_KEY", "")
     base_url = os.getenv("OPENAI_API_BASE", "")
 
     # Auto-detect: sk-or-* = OpenRouter, sk-proj-* = OpenAI direct
