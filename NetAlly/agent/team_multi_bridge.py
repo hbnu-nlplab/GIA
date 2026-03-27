@@ -47,6 +47,11 @@ def _ensure_team_root_on_path(team_root: Path) -> None:
 
 def _load_module(team_root: Path, module_name: str) -> Any:
     _ensure_team_root_on_path(team_root)
+    # agents_netally lives inside NetAlly/, ensure it's importable
+    if "agents_netally" in module_name:
+        netally_root = str(Path(__file__).resolve().parents[1])
+        if netally_root not in sys.path:
+            sys.path.append(netally_root)
     importlib.invalidate_caches()
     return importlib.import_module(module_name)
 
@@ -131,11 +136,30 @@ def _resolve_context(
     return "[NONE]"
 
 
+def _setup_mcp_tools_if_needed(module_name: str) -> str:
+    """Register MCP tools and return tool catalog string for agents_netally."""
+    if "agents_netally" not in module_name:
+        return ""
+    try:
+        from agent.mcp_tools import CORE_TOOLS
+        from agents_netally.tool_dispatch import register_tools, build_tool_catalog
+        tool_dict = {t.name: t for t in CORE_TOOLS}
+        register_tools(tool_dict)
+        catalog = build_tool_catalog(tool_dict)
+        return catalog
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).warning(f"MCP tool setup failed: {e}")
+        return ""
+
+
 def _build_initial_state(
     question: str,
     answer_type: str,
     dataset_type: str,
     context: str,
+    tool_catalog: str = "",
+    level: str = "",
 ) -> Dict[str, Any]:
     q = question.strip()
     if answer_type and answer_type != "text":
@@ -149,12 +173,18 @@ def _build_initial_state(
         "options": "",
         "dataset_type": dataset_type,
         "context": context,
+        "level": level,
+        "answer_type": answer_type,
         "round_count": 0,
         "history": [],
         "candidate_answer": "",
         "pro_argument": "",
         "con_argument": "",
         "final_answer": "",
+        # MCP tool integration (agents_netally)
+        "tool_calls_log": [],
+        "tool_results_raw": "",
+        "tool_catalog": tool_catalog,
     }
 
 
@@ -190,6 +220,7 @@ def run_team_multi_query(
     module_name: Optional[str] = None,
     dataset_type: Optional[str] = None,
     context: Optional[str] = None,
+    level: str = "",
 ) -> Dict[str, Any]:
     """Run a single query against the external MultiAgent graph."""
     started_at = time.perf_counter()
@@ -229,11 +260,14 @@ def run_team_multi_query(
         }
 
     resolved_context = _resolve_context(team_root, dataset_type, context, history)
+    tool_catalog = _setup_mcp_tools_if_needed(module_name)
     state = _build_initial_state(
         question=question,
         answer_type=answer_type,
         dataset_type=dataset_type,
         context=resolved_context,
+        tool_catalog=tool_catalog,
+        level=level,
     )
 
     try:
@@ -256,6 +290,19 @@ def run_team_multi_query(
         }
 
     answer = _extract_answer(output)
+
+    # Extract MAS debug info from output state
+    mas_debug = {
+        "tool_calls_log": output.get("tool_calls_log", []) if isinstance(output, Mapping) else [],
+        "outer_loop_count": output.get("outer_loop_count", 0) if isinstance(output, Mapping) else 0,
+        "inner_turn_count": output.get("inner_turn_count", 0) if isinstance(output, Mapping) else 0,
+        "status": output.get("status", "") if isinstance(output, Mapping) else "",
+        "debate_rounds": (
+            (output.get("inner_turn_count", 0) if isinstance(output, Mapping) else 0)
+            + (output.get("outer_loop_count", 0) if isinstance(output, Mapping) else 0)
+        ),
+    }
+
     return {
         "ok": True,
         "stage": "done",
@@ -267,5 +314,6 @@ def run_team_multi_query(
             "team_root": str(team_root),
             "context_chars": len(resolved_context),
             "duration_ms": int((time.perf_counter() - started_at) * 1000),
+            "mas_debug": mas_debug,
         },
     }

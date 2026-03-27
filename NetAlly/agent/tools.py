@@ -575,9 +575,15 @@ def network_verify(
         if not bf.is_available:
             return {"error": "Batfish SDK not available"}
         
-        # Ensure snapshot is initialized
+        # Ensure snapshot is initialized — auto-load if available
         if not bf._builder:
-            return {"error": "Batfish not initialized. Run lab_manage('init_batfish') first."}
+            topology_name = (
+                os.getenv("BATFISH_SNAPSHOT")
+                or os.getenv("BATFISH_NETWORK")
+                or "default"
+            )
+            if not bf.load_snapshot(topology_name):
+                return {"error": "Batfish not initialized. Run lab_manage('init_batfish') first."}
         
         builder = bf._builder  # BatfishBuilder (inherits L4/L5 Mixins)
 
@@ -740,10 +746,21 @@ def lab_manage(
                 or os.getenv("BATFISH_NETWORK")
                 or "default"
             )
+
+            # Fast path: Batfish에 이미 네트워크가 로드되어 있으면 재사용
+            if bf.load_snapshot(topology_name):
+                logger.info(f"Batfish: reusing existing snapshot '{topology_name}'")
+                return {
+                    "status": "success",
+                    "topology": topology_name,
+                    "source": "existing_snapshot",
+                    "nodes": getattr(bf._builder, 'nodes', []) if bf._builder else [],
+                }
+
             output_dir = params.get("output_dir", "./snapshot")
             devices = params.get("devices")
             use_restconf = bool(params.get("use_restconf", False))
-            
+
             export_result = nso.export_batfish_configs(
                 devices=devices,
                 output_dir=output_dir,

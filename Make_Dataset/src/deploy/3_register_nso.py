@@ -28,6 +28,7 @@ Step 3: NSO Device Registration via RESTCONF
 """
 
 import argparse
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -66,6 +67,27 @@ class NSORegistrar:
             print(f"  [✗] NSO 연결 실패: {e}")
             return False
 
+    def ensure_ssh_rsa(self, nso_container: str = "cisco-nso-dev") -> bool:
+        """NSO에 ssh-rsa public-key 알고리즘 설정 (IOS 15.x 호환).
+
+        NSO 6.x는 기본적으로 ssh-rsa를 비활성화하지만,
+        IOSv 15.x 장비는 ssh-rsa만 지원하므로 명시적 활성화 필요.
+        """
+        try:
+            result = subprocess.run(
+                ["docker", "exec", nso_container, "bash", "-c",
+                 "source /root/nso-6.6/ncsrc && cd /root/ncs-instance && "
+                 "echo 'configure\n"
+                 "set devices global-settings ssh-algorithms public-key [ ssh-rsa ]\n"
+                 "commit\n"
+                 "end\n"
+                 "exit' | ncs_cli -u admin"],
+                capture_output=True, text=True, timeout=15)
+            return "Commit complete" in result.stdout
+        except Exception as e:
+            print(f"    [warn] ssh-rsa 설정 실패: {e}")
+            return False
+
     def list_devices(self) -> list[str]:
         """등록된 장비 목록."""
         try:
@@ -101,20 +123,22 @@ class NSORegistrar:
                         authgroup: str, port: int = 22) -> bool:
         """장비 등록."""
         payload = {
-            "tailf-ncs:device": {
-                "name": name,
-                "address": ip,
-                "port": port,
-                "authgroup": authgroup,
-                "device-type": {
-                    "cli": {
-                        "ned-id": ned_id,
-                        "protocol": "ssh",
-                    }
-                },
-                "state": {
-                    "admin-state": "unlocked",
-                },
+            "tailf-ncs:devices": {
+                "device": [{
+                    "name": name,
+                    "address": ip,
+                    "port": port,
+                    "authgroup": authgroup,
+                    "device-type": {
+                        "cli": {
+                            "ned-id": ned_id,
+                            "protocol": "ssh",
+                        }
+                    },
+                    "state": {
+                        "admin-state": "unlocked",
+                    },
+                }]
             }
         }
         r = self.session.patch(
@@ -138,14 +162,20 @@ class NSORegistrar:
         try:
             r = self.session.post(
                 f"{self.base}/data/tailf-ncs:devices/device={name}/sync-from",
-                timeout=30)
+                timeout=120)
             if r.status_code in (200, 204):
                 if not r.content:
                     return True
                 data = r.json()
-                result = data.get("tailf-ncs:output", {}).get("result", "")
+                output = data.get("tailf-ncs:output", {})
+                result = output.get("result", "")
                 # NSO returns bool true or string "true"
-                return result is True or result == "true"
+                if result is True or result == "true":
+                    return True
+                info = output.get("info", "")
+                if info:
+                    print(f"    [warn] {name}: {info[:100]}")
+                return False
             print(f"    [warn] sync-from {name}: HTTP {r.status_code}")
             return False
         except Exception as e:
@@ -227,6 +257,14 @@ def main():
             state = nso.device_status(name)
             print(f"  {name:8s} → {state}")
         return
+
+    # ── Phase 0.5: SSH-RSA 알고리즘 설정 (IOSv 15.x 호환) ──
+    nso_container = gs.get("nso_container", "cisco-nso-dev")
+    print(f"\n--- Phase 0.5: SSH-RSA Algorithm ---")
+    if nso.ensure_ssh_rsa(nso_container):
+        print(f"  [✓] ssh-rsa public-key 설정 완료")
+    else:
+        print(f"  [!] ssh-rsa 설정 실패 (이미 설정되어 있을 수 있음, 계속 진행)")
 
     # ── Phase 1: Authgroup 생성 ──
     print(f"\n--- Phase 1: Create Authgroup '{authgroup}' ---")

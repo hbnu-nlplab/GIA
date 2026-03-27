@@ -39,9 +39,21 @@ async def nso_get_device_info(device: str) -> Dict[str, Any]:
 
 
 @tool
+async def nso_get_all_device_info() -> Dict[str, Any]:
+    """[MCP] Get device info for ALL devices in one call. Prefer this over calling nso_get_device_info repeatedly."""
+    return await _mcp_call("nso_get_all_device_info")
+
+
+@tool
 async def nso_get_interfaces(device: str) -> Dict[str, Any]:
     """[MCP] Get interfaces for a device from NSO."""
     return await _mcp_call("nso_get_interfaces", {"device": device})
+
+
+@tool
+async def nso_get_all_interfaces() -> Dict[str, Any]:
+    """[MCP] Get interfaces for ALL devices in one call. Prefer this over calling nso_get_interfaces repeatedly."""
+    return await _mcp_call("nso_get_all_interfaces")
 
 
 @tool
@@ -97,7 +109,7 @@ async def batfish_advanced_verify(
         "node_failure_impact",
         "spof_detection",
     ],
-    params: Dict[str, Any],
+    params: Dict[str, Any] = {},
 ) -> Dict[str, Any]:
     """[MCP] Run advanced Batfish analysis."""
     return await _mcp_call(
@@ -298,7 +310,9 @@ async def lab_bootstrap(
 CORE_TOOLS: List[Any] = [
     nso_list_devices,
     nso_get_device_info,
+    nso_get_all_device_info,
     nso_get_interfaces,
+    nso_get_all_interfaces,
     nso_get_routing,
     nso_get_logs,
     batfish_reachability,

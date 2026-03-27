@@ -83,12 +83,45 @@ def _build_server() -> FastMCP:
             {"category": "device", "device": device},
         )
 
+    @mcp.tool(name="nso_get_all_device_info")
+    async def nso_get_all_device_info() -> Dict[str, Any]:
+        """Get device info for ALL devices in one call. Use this instead of calling nso_get_device_info repeatedly."""
+        devices_result = await _invoke_legacy(legacy_network_query, {"category": "device"})
+        # devices_result is {"devices": ["Leaf1", ...]} or list
+        if isinstance(devices_result, dict):
+            device_names = devices_result.get("devices", [])
+        elif isinstance(devices_result, list):
+            device_names = [d.get("name", d) if isinstance(d, dict) else d for d in devices_result]
+        else:
+            device_names = []
+        all_info = {}
+        for name in device_names:
+            info = await _invoke_legacy(legacy_network_query, {"category": "device", "device": name})
+            all_info[name] = info
+        return {"devices": all_info, "count": len(all_info)}
+
     @mcp.tool(name="nso_get_interfaces")
     async def nso_get_interfaces(device: str) -> Dict[str, Any]:
         return await _invoke_legacy(
             legacy_network_query,
             {"category": "interface", "device": device},
         )
+
+    @mcp.tool(name="nso_get_all_interfaces")
+    async def nso_get_all_interfaces() -> Dict[str, Any]:
+        """Get interfaces for ALL devices in one call. Use this instead of calling nso_get_interfaces repeatedly."""
+        devices_result = await _invoke_legacy(legacy_network_query, {"category": "device"})
+        if isinstance(devices_result, dict):
+            device_names = devices_result.get("devices", [])
+        elif isinstance(devices_result, list):
+            device_names = [d.get("name", d) if isinstance(d, dict) else d for d in devices_result]
+        else:
+            device_names = []
+        all_intfs = {}
+        for name in device_names:
+            intfs = await _invoke_legacy(legacy_network_query, {"category": "interface", "device": name})
+            all_intfs[name] = intfs
+        return {"devices": all_intfs, "count": len(all_intfs)}
 
     @mcp.tool(name="nso_get_routing")
     async def nso_get_routing(device: str, protocol: Literal["bgp", "ospf"] = "bgp") -> Dict[str, Any]:
@@ -160,7 +193,7 @@ def _build_server() -> FastMCP:
             "node_failure_impact",
             "spof_detection",
         ],
-        params: Dict[str, Any],
+        params: Dict[str, Any] = {},
     ) -> Dict[str, Any]:
         return await _invoke_legacy(
             legacy_network_verify,

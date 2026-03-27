@@ -19,7 +19,26 @@ from agent.team_multi_bridge import run_team_multi_query
 from agent.tools import get_tools as get_legacy_tools
 
 
-_ANSWER_TYPE_FOOTER = "answer_type: {answer_type}"
+_ANSWER_TYPE_FORMATS = {
+    "text": "Respond with a short plain-text value only. No JSON, no quotes, no explanation.",
+    "scalar_str": "Respond with a short plain-text value only. No JSON, no quotes, no explanation.",
+    "number": "Respond with a single integer only. No units, no words, just the number.",
+    "scalar_int": "Respond with a single integer only. No units, no words, just the number.",
+    "numeric": "Respond with a single integer only. No units, no words, just the number.",
+    "bool": "Respond with exactly true or false (lowercase). Nothing else.",
+    "boolean": "Respond with exactly true or false (lowercase). Nothing else.",
+    "set_str": 'Respond with a JSON array of strings only, e.g. ["PE1", "PE2"]. No explanation.',
+    "set": 'Respond with a JSON array of strings only, e.g. ["PE1", "PE2"]. No explanation.',
+    "edge_set": 'Respond with a JSON array of [src, dst] pairs, e.g. [["PE1","PE2"]]. No explanation.',
+    "path": "Respond with the path as node names separated by ' -> ', e.g. PE1 -> P1 -> P2. No explanation.",
+    "map_str_str": 'Respond with a JSON object only, e.g. {"key": "value"}. No explanation.',
+    "map_str_int": 'Respond with a JSON object only, e.g. {"key": 1}. No explanation.',
+    "map": 'Respond with a JSON object only, e.g. {"key": "value"}. No explanation.',
+}
+
+def _format_answer_type_hint(answer_type: str) -> str:
+    hint = _ANSWER_TYPE_FORMATS.get(answer_type, _ANSWER_TYPE_FORMATS.get("text"))
+    return f"answer_type: {answer_type}\nOUTPUT FORMAT: {hint}"
 
 DEFAULT_EXECUTOR_PROMPT = """You are NetAlly, a network troubleshooting assistant.
 
@@ -28,10 +47,14 @@ Use available tools to answer the user query with evidence-first reasoning.
 Rules:
 1. Prefer tool calls over guessing.
 2. Keep the answer concise and grounded in tool outputs.
-3. Respect the answer_type format strictly.
+3. Follow the OUTPUT FORMAT instruction EXACTLY. Return ONLY the answer value, no explanation.
 4. If information is insufficient, ask for a narrower follow-up question.
+5. ALWAYS prefer bulk tools (nso_get_all_device_info, nso_get_all_interfaces) over per-device calls. NEVER call nso_get_device_info or nso_get_interfaces in a loop.
+6. Use minimum tool calls needed. One bulk call > twenty individual calls.
+7. For single-device questions, use the single-device tool directly with the device name.
 
-""" + _ANSWER_TYPE_FOOTER + "\n"
+{answer_type_hint}
+"""
 
 PURE_MAS_PROMPT = """You are NetAlly, a network configuration analysis assistant.
 
@@ -46,7 +69,8 @@ Rules:
 4. Keep the answer concise and respect the answer_type format strictly.
 5. If the configuration context is insufficient, state what is missing.
 
-""" + _ANSWER_TYPE_FOOTER + "\n"
+{answer_type_hint}
+"""
 
 
 def _normalize_role(role: str) -> str:
@@ -150,9 +174,12 @@ class SingleExecutorRuntime:
             template = PURE_MAS_PROMPT
         else:
             template = DEFAULT_EXECUTOR_PROMPT
+        hint = _format_answer_type_hint(answer_type)
+        if "{answer_type_hint}" in template:
+            return template.format(answer_type_hint=hint)
         if "{answer_type}" in template:
             return template.format(answer_type=answer_type)
-        return f"{template}\n\nanswer_type: {answer_type}"
+        return f"{template}\n\n{hint}"
 
     async def _invoke_tool(self, name: str, args: Dict[str, Any]) -> Any:
         tool = self._tool_by_name.get(name)
@@ -355,6 +382,7 @@ class TeamMultiAdapterRuntime:
     async def astream(self, request: Mapping[str, Any]) -> AsyncIterator[Dict[str, Any]]:
         question = str(request.get("message", "")).strip()
         answer_type = str(request.get("answer_type", "text") or "text")
+        level = str(request.get("level", "") or "")
         history = request.get("history") if isinstance(request.get("history"), list) else []
         context = request.get("context") if isinstance(request.get("context"), str) else None
 
@@ -394,6 +422,7 @@ class TeamMultiAdapterRuntime:
             module_name=self.module_name,
             dataset_type=self.dataset_type,
             context=context,
+            level=level,
         )
 
         tool_payload = {

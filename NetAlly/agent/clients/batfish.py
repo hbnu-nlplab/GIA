@@ -143,37 +143,64 @@ class BatfishClient:
 
     def load_snapshot(self, topology_name: str) -> bool:
         """
-        기존 스냅샷 로드 (Batfish 서비스에 이미 존재하는 경우)
+        기존 스냅샷 로드.
+        1) 로컬 디렉토리가 있으면 BatfishBuilder로 초기화
+        2) 없으면 Batfish 서버에 이미 로드된 네트워크를 직접 사용 (pybatfish set_network/set_snapshot)
         """
         if not self.is_available:
             return False
 
+        # 방법 1: 로컬 디렉토리 기반
         try:
             topology_dir = self.ROOT_DIR / topology_name
-            if not topology_dir.exists():
-                logger.warning(f"Snapshot directory not found: {topology_dir}")
-                return False
-
-            self._current_topology = topology_name
-            self._builder = BatfishBuilder(
-                snapshot_path=str(topology_dir),
-                network_name=topology_name,
-                batfish_host=self.host,
-            )
-            
-            # 반드시 initialize()를 호출하여 Batfish 세션 연결
-            if self._builder.initialize():
-                logger.info(f"Successfully loaded snapshot: {topology_name}")
-                return True
-            else:
-                logger.error(f"Failed to initialize Batfish for {topology_name}")
+            if topology_dir.exists():
+                self._current_topology = topology_name
+                self._builder = BatfishBuilder(
+                    snapshot_path=str(topology_dir),
+                    network_name=topology_name,
+                    batfish_host=self.host,
+                )
+                if self._builder.initialize():
+                    logger.info(f"Successfully loaded snapshot from local dir: {topology_name}")
+                    return True
                 self._builder = None
-                return False
-
         except Exception as e:
-            logger.error(f"Error loading snapshot {topology_name}: {e}")
+            logger.warning(f"Local snapshot load failed for {topology_name}: {e}")
             self._builder = None
-            return False
+
+        # 방법 2: Batfish 서버에 이미 존재하는 네트워크 직접 연결
+        try:
+            from pybatfish.client.session import Session
+            bf_session = Session(host=self.host.split(":")[0] if ":" in self.host else self.host)
+            networks = bf_session.list_networks()
+            if topology_name in networks:
+                bf_session.set_network(topology_name)
+                snapshots = bf_session.list_snapshots()
+                if snapshots:
+                    snap_name = "baseline" if "baseline" in snapshots else snapshots[0]
+                    bf_session.set_snapshot(snap_name)
+                    # BatfishBuilder 없이 세션만 설정 — traceroute 등 직접 호출용
+                    # 임시로 topology_dir 생성하여 BatfishBuilder 초기화
+                    topology_dir = self.ROOT_DIR / topology_name / "configs"
+                    topology_dir.mkdir(parents=True, exist_ok=True)
+                    self._current_topology = topology_name
+                    self._builder = BatfishBuilder(
+                        snapshot_path=str(self.ROOT_DIR / topology_name),
+                        network_name=topology_name,
+                        batfish_host=self.host.split(":")[0] if ":" in self.host else self.host,
+                    )
+                    # initialize()는 이미 서버에 있으므로 set_network/set_snapshot만
+                    self._builder._initialized = True
+                    self._builder.bf = bf_session
+                    self._builder.snapshot_name = snap_name
+                    self._builder.nodes = [n for n in bf_session.q.nodeProperties().answer().frame()["Node"]]
+                    logger.info(f"Connected to existing Batfish network: {topology_name}/{snap_name} ({len(self._builder.nodes)} nodes)")
+                    return True
+        except Exception as e:
+            logger.warning(f"Batfish server snapshot load failed for {topology_name}: {e}")
+            self._builder = None
+
+        return False
 
     def check_reachability(
         self,
@@ -220,35 +247,82 @@ class BatfishClient:
         except Exception as e:
             return {"error": str(e)}
 
+    def _resolve_location(self, addr: str) -> str:
+        """IP 주소를 Batfish locationSpecifier 형식으로 변환.
+
+        Batfish startLocation은 장비명 또는 '@enter(IP)' 형식이 필요.
+        - 장비명(예: 'PE1') → 그대로
+        - IP(예: '172.17.2.2') → 해당 IP를 가진 장비명으로 변환 시도, 실패 시 '@enter(src_intf)' 사용
+        """
+        import re
+        # IP 패턴이 아니면 장비명으로 간주 (Batfish는 소문자 노드명 사용)
+        if not re.match(r'^\d+\.\d+\.\d+\.\d+$', addr):
+            return addr.lower()
+
+        # IP → 장비명 매핑 (nodeProperties + interfaceProperties에서 검색)
+        try:
+            bf = self._builder.bf
+            intf_df = bf.q.interfaceProperties(
+                properties=["Primary_Address"]
+            ).answer().frame()
+            for _, row in intf_df.iterrows():
+                primary = str(row.get("Primary_Address", ""))
+                if addr in primary:
+                    # Interface 컬럼은 "node[intf]" 형식
+                    intf_str = str(row.get("Interface", ""))
+                    node = intf_str.split("[")[0] if "[" in intf_str else intf_str
+                    return node
+        except Exception:
+            pass
+
+        # fallback: @enter 형식
+        return f"@enter({addr})"
+
     def traceroute(self, src: str, dst: str) -> Dict[str, Any]:
         """경로 추적"""
         if not self._builder:
             return {"error": "Snapshot not initialized"}
-            
+
         try:
             from pybatfish.datamodel.flow import HeaderConstraints
-            
+
+            start_loc = self._resolve_location(src)
+
+            # srcIps는 IP일 때만 설정 (장비명이면 생략)
+            import re as _re
+            header_kwargs = {"dstIps": dst}
+            if _re.match(r'^\d+\.\d+\.\d+\.\d+$', src):
+                header_kwargs["srcIps"] = src
+
             result = self._builder.bf.q.traceroute(
-                startLocation=src,
-                headers=HeaderConstraints(dstIps=dst)
+                startLocation=start_loc,
+                headers=HeaderConstraints(**header_kwargs)
             ).answer().frame()
-            
+
             if result.empty:
                 return {"path": [], "found": False}
-                
-            traces = result.iloc[0].get("Traces", [])
-            path = []
-            if traces:
-                for hop in traces[0]:
-                    node = getattr(hop, 'node', str(hop))
-                    path.append(node)
-                    
+
+            # 모든 trace 중 가장 긴 경로를 선택 (완전한 경로 우선)
+            best_path = []
+            best_disposition = "UNKNOWN"
+            for _, row in result.iterrows():
+                traces = row.get("Traces", [])
+                disp = str(row.get("Flow_Disposition", "UNKNOWN"))
+                if traces:
+                    for trace in traces:
+                        hops = [getattr(hop, 'node', str(hop)) for hop in trace]
+                        if len(hops) > len(best_path):
+                            best_path = hops
+                            best_disposition = disp
+
             return {
-                "found": True,
-                "path": path,
-                "disposition": str(result.iloc[0].get("Flow_Disposition", "UNKNOWN"))
+                "found": len(best_path) > 0,
+                "path": best_path,
+                "path_str": " -> ".join(best_path),
+                "src_resolved": start_loc,
+                "disposition": best_disposition,
             }
-            
+
         except Exception as e:
             return {"error": str(e)}
 

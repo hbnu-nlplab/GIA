@@ -24,8 +24,8 @@ def normalize_answer(answer: str, answer_type: str) -> str:
     s = str(answer).strip()
     
     # Final Answer: 프리픽스 제거
-    s = re.sub(r'^\\s*final\\s+answer\\s*:\\s*', '', s, flags=re.IGNORECASE)
-    s = re.sub(r'^\\s*answer\\s*:\\s*', '', s, flags=re.IGNORECASE)
+    s = re.sub(r'^\s*final\s+answer\s*:\s*', '', s, flags=re.IGNORECASE)
+    s = re.sub(r'^\s*answer\s*:\s*', '', s, flags=re.IGNORECASE)
     s = s.strip()
     
     at = answer_type.lower()
@@ -92,7 +92,7 @@ def _normalize_set(s: str) -> str:
 
 def _normalize_number(s: str) -> str:
     """Number 타입 정규화"""
-    m = re.search(r'-?\\d+(\\.\\d+)?', s)
+    m = re.search(r'-?\d+(\.\d+)?', s)
     if not m:
         return s
     num = m.group(0)
