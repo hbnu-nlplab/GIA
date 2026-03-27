@@ -747,6 +747,19 @@ class ScorecardGenerator:
         lines.append(f"| Total Samples | {stats['total_samples']} |")
         lines.append(f"| Inference Time | {meta.get('duration_sec', meta.get('duration', 0)):.1f}s |")
         lines.append("")
+
+        # Positive / Negative testing emphasis for paper reporting
+        lines.append("## 🎯 Hallucination-Sensitive Evaluation\n")
+        lines.append("| Slice | Meaning | Accuracy |")
+        lines.append("|-------|---------|----------|")
+        ok_acc = stats.get('by_status', {}).get('OK')
+        neg_acc = stats.get('by_status', {}).get('NOT_CONFIGURED')
+        lines.append(f"| Positive (OK) | Configured facts / values that should be extracted | {fmt_pct(ok_acc)} |")
+        lines.append(f"| Negative (NOT_CONFIGURED) | Missing settings that must be explicitly abstained from | {fmt_pct(neg_acc)} |")
+        if ok_acc is not None and neg_acc is not None:
+            gap = ok_acc - neg_acc
+            lines.append(f"| Gap (OK - NOT_CONFIGURED) | Hallucination sensitivity gap | {gap*100:.2f}%p |")
+        lines.append("")
         
         # Metric Comparison by Answer Type
         lines.append("## 📊 Metric Comparison by Answer Type\n")
@@ -819,12 +832,16 @@ class ScorecardGenerator:
         # Error Analysis (if provided)
         if error_samples:
             lines.append("## ❌ Sample Errors\n")
-            lines.append("| ID | Type | Gold | Pred | Score |")
-            lines.append("|----|------|------|------|-------|")
+            lines.append("| ID | Status | Type | Gold(raw) | Gold(scored) | Pred | Score |")
+            lines.append("|----|--------|------|-----------|--------------|------|-------|")
             for e in error_samples[:15]:
-                gold_short = e['gold'][:25] + "..." if len(e['gold']) > 25 else e['gold']
+                gold_raw_short = e['gold_raw'][:25] + "..." if len(e['gold_raw']) > 25 else e['gold_raw']
+                gold_scored_short = e['gold_scored'][:25] + "..." if len(e['gold_scored']) > 25 else e['gold_scored']
                 pred_short = e['pred'][:25] + "..." if len(e['pred']) > 25 else e['pred']
-                lines.append(f"| {e['id']} | {e['type']} | `{gold_short}` | `{pred_short}` | {e['score']:.2f} |")
+                lines.append(
+                    f"| {e['id']} | {e['status']} | {e['type']} | `{gold_raw_short}` | "
+                    f"`{gold_scored_short}` | `{pred_short}` | {e['score']:.2f} |"
+                )
             lines.append("")
         
         # Footer
@@ -912,6 +929,24 @@ class SummaryReportGenerator:
             
             lines.append(f"| {model_name} | {l1:.2f} | {l2:.2f} | {l3:.2f} | {l4:.2f} | {l5:.2f} |")
         
+        lines.append("\n---\n")
+
+        # Table 4: Positive vs Negative testing
+        lines.append("### 4. Positive vs Negative Testing\n")
+        lines.append("| 모델 | OK | NOT_CONFIGURED | Gap (OK-NC) |")
+        lines.append("| :--- | :---: | :---: | :---: |")
+
+        for stats, meta in all_stats_meta:
+            model_name = meta.get("model", "Unknown")
+            by_status = stats.get('by_status', {})
+            ok = by_status.get('OK')
+            nc = by_status.get('NOT_CONFIGURED')
+            gap = None if ok is None or nc is None else ok - nc
+            lines.append(
+                f"| {model_name} | {fmt_pct(ok)} | {fmt_pct(nc)} | "
+                f"{('N/A' if gap is None else f'{gap*100:.2f}')} |"
+            )
+
         lines.append("\n")
         
         return "\n".join(lines)
@@ -1067,7 +1102,9 @@ def analyze_results(
             error_samples.append({
                 "id": question_id,
                 "question": question[:60] + "..." if len(question) > 60 else question,
-                "gold": clean_gold[:40] if clean_gold else "(empty)",
+                "status": status,
+                "gold_raw": gold_raw[:40] if gold_raw else "(empty)",
+                "gold_scored": clean_gold[:40] if clean_gold else "(empty)",
                 "pred": clean_pred[:40] if clean_pred else "(empty)",
                 "type": report_type,
                 "score": type_aware_score

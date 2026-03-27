@@ -71,6 +71,18 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Force re-analysis from the latest raw result even if analyzed JSON already exists.",
     )
+    parser.add_argument(
+        "--language",
+        choices=["all", "en", "ko"],
+        default="all",
+        help="Filter artifacts by language tag in filename (default: all).",
+    )
+    parser.add_argument(
+        "--decoding-mode",
+        choices=["all", "legacy", "strict"],
+        default="all",
+        help="Filter artifacts by meta.decoding_mode (default: all).",
+    )
     return parser.parse_args()
 
 
@@ -111,26 +123,72 @@ def discover_models(results_dir: Path, requested_models: Optional[Sequence[str]]
     return model_dirs
 
 
-def list_analyzed_files(lab_dir: Path) -> List[Path]:
+def matches_language(path: Path, language: str) -> bool:
+    if language == "all":
+        return True
+    return f"_{language}_" in path.name
+
+
+def read_meta_quick(path: Path) -> Dict[str, Any]:
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+    meta = payload.get("meta")
+    return meta if isinstance(meta, dict) else {}
+
+
+def matches_decoding_mode(path: Path, decoding_mode: str) -> bool:
+    if decoding_mode == "all":
+        return True
+    meta = read_meta_quick(path)
+    return str(meta.get("decoding_mode", "")).strip().lower() == decoding_mode
+
+
+def list_analyzed_files(
+    lab_dir: Path,
+    language: str = "all",
+    decoding_mode: str = "all",
+) -> List[Path]:
     files = []
     for path in lab_dir.glob("results_analyzed_*.json"):
         if path.name.endswith("_errors.json"):
+            continue
+        if not matches_language(path, language):
+            continue
+        if not matches_decoding_mode(path, decoding_mode):
             continue
         files.append(path)
     return sorted(files, key=timestamp_key)
 
 
-def list_raw_files(lab_dir: Path) -> List[Path]:
-    return sorted(lab_dir.glob("results_raw_*.json"), key=timestamp_key)
+def list_raw_files(
+    lab_dir: Path,
+    language: str = "all",
+    decoding_mode: str = "all",
+) -> List[Path]:
+    return sorted(
+        [
+            p
+            for p in lab_dir.glob("results_raw_*.json")
+            if matches_language(p, language) and matches_decoding_mode(p, decoding_mode)
+        ],
+        key=timestamp_key,
+    )
 
 
 def analyzed_path_for_raw(raw_path: Path) -> Path:
     return raw_path.with_name(raw_path.name.replace("results_raw_", "results_analyzed_"))
 
 
-def choose_artifact(lab_dir: Path, reanalyze: bool) -> Tuple[Optional[Path], Optional[Path], str]:
-    analyzed_files = list_analyzed_files(lab_dir)
-    raw_files = list_raw_files(lab_dir)
+def choose_artifact(
+    lab_dir: Path,
+    reanalyze: bool,
+    language: str = "all",
+    decoding_mode: str = "all",
+) -> Tuple[Optional[Path], Optional[Path], str]:
+    analyzed_files = list_analyzed_files(lab_dir, language=language, decoding_mode=decoding_mode)
+    raw_files = list_raw_files(lab_dir, language=language, decoding_mode=decoding_mode)
     latest_analyzed = analyzed_files[-1] if analyzed_files else None
     latest_raw = raw_files[-1] if raw_files else None
 
@@ -219,6 +277,8 @@ def build_record(
         "text": safe_get(stats, "by_type", "text"),
         "duration_sec": meta.get("duration_sec"),
         "throughput": meta.get("throughput"),
+        "language": meta.get("language"),
+        "decoding_mode": meta.get("decoding_mode"),
         "source_path": str(source_path),
         "analyzed_path": str(analyzed_path),
     }
@@ -428,6 +488,8 @@ def write_long_csv(path: Path, records: List[Dict[str, Any]]) -> None:
         "text",
         "duration_sec",
         "throughput",
+        "language",
+        "decoding_mode",
         "source_path",
         "analyzed_path",
     ]
@@ -488,7 +550,12 @@ def main() -> None:
                 missing.append((model_dir.name, lab))
                 continue
 
-            selected_path, analyzed_path, kind = choose_artifact(lab_dir, args.reanalyze)
+            selected_path, analyzed_path, kind = choose_artifact(
+                lab_dir,
+                args.reanalyze,
+                language=args.language,
+                decoding_mode=args.decoding_mode,
+            )
             if not selected_path or not analyzed_path:
                 missing.append((model_dir.name, lab))
                 continue

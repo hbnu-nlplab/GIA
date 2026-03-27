@@ -44,11 +44,11 @@ class Config:
     ROOT_DIR = BASE_DIR.parent.parent.parent  # GIA/
     DATA_DIR = ROOT_DIR / "Data"
     LOG_DIR = BASE_DIR / "logs"
-    RESULT_DIR = BASE_DIR / "results"
+    RESULT_DIR = BASE_DIR / "results_2"
 
     # Lab 경로 매핑 (최신 NetConfigQA2_2 기준)
     LABS = {
-        "A": "Research_Institute_Internal_DC",
+        "A": "LabA_Research_Institute_DC_10nodes",
         "B": "LabB_NCN_Basic_SP_20nodes",
         "C": "LabC_NCN_Security_L2VPN_30nodes",
         "D": "LabD_NCN_MultiAS_Complex_40nodes",
@@ -59,6 +59,28 @@ class Config:
     #   - 소형 모델(<10GB): Lab-D 설정 ~23,758 tok 처리 가능 → 40960
     #   - 대형 모델(>15GB): KV 캐시 부족 → 16384 (입력+출력 ~13K tok 범위)
     MODEL_DICT = {
+        "Llama-3.1-8B": {
+            "hf_path": "meta-llama/Meta-Llama-3.1-8B-Instruct",
+            "display": "Llama-3.1-8B",
+            "quant": None,
+            "backend": "vllm_offline",
+            "max_ctx": 40960,
+        },
+        "Mistral3-8B": {
+            "hf_path": "mistralai/Ministral-3-8B-Instruct-2512",
+            "display": "Mistral3-8B",
+            "quant": None,
+            "backend": "vllm_offline",
+            "max_ctx": 40960,
+        },
+        "Qwen3-8B": {
+            "hf_path": "Qwen/Qwen3-8B",
+            "display": "Qwen3-8B",
+            "quant": None,
+            "backend": "vllm_offline",
+            "max_ctx": 40960,
+            "extra_kwargs": {"reasoning_parser": "qwen3"},
+        },
         "gpt-oss:20b": {"hf_path": "openai/gpt-oss-20b", "display": "GPT-OSS-20B", "quant": None, "backend": "vllm_offline", "max_ctx": 40960},
         "qwen3-coder:30b-a3b-AWQ": {"hf_path": "stelterlab/Qwen3-Coder-30B-A3B-Instruct-AWQ", "display": "Qwen3-Coder", "quant": None, "backend": "vllm_offline", "max_ctx": 40960},
         "Nemotron-Cascade-2-30B-A3B-AWQ": {
@@ -136,6 +158,7 @@ class Config:
 
     # 공통 평가 파라미터
     TEMPERATURE = 0.0
+    DECODING_MODE_DEFAULT = "legacy"
 
     # 레벨별 출력 토큰 차등 — 배치를 레벨 그룹으로 분리하여 효율화
     # vLLM이 max_tokens를 실제 사용 가능한 범위로 자동 클리핑함
@@ -145,6 +168,19 @@ class Config:
         "L3": 3072,
         "L4": 4096,
         "L5": 4096,
+    }
+    # 답변 타입별 상한.
+    # level 기반 max_tokens를 그대로 쓰면 L4/L5 text가 과도하게 길어져 실험 시간이 폭증할 수 있다.
+    # 아래 값은 "정답만 한 줄로 짧게"라는 현재 프롬프트 가정에 맞춘 안전 상한이다.
+    MAX_OUTPUT_CAP_BY_ANSWER_TYPE = {
+        "boolean": 16,
+        "number": 32,
+        "text": 512,
+        "path": 768,
+        "set": 2048,
+        "map": 2048,
+        "map_str_int": 2048,
+        "map_str_str": 2048,
     }
     MAX_OUTPUT_DEFAULT = 8192
     OPENROUTER_MAX_CONSECUTIVE_429 = 3
@@ -188,16 +224,35 @@ def find_latest_dataset(lab_key: str) -> Optional[Path]:
     if not dataset_dir.exists(): return None
 
     timestamp_dirs = sorted(
-        [d for d in dataset_dir.iterdir() if d.is_dir() and d.name.isdigit() or "_" in d.name],
-        key=lambda d: d.name, reverse=True
+        [
+            d for d in dataset_dir.iterdir()
+            if d.is_dir() and re.fullmatch(r"\d{8}_\d{6}", d.name)
+        ],
+        key=lambda d: d.name,
+        reverse=True,
     )
 
-    for ts_dir in timestamp_dirs:
-        csv_files = list(ts_dir.glob("*_dataset_batfish_*_ko.csv"))
-        if csv_files: return csv_files[0]
+    candidate_dirs = list(timestamp_dirs) + [dataset_dir]
 
-    csv_files = list(dataset_dir.glob("*_dataset_batfish_*_ko.csv"))
-    if csv_files: return sorted(csv_files, key=lambda f: f.name, reverse=True)[0]
+    en_csvs = []
+    generic_csvs = []
+    ko_csvs = []
+    for base_dir in candidate_dirs:
+        for f in base_dir.glob("*_dataset_batfish_*.csv"):
+            name = f.name
+            if name.endswith("_en.csv"):
+                en_csvs.append(f)
+            elif name.endswith("_ko.csv"):
+                ko_csvs.append(f)
+            else:
+                generic_csvs.append(f)
+
+    if en_csvs:
+        return sorted(en_csvs, key=lambda f: f.name, reverse=True)[0]
+    if generic_csvs:
+        return sorted(generic_csvs, key=lambda f: f.name, reverse=True)[0]
+    if ko_csvs:
+        return sorted(ko_csvs, key=lambda f: f.name, reverse=True)[0]
     return None
 
 def find_config_dir(lab_key: str) -> Optional[Path]:
@@ -205,6 +260,15 @@ def find_config_dir(lab_key: str) -> Optional[Path]:
     if not lab_folder: return None
     config_dir = Config.DATA_DIR / "Pnetlab" / lab_folder / "configs"
     return config_dir if config_dir.exists() else None
+
+
+def infer_dataset_language(dataset_path: Path) -> str:
+    name = dataset_path.name.lower()
+    if name.endswith("_en.csv"):
+        return "en"
+    if name.endswith("_ko.csv"):
+        return "ko"
+    return "unknown"
 
 class ConfigManager:
     def __init__(self, config_dir: Path, logger: logging.Logger):
@@ -237,7 +301,7 @@ class ConfigManager:
 
 # === Prompt & Stability (재사용) ===
 
-SYSTEM_PROMPT = """You are an expert Network Engineer analyzing network configurations. /no_think
+STRICT_SYSTEM_PROMPT = """You are an expert Network Engineer analyzing network configurations. /no_think
 
 CRITICAL INSTRUCTIONS - READ CAREFULLY:
 You must analyze ALL provided device configurations from top to bottom before answering. This is crucial for multi-device questions and reachability analysis.
@@ -246,6 +310,7 @@ OUTPUT FORMAT RULES (MUST FOLLOW EXACTLY):
 You must output ONLY the raw answer value on ONE SINGLE LINE. 
 Do NOT use markdown code blocks (e.g., ```json or ```). Do NOT add ANY explanatory text or conversational fillers like "The answer is".
 Do NOT output any hidden reasoning, chain-of-thought, analysis, or tags such as <think> ... </think>.
+The very first generated token must already be part of the final answer. Do not start with a newline or any preamble.
 
 Based on the [ANSWER TYPE], use the exact format below:
 1. text: Output ONLY the requested string value (e.g., "R1" or "10.0.0.1"). For network paths, use '->' to strictly separate nodes in order (e.g., nodeA -> nodeB -> nodeC).
@@ -255,17 +320,67 @@ Based on the [ANSWER TYPE], use the exact format below:
 5. map / map_str_int / map_str_str / dict: Output a valid JSON Object with double quotes for strings (e.g., {"key": "value"}). CRITICAL: You MUST list ALL matching pair items completely without omission.
 
 NEGATIVE TESTING CAUTION:
-If the requested information is 'NOT_CONFIGURED', not found, or missing in the configuration, you MUST strictly output one of the following based on the type:
-- text: null
-- number / numeric: 0
-- set: []
-- map: {}
-- boolean: false
+If the requested information is 'NOT_CONFIGURED', not found, or missing in the configuration, you MUST strictly output exactly:
+- NOT_CONFIGURED
 
 REMEMBER: Your entire response will be programmatically parsed. The output MUST be just ONE line of the precise answer value."""
 
-def build_messages(question: str, answer_type: str, configs: str) -> List[Dict[str, str]]:
-    user_msg = f"""=== NETWORK CONFIGURATIONS ===
+LEGACY_SYSTEM_PROMPT = """You are an expert Network Engineer analyzing network configurations.
+
+OUTPUT FORMAT RULES (CRITICAL - MUST FOLLOW EXACTLY):
+
+1. First, use <think>...</think> tags to analyze:
+   - Search relevant configuration sections
+   - Trace network paths and connections
+   - Identify the answer
+
+2. After </think>, output ONLY the raw answer value in ONE line:
+   - text type: Just the text value (e.g., "R1" or "10.0.0.1")
+   - numeric/number type: Just the number (e.g., 5 or 10.5)
+   - set type: JSON array format (e.g., ["item1", "item2"])
+   - map type: JSON object format (e.g., {"key": "value"})
+   - boolean type: true or false
+
+3. FORBIDDEN after </think>:
+   - "The answer is..."
+   - "Based on the analysis..."
+   - "We need to..."
+   - "Looking at the configuration..."
+   - Any explanatory sentences
+   - Multiple lines or paragraphs
+
+4. If NOT_CONFIGURED or information missing:
+   - output exactly: NOT_CONFIGURED
+
+REMEMBER: After </think>, output ONLY the answer value on ONE line. Nothing else."""
+
+
+def build_messages(
+    question: str,
+    answer_type: str,
+    configs: str,
+    decoding_mode: str = Config.DECODING_MODE_DEFAULT,
+) -> List[Dict[str, str]]:
+    normalized_mode = str(decoding_mode or Config.DECODING_MODE_DEFAULT).strip().lower()
+    if normalized_mode == "legacy":
+        system_prompt = LEGACY_SYSTEM_PROMPT
+        user_msg = f"""=== NETWORK CONFIGURATIONS ===
+{configs}
+
+=== QUESTION ===
+{question}
+
+=== ANSWER TYPE ===
+{answer_type}
+
+=== YOUR RESPONSE ===
+<think>
+[Your analysis here]
+</think>
+[ANSWER VALUE ONLY - ONE LINE]"""
+    else:
+        system_prompt = STRICT_SYSTEM_PROMPT
+        user_msg = f"""=== NETWORK CONFIGURATIONS ===
 {configs}
 
 === QUESTION ===
@@ -277,7 +392,7 @@ def build_messages(question: str, answer_type: str, configs: str) -> List[Dict[s
 === YOUR ANSWER (ONE LINE ONLY) ==="""
 
     return [
-        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "system", "content": system_prompt},
         {"role": "user", "content": user_msg},
     ]
 
@@ -485,15 +600,206 @@ def extract_vllm_output_meta(
     }
 
 
+def extract_answer_legacy(raw_text: str, answer_type: Optional[str]) -> str:
+    """Recover the final answer from reasoning-heavy model output."""
+    import json as _json
+
+    normalized_answer_type = normalize_answer_type(answer_type)
+    original_text = (raw_text or "").strip()
+    if not original_text:
+        return ""
+
+    if "</think>" in original_text:
+        after_think = original_text.split("</think>")[-1].strip()
+    elif "assistantfinal" in original_text:
+        parts = original_text.split("assistantfinal")
+        after_think = parts[-1].strip()
+        if after_think.startswith("think"):
+            after_think = after_think[5:].strip()
+    elif "<think>" in original_text:
+        after_think = original_text.split("<think>")[0].strip()
+    else:
+        after_think = original_text
+
+    cleaned = after_think
+    for _ in range(3):
+        cleaned = re.sub(r"<([^>]+)>", r"\1", cleaned).strip()
+
+    prefixes_to_remove = [
+        r"^analysis\s*",
+        r"^we need to\s*",
+        r"^we need\s*",
+        r"^based on\s*",
+        r"^the answer is\s*",
+        r"^answer:\s*",
+        r"^result:\s*",
+        r"^\**answer\**:\s*",
+        r"^json\s*",
+        r"^set\s*",
+        r"^map\s*",
+        r"^text\s*",
+        r"^device:\s*",
+        r"^router:\s*",
+        r"^hostname:\s*",
+    ]
+    for prefix in prefixes_to_remove:
+        cleaned = re.sub(prefix, "", cleaned, flags=re.IGNORECASE)
+
+    lines = [line.strip() for line in cleaned.splitlines() if line.strip()]
+    if not lines and cleaned.strip():
+        lines = [cleaned.strip()]
+    if not lines:
+        return ""
+
+    first_line = lines[0]
+
+    if first_line.lower().startswith("we ") and len(first_line) > 50:
+        if normalized_answer_type == "number":
+            num_match = re.search(r"\b(-?\d+\.?\d*)\b", first_line)
+            if num_match:
+                first_line = num_match.group(1)
+        elif normalized_answer_type == "text":
+            device_match = re.search(r"\bof\s+([A-Za-z0-9_.:/-]+)", first_line)
+            if device_match:
+                first_line = device_match.group(1)
+
+    if normalized_answer_type == "set":
+        match = re.search(r"\[[\s\S]*?\]", cleaned)
+        if match:
+            try:
+                parsed = _json.loads(match.group(0))
+                return _json.dumps(parsed, ensure_ascii=False)
+            except Exception:
+                pass
+        return "[]"
+
+    if normalized_answer_type in {"map", "map_str_int", "map_str_str"}:
+        match = re.search(r"\{[\s\S]*?\}", cleaned)
+        if match:
+            try:
+                parsed = _json.loads(match.group(0))
+                return _json.dumps(parsed, ensure_ascii=False)
+            except Exception:
+                pass
+        return "{}"
+
+    if normalized_answer_type == "number":
+        match = re.search(r"-?\d+\.?\d*", cleaned)
+        if match:
+            return match.group(0)
+        return "0"
+
+    if normalized_answer_type == "boolean":
+        lower = cleaned.lower()
+        if "true" in lower or "yes" in lower:
+            return "true"
+        if "false" in lower or "no" in lower:
+            return "false"
+        return "false"
+
+    text = first_line.strip("\"'")
+    if len(text.split()) > 5:
+        text = text.split()[0]
+    if text.lower() == "login local":
+        text = "local"
+    return text
+
+
 def resolve_max_tokens(
     level: str,
+    answer_type: Optional[str] = None,
     level_token_overrides: Optional[Dict[str, int]] = None,
+    decoding_mode: str = Config.DECODING_MODE_DEFAULT,
 ) -> int:
-    """Return effective max_tokens for a given difficulty level."""
+    """Return effective max_tokens for a given difficulty level and answer type."""
     normalized = str(level or "L1").strip().upper()
     if level_token_overrides and normalized in level_token_overrides:
-        return level_token_overrides[normalized]
-    return Config.MAX_OUTPUT_BY_LEVEL.get(normalized, Config.MAX_OUTPUT_DEFAULT)
+        base_max_tokens = level_token_overrides[normalized]
+    else:
+        base_max_tokens = Config.MAX_OUTPUT_BY_LEVEL.get(normalized, Config.MAX_OUTPUT_DEFAULT)
+
+    normalized_mode = str(decoding_mode or Config.DECODING_MODE_DEFAULT).strip().lower()
+    if normalized_mode != "legacy":
+        normalized_answer_type = normalize_answer_type(answer_type)
+        type_cap = Config.MAX_OUTPUT_CAP_BY_ANSWER_TYPE.get(normalized_answer_type)
+        if type_cap is not None:
+            return min(base_max_tokens, type_cap)
+    return base_max_tokens
+
+
+def build_stop_sequences(
+    answer_type: Optional[str],
+    decoding_mode: str = Config.DECODING_MODE_DEFAULT,
+) -> List[str]:
+    """Return conservative stop sequences for one-line answer extraction."""
+    normalized_answer_type = normalize_answer_type(answer_type)
+    normalized_mode = str(decoding_mode or Config.DECODING_MODE_DEFAULT).strip().lower()
+
+    if normalized_mode == "legacy":
+        stop_sequences = [
+            "<|eot_id|>",
+            "<|end|>",
+            "Question:",
+            "User:",
+            "=== QUESTION ===",
+            "\n\nExample",
+            "\n\nQuestion:",
+            "\nBased on the analysis",
+            "\nIn summary",
+            "\nThe answer is",
+        ]
+    else:
+        stop_sequences = [
+            "<|eot_id|>",
+            "<|end|>",
+            "Question:",
+            "=== QUESTION ===",
+            "\n\nQuestion:",
+        ]
+
+        if normalized_answer_type in {"text", "number", "boolean", "path"}:
+            stop_sequences.extend(["\n", "\r\n"])
+
+        stop_sequences.extend([
+            "\nExplanation:",
+            "\nReasoning:",
+            "\nAnalysis:",
+            "\nThe answer is",
+        ])
+
+    # Preserve order but deduplicate.
+    seen = set()
+    deduped = []
+    for item in stop_sequences:
+        if item not in seen:
+            seen.add(item)
+            deduped.append(item)
+    return deduped
+
+
+def dedupe_preserve_order(items: List[str]) -> List[str]:
+    seen = set()
+    deduped = []
+    for item in items:
+        if item is None:
+            continue
+        item = str(item).strip()
+        if not item:
+            continue
+        if item not in seen:
+            seen.add(item)
+            deduped.append(item)
+    return deduped
+
+
+def should_tokenize_chat_template(model_key: str, hf_path: str, tokenizer: Any) -> bool:
+    """Use tokenized chat templates for tokenizers that warn on tokenize=False."""
+    tokenizer_cls = type(tokenizer).__name__.lower()
+    if "mistral" in tokenizer_cls or "mistral" in str(getattr(tokenizer, "__module__", "")).lower():
+        return True
+    if "mistral" in str(model_key).lower() or "mistral" in str(hf_path).lower():
+        return True
+    return False
 
 
 # === VLLM Global Engine Manager ===
@@ -641,6 +947,7 @@ def run_evaluation(
     level_token_overrides: Optional[Dict[str, int]] = None,
     max_model_len_override: Optional[str] = None,
     use_structured_outputs: bool = False,
+    decoding_mode: str = Config.DECODING_MODE_DEFAULT,
 ):
     logger, timestamp = setup_logger(model_key, lab_key)
 
@@ -691,6 +998,8 @@ def run_evaluation(
         return None
 
     model_backend = Config.MODEL_DICT.get(model_key, {}).get("backend", "vllm_offline")
+    model_info = Config.MODEL_DICT.get(model_key, {})
+    hf_path = model_info.get("hf_path", "")
     start_time = time.time()
     outputs_text = [""] * len(data)  # 원래 순서 유지용
     outputs_meta = [{"finish_reason": None, "output_tokens": None, "request_max_tokens": None, "truncated_flag": False}] * len(data)
@@ -698,11 +1007,30 @@ def run_evaluation(
     if model_backend == "vllm_offline":
         # 4. Prepare Prompts (Batch) — 레벨 + 답변 타입별로 그룹화
         logger.info("Preparing prompts for batch inference...")
-        prompt_groups = {}  # (level, normalized_answer_type) -> [(original_index, prompt)]
+        prompt_groups = {}  # (level, normalized_answer_type) -> [(original_index, prompt_or_token_ids)]
+        use_tokenized_chat_template = should_tokenize_chat_template(model_key, hf_path, tokenizer)
+        if use_tokenized_chat_template:
+            logger.info("Tokenizer warning 회피를 위해 tokenize=True chat template 경로를 사용합니다.")
         for idx, row in enumerate(data):
-            messages = build_messages(row["question"], row["answer_type"], configs_text)
+            messages = build_messages(
+                row["question"],
+                row["answer_type"],
+                configs_text,
+                decoding_mode=decoding_mode,
+            )
             try:
-                prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+                if use_tokenized_chat_template:
+                    prompt = tokenizer.apply_chat_template(
+                        messages,
+                        tokenize=True,
+                        add_generation_prompt=True,
+                    )
+                else:
+                    prompt = tokenizer.apply_chat_template(
+                        messages,
+                        tokenize=False,
+                        add_generation_prompt=True,
+                    )
             except Exception:
                 sys_msg = messages[0]["content"]
                 usr_msg = messages[1]["content"]
@@ -718,7 +1046,12 @@ def run_evaluation(
         # 5. Execute Inference — 레벨/타입별 배치로 분리
         for level, normalized_answer_type in sorted(prompt_groups.keys()):
             group = prompt_groups[(level, normalized_answer_type)]
-            max_tokens = resolve_max_tokens(level, level_token_overrides)
+            max_tokens = resolve_max_tokens(
+                level,
+                normalized_answer_type,
+                level_token_overrides,
+                decoding_mode=decoding_mode,
+            )
             prompts = [p for _, p in group]
             indices = [i for i, _ in group]
             structured_outputs = (
@@ -736,13 +1069,10 @@ def run_evaluation(
                 temperature=Config.TEMPERATURE,
                 repetition_penalty=1.05,
                 max_tokens=max_tokens,
-                stop=[
-                    "<|eot_id|>",
-                    "<|end|>",
-                    "Question:",
-                    "=== QUESTION ===",
-                    "\n\nQuestion:",
-                ],
+                stop=build_stop_sequences(
+                    normalized_answer_type,
+                    decoding_mode=decoding_mode,
+                ),
             )
             if structured_outputs is not None:
                 sampling_kwargs["structured_outputs"] = structured_outputs
@@ -775,8 +1105,18 @@ def run_evaluation(
                 logger.info(f"Progress: {i}/{len(data)} | ETA: {eta/60:.1f}min")
             
             level = row.get("level", "L1")
-            max_tokens_needed = resolve_max_tokens(level, level_token_overrides)
-            messages = build_messages(row["question"], row["answer_type"], configs_text)
+            max_tokens_needed = resolve_max_tokens(
+                level,
+                row.get("answer_type"),
+                level_token_overrides,
+                decoding_mode=decoding_mode,
+            )
+            messages = build_messages(
+                row["question"],
+                row["answer_type"],
+                configs_text,
+                decoding_mode=decoding_mode,
+            )
 
             # OpenRouter free tier는 일일/분당 제한 변동성이 커서 기본 딜레이를 더 보수적으로 둔다.
             time.sleep(api_delay_sec)
@@ -829,32 +1169,13 @@ def run_evaluation(
     duration = time.time() - start_time
     logger.info(f"Inference complete: {len(outputs_text)} samples in {duration:.1f}s ({len(outputs_text)/duration:.1f} req/s)")
 
-    # 6. Process Results — reasoning 토큰 제거
+    # 6. Process Results — legacy extraction compatible with reasoning-heavy outputs
     results = []
     format_stats = {}
 
-    def extract_answer(raw: str) -> str:
-        """vLLM raw output에서 reasoning 토큰을 제거하고 답변만 추출."""
-        text = raw.strip()
-        if not text:
-            return ""
-        # GPT-OSS-20B: "analysis...assistantfinal ANSWER"
-        if 'assistantfinal' in text:
-            text = text.split('assistantfinal')[-1].strip()
-        # Qwen/GLM: "<think>...</think> ANSWER"
-        elif '</think>' in text:
-            text = text.split('</think>')[-1].strip()
-        elif '<think>' in text:
-            text = text.split('<think>')[0].strip()
-        # reasoning delimiter 없이 폭주한 경우 → 답변 추출 불가
-        elif text.lstrip().startswith('analysis') or len(text) > 5000:
-            # 추론 루프에 빠진 것으로 간주 — 빈 문자열 반환
-            return ""
-        return text.strip()
-
     for i, raw_output in enumerate(outputs_text):
         row = data[i]
-        cleaned = extract_answer(raw_output)
+        cleaned = extract_answer_legacy(raw_output, row["answer_type"])
         generation_meta = outputs_meta[i] or {}
 
         format_metrics = measure_format_stability(cleaned, row["answer_type"])
@@ -882,10 +1203,11 @@ def run_evaluation(
     model_info = Config.MODEL_DICT.get(model_key, {})
     display_name = model_info.get("display", model_key)
     clean_display = display_name.replace(" ", "_").replace("/", "_")
+    dataset_language = infer_dataset_language(dataset_path)
 
     result_dir = Config.RESULT_DIR / f"{clean_display}" / f"Lab{lab_key}"
     result_dir.mkdir(parents=True, exist_ok=True)
-    output_file = result_dir / f"results_raw_vllm_{timestamp}.json"
+    output_file = result_dir / f"results_raw_vllm_{dataset_language}_{timestamp}.json"
 
     for atype in set(r["answer_type"] for r in results):
         type_results = [r for r in results if r["answer_type"] == atype]
@@ -904,18 +1226,24 @@ def run_evaluation(
             "backend": model_backend,
             "lab": f"Lab-{lab_key}",
             "lab_folder": Config.LABS.get(lab_key, ""),
+            "language": dataset_language,
             "date": str(datetime.datetime.now()),
             "duration_sec": round(duration, 2),
             "throughput": round(len(outputs_text)/duration, 2) if duration > 0 else 0,
             "dataset": str(dataset_path.name),
+            "dataset_path": str(dataset_path),
+            "config_dir": str(config_dir),
+            "result_model_dir": clean_display,
+            "result_lab_dir": f"Lab{lab_key}",
             "total_samples": len(results),
-            "tokenizer_chat_template": True if tokenizer and tokenizer.chat_template else False,
+            "tokenizer_chat_template": bool(getattr(tokenizer, "chat_template", None)),
             "enable_prefix_caching": True if model_backend == "vllm_offline" else False,
             "structured_outputs_enabled": (
                 True
                 if model_backend == "vllm_offline" and StructuredOutputsParams is not None and use_structured_outputs
                 else False
             ),
+            "decoding_mode": decoding_mode,
             "level_token_overrides": level_token_overrides or {},
             "max_model_len_override": max_model_len_override,
         },
@@ -959,6 +1287,12 @@ def main():
         action="store_true",
         help="vLLM structured outputs 제약을 켭니다. 기본값은 비활성화입니다.",
     )
+    parser.add_argument(
+        "--decoding-mode",
+        choices=["legacy", "strict"],
+        default=Config.DECODING_MODE_DEFAULT,
+        help="디코딩/추출 정책. legacy는 예전 통신학회 스타일 reasoning+후처리, strict는 한 줄 응답 강제.",
+    )
 
     args = parser.parse_args()
 
@@ -971,8 +1305,21 @@ def main():
     if args.l5_max_tokens is not None:
         level_token_overrides["L5"] = args.l5_max_tokens
 
-    models = Config.ALL_MODELS if "all" in [m.lower() for m in args.model] else args.model
-    labs = list(Config.LABS.keys()) if "all" in [l.lower() for l in args.lab] else [l.upper() for l in args.lab]
+    if "all" in [m.lower() for m in args.model]:
+        models = list(Config.ALL_MODELS)
+    else:
+        models = dedupe_preserve_order(args.model)
+        invalid_models = [m for m in models if m not in Config.MODEL_DICT]
+        if invalid_models:
+            raise ValueError(f"Unknown model tag(s): {invalid_models}")
+
+    if "all" in [l.lower() for l in args.lab]:
+        labs = list(Config.LABS.keys())
+    else:
+        labs = dedupe_preserve_order([l.upper() for l in args.lab])
+        invalid_labs = [l for l in labs if l not in Config.LABS]
+        if invalid_labs:
+            raise ValueError(f"Unknown lab key(s): {invalid_labs}")
 
     total_runs = len(models) * len(labs)
     print(f"\n{'='*60}")
@@ -999,6 +1346,7 @@ def main():
                 level_token_overrides=level_token_overrides or None,
                 max_model_len_override=args.max_model_len,
                 use_structured_outputs=args.structured_outputs,
+                decoding_mode=args.decoding_mode,
             )
             if output_file:
                 completed.append((display, lab_key, str(output_file)))
