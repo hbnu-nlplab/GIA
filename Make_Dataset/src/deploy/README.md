@@ -112,3 +112,42 @@ ifconfig eth2 10.10.10.100/24
 | 3-Config_Export_Batfish.py | NSO→Batfish | ❌ 불필요 | .cfg 직접 사용 |
 | ❌ 없음 | Config 적용 | 1_push_configs.py | 신규 |
 | 3-Check_Connectivity.py | 연결 확인 | 2_verify.py | 통합 |
+
+## NSO Docker (WSL 환경)
+
+PNETLab 내장 NSO(NED 3.8) 대신 WSL에서 NSO 6.6 Docker를 실행.
+
+```bash
+# 이미지 빌드 (ssh-rsa 패치 포함)
+cd docker/nso && docker build -t cisco-nso-dev:6.6-ssh-rsa .
+
+# 실행
+docker run -d --name cisco-nso-dev -p 2022:2022 -p 2024:2024 -p 8080:8080 cisco-nso-dev:6.6-ssh-rsa
+
+# NED: cisco-ios-cli-6.110 (VRF/VPNv4 지원)
+# ssh-rsa 알고리즘: entrypoint에서 자동 패치
+# healthy까지 약 60초
+
+# ssh-rsa public-key 설정 (3_register_nso.py가 자동 수행)
+# 수동: docker exec cisco-nso-dev bash -c "source /root/nso-6.6/ncsrc && ncs_cli -u admin"
+#   configure
+#   set devices global-settings ssh-algorithms public-key [ ssh-rsa ]
+#   commit
+```
+
+### Tailscale Subnet Route (WSL ↔ PNETLab 장비)
+
+```bash
+# PNETLab VM에서
+tailscale up --advertise-routes=10.10.10.0/24 --accept-routes --ssh
+# Tailscale Admin에서 route approve
+```
+
+### 알려진 이슈
+
+| 이슈 | 원인 | 해결 |
+|------|------|------|
+| PE sync timeout (NED 3.8) | VRF/VPNv4 파싱 불가 | NSO 6.6 + NED 6.110 사용 |
+| docker commit 후 SSH key 에러 | 파일 권한 깨짐 | Dockerfile로 빌드 |
+| `aaa new-model` confirm 프롬프트 | `no aaa new-model`에 [confirm] 필요 | 1_push_configs.py Phase 3에서 자동 처리 |
+| PNETLab VM에서 장비 ping 안 됨 | bridge rp_filter 이슈 | NSO↔장비 직접 통신은 정상, 무시 가능 |
