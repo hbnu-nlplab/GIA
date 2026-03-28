@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import sys
 from typing import Any, Dict, List, Literal, Optional
 
 from langchain_core.tools import tool
@@ -68,6 +69,36 @@ def _unwrap_result(result) -> Dict[str, Any]:
     if isinstance(result, dict):
         return result
     return {"result": str(result)}
+
+
+def _batfish_subprocess(func_name: str, args: Dict[str, Any], timeout: int = 120) -> Dict[str, Any]:
+    """Execute Batfish function in a separate subprocess.
+
+    Avoids pybatfish session thread-safety issues by running in a clean process.
+    Same environment as dataset generation — no event loop, no async.
+    """
+    import subprocess as _sp
+    import json as _json
+    from pathlib import Path
+
+    worker = str(Path(__file__).parent / "batfish_worker.py")
+    args_json = _json.dumps(args, ensure_ascii=False)
+
+    try:
+        proc = _sp.run(
+            [sys.executable, worker, func_name, args_json],
+            capture_output=True, text=True, timeout=timeout,
+            cwd=str(Path(__file__).parent.parent),  # NetAlly root
+        )
+        if proc.stdout.strip():
+            return _json.loads(proc.stdout.strip())
+        if proc.stderr.strip():
+            logger.warning(f"batfish_worker stderr: {proc.stderr[:200]}")
+        return {"error": f"Empty output from batfish_worker (exit={proc.returncode})"}
+    except _sp.TimeoutExpired:
+        return {"error": f"batfish_worker timed out after {timeout}s"}
+    except Exception as e:
+        return {"error": f"batfish_worker failed: {type(e).__name__}: {e}"}
 
 
 # ─── NSO tools ───────────────────────────────────────────────────────────────
@@ -238,101 +269,80 @@ async def nso_get_logs(device: str, lines: int = 50, keyword: Optional[str] = No
     return {"logs": data}
 
 
-# ─── Batfish tools (직접 Python 호출, @tool 중첩 없음) ────────────────────────
+# ─── Batfish tools (subprocess 호출 — pybatfish session 충돌 방지) ────────────
 
 @tool
 async def batfish_reachability(src: str, dst: str, protocol: str = "icmp") -> Dict[str, Any]:
     """[Direct] Run Batfish reachability test."""
-    def _run():
-        bf, _ = _ensure_batfish()
-        return bf.check_reachability(src=src.lower(), dst=dst.lower(), protocol=protocol)
-    return await asyncio.to_thread(_run)
+    return await asyncio.to_thread(
+        _batfish_subprocess, "reachability",
+        {"src": src.lower(), "dst": dst.lower(), "protocol": protocol})
 
 
 @tool
 async def batfish_traceroute(src: str, dst: str) -> Dict[str, Any]:
     """[Direct] Run Batfish traceroute between two nodes. Returns path, hop_count."""
-    def _run():
-        bf, _ = _ensure_batfish()
-        return bf.traceroute(src=src.lower(), dst=dst.lower())
-    return await asyncio.to_thread(_run)
+    return await asyncio.to_thread(
+        _batfish_subprocess, "traceroute",
+        {"src": src.lower(), "dst": dst.lower()})
 
 
 @tool
 async def batfish_bgp_sessions(device: Optional[str] = None) -> Dict[str, Any]:
     """[Direct] List BGP session status with summary (established, under-peered)."""
-    def _run():
-        bf, _ = _ensure_batfish()
-        return bf.get_bgp_sessions(device_filter=device.lower() if device else None)
-    return await asyncio.to_thread(_run)
+    return await asyncio.to_thread(
+        _batfish_subprocess, "bgp_sessions",
+        {"device": device.lower() if device else None})
 
 
 @tool
 async def batfish_route_table(device: str) -> Dict[str, Any]:
     """[Direct] Get routing table for a device. Returns routes and route_count."""
-    def _run():
-        bf, _ = _ensure_batfish()
-        return bf.get_route_table(device=device.lower())
-    return await asyncio.to_thread(_run)
+    return await asyncio.to_thread(
+        _batfish_subprocess, "route_table",
+        {"device": device.lower()})
 
 
-# ─── Batfish L4 analysis (직접 builder 호출) ──────────────────────────────────
+# ─── Batfish L4 analysis (subprocess) ─────────────────────────────────────────
 
 @tool
 async def batfish_acl_check(src_ip: str, dst_ip: str, dst_port: int = 80) -> Dict[str, Any]:
     """[Direct] Check if any ACL blocks traffic between src and dst IP."""
-    def _run():
-        _, builder = _ensure_batfish()
-        return _unwrap_result(builder.acl_blocking_point(src_ip=src_ip, dst_ip=dst_ip, dst_port=dst_port))
-    return await asyncio.to_thread(_run)
+    return await asyncio.to_thread(
+        _batfish_subprocess, "acl_check",
+        {"src_ip": src_ip, "dst_ip": dst_ip, "dst_port": dst_port})
 
 
 @tool
 async def batfish_loop_check() -> Dict[str, Any]:
     """[Direct] Detect routing loops in the network."""
-    def _run():
-        _, builder = _ensure_batfish()
-        return _unwrap_result(builder.loop_detection())
-    return await asyncio.to_thread(_run)
+    return await asyncio.to_thread(_batfish_subprocess, "loop_check", {})
 
 
 @tool
 async def batfish_blackhole_check(dst_prefix: str = "0.0.0.0/0") -> Dict[str, Any]:
     """[Direct] Detect blackhole routes (traffic silently dropped)."""
-    def _run():
-        _, builder = _ensure_batfish()
-        return _unwrap_result(builder.blackhole_detection(dst_prefix=dst_prefix))
-    return await asyncio.to_thread(_run)
+    return await asyncio.to_thread(
+        _batfish_subprocess, "blackhole_check", {"dst_prefix": dst_prefix})
 
 
 @tool
 async def batfish_waypoint_check(src_ip: str, dst_ip: str, waypoint: str) -> Dict[str, Any]:
     """[Direct] Verify traffic passes through a specific waypoint device."""
-    def _run():
-        _, builder = _ensure_batfish()
-        return _unwrap_result(builder.waypoint_check(src_ip=src_ip, dst_ip=dst_ip, waypoint_node=waypoint.lower()))
-    return await asyncio.to_thread(_run)
+    return await asyncio.to_thread(
+        _batfish_subprocess, "waypoint_check",
+        {"src_ip": src_ip, "dst_ip": dst_ip, "waypoint": waypoint.lower()})
 
 
-# ─── Batfish L5 analysis (직접 builder 호출, fork_snapshot) ──────────────────
+# ─── Batfish L5 analysis (subprocess — fork_snapshot safe) ───────────────────
 
 @tool
 async def batfish_link_failure(node1: str, node2: str, src: Optional[str] = None, dst: Optional[str] = None) -> Dict[str, Any]:
-    """[Direct] Simulate a link failure between two nodes and check traffic impact.
-    Args:
-        node1: First node of the failed link (e.g., 'p1')
-        node2: Second node of the failed link (e.g., 'p2')
-        src: Optional source for reachability test after failure
-        dst: Optional destination for reachability test after failure
-    Returns: Impact analysis with disrupted flows."""
-    def _run():
-        _, builder = _ensure_batfish()
-        return _unwrap_result(builder.link_failure_impact(
-            node1=node1.lower(), node2=node2.lower(),
-            test_src=src.lower() if src else None,
-            test_dst=dst.lower() if dst else None,
-        ))
-    return await asyncio.to_thread(_run)
+    """[Direct] Simulate a link failure between two nodes and check traffic impact."""
+    args = {"node1": node1.lower(), "node2": node2.lower()}
+    if src: args["src"] = src.lower()
+    if dst: args["dst"] = dst.lower()
+    return await asyncio.to_thread(_batfish_subprocess, "link_failure", args)
 
 
 @tool
@@ -341,126 +351,43 @@ async def batfish_multi_link_failure(
     link2_node1: str, link2_node2: str,
     src: str, dst: str,
 ) -> Dict[str, Any]:
-    """[Direct] Simulate TWO links failing simultaneously and check traffic impact.
-    Args:
-        link1_node1: First node of link 1 (e.g., 'leaf1')
-        link1_node2: Second node of link 1 (e.g., 'leaf6')
-        link2_node1: First node of link 2 (e.g., 'leaf2')
-        link2_node2: Second node of link 2 (e.g., 'leaf4')
-        src: Source device for reachability test
-        dst: Destination device for reachability test
-    Returns: isolated (bool), new_path, failure_reason."""
-    def _run():
-        bf, builder = _ensure_batfish()
-        # Map device names to interface names for multi_link_failure_analysis
-        edges = builder.bf.q.layer3Edges().answer(snapshot=builder.snapshot_name).frame()
-        def _find_ifaces(n1, n2):
-            for _, row in edges.iterrows():
-                h1 = row['Interface'].hostname
-                h2 = row['Remote_Interface'].hostname
-                if (h1 == n1 and h2 == n2) or (h1 == n2 and h2 == n1):
-                    return str(row['Interface']), str(row['Remote_Interface'])
-            return None, None
-        l1i1, l1i2 = _find_ifaces(link1_node1.lower(), link1_node2.lower())
-        l2i1, l2i2 = _find_ifaces(link2_node1.lower(), link2_node2.lower())
-        if not l1i1 or not l2i1:
-            return {"error": f"Link not found: {link1_node1}-{link1_node2} or {link2_node1}-{link2_node2}"}
-        return _unwrap_result(builder.multi_link_failure_analysis(
-            link1_iface1=l1i1, link1_iface2=l1i2,
-            link2_iface1=l2i1, link2_iface2=l2i2,
-            test_src=src.lower(), test_dst=dst.lower(),
-        ))
-    return await asyncio.to_thread(_run)
-
-
-@tool
-async def batfish_multi_node_failure(node1: str, node2: str) -> Dict[str, Any]:
-    """[Direct] Simulate TWO nodes failing simultaneously and calculate blast radius.
-    Args:
-        node1: First node to fail (e.g., 'p5')
-        node2: Second node to fail (e.g., 'p6')
-    Returns: affected_count (disrupted flows), newly_blocked_flows list."""
-    def _run():
-        bf, builder = _ensure_batfish()
-        # Deactivate both nodes in one fork_snapshot
-        import time as _time
-        snapshot_name = f"failure_{node1}_{node2}_{int(_time.time())}"
-        try:
-            builder.bf.fork_snapshot(
-                base_name=builder.snapshot_name,
-                name=snapshot_name,
-                deactivate_nodes=[node1.lower(), node2.lower()],
-                overwrite=True,
-            )
-            diff = builder.bf.q.differentialReachability().answer(
-                snapshot=snapshot_name,
-                reference_snapshot=builder.snapshot_name,
-            ).frame()
-            blocked = []
-            if not diff.empty:
-                for _, row in diff.iterrows():
-                    flow = row.get('Flow')
-                    if flow:
-                        src_ip = getattr(flow, 'srcIp', 'unknown')
-                        dst_ip = getattr(flow, 'dstIp', 'unknown')
-                        blocked.append(f"{src_ip} -> {dst_ip}")
-            return {"affected_count": len(blocked), "newly_blocked_flows": blocked}
-        except Exception as e:
-            return {"error": str(e), "affected_count": 0}
-        finally:
-            try:
-                builder.bf.delete_snapshot(snapshot_name)
-            except Exception:
-                pass
-    return await asyncio.to_thread(_run)
+    """[Direct] Simulate TWO links failing simultaneously and check traffic impact."""
+    return await asyncio.to_thread(
+        _batfish_subprocess, "multi_link_failure",
+        {"link1_node1": link1_node1.lower(), "link1_node2": link1_node2.lower(),
+         "link2_node1": link2_node1.lower(), "link2_node2": link2_node2.lower(),
+         "src": src.lower(), "dst": dst.lower()})
 
 
 @tool
 async def batfish_node_failure(node: str) -> Dict[str, Any]:
     """[Direct] Simulate a node going down and calculate blast radius.
-    Args:
-        node: The node to simulate failure for (e.g., 'p5', 'leaf3')
     Returns: affected_count (disrupted flows), newly_blocked_flows list."""
-    def _run():
-        _, builder = _ensure_batfish()
-        return _unwrap_result(builder.blast_radius_estimation(failed_node=node.lower()))
-    return await asyncio.to_thread(_run)
+    return await asyncio.to_thread(
+        _batfish_subprocess, "node_failure", {"node": node.lower()})
+
+
+@tool
+async def batfish_multi_node_failure(node1: str, node2: str) -> Dict[str, Any]:
+    """[Direct] Simulate TWO nodes failing simultaneously and calculate blast radius."""
+    return await asyncio.to_thread(
+        _batfish_subprocess, "multi_node_failure",
+        {"node1": node1.lower(), "node2": node2.lower()})
 
 
 @tool
 async def batfish_spof_detection() -> Dict[str, Any]:
-    """[Direct] Detect Single Points of Failure (SPOF) in the network.
-    Returns: List of nodes whose failure would disconnect parts of the network."""
-    def _run():
-        _, builder = _ensure_batfish()
-        return _unwrap_result(builder.spof_detection())
-    return await asyncio.to_thread(_run)
+    """[Direct] Detect Single Points of Failure (SPOF) in the network."""
+    return await asyncio.to_thread(_batfish_subprocess, "spof_detection", {})
 
 
 @tool
 async def batfish_find_blocker(src: str, dst: str) -> Dict[str, Any]:
     """[Direct] Find which device blocks/drops traffic from src to dst.
-    Runs traceroute and identifies the LAST HOP device where traffic stops.
-    Args:
-        src: Source device (e.g., 'leaf4')
-        dst: Destination device (e.g., 'p7')
     Returns: blocking_device name, disposition, full path."""
-    def _run():
-        bf, _ = _ensure_batfish()
-        result = bf.traceroute(src=src.lower(), dst=dst.lower())
-        if result.get("error"):
-            return result
-        path = result.get("path", [])
-        disposition = result.get("disposition", "UNKNOWN")
-        blocking_device = path[-1] if path else "unknown"
-        return {
-            "blocking_device": blocking_device,
-            "disposition": disposition,
-            "path": path,
-            "path_str": result.get("path_str", ""),
-            "reachable": disposition == "ACCEPTED",
-        }
-    return await asyncio.to_thread(_run)
+    return await asyncio.to_thread(
+        _batfish_subprocess, "find_blocker",
+        {"src": src.lower(), "dst": dst.lower()})
 
 
 def _lower_params(params: Dict[str, Any], keys: list) -> Dict[str, Any]:
