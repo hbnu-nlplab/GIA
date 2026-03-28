@@ -539,6 +539,27 @@ class NSOClient:
                 return [d.get("name", "") for d in devices if isinstance(d, dict)]
         return []
 
+    @staticmethod
+    def _extract_vrf_details(config: Dict) -> List[Dict[str, Any]]:
+        """VRF 이름, RD, route-target 추출"""
+        vrf_defs = config.get("vrf", {}).get("definition", [])
+        if not isinstance(vrf_defs, list):
+            return []
+        results = []
+        for v in vrf_defs:
+            if not isinstance(v, dict):
+                continue
+            rt_cfg = v.get("route-target", {})
+            export_rts = [r.get("asn-ip", "") for r in rt_cfg.get("export", []) if isinstance(r, dict)] if isinstance(rt_cfg, dict) else []
+            import_rts = [r.get("asn-ip", "") for r in rt_cfg.get("import", []) if isinstance(r, dict)] if isinstance(rt_cfg, dict) else []
+            results.append({
+                "name": v.get("name", ""),
+                "rd": v.get("rd", ""),
+                "route_targets_export": export_rts,
+                "route_targets_import": import_rts,
+            })
+        return results
+
     def get_device_info(self, device: str) -> Dict[str, Any]:
         """장비의 기본 정보 + config 요약 반환"""
         path = f"{self.PATHS['device']}={device}"
@@ -553,21 +574,114 @@ class NSOClient:
         try:
             config = self._fetch_config(device)
             if isinstance(config, dict):
+                ip_cfg = config.get("ip", {}) if isinstance(config.get("ip"), dict) else {}
+                clock_cfg = config.get("clock", {}) if isinstance(config.get("clock"), dict) else {}
+                tz_cfg = clock_cfg.get("timezone", {}) if isinstance(clock_cfg.get("timezone"), dict) else {}
+                banner_cfg = config.get("banner", {}) if isinstance(config.get("banner"), dict) else {}
+                logging_cfg = config.get("logging", {}) if isinstance(config.get("logging"), dict) else {}
+                line_cfg = config.get("line", {}) if isinstance(config.get("line"), dict) else {}
+                router_cfg = config.get("router", {}) if isinstance(config.get("router"), dict) else {}
+
+                # OSPF process IDs — router.ospf is a list: [{"id": 1, ...}]
+                ospf_ids = []
+                ospf_data = router_cfg.get("ospf", [])
+                if isinstance(ospf_data, list):
+                    ospf_ids = [str(p.get("id", "")) for p in ospf_data if isinstance(p, dict)]
+                elif isinstance(ospf_data, dict):
+                    ospf_ids = [str(ospf_data.get("id", ""))] if ospf_data.get("id") else []
+
+                # Syslog servers — logging.host.ipv4: [{"host": "10.10.10.1"}]
+                syslog_hosts = []
+                log_host = logging_cfg.get("host", {}) if isinstance(logging_cfg, dict) else {}
+                if isinstance(log_host, dict):
+                    ipv4_list = log_host.get("ipv4", [])
+                    if isinstance(ipv4_list, list):
+                        syslog_hosts = [h.get("host", "") for h in ipv4_list if isinstance(h, dict) and h.get("host")]
+                elif isinstance(log_host, list):
+                    syslog_hosts = [h.get("host", "") for h in log_host if isinstance(h, dict) and h.get("host")]
+
+                # VTY login mode
+                vty_login = ""
+                vty_data = line_cfg.get("vty", [])
+                if isinstance(vty_data, list) and vty_data:
+                    vty0 = vty_data[0] if isinstance(vty_data[0], dict) else {}
+                    login_cfg = vty0.get("login", {})
+                    if isinstance(login_cfg, dict):
+                        if login_cfg.get("local"):
+                            vty_login = "local"
+                        elif login_cfg.get("authentication"):
+                            vty_login = f"authentication {login_cfg['authentication']}"
+                        else:
+                            vty_login = "login"
+                    elif login_cfg:
+                        vty_login = str(login_cfg)
+
+                # Timezone with offset
+                tz_zone = tz_cfg.get("zone", "")
+                tz_offset = tz_cfg.get("hours", "")
+                clock_timezone = f"{tz_zone} {tz_offset}".strip() if tz_zone else ""
+
+                # BGP AS number — router.bgp is a list: [{"as-no": 65000, ...}]
+                bgp_as = ""
+                bgp_data = router_cfg.get("bgp", [])
+                if isinstance(bgp_data, list) and bgp_data:
+                    bgp_as = str(bgp_data[0].get("as-no", "")) if isinstance(bgp_data[0], dict) else ""
+                elif isinstance(bgp_data, dict):
+                    bgp_as = str(bgp_data.get("as-no", ""))
+
+                # NTP servers
+                ntp_cfg = config.get("ntp", {}) if isinstance(config.get("ntp"), dict) else {}
+                ntp_servers = []
+                ntp_server_list = ntp_cfg.get("server", {})
+                if isinstance(ntp_server_list, dict):
+                    peer_list = ntp_server_list.get("server-list", [])
+                    if isinstance(peer_list, list):
+                        ntp_servers = [s.get("ip-address", "") for s in peer_list if isinstance(s, dict)]
+
+                # Interface count
+                iface_cfg = config.get("interface", {})
+                iface_count = 0
+                iface_with_desc = 0
+                iface_without_desc = 0
+                if isinstance(iface_cfg, dict):
+                    for itype, ilist in iface_cfg.items():
+                        if isinstance(ilist, list):
+                            iface_count += len(ilist)
+                            for iface in ilist:
+                                if isinstance(iface, dict) and iface.get("description"):
+                                    iface_with_desc += 1
+                                else:
+                                    iface_without_desc += 1
+
+                # AAA enabled
+                aaa_cfg = config.get("aaa", {})
+                aaa_enabled = bool(aaa_cfg) if aaa_cfg is not None else False
+
                 result["config_summary"] = {
                     "hostname": config.get("hostname", ""),
                     "version": config.get("version", ""),
-                    "users": config.get("username", []),
-                    "domain_name": config.get("ip", {}).get("domain", {}).get("name", "") if isinstance(config.get("ip"), dict) else "",
+                    "users": [u.get("name", "") for u in config.get("username", []) if isinstance(u, dict)],
+                    "domain_name": ip_cfg.get("domain", {}).get("name", "") if isinstance(ip_cfg.get("domain"), dict) else "",
+                    "aaa_enabled": aaa_enabled,
                     "vrf_list": [v.get("name", "") for v in config.get("vrf", {}).get("definition", [])] if isinstance(config.get("vrf", {}).get("definition"), list) else [],
-                    "interface_types": list(config.get("interface", {}).keys()) if isinstance(config.get("interface"), dict) else [],
-                    "routing_protocols": list(config.get("router", {}).keys()) if isinstance(config.get("router"), dict) else [],
+                    "vrf_details": self._extract_vrf_details(config),
+                    "interface_count": iface_count,
+                    "interface_with_description": iface_with_desc,
+                    "interface_without_description": iface_without_desc,
+                    "interface_types": list(iface_cfg.keys()) if isinstance(iface_cfg, dict) else [],
+                    "routing_protocols": list(router_cfg.keys()),
                     "mpls_enabled": bool(config.get("mpls")),
-                    "ssh_version": config.get("ip", {}).get("ssh", {}).get("version") if isinstance(config.get("ip"), dict) else None,
-                    "clock_timezone": config.get("clock", {}).get("timezone", {}).get("zone", "") if isinstance(config.get("clock"), dict) else "",
-                    "banner_motd": bool(config.get("banner", {}).get("motd")) if isinstance(config.get("banner"), dict) else False,
-                    "logging": bool(config.get("logging")),
+                    "ssh_version": ip_cfg.get("ssh", {}).get("version") if isinstance(ip_cfg.get("ssh"), dict) else None,
+                    "clock_timezone": clock_timezone,
+                    "banner_motd": bool(banner_cfg.get("motd")),
+                    "logging": bool(logging_cfg),
+                    "syslog_servers": syslog_hosts,
                     "ntp": bool(config.get("ntp")),
+                    "ntp_servers": ntp_servers,
                     "snmp": bool(config.get("snmp-server")),
+                    "ospf_process_ids": ospf_ids,
+                    "bgp_as_number": bgp_as,
+                    "vty_login_mode": vty_login,
                 }
         except Exception:
             pass
@@ -577,21 +691,19 @@ class NSOClient:
     # --- Interface Management ---
 
     def get_interfaces(self, device: str) -> List[Dict[str, Any]]:
-        """장비의 모든 인터페이스 설정 정보 반환"""
-        config = self._fetch_config(device)
-        if not isinstance(config, dict):
+        """장비의 모든 인터페이스 설정 정보 반환 (서브트리 쿼리)"""
+        interfaces_data = self._fetch_config(device, "interface")
+        if not isinstance(interfaces_data, dict):
             return []
-        
-        interfaces_data = config.get("interface", {})
+
         result = []
-        
         if isinstance(interfaces_data, dict):
             for iface_type, iface_list in interfaces_data.items():
                 if isinstance(iface_list, list):
                     result.extend(iface_list)
         elif isinstance(interfaces_data, list):
             result = interfaces_data
-            
+
         return result
 
     def get_interface_ips(self, device: str) -> Dict[str, str]:

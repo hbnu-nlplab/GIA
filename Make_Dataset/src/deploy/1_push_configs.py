@@ -56,6 +56,7 @@ def parse_cfg(path: Path) -> list[str]:
     """
     lines = path.read_text(encoding="utf-8").splitlines()
     cmds = []
+    aaa_lines = []  # AAA 라인을 모아서 마지막에 안전한 순서로 적용
     in_banner = False
     delim = None
     prev_is_interface = False
@@ -90,11 +91,10 @@ def parse_cfg(path: Path) -> list[str]:
         if "crypto key generate rsa" in line or "crypto key zeroize" in line:
             continue
 
-        # aaa new-model → 별도 단계에서 제거 처리 (confirm 프롬프트 필요)
-        if line.strip() == "aaa new-model":
-            continue
-        # aaa authentication → aaa new-model 없이는 불필요
-        if line.strip().startswith("aaa "):
+        # AAA 라인은 수집해서 config 마지막에 순서대로 적용
+        # (username이 먼저 들어간 뒤에 aaa new-model → aaa authentication 순서)
+        if line.strip() == "aaa new-model" or line.strip().startswith("aaa "):
+            aaa_lines.append(line)
             continue
 
         # interface 블록 추적
@@ -120,6 +120,20 @@ def parse_cfg(path: Path) -> list[str]:
     # 파일 끝에서 interface 블록이 열려있었으면
     if prev_is_interface:
         cmds.append(" no shutdown")
+
+    # AAA 라인을 안전한 순서로 끝에 추가:
+    # username이 이미 config에 있으므로, aaa new-model → aaa authentication 순서로 적용
+    # 이렇게 하면 aaa new-model 적용 시 local auth가 바로 활성화됨
+    if aaa_lines:
+        # enable secret을 먼저 (aaa new-model 전에 설정해야 enable 인증 가능)
+        has_enable = any("enable secret" in c or "enable password" in c for c in cmds)
+        if not has_enable:
+            cmds.append("enable secret 0 admin")
+        # aaa new-model을 먼저, 나머지 aaa 라인은 그 뒤에
+        aaa_model = [l for l in aaa_lines if l.strip() == "aaa new-model"]
+        aaa_rest = [l for l in aaa_lines if l.strip() != "aaa new-model"]
+        cmds.extend(aaa_model)
+        cmds.extend(aaa_rest)
 
     return cmds
 
@@ -447,31 +461,10 @@ async def main():
         rsa_ok = sum(1 for s in rsa_results.values() if s == "OK")
         print(f"\n  RSA Keys: {rsa_ok}/{len(rsa_results)} OK")
 
-    # ── Phase 3: AAA Fixup (devices with aaa new-model) ──
+    # ── Phase 3: AAA는 이제 parse_cfg에서 안전한 순서로 push됨 ──
+    # (username → aaa new-model → aaa authentication 순서)
+    # post_push_fixup 불필요. AAA가 유지되어 NSO/데이터셋 정합성 보장.
     fixup_results = {}
-    if not args.dry_run:
-        aaa_devices = []
-        for d in devices:
-            name = d["name"]
-            if results.get(name) != "OK":
-                continue
-            cfg_path = args.configs_dir / f"{name}.cfg"
-            if _cfg_has_aaa(cfg_path):
-                aaa_devices.append(d)
-
-        if aaa_devices:
-            print(f"\n--- Phase 3: AAA Fixup ({len(aaa_devices)} devices) ---")
-            for d in aaa_devices:
-                name = d["name"]
-                print(f"  [{name:8s}] removing aaa + fixing VTY ... ", end="", flush=True)
-                status = await post_push_fixup(host, d["telnet_port"], name,
-                                               admin_pw)
-                fixup_results[name] = status
-                icon = "✓" if status == "OK" else "✗"
-                print(f"{icon} {status}")
-
-            fixup_ok = sum(1 for s in fixup_results.values() if s == "OK")
-            print(f"\n  AAA Fixup: {fixup_ok}/{len(fixup_results)} OK")
 
     # ── 요약 ──
     print(f"\n{'='*55}")

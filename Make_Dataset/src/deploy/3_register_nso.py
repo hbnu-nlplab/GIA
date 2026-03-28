@@ -103,15 +103,19 @@ class NSORegistrar:
             return []
 
     def create_authgroup(self, group_name: str, username: str,
-                         password: str) -> bool:
-        """인증 그룹 생성."""
+                         password: str, enable_password: str = "") -> bool:
+        """인증 그룹 생성 (enable password 포함)."""
+        default_map = {
+            "remote-name": username,
+            "remote-password": password,
+        }
+        # aaa new-model 장비는 enable secret 인증 필요
+        if enable_password:
+            default_map["remote-secondary-password"] = enable_password
         payload = {
             "tailf-ncs:group": {
                 "name": group_name,
-                "default-map": {
-                    "remote-name": username,
-                    "remote-password": password,
-                },
+                "default-map": default_map,
             }
         }
         r = self.session.patch(
@@ -268,7 +272,7 @@ def main():
 
     # ── Phase 1: Authgroup 생성 ──
     print(f"\n--- Phase 1: Create Authgroup '{authgroup}' ---")
-    if nso.create_authgroup(authgroup, gs.get("nso_device_username", gs["nso_username"]), admin_pw):
+    if nso.create_authgroup(authgroup, gs.get("nso_device_username", gs["nso_username"]), admin_pw, enable_password=admin_pw):
         print(f"  [✓] Authgroup '{authgroup}' 생성/갱신 완료")
     else:
         print(f"  [!] Authgroup 생성 실패 (이미 존재할 수 있음, 계속 진행)")

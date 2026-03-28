@@ -74,14 +74,30 @@ QUESTION: {question}
 QUESTION LEVEL: {level}
 {feedback_section}
 
+TOOL SELECTION GUIDE:
+- Config queries (hostname, SSH, AAA, VRF, users, timezone, OSPF, BGP AS):
+    → nso_get_device_info(device="X") for single device
+    → nso_get_all_device_info() for all devices
+- Interface details (IP, description, count, status):
+    → nso_get_interfaces(device="X") or nso_get_all_interfaces()
+- Routing table entries:
+    → batfish_route_table(device="X") — NOT nso_get_device_info
+- BGP sessions/neighbors/peering:
+    → batfish_bgp_sessions() for full mesh analysis
+    → nso_get_routing(device="X") for single device BGP config
+- Path/reachability (L4):
+    → batfish_traceroute(src="X", dst="Y")
+    → batfish_reachability(src="X", dst="Y")
+- Link failure (L5):
+    → batfish_link_failure(node1="X", node2="Y")
+- Node failure / blast radius (L5):
+    → batfish_node_failure(node="X")
+- Single point of failure (L5):
+    → batfish_spof_detection()
+
 STRICT RULES:
 - Use the ABSOLUTE MINIMUM tools. 1 tool call is ideal, 2-3 max.
-- For L1 (single device): ONLY call nso_get_device_info(device="<name>") — ONE call. Extract device name from the question.
-- For L2 (aggregation across devices): ONE call to nso_get_all_device_info() or nso_get_all_interfaces().
-- For L3 (cross-comparison): nso_get_all_interfaces() or batfish_bgp_sessions(). Max 2 calls.
-- For L4 (path/reachability): batfish_traceroute(src, dst) — ONE call. Extract src/dst from the question.
-- For L5 (what-if/failure): batfish_advanced_verify + optionally batfish_traceroute. Max 2 calls.
-- NEVER call 3+ tools for L1/L2 questions. That is wasteful.
+- Device names are UPPERCASE: PE1, P2, Leaf3. Always capitalize.
 - If Critic feedback is given, focus on gathering the SPECIFIC missing information.
 
 OUTPUT: A JSON array of tool calls. Each element: {{"tool": "<name>", "args": {{...}}}}
@@ -181,27 +197,22 @@ def _normalize_device_args(plans: List[Dict]) -> List[Dict]:
 
 
 # ---------------------------------------------------------------------------
-# Async tool execution
+# Tool execution (sync — no nested event loop issues)
 # ---------------------------------------------------------------------------
-def _run_async(coro):
-    """Run an async coroutine from sync context."""
-    try:
-        asyncio.get_running_loop()
-        # Already in an event loop — use thread to avoid nested loop
-        import concurrent.futures
-        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
-            return pool.submit(asyncio.run, coro).result()
-    except RuntimeError:
-        # No running loop — safe to use asyncio.run
-        return asyncio.run(coro)
-
-
-async def _execute_tools_async(
+def execute_tool_calls(
     plans: List[Dict], tools: Dict[str, Any]
 ) -> List[Dict]:
-    """Execute tool calls concurrently."""
+    """Execute tool calls sequentially using sync invoke-in-thread.
 
-    async def call_one(plan: Dict) -> Dict:
+    Avoids nested event loop issues by running each tool in a thread
+    with its own asyncio.run(), one at a time.
+    """
+    if not plans:
+        return []
+
+    import concurrent.futures
+
+    def _call_one(plan: Dict) -> Dict:
         tool_name = plan.get("tool", "")
         args = plan.get("args", {})
         tool_fn = tools.get(tool_name)
@@ -213,7 +224,9 @@ async def _execute_tools_async(
             }
         start = time.monotonic()
         try:
-            result = await tool_fn.ainvoke(args)
+            # Run async tool in a fresh event loop in a separate thread
+            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+                result = pool.submit(asyncio.run, tool_fn.ainvoke(args)).result(timeout=300)
             elapsed = (time.monotonic() - start) * 1000
             return {
                 "tool": tool_name, "args": args,
@@ -221,23 +234,14 @@ async def _execute_tools_async(
             }
         except Exception as e:
             elapsed = (time.monotonic() - start) * 1000
+            logger.error(f"Tool {tool_name} failed: {type(e).__name__}: {e}")
             return {
                 "tool": tool_name, "args": args,
-                "result": f"ERROR: {e}",
+                "result": f"ERROR: {type(e).__name__}: {e}",
                 "elapsed_ms": round(elapsed, 1),
             }
 
-    tasks = [call_one(p) for p in plans]
-    return list(await asyncio.gather(*tasks))
-
-
-def execute_tool_calls(
-    plans: List[Dict], tools: Dict[str, Any]
-) -> List[Dict]:
-    """Sync wrapper for async tool execution."""
-    if not plans:
-        return []
-    return _run_async(_execute_tools_async(plans, tools))
+    return [_call_one(p) for p in plans]
 
 
 # ---------------------------------------------------------------------------

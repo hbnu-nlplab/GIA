@@ -69,7 +69,51 @@ try:
 except ImportError:
     pass
 
+from langchain_core.callbacks import BaseCallbackHandler
 from tqdm import tqdm
+
+
+# ---------------------------------------------------------------------------
+# Token Usage Tracking Callback
+# ---------------------------------------------------------------------------
+
+class TokenUsageCallback(BaseCallbackHandler):
+    """Accumulates token usage across all LLM calls in a single graph run."""
+
+    def __init__(self):
+        super().__init__()
+        self.prompt_tokens = 0
+        self.completion_tokens = 0
+        self.total_tokens = 0
+        self.llm_calls = 0
+
+    def on_llm_end(self, response, **kwargs):
+        """Called after each LLM invocation. Extract token counts."""
+        self.llm_calls += 1
+        # LangChain ChatOpenAI stores usage in generation info or llm_output
+        if hasattr(response, "llm_output") and response.llm_output:
+            usage = response.llm_output.get("token_usage", {})
+            self.prompt_tokens += usage.get("prompt_tokens", 0)
+            self.completion_tokens += usage.get("completion_tokens", 0)
+            self.total_tokens += usage.get("total_tokens", 0)
+        # Also check generations for usage_metadata (newer LangChain)
+        if hasattr(response, "generations"):
+            for gen_list in response.generations:
+                for gen in gen_list:
+                    msg = getattr(gen, "message", None)
+                    if msg and hasattr(msg, "usage_metadata") and msg.usage_metadata:
+                        um = msg.usage_metadata
+                        self.prompt_tokens += getattr(um, "input_tokens", 0)
+                        self.completion_tokens += getattr(um, "output_tokens", 0)
+                        self.total_tokens += getattr(um, "total_tokens", 0)
+
+    def get_usage(self) -> Dict[str, int]:
+        return {
+            "prompt_tokens": self.prompt_tokens,
+            "completion_tokens": self.completion_tokens,
+            "total_tokens": self.total_tokens,
+            "llm_calls": self.llm_calls,
+        }
 
 # ---------------------------------------------------------------------------
 # OpenRouter API key fallback
@@ -246,16 +290,28 @@ def check_mcp_server() -> bool:
 # ---------------------------------------------------------------------------
 
 def setup_graph():
-    """Initialize models, register tools, build graph. Returns (graph, tool_catalog)."""
+    """Initialize models, register tools, build graph. Returns (graph, tool_catalog).
+
+    Uses DIRECT_TOOLS (bypass MCP HTTP) for faster evaluation.
+    Falls back to CORE_TOOLS (MCP proxy) if direct import fails.
+    """
     from agents_netally.main_netally import build_graph, init_models
     from agents_netally.tool_dispatch import register_tools, build_tool_catalog
-    from agent.mcp_tools import CORE_TOOLS
 
     # 1. Init LLM models
     init_models()
 
-    # 2. Register MCP tools in tool_dispatch registry
-    tool_dict = {t.name: t for t in CORE_TOOLS}
+    # 2. Register tools — prefer direct (no HTTP overhead)
+    try:
+        from agent.direct_tools import DIRECT_TOOLS
+        tool_list = DIRECT_TOOLS
+        logger.info("Using DIRECT_TOOLS (bypass MCP HTTP)")
+    except ImportError:
+        from agent.mcp_tools import CORE_TOOLS
+        tool_list = CORE_TOOLS
+        logger.info("Falling back to CORE_TOOLS (MCP HTTP proxy)")
+
+    tool_dict = {t.name: t for t in tool_list}
     register_tools(tool_dict)
 
     # 3. Build tool catalog text for LLM prompts
@@ -263,6 +319,22 @@ def setup_graph():
 
     # 4. Compile LangGraph
     graph = build_graph()
+
+    # 5. Pre-load Batfish snapshot (avoid cold-start on first L4/L5 question)
+    try:
+        import os
+        from agent.clients.batfish import get_batfish_client
+        bf = get_batfish_client()
+        if not bf._builder:
+            snap = os.getenv("BATFISH_SNAPSHOT") or os.getenv("BATFISH_NETWORK") or "default"
+            if bf.load_snapshot(snap):
+                logger.info(f"Batfish snapshot pre-loaded: {snap}")
+            else:
+                logger.warning("Batfish snapshot pre-load failed (L4/L5 will auto-load)")
+        else:
+            logger.info("Batfish snapshot already loaded")
+    except Exception as e:
+        logger.warning(f"Batfish pre-load skipped: {e}")
 
     logger.info(
         f"Graph compiled with {len(tool_dict)} tools registered"
@@ -344,9 +416,13 @@ def evaluate_one(
 
     for attempt in range(max_retries):
         try:
+            token_cb = TokenUsageCallback()
             output = graph.invoke(
                 state,
-                config={"recursion_limit": recursion_limit},
+                config={
+                    "recursion_limit": recursion_limit,
+                    "callbacks": [token_cb],
+                },
             )
             elapsed_ms = int((time.perf_counter() - start) * 1000)
 
@@ -364,6 +440,7 @@ def evaluate_one(
                 "inner_turn_count": output.get("inner_turn_count", 0),
                 "status": output.get("status", ""),
                 "attempts": attempt + 1,
+                "token_usage": token_cb.get_usage(),
             }
         except Exception as exc:
             last_error = f"{type(exc).__name__}: {exc}"
@@ -385,6 +462,7 @@ def evaluate_one(
         "inner_turn_count": 0,
         "status": "ERROR",
         "attempts": max_retries,
+        "token_usage": {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0, "llm_calls": 0},
     }
 
 
@@ -423,16 +501,25 @@ def run_eval(args: argparse.Namespace) -> None:
         format="%(asctime)s | %(name)s | %(levelname)s | %(message)s",
     )
 
-    # 1. Check MCP server
-    logger.info("Checking MCP server connectivity...")
-    if not check_mcp_server():
-        print(
-            f"\nERROR: MCP server is not reachable at {MCP_SERVER_URL}\n"
-            "Start the MCP server first:\n"
-            "  cd NetAlly && python -m agent.mcp_server\n"
-            "Or set NETALLY_MCP_SERVER_URL to a running instance.\n"
-        )
-        sys.exit(1)
+    # 1. Check if direct tools are available (skip MCP check if so)
+    use_direct = False
+    try:
+        from agent.direct_tools import DIRECT_TOOLS  # noqa: F401
+        use_direct = True
+        logger.info("Direct tools available — skipping MCP server check")
+    except ImportError:
+        pass
+
+    if not use_direct:
+        logger.info("Checking MCP server connectivity...")
+        if not check_mcp_server():
+            print(
+                f"\nERROR: MCP server is not reachable at {MCP_SERVER_URL}\n"
+                "Start the MCP server first:\n"
+                "  cd NetAlly && python -m agent.mcp_server\n"
+                "Or set NETALLY_MCP_SERVER_URL to a running instance.\n"
+            )
+            sys.exit(1)
 
     # 2. Load dataset
     dataset = load_dataset(args.dataset)
@@ -549,6 +636,9 @@ def run_eval(args: argparse.Namespace) -> None:
             tc.get("tool", "") for tc in tool_calls_log if isinstance(tc, dict)
         ]
 
+        # Token usage
+        token_usage = resp.get("token_usage", {})
+
         result_entry: Dict[str, Any] = {
             "question_id": qid,
             "question": question_text,
@@ -565,6 +655,11 @@ def run_eval(args: argparse.Namespace) -> None:
             "format_parseable": fmt["parseable"],
             "format_completeness": fmt["completeness"],
             "attempts": resp.get("attempts", 1),
+            # Token usage
+            "prompt_tokens": token_usage.get("prompt_tokens", 0),
+            "completion_tokens": token_usage.get("completion_tokens", 0),
+            "total_tokens": token_usage.get("total_tokens", 0),
+            "llm_calls": token_usage.get("llm_calls", 0),
             # MAS debug info
             "mas_outer_loops": resp.get("outer_loop_count", 0),
             "mas_inner_turns": resp.get("inner_turn_count", 0),
@@ -693,9 +788,15 @@ def run_eval(args: argparse.Namespace) -> None:
                 if new_count % INTERMEDIATE_STATS_INTERVAL == 0:
                     _print_intermediate_stats(level_correct, level_total, new_count)
 
-    # Final save
+    # Final save — include token usage summary in meta
     meta["duration_sec"] = round(time.time() - start_time, 1)
     meta["date_completed"] = datetime.now().isoformat()
+    meta["token_usage_total"] = {
+        "prompt_tokens": sum(r.get("prompt_tokens", 0) for r in results),
+        "completion_tokens": sum(r.get("completion_tokens", 0) for r in results),
+        "total_tokens": sum(r.get("total_tokens", 0) for r in results),
+        "llm_calls": sum(r.get("llm_calls", 0) for r in results),
+    }
     save_output(output_path, meta, results)
 
     # --- Level-wise summary table ---
@@ -728,22 +829,28 @@ def run_eval(args: argparse.Namespace) -> None:
 
     ok_count = sum(1 for r in results if r["answer_status"] == "OK")
     err_count = sum(1 for r in results if r["answer_status"] == "ERROR")
+    ok_results = [r for r in results if r["answer_status"] == "OK"]
     avg_latency = (
-        sum(r["latency_ms"] for r in results if r["answer_status"] == "OK")
-        / max(ok_count, 1)
+        sum(r["latency_ms"] for r in ok_results) / max(ok_count, 1)
     )
     avg_tools = (
-        sum(r["tool_count"] for r in results if r["answer_status"] == "OK")
-        / max(ok_count, 1)
+        sum(r["tool_count"] for r in ok_results) / max(ok_count, 1)
     )
     avg_outer = (
-        sum(r.get("mas_outer_loops", 0) for r in results if r["answer_status"] == "OK")
-        / max(ok_count, 1)
+        sum(r.get("mas_outer_loops", 0) for r in ok_results) / max(ok_count, 1)
     )
     avg_inner = (
-        sum(r.get("mas_inner_turns", 0) for r in results if r["answer_status"] == "OK")
-        / max(ok_count, 1)
+        sum(r.get("mas_inner_turns", 0) for r in ok_results) / max(ok_count, 1)
     )
+
+    # Token usage stats
+    total_prompt_tokens = sum(r.get("prompt_tokens", 0) for r in results)
+    total_completion_tokens = sum(r.get("completion_tokens", 0) for r in results)
+    total_all_tokens = sum(r.get("total_tokens", 0) for r in results)
+    total_llm_calls = sum(r.get("llm_calls", 0) for r in results)
+    avg_tokens_per_q = total_all_tokens / max(len(results), 1)
+    avg_llm_calls_per_q = total_llm_calls / max(len(results), 1)
+
     total_correct = sum(st["correct"] for st in all_level_stats.values())
     total_count = sum(st["count"] for st in all_level_stats.values())
     overall_acc = total_correct / total_count * 100 if total_count > 0 else 0.0
@@ -757,6 +864,15 @@ def run_eval(args: argparse.Namespace) -> None:
     print(f"  Avg tools/q     : {avg_tools:.1f}")
     print(f"  Avg outer loops : {avg_outer:.1f}")
     print(f"  Avg inner turns : {avg_inner:.1f}")
+    print()
+    print(f"  --- Token Usage ---")
+    print(f"  Total prompt    : {total_prompt_tokens:,}")
+    print(f"  Total completion: {total_completion_tokens:,}")
+    print(f"  Total tokens    : {total_all_tokens:,}")
+    print(f"  Total LLM calls : {total_llm_calls:,}")
+    print(f"  Avg tokens/q    : {avg_tokens_per_q:,.0f}")
+    print(f"  Avg LLM calls/q : {avg_llm_calls_per_q:.1f}")
+    print()
     print(f"  Duration        : {meta['duration_sec']:.1f} sec")
     print(f"  Output          : {output_path}")
     print(f"{'=' * 70}")

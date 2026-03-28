@@ -105,18 +105,72 @@ def collector_node(state: dict):
     models = get_models()
     llm = models.get('B', models['A'])
 
-    # === MCP MODE: 도구 카탈로그가 있으면 도구 호출 ===
+    # === MCP MODE: Collector가 직접 도구 선택+호출+추출 (Tool Planner 통합) ===
     tool_catalog = state.get("tool_catalog", "")
     if tool_catalog:
         from agents_netally.tool_dispatch import (
-            plan_tool_calls, execute_tool_calls, format_tool_results,
+            execute_tool_calls, format_tool_results,
             get_registered_tools, _normalize_device_args,
         )
+        import json as _json
         tools = get_registered_tools()
         if tools:
             feedback = state.get("feedback_to_collector", "")
             level = state.get("level", "")
-            plans = plan_tool_calls(llm, state["question"], tool_catalog, level, feedback)
+
+            # Collector LLM이 도구 선택 + 데이터 추출을 한 번에 수행
+            tool_select_prompt = f"""You are a Network Info Collector with tool access.
+STEP 1: Select tools to gather data for this question.
+STEP 2: After receiving tool results, extract relevant information.
+
+AVAILABLE TOOLS:
+{tool_catalog}
+
+TOOL SELECTION GUIDE:
+- Config queries (hostname, SSH, AAA, VRF, users, timezone, OSPF, BGP AS):
+    nso_get_device_info(device="X") for single device, nso_get_all_device_info() for all
+- Interface details: nso_get_interfaces(device="X") or nso_get_all_interfaces()
+- Routing table: batfish_route_table(device="X")
+- BGP sessions: batfish_bgp_sessions()
+- Path/reachability: batfish_traceroute(src="X", dst="Y")
+- Link failure: batfish_link_failure(node1="X", node2="Y")
+- Node failure: batfish_node_failure(node="X")
+- SPOF detection: batfish_spof_detection()
+
+RULES:
+- 1 tool call is ideal, 2-3 max. MINIMUM tools needed.
+- Device names are UPPERCASE: PE1, P2, Leaf3.
+{f'- CRITIC FEEDBACK (gather this specific info): {feedback}' if feedback else ''}
+
+QUESTION: {state["question"]}
+LEVEL: {level}
+
+Output a JSON array of tool calls. Each: {{"tool": "<name>", "args": {{...}}}}
+Output ONLY the JSON array."""
+
+            response = llm.invoke(tool_select_prompt)
+            text = _get_text(response)
+            # Parse tool plan from response
+            text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
+            text = re.sub(r"```json\s*", "", text)
+            text = re.sub(r"```\s*", "", text).strip()
+            try:
+                plans = _json.loads(text)
+                if not isinstance(plans, list):
+                    print(f"  ⚠️ Tool plan not a list: {type(plans).__name__}: {str(plans)[:100]}")
+                    plans = []
+            except _json.JSONDecodeError:
+                match = re.search(r'\[.*\]', text, re.DOTALL)
+                if match:
+                    try:
+                        plans = _json.loads(match.group(0))
+                    except _json.JSONDecodeError:
+                        print(f"  ⚠️ Tool plan parse failed: {text[:200]}")
+                        plans = []
+                else:
+                    print(f"  ⚠️ No JSON array in LLM response: {text[:200]}")
+                    plans = []
+
             plans = _normalize_device_args(plans)
             print(f"  📋 Tool plan: {[p.get('tool') for p in plans]}")
 
@@ -466,13 +520,17 @@ SIMULATION RULES:
 
     # answer_type 기반 포맷 힌트 추가 — Skeptic 거부율 감소 목적
     ANSWER_TYPE_HINTS = {
-        "scalar_str": "\nFORMAT HINT: Output a single string value. Example: PE1, GigabitEthernet0/0, 65000",
+        "text": "\nFORMAT HINT: Output the COMPLETE value exactly as configured. Include ALL parts (e.g., timezone 'KST 9' not just 'KST', SSH version '2' not 'version 2'). Do NOT add quotes. When a value is not configured or not applicable, output 'N/A' (not 'None' or 'null').",
+        "scalar_str": "\nFORMAT HINT: Output the COMPLETE value exactly as configured. Include ALL parts (e.g., timezone 'KST 9' not just 'KST'). Do NOT add quotes.",
+        "number": "\nFORMAT HINT: Output a single integer. Example: 5, 12, 0",
         "scalar_int": "\nFORMAT HINT: Output a single integer. Example: 5, 12, 0",
-        "set_str": "\nFORMAT HINT: Output a JSON array of strings. Example: [\"item1\", \"item2\"]",
-        "map_str_int": "\nFORMAT HINT: Output a JSON object with string keys and integer values. Example: {\"PE1\": 5, \"PE2\": 3}",
-        "map_str_str": "\nFORMAT HINT: Output a JSON object with string keys and string values. Example: {\"GigabitEthernet0/0\": \"up\", \"Loopback0\": \"up\"}",
-        "bool": "\nFORMAT HINT: Output exactly 'true' or 'false' (lowercase, no quotes).",
-        "path": "\nFORMAT HINT: Output device hostnames separated by arrow. Example: pe1→p2→p3→pe2. Or 'No path' if unreachable.",
+        "set": "\nFORMAT HINT: Output a JSON array of strings. Example: [\"item1\", \"item2\"]. Use [] if none found.",
+        "set_str": "\nFORMAT HINT: Output a JSON array of strings. Example: [\"item1\", \"item2\"]. Use [] if none found.",
+        "map": "\nFORMAT HINT: Output a JSON object. For comparison questions, use EXACTLY: {\"difference\": N, \"host1_count\": N, \"host2_count\": N}. For status mappings: {\"key\": \"value\"}. Use {} if none found.",
+        "map_str_int": "\nFORMAT HINT: For comparison questions (e.g., 'Compare X counts of A and B'), output EXACTLY: {\"difference\": N, \"host1_count\": N, \"host2_count\": N}. For other mappings: {\"PE1\": 5, \"PE2\": 3}.",
+        "map_str_str": "\nFORMAT HINT: Output a JSON object with string keys and string values. For interface status: {\"GigabitEthernet0/0\": \"up\", \"Loopback0\": \"up\"}.",
+        "bool": "\nFORMAT HINT: Output exactly 'Enabled' or 'Disabled' for feature status. Output 'true' or 'false' for yes/no questions.",
+        "path": "\nFORMAT HINT: Output device hostnames separated by ' -> '. Example: PE1 -> P2 -> P3 -> PE2. Or 'No path' if unreachable.",
     }
     answer_type = state.get("answer_type", "")
     format_hint = ANSWER_TYPE_HINTS.get(answer_type, "")

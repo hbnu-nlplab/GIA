@@ -604,10 +604,10 @@ def network_verify(
             )
             
         elif test_type == "bgp_session":
-            return {"sessions": bf.get_bgp_sessions(device_filter=params.get("device"))}
+            return bf.get_bgp_sessions(device_filter=params.get("device"))
             
         elif test_type == "route_table":
-            return {"routes": bf.get_route_table(device=params.get("device"))}
+            return bf.get_route_table(device=params.get("device"))
         
         # =====================================================================
         # L4 분석 (도달성 상세 분석)

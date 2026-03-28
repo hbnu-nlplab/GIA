@@ -194,6 +194,24 @@ class BatfishClient:
                     self._builder.bf = bf_session
                     self._builder.snapshot_name = snap_name
                     self._builder.nodes = [n for n in bf_session.q.nodeProperties().answer().frame()["Node"]]
+                    # node_ips/interfaces 채우기 (L5 link_failure 등에 필요)
+                    try:
+                        intf_df = bf_session.q.interfaceProperties().answer().frame()
+                        for _, row in intf_df.iterrows():
+                            intf = row.get("Interface", None)
+                            if intf is None:
+                                continue
+                            node = intf.hostname if hasattr(intf, "hostname") else str(intf).split("[")[0]
+                            if node not in self._builder.interfaces:
+                                self._builder.interfaces[node] = []
+                                self._builder.node_ips[node] = []
+                            primary = str(row.get("Primary_Address", ""))
+                            ip = primary.split("/")[0] if primary and primary != "None" else ""
+                            if ip:
+                                self._builder.node_ips[node].append(ip)
+                        logger.info(f"Populated node_ips for {len(self._builder.node_ips)} nodes")
+                    except Exception as e:
+                        logger.warning(f"Failed to populate node_ips: {e}")
                     logger.info(f"Connected to existing Batfish network: {topology_name}/{snap_name} ({len(self._builder.nodes)} nodes)")
                     return True
         except Exception as e:
@@ -248,35 +266,34 @@ class BatfishClient:
             return {"error": str(e)}
 
     def _resolve_location(self, addr: str) -> str:
-        """IP 주소를 Batfish locationSpecifier 형식으로 변환.
+        """IP 주소를 Batfish 장비명으로 변환.
 
-        Batfish startLocation은 장비명 또는 '@enter(IP)' 형식이 필요.
-        - 장비명(예: 'PE1') → 그대로
-        - IP(예: '172.17.2.2') → 해당 IP를 가진 장비명으로 변환 시도, 실패 시 '@enter(src_intf)' 사용
+        Batfish startLocation은 장비명이어야 함 (@enter(IP)는 동작 안 함).
+        - 장비명(예: 'PE1') → 소문자로
+        - IP(예: '10.0.12.1') → interfaceProperties에서 해당 IP 가진 장비명 검색
         """
         import re
-        # IP 패턴이 아니면 장비명으로 간주 (Batfish는 소문자 노드명 사용)
         if not re.match(r'^\d+\.\d+\.\d+\.\d+$', addr):
             return addr.lower()
 
-        # IP → 장비명 매핑 (nodeProperties + interfaceProperties에서 검색)
+        # IP → 장비명 매핑: interfaceProperties에서 검색
         try:
             bf = self._builder.bf
             intf_df = bf.q.interfaceProperties(
-                properties=["Primary_Address"]
+                properties="Primary_Address"
             ).answer().frame()
             for _, row in intf_df.iterrows():
                 primary = str(row.get("Primary_Address", ""))
-                if addr in primary:
-                    # Interface 컬럼은 "node[intf]" 형식
+                # "10.0.12.1/30" contains "10.0.12.1"
+                if primary.startswith(addr + "/") or primary == addr:
                     intf_str = str(row.get("Interface", ""))
                     node = intf_str.split("[")[0] if "[" in intf_str else intf_str
                     return node
         except Exception:
             pass
 
-        # fallback: @enter 형식
-        return f"@enter({addr})"
+        # Fallback: 장비명 없으면 IP 그대로 (srcIps만 사용, startLocation은 생략)
+        return addr
 
     def traceroute(self, src: str, dst: str) -> Dict[str, Any]:
         """경로 추적"""
@@ -288,12 +305,12 @@ class BatfishClient:
 
             start_loc = self._resolve_location(src)
 
-            # srcIps는 IP일 때만 설정 (장비명이면 생략)
             import re as _re
+            is_ip = bool(_re.match(r'^\d+\.\d+\.\d+\.\d+$', src))
             header_kwargs = {"dstIps": dst}
-            if _re.match(r'^\d+\.\d+\.\d+\.\d+$', src):
-                header_kwargs["srcIps"] = src
 
+            if is_ip:
+                header_kwargs["srcIps"] = src
             result = self._builder.bf.q.traceroute(
                 startLocation=start_loc,
                 headers=HeaderConstraints(**header_kwargs)
@@ -318,6 +335,7 @@ class BatfishClient:
             return {
                 "found": len(best_path) > 0,
                 "path": best_path,
+                "hop_count": len(best_path),
                 "path_str": " -> ".join(best_path),
                 "src_resolved": start_loc,
                 "disposition": best_disposition,
@@ -586,34 +604,66 @@ class BatfishClient:
             logger.warning("get_node_ip(%s) failed: %s", node, e)
         return "0.0.0.0" # Fallback
 
-    def get_bgp_sessions(self, device_filter: Optional[str] = None) -> List[Dict[str, Any]]:
-        """BGP 세션 상태"""
+    def get_bgp_sessions(self, device_filter: Optional[str] = None) -> Dict[str, Any]:
+        """BGP 세션 상태 + 요약 통계"""
         if not self._builder:
-            return []
-            
+            return {"sessions": [], "summary": {}}
+
         try:
             result = self._builder.bf.q.bgpSessionStatus().answer().frame()
             sessions = []
-            
+
             for _, row in result.iterrows():
                 node = str(row.get("Node", ""))
                 if device_filter and device_filter.lower() not in node.lower():
                     continue
-                    
+
                 sessions.append({
                     "node": node,
                     "remote_node": str(row.get("Remote_Node", "")),
-                    "status": str(row.get("Established_Status", "UNKNOWN"))
+                    "local_as": str(row.get("Local_AS", "")),
+                    "remote_as": str(row.get("Remote_AS", "")),
+                    "status": str(row.get("Established_Status", "UNKNOWN")),
                 })
-            return sessions
-        except Exception:
-            return []
 
-    def get_route_table(self, device: str) -> List[Dict[str, Any]]:
-        """라우팅 테이블"""
+            # Compute summary
+            established = sum(1 for s in sessions if s["status"] == "ESTABLISHED")
+            not_established = len(sessions) - established
+
+            # Per-node peer counts (for under-peered detection)
+            from collections import Counter
+            node_peer_count = Counter(s["node"] for s in sessions if s["status"] == "ESTABLISHED")
+            # iBGP full-mesh: each node should peer with (N-1) nodes in same AS
+            as_node_map: Dict[str, set] = {}
+            for s in sessions:
+                as_node_map.setdefault(s["local_as"], set()).add(s["node"])
+            under_peered = []
+            for as_no, nodes in as_node_map.items():
+                expected = len(nodes) - 1
+                if expected > 0:
+                    for n in nodes:
+                        actual = node_peer_count.get(n, 0)
+                        if actual < expected:
+                            under_peered.append({"node": n, "as": as_no, "peers": actual, "expected": expected})
+
+            summary = {
+                "total_sessions": len(sessions),
+                "established": established,
+                "not_established": not_established,
+                "unique_nodes": len(set(s["node"] for s in sessions)),
+                "under_peered_nodes": under_peered,
+                "under_peered_count": len(under_peered),
+            }
+
+            return {"sessions": sessions, "summary": summary}
+        except Exception as e:
+            return {"sessions": [], "summary": {}, "error": str(e)}
+
+    def get_route_table(self, device: str) -> Dict[str, Any]:
+        """라우팅 테이블 + 요약 통계"""
         if not self._builder:
-            return []
-            
+            return {"routes": [], "route_count": 0}
+
         try:
             result = self._builder.bf.q.routes(nodes=device).answer().frame()
             routes = []
@@ -623,6 +673,13 @@ class BatfishClient:
                     "next_hop": str(row.get("Next_Hop", "")),
                     "protocol": str(row.get("Protocol", ""))
                 })
-            return routes
-        except Exception:
-            return []
+            # Pre-compute counts
+            from collections import Counter
+            protocol_counts = dict(Counter(r["protocol"] for r in routes))
+            return {
+                "routes": routes,
+                "route_count": len(routes),
+                "protocol_counts": protocol_counts,
+            }
+        except Exception as e:
+            return {"routes": [], "route_count": 0, "error": str(e)}
