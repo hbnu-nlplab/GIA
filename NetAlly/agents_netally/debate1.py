@@ -132,14 +132,25 @@ TOOL SELECTION GUIDE:
 - Interface details: nso_get_interfaces(device="X") or nso_get_all_interfaces()
 - Routing table: batfish_route_table(device="X")
 - BGP sessions: batfish_bgp_sessions()
-- Path/reachability: batfish_traceroute(src="X", dst="Y")
-- Link failure: batfish_link_failure(node1="X", node2="Y")
-- Node failure: batfish_node_failure(node="X")
-- SPOF detection: batfish_spof_detection()
+- Path/reachability (L4): batfish_traceroute(src="X", dst="Y")
+- Blocking device / root cause: batfish_traceroute(src="X", dst="Y") — the LAST HOP device is the blocker
+
+FOR L5 (What-If / Failure) QUESTIONS — ALWAYS call 2 tools:
+  1st: nso_get_all_device_info() — to understand network topology and routing
+  2nd: the appropriate simulation tool:
+    - Single link failure: batfish_link_failure(node1="X", node2="Y", src="A", dst="B")
+    - TWO links fail simultaneously: batfish_multi_link_failure(link1_node1="X", link1_node2="Y", link2_node1="A", link2_node2="B", src="S", dst="D")
+      IMPORTANT: If question says "both fail" or "simultaneously", you MUST use multi_link_failure, NOT two separate link_failure calls!
+    - Single node failure / disrupted flows: batfish_node_failure(node="X")
+    - TWO nodes fail simultaneously: batfish_multi_node_failure(node1="X", node2="Y")
+      IMPORTANT: If question says "both fail" or "simultaneously", you MUST use multi_node_failure, NOT two separate node_failure calls!
+    - SPOF detection: batfish_spof_detection()
+    - Which device BLOCKS traffic: batfish_find_blocker(src="X", dst="Y") — returns the blocking device name
+  If the simulation tool fails or returns empty, use the NSO topology data to REASON about the failure impact.
 
 RULES:
-- 1 tool call is ideal, 2-3 max. MINIMUM tools needed.
-- Device names are UPPERCASE: PE1, P2, Leaf3.
+- L1/L2/L3: 1-2 tool calls. L4: 1 tool call. L5: 2-3 tool calls.
+- Device names are UPPERCASE for NSO (PE1, Leaf3), lowercase for Batfish (pe1, leaf3).
 {f'- CRITIC FEEDBACK (gather this specific info): {feedback}' if feedback else ''}
 
 QUESTION: {state["question"]}

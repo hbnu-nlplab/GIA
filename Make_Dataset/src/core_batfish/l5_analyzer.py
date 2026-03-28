@@ -399,7 +399,20 @@ class L5AnalyzerMixin:
                         if not accepted_paths:
                             impact = "DISCONNECTED"
                             reason = failure_dispositions[0] if failure_dispositions else "UNKNOWN"
-                            desc = f"Traffic unreachable after failure ({reason})"
+                            # blocking device = 마지막 trace의 마지막 hop
+                            blocking_device = ""
+                            for fail_trace_obj in reversed(fail_trace_list):
+                                for hop in reversed(getattr(fail_trace_obj, 'hops', [])):
+                                    node = getattr(hop, 'node', None)
+                                    if node:
+                                        blocking_device = getattr(node, 'hostname', str(node))
+                                        break
+                                if blocking_device:
+                                    break
+                            if blocking_device:
+                                desc = f"DISCONNECTED (reason: {reason} at {blocking_device})"
+                            else:
+                                desc = f"DISCONNECTED (reason: {reason})"
                         else:
                             # 도달 가능한 후보 중 가장 짧은 경로를 대표 경로로 사용
                             best_path = sorted(accepted_paths, key=len)[0]

@@ -178,7 +178,7 @@ async def nso_get_all_device_info() -> Dict[str, Any]:
 
     result = {"devices": compact_devices, "count": len(compact_devices), "aggregations": agg}
     _CACHE["all_device_info"] = result
-    logger.info(f"Cache SET: nso_get_all_device_info ({len(all_info)} devices)")
+    logger.info(f"Cache SET: nso_get_all_device_info ({len(all_full)} devices)")
     return result
 
 
@@ -336,6 +336,86 @@ async def batfish_link_failure(node1: str, node2: str, src: Optional[str] = None
 
 
 @tool
+async def batfish_multi_link_failure(
+    link1_node1: str, link1_node2: str,
+    link2_node1: str, link2_node2: str,
+    src: str, dst: str,
+) -> Dict[str, Any]:
+    """[Direct] Simulate TWO links failing simultaneously and check traffic impact.
+    Args:
+        link1_node1: First node of link 1 (e.g., 'leaf1')
+        link1_node2: Second node of link 1 (e.g., 'leaf6')
+        link2_node1: First node of link 2 (e.g., 'leaf2')
+        link2_node2: Second node of link 2 (e.g., 'leaf4')
+        src: Source device for reachability test
+        dst: Destination device for reachability test
+    Returns: isolated (bool), new_path, failure_reason."""
+    def _run():
+        bf, builder = _ensure_batfish()
+        # Map device names to interface names for multi_link_failure_analysis
+        edges = builder.bf.q.layer3Edges().answer(snapshot=builder.snapshot_name).frame()
+        def _find_ifaces(n1, n2):
+            for _, row in edges.iterrows():
+                h1 = row['Interface'].hostname
+                h2 = row['Remote_Interface'].hostname
+                if (h1 == n1 and h2 == n2) or (h1 == n2 and h2 == n1):
+                    return str(row['Interface']), str(row['Remote_Interface'])
+            return None, None
+        l1i1, l1i2 = _find_ifaces(link1_node1.lower(), link1_node2.lower())
+        l2i1, l2i2 = _find_ifaces(link2_node1.lower(), link2_node2.lower())
+        if not l1i1 or not l2i1:
+            return {"error": f"Link not found: {link1_node1}-{link1_node2} or {link2_node1}-{link2_node2}"}
+        return _unwrap_result(builder.multi_link_failure_analysis(
+            link1_iface1=l1i1, link1_iface2=l1i2,
+            link2_iface1=l2i1, link2_iface2=l2i2,
+            test_src=src.lower(), test_dst=dst.lower(),
+        ))
+    return await asyncio.to_thread(_run)
+
+
+@tool
+async def batfish_multi_node_failure(node1: str, node2: str) -> Dict[str, Any]:
+    """[Direct] Simulate TWO nodes failing simultaneously and calculate blast radius.
+    Args:
+        node1: First node to fail (e.g., 'p5')
+        node2: Second node to fail (e.g., 'p6')
+    Returns: affected_count (disrupted flows), newly_blocked_flows list."""
+    def _run():
+        bf, builder = _ensure_batfish()
+        # Deactivate both nodes in one fork_snapshot
+        import time as _time
+        snapshot_name = f"failure_{node1}_{node2}_{int(_time.time())}"
+        try:
+            builder.bf.fork_snapshot(
+                base_name=builder.snapshot_name,
+                name=snapshot_name,
+                deactivate_nodes=[node1.lower(), node2.lower()],
+                overwrite=True,
+            )
+            diff = builder.bf.q.differentialReachability().answer(
+                snapshot=snapshot_name,
+                reference_snapshot=builder.snapshot_name,
+            ).frame()
+            blocked = []
+            if not diff.empty:
+                for _, row in diff.iterrows():
+                    flow = row.get('Flow')
+                    if flow:
+                        src_ip = getattr(flow, 'srcIp', 'unknown')
+                        dst_ip = getattr(flow, 'dstIp', 'unknown')
+                        blocked.append(f"{src_ip} -> {dst_ip}")
+            return {"affected_count": len(blocked), "newly_blocked_flows": blocked}
+        except Exception as e:
+            return {"error": str(e), "affected_count": 0}
+        finally:
+            try:
+                builder.bf.delete_snapshot(snapshot_name)
+            except Exception:
+                pass
+    return await asyncio.to_thread(_run)
+
+
+@tool
 async def batfish_node_failure(node: str) -> Dict[str, Any]:
     """[Direct] Simulate a node going down and calculate blast radius.
     Args:
@@ -354,6 +434,32 @@ async def batfish_spof_detection() -> Dict[str, Any]:
     def _run():
         _, builder = _ensure_batfish()
         return _unwrap_result(builder.spof_detection())
+    return await asyncio.to_thread(_run)
+
+
+@tool
+async def batfish_find_blocker(src: str, dst: str) -> Dict[str, Any]:
+    """[Direct] Find which device blocks/drops traffic from src to dst.
+    Runs traceroute and identifies the LAST HOP device where traffic stops.
+    Args:
+        src: Source device (e.g., 'leaf4')
+        dst: Destination device (e.g., 'p7')
+    Returns: blocking_device name, disposition, full path."""
+    def _run():
+        bf, _ = _ensure_batfish()
+        result = bf.traceroute(src=src.lower(), dst=dst.lower())
+        if result.get("error"):
+            return result
+        path = result.get("path", [])
+        disposition = result.get("disposition", "UNKNOWN")
+        blocking_device = path[-1] if path else "unknown"
+        return {
+            "blocking_device": blocking_device,
+            "disposition": disposition,
+            "path": path,
+            "path_str": result.get("path_str", ""),
+            "reachable": disposition == "ACCEPTED",
+        }
     return await asyncio.to_thread(_run)
 
 
@@ -516,10 +622,13 @@ DIRECT_TOOLS = [
     batfish_loop_check,
     batfish_blackhole_check,
     batfish_waypoint_check,
-    # Batfish L5 (3) — What-If 시뮬레이션
+    # Batfish L5 (6) — What-If 시뮬레이션
     batfish_link_failure,
+    batfish_multi_link_failure,
     batfish_node_failure,
+    batfish_multi_node_failure,
     batfish_spof_detection,
+    batfish_find_blocker,
 ]
 
 # 전체 도구 (웹서버, Lab 관리 등 포함)

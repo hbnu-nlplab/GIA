@@ -339,24 +339,78 @@ def setup_graph():
     logger.info(
         f"Graph compiled with {len(tool_dict)} tools registered"
     )
-    return graph, tool_catalog
+
+    # 6. Build topology context (once, reused for all questions)
+    topology_context = build_topology_context()
+    logger.info(f"Topology context: {len(topology_context)} chars")
+
+    return graph, tool_catalog, topology_context
 
 
 # ---------------------------------------------------------------------------
 # Build initial state for a single question
 # ---------------------------------------------------------------------------
 
+def build_topology_context() -> str:
+    """Fetch topology summary once — reused as context for all questions.
+
+    Combines NSO aggregations + Batfish connectivity into a compact JSON
+    so LLM always has baseline network knowledge even if tools fail.
+    """
+    import asyncio as _asyncio
+
+    summary: Dict[str, Any] = {}
+
+    # 1. NSO aggregations (cached)
+    try:
+        from agent.direct_tools import nso_get_all_device_info
+        r = _asyncio.run(nso_get_all_device_info.ainvoke({}))
+        if isinstance(r, dict):
+            summary["device_count"] = r.get("count", 0)
+            summary["aggregations"] = r.get("aggregations", {})
+    except Exception as e:
+        logger.warning(f"Topology context: NSO failed: {e}")
+
+    # 2. Batfish connectivity (adjacency list)
+    try:
+        from agent.tools import get_batfish_client
+        bf = get_batfish_client()
+        if bf._builder:
+            edges = bf._builder.bf.q.layer3Edges().answer(
+                snapshot=bf._builder.snapshot_name
+            ).frame()
+            connectivity = []
+            seen = set()
+            for _, row in edges.iterrows():
+                n1 = row["Interface"].hostname
+                n2 = row["Remote_Interface"].hostname
+                key = tuple(sorted([n1, n2]))
+                if key not in seen:
+                    seen.add(key)
+                    connectivity.append({"from": n1, "to": n2})
+            summary["connectivity"] = connectivity
+            summary["link_count"] = len(connectivity)
+    except Exception as e:
+        logger.warning(f"Topology context: Batfish connectivity failed: {e}")
+
+    if not summary:
+        return ""
+
+    return json.dumps(summary, ensure_ascii=False)
+
+
 def build_initial_state(
     question: str,
     level: str,
     answer_type: str,
     tool_catalog: str,
+    topology_context: str = "",
 ) -> Dict[str, Any]:
     """Create the full NetAgentState dict for graph.invoke()."""
     return {
         # 1. Basic input
         "question": question,
-        "context": "",  # empty -- tools will fetch
+        "context": topology_context,  # minimal topology for fallback reasoning
         "dataset_type": "netconfig",
         "options": None,
         "level": level,
@@ -401,6 +455,7 @@ def evaluate_one(
     question: str,
     level: str,
     answer_type: str,
+    topology_context: str = "",
     recursion_limit: int = DEFAULT_RECURSION_LIMIT,
     max_retries: int = DEFAULT_MAX_RETRIES,
     retry_backoff_sec: int = DEFAULT_RETRY_BACKOFF_SEC,
@@ -410,7 +465,7 @@ def evaluate_one(
     Retries up to *max_retries* times on failure with exponential-ish backoff.
     Returns result dict.
     """
-    state = build_initial_state(question, level, answer_type, tool_catalog)
+    state = build_initial_state(question, level, answer_type, tool_catalog, topology_context)
     start = time.perf_counter()
     last_error: Optional[str] = None
 
@@ -564,7 +619,7 @@ def run_eval(args: argparse.Namespace) -> None:
 
     # 3. Setup graph + tools (one-time)
     logger.info("Initializing MAS graph and MCP tools...")
-    graph, tool_catalog = setup_graph()
+    graph, tool_catalog, topology_context = setup_graph()
 
     # Meta
     start_time = time.time()
@@ -615,6 +670,7 @@ def run_eval(args: argparse.Namespace) -> None:
             question=question_text,
             level=level,
             answer_type=answer_type,
+            topology_context=topology_context,
             recursion_limit=args.recursion_limit,
             max_retries=args.max_retries,
             retry_backoff_sec=DEFAULT_RETRY_BACKOFF_SEC,

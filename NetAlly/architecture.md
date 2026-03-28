@@ -1,203 +1,321 @@
-# NetAlly Architecture (v2.0)
+# NetAlly Architecture
 
-NetAlly는 네트워크 관리에 특화된 **Multi-Agent System**이다.  
-핵심은 **Orchestrator-Executor 2-Agent 구조** + **PNETLab-NSO-Batfish 통합 검증** + **도구 기반 추론(Tool-augmented Reasoning)**이다.
-
----
-
-## 1) Goals / Non-goals
-
-### Goals
-- 사용자가 config/log를 복사/붙여넣기 하지 않아도 **랩 상태를 자동 수집**
-- Batfish/도구 결과를 **Evidence Pack**으로 남기고 UI에서 추적 가능
-- **NSO를 Single Source of Truth**로, PNETLab API는 Discovery용으로 활용
-- **CDP/LLDP 기반 L1 토폴로지** 파악 (NSO에서 추출)
-- **Local / API / Hybrid LLM** 지원 (기관 정책/망 환경 대응)
-- 도커 기반 배포/업데이트 용이
-
-### Non-goals (v1)
-- 운영망(production) 자동 제어를 1차 목표로 삼지 않음
-- LLM이 설정을 "생성"하는 능력 자체를 연구의 중심으로 두지 않음 (검증/근거가 중심)
-- **UNL 파일 직접 파싱은 v1에서 제외** (v2에서 "설계 vs 실제" 비교 기능으로 확장)
+NetAlly는 **MCP 기반 도구 호출**과 **Multi-Agent Debate**를 결합한 네트워크 설정 분석 시스템이다.
+LLM이 네트워크 도구(NSO RESTCONF, Batfish)를 자율적으로 호출하여 데이터를 수집하고,
+5-Agent 토론 구조로 답변 품질을 보장한다.
 
 ---
 
-## 2) High-level Components
-
-- **UI (Cockpit + Chat Drawer)**: 대시보드 중심, 채팅은 보조(해설/추천/다음 액션)
-- **PNETLab API Client**: 노드 Discovery 및 포트 정보 수집
-- **NSO Client**: 장비 자동 등록, sync-from, 설정 조회
-- **Batfish**: 스냅샷 로딩/질의(Reachability/Trace/Policy/Diff 등)
-- **Agent Orchestrator (LangGraph)**: 계획 → 도구 호출 → 증거 정리 → 응답 생성
-- **LLM Runtime**:
-  - Local LLM 서버
-  - API LLM (예: GPT)
-- **Evidence Store**: 스냅샷/쿼리결과/로그검색결과/사용자 세션 저장
-
----
-
-## 3) Data Ingestion Strategy (API-First)
-
-### Primary Workflow: PNETLab API + NSO
-
-**1단계: Discovery** (PNETLab API)
-- 실행 중인 노드 목록 조회
-- 각 노드의 Telnet/SSH 포트 정보 수집
-
-**2단계: Auto-Onboarding** (NSO)
-- PNETLab에서 발견된 노드를 NSO에 자동 등록
-- `sync-from`으로 실제 장비 설정 동기화
-
-**3단계: L1 Topology** (CDP/LLDP)
-- NSO에서 `show cdp neighbors detail` 수집
-- 물리 연결 관계 추출 → Batfish `layer1_topology.json` 생성
-
-### Fallback: Config Export (NSO 미사용)
-
-NSO 없이 동작해야 할 경우:
-- PNETLab "Export CFG" 기능으로 Config ZIP 다운로드
-- L1 토폴로지는 제외 (Batfish L3 분석만 가능)
-
-> **v2 확장**: UNL 파일 직접 파싱으로 "설계 vs 실제" 비교 기능 추가 예정
-
----
-
-## 4) Snapshot Layout (Generated Artifacts)
-
-스냅샷은 Batfish 규격을 따른다:
+## System Overview (사용자 플로우)
 
 ```
-snapshot/
-    configs/
-        R1.cfg
-        R2.cfg
-    batfish/
-        layer1_topology.json (CDP/LLDP 기반)
-    dashboard_meta.json (좌표/아이콘/라벨, v2)
-evidence/
-    runs/<run_id>/*.json (Batfish 결과/CLI 결과/로그 결과)
++------------------+
+|    User (Web)    |
+|  "PE1의 SSH 버전?" |
++--------+---------+
+         |
+         | POST /api/chat (SSE)
+         v
++------------------------------------------+
+|           NetAlly Backend                 |
+|            (FastAPI)                      |
+|                                          |
+|  +------------------------------------+  |
+|  |         Runtime Selector            |  |
+|  |  single_executor | team_multi       |  |
+|  +--------+-----------+---------------+  |
+|           |           |                  |
+|     Single LLM   MAS (agents_netally)    |
+|     + Tools       5-Agent Debate         |
+|                   + MCP Tools            |
++--------+-----------+---------+-----------+
+         |           |         |
+         v           v         v
++--------+--+ +------+------+ +------+------+
+|    NSO     | |   Batfish   | |  PNETLab   |
+| (RESTCONF) | | (Simulation)| |  (LabFS)   |
++-----+------+ +------+------+ +------+------+
+      |               |               |
+      v               v               v
++--------------------------------------------+
+|         Network Devices (PNETLab)           |
+|  PE1  PE2  PE3  PE4  P1..P8  Leaf1..Leaf8  |
+|              (20 nodes)                     |
++--------------------------------------------+
 ```
 
 ---
 
-## 5) 외부 서비스 연결 (NSO Integration)
+## User Interaction Flow (실사용 흐름)
 
-LabMate는 **Batfish를 내장**하고, **NSO는 사용자가 별도로 운영**하는 구조다.
-NSO 연결은 **UI 설정 화면**에서 사용자가 직접 입력한다.
-
-### 연결 흐름
+### Flow 1: 단순 질문 (L1 — Config 조회)
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                    사용자 환경 (PNETLab 호스트)                  │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌─────────────────────┐         ┌─────────────────────┐       │
-│  │   LabMate Stack     │         │   NSO Container     │       │
-│  │   (Docker Compose)  │ ──────▶ │   (사용자 별도 운영) │       │
-│  │  network_mode:host  │  HTTP   │                     │       │
-│  │                     │         │  - RESTCONF API     │       │
-│  │  ┌───────────────┐  │         │  - Port 8888        │       │
-│  │  │ LabMate Agent │──┼─────────│                     │       │
-│  │  └───────────────┘  │         └─────────┬───────────┘       │
-│  │  ┌───────────────┐  │                   │                   │
-│  │  │    Batfish    │  │                   │ SSH/NETCONF       │
-│  │  └───────────────┘  │                   ▼                   │
-│  │  ┌───────────────┐  │         ┌─────────────────────┐       │
-│  │  │  LabMate UI   │  │         │   PNETLab 장비들    │       │
-│  │  └───────────────┘  │         │  (vIOS, CSR, etc.)  │       │
-│  └─────────────────────┘         └─────────────────────┘       │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+User: "PE1의 SSH 버전은?"
+  |
+  v
+Collector: tool_catalog 분석 -> nso_get_device_info(device="PE1") 선택
+  |
+  v
+NSO RESTCONF: GET /data/tailf-ncs:devices/device=PE1/config
+  -> config_summary: {ssh_version: 2, hostname: PE1, ...}
+  |
+  v
+Collector: raw_data = "SSH version: 2"
+  -> Verifier (bypass) -> Synthesizer -> "2"
+  -> Supporter: "config에 ssh version 2 확인"
+  -> Skeptic: [ACCEPT]
+  |
+  v
+User: "2"                                    [~7초, 도구 1회]
 ```
 
-### 네트워크 설정 (docker-compose.yml)
-
-```yaml
-services:
-  labmate:
-    network_mode: host  # 호스트 네트워크 사용
-    # 이를 통해 localhost로 PNETLab API, NSO API 모두 접근 가능
-```
-
-### UI 설정 화면
+### Flow 2: 집계 질문 (L2 — 전체 장비 분석)
 
 ```
-┌─────────────────────────────────────────────┐
-│  ⚙️ 외부 서비스 연결                         │
-├─────────────────────────────────────────────┤
-│                                             │
-│  📡 NSO 서버                                │
-│  ┌─────────────────────────────────────┐   │
-│  │ URL:      http://localhost:8888     │   │
-│  │ 사용자:   admin                      │   │
-│  │ 비밀번호: ********                   │   │
-│  └─────────────────────────────────────┘   │
-│                                             │
-│  [🔍 연결 테스트]  [💾 저장]                │
-│                                             │
-│  ✅ 연결 성공! 등록된 장비 5대              │
-│                                             │
-└─────────────────────────────────────────────┘
+User: "AAA가 활성화된 장비는?"
+  |
+  v
+Collector: nso_get_all_device_info() 선택
+  |
+  v
+NSO: 20개 장비 config_summary 수집 (캐시 히트 시 0ms)
+  -> aggregations: {devices_with_aaa: ["PE1","PE2","PE3","PE4"]}
+  |
+  v
+Synthesizer: ["PE1","PE2","PE3","PE4"]
+  -> Skeptic: [ACCEPT]
+  |
+  v
+User: ["PE1","PE2","PE3","PE4"]              [~13초, 도구 1회]
 ```
 
-### 설정 저장 위치
+### Flow 3: 경로 분석 (L4 — Batfish Simulation)
 
-- **컨테이너 내부**: `/data/config/services.json`
-- **Volume Mount**: `labmate_data:/data` (영속적 저장)
-
-```json
-// /data/config/services.json
-{
-  "nso": {
-    "enabled": true,
-    "base_url": "http://localhost:8888/restconf",
-    "username": "admin",
-    "password_encrypted": "..."
-  }
-}
+```
+User: "P6에서 10.0.5.1까지 경로?"
+  |
+  v
+Collector: batfish_traceroute(src="p6", dst="10.0.5.1") 선택
+  |
+  v
+Batfish: IP resolve (10.0.5.1 -> p4) -> traceroute simulation
+  -> {path: ["p6","p5","p3","p4"], hop_count: 4, path_str: "p6 -> p5 -> p3 -> p4"}
+  |
+  v
+Synthesizer: "p6 -> p5 -> p3 -> p4"
+  -> Skeptic: [ACCEPT]
+  |
+  v
+User: "p6 -> p5 -> p3 -> p4"                [~7초, 도구 1회]
 ```
 
-### NSO 없이도 동작 (Fallback)
+### Flow 4: What-If 분석 (L5 — Failure Simulation)
 
-NSO가 연결되지 않아도 LabMate의 핵심 기능(Batfish 검증)은 작동한다.
-하지만 **Hybrid Mode**에서는 NSO가 핵심 운영 플랫폼이 된다.
+```
+User: "Leaf1-Leaf6, Leaf2-Leaf4 동시 장애 시 Leaf5→P7 도달 가능?"
+  |
+  v
+Collector: 2개 도구 선택
+  1st: nso_get_all_device_info()    <- 토폴로지 파악
+  2nd: batfish_multi_link_failure(  <- 시뮬레이션
+         link1_node1="leaf1", link1_node2="leaf6",
+         link2_node1="leaf2", link2_node2="leaf4",
+         src="leaf5", dst="p7")
+  |
+  v
+Batfish: fork_snapshot(2개 링크 비활성화) -> differentialReachability
+  -> {isolated: true, failure_reason: "NO_ROUTE at pe3"}
+  |
+  v
+Synthesizer: "DISCONNECTED (reason: NO_ROUTE at pe3)"
+  -> Skeptic: tool 결과 기반 [ACCEPT]
+  |
+  v
+User: "DISCONNECTED (reason: NO_ROUTE at pe3)"  [~30초, 도구 2회]
+```
+
+### Flow 5: Skeptic 재시도 (Outer Loop)
+
+```
+User: "iBGP under-peered 장비?"
+  |
+  v
+Collector: batfish_bgp_sessions() -> {summary: {under_peered_nodes: [...]}}
+  -> Synthesizer: ["pe1","pe2","pe3","pe4"]
+  -> Skeptic: [NEED_MORE_INFO] "under-peered 기준 확인 필요"
+  |
+  v  (Outer loop: Collector 재호출)
+Collector: nso_get_all_device_info() -> {aggregations: {devices_with_bgp: [...]}}
+  -> Synthesizer: 재생성
+  -> Skeptic: [ACCEPT]
+  |
+  v
+User: ["pe1","pe2","pe3","pe4"]
+```
 
 ---
 
-## 6) Agent Workflow: Hybrid Auto-Onboarding (Reconciliation)
+## Component Architecture
 
-LabMate는 **"설계(PNETLab)와 운영(NSO)의 일치(Reconciliation)"**를 지향한다.
-사용자가 별도로 NSO에 장비를 등록할 필요 없이, 에이전트가 이를 자동화한다.
+### Backend (FastAPI)
 
-### Workflow: `Design-to-Live` Sync
+```
+main.py (FastAPI, SSE)
+  |
+  +-- /api/chat          POST, Server-Sent Events
+  +-- /api/lab/*          PNETLab 관리
+  +-- /api/dashboard      Batfish 대시보드 데이터
+  |
+  +-- agent/runtime.py    Runtime 선택
+  |     +-- SingleExecutorRuntime     (Single LLM + Tools)
+  |     +-- TeamMultiAdapterRuntime   (MAS + MCP)
+  |
+  +-- agent/clients/
+  |     +-- nso.py         NSO RESTCONF client
+  |     +-- batfish.py     Batfish client (pybatfish)
+  |     +-- pnetlab.py     PNETLab API client
+  |
+  +-- agent/direct_tools.py   Direct tool wrappers (eval용, MCP HTTP bypass)
+  +-- agent/mcp_tools.py      MCP proxy tools (웹서버용)
+  +-- agent/mcp_server.py     MCP server (FastMCP)
+```
 
-1.  **Discovery**:
-    - Agent가 PNETLab API (`lab_manage`)를 통해 실행 중인 노드 목록(R1, R2...)을 수집한다.
-    - 동시에 NSO API (`network_query`)를 통해 등록된 장비 목록을 조회한다.
+### MAS (agents_netally)
 
-2.  **Diff & Decision**:
-    - Agent는 두 목록을 비교한다.
-    - *"PNETLab에는 R2가 켜져 있는데, NSO에는 등록되어 있지 않습니다."*
-    - 사용자의 정책(자동/수동)에 따라 등록 절차를 수행한다.
+```
+agents_netally/
+  +-- main_netally.py      LangGraph 그래프 빌더
+  +-- debate1.py           Collector, Verifier, Synthesizer
+  +-- debate2.py           Supporter, Skeptic
+  +-- tool_dispatch.py     도구 실행 엔진
+  +-- model_loader.py      LLM 모델 로더 (OpenRouter/OpenAI)
+  +-- state.py             NetAgentState 정의
+```
 
-3.  **Onboarding (Execution)**:
-    - Agent가 `nso_client.register_device()` 및 `fetch-ssh-keys`, `sync-from`을 순차적으로 수행한다.
-    - Telnet/SSH 포트 정보는 PNETLab API에서 가져와 자동으로 매핑한다.
+### Tool Layer
 
-4.  **Operation**:
-    - 등록이 완료되면, 이후 모든 설정 조회 및 변경은 **NSO를 통해** 수행한다.
-    - 이를 통해 "Legacy Network"를 "Software Defined Network" 관리 체계로 자동 편입시킨다.
+```
++----------------------------------------------------+
+|              Tool Dispatch Engine                    |
+|  (tool_dispatch.py)                                 |
+|                                                     |
+|  execute_tool_calls(plans, tools)                   |
+|    -> ThreadPoolExecutor per tool                   |
+|    -> asyncio.run(tool.ainvoke(args))               |
+|    -> format_tool_results(results)                  |
++--------+-------------------+-----------------------+
+         |                   |
+    NSO Tools (5)       Batfish Tools (13)
+         |                   |
+         v                   v
++--------+------+   +-------+--------+
+| NSO RESTCONF  |   | Batfish Engine |
+| (live config) |   | (simulation)   |
+|               |   |                |
+| - device info |   | - traceroute   |
+| - interfaces  |   | - reachability |
+| - routing     |   | - BGP sessions |
+| - aggregations|   | - route table  |
+|               |   | - ACL check    |
+|   Cached per  |   | - failure sim  |
+|   session     |   | - SPOF detect  |
++---------------+   +----------------+
+```
 
-> **Research Value**: 이 과정은 단순 자동화를 넘어, **"Self-Driving Network Onboarding"**의 초기 형태를 보여준다. Legacy 장비를 스스로 인지하고 관리 영역으로 가져오는 Agent의 능력을 입증한다.
+---
 
-### 상세 비교표
+## Data Flow (SSE Event Stream)
 
-| 기능 | NSO 없음 | NSO 연결됨 |
-|------|----------|-----------|
-| Config 파일 분석 (Batfish) | ✅ | ✅ |
-| Reachability 검증 | ✅ | ✅ |
-| 실시간 장비 설정 조회 | ❌ | ✅ |
-| NSO sync-from 트리거 | ❌ | ✅ |
-| 자동 장비 등록 (Onboarding) | ❌ | ✅ |
-| L1 토폴로지 (CDP/LLDP) | ❌ | ✅ |
+```
+Browser                    Backend                     Tools
+  |                          |                           |
+  |-- POST /api/chat ------->|                           |
+  |                          |                           |
+  |<-- event: planning ------|                           |
+  |    "Analyzing question"  |                           |
+  |                          |                           |
+  |<-- event: tool_call -----|--- NSO RESTCONF --------->|
+  |    "nso_get_device_info" |                           |
+  |                          |<-- device config ---------|
+  |<-- event: tool_output ---|                           |
+  |    "{hostname: PE1,...}" |                           |
+  |                          |                           |
+  |<-- event: thinking ------|                           |
+  |    "Verifier bypass"     |                           |
+  |                          |                           |
+  |<-- event: thinking ------|                           |
+  |    "Synthesizer: 2"      |                           |
+  |                          |                           |
+  |<-- event: answer --------|                           |
+  |    "2"                   |                           |
+  |                          |                           |
+  |<-- event: complete ------|                           |
+  |    {latency, tools, ...} |                           |
+```
+
+---
+
+## Evaluation Pipeline
+
+```
+Dataset (JSON)                    Eval Runner                    Scoring
++-----------------+      +-------------------------+      +------------------+
+| questions:      |      | run_netally_eval_       |      | analyze_results  |
+|  - question     |----->| direct.py               |----->| .py              |
+|  - gold         |      |                         |      |                  |
+|  - level        |      | graph.invoke() x N      |      | TA-Acc per level |
+|  - answer_type  |      | (no web server needed)  |      | TA-Acc per type  |
++-----------------+      |                         |      | Token usage      |
+                         | Features:               |      | Latency stats    |
+                         | - Batfish pre-load       |      +------------------+
+                         | - Session caching        |
+                         | - Token tracking         |
+                         | - Resume support         |
+                         | - Level filtering        |
+                         +-------------------------+
+```
+
+---
+
+## 4-Way Experiment Design (논문)
+
+```
+                        Tools
+                    No      Yes
+              +--------+--------+
+        No    | Pure   | Single |
+  MAS         | LLM    | + Tools|
+              +--------+--------+
+        Yes   | Pure   | NetAlly|
+              | MAS    | MAS+MCP|
+              +--------+--------+
+
+1. Pure LLM:        LLM(.cfg context) -> answer
+2. Single + Tools:  LLM + NSO/Batfish -> answer
+3. Pure MAS:        5-Agent(.cfg context) -> answer
+4. NetAlly MAS+MCP: 5-Agent + NSO/Batfish -> answer  (*)
+```
+
+---
+
+## Environment
+
+| Component | Technology | Port |
+|-----------|-----------|------|
+| Backend | FastAPI + Uvicorn | 8111 |
+| Frontend | React + Vite | 3000 |
+| NSO | cisco-nso-dev:6.6 Docker | 8080 |
+| Batfish | batfish/batfish Docker | 9997/9996 |
+| PNETLab | VM (Tailscale) | 80 |
+| LLM | OpenRouter API / vLLM | - |
+
+## Key Metrics
+
+| Metric | Description |
+|--------|-------------|
+| TA-Acc | Type-Aware Accuracy (answer_type별 맞춤 비교) |
+| Latency | 질문당 응답 시간 (ms) |
+| Token Usage | LLM 호출당 프롬프트/생성 토큰 |
+| Tool Calls | 질문당 MCP 도구 호출 횟수 |
+| Debate Depth | MAS outer/inner loop 횟수 |
