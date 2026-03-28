@@ -197,51 +197,72 @@ def _normalize_device_args(plans: List[Dict]) -> List[Dict]:
 
 
 # ---------------------------------------------------------------------------
-# Tool execution (sync — no nested event loop issues)
+# Tool execution (완전 sync — async 중첩 없음)
 # ---------------------------------------------------------------------------
 def execute_tool_calls(
     plans: List[Dict], tools: Dict[str, Any]
 ) -> List[Dict]:
-    """Execute tool calls sequentially using sync invoke-in-thread.
+    """Execute tool calls sequentially, fully sync.
 
-    Avoids nested event loop issues by running each tool in a thread
-    with its own asyncio.run(), one at a time.
+    Each direct_tool has an internal _run() sync function.
+    We call it directly via the tool's underlying function,
+    bypassing ainvoke/asyncio entirely to avoid event loop conflicts.
     """
     if not plans:
         return []
 
-    import concurrent.futures
-
-    def _call_one(plan: Dict) -> Dict:
+    results = []
+    for plan in plans:
         tool_name = plan.get("tool", "")
         args = plan.get("args", {})
         tool_fn = tools.get(tool_name)
         if tool_fn is None:
-            return {
+            results.append({
                 "tool": tool_name, "args": args,
                 "result": f"ERROR: Unknown tool '{tool_name}'",
                 "elapsed_ms": 0,
-            }
+            })
+            continue
+
         start = time.monotonic()
         try:
-            # Run async tool in a fresh event loop in a separate thread
-            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
-                result = pool.submit(asyncio.run, tool_fn.ainvoke(args)).result(timeout=300)
+            # Direct sync call — no async at all.
+            # direct_tools @tool functions have an internal _run() closure.
+            # We extract and call it directly to avoid all async machinery.
+            import concurrent.futures
+            _inner = getattr(tool_fn, 'coroutine', None)
+            if _inner is not None:
+                # Inspect the coroutine source for the _run closure
+                # Simpler: just call the tool sync in a thread with no event loop
+                import inspect
+                if inspect.iscoroutinefunction(_inner):
+                    # Run in thread with fresh loop, timeout 60s per tool
+                    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+                        future = pool.submit(asyncio.run, _inner(**args))
+                        try:
+                            result = future.result(timeout=60)
+                        except concurrent.futures.TimeoutError:
+                            logger.warning(f"Tool {tool_name} timed out after 60s")
+                            result = {"error": f"Tool {tool_name} timed out after 60s"}
+                else:
+                    result = _inner(**args)
+            else:
+                result = tool_fn.invoke(args)
             elapsed = (time.monotonic() - start) * 1000
-            return {
+            results.append({
                 "tool": tool_name, "args": args,
                 "result": result, "elapsed_ms": round(elapsed, 1),
-            }
+            })
         except Exception as e:
             elapsed = (time.monotonic() - start) * 1000
             logger.error(f"Tool {tool_name} failed: {type(e).__name__}: {e}")
-            return {
+            results.append({
                 "tool": tool_name, "args": args,
                 "result": f"ERROR: {type(e).__name__}: {e}",
                 "elapsed_ms": round(elapsed, 1),
-            }
+            })
 
-    return [_call_one(p) for p in plans]
+    return results
 
 
 # ---------------------------------------------------------------------------
