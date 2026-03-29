@@ -204,8 +204,22 @@ FUNCTIONS = {
 
 
 if __name__ == "__main__":
+    # Suppress pybatfish stdout logging — only our JSON goes to stdout
+    import logging as _logging
+    _logging.basicConfig(level=_logging.WARNING, stream=sys.stderr)
+    # Redirect pybatfish's print-based output
+    import io
+    _real_stdout = sys.stdout
+    sys.stdout = io.StringIO()  # capture any stray prints
+
+    def _output(obj):
+        """Write JSON to real stdout (not captured StringIO)."""
+        _real_stdout.write(json.dumps(obj, ensure_ascii=False, default=str))
+        _real_stdout.write("\n")
+        _real_stdout.flush()
+
     if len(sys.argv) < 2:
-        print(json.dumps({"error": "Usage: python -m agent.batfish_worker <function> [args_json]"}))
+        _output({"error": "Usage: python -m agent.batfish_worker <function> [args_json]"})
         sys.exit(1)
 
     func_name = sys.argv[1]
@@ -214,18 +228,17 @@ if __name__ == "__main__":
     try:
         args = json.loads(args_json)
     except json.JSONDecodeError:
-        print(json.dumps({"error": f"Invalid JSON args: {args_json}"}))
+        _output({"error": f"Invalid JSON args: {args_json}"})
         sys.exit(1)
 
     fn = FUNCTIONS.get(func_name)
     if fn is None:
-        print(json.dumps({"error": f"Unknown function: {func_name}. Available: {list(FUNCTIONS.keys())}"}))
+        _output({"error": f"Unknown function: {func_name}. Available: {list(FUNCTIONS.keys())}"})
         sys.exit(1)
 
     try:
         result = fn(**args)
-        # Ensure JSON serializable
-        print(json.dumps(result, ensure_ascii=False, default=str))
+        _output(result)
     except Exception as e:
-        print(json.dumps({"error": f"{type(e).__name__}: {e}"}))
-        sys.exit(0)  # exit 0 so subprocess doesn't raise
+        _output({"error": f"{type(e).__name__}: {e}"})
+        sys.exit(0)

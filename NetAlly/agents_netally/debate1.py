@@ -189,7 +189,8 @@ Output ONLY the JSON array."""
                 results = execute_tool_calls(plans, tools)
                 formatted = format_tool_results(results)
                 tool_log = state.get("tool_calls_log", []) + [
-                    {"tool": r["tool"], "args": r["args"], "elapsed_ms": r["elapsed_ms"]}
+                    {"tool": r["tool"], "args": r["args"], "elapsed_ms": r["elapsed_ms"],
+                     "result": str(r.get("result", ""))[:500]}
                     for r in results
                 ]
                 print(f"  ✅ Collected via {len(results)} tool calls")
