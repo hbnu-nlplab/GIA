@@ -197,17 +197,50 @@ def _normalize_device_args(plans: List[Dict]) -> List[Dict]:
 
 
 # ---------------------------------------------------------------------------
-# Tool execution (완전 sync — async 중첩 없음)
+# Tool execution (완전 sync)
 # ---------------------------------------------------------------------------
+
+# Batfish 도구는 내부에서 _batfish_subprocess (sync)를 호출.
+# NSO 도구는 내부에서 _invoke → asyncio.to_thread (async).
+# 둘 다 별도 thread의 fresh event loop에서 실행.
+_TOOL_EXEC_POOL = None
+
+def _get_pool():
+    global _TOOL_EXEC_POOL
+    if _TOOL_EXEC_POOL is None:
+        import concurrent.futures
+        _TOOL_EXEC_POOL = concurrent.futures.ThreadPoolExecutor(max_workers=4)
+    return _TOOL_EXEC_POOL
+
+
+def _run_tool_sync(tool_fn, args: dict, timeout: int = 120):
+    """Run a single async tool in a fresh event loop in a separate thread."""
+    coro_fn = getattr(tool_fn, 'coroutine', None)
+    if coro_fn is None:
+        return tool_fn.invoke(args)
+
+    # Create coroutine and run in a separate thread with fresh loop
+    def _worker():
+        loop = asyncio.new_event_loop()
+        try:
+            return loop.run_until_complete(coro_fn(**args))
+        finally:
+            loop.close()
+
+    import concurrent.futures
+    pool = _get_pool()
+    future = pool.submit(_worker)
+    try:
+        return future.result(timeout=timeout)
+    except concurrent.futures.TimeoutError:
+        logger.warning(f"Tool timed out after {timeout}s")
+        return {"error": f"Tool timed out after {timeout}s"}
+
+
 def execute_tool_calls(
     plans: List[Dict], tools: Dict[str, Any]
 ) -> List[Dict]:
-    """Execute tool calls sequentially, fully sync.
-
-    Each direct_tool has an internal _run() sync function.
-    We call it directly via the tool's underlying function,
-    bypassing ainvoke/asyncio entirely to avoid event loop conflicts.
-    """
+    """Execute tool calls sequentially, each in its own event loop thread."""
     if not plans:
         return []
 
@@ -226,28 +259,7 @@ def execute_tool_calls(
 
         start = time.monotonic()
         try:
-            # Direct sync call — no async at all.
-            # direct_tools @tool functions have an internal _run() closure.
-            # We extract and call it directly to avoid all async machinery.
-            import concurrent.futures
-            _inner = getattr(tool_fn, 'coroutine', None)
-            if _inner is not None:
-                # Inspect the coroutine source for the _run closure
-                # Simpler: just call the tool sync in a thread with no event loop
-                import inspect
-                if inspect.iscoroutinefunction(_inner):
-                    # Run in thread with fresh loop, timeout 60s per tool
-                    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
-                        future = pool.submit(asyncio.run, _inner(**args))
-                        try:
-                            result = future.result(timeout=60)
-                        except concurrent.futures.TimeoutError:
-                            logger.warning(f"Tool {tool_name} timed out after 60s")
-                            result = {"error": f"Tool {tool_name} timed out after 60s"}
-                else:
-                    result = _inner(**args)
-            else:
-                result = tool_fn.invoke(args)
+            result = _run_tool_sync(tool_fn, args)
             elapsed = (time.monotonic() - start) * 1000
             results.append({
                 "tool": tool_name, "args": args,
