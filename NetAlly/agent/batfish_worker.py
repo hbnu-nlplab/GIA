@@ -149,12 +149,16 @@ def multi_node_failure(node1: str, node2: str):
             snapshot=snapshot_name,
             reference_snapshot=builder.snapshot_name,
         ).frame()
-        blocked = []
+        blocked = set()
         if not diff.empty:
             for _, row in diff.iterrows():
                 flow = row.get('Flow')
                 if flow:
-                    blocked.append(f"{getattr(flow,'srcIp','?')} -> {getattr(flow,'dstIp','?')}")
+                    src = getattr(flow, 'srcIp', '?')
+                    dst = getattr(flow, 'dstIp', '?')
+                    proto = getattr(flow, 'ipProtocol', '?')
+                    blocked.add(f"{src} -> {dst} ({proto})")
+        blocked = sorted(blocked)
         return {"affected_count": len(blocked), "newly_blocked_flows": blocked}
     finally:
         try:
@@ -175,10 +179,15 @@ def find_blocker(src: str, dst: str):
         return result
     path = result.get("path", [])
     disposition = result.get("disposition", "UNKNOWN")
+    # Blocking device = last device that tried to forward but failed
+    # If not ACCEPTED, the last hop in the path is the blocker
+    # (Batfish path only includes reachable hops, not the unreachable destination)
+    blocker = path[-1] if path else "unknown"
     return {
-        "blocking_device": path[-1] if path else "unknown",
+        "blocking_device": blocker,
         "disposition": disposition,
         "path": path,
+        "path_str": " -> ".join(path) if path else "No path",
         "reachable": disposition == "ACCEPTED",
     }
 
