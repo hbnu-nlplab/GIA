@@ -515,10 +515,10 @@ SIMULATION RULES:
 
    [Step 6] Output ONE LINE — the final answer only (no steps, no explanation).
 
-3. OUTPUT: ONE LINE answer only. No explanation. No reasoning. Just the answer value.
-   - Path: "leaf2→pe1" or "No path"
+3. OUTPUT: ONE LINE answer only. No explanation. No reasoning. Just the answer value. ALWAYS in English.
+   - Path: "leaf2 -> pe1" or "No path"
    - Device: "pe1"
-   - Connectivity: "Possible (Alternative route: p1→p2→p3)" or "Impossible (Reason: NO_ROUTE at pe1)"
+   - Connectivity: "CONNECTED (path: p1 -> p2 -> p3)" or "DISCONNECTED (reason: NO_ROUTE at pe1)"
    - Count: integer (e.g., "18")
 """
     }
@@ -534,14 +534,14 @@ SIMULATION RULES:
 
     # answer_type 기반 포맷 힌트 추가 — Skeptic 거부율 감소 목적
     ANSWER_TYPE_HINTS = {
-        "text": "\nFORMAT HINT: Output the COMPLETE value exactly as configured. Include ALL parts (e.g., timezone 'KST 9' not just 'KST', SSH version '2' not 'version 2'). Do NOT add quotes. When a value is not configured or not applicable, output 'N/A' (NEVER use 'None', 'null', or empty string). Use ' -> ' for paths (NOT '→'). Use 'NOT_TRAVERSED'/'TRAVERSED' for waypoint questions.",
-        "scalar_str": "\nFORMAT HINT: Output the COMPLETE value exactly as configured. Include ALL parts (e.g., timezone 'KST 9' not just 'KST'). Do NOT add quotes.",
+        "text": "\nFORMAT HINT: Output the COMPLETE value exactly as configured. Include ALL parts (e.g., timezone 'KST 9' not just 'KST', SSH version '2' not 'version 2'). Do NOT add quotes. CRITICAL: When a value is not configured or not applicable, ALWAYS output 'N/A' (NEVER 'None', 'null', 'not configured', or empty string). For comparison text (e.g., 'Compare BGP AS of A and B'), use format: 'deviceA: AS X, deviceB: AS Y' (use 'N/A' if not configured). Use ' -> ' for paths (NOT '→'). Use 'NOT_TRAVERSED'/'TRAVERSED' for waypoint questions.",
+        "scalar_str": "\nFORMAT HINT: Output the COMPLETE value exactly as configured. Include ALL parts (e.g., timezone 'KST 9' not just 'KST'). Do NOT add quotes. When not configured, output 'N/A' (NEVER 'None' or empty).",
         "number": "\nFORMAT HINT: Output a single integer. Example: 5, 12, 0",
         "scalar_int": "\nFORMAT HINT: Output a single integer. Example: 5, 12, 0",
         "set": "\nFORMAT HINT: Output a JSON array of strings. Example: [\"item1\", \"item2\"]. Use [] if none found.",
         "set_str": "\nFORMAT HINT: Output a JSON array of strings. Example: [\"item1\", \"item2\"]. Use [] if none found.",
-        "map": "\nFORMAT HINT: Output a JSON object. For comparison questions, use EXACTLY: {\"difference\": N, \"host1_count\": N, \"host2_count\": N}. For status mappings: {\"key\": \"value\"}. Use {} if none found.",
-        "map_str_int": "\nFORMAT HINT: For comparison questions (e.g., 'Compare X counts of A and B'), output EXACTLY: {\"difference\": N, \"host1_count\": N, \"host2_count\": N}. For other mappings: {\"PE1\": 5, \"PE2\": 3}.",
+        "map": "\nFORMAT HINT: Output a JSON object. For comparison questions, use EXACTLY these 3 keys (no others): {\"difference\": N, \"host1_count\": N, \"host2_count\": N}. Example: {\"difference\": 2, \"host1_count\": 4, \"host2_count\": 6}. For status mappings: {\"key\": \"value\"}. Use {} if none found.",
+        "map_str_int": "\nFORMAT HINT: For comparison questions, use EXACTLY these 3 keys — difference, host1_count, host2_count — nothing else: {\"difference\": N, \"host1_count\": N, \"host2_count\": N}. Example: 'Compare interface count of P8 and PE2' → {\"difference\": 2, \"host1_count\": 4, \"host2_count\": 6}. Do NOT use device names as keys. For other mappings: {\"PE1\": 5, \"PE2\": 3}.",
         "map_str_str": "\nFORMAT HINT: Output a JSON object with string keys and string values. For interface status: {\"GigabitEthernet0/0\": \"up\", \"Loopback0\": \"up\"}.",
         "bool": "\nFORMAT HINT: Output exactly 'Enabled' or 'Disabled' for feature status. Output 'true' or 'false' for yes/no questions.",
         "path": "\nFORMAT HINT: Output device hostnames separated by ' -> '. Example: PE1 -> P2 -> P3 -> PE2. Or 'No path' if unreachable.",

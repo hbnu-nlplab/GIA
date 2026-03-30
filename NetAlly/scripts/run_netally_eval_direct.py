@@ -53,6 +53,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+# TA-Acc scorer (논문 공식 메트릭)
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "Experiment" / "code" / "NetConfigQA2_2"))
+from analyze_results import NetConfigQAScorer
+_TA_SCORER = NetConfigQAScorer()
+
 # ---------------------------------------------------------------------------
 # Ensure NetAlly modules are importable
 # ---------------------------------------------------------------------------
@@ -526,21 +531,21 @@ def evaluate_one(
 # ---------------------------------------------------------------------------
 
 def _print_intermediate_stats(
-    level_correct: Dict[str, int],
+    level_correct: Dict[str, float],
     level_total: Dict[str, int],
     processed: int,
 ) -> None:
-    """Print current accuracy per level every N questions."""
-    lines = [f"\n--- Intermediate stats ({processed} questions processed) ---"]
+    """Print current TA-Acc per level every N questions."""
+    lines = [f"\n--- Intermediate TA-Acc ({processed} questions processed) ---"]
     for lvl in sorted(level_total.keys()):
         total = level_total[lvl]
-        correct = level_correct.get(lvl, 0)
-        acc = correct / total * 100 if total > 0 else 0.0
-        lines.append(f"  {lvl}: {correct}/{total} = {acc:.1f}%")
+        ta_sum = level_correct.get(lvl, 0.0)
+        acc = ta_sum / total * 100 if total > 0 else 0.0
+        lines.append(f"  {lvl}: {acc:.1f}% ({total}q)")
     overall_total = sum(level_total.values())
-    overall_correct = sum(level_correct.values())
-    overall_acc = overall_correct / overall_total * 100 if overall_total > 0 else 0.0
-    lines.append(f"  OVERALL: {overall_correct}/{overall_total} = {overall_acc:.1f}%")
+    overall_ta = sum(level_correct.values())
+    overall_acc = overall_ta / overall_total * 100 if overall_total > 0 else 0.0
+    lines.append(f"  OVERALL: {overall_acc:.1f}% ({overall_total}q)")
     lines.append("---")
     print("\n".join(lines))
 
@@ -646,9 +651,13 @@ def run_eval(args: argparse.Namespace) -> None:
     processed_ids = set(existing.keys())
     new_count = 0
 
-    # Helper: simple normalization for correctness check
-    def _normalize_for_match(val: str) -> str:
-        return val.strip().lower().replace(" ", "")
+    # Helper: TA-Acc score (논문 공식 메트릭)
+    def _ta_score(pred: str, gold: str, answer_type: str, qid: str = "") -> float:
+        try:
+            result = _TA_SCORER.score(pred, gold, answer_type, question_id=qid)
+            return result.get("score", 0.0)
+        except Exception:
+            return 0.0
 
     # Helper: evaluate one item (used by both serial and threaded paths)
     def _process_item(item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
@@ -736,8 +745,8 @@ def run_eval(args: argparse.Namespace) -> None:
             "event loop via _run_async. Monitor for deadlocks."
         )
 
-    # Tracking for running accuracy
-    level_correct: Dict[str, int] = defaultdict(int)
+    # Tracking for running TA-Acc
+    level_correct: Dict[str, float] = defaultdict(float)
     level_total: Dict[str, int] = defaultdict(int)
 
     if max_workers <= 1:
@@ -758,13 +767,13 @@ def run_eval(args: argparse.Namespace) -> None:
             processed_ids.add(result_entry["question_id"])
             new_count += 1
 
-            # Track running accuracy
+            # Track running TA-Acc
             lvl = result_entry["level"]
             level_total[lvl] += 1
-            gold_norm = _normalize_for_match(result_entry["gold"])
-            pred_norm = _normalize_for_match(result_entry["pred"])
-            if gold_norm == pred_norm:
-                level_correct[lvl] += 1
+            ta = _ta_score(result_entry["pred"], result_entry["gold"],
+                           result_entry.get("answer_type", "text"),
+                           result_entry.get("question_id", ""))
+            level_correct[lvl] += ta
 
             # Running accuracy for progress bar
             total_done = sum(level_total.values())
@@ -819,10 +828,10 @@ def run_eval(args: argparse.Namespace) -> None:
 
                 lvl = result_entry["level"]
                 level_total[lvl] += 1
-                gold_norm = _normalize_for_match(result_entry["gold"])
-                pred_norm = _normalize_for_match(result_entry["pred"])
-                if gold_norm == pred_norm:
-                    level_correct[lvl] += 1
+                ta = _ta_score(result_entry["pred"], result_entry["gold"],
+                               result_entry.get("answer_type", "text"),
+                               result_entry.get("question_id", ""))
+                level_correct[lvl] += ta
 
                 total_done = sum(level_total.values())
                 total_correct = sum(level_correct.values())
@@ -860,28 +869,28 @@ def run_eval(args: argparse.Namespace) -> None:
     print(f"  NetAlly Direct Evaluation Complete")
     print(f"{'=' * 70}")
 
-    # Build level-wise stats from ALL results (including resumed)
+    # Build level-wise stats from ALL results (including resumed) — TA-Acc
     all_level_stats: Dict[str, Dict[str, Any]] = defaultdict(
-        lambda: {"count": 0, "correct": 0, "total_ms": 0}
+        lambda: {"count": 0, "ta_sum": 0.0, "total_ms": 0}
     )
     for r in results:
         lvl = r.get("level", "?")
         st = all_level_stats[lvl]
         st["count"] += 1
         st["total_ms"] += r.get("latency_ms", 0)
-        if _normalize_for_match(r.get("gold", "")) == _normalize_for_match(r.get("pred", "")):
-            st["correct"] += 1
+        ta = _ta_score(r.get("pred", ""), r.get("gold", ""),
+                       r.get("answer_type", "text"), r.get("question_id", ""))
+        st["ta_sum"] += ta
 
-    header = f"  {'Level':<8}| {'Count':>6} | {'Correct':>8} | {'Accuracy':>9} | {'Avg Time':>10}"
+    header = f"  {'Level':<8}| {'Count':>6} | {'TA-Acc':>8} | {'Avg Time':>10}"
     print(header)
-    print(f"  {'-' * 8}+{'-' * 8}+{'-' * 10}+{'-' * 11}+{'-' * 12}")
+    print(f"  {'-' * 8}+{'-' * 8}+{'-' * 10}+{'-' * 12}")
     for lvl in sorted(all_level_stats.keys()):
         st = all_level_stats[lvl]
         cnt = st["count"]
-        cor = st["correct"]
-        acc = cor / cnt * 100 if cnt > 0 else 0.0
+        ta_acc = st["ta_sum"] / cnt * 100 if cnt > 0 else 0.0
         avg_t = st["total_ms"] / cnt / 1000 if cnt > 0 else 0.0
-        print(f"  {lvl:<8}| {cnt:>6} | {cor:>8} | {acc:>8.1f}% | {avg_t:>8.1f}s")
+        print(f"  {lvl:<8}| {cnt:>6} | {ta_acc:>7.1f}% | {avg_t:>8.1f}s")
 
     ok_count = sum(1 for r in results if r["answer_status"] == "OK")
     err_count = sum(1 for r in results if r["answer_status"] == "ERROR")
@@ -907,12 +916,12 @@ def run_eval(args: argparse.Namespace) -> None:
     avg_tokens_per_q = total_all_tokens / max(len(results), 1)
     avg_llm_calls_per_q = total_llm_calls / max(len(results), 1)
 
-    total_correct = sum(st["correct"] for st in all_level_stats.values())
+    total_ta_sum = sum(st["ta_sum"] for st in all_level_stats.values())
     total_count = sum(st["count"] for st in all_level_stats.values())
-    overall_acc = total_correct / total_count * 100 if total_count > 0 else 0.0
+    overall_acc = total_ta_sum / total_count * 100 if total_count > 0 else 0.0
 
-    print(f"  {'-' * 8}+{'-' * 8}+{'-' * 10}+{'-' * 11}+{'-' * 12}")
-    print(f"  {'TOTAL':<8}| {total_count:>6} | {total_correct:>8} | {overall_acc:>8.1f}% |")
+    print(f"  {'-' * 8}+{'-' * 8}+{'-' * 10}+{'-' * 12}")
+    print(f"  {'TOTAL':<8}| {total_count:>6} | {overall_acc:>7.1f}% |")
     print()
     print(f"  Processed (new) : {new_count}")
     print(f"  OK / Error      : {ok_count} / {err_count}")
