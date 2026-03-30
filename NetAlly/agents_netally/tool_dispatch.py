@@ -214,22 +214,10 @@ def _get_pool():
 
 
 def _run_tool_sync(tool_fn, args: dict, timeout: int = 120):
-    """Run a single async tool in a fresh event loop in a separate thread."""
-    coro_fn = getattr(tool_fn, 'coroutine', None)
-    if coro_fn is None:
-        return tool_fn.invoke(args)
-
-    # Create coroutine and run in a separate thread with fresh loop
-    def _worker():
-        loop = asyncio.new_event_loop()
-        try:
-            return loop.run_until_complete(coro_fn(**args))
-        finally:
-            loop.close()
-
+    """Run a tool via invoke() — fully sync, no event loop."""
     import concurrent.futures
     pool = _get_pool()
-    future = pool.submit(_worker)
+    future = pool.submit(tool_fn.invoke, args)
     try:
         return future.result(timeout=timeout)
     except concurrent.futures.TimeoutError:

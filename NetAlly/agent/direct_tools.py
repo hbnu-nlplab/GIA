@@ -43,9 +43,9 @@ def clear_cache() -> None:
     logger.info("Direct tools cache cleared")
 
 
-async def _invoke(tool_obj: Any, payload: Dict[str, Any]) -> Any:
-    """Call a LangChain tool synchronously in a thread. (NSO tools only)"""
-    return await asyncio.to_thread(tool_obj.invoke, payload)
+def _invoke_sync(tool_obj: Any, payload: Dict[str, Any]) -> Any:
+    """Call a LangChain tool synchronously. No async."""
+    return tool_obj.invoke(payload)
 
 
 def _ensure_batfish():
@@ -104,31 +104,31 @@ def _batfish_subprocess(func_name: str, args: Dict[str, Any], timeout: int = 120
 # ─── NSO tools ───────────────────────────────────────────────────────────────
 
 @tool
-async def nso_list_devices() -> Dict[str, Any]:
+def nso_list_devices() -> Dict[str, Any]:
     """[Direct] List all devices from NSO."""
-    return await _invoke(legacy_network_query, {"category": "device"})
+    return _invoke_sync(legacy_network_query, {"category": "device"})
 
 
 @tool
-async def nso_get_device_info(device: str) -> Dict[str, Any]:
+def nso_get_device_info(device: str) -> Dict[str, Any]:
     """[Direct] Get a device summary from NSO. Cached per session."""
     cache_key = f"device_info:{device}"
     if cache_key in _CACHE:
         logger.info(f"Cache HIT: nso_get_device_info({device})")
         return _CACHE[cache_key]
-    result = await _invoke(legacy_network_query, {"category": "device", "device": device})
+    result = _invoke_sync(legacy_network_query, {"category": "device", "device": device})
     _CACHE[cache_key] = result
     return result
 
 
 @tool
-async def nso_get_all_device_info() -> Dict[str, Any]:
+def nso_get_all_device_info() -> Dict[str, Any]:
     """[Direct] Get device info for ALL devices in one call. Cached per session."""
     if "all_device_info" in _CACHE:
         logger.info("Cache HIT: nso_get_all_device_info")
         return _CACHE["all_device_info"]
 
-    devices_result = await _invoke(legacy_network_query, {"category": "device"})
+    devices_result = _invoke_sync(legacy_network_query, {"category": "device"})
     if isinstance(devices_result, dict):
         device_names = devices_result.get("devices", [])
     elif isinstance(devices_result, list):
@@ -138,7 +138,7 @@ async def nso_get_all_device_info() -> Dict[str, Any]:
     # Fetch full summaries (cached individually too)
     all_full = {}
     for name in device_names:
-        info = await _invoke(legacy_network_query, {"category": "device", "device": name})
+        info = _invoke_sync(legacy_network_query, {"category": "device", "device": name})
         summary = info.get("config_summary", info) if isinstance(info, dict) else info
         all_full[name] = summary
         # Cache individual device info for nso_get_device_info hits
@@ -214,19 +214,19 @@ async def nso_get_all_device_info() -> Dict[str, Any]:
 
 
 @tool
-async def nso_get_interfaces(device: str) -> Dict[str, Any]:
+def nso_get_interfaces(device: str) -> Dict[str, Any]:
     """[Direct] Get interfaces for a device from NSO."""
-    return await _invoke(legacy_network_query, {"category": "interface", "device": device})
+    return _invoke_sync(legacy_network_query, {"category": "interface", "device": device})
 
 
 @tool
-async def nso_get_all_interfaces() -> Dict[str, Any]:
+def nso_get_all_interfaces() -> Dict[str, Any]:
     """[Direct] Get interfaces for ALL devices in one call. Cached per session."""
     if "all_interfaces" in _CACHE:
         logger.info("Cache HIT: nso_get_all_interfaces")
         return _CACHE["all_interfaces"]
 
-    devices_result = await _invoke(legacy_network_query, {"category": "device"})
+    devices_result = _invoke_sync(legacy_network_query, {"category": "device"})
     if isinstance(devices_result, dict):
         device_names = devices_result.get("devices", [])
     elif isinstance(devices_result, list):
@@ -235,7 +235,7 @@ async def nso_get_all_interfaces() -> Dict[str, Any]:
         device_names = []
     all_intfs = {}
     for name in device_names:
-        intfs = await _invoke(legacy_network_query, {"category": "interface", "device": name})
+        intfs = _invoke_sync(legacy_network_query, {"category": "interface", "device": name})
         all_intfs[name] = intfs
 
     # Pre-compute per-device interface counts
@@ -251,143 +251,126 @@ async def nso_get_all_interfaces() -> Dict[str, Any]:
 
 
 @tool
-async def nso_get_routing(device: str, protocol: Literal["bgp", "ospf"] = "bgp") -> Dict[str, Any]:
+def nso_get_routing(device: str, protocol: Literal["bgp", "ospf"] = "bgp") -> Dict[str, Any]:
     """[Direct] Get routing data (BGP/OSPF) for a device."""
-    return await _invoke(
+    return _invoke_sync(
         legacy_network_query,
         {"category": "routing", "device": device, "params": {"protocol": protocol}},
     )
 
 
 @tool
-async def nso_get_logs(device: str, lines: int = 50, keyword: Optional[str] = None) -> Dict[str, Any]:
+def nso_get_logs(device: str, lines: int = 50, keyword: Optional[str] = None) -> Dict[str, Any]:
     """[Direct] Get recent logs from NSO live-status output."""
-    data = await _invoke(
+    data = _invoke_sync(
         legacy_check_logs,
         {"device": device, "lines": lines, "keyword": keyword},
     )
     return {"logs": data}
 
 
-# ─── Batfish tools (subprocess 호출 — pybatfish session 충돌 방지) ────────────
+# ─── Batfish tools (sync @tool + subprocess — no async, no event loop) ───────
 
 @tool
-async def batfish_reachability(src: str, dst: str, protocol: str = "icmp") -> Dict[str, Any]:
+def batfish_reachability(src: str, dst: str, protocol: str = "icmp") -> Dict[str, Any]:
     """[Direct] Run Batfish reachability test."""
-    return await asyncio.to_thread(
-        _batfish_subprocess, "reachability",
-        {"src": src.lower(), "dst": dst.lower(), "protocol": protocol})
+    return _batfish_subprocess("reachability", {"src": src.lower(), "dst": dst.lower(), "protocol": protocol})
 
 
 @tool
-async def batfish_traceroute(src: str, dst: str) -> Dict[str, Any]:
+def batfish_traceroute(src: str, dst: str) -> Dict[str, Any]:
     """[Direct] Run Batfish traceroute between two nodes. Returns path, hop_count."""
-    return await asyncio.to_thread(
-        _batfish_subprocess, "traceroute",
-        {"src": src.lower(), "dst": dst.lower()})
+    return _batfish_subprocess("traceroute", {"src": src.lower(), "dst": dst.lower()})
 
 
 @tool
-async def batfish_bgp_sessions(device: Optional[str] = None) -> Dict[str, Any]:
+def batfish_bgp_sessions(device: Optional[str] = None) -> Dict[str, Any]:
     """[Direct] List BGP session status with summary (established, under-peered)."""
-    return await asyncio.to_thread(
-        _batfish_subprocess, "bgp_sessions",
-        {"device": device.lower() if device else None})
+    return _batfish_subprocess("bgp_sessions", {"device": device.lower() if device else None})
 
 
 @tool
-async def batfish_route_table(device: str) -> Dict[str, Any]:
+def batfish_route_table(device: str) -> Dict[str, Any]:
     """[Direct] Get routing table for a device. Returns routes and route_count."""
-    return await asyncio.to_thread(
-        _batfish_subprocess, "route_table",
-        {"device": device.lower()})
+    return _batfish_subprocess("route_table", {"device": device.lower()})
 
 
-# ─── Batfish L4 analysis (subprocess) ─────────────────────────────────────────
+# ─── Batfish L4 analysis (sync subprocess) ────────────────────────────────────
 
 @tool
-async def batfish_acl_check(src_ip: str, dst_ip: str, dst_port: int = 80) -> Dict[str, Any]:
+def batfish_acl_check(src_ip: str, dst_ip: str, dst_port: int = 80) -> Dict[str, Any]:
     """[Direct] Check if any ACL blocks traffic between src and dst IP."""
-    return await asyncio.to_thread(
-        _batfish_subprocess, "acl_check",
-        {"src_ip": src_ip, "dst_ip": dst_ip, "dst_port": dst_port})
+    return _batfish_subprocess("acl_check", {"src_ip": src_ip, "dst_ip": dst_ip, "dst_port": dst_port})
 
 
 @tool
-async def batfish_loop_check() -> Dict[str, Any]:
+def batfish_loop_check() -> Dict[str, Any]:
     """[Direct] Detect routing loops in the network."""
-    return await asyncio.to_thread(_batfish_subprocess, "loop_check", {})
+    return _batfish_subprocess("loop_check", {})
 
 
 @tool
-async def batfish_blackhole_check(dst_prefix: str = "0.0.0.0/0") -> Dict[str, Any]:
+def batfish_blackhole_check(dst_prefix: str = "0.0.0.0/0") -> Dict[str, Any]:
     """[Direct] Detect blackhole routes (traffic silently dropped)."""
-    return await asyncio.to_thread(
-        _batfish_subprocess, "blackhole_check", {"dst_prefix": dst_prefix})
+    return _batfish_subprocess("blackhole_check", {"dst_prefix": dst_prefix})
 
 
 @tool
-async def batfish_waypoint_check(src_ip: str, dst_ip: str, waypoint: str) -> Dict[str, Any]:
+def batfish_waypoint_check(src_ip: str, dst_ip: str, waypoint: str) -> Dict[str, Any]:
     """[Direct] Verify traffic passes through a specific waypoint device."""
-    return await asyncio.to_thread(
-        _batfish_subprocess, "waypoint_check",
-        {"src_ip": src_ip, "dst_ip": dst_ip, "waypoint": waypoint.lower()})
+    return _batfish_subprocess("waypoint_check", {"src_ip": src_ip, "dst_ip": dst_ip, "waypoint": waypoint.lower()})
 
 
-# ─── Batfish L5 analysis (subprocess — fork_snapshot safe) ───────────────────
+# ─── Batfish L5 analysis (sync subprocess — fork_snapshot safe) ──────────────
 
 @tool
-async def batfish_link_failure(node1: str, node2: str, src: Optional[str] = None, dst: Optional[str] = None) -> Dict[str, Any]:
+def batfish_link_failure(node1: str, node2: str, src: Optional[str] = None, dst: Optional[str] = None) -> Dict[str, Any]:
     """[Direct] Simulate a link failure between two nodes and check traffic impact."""
     args = {"node1": node1.lower(), "node2": node2.lower()}
-    if src: args["src"] = src.lower()
-    if dst: args["dst"] = dst.lower()
-    return await asyncio.to_thread(_batfish_subprocess, "link_failure", args)
+    if src:
+        args["src"] = src.lower()
+    if dst:
+        args["dst"] = dst.lower()
+    return _batfish_subprocess("link_failure", args)
 
 
 @tool
-async def batfish_multi_link_failure(
+def batfish_multi_link_failure(
     link1_node1: str, link1_node2: str,
     link2_node1: str, link2_node2: str,
     src: str, dst: str,
 ) -> Dict[str, Any]:
     """[Direct] Simulate TWO links failing simultaneously and check traffic impact."""
-    return await asyncio.to_thread(
-        _batfish_subprocess, "multi_link_failure",
-        {"link1_node1": link1_node1.lower(), "link1_node2": link1_node2.lower(),
-         "link2_node1": link2_node1.lower(), "link2_node2": link2_node2.lower(),
-         "src": src.lower(), "dst": dst.lower()})
+    return _batfish_subprocess("multi_link_failure", {
+        "link1_node1": link1_node1.lower(), "link1_node2": link1_node2.lower(),
+        "link2_node1": link2_node1.lower(), "link2_node2": link2_node2.lower(),
+        "src": src.lower(), "dst": dst.lower()})
 
 
 @tool
-async def batfish_node_failure(node: str) -> Dict[str, Any]:
+def batfish_node_failure(node: str) -> Dict[str, Any]:
     """[Direct] Simulate a node going down and calculate blast radius.
     Returns: affected_count (disrupted flows), newly_blocked_flows list."""
-    return await asyncio.to_thread(
-        _batfish_subprocess, "node_failure", {"node": node.lower()})
+    return _batfish_subprocess("node_failure", {"node": node.lower()})
 
 
 @tool
-async def batfish_multi_node_failure(node1: str, node2: str) -> Dict[str, Any]:
+def batfish_multi_node_failure(node1: str, node2: str) -> Dict[str, Any]:
     """[Direct] Simulate TWO nodes failing simultaneously and calculate blast radius."""
-    return await asyncio.to_thread(
-        _batfish_subprocess, "multi_node_failure",
-        {"node1": node1.lower(), "node2": node2.lower()})
+    return _batfish_subprocess("multi_node_failure", {"node1": node1.lower(), "node2": node2.lower()})
 
 
 @tool
-async def batfish_spof_detection() -> Dict[str, Any]:
+def batfish_spof_detection() -> Dict[str, Any]:
     """[Direct] Detect Single Points of Failure (SPOF) in the network."""
-    return await asyncio.to_thread(_batfish_subprocess, "spof_detection", {})
+    return _batfish_subprocess("spof_detection", {})
 
 
 @tool
-async def batfish_find_blocker(src: str, dst: str) -> Dict[str, Any]:
+def batfish_find_blocker(src: str, dst: str) -> Dict[str, Any]:
     """[Direct] Find which device blocks/drops traffic from src to dst.
     Returns: blocking_device name, disposition, full path."""
-    return await asyncio.to_thread(
-        _batfish_subprocess, "find_blocker",
-        {"src": src.lower(), "dst": dst.lower()})
+    return _batfish_subprocess("find_blocker", {"src": src.lower(), "dst": dst.lower()})
 
 
 def _lower_params(params: Dict[str, Any], keys: list) -> Dict[str, Any]:
@@ -397,7 +380,7 @@ def _lower_params(params: Dict[str, Any], keys: list) -> Dict[str, Any]:
 
 # Keep batfish_advanced_verify as fallback (not in DIRECT_TOOLS)
 @tool
-async def batfish_advanced_verify(
+def batfish_advanced_verify(
     analysis_type: Literal[
         "acl_blocking",
         "loop_detection",
@@ -410,7 +393,7 @@ async def batfish_advanced_verify(
     params: Dict[str, Any] = {},
 ) -> Dict[str, Any]:
     """[Direct] Run advanced Batfish analysis (generic). Prefer specific tools instead."""
-    return await _invoke(
+    return _invoke_sync(
         legacy_network_verify,
         {"test_type": analysis_type, "params": params},
     )
@@ -419,29 +402,29 @@ async def batfish_advanced_verify(
 # ─── Lab tools ───────────────────────────────────────────────────────────────
 
 @tool
-async def lab_show_inventory() -> Dict[str, Any]:
+def lab_show_inventory() -> Dict[str, Any]:
     """[Direct] Show lab topology inventory."""
-    return await _invoke(legacy_lab_manage, {"action": "show_inventory"})
+    return _invoke_sync(legacy_lab_manage, {"action": "show_inventory"})
 
 
 @tool
-async def lab_get_status(device: Optional[str] = None) -> Dict[str, Any]:
+def lab_get_status(device: Optional[str] = None) -> Dict[str, Any]:
     """[Direct] Get lab device status."""
-    return await _invoke(
+    return _invoke_sync(
         legacy_lab_manage,
         {"action": "get_status", "params": {"device": device} if device else {}},
     )
 
 
 @tool
-async def lab_export_configs(
+def lab_export_configs(
     output_dir: str = "./snapshot",
     export_xml: bool = True,
     export_yang_json: bool = True,
     devices: Optional[List[str]] = None,
 ) -> Dict[str, Any]:
     """[Direct] Export device configs from NSO."""
-    return await _invoke(
+    return _invoke_sync(
         legacy_lab_manage,
         {
             "action": "export_configs",
@@ -456,7 +439,7 @@ async def lab_export_configs(
 
 
 @tool
-async def lab_init_batfish(
+def lab_init_batfish(
     topology_name: Optional[str] = None,
     output_dir: str = "./snapshot",
     devices: Optional[List[str]] = None,
@@ -470,7 +453,7 @@ async def lab_init_batfish(
     }
     if topology_name:
         params["topology_name"] = topology_name
-    return await _invoke(
+    return _invoke_sync(
         legacy_lab_manage,
         {"action": "init_batfish", "params": params},
     )
@@ -479,54 +462,54 @@ async def lab_init_batfish(
 # ─── Compat wrappers ────────────────────────────────────────────────────────
 
 @tool
-async def network_query(category: str, device: Optional[str] = None, params: Optional[Dict] = None) -> Dict[str, Any]:
+def network_query(category: str, device: Optional[str] = None, params: Optional[Dict] = None) -> Dict[str, Any]:
     """[Direct] Generic network query (legacy compat)."""
     payload: Dict[str, Any] = {"category": category}
     if device:
         payload["device"] = device
     if params:
         payload["params"] = params
-    return await _invoke(legacy_network_query, payload)
+    return _invoke_sync(legacy_network_query, payload)
 
 
 @tool
-async def network_verify(test_type: str, params: Optional[Dict] = None) -> Dict[str, Any]:
+def network_verify(test_type: str, params: Optional[Dict] = None) -> Dict[str, Any]:
     """[Direct] Generic network verification (legacy compat)."""
-    return await _invoke(
+    return _invoke_sync(
         legacy_network_verify,
         {"test_type": test_type, "params": params or {}},
     )
 
 
 @tool
-async def scan_and_sync(action: str = "scan", **kwargs) -> Dict[str, Any]:
+def scan_and_sync(action: str = "scan", **kwargs) -> Dict[str, Any]:
     """[Direct] Scan and sync devices."""
     payload = {"action": action, **kwargs}
-    return await _invoke(legacy_scan_and_sync, payload)
+    return _invoke_sync(legacy_scan_and_sync, payload)
 
 
 @tool
-async def check_logs(device: str, lines: int = 50, keyword: Optional[str] = None) -> Dict[str, Any]:
+def check_logs(device: str, lines: int = 50, keyword: Optional[str] = None) -> Dict[str, Any]:
     """[Direct] Check device logs."""
-    return await _invoke(
+    return _invoke_sync(
         legacy_check_logs,
         {"device": device, "lines": lines, "keyword": keyword},
     )
 
 
 @tool
-async def lab_bootstrap() -> Dict[str, Any]:
+def lab_bootstrap() -> Dict[str, Any]:
     """[Direct] Bootstrap lab environment."""
-    return await _invoke(legacy_lab_bootstrap, {})
+    return _invoke_sync(legacy_lab_bootstrap, {})
 
 
 @tool
-async def lab_manage(action: str, params: Optional[Dict] = None) -> Dict[str, Any]:
+def lab_manage(action: str, params: Optional[Dict] = None) -> Dict[str, Any]:
     """[Direct] Lab management actions."""
     payload: Dict[str, Any] = {"action": action}
     if params:
         payload["params"] = params
-    return await _invoke(legacy_lab_manage, payload)
+    return _invoke_sync(legacy_lab_manage, payload)
 
 
 # ─── Export ──────────────────────────────────────────────────────────────────

@@ -482,9 +482,11 @@ SIMULATION RULES:
    - Start at the SOURCE device. Check its routing table (static routes: "ip route", dynamic: BGP/OSPF neighbors, default route: "ip route 0.0.0.0 0.0.0.0 <next-hop>").
    - Identify which interface the next-hop IP belongs to, and which device is connected on that subnet.
    - Repeat hop-by-hop until you reach the destination IP or hit a dead end.
-   - Output: device hostnames separated by → (e.g., "leaf2→pe1→p2→p3"). Use EXACT hostname case. Do NOT include IPs.
+   - Output: device hostnames separated by " -> " (e.g., "leaf2 -> pe1 -> p2 -> p3"). Use EXACT hostname case. Do NOT include IPs. Use " -> " NOT "→".
    - If no route exists to reach the destination: output "No path"
+   - If the question asks "does traffic traverse through X": answer "NOT_TRAVERSED" or "TRAVERSED" (exact keyword).
    - If destination IP belongs to an interface of a directly connected device: that device is the last hop.
+   - For reachability questions: format as "PATH: A -> B -> C; REACHABLE: TRUE" or "REACHABLE: FALSE (reason: ...)"
 
 2. WHAT-IF / FAULT ANALYSIS (L5) — "when link X-Y fails / device X is down":
    Follow these steps IN ORDER before writing the answer:
@@ -532,7 +534,7 @@ SIMULATION RULES:
 
     # answer_type 기반 포맷 힌트 추가 — Skeptic 거부율 감소 목적
     ANSWER_TYPE_HINTS = {
-        "text": "\nFORMAT HINT: Output the COMPLETE value exactly as configured. Include ALL parts (e.g., timezone 'KST 9' not just 'KST', SSH version '2' not 'version 2'). Do NOT add quotes. When a value is not configured or not applicable, output 'N/A' (not 'None' or 'null').",
+        "text": "\nFORMAT HINT: Output the COMPLETE value exactly as configured. Include ALL parts (e.g., timezone 'KST 9' not just 'KST', SSH version '2' not 'version 2'). Do NOT add quotes. When a value is not configured or not applicable, output 'N/A' (NEVER use 'None', 'null', or empty string). Use ' -> ' for paths (NOT '→'). Use 'NOT_TRAVERSED'/'TRAVERSED' for waypoint questions.",
         "scalar_str": "\nFORMAT HINT: Output the COMPLETE value exactly as configured. Include ALL parts (e.g., timezone 'KST 9' not just 'KST'). Do NOT add quotes.",
         "number": "\nFORMAT HINT: Output a single integer. Example: 5, 12, 0",
         "scalar_int": "\nFORMAT HINT: Output a single integer. Example: 5, 12, 0",
