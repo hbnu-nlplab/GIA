@@ -214,10 +214,16 @@ def _get_pool():
 
 
 def _run_tool_sync(tool_fn, args: dict, timeout: int = 120):
-    """Run a tool via invoke() — fully sync, no event loop."""
+    """Run a tool — plain function call, no LangChain invoke."""
     import concurrent.futures
+
+    # tool_fn이 @tool 객체면 내부 함수 추출, plain 함수면 직접 호출
+    raw_fn = getattr(tool_fn, 'func', None) or getattr(tool_fn, '_run', None)
+    if raw_fn is None:
+        raw_fn = tool_fn  # 이미 plain 함수
+
     pool = _get_pool()
-    future = pool.submit(tool_fn.invoke, args)
+    future = pool.submit(raw_fn, **args)
     try:
         return future.result(timeout=timeout)
     except concurrent.futures.TimeoutError:
