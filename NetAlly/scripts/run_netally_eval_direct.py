@@ -478,18 +478,21 @@ def evaluate_one(
     for attempt in range(max_retries):
         try:
             token_cb = TokenUsageCallback()
-            # Run graph.invoke with timeout to prevent infinite hang
+            # Run graph.invoke with hard timeout — abandon thread on timeout
             from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeout
-            with ThreadPoolExecutor(max_workers=1) as _q_pool:
-                _q_future = _q_pool.submit(
-                    graph.invoke,
-                    state,
-                    config={
-                        "recursion_limit": recursion_limit,
-                        "callbacks": [token_cb],
-                    },
-                )
+            _q_pool = ThreadPoolExecutor(max_workers=1)
+            _q_future = _q_pool.submit(
+                graph.invoke,
+                state,
+                config={
+                    "recursion_limit": recursion_limit,
+                    "callbacks": [token_cb],
+                },
+            )
+            try:
                 output = _q_future.result(timeout=question_timeout)
+            finally:
+                _q_pool.shutdown(wait=False, cancel_futures=True)
             elapsed_ms = int((time.perf_counter() - start) * 1000)
 
             # Extract answer: prefer final_answer, fallback to candidate_answer

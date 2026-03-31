@@ -226,15 +226,16 @@ def _run_tool_sync(tool_fn, args: dict, timeout: int = 120):
     if raw_fn is None:
         raw_fn = tool_fn  # 이미 plain 함수
 
-    # Use a disposable pool so stuck threads don't exhaust the shared pool
-    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
-        future = pool.submit(raw_fn, **args)
-        try:
-            return future.result(timeout=timeout)
-        except concurrent.futures.TimeoutError:
-            future.cancel()
-            logger.warning(f"Tool timed out after {timeout}s — thread abandoned")
-            return {"error": f"Tool timed out after {timeout}s"}
+    # Disposable pool — shutdown(wait=False) abandons stuck threads
+    pool = concurrent.futures.ThreadPoolExecutor(max_workers=1)
+    future = pool.submit(raw_fn, **args)
+    try:
+        return future.result(timeout=timeout)
+    except concurrent.futures.TimeoutError:
+        logger.warning(f"Tool timed out after {timeout}s — thread abandoned")
+        return {"error": f"Tool timed out after {timeout}s"}
+    finally:
+        pool.shutdown(wait=False, cancel_futures=True)
 
 
 def execute_tool_calls(
