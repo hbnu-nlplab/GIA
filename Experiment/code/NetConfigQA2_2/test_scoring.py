@@ -304,5 +304,42 @@ class TestScoreDispatch:
         assert r["score"] == 1.0
 
 
+class TestNegativeEvaluation:
+    def setup_method(self):
+        self.scorer = TypeAwareScorer()
+
+    def test_explicit_not_configured_counts_for_both(self):
+        r = self.scorer.evaluate_negative_prediction("NOT_CONFIGURED", "null", "text")
+        assert r["semantic_negative_correct"] is True
+        assert r["explicit_abstention_correct"] is True
+        assert r["contract_compliant"] is True
+
+    def test_blank_prediction_is_not_semantic_negative(self):
+        r = self.scorer.evaluate_negative_prediction("", "[]", "set")
+        assert r["semantic_negative_correct"] is False
+        assert r["blank_prediction"] is True
+
+    def test_empty_set_counts_as_semantic_negative_only(self):
+        r = self.scorer.evaluate_negative_prediction("[]", "[]", "set_str")
+        assert r["semantic_negative_correct"] is True
+        assert r["explicit_abstention_correct"] is False
+        assert r["contract_compliant"] is False
+
+    def test_zero_counts_as_semantic_negative_only(self):
+        r = self.scorer.evaluate_negative_prediction("0", "0", "number")
+        assert r["semantic_negative_correct"] is True
+        assert r["explicit_abstention_correct"] is False
+
+    def test_disabled_text_counts_as_semantic_negative_only(self):
+        r = self.scorer.evaluate_negative_prediction("Disabled", '"Disabled"', "text")
+        assert r["semantic_negative_correct"] is True
+        assert r["explicit_abstention_correct"] is False
+
+    def test_null_negative_requires_explicit_token(self):
+        r = self.scorer.evaluate_negative_prediction("Disabled", "null", "text")
+        assert r["semantic_negative_correct"] is False
+        assert r["detail"] == "null_negative_requires_explicit"
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

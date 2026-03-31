@@ -24,7 +24,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--results-dir",
-        default=str(Path(__file__).resolve().parent / "results"),
+        default=str(Path(__file__).resolve().parent / "results_2"),
         help="Root directory containing model/Lab*/results_*.json files.",
     )
     parser.add_argument(
@@ -96,11 +96,11 @@ def timestamp_key(path: Path) -> Tuple[str, float]:
 
 
 def fmt_pct(value: Optional[float]) -> str:
-    return "N/A" if value is None else f"{value * 100:.2f}"
+    return "미보고" if value is None else f"{value * 100:.2f}%"
 
 
 def fmt_num(value: Optional[float]) -> str:
-    return "N/A" if value is None else f"{value:.2f}"
+    return "미보고" if value is None else f"{value:.2f}"
 
 
 def mean(values: Iterable[Optional[float]]) -> Optional[float]:
@@ -252,6 +252,7 @@ def build_record(
     analyzed_path: Path,
 ) -> Dict[str, Any]:
     trad = stats.get("traditional_metrics", {})
+    negative_eval = stats.get("negative_eval", {})
     return {
         "model": model,
         "lab": lab,
@@ -275,6 +276,11 @@ def build_record(
         "number": safe_get(stats, "by_type", "number"),
         "set": safe_get(stats, "by_type", "set"),
         "text": safe_get(stats, "by_type", "text"),
+        "ok_accuracy": safe_get(stats, "by_status", "OK"),
+        "strict_negative_accuracy": safe_get(negative_eval, "explicit_abstention_accuracy"),
+        "semantic_negative_accuracy": safe_get(negative_eval, "semantic_negative_accuracy"),
+        "contract_compliance": safe_get(negative_eval, "contract_compliance"),
+        "negative_gap": safe_get(negative_eval, "semantic_vs_explicit_gap"),
         "duration_sec": meta.get("duration_sec"),
         "throughput": meta.get("throughput"),
         "language": meta.get("language"),
@@ -332,11 +338,19 @@ def aggregate_model_rows(
             "avg_rougeL": mean(record_by_lab.get(lab, {}).get("rougeL") for lab in labs),
             "avg_L4": mean(record_by_lab.get(lab, {}).get("L4") for lab in labs),
             "avg_L5": mean(record_by_lab.get(lab, {}).get("L5") for lab in labs),
+            "avg_ok_accuracy": mean(record_by_lab.get(lab, {}).get("ok_accuracy") for lab in labs),
+            "avg_strict_negative_accuracy": mean(record_by_lab.get(lab, {}).get("strict_negative_accuracy") for lab in labs),
+            "avg_semantic_negative_accuracy": mean(record_by_lab.get(lab, {}).get("semantic_negative_accuracy") for lab in labs),
+            "avg_contract_compliance": mean(record_by_lab.get(lab, {}).get("contract_compliance") for lab in labs),
+            "avg_negative_gap": mean(record_by_lab.get(lab, {}).get("negative_gap") for lab in labs),
             "avg_rank": avg_rank,
         }
         for lab in labs:
             row[f"{lab}_ta"] = record_by_lab.get(lab, {}).get("type_aware_accuracy")
             row[f"{lab}_rank"] = ranks.get(model, {}).get(lab)
+            row[f"{lab}_strict_nc"] = record_by_lab.get(lab, {}).get("strict_negative_accuracy")
+            row[f"{lab}_semantic_nc"] = record_by_lab.get(lab, {}).get("semantic_negative_accuracy")
+            row[f"{lab}_compliance"] = record_by_lab.get(lab, {}).get("contract_compliance")
         rows.append(row)
 
     rows.sort(
@@ -363,29 +377,72 @@ def generate_markdown(
     missing: List[Tuple[str, str]],
 ) -> str:
     generated = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    lines = ["# NetConfigQA Paper Summary", "", f"> Generated on: {generated}", ""]
+    lines = ["# NetConfigQA 전체 결과 요약", "", f"> 생성 시각: {generated}", ""]
+    lines.append("> 읽는 법")
+    lines.append("> - 모든 비율 값은 % 단위입니다.")
+    lines.append("> - `TA-Acc`는 이 벤치마크의 핵심 점수입니다.")
+    lines.append("> - `미보고`는 해당 모델-랩 조합의 실험 결과가 없다는 뜻입니다.")
+    lines.append("")
 
-    overview_headers = [
-        "Rank",
-        "Model",
-        "Labs",
-        "Avg TA-Acc",
-        "Avg Rank",
-        "Avg EM",
-        "Avg Token F1",
-        "Avg Rouge-L",
-        "Avg BLEU",
-        "Avg BERTScore",
-        "Avg L4",
-        "Avg L5",
+    total_labs = len(labs)
+    full_rows = [row for row in model_rows if row["labs_covered"] == total_labs]
+    partial_rows = [row for row in model_rows if row["labs_covered"] < total_labs]
+
+    all_models = sorted({record["model"] for record in records})
+    common_labs = [
+        lab
+        for lab in labs
+        if all(any(record["model"] == model and record["lab"] == lab for record in records) for model in all_models)
     ]
-    overview_rows = []
-    for idx, row in enumerate(model_rows, start=1):
-        overview_rows.append(
+    common_ranks = compute_ranks(records, common_labs) if common_labs else {}
+    common_rows = aggregate_model_rows(records, common_labs, common_ranks) if common_labs else []
+
+    lines.append("## 1. 한눈에 보는 결론")
+    lines.append("")
+    if full_rows:
+        best_full = full_rows[0]
+        lines.append(
+            f"- 4개 랩을 모두 끝낸 모델만 놓고 보면, 전체 1위는 `{best_full['model']}`이고 평균 TA-Acc는 {fmt_pct(best_full['avg_type_aware_accuracy'])}입니다."
+        )
+    if partial_rows:
+        partial_desc = ", ".join(
+            f"`{row['model']}` ({row['labs_covered']}/{total_labs}개 랩만 완료)"
+            for row in partial_rows
+        )
+        lines.append(
+            f"- 다음 모델은 일부 랩만 결과가 있어서 전체 순위와 따로 봐야 합니다: {partial_desc}."
+        )
+    if common_labs and len(common_labs) < total_labs:
+        lines.append(
+            f"- 모든 모델에 결과가 있는 공통 랩은 `{', '.join(common_labs)}`입니다. 일부 랩이 비어 있는 모델은 이 공통 랩 기준 표로 비교하는 것이 더 공정합니다."
+        )
+    if missing:
+        lines.append(
+            "- 특히 `Qwen3-8B / LabD`처럼 어려운 랩이 빠지면 평균 점수가 실제보다 좋아 보일 수 있습니다. 그래서 이런 모델은 메인 종합 순위에 바로 넣지 않는 편이 안전합니다."
+        )
+    lines.append("")
+
+    full_headers = [
+        "순위",
+        "모델",
+        "완료 랩 수",
+        "평균 TA-Acc",
+        "평균 순위",
+        "평균 EM",
+        "평균 Token F1",
+        "평균 ROUGE-L",
+        "평균 BLEU",
+        "평균 BERTScore",
+        "평균 L4",
+        "평균 L5",
+    ]
+    full_table_rows = []
+    for idx, row in enumerate(full_rows, start=1):
+        full_table_rows.append(
             [
                 str(idx),
                 row["model"],
-                str(row["labs_covered"]),
+                f"{row['labs_covered']}/{total_labs}",
                 fmt_pct(row["avg_type_aware_accuracy"]),
                 fmt_num(row["avg_rank"]),
                 fmt_pct(row["avg_exact_match"]),
@@ -397,9 +454,65 @@ def generate_markdown(
                 fmt_pct(row["avg_L5"]),
             ]
         )
-    lines.extend(["## 1. Average Ranking Across Labs", "", markdown_table(overview_headers, overview_rows), ""])
+    lines.extend(["## 2. 전체 랩을 모두 끝낸 모델 순위", ""])
+    if full_table_rows:
+        lines.append(markdown_table(full_headers, full_table_rows))
+    else:
+        lines.append("4개 랩을 모두 끝낸 모델이 없습니다.")
+    lines.append("")
 
-    matrix_headers = ["Model", *labs, "Avg"]
+    partial_headers = [
+        "모델",
+        "완료한 랩 수",
+        "완료한 랩 기준 평균 TA-Acc",
+        "완료한 랩 기준 평균 순위",
+        "비고",
+    ]
+    partial_table_rows = []
+    for row in partial_rows:
+        missing_labs = [lab for lab in labs if row.get(f"{lab}_ta") is None]
+        partial_table_rows.append(
+            [
+                row["model"],
+                f"{row['labs_covered']}/{total_labs}",
+                fmt_pct(row["avg_type_aware_accuracy"]),
+                fmt_num(row["avg_rank"]),
+                f"전체 순위에서는 제외, 빠진 랩: {', '.join(missing_labs) if missing_labs else '없음'}",
+            ]
+        )
+    lines.extend(["## 3. 일부 랩만 완료한 모델", ""])
+    if partial_table_rows:
+        lines.append(markdown_table(partial_headers, partial_table_rows))
+    else:
+        lines.append("일부 랩만 완료한 모델은 없습니다.")
+    lines.append("")
+
+    if common_rows:
+        common_headers = [
+            "순위",
+            "모델",
+            "공통 랩 수",
+            "공통 랩 평균 TA-Acc",
+            "공통 랩 평균 순위",
+            "공통 랩 평균 EM",
+            "공통 랩 평균 Token F1",
+        ]
+        common_table_rows = []
+        for idx, row in enumerate(common_rows, start=1):
+            common_table_rows.append(
+                [
+                    str(idx),
+                    row["model"],
+                    f"{row['labs_covered']}/{len(common_labs)}",
+                    fmt_pct(row["avg_type_aware_accuracy"]),
+                    fmt_num(row["avg_rank"]),
+                    fmt_pct(row["avg_exact_match"]),
+                    fmt_pct(row["avg_token_f1"]),
+                ]
+            )
+        lines.extend([f"## 4. 모든 모델이 공통으로 완료한 랩만 따로 비교 ({', '.join(common_labs)})", "", markdown_table(common_headers, common_table_rows), ""])
+
+    matrix_headers = ["모델", *labs, "평균"]
     matrix_rows = []
     for row in model_rows:
         matrix_rows.append(
@@ -409,29 +522,14 @@ def generate_markdown(
                 fmt_pct(row["avg_type_aware_accuracy"]),
             ]
         )
-    lines.extend(["## 2. Type-Aware Accuracy Matrix", "", markdown_table(matrix_headers, matrix_rows), ""])
+    lines.extend(["## 5. 랩별 핵심 점수(TA-Acc)", "", markdown_table(matrix_headers, matrix_rows), ""])
 
-    rank_headers = ["Model", *[f"{lab} Rank" for lab in labs], "Avg Rank"]
-    rank_rows = []
-    for row in model_rows:
-        rank_rows.append(
-            [
-                row["model"],
-                *[
-                    "N/A" if row.get(f"{lab}_rank") is None else str(row[f"{lab}_rank"])
-                    for lab in labs
-                ],
-                fmt_num(row["avg_rank"]),
-            ]
-        )
-    lines.extend(["## 3. Average Rank by Lab", "", markdown_table(rank_headers, rank_rows), ""])
-
-    best_by_lab_headers = ["Lab", "Best Model", "TA-Acc", "EM", "Token F1", "Rouge-L"]
+    best_by_lab_headers = ["랩", "최고 모델", "TA-Acc", "EM", "Token F1", "ROUGE-L"]
     best_by_lab_rows = []
     for lab in labs:
         lab_records = [r for r in records if r["lab"] == lab and r["type_aware_accuracy"] is not None]
         if not lab_records:
-            best_by_lab_rows.append([lab, "N/A", "N/A", "N/A", "N/A", "N/A"])
+            best_by_lab_rows.append([lab, "미보고", "미보고", "미보고", "미보고", "미보고"])
             continue
         best = sorted(
             lab_records,
@@ -448,17 +546,63 @@ def generate_markdown(
                 fmt_pct(best["rougeL"]),
             ]
         )
-    lines.extend(["## 4. Best Model per Lab", "", markdown_table(best_by_lab_headers, best_by_lab_rows), ""])
+    lines.extend(["## 6. 각 랩에서 가장 잘한 모델", "", markdown_table(best_by_lab_headers, best_by_lab_rows), ""])
+
+    negative_headers = [
+        "모델",
+        "보고 랩 수",
+        "평균 OK",
+        "평균 Explicit NC",
+        "평균 Semantic NC",
+        "평균 Compliance",
+        "평균 Gap",
+    ]
+    negative_rows = []
+    negative_sorted = sorted(
+        model_rows,
+        key=lambda row: (
+            row["avg_strict_negative_accuracy"] is None,
+            -(row["avg_strict_negative_accuracy"] or -1.0),
+            -(row["avg_semantic_negative_accuracy"] or -1.0),
+            -(row["avg_contract_compliance"] or -1.0),
+        ),
+    )
+    for row in negative_sorted:
+        negative_rows.append(
+            [
+                row["model"],
+                f"{row['labs_covered']}/{total_labs}",
+                fmt_pct(row["avg_ok_accuracy"]),
+                fmt_pct(row["avg_strict_negative_accuracy"]),
+                fmt_pct(row["avg_semantic_negative_accuracy"]),
+                fmt_pct(row["avg_contract_compliance"]),
+                fmt_pct(row["avg_negative_gap"]),
+            ]
+        )
+    lines.extend(["## 7. 설정이 없을 때 제대로 '없음'이라고 답했는지", "", markdown_table(negative_headers, negative_rows), ""])
+    lines.append(
+        "> `Explicit NC`: 모델이 정답을 정확히 `NOT_CONFIGURED`라고 쓴 비율"
+    )
+    lines.append(
+        "> `Semantic NC`: 표현은 달라도 의미상 '설정이 없음'을 맞힌 비율"
+    )
+    lines.append(
+        "> `Compliance`: 의미상 맞춘 답 중에서, 실제로 `NOT_CONFIGURED` 규약까지 지킨 비율"
+    )
+    lines.append("")
 
     if missing:
-        lines.append("## 5. Missing Results")
+        lines.append("## 8. 빠진 결과는 어떻게 해석해야 하나?")
         lines.append("")
         for model, lab in missing:
-            lines.append(f"- {model} / {lab}")
+            lines.append(f"- `{model} / {lab}`: 결과가 없어서 `미보고`로 표시했습니다.")
+        lines.append("- 결과가 빠진 모델은 전체 순위에 바로 넣지 않는 것이 좋습니다.")
+        lines.append("- 대신 모든 모델이 공통으로 완료한 랩만 따로 모아 비교하면 더 공정합니다.")
+        lines.append("- 특히 어려운 랩이 빠진 경우 평균 점수는 실제보다 높게 보일 수 있습니다.")
         lines.append("")
 
     lines.append("---")
-    lines.append("*Generated by aggregate_paper_results.py*")
+    lines.append("*aggregate_paper_results.py 로 생성됨*")
     return "\n".join(lines)
 
 
@@ -486,6 +630,11 @@ def write_long_csv(path: Path, records: List[Dict[str, Any]]) -> None:
         "number",
         "set",
         "text",
+        "ok_accuracy",
+        "strict_negative_accuracy",
+        "semantic_negative_accuracy",
+        "contract_compliance",
+        "negative_gap",
         "duration_sec",
         "throughput",
         "language",
@@ -513,7 +662,15 @@ def write_rank_csv(path: Path, model_rows: List[Dict[str, Any]], labs: Sequence[
         "avg_bertscore_f1",
         "avg_L4",
         "avg_L5",
+        "avg_ok_accuracy",
+        "avg_strict_negative_accuracy",
+        "avg_semantic_negative_accuracy",
+        "avg_contract_compliance",
+        "avg_negative_gap",
         *[f"{lab}_ta" for lab in labs],
+        *[f"{lab}_strict_nc" for lab in labs],
+        *[f"{lab}_semantic_nc" for lab in labs],
+        *[f"{lab}_compliance" for lab in labs],
         *[f"{lab}_rank" for lab in labs],
     ]
     with path.open("w", newline="", encoding="utf-8-sig") as csvf:

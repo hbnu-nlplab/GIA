@@ -319,6 +319,109 @@ class NetConfigQAScorer:
             return {"score": 1.0, "detail": "explicit_not_configured"}
         return {"score": 0.0, "detail": "missing_explicit_not_configured"}
 
+    def _is_explicit_not_configured(self, pred: str) -> bool:
+        pred_norm = str(pred or "").strip().lower().replace("-", "_").replace(" ", "_")
+        return pred_norm == "not_configured"
+
+    def _unwrap_raw_gold(self, gold_raw: str) -> Any:
+        text = str(gold_raw).strip()
+        try:
+            return json.loads(text)
+        except Exception:
+            pass
+
+        if len(text) >= 2 and text[0] == text[-1] and text[0] in ('"', "'"):
+            text = text[1:-1]
+        return text
+
+    def evaluate_negative_prediction(self, pred: str, gold_raw: str, answer_type: str) -> Dict[str, Any]:
+        """Evaluate negative samples with strict and relaxed views.
+
+        Strict:
+        - exact canonical token `NOT_CONFIGURED`
+
+        Relaxed semantic-negative:
+        - exact canonical token, or
+        - a non-blank prediction that matches the dataset's raw negative form
+          in a type-aware manner (e.g. [] / {} / 0 / "Disabled")
+        """
+        answer_type = canonical_answer_type(answer_type)
+        pred = str(pred or "").strip()
+
+        explicit_abstention = self._is_explicit_not_configured(pred)
+        if explicit_abstention:
+            return {
+                "semantic_negative_correct": True,
+                "explicit_abstention_correct": True,
+                "contract_compliant": True,
+                "blank_prediction": False,
+                "detail": "explicit_not_configured",
+            }
+
+        if not pred:
+            return {
+                "semantic_negative_correct": False,
+                "explicit_abstention_correct": False,
+                "contract_compliant": False,
+                "blank_prediction": True,
+                "detail": "blank_prediction",
+            }
+
+        raw_gold = self._unwrap_raw_gold(gold_raw)
+        semantic_negative_correct = False
+        detail = "negative_mismatch"
+
+        # Null/empty negatives must remain explicit to avoid rewarding lookup failure.
+        if raw_gold is None:
+            detail = "null_negative_requires_explicit"
+        elif isinstance(raw_gold, str):
+            gold_text = str(raw_gold).strip()
+            if not gold_text:
+                detail = "empty_negative_requires_explicit"
+            elif answer_type == "boolean":
+                semantic_negative_correct = self._score_boolean(pred, gold_text)["score"] == 1.0
+            elif answer_type == "number":
+                semantic_negative_correct = self._score_numeric(pred, gold_text)["score"] == 1.0
+            elif answer_type == "path":
+                semantic_negative_correct = self._score_path(pred, gold_text)["score"] == 1.0
+            else:
+                semantic_negative_correct = self._score_text(pred, gold_text)["score"] == 1.0
+            if semantic_negative_correct:
+                detail = "typed_negative_match"
+        elif isinstance(raw_gold, list):
+            if answer_type == "path":
+                if not raw_gold:
+                    semantic_negative_correct = pred == "[]"
+                else:
+                    gold_path = " -> ".join(str(node) for node in raw_gold)
+                    semantic_negative_correct = self._score_path(pred, gold_path)["score"] == 1.0
+            else:
+                gold_json = json.dumps(raw_gold, ensure_ascii=False)
+                semantic_negative_correct = self._score_set(pred, gold_json)["score"] == 1.0
+            if semantic_negative_correct:
+                detail = "typed_negative_match"
+        elif isinstance(raw_gold, dict):
+            gold_json = json.dumps(raw_gold, ensure_ascii=False, sort_keys=True)
+            semantic_negative_correct = self._score_map(pred, gold_json)["score"] == 1.0
+            if semantic_negative_correct:
+                detail = "typed_negative_match"
+        elif isinstance(raw_gold, bool):
+            semantic_negative_correct = self._score_boolean(pred, str(raw_gold).lower())["score"] == 1.0
+            if semantic_negative_correct:
+                detail = "typed_negative_match"
+        elif isinstance(raw_gold, (int, float)) and not isinstance(raw_gold, bool):
+            semantic_negative_correct = self._score_numeric(pred, str(raw_gold))["score"] == 1.0
+            if semantic_negative_correct:
+                detail = "typed_negative_match"
+
+        return {
+            "semantic_negative_correct": semantic_negative_correct,
+            "explicit_abstention_correct": False,
+            "contract_compliant": False,
+            "blank_prediction": False,
+            "detail": detail,
+        }
+
     def score(self, pred: str, gold: str, answer_type: str, status: str = "OK", question_id: str = "") -> Dict[str, float]:
         """Score prediction against gold answer based on answer type.
 
@@ -754,12 +857,24 @@ class ScorecardGenerator:
         lines.append("|-------|---------|----------|")
         ok_acc = stats.get('by_status', {}).get('OK')
         neg_acc = stats.get('by_status', {}).get('NOT_CONFIGURED')
+        negative_eval = stats.get('negative_eval', {})
+        semantic_neg_acc = negative_eval.get('semantic_negative_accuracy')
+        explicit_neg_acc = negative_eval.get('explicit_abstention_accuracy', neg_acc)
+        contract_compliance = negative_eval.get('contract_compliance')
         lines.append(f"| Positive (OK) | Configured facts / values that should be extracted | {fmt_pct(ok_acc)} |")
-        lines.append(f"| Negative (NOT_CONFIGURED) | Missing settings that must be explicitly abstained from | {fmt_pct(neg_acc)} |")
-        if ok_acc is not None and neg_acc is not None:
-            gap = ok_acc - neg_acc
-            lines.append(f"| Gap (OK - NOT_CONFIGURED) | Hallucination sensitivity gap | {gap*100:.2f}%p |")
+        lines.append(f"| Explicit Abstention (Strict) | Negative samples answered with exact `NOT_CONFIGURED` | {fmt_pct(explicit_neg_acc)} |")
+        lines.append(f"| Semantic Negative (Relaxed) | Metric-consistent negative form accepted; blank outputs remain wrong | {fmt_pct(semantic_neg_acc)} |")
+        lines.append(f"| Contract Compliance | Fraction of semantic negatives that used canonical `NOT_CONFIGURED` | {fmt_pct(contract_compliance)} |")
+        if ok_acc is not None and explicit_neg_acc is not None:
+            gap = ok_acc - explicit_neg_acc
+            lines.append(f"| Gap (OK - Strict Negative) | Hallucination sensitivity gap | {gap*100:.2f}%p |")
         lines.append("")
+        lines.append(
+            "> `Explicit Abstention (Strict)` requires the exact token `NOT_CONFIGURED`. "
+            "`Semantic Negative (Relaxed)` accepts metric-consistent negative forms such as `[]`, `{}`, `0`, or `Disabled`, "
+            "but never rewards blank outputs. `Contract Compliance` measures how often semantically-correct negative answers "
+            "also obey the canonical output contract.\n"
+        )
         
         # Metric Comparison by Answer Type
         lines.append("## 📊 Metric Comparison by Answer Type\n")
@@ -824,9 +939,19 @@ class ScorecardGenerator:
         lines.append("## 🔬 Positive vs Negative Testing\n")
         lines.append("| Test Type | Accuracy |")
         lines.append("|-----------|----------|")
-        for status, acc in sorted(stats['by_status'].items()):
-            label = "Positive (OK)" if status == "OK" else "Negative (NOT_CONFIGURED)"
-            lines.append(f"| {label} | {acc*100:.1f}% |")
+        lines.append(f"| Positive (OK) | {ok_acc*100:.1f}% |" if ok_acc is not None else "| Positive (OK) | N/A |")
+        lines.append(
+            f"| Explicit Abstention (Strict) | {explicit_neg_acc*100:.1f}% |"
+            if explicit_neg_acc is not None else "| Explicit Abstention (Strict) | N/A |"
+        )
+        lines.append(
+            f"| Semantic Negative (Relaxed) | {semantic_neg_acc*100:.1f}% |"
+            if semantic_neg_acc is not None else "| Semantic Negative (Relaxed) | N/A |"
+        )
+        lines.append(
+            f"| Contract Compliance | {contract_compliance*100:.1f}% |"
+            if contract_compliance is not None else "| Contract Compliance | N/A |"
+        )
         lines.append("")
         
         # Error Analysis (if provided)
@@ -933,21 +1058,27 @@ class SummaryReportGenerator:
 
         # Table 4: Positive vs Negative testing
         lines.append("### 4. Positive vs Negative Testing\n")
-        lines.append("| 모델 | OK | NOT_CONFIGURED | Gap (OK-NC) |")
-        lines.append("| :--- | :---: | :---: | :---: |")
+        lines.append("| 모델 | OK | Explicit NC | Semantic NC | Compliance | Gap (OK-Explicit) |")
+        lines.append("| :--- | :---: | :---: | :---: | :---: | :---: |")
 
         for stats, meta in all_stats_meta:
             model_name = meta.get("model", "Unknown")
             by_status = stats.get('by_status', {})
             ok = by_status.get('OK')
-            nc = by_status.get('NOT_CONFIGURED')
-            gap = None if ok is None or nc is None else ok - nc
+            negative_eval = stats.get('negative_eval', {})
+            explicit_nc = negative_eval.get('explicit_abstention_accuracy', by_status.get('NOT_CONFIGURED'))
+            semantic_nc = negative_eval.get('semantic_negative_accuracy')
+            compliance = negative_eval.get('contract_compliance')
+            gap = None if ok is None or explicit_nc is None else ok - explicit_nc
             lines.append(
-                f"| {model_name} | {fmt_pct(ok)} | {fmt_pct(nc)} | "
-                f"{('N/A' if gap is None else f'{gap*100:.2f}')} |"
+                f"| {model_name} | {fmt_pct(ok)} | {fmt_pct(explicit_nc)} | {fmt_pct(semantic_nc)} | "
+                f"{fmt_pct(compliance)} | {('N/A' if gap is None else f'{gap*100:.2f}')} |"
             )
 
-        lines.append("\n")
+        lines.append(
+            "\n> `Explicit NC` = exact `NOT_CONFIGURED`; `Semantic NC` = relaxed metric-consistent negative answer; "
+            "`Compliance` = explicit / semantic.\n"
+        )
         
         return "\n".join(lines)
 
@@ -1033,6 +1164,10 @@ def analyze_results(
     all_golds = []
     structured_total = 0
     structured_valid = 0
+    negative_total = 0
+    semantic_negative_correct = 0
+    explicit_abstention_correct = 0
+    blank_negative_predictions = 0
 
     print(f"Analyzing {len(rows)} results from {json_file}...")
     print(
@@ -1062,10 +1197,19 @@ def analyze_results(
 
         clean_pred = scorer.clean_prediction(str(pred_input), answer_type)
         clean_gold = scorer.clean_gold(gold_raw, status=status)
+        status_upper = str(status).strip().upper()
 
         type_aware_metrics = scorer.score(clean_pred, gold_raw, answer_type, status=status, question_id=question_id)
         type_aware_score = type_aware_metrics['score']
         trad_metrics = trad_calc.calculate_all(clean_pred, clean_gold)
+
+        negative_metrics = None
+        if status_upper == "NOT_CONFIGURED":
+            negative_metrics = scorer.evaluate_negative_prediction(clean_pred, gold_raw, answer_type)
+            negative_total += 1
+            semantic_negative_correct += int(negative_metrics["semantic_negative_correct"])
+            explicit_abstention_correct += int(negative_metrics["explicit_abstention_correct"])
+            blank_negative_predictions += int(negative_metrics["blank_prediction"])
 
         result = {
             "question_id": question_id,
@@ -1080,6 +1224,11 @@ def analyze_results(
             "type_aware_score": type_aware_score,
             "type": report_type,
             "canonical_type": answer_type,
+            "negative_semantic_correct": None if negative_metrics is None else negative_metrics["semantic_negative_correct"],
+            "negative_explicit_abstention": None if negative_metrics is None else negative_metrics["explicit_abstention_correct"],
+            "negative_contract_compliant": None if negative_metrics is None else negative_metrics["contract_compliant"],
+            "negative_blank_prediction": None if negative_metrics is None else negative_metrics["blank_prediction"],
+            "negative_eval_detail": None if negative_metrics is None else negative_metrics["detail"],
         }
         result.update({f"type_aware_{k}": v for k, v in type_aware_metrics.items() if k != 'score'})
         result.update(trad_metrics)
@@ -1163,6 +1312,21 @@ def analyze_results(
         "by_level": {l: sum(s)/len(s) for l, s in grouped_by_level.items()},
         "by_category": {c: sum(s)/len(s) for c, s in grouped_by_category.items()},
         "by_status": {s: sum(sc)/len(sc) for s, sc in grouped_by_status.items()},
+        "negative_eval": {
+            "total_negative_samples": negative_total,
+            "semantic_negative_correct": semantic_negative_correct,
+            "explicit_abstention_correct": explicit_abstention_correct,
+            "blank_negative_predictions": blank_negative_predictions,
+            "semantic_negative_accuracy": (semantic_negative_correct / negative_total) if negative_total > 0 else None,
+            "explicit_abstention_accuracy": (explicit_abstention_correct / negative_total) if negative_total > 0 else None,
+            "contract_compliance": (
+                explicit_abstention_correct / semantic_negative_correct
+            ) if semantic_negative_correct > 0 else None,
+            "semantic_vs_explicit_gap": (
+                (semantic_negative_correct / negative_total) -
+                (explicit_abstention_correct / negative_total)
+            ) if negative_total > 0 else None,
+        },
         "traditional_metrics": overall_trad_metrics,
         "trad_by_type": {
             atype: {
@@ -1259,7 +1423,10 @@ def analyze_results(
         if results:
             fieldnames = ['question_id', 'level', 'category', 'type', 'status',
                          'question', 'gold', 'pred',
-                         'type_aware_score', 'exact_match', 'token_f1',
+                         'type_aware_score', 'negative_semantic_correct',
+                         'negative_explicit_abstention', 'negative_contract_compliant',
+                         'negative_blank_prediction', 'negative_eval_detail',
+                         'exact_match', 'token_f1',
                          'bertscore_f1', 'rougeL', 'rouge1', 'rouge2']
             writer = csv.DictWriter(csvf, fieldnames=fieldnames, extrasaction='ignore')
             writer.writeheader()

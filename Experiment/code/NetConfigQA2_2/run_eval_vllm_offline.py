@@ -193,9 +193,9 @@ class Config:
 
 # === Logger ===
 
-def setup_logger(model_name: str, lab_name: str) -> tuple:
+def setup_logger(model_name: str, lab_name: str, run_id: Optional[str] = None) -> tuple:
     Config.LOG_DIR.mkdir(parents=True, exist_ok=True)
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    timestamp = run_id or datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     clean_name = model_name.replace("/", "_").replace(":", "_")
     log_file = Config.LOG_DIR / f"eval_vllm_{clean_name}_Lab{lab_name}_{timestamp}.log"
 
@@ -212,6 +212,74 @@ def setup_logger(model_name: str, lab_name: str) -> tuple:
     logger.addHandler(sh)
 
     return logger, timestamp
+
+
+def make_group_id(level: str, answer_type: str) -> str:
+    normalized_level = str(level or "L1").strip().upper()
+    normalized_type = normalize_answer_type(answer_type)
+    return f"{normalized_level}__{normalized_type}"
+
+
+def load_completed_group_parts(parts_dir: Path) -> Dict[str, Dict[str, Any]]:
+    completed_parts: Dict[str, Dict[str, Any]] = {}
+    if not parts_dir.exists():
+        return completed_parts
+
+    for part_file in sorted(parts_dir.glob("*.json")):
+        try:
+            with open(part_file, "r", encoding="utf-8") as f:
+                payload = json.load(f)
+        except Exception:
+            continue
+        group_id = payload.get("group_id")
+        if group_id:
+            completed_parts[group_id] = payload
+    return completed_parts
+
+
+def is_group_part_complete(payload: Optional[Dict[str, Any]]) -> bool:
+    if not payload:
+        return False
+    if "completed" in payload:
+        return bool(payload.get("completed"))
+    expected_count = payload.get("expected_count")
+    item_count = len(payload.get("items", []))
+    if expected_count is None:
+        return True
+    return item_count >= int(expected_count)
+
+
+def save_group_part(
+    parts_dir: Path,
+    group_id: str,
+    level: str,
+    answer_type: str,
+    request_max_tokens: int,
+    items: List[Dict[str, Any]],
+    expected_count: Optional[int] = None,
+    completed: bool = True,
+) -> Path:
+    parts_dir.mkdir(parents=True, exist_ok=True)
+    part_file = parts_dir / f"{group_id}.json"
+    payload = {
+        "group_id": group_id,
+        "level": str(level or "L1").strip().upper(),
+        "answer_type": normalize_answer_type(answer_type),
+        "request_max_tokens": request_max_tokens,
+        "expected_count": expected_count if expected_count is not None else len(items),
+        "count": len(items),
+        "completed": completed,
+        "items": items,
+    }
+    with open(part_file, "w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=2, ensure_ascii=False)
+    return part_file
+
+
+def iter_group_chunks(items: List[Any], chunk_size: Optional[int]) -> List[List[Any]]:
+    if not chunk_size or chunk_size <= 0 or chunk_size >= len(items):
+        return [items]
+    return [items[i:i + chunk_size] for i in range(0, len(items), chunk_size)]
 
 
 # === Dataset & Config Finder (재사용) ===
@@ -945,11 +1013,15 @@ def run_evaluation(
     include_levels: Optional[List[str]] = None,
     exclude_levels: Optional[List[str]] = None,
     level_token_overrides: Optional[Dict[str, int]] = None,
+    group_batch_size: Optional[int] = None,
+    group_batch_levels: Optional[List[str]] = None,
     max_model_len_override: Optional[str] = None,
     use_structured_outputs: bool = False,
     decoding_mode: str = Config.DECODING_MODE_DEFAULT,
+    run_id: Optional[str] = None,
+    resume: bool = False,
 ):
-    logger, timestamp = setup_logger(model_key, lab_key)
+    logger, timestamp = setup_logger(model_key, lab_key, run_id=run_id)
 
     # 1. Dataset & Config Load
     dataset_path = find_latest_dataset(lab_key)
@@ -1002,7 +1074,53 @@ def run_evaluation(
     hf_path = model_info.get("hf_path", "")
     start_time = time.time()
     outputs_text = [""] * len(data)  # 원래 순서 유지용
-    outputs_meta = [{"finish_reason": None, "output_tokens": None, "request_max_tokens": None, "truncated_flag": False}] * len(data)
+    outputs_meta = [
+        {
+            "finish_reason": None,
+            "stop_reason": None,
+            "output_tokens": None,
+            "request_max_tokens": None,
+            "truncated_flag": False,
+        }
+        for _ in range(len(data))
+    ]
+    model_info = Config.MODEL_DICT.get(model_key, {})
+    display_name = model_info.get("display", model_key)
+    clean_display = display_name.replace(" ", "_").replace("/", "_")
+    dataset_language = infer_dataset_language(dataset_path)
+    group_batch_level_set = {
+        str(level or "").strip().upper()
+        for level in (group_batch_levels or [])
+        if str(level or "").strip()
+    }
+    result_dir = Config.RESULT_DIR / f"{clean_display}" / f"Lab{lab_key}"
+    result_dir.mkdir(parents=True, exist_ok=True)
+    output_file = result_dir / f"results_raw_vllm_{dataset_language}_{timestamp}.json"
+    parts_dir = result_dir / "_parts" / output_file.stem
+    completed_parts = load_completed_group_parts(parts_dir) if resume else {}
+    resumed_items = 0
+
+    if resume and completed_parts:
+        for payload in completed_parts.values():
+            for item in payload.get("items", []):
+                try:
+                    orig_idx = int(item["index"])
+                except Exception:
+                    continue
+                if 0 <= orig_idx < len(outputs_text):
+                    outputs_text[orig_idx] = item.get("raw_pred", "")
+                    outputs_meta[orig_idx] = {
+                        "finish_reason": item.get("finish_reason"),
+                        "stop_reason": item.get("stop_reason"),
+                        "output_tokens": item.get("output_tokens"),
+                        "request_max_tokens": item.get("request_max_tokens"),
+                        "truncated_flag": item.get("truncated_flag", False),
+                    }
+                    resumed_items += 1
+        logger.info(
+            f"Resume enabled: loaded {len(completed_parts)} completed group part(s) "
+            f"covering {resumed_items} sample(s) from {parts_dir}"
+        )
 
     if model_backend == "vllm_offline":
         # 4. Prepare Prompts (Batch) — 레벨 + 답변 타입별로 그룹화
@@ -1045,7 +1163,30 @@ def run_evaluation(
 
         # 5. Execute Inference — 레벨/타입별 배치로 분리
         for level, normalized_answer_type in sorted(prompt_groups.keys()):
-            group = prompt_groups[(level, normalized_answer_type)]
+            original_group = prompt_groups[(level, normalized_answer_type)]
+            group = list(original_group)
+            group_id = make_group_id(level, normalized_answer_type)
+            existing_payload = completed_parts.get(group_id) if resume else None
+            existing_items = existing_payload.get("items", []) if existing_payload else []
+            if resume and existing_payload:
+                if is_group_part_complete(existing_payload):
+                    logger.info(
+                        f"  {level}/{normalized_answer_type}: {len(group)}건 [resume-skip from {group_id}]"
+                    )
+                    continue
+                completed_indices = {
+                    int(item["index"])
+                    for item in existing_items
+                    if str(item.get("index", "")).isdigit()
+                }
+                remaining_group = [(idx, prompt) for idx, prompt in group if idx not in completed_indices]
+                logger.info(
+                    f"  {level}/{normalized_answer_type}: {len(group)}건 "
+                    f"[resume-partial {len(existing_items)} done, {len(remaining_group)} remaining]"
+                )
+                group = remaining_group
+                if not group:
+                    continue
             max_tokens = resolve_max_tokens(
                 level,
                 normalized_answer_type,
@@ -1060,9 +1201,16 @@ def run_evaluation(
             )
 
             structured_label = "structured" if structured_outputs is not None else "freeform"
+            chunk_size = None
+            if group_batch_size and str(level or "").strip().upper() in group_batch_level_set:
+                chunk_size = max(1, int(group_batch_size))
+            chunked_group = iter_group_chunks(group, chunk_size)
+            chunk_note = ""
+            if chunk_size and len(chunked_group) > 1:
+                chunk_note = f", chunk_size={chunk_size} ({len(chunked_group)} chunk(s))"
             logger.info(
                 f"  {level}/{normalized_answer_type}: {len(prompts)}건 × "
-                f"max_tokens={max_tokens} [{structured_label}]"
+                f"max_tokens={max_tokens} [{structured_label}{chunk_note}]"
             )
 
             sampling_kwargs = dict(
@@ -1078,16 +1226,57 @@ def run_evaluation(
                 sampling_kwargs["structured_outputs"] = structured_outputs
 
             sampling_params = SamplingParams(**sampling_kwargs)
-            outputs = llm.generate(prompts, sampling_params)
+            part_items_by_index = {}
+            for item in existing_items:
+                try:
+                    part_items_by_index[int(item["index"])] = item
+                except Exception:
+                    continue
 
-            for out, orig_idx in zip(outputs, indices):
-                completion = out.outputs[0]
-                outputs_text[orig_idx] = completion.text
-                outputs_meta[orig_idx] = extract_vllm_output_meta(
-                    out,
-                    completion,
+            total_expected = len(original_group)
+            for chunk_idx, chunk in enumerate(chunked_group, start=1):
+                chunk_prompts = [p for _, p in chunk]
+                chunk_indices = [i for i, _ in chunk]
+                outputs = llm.generate(chunk_prompts, sampling_params)
+
+                for out, orig_idx in zip(outputs, chunk_indices):
+                    completion = out.outputs[0]
+                    outputs_text[orig_idx] = completion.text
+                    generation_meta = extract_vllm_output_meta(
+                        out,
+                        completion,
+                        request_max_tokens=max_tokens,
+                    )
+                    outputs_meta[orig_idx] = generation_meta
+                    part_items_by_index[orig_idx] = {
+                        "index": orig_idx,
+                        "raw_pred": completion.text,
+                        "finish_reason": generation_meta.get("finish_reason"),
+                        "stop_reason": generation_meta.get("stop_reason"),
+                        "output_tokens": generation_meta.get("output_tokens"),
+                        "request_max_tokens": generation_meta.get("request_max_tokens"),
+                        "truncated_flag": generation_meta.get("truncated_flag", False),
+                    }
+
+                part_items = [part_items_by_index[idx] for idx in sorted(part_items_by_index)]
+                part_completed = len(part_items) >= total_expected
+                part_file = save_group_part(
+                    parts_dir=parts_dir,
+                    group_id=group_id,
+                    level=level,
+                    answer_type=normalized_answer_type,
                     request_max_tokens=max_tokens,
+                    items=part_items,
+                    expected_count=total_expected,
+                    completed=part_completed,
                 )
+                if len(chunked_group) > 1:
+                    logger.info(
+                        f"    checkpoint saved: {part_file} "
+                        f"[chunk {chunk_idx}/{len(chunked_group)}, {len(part_items)}/{total_expected}]"
+                    )
+                else:
+                    logger.info(f"    checkpoint saved: {part_file}")
         logger.info(f"VLLM batch inference complete: {len(data)} samples")
     elif model_backend in ("openai", "openrouter"):
         model_info = Config.MODEL_DICT.get(model_key, {})
@@ -1200,15 +1389,6 @@ def run_evaluation(
         })
 
     # 7. Aggregate & Save
-    model_info = Config.MODEL_DICT.get(model_key, {})
-    display_name = model_info.get("display", model_key)
-    clean_display = display_name.replace(" ", "_").replace("/", "_")
-    dataset_language = infer_dataset_language(dataset_path)
-
-    result_dir = Config.RESULT_DIR / f"{clean_display}" / f"Lab{lab_key}"
-    result_dir.mkdir(parents=True, exist_ok=True)
-    output_file = result_dir / f"results_raw_vllm_{dataset_language}_{timestamp}.json"
-
     for atype in set(r["answer_type"] for r in results):
         type_results = [r for r in results if r["answer_type"] == atype]
         parse_rate = sum(1 for r in type_results if r["format_parseable"]) / len(type_results)
@@ -1245,6 +1425,8 @@ def run_evaluation(
             ),
             "decoding_mode": decoding_mode,
             "level_token_overrides": level_token_overrides or {},
+            "group_batch_size": group_batch_size,
+            "group_batch_levels": sorted(group_batch_level_set),
             "max_model_len_override": max_model_len_override,
         },
         "format_stability": format_stats,
@@ -1278,6 +1460,18 @@ def main():
     parser.add_argument("--l4-max-tokens", type=int, default=None, help="L4 전용 생성 토큰 상한 override")
     parser.add_argument("--l5-max-tokens", type=int, default=None, help="L5 전용 생성 토큰 상한 override")
     parser.add_argument(
+        "--group-batch-size",
+        type=int,
+        default=None,
+        help="동일 level/type 그룹을 여러 llm.generate 호출로 나눌 chunk 크기. 기본값은 비활성화.",
+    )
+    parser.add_argument(
+        "--group-batch-levels",
+        nargs="+",
+        default=["L4", "L5"],
+        help="group chunking을 적용할 level 목록. 기본값: L4 L5",
+    )
+    parser.add_argument(
         "--max-model-len",
         default=None,
         help="vLLM max_model_len override. 정수 또는 'auto' 사용 가능.",
@@ -1293,11 +1487,26 @@ def main():
         default=Config.DECODING_MODE_DEFAULT,
         help="디코딩/추출 정책. legacy는 예전 통신학회 스타일 reasoning+후처리, strict는 한 줄 응답 강제.",
     )
+    parser.add_argument(
+        "--run-id",
+        default=None,
+        help="결과 파일/로그/체크포인트를 고정할 실행 ID. 재개할 때 같은 값을 사용합니다.",
+    )
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        help="같은 --run-id의 group checkpoint를 읽어 완료된 level/answer_type 그룹을 건너뜁니다.",
+    )
 
     args = parser.parse_args()
 
+    if args.resume and not args.run_id:
+        raise ValueError("--resume 사용 시에는 동일 실행을 식별할 --run-id를 함께 지정해야 합니다.")
+
     if args.hard_levels_only:
         args.include_levels = ["L4", "L5"]
+
+    group_batch_levels = dedupe_preserve_order([str(level).upper() for level in (args.group_batch_levels or [])])
 
     level_token_overrides = {}
     if args.l4_max_tokens is not None:
@@ -1344,9 +1553,13 @@ def main():
                 include_levels=args.include_levels,
                 exclude_levels=args.exclude_levels,
                 level_token_overrides=level_token_overrides or None,
+                group_batch_size=args.group_batch_size,
+                group_batch_levels=group_batch_levels,
                 max_model_len_override=args.max_model_len,
                 use_structured_outputs=args.structured_outputs,
                 decoding_mode=args.decoding_mode,
+                run_id=args.run_id,
+                resume=args.resume,
             )
             if output_file:
                 completed.append((display, lab_key, str(output_file)))

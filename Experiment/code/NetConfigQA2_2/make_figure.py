@@ -99,6 +99,12 @@ class AcademicFigureGenerator:
         
         # Figure 4: Level x Category Heatmap
         self.fig4_heatmap(results, model_name)
+
+        # Figure 5: Negative contract gap
+        self.fig5_negative_gap(stats, model_name)
+
+        # Figure summary with metric meaning
+        self.write_figure_summary(stats, model_name)
         
         print(f"\n[OK] All figures saved to: {self.output_dir}")
         return self.output_dir
@@ -200,22 +206,34 @@ class AcademicFigureGenerator:
         print(f"  ✓ Saved: {output_path.name}")
     
     def fig3_positive_negative(self, stats: dict, model_name: str):
-        """Figure 3: Positive vs Negative Testing 비교"""
-        fig, ax = plt.subplots(figsize=(8, 6))
-        
-        labels = ['Positive\n(OK)', 'Negative\n(NOT_CONFIGURED)']
+        """Figure 3: Positive/Negative evaluation breakdown."""
+        fig, ax = plt.subplots(figsize=(9.5, 6))
+
+        negative_eval = stats.get('negative_eval', {})
+        labels = [
+            'Positive\n(OK)',
+            'Explicit NC\n(Strict)',
+            'Semantic NC\n(Relaxed)',
+            'Contract\nCompliance',
+        ]
         values = [
             stats['by_status'].get('OK', 0) * 100,
-            stats['by_status'].get('NOT_CONFIGURED', 0) * 100
+            negative_eval.get('explicit_abstention_accuracy', stats['by_status'].get('NOT_CONFIGURED', 0) or 0) * 100,
+            negative_eval.get('semantic_negative_accuracy', 0) * 100,
+            negative_eval.get('contract_compliance', 0) * 100,
         ]
-        
-        # 막대 그래프
-        colors = [self.COLORS['success'], self.COLORS['danger']]
+
+        colors = [
+            self.COLORS['success'],
+            self.COLORS['danger'],
+            self.COLORS['accent'],
+            self.COLORS['primary'],
+        ]
         bars = ax.bar(labels, values, 
                       color=colors, 
                       edgecolor='black', 
                       linewidth=0.8, 
-                      width=0.5)
+                      width=0.58)
         
         # 값 표시
         for bar, val in zip(bars, values):
@@ -228,11 +246,20 @@ class AcademicFigureGenerator:
         
         # 스타일링
         ax.set_ylabel('Accuracy (%)', fontweight='bold', fontsize=12)
-        ax.set_title(f'Positive vs Negative Testing\n({model_name})', 
+        ax.set_title(f'Negative Evaluation Breakdown\n({model_name})', 
                      fontweight='bold', fontsize=14, pad=15)
         ax.set_ylim(0, 110)
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
+
+        fig.text(
+            0.02,
+            0.02,
+            "Explicit NC: exact NOT_CONFIGURED | Semantic NC: metric-consistent negative form, blank still wrong | "
+            "Compliance: explicit / semantic",
+            fontsize=9,
+            color=self.COLORS['neutral'],
+        )
         
         # 저장
         output_path = self.output_dir / "fig3_positive_negative.png"
@@ -304,6 +331,87 @@ class AcademicFigureGenerator:
         plt.tight_layout()
         plt.savefig(output_path)
         plt.close()
+        print(f"  ✓ Saved: {output_path.name}")
+
+    def fig5_negative_gap(self, stats: dict, model_name: str):
+        """Figure 5: semantic-vs-explicit negative gap."""
+        negative_eval = stats.get('negative_eval', {})
+        strict = (negative_eval.get('explicit_abstention_accuracy') or 0) * 100
+        semantic = (negative_eval.get('semantic_negative_accuracy') or 0) * 100
+        gap = semantic - strict
+
+        fig, ax = plt.subplots(figsize=(7.5, 5.5))
+        labels = ['Explicit NC', 'Semantic NC']
+        values = [strict, semantic]
+        colors = [self.COLORS['danger'], self.COLORS['accent']]
+        bars = ax.bar(labels, values, color=colors, edgecolor='black', linewidth=0.8, width=0.55)
+
+        for bar, val in zip(bars, values):
+            ax.annotate(
+                f'{val:.1f}%',
+                xy=(bar.get_x() + bar.get_width() / 2, val),
+                xytext=(0, 5),
+                textcoords="offset points",
+                ha='center',
+                va='bottom',
+                fontsize=12,
+                fontweight='bold',
+            )
+
+        ax.annotate(
+            f'Gap: {gap:.1f}%p',
+            xy=(0.5, max(values) + 2),
+            xytext=(0.5, max(values) + 12),
+            textcoords='data',
+            ha='center',
+            va='bottom',
+            arrowprops=dict(arrowstyle='-[,widthB=4.0,lengthB=0.8', lw=1.5, color=self.COLORS['neutral']),
+            fontsize=11,
+            fontweight='bold',
+            color=self.COLORS['neutral'],
+        )
+
+        ax.set_ylabel('Accuracy (%)', fontweight='bold', fontsize=12)
+        ax.set_title(f'Semantic vs Explicit Negative Accuracy\n({model_name})',
+                     fontweight='bold', fontsize=14, pad=15)
+        ax.set_ylim(0, max(semantic, strict) + 25)
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+
+        output_path = self.output_dir / "fig5_negative_gap.png"
+        plt.tight_layout()
+        plt.savefig(output_path)
+        plt.close()
+        print(f"  ✓ Saved: {output_path.name}")
+
+    def write_figure_summary(self, stats: dict, model_name: str):
+        """Write a short markdown summary for the generated figures."""
+        negative_eval = stats.get('negative_eval', {})
+        ok_acc = stats.get('by_status', {}).get('OK')
+        strict = negative_eval.get('explicit_abstention_accuracy', stats.get('by_status', {}).get('NOT_CONFIGURED'))
+        semantic = negative_eval.get('semantic_negative_accuracy')
+        compliance = negative_eval.get('contract_compliance')
+        gap = negative_eval.get('semantic_vs_explicit_gap')
+
+        def fmt_pct(value):
+            return "N/A" if value is None else f"{value * 100:.2f}%"
+
+        lines = [
+            "# Figure Notes",
+            "",
+            f"Model: `{model_name}`",
+            "",
+            "## Negative Metrics",
+            "",
+            f"- `Positive (OK)`: configured facts that should be extracted. Current value: {fmt_pct(ok_acc)}.",
+            f"- `Explicit NC (Strict)`: exact `NOT_CONFIGURED` output on negative samples. Current value: {fmt_pct(strict)}.",
+            f"- `Semantic NC (Relaxed)`: metric-consistent negative form such as `[]`, `{{}}`, `0`, or `Disabled`, while still rejecting blank outputs. Current value: {fmt_pct(semantic)}.",
+            f"- `Contract Compliance`: fraction of semantic negatives that also used exact `NOT_CONFIGURED`. Current value: {fmt_pct(compliance)}.",
+            f"- `Semantic-Strict Gap`: how much better the model is at recognizing absence than following the canonical abstention token. Current value: {fmt_pct(gap)}.",
+            "",
+        ]
+        output_path = self.output_dir / "figure_summary.md"
+        output_path.write_text("\n".join(lines), encoding='utf-8')
         print(f"  ✓ Saved: {output_path.name}")
 
 
