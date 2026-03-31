@@ -1,0 +1,116 @@
+% !TEX program = xelatex
+\RequirePackage{silence}
+\WarningFilter{latexfont}{Font shape}
+\WarningFilter{latexfont}{Some font shapes were not available}
+\WarningFilter{latex}{Text page}
+\WarningFilter{latex}{Overfull \hbox}
+\WarningFilter{latex}{Underfull \hbox}
+\WarningFilter{latex}{Citation}
+\WarningFilter{latex}{Reference}
+\WarningFilter{latex}{undefined references}
+\WarningFilter{latex}{Label(s) may have changed}
+\documentclass[journal]{IEEEtran}
+
+\usepackage{cite}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{iftex}
+\usepackage{enumitem}
+\usepackage{kotex}
+\usepackage{url}
+\usepackage{tabularx}
+\usepackage{makecell}
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
+\usepackage{threeparttable}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{float}
+\usepackage{multirow}
+
+
+\providecommand{\IfFontExistsTF}[3]{#3}
+\providecommand{\setmainhangulfont}[2][]{ }
+\IfFontExistsTF{Noto Serif CJK KR}{\setmainhangulfont{Noto Serif CJK KR}[BoldFont={Noto Serif CJK KR Bold}]}{%
+  \IfFontExistsTF{Source Han Serif KR}{\setmainhangulfont{Source Han Serif KR}}{%
+    \setmainhangulfont{UnBatang}%
+  }%
+}
+
+\hbadness=10000
+\vbadness=10000
+\hfuzz=100pt
+\vfuzz=100pt
+\emergencystretch=3em
+\setlength{\tabcolsep}{5.0pt}
+\renewcommand{\arraystretch}{1.12}
+\setlist[itemize]{leftmargin=1.4em, itemsep=2pt, topsep=3pt}
+
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+
+\graphicspath{{figure/}{figures/}}
+
+\hyphenation{net-work net-works con-fig-u-ra-tion}
+
+\begin{document}
+
+\title{How Well Can LLMs Interpret Network Configurations?\\ A Benchmark and Tool-Augmented Multi-Agent System}
+
+
+\author{
+Hyeonjeong Lee, Yujin Park, Ki-Hyeon Kim, Chanjin Park, Jinyeong Bak, Cheoneum Park
+\thanks{H. Lee and C. Park are with the Department of Computer Science, Hanbat National University, Daejeon, South Korea (e-mail: leehj@edu.hanbat.ac.kr; parkce@hanbat.ac.kr).}
+\thanks{Y. Park is with the Department of Computer Science, Chungnam National University, Daejeon, South Korea (e-mail: newmail@cnu.ac.kr).}
+\thanks{K.-H. Kim and C. Park are with the Advanced KREONET Center of Korea Institute of Science and Technology Information, Daejeon, South Korea (e-mail: kkh1258@kisti.re.kr).}
+\thanks{J. Park is with the Department of Computer Science, Sungkyunkwan University, Suwon, South Korea (e-mail: jy.bak@skku.edu).}
+
+\thanks{Corresponding author: Cheoneum Park.}
+\thanks{Manuscript received Month XX, 2026; revised Month XX, 2026.}
+}
+
+\markboth{IEEE Transactions on Network and Service Management,~2026}%
+{Lee \MakeLowercase{\textit{et al.}}: How Well Can LLMs Interpret Network Configurations?}
+
+\maketitle
+
+\begin{abstract}
+  \input{body/abstract}
+\end{abstract}
+
+\IEEEpeerreviewmaketitle
+
+\input{body/introduction}
+\input{body/related_work}
+\input{body/benchmark}
+\input{body/netagent}
+\input{body/netally}
+\input{body/experiments}
+\input{body/discussion}
+\input{body/conclusion}
+
+
+\section*{Acknowledgment}
+[TODO]
+
+\ifCLASSOPTIONcaptionsoff
+\newpage
+\fi
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\begin{IEEEbiographynophoto}{Hyeonjeong Lee}
+  [TODO]
+\end{IEEEbiographynophoto}
+
+\begin{IEEEbiographynophoto}{Yujin Park}
+  [TODO]
+\end{IEEEbiographynophoto}
+
+\begin{IEEEbiographynophoto}{Cheoneum Park}
+  Cheoneum Park is a Member of IEEE. [TODO]
+\end{IEEEbiographynophoto}
+
+\end{document}

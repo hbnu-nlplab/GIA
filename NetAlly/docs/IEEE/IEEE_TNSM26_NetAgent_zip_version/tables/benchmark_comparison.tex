@@ -1,0 +1,20 @@
+\begin{table*}[!t]
+  \caption{Network LLM Benchmark Comparison}
+  \label{tab:benchmark_comparison}
+  \centering
+  \small
+  \begin{tabular}{llllc}
+    \toprule
+    \textbf{Benchmark}                     & \textbf{Task}          & \textbf{Data Source}     & \textbf{GT Generation}           & \textbf{Metric}  \\
+    \midrule
+    TeleQnA~\cite{ref9}                    & Knowledge QA           & 3GPP docs                & Human+LLM                        & Accuracy         \\
+    TeleQuAD~\cite{ref10}                  & Span Extraction         & 3GPP specs               & Extractive                       & F1 / EM          \\
+    NetBench~\cite{ref11}                  & Expert QA              & Expert-curated           & Expert panel                     & Expert eval      \\
+    NetConfEval~\cite{wang2024netconfeval} & Config Generation      & Documentation            & Reference config                 & Accuracy         \\
+    NETLLM\allowbreak BENCH~\cite{ref12}   & Generation+Validation  & YANG schema              & Emulation                        & Syntax+Semantics \\
+    NetPress~\cite{ref7}                   & Dynamic Reasoning      & Runtime-generated        & Emulator                         & Correctness      \\
+    \midrule
+    \textbf{Ours}                          & \textbf{Config Interp.} & \textbf{Real .cfg files} & \textbf{Rule + Batfish sim.}     & \textbf{TA-Acc}  \\
+    \bottomrule
+  \end{tabular}
+\end{table*}

@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>NetAlly MAS + MCP Architecture</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8f9fa; display: flex; justify-content: center; padding: 24px; }
+
+  .figure { width: 860px; font-family: 'Inter', 'Noto Sans KR', sans-serif; }
+  .fig-box {
+    border: 1px solid #d0d0d0;
+    padding: 28px 24px 20px;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .caption {
+    text-align: center; font-size: 12px; margin-top: 12px;
+    line-height: 1.65; color: #333; max-width: 760px; margin-left: auto; margin-right: auto;
+  }
+  .caption b { font-weight: 700; }
+
+  .canvas { position: relative; width: 812px; height: 780px; }
+
+  /* ===== Node base ===== */
+  .node {
+    position: absolute; border-radius: 8px; overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    transition: box-shadow 0.2s;
+  }
+  .node:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  .node-head {
+    padding: 8px 12px; font-weight: 700; font-size: 12px;
+    display: flex; align-items: center; gap: 7px;
+    letter-spacing: -0.3px;
+  }
+  .node-head .icon { font-size: 18px; flex-shrink: 0; }
+  .node-head .titles { line-height: 1.3; }
+  .node-head .en { display: block; }
+  .node-head .ko { display: block; font-size: 9.5px; font-weight: 500; opacity: 0.7; }
+  .node-body {
+    padding: 7px 12px 9px; font-size: 10px; line-height: 1.55; color: #444;
+  }
+  .node-body b { font-weight: 600; color: #222; }
+  .node-body .hint { color: #888; font-size: 9px; }
+  .node-body .tag {
+    display: inline-block; font-size: 8.5px; font-weight: 600;
+    padding: 1px 6px; border-radius: 3px; margin: 1px 2px;
+  }
+  .tag-accept { background: #d1fae5; color: #065f46; }
+  .tag-continue { background: #dbeafe; color: #1e40af; }
+  .tag-need { background: #fee2e2; color: #991b1b; }
+  .tag-defend { background: #dbeafe; color: #1e40af; }
+  .tag-concede { background: #fef3c7; color: #92400e; }
+  .tag-model { background: #f3f4f6; color: #374151; font-size: 8px; }
+
+  /* ===== Color themes ===== */
+  .n-input .node-head { background: #374151; color: #fff; }
+  .n-input .node-body { background: #f9fafb; border: 1px solid #d1d5db; border-top: 0; border-radius: 0 0 8px 8px; }
+
+  .n-collector .node-head { background: #dc2626; color: #fff; }
+  .n-collector .node-body { background: #fef2f2; border: 1.5px solid #fca5a5; border-top: 0; border-radius: 0 0 8px 8px; }
+
+  .n-verifier .node-head { background: #2563eb; color: #fff; }
+  .n-verifier .node-body { background: #eff6ff; border: 1.5px solid #93c5fd; border-top: 0; border-radius: 0 0 8px 8px; }
+
+  .n-synth .node-head { background: #059669; color: #fff; }
+  .n-synth .node-body { background: #ecfdf5; border: 1.5px solid #6ee7b7; border-top: 0; border-radius: 0 0 8px 8px; }
+
+  .n-supporter .node-head { background: #0284c7; color: #fff; }
+  .n-supporter .node-body { background: #f0f9ff; border: 1.5px solid #7dd3fc; border-top: 0; border-radius: 0 0 8px 8px; }
+
+  .n-skeptic .node-head { background: #7c3aed; color: #fff; }
+  .n-skeptic .node-body { background: #f5f3ff; border: 1.5px solid #c4b5fd; border-top: 0; border-radius: 0 0 8px 8px; }
+
+  .n-answer { background: #059669; border-radius: 10px; box-shadow: 0 3px 10px rgba(5,150,105,0.3); }
+  .n-answer .node-head { background: #059669; color: #fff; justify-content: center; padding: 12px; }
+
+  .n-feedback { border: 2px dashed #d97706; border-radius: 10px; background: #fffbeb; box-shadow: none; }
+  .n-feedback .node-head { background: #fffbeb; color: #92400e; border-bottom: 1px dashed #fbbf24; }
+  .n-feedback .node-body { background: #fffbeb; }
+
+  .n-tool .node-head { background: #ea580c; color: #fff; font-size: 11px; }
+  .n-tool .node-body { background: #fff7ed; border: 1.5px solid #fdba74; border-top: 0; border-radius: 0 0 8px 8px; }
+
+  /* ===== Phase areas ===== */
+  .phase-area { position: absolute; border-radius: 12px; }
+  .phase-label {
+    position: absolute; font-weight: 700; font-size: 11.5px;
+    padding: 4px 14px; border-radius: 6px; top: -14px; left: 16px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .phase-label .p-icon { font-size: 14px; }
+  .phase-label .p-ko { font-weight: 500; font-size: 10px; opacity: 0.8; margin-left: 4px; }
+
+  .pa1 { border: 2px solid #93c5fd; background: rgba(239,246,255,0.35); }
+  .pl1 { background: #dbeafe; border: 1.5px solid #60a5fa; color: #1e40af; }
+
+  .pa2 { border: 2px solid #fdba74; background: rgba(255,247,237,0.35); }
+  .pl2 { background: #ffedd5; border: 1.5px solid #fb923c; color: #9a3412; }
+
+  /* ===== Debate bubble ===== */
+  .debate-bubble {
+    position: absolute; width: 60px; height: 60px;
+    border: 2.5px solid #f59e0b; border-radius: 50%;
+    background: linear-gradient(135deg, #fffbeb, #fef3c7);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; font-weight: 700; color: #b45309;
+    box-shadow: 0 2px 8px rgba(245,158,11,0.25);
+  }
+  .debate-bubble .d-icon { font-size: 16px; }
+  .debate-bubble .d-text { font-size: 9px; margin-top: 1px; }
+
+  /* ===== Counters ===== */
+  .counter {
+    position: absolute; font-size: 9px; font-weight: 600;
+    background: #fff; border-radius: 12px; padding: 3px 10px;
+    display: flex; align-items: center; gap: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  .counter .c-icon { font-size: 12px; }
+  .counter .c-ko { font-weight: 400; color: #888; font-size: 8px; }
+  .c-inner { border: 1.5px solid #f59e0b; color: #b45309; }
+  .c-outer { border: 1.5px solid #ef4444; color: #b91c1c; }
+  .c-safety { border: 1.5px solid #9ca3af; color: #6b7280; }
+
+  /* ===== Arrow labels ===== */
+  .al {
+    position: absolute; font-size: 9px; color: #666;
+    background: rgba(255,255,255,0.95); padding: 1px 5px;
+    border-radius: 3px; white-space: nowrap; line-height: 1.35;
+  }
+  .al .ko { font-size: 8px; color: #999; display: block; }
+  .al-red { color: #b91c1c; font-weight: 600; }
+  .al-green { color: #059669; font-weight: 700; }
+  .al-blue { color: #2563eb; font-weight: 600; }
+  .al-bold { font-weight: 700; }
+
+  /* ===== Annotation ===== */
+  .annot {
+    position: absolute; font-size: 9px; color: #555;
+    background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px;
+    padding: 8px 12px; line-height: 1.55;
+  }
+  .annot b { color: #333; }
+</style>
+</head>
+<body>
+<div class="figure">
+<div class="fig-box">
+<div class="canvas">
+
+  <!-- ===== INPUT ===== -->
+  <div class="node n-input" style="top:0; left:8px; width:185px;">
+    <div class="node-head">
+      <span class="icon">&#128172;</span>
+      <span class="titles">
+        <span class="en">User Question</span>
+        <span class="ko">사용자 질문</span>
+      </span>
+    </div>
+    <div class="node-body">
+      + level (L1~L5)<br/>
+      + answer_type (set, path, ...)<br/>
+      + tool_catalog (18 tools)
+    </div>
+  </div>
+
+  <!-- ========================================= -->
+  <!-- PHASE 1                                    -->
+  <!-- ========================================= -->
+  <div class="phase-area pa1" style="top:62px; left:0; width:812px; height:240px;">
+    <div class="phase-label pl1">
+      <span class="p-icon">&#128269;</span>
+      PHASE 1: Evidence Extraction
+      <span class="p-ko">(근거 수집 및 초기 추론)</span>
+    </div>
+  </div>
+
+  <!-- A1: Collector -->
+  <div class="node n-collector" style="top:90px; left:14px; width:235px;">
+    <div class="node-head">
+      <span class="icon">&#128295;</span>
+      <span class="titles">
+        <span class="en">A1. Collector <span class="tag tag-model">Model B</span></span>
+        <span class="ko">근거 수집기 — MCP 도구 호출</span>
+      </span>
+    </div>
+    <div class="node-body">
+      <b>1.</b> LLM이 tool_catalog 분석<br/>
+      <span class="hint">&nbsp;&nbsp;&nbsp;18개 도구 설명을 읽고 판단</span><br/>
+      <b>2.</b> JSON 도구 호출 계획 생성<br/>
+      <span class="hint">&nbsp;&nbsp;&nbsp;[{"tool":"nso_get_...", "args":{...}}]</span><br/>
+      <b>3.</b> tool_dispatch 순차 실행<br/>
+      <span class="hint">&nbsp;&nbsp;&nbsp;NSO RESTCONF / Batfish API</span><br/>
+      <b>4.</b> 결과를 raw_data로 포맷
+    </div>
+  </div>
+
+  <!-- A2: Verifier -->
+  <div class="node n-verifier" style="top:90px; left:296px; width:210px;">
+    <div class="node-head">
+      <span class="icon">&#128270;</span>
+      <span class="titles">
+        <span class="en">A2. Verifier <span class="tag tag-model">Model A</span></span>
+        <span class="ko">검증 필터 — 노이즈 제거</span>
+      </span>
+    </div>
+    <div class="node-body">
+      수집된 정보에서 무관한 내용 제거<br/><br/>
+      <b>도구 결과 존재?</b> → <span class="tag tag-accept">BYPASS</span><br/>
+      <span class="hint">이미 구조화됨, 필터 불필요</span><br/><br/>
+      <b>L3/L4/L5?</b> → <span class="tag tag-accept">BYPASS</span><br/>
+      <span class="hint">크로스 장비 컨텍스트 보존</span>
+    </div>
+  </div>
+
+  <!-- A3: Synthesizer -->
+  <div class="node n-synth" style="top:90px; left:553px; width:245px;">
+    <div class="node-head">
+      <span class="icon">&#9998;</span>
+      <span class="titles">
+        <span class="en">A3. Synthesizer <span class="tag tag-model">Model A</span></span>
+        <span class="ko">답변 생성기 — 포맷 적용</span>
+      </span>
+    </div>
+    <div class="node-body">
+      Passage만 참조하여 답변 생성<br/>
+      <span class="hint">외부 지식 사용 금지, passage 기반만</span><br/><br/>
+      <b>answer_type별 출력 포맷:</b><br/>
+      <span class="tag" style="background:#e0e7ff; color:#3730a3;">set</span> → ["PE1", "PE2", ...]<br/>
+      <span class="tag" style="background:#fce7f3; color:#9d174d;">path</span> → PE1 → P2 → P3<br/>
+      <span class="tag" style="background:#ecfccb; color:#3f6212;">number</span> → 단일 정수<br/>
+      <span class="tag" style="background:#fef9c3; color:#854d0e;">bool</span> → true / false<br/>
+      <span class="tag" style="background:#f3e8ff; color:#6b21a8;">map</span> → {"key": value}
+    </div>
+  </div>
+
+  <!-- Phase 1 arrow labels -->
+  <div class="al" style="top:165px; left:255px;">
+    Context<br/><span class="ko">(raw_data)</span>
+  </div>
+  <div class="al" style="top:165px; left:512px;">
+    Passage<br/><span class="ko">(검증된 정보)</span>
+  </div>
+
+  <!-- tool_dispatch -->
+  <div class="node n-tool" style="top:260px; left:20px; width:175px;">
+    <div class="node-head">
+      <span class="icon">&#9881;</span>
+      <span class="titles">
+        <span class="en">tool_dispatch</span>
+        <span class="ko">도구 실행 엔진</span>
+      </span>
+    </div>
+    <div class="node-body" style="text-align:center;">
+      &#128268; <b>NSO RESTCONF</b> (5 tools)<br/>
+      <span class="hint">장비 설정 조회 + 집계 + 캐싱</span><br/><br/>
+      &#128300; <b>Batfish Engine</b> (13 tools)<br/>
+      <span class="hint">시뮬레이션 + 장애 분석 + SPOF</span>
+    </div>
+  </div>
+
+  <!-- ========================================= -->
+  <!-- PHASE 2                                    -->
+  <!-- ========================================= -->
+  <div class="phase-area pa2" style="top:330px; left:100px; width:630px; height:230px;">
+    <div class="phase-label pl2">
+      <span class="p-icon">&#9878;</span>
+      PHASE 2: Adversarial Debate
+      <span class="p-ko">(적대적 토론 — 답변 검증)</span>
+    </div>
+  </div>
+
+  <!-- A4: Supporter -->
+  <div class="node n-supporter" style="top:360px; left:115px; width:230px;">
+    <div class="node-head">
+      <span class="icon">&#128170;</span>
+      <span class="titles">
+        <span class="en">A4. Supporter <span class="tag tag-model">Model A</span></span>
+        <span class="ko">답변 옹호자 — 방어 논거</span>
+      </span>
+    </div>
+    <div class="node-body">
+      Passage 근거로 답변을 방어<br/><br/>
+      <span class="tag tag-defend">DEFEND</span> 근거 제시 → Critic에게<br/>
+      <span class="hint">passage에서 증거 인용하여 방어</span><br/><br/>
+      <span class="tag tag-concede">CONCEDE</span> 오류 인정 → 재합성<br/>
+      <span class="hint">Synthesizer 재실행 트리거</span>
+    </div>
+  </div>
+
+  <!-- Debate bubble -->
+  <div class="debate-bubble" style="top:395px; left:370px;">
+    <span class="d-icon">&#9878;</span>
+    <span class="d-text">Debate</span>
+  </div>
+
+  <!-- A5: Critic -->
+  <div class="node n-skeptic" style="top:360px; left:458px; width:250px;">
+    <div class="node-head">
+      <span class="icon">&#128373;</span>
+      <span class="titles">
+        <span class="en">A5. Critic <span class="tag tag-model">Model B</span></span>
+        <span class="ko">비판적 검토자 — 답변 판정</span>
+      </span>
+    </div>
+    <div class="node-body">
+      10가지 검증 규칙으로 답변 비판<br/>
+      <span class="hint">passage ↔ answer 일관성 검사</span><br/><br/>
+      <span class="tag tag-accept">ACCEPT</span> 답변 확정 → Final Answer<br/>
+      <span class="hint">passage와 답변이 일치하면 승인</span><br/><br/>
+      <span class="tag tag-continue">CONTINUE</span> 재토론 요청<br/>
+      <span class="hint">Supporter에게 추가 논거 요구</span><br/><br/>
+      <span class="tag tag-need">NEED_MORE_INFO</span> 정보 부족<br/>
+      <span class="hint">Collector에게 추가 도구 호출 지시</span>
+    </div>
+  </div>
+
+  <!-- Final Answer -->
+  <div class="node n-answer" style="top:410px; left:738px; width:70px;">
+    <div class="node-head" style="flex-direction:column; gap:2px;">
+      <span style="font-size:20px;">&#127942;</span>
+      <span style="font-size:11px;">Final<br/>Answer</span>
+      <span style="font-size:8px; font-weight:400; opacity:0.8;">최종 답변</span>
+    </div>
+  </div>
+
+  <!-- Targeted Feedback -->
+  <div class="node n-feedback" style="top:590px; left:175px; width:460px;">
+    <div class="node-head">
+      <span class="icon">&#128233;</span>
+      <span class="titles">
+        <span class="en">Targeted Feedback Payload</span>
+        <span class="ko">도구 재호출 지시 — Collector에게 전달</span>
+      </span>
+    </div>
+    <div class="node-body" style="text-align:center;">
+      <span class="hint">Critic이 부족한 정보를 구체적으로 지시</span><br/>
+      e.g. <code style="background:#fee2e2; padding:1px 4px; border-radius:2px; font-size:9px;">nso_get_routing(PE1, ospf)</code> → OSPF neighbor 확인<br/>
+      e.g. <code style="background:#dbeafe; padding:1px 4px; border-radius:2px; font-size:9px;">batfish_link_failure(p1, p2)</code> → 장애 영향 분석
+    </div>
+  </div>
+
+  <!-- ===== LOOP COUNTERS ===== -->
+  <div class="counter c-inner" style="top:560px; left:490px;">
+    <span class="c-icon">&#128260;</span>
+    inner_turn_count &le; 2
+    <span class="c-ko">(재토론 최대 2회)</span>
+  </div>
+  <div class="counter c-outer" style="top:690px; left:15px;">
+    <span class="c-icon">&#128257;</span>
+    outer_loop_count &le; 2
+    <span class="c-ko">(도구 재호출 최대 2회)</span>
+  </div>
+  <div class="counter c-safety" style="top:690px; left:550px;">
+    <span class="c-icon">&#128274;</span>
+    recursion_limit = 60
+    <span class="c-ko">(무한루프 방지)</span>
+  </div>
+
+  <!-- ===== ANNOTATION ===== -->
+  <div class="annot" style="top:725px; left:8px; width:796px;">
+    <b>&#128161; 핵심 설계:</b>
+    Collector는 하드코딩이 아닌 <b>프롬프트 기반으로 도구를 자율 선택</b>한다.
+    tool_catalog에 18개 도구(NSO 5 + Batfish 13)의 설명이 포함되며, LLM이 질문과 레벨을 분석하여 JSON 호출 계획을 생성한다.
+    L5 What-If 질문에서는 여러 도구를 조합(예: NSO 토폴로지 조회 + Batfish 장애 시뮬레이션)하여 호출할 수 있다.
+  </div>
+
+  <!-- ===== SVG ARROWS ===== -->
+  <svg style="position:absolute;top:0;left:0;width:812px;height:780px;pointer-events:none;" viewBox="0 0 812 780">
+    <defs>
+      <marker id="ak" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#374151"/></marker>
+      <marker id="ar" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#dc2626"/></marker>
+      <marker id="ag" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#059669"/></marker>
+      <marker id="ab" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#2563eb"/></marker>
+    </defs>
+
+    <!-- Input → Collector -->
+    <path d="M 100 56 L 100 68 L 132 88" stroke="#374151" stroke-width="2.5" fill="none" marker-end="url(#ak)"/>
+
+    <!-- Collector → Verifier -->
+    <line x1="249" y1="168" x2="294" y2="168" stroke="#374151" stroke-width="2.5" marker-end="url(#ak)"/>
+
+    <!-- Verifier → Synthesizer -->
+    <line x1="506" y1="168" x2="551" y2="168" stroke="#374151" stroke-width="2.5" marker-end="url(#ak)"/>
+
+    <!-- Synthesizer → Supporter (down curve) -->
+    <path d="M 675 275 Q 675 318 345 358" stroke="#374151" stroke-width="2" fill="none" marker-end="url(#ak)"/>
+
+    <!-- Collector → tool_dispatch -->
+    <line x1="107" y1="248" x2="107" y2="260" stroke="#374151" stroke-width="1.5" marker-end="url(#ak)"/>
+
+    <!-- Supporter → Debate (dashed) -->
+    <line x1="345" y1="425" x2="368" y2="425" stroke="#374151" stroke-width="2" stroke-dasharray="5,3"/>
+    <!-- Debate → Skeptic (dashed) -->
+    <line x1="432" y1="425" x2="456" y2="425" stroke="#374151" stroke-width="2" stroke-dasharray="5,3"/>
+
+    <!-- Critique: Skeptic → Supporter (bottom curve, dashed) -->
+    <path d="M 520 530 Q 430 565 270 520" stroke="#374151" stroke-width="1.5" fill="none" stroke-dasharray="6,3" marker-end="url(#ak)"/>
+
+    <!-- ACCEPT: Skeptic → Final Answer (green bold) -->
+    <line x1="708" y1="440" x2="736" y2="440" stroke="#059669" stroke-width="3" marker-end="url(#ag)"/>
+
+    <!-- CONCEDE: Supporter → Synthesizer (up blue dashed) -->
+    <path d="M 220 358 Q 200 310 553 280" stroke="#2563eb" stroke-width="1.5" fill="none" stroke-dasharray="6,3" marker-end="url(#ab)"/>
+
+    <!-- NEED_MORE_INFO: Skeptic → Feedback (red) -->
+    <path d="M 583 530 L 510 588" stroke="#dc2626" stroke-width="2.5" fill="none" marker-end="url(#ar)"/>
+
+    <!-- Feedback → Collector (outer loop, big red dashed) -->
+    <path d="M 175 620 Q 0 590 0 200 Q 0 110 14 95" stroke="#dc2626" stroke-width="3" fill="none" stroke-dasharray="10,5" marker-end="url(#ar)"/>
+  </svg>
+
+  <!-- ===== ARROW LABELS ===== -->
+  <div class="al al-bold" style="top:395px; left:262px;">
+    Proponent Argument<br/><span class="ko">방어 논거</span>
+  </div>
+  <div class="al" style="top:540px; left:330px;">
+    Critique<br/><span class="ko">비판 피드백</span>
+  </div>
+  <div class="al al-green" style="top:422px; left:712px;">
+    Accept &#10003;<br/><span class="ko" style="color:#059669;">승인</span>
+  </div>
+  <div class="al al-red" style="top:548px; left:520px;">
+    need more info<br/><span class="ko" style="color:#b91c1c;">정보 부족</span>
+  </div>
+  <div class="al al-blue" style="top:305px; left:290px;">
+    CONCEDE → re-synthesize<br/><span class="ko" style="color:#2563eb;">오류 인정 → 재합성</span>
+  </div>
+  <div class="al" style="top:310px; left:580px;">
+    candidate answer<br/><span class="ko">후보 답변</span>
+  </div>
+
+</div><!-- /canvas -->
+</div><!-- /fig-box -->
+
+<div class="caption">
+  <b>Fig. X.</b> NetAlly multi-agent debate architecture with MCP tool integration.<br/>
+  Phase 1은 Collector(&#128295; 도구 호출), Verifier(&#128270; 필터링), Synthesizer(&#9998; 답변 생성) 3개 에이전트로 구성된다.
+  Collector는 tool_catalog 프롬프트를 기반으로 18개 MCP 도구(NSO 5 + Batfish 13) 중 필요한 것을 <b>자율적으로 선택</b>한다.
+  Phase 2에서 Supporter(&#128170;)-Critic(&#128373;) 적대적 토론을 통해 답변을 검증하며,
+  <span style="color:#059669;">ACCEPT</span>(답변 확정),
+  <span style="color:#2563eb;">CONTINUE</span>(재토론, inner loop max 2회),
+  <span style="color:#b91c1c;">NEED_MORE_INFO</span>(정보 부족, outer loop max 2회, 추가 도구 호출 트리거)의
+  3가지 종료 조건을 갖는다.
+</div>
+
+</div><!-- /figure -->
+</body>
+</html>

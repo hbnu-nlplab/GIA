@@ -1,0 +1,18 @@
+\begin{table*}[!t]
+  \caption{토폴로지 요약 및 레벨별 QA 분포. Lab-B\textasciitilde D는 Lab-A를 기반으로 Config Generator를 통해 단계적으로 확장하였다.}
+  \label{tab:topology-summary}
+  \centering
+  \small
+  \begin{tabular}{lclcrrrrrrr}
+    \toprule
+    \textbf{Lab} & \textbf{Nodes} & \textbf{Concept} & \textbf{Key Protocols} & \textbf{L1} & \textbf{L2} & \textbf{L3} & \textbf{L4} & \textbf{L5} & \textbf{Total} & \textbf{QA/N} \\
+    \midrule
+    Lab-A & 10 & SP MPLS VPN      & OSPF, BGP, LDP, VRF       & 660   & 104 & 252 & 146   & 102 & \textbf{1,264} & 126 \\
+    Lab-B & 20 & Extended SP      & + NTP, SNMP, AAA           & 1,230 & 101 & 255 & 441   & 127 & \textbf{2,154} & 108 \\
+    Lab-C & 30 & Security + L2VPN & + L2VPN, ACL, eBGP, HSRP   & 1,230 & 80  & 255 & 954   & 154 & \textbf{2,673} & 89  \\
+    Lab-D & 40 & Multi-AS Complex & + QoS, NetFlow, 3-AS       & 1,230 & 69  & 253 & 1,657 & 162 & \textbf{3,371} & 84  \\
+    \midrule
+    \multicolumn{4}{l}{\textbf{Total}} & 4,350 & 354 & 1,015 & 3,198 & 545 & \textbf{9,462} & --  \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
