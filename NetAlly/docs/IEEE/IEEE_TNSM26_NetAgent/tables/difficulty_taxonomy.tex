@@ -1,0 +1,18 @@
+\begin{table*}[!t]
+  \caption{Cognitive Difficulty Taxonomy}
+  \label{tab:difficulty_taxonomy}
+  \centering
+  \small
+  \begin{tabular}{clllc}
+    \toprule
+    \textbf{Level} & \textbf{Cognitive Task} & \textbf{Question Essence} & \textbf{Answer Generation} & \textbf{Complexity} \\
+    \midrule
+    L1 & Fact Extraction    & What is written in the config?       & Config parsing              & $O(1)$   \\
+    L2 & Aggregation        & What are the network-wide statistics? & Full device traversal       & $O(N)$   \\
+    L3 & Consistency Check  & Any logical contradictions?           & Cross-device verification   & $O(N^2)$ \\
+    \cmidrule(lr){1-5}
+    L4 & Path Simulation    & Does the packet actually arrive?      & Batfish traceroute          & Simulation \\
+    L5 & Failure Impact     & What happens if a link fails?         & fork\_snapshot + diff       & Multi-sim  \\
+    \bottomrule
+  \end{tabular}
+\end{table*}

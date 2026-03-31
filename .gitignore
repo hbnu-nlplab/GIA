@@ -8,6 +8,8 @@ __pycache__/
 debug/
 .agent/
 .serena/
+*.tar
+.claude/settings.local.json
 Experiment\code\NetConfigQA2\NetConfigQA2_Experiment_vllm_colab.ipynb
 
 

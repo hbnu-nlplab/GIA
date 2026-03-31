@@ -1,178 +1,265 @@
 
-\section{Experiments}
-\subsection{실험 설정}
-평가 데이터셋은 NetConfigQA~2.0의 4개 Lab으로 구성되며, 전체 QA 수는 9,462개이다. 모델은 4개 벤더에서 6개 LLM을 선정하였다.
+% \section{Experiments}
+% \subsection{실험 설정}
+% 평가 데이터셋은 NetConfigQA~2.0의 4개 Lab(Table~\ref{tab:topology-summary})으로 구성되며, 전체 QA 수는 9,462개이다.
+% 본 논문은 4개 벤더에서 6개 오픈소스 LLM을 평가 모델로 선정하였다(Table~\ref{tab:single-llm-overview}).
+% 모든 모델은 vLLM 기반으로 NVIDIA A5000 환경에서 서빙하였다.
+% 우리는 재현성과 비용 효율성을 고려하여 로컬 환경에서 실행 가능한 오픈소스 모델을 선정하며, 오픈소스 모델과 네트워크 분석 도구의 조합만으로 어느 수준의 성능에 도달할 수 있는지를 확인한다.
 
-\begin{table*}[!t]
-  \caption{평가 모델 구성}
-  \label{tab:model-setup}
-  \centering
-  \small
-  \begin{tabular}{|L{2.6cm}|L{2.0cm}|L{3.0cm}|L{1.8cm}|C{1.5cm}|}
-    \hline
-    \textbf{모델}   & \textbf{벤더} & \textbf{파라미터}       & \textbf{양자화} & \textbf{Context} \\
-    \hline
-    GPT-4o-mini   & OpenAI      & -- (API)            & --           & 128K             \\
-    \hline
-    GPT-OSS-20B   & OpenAI      & 20B                 & MXFP4        & 131K             \\
-    \hline
-    Qwen3-Coder   & Alibaba     & 30B MoE / 3B active & Q4\_K\_M     & 256K             \\
-    \hline
-    Gemma-3-27B   & Google      & 27B                 & Q4\_K\_M     & 128K             \\
-    \hline
-    GLM-4.7-Flash & Zhipu       & 30B MoE / 3B active & Q4\_K\_M     & 198K             \\
-    \hline
-    Qwen3.5-27B   & Alibaba     & 27B                 & Q4\_K\_M     & 262K             \\
-    \hline
-  \end{tabular}
-\end{table*}
+% 모든 평가는 zero-shot 조건에서 수행하며, temperature는 0으로 고정하고 \texttt{num\_ctx}는 49,152로 설정한다. 평가 지표는 TA-Acc와 Format Stability(Parse Success Rate)이다. 본 논문은 Single LLM 평가에서 Overall TA-Acc가 가장 높은 오픈소스 모델을 Pure MAS와 NetAlly의 공통 backbone으로 사용한다.
 
-모든 평가는 zero-shot 조건에서 수행하며, temperature는 0으로 고정하고 `num\_ctx`는 49,152로 설정하였다. 로컬 모델 서빙은 RTX 3090 (24GB) 환경의 Ollama를 사용하였다. 평가 지표는 TA-Acc와 Format Stability(Parse Success Rate)이다. 모델 간 성능 차이의 유의성은 Bootstrap 95\% 신뢰구간(10,000회 리샘플링)으로 검정한다. Single LLM 평가가 완료되면 Overall TA-Acc가 가장 높은 오픈소스 모델을 Pure MAS와 NetAlly의 공통 backbone으로 사용한다([TODO]: 모델명).
+% \subsection{Single LLM 기준선과 확장성}
+% 우리는 LLM의 설정 파일 해석 능력을 평가하기 위해 6개 모델을 4개 Lab에 각각 적용하였다.
+% Table~\ref{tab:single-llm-overview}는 평가 모델의 구성과 Lab별 Overall TA-Acc를 정리한 것이다.
 
-\subsection{Single LLM 기준선과 확장성}
-LLM의 설정 파일 해석 능력을 평가하기 위해 6개 모델을 4개 Lab에 각각 적용하여 총 $6\times4=24$회 평가하였다.
+% \begin{table}[!t]
+%   \caption{평가 모델 구성 및 Lab별 Overall TA-Acc(\%).}
+%   \label{tab:single-llm-overview}
+%   \centering
+%   \small
+%   \begin{tabular}{L{2.0cm}L{1.0cm}C{0.9cm}C{0.7cm}C{0.7cm}C{0.7cm}C{0.7cm}C{0.7cm}}
+%     \toprule
+%     \textbf{Model} & \textbf{Vendor} & \textbf{Params} & \textbf{A} & \textbf{B} & \textbf{C} & \textbf{D} & \textbf{Avg} \\
+%     \midrule
+%     Qwen3.5-9B        & Alibaba & 9B       & \textbf{51.5} & \textbf{48.3} & \textbf{35.5} & \textbf{29.0} & \textbf{41.1} \\
+%     GPT-OSS-20B       & OpenAI  & 20B      & 51.0 & 45.4 & 34.4 & 27.7 & 39.6 \\
+%     Nemotron-Cascade   & NVIDIA  & 30B/3B   & 39.4 & 36.1 & 27.6 & 21.0 & 31.0 \\
+%     Qwen3.5-4B        & Alibaba & 4B       & 32.9 & 27.4 & 22.4 & N/A  & 27.6 \\
+%     Qwen3-Coder       & Alibaba & 30B/3B   & 31.8 & 29.9 & 21.1 & 17.0 & 25.0 \\
+%     Foundation-Sec-8B  & Cisco   & 8B       & 23.6 & 26.8 & 17.2 & 13.2 & 20.2 \\
+%     \bottomrule
+%   \end{tabular}
+% \end{table}
 
-\begin{table*}[!t]
-  \caption{Single LLM 기준선: Overall TA-Acc (6개 모델 $\times$ 4개 Lab). 각 셀은 Micro / Macro 순이다.}
-  \label{tab:single-llm-baseline}
-  \centering
-  \small
-  \begin{tabular}{|L{2.8cm}|C{1.9cm}|C{1.9cm}|C{1.9cm}|C{1.9cm}|}
-    \hline
-    \textbf{모델}   & \textbf{Lab-A (10)} & \textbf{Lab-B (20)} & \textbf{Lab-C (30)} & \textbf{Lab-D (40)} \\
-    \hline
-    GPT-4o-mini   & [TODO]              & [TODO]              & [TODO]              & [TODO]              \\
-    \hline
-    GPT-OSS-20B   & [TODO]              & [TODO]              & [TODO]              & [TODO]              \\
-    \hline
-    Qwen3-Coder   & [TODO]              & [TODO]              & [TODO]              & [TODO]              \\
-    \hline
-    Gemma-3-27B   & [TODO]              & [TODO]              & [TODO]              & [TODO]              \\
-    \hline
-    GLM-4.7-Flash & [TODO]              & [TODO]              & [TODO]              & [TODO]              \\
-    \hline
-    Qwen3.5-27B   & [TODO]              & [TODO]              & [TODO]              & [TODO]              \\
-    \hline
-  \end{tabular}
-\end{table*}
+% Fig.~\ref{fig:levels-all-labs}는 6개 모델의 4개 Lab에 대한 인지 난이도별 TA-Acc를 보여준다.
+% 모든 모델이 L1-L3에서는 비교적 높은 성능을 보이지만, L3에서 L4로 넘어가는 구간에서 모든 모델에서 급격한 성능 하락이 관찰된다. 이는 설정 파일에 경로 계산에 필요한 정보가 존재함에도, 그래프 기반 계산이 요구되는 시점에서 나타나는 성능 절벽으로, 본 논문은 이를 \textbf{시뮬레이션 장벽(Simulation Barrier)}으로 지칭한다. Best 모델(Qwen3.5-9B)의 경우 L3(65.5\%)에서 L4(23.5\%)로 42\%p 급락하며, L5에서는 16.5\%까지 하락한다.
+% 토폴로지 규모가 증가할수록 이 패턴은 모든 Lab에서 일관되게 관찰되며, Qwen3.5-9B는 Lab-A(51.5\%)에서 Lab-D(29.0\%)로 22.5\%p 감소한다.
 
-파이프라인 확장성은 QA/노드 비율로 함께 보고한다. 본 데이터셋에서는 Lab-A 126, Lab-B 108, Lab-C 89, Lab-D 84로, 토폴로지 규모가 증가해도 QA 생성량이 동일한 수준에서 유지됨을 확인할 수 있다.
+% % fig4(Line+Heatmap) 삭제 — fig5(2×2 Grid)와 중복, 교수님 피드백 반영
+% \begin{figure*}[!t]
+%   \centering
+%   \includegraphics[width=\textwidth]{fig5_levels_all_labs}
+%   \caption{Single LLM 기준선: 4개 Lab에서의 인지 난이도별 TA-Acc. 모든 토폴로지에서 L3-L4 구간의 시뮬레이션 장벽이 일관되게 관찰되며, 토폴로지 규모가 증가할수록 전반적인 성능이 하락한다. Lab-D에서 Qwen3.5-4B는 실험 미수행(N/A).}
+%   \label{fig:levels-all-labs}
+% \end{figure*}
 
-Table~\ref{tab:level-taacc}은 Lab-A에서의 레벨별 TA-Acc를 정리하기 위한 표이다. 이 표와 Fig.~\ref{fig:ta-acc-levels}는 모델이 어느 난이도 구간에서 성능 저하를 보이는지, 그리고 그 저하가 L3$\rightarrow$L4 구간에 집중되는지를 점검하는 데 사용한다. 본 연구는 설정 파일에 경로 계산에 필요한 정보가 존재함에도 그래프 기반 계산이 요구되는 시점에서 나타나는 성능 절벽을 \textbf{시뮬레이션 장벽(Simulation Barrier)}으로 지칭한다. 또한 결과 보고에서는 Micro와 Macro Average를 병행하여 레벨 불균형의 영향을 함께 제시한다. 예를 들어 Lab-A에서는 L4 비율이 11.6\%로 낮아 두 지표의 차이가 제한적일 수 있지만, L4 비율이 49\%인 Lab-D에서는 Micro Average가 L4에 더 크게 영향을 받을 수 있으므로 Macro Average를 함께 해석하는 것이 필요하다.
+% \subsection{구조 효과와 도구 효과: 3-Way 비교}
+% 본 논문은 도구 연동을 통한 시뮬레이션 장벽의 우회 가능성을 검토하기 위해, Section~V-B에서 Overall TA-Acc가 가장 높은 오픈소스 모델을 선정하여 세 가지 설정을 비교한다.
+% \begin{itemize}
+%   \item \textbf{Single LLM:} 도구 없음, 설정 파일 전문을 프롬프트에 포함 (Section~V-B 결과 재사용)
+%   \item \textbf{Pure MAS:} Orchestrator + Executor 구조, 모든 도구 비활성화. L4-L5 질문에 대해 Executor는 도구 호출 없이 프롬프트에 포함된 설정 파일만으로 경로 추론을 시도한다.
+%   \item \textbf{NetAlly:} Orchestrator + Executor + Batfish/NSO/PNETLab 도구 활성화
+% \end{itemize}
+% Fig.~\ref{fig:three-way}와 Table~\ref{tab:3way-level-comparison}은 이 세 가지 설정의 레벨별 TA-Acc와 효과 분리 결과를 보여준다. 세 설정의 공정한 비교를 위해 다음 변인을 통제한다: (1)~동일 LLM backbone (Section~V-B에서 선정된 모델), (2)~동일 시스템 프롬프트 기본 구조 (Pure MAS와 NetAlly는 스킬 가이드 주입 여부만 상이), (3)~동일 최대 토큰 예산 및 최대 추론 단계 (max\_steps = 10), (4)~동일 설정 파일 입력. Pure MAS와 Single LLM의 차이는 질문 분해(Orchestrator의 스킬 선택)와 다단계 추론(Executor의 ReAct 루프)에 한정되며, 두 설정 모두 외부 도구에 접근할 수 없다. Pure MAS와 NetAlly의 차이는 MCP를 통한 도구 바인딩의 활성화 여부만이다. 따라서 $\Delta$(구조) = Pure MAS $-$ Single은 MAS 구조(질문 분해 + 다단계 추론)의 효과를, $\Delta$(도구) = NetAlly $-$ Pure MAS는 동일 MAS 구조에서 도구 연동의 추가 효과를 각각 분리한다. 이 설계를 통해 MAS가 도구를 활용하여 시뮬레이션 장벽을 어느 수준까지 우회할 수 있는지 정량적으로 분석할 수 있다.
 
-\begin{table*}[!t]
-  \caption{Lab-A 레벨별 TA-Acc. Micro는 전체 QA 평균, Macro는 레벨별 평균의 산술 평균이다.}
-  \label{tab:level-taacc}
-  \centering
-  \small
-  \begin{tabular}{|L{2.4cm}|C{1.1cm}|C{1.1cm}|C{1.1cm}|C{1.1cm}|C{1.1cm}|C{1.3cm}|C{1.3cm}|}
-    \hline
-    \textbf{모델}   & \textbf{L1} & \textbf{L2} & \textbf{L3} & \textbf{L4} & \textbf{L5} & \textbf{Micro} & \textbf{Macro} \\
-    \hline
-    GPT-4o-mini   & --          & --          & --          & --          & --          & --             & --             \\
-    \hline
-    GPT-OSS-20B   & --          & --          & --          & --          & --          & --             & --             \\
-    \hline
-    Qwen3-Coder   & --          & --          & --          & --          & --          & --             & --             \\
-    \hline
-    Gemma-3-27B   & --          & --          & --          & --          & --          & --             & --             \\
-    \hline
-    GLM-4.7-Flash & --          & --          & --          & --          & --          & --             & --             \\
-    \hline
-    Qwen3.5-27B   & --          & --          & --          & --          & --          & --             & --             \\
-    \hline
-  \end{tabular}
-\end{table*}
+% \begin{figure}[!t]
+%   \centering
+%   \includegraphics[width=\columnwidth]{EX_fig5_3way_comparison}
+%   \caption{Single LLM, NetAgent, NetAlly의 3-way 비교. $\Delta$(구조)는 Single$\rightarrow$Pure MAS, $\Delta$(도구)는 Pure MAS$\rightarrow$NetAlly의 차이를 나타내며, 구조 효과와 도구 효과를 분리해 해석하기 위한 도식이다.}
+%   \label{fig:three-way}
+% \end{figure}
 
-\begin{figure}[!t]
-  \centering
-  \includegraphics[width=\columnwidth]{fig4_ta_acc_levels}
-  \caption{Lab-A에서의 인지 난이도별 TA-Acc. 이 그림은 6개 모델의 레벨별 성능 분포를 비교하기 위한 것으로, 점선은 본 연구가 시뮬레이션 장벽으로 해석하는 L3$\rightarrow$L4 경계를 나타낸다.}
-  \label{fig:ta-acc-levels}
-\end{figure}
+% % ── Table A: 3-way 레벨별 비교 + 도구 호출 (메인 비교 표) ──
+% \begin{table*}[!t]
+%   \caption{3-way 비교: 레벨별 TA-Acc(\%) 및 NetAlly 도구 호출 분석. $\Delta$(구조) = Pure MAS $-$ Single, $\Delta$(도구) = NetAlly $-$ Pure MAS.}
+%   \label{tab:3way-level-comparison}
+%   \centering
+%   \small
+%   \begin{tabular}{lcccccccc}
+%     \toprule
+%     \multirow{2}{*}{\textbf{Level}} & \multicolumn{3}{c}{\textbf{TA-Acc (\%) $\uparrow$}} & \multicolumn{2}{c}{\textbf{Effect Separation}} & \multicolumn{3}{c}{\textbf{NetAlly Tool Analysis}} \\
+%     \cmidrule(lr){2-4} \cmidrule(lr){5-6} \cmidrule(lr){7-9}
+%     & Single & Pure MAS & NetAlly & $\Delta$(구조) & $\Delta$(도구) & Tool & Succ.\% & Acc$_\text{succ}$ \\
+%     \midrule
+%     L1 & -- & -- & -- & -- & -- & NSO query            & -- & -- \\
+%     L2 & -- & -- & -- & -- & -- & NSO aggregation      & -- & -- \\
+%     L3 & -- & -- & -- & -- & -- & Batfish cross-check  & -- & -- \\
+%     L4 & -- & -- & -- & -- & -- & Batfish traceroute   & -- & -- \\
+%     L5 & -- & -- & -- & -- & -- & Batfish fork\_snapshot & -- & -- \\
+%     \midrule
+%     Overall & -- & -- & -- & -- & -- & & -- & -- \\
+%     \bottomrule
+%   \end{tabular}
+% \end{table*}
 
-\begin{figure}[!b]
-  \centering
-  \includegraphics[width=\columnwidth]{fig6_scalability}
-  \caption{토폴로지 규모에 따른 레벨별 TA-Acc 변화. 이 그림은 노드 수 증가에 따라 각 레벨의 성능이 어떻게 달라지는지 비교하기 위한 것이다.}
-  \label{fig:scalability}
-\end{figure}
+% % ── Table B: NetAlly 답변 타입별 성능 (TA-Acc 7 타입 정당화) ──
+% \begin{table}[!t]
+%   \caption{NetAlly의 답변 타입별 TA-Acc(\%). TA-Acc의 7가지 타입별 성능 차이를 보여준다.}
+%   \label{tab:netally-answer-type}
+%   \centering
+%   \small
+%   \begin{tabular}{lccc}
+%     \toprule
+%     \textbf{Answer Type} & \textbf{Single} & \textbf{NetAlly} & \textbf{$\Delta$} \\
+%     \midrule
+%     Scalar Attribute      & -- & -- & -- \\
+%     Scalar Counter        & -- & -- & -- \\
+%     Resource Inventory    & -- & -- & -- \\
+%     Configuration State   & -- & -- & -- \\
+%     Forwarding Sequence   & -- & -- & -- \\
+%     Property Table        & -- & -- & -- \\
+%     Metric Table          & -- & -- & -- \\
+%     \midrule
+%     Overall               & -- & -- & -- \\
+%     \bottomrule
+%   \end{tabular}
+% \end{table}
 
-\subsection{구조 효과와 도구 효과: 3-Way 비교}
-도구 통합을 통한 시뮬레이션 장벽의 우회 가능성을 확인하기 위해, Section~V-B에서 Overall TA-Acc가 가장 높은 오픈소스 모델을 선정하여 세 가지 설정을 비교한다.
-\begin{itemize}
-  \item \textbf{Single LLM:} 도구 없음, 설정 파일 전문을 프롬프트에 포함 (Section~V-B 결과 재사용)
-  \item \textbf{Pure MAS:} Orchestrator + Executor 구조, 모든 도구 비활성화. L4/L5 질문에 대해 Executor는 도구 호출 없이 프롬프트에 포함된 설정 파일만으로 경로 추론을 시도한다.
-  \item \textbf{NetAlly:} Orchestrator + Executor + Batfish/NSO/PNETLab 도구 활성화
-\end{itemize}
-세 설정의 공정한 비교를 위해 다음 변인을 통제한다: (1)~동일 LLM backbone (Section~V-B에서 선정된 모델), (2)~동일 시스템 프롬프트 기본 구조 (Pure MAS와 NetAlly는 스킬 가이드 주입 여부만 상이), (3)~동일 최대 토큰 예산 및 최대 추론 단계 (max\_steps = 10), (4)~동일 설정 파일 입력. Pure MAS와 Single LLM의 차이는 질문 분해(Orchestrator의 스킬 선택)와 다단계 추론(Executor의 ReAct 루프)에 한정되며, 두 설정 모두 외부 도구에 접근할 수 없다. Pure MAS와 NetAlly의 차이는 도구 바인딩의 활성화 여부만이다. 따라서 $\Delta$(구조) = Pure MAS $-$ Single은 에이전트 구조(질문 분해 + 다단계 추론)의 효과를, $\Delta$(도구) = NetAlly $-$ Pure MAS는 동일 구조에서 도구 통합의 효과를 각각 분리한다. 다만, $\Delta$(구조)에는 질문 분해와 컨텍스트 재구성이 혼재하므로 순수 ablation이 아닌 준실험(quasi-experiment) 설계임을 유의한다.
 
-\begin{figure}[!t]
-  \centering
-  \includegraphics[width=\columnwidth]{fig5_3way_comparison}
-  \caption{Single LLM, Pure MAS, NetAlly의 3-way 비교. $\Delta$(구조)는 Single$\rightarrow$Pure MAS, $\Delta$(도구)는 Pure MAS$\rightarrow$NetAlly의 차이를 나타내며, 구조 효과와 도구 효과를 분리해 해석하기 위한 도식이다.}
-  \label{fig:three-way}
-\end{figure}
 
-\begin{table*}[!t]
-  \caption{3-way 비교 결과}
-  \label{tab:three-way}
-  \centering
-  \small
-  \begin{tabular}{|C{1.2cm}|C{2.0cm}|C{2.0cm}|C{2.0cm}|C{2.0cm}|C{2.0cm}|}
-    \hline
-    \textbf{레벨} & \textbf{Single} & \textbf{Pure MAS} & \textbf{NetAlly} & \textbf{$\Delta$(구조)} & \textbf{$\Delta$(도구)} \\
-    \hline
-    L1          & TBD             & TBD               & TBD              &                       &                       \\
-    \hline
-    L2          & TBD             & TBD               & TBD              &                       &                       \\
-    \hline
-    L3          & TBD             & TBD               & TBD              &                       &                       \\
-    \hline
-    L4          & TBD             & TBD               & TBD              &                       &                       \\
-    \hline
-    L5          & TBD             & TBD               & TBD              &                       &                       \\
-    \hline
-  \end{tabular}
-\end{table*}
 
-\begin{table*}[!t]
-  \caption{도구 호출 분석}
-  \label{tab:tool-call-analysis}
-  \centering
-  \small
-  \begin{tabular}{|C{1.2cm}|L{4.0cm}|C{2.0cm}|C{2.0cm}|C{2.0cm}|}
-    \hline
-    \textbf{레벨} & \textbf{주요 도구}         & \textbf{호출 성공률} & \textbf{TA-Acc (성공)} & \textbf{TA-Acc (실패)} \\
-    \hline
-    L4          & Batfish traceroute     & TBD             & TBD                  & TBD                  \\
-    \hline
-    L5          & Batfish fork\_snapshot & TBD             & TBD                  & TBD                  \\
-    \hline
-  \end{tabular}
-\end{table*}
+% % ============================================================
+% \subsection{외부 벤치마크 비교}
+% % ============================================================
+ 
+% \subsubsection{실험 환경}
+ 
+% 주 평가 벤치마크로 \textbf{NetConfigQA 2.0}을 사용하였다.
+% NetConfigQA 2.0은 실제 네트워크 장비 설정 파일(\texttt{.cfg})에 기반한
+% 762개의 QA 쌍으로 구성되며, 질문 난이도를 L1--L5의 다섯 단계로 구분한다.
+% L1/L2는 단일 장비에서의 단순 사실 추출이며,
+% L3는 다중 장비 간 교차 비교, L4는 hop-by-hop 경로 추적,
+% L5는 링크/장비 장애 발생 시의 what-if 분석에 해당한다.
+% 답변 유형은 Scalar Attribute, Scalar Counter, Resource Inventory, Configuration State, Forwarding Sequence, Property Table, Metric Table의 7가지로 구성되며,
+% 유형별 정규화를 적용한 \textbf{Type-Aware Accuracy (TA-Acc)}를 주요 지표로 사용하였다.
+% 보조 지표로 Exact Match (EM)와 BertScore를 함께 보고한다.
+% 외부 벤치마크 비교를 위하여 TeleQuAD, NetBench, TeleQnA를 추가로 활용하였다.
+ 
+% NetAgent는 LangGraph 프레임워크 위에 구현되었으며,
+% 이종 모델 구성(Heterogeneous LLM)을 채택한다.
+% Model A(Gemini-3.1-Flash-Lite)는 Verifier·Synthesizer·Proponent에,
+% Model B(GPT-4o mini)는 Collector·Critic에 배치하였다.
+% 병렬 처리는 \texttt{ThreadPoolExecutor}(MAX\_WORKERS=50)를 통해 수행하며,
+% LangGraph의 재귀 깊이 한계는 기본값인 25로 설정하였다.
+% Inner Loop와 Outer Loop의 최대 반복 횟수는 각각 3회로 제한하였다.
+ 
+% \subsubsection{외부 벤치마크와 단일 LLM을 통한 비교}
+ 
+% 표~\ref{tab:ex_dataset}은 네 개의 벤치마크(TeleQuAD, NetBench, TeleQnA, NetConfigQA 2.0)에서
+% 단일 LLM 베이스라인과 제안하는 NetAgent의 성능을 비교한 결과이다.
+ 
+% \textbf{단일 LLM 베이스라인.}
+% 독립적으로 동작하는 LLM 중 GPT-OSS-20B는 전반적으로 가장 강력한 성능을 보이며,
+% NetConfigQA 2.0에서 가장 높은 TA-Acc(61.18)를 달성하고,
+% NetBench BertScore(0.808)와 TeleQnA 정확도(75.71)에서도 최고 성능을 기록하였다.
+% GPT-4o mini는 더 작은 모델임에도 불구하고
+% TeleQnA(74.26)와 NetConfigQA 2.0 EM(0.3976)에서 경쟁력 있는 점수를 보였다.
+% 반면, 오픈소스 8B 모델들(Llama-3.1-8B, Mistral3-8B, Qwen3-8B)은
+% 네트워크 특화 작업에서 상대적으로 낮은 성능을 보였으며,
+% 이는 해당 벤치마크가 요구하는 도메인 지식의 깊이를 반영한다.
+ 
+% \textbf{NetAgent.}
+% NetAgent\tnote{b}(A: Gemini-3.1-Flash-Lite, B: GPT-4o mini)는
+% TeleQuAD(EM 0.5002), TeleQnA(79.48\%), NetConfigQA 2.0 EM(0.6312)에서
+% 모든 단일 LLM 베이스라인을 능가하였으며,
+% 다중 에이전트 토론 프레임워크가 이질적인 네트워크 QA 작업 전반에서
+% 일관되게 성능을 향상시킴을 보여준다.
+% 특히, NetAgent\tnote{b}는 단일 GPT-4o mini 베이스라인(EM 0.3976) 대비
+% NetConfigQA 2.0 EM을 +23.4 포인트 향상시켜(0.6312),
+% 협력적 토론이 네트워크 설정 정보의 정확한 추출과 검증에 기여함을 확인하였다.
+ 
+% 한편, NetAgent\tnote{a}(A: Gemini-2.5-Flash-Lite, B: GPT-4o mini)는
+% NetConfigQA 2.0에서 TA-Acc 31.00으로 단일 LLM 베이스라인보다도 낮은 성능을 보이는 반면,
+% NetBench BertScore(0.8620)에서는 가장 높은 점수를 기록하였다.
+% 이러한 두 구성 간 성능 격차는 합성기(Synthesizer, Model A)의 선택이
+% 시스템 전체 성능에 결정적인 영향을 미침을 시사한다.
+% 더 강력한 합성기는 답변 품질을 향상시킬 뿐만 아니라
+% 토론 파이프라인이 올바른 답으로 수렴하도록 유도하는 반면,
+% 역량이 부족한 합성기가 유발한 초기 오류는 반복 토론을 통해 오히려 증폭될 가능성이 있다.
+ 
+% 난이도별 성능은 Table~\ref{tab:3way-level-comparison}에, 타입별 성능은 Table~\ref{tab:netally-answer-type}에 정리하였다.
+% NetAgent\tnote{b}는 L1(89.2)과 L2(89.9)에서 가장 높은 성능을 달성하였으며,
+% Property Table 유형에서도 85.0으로 GPT-4o mini(61.8) 대비 큰 폭의 향상을 보였다.
+% 반면, L5에서는 18.1로 낮은 성능을 보이는데, 이에 대해서는 절제 실험에서 상세히 분석한다.
+ 
+% \input{tables/ex_dataset}
+% % 아래 2개 표는 tab:3way-level-comparison + tab:netally-answer-type으로 대체
+% % 기존 초안(이전 모델 세트)은 새 모델로 재실험 후 통합 예정
+% % \input{tables/ex_type}
+% % \input{tables/ex_level}
+ 
+% % ============================================================
+% \subsection{절제 실험}
+% % ============================================================
+%  \input{tables/ablation}
+% Table~\ref{tab:ablation}은 NetAgent의 각 구성 요소가 성능에 미치는 영향을 분석하기 위한
+% 절제 실험(Ablation Study) 결과를 보고한다.
+% 비교 구성으로는 단일 LLM, Homo(전 에이전트 GPT-4o mini 동일 모델),
+% Debate 1만 사용한 D1 Only, Debate 2만 사용한 D2 Only,
+% 그리고 완전한 파이프라인인 NetAgent hetero를 포함한다.
+ 
+% \textbf{전체 성능 비교.}
+% 완전한 파이프라인인 NetAgent hetero는 EM 0.6260, TA-Acc 65.79를 달성하여
+% 단일 LLM 베이스라인(EM 0.3976, TA-Acc 51.51) 대비 각각 +22.8 포인트, +14.3 포인트 향상을 보인다.
+% 주목할 점은 D2 Only(TA-Acc 67.33)가 Full Pipeline인 hetero(TA-Acc 65.79)보다
+% 높은 전체 TA-Acc를 기록한다는 점이다.
+% 이는 Debate 1의 정보 정제 과정에서 특정 답변 유형에 대한 정보 손실이 발생하기 때문으로,
+% 아래에서 상세히 분석한다.
+ 
+% \textbf{답변 유형별 분석.}
+% Property Table 유형의 경우, 단일 LLM(61.8)과 D2 Only(17.5)가 낮은 성능을 보이는 반면,
+% NetAgent hetero는 85.0으로 가장 높은 성능을 달성하였다.
+% 이는 Debate 1의 Collector가 장비별 설정 블록을 구조화하여 추출하는 효과가
+% Property Table 유형에서 명확히 발현됨을 의미한다.
+% Scalar Counter와 Resource Inventory 유형에서는 D1 Only와 D2 Only 모두 90\% 이상의 높은 성능을 보이며,
+% 비교적 단순한 값 추출 작업에서는 단계적 정제보다 직접적인 검증이 효과적임을 시사한다.
+% 반면, Scalar Attribute 유형에서는 D2 Only(60.5)가 hetero(49.7)보다 높아,
+% Verifier의 필터링 과정에서 정답 라인이 제거되는
+% 공격적 필터링(Aggressive Filtering) 문제가 Scalar Attribute 유형 성능 저하의 주요 원인임을 확인하였다.
+ 
+% \textbf{난이도별 분석.}
+% NetAgent hetero는 L1(89.2)과 L2(89.9)에서 가장 높은 성능을 달성하였다.
+% 단순 사실 추출 수준의 질문에서는 Debate 1의 정보 정제와
+% Debate 2의 찬반 검증이 상호 보완적으로 작동하여 높은 정확도를 달성한다.
+% L3에서는 D2 Only(81.9)가 가장 높은 성능을 보이며,
+% NetAgent hetero의 L3 성능(74.3)이 D2 Only 대비 낮은 점은
+% Collector의 재추출 과정에서 교차 비교에 필요한 일부 정보가 누락될 수 있음을 시사한다.
+% L4와 L5에서는 모든 구성이 낮은 성능을 보이는 가운데,
+% Homo(L5: 48.5)가 hetero(L5: 18.1)보다 현저히 높은 성능을 기록하였다.
+% L5의 장애 분석은 전체 토폴로지에 대한 복합 추론을 요구하며,
+% 이 경우 경량 합성기 모델(Model A)의 역량 한계가 파이프라인 전체의 성능을 제약하는
+% 병목으로 작용함을 확인하였다.
+ 
+% \textbf{Full Pipeline vs.\ D2 Only 분석.}
+% D2 Only(TA-Acc 67.33)가 Full Pipeline(TA-Acc 65.79)보다
+% 높은 전체 성능을 보이는 현상은 단순히 Debate 1이 불필요하다는 의미가 아니다.
+% Full Pipeline은 Property Table(+67.5), Scalar Counter(+7.4), L1(+5.0), L2(+2.6) 유형에서
+% D2 Only를 명확히 능가하며, Debate 1의 구조화 추출 효과가 특정 유형에서 유효함을 보여준다.
+% 반면, Full Pipeline의 전체 TA-Acc 하락은 크게 두 가지 요인으로 분석된다.
+% 첫째, Verifier의 공격적 필터링으로 인한 Scalar Attribute 유형 정답 라인 소실이다.
+% 둘째, Proponent가 초기 후보 답변에 과도하게 집착하는 Anchor Bias로 인해
+% Critic의 타당한 비판에도 불구하고 오답을 지속 방어하는 경향이 관찰되며,
+% 이는 L3/L4/L5 난이도에서 Full Pipeline의 성능이 D2 Only 대비 하락하는 원인이 된다.
+% 이러한 분석 결과는 Debate 1과 Debate 2가 상호 보완적인 역할을 수행하며,
+% 특정 유형에서의 강점이 다른 유형에서의 약점과 트레이드오프 관계에 있음을 보여준다.
+% 따라서 Full Pipeline의 성능 개선을 위해서는
+% Verifier의 보수적 필터링 강화와 Proponent의 Anchor Bias 완화가 핵심 과제로 남아 있다.
+ 
 
-\subsection{오류 분석}
-L4/L5 오답은 무작위 표본을 추출하여 오류 유형별로 분류한다(Table~\ref{tab:error-analysis}). 분석의 목적은 단순 정확도 비교를 넘어, 모델이 어떤 지점에서 추론을 중단하거나 잘못된 경로를 구성하는지 정성적으로 파악하는 데 있다. 특히 빈 응답 또는 추론 회피, 추가 홉 오류, IP-노드 매핑 실패, 형식 오류, 컨텍스트 포화는 L4/L5 성능 저하를 해석하는 핵심 후보 유형으로 간주한다. 최종 원고에서는 각 유형의 비율과 대표 사례를 함께 제시할 예정이다.
 
-\begin{table*}[!t]
-  \caption{L4/L5 오류 유형 분류}
-  \label{tab:error-analysis}
-  \centering
-  \small
-  \begin{tabular}{|L{2.8cm}|C{2.0cm}|L{7.0cm}|}
-    \hline
-    \textbf{오류 유형} & \textbf{비율} & \textbf{근본 원인}                    \\
-    \hline
-    빈 응답 / 추론 회피   & TBD         & 경로 계산 자체를 시도하지 못하거나 ``확인 불가''로 회피 \\
-    \hline
-    추가 홉 오류        & TBD         & 3홉 이상에서 중간 노드 누락 또는 불필요한 노드 추가    \\
-    \hline
-    IP-노드 매핑 실패    & TBD         & 목적지 IP의 소속 장비를 파악하지 못해 경로 과연장     \\
-    \hline
-    형식 오류          & TBD         & path/set 포매팅 실패로 파싱 불가            \\
-    \hline
-    Context 포화     & TBD         & 대규모 config 입력 시 답변 퇴화             \\
-    \hline
-  \end{tabular}
-\end{table*}
+
+
+
+
+% % =====================
+
+
+% \subsection{오류 분석}
+% 우리는 L4/L5 오답의 원인을 파악하기 위하여 무작위 표본을 추출하여 정성적으로 분류하였다. 관찰된 주요 오류 유형은 다음의 5가지이다:
+% \begin{itemize}
+%   \item \textbf{빈 응답/추론 회피} --- 경로 계산 자체를 시도하지 못하거나 ``확인 불가''로 회피하는 경우.
+%   \item \textbf{추가 홉 오류} --- 3홉 이상의 경로에서 중간 노드를 누락하거나 불필요한 노드를 추가하는 경우.
+%   \item \textbf{IP-노드 매핑 실패} --- 목적지 IP의 소속 장비를 파악하지 못하여 경로를 과연장하는 경우.
+%   \item \textbf{형식 오류} --- Forwarding Sequence 또는 Resource Inventory 타입의 포매팅 실패로 파싱이 불가한 경우.
+%   \item \textbf{Context 포화} --- 대규모 설정 파일 입력 시 답변이 퇴화하는 경우.
+% \end{itemize}
+% 각 유형의 비율과 대표 사례는 실험 결과 확정 후 보고한다.
+
+
+
+
+
+
+% \subsection{토의 및 한계점 (Discussion)}
+% NetAgent는 다단계 피드백을 통해 고난도 네트워크 QA에서 탁월한 성과를 보였으나, 실시간 장애 대응(Real-time troubleshooting)과 같이 초저지연 응답이 필요한 환경에서는 다중 에이전트 토론으로 인한 지연 시간이 제약 요소가 될 수 있다. 향후 연구에서는 토론의 필요 여부를 사전에 예측하여 간단한 질의는 Phase 1에서 즉시 종료하는 'Early Exit' 메커니즘을 도입하여 효율성을 더욱 개선할 계획이다.
+

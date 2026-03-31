@@ -1,0 +1,32 @@
+
+
+\begin{table}[htbp]
+\centering
+% \footnotesize
+\caption{타입별 점수 (TA-Acc)}
+\label{tab:ex_type}
+\begin{threeparttable}
+\resizebox{\linewidth}{!}{
+\begin{tabular}{c|c|c|c|c|c}
+\hline
+\textbf{Model} & \textbf{Property Table} & \textbf{Scalar Counter} & \textbf{Scalar Attribute} & \textbf{Forwarding Seq.} & \textbf{Resource Inv.} \\
+\hline
+GPT-4o-mini   & 61.8 & 68.3 & 42.6 & 19.4 & 73.3 \\
+Llama-3.1-8B  & 67.9 & 15.8 & 30.2 & 11.9 & 32.2 \\
+Mistral3-8B   & 4.2 & 48.5 & 37.5 & 1.5 & 72.8 \\
+Qwen3-8B      & 72.9 & 43.6 & 41.1 & 28.4 & 62.3 \\
+GPT-OSS-20B   & \textbf{89.7} & 77.2 & 48.0 & 26.9 & 90.3 \\
+NetAgent*  & 85.0 & \textbf{94.1} & \textbf{49.7} & \textbf{37.3} & \textbf{94.1} \\
+\hline
+\end{tabular}
+}
+\begin{tablenotes}
+\footnotesize
+\item * A: gemini3.1-flash-lite, B: GPT-4o mini
+\end{tablenotes}
+
+\end{threeparttable}
+
+\smallskip
+\end{table}
+\vspace{-10pt}

@@ -9,9 +9,16 @@
 \WarningFilter{latex}{Reference}
 \WarningFilter{latex}{undefined references}
 \WarningFilter{latex}{Label(s) may have changed}
-\documentclass[journal]{IEEEtran}
 
-\usepackage{cite}
+\documentclass[10pt,journal,compsoc]{IEEEtran}
+
+% *** CITATION PACKAGES ***
+\ifCLASSOPTIONcompsoc
+  \usepackage[nocompress]{cite}
+\else
+  \usepackage{cite}
+\fi
+
 \usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage{array}
@@ -20,6 +27,14 @@
 \usepackage{enumitem}
 \usepackage{kotex}
 \usepackage{url}
+\usepackage{tabularx}
+\usepackage{makecell}
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
+\usepackage{threeparttable}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{float}
+\usepackage{multirow}
 
 \providecommand{\IfFontExistsTF}[3]{#3}
 \providecommand{\setmainhangulfont}[2][]{ }
@@ -37,51 +52,74 @@
 \setlength{\tabcolsep}{5.0pt}
 \renewcommand{\arraystretch}{1.12}
 \setlist[itemize]{leftmargin=1.4em, itemsep=2pt, topsep=3pt}
-
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 \newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
-
 \graphicspath{{figure/}{figures/}}
-
 \hyphenation{net-work net-works con-fig-u-ra-tion}
 
 \begin{document}
 
-\title{How Well Can LLMs Interpret Network Configurations?\\ A Benchmark and Tool-Augmented Multi-Agent Approach}
+\title{NetAlly: A Benchmark and MCP-Augmented Multi-Agent System for Network Configuration Understanding}
 
 \author{
-Hyeonjeong Lee$^{1}$, Yujin Park$^{2}$, Ki-Hyeon Kim$^{3}$, Jinyeong Park$^{4}$, Cheoneum Park$^{1}$\footnotemark[*] \\
-Hanbat National Univ.$^{1}$, Chungnam National Univ.$^{2}$, KISTI$^{3}$, Sungkyunkwan Univ.$^{4}$\\ 
-leehj@edu.hanbat.ac.kr, newmail@cnu.ac.kr, jy.bak@skku.edu, parkce@hanbat.ac.kr
-\thanks{H. Lee, Y. and C. Park are with the Department of Computer Science, Hanbat National University, Daejeon, South Korea and Yujin Park is with the Department of Conputer Science, Chugnam National University, Daejeon, South Korea}
-\thanks{Manuscript received [TODO]; revised [TODO].}
+Hyeonjeong Lee, Yujin Park, Ki-Hyeon Kim, Chanjin Park, Jinyeong Bak, Taehoon Kim, Cheoneum Park
+\IEEEcompsocitemizethanks{
+  \IEEEcompsocthanksitem H. Lee and T. Kim and C. Park are with the Department of Computer Science,
+  Hanbat National University, Daejeon, South Korea.
+  E-mail: leehj@edu.hanbat.ac.kr; parkce@hanbat.ac.kr.
+  \IEEEcompsocthanksitem Y. Park is with the Department of Computer Science,
+  Chungnam National University, Daejeon, South Korea.
+  E-mail: newmail@cnu.ac.kr.
+  \IEEEcompsocthanksitem K.-H. Kim and C. Park are with the Advanced KREONET Center
+  of Korea Institute of Science and Technology Information, Daejeon, South Korea.
+  E-mail: kkh1258@kisti.re.kr.
+  \IEEEcompsocthanksitem J. Bak is with the Department of Computer Science,
+  Sungkyunkwan University, Suwon, South Korea.
+  E-mail: jy.bak@skku.edu.
+  \IEEEcompsocthanksitem Corresponding author: Cheoneum Park.
+}
+\thanks{Manuscript received Month XX, 2026; revised Month XX, 2026.}
 }
 
 \markboth{IEEE Transactions on Network and Service Management,~2026}%
 {Lee \MakeLowercase{\textit{et al.}}: How Well Can LLMs Interpret Network Configurations?}
 
-\maketitle
-
+\IEEEtitleabstractindextext{%
 \begin{abstract}
   \input{body/abstract}
 \end{abstract}
 
+\begin{IEEEkeywords}
+Multi-Agent System, Network configuration, Network benchmark, Tool Augmentation, Large-Language Models.
+\end{IEEEkeywords}}
+
+\maketitle
+
+\IEEEdisplaynontitleabstractindextext
+
 \IEEEpeerreviewmaketitle
 
+% \IEEEraisesectionheading{\section{Introduction}\label{sec:introduction}}
 \input{body/introduction}
+
 \input{body/related_work}
 \input{body/benchmark}
-\input{body/mas}
+\input{body/netagent}
+\input{body/netally}
 \input{body/experiments}
 \input{body/discussion}
 \input{body/conclusion}
 
-
-\section*{Acknowledgment}
+% The Computer Society uses the plural form
+\ifCLASSOPTIONcompsoc
+  \section*{Acknowledgments}
+\else
+  \section*{Acknowledgment}
+\fi
 [TODO]
 
 \ifCLASSOPTIONcaptionsoff
-\newpage
+  \newpage
 \fi
 
 \bibliographystyle{IEEEtran}
