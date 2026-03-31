@@ -1,0 +1,10 @@
+Question_ID,Level,Type,Category,Gold,Pred,Failure_Category,Root_Cause,Fix_Type
+ROUTING_TABLE_ENTRY_COUNT_p4,L1,number,System_Inventory,6,0,Tool Failure,Batfish routing query incomplete,Tool Fix
+INTERFACES_MISSING_DESCRIPTION_COUNT_leaf2,L1,number,Configuration_Check,2,0,Tool Failure,NSO missing description field,Tool Fix
+INTERFACE_STATUS_MAP_leaf7,L1,map,System_Inventory,"{up,up}",{},Tool Failure,Interface status not extracted,Tool Fix
+AAA_ENABLED_DEVICES (5x),L2,set,Security_Policy,[pe1-4],all/empty,LLM Interpretation,No device type taxonomy,Prompt Fix
+COMPARE_VRF_COUNT_leaf7_p5,L3,map,Comparison_Analysis,"{diff:0,...}","{Leaf7:0,P5:0}",Format Mismatch,Wrong JSON schema keys,Prompt Fix
+COMPARE_INTERFACE_COUNT_p8_pe2,L3,map,Comparison_Analysis,"{diff:2,...}","{p8:0,pe2:0}",Format Mismatch,Wrong JSON schema keys,Prompt Fix
+COMPARE_BGP_AS_leaf3_p6,L3,text,Comparison_Analysis,N/A,None,Format Mismatch,None vs N/A string,Prompt Fix
+L2VPN_MISMATCH_COUNT,L3,number,L2VPN_Consistency,0,4,Data/LLM Mismatch,LLM hallucination,Data/Prompt Fix
+IBGP_UNDER_PEERED_DEVICES_65000,L3,set,BGP_Consistency,[pe1-4],[],Tool Failure,BGP device enum empty,Tool Fix

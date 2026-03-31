@@ -1,0 +1,123 @@
+{
+  "meta": {
+    "model": "NetAlly-MAS+MCP",
+    "model_tag": "debug-v20",
+    "backend": "netally-direct",
+    "lab": "Lab-B",
+    "lab_folder": "Dataset",
+    "date": "2026-03-28T19:56:27.244131",
+    "duration_sec": 21.5,
+    "total_samples": 2,
+    "dataset": "sampled_100_mixed_en.json",
+    "dataset_path": "../Data/Pnetlab/LabB_NCN_Basic_SP_20nodes/Dataset/20260325_101536/sampled_100_mixed_en.json",
+    "mcp_server_url": "http://127.0.0.1:8811/mcp",
+    "recursion_limit": 60,
+    "max_retries": 3,
+    "max_workers": 1,
+    "include_levels": [
+      "L5"
+    ],
+    "exclude_levels": null,
+    "date_completed": "2026-03-28T19:56:48.745871",
+    "token_usage_total": {
+      "prompt_tokens": 28458,
+      "completion_tokens": 486,
+      "total_tokens": 28944,
+      "llm_calls": 8
+    }
+  },
+  "results": [
+    {
+      "question_id": "MULTI_FAIL_leaf1_leaf6_leaf2_leaf4",
+      "question": "Can traffic reach from leaf5 to p7 when links leaf1-leaf6 and leaf2-leaf4 both fail? [Answer format: 'REROUTED (path: A→B→C)' or 'DISCONNECTED (reason: ...)']",
+      "gold": "\"DISCONNECTED (reason: NO_ROUTE at pe3)\"",
+      "raw_pred": "DISCONNECTED (reason: pe3에서 NO_ROUTE)",
+      "pred": "DISCONNECTED (reason: pe3에서 NO_ROUTE)",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info",
+        "batfish_multi_link_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 13781,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 14232,
+      "completion_tokens": 242,
+      "total_tokens": 14474,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 1.2
+        },
+        {
+          "tool": "batfish_multi_link_failure",
+          "args": {
+            "link1_node1": "leaf1",
+            "link1_node2": "leaf6",
+            "link2_node1": "leaf2",
+            "link2_node2": "leaf4",
+            "src": "leaf5",
+            "dst": "p7"
+          },
+          "elapsed_ms": 6257.3
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "MULTI_FAIL_leaf1_p4_leaf2_pe1",
+      "question": "Can traffic reach from leaf6 to p7 when links leaf1-p4 and leaf2-pe1 both fail? [Answer format: 'REROUTED (path: A→B→C)' or 'DISCONNECTED (reason: ...)']",
+      "gold": "\"DISCONNECTED (reason: NO_ROUTE at pe3)\"",
+      "raw_pred": "DISCONNECTED (reason: NO_ROUTE at PE3)",
+      "pred": "DISCONNECTED (reason: NO_ROUTE at PE3)",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info",
+        "batfish_multi_link_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 9203,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 14226,
+      "completion_tokens": 244,
+      "total_tokens": 14470,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 1.5
+        },
+        {
+          "tool": "batfish_multi_link_failure",
+          "args": {
+            "link1_node1": "leaf1",
+            "link1_node2": "p4",
+            "link2_node1": "leaf2",
+            "link2_node2": "pe1",
+            "src": "leaf6",
+            "dst": "p7"
+          },
+          "elapsed_ms": 1041.1
+        }
+      ],
+      "mas_status": "ACCEPT"
+    }
+  ]
+}

@@ -1,0 +1,257 @@
+{
+  "title": "NetAlly MAS Evaluation - Failure Pattern Analysis",
+  "date": "2026-03-27",
+  "model": "NetAlly-MAS+MCP (gpt-4o-mini-v4-vrf-fix)",
+  "dataset": "sampled_100_mixed_en.json (Lab-B)",
+  "overall_metrics": {
+    "total_samples": 50,
+    "accuracy": "75.33%",
+    "failures": 13,
+    "expected_post_fix": "~91%"
+  },
+  "performance_by_type": {
+    "text": "85.71% (GOOD)",
+    "set": "83.84% (GOOD)",
+    "number": "50.00% (WEAK)",
+    "map": "25.00% (CRITICAL)"
+  },
+  "critical_weak_categories": {
+    "BGP_Consistency": "0.00%",
+    "Comparison_Analysis": "25.00%",
+    "L2VPN_Consistency": "50.00%"
+  },
+  "failure_summary": {
+    "total_failures": 13,
+    "prompt_fix": {
+      "count": 8,
+      "percentage": "61.5%",
+      "impact": "+16.0% accuracy",
+      "main_issues": [
+        "Device type filtering (AAA_ENABLED_DEVICES - 5 failures)",
+        "JSON schema mismatch in comparisons (2 failures)",
+        "Null value formatting (1 failure)"
+      ]
+    },
+    "tool_fix": {
+      "count": 4,
+      "percentage": "30.8%",
+      "impact": "+8.0% accuracy",
+      "main_issues": [
+        "Batfish routing table query returns 0 (1 failure)",
+        "NSO missing description filter (1 failure)",
+        "Interface status map extraction (1 failure)",
+        "BGP device enumeration empty (1 failure)"
+      ]
+    },
+    "data_fix": {
+      "count": 1,
+      "percentage": "7.7%",
+      "impact": "+2.0% accuracy",
+      "main_issues": [
+        "L2VPN mismatch count - verify gold labels"
+      ]
+    }
+  },
+  "actionable_recommendations": {
+    "PHASE_1_PROMPT_FIXES": {
+      "priority": "CRITICAL",
+      "effort": "30 minutes",
+      "roi": "16% accuracy gain",
+      "actions": [
+        {
+          "title": "Add device type taxonomy to system prompt",
+          "files": [
+            "agent/system_prompt.py",
+            "agent/prompt_templates.py"
+          ],
+          "change": "Add clear device classification: PE (pe1-4), Access (leaf1-7), Spine (spine1-2)",
+          "fixes": "AAA_ENABLED_DEVICES (5 failures)",
+          "impact": "38.5% of failures"
+        },
+        {
+          "title": "Add JSON schema templates for comparison queries",
+          "files": [
+            "agent/prompts/comparison_template.md"
+          ],
+          "change": "Provide exact schema: {\"difference\": int, \"host1_count\": int, \"host2_count\": int}",
+          "fixes": "COMPARE_VRF/INTERFACE_COUNT (2 failures)",
+          "impact": "15.4% of failures"
+        },
+        {
+          "title": "Clarify null/N/A handling in output format",
+          "files": [
+            "agent/system_prompt.py"
+          ],
+          "change": "Add: 'Use string N/A (not Python None) when values are unavailable'",
+          "fixes": "COMPARE_BGP_AS (1 failure)",
+          "impact": "7.7% of failures"
+        }
+      ]
+    },
+    "PHASE_2_TOOL_FIXES": {
+      "priority": "HIGH",
+      "effort": "2-4 hours",
+      "roi": "8% accuracy gain",
+      "actions": [
+        {
+          "title": "Debug Batfish routing table query",
+          "file": "agent/clients/batfish.py",
+          "current_issue": "Query returns 0 routes when should return 6+ for node p4",
+          "fix": "Check routing.routes() API call - may need different endpoint or filter",
+          "test": "ROUTING_TABLE_ENTRY_COUNT_p4 (should return 6)"
+        },
+        {
+          "title": "Add interface description filter to NSO config_summary",
+          "file": "agent/clients/nso.py",
+          "current_issue": "interfaces_missing_description not extracted",
+          "fix": "Add filter: count(interfaces without description field)",
+          "test": "INTERFACES_MISSING_DESCRIPTION_COUNT_leaf2 (should return 2)"
+        },
+        {
+          "title": "Extract interface status mapping from NSO",
+          "file": "agent/clients/nso.py",
+          "current_issue": "config_summary missing interface_status_map field",
+          "fix": "Add field: {interface_name: status} dict from interface configs",
+          "test": "INTERFACE_STATUS_MAP_leaf7 (should return {GigabitEthernet0/0: up, GigabitEthernet0/7: up})"
+        },
+        {
+          "title": "Fix BGP device enumeration for consistency checks",
+          "file": "agent/clients/batfish.py",
+          "current_issue": "BGP query returns empty device list",
+          "fix": "Debug BgpPeerConfigurationQuestion or similar - ensure devices with BGP are returned",
+          "test": "IBGP_UNDER_PEERED_DEVICES_65000 (should return [pe1, pe2, pe3, pe4])"
+        }
+      ]
+    },
+    "PHASE_3_DATA_VERIFICATION": {
+      "priority": "MEDIUM",
+      "effort": "30 minutes",
+      "actions": [
+        {
+          "title": "Verify L2VPN gold label",
+          "issue": "L2VPN_MISMATCH_COUNT predicted 4 mismatches when gold=0",
+          "action": "Check test data: is there actually no L2VPN config mismatch? If yes, add verification prompt"
+        }
+      ]
+    }
+  },
+  "detailed_failure_table": [
+    {
+      "question_id": "ROUTING_TABLE_ENTRY_COUNT_p4",
+      "level": "L1",
+      "type": "number",
+      "category": "System_Inventory",
+      "gold": "6",
+      "pred": "0",
+      "failure_category": "Tool Failure",
+      "root_cause": "Batfish query returns 0; incomplete data extraction",
+      "fix_recommendation": "Tool Fix - Check routing table query API"
+    },
+    {
+      "question_id": "INTERFACES_MISSING_DESCRIPTION_COUNT_leaf2",
+      "level": "L1",
+      "type": "number",
+      "category": "Configuration_Check",
+      "gold": "2",
+      "pred": "0",
+      "failure_category": "Tool Failure",
+      "root_cause": "NSO missing description field in config_summary",
+      "fix_recommendation": "Tool Fix - Add interface description filter"
+    },
+    {
+      "question_id": "INTERFACE_STATUS_MAP_leaf7",
+      "level": "L1",
+      "type": "map",
+      "category": "System_Inventory",
+      "gold": "{GigabitEthernet0/0: up, GigabitEthernet0/7: up}",
+      "pred": "{}",
+      "failure_category": "Tool Failure",
+      "root_cause": "Empty dict - interface status mapping not extracted",
+      "fix_recommendation": "Tool Fix - Add interface_status_map to NSO config_summary"
+    },
+    {
+      "question_id": "AAA_ENABLED_DEVICES (5x L2)",
+      "level": "L2",
+      "type": "set",
+      "category": "Security_Policy",
+      "gold": "[pe1, pe2, pe3, pe4]",
+      "pred": "all leaves OR empty",
+      "failure_category": "LLM Interpretation Error",
+      "root_cause": "No device type taxonomy; LLM can't filter PE vs Access",
+      "fix_recommendation": "Prompt Fix - Add device classification to system prompt"
+    },
+    {
+      "question_id": "COMPARE_VRF_COUNT_leaf7_p5",
+      "level": "L3",
+      "type": "map",
+      "category": "Comparison_Analysis",
+      "gold": "{difference:0, host1_count:0, host2_count:0}",
+      "pred": "{Leaf7:0, P5:0}",
+      "failure_category": "Format Mismatch",
+      "root_cause": "LLM uses wrong key names (host names vs schema)",
+      "fix_recommendation": "Prompt Fix - Provide JSON schema template"
+    },
+    {
+      "question_id": "COMPARE_INTERFACE_COUNT_p8_pe2",
+      "level": "L3",
+      "type": "map",
+      "category": "Comparison_Analysis",
+      "gold": "{difference:2, host1_count:4, host2_count:6}",
+      "pred": "{p8:0, pe2:0}",
+      "failure_category": "Format Mismatch",
+      "root_cause": "LLM invents field names instead of using schema",
+      "fix_recommendation": "Prompt Fix - Add strict JSON schema spec"
+    },
+    {
+      "question_id": "COMPARE_BGP_AS_leaf3_p6",
+      "level": "L3",
+      "type": "text",
+      "category": "Comparison_Analysis",
+      "gold": "leaf3: AS N/A, p6: AS N/A",
+      "pred": "leaf3: AS None, p6: AS None",
+      "failure_category": "Format Mismatch",
+      "root_cause": "LLM uses Python None instead of string N/A",
+      "fix_recommendation": "Prompt Fix - Clarify null value format"
+    },
+    {
+      "question_id": "L2VPN_MISMATCH_COUNT",
+      "level": "L3",
+      "type": "number",
+      "category": "L2VPN_Consistency",
+      "gold": "0",
+      "pred": "4",
+      "failure_category": "Data/LLM Mismatch",
+      "root_cause": "LLM hallucinated mismatches when none exist",
+      "fix_recommendation": "Data Fix - Verify gold label OR Prompt Fix - Add verification"
+    },
+    {
+      "question_id": "IBGP_UNDER_PEERED_DEVICES_65000",
+      "level": "L3",
+      "type": "set",
+      "category": "BGP_Consistency",
+      "gold": "[pe1, pe2, pe3, pe4]",
+      "pred": "[]",
+      "failure_category": "Tool Failure",
+      "root_cause": "BGP device enumeration query returns empty",
+      "fix_recommendation": "Tool Fix - Debug Batfish BGP query"
+    }
+  ],
+  "implementation_checklist": {
+    "phase_1": [
+      "[ ] Add device type taxonomy to system_prompt.py",
+      "[ ] Create comparison answer JSON schema in prompt_templates",
+      "[ ] Add N/A format clarification to output spec"
+    ],
+    "phase_2": [
+      "[ ] Debug batfish.py routing.routes() API call",
+      "[ ] Add interface description filter to nso.py config_summary",
+      "[ ] Extract interface_status_map in nso.py",
+      "[ ] Debug BGP device enumeration in batfish.py"
+    ],
+    "phase_3": [
+      "[ ] Verify L2VPN mismatch test data",
+      "[ ] Re-run evaluation after Phase 1 fixes",
+      "[ ] Re-run evaluation after Phase 2 fixes"
+    ]
+  }
+}

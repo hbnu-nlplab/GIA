@@ -1,0 +1,29 @@
+{
+  "meta": {
+    "model": "NetAlly-MAS+MCP",
+    "model_tag": "NetAlly-v2",
+    "backend": "netally-direct",
+    "lab": "Lab-B",
+    "lab_folder": "Dataset",
+    "date": "2026-03-27T16:40:35.711623",
+    "duration_sec": 114.3,
+    "total_samples": 20,
+    "dataset": "LabB_NCN_Basic_SP_20nodes_dataset_batfish_20260325_101536_en.json",
+    "dataset_path": "../Data/Pnetlab/LabB_NCN_Basic_SP_20nodes/Dataset/20260325_101536/LabB_NCN_Basic_SP_20nodes_dataset_batfish_20260325_101536_en.json",
+    "mcp_server_url": "http://127.0.0.1:8811/mcp",
+    "recursion_limit": 60,
+    "max_retries": 3,
+    "max_workers": 1,
+    "include_levels": [],
+    "exclude_levels": [
+      "L6"
+    ],
+    "date_completed": "2026-03-27T16:42:30.045532",
+    "schema_version": "unknown",
+    "policy_validation_passed": false,
+    "structured_metrics_coverage": 1.0,
+    "legacy_map_fallback_count": 0
+  },
+  "count": 0,
+  "results": []
+}

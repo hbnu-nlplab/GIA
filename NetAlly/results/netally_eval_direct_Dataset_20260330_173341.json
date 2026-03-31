@@ -1,0 +1,909 @@
+{
+  "meta": {
+    "model": "NetAlly-MAS+MCP",
+    "model_tag": "L5-tool-fix",
+    "backend": "netally-direct",
+    "lab": "Lab-B",
+    "lab_folder": "Dataset",
+    "date": "2026-03-30T17:33:49.047599",
+    "duration_sec": 213.7,
+    "total_samples": 20,
+    "dataset": "sampled_100_mixed_en.json",
+    "dataset_path": "../Data/Pnetlab/LabB_NCN_Basic_SP_20nodes/Dataset/20260325_101536/sampled_100_mixed_en.json",
+    "mcp_server_url": "http://127.0.0.1:8811/mcp",
+    "recursion_limit": 60,
+    "max_retries": 3,
+    "max_workers": 1,
+    "include_levels": [
+      "L5"
+    ],
+    "exclude_levels": null,
+    "date_completed": "2026-03-30T17:37:22.779969",
+    "token_usage_total": {
+      "prompt_tokens": 236585,
+      "completion_tokens": 4217,
+      "total_tokens": 240802,
+      "llm_calls": 80
+    }
+  },
+  "results": [
+    {
+      "question_id": "MULTI_FAIL_leaf1_leaf6_leaf2_leaf4",
+      "question": "Can traffic reach from leaf5 to p7 when links leaf1-leaf6 and leaf2-leaf4 both fail? [Answer format: 'REROUTED (path: A→B→C)' or 'DISCONNECTED (reason: ...)']",
+      "gold": "\"DISCONNECTED (reason: NO_ROUTE at pe3)\"",
+      "raw_pred": "DISCONNECTED (reason: NO_ROUTE at PE3)",
+      "pred": "DISCONNECTED (reason: NO_ROUTE at PE3)",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info",
+        "batfish_multi_link_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 10285,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 14071,
+      "completion_tokens": 248,
+      "total_tokens": 14319,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.6,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        },
+        {
+          "tool": "batfish_multi_link_failure",
+          "args": {
+            "link1_node1": "leaf1",
+            "link1_node2": "leaf6",
+            "link2_node1": "leaf2",
+            "link2_node2": "leaf4",
+            "src": "leaf5",
+            "dst": "p7"
+          },
+          "elapsed_ms": 3076.6,
+          "result": "{'isolated': True, 'new_path': [], 'path_change': 'ISOLATED', 'failure_reason': 'pe3에서 NO_ROUTE'}"
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "MULTI_FAIL_leaf1_p4_leaf2_pe1",
+      "question": "Can traffic reach from leaf6 to p7 when links leaf1-p4 and leaf2-pe1 both fail? [Answer format: 'REROUTED (path: A→B→C)' or 'DISCONNECTED (reason: ...)']",
+      "gold": "\"DISCONNECTED (reason: NO_ROUTE at pe3)\"",
+      "raw_pred": "DISCONNECTED (reason: NO_ROUTE at PE3)",
+      "pred": "DISCONNECTED (reason: NO_ROUTE at PE3)",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info",
+        "batfish_multi_link_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 10093,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 14065,
+      "completion_tokens": 240,
+      "total_tokens": 14305,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.3,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        },
+        {
+          "tool": "batfish_multi_link_failure",
+          "args": {
+            "link1_node1": "leaf1",
+            "link1_node2": "p4",
+            "link2_node1": "leaf2",
+            "link2_node2": "pe1",
+            "src": "leaf6",
+            "dst": "p7"
+          },
+          "elapsed_ms": 3203.6,
+          "result": "{'isolated': True, 'new_path': [], 'path_change': 'ISOLATED', 'failure_reason': 'pe3에서 NO_ROUTE'}"
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "ROOT_CAUSE_leaf4_p7",
+      "question": "Which device blocks traffic from leaf4 to p7? [Answer format: device name]",
+      "gold": "\"pe2\"",
+      "raw_pred": "pe2",
+      "pred": "pe2",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_find_blocker"
+      ],
+      "tool_count": 1,
+      "latency_ms": 7866,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3762,
+      "completion_tokens": 195,
+      "total_tokens": 3957,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_find_blocker",
+          "args": {
+            "src": "leaf4",
+            "dst": "p7"
+          },
+          "elapsed_ms": 2086.0,
+          "result": "{'blocking_device': 'pe2', 'disposition': 'UNKNOWN', 'path': ['leaf4', 'pe2'], 'path_str': 'leaf4 -> pe2', 'reachable': False}"
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "MULTI_FAIL_leaf1_leaf6_leaf2_leaf3",
+      "question": "Can traffic reach from leaf5 to p7 when links leaf1-leaf6 and leaf2-leaf3 both fail? [Answer format: 'REROUTED (path: A→B→C)' or 'DISCONNECTED (reason: ...)']",
+      "gold": "\"DISCONNECTED (reason: NO_ROUTE at pe3)\"",
+      "raw_pred": "DISCONNECTED (reason: NO_ROUTE at PE3)",
+      "pred": "DISCONNECTED (reason: NO_ROUTE at PE3)",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info",
+        "batfish_multi_link_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 10611,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 14071,
+      "completion_tokens": 239,
+      "total_tokens": 14310,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.3,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        },
+        {
+          "tool": "batfish_multi_link_failure",
+          "args": {
+            "link1_node1": "leaf1",
+            "link1_node2": "leaf6",
+            "link2_node1": "leaf2",
+            "link2_node2": "leaf3",
+            "src": "leaf5",
+            "dst": "p7"
+          },
+          "elapsed_ms": 2665.2,
+          "result": "{'isolated': True, 'new_path': [], 'path_change': 'ISOLATED', 'failure_reason': 'pe3에서 NO_ROUTE'}"
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "MULTI_FAIL_leaf1_p5_leaf2_leaf6",
+      "question": "Can traffic reach from leaf5 to p7 when links leaf1-p5 and leaf2-leaf6 both fail? [Answer format: 'REROUTED (path: A→B→C)' or 'DISCONNECTED (reason: ...)']",
+      "gold": "\"DISCONNECTED (reason: NO_ROUTE at pe3)\"",
+      "raw_pred": "DISCONNECTED (reason: NO_ROUTE at PE3)",
+      "pred": "DISCONNECTED (reason: NO_ROUTE at PE3)",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info",
+        "batfish_multi_link_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 11805,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 14068,
+      "completion_tokens": 248,
+      "total_tokens": 14316,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.3,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        },
+        {
+          "tool": "batfish_multi_link_failure",
+          "args": {
+            "link1_node1": "leaf1",
+            "link1_node2": "p5",
+            "link2_node1": "leaf2",
+            "link2_node2": "leaf6",
+            "src": "leaf5",
+            "dst": "p7"
+          },
+          "elapsed_ms": 2899.4,
+          "result": "{'isolated': True, 'new_path': [], 'path_change': 'ISOLATED', 'failure_reason': 'pe3에서 NO_ROUTE'}"
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "NODE_FAILURE_leaf5",
+      "question": "How many traffic flows are disrupted if leaf5 goes down? [Answer format: integer]",
+      "gold": "29",
+      "raw_pred": "29",
+      "pred": "29",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "number",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info",
+        "batfish_node_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 8305,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 14669,
+      "completion_tokens": 183,
+      "total_tokens": 14852,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.2,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        },
+        {
+          "tool": "batfish_node_failure",
+          "args": {
+            "node": "leaf5"
+          },
+          "elapsed_ms": 2704.7,
+          "result": "{'affected_count': 29, 'newly_blocked_flows': ['10.0.1.0 -> 10.10.10.35 (ICMP)', '172.17.3.3 -> 10.10.10.35 (ICMP)', '10.0.3.1 -> 10.10.10.35 (ICMP)', '10.10.10.38 -> 10.10.10.35 (ICMP)', '172.16.2.3 -> 10.10.10.35 (ICMP)', '172.17.1.3 -> 172.17.1.2 (ICMP)', '10.0.11.1 -> 10.10.10.35 (ICMP)', '10.0.14.1 -> 10.10.10.35 (ICMP)', '10.0.4.1 -> 10.10.10.35 (ICMP)', '172.16.1.3 -> 10.10.10.35 (ICMP)', '172.17.2.3 -> 10.10.10.35 (ICMP)', '10.0.5.1 -> 10.10.10.35 (ICMP)', '10.10.10.34 -> 10.10.10.35 (IC"
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "DUAL_FAILURE_p5_p6",
+      "question": "If p5 and p6 both fail simultaneously, how many flows are isolated? [Answer format: 'NONE' or integer]",
+      "gold": "\"29\"",
+      "raw_pred": "29",
+      "pred": "29",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info",
+        "batfish_multi_node_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 8034,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 15746,
+      "completion_tokens": 185,
+      "total_tokens": 15931,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.3,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        },
+        {
+          "tool": "batfish_multi_node_failure",
+          "args": {
+            "node1": "p5",
+            "node2": "p6"
+          },
+          "elapsed_ms": 2646.1,
+          "result": "{'affected_count': 29, 'newly_blocked_flows': ['10.0.1.0 -> 10.0.11.0 (ICMP)', '10.0.1.1 -> 10.0.11.0 (ICMP)', '10.0.11.0 -> 10.0.1.0 (ICMP)', '10.0.14.1 -> 10.0.1.0 (ICMP)', '10.0.15.1 -> 10.0.1.0 (ICMP)', '10.0.16.1 -> 10.0.1.0 (ICMP)', '10.0.2.1 -> 10.0.11.0 (ICMP)', '10.0.3.1 -> 10.0.11.0 (ICMP)', '10.0.4.1 -> 10.0.11.0 (ICMP)', '10.0.5.1 -> 10.0.11.0 (ICMP)', '10.10.10.1 -> 10.0.1.0 (ICMP)', '10.10.10.1 -> 10.0.11.0 (ICMP)', '10.10.10.1 -> 10.10.10.15 (ICMP)', '10.10.10.31 -> 10.10.10.15 (I"
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "ROOT_CAUSE_leaf7_pe1",
+      "question": "Which device blocks traffic from leaf7 to pe1? [Answer format: device name]",
+      "gold": "\"pe4\"",
+      "raw_pred": "pe4",
+      "pred": "pe4",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_find_blocker"
+      ],
+      "tool_count": 1,
+      "latency_ms": 7634,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3763,
+      "completion_tokens": 196,
+      "total_tokens": 3959,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_find_blocker",
+          "args": {
+            "src": "leaf7",
+            "dst": "pe1"
+          },
+          "elapsed_ms": 2253.5,
+          "result": "{'blocking_device': 'pe4', 'disposition': 'UNKNOWN', 'path': ['leaf7', 'pe4'], 'path_str': 'leaf7 -> pe4', 'reachable': False}"
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "ROOT_CAUSE_leaf2_pe2",
+      "question": "Which device blocks traffic from leaf2 to pe2? [Answer format: device name]",
+      "gold": "\"pe1\"",
+      "raw_pred": "pe1",
+      "pred": "pe1",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_find_blocker"
+      ],
+      "tool_count": 1,
+      "latency_ms": 10549,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3762,
+      "completion_tokens": 206,
+      "total_tokens": 3968,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_find_blocker",
+          "args": {
+            "src": "leaf2",
+            "dst": "pe2"
+          },
+          "elapsed_ms": 2162.3,
+          "result": "{'blocking_device': 'pe1', 'disposition': 'UNKNOWN', 'path': ['leaf2', 'pe1'], 'path_str': 'leaf2 -> pe1', 'reachable': False}"
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "DUAL_FAILURE_leaf1_leaf2",
+      "question": "If leaf1 and leaf2 both fail simultaneously, how many flows are isolated? [Answer format: 'NONE' or integer]",
+      "gold": "\"29\"",
+      "raw_pred": "29",
+      "pred": "29",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info",
+        "batfish_multi_node_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 14782,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 15748,
+      "completion_tokens": 151,
+      "total_tokens": 15899,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.3,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        },
+        {
+          "tool": "batfish_multi_node_failure",
+          "args": {
+            "node1": "leaf1",
+            "node2": "leaf2"
+          },
+          "elapsed_ms": 2481.0,
+          "result": "{'affected_count': 29, 'newly_blocked_flows': ['10.0.1.0 -> 10.10.10.31 (ICMP)', '10.0.1.1 -> 10.10.10.31 (ICMP)', '10.0.11.0 -> 10.10.10.31 (ICMP)', '10.0.11.1 -> 10.10.10.31 (ICMP)', '10.0.12.1 -> 10.10.10.31 (ICMP)', '10.0.14.1 -> 10.10.10.31 (ICMP)', '10.0.15.1 -> 10.10.10.31 (ICMP)', '10.0.16.1 -> 10.10.10.31 (ICMP)', '10.0.2.1 -> 10.10.10.31 (ICMP)', '10.0.3.1 -> 10.10.10.31 (ICMP)', '10.0.4.1 -> 10.10.10.31 (ICMP)', '10.0.5.1 -> 10.10.10.31 (ICMP)', '10.10.10.1 -> 10.10.10.31 (ICMP)', '10"
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "MULTI_FAIL_leaf1_p8_leaf2_p2",
+      "question": "Can traffic reach from leaf6 to p7 when links leaf1-p8 and leaf2-p2 both fail? [Answer format: 'REROUTED (path: A→B→C)' or 'DISCONNECTED (reason: ...)']",
+      "gold": "\"DISCONNECTED (reason: NO_ROUTE at pe3)\"",
+      "raw_pred": "DISCONNECTED (reason: NO_ROUTE at PE3)",
+      "pred": "DISCONNECTED (reason: NO_ROUTE at PE3)",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info",
+        "batfish_multi_link_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 12810,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 14065,
+      "completion_tokens": 247,
+      "total_tokens": 14312,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.2,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        },
+        {
+          "tool": "batfish_multi_link_failure",
+          "args": {
+            "link1_node1": "leaf1",
+            "link1_node2": "p8",
+            "link2_node1": "leaf2",
+            "link2_node2": "p2",
+            "src": "leaf6",
+            "dst": "p7"
+          },
+          "elapsed_ms": 3200.0,
+          "result": "{'isolated': True, 'new_path': [], 'path_change': 'ISOLATED', 'failure_reason': 'pe3에서 NO_ROUTE'}"
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "MULTI_FAIL_leaf1_leaf6_leaf2_p1",
+      "question": "Can traffic reach from leaf5 to p7 when links leaf1-leaf6 and leaf2-p1 both fail? [Answer format: 'REROUTED (path: A→B→C)' or 'DISCONNECTED (reason: ...)']",
+      "gold": "\"DISCONNECTED (reason: NO_ROUTE at pe3)\"",
+      "raw_pred": "DISCONNECTED (reason: NO_ROUTE at PE3)",
+      "pred": "DISCONNECTED (reason: NO_ROUTE at PE3)",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info",
+        "batfish_multi_link_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 10274,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 14068,
+      "completion_tokens": 248,
+      "total_tokens": 14316,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.3,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        },
+        {
+          "tool": "batfish_multi_link_failure",
+          "args": {
+            "link1_node1": "leaf1",
+            "link1_node2": "leaf6",
+            "link2_node1": "leaf2",
+            "link2_node2": "p1",
+            "src": "leaf5",
+            "dst": "p7"
+          },
+          "elapsed_ms": 2643.0,
+          "result": "{'isolated': True, 'new_path': [], 'path_change': 'ISOLATED', 'failure_reason': 'pe3에서 NO_ROUTE'}"
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "DUAL_FAILURE_p7_p8",
+      "question": "If p7 and p8 both fail simultaneously, how many flows are isolated? [Answer format: 'NONE' or integer]",
+      "gold": "\"28\"",
+      "raw_pred": "28",
+      "pred": "28",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info",
+        "batfish_multi_node_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 16532,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 15669,
+      "completion_tokens": 183,
+      "total_tokens": 15852,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.3,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        },
+        {
+          "tool": "batfish_multi_node_failure",
+          "args": {
+            "node1": "p7",
+            "node2": "p8"
+          },
+          "elapsed_ms": 2359.5,
+          "result": "{'affected_count': 28, 'newly_blocked_flows': ['10.0.1.0 -> 10.0.15.1 (ICMP)', '10.0.1.1 -> 10.0.15.1 (ICMP)', '10.0.11.0 -> 10.0.15.1 (ICMP)', '10.0.11.1 -> 10.0.15.1 (ICMP)', '10.0.12.1 -> 10.0.15.1 (ICMP)', '10.0.14.1 -> 10.0.15.1 (ICMP)', '10.0.2.1 -> 10.0.15.1 (ICMP)', '10.0.3.1 -> 10.0.15.1 (ICMP)', '10.0.4.1 -> 10.0.15.1 (ICMP)', '10.0.5.1 -> 10.0.15.1 (ICMP)', '10.10.10.1 -> 10.0.15.1 (ICMP)', '10.10.10.1 -> 10.10.10.17 (ICMP)', '10.10.10.31 -> 10.10.10.17 (ICMP)', '10.10.10.32 -> 10.10."
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "NODE_FAILURE_p8",
+      "question": "How many traffic flows are disrupted if p8 goes down? [Answer format: integer]",
+      "gold": "29",
+      "raw_pred": "29",
+      "pred": "29",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "number",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info",
+        "batfish_node_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 14832,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 14671,
+      "completion_tokens": 182,
+      "total_tokens": 14853,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.3,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        },
+        {
+          "tool": "batfish_node_failure",
+          "args": {
+            "node": "p8"
+          },
+          "elapsed_ms": 2374.6,
+          "result": "{'affected_count': 29, 'newly_blocked_flows': ['10.0.14.1 -> 10.0.16.1 (ICMP)', '10.10.10.1 -> 10.0.16.1 (ICMP)', '172.16.4.3 -> 10.10.10.18 (ICMP)', '10.0.2.1 -> 10.0.16.1 (ICMP)', '172.17.3.3 -> 10.10.10.18 (ICMP)', '10.10.10.33 -> 10.10.10.18 (ICMP)', '10.10.10.36 -> 10.10.10.18 (ICMP)', '10.10.10.38 -> 10.10.10.18 (ICMP)', '10.10.10.32 -> 10.10.10.18 (ICMP)', '10.10.10.37 -> 10.10.10.18 (ICMP)', '172.16.3.3 -> 10.10.10.18 (ICMP)', '10.0.1.1 -> 10.0.16.1 (ICMP)', '10.0.3.1 -> 10.0.16.1 (ICMP)"
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "MULTI_FAIL_leaf1_leaf3_leaf2_p1",
+      "question": "Can traffic reach from leaf6 to p7 when links leaf1-leaf3 and leaf2-p1 both fail? [Answer format: 'REROUTED (path: A→B→C)' or 'DISCONNECTED (reason: ...)']",
+      "gold": "\"DISCONNECTED (reason: NO_ROUTE at pe3)\"",
+      "raw_pred": "DISCONNECTED (reason: NO_ROUTE at PE3)",
+      "pred": "DISCONNECTED (reason: NO_ROUTE at PE3)",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info",
+        "batfish_multi_link_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 13042,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 14068,
+      "completion_tokens": 242,
+      "total_tokens": 14310,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.3,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        },
+        {
+          "tool": "batfish_multi_link_failure",
+          "args": {
+            "link1_node1": "leaf1",
+            "link1_node2": "leaf3",
+            "link2_node1": "leaf2",
+            "link2_node2": "p1",
+            "src": "leaf6",
+            "dst": "p7"
+          },
+          "elapsed_ms": 2592.7,
+          "result": "{'isolated': True, 'new_path': [], 'path_change': 'ISOLATED', 'failure_reason': 'pe3에서 NO_ROUTE'}"
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "ROOT_CAUSE_leaf3_p7",
+      "question": "Which device blocks traffic from leaf3 to p7? [Answer format: device name]",
+      "gold": "\"pe2\"",
+      "raw_pred": "pe2",
+      "pred": "pe2",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_find_blocker"
+      ],
+      "tool_count": 1,
+      "latency_ms": 9994,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3763,
+      "completion_tokens": 172,
+      "total_tokens": 3935,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_find_blocker",
+          "args": {
+            "src": "leaf3",
+            "dst": "p7"
+          },
+          "elapsed_ms": 1918.4,
+          "result": "{'blocking_device': 'pe2', 'disposition': 'UNKNOWN', 'path': ['leaf3', 'pe2'], 'path_str': 'leaf3 -> pe2', 'reachable': False}"
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "NODE_FAILURE_p5",
+      "question": "How many traffic flows are disrupted if p5 goes down? [Answer format: integer]",
+      "gold": "30",
+      "raw_pred": "30",
+      "pred": "30",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "number",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info",
+        "batfish_node_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 11749,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 14667,
+      "completion_tokens": 180,
+      "total_tokens": 14847,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.3,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        },
+        {
+          "tool": "batfish_node_failure",
+          "args": {
+            "node": "p5"
+          },
+          "elapsed_ms": 2446.0,
+          "result": "{'affected_count': 30, 'newly_blocked_flows': ['10.0.1.0 -> 10.0.11.0 (ICMP)', '10.0.15.1 -> 10.0.1.0 (ICMP)', '10.10.10.36 -> 10.10.10.15 (ICMP)', '172.16.2.3 -> 10.10.10.15 (ICMP)', '172.16.1.3 -> 10.10.10.15 (ICMP)', '10.0.1.1 -> 10.0.11.0 (ICMP)', '10.10.10.34 -> 10.10.10.15 (ICMP)', '172.17.2.3 -> 10.10.10.15 (ICMP)', '10.10.10.37 -> 10.10.10.15 (ICMP)', '172.17.3.3 -> 10.10.10.15 (ICMP)', '172.17.4.3 -> 10.10.10.15 (ICMP)', '10.10.10.1 -> 10.0.11.0 (ICMP)', '10.10.10.35 -> 10.10.10.15 (ICM"
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "ROOT_CAUSE_p8_leaf8",
+      "question": "Which device blocks traffic from p8 to leaf8? [Answer format: device name]",
+      "gold": "\"p8\"",
+      "raw_pred": "leaf8",
+      "pred": "leaf8",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_find_blocker"
+      ],
+      "tool_count": 1,
+      "latency_ms": 9051,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3754,
+      "completion_tokens": 194,
+      "total_tokens": 3948,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_find_blocker",
+          "args": {
+            "src": "p8",
+            "dst": "leaf8"
+          },
+          "elapsed_ms": 1949.3,
+          "result": "{'blocking_device': 'leaf8', 'disposition': 'UNKNOWN', 'path': ['p8', 'leaf8'], 'path_str': 'p8 -> leaf8', 'reachable': False}"
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "MULTI_FAIL_leaf1_pe3_leaf2_leaf4",
+      "question": "Can traffic reach from leaf6 to p7 when links leaf1-pe3 and leaf2-leaf4 both fail? [Answer format: 'REROUTED (path: A→B→C)' or 'DISCONNECTED (reason: ...)']",
+      "gold": "\"DISCONNECTED (reason: NO_ROUTE at pe3)\"",
+      "raw_pred": "DISCONNECTED (reason: NO_ROUTE at PE3)",
+      "pred": "DISCONNECTED (reason: NO_ROUTE at PE3)",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info",
+        "batfish_multi_link_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 12542,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 14064,
+      "completion_tokens": 243,
+      "total_tokens": 14307,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.3,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        },
+        {
+          "tool": "batfish_multi_link_failure",
+          "args": {
+            "link1_node1": "leaf1",
+            "link1_node2": "pe3",
+            "link2_node1": "leaf2",
+            "link2_node2": "leaf4",
+            "src": "leaf6",
+            "dst": "p7"
+          },
+          "elapsed_ms": 2749.2,
+          "result": "{'isolated': True, 'new_path': [], 'path_change': 'ISOLATED', 'failure_reason': 'pe3에서 NO_ROUTE'}"
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "MULTI_FAIL_leaf1_leaf4_leaf2_leaf6",
+      "question": "Can traffic reach from leaf5 to p7 when links leaf1-leaf4 and leaf2-leaf6 both fail? [Answer format: 'REROUTED (path: A→B→C)' or 'DISCONNECTED (reason: ...)']",
+      "gold": "\"DISCONNECTED (reason: NO_ROUTE at pe3)\"",
+      "raw_pred": "DISCONNECTED (reason: NO_ROUTE at PE3)",
+      "pred": "DISCONNECTED (reason: NO_ROUTE at PE3)",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info",
+        "batfish_multi_link_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 10359,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 14071,
+      "completion_tokens": 235,
+      "total_tokens": 14306,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.3,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        },
+        {
+          "tool": "batfish_multi_link_failure",
+          "args": {
+            "link1_node1": "leaf1",
+            "link1_node2": "leaf4",
+            "link2_node1": "leaf2",
+            "link2_node2": "leaf6",
+            "src": "leaf5",
+            "dst": "p7"
+          },
+          "elapsed_ms": 2875.5,
+          "result": "{'isolated': True, 'new_path': [], 'path_change': 'ISOLATED', 'failure_reason': 'pe3에서 NO_ROUTE'}"
+        }
+      ],
+      "mas_status": "ACCEPT"
+    }
+  ]
+}

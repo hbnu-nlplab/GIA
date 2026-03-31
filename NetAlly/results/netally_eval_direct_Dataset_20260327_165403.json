@@ -1,0 +1,643 @@
+{
+  "meta": {
+    "model": "NetAlly-MAS+MCP",
+    "model_tag": "NetAlly-OpenRouter-gpt4omini",
+    "backend": "netally-direct",
+    "lab": "Lab-B",
+    "lab_folder": "Dataset",
+    "date": "2026-03-27T16:54:06.045148",
+    "duration_sec": 113.6,
+    "total_samples": 20,
+    "dataset": "LabB_NCN_Basic_SP_20nodes_dataset_batfish_20260325_101536_en.json",
+    "dataset_path": "../Data/Pnetlab/LabB_NCN_Basic_SP_20nodes/Dataset/20260325_101536/LabB_NCN_Basic_SP_20nodes_dataset_batfish_20260325_101536_en.json",
+    "mcp_server_url": "http://127.0.0.1:8811/mcp",
+    "recursion_limit": 60,
+    "max_retries": 3,
+    "max_workers": 1,
+    "include_levels": null,
+    "exclude_levels": null,
+    "date_completed": "2026-03-27T16:55:59.686557"
+  },
+  "results": [
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT_pe4",
+      "question": "What is the system hostname on pe4? [Answer format: plain string]",
+      "gold": "\"pe4\"",
+      "raw_pred": "PE4",
+      "pred": "PE4",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 5907,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "PE4"
+          },
+          "elapsed_ms": 332.4
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT_leaf6",
+      "question": "What is the system hostname on leaf6? [Answer format: plain string]",
+      "gold": "\"leaf6\"",
+      "raw_pred": "Leaf6",
+      "pred": "Leaf6",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 5496,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "Leaf6"
+          },
+          "elapsed_ms": 269.4
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT_p7",
+      "question": "What is the system hostname on p7? [Answer format: plain string]",
+      "gold": "\"p7\"",
+      "raw_pred": "P7",
+      "pred": "P7",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 5703,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "P7"
+          },
+          "elapsed_ms": 295.3
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT_leaf5",
+      "question": "What is the system hostname on leaf5? [Answer format: plain string]",
+      "gold": "\"leaf5\"",
+      "raw_pred": "Leaf5",
+      "pred": "Leaf5",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 5255,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "Leaf5"
+          },
+          "elapsed_ms": 266.1
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT_p2",
+      "question": "What is the system hostname on p2? [Answer format: plain string]",
+      "gold": "\"p2\"",
+      "raw_pred": "P2",
+      "pred": "P2",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 5669,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "P2"
+          },
+          "elapsed_ms": 304.6
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT_p6",
+      "question": "What is the system hostname on p6? [Answer format: plain string]",
+      "gold": "\"p6\"",
+      "raw_pred": "P6",
+      "pred": "P6",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 6133,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "P6"
+          },
+          "elapsed_ms": 265.9
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT_p8",
+      "question": "What is the system hostname on p8? [Answer format: plain string]",
+      "gold": "\"p8\"",
+      "raw_pred": "P8",
+      "pred": "P8",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 5648,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "P8"
+          },
+          "elapsed_ms": 300.3
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT_pe3",
+      "question": "What is the system hostname on pe3? [Answer format: plain string]",
+      "gold": "\"pe3\"",
+      "raw_pred": "PE3",
+      "pred": "PE3",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 5463,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "PE3"
+          },
+          "elapsed_ms": 282.4
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT_leaf7",
+      "question": "What is the system hostname on leaf7? [Answer format: plain string]",
+      "gold": "\"leaf7\"",
+      "raw_pred": "Leaf7",
+      "pred": "Leaf7",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 5847,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "Leaf7"
+          },
+          "elapsed_ms": 745.0
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT_p5",
+      "question": "What is the system hostname on p5? [Answer format: plain string]",
+      "gold": "\"p5\"",
+      "raw_pred": "P5",
+      "pred": "P5",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 7341,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "P5"
+          },
+          "elapsed_ms": 491.6
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT_pe2",
+      "question": "What is the system hostname on pe2? [Answer format: plain string]",
+      "gold": "\"pe2\"",
+      "raw_pred": "PE2",
+      "pred": "PE2",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 5801,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "PE2"
+          },
+          "elapsed_ms": 313.9
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT_p3",
+      "question": "What is the system hostname on p3? [Answer format: plain string]",
+      "gold": "\"p3\"",
+      "raw_pred": "P3",
+      "pred": "P3",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 5948,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "P3"
+          },
+          "elapsed_ms": 270.9
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT_leaf2",
+      "question": "What is the system hostname on leaf2? [Answer format: plain string]",
+      "gold": "\"leaf2\"",
+      "raw_pred": "Leaf2",
+      "pred": "Leaf2",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 5342,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "Leaf2"
+          },
+          "elapsed_ms": 302.9
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT_p4",
+      "question": "What is the system hostname on p4? [Answer format: plain string]",
+      "gold": "\"p4\"",
+      "raw_pred": "P4",
+      "pred": "P4",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 5315,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "P4"
+          },
+          "elapsed_ms": 272.9
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT_leaf3",
+      "question": "What is the system hostname on leaf3? [Answer format: plain string]",
+      "gold": "\"leaf3\"",
+      "raw_pred": "Leaf3",
+      "pred": "Leaf3",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 5339,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "Leaf3"
+          },
+          "elapsed_ms": 293.3
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT_pe1",
+      "question": "What is the system hostname on pe1? [Answer format: plain string]",
+      "gold": "\"pe1\"",
+      "raw_pred": "PE1",
+      "pred": "PE1",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 5922,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "PE1"
+          },
+          "elapsed_ms": 291.6
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT_leaf8",
+      "question": "What is the system hostname on leaf8? [Answer format: plain string]",
+      "gold": "\"leaf8\"",
+      "raw_pred": "Leaf8",
+      "pred": "Leaf8",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 6628,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "Leaf8"
+          },
+          "elapsed_ms": 283.8
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT_p1",
+      "question": "What is the system hostname on p1? [Answer format: plain string]",
+      "gold": "\"p1\"",
+      "raw_pred": "P1",
+      "pred": "P1",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 5638,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "P1"
+          },
+          "elapsed_ms": 286.5
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT_leaf1",
+      "question": "What is the system hostname on leaf1? [Answer format: plain string]",
+      "gold": "\"leaf1\"",
+      "raw_pred": "Leaf1",
+      "pred": "Leaf1",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 6651,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "Leaf1"
+          },
+          "elapsed_ms": 285.6
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "SYSTEM_HOSTNAME_TEXT_leaf4",
+      "question": "What is the system hostname on leaf4? [Answer format: plain string]",
+      "gold": "\"leaf4\"",
+      "raw_pred": "Leaf4",
+      "pred": "Leaf4",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 6577,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "Leaf4"
+          },
+          "elapsed_ms": 262.4
+        }
+      ],
+      "mas_status": "ACCEPT"
+    }
+  ]
+}

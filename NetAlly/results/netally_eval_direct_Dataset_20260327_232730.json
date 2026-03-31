@@ -1,0 +1,1696 @@
+{
+  "meta": {
+    "model": "NetAlly-MAS+MCP",
+    "model_tag": "gpt-4o-mini-v9-nodeips-fix",
+    "backend": "netally-direct",
+    "lab": "Lab-B",
+    "lab_folder": "Dataset",
+    "date": "2026-03-27T23:27:33.803426",
+    "duration_sec": 350.4,
+    "total_samples": 40,
+    "dataset": "sampled_100_mixed_en.json",
+    "dataset_path": "../Data/Pnetlab/LabB_NCN_Basic_SP_20nodes/Dataset/20260325_101536/sampled_100_mixed_en.json",
+    "mcp_server_url": "http://127.0.0.1:8811/mcp",
+    "recursion_limit": 60,
+    "max_retries": 3,
+    "max_workers": 1,
+    "include_levels": [
+      "L4",
+      "L5"
+    ],
+    "exclude_levels": null,
+    "date_completed": "2026-03-27T23:33:24.247140",
+    "token_usage_total": {
+      "prompt_tokens": 160291,
+      "completion_tokens": 10727,
+      "total_tokens": 171018,
+      "llm_calls": 190
+    }
+  },
+  "results": [
+    {
+      "question_id": "WAYPOINT_leaf6_p7_p2",
+      "question": "Does traffic from 172.17.2.2 to 10.0.15.1 traverse through p2? Show the full path. [Answer format: 'A → B → C' or 'Does not traverse']",
+      "gold": "\"NOT_TRAVERSED\"",
+      "raw_pred": "Does not traverse",
+      "pred": "Does not traverse",
+      "level": "L4",
+      "category": "Reachability_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_traceroute"
+      ],
+      "tool_count": 1,
+      "latency_ms": 26763,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6537,
+      "completion_tokens": 638,
+      "total_tokens": 7175,
+      "llm_calls": 8,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 4,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_traceroute",
+          "args": {
+            "src": "172.17.2.2",
+            "dst": "10.0.15.1"
+          },
+          "elapsed_ms": 5345.4
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "BOUNDED_PATH_p8_pe2",
+      "question": "How many hops are in the path from p8 to 10.0.4.1? [Answer format: integer]",
+      "gold": "8",
+      "raw_pred": "8",
+      "pred": "8",
+      "level": "L4",
+      "category": "Reachability_Analysis",
+      "answer_type": "number",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_traceroute"
+      ],
+      "tool_count": 1,
+      "latency_ms": 5238,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3412,
+      "completion_tokens": 146,
+      "total_tokens": 3558,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_traceroute",
+          "args": {
+            "src": "P8",
+            "dst": "10.0.4.1"
+          },
+          "elapsed_ms": 285.3
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "BOUNDED_PATH_leaf4_p1",
+      "question": "How many hops are in the path from leaf4 to 10.0.1.1? [Answer format: integer]",
+      "gold": "2",
+      "raw_pred": "2",
+      "pred": "2",
+      "level": "L4",
+      "category": "Reachability_Analysis",
+      "answer_type": "number",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_traceroute"
+      ],
+      "tool_count": 1,
+      "latency_ms": 5960,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3267,
+      "completion_tokens": 179,
+      "total_tokens": 3446,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_traceroute",
+          "args": {
+            "src": "Leaf4",
+            "dst": "10.0.1.1"
+          },
+          "elapsed_ms": 276.3
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "ASYMMETRIC_leaf5_p6",
+      "question": "Compare the forward and reverse paths between leaf5 and p6. [Answer format: 'Forward: A→B→C, Reverse: C→D→A']",
+      "gold": "\"Forward: leaf5 -> pe3, Reverse: p6\"",
+      "raw_pred": "Forward: leaf5→pe3, Reverse: p6→leaf5",
+      "pred": "Forward: leaf5→pe3, Reverse: p6→leaf5",
+      "level": "L4",
+      "category": "Routing_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_traceroute",
+        "batfish_traceroute"
+      ],
+      "tool_count": 2,
+      "latency_ms": 9146,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3657,
+      "completion_tokens": 259,
+      "total_tokens": 3916,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_traceroute",
+          "args": {
+            "src": "Leaf5",
+            "dst": "P6"
+          },
+          "elapsed_ms": 124.2
+        },
+        {
+          "tool": "batfish_traceroute",
+          "args": {
+            "src": "P6",
+            "dst": "Leaf5"
+          },
+          "elapsed_ms": 282.3
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "TRACEROUTE_p3_pe4",
+      "question": "What is the traceroute path from 10.0.3.1 to 10.0.14.1? [Answer format: plain string]",
+      "gold": "\"p3 -> p5 -> p6 -> pe4\"",
+      "raw_pred": "p3→p5→p6→pe4",
+      "pred": "p3→p5→p6→pe4",
+      "level": "L4",
+      "category": "Reachability_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_traceroute"
+      ],
+      "tool_count": 1,
+      "latency_ms": 7646,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3430,
+      "completion_tokens": 191,
+      "total_tokens": 3621,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_traceroute",
+          "args": {
+            "src": "10.0.3.1",
+            "dst": "10.0.14.1"
+          },
+          "elapsed_ms": 240.5
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "BOUNDED_PATH_leaf2_pe4",
+      "question": "How many hops are in the path from leaf2 to 10.0.14.1? [Answer format: integer]",
+      "gold": "2",
+      "raw_pred": "2",
+      "pred": "2",
+      "level": "L4",
+      "category": "Reachability_Analysis",
+      "answer_type": "number",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_traceroute"
+      ],
+      "tool_count": 1,
+      "latency_ms": 6189,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3267,
+      "completion_tokens": 175,
+      "total_tokens": 3442,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_traceroute",
+          "args": {
+            "src": "Leaf2",
+            "dst": "10.0.14.1"
+          },
+          "elapsed_ms": 124.4
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "TRACEROUTE_pe3_leaf3",
+      "question": "What is the traceroute path from 10.0.11.0 to 172.16.3.2? [Answer format: plain string]",
+      "gold": "\"pe3\"",
+      "raw_pred": "pe3",
+      "pred": "pe3",
+      "level": "L4",
+      "category": "Reachability_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_traceroute"
+      ],
+      "tool_count": 1,
+      "latency_ms": 6709,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3339,
+      "completion_tokens": 212,
+      "total_tokens": 3551,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_traceroute",
+          "args": {
+            "src": "10.0.11.0",
+            "dst": "172.16.3.2"
+          },
+          "elapsed_ms": 248.7
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "BOUNDED_PATH_leaf2_leaf4",
+      "question": "How many hops are in the path from leaf2 to 172.16.4.2? [Answer format: integer]",
+      "gold": "2",
+      "raw_pred": "2",
+      "pred": "2",
+      "level": "L4",
+      "category": "Reachability_Analysis",
+      "answer_type": "number",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_traceroute"
+      ],
+      "tool_count": 1,
+      "latency_ms": 5457,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3268,
+      "completion_tokens": 180,
+      "total_tokens": 3448,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_traceroute",
+          "args": {
+            "src": "Leaf2",
+            "dst": "172.16.4.2"
+          },
+          "elapsed_ms": 120.5
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "TRACEROUTE_p2_p4",
+      "question": "What is the traceroute path from 10.0.2.1 to 10.0.5.1? [Answer format: plain string]",
+      "gold": "\"p2 -> p4\"",
+      "raw_pred": "p2→p4",
+      "pred": "p2→p4",
+      "level": "L4",
+      "category": "Reachability_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_traceroute"
+      ],
+      "tool_count": 1,
+      "latency_ms": 6515,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3367,
+      "completion_tokens": 192,
+      "total_tokens": 3559,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_traceroute",
+          "args": {
+            "src": "10.0.2.1",
+            "dst": "10.0.5.1"
+          },
+          "elapsed_ms": 239.7
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "TRACEROUTE_leaf5_pe1",
+      "question": "What is the traceroute path from 172.17.1.2 to 10.0.1.0? [Answer format: plain string]",
+      "gold": "\"leaf5 -> pe3\"",
+      "raw_pred": "leaf5→pe3",
+      "pred": "leaf5→pe3",
+      "level": "L4",
+      "category": "Reachability_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_traceroute"
+      ],
+      "tool_count": 1,
+      "latency_ms": 9189,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3364,
+      "completion_tokens": 188,
+      "total_tokens": 3552,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_traceroute",
+          "args": {
+            "src": "172.17.1.2",
+            "dst": "10.0.1.0"
+          },
+          "elapsed_ms": 246.2
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "BOUNDED_PATH_leaf5_pe2",
+      "question": "How many hops are in the path from leaf5 to 10.0.4.1? [Answer format: integer]",
+      "gold": "2",
+      "raw_pred": "2",
+      "pred": "2",
+      "level": "L4",
+      "category": "Reachability_Analysis",
+      "answer_type": "number",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_traceroute"
+      ],
+      "tool_count": 1,
+      "latency_ms": 6210,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3267,
+      "completion_tokens": 145,
+      "total_tokens": 3412,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_traceroute",
+          "args": {
+            "src": "Leaf5",
+            "dst": "10.0.4.1"
+          },
+          "elapsed_ms": 118.1
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "TRACEROUTE_leaf2_leaf4",
+      "question": "What is the traceroute path from 172.16.2.2 to 172.16.4.2? [Answer format: plain string]",
+      "gold": "\"leaf2 -> pe1\"",
+      "raw_pred": "leaf2→pe1",
+      "pred": "leaf2→pe1",
+      "level": "L4",
+      "category": "Reachability_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_traceroute"
+      ],
+      "tool_count": 1,
+      "latency_ms": 6047,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3364,
+      "completion_tokens": 161,
+      "total_tokens": 3525,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_traceroute",
+          "args": {
+            "src": "172.16.2.2",
+            "dst": "172.16.4.2"
+          },
+          "elapsed_ms": 245.0
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "BOUNDED_PATH_p8_pe1",
+      "question": "How many hops are in the path from p8 to 10.0.1.0? [Answer format: integer]",
+      "gold": "7",
+      "raw_pred": "7",
+      "pred": "7",
+      "level": "L4",
+      "category": "Reachability_Analysis",
+      "answer_type": "number",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_traceroute"
+      ],
+      "tool_count": 1,
+      "latency_ms": 5976,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3388,
+      "completion_tokens": 181,
+      "total_tokens": 3569,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_traceroute",
+          "args": {
+            "src": "P8",
+            "dst": "10.0.1.0"
+          },
+          "elapsed_ms": 121.1
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "TRACEROUTE_leaf5_pe3",
+      "question": "What is the traceroute path from 172.17.1.2 to 10.0.11.0? [Answer format: plain string]",
+      "gold": "\"leaf5 -> pe3\"",
+      "raw_pred": "leaf5→pe3",
+      "pred": "leaf5→pe3",
+      "level": "L4",
+      "category": "Reachability_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_traceroute"
+      ],
+      "tool_count": 1,
+      "latency_ms": 5928,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3364,
+      "completion_tokens": 173,
+      "total_tokens": 3537,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_traceroute",
+          "args": {
+            "src": "172.17.1.2",
+            "dst": "10.0.11.0"
+          },
+          "elapsed_ms": 238.0
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "TRACEROUTE_p5_p4",
+      "question": "What is the traceroute path from 10.0.11.1 to 10.0.5.1? [Answer format: plain string]",
+      "gold": "\"p5 -> p3 -> p4\"",
+      "raw_pred": "p5→p3→p4",
+      "pred": "p5→p3→p4",
+      "level": "L4",
+      "category": "Reachability_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_traceroute"
+      ],
+      "tool_count": 1,
+      "latency_ms": 6843,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3399,
+      "completion_tokens": 194,
+      "total_tokens": 3593,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_traceroute",
+          "args": {
+            "src": "10.0.11.1",
+            "dst": "10.0.5.1"
+          },
+          "elapsed_ms": 237.1
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "ASYMMETRIC_p5_p6",
+      "question": "Compare the forward and reverse paths between p5 and p6. [Answer format: 'Forward: A→B→C, Reverse: C→D→A']",
+      "gold": "\"Forward: p5 -> p6, Reverse: p6 -> p5\"",
+      "raw_pred": "Forward: p5→p6, Reverse: p6→p5",
+      "pred": "Forward: p5→p6, Reverse: p6→p5",
+      "level": "L4",
+      "category": "Routing_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_traceroute",
+        "batfish_traceroute"
+      ],
+      "tool_count": 2,
+      "latency_ms": 6426,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3638,
+      "completion_tokens": 238,
+      "total_tokens": 3876,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_traceroute",
+          "args": {
+            "src": "P5",
+            "dst": "P6"
+          },
+          "elapsed_ms": 128.0
+        },
+        {
+          "tool": "batfish_traceroute",
+          "args": {
+            "src": "P6",
+            "dst": "P5"
+          },
+          "elapsed_ms": 281.5
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "TRACEROUTE_p6_p4",
+      "question": "What is the traceroute path from 10.0.12.1 to 10.0.5.1? [Answer format: plain string]",
+      "gold": "\"p6 -> p5 -> p3 -> p4\"",
+      "raw_pred": "p6→p5→p3→p4",
+      "pred": "p6→p5→p3→p4",
+      "level": "L4",
+      "category": "Reachability_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_traceroute"
+      ],
+      "tool_count": 1,
+      "latency_ms": 6375,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3423,
+      "completion_tokens": 194,
+      "total_tokens": 3617,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_traceroute",
+          "args": {
+            "src": "10.0.12.1",
+            "dst": "10.0.5.1"
+          },
+          "elapsed_ms": 240.9
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "TRACEROUTE_leaf8_p1",
+      "question": "What is the traceroute path from 172.17.4.2 to 10.0.1.1? [Answer format: plain string]",
+      "gold": "\"leaf8 -> pe4\"",
+      "raw_pred": "leaf8→pe4",
+      "pred": "leaf8→pe4",
+      "level": "L4",
+      "category": "Reachability_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_traceroute"
+      ],
+      "tool_count": 1,
+      "latency_ms": 6356,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3364,
+      "completion_tokens": 188,
+      "total_tokens": 3552,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_traceroute",
+          "args": {
+            "src": "172.17.4.2",
+            "dst": "10.0.1.1"
+          },
+          "elapsed_ms": 238.5
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "REACH_p2_p3_ICMP",
+      "question": "What is the reachability status from 10.0.2.1 to 10.0.3.1 over ICMP/0? [Answer format: plain string]",
+      "gold": "\"PATH: p2 -> p1 -> p3; REACHABLE: TRUE\"",
+      "raw_pred": "Impossible (Reason: NO_ROUTE at leaf2)",
+      "pred": "Impossible (Reason: NO_ROUTE at leaf2)",
+      "level": "L4",
+      "category": "Reachability_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_reachability"
+      ],
+      "tool_count": 1,
+      "latency_ms": 18601,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 5012,
+      "completion_tokens": 610,
+      "total_tokens": 5622,
+      "llm_calls": 6,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 2,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_reachability",
+          "args": {
+            "src": "10.0.2.1",
+            "dst": "10.0.3.1",
+            "protocol": "ICMP"
+          },
+          "elapsed_ms": 127.4
+        }
+      ],
+      "mas_status": "CONTINUE_DEBATE"
+    },
+    {
+      "question_id": "TRACEROUTE_leaf7_pe4",
+      "question": "What is the traceroute path from 172.17.3.2 to 10.0.14.1? [Answer format: plain string]",
+      "gold": "\"leaf7 -> pe4\"",
+      "raw_pred": "leaf7→pe4",
+      "pred": "leaf7→pe4",
+      "level": "L4",
+      "category": "Reachability_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_traceroute"
+      ],
+      "tool_count": 1,
+      "latency_ms": 6138,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3364,
+      "completion_tokens": 183,
+      "total_tokens": 3547,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_traceroute",
+          "args": {
+            "src": "172.17.3.2",
+            "dst": "10.0.14.1"
+          },
+          "elapsed_ms": 235.9
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "MULTI_FAIL_leaf1_leaf6_leaf2_leaf4",
+      "question": "Can traffic reach from leaf5 to p7 when links leaf1-leaf6 and leaf2-leaf4 both fail? [Answer format: 'REROUTED (path: A→B→C)' or 'DISCONNECTED (reason: ...)']",
+      "gold": "\"DISCONNECTED (reason: NO_ROUTE at pe3)\"",
+      "raw_pred": "DISCONNECTED (reason: Dst IP Not Found)",
+      "pred": "DISCONNECTED (reason: Dst IP Not Found)",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_link_failure",
+        "batfish_link_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 8103,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3467,
+      "completion_tokens": 240,
+      "total_tokens": 3707,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_link_failure",
+          "args": {
+            "node1": "Leaf1",
+            "node2": "Leaf6",
+            "src": "Leaf5",
+            "dst": "P7"
+          },
+          "elapsed_ms": 140.1
+        },
+        {
+          "tool": "batfish_link_failure",
+          "args": {
+            "node1": "Leaf2",
+            "node2": "Leaf4",
+            "src": "Leaf5",
+            "dst": "P7"
+          },
+          "elapsed_ms": 292.1
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "MULTI_FAIL_leaf1_p4_leaf2_pe1",
+      "question": "Can traffic reach from leaf6 to p7 when links leaf1-p4 and leaf2-pe1 both fail? [Answer format: 'REROUTED (path: A→B→C)' or 'DISCONNECTED (reason: ...)']",
+      "gold": "\"DISCONNECTED (reason: NO_ROUTE at pe3)\"",
+      "raw_pred": "DISCONNECTED (reason: Dst IP Not Found)",
+      "pred": "DISCONNECTED (reason: Dst IP Not Found)",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_link_failure",
+        "batfish_link_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 8308,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3474,
+      "completion_tokens": 249,
+      "total_tokens": 3723,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_link_failure",
+          "args": {
+            "node1": "LEAF1",
+            "node2": "P4",
+            "src": "LEAF6",
+            "dst": "P7"
+          },
+          "elapsed_ms": 3.1
+        },
+        {
+          "tool": "batfish_link_failure",
+          "args": {
+            "node1": "LEAF2",
+            "node2": "PE1",
+            "src": "LEAF6",
+            "dst": "P7"
+          },
+          "elapsed_ms": 3.2
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "ROOT_CAUSE_leaf4_p7",
+      "question": "Which device blocks traffic from leaf4 to p7? [Answer format: device name]",
+      "gold": "\"pe2\"",
+      "raw_pred": "N/A",
+      "pred": "N/A",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_acl_check",
+        "batfish_acl_check"
+      ],
+      "tool_count": 2,
+      "latency_ms": 18018,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6520,
+      "completion_tokens": 543,
+      "total_tokens": 7063,
+      "llm_calls": 8,
+      "mas_outer_loops": 2,
+      "mas_inner_turns": 2,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_acl_check",
+          "args": {
+            "src_ip": "leaf4",
+            "dst_ip": "p7",
+            "dst_port": 0
+          },
+          "elapsed_ms": 278.5
+        },
+        {
+          "tool": "batfish_acl_check",
+          "args": {
+            "src_ip": "leaf4",
+            "dst_ip": "p7",
+            "dst_port": 0
+          },
+          "elapsed_ms": 274.1
+        }
+      ],
+      "mas_status": "NEED_MORE_INFO"
+    },
+    {
+      "question_id": "MULTI_FAIL_leaf1_leaf6_leaf2_leaf3",
+      "question": "Can traffic reach from leaf5 to p7 when links leaf1-leaf6 and leaf2-leaf3 both fail? [Answer format: 'REROUTED (path: A→B→C)' or 'DISCONNECTED (reason: ...)']",
+      "gold": "\"DISCONNECTED (reason: NO_ROUTE at pe3)\"",
+      "raw_pred": "DISCONNECTED (reason: Dst IP Not Found)",
+      "pred": "DISCONNECTED (reason: Dst IP Not Found)",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_link_failure",
+        "batfish_link_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 7276,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3486,
+      "completion_tokens": 252,
+      "total_tokens": 3738,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_link_failure",
+          "args": {
+            "node1": "LEAF1",
+            "node2": "LEAF6",
+            "src": "LEAF5",
+            "dst": "P7"
+          },
+          "elapsed_ms": 3.5
+        },
+        {
+          "tool": "batfish_link_failure",
+          "args": {
+            "node1": "LEAF2",
+            "node2": "LEAF3",
+            "src": "LEAF5",
+            "dst": "P7"
+          },
+          "elapsed_ms": 3.6
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "MULTI_FAIL_leaf1_p5_leaf2_leaf6",
+      "question": "Can traffic reach from leaf5 to p7 when links leaf1-p5 and leaf2-leaf6 both fail? [Answer format: 'REROUTED (path: A→B→C)' or 'DISCONNECTED (reason: ...)']",
+      "gold": "\"DISCONNECTED (reason: NO_ROUTE at pe3)\"",
+      "raw_pred": "DISCONNECTED (reason: Dst IP Not Found)",
+      "pred": "DISCONNECTED (reason: Dst IP Not Found)",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_link_failure",
+        "batfish_link_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 6710,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3480,
+      "completion_tokens": 249,
+      "total_tokens": 3729,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_link_failure",
+          "args": {
+            "node1": "LEAF1",
+            "node2": "P5",
+            "src": "LEAF5",
+            "dst": "P7"
+          },
+          "elapsed_ms": 2.9
+        },
+        {
+          "tool": "batfish_link_failure",
+          "args": {
+            "node1": "LEAF2",
+            "node2": "LEAF6",
+            "src": "LEAF5",
+            "dst": "P7"
+          },
+          "elapsed_ms": 2.9
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "NODE_FAILURE_leaf5",
+      "question": "How many traffic flows are disrupted if leaf5 goes down? [Answer format: integer]",
+      "gold": "29",
+      "raw_pred": "0",
+      "pred": "0",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "number",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_node_failure"
+      ],
+      "tool_count": 1,
+      "latency_ms": 10599,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3108,
+      "completion_tokens": 160,
+      "total_tokens": 3268,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_node_failure",
+          "args": {
+            "node": "Leaf5"
+          },
+          "elapsed_ms": 611.4
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "DUAL_FAILURE_p5_p6",
+      "question": "If p5 and p6 both fail simultaneously, how many flows are isolated? [Answer format: 'NONE' or integer]",
+      "gold": "\"29\"",
+      "raw_pred": "0",
+      "pred": "0",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_node_failure",
+        "batfish_node_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 9263,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3337,
+      "completion_tokens": 193,
+      "total_tokens": 3530,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_node_failure",
+          "args": {
+            "node": "P5"
+          },
+          "elapsed_ms": 1072.9
+        },
+        {
+          "tool": "batfish_node_failure",
+          "args": {
+            "node": "P6"
+          },
+          "elapsed_ms": 1425.4
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "ROOT_CAUSE_leaf7_pe1",
+      "question": "Which device blocks traffic from leaf7 to pe1? [Answer format: device name]",
+      "gold": "\"pe4\"",
+      "raw_pred": "N/A",
+      "pred": "N/A",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_acl_check",
+        "batfish_acl_check"
+      ],
+      "tool_count": 2,
+      "latency_ms": 15804,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6511,
+      "completion_tokens": 527,
+      "total_tokens": 7038,
+      "llm_calls": 8,
+      "mas_outer_loops": 2,
+      "mas_inner_turns": 2,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_acl_check",
+          "args": {
+            "src_ip": "leaf7",
+            "dst_ip": "pe1",
+            "dst_port": 0
+          },
+          "elapsed_ms": 122.7
+        },
+        {
+          "tool": "batfish_acl_check",
+          "args": {
+            "src_ip": "leaf7",
+            "dst_ip": "pe1",
+            "dst_port": 80
+          },
+          "elapsed_ms": 254.8
+        }
+      ],
+      "mas_status": "NEED_MORE_INFO"
+    },
+    {
+      "question_id": "ROOT_CAUSE_leaf2_pe2",
+      "question": "Which device blocks traffic from leaf2 to pe2? [Answer format: device name]",
+      "gold": "\"pe1\"",
+      "raw_pred": "N/A",
+      "pred": "N/A",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_acl_check",
+        "batfish_acl_check"
+      ],
+      "tool_count": 2,
+      "latency_ms": 17655,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6475,
+      "completion_tokens": 510,
+      "total_tokens": 6985,
+      "llm_calls": 8,
+      "mas_outer_loops": 2,
+      "mas_inner_turns": 2,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_acl_check",
+          "args": {
+            "src_ip": "leaf2",
+            "dst_ip": "pe2",
+            "dst_port": 80
+          },
+          "elapsed_ms": 310.5
+        },
+        {
+          "tool": "batfish_acl_check",
+          "args": {
+            "src_ip": "leaf2_ip",
+            "dst_ip": "pe2_ip",
+            "dst_port": 80
+          },
+          "elapsed_ms": 120.0
+        }
+      ],
+      "mas_status": "NEED_MORE_INFO"
+    },
+    {
+      "question_id": "DUAL_FAILURE_leaf1_leaf2",
+      "question": "If leaf1 and leaf2 both fail simultaneously, how many flows are isolated? [Answer format: 'NONE' or integer]",
+      "gold": "\"29\"",
+      "raw_pred": "0",
+      "pred": "0",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_node_failure",
+        "batfish_node_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 8000,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3340,
+      "completion_tokens": 192,
+      "total_tokens": 3532,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_node_failure",
+          "args": {
+            "node": "Leaf1"
+          },
+          "elapsed_ms": 1079.1
+        },
+        {
+          "tool": "batfish_node_failure",
+          "args": {
+            "node": "Leaf2"
+          },
+          "elapsed_ms": 1427.9
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "MULTI_FAIL_leaf1_p8_leaf2_p2",
+      "question": "Can traffic reach from leaf6 to p7 when links leaf1-p8 and leaf2-p2 both fail? [Answer format: 'REROUTED (path: A→B→C)' or 'DISCONNECTED (reason: ...)']",
+      "gold": "\"DISCONNECTED (reason: NO_ROUTE at pe3)\"",
+      "raw_pred": "DISCONNECTED (reason: Dst IP Not Found)",
+      "pred": "DISCONNECTED (reason: Dst IP Not Found)",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_link_failure",
+        "batfish_link_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 7173,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3477,
+      "completion_tokens": 238,
+      "total_tokens": 3715,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_link_failure",
+          "args": {
+            "node1": "LEAF1",
+            "node2": "P8",
+            "src": "LEAF6",
+            "dst": "P7"
+          },
+          "elapsed_ms": 3.0
+        },
+        {
+          "tool": "batfish_link_failure",
+          "args": {
+            "node1": "LEAF2",
+            "node2": "P2",
+            "src": "LEAF6",
+            "dst": "P7"
+          },
+          "elapsed_ms": 3.0
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "MULTI_FAIL_leaf1_leaf6_leaf2_p1",
+      "question": "Can traffic reach from leaf5 to p7 when links leaf1-leaf6 and leaf2-p1 both fail? [Answer format: 'REROUTED (path: A→B→C)' or 'DISCONNECTED (reason: ...)']",
+      "gold": "\"DISCONNECTED (reason: NO_ROUTE at pe3)\"",
+      "raw_pred": "DISCONNECTED (reason: Dst IP Not Found)",
+      "pred": "DISCONNECTED (reason: Dst IP Not Found)",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_link_failure",
+        "batfish_link_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 7953,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3480,
+      "completion_tokens": 249,
+      "total_tokens": 3729,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_link_failure",
+          "args": {
+            "node1": "LEAF1",
+            "node2": "LEAF6",
+            "src": "LEAF5",
+            "dst": "P7"
+          },
+          "elapsed_ms": 4.0
+        },
+        {
+          "tool": "batfish_link_failure",
+          "args": {
+            "node1": "LEAF2",
+            "node2": "P1",
+            "src": "LEAF5",
+            "dst": "P7"
+          },
+          "elapsed_ms": 3.8
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "DUAL_FAILURE_p7_p8",
+      "question": "If p7 and p8 both fail simultaneously, how many flows are isolated? [Answer format: 'NONE' or integer]",
+      "gold": "\"28\"",
+      "raw_pred": "0",
+      "pred": "0",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_link_failure",
+        "batfish_node_failure",
+        "batfish_node_failure"
+      ],
+      "tool_count": 3,
+      "latency_ms": 19607,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6683,
+      "completion_tokens": 475,
+      "total_tokens": 7158,
+      "llm_calls": 8,
+      "mas_outer_loops": 2,
+      "mas_inner_turns": 2,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_link_failure",
+          "args": {
+            "node1": "P7",
+            "node2": "P8"
+          },
+          "elapsed_ms": 2.0
+        },
+        {
+          "tool": "batfish_node_failure",
+          "args": {
+            "node": "P7"
+          },
+          "elapsed_ms": 1084.9
+        },
+        {
+          "tool": "batfish_node_failure",
+          "args": {
+            "node": "P8"
+          },
+          "elapsed_ms": 846.5
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "NODE_FAILURE_p8",
+      "question": "How many traffic flows are disrupted if p8 goes down? [Answer format: integer]",
+      "gold": "29",
+      "raw_pred": "0",
+      "pred": "0",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "number",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_node_failure"
+      ],
+      "tool_count": 1,
+      "latency_ms": 6814,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3110,
+      "completion_tokens": 131,
+      "total_tokens": 3241,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_node_failure",
+          "args": {
+            "node": "P8"
+          },
+          "elapsed_ms": 616.4
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "MULTI_FAIL_leaf1_leaf3_leaf2_p1",
+      "question": "Can traffic reach from leaf6 to p7 when links leaf1-leaf3 and leaf2-p1 both fail? [Answer format: 'REROUTED (path: A→B→C)' or 'DISCONNECTED (reason: ...)']",
+      "gold": "\"DISCONNECTED (reason: NO_ROUTE at pe3)\"",
+      "raw_pred": "DISCONNECTED (reason: Dst IP Not Found)",
+      "pred": "DISCONNECTED (reason: Dst IP Not Found)",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_link_failure",
+        "batfish_link_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 7633,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3479,
+      "completion_tokens": 244,
+      "total_tokens": 3723,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_link_failure",
+          "args": {
+            "node1": "LEAF1",
+            "node2": "LEAF3",
+            "src": "LEAF6",
+            "dst": "P7"
+          },
+          "elapsed_ms": 3.2
+        },
+        {
+          "tool": "batfish_link_failure",
+          "args": {
+            "node1": "LEAF2",
+            "node2": "P1",
+            "src": "LEAF6",
+            "dst": "P7"
+          },
+          "elapsed_ms": 3.3
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "ROOT_CAUSE_leaf3_p7",
+      "question": "Which device blocks traffic from leaf3 to p7? [Answer format: device name]",
+      "gold": "\"pe2\"",
+      "raw_pred": "N/A",
+      "pred": "N/A",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_acl_check",
+        "nso_get_all_interfaces",
+        "batfish_acl_check"
+      ],
+      "tool_count": 3,
+      "latency_ms": 16808,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 7855,
+      "completion_tokens": 524,
+      "total_tokens": 8379,
+      "llm_calls": 8,
+      "mas_outer_loops": 2,
+      "mas_inner_turns": 2,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_acl_check",
+          "args": {
+            "src_ip": "Leaf3",
+            "dst_ip": "P7",
+            "dst_port": 0
+          },
+          "elapsed_ms": 124.9
+        },
+        {
+          "tool": "nso_get_all_interfaces",
+          "args": {},
+          "elapsed_ms": 150.1
+        },
+        {
+          "tool": "batfish_acl_check",
+          "args": {
+            "src_ip": "Leaf3_IP",
+            "dst_ip": "P7_IP",
+            "dst_port": 80
+          },
+          "elapsed_ms": 122.2
+        }
+      ],
+      "mas_status": "NEED_MORE_INFO"
+    },
+    {
+      "question_id": "NODE_FAILURE_p5",
+      "question": "How many traffic flows are disrupted if p5 goes down? [Answer format: integer]",
+      "gold": "30",
+      "raw_pred": "0",
+      "pred": "0",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "number",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_node_failure"
+      ],
+      "tool_count": 1,
+      "latency_ms": 6915,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3111,
+      "completion_tokens": 172,
+      "total_tokens": 3283,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_node_failure",
+          "args": {
+            "node": "P5"
+          },
+          "elapsed_ms": 611.2
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "ROOT_CAUSE_p8_leaf8",
+      "question": "Which device blocks traffic from p8 to leaf8? [Answer format: device name]",
+      "gold": "\"p8\"",
+      "raw_pred": "No path",
+      "pred": "No path",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_acl_check",
+        "batfish_acl_check"
+      ],
+      "tool_count": 2,
+      "latency_ms": 13470,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6441,
+      "completion_tokens": 453,
+      "total_tokens": 6894,
+      "llm_calls": 8,
+      "mas_outer_loops": 2,
+      "mas_inner_turns": 2,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_acl_check",
+          "args": {
+            "src_ip": "p8",
+            "dst_ip": "leaf8",
+            "dst_port": 0
+          },
+          "elapsed_ms": 120.1
+        },
+        {
+          "tool": "batfish_acl_check",
+          "args": {
+            "src_ip": "p8",
+            "dst_ip": "leaf8",
+            "dst_port": 0
+          },
+          "elapsed_ms": 122.1
+        }
+      ],
+      "mas_status": "NEED_MORE_INFO"
+    },
+    {
+      "question_id": "MULTI_FAIL_leaf1_pe3_leaf2_leaf4",
+      "question": "Can traffic reach from leaf6 to p7 when links leaf1-pe3 and leaf2-leaf4 both fail? [Answer format: 'REROUTED (path: A→B→C)' or 'DISCONNECTED (reason: ...)']",
+      "gold": "\"DISCONNECTED (reason: NO_ROUTE at pe3)\"",
+      "raw_pred": "DISCONNECTED (reason: Dst IP Not Found)",
+      "pred": "DISCONNECTED (reason: Dst IP Not Found)",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_link_failure",
+        "batfish_link_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 7013,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3480,
+      "completion_tokens": 249,
+      "total_tokens": 3729,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_link_failure",
+          "args": {
+            "node1": "LEAF1",
+            "node2": "PE3",
+            "src": "LEAF6",
+            "dst": "P7"
+          },
+          "elapsed_ms": 3.4
+        },
+        {
+          "tool": "batfish_link_failure",
+          "args": {
+            "node1": "LEAF2",
+            "node2": "LEAF4",
+            "src": "LEAF6",
+            "dst": "P7"
+          },
+          "elapsed_ms": 3.5
+        }
+      ],
+      "mas_status": "ACCEPT"
+    },
+    {
+      "question_id": "MULTI_FAIL_leaf1_leaf4_leaf2_leaf6",
+      "question": "Can traffic reach from leaf5 to p7 when links leaf1-leaf4 and leaf2-leaf6 both fail? [Answer format: 'REROUTED (path: A→B→C)' or 'DISCONNECTED (reason: ...)']",
+      "gold": "\"DISCONNECTED (reason: NO_ROUTE at pe3)\"",
+      "raw_pred": "DISCONNECTED (reason: Dst IP Not Found)",
+      "pred": "DISCONNECTED (reason: Dst IP Not Found)",
+      "level": "L5",
+      "category": "What_If_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_link_failure",
+        "batfish_link_failure"
+      ],
+      "tool_count": 2,
+      "latency_ms": 7917,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3486,
+      "completion_tokens": 250,
+      "total_tokens": 3736,
+      "llm_calls": 4,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 1,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_link_failure",
+          "args": {
+            "node1": "LEAF1",
+            "node2": "LEAF4",
+            "src": "LEAF5",
+            "dst": "P7"
+          },
+          "elapsed_ms": 3.1
+        },
+        {
+          "tool": "batfish_link_failure",
+          "args": {
+            "node1": "LEAF2",
+            "node2": "LEAF6",
+            "src": "LEAF5",
+            "dst": "P7"
+          },
+          "elapsed_ms": 3.2
+        }
+      ],
+      "mas_status": "ACCEPT"
+    }
+  ]
+}

@@ -1,0 +1,160 @@
+====================================================================================================
+NETALLY MAS EVALUATION - FAILURE PATTERN ANALYSIS & TOOL IMPROVEMENTS
+====================================================================================================
+
+Date: 2026-03-27 | Model: gpt-4o-mini-v4-vrf-fix | Samples: 50
+Accuracy: 75.3% | Failures: 13/50
+
+SECTION 1: PERFORMANCE BOTTLENECKS (by type & category)
+----------------------------------------------------------------------------------------------------
+
+TYPE-LEVEL PERFORMANCE (sorted by weakness):
+  map         25.0%  [CRITICAL]
+  number      50.0%  [WEAK]
+  set         83.8%  [GOOD]
+  text        85.7%  [GOOD]
+
+CATEGORY-LEVEL FAILURES (only problem areas):
+  BGP_Consistency             0.0%  [CRITICAL]
+  Comparison_Analysis        25.0%  [CRITICAL]
+  L2VPN_Consistency          50.0%  [HIGH]
+  System_Inventory           71.4%  [HIGH]
+  Configuration_Check        75.0%  [MEDIUM]
+  Security_Policy            75.9%  [MEDIUM]
+
+SECTION 2: ROOT CAUSE ANALYSIS (13 failures)
+----------------------------------------------------------------------------------------------------
+
+TOOL_FIX: 3 failures
+  • ROUTING_TABLE_ENTRY_COUNT_p4                       [number] Query returns empty
+  • INTERFACES_MISSING_DESCRIPTION_COUNT_leaf2         [number] Query returns empty
+  • INTERFACE_STATUS_MAP_leaf7                         [map] Empty extraction
+
+PROMPT_FIX: 9 failures
+  • AAA_ENABLED_DEVICES__rs_Security_Policy_2__rs_Secu [set] Filtering logic
+  • AAA_ENABLED_DEVICES__rs_Security_Policy_2__rs_Secu [set] Filtering logic
+  • AAA_ENABLED_DEVICES__rs_Security_Policy_2__rs_Secu [set] Filtering logic
+  • AAA_ENABLED_DEVICES__rs_Security_Policy_2__rs_Secu [set] Filtering logic
+  • AAA_ENABLED_DEVICES__rs_Security_Policy_2          [set] Filtering logic
+  • COMPARE_BGP_AS_leaf3_p6                            [text] Format (None vs N/A)
+  • COMPARE_VRF_COUNT_leaf7_p5                         [map] Schema mismatch
+  • IBGP_UNDER_PEERED_DEVICES_65000__rs_BGP_Consistenc [set] Filtering logic
+  • COMPARE_INTERFACE_COUNT_p8_pe2                     [map] Schema mismatch
+
+DATA_FIX: 1 failures
+  • L2VPN_MISMATCH_COUNT__rs_L2VPN_Consistency_1__rs_L [number] LLM hallucination/verification
+
+SECTION 3: DETAILED RECOMMENDATIONS BY FIX TYPE
+----------------------------------------------------------------------------------------------------
+
+A. TOOL FIXES (4 failures - 30.8%) [HIGH IMPACT]
+   Impact: Affects core data extraction; blocking 4 queries
+
+   1. BATFISH QUERY IMPROVEMENTS (2 failures)
+      • ROUTING_TABLE_ENTRY_COUNT_p4 (L1, System_Inventory)
+        - Problem: Batfish not querying routing table size correctly
+        - Fix: Check batfish.py routing query API - may need different endpoint
+        - Expected: 6 routes | Got: 0
+
+      • INTERFACES_MISSING_DESCRIPTION_COUNT_leaf2 (L1, Configuration_Check)
+        - Problem: NSO/Batfish not filtering interfaces missing descriptions
+        - Fix: Add filter logic to config_summary extraction
+        - Expected: 2 interfaces | Got: 0
+
+   2. INTERFACE STATUS MAPPING (1 failure)
+      • INTERFACE_STATUS_MAP_leaf7 (L1, System_Inventory)
+        - Problem: Tool returns empty dict instead of status mapping
+        - Fix: NSO.py config_summary needs interface_status_map field
+        - Currently missing from config_summary extraction
+
+   3. BGP DEVICE ENUMERATION (1 failure)
+      • IBGP_UNDER_PEERED_DEVICES_65000 (L3, BGP_Consistency)
+        - Problem: Tool not returning any devices for BGP check
+        - Fix: Batfish BGP consistency query incomplete
+
+B. PROMPT FIXES (9 failures - 69.2%) [CRITICAL]
+   Impact: Affects interpretation & formatting; majority of failures
+
+   1. SET FILTERING LOGIC (5 failures)
+      • AAA_ENABLED_DEVICES (5 instances across L2 Security_Policy)
+        - Problem: LLM returns ALL devices or EMPTY when asked for PE devices
+        - Pattern: Gold=[pe1,pe2,pe3,pe4] vs Pred=all leaves OR empty
+        - Root: No clear device type filtering in prompt
+        - Fix: Add device type taxonomy to system prompt
+               Example: 'PE (provider edge): pe1-4, Access: leaf1-7'
+               Clarify: 'Return only PE-class devices, not access/leaf'
+
+   2. COMPARISON ANSWER SCHEMA (2 failures)
+      • COMPARE_VRF_COUNT_leaf7_p5 (L3, Comparison_Analysis)
+        - Problem: Pred uses host names {Leaf7:0, P5:0}
+        - Expected: {difference:0, host1_count:0, host2_count:0}
+        - Fix: Add JSON schema spec in prompt
+
+      • COMPARE_INTERFACE_COUNT_p8_pe2 (L3, Comparison_Analysis)
+        - Same schema issue - LLM invents field names
+        - Fix: Provide exact template for comparison responses
+
+   3. NULL VALUE HANDLING (1 failure)
+      • COMPARE_BGP_AS_leaf3_p6 (L3, Comparison_Analysis)
+        - Problem: 'leaf3: AS None' vs expected 'leaf3: AS N/A'
+        - Fix: Clarify null handling: 'Use N/A not None when value unavailable'
+
+   4. COUNT HALLUCINATION (1 failure)
+      • L2VPN_MISMATCH_COUNT__rs_L2VPN_Consistency (L3)
+        - Problem: Pred=4 when gold=0 (no mismatches)
+        - Fix: Add verification prompt 'Verify count > 0 only if data present'
+
+C. DATA FIXES (1 failure - 7.7%) [LOW IMPACT]
+   Impact: Unclear if gold label or data issue
+
+   1. L2VPN_MISMATCH_COUNT (1 failure)
+      - Action: Verify test data - is gold=0 correct?
+      - If gold correct: Add 'Don't generate data not in config' to prompt
+
+
+SECTION 4: IMPLEMENTATION ROADMAP (Priority Order)
+----------------------------------------------------------------------------------------------------
+
+PHASE 1 (Prompt Fixes - High ROI, 30 min)
+  1. Add device type taxonomy to system prompt
+     - Affects 5 failures (AAA_ENABLED_DEVICES)
+     - Fixes: 38.5% of failures
+
+  2. Add JSON schema templates for comparison queries
+     - Affects 2 failures (COMPARE_VRF/INTERFACE_COUNT)
+     - Fixes: 15.4% of failures
+
+  3. Clarify null/N/A handling
+     - Affects 1 failure (COMPARE_BGP_AS)
+     - Fixes: 7.7% of failures
+
+PHASE 2 (Tool Fixes - Medium ROI, 2-4 hours)
+  1. Add interface_status_map to NSO config_summary
+     - Affects 1 failure (INTERFACE_STATUS_MAP)
+     - /home/sdlab08/projects/GIA/NetAlly/agent/clients/nso.py
+
+  2. Debug Batfish routing table query
+     - Affects 1 failure (ROUTING_TABLE_ENTRY_COUNT)
+     - /home/sdlab08/projects/GIA/NetAlly/agent/clients/batfish.py
+
+  3. Add interface description filter
+     - Affects 1 failure (INTERFACES_MISSING_DESCRIPTION)
+     - Both files above
+
+  4. Fix BGP device enumeration
+     - Affects 1 failure (IBGP_UNDER_PEERED)
+     - batfish.py BGP consistency query
+
+
+====================================================================================================
+KEY METRICS
+====================================================================================================
+Current Accuracy:        75.33% (37.67/50 correct)
+Prompt Fixes Potential:  +9.2% (69% of failures)
+Tool Fixes Potential:    +6.4% (30% of failures)
+Expected Post-Fix:       ~90.9% accuracy
+
+WEAKEST CATEGORIES TO FOCUS:
+  1. Comparison_Analysis:  25% (2/8) - 6 failures from prompts, 2 from tools
+  2. BGP_Consistency:       0% (0/4) - 1 tool failure, need debug
+  3. L2VPN_Consistency:    50% (2/4) - 1 prompt, 1 data issue
