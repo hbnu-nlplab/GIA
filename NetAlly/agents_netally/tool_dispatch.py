@@ -214,7 +214,11 @@ def _get_pool():
 
 
 def _run_tool_sync(tool_fn, args: dict, timeout: int = 120):
-    """Run a tool — plain function call, no LangChain invoke."""
+    """Run a tool — plain function call, no LangChain invoke.
+
+    Uses a fresh single-thread pool per call so timeout cancellation
+    does not leak stuck threads into the shared pool.
+    """
     import concurrent.futures
 
     # tool_fn이 @tool 객체면 내부 함수 추출, plain 함수면 직접 호출
@@ -222,13 +226,15 @@ def _run_tool_sync(tool_fn, args: dict, timeout: int = 120):
     if raw_fn is None:
         raw_fn = tool_fn  # 이미 plain 함수
 
-    pool = _get_pool()
-    future = pool.submit(raw_fn, **args)
-    try:
-        return future.result(timeout=timeout)
-    except concurrent.futures.TimeoutError:
-        logger.warning(f"Tool timed out after {timeout}s")
-        return {"error": f"Tool timed out after {timeout}s"}
+    # Use a disposable pool so stuck threads don't exhaust the shared pool
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+        future = pool.submit(raw_fn, **args)
+        try:
+            return future.result(timeout=timeout)
+        except concurrent.futures.TimeoutError:
+            future.cancel()
+            logger.warning(f"Tool timed out after {timeout}s — thread abandoned")
+            return {"error": f"Tool timed out after {timeout}s"}
 
 
 def execute_tool_calls(

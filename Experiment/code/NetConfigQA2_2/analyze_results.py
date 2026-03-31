@@ -733,6 +733,17 @@ class NetConfigQAScorer:
         # 6. Normalize interface shutdown status
         text = text.replace('shutdown', 'down')
 
+        # 7. Normalize network-specific aliases
+        text = text.replace('does not traverse', 'not_traversed')
+        text = text.replace('not traversed', 'not_traversed')
+        text = text.replace('traversed', 'traversed')
+
+        # 8. Normalize Korean→English network patterns
+        # "X에서 NO_ROUTE" → "no_route at X"
+        import re as _re
+        text = _re.sub(r'(\w+)에서\s+no_route', r'no_route at \1', text)
+        text = _re.sub(r'(\w+)에서\s+no route', r'no_route at \1', text)
+
         return text.strip()
 
     def _score_text(self, pred: str, gold: str) -> Dict[str, float]:

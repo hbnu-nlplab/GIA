@@ -328,8 +328,8 @@ def setup_graph():
     # 5. Pre-load Batfish snapshot (avoid cold-start on first L4/L5 question)
     try:
         import os
-        from agent.clients.batfish import get_batfish_client
-        bf = get_batfish_client()
+        from agent.clients.batfish import BatfishClient
+        bf = BatfishClient(host=os.getenv("BATFISH_HOST", "localhost"))
         if not bf._builder:
             snap = os.getenv("BATFISH_SNAPSHOT") or os.getenv("BATFISH_NETWORK") or "default"
             if bf.load_snapshot(snap):
@@ -473,17 +473,23 @@ def evaluate_one(
     state = build_initial_state(question, level, answer_type, tool_catalog, topology_context)
     start = time.perf_counter()
     last_error: Optional[str] = None
+    question_timeout = 300  # 5 min per question max
 
     for attempt in range(max_retries):
         try:
             token_cb = TokenUsageCallback()
-            output = graph.invoke(
-                state,
-                config={
-                    "recursion_limit": recursion_limit,
-                    "callbacks": [token_cb],
-                },
-            )
+            # Run graph.invoke with timeout to prevent infinite hang
+            from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeout
+            with ThreadPoolExecutor(max_workers=1) as _q_pool:
+                _q_future = _q_pool.submit(
+                    graph.invoke,
+                    state,
+                    config={
+                        "recursion_limit": recursion_limit,
+                        "callbacks": [token_cb],
+                    },
+                )
+                output = _q_future.result(timeout=question_timeout)
             elapsed_ms = int((time.perf_counter() - start) * 1000)
 
             # Extract answer: prefer final_answer, fallback to candidate_answer
@@ -502,6 +508,10 @@ def evaluate_one(
                 "attempts": attempt + 1,
                 "token_usage": token_cb.get_usage(),
             }
+        except FuturesTimeout:
+            last_error = f"Question timeout after {question_timeout}s"
+            logger.warning(f"Attempt {attempt + 1}/{max_retries}: {last_error}")
+            break  # No retry on timeout — skip this question
         except Exception as exc:
             last_error = f"{type(exc).__name__}: {exc}"
             if attempt < max_retries - 1:
