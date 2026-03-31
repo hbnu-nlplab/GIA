@@ -1,0 +1,23 @@
+{
+  "global_settings": {
+    "pnetlab_vm_ip": "100.85.92.121",
+    "gateway_ip": "10.10.10.1",
+    "enable_password": "",
+    "admin_password": "admin",
+    "domain_name": "ncn.go.kr",
+    "nso_authgroup": "default",
+    "nso_ned_id": "",
+    "nso_username": "admin",
+    "nso_password": "admin",
+    "batfish_output_dir": "./snapshot"
+  },
+  "devices": [
+    {
+      "name": "P1",
+      "oob_ip": null,
+      "oob_intf": "",
+      "device_group": null,
+      "telnet_port": 30001
+    }
+  ]
+}
