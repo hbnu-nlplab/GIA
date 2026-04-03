@@ -23,29 +23,36 @@ def init_models():
     if _LLM_DICT:
         return _LLM_DICT
 
-    # Prefer OPENROUTER_API_KEY if available (cheaper, more models)
+    # Backend detection: vllm > openrouter > openai
+    backend = os.getenv("NETALLY_EXECUTOR_LLM_BACKEND", "openai")
+    vllm_url = os.getenv("VLLM_BASE_URL", "")
     api_key = os.getenv("OPENROUTER_API_KEY") or os.getenv("OPENAI_API_KEY", "")
     base_url = os.getenv("OPENAI_API_BASE", "")
 
-    # Auto-detect: sk-or-* = OpenRouter, sk-proj-* = OpenAI direct
-    if not base_url:
+    if backend == "vllm" and vllm_url:
+        base_url = vllm_url
+        api_key = "sk-no-key-required"
+        # Override env vars BEFORE ChatOpenAI reads them
+        # (dotenv loads real OPENAI_API_KEY which causes SDK to hit api.openai.com)
+        os.environ["OPENAI_API_KEY"] = api_key
+        os.environ["OPENAI_API_BASE"] = base_url
+        os.environ["OPENAI_BASE_URL"] = base_url
+    elif not base_url:
         if api_key.startswith("sk-or-"):
             base_url = "https://openrouter.ai/api/v1"
         else:
             base_url = "https://api.openai.com/v1"
 
-    # Model names: OpenRouter needs "openai/" prefix, OpenAI direct does not
     default_model = os.getenv("NETALLY_EXECUTOR_LLM_MODEL", "gpt-4o-mini")
     model_a = os.getenv("NETALLY_MAS_MODEL_A", default_model)
     model_b = os.getenv("NETALLY_MAS_MODEL_B", model_a)
 
     common = {
-        "api_key": api_key,
+        "openai_api_key": api_key,
+        "openai_api_base": base_url,
         "temperature": 0,
         "max_tokens": 4096,
     }
-    if base_url and "openrouter" in base_url:
-        common["base_url"] = base_url
 
     _LLM_DICT['A'] = ChatOpenAI(model=model_a, **common)
     _LLM_DICT['B'] = ChatOpenAI(model=model_b, **common)
