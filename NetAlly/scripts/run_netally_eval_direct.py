@@ -300,7 +300,13 @@ def setup_graph():
     Uses DIRECT_TOOLS (bypass MCP HTTP) for faster evaluation.
     Falls back to CORE_TOOLS (MCP proxy) if direct import fails.
     """
-    from agents_netally.main_netally import build_graph, init_models
+    single_mode = getattr(setup_graph, '_single_agent_mode', False)
+    if single_mode:
+        from agents_netally.main_single_mcp import build_graph, init_models
+        logger.info("Using Single+MCP mode (no debate)")
+    else:
+        from agents_netally.main_netally import build_graph, init_models
+        logger.info("Using MAS+MCP mode (5-agent debate)")
     from agents_netally.tool_dispatch import register_tools, build_tool_catalog
 
     # 1. Init LLM models
@@ -637,6 +643,8 @@ def run_eval(args: argparse.Namespace) -> None:
 
     # 3. Setup graph + tools (one-time)
     logger.info("Initializing MAS graph and MCP tools...")
+    # Pass single-agent flag to setup_graph via function attribute
+    setup_graph._single_agent_mode = getattr(args, 'single_agent_mode', False)
     graph, tool_catalog, topology_context = setup_graph()
 
     # Meta
@@ -995,6 +1003,12 @@ def parse_args() -> argparse.Namespace:
         type=int,
         default=DEFAULT_RECURSION_LIMIT,
         help=f"LangGraph recursion limit (default: {DEFAULT_RECURSION_LIMIT})",
+    )
+    parser.add_argument(
+        "--single-agent-mode",
+        action="store_true",
+        default=False,
+        help="Single LLM + MCP mode (no debate). For ablation: MCP contribution only.",
     )
     parser.add_argument(
         "--include-levels",
