@@ -127,7 +127,10 @@ AVAILABLE TOOLS:
 {tool_catalog}
 
 TOOL SELECTION GUIDE:
-- Config queries (hostname, SSH, AAA, VRF, users, timezone, OSPF, BGP AS):
+- Raw config text (banner, version, CDP, enable secret, static routes, VRF binding, console/VTY settings, ACL):
+    get_config_section(device="X", keyword="banner|version|cdp|enable|ip route|vrf|line|access-list")
+    USE THIS when asking about exact config values, text content, or features not in NSO summary.
+- Structured config (hostname, SSH, AAA, users, timezone, OSPF process, BGP AS, NTP, syslog):
     nso_get_device_info(device="X") for single device, nso_get_all_device_info() for all
 - Interface details: nso_get_interfaces(device="X") or nso_get_all_interfaces()
 - Routing table: batfish_route_table(device="X")

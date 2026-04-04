@@ -512,10 +512,96 @@ def lab_manage(action: str, params: Optional[Dict] = None) -> Dict[str, Any]:
     return _invoke_sync(legacy_lab_manage, payload)
 
 
+# ─── Config Section Extraction ───────────────────────────────────────────────
+
+_CFG_CACHE: Dict[str, str] = {}  # device → cfg text cache
+
+def _find_cfg_path(device: str) -> Optional[str]:
+    """Find .cfg file path for device."""
+    from pathlib import Path
+    base = Path(__file__).parent / "Pnetlab_Data"
+    for topo_dir in base.iterdir():
+        if not topo_dir.is_dir():
+            continue
+        cfg = topo_dir / "configs" / f"{device}.cfg"
+        if cfg.exists():
+            return str(cfg)
+    return None
+
+def _load_cfg(device: str) -> str:
+    """Load cfg file content (cached)."""
+    key = device.upper()
+    if key not in _CFG_CACHE:
+        # Try exact case first, then uppercase
+        path = _find_cfg_path(device) or _find_cfg_path(key)
+        if not path:
+            return ""
+        with open(path, "r", encoding="utf-8") as f:
+            _CFG_CACHE[key] = f.read()
+    return _CFG_CACHE[key]
+
+@tool
+def get_config_section(device: str, keyword: str) -> str:
+    """Extract raw config section(s) from device .cfg file by keyword.
+
+    Searches for lines starting with the keyword and includes all
+    indented sub-lines until the next '!' delimiter.
+    Returns raw config text for LLM interpretation.
+
+    Args:
+        device: Device name (e.g., 'PE1', 'P1', 'Leaf1')
+        keyword: Config keyword to search (e.g., 'banner', 'ntp', 'interface',
+                 'router', 'line', 'ip route', 'vrf', 'enable', 'cdp',
+                 'snmp', 'logging', 'version', 'clock', 'mpls')
+    """
+    cfg_text = _load_cfg(device)
+    if not cfg_text:
+        return f"No config file found for {device}"
+
+    lines = cfg_text.splitlines()
+    kw = keyword.lower().strip()
+    sections = []
+    current_section = []
+    capturing = False
+
+    for line in lines:
+        line_lower = line.lower().strip()
+
+        # Section start: line begins with keyword
+        if line_lower.startswith(kw) and not capturing:
+            capturing = True
+            current_section = [line]
+            continue
+
+        if capturing:
+            # Section end: '!' delimiter or new top-level command (not indented)
+            if line.strip() == '!' or (line and not line[0].isspace() and not line_lower.startswith(kw)):
+                sections.append('\n'.join(current_section))
+                current_section = []
+                capturing = False
+                # Check if this new line also matches keyword
+                if line_lower.startswith(kw):
+                    capturing = True
+                    current_section = [line]
+            else:
+                current_section.append(line)
+
+    # Flush last section
+    if current_section:
+        sections.append('\n'.join(current_section))
+
+    if not sections:
+        return f"No '{keyword}' section found in {device} config"
+
+    return '\n---\n'.join(sections)
+
+
 # ─── Export ──────────────────────────────────────────────────────────────────
 
 # Eval용: QA 답변에 사용되는 도구만 노출
 DIRECT_TOOLS = [
+    # Config (1) — raw cfg 섹션 추출
+    get_config_section,
     # NSO (5) — config 쿼리
     nso_get_device_info,
     nso_get_all_device_info,
