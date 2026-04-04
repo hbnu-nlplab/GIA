@@ -634,9 +634,9 @@ class NSOClient:
                 ntp_servers = []
                 ntp_server_list = ntp_cfg.get("server", {})
                 if isinstance(ntp_server_list, dict):
-                    peer_list = ntp_server_list.get("server-list", [])
+                    peer_list = ntp_server_list.get("peer-list", ntp_server_list.get("server-list", []))
                     if isinstance(peer_list, list):
-                        ntp_servers = [s.get("ip-address", "") for s in peer_list if isinstance(s, dict)]
+                        ntp_servers = [s.get("name", s.get("ip-address", "")) for s in peer_list if isinstance(s, dict)]
 
                 # Interface count
                 iface_cfg = config.get("interface", {})
@@ -675,6 +675,7 @@ class NSOClient:
                     "clock_timezone": clock_timezone,
                     "banner_motd": bool(banner_cfg.get("motd")),
                     "logging": bool(logging_cfg),
+                    "logging_buffered": logging_cfg.get("buffered", {}).get("severity-level", "") if isinstance(logging_cfg, dict) else "",
                     "syslog_servers": syslog_hosts,
                     "ntp": bool(config.get("ntp")),
                     "ntp_servers": ntp_servers,
@@ -692,17 +693,22 @@ class NSOClient:
 
     def get_interfaces(self, device: str) -> List[Dict[str, Any]]:
         """장비의 모든 인터페이스 설정 정보 반환 (서브트리 쿼리)"""
-        interfaces_data = self._fetch_config(device, "interface")
+        raw = self._fetch_config(device, "tailf-ned-cisco-ios:interface")
+        if not isinstance(raw, dict):
+            return []
+
+        # Unwrap: {"interface": {"Loopback": [...], ...}} → {"Loopback": [...], ...}
+        interfaces_data = raw.get("interface", raw)
         if not isinstance(interfaces_data, dict):
             return []
 
         result = []
-        if isinstance(interfaces_data, dict):
-            for iface_type, iface_list in interfaces_data.items():
-                if isinstance(iface_list, list):
-                    result.extend(iface_list)
-        elif isinstance(interfaces_data, list):
-            result = interfaces_data
+        for iface_type, iface_list in interfaces_data.items():
+            if isinstance(iface_list, list):
+                for iface in iface_list:
+                    if isinstance(iface, dict):
+                        iface["_type"] = iface_type  # 인터페이스 타입 보존
+                        result.append(iface)
 
         return result
 
