@@ -744,6 +744,18 @@ class NetConfigQAScorer:
         text = _re.sub(r'(\w+)에서\s+no_route', r'no_route at \1', text)
         text = _re.sub(r'(\w+)에서\s+no route', r'no_route at \1', text)
 
+        # 9. Normalize "not configured" variants
+        # "None", "null", "not configured", "n/a", "none" → all same
+        _nc_patterns = {'none', 'null', 'n/a', 'not configured', 'not_configured', 'na', 'no'}
+        if text in _nc_patterns:
+            text = 'n/a'
+
+        # 10. Normalize single-element array to scalar
+        # '["65000"]' → '65000', '[0]' → '0'
+        m = _re.fullmatch(r'\[\s*"?([^"\[\]]+)"?\s*\]', text)
+        if m:
+            text = m.group(1).strip()
+
         return text.strip()
 
     def _score_text(self, pred: str, gold: str) -> Dict[str, float]:
