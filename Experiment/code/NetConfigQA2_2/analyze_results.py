@@ -746,7 +746,8 @@ class NetConfigQAScorer:
 
         # 9. Normalize "not configured" variants
         # "None", "null", "not configured", "n/a", "none" → all same
-        _nc_patterns = {'none', 'null', 'n/a', 'not configured', 'not_configured', 'na', 'no'}
+        _nc_patterns = {'none', 'null', 'n/a', 'not configured', 'not_configured', 'na', 'no',
+                        'not applicable', 'not set', 'disabled'}
         if text in _nc_patterns:
             text = 'n/a'
 
@@ -755,6 +756,21 @@ class NetConfigQAScorer:
         m = _re.fullmatch(r'\[\s*"?([^"\[\]]+)"?\s*\]', text)
         if m:
             text = m.group(1).strip()
+
+        # 11. Strip Cisco IOS config line prefixes → extract value only
+        # "transport input ssh" → "ssh"
+        # "login local" → "local"
+        # "service password-encryption" → "enabled"
+        _cfg_prefixes = [
+            (r'^transport input\s+', ''),
+            (r'^login\s+', ''),
+            (r'^logging buffered \d+\s+', ''),  # "logging buffered 51200 warnings" → "warnings"
+        ]
+        for pattern, repl in _cfg_prefixes:
+            new_text = _re.sub(pattern, repl, text)
+            if new_text != text:
+                text = new_text
+                break
 
         return text.strip()
 
