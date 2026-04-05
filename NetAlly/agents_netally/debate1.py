@@ -537,8 +537,8 @@ SIMULATION RULES:
 
     # answer_type 기반 포맷 힌트 추가 — Skeptic 거부율 감소 목적
     ANSWER_TYPE_HINTS = {
-        "text": "\nFORMAT HINT: Output the COMPLETE value exactly as configured. Include ALL parts (e.g., timezone 'KST 9' not just 'KST', SSH version '2' not 'version 2'). Do NOT add quotes. CRITICAL: When a value is not configured or not applicable, ALWAYS output 'N/A' (NEVER 'None', 'null', 'not configured', or empty string). For comparison text (e.g., 'Compare BGP AS of A and B'), use format: 'deviceA: AS X, deviceB: AS Y' (use 'N/A' if not configured). Use ' -> ' for paths (NOT '→'). Use 'NOT_TRAVERSED'/'TRAVERSED' for waypoint questions.",
-        "scalar_str": "\nFORMAT HINT: Output the COMPLETE value exactly as configured. Include ALL parts (e.g., timezone 'KST 9' not just 'KST'). Do NOT add quotes. When not configured, output 'N/A' (NEVER 'None' or empty).",
+        "text": "\nFORMAT HINT: Output ONLY the value, not the full config line. Examples: 'transport input ssh' → output 'ssh'. 'login local' → output 'local'. 'logging buffered 51200 warnings' → output 'warnings'. Include ALL parts for multi-word values (e.g., timezone 'KST 9' not just 'KST'). Do NOT add quotes. CRITICAL: When not configured, output 'N/A'. For Cisco IOS defaults: CDP is 'Enabled' unless 'no cdp run' is present. IP source-route is 'Enabled' unless 'no ip source-route' is present. For comparison text (e.g., 'Compare BGP AS of A and B'), use format: 'deviceA: AS X, deviceB: AS Y' (use 'N/A' if not configured). Use ' -> ' for paths (NOT '→'). Use 'NOT_TRAVERSED'/'TRAVERSED' for waypoint questions.",
+        "scalar_str": "\nFORMAT HINT: Output ONLY the value, not the full config line. Examples: 'transport input ssh' → 'ssh'. 'login local' → 'local'. Do NOT add quotes. When not configured, output 'N/A'. Cisco IOS defaults: CDP is 'Enabled' unless 'no cdp run' exists.",
         "number": "\nFORMAT HINT: Output a single integer. Example: 5, 12, 0",
         "scalar_int": "\nFORMAT HINT: Output a single integer. Example: 5, 12, 0",
         "set": "\nFORMAT HINT: Output a JSON array of strings. Example: [\"item1\", \"item2\"]. Use [] if none found.",
