@@ -6,7 +6,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parents[1]
 sys.path.append(str(BASE_DIR))
 
-DATA_PATH = BASE_DIR / "data" / "debate_results" / "agents_v2" /  "full_w_context3" / "teleqna" / "teleqna_result.json"
+DATA_PATH = BASE_DIR / "data" / "debate_results" / "agents_v2" /  "mas" / "teleqna" / "teleqna_result.json"
 MODEL_KEY = "debate2_answer"
 
 def extract_option_number_from_gold(text):

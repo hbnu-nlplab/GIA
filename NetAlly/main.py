@@ -8,6 +8,8 @@ NetAlly FastAPI Backend
 import os
 import json
 import asyncio
+import threading
+import time as _time
 from typing import List, Optional, Any, Dict, Set, Tuple
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -152,8 +154,8 @@ class ChatDeviceContext(BaseModel):
 
 class ChatRequest(BaseModel):
     """채팅 요청"""
-    message: str = Field(..., description="사용자 질문")
-    history: List[ChatMessage] = Field(default_factory=list, description="대화 기록")
+    message: str = Field(..., max_length=8000, description="사용자 질문")
+    history: List[ChatMessage] = Field(default_factory=list, max_length=50, description="대화 기록")
     answer_type: str = Field(default="text", description="답변 형식: text, numeric, set, map, boolean")
     context_device: Optional[ChatDeviceContext] = Field(
         default=None,
@@ -311,7 +313,7 @@ class TopologyResponse(BaseModel):
 async def lifespan(app: FastAPI):
     """앱 시작/종료 시 실행"""
     # Startup
-    print("[NetAlly] Starting up...")
+    logger.info("[NetAlly] Starting up...")
 
     app.state.tool_backend = os.getenv("NETALLY_TOOL_BACKEND", TOOL_BACKEND_DEFAULT).lower()
     app.state.agent_backend = os.getenv("NETALLY_AGENT_BACKEND", AGENT_BACKEND_DEFAULT).lower()
@@ -342,7 +344,7 @@ async def lifespan(app: FastAPI):
         except Exception as e:
             logger.error(f"MCP runtime startup failed: {e}")
 
-    print("[NetAlly] Startup complete (agent runtime lazy-loaded).")
+    logger.info("[NetAlly] Startup complete (agent runtime lazy-loaded).")
     
     yield
     
@@ -353,7 +355,7 @@ async def lifespan(app: FastAPI):
             await stop_embedded_mcp_server()
         except Exception as e:
             logger.warning(f"MCP runtime shutdown warning: {e}")
-    print("[NetAlly] Shutting down...")
+    logger.info("[NetAlly] Shutting down...")
 
 
 # =============================================================================
@@ -409,10 +411,15 @@ def get_auto_init_batfish() -> bool:
 # CORS 설정 (개발용)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 프로덕션에서는 특정 origin으로 제한
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:8111",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:8111",
+    ],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
 )
 
 # 정적 파일 서빙 (프론트엔드 빌드 결과)
@@ -446,15 +453,24 @@ def _invalidate_runtime() -> None:
     app.state.bound_tool_count = 0
 
 
+_batfish_lock = threading.Lock()
+
+
 def _get_batfish_client():
     from agent.clients.batfish import BatfishClient
 
     desired_host = os.getenv("BATFISH_HOST", "localhost")
     current = getattr(app.state, "batfish_client", None)
-    if current is None or getattr(current, "host", None) != desired_host:
+    if current is not None and getattr(current, "host", None) == desired_host:
+        return current
+    with _batfish_lock:
+        # Double-check after acquiring lock
+        current = getattr(app.state, "batfish_client", None)
+        if current is not None and getattr(current, "host", None) == desired_host:
+            return current
         current = BatfishClient(host=desired_host)
         app.state.batfish_client = current
-    return current
+        return current
 
 
 async def call_mcp_tool(tool_name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -593,6 +609,11 @@ async def _run_lab_refresh(request: LabRefreshRequest) -> Tuple[int, Dict[str, A
     try:
         params: Dict[str, Any] = {}
         if request.config_path:
+            # Path traversal 방지: ".." 포함 시 거부
+            from pathlib import Path as _P
+            _cp = _P(request.config_path).resolve()
+            if ".." in request.config_path or not str(_cp).startswith("/"):
+                return 400, {"detail": "Invalid config_path: path traversal not allowed"}
             params["config_path"] = request.config_path
         if request.overrides:
             params["overrides"] = request.overrides
@@ -648,6 +669,72 @@ async def health():
         "agent_graph_loaded": runtime_loaded,
         "agent_graph_error": runtime_error,
     }
+
+
+def _classify_llm_error(exc: Exception) -> tuple[str, int]:
+    """Classify LLM exception into (error_code, http_status)."""
+    err_str = str(exc).lower()
+    if "api_key" in err_str or "apikey" in err_str or "auth" in err_str:
+        return "LLM_AUTH_ERROR", 401
+    elif "rate" in err_str or "limit" in err_str:
+        return "LLM_RATE_LIMIT", 429
+    elif "timeout" in err_str:
+        return "LLM_TIMEOUT", 504
+    return "LLM_ERROR", 502
+
+
+def _make_sse_event(event_type: str, data: dict) -> str:
+    """Format a Server-Sent Event string."""
+    return f"event: {event_type}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n"
+
+
+_tool_invoke_cache: dict = {}
+_tool_invoke_lock = asyncio.Lock()
+
+
+@app.post("/api/tool/invoke")
+async def tool_invoke(request: Request):
+    """
+    Direct tool invocation for external MAS integration (agents_v2).
+    Bypasses LLM — calls MCP tool directly and returns result.
+
+    Body: {"tool": "batfish_traceroute", "args": {"src": "P1", "dst": "PE3"}}
+    Returns: {"ok": true, "result": {...}} or {"ok": false, "error": "..."}
+    """
+    try:
+        body = await request.json()
+        tool_name = body.get("tool", "")
+        tool_args = body.get("args", {})
+
+        if not tool_name:
+            return JSONResponse({"ok": False, "error": "Missing 'tool' field"}, status_code=400)
+
+        # Validate tool name (prevent injection)
+        if not re.match(r'^[\w_]+$', tool_name):
+            return JSONResponse({"ok": False, "error": f"Invalid tool name: {tool_name}"}, status_code=400)
+
+        # Load tools (cached)
+        async with _tool_invoke_lock:
+            if not _tool_invoke_cache:
+                from agent.mcp_tools import get_core_tools
+                _tool_invoke_cache.update({t.name: t for t in get_core_tools()})
+
+        tool = _tool_invoke_cache.get(tool_name)
+        if not tool:
+            available = sorted(_tool_invoke_cache.keys())
+            return JSONResponse({"ok": False, "error": f"Unknown tool: {tool_name}", "available": available}, status_code=404)
+
+        # Invoke (fallback to sync only if ainvoke not available)
+        try:
+            result = await tool.ainvoke(tool_args)
+        except (AttributeError, NotImplementedError):
+            result = await asyncio.to_thread(tool.invoke, tool_args)
+
+        return JSONResponse({"ok": True, "tool": tool_name, "result": result})
+
+    except Exception as e:
+        logger.error("tool_invoke failed: %s", e, exc_info=True)
+        return JSONResponse({"ok": False, "error": "Tool invocation failed"}, status_code=500)
 
 
 def _service_health_payload(status: str, severity: str, detail: str = "", extra: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
@@ -801,9 +888,18 @@ def _runtime_health_batfish() -> Dict[str, Any]:
         return _service_health_payload("error", "error", f"Batfish check failed: {e}")
 
 
+_health_cache: Dict[str, Any] = {}
+_health_cache_ts: float = 0.0
+_HEALTH_CACHE_TTL: float = 5.0
+
+
 @app.get("/api/runtime/health")
 async def runtime_health():
-    """Service-oriented runtime health for degraded-mode UX."""
+    """Service-oriented runtime health for degraded-mode UX (5s TTL cache)."""
+    global _health_cache, _health_cache_ts
+    if _health_cache and (_time.monotonic() - _health_cache_ts) < _HEALTH_CACHE_TTL:
+        return _health_cache
+
     batfish = _runtime_health_batfish()
     nso = await _runtime_health_nso()
     pnetlab = await _runtime_health_pnetlab()
@@ -831,7 +927,7 @@ async def runtime_health():
     if pnetlab.get("status") == "disabled":
         notes.append("PNETLab API auth is disabled. Keep using LabFS backend (recommended).")
 
-    return {
+    result = {
         "status": "ok",
         "overall": overall,
         "recommendedMode": recommended_mode,
@@ -839,6 +935,10 @@ async def runtime_health():
         "services": services,
         "notes": notes,
     }
+    _health_cache.clear()
+    _health_cache.update(result)
+    _health_cache_ts = _time.monotonic()
+    return result
 
 # =============================================================================
 # PNETLab Icon Proxy (for topology replication)
@@ -923,16 +1023,22 @@ async def get_pnetlab_icon(icon_name: str):
     return FileResponse(str(cached), media_type="image/png")
 
 
+_refresh_lock = asyncio.Lock()
+
+
 @app.post("/api/lab/refresh")
 async def lab_refresh(request: LabRefreshRequest):
     """
     PNETLab -> 신규 장비 부트스트랩 (Refresh 버튼용)
     - device_info.json이 없으면 API로 자동 생성
     """
-    status_code, payload = await _run_lab_refresh(request)
-    if status_code >= 400:
-        return JSONResponse(status_code=status_code, content=payload)
-    return payload
+    if _refresh_lock.locked():
+        return JSONResponse(status_code=409, content={"detail": "Refresh already in progress"})
+    async with _refresh_lock:
+        status_code, payload = await _run_lab_refresh(request)
+        if status_code >= 400:
+            return JSONResponse(status_code=status_code, content=payload)
+        return payload
 
 
 @app.post("/api/lab/refresh/stream")
@@ -941,6 +1047,8 @@ async def lab_refresh_stream(request: LabRefreshRequest):
     Refresh workflow with live progress/log SSE.
     Frontend can open this stream as soon as Refresh starts to show telnet/onboarding progress.
     """
+    if _refresh_lock.locked():
+        return JSONResponse(status_code=409, content={"detail": "Refresh already in progress"})
     headers = {
         "Cache-Control": "no-cache",
         "Connection": "keep-alive",
@@ -1917,8 +2025,8 @@ async def chat_stream_generator(request: ChatRequest, runtime):
                     "grounding": _build_grounding_meta([]),
                     "meta": prep,
                 }
-                yield f"event: answer\ndata: {json.dumps(data)}\n\n"
-                yield f"event: complete\ndata: {json.dumps({'type': 'complete'})}\n\n"
+                yield _make_sse_event("answer", data)
+                yield _make_sse_event("complete", {"type": "complete"})
                 return
 
         composed_message = _compose_chat_message(request)
@@ -2032,14 +2140,16 @@ async def chat_stream_generator(request: ChatRequest, runtime):
                 data["citations"] = citations
                 data["grounding"] = _build_grounding_meta(citations)
 
-            yield f"event: {event_type}\ndata: {json.dumps(data)}\n\n"
+            yield _make_sse_event(event_type, data)
 
-        yield f"event: complete\ndata: {json.dumps({'type': 'complete'})}\n\n"
+        yield _make_sse_event("complete", {"type": "complete"})
 
     except Exception as e:
-        error_data = {"type": "error", "message": str(e)}
-        yield f"event: error\ndata: {json.dumps(error_data)}\n\n"
-        yield f"event: complete\ndata: {json.dumps({'type': 'complete'})}\n\n"
+        error_code, _ = _classify_llm_error(e)
+        logger.error("Chat stream error: %s", e, exc_info=True)
+        error_data = {"type": "error", "code": error_code, "message": str(e)[:300]}
+        yield _make_sse_event("error", error_data)
+        yield _make_sse_event("complete", {"type": "complete"})
 
 
 @app.post("/api/chat")
@@ -2105,8 +2215,8 @@ async def chat(request: ChatRequest):
             code = "RUNTIME_LOAD_FAILED"
 
         async def error_stream():
-            yield f"event: error\ndata: {json.dumps({'type': 'error', 'code': code, 'message': message})}\n\n"
-            yield f"event: complete\ndata: {json.dumps({'type': 'complete'})}\n\n"
+            yield _make_sse_event("error", {"type": "error", "code": code, "message": message})
+            yield _make_sse_event("complete", {"type": "complete"})
 
         return StreamingResponse(error_stream(), media_type="text/event-stream", headers=headers)
 

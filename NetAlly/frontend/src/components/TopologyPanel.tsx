@@ -177,13 +177,14 @@ function computeHandleSides(
 }
 
 export default function TopologyPanel() {
-  const { setSelectedNode, openDetail, theme, topologySource, setTopologySource, viz, setTopologyDevices, setChatContextDevice } = useAppStore(state => ({
+  const { setSelectedNode, openDetail, theme, topologySource, setTopologySource, viz, clearViz, setTopologyDevices, setChatContextDevice } = useAppStore(state => ({
     setSelectedNode: state.setSelectedNode,
     openDetail: state.openDetail,
     theme: state.theme,
     topologySource: state.topologySource,
     setTopologySource: state.setTopologySource,
     viz: state.viz,
+    clearViz: state.clearViz,
     setTopologyDevices: state.setTopologyDevices,
     setChatContextDevice: state.setChatContextDevice,
   }))
@@ -529,6 +530,11 @@ export default function TopologyPanel() {
         markerEnd: undefined,
         animated: preVizAnimated,
         label: preVizLabel,
+        data: {
+          ...edgeData,
+          highlight: highlighted,
+          highlightMode: viz?.mode || 'focus',
+        },
       }
     }))
 
@@ -850,6 +856,30 @@ export default function TopologyPanel() {
           >
             Use As Chat Context
           </button>
+        </div>
+      )}
+
+      {/* Viz Highlight Legend */}
+      {viz && (
+        <div className="absolute bottom-16 left-3 z-10
+                        bg-slate-900/90 backdrop-blur-sm border border-slate-700/50
+                        rounded-lg px-3 py-2 text-xs
+                        animate-in fade-in duration-200">
+          <div className="flex items-center justify-between gap-3 mb-1">
+            <span className="text-slate-400 font-medium">Highlight</span>
+            <button
+              onClick={clearViz}
+              className="text-slate-500 hover:text-slate-300 leading-none"
+              title="Clear highlight"
+            >×</button>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className={`w-2 h-2 rounded-full flex-shrink-0 ${viz.mode === 'path' ? 'bg-emerald-400' : 'bg-amber-400'}`} />
+            <span className="text-slate-300">{viz.mode === 'path' ? 'Path Trace' : 'Focus'}</span>
+          </div>
+          {viz.title && (
+            <div className="text-slate-500 mt-1 truncate max-w-[180px]">{viz.title}</div>
+          )}
         </div>
       )}
 

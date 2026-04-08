@@ -1,11 +1,18 @@
+# DEPRECATED: Use Make_Dataset/src/deploy/3_register_nso.py instead.
+# This script uses NSO CLI via docker exec. The new script uses RESTCONF API.
+
 import json
 import subprocess
 import time
 import sys
 import os
 
-# 설정 파일 경로
-SUCCESSFUL_DEVICES_FILE = r"c:\Users\Yujin\CodeSpace\GIA\Data\Pnetlab\Research_Institute_Internal_DC\device_info.json"
+# 설정 파일 경로: 환경변수 > 기본 상대경로
+_DEFAULT_CONFIG = os.path.join(
+    os.path.dirname(__file__), "..", "..",
+    "Data", "Pnetlab", "Research_Institute_Internal_DC", "device_info.json"
+)
+SUCCESSFUL_DEVICES_FILE = os.environ.get("PNETLAB_DEVICE_INFO", _DEFAULT_CONFIG)
 
 class NSORegistrar:
     def __init__(self, successful_devices_file):

@@ -13,6 +13,13 @@ interface DeviceNodeProps {
     type: string
     platform?: string
     mgmt_ip?: string
+    ip?: string
+    managementIp?: string
+    deviceType?: string
+    device_type?: string
+    interfaces?: unknown[]
+    interfaceCount?: number
+    highlightReason?: string
     icon?: string
     highlight?: boolean
     highlightMode?: 'focus' | 'path'
@@ -78,10 +85,16 @@ export default function DeviceNode({ data, selected }: DeviceNodeProps) {
     return 'text-slate-400'
   }
 
+  const displayIp = data.mgmt_ip || data.ip || data.managementIp
+  const displayType = (data as any).device_type || data.deviceType || data.type
+  const ifaceCount =
+    data.interfaceCount ??
+    (Array.isArray(data.interfaces) ? data.interfaces.length : null)
+
   return (
     <div
       className={`
-        relative px-4 py-2.5 rounded-xl border transition-all duration-200
+        group relative px-4 py-2.5 rounded-xl border transition-all duration-200
         ${selected
           ? 'bg-primary/8 border-primary shadow-glow-primary scale-[1.03]'
           : data.highlight
@@ -147,6 +160,39 @@ export default function DeviceNode({ data, selected }: DeviceNodeProps) {
             </span>
           )}
         </div>
+      </div>
+
+      {/* Hover tooltip */}
+      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2
+                      opacity-0 group-hover:opacity-100 transition-opacity duration-200
+                      bg-slate-900 border border-slate-700 rounded-lg px-3 py-2
+                      text-xs text-slate-200 whitespace-nowrap pointer-events-none z-50
+                      shadow-lg">
+        <div className="font-semibold text-slate-100">{data.label}</div>
+        {(displayType || displayIp) && (
+          <div className="text-slate-400 mt-0.5">
+            {displayType && <span>{displayType}</span>}
+            {displayType && displayIp && <span> • </span>}
+            {displayIp && <span className="font-mono">{displayIp}</span>}
+          </div>
+        )}
+        {ifaceCount !== null && (
+          <div className="text-slate-400 mt-0.5">
+            {ifaceCount} interface{ifaceCount !== 1 ? 's' : ''}
+          </div>
+        )}
+        {data.highlight && (
+          <div className={`mt-1 ${data.highlightMode === 'path' ? 'text-emerald-400' : 'text-amber-400'}`}>
+            {data.highlightReason
+              ? `● ${data.highlightReason}`
+              : data.highlightMode === 'path'
+                ? '● On path'
+                : '● Highlighted'}
+          </div>
+        )}
+        {/* Arrow */}
+        <div className="absolute top-full left-1/2 -translate-x-1/2
+                        border-4 border-transparent border-t-slate-700" />
       </div>
 
       {selected && (

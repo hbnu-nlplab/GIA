@@ -21,32 +21,76 @@ from collections import defaultdict
 from datetime import datetime
 
 
+# Network domain labels for answer types (RFC 6020 YANG / RFC 2578 SNMP)
+ANSWER_TYPE_LABEL = {
+    "text": "Scalar Attribute",
+    "scalar_str": "Scalar Attribute",
+    "scalar_int": "Scalar Counter",
+    "number": "Scalar Counter",
+    "numeric": "Scalar Counter",
+    "set_str": "Resource Inventory",
+    "set": "Resource Inventory",
+    "edge_set": "Resource Inventory",
+    "bool": "Configuration State",
+    "boolean": "Configuration State",
+    "path": "Forwarding Sequence",
+    "map_str_str": "Property Table",
+    "map_str_int": "Metric Table",
+    "map": "Property Table",
+    "json": "Property Table",
+}
+
+
+# Unified alias dict — keep in sync with ground_truth_contracts._CANONICAL_TYPE_ALIASES
+_CANONICAL_ALIASES = {
+    # number
+    'numeric': 'number', 'num': 'number', 'numbers': 'number',
+    'int': 'number', 'integer': 'number', 'float': 'number', 'scalar_int': 'number',
+    # set
+    'list_str': 'set', 'set_str': 'set', 'edge_set': 'set', 'set_string': 'set', 'list': 'set',
+    # map
+    'dict': 'map', 'map_str_str': 'map', 'map_str_int': 'map', 'json': 'map',
+    # text
+    'scalar_str': 'text', 'enum': 'text',
+    # boolean
+    'bool': 'boolean', 'boolean': 'boolean',
+    # path (identity)
+    'path': 'path',
+}
+
+
+def display_answer_type(answer_type: str) -> str:
+    """Normalize answer types for reporting while preserving numeric vs number split."""
+    if answer_type is None:
+        return "text"
+    atype = str(answer_type).strip().lower()
+    if atype == "numeric":
+        return "numeric"
+    if atype in {"num", "numbers", "int", "integer", "float", "scalar_int", "number"}:
+        return "number"
+    if atype in {"list_str", "set_str", "edge_set", "set_string", "list", "set"}:
+        return "set"
+    if atype in {"dict", "map_str_str", "map_str_int", "json", "map"}:
+        return "map"
+    if atype in {"scalar_str", "enum", "text"}:
+        return "text"
+    if atype in {"bool", "boolean"}:
+        return "boolean"
+    if atype == "path":
+        return "path"
+    return canonical_answer_type(atype)
+
+
 def canonical_answer_type(answer_type: str) -> str:
-    """Normalize answer_type values to a canonical set used by the scorer/reports."""
+    """Normalize answer_type values to a canonical set used by the scorer/reports.
+
+    Canonical set: {text, number, set, map, boolean, path}
+    Source of truth: Make_Dataset/src/ground_truth_contracts.py (_CANONICAL_TYPE_ALIASES)
+    """
     if answer_type is None:
         return 'text'
     atype = str(answer_type).strip().lower()
-    aliases = {
-        # observed plural/variant forms
-        'numbers': 'number',
-        'num': 'numeric',
-        'int': 'number',
-        'integer': 'number',
-        'float': 'numeric',
-        # common dataset schema aliases
-        'list_str': 'set',
-        'set_str': 'set',
-        'edge_set': 'set',
-        'set_string': 'set',
-        'dict': 'map',
-        'map_str_str': 'map',
-        'map_str_int': 'map',
-        'json': 'map',
-        'scalar_int': 'number',
-        'bool': 'boolean',
-        'boolean': 'boolean',
-    }
-    return aliases.get(atype, atype)
+    return _CANONICAL_ALIASES.get(atype, atype)
 
 # Traditional metrics
 try:
@@ -70,6 +114,11 @@ try:
 except ImportError:
     NLTK_AVAILABLE = False
     print("[WARNING] nltk not available. Install with: pip install nltk")
+
+try:
+    import torch
+except ImportError:
+    torch = None
 
 
 # ==================== Traditional Metrics Calculator ====================
@@ -123,9 +172,9 @@ class TraditionalMetricsCalculator:
         """Calculate ROUGE-1, ROUGE-2, ROUGE-L scores."""
         if not ROUGE_AVAILABLE or not self.rouge_scorer:
             return {
-                "rouge1": 0.0,
-                "rouge2": 0.0,
-                "rougeL": 0.0
+                "rouge1": None,
+                "rouge2": None,
+                "rougeL": None
             }
         
         try:
@@ -136,12 +185,12 @@ class TraditionalMetricsCalculator:
                 "rougeL": scores['rougeL'].fmeasure
             }
         except:
-            return {"rouge1": 0.0, "rouge2": 0.0, "rougeL": 0.0}
+            return {"rouge1": None, "rouge2": None, "rougeL": None}
     
     def calculate_bleu(self, pred: str, gold: str) -> float:
         """Calculate BLEU score."""
         if not NLTK_AVAILABLE:
-            return 0.0
+            return None
         
         pred_tokens = self.normalize_text(pred).split()
         gold_tokens = [self.normalize_text(gold).split()]
@@ -184,6 +233,7 @@ class NetConfigQAScorer:
 
     def __init__(self):
         self.warnings: List[Dict[str, str]] = []
+        self.explicit_negative_token = "NOT_CONFIGURED"
     
     def clean_prediction(self, pred: str, answer_type: str = None) -> str:
         """
@@ -243,27 +293,33 @@ class NetConfigQAScorer:
         if len(pred) >= 2 and pred[0] == pred[-1] and pred[0] in ('"', "'"):
             pred = pred[1:-1]
 
-        # 6. Normalize null values
-        if pred.lower() in ['null', 'none', 'n/a', 'not configured', 'not found', '']:
-            pred = ""
+        # 6. Normalize explicit negative answers, but do not reward blank output.
+        if pred.lower() in ['null', 'none', 'n/a', 'not configured', 'not_configured', '미설정']:
+            pred = self.explicit_negative_token
 
         return pred.strip()
 
-    def clean_gold(self, gold: str) -> str:
+    def clean_gold(self, gold: str, status: str = "OK") -> str:
         """Clean gold answer with same normalization as prediction."""
         gold = str(gold).strip()
+
+        if str(status).strip().upper() == "NOT_CONFIGURED":
+            return self.explicit_negative_token
         
         # Unquote gold
         if len(gold) >= 2 and ((gold.startswith('"') and gold.endswith('"')) or \
                                (gold.startswith("'") and gold.endswith("'"))):
             gold = gold[1:-1]
-        
-        if gold.lower() in ['null', 'none', 'n/a', 'not configured', '']:
-            gold = ""
             
         return gold
 
-    def score(self, pred: str, gold: str, answer_type: str, question_id: str = "") -> Dict[str, float]:
+    def _score_negative_abstention(self, pred: str) -> Dict[str, float]:
+        pred_norm = pred.strip().lower().replace("-", "_").replace(" ", "_")
+        if pred_norm == "not_configured":
+            return {"score": 1.0, "detail": "explicit_not_configured"}
+        return {"score": 0.0, "detail": "missing_explicit_not_configured"}
+
+    def score(self, pred: str, gold: str, answer_type: str, status: str = "OK", question_id: str = "") -> Dict[str, float]:
         """Score prediction against gold answer based on answer type.
 
         TA-Acc 정의 (IEEE TNMS):
@@ -274,10 +330,12 @@ class NetConfigQAScorer:
         - bool / boolean    → 정규화 비교
         - map_str_int / map → Key-Value F1
         """
-        # Clean prediction with answer_type context
+        # Expects pre-cleaned pred (caller must call clean_prediction beforehand)
         answer_type = canonical_answer_type(answer_type)
-        pred = self.clean_prediction(pred, answer_type)
-        gold = self.clean_gold(gold)
+        gold = self.clean_gold(gold, status=status)
+
+        if str(status).strip().upper() == "NOT_CONFIGURED":
+            return self._score_negative_abstention(pred)
 
         try:
             if answer_type in ["numeric", "scalar_int", "number"]:
@@ -288,8 +346,10 @@ class NetConfigQAScorer:
                 return self._score_map(pred, gold, question_id=question_id)
             elif answer_type in ["boolean"]:
                 return self._score_boolean(pred, gold)
+            elif answer_type in ["path"]:
+                return self._score_path(pred, gold)
             elif answer_type in ["text"]:
-                # Path 감지: "->" 또는 "→"가 gold에 포함되면 ordered match
+                # Path 감지 fallback: answer_type이 text인데 gold에 "->"/"→" 포함
                 if "->" in gold or "→" in gold:
                     return self._score_path(pred, gold)
                 return self._score_text(pred, gold)
@@ -489,8 +549,10 @@ class NetConfigQAScorer:
         legacy_fallback_used = False
         try:
             g_obj = json.loads(gold.replace("'", '"'))
-        except:
-            return {"score": 1.0 if pred.lower() == gold.lower() else 0.0}
+        except Exception:
+            g_obj = self._parse_legacy_map_text(gold, expected_keys=None)
+            if g_obj is None:
+                return {"score": 0.0, "parse_error": "gold_map_unparseable"}
 
         try:
             p_obj = json.loads(pred.replace("'", '"'))
@@ -599,8 +661,8 @@ class NetConfigQAScorer:
         Score boolean answers with normalization.
         논문 정의: bool → 정규화 비교
         """
-        TRUTHY = {"true", "yes", "1", "예"}
-        FALSY = {"false", "no", "0", "아니오", "아니오"}
+        TRUTHY = {"true", "yes", "1", "예", "enabled", "up", "configured", "active", "established"}
+        FALSY = {"false", "no", "0", "아니오", "disabled", "down", "not configured", "inactive"}
 
         pred_lower = pred.strip().lower()
         gold_lower = gold.strip().lower()
@@ -630,7 +692,8 @@ class NetConfigQAScorer:
             if "->" in text:
                 nodes = [n.strip().lower() for n in text.split("->") if n.strip()]
             else:
-                nodes = [text.strip().lower()]
+                stripped = text.strip().lower()
+                nodes = [stripped] if stripped else []
             return nodes
 
         pred_nodes = extract_nodes(pred)
@@ -654,6 +717,9 @@ class ScorecardGenerator:
     
     def generate(self, stats: dict, meta: dict, error_samples: list = None) -> str:
         """Generate a comprehensive Markdown scorecard."""
+        def fmt_pct(value) -> str:
+            return "N/A" if value is None else f"{value*100:.2f}%"
+
         lines = []
         
         # Header
@@ -671,14 +737,15 @@ class ScorecardGenerator:
         lines.append(f"| **Type-Aware Accuracy** | **{stats['accuracy']*100:.2f}%** |")
         
         trad_metrics = stats.get('traditional_metrics', {})
-        lines.append(f"| Exact Match (EM) | {trad_metrics.get('exact_match', 0)*100:.2f}% |")
-        lines.append(f"| Token F1 | {trad_metrics.get('token_f1', 0)*100:.2f}% |")
-        lines.append(f"| BERTScore F1 | {trad_metrics.get('bertscore_f1', 0)*100:.2f}% |")
-        lines.append(f"| ROUGE-L | {trad_metrics.get('rougeL', 0)*100:.2f}% |")
-        lines.append(f"| ROUGE-1 | {trad_metrics.get('rouge1', 0)*100:.2f}% |")
-        lines.append(f"| ROUGE-2 | {trad_metrics.get('rouge2', 0)*100:.2f}% |")
+        lines.append(f"| Exact Match (EM) | {fmt_pct(trad_metrics.get('exact_match'))} |")
+        lines.append(f"| Token F1 | {fmt_pct(trad_metrics.get('token_f1'))} |")
+        lines.append(f"| BLEU | {fmt_pct(trad_metrics.get('bleu'))} |")
+        lines.append(f"| BERTScore F1 | {fmt_pct(trad_metrics.get('bertscore_f1'))} |")
+        lines.append(f"| ROUGE-L | {fmt_pct(trad_metrics.get('rougeL'))} |")
+        lines.append(f"| ROUGE-1 | {fmt_pct(trad_metrics.get('rouge1'))} |")
+        lines.append(f"| ROUGE-2 | {fmt_pct(trad_metrics.get('rouge2'))} |")
         lines.append(f"| Total Samples | {stats['total_samples']} |")
-        lines.append(f"| Inference Time | {meta.get('duration', 0):.1f}s |")
+        lines.append(f"| Inference Time | {meta.get('duration_sec', meta.get('duration', 0)):.1f}s |")
         lines.append("")
         
         # Metric Comparison by Answer Type
@@ -690,7 +757,8 @@ class ScorecardGenerator:
         # Type-Aware row
         ta_row = "| **Type-Aware** |"
         for atype in ['number', 'numeric', 'set', 'map', 'text']:
-            ta_row += f" {stats['by_type'].get(atype, 0)*100:.1f}% |"
+            ta_val = stats['by_type'].get(atype)
+            ta_row += f" {('N/A' if ta_val is None else f'{ta_val*100:.1f}%')} |"
         ta_row += f" **{stats['accuracy']*100:.1f}%** |"
         lines.append(ta_row)
         
@@ -704,10 +772,10 @@ class ScorecardGenerator:
         ]:
             row = f"| {metric_label} |"
             for atype in ['number', 'numeric', 'set', 'map', 'text']:
-                val = trad_by_type.get(atype, {}).get(metric_name, 0) * 100
-                row += f" {val:.1f}% |"
-            overall_val = trad_metrics.get(metric_name, 0) * 100
-            row += f" {overall_val:.1f}% |"
+                val = trad_by_type.get(atype, {}).get(metric_name)
+                row += f" {('N/A' if val is None else f'{val*100:.1f}%')} |"
+            overall_val = trad_metrics.get(metric_name)
+            row += f" {('N/A' if overall_val is None else f'{overall_val*100:.1f}%')} |"
             lines.append(row)
         
         lines.append("")
@@ -732,10 +800,11 @@ class ScorecardGenerator:
         
         # By Answer Type
         lines.append("## 📝 Accuracy by Answer Type\n")
-        lines.append("| Type | Accuracy |")
-        lines.append("|------|----------|")
+        lines.append("| Type | Label | Accuracy |")
+        lines.append("|------|-------|----------|")
         for atype, acc in sorted(stats['by_type'].items(), key=lambda x: x[1], reverse=True):
-            lines.append(f"| {atype} | {acc*100:.1f}% |")
+            label = ANSWER_TYPE_LABEL.get(canonical_answer_type(atype), atype)
+            lines.append(f"| {atype} | {label} | {acc*100:.1f}% |")
         lines.append("")
         
         # By Status (Positive/Negative Testing)
@@ -773,6 +842,9 @@ class SummaryReportGenerator:
         Generate a comparison report for multiple models.
         all_stats_meta: List of (stats, meta) tuples
         """
+        def fmt_pct(value) -> str:
+            return "N/A" if value is None else f"{value*100:.2f}"
+
         lines = []
         lines.append(f"# NetConfigQA Comparison Report\n")
         lines.append(f"> **Generated on**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
@@ -785,16 +857,19 @@ class SummaryReportGenerator:
         for stats, meta in all_stats_meta:
             model_name = meta.get("model", "Unknown")
             trad = stats.get('traditional_metrics', {})
-            r1 = trad.get('rouge1', 0) * 100
-            r2 = trad.get('rouge2', 0) * 100
-            rl = trad.get('rougeL', 0) * 100
-            em = trad.get('exact_match', 0) * 100
-            bleu = trad.get('bleu', 0) * 100
-            bs = trad.get('bertscore_f1', 0) * 100
-            f1 = trad.get('token_f1', 0) * 100
-            ta_acc = stats.get('accuracy', 0) * 100
+            r1 = trad.get('rouge1')
+            r2 = trad.get('rouge2')
+            rl = trad.get('rougeL')
+            em = trad.get('exact_match')
+            bleu = trad.get('bleu')
+            bs = trad.get('bertscore_f1')
+            f1 = trad.get('token_f1')
+            ta_acc = stats.get('accuracy', 0)
             
-            lines.append(f"| {model_name} | {r1:.2f} | {r2:.2f} | {rl:.2f} | {em:.2f} | {bleu:.2f} | {bs:.2f} | {f1:.2f} | {ta_acc:.2f} |")
+            lines.append(
+                f"| {model_name} | {fmt_pct(r1)} | {fmt_pct(r2)} | {fmt_pct(rl)} | "
+                f"{fmt_pct(em)} | {fmt_pct(bleu)} | {fmt_pct(bs)} | {fmt_pct(f1)} | {fmt_pct(ta_acc)} |"
+            )
         
         lines.append("\n---\n")
         
@@ -806,13 +881,16 @@ class SummaryReportGenerator:
         for stats, meta in all_stats_meta:
             model_name = meta.get("model", "Unknown")
             by_type = stats.get('by_type', {})
-            m_score = by_type.get('map', 0) * 100
-            n_score = by_type.get('numeric', 0) * 100
-            t_score = by_type.get('text', 0) * 100
-            num_score = by_type.get('number', 0) * 100
-            s_score = by_type.get('set', 0) * 100
+            m_score = by_type.get('map')
+            n_score = by_type.get('numeric')
+            t_score = by_type.get('text')
+            num_score = by_type.get('number')
+            s_score = by_type.get('set')
             
-            lines.append(f"| {model_name} | {m_score:.2f} | {n_score:.2f} | {t_score:.2f} | {num_score:.2f} | {s_score:.2f} |")
+            lines.append(
+                f"| {model_name} | {fmt_pct(m_score)} | {fmt_pct(n_score)} | {fmt_pct(t_score)} | "
+                f"{fmt_pct(num_score)} | {fmt_pct(s_score)} |"
+            )
 
         lines.append("\n> Note: `number`는 주로 정수/카운트(개수) 유형, `numeric`은 수치값(스칼라/실수 가능) 유형입니다. 둘 다 동일한 숫자 채점 로직으로 평가되지만 분석을 위해 분리 집계합니다.\n")
         
@@ -931,7 +1009,9 @@ def analyze_results(
     for idx, row in enumerate(rows):
         question_id = str(row.get("question_id", row.get("id", idx)))
         question = row.get("question", "")
-        answer_type = canonical_answer_type(row.get('answer_type', row.get('type', 'text')))
+        raw_answer_type = row.get('answer_type', row.get('type', 'text'))
+        answer_type = canonical_answer_type(raw_answer_type)
+        report_type = display_answer_type(raw_answer_type)
         level = str(row.get("level", "L1")).strip().upper()
         category = row.get("category", "General")
         status = row.get("answer_status", row.get("status", "OK"))
@@ -946,9 +1026,9 @@ def analyze_results(
                 structured_valid += 1
 
         clean_pred = scorer.clean_prediction(str(pred_input), answer_type)
-        clean_gold = scorer.clean_gold(gold_raw)
+        clean_gold = scorer.clean_gold(gold_raw, status=status)
 
-        type_aware_metrics = scorer.score(clean_pred, gold_raw, answer_type, question_id=question_id)
+        type_aware_metrics = scorer.score(clean_pred, gold_raw, answer_type, status=status, question_id=question_id)
         type_aware_score = type_aware_metrics['score']
         trad_metrics = trad_calc.calculate_all(clean_pred, clean_gold)
 
@@ -963,20 +1043,22 @@ def analyze_results(
             "raw_pred": raw_pred,
             "pred": clean_pred,
             "type_aware_score": type_aware_score,
-            "type": answer_type,
+            "type": report_type,
+            "canonical_type": answer_type,
         }
         result.update({f"type_aware_{k}": v for k, v in type_aware_metrics.items() if k != 'score'})
         result.update(trad_metrics)
 
         results.append(result)
 
-        grouped_by_type[answer_type].append(type_aware_score)
+        grouped_by_type[report_type].append(type_aware_score)
         grouped_by_level[level].append(type_aware_score)
         grouped_by_category[category].append(type_aware_score)
         grouped_by_status[status].append(type_aware_score)
 
         for metric_name, metric_value in trad_metrics.items():
-            trad_metrics_by_type[answer_type][metric_name].append(metric_value)
+            if metric_value is not None:
+                trad_metrics_by_type[report_type][metric_name].append(metric_value)
 
         all_preds.append(clean_pred if clean_pred else "[empty]")
         all_golds.append(clean_gold if clean_gold else "[empty]")
@@ -987,14 +1069,23 @@ def analyze_results(
                 "question": question[:60] + "..." if len(question) > 60 else question,
                 "gold": clean_gold[:40] if clean_gold else "(empty)",
                 "pred": clean_pred[:40] if clean_pred else "(empty)",
-                "type": answer_type,
+                "type": report_type,
                 "score": type_aware_score
             })
 
     print("[Step 2/3] Calculating BERTScore (batch processing)...")
     if BERTSCORE_AVAILABLE and all_preds and all_golds:
         try:
-            P, R, F1 = bert_score(all_preds, all_golds, lang='en', verbose=False, device='cpu')
+            bert_device = "cuda" if torch is not None and torch.cuda.is_available() else "cpu"
+            print(f"   [INFO] BERTScore device: {bert_device}")
+            try:
+                P, R, F1 = bert_score(all_preds, all_golds, lang='en', verbose=False, device=bert_device)
+            except RuntimeError as e:
+                if bert_device == "cuda" and "out of memory" in str(e).lower():
+                    print("   [WARNING] BERTScore CUDA OOM, retrying on CPU...")
+                    P, R, F1 = bert_score(all_preds, all_golds, lang='en', verbose=False, device='cpu')
+                else:
+                    raise
             for i, result in enumerate(results):
                 result['bertscore_precision'] = P[i].item()
                 result['bertscore_recall'] = R[i].item()
@@ -1006,16 +1097,16 @@ def analyze_results(
         except Exception as e:
             print(f"   [WARNING] BERTScore calculation failed: {e}")
             for result in results:
-                result['bertscore_precision'] = 0.0
-                result['bertscore_recall'] = 0.0
-                result['bertscore_f1'] = 0.0
+                result['bertscore_precision'] = None
+                result['bertscore_recall'] = None
+                result['bertscore_f1'] = None
     else:
         if not BERTSCORE_AVAILABLE:
             print("   [WARNING] BERTScore not available (install with: pip install bert-score)")
         for result in results:
-            result['bertscore_precision'] = 0.0
-            result['bertscore_recall'] = 0.0
-            result['bertscore_f1'] = 0.0
+            result['bertscore_precision'] = None
+            result['bertscore_recall'] = None
+            result['bertscore_f1'] = None
 
     n = len(results)
     total_score = sum(r['type_aware_score'] for r in results)
@@ -1025,8 +1116,8 @@ def analyze_results(
 
     overall_trad_metrics = {}
     for metric_name in ['exact_match', 'token_f1', 'rouge1', 'rouge2', 'rougeL', 'bertscore_f1', 'bleu']:
-        all_values = [r.get(metric_name, 0.0) for r in results]
-        overall_trad_metrics[metric_name] = sum(all_values) / len(all_values) if all_values else 0.0
+        all_values = [r.get(metric_name) for r in results if r.get(metric_name) is not None]
+        overall_trad_metrics[metric_name] = sum(all_values) / len(all_values) if all_values else None
 
     stats = {
         "accuracy": avg_acc,
@@ -1038,7 +1129,7 @@ def analyze_results(
         "traditional_metrics": overall_trad_metrics,
         "trad_by_type": {
             atype: {
-                metric: sum(vals)/len(vals) if vals else 0.0
+                metric: sum(vals)/len(vals) if vals else None
                 for metric, vals in metrics_dict.items()
             }
             for atype, metrics_dict in trad_metrics_by_type.items()
@@ -1053,18 +1144,24 @@ def analyze_results(
     print(f"\n{'Metric':<25} {'Score':>10}")
     print("-" * 40)
     print(f"{'Type-Aware Accuracy':<25} {avg_acc:>9.2%}")
-    print(f"{'Exact Match':<25} {overall_trad_metrics.get('exact_match', 0):>9.2%}")
-    print(f"{'Token F1':<25} {overall_trad_metrics.get('token_f1', 0):>9.2%}")
-    print(f"{'BLEU':<25} {overall_trad_metrics.get('bleu', 0):>9.2%}")
-    print(f"{'BERTScore F1':<25} {overall_trad_metrics.get('bertscore_f1', 0):>9.2%}")
-    print(f"{'ROUGE-L':<25} {overall_trad_metrics.get('rougeL', 0):>9.2%}")
-    print(f"{'ROUGE-1':<25} {overall_trad_metrics.get('rouge1', 0):>9.2%}")
-    print(f"{'ROUGE-2':<25} {overall_trad_metrics.get('rouge2', 0):>9.2%}")
+    def _print_metric(name: str, key: str):
+        value = overall_trad_metrics.get(key)
+        rendered = "N/A" if value is None else f"{value:>9.2%}"
+        print(f"{name:<25} {rendered}")
+
+    _print_metric('Exact Match', 'exact_match')
+    _print_metric('Token F1', 'token_f1')
+    _print_metric('BLEU', 'bleu')
+    _print_metric('BERTScore F1', 'bertscore_f1')
+    _print_metric('ROUGE-L', 'rougeL')
+    _print_metric('ROUGE-1', 'rouge1')
+    _print_metric('ROUGE-2', 'rouge2')
 
     print(f"\n[Type-Aware Score by Answer Type]")
     for t in sorted(grouped_by_type.keys()):
         scores = grouped_by_type[t]
-        print(f"   {t:12s}: {sum(scores)/len(scores):.2%} (n={len(scores)})")
+        label = ANSWER_TYPE_LABEL.get(t, t)
+        print(f"   {t:12s} ({label}): {sum(scores)/len(scores):.2%} (n={len(scores)})")
 
     print(f"\n[Type-Aware Score by Level]")
     for lvl in sorted(grouped_by_level.keys()):
@@ -1151,7 +1248,7 @@ def analyze_results(
         f.write(summary_md)
 
     print(f"[OK] Saved summary report to: {summary_file}")
-    print(f"\n[TIP] Run 'python Figure.py \"{output_file}\"' to generate visualizations.")
+    print(f"\n[TIP] Run 'python make_figure.py \"{output_file}\"' to generate visualizations.")
 
     return stats, results, meta
 

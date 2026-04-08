@@ -1027,7 +1027,7 @@ def main():
     files_to_process = args.json_files
     if not files_to_process:
         # Default file if none provided
-        default_file = BASE_DIR / "data" / "debate_results" / "agents_v2" / "single_model" / "gemini3.1" / "netconfig_result.json"
+        default_file = BASE_DIR / "data" / "debate_results" /"agents_v2"/ "mas"/ "netbench" / "netbench_result.json" 
         # default_file = BASE_DIR / "data" / "debate_results" / "ablation" / "d2only" / "netconfig" / "netconfig_result.json"
         if default_file.exists():
             files_to_process = [str(default_file)]
@@ -1039,7 +1039,7 @@ def main():
         stats, results, meta = analyze_results(json_file, args.verbose)
         all_results.append((stats, meta))
     
-    # 여러 파일이 입력된 경우 통합 비교 리포트 생성
+    # 여러 파일이 입력된 경우 통합 비교 리포트 생성dfs
     if len(args.json_files) > 1:
         summary_gen = SummaryReportGenerator()
         comparison_md = summary_gen.generate(all_results)

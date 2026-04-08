@@ -1,0 +1,15 @@
+{
+  "dataset": "/home/sdlab08/projects/GIA/Data/Pnetlab/LabB_NCN_Basic_SP_20nodes/Dataset/20260325_101536/LabB_NCN_Basic_SP_20nodes_dataset_batfish_20260325_101536_en.csv",
+  "total_rows": 2157,
+  "meta": {},
+  "checks": {
+    "duplicate_id_count": 0,
+    "duplicate_id_examples": [],
+    "evidence_placeholder_count": 0,
+    "unsupported_answer_type_count": 0,
+    "structured_schema_total": 60,
+    "structured_schema_valid": 60,
+    "structured_schema_pass_rate": 1.0
+  },
+  "quality_gate_passed": true
+}

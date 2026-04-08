@@ -29,9 +29,11 @@ import torch
 # Attempt to import vllm
 try:
     from vllm import LLM, SamplingParams
+    from vllm.sampling_params import StructuredOutputsParams
 except ImportError:
     LLM = None
     SamplingParams = None
+    StructuredOutputsParams = None
     print("Warning: 'vllm' module not found. Install with `pip install vllm`.")
 
 
@@ -46,7 +48,7 @@ class Config:
 
     # Lab 경로 매핑 (최신 NetConfigQA2_2 기준)
     LABS = {
-        "A": "LabA_Research_Institute_DC_10nodes",
+        "A": "Research_Institute_Internal_DC",
         "B": "LabB_NCN_Basic_SP_20nodes",
         "C": "LabC_NCN_Security_L2VPN_30nodes",
         "D": "LabD_NCN_MultiAS_Complex_40nodes",
@@ -57,14 +59,77 @@ class Config:
     #   - 소형 모델(<10GB): Lab-D 설정 ~23,758 tok 처리 가능 → 40960
     #   - 대형 모델(>15GB): KV 캐시 부족 → 16384 (입력+출력 ~13K tok 범위)
     MODEL_DICT = {
-        "gpt-oss:20b":               {"hf_path": "openai/gpt-oss-20b",                           "display": "GPT-OSS-20B",   "quant": None,  "backend": "vllm_offline", "max_ctx": 40960},
-        "qwen3-coder:30b-a3b-AWQ":{"hf_path": "stelterlab/Qwen3-Coder-30B-A3B-Instruct-AWQ",  "display": "Qwen3-Coder",   "quant": None,  "backend": "vllm_offline", "max_ctx": 40960},
-        "glm-4.7-flash-AWQ":      {"hf_path": "QuantTrio/GLM-4.7-Flash-AWQ",                  "display": "GLM-4.7-Flash", "quant": None,  "backend": "vllm_offline", "max_ctx": 32768, "eager": True,
-                                    "env": {"VLLM_USE_DEEP_GEMM": "0", "VLLM_USE_FLASHINFER_MOE_FP16": "1", "VLLM_USE_FLASHINFER_SAMPLER": "0", "OMP_NUM_THREADS": "4", "PYTORCH_CUDA_ALLOC_CONF": "expandable_segments:True"},
-                                    "extra_kwargs": {"reasoning_parser": "glm45", "gpu_memory_utilization": 0.85, "max_num_batched_tokens": 2048}},
-        "Qwen3.5-9B": {"hf_path": "cyankiwi/Qwen3.5-9B-AWQ-4bit", "display": "Qwen3.5-9B",   "quant": None,  "backend": "vllm_offline", "max_ctx": 40960,
-                        "extra_kwargs": {"reasoning_parser": "qwen3"}},
-        "gpt-4o-mini":               {"hf_path": "gpt-4o-mini",                                  "display": "GPT-4o-mini",   "quant": None,  "backend": "openai",        "max_ctx": 128000},
+        "gpt-oss:20b": {"hf_path": "openai/gpt-oss-20b", "display": "GPT-OSS-20B", "quant": None, "backend": "vllm_offline", "max_ctx": 40960},
+        "qwen3-coder:30b-a3b-AWQ": {"hf_path": "stelterlab/Qwen3-Coder-30B-A3B-Instruct-AWQ", "display": "Qwen3-Coder", "quant": None, "backend": "vllm_offline", "max_ctx": 40960},
+        "Nemotron-Cascade-2-30B-A3B-AWQ": {
+            "hf_path": "stelterlab/Nemotron-Cascade-2-30B-A3B-AWQ",
+            "display": "Nemotron-Cascade-2-30B-A3B",
+            "quant": None,
+            "backend": "vllm_offline",
+            "max_ctx": 40960,
+        },
+        "Gemma-3-27B-W4A16": {
+            "hf_path": "RedHatAI/gemma-3-27b-it-quantized.w4a16",
+            "display": "Gemma-3-27B",
+            "quant": None,
+            "backend": "vllm_offline",
+            "max_ctx": 16384,
+            "extra_kwargs": {"gpu_memory_utilization": 0.82, "enforce_eager": True},
+        },
+        "Qwen3.5-9B": {"hf_path": "cyankiwi/Qwen3.5-9B-AWQ-4bit", "display": "Qwen3.5-9B", "quant": None, "backend": "vllm_offline", "max_ctx": 40960,
+                       "extra_kwargs": {"reasoning_parser": "qwen3"}},
+        # Lab-D prompt can exceed 32K once the full config bundle and chat template are tokenized.
+        # Keep this above the measured prompt length so the 4B model remains evaluable on A5000.
+        "Qwen3.5-4B": {"hf_path": "cyankiwi/Qwen3.5-4B-AWQ-4bit", "display": "Qwen3.5-4B", "quant": None, "backend": "vllm_offline", "max_ctx": 40960,
+                       "env": {"PYTORCH_CUDA_ALLOC_CONF": "expandable_segments:True"},
+                       "extra_kwargs": {"reasoning_parser": "qwen3", "gpu_memory_utilization": 0.7, "enforce_eager": True}},
+        "Foundation-Sec-8B": {"hf_path": "fdtn-ai/Foundation-Sec-1.1-8B-Instruct", "display": "Foundation-Sec-8B", "quant": None, "backend": "vllm_offline", "max_ctx": 40960},
+        "gpt-4o-mini": {"hf_path": "gpt-4o-mini", "display": "GPT-4o-mini", "quant": None, "backend": "openai", "max_ctx": 128000},
+        "openrouter-gpt-oss-120b-free": {
+            "hf_path": "openai/gpt-oss-120b:free",
+            "display": "OpenRouter GPT-OSS-120B Free",
+            "backend": "openrouter",
+            "max_ctx": 131072,
+            "api_delay_sec": 4.0,
+            "openrouter_reasoning": {"effort": "low", "exclude": True},
+        },
+        "openrouter-nemotron-super-free": {
+            "hf_path": "nvidia/nemotron-3-super-120b-a12b:free",
+            "display": "OpenRouter Nemotron-3-Super Free",
+            "backend": "openrouter",
+            "max_ctx": 262144,
+            "api_delay_sec": 4.0,
+            "openrouter_reasoning": {"effort": "low", "exclude": True},
+        },
+        "openrouter-minimax-m2.5-free": {
+            "hf_path": "minimax/minimax-m2.5:free",
+            "display": "OpenRouter MiniMax-M2.5 Free",
+            "backend": "openrouter",
+            "max_ctx": 196608,
+            "api_delay_sec": 4.0,
+            "openrouter_reasoning": {"effort": "low", "exclude": True},
+        },
+        "openrouter-qwen3-coder-free": {
+            "hf_path": "qwen/qwen3-coder:free",
+            "display": "OpenRouter Qwen3-Coder Free",
+            "backend": "openrouter",
+            "max_ctx": 262144,
+            "api_delay_sec": 4.0,
+        },
+        "openrouter-qwen3-next-80b-free": {
+            "hf_path": "qwen/qwen3-next-80b-a3b-instruct:free",
+            "display": "OpenRouter Qwen3-Next-80B Free",
+            "backend": "openrouter",
+            "max_ctx": 262144,
+            "api_delay_sec": 4.0,
+        },
+        "openrouter-nemotron-nano-free": {
+            "hf_path": "nvidia/nemotron-3-nano-30b-a3b:free",
+            "display": "OpenRouter Nemotron-3-Nano Free",
+            "backend": "openrouter",
+            "max_ctx": 256000,
+            "api_delay_sec": 4.0,
+        },
     }
 
     ALL_MODELS = list(MODEL_DICT.keys())
@@ -75,13 +140,14 @@ class Config:
     # 레벨별 출력 토큰 차등 — 배치를 레벨 그룹으로 분리하여 효율화
     # vLLM이 max_tokens를 실제 사용 가능한 범위로 자동 클리핑함
     MAX_OUTPUT_BY_LEVEL = {
-        "L1": 1024,
-        "L2": 1024,
-        "L3": 2048,
+        "L1": 2048,
+        "L2": 2048,
+        "L3": 3072,
         "L4": 4096,
         "L5": 4096,
     }
     MAX_OUTPUT_DEFAULT = 8192
+    OPENROUTER_MAX_CONSECUTIVE_429 = 3
     
     NUM_CTX = 16384  # ← 대형 모델(>15GB) 기본값 (모델별 max_ctx가 우선)
                      # 실제 입력: Config(~4192 tok) + System/Q(~400 tok) = ~4600 tok
@@ -179,6 +245,7 @@ You must analyze ALL provided device configurations from top to bottom before an
 OUTPUT FORMAT RULES (MUST FOLLOW EXACTLY):
 You must output ONLY the raw answer value on ONE SINGLE LINE. 
 Do NOT use markdown code blocks (e.g., ```json or ```). Do NOT add ANY explanatory text or conversational fillers like "The answer is".
+Do NOT output any hidden reasoning, chain-of-thought, analysis, or tags such as <think> ... </think>.
 
 Based on the [ANSWER TYPE], use the exact format below:
 1. text: Output ONLY the requested string value (e.g., "R1" or "10.0.0.1"). For network paths, use '->' to strictly separate nodes in order (e.g., nodeA -> nodeB -> nodeC).
@@ -213,6 +280,70 @@ def build_messages(question: str, answer_type: str, configs: str) -> List[Dict[s
         {"role": "system", "content": SYSTEM_PROMPT},
         {"role": "user", "content": user_msg},
     ]
+
+
+def normalize_answer_type(answer_type: Optional[str]) -> str:
+    normalized = str(answer_type or "text").strip().lower()
+    alias_map = {
+        "numeric": "number",
+        "scalar_int": "number",
+        "bool": "boolean",
+        "dict": "map",
+        "list_str": "set",
+        "set_str": "set",
+        "edge_set": "set",
+    }
+    return alias_map.get(normalized, normalized)
+
+
+def build_structured_outputs(answer_type: str) -> Optional["StructuredOutputsParams"]:
+    """Build vLLM structured output constraints for parseable answer types."""
+    if StructuredOutputsParams is None:
+        return None
+
+    normalized = normalize_answer_type(answer_type)
+    common_kwargs = {"disable_fallback": True}
+
+    if normalized == "boolean":
+        return StructuredOutputsParams(choice=["true", "false"], **common_kwargs)
+
+    if normalized == "number":
+        return StructuredOutputsParams(regex=r"-?\d+(?:\.\d+)?", **common_kwargs)
+
+    if normalized == "set":
+        schema = {
+            "type": "array",
+            "items": {"type": "string"},
+        }
+        return StructuredOutputsParams(json=schema, **common_kwargs)
+
+    if normalized == "map_str_int":
+        schema = {
+            "type": "object",
+            "additionalProperties": {"type": "integer"},
+        }
+        return StructuredOutputsParams(json=schema, **common_kwargs)
+
+    if normalized == "map_str_str":
+        schema = {
+            "type": "object",
+            "additionalProperties": {"type": "string"},
+        }
+        return StructuredOutputsParams(json=schema, **common_kwargs)
+
+    if normalized == "map":
+        schema = {
+            "type": "object",
+        }
+        return StructuredOutputsParams(json=schema, **common_kwargs)
+
+    if normalized == "path":
+        return StructuredOutputsParams(
+            regex=r"[^\n]+(?:\s*(?:->|→)\s*[^\n]+)+",
+            **common_kwargs,
+        )
+
+    return None
 
 def measure_format_stability(raw_output: str, answer_type: str) -> Dict[str, Any]:
     result = {"parseable": False, "completeness": 0.0, "raw_length": len(raw_output)}
@@ -263,16 +394,125 @@ def measure_format_stability(raw_output: str, answer_type: str) -> Dict[str, Any
     return result
 
 
+def extract_api_text_response(resp: Any) -> str:
+    """OpenAI/OpenRouter 응답에서 텍스트를 안전하게 추출."""
+    choices = getattr(resp, "choices", None)
+    if not choices:
+        raise RuntimeError("API response contained no choices.")
+
+    message = getattr(choices[0], "message", None)
+    if message is None:
+        raise RuntimeError("API response choice contained no message.")
+
+    content = getattr(message, "content", None)
+    if isinstance(content, str):
+        return content
+    if content is None:
+        return ""
+    if isinstance(content, list):
+        text_parts = []
+        for block in content:
+            if isinstance(block, dict):
+                if block.get("type") == "text" and block.get("text"):
+                    text_parts.append(block["text"])
+            else:
+                block_type = getattr(block, "type", None)
+                block_text = getattr(block, "text", None)
+                if block_type == "text" and block_text:
+                    text_parts.append(block_text)
+        return "\n".join(text_parts).strip()
+    return str(content)
+
+
+def extract_api_response_meta(resp: Any, request_max_tokens: Optional[int] = None) -> Dict[str, Any]:
+    """OpenAI/OpenRouter 응답에서 종료 사유와 토큰 사용량을 안전하게 추출."""
+    choices = getattr(resp, "choices", None) or []
+    first_choice = choices[0] if choices else None
+    finish_reason = getattr(first_choice, "finish_reason", None) if first_choice else None
+
+    usage = getattr(resp, "usage", None)
+    output_tokens = getattr(usage, "completion_tokens", None) if usage else None
+
+    finish_reason_str = str(finish_reason) if finish_reason is not None else None
+    truncated_flag = False
+    if finish_reason_str:
+        truncated_flag = finish_reason_str.lower() in {"length", "max_tokens"}
+    if not truncated_flag and output_tokens is not None and request_max_tokens is not None:
+        truncated_flag = output_tokens >= request_max_tokens
+
+    return {
+        "finish_reason": finish_reason_str,
+        "output_tokens": output_tokens,
+        "request_max_tokens": request_max_tokens,
+        "truncated_flag": truncated_flag,
+    }
+
+
+def extract_vllm_output_meta(
+    output_obj: Any,
+    completion_obj: Any,
+    request_max_tokens: Optional[int] = None,
+) -> Dict[str, Any]:
+    """vLLM 출력에서 종료 사유와 토큰 사용량을 안전하게 추출."""
+    finish_reason = getattr(completion_obj, "finish_reason", None)
+    stop_reason = getattr(completion_obj, "stop_reason", None)
+    token_ids = getattr(completion_obj, "token_ids", None)
+
+    output_tokens = len(token_ids) if token_ids is not None else None
+    if output_tokens is None:
+        outputs = getattr(output_obj, "outputs", None) or []
+        if outputs:
+            text = getattr(outputs[0], "text", "")
+            output_tokens = None if not text else None
+
+    finish_reason_str = str(finish_reason) if finish_reason is not None else None
+    stop_reason_str = str(stop_reason) if stop_reason is not None else None
+
+    truncated_flag = False
+    if finish_reason_str:
+        truncated_flag = finish_reason_str.lower() in {"length", "max_tokens"}
+    if not truncated_flag and stop_reason_str:
+        truncated_flag = stop_reason_str.lower() in {"length", "max_tokens"}
+    if not truncated_flag and output_tokens is not None and request_max_tokens is not None:
+        truncated_flag = output_tokens >= request_max_tokens
+
+    return {
+        "finish_reason": finish_reason_str,
+        "stop_reason": stop_reason_str,
+        "output_tokens": output_tokens,
+        "request_max_tokens": request_max_tokens,
+        "truncated_flag": truncated_flag,
+    }
+
+
+def resolve_max_tokens(
+    level: str,
+    level_token_overrides: Optional[Dict[str, int]] = None,
+) -> int:
+    """Return effective max_tokens for a given difficulty level."""
+    normalized = str(level or "L1").strip().upper()
+    if level_token_overrides and normalized in level_token_overrides:
+        return level_token_overrides[normalized]
+    return Config.MAX_OUTPUT_BY_LEVEL.get(normalized, Config.MAX_OUTPUT_DEFAULT)
+
+
 # === VLLM Global Engine Manager ===
 # 여러 Lab을 돌 때 모델을 계속 로드/언로드 하는 비효율 방지용 싱글톤 래퍼
 
 class VLLMEngineManager:
     _instance = None
     _current_model_key = None
-    _openai_client = None
+    _current_engine_signature = None
+    _api_clients = {}
     
     @classmethod
-    def get_engine(cls, model_key: str, gpu_util: float, logger: logging.Logger):
+    def get_engine(
+        cls,
+        model_key: str,
+        gpu_util: float,
+        logger: logging.Logger,
+        max_model_len_override: Optional[str] = None,
+    ):
         model_info = Config.MODEL_DICT.get(model_key)
         if not model_info:
             raise ValueError(f"Unknown model key: {model_key}")
@@ -280,23 +520,55 @@ class VLLMEngineManager:
         hf_path = model_info["hf_path"]
         quantization = model_info.get("quant")
         backend = model_info.get("backend", "vllm_offline")
+        model_max_ctx = model_info.get("max_ctx", Config.NUM_CTX)
+        if max_model_len_override is not None:
+            override = str(max_model_len_override).strip().lower()
+            model_max_ctx = -1 if override == "auto" else int(max_model_len_override)
+        engine_signature = (model_key, backend, gpu_util, model_max_ctx)
 
-        if backend == "openai":
-            if cls._openai_client is None:
+        if backend in ("openai", "openrouter"):
+            if backend not in cls._api_clients:
                 try:
                     from openai import OpenAI
+                except ImportError:
+                    raise RuntimeError("openai 패키지가 설치되어 있지 않습니다. pip install openai")
+
+                if backend == "openai":
                     api_key = os.getenv("OPENAI_API_KEY")
                     if not api_key:
                         raise RuntimeError("OPENAI_API_KEY 환경변수가 설정되어 있지 않습니다.")
-                    cls._openai_client = OpenAI(api_key=api_key)
+                    cls._api_clients[backend] = OpenAI(api_key=api_key)
                     logger.info(f"Initialized OpenAI client for {hf_path}")
-                except ImportError:
-                    raise RuntimeError("openai 패키지가 설치되어 있지 않습니다. pip install openai")
+                else:
+                    api_key = os.getenv("OPENROUTER_API_KEY")
+                    if not api_key:
+                        raise RuntimeError("OPENROUTER_API_KEY 환경변수가 설정되어 있지 않습니다.")
+
+                    extra_headers = {}
+                    site_url = os.getenv("OPENROUTER_SITE_URL")
+                    app_name = os.getenv("OPENROUTER_APP_NAME")
+                    if site_url:
+                        extra_headers["HTTP-Referer"] = site_url
+                    if app_name:
+                        extra_headers["X-OpenRouter-Title"] = app_name
+
+                    client_kwargs = {
+                        "api_key": api_key,
+                        "base_url": "https://openrouter.ai/api/v1",
+                    }
+                    if extra_headers:
+                        client_kwargs["default_headers"] = extra_headers
+
+                    client_kwargs["max_retries"] = 0
+                    cls._api_clients[backend] = OpenAI(**client_kwargs)
+                    logger.info(f"Initialized OpenRouter client for {hf_path}")
+
             cls._current_model_key = model_key
-            return cls._openai_client, None
+            cls._current_engine_signature = engine_signature
+            return cls._api_clients[backend], None
 
         # 기존 VLLM 모델이 로드되어 있고, 새로 요청한 모델과 다르면 언로드
-        if cls._instance is not None and cls._current_model_key != model_key:
+        if cls._instance is not None and cls._current_engine_signature != engine_signature:
             logger.info(f"Unloading previous vLLM engine ({cls._current_model_key})...")
             from vllm.distributed.parallel_state import destroy_model_parallel
             destroy_model_parallel()
@@ -310,9 +582,8 @@ class VLLMEngineManager:
             if LLM is None:
                 raise RuntimeError("vllm is not installed.")
             
-            # 모델별 max_ctx 결정 (MODEL_DICT.max_ctx 우선, 없으면 Config.NUM_CTX)
-            model_max_ctx = model_info.get("max_ctx", Config.NUM_CTX)
-            logger.info(f"Loading vLLM engine: {hf_path} (quant={quantization}, max_model_len={model_max_ctx})")
+            max_ctx_label = f"{model_max_ctx} (auto-fit)" if model_max_ctx == -1 else str(model_max_ctx)
+            logger.info(f"Loading vLLM engine: {hf_path} (quant={quantization}, max_model_len={max_ctx_label})")
             
             # 멀티모달 모델(Gemma-3, Qwen3.5 등)은 vision 인코더를 비활성화하여 KV 캐시 메모리 확보
             # Gemma-3-27B-IT: SigLIP 비전 인코더 프로파일링이 OOM 유발 → 텍스트 전용 모드 강제
@@ -353,6 +624,7 @@ class VLLMEngineManager:
 
             cls._instance = LLM(**llm_kwargs)
             cls._current_model_key = model_key
+            cls._current_engine_signature = engine_signature
             
         return cls._instance, cls._instance.get_tokenizer()
 
@@ -366,6 +638,9 @@ def run_evaluation(
     limit: Optional[int] = None,
     include_levels: Optional[List[str]] = None,
     exclude_levels: Optional[List[str]] = None,
+    level_token_overrides: Optional[Dict[str, int]] = None,
+    max_model_len_override: Optional[str] = None,
+    use_structured_outputs: bool = False,
 ):
     logger, timestamp = setup_logger(model_key, lab_key)
 
@@ -405,46 +680,59 @@ def run_evaluation(
 
     # 3. Request vLLM Engine (Singleton) & Tokenizer
     try:
-        llm, tokenizer = VLLMEngineManager.get_engine(model_key, gpu_util, logger)
+        llm, tokenizer = VLLMEngineManager.get_engine(
+            model_key,
+            gpu_util,
+            logger,
+            max_model_len_override=max_model_len_override,
+        )
     except Exception as e:
         logger.critical(f"Failed to load VLLM engine: {e}")
         return None
 
-    # 4. Prepare Prompts (Batch) — 레벨별로 그룹화
-    logger.info("Preparing prompts for batch inference...")
-
-    # 인덱스-프롬프트-레벨 매핑
-    prompt_groups = {}  # level -> [(original_index, prompt)]
-    for idx, row in enumerate(data):
-        messages = build_messages(row["question"], row["answer_type"], configs_text)
-        try:
-            prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-        except Exception:
-            sys_msg = messages[0]["content"]
-            usr_msg = messages[1]["content"]
-            prompt = f"{sys_msg}\n\n{usr_msg}"
-
-        level = row.get("level", "L1")
-        if level not in prompt_groups:
-            prompt_groups[level] = []
-        prompt_groups[level].append((idx, prompt))
-
-    # 5. Execute Inference — 레벨별 배치로 분리 (max_tokens 차등)
     model_backend = Config.MODEL_DICT.get(model_key, {}).get("backend", "vllm_offline")
-
     start_time = time.time()
     outputs_text = [""] * len(data)  # 원래 순서 유지용
+    outputs_meta = [{"finish_reason": None, "output_tokens": None, "request_max_tokens": None, "truncated_flag": False}] * len(data)
 
     if model_backend == "vllm_offline":
-        for level in sorted(prompt_groups.keys()):
-            group = prompt_groups[level]
-            max_tokens = Config.MAX_OUTPUT_BY_LEVEL.get(level, Config.MAX_OUTPUT_DEFAULT)
+        # 4. Prepare Prompts (Batch) — 레벨 + 답변 타입별로 그룹화
+        logger.info("Preparing prompts for batch inference...")
+        prompt_groups = {}  # (level, normalized_answer_type) -> [(original_index, prompt)]
+        for idx, row in enumerate(data):
+            messages = build_messages(row["question"], row["answer_type"], configs_text)
+            try:
+                prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+            except Exception:
+                sys_msg = messages[0]["content"]
+                usr_msg = messages[1]["content"]
+                prompt = f"{sys_msg}\n\n{usr_msg}"
+
+            level = row.get("level", "L1")
+            normalized_answer_type = normalize_answer_type(row.get("answer_type"))
+            group_key = (level, normalized_answer_type)
+            if group_key not in prompt_groups:
+                prompt_groups[group_key] = []
+            prompt_groups[group_key].append((idx, prompt))
+
+        # 5. Execute Inference — 레벨/타입별 배치로 분리
+        for level, normalized_answer_type in sorted(prompt_groups.keys()):
+            group = prompt_groups[(level, normalized_answer_type)]
+            max_tokens = resolve_max_tokens(level, level_token_overrides)
             prompts = [p for _, p in group]
             indices = [i for i, _ in group]
+            structured_outputs = (
+                build_structured_outputs(normalized_answer_type)
+                if use_structured_outputs else None
+            )
 
-            logger.info(f"  {level}: {len(prompts)}건 × max_tokens={max_tokens}")
+            structured_label = "structured" if structured_outputs is not None else "freeform"
+            logger.info(
+                f"  {level}/{normalized_answer_type}: {len(prompts)}건 × "
+                f"max_tokens={max_tokens} [{structured_label}]"
+            )
 
-            sampling_params = SamplingParams(
+            sampling_kwargs = dict(
                 temperature=Config.TEMPERATURE,
                 repetition_penalty=1.05,
                 max_tokens=max_tokens,
@@ -456,15 +744,30 @@ def run_evaluation(
                     "\n\nQuestion:",
                 ],
             )
+            if structured_outputs is not None:
+                sampling_kwargs["structured_outputs"] = structured_outputs
+
+            sampling_params = SamplingParams(**sampling_kwargs)
             outputs = llm.generate(prompts, sampling_params)
 
             for out, orig_idx in zip(outputs, indices):
-                outputs_text[orig_idx] = out.outputs[0].text
-
+                completion = out.outputs[0]
+                outputs_text[orig_idx] = completion.text
+                outputs_meta[orig_idx] = extract_vllm_output_meta(
+                    out,
+                    completion,
+                    request_max_tokens=max_tokens,
+                )
         logger.info(f"VLLM batch inference complete: {len(data)} samples")
-    elif model_backend == "openai":
-        logger.info(f"Starting OpenAI sequential inference for {len(data)} samples...")
-        openai_model_name = Config.MODEL_DICT.get(model_key, {}).get("hf_path")
+    elif model_backend in ("openai", "openrouter"):
+        model_info = Config.MODEL_DICT.get(model_key, {})
+        api_model_name = model_info.get("hf_path")
+        api_delay_sec = model_info.get(
+            "api_delay_sec",
+            1.2 if model_backend == "openai" else 4.0,
+        )
+        logger.info(f"Starting {model_backend} sequential inference for {len(data)} samples...")
+        consecutive_429 = 0
         for i, row in enumerate(data, 1):
             if i % 50 == 0 or i == 1:
                 elapsed = time.time() - start_time
@@ -472,31 +775,55 @@ def run_evaluation(
                 logger.info(f"Progress: {i}/{len(data)} | ETA: {eta/60:.1f}min")
             
             level = row.get("level", "L1")
-            max_tokens_needed = Config.MAX_OUTPUT_BY_LEVEL.get(level, Config.MAX_OUTPUT_DEFAULT)
+            max_tokens_needed = resolve_max_tokens(level, level_token_overrides)
             messages = build_messages(row["question"], row["answer_type"], configs_text)
 
-            # TPM rate-limit 방지: 요청간 1초 딜레이 (200K TPM / ~4000 TPR ≈ 50 req/min 이내 유지)
-            time.sleep(1.2)
+            # OpenRouter free tier는 일일/분당 제한 변동성이 커서 기본 딜레이를 더 보수적으로 둔다.
+            time.sleep(api_delay_sec)
 
             for attempt in range(4):  # 최대 4회 시도 (1회 + 3회 재시도)
                 try:
-                    resp = llm.chat.completions.create(
-                        model=openai_model_name,
-                        messages=messages,
-                        temperature=Config.TEMPERATURE,
-                        max_tokens=min(max_tokens_needed, 16383),
+                    request_kwargs = {
+                        "model": api_model_name,
+                        "messages": messages,
+                        "temperature": Config.TEMPERATURE,
+                        "max_tokens": min(max_tokens_needed, 16383),
+                    }
+                    if model_backend == "openrouter":
+                        reasoning_cfg = model_info.get("openrouter_reasoning")
+                        if reasoning_cfg:
+                            request_kwargs["extra_body"] = {"reasoning": reasoning_cfg}
+
+                    resp = llm.chat.completions.create(**request_kwargs)
+                    outputs_text[i - 1] = extract_api_text_response(resp)
+                    outputs_meta[i - 1] = extract_api_response_meta(
+                        resp,
+                        request_max_tokens=request_kwargs["max_tokens"],
                     )
-                    outputs_text[i - 1] = resp.choices[0].message.content or ""
+                    consecutive_429 = 0
                     break  # 성공 시 재시도 루프 탈출
                 except Exception as e:
                     err_str = str(e)
                     if "429" in err_str and attempt < 3:
-                        wait = 60 * (attempt + 1)  # 60s, 120s, 180s
+                        consecutive_429 += 1
+                        if model_backend == "openrouter" and consecutive_429 >= Config.OPENROUTER_MAX_CONSECUTIVE_429:
+                            raise RuntimeError(
+                                f"OpenRouter rate limit persisted for {consecutive_429} consecutive samples. "
+                                "Free endpoint로는 현재 전체 평가를 지속하기 어렵습니다."
+                            ) from e
+                        wait = (120 if model_backend == "openrouter" else 60) * (attempt + 1)
                         logger.warning(f"Rate limit on sample {i} (attempt {attempt+1}), waiting {wait}s...")
                         time.sleep(wait)
                     else:
-                        logger.error(f"OpenAI API Error on sample {i}: {e}")
+                        logger.error(f"{model_backend} API Error on sample {i}: {type(e).__name__}: {e}")
                         outputs_text[i - 1] = ""
+                        outputs_meta[i - 1] = {
+                            "finish_reason": "error",
+                            "output_tokens": None,
+                            "request_max_tokens": min(max_tokens_needed, 16383),
+                            "truncated_flag": False,
+                            "error_type": type(e).__name__,
+                        }
                         break
     
     duration = time.time() - start_time
@@ -528,6 +855,7 @@ def run_evaluation(
     for i, raw_output in enumerate(outputs_text):
         row = data[i]
         cleaned = extract_answer(raw_output)
+        generation_meta = outputs_meta[i] or {}
 
         format_metrics = measure_format_stability(cleaned, row["answer_type"])
 
@@ -543,6 +871,11 @@ def run_evaluation(
             "answer_status": row.get("answer_status", "OK"),
             "format_parseable": format_metrics["parseable"],
             "format_completeness": format_metrics["completeness"],
+            "finish_reason": generation_meta.get("finish_reason"),
+            "stop_reason": generation_meta.get("stop_reason"),
+            "output_tokens": generation_meta.get("output_tokens"),
+            "request_max_tokens": generation_meta.get("request_max_tokens"),
+            "truncated_flag": generation_meta.get("truncated_flag", False),
         })
 
     # 7. Aggregate & Save
@@ -578,6 +911,13 @@ def run_evaluation(
             "total_samples": len(results),
             "tokenizer_chat_template": True if tokenizer and tokenizer.chat_template else False,
             "enable_prefix_caching": True if model_backend == "vllm_offline" else False,
+            "structured_outputs_enabled": (
+                True
+                if model_backend == "vllm_offline" and StructuredOutputsParams is not None and use_structured_outputs
+                else False
+            ),
+            "level_token_overrides": level_token_overrides or {},
+            "max_model_len_override": max_model_len_override,
         },
         "format_stability": format_stats,
         "results": results,
@@ -602,8 +942,34 @@ def main():
     parser.add_argument("--limit", type=int, default=None, help="디버깅용 제한")
     parser.add_argument("--include-levels", nargs="+", default=None)
     parser.add_argument("--exclude-levels", nargs="+", default=["L6"])
+    parser.add_argument(
+        "--hard-levels-only",
+        action="store_true",
+        help="L4/L5 질문만 재실험합니다. --include-levels와 함께 쓰면 L4/L5로 강제됩니다.",
+    )
+    parser.add_argument("--l4-max-tokens", type=int, default=None, help="L4 전용 생성 토큰 상한 override")
+    parser.add_argument("--l5-max-tokens", type=int, default=None, help="L5 전용 생성 토큰 상한 override")
+    parser.add_argument(
+        "--max-model-len",
+        default=None,
+        help="vLLM max_model_len override. 정수 또는 'auto' 사용 가능.",
+    )
+    parser.add_argument(
+        "--structured-outputs",
+        action="store_true",
+        help="vLLM structured outputs 제약을 켭니다. 기본값은 비활성화입니다.",
+    )
 
     args = parser.parse_args()
+
+    if args.hard_levels_only:
+        args.include_levels = ["L4", "L5"]
+
+    level_token_overrides = {}
+    if args.l4_max_tokens is not None:
+        level_token_overrides["L4"] = args.l4_max_tokens
+    if args.l5_max_tokens is not None:
+        level_token_overrides["L5"] = args.l5_max_tokens
 
     models = Config.ALL_MODELS if "all" in [m.lower() for m in args.model] else args.model
     labs = list(Config.LABS.keys()) if "all" in [l.lower() for l in args.lab] else [l.upper() for l in args.lab]
@@ -630,6 +996,9 @@ def main():
                 limit=args.limit,
                 include_levels=args.include_levels,
                 exclude_levels=args.exclude_levels,
+                level_token_overrides=level_token_overrides or None,
+                max_model_len_override=args.max_model_len,
+                use_structured_outputs=args.structured_outputs,
             )
             if output_file:
                 completed.append((display, lab_key, str(output_file)))

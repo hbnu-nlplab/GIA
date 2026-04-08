@@ -173,6 +173,92 @@ class TestAnswerResult(unittest.TestCase):
         self.assertEqual(result.value, [])
 
 
+import copy
+import json
+import random
+
+from ground_truth_contracts import canonical_answer_type as gt_canonical, _CANONICAL_TYPE_ALIASES
+from main_batfish import _ZERO_MEANS_NOT_CONFIGURED
+
+
+class TestGroundTruthCanonical(unittest.TestCase):
+    """ground_truth_contracts.canonical_answer_type — 단일 소스 테스트"""
+
+    def test_number_aliases(self):
+        for alias in ("numeric", "scalar_int", "int", "integer", "float"):
+            self.assertEqual(gt_canonical(alias), "number", f"{alias}")
+
+    def test_set_aliases(self):
+        for alias in ("set_str", "list", "edge_set", "list_str"):
+            self.assertEqual(gt_canonical(alias), "set", f"{alias}")
+
+    def test_map_aliases(self):
+        for alias in ("map_str_int", "map_str_str", "json", "dict"):
+            self.assertEqual(gt_canonical(alias), "map", f"{alias}")
+
+    def test_text_aliases(self):
+        for alias in ("scalar_str", "enum"):
+            self.assertEqual(gt_canonical(alias), "text", f"{alias}")
+
+    def test_boolean(self):
+        self.assertEqual(gt_canonical("bool"), "boolean")
+
+    def test_path_identity(self):
+        self.assertEqual(gt_canonical("path"), "path")
+
+    def test_unknown_passthrough(self):
+        self.assertEqual(gt_canonical("xyzzy"), "xyzzy")
+
+    def test_canonical_value_set_complete(self):
+        values = set(_CANONICAL_TYPE_ALIASES.values())
+        self.assertEqual(values, {"number", "set", "map", "text", "boolean", "path"})
+
+
+class TestZeroMeansNotConfigured(unittest.TestCase):
+
+    def test_is_frozenset(self):
+        self.assertIsInstance(_ZERO_MEANS_NOT_CONFIGURED, frozenset)
+
+    def test_inventory_metrics_included(self):
+        expected = {"system_user_count", "vrf_count", "acl_configured_count"}
+        self.assertTrue(expected.issubset(_ZERO_MEANS_NOT_CONFIGURED))
+
+    def test_comparison_metrics_excluded(self):
+        must_not_include = {
+            "ibgp_missing_pairs_count", "l2vpn_mismatch_count",
+            "bgp_neighbor_count", "ospf_area0_if_count",
+        }
+        for m in must_not_include:
+            self.assertNotIn(m, _ZERO_MEANS_NOT_CONFIGURED, f"{m} should NOT be in whitelist")
+
+
+class TestResampleIdCollision(unittest.TestCase):
+
+    def test_no_cross_category_collision(self):
+        random.seed(42)
+        src = {"id": "Q001", "id_v2": "abc123"}
+        ids = set()
+        for cat in ("Inventory", "Configuration_Check", "Routing"):
+            for idx in range(3):
+                cid = f"{src['id']}__rs_{cat}_{idx + 1}"
+                cid_v2 = f"{src['id_v2']}-rs_{cat}_{idx + 1}"
+                self.assertNotIn(cid, ids, f"ID collision: {cid}")
+                self.assertNotIn(cid_v2, ids, f"ID_v2 collision: {cid_v2}")
+                ids.add(cid)
+                ids.add(cid_v2)
+        self.assertEqual(len(ids), 18)
+
+
+class TestScopeDeepCopy(unittest.TestCase):
+
+    def test_deepcopy_prevents_mutation(self):
+        template = {"host": None, "params": {"nested": {"a": 1}}}
+        for inst in [{"host": "P1"}, {"host": "P2"}]:
+            scope = copy.deepcopy(template)
+            scope["host"] = inst["host"]
+            scope["params"]["nested"]["a"] = 999
+        self.assertEqual(template["params"]["nested"]["a"], 1)
+
+
 if __name__ == "__main__":
-    # 테스트 실행
     unittest.main(verbosity=2)

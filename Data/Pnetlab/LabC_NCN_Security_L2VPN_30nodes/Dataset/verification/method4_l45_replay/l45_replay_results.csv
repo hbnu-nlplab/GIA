@@ -1,0 +1,1110 @@
+id,id_v2,level,metric,answer_type,status,reason,replay_answer,dataset_answer,match,score,detail
+TRACEROUTE_asbr2_p2,traceroute_path:76ee124e6f,L4,traceroute_path,text,MATCH,,asbr2 -> p8 -> p7 -> p6 -> p5 -> p3 -> p1 -> p2,"""asbr2 -> p8 -> p7 -> p6 -> p5 -> p3 -> p1 -> p2""",True,1.0,exact
+TRACEROUTE_leaf10_leaf6,traceroute_path:cac48b5fa5,L4,traceroute_path,text,MATCH,,leaf10 -> pe5,"""leaf10 -> pe5""",True,1.0,exact
+TRACEROUTE_leaf5_p5,traceroute_path:a6f89f87c0,L4,traceroute_path,text,MATCH,,leaf5 -> pe3,"""leaf5 -> pe3""",True,1.0,exact
+TRACEROUTE_p9_p8,traceroute_path:841cab4735,L4,traceroute_path,text,MATCH,,p9 -> asbr1 -> p7 -> p8,"""p9 -> asbr1 -> p7 -> p8""",True,1.0,exact
+TRACEROUTE_leaf12_leaf8,traceroute_path:0cc18b859f,L4,traceroute_path,text,MATCH,,leaf12 -> pe6,"""leaf12 -> pe6""",True,1.0,exact
+TRACEROUTE_pe2_leaf5,traceroute_path:74081089b4,L4,traceroute_path,text,MATCH,,pe2,"""pe2""",True,1.0,exact
+TRACEROUTE_leaf10_leaf5,traceroute_path:6e36b6c357,L4,traceroute_path,text,MATCH,,leaf10 -> pe5,"""leaf10 -> pe5""",True,1.0,exact
+TRACEROUTE_p7_p5,traceroute_path:8e5b11d106,L4,traceroute_path,text,MATCH,,p7 -> p6 -> p5,"""p7 -> p6 -> p5""",True,1.0,exact
+TRACEROUTE_pe1_p1,traceroute_path:00c5947fe1,L4,traceroute_path,text,MATCH,,pe1 -> p1,"""pe1 -> p1""",True,1.0,exact
+TRACEROUTE_leaf12_p4,traceroute_path:1783512dd4,L4,traceroute_path,text,MATCH,,leaf12 -> pe6,"""leaf12 -> pe6""",True,1.0,exact
+TRACEROUTE_pe2_leaf10,traceroute_path:f4f9ac834e,L4,traceroute_path,text,MATCH,,pe2,"""pe2""",True,1.0,exact
+TRACEROUTE_p5_pe5,traceroute_path:e65ae775b3,L4,traceroute_path,text,MATCH,,p5 -> p6 -> p7 -> asbr1 -> pe5,"""p5 -> p6 -> p7 -> asbr1 -> pe5""",True,1.0,exact
+TRACEROUTE_leaf2_pe5,traceroute_path:cc34663cf2,L4,traceroute_path,text,MATCH,,leaf2 -> pe1,"""leaf2 -> pe1""",True,1.0,exact
+TRACEROUTE_p10_p4,traceroute_path:2e685a69be,L4,traceroute_path,text,MATCH,,p10 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> p3 -> p4,"""p10 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> p3 -> p4""",True,1.0,exact
+TRACEROUTE_p9_p2,traceroute_path:8b8567af85,L4,traceroute_path,text,MATCH,,p9 -> asbr1 -> p7 -> p6 -> p5 -> p3 -> p1 -> p2,"""p9 -> asbr1 -> p7 -> p6 -> p5 -> p3 -> p1 -> p2""",True,1.0,exact
+TRACEROUTE_p10_leaf6,traceroute_path:a65f5da518,L4,traceroute_path,text,MATCH,,p10,"""p10""",True,1.0,exact
+TRACEROUTE_leaf10_p3,traceroute_path:de8e73c908,L4,traceroute_path,text,MATCH,,leaf10 -> pe5,"""leaf10 -> pe5""",True,1.0,exact
+TRACEROUTE_p3_leaf2,traceroute_path:4dc3e62468,L4,traceroute_path,text,MATCH,,p3,"""p3""",True,1.0,exact
+TRACEROUTE_p10_p7,traceroute_path:dd69953dbb,L4,traceroute_path,text,MATCH,,p10 -> asbr2 -> p8 -> p7,"""p10 -> asbr2 -> p8 -> p7""",True,1.0,exact
+TRACEROUTE_pe2_leaf4,traceroute_path:454b1a5c03,L4,traceroute_path,text,MATCH,,pe2,"""pe2""",True,1.0,exact
+TRACEROUTE_asbr1_leaf8,traceroute_path:39c885ee03,L4,traceroute_path,text,MATCH,,asbr1,"""asbr1""",True,1.0,exact
+TRACEROUTE_leaf12_leaf4,traceroute_path:34f91e253f,L4,traceroute_path,text,MATCH,,leaf12 -> pe6,"""leaf12 -> pe6""",True,1.0,exact
+TRACEROUTE_pe2_p5,traceroute_path:a41361499e,L4,traceroute_path,text,MATCH,,pe2 -> p4 -> p3 -> p5,"""pe2 -> p4 -> p3 -> p5""",True,1.0,exact
+TRACEROUTE_p1_leaf10,traceroute_path:1d2a71442b,L4,traceroute_path,text,MATCH,,p1,"""p1""",True,1.0,exact
+TRACEROUTE_leaf12_leaf3,traceroute_path:08699d45dc,L4,traceroute_path,text,MATCH,,leaf12 -> pe6,"""leaf12 -> pe6""",True,1.0,exact
+TRACEROUTE_p10_pe4,traceroute_path:71040b2272,L4,traceroute_path,text,MATCH,,p10 -> asbr2 -> p8 -> pe4,"""p10 -> asbr2 -> p8 -> pe4""",True,1.0,exact
+TRACEROUTE_pe4_leaf1,traceroute_path:7f17a328e7,L4,traceroute_path,text,MATCH,,pe4,"""pe4""",True,1.0,exact
+TRACEROUTE_leaf11_p9,traceroute_path:bca5863a51,L4,traceroute_path,text,MATCH,,leaf11 -> pe6,"""leaf11 -> pe6""",True,1.0,exact
+TRACEROUTE_leaf8_leaf7,traceroute_path:af0f40c009,L4,traceroute_path,text,MATCH,,leaf8 -> pe4,"""leaf8 -> pe4""",True,1.0,exact
+TRACEROUTE_leaf6_leaf9,traceroute_path:03b563078f,L4,traceroute_path,text,MATCH,,leaf6 -> pe3,"""leaf6 -> pe3""",True,1.0,exact
+TRACEROUTE_leaf12_p1,traceroute_path:a91d0abf0d,L4,traceroute_path,text,MATCH,,leaf12 -> pe6,"""leaf12 -> pe6""",True,1.0,exact
+TRACEROUTE_leaf10_p6,traceroute_path:f49db49615,L4,traceroute_path,text,MATCH,,leaf10 -> pe5,"""leaf10 -> pe5""",True,1.0,exact
+TRACEROUTE_pe1_p6,traceroute_path:ca0ab732a8,L4,traceroute_path,text,MATCH,,pe1 -> p1 -> p3 -> p5 -> p6,"""pe1 -> p1 -> p3 -> p5 -> p6""",True,1.0,exact
+TRACEROUTE_p10_p5,traceroute_path:1233688a34,L4,traceroute_path,text,MATCH,,p10 -> asbr2 -> p8 -> p7 -> p6 -> p5,"""p10 -> asbr2 -> p8 -> p7 -> p6 -> p5""",True,1.0,exact
+TRACEROUTE_p4_leaf6,traceroute_path:9889d46fef,L4,traceroute_path,text,MATCH,,p4,"""p4""",True,1.0,exact
+TRACEROUTE_pe6_p7,traceroute_path:649f2c5768,L4,traceroute_path,text,MATCH,,pe6 -> asbr2 -> p8 -> p7,"""pe6 -> asbr2 -> p8 -> p7""",True,1.0,exact
+TRACEROUTE_asbr1_p3,traceroute_path:ee8bc45fe9,L4,traceroute_path,text,MATCH,,asbr1 -> p7 -> p6 -> p5 -> p3,"""asbr1 -> p7 -> p6 -> p5 -> p3""",True,1.0,exact
+TRACEROUTE_asbr2_p3,traceroute_path:097e1c1f8e,L4,traceroute_path,text,MATCH,,asbr2 -> p8 -> p7 -> p6 -> p5 -> p3,"""asbr2 -> p8 -> p7 -> p6 -> p5 -> p3""",True,1.0,exact
+TRACEROUTE_p7_pe5,traceroute_path:85c5269ad5,L4,traceroute_path,text,MATCH,,p7 -> asbr1 -> pe5,"""p7 -> asbr1 -> pe5""",True,1.0,exact
+TRACEROUTE_asbr1_leaf2,traceroute_path:ce40d22460,L4,traceroute_path,text,MATCH,,asbr1,"""asbr1""",True,1.0,exact
+TRACEROUTE_leaf10_pe5,traceroute_path:8905954277,L4,traceroute_path,text,MATCH,,leaf10 -> pe5,"""leaf10 -> pe5""",True,1.0,exact
+TRACEROUTE_leaf11_p8,traceroute_path:66a0d41718,L4,traceroute_path,text,MATCH,,leaf11 -> pe6,"""leaf11 -> pe6""",True,1.0,exact
+TRACEROUTE_leaf5_p8,traceroute_path:176336e911,L4,traceroute_path,text,MATCH,,leaf5 -> pe3,"""leaf5 -> pe3""",True,1.0,exact
+TRACEROUTE_pe3_p6,traceroute_path:dfcdb86c8b,L4,traceroute_path,text,MATCH,,pe3 -> p5 -> p6,"""pe3 -> p5 -> p6""",True,1.0,exact
+TRACEROUTE_p3_leaf3,traceroute_path:9368949ec2,L4,traceroute_path,text,MATCH,,p3,"""p3""",True,1.0,exact
+TRACEROUTE_leaf1_p9,traceroute_path:df1e74d27b,L4,traceroute_path,text,MATCH,,leaf1 -> pe1,"""leaf1 -> pe1""",True,1.0,exact
+TRACEROUTE_leaf12_pe2,traceroute_path:e2a334141a,L4,traceroute_path,text,MATCH,,leaf12 -> pe6,"""leaf12 -> pe6""",True,1.0,exact
+TRACEROUTE_p7_leaf2,traceroute_path:ded2852f56,L4,traceroute_path,text,MATCH,,p7,"""p7""",True,1.0,exact
+TRACEROUTE_p1_asbr1,traceroute_path:8ef33d9518,L4,traceroute_path,text,MATCH,,p1 -> p3 -> p5 -> p6 -> p7 -> asbr1,"""p1 -> p3 -> p5 -> p6 -> p7 -> asbr1""",True,1.0,exact
+TRACEROUTE_leaf6_p6,traceroute_path:654e796ff0,L4,traceroute_path,text,MATCH,,leaf6 -> pe3,"""leaf6 -> pe3""",True,1.0,exact
+TRACEROUTE_pe1_asbr1,traceroute_path:e6549e3c68,L4,traceroute_path,text,MATCH,,pe1 -> p1 -> p3 -> p5 -> p6 -> p7 -> asbr1,"""pe1 -> p1 -> p3 -> p5 -> p6 -> p7 -> asbr1""",True,1.0,exact
+TRACEROUTE_pe4_leaf2,traceroute_path:cfa847a2ab,L4,traceroute_path,text,MATCH,,pe4,"""pe4""",True,1.0,exact
+TRACEROUTE_pe3_p8,traceroute_path:ace6e63a73,L4,traceroute_path,text,MATCH,,pe3 -> p5 -> p6 -> p7 -> p8,"""pe3 -> p5 -> p6 -> p7 -> p8""",True,1.0,exact
+TRACEROUTE_p7_leaf7,traceroute_path:bdf83d4f85,L4,traceroute_path,text,MATCH,,p7,"""p7""",True,1.0,exact
+TRACEROUTE_pe1_p2,traceroute_path:9963f3154f,L4,traceroute_path,text,MATCH,,pe1 -> p1 -> p2,"""pe1 -> p1 -> p2""",True,1.0,exact
+TRACEROUTE_pe1_leaf11,traceroute_path:ed1ab03747,L4,traceroute_path,text,MATCH,,pe1,"""pe1""",True,1.0,exact
+TRACEROUTE_asbr2_leaf3,traceroute_path:62124e243a,L4,traceroute_path,text,MATCH,,asbr2,"""asbr2""",True,1.0,exact
+TRACEROUTE_p8_pe5,traceroute_path:8b8862d730,L4,traceroute_path,text,MATCH,,p8 -> p7 -> asbr1 -> pe5,"""p8 -> p7 -> asbr1 -> pe5""",True,1.0,exact
+TRACEROUTE_pe4_p4,traceroute_path:c727d06a9c,L4,traceroute_path,text,MATCH,,pe4 -> p6 -> p5 -> p3 -> p4,"""pe4 -> p6 -> p5 -> p3 -> p4""",True,1.0,exact
+TRACEROUTE_leaf11_leaf7,traceroute_path:88aad56e94,L4,traceroute_path,text,MATCH,,leaf11 -> pe6,"""leaf11 -> pe6""",True,1.0,exact
+TRACEROUTE_pe4_leaf4,traceroute_path:624e535119,L4,traceroute_path,text,MATCH,,pe4,"""pe4""",True,1.0,exact
+TRACEROUTE_leaf1_leaf8,traceroute_path:947a2759c5,L4,traceroute_path,text,MATCH,,leaf1 -> pe1,"""leaf1 -> pe1""",True,1.0,exact
+TRACEROUTE_pe2_asbr1,traceroute_path:569993a14c,L4,traceroute_path,text,MATCH,,pe2 -> p4 -> p3 -> p5 -> p6 -> p7 -> asbr1,"""pe2 -> p4 -> p3 -> p5 -> p6 -> p7 -> asbr1""",True,1.0,exact
+TRACEROUTE_leaf12_p6,traceroute_path:dcdd48275a,L4,traceroute_path,text,MATCH,,leaf12 -> pe6,"""leaf12 -> pe6""",True,1.0,exact
+TRACEROUTE_p8_leaf4,traceroute_path:54fb1519a7,L4,traceroute_path,text,MATCH,,p8,"""p8""",True,1.0,exact
+TRACEROUTE_pe4_asbr2,traceroute_path:0e4d054020,L4,traceroute_path,text,MATCH,,pe4 -> p8 -> asbr2,"""pe4 -> p8 -> asbr2""",True,1.0,exact
+TRACEROUTE_p4_p6,traceroute_path:b57ecc13db,L4,traceroute_path,text,MATCH,,p4 -> p3 -> p5 -> p6,"""p4 -> p3 -> p5 -> p6""",True,1.0,exact
+TRACEROUTE_p7_p8,traceroute_path:f5e3f80c63,L4,traceroute_path,text,MATCH,,p7 -> p8,"""p7 -> p8""",True,1.0,exact
+TRACEROUTE_asbr2_pe5,traceroute_path:507680f655,L4,traceroute_path,text,MATCH,,asbr2 -> p10 -> pe5,"""asbr2 -> p10 -> pe5""",True,1.0,exact
+TRACEROUTE_pe6_asbr1,traceroute_path:e3266b0dde,L4,traceroute_path,text,MATCH,,pe6 -> p9 -> asbr1,"""pe6 -> p9 -> asbr1""",True,1.0,exact
+TRACEROUTE_pe3_p5,traceroute_path:93fef30353,L4,traceroute_path,text,MATCH,,pe3 -> p5,"""pe3 -> p5""",True,1.0,exact
+TRACEROUTE_pe2_leaf6,traceroute_path:17e8d82e97,L4,traceroute_path,text,MATCH,,pe2,"""pe2""",True,1.0,exact
+TRACEROUTE_pe4_pe2,traceroute_path:f0b0344542,L4,traceroute_path,text,MATCH,,pe4 -> p6 -> p5 -> p3 -> p1 -> p2 -> pe2,"""pe4 -> p6 -> p5 -> p3 -> p1 -> p2 -> pe2""",True,1.0,exact
+TRACEROUTE_pe6_leaf8,traceroute_path:6db4b08563,L4,traceroute_path,text,MATCH,,pe6,"""pe6""",True,1.0,exact
+TRACEROUTE_p8_leaf7,traceroute_path:5b16122db5,L4,traceroute_path,text,MATCH,,p8,"""p8""",True,1.0,exact
+TRACEROUTE_p1_pe5,traceroute_path:186545f9b2,L4,traceroute_path,text,MATCH,,p1 -> p3 -> p5 -> p6 -> p7 -> asbr1 -> pe5,"""p1 -> p3 -> p5 -> p6 -> p7 -> asbr1 -> pe5""",True,1.0,exact
+TRACEROUTE_leaf6_leaf7,traceroute_path:1279ae07ff,L4,traceroute_path,text,MATCH,,leaf6 -> pe3,"""leaf6 -> pe3""",True,1.0,exact
+TRACEROUTE_leaf11_pe5,traceroute_path:a08c01370e,L4,traceroute_path,text,MATCH,,leaf11 -> pe6,"""leaf11 -> pe6""",True,1.0,exact
+TRACEROUTE_pe1_leaf10,traceroute_path:196063462e,L4,traceroute_path,text,MATCH,,pe1,"""pe1""",True,1.0,exact
+TRACEROUTE_p4_leaf3,traceroute_path:3fa7c5cc3e,L4,traceroute_path,text,MATCH,,p4,"""p4""",True,1.0,exact
+TRACEROUTE_pe1_leaf8,traceroute_path:9e1f072e38,L4,traceroute_path,text,MATCH,,pe1,"""pe1""",True,1.0,exact
+TRACEROUTE_pe4_p7,traceroute_path:9b7ae36454,L4,traceroute_path,text,MATCH,,pe4 -> p6 -> p7,"""pe4 -> p6 -> p7""",True,1.0,exact
+TRACEROUTE_p4_p5,traceroute_path:fdda2989b7,L4,traceroute_path,text,MATCH,,p4 -> p3 -> p5,"""p4 -> p3 -> p5""",True,1.0,exact
+TRACEROUTE_leaf10_leaf2,traceroute_path:76807f87c3,L4,traceroute_path,text,MATCH,,leaf10 -> pe5,"""leaf10 -> pe5""",True,1.0,exact
+TRACEROUTE_p10_leaf3,traceroute_path:093cc2b03d,L4,traceroute_path,text,MATCH,,p10,"""p10""",True,1.0,exact
+TRACEROUTE_leaf10_p9,traceroute_path:238f9d8dce,L4,traceroute_path,text,MATCH,,leaf10 -> pe5,"""leaf10 -> pe5""",True,1.0,exact
+TRACEROUTE_p7_leaf3,traceroute_path:287422755a,L4,traceroute_path,text,MATCH,,p7,"""p7""",True,1.0,exact
+TRACEROUTE_pe6_p4,traceroute_path:978b29a75c,L4,traceroute_path,text,MATCH,,pe6 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> p3 -> p4,"""pe6 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> p3 -> p4""",True,1.0,exact
+TRACEROUTE_leaf5_p6,traceroute_path:c5c8bb01ef,L4,traceroute_path,text,MATCH,,leaf5 -> pe3,"""leaf5 -> pe3""",True,1.0,exact
+TRACEROUTE_pe4_p9,traceroute_path:6a26382fcf,L4,traceroute_path,text,MATCH,,pe4 -> p6 -> p7 -> asbr1 -> p9,"""pe4 -> p6 -> p7 -> asbr1 -> p9""",True,1.0,exact
+TRACEROUTE_leaf11_leaf4,traceroute_path:f2ff33ed87,L4,traceroute_path,text,MATCH,,leaf11 -> pe6,"""leaf11 -> pe6""",True,1.0,exact
+TRACEROUTE_pe1_leaf4,traceroute_path:5f5ad2c1b9,L4,traceroute_path,text,MATCH,,pe1,"""pe1""",True,1.0,exact
+TRACEROUTE_p9_p5,traceroute_path:2acabdd894,L4,traceroute_path,text,MATCH,,p9 -> asbr1 -> p7 -> p6 -> p5,"""p9 -> asbr1 -> p7 -> p6 -> p5""",True,1.0,exact
+TRACEROUTE_leaf1_p4,traceroute_path:7286e34e9e,L4,traceroute_path,text,MATCH,,leaf1 -> pe1,"""leaf1 -> pe1""",True,1.0,exact
+TRACEROUTE_leaf9_leaf3,traceroute_path:7c53fd9e47,L4,traceroute_path,text,MATCH,,leaf9 -> pe5,"""leaf9 -> pe5""",True,1.0,exact
+TRACEROUTE_p7_leaf6,traceroute_path:b11edfda0b,L4,traceroute_path,text,MATCH,,p7,"""p7""",True,1.0,exact
+TRACEROUTE_pe2_leaf7,traceroute_path:f5c0129c2e,L4,traceroute_path,text,MATCH,,pe2,"""pe2""",True,1.0,exact
+TRACEROUTE_pe1_pe3,traceroute_path:831925086b,L4,traceroute_path,text,MATCH,,pe1 -> p1 -> p3 -> p5 -> pe3,"""pe1 -> p1 -> p3 -> p5 -> pe3""",True,1.0,exact
+TRACEROUTE_pe6_p2,traceroute_path:b9b7ed6181,L4,traceroute_path,text,MATCH,,pe6 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> p3 -> p1 -> p2,"""pe6 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> p3 -> p1 -> p2""",True,1.0,exact
+TRACEROUTE_p7_p1,traceroute_path:4046d29308,L4,traceroute_path,text,MATCH,,p7 -> p6 -> p5 -> p3 -> p1,"""p7 -> p6 -> p5 -> p3 -> p1""",True,1.0,exact
+TRACEROUTE_leaf9_leaf7,traceroute_path:5888540b36,L4,traceroute_path,text,MATCH,,leaf9 -> pe5,"""leaf9 -> pe5""",True,1.0,exact
+TRACEROUTE_p3_p5,traceroute_path:3f557fdf61,L4,traceroute_path,text,MATCH,,p3 -> p5,"""p3 -> p5""",True,1.0,exact
+TRACEROUTE_leaf12_leaf9,traceroute_path:d2e5c4a978,L4,traceroute_path,text,MATCH,,leaf12 -> pe6,"""leaf12 -> pe6""",True,1.0,exact
+TRACEROUTE_leaf1_leaf6,traceroute_path:e8c33070c3,L4,traceroute_path,text,MATCH,,leaf1 -> pe1,"""leaf1 -> pe1""",True,1.0,exact
+TRACEROUTE_pe6_p5,traceroute_path:8321f5fe83,L4,traceroute_path,text,MATCH,,pe6 -> asbr2 -> p8 -> p7 -> p6 -> p5,"""pe6 -> asbr2 -> p8 -> p7 -> p6 -> p5""",True,1.0,exact
+TRACEROUTE_leaf11_leaf3,traceroute_path:0e98471077,L4,traceroute_path,text,MATCH,,leaf11 -> pe6,"""leaf11 -> pe6""",True,1.0,exact
+TRACEROUTE_leaf11_asbr1,traceroute_path:45ff467769,L4,traceroute_path,text,MATCH,,leaf11 -> pe6,"""leaf11 -> pe6""",True,1.0,exact
+TRACEROUTE_p10_leaf10,traceroute_path:59ac1cb77e,L4,traceroute_path,text,MATCH,,p10,"""p10""",True,1.0,exact
+TRACEROUTE_pe6_leaf10,traceroute_path:1a51311d32,L4,traceroute_path,text,MATCH,,pe6,"""pe6""",True,1.0,exact
+TRACEROUTE_leaf6_p9,traceroute_path:ae7b3c4252,L4,traceroute_path,text,MATCH,,leaf6 -> pe3,"""leaf6 -> pe3""",True,1.0,exact
+TRACEROUTE_p10_leaf9,traceroute_path:154b76c999,L4,traceroute_path,text,MATCH,,p10,"""p10""",True,1.0,exact
+TRACEROUTE_leaf10_leaf7,traceroute_path:1c463ed4fb,L4,traceroute_path,text,MATCH,,leaf10 -> pe5,"""leaf10 -> pe5""",True,1.0,exact
+TRACEROUTE_pe4_pe5,traceroute_path:e7ec4d4ae1,L4,traceroute_path,text,MATCH,,pe4 -> p6 -> p7 -> asbr1 -> pe5,"""pe4 -> p6 -> p7 -> asbr1 -> pe5""",True,1.0,exact
+TRACEROUTE_pe6_p1,traceroute_path:4e0a03cb01,L4,traceroute_path,text,MATCH,,pe6 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> p3 -> p1,"""pe6 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> p3 -> p1""",True,1.0,exact
+TRACEROUTE_pe6_leaf11,traceroute_path:fb53073c44,L4,traceroute_path,text,MATCH,,pe6,"""pe6""",True,1.0,exact
+TRACEROUTE_leaf6_leaf4,traceroute_path:86e6dc4398,L4,traceroute_path,text,MATCH,,leaf6 -> pe3,"""leaf6 -> pe3""",True,1.0,exact
+TRACEROUTE_p10_leaf11,traceroute_path:109baa3aa6,L4,traceroute_path,text,MATCH,,p10,"""p10""",True,1.0,exact
+TRACEROUTE_pe3_leaf6,traceroute_path:eed8e6a2c1,L4,traceroute_path,text,MATCH,,pe3,"""pe3""",True,1.0,exact
+TRACEROUTE_leaf10_p8,traceroute_path:0d40ebb4b5,L4,traceroute_path,text,MATCH,,leaf10 -> pe5,"""leaf10 -> pe5""",True,1.0,exact
+TRACEROUTE_leaf1_p5,traceroute_path:5663bb4d62,L4,traceroute_path,text,MATCH,,leaf1 -> pe1,"""leaf1 -> pe1""",True,1.0,exact
+TRACEROUTE_pe3_leaf7,traceroute_path:379acdabcc,L4,traceroute_path,text,MATCH,,pe3,"""pe3""",True,1.0,exact
+TRACEROUTE_pe6_leaf6,traceroute_path:c1db308a25,L4,traceroute_path,text,MATCH,,pe6,"""pe6""",True,1.0,exact
+TRACEROUTE_pe4_asbr1,traceroute_path:854492d5a9,L4,traceroute_path,text,MATCH,,pe4 -> p6 -> p7 -> asbr1,"""pe4 -> p6 -> p7 -> asbr1""",True,1.0,exact
+TRACEROUTE_pe6_leaf2,traceroute_path:3af1e82539,L4,traceroute_path,text,MATCH,,pe6,"""pe6""",True,1.0,exact
+TRACEROUTE_p10_pe2,traceroute_path:2258abd701,L4,traceroute_path,text,MATCH,,p10 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> p3 -> p1 -> p2 -> pe2,"""p10 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> p3 -> p1 -> p2 -> pe2""",True,1.0,exact
+TRACEROUTE_p9_pe5,traceroute_path:4403066d19,L4,traceroute_path,text,MATCH,,p9 -> asbr1 -> pe5,"""p9 -> asbr1 -> pe5""",True,1.0,exact
+TRACEROUTE_pe2_pe5,traceroute_path:5df14fc344,L4,traceroute_path,text,MATCH,,pe2 -> p4 -> p3 -> p5 -> p6 -> p7 -> asbr1 -> pe5,"""pe2 -> p4 -> p3 -> p5 -> p6 -> p7 -> asbr1 -> pe5""",True,1.0,exact
+TRACEROUTE_pe6_leaf9,traceroute_path:2392643c1e,L4,traceroute_path,text,MATCH,,pe6,"""pe6""",True,1.0,exact
+TRACEROUTE_leaf12_leaf10,traceroute_path:f07422a65e,L4,traceroute_path,text,MATCH,,leaf12 -> pe6,"""leaf12 -> pe6""",True,1.0,exact
+TRACEROUTE_pe1_p4,traceroute_path:82f43d0fc6,L4,traceroute_path,text,MATCH,,pe1 -> p1 -> p2 -> p4,"""pe1 -> p1 -> p2 -> p4""",True,1.0,exact
+TRACEROUTE_p7_asbr1,traceroute_path:868f4619f1,L4,traceroute_path,text,MATCH,,p7 -> asbr1,"""p7 -> asbr1""",True,1.0,exact
+TRACEROUTE_leaf12_leaf11,traceroute_path:e386a68652,L4,traceroute_path,text,MATCH,,leaf12 -> pe6,"""leaf12 -> pe6""",True,1.0,exact
+TRACEROUTE_asbr1_leaf5,traceroute_path:1e01c8c9ab,L4,traceroute_path,text,MATCH,,asbr1,"""asbr1""",True,1.0,exact
+TRACEROUTE_leaf5_leaf8,traceroute_path:4485fff6f0,L4,traceroute_path,text,MATCH,,leaf5 -> pe3,"""leaf5 -> pe3""",True,1.0,exact
+TRACEROUTE_p4_leaf8,traceroute_path:16ba951a01,L4,traceroute_path,text,MATCH,,p4,"""p4""",True,1.0,exact
+TRACEROUTE_pe4_p3,traceroute_path:7e0c8fc240,L4,traceroute_path,text,MATCH,,pe4 -> p6 -> p5 -> p3,"""pe4 -> p6 -> p5 -> p3""",True,1.0,exact
+TRACEROUTE_leaf10_asbr1,traceroute_path:57dd420e22,L4,traceroute_path,text,MATCH,,leaf10 -> pe5,"""leaf10 -> pe5""",True,1.0,exact
+TRACEROUTE_pe4_leaf5,traceroute_path:a2b17e93e4,L4,traceroute_path,text,MATCH,,pe4,"""pe4""",True,1.0,exact
+TRACEROUTE_p7_p9,traceroute_path:89822b4d4c,L4,traceroute_path,text,MATCH,,p7 -> asbr1 -> p9,"""p7 -> asbr1 -> p9""",True,1.0,exact
+TRACEROUTE_leaf12_leaf5,traceroute_path:24af676f44,L4,traceroute_path,text,MATCH,,leaf12 -> pe6,"""leaf12 -> pe6""",True,1.0,exact
+TRACEROUTE_leaf1_leaf10,traceroute_path:47295b41f2,L4,traceroute_path,text,MATCH,,leaf1 -> pe1,"""leaf1 -> pe1""",True,1.0,exact
+TRACEROUTE_leaf9_p6,traceroute_path:6cade7f7e3,L4,traceroute_path,text,MATCH,,leaf9 -> pe5,"""leaf9 -> pe5""",True,1.0,exact
+TRACEROUTE_p1_leaf8,traceroute_path:8553df0697,L4,traceroute_path,text,MATCH,,p1,"""p1""",True,1.0,exact
+TRACEROUTE_p1_leaf6,traceroute_path:1b932afd68,L4,traceroute_path,text,MATCH,,p1,"""p1""",True,1.0,exact
+TRACEROUTE_leaf11_p1,traceroute_path:8ce341eed2,L4,traceroute_path,text,MATCH,,leaf11 -> pe6,"""leaf11 -> pe6""",True,1.0,exact
+TRACEROUTE_leaf1_leaf7,traceroute_path:978358d17f,L4,traceroute_path,text,MATCH,,leaf1 -> pe1,"""leaf1 -> pe1""",True,1.0,exact
+TRACEROUTE_p4_leaf7,traceroute_path:62e4ac4a3a,L4,traceroute_path,text,MATCH,,p4,"""p4""",True,1.0,exact
+TRACEROUTE_leaf5_leaf7,traceroute_path:1b39dca268,L4,traceroute_path,text,MATCH,,leaf5 -> pe3,"""leaf5 -> pe3""",True,1.0,exact
+TRACEROUTE_leaf9_p5,traceroute_path:e58da54df5,L4,traceroute_path,text,MATCH,,leaf9 -> pe5,"""leaf9 -> pe5""",True,1.0,exact
+TRACEROUTE_leaf11_p2,traceroute_path:339f16148e,L4,traceroute_path,text,MATCH,,leaf11 -> pe6,"""leaf11 -> pe6""",True,1.0,exact
+TRACEROUTE_leaf3_p6,traceroute_path:9c54803a2e,L4,traceroute_path,text,MATCH,,leaf3 -> pe2,"""leaf3 -> pe2""",True,1.0,exact
+TRACEROUTE_leaf12_p2,traceroute_path:ea8eeb96c1,L4,traceroute_path,text,MATCH,,leaf12 -> pe6,"""leaf12 -> pe6""",True,1.0,exact
+TRACEROUTE_leaf1_leaf4,traceroute_path:a841e885b9,L4,traceroute_path,text,MATCH,,leaf1 -> pe1,"""leaf1 -> pe1""",True,1.0,exact
+TRACEROUTE_pe3_pe2,traceroute_path:3386a89652,L4,traceroute_path,text,MATCH,,pe3 -> p5 -> p3 -> p1 -> p2 -> pe2,"""pe3 -> p5 -> p3 -> p1 -> p2 -> pe2""",True,1.0,exact
+TRACEROUTE_p10_leaf2,traceroute_path:d27bc4df60,L4,traceroute_path,text,MATCH,,p10,"""p10""",True,1.0,exact
+TRACEROUTE_p4_p8,traceroute_path:d18ee49fb1,L4,traceroute_path,text,MATCH,,p4 -> p3 -> p5 -> p6 -> p7 -> p8,"""p4 -> p3 -> p5 -> p6 -> p7 -> p8""",True,1.0,exact
+TRACEROUTE_pe3_asbr2,traceroute_path:110cb868cd,L4,traceroute_path,text,MATCH,,pe3 -> p5 -> p6 -> pe4 -> p8 -> asbr2,"""pe3 -> p5 -> p6 -> pe4 -> p8 -> asbr2""",True,1.0,exact
+TRACEROUTE_p1_asbr2,traceroute_path:d882c3a946,L4,traceroute_path,text,MATCH,,p1 -> p3 -> p5 -> p6 -> pe4 -> p8 -> asbr2,"""p1 -> p3 -> p5 -> p6 -> pe4 -> p8 -> asbr2""",True,1.0,exact
+TRACEROUTE_leaf9_p8,traceroute_path:24c97a7fa0,L4,traceroute_path,text,MATCH,,leaf9 -> pe5,"""leaf9 -> pe5""",True,1.0,exact
+TRACEROUTE_leaf12_leaf7,traceroute_path:d60fbf2bb2,L4,traceroute_path,text,MATCH,,leaf12 -> pe6,"""leaf12 -> pe6""",True,1.0,exact
+TRACEROUTE_leaf5_leaf4,traceroute_path:126eb52afe,L4,traceroute_path,text,MATCH,,leaf5 -> pe3,"""leaf5 -> pe3""",True,1.0,exact
+TRACEROUTE_leaf7_pe5,traceroute_path:66db15c5a1,L4,traceroute_path,text,MATCH,,leaf7 -> pe4,"""leaf7 -> pe4""",True,1.0,exact
+TRACEROUTE_asbr1_leaf4,traceroute_path:27176598c2,L4,traceroute_path,text,MATCH,,asbr1,"""asbr1""",True,1.0,exact
+TRACEROUTE_p3_p8,traceroute_path:902609e3e3,L4,traceroute_path,text,MATCH,,p3 -> p5 -> p6 -> p7 -> p8,"""p3 -> p5 -> p6 -> p7 -> p8""",True,1.0,exact
+TRACEROUTE_p3_leaf7,traceroute_path:31d9c738ec,L4,traceroute_path,text,MATCH,,p3,"""p3""",True,1.0,exact
+TRACEROUTE_pe2_leaf8,traceroute_path:124e8b3b53,L4,traceroute_path,text,MATCH,,pe2,"""pe2""",True,1.0,exact
+TRACEROUTE_p10_p6,traceroute_path:b1e5d667c8,L4,traceroute_path,text,MATCH,,p10 -> asbr2 -> p8 -> p7 -> p6,"""p10 -> asbr2 -> p8 -> p7 -> p6""",True,1.0,exact
+TRACEROUTE_pe2_leaf2,traceroute_path:de50d27014,L4,traceroute_path,text,MATCH,,pe2,"""pe2""",True,1.0,exact
+TRACEROUTE_pe4_leaf8,traceroute_path:59f9f9fa59,L4,traceroute_path,text,MATCH,,pe4,"""pe4""",True,1.0,exact
+TRACEROUTE_asbr2_p5,traceroute_path:7cc1a9ea3b,L4,traceroute_path,text,MATCH,,asbr2 -> p8 -> p7 -> p6 -> p5,"""asbr2 -> p8 -> p7 -> p6 -> p5""",True,1.0,exact
+TRACEROUTE_p10_leaf4,traceroute_path:1c1da079d7,L4,traceroute_path,text,MATCH,,p10,"""p10""",True,1.0,exact
+TRACEROUTE_leaf10_asbr2,traceroute_path:231ce49075,L4,traceroute_path,text,MATCH,,leaf10 -> pe5,"""leaf10 -> pe5""",True,1.0,exact
+TRACEROUTE_leaf12_leaf6,traceroute_path:5beecd116b,L4,traceroute_path,text,MATCH,,leaf12 -> pe6,"""leaf12 -> pe6""",True,1.0,exact
+TRACEROUTE_p3_pe5,traceroute_path:e461874fd6,L4,traceroute_path,text,MATCH,,p3 -> p5 -> p6 -> p7 -> asbr1 -> pe5,"""p3 -> p5 -> p6 -> p7 -> asbr1 -> pe5""",True,1.0,exact
+TRACEROUTE_p5_leaf3,traceroute_path:406c659628,L4,traceroute_path,text,MATCH,,p5,"""p5""",True,1.0,exact
+TRACEROUTE_leaf9_pe5,traceroute_path:5555dcbf01,L4,traceroute_path,text,MATCH,,leaf9 -> pe5,"""leaf9 -> pe5""",True,1.0,exact
+TRACEROUTE_pe4_leaf7,traceroute_path:215d10d226,L4,traceroute_path,text,MATCH,,pe4,"""pe4""",True,1.0,exact
+TRACEROUTE_p2_p6,traceroute_path:d21a620f4e,L4,traceroute_path,text,MATCH,,p2 -> p1 -> p3 -> p5 -> p6,"""p2 -> p1 -> p3 -> p5 -> p6""",True,1.0,exact
+TRACEROUTE_pe4_p1,traceroute_path:2993ae5c8c,L4,traceroute_path,text,MATCH,,pe4 -> p6 -> p5 -> p3 -> p1,"""pe4 -> p6 -> p5 -> p3 -> p1""",True,1.0,exact
+TRACEROUTE_leaf2_p5,traceroute_path:c0bb49ee38,L4,traceroute_path,text,MATCH,,leaf2 -> pe1,"""leaf2 -> pe1""",True,1.0,exact
+TRACEROUTE_leaf1_pe5,traceroute_path:39f20052ff,L4,traceroute_path,text,MATCH,,leaf1 -> pe1,"""leaf1 -> pe1""",True,1.0,exact
+TRACEROUTE_leaf1_asbr2,traceroute_path:5deec87fa4,L4,traceroute_path,text,MATCH,,leaf1 -> pe1,"""leaf1 -> pe1""",True,1.0,exact
+TRACEROUTE_asbr2_leaf6,traceroute_path:7b3e730d3f,L4,traceroute_path,text,MATCH,,asbr2,"""asbr2""",True,1.0,exact
+TRACEROUTE_pe1_leaf9,traceroute_path:4396852161,L4,traceroute_path,text,MATCH,,pe1,"""pe1""",True,1.0,exact
+TRACEROUTE_pe4_p8,traceroute_path:1e850a0775,L4,traceroute_path,text,MATCH,,pe4 -> p8,"""pe4 -> p8""",True,1.0,exact
+TRACEROUTE_p1_leaf2,traceroute_path:0c84d22545,L4,traceroute_path,text,MATCH,,p1,"""p1""",True,1.0,exact
+TRACEROUTE_pe6_pe2,traceroute_path:c9382a8e5a,L4,traceroute_path,text,MATCH,,pe6 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> p3 -> p1 -> p2 -> pe2,"""pe6 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> p3 -> p1 -> p2 -> pe2""",True,1.0,exact
+TRACEROUTE_leaf1_p6,traceroute_path:ea983fd706,L4,traceroute_path,text,MATCH,,leaf1 -> pe1,"""leaf1 -> pe1""",True,1.0,exact
+TRACEROUTE_p7_p2,traceroute_path:2f6f165c32,L4,traceroute_path,text,MATCH,,p7 -> p6 -> p5 -> p3 -> p1 -> p2,"""p7 -> p6 -> p5 -> p3 -> p1 -> p2""",True,1.0,exact
+TRACEROUTE_p7_leaf5,traceroute_path:dae18777ab,L4,traceroute_path,text,MATCH,,p7,"""p7""",True,1.0,exact
+TRACEROUTE_p1_leaf3,traceroute_path:cb0c9dd809,L4,traceroute_path,text,MATCH,,p1,"""p1""",True,1.0,exact
+TRACEROUTE_p9_leaf9,traceroute_path:a460d3d32a,L4,traceroute_path,text,MATCH,,p9,"""p9""",True,1.0,exact
+TRACEROUTE_leaf1_p2,traceroute_path:e3d845ce8f,L4,traceroute_path,text,MATCH,,leaf1 -> pe1,"""leaf1 -> pe1""",True,1.0,exact
+TRACEROUTE_asbr1_p2,traceroute_path:20072b347b,L4,traceroute_path,text,MATCH,,asbr1 -> p7 -> p6 -> p5 -> p3 -> p1 -> p2,"""asbr1 -> p7 -> p6 -> p5 -> p3 -> p1 -> p2""",True,1.0,exact
+TRACEROUTE_p1_p3,traceroute_path:85077ea73e,L4,traceroute_path,text,MATCH,,p1 -> p3,"""p1 -> p3""",True,1.0,exact
+TRACEROUTE_leaf1_p1,traceroute_path:2ecc0b7be5,L4,traceroute_path,text,MATCH,,leaf1 -> pe1,"""leaf1 -> pe1""",True,1.0,exact
+TRACEROUTE_asbr1_leaf6,traceroute_path:fb98687582,L4,traceroute_path,text,MATCH,,asbr1,"""asbr1""",True,1.0,exact
+TRACEROUTE_pe6_leaf12,traceroute_path:65023dd414,L4,traceroute_path,text,MATCH,,pe6,"""pe6""",True,1.0,exact
+TRACEROUTE_pe3_leaf4,traceroute_path:8464c6b0cb,L4,traceroute_path,text,MATCH,,pe3,"""pe3""",True,1.0,exact
+TRACEROUTE_pe2_p4,traceroute_path:05b9883e5d,L4,traceroute_path,text,MATCH,,pe2 -> p2 -> p4,"""pe2 -> p2 -> p4""",True,1.0,exact
+TRACEROUTE_pe4_pe3,traceroute_path:1d084cdc34,L4,traceroute_path,text,MATCH,,pe4 -> p6 -> p5 -> pe3,"""pe4 -> p6 -> p5 -> pe3""",True,1.0,exact
+TRACEROUTE_p10_leaf1,traceroute_path:02af9bb46e,L4,traceroute_path,text,MATCH,,p10,"""p10""",True,1.0,exact
+TRACEROUTE_p1_leaf5,traceroute_path:158761bcf1,L4,traceroute_path,text,MATCH,,p1,"""p1""",True,1.0,exact
+TRACEROUTE_pe2_p9,traceroute_path:cd67d52d7c,L4,traceroute_path,text,MATCH,,pe2 -> p4 -> p3 -> p5 -> p6 -> p7 -> asbr1 -> p9,"""pe2 -> p4 -> p3 -> p5 -> p6 -> p7 -> asbr1 -> p9""",True,1.0,exact
+TRACEROUTE_leaf8_leaf3,traceroute_path:6cdf5085f3,L4,traceroute_path,text,MATCH,,leaf8 -> pe4,"""leaf8 -> pe4""",True,1.0,exact
+TRACEROUTE_asbr1_p5,traceroute_path:f0227495df,L4,traceroute_path,text,MATCH,,asbr1 -> p7 -> p6 -> p5,"""asbr1 -> p7 -> p6 -> p5""",True,1.0,exact
+TRACEROUTE_p9_leaf8,traceroute_path:109ab43d19,L4,traceroute_path,text,MATCH,,p9,"""p9""",True,1.0,exact
+TRACEROUTE_p10_p3,traceroute_path:464db933e4,L4,traceroute_path,text,MATCH,,p10 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> p3,"""p10 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> p3""",True,1.0,exact
+TRACEROUTE_leaf10_leaf4,traceroute_path:01826a8bfd,L4,traceroute_path,text,MATCH,,leaf10 -> pe5,"""leaf10 -> pe5""",True,1.0,exact
+TRACEROUTE_asbr2_leaf7,traceroute_path:b9e66d3993,L4,traceroute_path,text,MATCH,,asbr2,"""asbr2""",True,1.0,exact
+TRACEROUTE_pe2_p2,traceroute_path:b626af9f4a,L4,traceroute_path,text,MATCH,,pe2 -> p2,"""pe2 -> p2""",True,1.0,exact
+TRACEROUTE_asbr2_p6,traceroute_path:d5f23d4058,L4,traceroute_path,text,MATCH,,asbr2 -> p8 -> p7 -> p6,"""asbr2 -> p8 -> p7 -> p6""",True,1.0,exact
+TRACEROUTE_p7_p4,traceroute_path:2642e585b3,L4,traceroute_path,text,MATCH,,p7 -> p6 -> p5 -> p3 -> p4,"""p7 -> p6 -> p5 -> p3 -> p4""",True,1.0,exact
+TRACEROUTE_p8_p6,traceroute_path:eb7dcffe58,L4,traceroute_path,text,MATCH,,p8 -> p7 -> p6,"""p8 -> p7 -> p6""",True,1.0,exact
+TRACEROUTE_p4_p3,traceroute_path:9412aeec36,L4,traceroute_path,text,MATCH,,p4 -> p3,"""p4 -> p3""",True,1.0,exact
+TRACEROUTE_pe4_leaf12,traceroute_path:2768e688aa,L4,traceroute_path,text,MATCH,,pe4,"""pe4""",True,1.0,exact
+TRACEROUTE_asbr1_pe5,traceroute_path:76a7087ba1,L4,traceroute_path,text,MATCH,,asbr1 -> pe5,"""asbr1 -> pe5""",True,1.0,exact
+TRACEROUTE_p1_p6,traceroute_path:b8a889b67d,L4,traceroute_path,text,MATCH,,p1 -> p3 -> p5 -> p6,"""p1 -> p3 -> p5 -> p6""",True,1.0,exact
+TRACEROUTE_p2_leaf4,traceroute_path:b1dd2e8733,L4,traceroute_path,text,MATCH,,p2,"""p2""",True,1.0,exact
+TRACEROUTE_pe1_pe4,traceroute_path:d823bfdbc9,L4,traceroute_path,text,MATCH,,pe1 -> p1 -> p3 -> p5 -> p6 -> pe4,"""pe1 -> p1 -> p3 -> p5 -> p6 -> pe4""",True,1.0,exact
+TRACEROUTE_pe3_p1,traceroute_path:bc9819fc09,L4,traceroute_path,text,MATCH,,pe3 -> p5 -> p3 -> p1,"""pe3 -> p5 -> p3 -> p1""",True,1.0,exact
+TRACEROUTE_pe3_leaf3,traceroute_path:b770563a94,L4,traceroute_path,text,MATCH,,pe3,"""pe3""",True,1.0,exact
+TRACEROUTE_asbr2_leaf2,traceroute_path:1344093ee8,L4,traceroute_path,text,MATCH,,asbr2,"""asbr2""",True,1.0,exact
+TRACEROUTE_pe4_leaf6,traceroute_path:54a7dc8a1b,L4,traceroute_path,text,MATCH,,pe4,"""pe4""",True,1.0,exact
+TRACEROUTE_p5_leaf8,traceroute_path:afb0b3f05e,L4,traceroute_path,text,MATCH,,p5,"""p5""",True,1.0,exact
+TRACEROUTE_leaf12_p3,traceroute_path:b4d922fcf0,L4,traceroute_path,text,MATCH,,leaf12 -> pe6,"""leaf12 -> pe6""",True,1.0,exact
+TRACEROUTE_pe4_p5,traceroute_path:1950e9715f,L4,traceroute_path,text,MATCH,,pe4 -> p6 -> p5,"""pe4 -> p6 -> p5""",True,1.0,exact
+TRACEROUTE_leaf2_leaf8,traceroute_path:13c5b411ed,L4,traceroute_path,text,MATCH,,leaf2 -> pe1,"""leaf2 -> pe1""",True,1.0,exact
+TRACEROUTE_leaf11_pe2,traceroute_path:dab0175703,L4,traceroute_path,text,MATCH,,leaf11 -> pe6,"""leaf11 -> pe6""",True,1.0,exact
+TRACEROUTE_leaf5_p3,traceroute_path:1cb6a28374,L4,traceroute_path,text,MATCH,,leaf5 -> pe3,"""leaf5 -> pe3""",True,1.0,exact
+TRACEROUTE_p3_leaf8,traceroute_path:dc44af5da0,L4,traceroute_path,text,MATCH,,p3,"""p3""",True,1.0,exact
+TRACEROUTE_p9_leaf4,traceroute_path:1908dfe82a,L4,traceroute_path,text,MATCH,,p9,"""p9""",True,1.0,exact
+TRACEROUTE_p2_leaf7,traceroute_path:659f26ebd4,L4,traceroute_path,text,MATCH,,p2,"""p2""",True,1.0,exact
+TRACEROUTE_leaf6_p5,traceroute_path:50c76a84f7,L4,traceroute_path,text,MATCH,,leaf6 -> pe3,"""leaf6 -> pe3""",True,1.0,exact
+TRACEROUTE_leaf6_leaf3,traceroute_path:ca1cc4744e,L4,traceroute_path,text,MATCH,,leaf6 -> pe3,"""leaf6 -> pe3""",True,1.0,exact
+TRACEROUTE_p2_leaf9,traceroute_path:076d0f4cc5,L4,traceroute_path,text,MATCH,,p2,"""p2""",True,1.0,exact
+TRACEROUTE_p7_leaf4,traceroute_path:4541365ced,L4,traceroute_path,text,MATCH,,p7,"""p7""",True,1.0,exact
+TRACEROUTE_pe2_p6,traceroute_path:e3f9cc04b8,L4,traceroute_path,text,MATCH,,pe2 -> p4 -> p3 -> p5 -> p6,"""pe2 -> p4 -> p3 -> p5 -> p6""",True,1.0,exact
+TRACEROUTE_p2_leaf2,traceroute_path:0bc31aea31,L4,traceroute_path,text,MATCH,,p2,"""p2""",True,1.0,exact
+TRACEROUTE_pe6_asbr2,traceroute_path:bb76cb0eaf,L4,traceroute_path,text,MATCH,,pe6 -> asbr2,"""pe6 -> asbr2""",True,1.0,exact
+TRACEROUTE_pe1_leaf6,traceroute_path:d0a5ed2dc8,L4,traceroute_path,text,MATCH,,pe1,"""pe1""",True,1.0,exact
+TRACEROUTE_leaf4_p6,traceroute_path:063f779794,L4,traceroute_path,text,MATCH,,leaf4 -> pe2,"""leaf4 -> pe2""",True,1.0,exact
+TRACEROUTE_leaf1_leaf3,traceroute_path:6e7d9f3688,L4,traceroute_path,text,MATCH,,leaf1 -> pe1,"""leaf1 -> pe1""",True,1.0,exact
+TRACEROUTE_pe3_p9,traceroute_path:8e8c67b6bc,L4,traceroute_path,text,MATCH,,pe3 -> p5 -> p6 -> p7 -> asbr1 -> p9,"""pe3 -> p5 -> p6 -> p7 -> asbr1 -> p9""",True,1.0,exact
+TRACEROUTE_leaf12_p9,traceroute_path:d9e2042aac,L4,traceroute_path,text,MATCH,,leaf12 -> pe6,"""leaf12 -> pe6""",True,1.0,exact
+TRACEROUTE_p1_p4,traceroute_path:a4b3456479,L4,traceroute_path,text,MATCH,,p1 -> p2 -> p4,"""p1 -> p2 -> p4""",True,1.0,exact
+TRACEROUTE_leaf5_pe5,traceroute_path:c96f1aa5a1,L4,traceroute_path,text,MATCH,,leaf5 -> pe3,"""leaf5 -> pe3""",True,1.0,exact
+TRACEROUTE_leaf11_p5,traceroute_path:e1d2557b96,L4,traceroute_path,text,MATCH,,leaf11 -> pe6,"""leaf11 -> pe6""",True,1.0,exact
+TRACEROUTE_leaf6_leaf2,traceroute_path:d040d6b796,L4,traceroute_path,text,MATCH,,leaf6 -> pe3,"""leaf6 -> pe3""",True,1.0,exact
+TRACEROUTE_leaf6_leaf8,traceroute_path:6fbe007b47,L4,traceroute_path,text,MATCH,,leaf6 -> pe3,"""leaf6 -> pe3""",True,1.0,exact
+TRACEROUTE_leaf10_p4,traceroute_path:abc538a517,L4,traceroute_path,text,MATCH,,leaf10 -> pe5,"""leaf10 -> pe5""",True,1.0,exact
+TRACEROUTE_p10_p2,traceroute_path:d77f0a14df,L4,traceroute_path,text,MATCH,,p10 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> p3 -> p1 -> p2,"""p10 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> p3 -> p1 -> p2""",True,1.0,exact
+TRACEROUTE_pe2_asbr2,traceroute_path:93a33ce0b9,L4,traceroute_path,text,MATCH,,pe2 -> p4 -> p3 -> p5 -> p6 -> pe4 -> p8 -> asbr2,"""pe2 -> p4 -> p3 -> p5 -> p6 -> pe4 -> p8 -> asbr2""",True,1.0,exact
+TRACEROUTE_pe3_p3,traceroute_path:39b6638457,L4,traceroute_path,text,MATCH,,pe3 -> p5 -> p3,"""pe3 -> p5 -> p3""",True,1.0,exact
+TRACEROUTE_leaf11_asbr2,traceroute_path:96e29fa8f4,L4,traceroute_path,text,MATCH,,leaf11 -> pe6,"""leaf11 -> pe6""",True,1.0,exact
+TRACEROUTE_pe1_p9,traceroute_path:45b5d10a73,L4,traceroute_path,text,MATCH,,pe1 -> p1 -> p3 -> p5 -> p6 -> p7 -> asbr1 -> p9,"""pe1 -> p1 -> p3 -> p5 -> p6 -> p7 -> asbr1 -> p9""",True,1.0,exact
+TRACEROUTE_p5_p8,traceroute_path:3223769384,L4,traceroute_path,text,MATCH,,p5 -> p6 -> p7 -> p8,"""p5 -> p6 -> p7 -> p8""",True,1.0,exact
+TRACEROUTE_pe3_p2,traceroute_path:102584dc87,L4,traceroute_path,text,MATCH,,pe3 -> p5 -> p3 -> p1 -> p2,"""pe3 -> p5 -> p3 -> p1 -> p2""",True,1.0,exact
+TRACEROUTE_pe1_pe6,traceroute_path:79bfb46c43,L4,traceroute_path,text,MATCH,,pe1 -> p1 -> p3 -> p5 -> p6 -> pe4 -> p8 -> asbr2 -> pe6,"""pe1 -> p1 -> p3 -> p5 -> p6 -> pe4 -> p8 -> asbr2 -> pe6""",True,1.0,exact
+TRACEROUTE_pe3_leaf5,traceroute_path:2c02baf702,L4,traceroute_path,text,MATCH,,pe3,"""pe3""",True,1.0,exact
+TRACEROUTE_p7_p6,traceroute_path:ed37692993,L4,traceroute_path,text,MATCH,,p7 -> p6,"""p7 -> p6""",True,1.0,exact
+TRACEROUTE_asbr2_leaf9,traceroute_path:f6caa6ac57,L4,traceroute_path,text,MATCH,,asbr2,"""asbr2""",True,1.0,exact
+TRACEROUTE_p4_leaf2,traceroute_path:6b72321656,L4,traceroute_path,text,MATCH,,p4,"""p4""",True,1.0,exact
+TRACEROUTE_p10_p1,traceroute_path:63aabaeccb,L4,traceroute_path,text,MATCH,,p10 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> p3 -> p1,"""p10 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> p3 -> p1""",True,1.0,exact
+TRACEROUTE_p1_p9,traceroute_path:9e4032c47b,L4,traceroute_path,text,MATCH,,p1 -> p3 -> p5 -> p6 -> p7 -> asbr1 -> p9,"""p1 -> p3 -> p5 -> p6 -> p7 -> asbr1 -> p9""",True,1.0,exact
+TRACEROUTE_leaf12_asbr2,traceroute_path:0dbc1f8d25,L4,traceroute_path,text,MATCH,,leaf12 -> pe6,"""leaf12 -> pe6""",True,1.0,exact
+TRACEROUTE_p10_pe1,traceroute_path:29e7b759f2,L4,traceroute_path,text,MATCH,,p10 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> p3 -> p1 -> pe1,"""p10 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> p3 -> p1 -> pe1""",True,1.0,exact
+TRACEROUTE_pe6_p6,traceroute_path:b1b04770b4,L4,traceroute_path,text,MATCH,,pe6 -> asbr2 -> p8 -> p7 -> p6,"""pe6 -> asbr2 -> p8 -> p7 -> p6""",True,1.0,exact
+TRACEROUTE_leaf11_leaf5,traceroute_path:a248d34643,L4,traceroute_path,text,MATCH,,leaf11 -> pe6,"""leaf11 -> pe6""",True,1.0,exact
+TRACEROUTE_p5_p6,traceroute_path:ff57634105,L4,traceroute_path,text,MATCH,,p5 -> p6,"""p5 -> p6""",True,1.0,exact
+TRACEROUTE_p5_leaf7,traceroute_path:49240e2a0c,L4,traceroute_path,text,MATCH,,p5,"""p5""",True,1.0,exact
+TRACEROUTE_p4_leaf5,traceroute_path:6923c5e704,L4,traceroute_path,text,MATCH,,p4,"""p4""",True,1.0,exact
+TRACEROUTE_p7_leaf8,traceroute_path:af089ad94b,L4,traceroute_path,text,MATCH,,p7,"""p7""",True,1.0,exact
+TRACEROUTE_pe1_leaf3,traceroute_path:1195432cf0,L4,traceroute_path,text,MATCH,,pe1,"""pe1""",True,1.0,exact
+TRACEROUTE_p1_leaf7,traceroute_path:b2f2c678a2,L4,traceroute_path,text,MATCH,,p1,"""p1""",True,1.0,exact
+TRACEROUTE_pe4_leaf10,traceroute_path:559fba4c54,L4,traceroute_path,text,MATCH,,pe4,"""pe4""",True,1.0,exact
+TRACEROUTE_p1_p5,traceroute_path:2f56c55ea4,L4,traceroute_path,text,MATCH,,p1 -> p3 -> p5,"""p1 -> p3 -> p5""",True,1.0,exact
+TRACEROUTE_p9_leaf5,traceroute_path:4a3ea4704f,L4,traceroute_path,text,MATCH,,p9,"""p9""",True,1.0,exact
+TRACEROUTE_p10_pe6,traceroute_path:9c41ac7e83,L4,traceroute_path,text,MATCH,,p10 -> asbr2 -> pe6,"""p10 -> asbr2 -> pe6""",True,1.0,exact
+TRACEROUTE_p9_p6,traceroute_path:0d30ad4894,L4,traceroute_path,text,MATCH,,p9 -> asbr1 -> p7 -> p6,"""p9 -> asbr1 -> p7 -> p6""",True,1.0,exact
+TRACEROUTE_pe6_leaf4,traceroute_path:e5ef39ea69,L4,traceroute_path,text,MATCH,,pe6,"""pe6""",True,1.0,exact
+TRACEROUTE_pe2_leaf3,traceroute_path:1e09853abb,L4,traceroute_path,text,MATCH,,pe2,"""pe2""",True,1.0,exact
+TRACEROUTE_p2_p5,traceroute_path:1e93d0ec40,L4,traceroute_path,text,MATCH,,p2 -> p1 -> p3 -> p5,"""p2 -> p1 -> p3 -> p5""",True,1.0,exact
+TRACEROUTE_leaf3_pe5,traceroute_path:a0aa1735af,L4,traceroute_path,text,MATCH,,leaf3 -> pe2,"""leaf3 -> pe2""",True,1.0,exact
+TRACEROUTE_leaf2_leaf7,traceroute_path:2fb79bb54b,L4,traceroute_path,text,MATCH,,leaf2 -> pe1,"""leaf2 -> pe1""",True,1.0,exact
+TRACEROUTE_p9_leaf2,traceroute_path:128c5ae615,L4,traceroute_path,text,MATCH,,p9,"""p9""",True,1.0,exact
+TRACEROUTE_leaf7_leaf3,traceroute_path:7fa00d2c00,L4,traceroute_path,text,MATCH,,leaf7 -> pe4,"""leaf7 -> pe4""",True,1.0,exact
+TRACEROUTE_pe6_pe3,traceroute_path:8d5d6a30e8,L4,traceroute_path,text,MATCH,,pe6 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> pe3,"""pe6 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> pe3""",True,1.0,exact
+TRACEROUTE_p10_leaf12,traceroute_path:926eedde67,L4,traceroute_path,text,MATCH,,p10,"""p10""",True,1.0,exact
+TRACEROUTE_p4_asbr1,traceroute_path:163c34b0e1,L4,traceroute_path,text,MATCH,,p4 -> p3 -> p5 -> p6 -> p7 -> asbr1,"""p4 -> p3 -> p5 -> p6 -> p7 -> asbr1""",True,1.0,exact
+TRACEROUTE_pe3_leaf8,traceroute_path:2316931578,L4,traceroute_path,text,MATCH,,pe3,"""pe3""",True,1.0,exact
+TRACEROUTE_leaf10_p2,traceroute_path:0f28fcda75,L4,traceroute_path,text,MATCH,,leaf10 -> pe5,"""leaf10 -> pe5""",True,1.0,exact
+TRACEROUTE_leaf1_p8,traceroute_path:cf9fece538,L4,traceroute_path,text,MATCH,,leaf1 -> pe1,"""leaf1 -> pe1""",True,1.0,exact
+TRACEROUTE_leaf11_leaf9,traceroute_path:8fd622b3b6,L4,traceroute_path,text,MATCH,,leaf11 -> pe6 -> leaf9,"""leaf11 -> pe6 -> leaf9""",True,1.0,exact
+TRACEROUTE_leaf11_leaf8,traceroute_path:7544ef6587,L4,traceroute_path,text,MATCH,,leaf11 -> pe6,"""leaf11 -> pe6""",True,1.0,exact
+TRACEROUTE_pe1_p7,traceroute_path:be9c1a22e0,L4,traceroute_path,text,MATCH,,pe1 -> p1 -> p3 -> p5 -> p6 -> p7,"""pe1 -> p1 -> p3 -> p5 -> p6 -> p7""",True,1.0,exact
+TRACEROUTE_leaf2_leaf4,traceroute_path:206c768141,L4,traceroute_path,text,MATCH,,leaf2 -> pe1,"""leaf2 -> pe1""",True,1.0,exact
+TRACEROUTE_leaf2_p6,traceroute_path:64f66e428c,L4,traceroute_path,text,MATCH,,leaf2 -> pe1,"""leaf2 -> pe1""",True,1.0,exact
+TRACEROUTE_pe6_p8,traceroute_path:4a74db0730,L4,traceroute_path,text,MATCH,,pe6 -> asbr2 -> p8,"""pe6 -> asbr2 -> p8""",True,1.0,exact
+TRACEROUTE_pe1_pe5,traceroute_path:c5a6a9156a,L4,traceroute_path,text,MATCH,,pe1 -> p1 -> p3 -> p5 -> p6 -> p7 -> asbr1 -> pe5,"""pe1 -> p1 -> p3 -> p5 -> p6 -> p7 -> asbr1 -> pe5""",True,1.0,exact
+TRACEROUTE_p10_leaf7,traceroute_path:281636d56b,L4,traceroute_path,text,MATCH,,p10,"""p10""",True,1.0,exact
+TRACEROUTE_pe1_p3,traceroute_path:aebe5a1827,L4,traceroute_path,text,MATCH,,pe1 -> p1 -> p3,"""pe1 -> p1 -> p3""",True,1.0,exact
+TRACEROUTE_p1_p2,traceroute_path:820e23e546,L4,traceroute_path,text,MATCH,,p1 -> p2,"""p1 -> p2""",True,1.0,exact
+TRACEROUTE_p1_leaf4,traceroute_path:8bb765b8b4,L4,traceroute_path,text,MATCH,,p1,"""p1""",True,1.0,exact
+TRACEROUTE_pe6_p9,traceroute_path:41e9578b53,L4,traceroute_path,text,MATCH,,pe6 -> p9,"""pe6 -> p9""",True,1.0,exact
+TRACEROUTE_leaf6_p3,traceroute_path:52bdef7e3c,L4,traceroute_path,text,MATCH,,leaf6 -> pe3,"""leaf6 -> pe3""",True,1.0,exact
+TRACEROUTE_p2_p3,traceroute_path:30226e2aad,L4,traceroute_path,text,MATCH,,p2 -> p1 -> p3,"""p2 -> p1 -> p3""",True,1.0,exact
+TRACEROUTE_pe2_leaf1,traceroute_path:5294fb6d6c,L4,traceroute_path,text,MATCH,,pe2,"""pe2""",True,1.0,exact
+TRACEROUTE_p4_pe5,traceroute_path:ee0365eb77,L4,traceroute_path,text,MATCH,,p4 -> p3 -> p5 -> p6 -> p7 -> asbr1 -> pe5,"""p4 -> p3 -> p5 -> p6 -> p7 -> asbr1 -> pe5""",True,1.0,exact
+TRACEROUTE_pe2_p8,traceroute_path:0b2263cc34,L4,traceroute_path,text,MATCH,,pe2 -> p4 -> p3 -> p5 -> p6 -> p7 -> p8,"""pe2 -> p4 -> p3 -> p5 -> p6 -> p7 -> p8""",True,1.0,exact
+TRACEROUTE_asbr2_asbr1,traceroute_path:5631e212cd,L4,traceroute_path,text,MATCH,,asbr2 -> p8 -> p7 -> asbr1,"""asbr2 -> p8 -> p7 -> asbr1""",True,1.0,exact
+TRACEROUTE_pe3_pe5,traceroute_path:bd3c71ca8f,L4,traceroute_path,text,MATCH,,pe3 -> p5 -> p6 -> p7 -> asbr1 -> pe5,"""pe3 -> p5 -> p6 -> p7 -> asbr1 -> pe5""",True,1.0,exact
+TRACEROUTE_leaf10_leaf8,traceroute_path:3ff63af7db,L4,traceroute_path,text,MATCH,,leaf10 -> pe5,"""leaf10 -> pe5""",True,1.0,exact
+TRACEROUTE_p5_leaf4,traceroute_path:9847c5795a,L4,traceroute_path,text,MATCH,,p5,"""p5""",True,1.0,exact
+TRACEROUTE_pe3_leaf9,traceroute_path:0a5466a9f2,L4,traceroute_path,text,MATCH,,pe3,"""pe3""",True,1.0,exact
+TRACEROUTE_leaf7_p6,traceroute_path:6a572a9f46,L4,traceroute_path,text,MATCH,,leaf7 -> pe4,"""leaf7 -> pe4""",True,1.0,exact
+TRACEROUTE_p3_leaf9,traceroute_path:ce801b08b1,L4,traceroute_path,text,MATCH,,p3,"""p3""",True,1.0,exact
+TRACEROUTE_pe6_p3,traceroute_path:bd77bacb89,L4,traceroute_path,text,MATCH,,pe6 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> p3,"""pe6 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> p3""",True,1.0,exact
+TRACEROUTE_leaf1_p3,traceroute_path:0d36366864,L4,traceroute_path,text,MATCH,,leaf1 -> pe1,"""leaf1 -> pe1""",True,1.0,exact
+TRACEROUTE_leaf11_p6,traceroute_path:fc7f81879d,L4,traceroute_path,text,MATCH,,leaf11 -> pe6,"""leaf11 -> pe6""",True,1.0,exact
+TRACEROUTE_p1_leaf9,traceroute_path:9c927cc749,L4,traceroute_path,text,MATCH,,p1,"""p1""",True,1.0,exact
+TRACEROUTE_asbr1_p8,traceroute_path:b680a5b339,L4,traceroute_path,text,MATCH,,asbr1 -> p7 -> p8,"""asbr1 -> p7 -> p8""",True,1.0,exact
+TRACEROUTE_asbr1_p6,traceroute_path:f521cbbd09,L4,traceroute_path,text,MATCH,,asbr1 -> p7 -> p6,"""asbr1 -> p7 -> p6""",True,1.0,exact
+TRACEROUTE_p4_leaf9,traceroute_path:f91e93655f,L4,traceroute_path,text,MATCH,,p4,"""p4""",True,1.0,exact
+TRACEROUTE_pe4_p6,traceroute_path:af2b02261e,L4,traceroute_path,text,MATCH,,pe4 -> p6,"""pe4 -> p6""",True,1.0,exact
+TRACEROUTE_pe1_leaf12,traceroute_path:06afadf01c,L4,traceroute_path,text,MATCH,,pe1,"""pe1""",True,1.0,exact
+TRACEROUTE_p7_pe2,traceroute_path:8903b8e5a0,L4,traceroute_path,text,MATCH,,p7 -> p6 -> p5 -> p3 -> p1 -> p2 -> pe2,"""p7 -> p6 -> p5 -> p3 -> p1 -> p2 -> pe2""",True,1.0,exact
+TRACEROUTE_pe2_p1,traceroute_path:b9d0c92d14,L4,traceroute_path,text,MATCH,,pe2 -> p2 -> p1,"""pe2 -> p2 -> p1""",True,1.0,exact
+TRACEROUTE_leaf12_leaf1,traceroute_path:7700266337,L4,traceroute_path,text,MATCH,,leaf12 -> pe6,"""leaf12 -> pe6""",True,1.0,exact
+TRACEROUTE_leaf8_p6,traceroute_path:c88437857c,L4,traceroute_path,text,MATCH,,leaf8 -> pe4,"""leaf8 -> pe4""",True,1.0,exact
+TRACEROUTE_pe3_p4,traceroute_path:087dfea6ee,L4,traceroute_path,text,MATCH,,pe3 -> p5 -> p3 -> p4,"""pe3 -> p5 -> p3 -> p4""",True,1.0,exact
+TRACEROUTE_p10_pe5,traceroute_path:283d3497ea,L4,traceroute_path,text,MATCH,,p10 -> pe5,"""p10 -> pe5""",True,1.0,exact
+TRACEROUTE_leaf12_asbr1,traceroute_path:ea1d7ce035,L4,traceroute_path,text,MATCH,,leaf12 -> pe6,"""leaf12 -> pe6""",True,1.0,exact
+TRACEROUTE_leaf9_leaf4,traceroute_path:0ee7bad600,L4,traceroute_path,text,MATCH,,leaf9 -> pe5,"""leaf9 -> pe5""",True,1.0,exact
+TRACEROUTE_p4_p9,traceroute_path:0d15a1ac10,L4,traceroute_path,text,MATCH,,p4 -> p3 -> p5 -> p6 -> p7 -> asbr1 -> p9,"""p4 -> p3 -> p5 -> p6 -> p7 -> asbr1 -> p9""",True,1.0,exact
+TRACEROUTE_p6_pe5,traceroute_path:477dee6280,L4,traceroute_path,text,MATCH,,p6 -> p7 -> asbr1 -> pe5,"""p6 -> p7 -> asbr1 -> pe5""",True,1.0,exact
+TRACEROUTE_p7_leaf1,traceroute_path:810614e3cb,L4,traceroute_path,text,MATCH,,p7,"""p7""",True,1.0,exact
+TRACEROUTE_leaf2_leaf3,traceroute_path:b0c09408f5,L4,traceroute_path,text,MATCH,,leaf2 -> pe1,"""leaf2 -> pe1""",True,1.0,exact
+TRACEROUTE_leaf1_leaf9,traceroute_path:8d54645627,L4,traceroute_path,text,MATCH,,leaf1 -> pe1,"""leaf1 -> pe1""",True,1.0,exact
+TRACEROUTE_p9_leaf7,traceroute_path:edef79c322,L4,traceroute_path,text,MATCH,,p9,"""p9""",True,1.0,exact
+TRACEROUTE_leaf4_leaf3,traceroute_path:85cf0a193c,L4,traceroute_path,text,MATCH,,leaf4 -> pe2,"""leaf4 -> pe2""",True,1.0,exact
+TRACEROUTE_leaf10_leaf9,traceroute_path:462929908e,L4,traceroute_path,text,MATCH,,leaf10 -> pe5,"""leaf10 -> pe5""",True,1.0,exact
+TRACEROUTE_pe4_leaf11,traceroute_path:4508268aa9,L4,traceroute_path,text,MATCH,,pe4,"""pe4""",True,1.0,exact
+TRACEROUTE_p9_leaf3,traceroute_path:7018c01e86,L4,traceroute_path,text,MATCH,,p9,"""p9""",True,1.0,exact
+TRACEROUTE_asbr2_leaf4,traceroute_path:6d3b1516da,L4,traceroute_path,text,MATCH,,asbr2,"""asbr2""",True,1.0,exact
+TRACEROUTE_pe1_leaf1,traceroute_path:1435203c63,L4,traceroute_path,text,MATCH,,pe1,"""pe1""",True,1.0,exact
+TRACEROUTE_leaf6_leaf5,traceroute_path:874bcbb4c1,L4,traceroute_path,text,MATCH,,leaf6 -> pe3,"""leaf6 -> pe3""",True,1.0,exact
+TRACEROUTE_p7_leaf11,traceroute_path:2108e71a44,L4,traceroute_path,text,MATCH,,p7,"""p7""",True,1.0,exact
+TRACEROUTE_leaf6_pe5,traceroute_path:7149802ecb,L4,traceroute_path,text,MATCH,,leaf6 -> pe3,"""leaf6 -> pe3""",True,1.0,exact
+TRACEROUTE_pe4_leaf3,traceroute_path:0d2c656e84,L4,traceroute_path,text,MATCH,,pe4,"""pe4""",True,1.0,exact
+TRACEROUTE_leaf12_pe5,traceroute_path:b6c7acf896,L4,traceroute_path,text,MATCH,,leaf12 -> pe6,"""leaf12 -> pe6""",True,1.0,exact
+TRACEROUTE_leaf11_leaf6,traceroute_path:9fc952cf10,L4,traceroute_path,text,MATCH,,leaf11 -> pe6,"""leaf11 -> pe6""",True,1.0,exact
+TRACEROUTE_pe6_pe5,traceroute_path:afea94cf3a,L4,traceroute_path,text,MATCH,,pe6 -> p9 -> asbr1 -> pe5,"""pe6 -> p9 -> asbr1 -> pe5""",True,1.0,exact
+TRACEROUTE_leaf11_p4,traceroute_path:86ec4ea05e,L4,traceroute_path,text,MATCH,,leaf11 -> pe6,"""leaf11 -> pe6""",True,1.0,exact
+TRACEROUTE_asbr1_leaf7,traceroute_path:c1d63786a5,L4,traceroute_path,text,MATCH,,asbr1,"""asbr1""",True,1.0,exact
+TRACEROUTE_leaf1_leaf5,traceroute_path:2601ee7ff0,L4,traceroute_path,text,MATCH,,leaf1 -> pe1,"""leaf1 -> pe1""",True,1.0,exact
+TRACEROUTE_leaf2_p8,traceroute_path:353e875ba0,L4,traceroute_path,text,MATCH,,leaf2 -> pe1,"""leaf2 -> pe1""",True,1.0,exact
+TRACEROUTE_p3_leaf4,traceroute_path:3f3d01e778,L4,traceroute_path,text,MATCH,,p3,"""p3""",True,1.0,exact
+TRACEROUTE_pe1_p8,traceroute_path:70e56ba176,L4,traceroute_path,text,MATCH,,pe1 -> p1 -> p3 -> p5 -> p6 -> p7 -> p8,"""pe1 -> p1 -> p3 -> p5 -> p6 -> p7 -> p8""",True,1.0,exact
+TRACEROUTE_leaf8_p8,traceroute_path:e2c6a08f90,L4,traceroute_path,text,MATCH,,leaf8 -> pe4,"""leaf8 -> pe4""",True,1.0,exact
+TRACEROUTE_p2_p8,traceroute_path:0c1af22a6f,L4,traceroute_path,text,MATCH,,p2 -> p1 -> p3 -> p5 -> p6 -> p7 -> p8,"""p2 -> p1 -> p3 -> p5 -> p6 -> p7 -> p8""",True,1.0,exact
+TRACEROUTE_p7_p3,traceroute_path:ed8666e284,L4,traceroute_path,text,MATCH,,p7 -> p6 -> p5 -> p3,"""p7 -> p6 -> p5 -> p3""",True,1.0,exact
+TRACEROUTE_pe3_leaf10,traceroute_path:6c38b923f4,L4,traceroute_path,text,MATCH,,pe3,"""pe3""",True,1.0,exact
+TRACEROUTE_leaf6_p8,traceroute_path:f94c2239cb,L4,traceroute_path,text,MATCH,,leaf6 -> pe3,"""leaf6 -> pe3""",True,1.0,exact
+TRACEROUTE_p10_p8,traceroute_path:bac43e3586,L4,traceroute_path,text,MATCH,,p10 -> asbr2 -> p8,"""p10 -> asbr2 -> p8""",True,1.0,exact
+TRACEROUTE_pe1_pe2,traceroute_path:011107df04,L4,traceroute_path,text,MATCH,,pe1 -> p1 -> p2 -> pe2,"""pe1 -> p1 -> p2 -> pe2""",True,1.0,exact
+TRACEROUTE_leaf5_leaf9,traceroute_path:31ce9dd87f,L4,traceroute_path,text,MATCH,,leaf5 -> pe3,"""leaf5 -> pe3""",True,1.0,exact
+TRACEROUTE_pe4_p2,traceroute_path:312b5f59c5,L4,traceroute_path,text,MATCH,,pe4 -> p6 -> p5 -> p3 -> p1 -> p2,"""pe4 -> p6 -> p5 -> p3 -> p1 -> p2""",True,1.0,exact
+TRACEROUTE_p4_leaf4,traceroute_path:e307f9b597,L4,traceroute_path,text,MATCH,,p4,"""p4""",True,1.0,exact
+TRACEROUTE_leaf11_leaf10,traceroute_path:3299afa684,L4,traceroute_path,text,MATCH,,leaf11 -> pe6,"""leaf11 -> pe6""",True,1.0,exact
+TRACEROUTE_asbr1_p9,traceroute_path:d75879f423,L4,traceroute_path,text,MATCH,,asbr1 -> p9,"""asbr1 -> p9""",True,1.0,exact
+TRACEROUTE_asbr1_leaf9,traceroute_path:a6370aa893,L4,traceroute_path,text,MATCH,,asbr1,"""asbr1""",True,1.0,exact
+TRACEROUTE_p7_leaf9,traceroute_path:c6313a13a1,L4,traceroute_path,text,MATCH,,p7,"""p7""",True,1.0,exact
+TRACEROUTE_p4_asbr2,traceroute_path:0d962c3308,L4,traceroute_path,text,MATCH,,p4 -> p3 -> p5 -> p6 -> pe4 -> p8 -> asbr2,"""p4 -> p3 -> p5 -> p6 -> pe4 -> p8 -> asbr2""",True,1.0,exact
+TRACEROUTE_pe1_asbr2,traceroute_path:7540fb1d26,L4,traceroute_path,text,MATCH,,pe1 -> p1 -> p3 -> p5 -> p6 -> pe4 -> p8 -> asbr2,"""pe1 -> p1 -> p3 -> p5 -> p6 -> pe4 -> p8 -> asbr2""",True,1.0,exact
+TRACEROUTE_leaf11_p3,traceroute_path:5ace7b91df,L4,traceroute_path,text,MATCH,,leaf11 -> pe6,"""leaf11 -> pe6""",True,1.0,exact
+TRACEROUTE_pe6_leaf1,traceroute_path:74dbe5816e,L4,traceroute_path,text,MATCH,,pe6,"""pe6""",True,1.0,exact
+TRACEROUTE_leaf10_p5,traceroute_path:d2b9e362c9,L4,traceroute_path,text,MATCH,,leaf10 -> pe5,"""leaf10 -> pe5""",True,1.0,exact
+TRACEROUTE_leaf1_leaf2,traceroute_path:dcc1e8bce1,L4,traceroute_path,text,MATCH,,leaf1 -> pe1,"""leaf1 -> pe1""",True,1.0,exact
+TRACEROUTE_p2_leaf8,traceroute_path:688b324643,L4,traceroute_path,text,MATCH,,p2,"""p2""",True,1.0,exact
+TRACEROUTE_p10_leaf8,traceroute_path:a2593c3cb1,L4,traceroute_path,text,MATCH,,p10,"""p10""",True,1.0,exact
+TRACEROUTE_p7_leaf12,traceroute_path:d7282d6040,L4,traceroute_path,text,MATCH,,p7,"""p7""",True,1.0,exact
+TRACEROUTE_asbr2_p8,traceroute_path:426cffcfe0,L4,traceroute_path,text,MATCH,,asbr2 -> p8,"""asbr2 -> p8""",True,1.0,exact
+TRACEROUTE_leaf12_p8,traceroute_path:3820c0ef6c,L4,traceroute_path,text,MATCH,,leaf12 -> pe6,"""leaf12 -> pe6""",True,1.0,exact
+TRACEROUTE_leaf11_leaf1,traceroute_path:3b93a3bad3,L4,traceroute_path,text,MATCH,,leaf11 -> pe6,"""leaf11 -> pe6""",True,1.0,exact
+TRACEROUTE_pe1_p5,traceroute_path:89a5a45cb4,L4,traceroute_path,text,MATCH,,pe1 -> p1 -> p3 -> p5,"""pe1 -> p1 -> p3 -> p5""",True,1.0,exact
+TRACEROUTE_leaf11_leaf2,traceroute_path:6b28f8b1b9,L4,traceroute_path,text,MATCH,,leaf11 -> pe6,"""leaf11 -> pe6""",True,1.0,exact
+TRACEROUTE_leaf8_leaf4,traceroute_path:045cb0c22a,L4,traceroute_path,text,MATCH,,leaf8 -> pe4,"""leaf8 -> pe4""",True,1.0,exact
+TRACEROUTE_leaf7_leaf4,traceroute_path:39352a8642,L4,traceroute_path,text,MATCH,,leaf7 -> pe4,"""leaf7 -> pe4""",True,1.0,exact
+TRACEROUTE_leaf12_leaf2,traceroute_path:f0134ca732,L4,traceroute_path,text,MATCH,,leaf12 -> pe6,"""leaf12 -> pe6""",True,1.0,exact
+TRACEROUTE_leaf2_leaf9,traceroute_path:76578c8b79,L4,traceroute_path,text,MATCH,,leaf2 -> pe1,"""leaf2 -> pe1""",True,1.0,exact
+TRACEROUTE_pe3_p7,traceroute_path:d54dd7b7a5,L4,traceroute_path,text,MATCH,,pe3 -> p5 -> p6 -> p7,"""pe3 -> p5 -> p6 -> p7""",True,1.0,exact
+TRACEROUTE_pe6_leaf7,traceroute_path:7bb4b4724f,L4,traceroute_path,text,MATCH,,pe6,"""pe6""",True,1.0,exact
+TRACEROUTE_leaf9_leaf8,traceroute_path:a4e4db31a1,L4,traceroute_path,text,MATCH,,leaf9 -> pe5,"""leaf9 -> pe5""",True,1.0,exact
+TRACEROUTE_leaf12_p5,traceroute_path:0c776c4e80,L4,traceroute_path,text,MATCH,,leaf12 -> pe6,"""leaf12 -> pe6""",True,1.0,exact
+TRACEROUTE_leaf8_pe5,traceroute_path:b3a44b1b00,L4,traceroute_path,text,MATCH,,leaf8 -> pe4,"""leaf8 -> pe4""",True,1.0,exact
+TRACEROUTE_leaf5_p2,traceroute_path:8f4a2810d3,L4,traceroute_path,text,MATCH,,leaf5 -> pe3,"""leaf5 -> pe3""",True,1.0,exact
+TRACEROUTE_pe6_leaf3,traceroute_path:a1c4095c17,L4,traceroute_path,text,MATCH,,pe6,"""pe6""",True,1.0,exact
+TRACEROUTE_p3_p6,traceroute_path:b3d3071467,L4,traceroute_path,text,MATCH,,p3 -> p5 -> p6,"""p3 -> p5 -> p6""",True,1.0,exact
+TRACEROUTE_p10_pe3,traceroute_path:c6fce681b6,L4,traceroute_path,text,MATCH,,p10 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> pe3,"""p10 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> pe3""",True,1.0,exact
+TRACEROUTE_p7_asbr2,traceroute_path:e5d8d817dc,L4,traceroute_path,text,MATCH,,p7 -> p8 -> asbr2,"""p7 -> p8 -> asbr2""",True,1.0,exact
+TRACEROUTE_asbr2_p9,traceroute_path:4f20dc4798,L4,traceroute_path,text,MATCH,,asbr2 -> p10 -> p9,"""asbr2 -> p10 -> p9""",True,1.0,exact
+TRACEROUTE_leaf1_asbr1,traceroute_path:9a48cc70dd,L4,traceroute_path,text,MATCH,,leaf1 -> pe1,"""leaf1 -> pe1""",True,1.0,exact
+TRACEROUTE_pe3_leaf11,traceroute_path:dec3b06ec5,L4,traceroute_path,text,MATCH,,pe3,"""pe3""",True,1.0,exact
+TRACEROUTE_pe2_p3,traceroute_path:d74eb314f5,L4,traceroute_path,text,MATCH,,pe2 -> p2 -> p1 -> p3,"""pe2 -> p2 -> p1 -> p3""",True,1.0,exact
+TRACEROUTE_p8_leaf3,traceroute_path:281f1723e5,L4,traceroute_path,text,MATCH,,p8,"""p8""",True,1.0,exact
+TRACEROUTE_leaf5_leaf2,traceroute_path:0537bfa8c9,L4,traceroute_path,text,MATCH,,leaf5 -> pe3,"""leaf5 -> pe3""",True,1.0,exact
+TRACEROUTE_leaf6_p2,traceroute_path:105267b824,L4,traceroute_path,text,MATCH,,leaf6 -> pe3,"""leaf6 -> pe3""",True,1.0,exact
+TRACEROUTE_leaf5_leaf3,traceroute_path:3c08ed8e90,L4,traceroute_path,text,MATCH,,leaf5 -> pe3,"""leaf5 -> pe3""",True,1.0,exact
+TRACEROUTE_pe4_leaf9,traceroute_path:8b1d9c8b2b,L4,traceroute_path,text,MATCH,,pe4,"""pe4""",True,1.0,exact
+TRACEROUTE_p4_p2,traceroute_path:671ab3f535,L4,traceroute_path,text,MATCH,,p4 -> p2,"""p4 -> p2""",True,1.0,exact
+TRACEROUTE_p10_asbr1,traceroute_path:80699e520a,L4,traceroute_path,text,MATCH,,p10 -> p9 -> asbr1,"""p10 -> p9 -> asbr1""",True,1.0,exact
+TRACEROUTE_asbr2_leaf8,traceroute_path:427f1531bf,L4,traceroute_path,text,MATCH,,asbr2,"""asbr2""",True,1.0,exact
+TRACEROUTE_p1_p8,traceroute_path:5304de0ea1,L4,traceroute_path,text,MATCH,,p1 -> p3 -> p5 -> p6 -> p7 -> p8,"""p1 -> p3 -> p5 -> p6 -> p7 -> p8""",True,1.0,exact
+TRACEROUTE_pe3_asbr1,traceroute_path:0d6f8ee791,L4,traceroute_path,text,MATCH,,pe3 -> p5 -> p6 -> p7 -> asbr1,"""pe3 -> p5 -> p6 -> p7 -> asbr1""",True,1.0,exact
+TRACEROUTE_pe3_leaf12,traceroute_path:087984716d,L4,traceroute_path,text,MATCH,,pe3,"""pe3""",True,1.0,exact
+TRACEROUTE_pe1_leaf2,traceroute_path:eb49cf21d3,L4,traceroute_path,text,MATCH,,pe1,"""pe1""",True,1.0,exact
+TRACEROUTE_p10_p9,traceroute_path:2a6b59e734,L4,traceroute_path,text,MATCH,,p10 -> p9,"""p10 -> p9""",True,1.0,exact
+TRACEROUTE_p10_leaf5,traceroute_path:ac2c474657,L4,traceroute_path,text,MATCH,,p10,"""p10""",True,1.0,exact
+TRACEROUTE_pe2_leaf9,traceroute_path:71b02f62e6,L4,traceroute_path,text,MATCH,,pe2,"""pe2""",True,1.0,exact
+TRACEROUTE_asbr2_leaf5,traceroute_path:4055e221b7,L4,traceroute_path,text,MATCH,,asbr2,"""asbr2""",True,1.0,exact
+TRACEROUTE_pe1_leaf5,traceroute_path:bdcb21b563,L4,traceroute_path,text,MATCH,,pe1,"""pe1""",True,1.0,exact
+TRACEROUTE_leaf10_leaf3,traceroute_path:f1131a6e4e,L4,traceroute_path,text,MATCH,,leaf10 -> pe5,"""leaf10 -> pe5""",True,1.0,exact
+TRACEROUTE_leaf4_pe5,traceroute_path:fa0ca92ae4,L4,traceroute_path,text,MATCH,,leaf4 -> pe2,"""leaf4 -> pe2""",True,1.0,exact
+TRACEROUTE_p9_p3,traceroute_path:64e381a40d,L4,traceroute_path,text,MATCH,,p9 -> asbr1 -> p7 -> p6 -> p5 -> p3,"""p9 -> asbr1 -> p7 -> p6 -> p5 -> p3""",True,1.0,exact
+TRACEROUTE_pe1_leaf7,traceroute_path:26be1179dd,L4,traceroute_path,text,MATCH,,pe1,"""pe1""",True,1.0,exact
+TRACEROUTE_p2_leaf3,traceroute_path:571450bedf,L4,traceroute_path,text,MATCH,,p2,"""p2""",True,1.0,exact
+TRACEROUTE_pe6_leaf5,traceroute_path:240e5e317e,L4,traceroute_path,text,MATCH,,pe6,"""pe6""",True,1.0,exact
+TRACEROUTE_pe3_leaf1,traceroute_path:b352256208,L4,traceroute_path,text,MATCH,,pe3,"""pe3""",True,1.0,exact
+TRACEROUTE_pe3_leaf2,traceroute_path:c91c79f5d8,L4,traceroute_path,text,MATCH,,pe3,"""pe3""",True,1.0,exact
+TRACEROUTE_p7_leaf10,traceroute_path:ed7814027b,L4,traceroute_path,text,MATCH,,p7,"""p7""",True,1.0,exact
+TRACEROUTE_p2_pe5,traceroute_path:e7a4c0bc35,L4,traceroute_path,text,MATCH,,p2 -> p1 -> p3 -> p5 -> p6 -> p7 -> asbr1 -> pe5,"""p2 -> p1 -> p3 -> p5 -> p6 -> p7 -> asbr1 -> pe5""",True,1.0,exact
+TRACEROUTE_p10_asbr2,traceroute_path:72ad696677,L4,traceroute_path,text,MATCH,,p10 -> asbr2,"""p10 -> asbr2""",True,1.0,exact
+TRACEROUTE_pe6_pe4,traceroute_path:e73b47ddb7,L4,traceroute_path,text,MATCH,,pe6 -> asbr2 -> p8 -> pe4,"""pe6 -> asbr2 -> p8 -> pe4""",True,1.0,exact
+TRACEROUTE_asbr1_leaf3,traceroute_path:a956dac5a4,L4,traceroute_path,text,MATCH,,asbr1,"""asbr1""",True,1.0,exact
+REACH_p9_pe5_TCP,reachability_status:8aeeab7387,L4,reachability_status,text,MATCH,,PATH: p9 -> asbr1 -> pe5; REACHABLE: TRUE,"""PATH: p9 -> asbr1 -> pe5; REACHABLE: TRUE""",True,1.0,exact
+REACH_pe3_asbr1_TCP,reachability_status:02c1f3efac,L4,reachability_status,text,MATCH,,PATH: pe3 -> p5 -> p6 -> p7 -> asbr1; REACHABLE: TRUE,"""PATH: pe3 -> p5 -> p6 -> p7 -> asbr1; REACHABLE: TRUE""",True,1.0,exact
+REACH_pe1_p8_ICMP,reachability_status:9f7a3bbda4,L4,reachability_status,text,MATCH,,PATH: pe1 -> p1 -> p3 -> p5 -> p6 -> p7 -> p8; REACHABLE: TRUE,"""PATH: pe1 -> p1 -> p3 -> p5 -> p6 -> p7 -> p8; REACHABLE: TRUE""",True,1.0,exact
+REACH_p5_leaf7_TCP,reachability_status:21352283f8,L4,reachability_status,text,MATCH,,PATH: p5; REACHABLE: FALSE; REASON: EXTERNAL,"""PATH: p5; REACHABLE: FALSE; REASON: EXTERNAL""",True,1.0,exact
+REACH_asbr2_leaf2_ICMP,reachability_status:569fd2dece,L4,reachability_status,text,MATCH,,PATH: asbr2; REACHABLE: FALSE; REASON: EXTERNAL,"""PATH: asbr2; REACHABLE: FALSE; REASON: EXTERNAL""",True,1.0,exact
+REACH_leaf9_leaf7_ICMP,reachability_status:920e8bad4f,L4,reachability_status,text,MATCH,,PATH: leaf9 -> pe5; REACHABLE: FALSE; REASON: NO_ROUTE,"""PATH: leaf9 -> pe5; REACHABLE: FALSE; REASON: NO_ROUTE""",True,1.0,exact
+REACH_pe4_leaf4_TCP,reachability_status:dd651ed667,L4,reachability_status,text,MATCH,,PATH: pe4; REACHABLE: FALSE; REASON: EXTERNAL,"""PATH: pe4; REACHABLE: FALSE; REASON: EXTERNAL""",True,1.0,exact
+REACH_pe1_leaf12_TCP,reachability_status:6d138bd240,L4,reachability_status,text,MATCH,,PATH: pe1; REACHABLE: FALSE; REASON: EXTERNAL,"""PATH: pe1; REACHABLE: FALSE; REASON: EXTERNAL""",True,1.0,exact
+REACH_pe3_leaf8_ICMP,reachability_status:315baeea6d,L4,reachability_status,text,MATCH,,PATH: pe3; REACHABLE: FALSE; REASON: EXTERNAL,"""PATH: pe3; REACHABLE: FALSE; REASON: EXTERNAL""",True,1.0,exact
+REACH_pe4_pe2_ICMP,reachability_status:5064080cc3,L4,reachability_status,text,MATCH,,PATH: pe4 -> p6 -> p5 -> p3 -> p1 -> p2 -> pe2; REACHABLE: TRUE,"""PATH: pe4 -> p6 -> p5 -> p3 -> p1 -> p2 -> pe2; REACHABLE: TRUE""",True,1.0,exact
+REACH_p1_leaf2_TCP,reachability_status:c31ac1dc3f,L4,reachability_status,text,MATCH,,PATH: p1; REACHABLE: FALSE; REASON: EXTERNAL,"""PATH: p1; REACHABLE: FALSE; REASON: EXTERNAL""",True,1.0,exact
+REACH_pe2_leaf8_ICMP,reachability_status:36c85a0eec,L4,reachability_status,text,MATCH,,PATH: pe2; REACHABLE: FALSE; REASON: EXTERNAL,"""PATH: pe2; REACHABLE: FALSE; REASON: EXTERNAL""",True,1.0,exact
+REACH_p4_leaf8_ICMP,reachability_status:ef19940202,L4,reachability_status,text,MATCH,,PATH: p4; REACHABLE: FALSE; REASON: EXTERNAL,"""PATH: p4; REACHABLE: FALSE; REASON: EXTERNAL""",True,1.0,exact
+REACH_p7_leaf10_TCP,reachability_status:a284c8b3f1,L4,reachability_status,text,MATCH,,PATH: p7; REACHABLE: FALSE; REASON: EXTERNAL,"""PATH: p7; REACHABLE: FALSE; REASON: EXTERNAL""",True,1.0,exact
+REACH_p2_p8_TCP,reachability_status:16e5a9a5e9,L4,reachability_status,text,MATCH,,PATH: p2 -> p1 -> p3 -> p5 -> p6 -> p7 -> p8; REACHABLE: TRUE,"""PATH: p2 -> p1 -> p3 -> p5 -> p6 -> p7 -> p8; REACHABLE: TRUE""",True,1.0,exact
+REACH_p3_leaf7_TCP,reachability_status:5cfb03337c,L4,reachability_status,text,MATCH,,PATH: p3; REACHABLE: FALSE; REASON: EXTERNAL,"""PATH: p3; REACHABLE: FALSE; REASON: EXTERNAL""",True,1.0,exact
+REACH_p4_leaf2_ICMP,reachability_status:7402b87662,L4,reachability_status,text,MATCH,,PATH: p4; REACHABLE: FALSE; REASON: EXTERNAL,"""PATH: p4; REACHABLE: FALSE; REASON: EXTERNAL""",True,1.0,exact
+REACH_p10_pe2_ICMP,reachability_status:f2511ba9e3,L4,reachability_status,text,MATCH,,PATH: p10 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> p3 -> p1 -> p2 -> pe2; REACHABLE: TRUE,"""PATH: p10 -> asbr2 -> p8 -> p7 -> p6 -> p5 -> p3 -> p1 -> p2 -> pe2; REACHABLE: TRUE""",True,1.0,exact
+REACH_p1_p9_TCP,reachability_status:b18f52b0d0,L4,reachability_status,text,MATCH,,PATH: p1 -> p3 -> p5 -> p6 -> p7 -> asbr1 -> p9; REACHABLE: TRUE,"""PATH: p1 -> p3 -> p5 -> p6 -> p7 -> asbr1 -> p9; REACHABLE: TRUE""",True,1.0,exact
+REACH_leaf2_p5_TCP,reachability_status:13c59226aa,L4,reachability_status,text,MATCH,,PATH: leaf2 -> pe1; REACHABLE: FALSE; REASON: NO_ROUTE,"""PATH: leaf2 -> pe1; REACHABLE: FALSE; REASON: NO_ROUTE""",True,1.0,exact
+REACH_p7_asbr1_TCP,reachability_status:aba129b1aa,L4,reachability_status,text,MATCH,,PATH: p7 -> asbr1; REACHABLE: TRUE,"""PATH: p7 -> asbr1; REACHABLE: TRUE""",True,1.0,exact
+REACH_asbr2_asbr1_ICMP,reachability_status:0f9ab65857,L4,reachability_status,text,MATCH,,PATH: asbr2 -> p8 -> p7 -> asbr1; REACHABLE: TRUE,"""PATH: asbr2 -> p8 -> p7 -> asbr1; REACHABLE: TRUE""",True,1.0,exact
+REACH_pe1_leaf8_TCP,reachability_status:d0b66b99dc,L4,reachability_status,text,MATCH,,PATH: pe1; REACHABLE: FALSE; REASON: EXTERNAL,"""PATH: pe1; REACHABLE: FALSE; REASON: EXTERNAL""",True,1.0,exact
+REACH_leaf1_asbr2_ICMP,reachability_status:5339315b52,L4,reachability_status,text,MATCH,,PATH: leaf1 -> pe1; REACHABLE: FALSE; REASON: NO_ROUTE,"""PATH: leaf1 -> pe1; REACHABLE: FALSE; REASON: NO_ROUTE""",True,1.0,exact
+REACH_p7_leaf6_ICMP,reachability_status:42533cc063,L4,reachability_status,text,MATCH,,PATH: p7; REACHABLE: FALSE; REASON: EXTERNAL,"""PATH: p7; REACHABLE: FALSE; REASON: EXTERNAL""",True,1.0,exact
+REACH_p10_pe4_TCP,reachability_status:1c2be7b3e0,L4,reachability_status,text,MATCH,,PATH: p10 -> asbr2 -> p8 -> pe4; REACHABLE: TRUE,"""PATH: p10 -> asbr2 -> p8 -> pe4; REACHABLE: TRUE""",True,1.0,exact
+REACH_p1_p3_ICMP,reachability_status:d3aee24dad,L4,reachability_status,text,MATCH,,PATH: p1 -> p3; REACHABLE: TRUE,"""PATH: p1 -> p3; REACHABLE: TRUE""",True,1.0,exact
+REACH_leaf10_leaf8_TCP,reachability_status:68d0694687,L4,reachability_status,text,MATCH,,PATH: leaf10 -> pe5; REACHABLE: FALSE; REASON: NO_ROUTE,"""PATH: leaf10 -> pe5; REACHABLE: FALSE; REASON: NO_ROUTE""",True,1.0,exact
+REACH_leaf7_leaf3_ICMP,reachability_status:7327d687c6,L4,reachability_status,text,MATCH,,PATH: leaf7 -> pe4; REACHABLE: FALSE; REASON: NO_ROUTE,"""PATH: leaf7 -> pe4; REACHABLE: FALSE; REASON: NO_ROUTE""",True,1.0,exact
+REACH_leaf10_p5_TCP,reachability_status:2566a503f3,L4,reachability_status,text,MATCH,,PATH: leaf10 -> pe5; REACHABLE: FALSE; REASON: NO_ROUTE,"""PATH: leaf10 -> pe5; REACHABLE: FALSE; REASON: NO_ROUTE""",True,1.0,exact
+LOOP_DETECTION_GLOBAL,loop_detection:566d4b6821,L4,loop_detection,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+ACL_BLOCKING_p10_asbr2,acl_blocking_point:e7a067ee6d,L4,acl_blocking_point,text,MATCH,,ALLOWED,"""ALLOWED""",True,1.0,exact
+ACL_BLOCKING_pe6_leaf11,acl_blocking_point:57a279e7d8,L4,acl_blocking_point,text,MATCH,,ALLOWED,"""ALLOWED""",True,1.0,exact
+ACL_BLOCKING_leaf7_leaf3,acl_blocking_point:3dfbaafee0,L4,acl_blocking_point,text,MATCH,,ALLOWED,"""ALLOWED""",True,1.0,exact
+ACL_BLOCKING_p7_p2,acl_blocking_point:592223ba74,L4,acl_blocking_point,text,MATCH,,ALLOWED,"""ALLOWED""",True,1.0,exact
+ACL_BLOCKING_leaf11_leaf3,acl_blocking_point:bf5ed44a97,L4,acl_blocking_point,text,MATCH,,ALLOWED,"""ALLOWED""",True,1.0,exact
+ACL_BLOCKING_p1_p8,acl_blocking_point:b271f534d6,L4,acl_blocking_point,text,MATCH,,ALLOWED,"""ALLOWED""",True,1.0,exact
+ACL_BLOCKING_p7_asbr1,acl_blocking_point:e1195f6f22,L4,acl_blocking_point,text,MATCH,,ALLOWED,"""ALLOWED""",True,1.0,exact
+ACL_BLOCKING_pe4_p8,acl_blocking_point:dbddfd9bd4,L4,acl_blocking_point,text,MATCH,,ALLOWED,"""ALLOWED""",True,1.0,exact
+ACL_BLOCKING_p7_leaf2,acl_blocking_point:3cdc7b5f35,L4,acl_blocking_point,text,MATCH,,ALLOWED,"""ALLOWED""",True,1.0,exact
+ACL_BLOCKING_p4_leaf4,acl_blocking_point:5ea248b0b1,L4,acl_blocking_point,text,MATCH,,ALLOWED,"""ALLOWED""",True,1.0,exact
+BOUNDED_PATH_leaf10_leaf8,bounded_path_length:3ff63af7db,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf6_p8,bounded_path_length:f94c2239cb,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe4_p5,bounded_path_length:1950e9715f,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_p10_pe4,bounded_path_length:71040b2272,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_pe1_p8,bounded_path_length:70e56ba176,L4,bounded_path_length,number,MATCH,,7,7,True,1.0,"parser=7.0, gold=7.0"
+BOUNDED_PATH_p8_leaf3,bounded_path_length:281f1723e5,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf11_p6,bounded_path_length:fc7f81879d,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf7_p6,bounded_path_length:6a572a9f46,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p7_leaf9,bounded_path_length:c6313a13a1,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe6_p7,bounded_path_length:649f2c5768,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_leaf10_p6,bounded_path_length:f49db49615,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe6_leaf7,bounded_path_length:7bb4b4724f,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe1_p4,bounded_path_length:82f43d0fc6,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_p3_leaf7,bounded_path_length:31d9c738ec,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p3_leaf8,bounded_path_length:dc44af5da0,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p10_p1,bounded_path_length:63aabaeccb,L4,bounded_path_length,number,MATCH,,8,8,True,1.0,"parser=8.0, gold=8.0"
+BOUNDED_PATH_p3_pe5,bounded_path_length:e461874fd6,L4,bounded_path_length,number,MATCH,,6,6,True,1.0,"parser=6.0, gold=6.0"
+BOUNDED_PATH_pe1_p2,bounded_path_length:9963f3154f,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_p2_pe5,bounded_path_length:e7a4c0bc35,L4,bounded_path_length,number,MATCH,,8,8,True,1.0,"parser=8.0, gold=8.0"
+BOUNDED_PATH_pe6_leaf6,bounded_path_length:c1db308a25,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf7_pe5,bounded_path_length:66db15c5a1,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p4_leaf2,bounded_path_length:6b72321656,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf11_leaf9,bounded_path_length:8fd622b3b6,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_p7_p8,bounded_path_length:f5e3f80c63,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf2_leaf7,bounded_path_length:2fb79bb54b,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf12_p3,bounded_path_length:b4d922fcf0,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe2_leaf8,bounded_path_length:124e8b3b53,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf6_leaf7,bounded_path_length:1279ae07ff,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p10_pe3,bounded_path_length:c6fce681b6,L4,bounded_path_length,number,MATCH,,7,7,True,1.0,"parser=7.0, gold=7.0"
+BOUNDED_PATH_leaf9_p6,bounded_path_length:6cade7f7e3,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe6_leaf8,bounded_path_length:6db4b08563,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p10_leaf12,bounded_path_length:926eedde67,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe4_p2,bounded_path_length:312b5f59c5,L4,bounded_path_length,number,MATCH,,6,6,True,1.0,"parser=6.0, gold=6.0"
+BOUNDED_PATH_pe3_p6,bounded_path_length:dfcdb86c8b,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_pe3_p3,bounded_path_length:39b6638457,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_asbr2_asbr1,bounded_path_length:5631e212cd,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_pe4_p4,bounded_path_length:c727d06a9c,L4,bounded_path_length,number,MATCH,,5,5,True,1.0,"parser=5.0, gold=5.0"
+BOUNDED_PATH_pe3_asbr2,bounded_path_length:110cb868cd,L4,bounded_path_length,number,MATCH,,6,6,True,1.0,"parser=6.0, gold=6.0"
+BOUNDED_PATH_p5_p6,bounded_path_length:ff57634105,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf1_pe5,bounded_path_length:39f20052ff,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf11_leaf2,bounded_path_length:6b28f8b1b9,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p8_p6,bounded_path_length:eb7dcffe58,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_leaf12_p1,bounded_path_length:a91d0abf0d,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p10_leaf5,bounded_path_length:ac2c474657,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf1_p2,bounded_path_length:e3d845ce8f,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf10_asbr1,bounded_path_length:57dd420e22,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_asbr2_leaf2,bounded_path_length:1344093ee8,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf12_leaf5,bounded_path_length:24af676f44,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p3_leaf2,bounded_path_length:4dc3e62468,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p9_p3,bounded_path_length:64e381a40d,L4,bounded_path_length,number,MATCH,,6,6,True,1.0,"parser=6.0, gold=6.0"
+BOUNDED_PATH_p2_leaf8,bounded_path_length:688b324643,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf11_pe2,bounded_path_length:dab0175703,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p3_p8,bounded_path_length:902609e3e3,L4,bounded_path_length,number,MATCH,,5,5,True,1.0,"parser=5.0, gold=5.0"
+BOUNDED_PATH_pe1_p7,bounded_path_length:be9c1a22e0,L4,bounded_path_length,number,MATCH,,6,6,True,1.0,"parser=6.0, gold=6.0"
+BOUNDED_PATH_leaf6_leaf2,bounded_path_length:d040d6b796,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf11_asbr1,bounded_path_length:45ff467769,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe1_pe5,bounded_path_length:c5a6a9156a,L4,bounded_path_length,number,MATCH,,8,8,True,1.0,"parser=8.0, gold=8.0"
+BOUNDED_PATH_pe4_pe5,bounded_path_length:e7ec4d4ae1,L4,bounded_path_length,number,MATCH,,5,5,True,1.0,"parser=5.0, gold=5.0"
+BOUNDED_PATH_pe1_leaf12,bounded_path_length:06afadf01c,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p1_leaf5,bounded_path_length:158761bcf1,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_asbr2_leaf5,bounded_path_length:4055e221b7,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf11_p9,bounded_path_length:bca5863a51,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p10_p3,bounded_path_length:464db933e4,L4,bounded_path_length,number,MATCH,,7,7,True,1.0,"parser=7.0, gold=7.0"
+BOUNDED_PATH_leaf5_leaf7,bounded_path_length:1b39dca268,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe3_leaf1,bounded_path_length:b352256208,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf11_p4,bounded_path_length:86ec4ea05e,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p10_pe6,bounded_path_length:9c41ac7e83,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_asbr1_leaf4,bounded_path_length:27176598c2,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf12_p4,bounded_path_length:1783512dd4,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p4_p5,bounded_path_length:fdda2989b7,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_pe2_leaf6,bounded_path_length:17e8d82e97,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe1_leaf8,bounded_path_length:9e1f072e38,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p9_leaf2,bounded_path_length:128c5ae615,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe3_leaf12,bounded_path_length:087984716d,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf9_pe5,bounded_path_length:5555dcbf01,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p10_leaf8,bounded_path_length:a2593c3cb1,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf11_leaf1,bounded_path_length:3b93a3bad3,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe2_asbr1,bounded_path_length:569993a14c,L4,bounded_path_length,number,MATCH,,7,7,True,1.0,"parser=7.0, gold=7.0"
+BOUNDED_PATH_pe4_leaf8,bounded_path_length:59f9f9fa59,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf3_p6,bounded_path_length:9c54803a2e,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_asbr2_leaf9,bounded_path_length:f6caa6ac57,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p10_pe2,bounded_path_length:2258abd701,L4,bounded_path_length,number,MATCH,,10,10,True,1.0,"parser=10.0, gold=10.0"
+BOUNDED_PATH_p8_leaf7,bounded_path_length:5b16122db5,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf1_leaf4,bounded_path_length:a841e885b9,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe1_leaf1,bounded_path_length:1435203c63,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf5_p5,bounded_path_length:a6f89f87c0,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf5_leaf4,bounded_path_length:126eb52afe,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf1_p4,bounded_path_length:7286e34e9e,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p7_pe2,bounded_path_length:8903b8e5a0,L4,bounded_path_length,number,MATCH,,7,7,True,1.0,"parser=7.0, gold=7.0"
+BOUNDED_PATH_leaf12_asbr1,bounded_path_length:ea1d7ce035,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p4_p8,bounded_path_length:d18ee49fb1,L4,bounded_path_length,number,MATCH,,6,6,True,1.0,"parser=6.0, gold=6.0"
+BOUNDED_PATH_leaf1_p9,bounded_path_length:df1e74d27b,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf9_leaf8,bounded_path_length:a4e4db31a1,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p10_pe1,bounded_path_length:29e7b759f2,L4,bounded_path_length,number,MATCH,,9,9,True,1.0,"parser=9.0, gold=9.0"
+BOUNDED_PATH_p5_leaf7,bounded_path_length:49240e2a0c,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf11_p3,bounded_path_length:5ace7b91df,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf12_leaf11,bounded_path_length:e386a68652,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf10_p3,bounded_path_length:de8e73c908,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe4_leaf10,bounded_path_length:559fba4c54,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe1_leaf6,bounded_path_length:d0a5ed2dc8,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p5_p8,bounded_path_length:3223769384,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_p10_asbr2,bounded_path_length:72ad696677,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe4_p6,bounded_path_length:af2b02261e,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe1_pe6,bounded_path_length:79bfb46c43,L4,bounded_path_length,number,MATCH,,9,9,True,1.0,"parser=9.0, gold=9.0"
+BOUNDED_PATH_leaf5_p2,bounded_path_length:8f4a2810d3,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf2_pe5,bounded_path_length:cc34663cf2,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p1_leaf6,bounded_path_length:1b932afd68,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe4_p7,bounded_path_length:9b7ae36454,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_pe2_p9,bounded_path_length:cd67d52d7c,L4,bounded_path_length,number,MATCH,,8,8,True,1.0,"parser=8.0, gold=8.0"
+BOUNDED_PATH_p7_leaf1,bounded_path_length:810614e3cb,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p9_leaf4,bounded_path_length:1908dfe82a,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe6_leaf9,bounded_path_length:2392643c1e,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe2_leaf3,bounded_path_length:1e09853abb,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe2_leaf9,bounded_path_length:71b02f62e6,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p4_leaf6,bounded_path_length:9889d46fef,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p10_p2,bounded_path_length:d77f0a14df,L4,bounded_path_length,number,MATCH,,9,9,True,1.0,"parser=9.0, gold=9.0"
+BOUNDED_PATH_p3_leaf9,bounded_path_length:ce801b08b1,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p7_p4,bounded_path_length:2642e585b3,L4,bounded_path_length,number,MATCH,,5,5,True,1.0,"parser=5.0, gold=5.0"
+BOUNDED_PATH_leaf1_leaf2,bounded_path_length:dcc1e8bce1,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe3_asbr1,bounded_path_length:0d6f8ee791,L4,bounded_path_length,number,MATCH,,5,5,True,1.0,"parser=5.0, gold=5.0"
+BOUNDED_PATH_pe1_leaf11,bounded_path_length:ed1ab03747,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf6_leaf9,bounded_path_length:03b563078f,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf12_leaf8,bounded_path_length:0cc18b859f,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p4_leaf3,bounded_path_length:3fa7c5cc3e,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p10_p6,bounded_path_length:b1e5d667c8,L4,bounded_path_length,number,MATCH,,5,5,True,1.0,"parser=5.0, gold=5.0"
+BOUNDED_PATH_pe6_leaf11,bounded_path_length:fb53073c44,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe4_leaf6,bounded_path_length:54a7dc8a1b,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf10_p2,bounded_path_length:0f28fcda75,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe3_pe2,bounded_path_length:3386a89652,L4,bounded_path_length,number,MATCH,,6,6,True,1.0,"parser=6.0, gold=6.0"
+BOUNDED_PATH_p4_leaf5,bounded_path_length:6923c5e704,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p1_leaf7,bounded_path_length:b2f2c678a2,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p9_leaf5,bounded_path_length:4a3ea4704f,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p10_leaf10,bounded_path_length:59ac1cb77e,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe6_leaf2,bounded_path_length:3af1e82539,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf10_leaf6,bounded_path_length:cac48b5fa5,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe4_pe2,bounded_path_length:f0b0344542,L4,bounded_path_length,number,MATCH,,7,7,True,1.0,"parser=7.0, gold=7.0"
+BOUNDED_PATH_asbr2_leaf4,bounded_path_length:6d3b1516da,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf11_p2,bounded_path_length:339f16148e,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe1_pe3,bounded_path_length:831925086b,L4,bounded_path_length,number,MATCH,,5,5,True,1.0,"parser=5.0, gold=5.0"
+BOUNDED_PATH_p5_leaf8,bounded_path_length:afb0b3f05e,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p1_p6,bounded_path_length:b8a889b67d,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_pe4_leaf1,bounded_path_length:7f17a328e7,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p5_leaf3,bounded_path_length:406c659628,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf1_leaf3,bounded_path_length:6e7d9f3688,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf1_asbr1,bounded_path_length:9a48cc70dd,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf12_p9,bounded_path_length:d9e2042aac,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf4_pe5,bounded_path_length:fa0ca92ae4,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf11_leaf7,bounded_path_length:88aad56e94,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe6_pe4,bounded_path_length:e73b47ddb7,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_leaf1_leaf10,bounded_path_length:47295b41f2,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p7_asbr2,bounded_path_length:e5d8d817dc,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_pe6_leaf5,bounded_path_length:240e5e317e,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf8_leaf3,bounded_path_length:6cdf5085f3,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf10_leaf5,bounded_path_length:6e36b6c357,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_asbr2_p9,bounded_path_length:4f20dc4798,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_pe2_pe5,bounded_path_length:5df14fc344,L4,bounded_path_length,number,MATCH,,8,8,True,1.0,"parser=8.0, gold=8.0"
+BOUNDED_PATH_pe4_p1,bounded_path_length:2993ae5c8c,L4,bounded_path_length,number,MATCH,,5,5,True,1.0,"parser=5.0, gold=5.0"
+BOUNDED_PATH_p7_p1,bounded_path_length:4046d29308,L4,bounded_path_length,number,MATCH,,5,5,True,1.0,"parser=5.0, gold=5.0"
+BOUNDED_PATH_p3_leaf3,bounded_path_length:9368949ec2,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf2_leaf4,bounded_path_length:206c768141,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe3_p4,bounded_path_length:087dfea6ee,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_pe1_leaf5,bounded_path_length:bdcb21b563,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p1_asbr1,bounded_path_length:8ef33d9518,L4,bounded_path_length,number,MATCH,,6,6,True,1.0,"parser=6.0, gold=6.0"
+BOUNDED_PATH_pe4_p9,bounded_path_length:6a26382fcf,L4,bounded_path_length,number,MATCH,,5,5,True,1.0,"parser=5.0, gold=5.0"
+BOUNDED_PATH_asbr1_p5,bounded_path_length:f0227495df,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_asbr2_p5,bounded_path_length:7cc1a9ea3b,L4,bounded_path_length,number,MATCH,,5,5,True,1.0,"parser=5.0, gold=5.0"
+BOUNDED_PATH_p1_leaf10,bounded_path_length:1d2a71442b,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf10_leaf2,bounded_path_length:76807f87c3,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe1_leaf4,bounded_path_length:5f5ad2c1b9,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p1_p2,bounded_path_length:820e23e546,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p1_p4,bounded_path_length:a4b3456479,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_leaf5_p6,bounded_path_length:c5c8bb01ef,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe3_leaf6,bounded_path_length:eed8e6a2c1,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf1_p6,bounded_path_length:ea983fd706,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf9_leaf3,bounded_path_length:7c53fd9e47,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf12_leaf4,bounded_path_length:34f91e253f,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe1_leaf7,bounded_path_length:26be1179dd,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p2_leaf2,bounded_path_length:0bc31aea31,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe4_leaf7,bounded_path_length:215d10d226,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p1_p9,bounded_path_length:9e4032c47b,L4,bounded_path_length,number,MATCH,,7,7,True,1.0,"parser=7.0, gold=7.0"
+BOUNDED_PATH_p2_p5,bounded_path_length:1e93d0ec40,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_p9_p8,bounded_path_length:841cab4735,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_pe3_leaf11,bounded_path_length:dec3b06ec5,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe2_p6,bounded_path_length:e3f9cc04b8,L4,bounded_path_length,number,MATCH,,5,5,True,1.0,"parser=5.0, gold=5.0"
+BOUNDED_PATH_pe1_leaf9,bounded_path_length:4396852161,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe2_p8,bounded_path_length:0b2263cc34,L4,bounded_path_length,number,MATCH,,7,7,True,1.0,"parser=7.0, gold=7.0"
+BOUNDED_PATH_leaf12_leaf3,bounded_path_length:08699d45dc,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p2_leaf9,bounded_path_length:076d0f4cc5,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p10_leaf1,bounded_path_length:02af9bb46e,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf6_p9,bounded_path_length:ae7b3c4252,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p9_p2,bounded_path_length:8b8567af85,L4,bounded_path_length,number,MATCH,,8,8,True,1.0,"parser=8.0, gold=8.0"
+BOUNDED_PATH_leaf10_p8,bounded_path_length:0d40ebb4b5,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf2_leaf3,bounded_path_length:b0c09408f5,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p7_pe5,bounded_path_length:85c5269ad5,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_leaf10_p9,bounded_path_length:238f9d8dce,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p9_p6,bounded_path_length:0d30ad4894,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_pe3_pe5,bounded_path_length:bd3c71ca8f,L4,bounded_path_length,number,MATCH,,6,6,True,1.0,"parser=6.0, gold=6.0"
+BOUNDED_PATH_pe1_p9,bounded_path_length:45b5d10a73,L4,bounded_path_length,number,MATCH,,8,8,True,1.0,"parser=8.0, gold=8.0"
+BOUNDED_PATH_pe3_leaf5,bounded_path_length:2c02baf702,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe2_p5,bounded_path_length:a41361499e,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_p10_asbr1,bounded_path_length:80699e520a,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_leaf11_p1,bounded_path_length:8ce341eed2,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe6_pe3,bounded_path_length:8d5d6a30e8,L4,bounded_path_length,number,MATCH,,7,7,True,1.0,"parser=7.0, gold=7.0"
+BOUNDED_PATH_leaf10_leaf7,bounded_path_length:1c463ed4fb,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_asbr1_leaf8,bounded_path_length:39c885ee03,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf11_p8,bounded_path_length:66a0d41718,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf11_leaf4,bounded_path_length:f2ff33ed87,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_asbr1_leaf5,bounded_path_length:1e01c8c9ab,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe6_asbr2,bounded_path_length:bb76cb0eaf,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf5_p3,bounded_path_length:1cb6a28374,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p9_pe5,bounded_path_length:4403066d19,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_p10_leaf11,bounded_path_length:109baa3aa6,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf12_leaf1,bounded_path_length:7700266337,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf6_leaf4,bounded_path_length:86e6dc4398,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf10_leaf4,bounded_path_length:01826a8bfd,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf11_pe5,bounded_path_length:a08c01370e,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p3_p6,bounded_path_length:b3d3071467,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_p7_leaf2,bounded_path_length:ded2852f56,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe4_leaf4,bounded_path_length:624e535119,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf8_p6,bounded_path_length:c88437857c,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p3_p5,bounded_path_length:3f557fdf61,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p5_pe5,bounded_path_length:e65ae775b3,L4,bounded_path_length,number,MATCH,,5,5,True,1.0,"parser=5.0, gold=5.0"
+BOUNDED_PATH_pe4_asbr1,bounded_path_length:854492d5a9,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_p4_leaf9,bounded_path_length:f91e93655f,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe2_asbr2,bounded_path_length:93a33ce0b9,L4,bounded_path_length,number,MATCH,,8,8,True,1.0,"parser=8.0, gold=8.0"
+BOUNDED_PATH_p4_leaf7,bounded_path_length:62e4ac4a3a,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf1_leaf9,bounded_path_length:8d54645627,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p2_p3,bounded_path_length:30226e2aad,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_leaf12_pe5,bounded_path_length:b6c7acf896,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf5_leaf2,bounded_path_length:0537bfa8c9,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_asbr1_pe5,bounded_path_length:76a7087ba1,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe3_leaf7,bounded_path_length:379acdabcc,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p9_p5,bounded_path_length:2acabdd894,L4,bounded_path_length,number,MATCH,,5,5,True,1.0,"parser=5.0, gold=5.0"
+BOUNDED_PATH_pe3_p8,bounded_path_length:ace6e63a73,L4,bounded_path_length,number,MATCH,,5,5,True,1.0,"parser=5.0, gold=5.0"
+BOUNDED_PATH_leaf2_p5,bounded_path_length:c0bb49ee38,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p7_p5,bounded_path_length:8e5b11d106,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_pe6_p5,bounded_path_length:8321f5fe83,L4,bounded_path_length,number,MATCH,,6,6,True,1.0,"parser=6.0, gold=6.0"
+BOUNDED_PATH_pe2_leaf2,bounded_path_length:de50d27014,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p3_leaf4,bounded_path_length:3f3d01e778,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_asbr2_leaf8,bounded_path_length:427f1531bf,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf9_leaf4,bounded_path_length:0ee7bad600,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p2_p6,bounded_path_length:d21a620f4e,L4,bounded_path_length,number,MATCH,,5,5,True,1.0,"parser=5.0, gold=5.0"
+BOUNDED_PATH_asbr2_p6,bounded_path_length:d5f23d4058,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_p7_leaf3,bounded_path_length:287422755a,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf6_leaf5,bounded_path_length:874bcbb4c1,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe6_pe5,bounded_path_length:afea94cf3a,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_pe1_pe2,bounded_path_length:011107df04,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_pe3_leaf4,bounded_path_length:8464c6b0cb,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf1_asbr2,bounded_path_length:5deec87fa4,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf2_p6,bounded_path_length:64f66e428c,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe1_leaf10,bounded_path_length:196063462e,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe3_leaf10,bounded_path_length:6c38b923f4,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe3_leaf3,bounded_path_length:b770563a94,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe3_p9,bounded_path_length:8e8c67b6bc,L4,bounded_path_length,number,MATCH,,6,6,True,1.0,"parser=6.0, gold=6.0"
+BOUNDED_PATH_p1_leaf3,bounded_path_length:cb0c9dd809,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf12_p2,bounded_path_length:ea8eeb96c1,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe6_p9,bounded_path_length:41e9578b53,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p10_leaf2,bounded_path_length:d27bc4df60,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf9_p8,bounded_path_length:24c97a7fa0,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p10_leaf9,bounded_path_length:154b76c999,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p1_p5,bounded_path_length:2f56c55ea4,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_leaf10_pe5,bounded_path_length:8905954277,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p1_leaf4,bounded_path_length:8bb765b8b4,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe4_leaf9,bounded_path_length:8b1d9c8b2b,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf6_pe5,bounded_path_length:7149802ecb,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p4_asbr1,bounded_path_length:163c34b0e1,L4,bounded_path_length,number,MATCH,,6,6,True,1.0,"parser=6.0, gold=6.0"
+BOUNDED_PATH_leaf12_leaf9,bounded_path_length:d2e5c4a978,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf11_leaf5,bounded_path_length:a248d34643,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_asbr2_p3,bounded_path_length:097e1c1f8e,L4,bounded_path_length,number,MATCH,,6,6,True,1.0,"parser=6.0, gold=6.0"
+BOUNDED_PATH_leaf9_leaf7,bounded_path_length:5888540b36,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf4_leaf3,bounded_path_length:85cf0a193c,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe6_leaf12,bounded_path_length:65023dd414,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p7_asbr1,bounded_path_length:868f4619f1,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf5_leaf8,bounded_path_length:4485fff6f0,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf2_leaf9,bounded_path_length:76578c8b79,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf11_leaf8,bounded_path_length:7544ef6587,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p9_leaf3,bounded_path_length:7018c01e86,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p7_p2,bounded_path_length:2f6f165c32,L4,bounded_path_length,number,MATCH,,6,6,True,1.0,"parser=6.0, gold=6.0"
+BOUNDED_PATH_leaf11_leaf10,bounded_path_length:3299afa684,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe4_p3,bounded_path_length:7e0c8fc240,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_p10_leaf3,bounded_path_length:093cc2b03d,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe2_p1,bounded_path_length:b9d0c92d14,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_p2_leaf3,bounded_path_length:571450bedf,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p4_p9,bounded_path_length:0d15a1ac10,L4,bounded_path_length,number,MATCH,,7,7,True,1.0,"parser=7.0, gold=7.0"
+BOUNDED_PATH_pe2_leaf10,bounded_path_length:f4f9ac834e,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf11_asbr2,bounded_path_length:96e29fa8f4,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p2_p8,bounded_path_length:0c1af22a6f,L4,bounded_path_length,number,MATCH,,7,7,True,1.0,"parser=7.0, gold=7.0"
+BOUNDED_PATH_pe6_asbr1,bounded_path_length:e3266b0dde,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_pe2_leaf7,bounded_path_length:f5c0129c2e,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe1_p6,bounded_path_length:ca0ab732a8,L4,bounded_path_length,number,MATCH,,5,5,True,1.0,"parser=5.0, gold=5.0"
+BOUNDED_PATH_p10_p7,bounded_path_length:dd69953dbb,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_leaf10_p5,bounded_path_length:d2b9e362c9,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p7_leaf5,bounded_path_length:dae18777ab,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf1_leaf7,bounded_path_length:978358d17f,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p1_p3,bounded_path_length:85077ea73e,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p7_leaf6,bounded_path_length:b11edfda0b,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_asbr1_p8,bounded_path_length:b680a5b339,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_p10_leaf7,bounded_path_length:281636d56b,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf12_p6,bounded_path_length:dcdd48275a,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p4_pe5,bounded_path_length:ee0365eb77,L4,bounded_path_length,number,MATCH,,7,7,True,1.0,"parser=7.0, gold=7.0"
+BOUNDED_PATH_pe3_p7,bounded_path_length:d54dd7b7a5,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_leaf6_p2,bounded_path_length:105267b824,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf1_p3,bounded_path_length:0d36366864,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p1_p8,bounded_path_length:5304de0ea1,L4,bounded_path_length,number,MATCH,,6,6,True,1.0,"parser=6.0, gold=6.0"
+BOUNDED_PATH_leaf11_leaf3,bounded_path_length:0e98471077,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe1_p3,bounded_path_length:aebe5a1827,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_p10_p4,bounded_path_length:2e685a69be,L4,bounded_path_length,number,MATCH,,8,8,True,1.0,"parser=8.0, gold=8.0"
+BOUNDED_PATH_leaf5_leaf3,bounded_path_length:3c08ed8e90,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p7_p6,bounded_path_length:ed37692993,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_asbr2_leaf3,bounded_path_length:62124e243a,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf1_p8,bounded_path_length:cf9fece538,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf6_p5,bounded_path_length:50c76a84f7,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p1_leaf9,bounded_path_length:9c927cc749,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_asbr1_p2,bounded_path_length:20072b347b,L4,bounded_path_length,number,MATCH,,7,7,True,1.0,"parser=7.0, gold=7.0"
+BOUNDED_PATH_pe4_leaf5,bounded_path_length:a2b17e93e4,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf6_p6,bounded_path_length:654e796ff0,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p2_leaf7,bounded_path_length:659f26ebd4,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf12_leaf6,bounded_path_length:5beecd116b,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe6_leaf3,bounded_path_length:a1c4095c17,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe3_p5,bounded_path_length:93fef30353,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe2_p3,bounded_path_length:d74eb314f5,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_asbr1_leaf6,bounded_path_length:fb98687582,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf11_p5,bounded_path_length:e1d2557b96,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p5_leaf4,bounded_path_length:9847c5795a,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p10_leaf4,bounded_path_length:1c1da079d7,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe1_p5,bounded_path_length:89a5a45cb4,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_pe6_p2,bounded_path_length:b9b7ed6181,L4,bounded_path_length,number,MATCH,,9,9,True,1.0,"parser=9.0, gold=9.0"
+BOUNDED_PATH_pe3_leaf9,bounded_path_length:0a5466a9f2,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p6_pe5,bounded_path_length:477dee6280,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_p7_leaf11,bounded_path_length:2108e71a44,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe6_pe2,bounded_path_length:c9382a8e5a,L4,bounded_path_length,number,MATCH,,10,10,True,1.0,"parser=10.0, gold=10.0"
+BOUNDED_PATH_leaf3_pe5,bounded_path_length:a0aa1735af,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe3_p2,bounded_path_length:102584dc87,L4,bounded_path_length,number,MATCH,,5,5,True,1.0,"parser=5.0, gold=5.0"
+BOUNDED_PATH_leaf6_leaf3,bounded_path_length:ca1cc4744e,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe1_leaf3,bounded_path_length:1195432cf0,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p4_p2,bounded_path_length:671ab3f535,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p1_pe5,bounded_path_length:186545f9b2,L4,bounded_path_length,number,MATCH,,7,7,True,1.0,"parser=7.0, gold=7.0"
+BOUNDED_PATH_leaf11_leaf6,bounded_path_length:9fc952cf10,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p8_leaf4,bounded_path_length:54fb1519a7,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe2_leaf1,bounded_path_length:5294fb6d6c,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf4_p6,bounded_path_length:063f779794,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf12_leaf10,bounded_path_length:f07422a65e,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf12_pe2,bounded_path_length:e2a334141a,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe6_p3,bounded_path_length:bd77bacb89,L4,bounded_path_length,number,MATCH,,7,7,True,1.0,"parser=7.0, gold=7.0"
+BOUNDED_PATH_asbr2_leaf7,bounded_path_length:b9e66d3993,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf12_p5,bounded_path_length:0c776c4e80,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe4_p8,bounded_path_length:1e850a0775,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf1_p5,bounded_path_length:5663bb4d62,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf5_leaf9,bounded_path_length:31ce9dd87f,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe2_leaf5,bounded_path_length:74081089b4,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf1_p1,bounded_path_length:2ecc0b7be5,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe6_leaf4,bounded_path_length:e5ef39ea69,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe1_pe4,bounded_path_length:d823bfdbc9,L4,bounded_path_length,number,MATCH,,6,6,True,1.0,"parser=6.0, gold=6.0"
+BOUNDED_PATH_p9_leaf7,bounded_path_length:edef79c322,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe1_p1,bounded_path_length:00c5947fe1,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf1_leaf5,bounded_path_length:2601ee7ff0,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p7_leaf8,bounded_path_length:af089ad94b,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe2_p4,bounded_path_length:05b9883e5d,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_p9_leaf8,bounded_path_length:109ab43d19,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe3_leaf2,bounded_path_length:c91c79f5d8,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p1_asbr2,bounded_path_length:d882c3a946,L4,bounded_path_length,number,MATCH,,7,7,True,1.0,"parser=7.0, gold=7.0"
+BOUNDED_PATH_p7_leaf7,bounded_path_length:bdf83d4f85,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p2_leaf4,bounded_path_length:b1dd2e8733,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p7_p3,bounded_path_length:ed8666e284,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_leaf10_leaf3,bounded_path_length:f1131a6e4e,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_asbr1_leaf9,bounded_path_length:a6370aa893,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p1_leaf2,bounded_path_length:0c84d22545,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p10_p9,bounded_path_length:2a6b59e734,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf7_leaf4,bounded_path_length:39352a8642,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_asbr1_p9,bounded_path_length:d75879f423,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe2_p2,bounded_path_length:b626af9f4a,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p4_leaf8,bounded_path_length:16ba951a01,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe4_leaf3,bounded_path_length:0d2c656e84,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf6_p3,bounded_path_length:52bdef7e3c,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p7_leaf12,bounded_path_length:d7282d6040,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p4_leaf4,bounded_path_length:e307f9b597,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf2_leaf8,bounded_path_length:13c5b411ed,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p10_p8,bounded_path_length:bac43e3586,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_pe1_asbr1,bounded_path_length:e6549e3c68,L4,bounded_path_length,number,MATCH,,7,7,True,1.0,"parser=7.0, gold=7.0"
+BOUNDED_PATH_p10_leaf6,bounded_path_length:a65f5da518,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p10_p5,bounded_path_length:1233688a34,L4,bounded_path_length,number,MATCH,,6,6,True,1.0,"parser=6.0, gold=6.0"
+BOUNDED_PATH_p4_p3,bounded_path_length:9412aeec36,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf12_leaf2,bounded_path_length:f0134ca732,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_asbr2_p8,bounded_path_length:426cffcfe0,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf5_pe5,bounded_path_length:c96f1aa5a1,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_asbr1_p3,bounded_path_length:ee8bc45fe9,L4,bounded_path_length,number,MATCH,,5,5,True,1.0,"parser=5.0, gold=5.0"
+BOUNDED_PATH_leaf6_leaf8,bounded_path_length:6fbe007b47,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe4_leaf11,bounded_path_length:4508268aa9,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf8_leaf7,bounded_path_length:af0f40c009,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p4_p6,bounded_path_length:b57ecc13db,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_asbr2_p2,bounded_path_length:76ee124e6f,L4,bounded_path_length,number,MATCH,,8,8,True,1.0,"parser=8.0, gold=8.0"
+BOUNDED_PATH_pe4_leaf12,bounded_path_length:2768e688aa,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_asbr1_p6,bounded_path_length:f521cbbd09,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_leaf8_pe5,bounded_path_length:b3a44b1b00,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe1_leaf2,bounded_path_length:eb49cf21d3,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf10_leaf9,bounded_path_length:462929908e,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_asbr2_pe5,bounded_path_length:507680f655,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_leaf8_p8,bounded_path_length:e2c6a08f90,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_asbr1_leaf2,bounded_path_length:ce40d22460,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe6_p1,bounded_path_length:4e0a03cb01,L4,bounded_path_length,number,MATCH,,8,8,True,1.0,"parser=8.0, gold=8.0"
+BOUNDED_PATH_p7_leaf10,bounded_path_length:ed7814027b,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf7_leaf3,bounded_path_length:7fa00d2c00,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_asbr1_leaf7,bounded_path_length:c1d63786a5,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe4_leaf2,bounded_path_length:cfa847a2ab,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe3_leaf8,bounded_path_length:2316931578,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe1_asbr2,bounded_path_length:7540fb1d26,L4,bounded_path_length,number,MATCH,,8,8,True,1.0,"parser=8.0, gold=8.0"
+BOUNDED_PATH_p7_p9,bounded_path_length:89822b4d4c,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_leaf8_leaf4,bounded_path_length:045cb0c22a,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf12_leaf7,bounded_path_length:d60fbf2bb2,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe3_p1,bounded_path_length:bc9819fc09,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_leaf5_p8,bounded_path_length:176336e911,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf12_asbr2,bounded_path_length:0dbc1f8d25,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe6_p6,bounded_path_length:b1b04770b4,L4,bounded_path_length,number,MATCH,,5,5,True,1.0,"parser=5.0, gold=5.0"
+BOUNDED_PATH_pe4_pe3,bounded_path_length:1d084cdc34,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_p7_leaf4,bounded_path_length:4541365ced,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe6_p8,bounded_path_length:4a74db0730,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_leaf10_asbr2,bounded_path_length:231ce49075,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe6_leaf1,bounded_path_length:74dbe5816e,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p10_pe5,bounded_path_length:283d3497ea,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p1_leaf8,bounded_path_length:8553df0697,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe2_leaf4,bounded_path_length:454b1a5c03,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_pe6_p4,bounded_path_length:978b29a75c,L4,bounded_path_length,number,MATCH,,8,8,True,1.0,"parser=8.0, gold=8.0"
+BOUNDED_PATH_leaf2_p8,bounded_path_length:353e875ba0,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_pe4_asbr2,bounded_path_length:0e4d054020,L4,bounded_path_length,number,MATCH,,3,3,True,1.0,"parser=3.0, gold=3.0"
+BOUNDED_PATH_asbr2_leaf6,bounded_path_length:7b3e730d3f,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_asbr1_leaf3,bounded_path_length:a956dac5a4,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_p4_asbr2,bounded_path_length:0d962c3308,L4,bounded_path_length,number,MATCH,,7,7,True,1.0,"parser=7.0, gold=7.0"
+BOUNDED_PATH_leaf9_p5,bounded_path_length:e58da54df5,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p8_pe5,bounded_path_length:8b8862d730,L4,bounded_path_length,number,MATCH,,4,4,True,1.0,"parser=4.0, gold=4.0"
+BOUNDED_PATH_pe6_leaf10,bounded_path_length:1a51311d32,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf12_p8,bounded_path_length:3820c0ef6c,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf10_p4,bounded_path_length:abc538a517,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_p9_leaf9,bounded_path_length:a460d3d32a,L4,bounded_path_length,number,MATCH,,1,1,True,1.0,"parser=1.0, gold=1.0"
+BOUNDED_PATH_leaf1_leaf8,bounded_path_length:947a2759c5,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BOUNDED_PATH_leaf1_leaf6,bounded_path_length:e8c33070c3,L4,bounded_path_length,number,MATCH,,2,2,True,1.0,"parser=2.0, gold=2.0"
+BLACKHOLE_DETECTION_GLOBAL,blackhole_destination_list:566d4b6821,L4,blackhole_destination_list,set,MATCH,,[],[],True,1.0,both_empty
+WAYPOINT_p10_pe5_p10,waypoint_traversal_path:606084cdbc,L4,waypoint_traversal_path,text,MATCH,,p10 -> pe5,"""p10 -> pe5""",True,1.0,exact
+WAYPOINT_p10_pe5_pe1,waypoint_traversal_path:d3b9d1edb1,L4,waypoint_traversal_path,text,MATCH,,NOT_TRAVERSED,"""NOT_TRAVERSED""",True,1.0,exact
+WAYPOINT_p10_pe5_pe6,waypoint_traversal_path:ec24103c9e,L4,waypoint_traversal_path,text,MATCH,,NOT_TRAVERSED,"""NOT_TRAVERSED""",True,1.0,exact
+WAYPOINT_p10_pe5_pe4,waypoint_traversal_path:977a0c8534,L4,waypoint_traversal_path,text,MATCH,,NOT_TRAVERSED,"""NOT_TRAVERSED""",True,1.0,exact
+WAYPOINT_p10_pe5_pe3,waypoint_traversal_path:c3258eafad,L4,waypoint_traversal_path,text,MATCH,,NOT_TRAVERSED,"""NOT_TRAVERSED""",True,1.0,exact
+ISOLATION_VRF_EDU_VRF_GOV,leaked_prefixes_list:92a0325284,L4,leaked_prefixes_list,set,MATCH,,[],[],True,1.0,both_empty
+ISOLATION_VRF_EDU_VRF_MIL,leaked_prefixes_list:066562a983,L4,leaked_prefixes_list,set,MATCH,,[],[],True,1.0,both_empty
+ISOLATION_VRF_EDU_VRF_RND,leaked_prefixes_list:c4d3693e73,L4,leaked_prefixes_list,set,MATCH,,[],[],True,1.0,both_empty
+ISOLATION_VRF_GOV_VRF_MIL,leaked_prefixes_list:5c30587933,L4,leaked_prefixes_list,set,MATCH,,[],[],True,1.0,both_empty
+ISOLATION_VRF_GOV_VRF_RND,leaked_prefixes_list:b84b5b47b3,L4,leaked_prefixes_list,set,MATCH,,[],[],True,1.0,both_empty
+ISOLATION_VRF_MIL_VRF_RND,leaked_prefixes_list:83ca7e5dc5,L4,leaked_prefixes_list,set,MATCH,,[],[],True,1.0,both_empty
+ASYMMETRIC_leaf1_p1,asymmetric_path_comparison:581be9d818,L4,asymmetric_path_comparison,text,MATCH,,"Forward: leaf1 -> pe1, Reverse: p1","""Forward: leaf1 -> pe1, Reverse: p1""",True,1.0,exact
+ASYMMETRIC_leaf11_asbr2,asymmetric_path_comparison:c3e03ad556,L4,asymmetric_path_comparison,text,MATCH,,"Forward: leaf11 -> pe6, Reverse: asbr2","""Forward: leaf11 -> pe6, Reverse: asbr2""",True,1.0,exact
+ASYMMETRIC_leaf12_leaf9,asymmetric_path_comparison:7664bfab7e,L4,asymmetric_path_comparison,text,MATCH,,"Forward: leaf12 -> pe6, Reverse: leaf9 -> pe5","""Forward: leaf12 -> pe6, Reverse: leaf9 -> pe5""",True,1.0,exact
+ASYMMETRIC_pe4_p8,asymmetric_path_comparison:624e5d65c1,L4,asymmetric_path_comparison,text,MATCH,,"Forward: pe4 -> p8, Reverse: p8 -> pe4","""Forward: pe4 -> p8, Reverse: p8 -> pe4""",True,1.0,exact
+ASYMMETRIC_leaf5_leaf4,asymmetric_path_comparison:184f5df8ab,L4,asymmetric_path_comparison,text,MATCH,,"Forward: leaf5 -> pe3, Reverse: leaf4 -> pe2","""Forward: leaf5 -> pe3, Reverse: leaf4 -> pe2""",True,1.0,exact
+ASYMMETRIC_asbr1_p8,asymmetric_path_comparison:e5c3d3c578,L4,asymmetric_path_comparison,text,MATCH,,"Forward: asbr1 -> p7 -> p8, Reverse: p8 -> p7 -> asbr1","""Forward: asbr1 -> p7 -> p8, Reverse: p8 -> p7 -> asbr1""",True,1.0,exact
+ASYMMETRIC_p8_leaf3,asymmetric_path_comparison:00dcdcf417,L4,asymmetric_path_comparison,text,MATCH,,"Forward: p8, Reverse: leaf3 -> pe2","""Forward: p8, Reverse: leaf3 -> pe2""",True,1.0,exact
+ASYMMETRIC_p2_leaf9,asymmetric_path_comparison:1864d2b6cd,L4,asymmetric_path_comparison,text,MATCH,,"Forward: p2, Reverse: leaf9 -> pe5","""Forward: p2, Reverse: leaf9 -> pe5""",True,1.0,exact
+ASYMMETRIC_asbr2_leaf9,asymmetric_path_comparison:17c8405dbe,L4,asymmetric_path_comparison,text,MATCH,,"Forward: asbr2, Reverse: leaf9 -> pe5","""Forward: asbr2, Reverse: leaf9 -> pe5""",True,1.0,exact
+ASYMMETRIC_p7_leaf4,asymmetric_path_comparison:b284b91379,L4,asymmetric_path_comparison,text,MATCH,,"Forward: p7, Reverse: leaf4 -> pe2","""Forward: p7, Reverse: leaf4 -> pe2""",True,1.0,exact
+SEC_BYPASS_p7_p8_p10,security_policy_bypass_check:d129441350,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p7 -> p8),"""VIOLATION (path: p7 -> p8)""",True,1.0,exact
+SEC_BYPASS_p8_p7_p10,security_policy_bypass_check:6e9ef5078d,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p8 -> p7),"""VIOLATION (path: p8 -> p7)""",True,1.0,exact
+SEC_BYPASS_p7_p8_pe1,security_policy_bypass_check:f23075fa11,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p7 -> p8),"""VIOLATION (path: p7 -> p8)""",True,1.0,exact
+SEC_BYPASS_p8_p7_pe1,security_policy_bypass_check:f5e4bb14c4,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p8 -> p7),"""VIOLATION (path: p8 -> p7)""",True,1.0,exact
+LINK_FAILURE_asbr1_p7,link_failure_impact:27894bc3dd,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_p9,link_failure_impact:b30c7fb45d,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_pe5,link_failure_impact:02caaa6577,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_asbr2,link_failure_impact:cbdc09e899,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_leaf1,link_failure_impact:a55624a760,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_leaf10,link_failure_impact:d06b917638,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_leaf11,link_failure_impact:68893e44b8,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_leaf12,link_failure_impact:62e47d01a0,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_leaf2,link_failure_impact:1c11b242fc,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_leaf3,link_failure_impact:afa791152f,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_leaf4,link_failure_impact:f3feb289f3,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_leaf5,link_failure_impact:bb21f4791a,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_leaf6,link_failure_impact:9f9fd66828,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_leaf7,link_failure_impact:44428856fe,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_leaf8,link_failure_impact:a93b9abc34,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_leaf9,link_failure_impact:317b408284,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_p1,link_failure_impact:15e112097a,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_p10,link_failure_impact:89be096296,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_p2,link_failure_impact:f49df7580c,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_p3,link_failure_impact:f9848f4178,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_p4,link_failure_impact:12bdfad041,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_p5,link_failure_impact:e5721b88d0,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_p6,link_failure_impact:9b3a224e53,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_p8,link_failure_impact:b820858a93,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_pe1,link_failure_impact:6382bc6156,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_pe2,link_failure_impact:9395ac1ba6,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_pe3,link_failure_impact:ed2426a865,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_pe4,link_failure_impact:123b86a9d8,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr1_pe6,link_failure_impact:51efb5ac4f,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_p8,link_failure_impact:e1712cf28e,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_p10,link_failure_impact:aac3a35339,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_pe6,link_failure_impact:eb871ff749,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_asbr1,link_failure_impact:dd72d76c48,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_leaf1,link_failure_impact:0cf76ad2a6,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_leaf10,link_failure_impact:b8403a1b28,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_leaf11,link_failure_impact:ea94662b7c,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_leaf12,link_failure_impact:42c10fdecd,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_leaf2,link_failure_impact:2b363c32c0,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_leaf3,link_failure_impact:e7fd45f05d,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_leaf4,link_failure_impact:a5c7845652,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_leaf5,link_failure_impact:2e52ec9e37,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_leaf6,link_failure_impact:3598e0c054,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_leaf7,link_failure_impact:65eee3e09b,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_leaf8,link_failure_impact:ace503cd65,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_leaf9,link_failure_impact:db12c4702d,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_p1,link_failure_impact:67c1da4655,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_p2,link_failure_impact:82161cd87b,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_p3,link_failure_impact:1fb8ff57cc,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_p4,link_failure_impact:f4f786f7bd,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_p5,link_failure_impact:f36c71058c,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_p6,link_failure_impact:553cd9c11b,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_p7,link_failure_impact:d97c2b651e,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_p9,link_failure_impact:2dd19302ba,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_pe1,link_failure_impact:e4dfb3c83b,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_pe2,link_failure_impact:8223200a45,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_pe3,link_failure_impact:03c21d61f4,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_pe4,link_failure_impact:fec6c7911a,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_asbr2_pe5,link_failure_impact:91c10528f6,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_leaf1_pe1,link_failure_impact:bd27a37e2a,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_leaf1_asbr1,link_failure_impact:06a29a852e,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_leaf1_asbr2,link_failure_impact:fc2d5f0786,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_leaf1_leaf10,link_failure_impact:58b39b0fc7,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_leaf1_leaf11,link_failure_impact:76e5a98d69,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_leaf1_leaf12,link_failure_impact:d4e3e4beb1,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_leaf1_leaf2,link_failure_impact:84f51154dc,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_leaf1_leaf3,link_failure_impact:bc1a44ecae,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_leaf1_leaf4,link_failure_impact:6cc9dbdcac,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_leaf1_leaf5,link_failure_impact:3694695629,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_leaf1_leaf6,link_failure_impact:399a416a74,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_leaf1_leaf7,link_failure_impact:83ebda09dc,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_leaf1_leaf8,link_failure_impact:88e12b215d,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_leaf1_leaf9,link_failure_impact:740dded4a9,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_leaf1_p1,link_failure_impact:7636b9072b,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+LINK_FAILURE_leaf1_p10,link_failure_impact:7aca01325e,L5,link_failure_impact,text,MATCH,,NONE,"""NONE""",True,1.0,both_empty
+SPOF_DETECTION_GLOBAL,spof_detection:566d4b6821,L5,spof_detection,set_str,MATCH,,[],[],True,1.0,both_empty
+K_FAILURE_p7_p8,redundant_paths_list:f5e3f80c63,L5,redundant_paths_list,set,MATCH,,"[""p7 → p8""]","[""p7 → p8""]",True,1.0,exact
+ROOT_CAUSE_leaf10_leaf6,root_cause_analysis:cac48b5fa5,L5,root_cause_analysis,text,MATCH,,pe5,"""pe5""",True,1.0,exact
+ROOT_CAUSE_leaf5_p5,root_cause_analysis:a6f89f87c0,L5,root_cause_analysis,text,MATCH,,pe3,"""pe3""",True,1.0,exact
+ROOT_CAUSE_leaf12_leaf8,root_cause_analysis:0cc18b859f,L5,root_cause_analysis,text,MATCH,,pe6,"""pe6""",True,1.0,exact
+ROOT_CAUSE_pe2_leaf5,root_cause_analysis:74081089b4,L5,root_cause_analysis,text,MATCH,,pe2,"""pe2""",True,1.0,exact
+ROOT_CAUSE_leaf10_leaf5,root_cause_analysis:6e36b6c357,L5,root_cause_analysis,text,MATCH,,pe5,"""pe5""",True,1.0,exact
+ROOT_CAUSE_leaf12_p4,root_cause_analysis:1783512dd4,L5,root_cause_analysis,text,MATCH,,pe6,"""pe6""",True,1.0,exact
+ROOT_CAUSE_pe2_leaf10,root_cause_analysis:f4f9ac834e,L5,root_cause_analysis,text,MATCH,,pe2,"""pe2""",True,1.0,exact
+ROOT_CAUSE_leaf2_pe5,root_cause_analysis:cc34663cf2,L5,root_cause_analysis,text,MATCH,,pe1,"""pe1""",True,1.0,exact
+ROOT_CAUSE_p10_leaf6,root_cause_analysis:a65f5da518,L5,root_cause_analysis,text,MATCH,,p10,"""p10""",True,1.0,exact
+ROOT_CAUSE_leaf10_p3,root_cause_analysis:de8e73c908,L5,root_cause_analysis,text,MATCH,,pe5,"""pe5""",True,1.0,exact
+ROOT_CAUSE_p3_leaf2,root_cause_analysis:4dc3e62468,L5,root_cause_analysis,text,MATCH,,p3,"""p3""",True,1.0,exact
+ROOT_CAUSE_pe2_leaf4,root_cause_analysis:454b1a5c03,L5,root_cause_analysis,text,MATCH,,pe2,"""pe2""",True,1.0,exact
+ROOT_CAUSE_asbr1_leaf8,root_cause_analysis:39c885ee03,L5,root_cause_analysis,text,MATCH,,asbr1,"""asbr1""",True,1.0,exact
+ROOT_CAUSE_leaf12_leaf4,root_cause_analysis:34f91e253f,L5,root_cause_analysis,text,MATCH,,pe6,"""pe6""",True,1.0,exact
+ROOT_CAUSE_p1_leaf10,root_cause_analysis:1d2a71442b,L5,root_cause_analysis,text,MATCH,,p1,"""p1""",True,1.0,exact
+ROOT_CAUSE_leaf12_leaf3,root_cause_analysis:08699d45dc,L5,root_cause_analysis,text,MATCH,,pe6,"""pe6""",True,1.0,exact
+ROOT_CAUSE_pe4_leaf1,root_cause_analysis:7f17a328e7,L5,root_cause_analysis,text,MATCH,,pe4,"""pe4""",True,1.0,exact
+ROOT_CAUSE_leaf11_p9,root_cause_analysis:bca5863a51,L5,root_cause_analysis,text,MATCH,,pe6,"""pe6""",True,1.0,exact
+ROOT_CAUSE_leaf8_leaf7,root_cause_analysis:af0f40c009,L5,root_cause_analysis,text,MATCH,,pe4,"""pe4""",True,1.0,exact
+ROOT_CAUSE_leaf6_leaf9,root_cause_analysis:03b563078f,L5,root_cause_analysis,text,MATCH,,pe3,"""pe3""",True,1.0,exact
+ROOT_CAUSE_leaf12_p1,root_cause_analysis:a91d0abf0d,L5,root_cause_analysis,text,MATCH,,pe6,"""pe6""",True,1.0,exact
+ROOT_CAUSE_leaf10_p6,root_cause_analysis:f49db49615,L5,root_cause_analysis,text,MATCH,,pe5,"""pe5""",True,1.0,exact
+ROOT_CAUSE_p4_leaf6,root_cause_analysis:9889d46fef,L5,root_cause_analysis,text,MATCH,,p4,"""p4""",True,1.0,exact
+ROOT_CAUSE_asbr1_leaf2,root_cause_analysis:ce40d22460,L5,root_cause_analysis,text,MATCH,,asbr1,"""asbr1""",True,1.0,exact
+ROOT_CAUSE_leaf10_pe5,root_cause_analysis:8905954277,L5,root_cause_analysis,text,MATCH,,pe5,"""pe5""",True,1.0,exact
+ROOT_CAUSE_leaf11_p8,root_cause_analysis:66a0d41718,L5,root_cause_analysis,text,MATCH,,pe6,"""pe6""",True,1.0,exact
+ROOT_CAUSE_leaf5_p8,root_cause_analysis:176336e911,L5,root_cause_analysis,text,MATCH,,pe3,"""pe3""",True,1.0,exact
+ROOT_CAUSE_p3_leaf3,root_cause_analysis:9368949ec2,L5,root_cause_analysis,text,MATCH,,p3,"""p3""",True,1.0,exact
+ROOT_CAUSE_leaf1_p9,root_cause_analysis:df1e74d27b,L5,root_cause_analysis,text,MATCH,,pe1,"""pe1""",True,1.0,exact
+ROOT_CAUSE_leaf12_pe2,root_cause_analysis:e2a334141a,L5,root_cause_analysis,text,MATCH,,pe6,"""pe6""",True,1.0,exact
+ROOT_CAUSE_p7_leaf2,root_cause_analysis:ded2852f56,L5,root_cause_analysis,text,MATCH,,p7,"""p7""",True,1.0,exact
+ROOT_CAUSE_leaf6_p6,root_cause_analysis:654e796ff0,L5,root_cause_analysis,text,MATCH,,pe3,"""pe3""",True,1.0,exact
+ROOT_CAUSE_pe4_leaf2,root_cause_analysis:cfa847a2ab,L5,root_cause_analysis,text,MATCH,,pe4,"""pe4""",True,1.0,exact
+ROOT_CAUSE_p7_leaf7,root_cause_analysis:bdf83d4f85,L5,root_cause_analysis,text,MATCH,,p7,"""p7""",True,1.0,exact
+ROOT_CAUSE_pe1_leaf11,root_cause_analysis:ed1ab03747,L5,root_cause_analysis,text,MATCH,,pe1,"""pe1""",True,1.0,exact
+ROOT_CAUSE_asbr2_leaf3,root_cause_analysis:62124e243a,L5,root_cause_analysis,text,MATCH,,asbr2,"""asbr2""",True,1.0,exact
+ROOT_CAUSE_leaf11_leaf7,root_cause_analysis:88aad56e94,L5,root_cause_analysis,text,MATCH,,pe6,"""pe6""",True,1.0,exact
+ROOT_CAUSE_pe4_leaf4,root_cause_analysis:624e535119,L5,root_cause_analysis,text,MATCH,,pe4,"""pe4""",True,1.0,exact
+ROOT_CAUSE_leaf1_leaf8,root_cause_analysis:947a2759c5,L5,root_cause_analysis,text,MATCH,,pe1,"""pe1""",True,1.0,exact
+ROOT_CAUSE_leaf12_p6,root_cause_analysis:dcdd48275a,L5,root_cause_analysis,text,MATCH,,pe6,"""pe6""",True,1.0,exact
+ROOT_CAUSE_p8_leaf4,root_cause_analysis:54fb1519a7,L5,root_cause_analysis,text,MATCH,,p8,"""p8""",True,1.0,exact
+ROOT_CAUSE_pe2_leaf6,root_cause_analysis:17e8d82e97,L5,root_cause_analysis,text,MATCH,,pe2,"""pe2""",True,1.0,exact
+ROOT_CAUSE_pe6_leaf8,root_cause_analysis:6db4b08563,L5,root_cause_analysis,text,MATCH,,pe6,"""pe6""",True,1.0,exact
+ROOT_CAUSE_p8_leaf7,root_cause_analysis:5b16122db5,L5,root_cause_analysis,text,MATCH,,p8,"""p8""",True,1.0,exact
+ROOT_CAUSE_leaf6_leaf7,root_cause_analysis:1279ae07ff,L5,root_cause_analysis,text,MATCH,,pe3,"""pe3""",True,1.0,exact
+ROOT_CAUSE_leaf11_pe5,root_cause_analysis:a08c01370e,L5,root_cause_analysis,text,MATCH,,pe6,"""pe6""",True,1.0,exact
+ROOT_CAUSE_pe1_leaf10,root_cause_analysis:196063462e,L5,root_cause_analysis,text,MATCH,,pe1,"""pe1""",True,1.0,exact
+ROOT_CAUSE_p4_leaf3,root_cause_analysis:3fa7c5cc3e,L5,root_cause_analysis,text,MATCH,,p4,"""p4""",True,1.0,exact
+NODE_FAILURE_p10,node_failure_impact:33a2ac2b94,L5,node_failure_impact,number,MATCH,,43,43,True,1.0,"parser=43.0, gold=43.0"
+NODE_FAILURE_pe1,node_failure_impact:4ccbada267,L5,node_failure_impact,number,MATCH,,43,43,True,1.0,"parser=43.0, gold=43.0"
+NODE_FAILURE_pe6,node_failure_impact:e811c3958b,L5,node_failure_impact,number,MATCH,,45,45,True,1.0,"parser=45.0, gold=45.0"
+NODE_FAILURE_pe4,node_failure_impact:6111b27eac,L5,node_failure_impact,number,MATCH,,43,43,True,1.0,"parser=43.0, gold=43.0"
+NODE_FAILURE_pe3,node_failure_impact:8c42c4983c,L5,node_failure_impact,number,MATCH,,43,43,True,1.0,"parser=43.0, gold=43.0"
+NODE_FAILURE_p7,node_failure_impact:b0e6d3010b,L5,node_failure_impact,number,MATCH,,43,43,True,1.0,"parser=43.0, gold=43.0"
+NODE_FAILURE_leaf12,node_failure_impact:b37a16b2fb,L5,node_failure_impact,number,MATCH,,43,43,True,1.0,"parser=43.0, gold=43.0"
+NODE_FAILURE_leaf11,node_failure_impact:88f7e872d9,L5,node_failure_impact,number,MATCH,,44,44,True,1.0,"parser=44.0, gold=44.0"
+NODE_FAILURE_pe2,node_failure_impact:8c1b88e5bd,L5,node_failure_impact,number,MATCH,,43,43,True,1.0,"parser=43.0, gold=43.0"
+NODE_FAILURE_leaf1,node_failure_impact:edcd1eab8d,L5,node_failure_impact,number,MATCH,,43,43,True,1.0,"parser=43.0, gold=43.0"
+DUAL_FAILURE_p1_p2,redundancy_verification:40392f1b2f,L5,redundancy_verification,text,MATCH,,43,"""43""",True,1.0,exact
+DUAL_FAILURE_p3_p4,redundancy_verification:a2dc4b309f,L5,redundancy_verification,text,MATCH,,43,"""43""",True,1.0,exact
+DUAL_FAILURE_p5_p6,redundancy_verification:cdac175c11,L5,redundancy_verification,text,MATCH,,43,"""43""",True,1.0,exact
+DUAL_FAILURE_p7_p8,redundancy_verification:172506136c,L5,redundancy_verification,text,MATCH,,43,"""43""",True,1.0,exact
+DUAL_FAILURE_p9_p10,redundancy_verification:78efd1d9a7,L5,redundancy_verification,text,MATCH,,42,"""42""",True,1.0,exact
+DUAL_FAILURE_pe1_pe2,redundancy_verification:063c7e06a8,L5,redundancy_verification,text,MATCH,,42,"""42""",True,1.0,exact
+DUAL_FAILURE_pe3_pe4,redundancy_verification:2e5967de03,L5,redundancy_verification,text,MATCH,,42,"""42""",True,1.0,exact
+DUAL_FAILURE_pe5_pe6,redundancy_verification:8d1b60520b,L5,redundancy_verification,text,MATCH,,45,"""45""",True,1.0,exact
+DUAL_FAILURE_leaf1_leaf2,redundancy_verification:b24f7175b1,L5,redundancy_verification,text,MATCH,,43,"""43""",True,1.0,exact
+DUAL_FAILURE_leaf3_leaf4,redundancy_verification:52145e3ff9,L5,redundancy_verification,text,MATCH,,43,"""43""",True,1.0,exact
+DUAL_FAILURE_leaf5_leaf6,redundancy_verification:66737a0610,L5,redundancy_verification,text,MATCH,,43,"""43""",True,1.0,exact
+DUAL_FAILURE_leaf7_leaf8,redundancy_verification:62909e9aac,L5,redundancy_verification,text,MATCH,,43,"""43""",True,1.0,exact
+DUAL_FAILURE_leaf9_leaf10,redundancy_verification:397f272a3d,L5,redundancy_verification,text,MATCH,,45,"""45""",True,1.0,exact
+DUAL_FAILURE_leaf11_leaf12,redundancy_verification:35e0e18bac,L5,redundancy_verification,text,MATCH,,44,"""44""",True,1.0,exact
+DUAL_FAILURE_asbr1_asbr2,redundancy_verification:b2bccb1a1a,L5,redundancy_verification,text,MATCH,,43,"""43""",True,1.0,exact
+TRIPLE_FAILURE_p1_p2_p3,triple_node_failure:2a76b3ac27,L5,triple_node_failure,text,MATCH,,NO (affected_flows: 42),"""NO (affected_flows: 42)""",True,1.0,exact
+WORST_CASE_FAILURE,worst_case_failure_analysis:566d4b6821,L5,worst_case_failure_analysis,text,MATCH,,pe6(45),"""pe6(45)""",True,1.0,exact
+NEGATIVE_TEST_FAKE_NODE,non_existent_node_check:4816fc9823,L5,non_existent_node_check,number,MATCH,,0,0,True,1.0,"parser=0.0, gold=0.0"
+CONFIG_CHANGE_BASELINE,config_change_impact:a859aa6954,L5,config_change_impact,text,MATCH,,"CHANGED (70 entries: 10.0.30.1 -> 10.0.32.1, 10.10.10.1 -> 10.0.32.1, 10.0.30.3 -> 10.0.32.1)","""CHANGED (70 entries: 10.0.30.1 -> 10.0.32.1, 10.10.10.1 -> 10.0.32.1, 10.0.30.3 -> 10.0.32.1)""",True,1.0,exact
+DIFF_REACH_BASELINE,differential_reachability:7d4eaaddd0,L5,differential_reachability,text,MATCH,,NO_DIFF,"""NO_DIFF""",True,1.0,exact
+POLICY_COMPLIANCE_p10,policy_compliance_check:da0910f0db,L5,policy_compliance_check,text,MATCH,,"VIOLATION: 10.0.1.0 -> 8.8.8.8, 10.0.1.1 -> 8.8.8.8, 10.0.11.0 -> 8.8.8.8","""VIOLATION: 10.0.1.0 -> 8.8.8.8, 10.0.1.1 -> 8.8.8.8, 10.0.11.0 -> 8.8.8.8""",True,1.0,exact
+SEC_BYPASS_p8_p7_p10__rs_Security_Policy_5,security_policy_bypass_check:6e9ef5078d-rs_Security_Policy_5,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p8 -> p7),"""VIOLATION (path: p8 -> p7)""",True,1.0,exact
+SEC_BYPASS_p7_p8_pe1__rs_Security_Policy_7,security_policy_bypass_check:f23075fa11-rs_Security_Policy_7,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p7 -> p8),"""VIOLATION (path: p7 -> p8)""",True,1.0,exact
+SEC_BYPASS_p7_p8_p10__rs_Security_Policy_9,security_policy_bypass_check:d129441350-rs_Security_Policy_9,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p7 -> p8),"""VIOLATION (path: p7 -> p8)""",True,1.0,exact
+SEC_BYPASS_p8_p7_p10__rs_Security_Policy_5__rs_Security_Policy_14,security_policy_bypass_check:6e9ef5078d-rs_Security_Policy_5-rs_Security_Policy_14,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p8 -> p7),"""VIOLATION (path: p8 -> p7)""",True,1.0,exact
+SEC_BYPASS_p8_p7_p10__rs_Security_Policy_5__rs_Security_Policy_14__rs_Security_Policy_19,security_policy_bypass_check:6e9ef5078d-rs_Security_Policy_5-rs_Security_Policy_14-rs_Security_Policy_19,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p8 -> p7),"""VIOLATION (path: p8 -> p7)""",True,1.0,exact
+SEC_BYPASS_p7_p8_p10__rs_Security_Policy_9__rs_Security_Policy_20,security_policy_bypass_check:d129441350-rs_Security_Policy_9-rs_Security_Policy_20,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p7 -> p8),"""VIOLATION (path: p7 -> p8)""",True,1.0,exact
+SEC_BYPASS_p7_p8_pe1__rs_Security_Policy_7__rs_Security_Policy_21,security_policy_bypass_check:f23075fa11-rs_Security_Policy_7-rs_Security_Policy_21,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p7 -> p8),"""VIOLATION (path: p7 -> p8)""",True,1.0,exact
+SEC_BYPASS_p8_p7_p10__rs_Security_Policy_5__rs_Security_Policy_14__rs_Security_Policy_22,security_policy_bypass_check:6e9ef5078d-rs_Security_Policy_5-rs_Security_Policy_14-rs_Security_Policy_22,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p8 -> p7),"""VIOLATION (path: p8 -> p7)""",True,1.0,exact
+SEC_BYPASS_p8_p7_p10__rs_Security_Policy_5__rs_Security_Policy_14__rs_Security_Policy_19__rs_Security_Policy_23,security_policy_bypass_check:6e9ef5078d-rs_Security_Policy_5-rs_Security_Policy_14-rs_Security_Policy_19-rs_Security_Policy_23,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p8 -> p7),"""VIOLATION (path: p8 -> p7)""",True,1.0,exact
+SEC_BYPASS_p8_p7_p10__rs_Security_Policy_5__rs_Security_Policy_14__rs_Security_Policy_19__rs_Security_Policy_23__rs_Security_Policy_26,security_policy_bypass_check:6e9ef5078d-rs_Security_Policy_5-rs_Security_Policy_14-rs_Security_Policy_19-rs_Security_Policy_23-rs_Security_Policy_26,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p8 -> p7),"""VIOLATION (path: p8 -> p7)""",True,1.0,exact
+SEC_BYPASS_p7_p8_pe1__rs_Security_Policy_27,security_policy_bypass_check:f23075fa11-rs_Security_Policy_27,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p7 -> p8),"""VIOLATION (path: p7 -> p8)""",True,1.0,exact
+SEC_BYPASS_p8_p7_p10__rs_Security_Policy_5__rs_Security_Policy_14__rs_Security_Policy_30,security_policy_bypass_check:6e9ef5078d-rs_Security_Policy_5-rs_Security_Policy_14-rs_Security_Policy_30,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p8 -> p7),"""VIOLATION (path: p8 -> p7)""",True,1.0,exact
+SEC_BYPASS_p7_p8_p10__rs_Security_Policy_9__rs_Security_Policy_20__rs_Security_Policy_32,security_policy_bypass_check:d129441350-rs_Security_Policy_9-rs_Security_Policy_20-rs_Security_Policy_32,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p7 -> p8),"""VIOLATION (path: p7 -> p8)""",True,1.0,exact
+SEC_BYPASS_p7_p8_pe1__rs_Security_Policy_7__rs_Security_Policy_21__rs_Security_Policy_33,security_policy_bypass_check:f23075fa11-rs_Security_Policy_7-rs_Security_Policy_21-rs_Security_Policy_33,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p7 -> p8),"""VIOLATION (path: p7 -> p8)""",True,1.0,exact
+SEC_BYPASS_p8_p7_p10__rs_Security_Policy_5__rs_Security_Policy_14__rs_Security_Policy_30__rs_Security_Policy_34,security_policy_bypass_check:6e9ef5078d-rs_Security_Policy_5-rs_Security_Policy_14-rs_Security_Policy_30-rs_Security_Policy_34,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p8 -> p7),"""VIOLATION (path: p8 -> p7)""",True,1.0,exact
+SEC_BYPASS_p7_p8_pe1__rs_Security_Policy_7__rs_Security_Policy_21__rs_Security_Policy_33__rs_Security_Policy_35,security_policy_bypass_check:f23075fa11-rs_Security_Policy_7-rs_Security_Policy_21-rs_Security_Policy_33-rs_Security_Policy_35,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p7 -> p8),"""VIOLATION (path: p7 -> p8)""",True,1.0,exact
+SEC_BYPASS_p8_p7_p10__rs_Security_Policy_5__rs_Security_Policy_14__rs_Security_Policy_30__rs_Security_Policy_34__rs_Security_Policy_36,security_policy_bypass_check:6e9ef5078d-rs_Security_Policy_5-rs_Security_Policy_14-rs_Security_Policy_30-rs_Security_Policy_34-rs_Security_Policy_36,L4,security_policy_bypass_check,text,MATCH,,VIOLATION (path: p8 -> p7),"""VIOLATION (path: p8 -> p7)""",True,1.0,exact

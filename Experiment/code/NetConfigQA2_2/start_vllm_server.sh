@@ -4,7 +4,7 @@
 # Usage:
 #   bash start_vllm_server.sh <model_alias>
 #
-# Aliases: gpt-oss | qwen3-coder | glm-flash | qwen3.5
+# Aliases: gpt-oss | qwen3-coder | qwen3.5 | qwen3.5-4b | fdtn-sec
 
 set -e
 
@@ -14,15 +14,16 @@ if [ -z "$1" ]; then
     echo "Available aliases:"
     echo "  gpt-oss      → openai/gpt-oss-20b"
     echo "  qwen3-coder  → stelterlab/Qwen3-Coder-30B-A3B-Instruct-AWQ"
-    echo "  glm-flash    → QuantTrio/GLM-4.7-Flash-AWQ"
     echo "  qwen3.5      → cyankiwi/Qwen3.5-9B-AWQ-4bit"
+    echo "  qwen3.5-4b   → cyankiwi/Qwen3.5-4B-AWQ-4bit"
+    echo "  fdtn-sec     → fdtn-ai/Foundation-Sec-1.1-8B-Instruct"
     exit 1
 fi
 
 ALIAS="$1"
 PORT=8000
 GPU_MEMORY_UTIL=0.90
-MAX_MODEL_LEN=40960
+MAX_MODEL_LEN=42000
 EXTRA_FLAGS=""
 EXTRA_ENV=""
 
@@ -35,20 +36,26 @@ case "$ALIAS" in
         HF_PATH="stelterlab/Qwen3-Coder-30B-A3B-Instruct-AWQ"
         SERVED_NAME="Qwen3-Coder"
         ;;
-    glm-flash)
-        HF_PATH="QuantTrio/GLM-4.7-Flash-AWQ"
-        SERVED_NAME="GLM-4.7-Flash"
-        EXTRA_FLAGS="--enforce-eager"
-        EXTRA_ENV="VLLM_USE_DEEP_GEMM=0"
-        ;;
     qwen3.5)
         HF_PATH="cyankiwi/Qwen3.5-9B-AWQ-4bit"
         SERVED_NAME="Qwen3.5-9B"
         EXTRA_FLAGS="--reasoning-parser qwen3"
         ;;
+    qwen3.5-4b)
+        HF_PATH="cyankiwi/Qwen3.5-4B-AWQ-4bit"
+        SERVED_NAME="Qwen3.5-4B"
+        MAX_MODEL_LEN=32768
+        GPU_MEMORY_UTIL=0.82
+        EXTRA_ENV="PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True"
+        EXTRA_FLAGS="--reasoning-parser qwen3"
+        ;;
+    fdtn-sec)
+        HF_PATH="fdtn-ai/Foundation-Sec-1.1-8B-Instruct"
+        SERVED_NAME="Foundation-Sec-8B"
+        ;;
     *)
         echo "Unknown alias: $ALIAS"
-        echo "Available: gpt-oss | qwen3-coder | glm-flash | qwen3.5"
+        echo "Available: gpt-oss | qwen3-coder | qwen3.5 | qwen3.5-4b | fdtn-sec"
         exit 1
         ;;
 esac

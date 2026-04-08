@@ -18,7 +18,6 @@ CURRENT_DIR = Path(__file__).resolve().parent
 BASE_DIR = CURRENT_DIR.parent
 sys.path.append(str(BASE_DIR))
 
-# --- [주의] state.py에 feedback_to_collector, outer_loop_count 상태가 추가되어야 합니다 ---
 from agents_v2.state import NetAgentState
 from agents_v2.model_loader import init_models
 import agents_v2.debate1 as d1
@@ -228,7 +227,7 @@ def main():
     
     # 여기서 데이터셋 경로 설정 
     input_path = BASE_DIR / "data" / "passages"  / "full_w_context" / "telequad_passage.json"
-    output_path = BASE_DIR / "data" / "debate_results" / "agents_v2" / "full_w_context3" / "telequad" / "telequad_result.json"
+    output_path = BASE_DIR / "data" / "debate_results" / "agents_v2" / "mas" / "telequad" / "telequad_result.json"
     
     if not input_path.exists():
         print(f"Input file not found: {input_path}")

@@ -53,14 +53,14 @@ COPY --from=frontend-builder /app/frontend/dist ./static
 
 # 환경변수 (런타임에 오버라이드 가능)
 ENV PYTHONUNBUFFERED=1
-ENV PORT=8000
+ENV PORT=8111
 
 # 포트 노출
-EXPOSE 8000
+EXPOSE 8111
 
 # 헬스체크
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/api/health || exit 1
+    CMD curl -f http://localhost:8111/api/health || exit 1
 
 # 실행
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8111"]

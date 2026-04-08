@@ -27,6 +27,50 @@ Step 6. 파이프라인 실행   → main_batfish.py → 데이터셋 생성
 
 ---
 
+## 0.5 배포 진행 체크리스트 (Progress Tracker)
+
+각 Lab 배포 시 현재 진행 상태를 추적한다. 완료된 항목에 `[x]` 표시.
+
+### Lab-B (20 nodes)
+```
+Phase 1: 준비
+  [ ] Config 생성 완료 (generator.py --topology lab_b_20nodes.yaml)
+  [ ] output/LabB_NCN_Basic_SP_20nodes/configs/ 에 20개 .cfg 확인
+  [ ] PNETLab 서버 RAM 16GB+ 확인
+
+Phase 2: 랩 생성 + Config 적용
+  [ ] PNETLab에서 "LabB_NCN_Basic_SP" 랩 생성
+  [ ] IOSv 노드 20개 추가 (Ethernet: 8개 필수!)
+  [ ] Cloud0 (Management) 네트워크 생성
+  [ ] Import Startup Configuration 완료 (txt/ 폴더)
+  [ ] Node ID remap 필요 시 완료
+
+Phase 3: 배선 (가장 시간 소모적 — ~1시간)
+  [ ] 관리망 배선: 20개 노드 e7 → Cloud0  (5분)
+  [ ] Region 1 코어 배선: P1-P4, PE1-PE2 (15분)
+  [ ] Region 1 액세스 배선: PE↔Leaf 4개 (5분)
+  [ ] Inter-Region 배선: P3↔P5 (2분)
+  [ ] Region 2 코어 배선: P5-P8, PE3-PE4 (15분)
+  [ ] Region 2 액세스 배선: PE↔Leaf 4개 (5분)
+
+Phase 4: 검증
+  [ ] Start All → 모든 노드 부팅 (녹색 아이콘)
+  [ ] 관리망 ping 확인 (10.10.10.11~38)
+  [ ] SSH 접속 확인 (ssh admin@10.10.10.11)
+  [ ] OSPF neighbor FULL 확인
+  [ ] BGP VPNv4 세션 확인
+  [ ] MPLS LDP neighbor 확인
+
+Phase 5: 파이프라인 연결
+  [ ] Data/Pnetlab/LabB_NCN_Basic_SP_20nodes/configs/ 에 .cfg 복사
+  [ ] device_info.json 생성 (telnet_port 실제값 입력)
+  [ ] Batfish 데이터셋 생성 (main_batfish.py)
+```
+
+> **팁**: Phase 3(배선)이 전체 작업의 60~70%를 차지한다. 아래 **섹션 2.5 효율적 배선 전략**을 반드시 참고할 것.
+
+---
+
 ## 1. 사전 준비 (Prerequisites)
 
 ### 1.1 하드웨어 요구사항
@@ -220,6 +264,108 @@ Lab-C에서 PE5와 PE6가 Leaf9의 172.18.1.0/24 서브넷에서 HSRP를 구성�
 | | PE6 | e4 (Gi0/4, VRF_SEC, HSRP Standby) |
 | | Leaf9 | e0 (Gi0/0) |
 
+### 2.5 효율적 배선 전략 (Wiring Strategy)
+
+배선은 가장 시간이 많이 걸리는 단계다. 아래 전략을 따르면 실수를 최소화하고 속도를 높일 수 있다.
+
+#### 2.5.1 배선 순서 원칙
+
+**반드시 이 순서로 배선할 것:**
+
+```
+① 관리망 먼저 (Cloud0 ↔ 모든 노드 e7)
+  → 이유: 배선 후 Start All하면 바로 SSH 접속 가능. config 오류 시 즉시 디버깅.
+
+② Region별로 코어(P↔P, P↔PE) 먼저
+  → 이유: OSPF neighbor가 먼저 올라와야 전체 토폴로지 동작 확인 가능.
+
+③ 액세스(PE↔Leaf) 나중에
+  → 이유: 코어가 안정되면 Leaf는 단순 연결. VRF 경로 전파도 코어 의존.
+
+④ Inter-Region 링크 마지막
+  → 이유: 각 Region이 독립적으로 동작하는 것을 먼저 확인.
+```
+
+#### 2.5.2 PNETLab Bridge 네이밍 컨벤션
+
+PNETLab에서 각 point-to-point 링크마다 Bridge(네트워크)를 생성한다.
+**네이밍이 일관되어야 나중에 디버깅이 쉽다.**
+
+```
+형식:  net_<NodeA>_<NodeB>
+예시:  net_P1_PE1, net_P1_P2, net_PE1_Leaf1
+관리망: net_mgmt (또는 Cloud0 자동 생성)
+HSRP:  net_hsrp_sec (공유 Bridge)
+```
+
+> **주의**: PNETLab UI에서 네트워크 이름은 생성 후 변경 불가. 처음부터 명확하게 지을 것.
+
+#### 2.5.3 Lab-B 배선 작업 체크시트 (22개 링크)
+
+아래 순서대로 배선하면 약 40분에 완료 가능하다. 각 행을 체크하며 진행.
+
+**Step 1 — 관리망 (5분)**
+```
+[ ] Cloud0 생성 (Type: Management)
+[ ] P1~P8 (8개) e7 → Cloud0
+[ ] PE1~PE4 (4개) e7 → Cloud0
+[ ] Leaf1~Leaf8 (8개) e7 → Cloud0
+```
+
+**Step 2 — Region 1 코어 (15분, 링크 #1~#7)**
+```
+[ ] #1  net_P1_PE1:   P1(e0) ↔ PE1(e0)
+[ ] #2  net_P1_P2:    P1(e1) ↔ P2(e0)
+[ ] #3  net_P1_P3:    P1(e2) ↔ P3(e0)
+[ ] #4  net_P2_PE2:   P2(e1) ↔ PE2(e0)
+[ ] #5  net_P2_P4:    P2(e2) ↔ P4(e0)
+[ ] #6  net_P3_P4:    P3(e1) ↔ P4(e1)
+[ ] #7  net_P4_PE2:   P4(e2) ↔ PE2(e1)
+```
+
+**Step 3 — Region 1 액세스 (5분, 링크 #8~#11)**
+```
+[ ] #8  net_PE1_Leaf1: PE1(e1) ↔ Leaf1(e0)
+[ ] #9  net_PE1_Leaf2: PE1(e2) ↔ Leaf2(e0)
+[ ] #10 net_PE2_Leaf3: PE2(e2) ↔ Leaf3(e0)
+[ ] #11 net_PE2_Leaf4: PE2(e3) ↔ Leaf4(e0)
+```
+
+**Step 4 — Inter-Region (2분, 링크 #12)**
+```
+[ ] #12 net_P3_P5:    P3(e2) ↔ P5(e2)   ← Inter-Region Backbone
+```
+
+**Step 5 — Region 2 코어 (15분, 링크 #13~#18)**
+```
+[ ] #13 net_P5_PE3:   P5(e0) ↔ PE3(e0)
+[ ] #14 net_P5_P6:    P5(e1) ↔ P6(e0)
+[ ] #15 net_P6_PE4:   P6(e1) ↔ PE4(e0)
+[ ] #16 net_P6_P7:    P6(e2) ↔ P7(e0)
+[ ] #17 net_P7_P8:    P7(e1) ↔ P8(e0)
+[ ] #18 net_P8_PE4:   P8(e1) ↔ PE4(e1)
+```
+
+**Step 6 — Region 2 액세스 (5분, 링크 #19~#22)**
+```
+[ ] #19 net_PE3_Leaf5: PE3(e1) ↔ Leaf5(e0)
+[ ] #20 net_PE3_Leaf6: PE3(e2) ↔ Leaf6(e0)
+[ ] #21 net_PE4_Leaf7: PE4(e2) ↔ Leaf7(e0)
+[ ] #22 net_PE4_Leaf8: PE4(e3) ↔ Leaf8(e0)
+```
+
+#### 2.5.4 배선 중 흔한 실수와 방지법
+
+| 실수 | 증상 | 방지법 |
+|------|------|--------|
+| **e 슬롯 번호 착각** | OSPF neighbor 안 올라옴 | 배선 테이블의 Slot 열 대조 후 연결 |
+| **Ethernet 4개만 설정** | e4~e7 슬롯이 안 보임 | 노드 생성 시 Ethernet=8 확인. 이미 만든 노드는 삭제 후 재생성 |
+| **같은 Bridge에 3개 이상 연결** (의도치 않게) | broadcast storm 또는 예상치 못한 경로 | HSRP(#32) 외에는 반드시 1:1 point-to-point |
+| **Cloud0에 e7 대신 다른 슬롯 연결** | 관리망 접속 불가 + 데이터 링크 깨짐 | 관리망은 **항상 e7 (Gi0/7)** |
+| **노드 이름 불일치** (P01 vs P1) | config hostname과 불일치 → NSO 등록 실패 | YAML `name` 필드와 정확히 동일하게 |
+
+> **실수 발견 시 복구**: PNETLab에서 배선은 자유롭게 삭제/재연결 가능. 잘못된 Bridge 삭제 → 재생성하면 된다.
+
 ---
 
 ## 3. Config 적용
@@ -233,7 +379,7 @@ Lab-C에서 PE5와 PE6가 Leaf9의 172.18.1.0/24 서브넷에서 HSRP를 구성�
 | C: SSH 파일시스템 직접 복사 | ~5분 | 중 | 고급 대안 |
 | D: Console Telnet 복붙 | ~90분 | 하 | 비권장 |
 
-> 생성된 .cfg에 SSH, OOB 관리 인터페이스, 기본 라우팅이 이미 포함되어 있으므로
+> 생성된 .cfg에 SSH, OOB 관리 인터페이스, 기본 라우팅이 이미 포함되어 ********있으**므로**
 > `1-SSH_Enable.py` 스크립트가 **불필요**하다.
 
 ### 3.2 방법 A: Import Startup Configuration (최우선 권장)

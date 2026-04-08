@@ -279,6 +279,7 @@ class BatfishClient:
             bf = self._builder.bf
             
             # 1. BGP 분석
+            bgp_status = None
             try:
                 bgp_status = bf.q.bgpSessionStatus().answer().frame()
                 results["protocols"]["bgp"]["total"] = len(bgp_status)
@@ -340,7 +341,7 @@ class BatfishClient:
             routing_issues = 0
             try:
                 # 3.1 중복 Router ID 검사 (BGP)
-                if len(bgp_status) > 0 and 'Local_IP' in bgp_status.columns:
+                if bgp_status is not None and len(bgp_status) > 0 and 'Local_IP' in bgp_status.columns:
                     router_ids = bgp_status.groupby('Local_IP').size()
                     duplicates = router_ids[router_ids > 1]
                     for router_id in duplicates.index:
@@ -507,8 +508,8 @@ class BatfishClient:
             with_ip = ifaces[ifaces['All_Prefixes'].apply(lambda x: len(x) > 0)]
             if not with_ip.empty:
                 return with_ip['All_Prefixes'].iloc[0][0].split('/')[0]
-        except:
-            pass
+        except Exception as e:
+            logger.warning("get_node_ip(%s) failed: %s", node, e)
         return "0.0.0.0" # Fallback
 
     def get_bgp_sessions(self, device_filter: Optional[str] = None) -> List[Dict[str, Any]]:

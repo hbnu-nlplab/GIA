@@ -230,7 +230,7 @@ def main():
     # output_path = BASE_DIR / "data" / "debate_results" / "agents_v2" / "test2" / "netconfig_result.json"
     
     input_path = BASE_DIR / "data" / "passages"  / "full_w_context" / "netbench_passage.json"
-    output_path = BASE_DIR / "data" / "debate_results" / "agents_v2" / "full_w_context3" / "netbench" / "netbench_result.json"
+    output_path = BASE_DIR / "data" / "debate_results" / "agents_v2" / "mas" / "netbench" / "netbench_result.json"
     
     if not input_path.exists():
         print(f"Input file not found: {input_path}")

@@ -178,7 +178,6 @@ class PnetlabClient:
         if xsrf:
             self.session.cookies.set('XSRF-TOKEN', xsrf, domain=domain)
             # XSRF-TOKEN 헤더는 URL 디코딩된 값을 원본값으로 사용
-            from urllib.parse import unquote
             self._xsrf_token = unquote(xsrf)
             self.session.headers['X-XSRF-TOKEN'] = self._xsrf_token
 
@@ -942,8 +941,9 @@ class PnetlabClient:
     def get_inventory(self) -> Dict[str, Any]:
         """전체 장비 목록 및 상세 정보 (High-level)"""
         if not self.is_authenticated:
-            if not self.login():
-                return {"error": "Authentication failed"}
+            result = self.login()
+            if isinstance(result, dict) and result.get("error"):
+                return result
             
         topology = self.get_session_topology()
         if "error" in topology:

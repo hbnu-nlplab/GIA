@@ -1,12 +1,12 @@
 {
-  "total_samples": 43,
-  "agree": 42,
-  "disagree": 1,
-  "agreement_rate": 0.9767441860465116,
+  "total_samples": 38,
+  "agree": 38,
+  "disagree": 0,
+  "agreement_rate": 1.0,
   "by_level": {
     "L1": {
-      "total": 10,
-      "agree": 10,
+      "total": 5,
+      "agree": 5,
       "disagree": 0
     },
     "L2": {
@@ -16,8 +16,8 @@
     },
     "L3": {
       "total": 23,
-      "agree": 22,
-      "disagree": 1
+      "agree": 23,
+      "disagree": 0
     }
   },
   "by_metric": {
@@ -26,24 +26,9 @@
       "agree": 1,
       "disagree": 0
     },
-    "interface_status_map": {
-      "total": 1,
-      "agree": 1,
-      "disagree": 0
-    },
     "ntp_server_list": {
       "total": 1,
       "agree": 1,
-      "disagree": 0
-    },
-    "rt_export_count": {
-      "total": 2,
-      "agree": 2,
-      "disagree": 0
-    },
-    "rt_import_count": {
-      "total": 2,
-      "agree": 2,
       "disagree": 0
     },
     "snmp_community_list": {
@@ -81,7 +66,7 @@
       "agree": 1,
       "disagree": 0
     },
-    "ospf_area0_if_count": {
+    "ospf_area0_routers": {
       "total": 1,
       "agree": 1,
       "disagree": 0
@@ -113,8 +98,8 @@
     },
     "all_devices_same_as": {
       "total": 1,
-      "agree": 0,
-      "disagree": 1
+      "agree": 1,
+      "disagree": 0
     },
     "bgp_as_distribution": {
       "total": 1,
@@ -224,39 +209,21 @@
   },
   "by_answer_type": {
     "number": {
-      "total": 14,
-      "agree": 14
+      "total": 9,
+      "agree": 9
     },
-    "map": {
-      "total": 1,
-      "agree": 1
-    },
-    "set": {
+    "set_str": {
       "total": 17,
       "agree": 17
     },
     "text": {
-      "total": 8,
-      "agree": 7
+      "total": 9,
+      "agree": 9
     },
     "map_str_int": {
       "total": 3,
       "agree": 3
     }
   },
-  "disagree_examples": [
-    {
-      "qa_id": "ALL_DEVICES_SAME_AS",
-      "metric": "all_devices_same_as",
-      "level": "L3",
-      "answer_type": "text",
-      "dataset_answer": "\"leaf1: AS None, leaf2: AS None, leaf3: AS None, leaf4: AS None, p1: AS None, p2: AS None, p3: AS None, p4: AS None, pe1: AS 65000, pe2: AS 65000\"",
-      "manual_answer": "pe1: AS 65000, pe2: AS 65000",
-      "verdict": "DISAGREE",
-      "disagreement_type": "DATA_ERROR",
-      "rationale": "Manual: BGP AS numbers found: {'65000'} | [Method1-crossref] all_devices_same_as({'type': 'GLOBAL'}) = pe1: AS 65000, pe2: AS 65000",
-      "verification_procedure": "검증 방법: 1) 전체 장비 목록을 순회하며 각 장비의 Config를 스캔합니다. 2) 'router bgp <AS_NUMBER>' 명령이 있으면 해당 AS 번호를 추출합니다. 3) BGP가 설정되지 않은 장비는 'AS None'으로 표시합니다. 4) 각 장비명과 AS 값을 '장비명: AS 값' 형식으로 만듭니다. 5) 모든 쌍을 쉼표와 공백(', ')으로",
-      "hosts_inspected": "leaf1, leaf2, leaf3, leaf4, p1, p2, p3, p4, pe1, pe2"
-    }
-  ]
+  "disagree_examples": []
 }

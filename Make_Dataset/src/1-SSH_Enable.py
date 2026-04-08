@@ -5,9 +5,12 @@ import time
 import sys
 import os
 
-# 설정 파일 경로 (사용자 환경에 맞게 수정 필요)
-# 실제 경로를 확인해주세요. 예: ./device_info.json
-CONFIG_FILE = r"c:\Users\Yujin\CodeSpace\GIA\Data\Pnetlab\Research_Institute_Internal_DC\device_info.json"
+# 설정 파일 경로: 환경변수 > CLI 인자 > 기본 상대경로
+_DEFAULT_CONFIG = os.path.join(
+    os.path.dirname(__file__), "..", "..",
+    "Data", "Pnetlab", "Research_Institute_Internal_DC", "device_info.json"
+)
+CONFIG_FILE = os.environ.get("PNETLAB_DEVICE_INFO", _DEFAULT_CONFIG)
 
 class SSHEnabler:
     def __init__(self, config_file):

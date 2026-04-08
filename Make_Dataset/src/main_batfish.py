@@ -4,6 +4,7 @@ import json
 import time
 import subprocess
 import hashlib
+import copy
 from pathlib import Path
 import sys
 import random
@@ -11,6 +12,14 @@ import itertools
 import re
 from collections import Counter, defaultdict
 import pandas as pd
+
+# C3: count=0이 "미설정"을 의미하는 순수 존재/인벤토리 메트릭 화이트리스트
+_ZERO_MEANS_NOT_CONFIGURED = frozenset({
+    "system_user_count", "vrf_count", "acl_configured_count",
+    "prefix_list_count", "route_map_count", "netflow_monitors_count",
+    "qos_class_maps_count", "interfaces_missing_description_count",
+    "static_route_count", "hsrp_groups_count",
+})
 
 """
 python Make_Dataset\\src\\main_batfish.py --lab-path Data\\Pnetlab\\Research_Institute_Internal_DC --policies Make_Dataset\\policies.json
@@ -24,6 +33,8 @@ from core_batfish.rule_based_generator import RuleBasedGenerator, RuleBasedGener
 from core_batfish.builder_core import BuilderCore
 from core_batfish.batfish_builder import BatfishBuilder, AnswerResult
 from core_batfish.ko_josa import fix_josa
+from l45_contracts import build_l45_contract
+from ground_truth_contracts import infer_oracle_source
 from validate_policies import validate_policies
 from validate_dataset_quality import validate_dataset_quality
 
@@ -203,6 +214,25 @@ def canonicalize_answers_for_language_neutral_contract(rows: list) -> int:
     return changed
 
 
+def build_eval_answer(answer_status: str, answer_json: str) -> str:
+    """Build evaluation-facing gold answer.
+
+    Internal answers stay typed for verification. For hallucination scoring,
+    NOT_CONFIGURED must be explicit and must not silently equal blank/null/[].
+    """
+    if str(answer_status or "").strip().upper() == "NOT_CONFIGURED":
+        return "NOT_CONFIGURED"
+
+    try:
+        parsed = json.loads(answer_json)
+    except Exception:
+        return str(answer_json)
+
+    if isinstance(parsed, str):
+        return parsed
+    return json.dumps(parsed, ensure_ascii=False, sort_keys=True)
+
+
 def validate_answer(value, answer_type: str) -> tuple:
     """
     정답이 스키마를 준수하는지 검증
@@ -316,9 +346,9 @@ def enforce_min_per_category(rows: list, categories: list, min_per_cat: int) -> 
         for idx in range(deficit):
             src = random.choice(seeds)
             clone = dict(src)
-            clone["id"] = f"{src['id']}__rs{idx + 1}"
+            clone["id"] = f"{src['id']}__rs_{category}_{idx + 1}"
             base_id_v2 = src.get("id_v2") or src["id"]
-            clone["id_v2"] = f"{base_id_v2}-rs{idx + 1}"
+            clone["id_v2"] = f"{base_id_v2}-rs_{category}_{idx + 1}"
             try:
                 ev = json.loads(src.get("evidence", "{}"))
                 if not isinstance(ev, dict):
@@ -343,7 +373,7 @@ def get_pipeline_version() -> str:
             cwd=Path(__file__).parent.parent.parent,
             stderr=subprocess.DEVNULL
         ).decode().strip()
-    except:
+    except Exception:
         return "unknown"
 
 
@@ -572,7 +602,9 @@ def main():
         if las: all_asns.add(str(las))
     
     qa_list = []
+    seen_ids = set()
     seen_id_v2 = set()
+    l45_errors = 0
     generation_checks = {
         "evidence_placeholder_count": 0,
         "structured_schema_violations": 0,
@@ -683,7 +715,7 @@ def main():
 
         for inst in instances:
             intent = intent_template.copy()
-            scope = scope_template.copy()
+            scope = copy.deepcopy(scope_template)
             for k, v in inst.items():
                 scope[k] = v
             intent["scope"] = scope
@@ -787,9 +819,8 @@ def main():
                     else:
                         continue
                 except Exception as e:
-                    print(f"[DEBUG] Exception in metric {metric}: {e}")
-                    import traceback
-                    traceback.print_exc()
+                    l45_errors += 1
+                    print(f"[ERROR] L4/L5 metric '{metric}' failed: {e}")
                     continue
             else:
                 res = builder.compute(intent)
@@ -884,8 +915,8 @@ def main():
                         is_empty = True
                     elif isinstance(a_val, str) and a_val in ["Disabled", "Not Configured", "None", ""]:
                         is_empty = True
-                    elif isinstance(a_val, (int, float)) and a_val == 0:
-                        # 0이어도 유효한 경우가 있을 수 있으나, Inventory/Check에서는 '없음'을 의미하므로 NOT_CONFIGURED 처리
+                    elif isinstance(a_val, (int, float)) and a_val == 0 and metric_name in _ZERO_MEANS_NOT_CONFIGURED:
+                        # C3: 화이트리스트에 있는 메트릭만 0을 NOT_CONFIGURED로 처리
                         is_empty = True
                     
                     if is_empty:
@@ -938,20 +969,37 @@ def main():
                     parsed_text = canonicalize_text_answer(metric_name, parsed_text)
                     a_json = json.dumps(parsed_text, ensure_ascii=False)
 
+            row_id = unique_id
+            if row_id in seen_ids:
+                row_id = f"{row_id}__{make_scope_hash(scope)[:8]}"
+            seen_ids.add(row_id)
+
             qa_list.append({
-                "id": unique_id,
+                "id": row_id,
                 "id_v2": id_v2,
+                "metric": metric_name,
+                "scope": json.dumps(scope, ensure_ascii=False, default=str),
                 "category": dsl["category"],
                 "level": level,
+                "question_type": dsl.get("question_type", "unknown"),
                 "question": q_text,
                 "answer_status": answer_status,
                 "answer_type": answer_type,
                 "answer": a_json,
+                "eval_answer": build_eval_answer(answer_status, a_json),
                 "unknown_reason": unknown_reason,
                 "evidence": evidence_str,
+                "scenario": None,
+                "query_contract": None,
+                "verification_contract": None,
+                "oracle_source": infer_oracle_source(metric_name, level),
+                "verification_status": "pending",
+                "quarantine_reason": "",
                 "pipeline_version": PIPELINE_VERSION,
                 "files": str(res.get("files", []) if isinstance(res, dict) else [])
             })
+
+    print(f"[WARN] L4/L5 generation: {l45_errors} errors out of {len(dsl_items)} metrics")
 
     # =========================================================================
     # L4/L5 추가 질문 생성 (BatfishBuilder 자체 생성 함수 활용)
@@ -1006,21 +1054,40 @@ def main():
                 answer_type = canonical_dataset_answer_type(q["answer_type"])
                 if answer_type in {"text", "scalar_str", "enum"} and isinstance(answer_val, str):
                     answer_val = canonicalize_text_answer(metric_name, answer_val)
+                contract = {}
+                if level in {"L4", "L5"}:
+                    contract = build_l45_contract(q, bf_builder)
                 
-                qa_list.append({
-                    "id": str(q["id"]),
+                row_id = str(q["id"])
+                if row_id in seen_ids:
+                    row_id = f"{row_id}__{id_v2.split(':', 1)[-1][:8]}"
+                seen_ids.add(row_id)
+
+                row = {
+                    "id": row_id,
                     "id_v2": id_v2,
+                    "metric": metric_name,
+                    "scope": json.dumps(scope, ensure_ascii=False, default=str),
                     "category": q["category"],
                     "level": q["level"],
+                    "question_type": q.get("question_type", "unknown"),
                     "question": q["question"],
                     "answer_status": "OK",
                     "answer_type": answer_type,
                     "answer": json.dumps(answer_val, ensure_ascii=False),
+                    "eval_answer": build_eval_answer("OK", json.dumps(answer_val, ensure_ascii=False)),
                     "unknown_reason": "",
                     "evidence": json.dumps(evidence, ensure_ascii=False),
+                    "scenario": contract.get("scenario"),
+                    "query_contract": contract.get("query_contract"),
+                    "verification_contract": contract.get("verification_contract"),
+                    "oracle_source": contract.get("oracle_source", "batfish_replay" if level in {"L4", "L5"} else "builder"),
+                    "verification_status": contract.get("verification_status", "pending"),
+                    "quarantine_reason": contract.get("quarantine_reason", ""),
                     "pipeline_version": PIPELINE_VERSION,
                     "files": "[]"
-                })
+                }
+                qa_list.append(row)
 
         # L4 질문 생성
         print("[3.5.1] Generating L4 questions (Reachability, Traceroute, Advanced)...")
@@ -1099,7 +1166,13 @@ def main():
 
         df = pd.DataFrame(qa_list)
         # 컬럼 순서 정렬
-        column_order = ["id", "id_v2", "category", "level", "question", "answer_status", "answer_type", "answer", "unknown_reason", "evidence", "pipeline_version", "files"]
+        column_order = [
+            "id", "id_v2", "metric", "scope", "category", "level", "question_type", "question",
+            "answer_status", "answer_type", "answer", "eval_answer", "unknown_reason",
+            "evidence", "scenario", "query_contract", "verification_contract",
+            "oracle_source", "verification_status", "quarantine_reason",
+            "pipeline_version", "files"
+        ]
         df = df[[c for c in column_order if c in df.columns]]
         
         # CSV 저장

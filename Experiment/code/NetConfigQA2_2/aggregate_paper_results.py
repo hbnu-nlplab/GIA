@@ -1,0 +1,533 @@
+#!/usr/bin/env python3
+"""Aggregate NetConfigQA results across models and labs for paper-ready tables."""
+
+from __future__ import annotations
+
+import argparse
+import csv
+import json
+import re
+from collections import defaultdict
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
+
+from analyze_results import analyze_results
+
+
+TIMESTAMP_RE = re.compile(r"(\d{8}_\d{6})")
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Aggregate NetConfigQA model results across labs into paper-ready tables."
+    )
+    parser.add_argument(
+        "--results-dir",
+        default=str(Path(__file__).resolve().parent / "results"),
+        help="Root directory containing model/Lab*/results_*.json files.",
+    )
+    parser.add_argument(
+        "--labs",
+        nargs="+",
+        default=["LabA", "LabB", "LabC", "LabD"],
+        help="Lab folders to aggregate (default: LabA LabB LabC LabD).",
+    )
+    parser.add_argument(
+        "--models",
+        nargs="+",
+        default=None,
+        help="Optional subset of model folder names to include.",
+    )
+    parser.add_argument(
+        "--output-md",
+        default=None,
+        help="Markdown output path. Defaults under results-dir.",
+    )
+    parser.add_argument(
+        "--output-csv",
+        default=None,
+        help="Long-form CSV output path. Defaults under results-dir.",
+    )
+    parser.add_argument(
+        "--output-rank-csv",
+        default=None,
+        help="Ranking CSV output path. Defaults under results-dir.",
+    )
+    parser.add_argument(
+        "--include-levels",
+        nargs="+",
+        default=None,
+        help="Levels to include when auto-analyzing raw results.",
+    )
+    parser.add_argument(
+        "--exclude-levels",
+        nargs="+",
+        default=["L6"],
+        help="Levels to exclude when auto-analyzing raw results.",
+    )
+    parser.add_argument(
+        "--reanalyze",
+        action="store_true",
+        help="Force re-analysis from the latest raw result even if analyzed JSON already exists.",
+    )
+    return parser.parse_args()
+
+
+def extract_timestamp(path: Path) -> str:
+    match = TIMESTAMP_RE.search(path.name)
+    return match.group(1) if match else ""
+
+
+def timestamp_key(path: Path) -> Tuple[str, float]:
+    return (extract_timestamp(path), path.stat().st_mtime)
+
+
+def fmt_pct(value: Optional[float]) -> str:
+    return "N/A" if value is None else f"{value * 100:.2f}"
+
+
+def fmt_num(value: Optional[float]) -> str:
+    return "N/A" if value is None else f"{value:.2f}"
+
+
+def mean(values: Iterable[Optional[float]]) -> Optional[float]:
+    cleaned = [v for v in values if v is not None]
+    if not cleaned:
+        return None
+    return sum(cleaned) / len(cleaned)
+
+
+def discover_models(results_dir: Path, requested_models: Optional[Sequence[str]]) -> List[Path]:
+    model_dirs = []
+    requested = set(requested_models) if requested_models else None
+    for path in sorted(results_dir.iterdir()):
+        if not path.is_dir():
+            continue
+        if requested and path.name not in requested:
+            continue
+        if any(child.is_dir() and child.name.startswith("Lab") for child in path.iterdir()):
+            model_dirs.append(path)
+    return model_dirs
+
+
+def list_analyzed_files(lab_dir: Path) -> List[Path]:
+    files = []
+    for path in lab_dir.glob("results_analyzed_*.json"):
+        if path.name.endswith("_errors.json"):
+            continue
+        files.append(path)
+    return sorted(files, key=timestamp_key)
+
+
+def list_raw_files(lab_dir: Path) -> List[Path]:
+    return sorted(lab_dir.glob("results_raw_*.json"), key=timestamp_key)
+
+
+def analyzed_path_for_raw(raw_path: Path) -> Path:
+    return raw_path.with_name(raw_path.name.replace("results_raw_", "results_analyzed_"))
+
+
+def choose_artifact(lab_dir: Path, reanalyze: bool) -> Tuple[Optional[Path], Optional[Path], str]:
+    analyzed_files = list_analyzed_files(lab_dir)
+    raw_files = list_raw_files(lab_dir)
+    latest_analyzed = analyzed_files[-1] if analyzed_files else None
+    latest_raw = raw_files[-1] if raw_files else None
+
+    if reanalyze and latest_raw:
+        return latest_raw, analyzed_path_for_raw(latest_raw), "raw"
+
+    if latest_raw:
+        matched_analyzed = analyzed_path_for_raw(latest_raw)
+        if matched_analyzed.exists():
+            return matched_analyzed, matched_analyzed, "analyzed"
+        return latest_raw, matched_analyzed, "raw"
+
+    if latest_analyzed:
+        return latest_analyzed, latest_analyzed, "analyzed"
+
+    return None, None, "missing"
+
+
+def load_analyzed(path: Path) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    return payload["stats"], payload["meta"]
+
+
+def ensure_analyzed(
+    selected_path: Path,
+    kind: str,
+    include_levels: Optional[Sequence[str]],
+    exclude_levels: Optional[Sequence[str]],
+) -> Tuple[Dict[str, Any], Dict[str, Any], Path]:
+    if kind == "analyzed":
+        stats, meta = load_analyzed(selected_path)
+        return stats, meta, selected_path
+
+    stats, _, meta = analyze_results(
+        str(selected_path),
+        verbose=False,
+        include_levels=include_levels,
+        exclude_levels=exclude_levels,
+    )
+    analyzed_path = analyzed_path_for_raw(selected_path)
+    return stats, meta, analyzed_path
+
+
+def safe_get(dct: Dict[str, Any], *keys: str) -> Optional[float]:
+    current: Any = dct
+    for key in keys:
+        if not isinstance(current, dict):
+            return None
+        current = current.get(key)
+    if current is None:
+        return None
+    return float(current)
+
+
+def build_record(
+    model: str,
+    lab: str,
+    stats: Dict[str, Any],
+    meta: Dict[str, Any],
+    source_path: Path,
+    analyzed_path: Path,
+) -> Dict[str, Any]:
+    trad = stats.get("traditional_metrics", {})
+    return {
+        "model": model,
+        "lab": lab,
+        "lab_label": meta.get("lab", lab),
+        "samples": meta.get("total_samples", stats.get("total_samples")),
+        "type_aware_accuracy": safe_get(stats, "accuracy"),
+        "exact_match": safe_get(trad, "exact_match"),
+        "token_f1": safe_get(trad, "token_f1"),
+        "bleu": safe_get(trad, "bleu"),
+        "bertscore_f1": safe_get(trad, "bertscore_f1"),
+        "rouge1": safe_get(trad, "rouge1"),
+        "rouge2": safe_get(trad, "rouge2"),
+        "rougeL": safe_get(trad, "rougeL"),
+        "L1": safe_get(stats, "by_level", "L1"),
+        "L2": safe_get(stats, "by_level", "L2"),
+        "L3": safe_get(stats, "by_level", "L3"),
+        "L4": safe_get(stats, "by_level", "L4"),
+        "L5": safe_get(stats, "by_level", "L5"),
+        "map": safe_get(stats, "by_type", "map"),
+        "numeric": safe_get(stats, "by_type", "numeric"),
+        "number": safe_get(stats, "by_type", "number"),
+        "set": safe_get(stats, "by_type", "set"),
+        "text": safe_get(stats, "by_type", "text"),
+        "duration_sec": meta.get("duration_sec"),
+        "throughput": meta.get("throughput"),
+        "source_path": str(source_path),
+        "analyzed_path": str(analyzed_path),
+    }
+
+
+def compute_ranks(records: List[Dict[str, Any]], labs: Sequence[str]) -> Dict[str, Dict[str, int]]:
+    ranks: Dict[str, Dict[str, int]] = defaultdict(dict)
+    for lab in labs:
+        lab_records = [r for r in records if r["lab"] == lab and r["type_aware_accuracy"] is not None]
+        sorted_records = sorted(
+            lab_records,
+            key=lambda r: (r["type_aware_accuracy"], r["token_f1"] or -1.0, r["exact_match"] or -1.0),
+            reverse=True,
+        )
+        prev_score: Optional[Tuple[Optional[float], Optional[float], Optional[float]]] = None
+        prev_rank = 0
+        for idx, record in enumerate(sorted_records, start=1):
+            score = (
+                record["type_aware_accuracy"],
+                record["token_f1"],
+                record["exact_match"],
+            )
+            if score != prev_score:
+                prev_rank = idx
+                prev_score = score
+            ranks[record["model"]][lab] = prev_rank
+    return ranks
+
+
+def aggregate_model_rows(
+    records: List[Dict[str, Any]],
+    labs: Sequence[str],
+    ranks: Dict[str, Dict[str, int]],
+) -> List[Dict[str, Any]]:
+    by_model: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
+    for record in records:
+        by_model[record["model"]].append(record)
+
+    rows = []
+    for model, model_records in by_model.items():
+        record_by_lab = {record["lab"]: record for record in model_records}
+        avg_rank = mean(ranks.get(model, {}).get(lab) for lab in labs)
+        row = {
+            "model": model,
+            "labs_covered": sum(1 for lab in labs if lab in record_by_lab),
+            "avg_type_aware_accuracy": mean(record_by_lab.get(lab, {}).get("type_aware_accuracy") for lab in labs),
+            "avg_exact_match": mean(record_by_lab.get(lab, {}).get("exact_match") for lab in labs),
+            "avg_token_f1": mean(record_by_lab.get(lab, {}).get("token_f1") for lab in labs),
+            "avg_bleu": mean(record_by_lab.get(lab, {}).get("bleu") for lab in labs),
+            "avg_bertscore_f1": mean(record_by_lab.get(lab, {}).get("bertscore_f1") for lab in labs),
+            "avg_rougeL": mean(record_by_lab.get(lab, {}).get("rougeL") for lab in labs),
+            "avg_L4": mean(record_by_lab.get(lab, {}).get("L4") for lab in labs),
+            "avg_L5": mean(record_by_lab.get(lab, {}).get("L5") for lab in labs),
+            "avg_rank": avg_rank,
+        }
+        for lab in labs:
+            row[f"{lab}_ta"] = record_by_lab.get(lab, {}).get("type_aware_accuracy")
+            row[f"{lab}_rank"] = ranks.get(model, {}).get(lab)
+        rows.append(row)
+
+    rows.sort(
+        key=lambda row: (
+            row["avg_type_aware_accuracy"] is None,
+            -(row["avg_type_aware_accuracy"] or -1.0),
+            row["avg_rank"] or 999.0,
+        )
+    )
+    return rows
+
+
+def markdown_table(headers: Sequence[str], rows: Sequence[Sequence[str]]) -> str:
+    header_line = "| " + " | ".join(headers) + " |"
+    sep_line = "| " + " | ".join([":---"] + [":---:" for _ in headers[1:]]) + " |"
+    body = ["| " + " | ".join(row) + " |" for row in rows]
+    return "\n".join([header_line, sep_line] + body)
+
+
+def generate_markdown(
+    model_rows: List[Dict[str, Any]],
+    records: List[Dict[str, Any]],
+    labs: Sequence[str],
+    missing: List[Tuple[str, str]],
+) -> str:
+    generated = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    lines = ["# NetConfigQA Paper Summary", "", f"> Generated on: {generated}", ""]
+
+    overview_headers = [
+        "Rank",
+        "Model",
+        "Labs",
+        "Avg TA-Acc",
+        "Avg Rank",
+        "Avg EM",
+        "Avg Token F1",
+        "Avg Rouge-L",
+        "Avg BLEU",
+        "Avg BERTScore",
+        "Avg L4",
+        "Avg L5",
+    ]
+    overview_rows = []
+    for idx, row in enumerate(model_rows, start=1):
+        overview_rows.append(
+            [
+                str(idx),
+                row["model"],
+                str(row["labs_covered"]),
+                fmt_pct(row["avg_type_aware_accuracy"]),
+                fmt_num(row["avg_rank"]),
+                fmt_pct(row["avg_exact_match"]),
+                fmt_pct(row["avg_token_f1"]),
+                fmt_pct(row["avg_rougeL"]),
+                fmt_pct(row["avg_bleu"]),
+                fmt_pct(row["avg_bertscore_f1"]),
+                fmt_pct(row["avg_L4"]),
+                fmt_pct(row["avg_L5"]),
+            ]
+        )
+    lines.extend(["## 1. Average Ranking Across Labs", "", markdown_table(overview_headers, overview_rows), ""])
+
+    matrix_headers = ["Model", *labs, "Avg"]
+    matrix_rows = []
+    for row in model_rows:
+        matrix_rows.append(
+            [
+                row["model"],
+                *[fmt_pct(row.get(f"{lab}_ta")) for lab in labs],
+                fmt_pct(row["avg_type_aware_accuracy"]),
+            ]
+        )
+    lines.extend(["## 2. Type-Aware Accuracy Matrix", "", markdown_table(matrix_headers, matrix_rows), ""])
+
+    rank_headers = ["Model", *[f"{lab} Rank" for lab in labs], "Avg Rank"]
+    rank_rows = []
+    for row in model_rows:
+        rank_rows.append(
+            [
+                row["model"],
+                *[
+                    "N/A" if row.get(f"{lab}_rank") is None else str(row[f"{lab}_rank"])
+                    for lab in labs
+                ],
+                fmt_num(row["avg_rank"]),
+            ]
+        )
+    lines.extend(["## 3. Average Rank by Lab", "", markdown_table(rank_headers, rank_rows), ""])
+
+    best_by_lab_headers = ["Lab", "Best Model", "TA-Acc", "EM", "Token F1", "Rouge-L"]
+    best_by_lab_rows = []
+    for lab in labs:
+        lab_records = [r for r in records if r["lab"] == lab and r["type_aware_accuracy"] is not None]
+        if not lab_records:
+            best_by_lab_rows.append([lab, "N/A", "N/A", "N/A", "N/A", "N/A"])
+            continue
+        best = sorted(
+            lab_records,
+            key=lambda r: (r["type_aware_accuracy"], r["token_f1"] or -1.0, r["exact_match"] or -1.0),
+            reverse=True,
+        )[0]
+        best_by_lab_rows.append(
+            [
+                lab,
+                best["model"],
+                fmt_pct(best["type_aware_accuracy"]),
+                fmt_pct(best["exact_match"]),
+                fmt_pct(best["token_f1"]),
+                fmt_pct(best["rougeL"]),
+            ]
+        )
+    lines.extend(["## 4. Best Model per Lab", "", markdown_table(best_by_lab_headers, best_by_lab_rows), ""])
+
+    if missing:
+        lines.append("## 5. Missing Results")
+        lines.append("")
+        for model, lab in missing:
+            lines.append(f"- {model} / {lab}")
+        lines.append("")
+
+    lines.append("---")
+    lines.append("*Generated by aggregate_paper_results.py*")
+    return "\n".join(lines)
+
+
+def write_long_csv(path: Path, records: List[Dict[str, Any]]) -> None:
+    fieldnames = [
+        "model",
+        "lab",
+        "lab_label",
+        "samples",
+        "type_aware_accuracy",
+        "exact_match",
+        "token_f1",
+        "bleu",
+        "bertscore_f1",
+        "rouge1",
+        "rouge2",
+        "rougeL",
+        "L1",
+        "L2",
+        "L3",
+        "L4",
+        "L5",
+        "map",
+        "numeric",
+        "number",
+        "set",
+        "text",
+        "duration_sec",
+        "throughput",
+        "source_path",
+        "analyzed_path",
+    ]
+    with path.open("w", newline="", encoding="utf-8-sig") as csvf:
+        writer = csv.DictWriter(csvf, fieldnames=fieldnames)
+        writer.writeheader()
+        for record in sorted(records, key=lambda r: (r["model"], r["lab"])):
+            writer.writerow(record)
+
+
+def write_rank_csv(path: Path, model_rows: List[Dict[str, Any]], labs: Sequence[str]) -> None:
+    fieldnames = [
+        "model",
+        "labs_covered",
+        "avg_type_aware_accuracy",
+        "avg_rank",
+        "avg_exact_match",
+        "avg_token_f1",
+        "avg_rougeL",
+        "avg_bleu",
+        "avg_bertscore_f1",
+        "avg_L4",
+        "avg_L5",
+        *[f"{lab}_ta" for lab in labs],
+        *[f"{lab}_rank" for lab in labs],
+    ]
+    with path.open("w", newline="", encoding="utf-8-sig") as csvf:
+        writer = csv.DictWriter(csvf, fieldnames=fieldnames)
+        writer.writeheader()
+        for row in model_rows:
+            writer.writerow(row)
+
+
+def main() -> None:
+    args = parse_args()
+    results_dir = Path(args.results_dir).resolve()
+    stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    output_md = Path(args.output_md) if args.output_md else results_dir / f"paper_summary_{stamp}.md"
+    output_csv = Path(args.output_csv) if args.output_csv else results_dir / f"paper_summary_{stamp}.csv"
+    output_rank_csv = (
+        Path(args.output_rank_csv)
+        if args.output_rank_csv
+        else results_dir / f"paper_summary_{stamp}_ranking.csv"
+    )
+
+    model_dirs = discover_models(results_dir, args.models)
+    if not model_dirs:
+        raise SystemExit(f"No model directories found in {results_dir}")
+
+    records: List[Dict[str, Any]] = []
+    missing: List[Tuple[str, str]] = []
+
+    for model_dir in model_dirs:
+        for lab in args.labs:
+            lab_dir = model_dir / lab
+            if not lab_dir.exists():
+                missing.append((model_dir.name, lab))
+                continue
+
+            selected_path, analyzed_path, kind = choose_artifact(lab_dir, args.reanalyze)
+            if not selected_path or not analyzed_path:
+                missing.append((model_dir.name, lab))
+                continue
+
+            print(f"[INFO] {model_dir.name} / {lab}: using {kind} -> {selected_path.name}")
+            stats, meta, ensured_analyzed_path = ensure_analyzed(
+                selected_path,
+                kind,
+                include_levels=args.include_levels,
+                exclude_levels=args.exclude_levels,
+            )
+            records.append(
+                build_record(
+                    model=model_dir.name,
+                    lab=lab,
+                    stats=stats,
+                    meta=meta,
+                    source_path=selected_path,
+                    analyzed_path=ensured_analyzed_path,
+                )
+            )
+
+    if not records:
+        raise SystemExit("No results could be aggregated.")
+
+    ranks = compute_ranks(records, args.labs)
+    model_rows = aggregate_model_rows(records, args.labs, ranks)
+    markdown = generate_markdown(model_rows, records, args.labs, missing)
+
+    output_md.write_text(markdown, encoding="utf-8")
+    write_long_csv(output_csv, records)
+    write_rank_csv(output_rank_csv, model_rows, args.labs)
+
+    print("\n" + "=" * 80)
+    print(f"[OK] Markdown summary : {output_md}")
+    print(f"[OK] Long-form CSV    : {output_csv}")
+    print(f"[OK] Ranking CSV      : {output_rank_csv}")
+    print("=" * 80)
+
+
+if __name__ == "__main__":
+    main()

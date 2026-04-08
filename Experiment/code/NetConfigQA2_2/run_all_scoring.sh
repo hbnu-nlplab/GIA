@@ -3,12 +3,17 @@
 # 모든 results_raw_*.json을 찾아서 analyze_results.py 실행
 
 set -euo pipefail
+shopt -s nullglob
 export PYTHONUTF8=1
 
 ROOT_DIR="$(cd "$(dirname "$0")/../../.." && pwd)"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-if [[ -x "${ROOT_DIR}/.venv/Scripts/python.exe" ]]; then
+if [[ -x "${ROOT_DIR}/NetAlly/.venv/Scripts/python.exe" ]]; then
+    PYTHON="${ROOT_DIR}/NetAlly/.venv/Scripts/python.exe"
+elif [[ -x "${ROOT_DIR}/NetAlly/.venv/bin/python" ]]; then
+    PYTHON="${ROOT_DIR}/NetAlly/.venv/bin/python"
+elif [[ -x "${ROOT_DIR}/.venv/Scripts/python.exe" ]]; then
     PYTHON="${ROOT_DIR}/.venv/Scripts/python.exe"
 elif [[ -x "${ROOT_DIR}/.venv/bin/python" ]]; then
     PYTHON="${ROOT_DIR}/.venv/bin/python"
@@ -25,7 +30,8 @@ SUCCESS=0
 for raw_file in "${SCRIPT_DIR}"/results/*/Lab*/results_raw_*.json; do
     # 이미 채점된 결과가 있으면 건너뜀
     dir=$(dirname "$raw_file")
-    if ls "${dir}"/results_analyzed_*.json 1>/dev/null 2>&1; then
+    analyzed_file="${raw_file/results_raw_/results_analyzed_}"
+    if [[ -f "${analyzed_file}" ]]; then
         echo "[SKIP] $(basename $(dirname $(dirname "$raw_file")))/$(basename $(dirname "$raw_file")) — 이미 채점됨"
         continue
     fi

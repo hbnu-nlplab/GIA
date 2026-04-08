@@ -65,6 +65,9 @@ export default function InterfaceEdge({
   const dstLabelX = targetX - dx * ratio + perpX * PERP_SHIFT
   const dstLabelY = targetY - dy * ratio + perpY * PERP_SHIFT
 
+  const isHighlighted = Boolean(edgeData.highlight)
+  const highlightMode = edgeData.highlightMode as 'path' | 'focus' | undefined
+
   const strokeColor = (style as Record<string, any>)?.stroke || 'hsl(var(--border))'
   const fontSize = 9
   const CHAR_WIDTH = 5.5
@@ -75,7 +78,47 @@ export default function InterfaceEdge({
 
   return (
     <>
+      <style>{`
+        @keyframes edgeFlowPath {
+          0% { stroke-dashoffset: 24; }
+          100% { stroke-dashoffset: 0; }
+        }
+        @keyframes edgeFocusPulse {
+          0%, 100% { stroke-opacity: 0.35; }
+          50% { stroke-opacity: 0.75; }
+        }
+        .edge-anim-path {
+          stroke-dasharray: 8 4;
+          animation: edgeFlowPath 2s linear infinite;
+        }
+        .edge-anim-focus {
+          stroke-dasharray: 6 6;
+          animation: edgeFocusPulse 1.5s ease-in-out infinite;
+        }
+      `}</style>
       <BaseEdge id={id} path={edgePath} style={style} />
+      {isHighlighted && highlightMode === 'path' && (
+        <path
+          d={edgePath}
+          fill="none"
+          stroke="#34d399"
+          strokeWidth={2.5}
+          strokeOpacity={0.6}
+          className="edge-anim-path"
+          style={{ pointerEvents: 'none' }}
+        />
+      )}
+      {isHighlighted && highlightMode === 'focus' && (
+        <path
+          d={edgePath}
+          fill="none"
+          stroke="#fbbf24"
+          strokeWidth={3}
+          strokeOpacity={0.45}
+          className="edge-anim-focus"
+          style={{ pointerEvents: 'none' }}
+        />
+      )}
       {srcIface && (
         <g>
           <rect
