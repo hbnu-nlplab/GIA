@@ -1,0 +1,389 @@
+{
+  "meta": {
+    "model": "NetAlly-MAS+MCP",
+    "model_tag": "single-mcp-v2",
+    "backend": "netally-direct",
+    "lab": "Lab-B",
+    "lab_folder": "Dataset",
+    "date": "2026-04-03T21:39:49.134723",
+    "duration_sec": 20.0,
+    "total_samples": 10,
+    "dataset": "sampled_100_mixed_en.json",
+    "dataset_path": "../Data/Pnetlab/LabB_NCN_Basic_SP_20nodes/Dataset/20260325_101536/sampled_100_mixed_en.json",
+    "mcp_server_url": "http://127.0.0.1:8811/mcp",
+    "recursion_limit": 60,
+    "max_retries": 3,
+    "max_workers": 1,
+    "include_levels": [
+      "L1"
+    ],
+    "exclude_levels": null,
+    "date_completed": "2026-04-03T21:40:09.144688",
+    "token_usage_total": {
+      "prompt_tokens": 34253,
+      "completion_tokens": 362,
+      "total_tokens": 34615,
+      "llm_calls": 20
+    }
+  },
+  "results": [
+    {
+      "question_id": "SSH_VERSION_TEXT_p6",
+      "question": "What is the SSH version on p6? [Answer format: plain string]",
+      "gold": "\"2\"",
+      "raw_pred": "2",
+      "pred": "2",
+      "level": "L1",
+      "category": "Security_Inventory",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1840,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3106,
+      "completion_tokens": 37,
+      "total_tokens": 3143,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "P6"
+          },
+          "elapsed_ms": 0.6,
+          "result": "{'name': 'P6', 'address': '10.10.10.16', 'port': 22, 'authgroup': 'default', 'device-type': {'cli': {'ned-id': 'cisco-ios-cli-6.110:cisco-ios-cli-6.110', 'protocol': 'ssh'}}, 'config_summary': {'hostname': 'P6', 'version': '15.9', 'users': ['admin'], 'domain_name': 'ncn.go.kr', 'aaa_enabled': False, 'vrf_list': [], 'vrf_details': [], 'interface_count': 9, 'interface_with_description': 0, 'interface_without_description': 9, 'interface_types': ['Loopback', 'GigabitEthernet'], 'routing_protocols': "
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "SYSTEM_TIMEZONE_TEXT_p8",
+      "question": "What is the system timezone on p8? [Answer format: plain string]",
+      "gold": "\"KST 9\"",
+      "raw_pred": "KST 9",
+      "pred": "KST 9",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1793,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3106,
+      "completion_tokens": 39,
+      "total_tokens": 3145,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "P8"
+          },
+          "elapsed_ms": 0.4,
+          "result": "{'name': 'P8', 'address': '10.10.10.18', 'port': 22, 'authgroup': 'default', 'device-type': {'cli': {'ned-id': 'cisco-ios-cli-6.110:cisco-ios-cli-6.110', 'protocol': 'ssh'}}, 'config_summary': {'hostname': 'P8', 'version': '15.9', 'users': ['admin'], 'domain_name': 'ncn.go.kr', 'aaa_enabled': False, 'vrf_list': [], 'vrf_details': [], 'interface_count': 9, 'interface_with_description': 0, 'interface_without_description': 9, 'interface_types': ['Loopback', 'GigabitEthernet'], 'routing_protocols': "
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "VRF_RD_MAP_leaf8",
+      "question": "What is the VRF route-distinguisher mapping on leaf8? [Answer format: JSON object]",
+      "gold": "{}",
+      "raw_pred": "{}",
+      "pred": "{}",
+      "level": "L1",
+      "category": "Services_Inventory",
+      "answer_type": "map_str_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 2670,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 2986,
+      "completion_tokens": 35,
+      "total_tokens": 3021,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "Leaf8"
+          },
+          "elapsed_ms": 0.5,
+          "result": "{'name': 'Leaf8', 'address': '10.10.10.38', 'port': 22, 'authgroup': 'default', 'device-type': {'cli': {'ned-id': 'cisco-ios-cli-6.110:cisco-ios-cli-6.110', 'protocol': 'ssh'}}, 'config_summary': {'hostname': 'Leaf8', 'version': '15.9', 'users': ['admin'], 'domain_name': 'ncn.go.kr', 'aaa_enabled': False, 'vrf_list': [], 'vrf_details': [], 'interface_count': 8, 'interface_with_description': 0, 'interface_without_description': 8, 'interface_types': ['GigabitEthernet'], 'routing_protocols': [], 'm"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "OSPF_AREA0_IF_LIST_leaf6",
+      "question": "Which interfaces belong to OSPF Area 0 on leaf6? [Answer format: JSON array]",
+      "gold": "[]",
+      "raw_pred": "[]",
+      "pred": "[]",
+      "level": "L1",
+      "category": "Routing_Inventory",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_interfaces"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1423,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 2670,
+      "completion_tokens": 34,
+      "total_tokens": 2704,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_interfaces",
+          "args": {
+            "device": "Leaf6"
+          },
+          "elapsed_ms": 23.9,
+          "result": "{'interfaces': []}"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "NEIGHBOR_LIST_EBGP_leaf8",
+      "question": "Which eBGP neighbor IPs are configured on leaf8? [Answer format: JSON array]",
+      "gold": "[]",
+      "raw_pred": "[]",
+      "pred": "[]",
+      "level": "L1",
+      "category": "Routing_Inventory",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1571,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 2969,
+      "completion_tokens": 35,
+      "total_tokens": 3004,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "Leaf8"
+          },
+          "elapsed_ms": 0.5,
+          "result": "{'name': 'Leaf8', 'address': '10.10.10.38', 'port': 22, 'authgroup': 'default', 'device-type': {'cli': {'ned-id': 'cisco-ios-cli-6.110:cisco-ios-cli-6.110', 'protocol': 'ssh'}}, 'config_summary': {'hostname': 'Leaf8', 'version': '15.9', 'users': ['admin'], 'domain_name': 'ncn.go.kr', 'aaa_enabled': False, 'vrf_list': [], 'vrf_details': [], 'interface_count': 8, 'interface_with_description': 0, 'interface_without_description': 8, 'interface_types': ['GigabitEthernet'], 'routing_protocols': [], 'm"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "VTY_LOGIN_MODE_TEXT_leaf4",
+      "question": "What is the VTY login mode on leaf4? [Answer format: plain string]",
+      "gold": "\"local\"",
+      "raw_pred": "local",
+      "pred": "local",
+      "level": "L1",
+      "category": "Security_Inventory",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1432,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3092,
+      "completion_tokens": 36,
+      "total_tokens": 3128,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "Leaf4"
+          },
+          "elapsed_ms": 0.5,
+          "result": "{'name': 'Leaf4', 'address': '10.10.10.34', 'port': 22, 'authgroup': 'default', 'device-type': {'cli': {'ned-id': 'cisco-ios-cli-6.110:cisco-ios-cli-6.110', 'protocol': 'ssh'}}, 'config_summary': {'hostname': 'Leaf4', 'version': '15.9', 'users': ['admin'], 'domain_name': 'ncn.go.kr', 'aaa_enabled': False, 'vrf_list': [], 'vrf_details': [], 'interface_count': 8, 'interface_with_description': 0, 'interface_without_description': 8, 'interface_types': ['GigabitEthernet'], 'routing_protocols': [], 'm"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "ROUTING_TABLE_ENTRY_COUNT_p4",
+      "question": "How many routing table entries exist on p4? [Answer format: integer]",
+      "gold": "6",
+      "raw_pred": "36",
+      "pred": "36",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "number",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_route_table"
+      ],
+      "tool_count": 1,
+      "latency_ms": 4490,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 4470,
+      "completion_tokens": 36,
+      "total_tokens": 4506,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_route_table",
+          "args": {
+            "device": "P4"
+          },
+          "elapsed_ms": 2598.7,
+          "result": "{'routes': [{'network': '0.0.0.0/0', 'next_hop': 'ip 10.10.10.1', 'protocol': 'static'}, {'network': '10.0.1.0/31', 'next_hop': 'interface GigabitEthernet0/0 ip 10.0.5.0', 'protocol': 'ospf'}, {'network': '10.0.1.0/31', 'next_hop': 'interface GigabitEthernet0/1 ip 10.0.6.0', 'protocol': 'ospf'}, {'network': '10.0.2.0/31', 'next_hop': 'interface GigabitEthernet0/0 ip 10.0.5.0', 'protocol': 'ospf'}, {'network': '10.0.3.0/31', 'next_hop': 'interface GigabitEthernet0/1 ip 10.0.6.0', 'protocol': 'osp"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "INTERFACES_MISSING_DESCRIPTION_COUNT_leaf2",
+      "question": "How many interfaces are missing a description on leaf2? [Answer format: integer]",
+      "gold": "2",
+      "raw_pred": "0",
+      "pred": "0",
+      "level": "L1",
+      "category": "Configuration_Check",
+      "answer_type": "number",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_interfaces"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1597,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 2655,
+      "completion_tokens": 36,
+      "total_tokens": 2691,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_interfaces",
+          "args": {
+            "device": "Leaf2"
+          },
+          "elapsed_ms": 6.1,
+          "result": "{'interfaces': []}"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "SYSLOG_SERVER_LIST_pe2",
+      "question": "Which Syslog servers are configured on pe2? [Answer format: JSON array]",
+      "gold": "[\"10.10.10.1\"]",
+      "raw_pred": "[\"10.10.10.1\"]",
+      "pred": "[\"10.10.10.1\"]",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 2306,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3182,
+      "completion_tokens": 43,
+      "total_tokens": 3225,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "PE2"
+          },
+          "elapsed_ms": 0.6,
+          "result": "{'name': 'PE2', 'address': '10.10.10.22', 'port': 22, 'authgroup': 'default', 'device-type': {'cli': {'ned-id': 'cisco-ios-cli-6.110:cisco-ios-cli-6.110', 'protocol': 'ssh'}}, 'config_summary': {'hostname': 'PE2', 'version': '15.9', 'users': ['admin'], 'domain_name': 'ncn.go.kr', 'aaa_enabled': True, 'vrf_list': ['VRF_EDU', 'VRF_GOV', 'VRF_RND'], 'vrf_details': [{'name': 'VRF_EDU', 'rd': '65000:200', 'route_targets_export': ['65000:200'], 'route_targets_import': ['65000:200']}, {'name': 'VRF_GOV"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "PORT_CHANNEL_DEVICES__rs_Hardware_Inventory_6",
+      "question": "Which port channel devices are configured? [Answer format: JSON array]",
+      "gold": "[]",
+      "raw_pred": "[]",
+      "pred": "[]",
+      "level": "L1",
+      "category": "Hardware_Inventory",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1638,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6017,
+      "completion_tokens": 31,
+      "total_tokens": 6048,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.4,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        }
+      ],
+      "mas_status": ""
+    }
+  ]
+}

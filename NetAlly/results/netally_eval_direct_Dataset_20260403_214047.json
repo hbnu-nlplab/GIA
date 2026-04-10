@@ -1,0 +1,1857 @@
+{
+  "meta": {
+    "model": "NetAlly-MAS+MCP",
+    "model_tag": "single-mcp-full",
+    "backend": "netally-direct",
+    "lab": "Lab-B",
+    "lab_folder": "Dataset",
+    "date": "2026-04-03T21:40:55.948127",
+    "duration_sec": 116.0,
+    "total_samples": 50,
+    "dataset": "sampled_100_mixed_en.json",
+    "dataset_path": "../Data/Pnetlab/LabB_NCN_Basic_SP_20nodes/Dataset/20260325_101536/sampled_100_mixed_en.json",
+    "mcp_server_url": "http://127.0.0.1:8811/mcp",
+    "recursion_limit": 60,
+    "max_retries": 3,
+    "max_workers": 1,
+    "include_levels": null,
+    "exclude_levels": null,
+    "date_completed": "2026-04-03T21:42:51.939937",
+    "token_usage_total": {
+      "prompt_tokens": 229168,
+      "completion_tokens": 2242,
+      "total_tokens": 231410,
+      "llm_calls": 100
+    }
+  },
+  "results": [
+    {
+      "question_id": "SSH_VERSION_TEXT_p6",
+      "question": "What is the SSH version on p6? [Answer format: plain string]",
+      "gold": "\"2\"",
+      "raw_pred": "2",
+      "pred": "2",
+      "level": "L1",
+      "category": "Security_Inventory",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 2136,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3106,
+      "completion_tokens": 37,
+      "total_tokens": 3143,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "P6"
+          },
+          "elapsed_ms": 0.5,
+          "result": "{'name': 'P6', 'address': '10.10.10.16', 'port': 22, 'authgroup': 'default', 'device-type': {'cli': {'ned-id': 'cisco-ios-cli-6.110:cisco-ios-cli-6.110', 'protocol': 'ssh'}}, 'config_summary': {'hostname': 'P6', 'version': '15.9', 'users': ['admin'], 'domain_name': 'ncn.go.kr', 'aaa_enabled': False, 'vrf_list': [], 'vrf_details': [], 'interface_count': 9, 'interface_with_description': 0, 'interface_without_description': 9, 'interface_types': ['Loopback', 'GigabitEthernet'], 'routing_protocols': "
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "SYSTEM_TIMEZONE_TEXT_p8",
+      "question": "What is the system timezone on p8? [Answer format: plain string]",
+      "gold": "\"KST 9\"",
+      "raw_pred": "KST 9",
+      "pred": "KST 9",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1271,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3106,
+      "completion_tokens": 39,
+      "total_tokens": 3145,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "P8"
+          },
+          "elapsed_ms": 0.4,
+          "result": "{'name': 'P8', 'address': '10.10.10.18', 'port': 22, 'authgroup': 'default', 'device-type': {'cli': {'ned-id': 'cisco-ios-cli-6.110:cisco-ios-cli-6.110', 'protocol': 'ssh'}}, 'config_summary': {'hostname': 'P8', 'version': '15.9', 'users': ['admin'], 'domain_name': 'ncn.go.kr', 'aaa_enabled': False, 'vrf_list': [], 'vrf_details': [], 'interface_count': 9, 'interface_with_description': 0, 'interface_without_description': 9, 'interface_types': ['Loopback', 'GigabitEthernet'], 'routing_protocols': "
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "VRF_RD_MAP_leaf8",
+      "question": "What is the VRF route-distinguisher mapping on leaf8? [Answer format: JSON object]",
+      "gold": "{}",
+      "raw_pred": "{}",
+      "pred": "{}",
+      "level": "L1",
+      "category": "Services_Inventory",
+      "answer_type": "map_str_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1881,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 2986,
+      "completion_tokens": 35,
+      "total_tokens": 3021,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "Leaf8"
+          },
+          "elapsed_ms": 0.5,
+          "result": "{'name': 'Leaf8', 'address': '10.10.10.38', 'port': 22, 'authgroup': 'default', 'device-type': {'cli': {'ned-id': 'cisco-ios-cli-6.110:cisco-ios-cli-6.110', 'protocol': 'ssh'}}, 'config_summary': {'hostname': 'Leaf8', 'version': '15.9', 'users': ['admin'], 'domain_name': 'ncn.go.kr', 'aaa_enabled': False, 'vrf_list': [], 'vrf_details': [], 'interface_count': 8, 'interface_with_description': 0, 'interface_without_description': 8, 'interface_types': ['GigabitEthernet'], 'routing_protocols': [], 'm"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "OSPF_AREA0_IF_LIST_leaf6",
+      "question": "Which interfaces belong to OSPF Area 0 on leaf6? [Answer format: JSON array]",
+      "gold": "[]",
+      "raw_pred": "[]",
+      "pred": "[]",
+      "level": "L1",
+      "category": "Routing_Inventory",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_interfaces"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1816,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 2670,
+      "completion_tokens": 34,
+      "total_tokens": 2704,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_interfaces",
+          "args": {
+            "device": "Leaf6"
+          },
+          "elapsed_ms": 24.7,
+          "result": "{'interfaces': []}"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "NEIGHBOR_LIST_EBGP_leaf8",
+      "question": "Which eBGP neighbor IPs are configured on leaf8? [Answer format: JSON array]",
+      "gold": "[]",
+      "raw_pred": "[]",
+      "pred": "[]",
+      "level": "L1",
+      "category": "Routing_Inventory",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 2044,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 2969,
+      "completion_tokens": 35,
+      "total_tokens": 3004,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "Leaf8"
+          },
+          "elapsed_ms": 0.4,
+          "result": "{'name': 'Leaf8', 'address': '10.10.10.38', 'port': 22, 'authgroup': 'default', 'device-type': {'cli': {'ned-id': 'cisco-ios-cli-6.110:cisco-ios-cli-6.110', 'protocol': 'ssh'}}, 'config_summary': {'hostname': 'Leaf8', 'version': '15.9', 'users': ['admin'], 'domain_name': 'ncn.go.kr', 'aaa_enabled': False, 'vrf_list': [], 'vrf_details': [], 'interface_count': 8, 'interface_with_description': 0, 'interface_without_description': 8, 'interface_types': ['GigabitEthernet'], 'routing_protocols': [], 'm"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "VTY_LOGIN_MODE_TEXT_leaf4",
+      "question": "What is the VTY login mode on leaf4? [Answer format: plain string]",
+      "gold": "\"local\"",
+      "raw_pred": "local",
+      "pred": "local",
+      "level": "L1",
+      "category": "Security_Inventory",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1902,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3092,
+      "completion_tokens": 36,
+      "total_tokens": 3128,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "Leaf4"
+          },
+          "elapsed_ms": 0.4,
+          "result": "{'name': 'Leaf4', 'address': '10.10.10.34', 'port': 22, 'authgroup': 'default', 'device-type': {'cli': {'ned-id': 'cisco-ios-cli-6.110:cisco-ios-cli-6.110', 'protocol': 'ssh'}}, 'config_summary': {'hostname': 'Leaf4', 'version': '15.9', 'users': ['admin'], 'domain_name': 'ncn.go.kr', 'aaa_enabled': False, 'vrf_list': [], 'vrf_details': [], 'interface_count': 8, 'interface_with_description': 0, 'interface_without_description': 8, 'interface_types': ['GigabitEthernet'], 'routing_protocols': [], 'm"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "ROUTING_TABLE_ENTRY_COUNT_p4",
+      "question": "How many routing table entries exist on p4? [Answer format: integer]",
+      "gold": "6",
+      "raw_pred": "36",
+      "pred": "36",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "number",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_route_table"
+      ],
+      "tool_count": 1,
+      "latency_ms": 3872,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 4470,
+      "completion_tokens": 36,
+      "total_tokens": 4506,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_route_table",
+          "args": {
+            "device": "P4"
+          },
+          "elapsed_ms": 2078.8,
+          "result": "{'routes': [{'network': '0.0.0.0/0', 'next_hop': 'ip 10.10.10.1', 'protocol': 'static'}, {'network': '10.0.1.0/31', 'next_hop': 'interface GigabitEthernet0/0 ip 10.0.5.0', 'protocol': 'ospf'}, {'network': '10.0.1.0/31', 'next_hop': 'interface GigabitEthernet0/1 ip 10.0.6.0', 'protocol': 'ospf'}, {'network': '10.0.2.0/31', 'next_hop': 'interface GigabitEthernet0/0 ip 10.0.5.0', 'protocol': 'ospf'}, {'network': '10.0.3.0/31', 'next_hop': 'interface GigabitEthernet0/1 ip 10.0.6.0', 'protocol': 'osp"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "INTERFACES_MISSING_DESCRIPTION_COUNT_leaf2",
+      "question": "How many interfaces are missing a description on leaf2? [Answer format: integer]",
+      "gold": "2",
+      "raw_pred": "0",
+      "pred": "0",
+      "level": "L1",
+      "category": "Configuration_Check",
+      "answer_type": "number",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_interfaces"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1357,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 2655,
+      "completion_tokens": 36,
+      "total_tokens": 2691,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_interfaces",
+          "args": {
+            "device": "Leaf2"
+          },
+          "elapsed_ms": 6.0,
+          "result": "{'interfaces': []}"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "SYSLOG_SERVER_LIST_pe2",
+      "question": "Which Syslog servers are configured on pe2? [Answer format: JSON array]",
+      "gold": "[\"10.10.10.1\"]",
+      "raw_pred": "[\"10.10.10.1\"]",
+      "pred": "[\"10.10.10.1\"]",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 2041,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3182,
+      "completion_tokens": 43,
+      "total_tokens": 3225,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "PE2"
+          },
+          "elapsed_ms": 1.0,
+          "result": "{'name': 'PE2', 'address': '10.10.10.22', 'port': 22, 'authgroup': 'default', 'device-type': {'cli': {'ned-id': 'cisco-ios-cli-6.110:cisco-ios-cli-6.110', 'protocol': 'ssh'}}, 'config_summary': {'hostname': 'PE2', 'version': '15.9', 'users': ['admin'], 'domain_name': 'ncn.go.kr', 'aaa_enabled': True, 'vrf_list': ['VRF_EDU', 'VRF_GOV', 'VRF_RND'], 'vrf_details': [{'name': 'VRF_EDU', 'rd': '65000:200', 'route_targets_export': ['65000:200'], 'route_targets_import': ['65000:200']}, {'name': 'VRF_GOV"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "PORT_CHANNEL_DEVICES__rs_Hardware_Inventory_6",
+      "question": "Which port channel devices are configured? [Answer format: JSON array]",
+      "gold": "[]",
+      "raw_pred": "[]",
+      "pred": "[]",
+      "level": "L1",
+      "category": "Hardware_Inventory",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1360,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6017,
+      "completion_tokens": 31,
+      "total_tokens": 6048,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.6,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "LOOPBACK_INTERFACES_LIST_leaf1",
+      "question": "Which loopback interfaces are configured on leaf1? [Answer format: JSON array]",
+      "gold": "[]",
+      "raw_pred": "[]",
+      "pred": "[]",
+      "level": "L1",
+      "category": "Configuration_Check",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_interfaces"
+      ],
+      "tool_count": 1,
+      "latency_ms": 2288,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 2662,
+      "completion_tokens": 34,
+      "total_tokens": 2696,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_interfaces",
+          "args": {
+            "device": "Leaf1"
+          },
+          "elapsed_ms": 24.3,
+          "result": "{'interfaces': []}"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "SYSTEM_USER_LIST_p4",
+      "question": "Which system users are configured on p4? [Answer format: JSON array]",
+      "gold": "[\"admin\"]",
+      "raw_pred": "[\"admin\"]",
+      "pred": "[\"admin\"]",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1920,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 2979,
+      "completion_tokens": 37,
+      "total_tokens": 3016,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "P4"
+          },
+          "elapsed_ms": 0.5,
+          "result": "{'name': 'P4', 'address': '10.10.10.14', 'port': 22, 'authgroup': 'default', 'device-type': {'cli': {'ned-id': 'cisco-ios-cli-6.110:cisco-ios-cli-6.110', 'protocol': 'ssh'}}, 'config_summary': {'hostname': 'P4', 'version': '15.9', 'users': ['admin'], 'domain_name': 'ncn.go.kr', 'aaa_enabled': False, 'vrf_list': [], 'vrf_details': [], 'interface_count': 9, 'interface_with_description': 0, 'interface_without_description': 9, 'interface_types': ['Loopback', 'GigabitEthernet'], 'routing_protocols': "
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "SYSTEM_USER_LIST_leaf1",
+      "question": "Which system users are configured on leaf1? [Answer format: JSON array]",
+      "gold": "[\"admin\"]",
+      "raw_pred": "[\"admin\"]",
+      "pred": "[\"admin\"]",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1738,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 2961,
+      "completion_tokens": 37,
+      "total_tokens": 2998,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "Leaf1"
+          },
+          "elapsed_ms": 0.6,
+          "result": "{'name': 'Leaf1', 'address': '10.10.10.31', 'port': 22, 'authgroup': 'default', 'device-type': {'cli': {'ned-id': 'cisco-ios-cli-6.110:cisco-ios-cli-6.110', 'protocol': 'ssh'}}, 'config_summary': {'hostname': 'Leaf1', 'version': '15.9', 'users': ['admin'], 'domain_name': 'ncn.go.kr', 'aaa_enabled': False, 'vrf_list': [], 'vrf_details': [], 'interface_count': 8, 'interface_with_description': 0, 'interface_without_description': 8, 'interface_types': ['GigabitEthernet'], 'routing_protocols': [], 'm"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "INTERFACE_STATUS_MAP_leaf7",
+      "question": "What is the interface status mapping on leaf7? [Answer format: JSON object]",
+      "gold": "{\"GigabitEthernet0/0\": \"up\", \"GigabitEthernet0/7\": \"up\"}",
+      "raw_pred": "{}",
+      "pred": "{}",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "map_str_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_interfaces"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1777,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 2675,
+      "completion_tokens": 34,
+      "total_tokens": 2709,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_interfaces",
+          "args": {
+            "device": "Leaf7"
+          },
+          "elapsed_ms": 6.3,
+          "result": "{'interfaces': []}"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "NEIGHBOR_LIST_EBGP_pe1",
+      "question": "Which eBGP neighbor IPs are configured on pe1? [Answer format: JSON array]",
+      "gold": "[]",
+      "raw_pred": "[\"pe2\", \"pe3\"]",
+      "pred": "[\"pe2\", \"pe3\"]",
+      "level": "L1",
+      "category": "Routing_Inventory",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_bgp_sessions"
+      ],
+      "tool_count": 1,
+      "latency_ms": 4649,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 2826,
+      "completion_tokens": 42,
+      "total_tokens": 2868,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_bgp_sessions",
+          "args": {
+            "device": "PE1"
+          },
+          "elapsed_ms": 2105.4,
+          "result": "{'sessions': [{'node': 'pe1', 'remote_node': 'pe2', 'local_as': '65000', 'remote_as': '65000', 'status': 'ESTABLISHED'}, {'node': 'pe1', 'remote_node': 'pe3', 'local_as': '65000', 'remote_as': '65000', 'status': 'ESTABLISHED'}], 'summary': {'total_sessions': 2, 'established': 2, 'not_established': 0, 'unique_nodes': 1, 'under_peered_nodes': [], 'under_peered_count': 0}}"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "OSPF_PROCESS_IDS_SET_p3",
+      "question": "Which OSPF process IDs are configured on p3? [Answer format: JSON array]",
+      "gold": "[\"1\"]",
+      "raw_pred": "[\"1\"]",
+      "pred": "[\"1\"]",
+      "level": "L1",
+      "category": "Routing_Inventory",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1361,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 2985,
+      "completion_tokens": 37,
+      "total_tokens": 3022,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "P3"
+          },
+          "elapsed_ms": 0.5,
+          "result": "{'name': 'P3', 'address': '10.10.10.13', 'port': 22, 'authgroup': 'default', 'device-type': {'cli': {'ned-id': 'cisco-ios-cli-6.110:cisco-ios-cli-6.110', 'protocol': 'ssh'}}, 'config_summary': {'hostname': 'P3', 'version': '15.9', 'users': ['admin'], 'domain_name': 'ncn.go.kr', 'aaa_enabled': False, 'vrf_list': [], 'vrf_details': [], 'interface_count': 9, 'interface_with_description': 1, 'interface_without_description': 8, 'interface_types': ['Loopback', 'GigabitEthernet'], 'routing_protocols': "
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "PREFIX_LIST_COUNT_p6",
+      "question": "How many prefix list entries are configured on p6? [Answer format: integer]",
+      "gold": "0",
+      "raw_pred": "0",
+      "pred": "0",
+      "level": "L1",
+      "category": "Configuration_Check",
+      "answer_type": "number",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 2033,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 2974,
+      "completion_tokens": 36,
+      "total_tokens": 3010,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "P6"
+          },
+          "elapsed_ms": 0.4,
+          "result": "{'name': 'P6', 'address': '10.10.10.16', 'port': 22, 'authgroup': 'default', 'device-type': {'cli': {'ned-id': 'cisco-ios-cli-6.110:cisco-ios-cli-6.110', 'protocol': 'ssh'}}, 'config_summary': {'hostname': 'P6', 'version': '15.9', 'users': ['admin'], 'domain_name': 'ncn.go.kr', 'aaa_enabled': False, 'vrf_list': [], 'vrf_details': [], 'interface_count': 9, 'interface_with_description': 0, 'interface_without_description': 9, 'interface_types': ['Loopback', 'GigabitEthernet'], 'routing_protocols': "
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "PORT_CHANNEL_DEVICES__rs_Hardware_Inventory_29",
+      "question": "Which port channel devices are configured? [Answer format: JSON array]",
+      "gold": "[]",
+      "raw_pred": "[]",
+      "pred": "[]",
+      "level": "L1",
+      "category": "Hardware_Inventory",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1613,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6017,
+      "completion_tokens": 31,
+      "total_tokens": 6048,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.4,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "SYSTEM_TIMEZONE_TEXT_pe2",
+      "question": "What is the system timezone on pe2? [Answer format: plain string]",
+      "gold": "\"KST 9\"",
+      "raw_pred": "KST 9",
+      "pred": "KST 9",
+      "level": "L1",
+      "category": "System_Inventory",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1749,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3307,
+      "completion_tokens": 39,
+      "total_tokens": 3346,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "PE2"
+          },
+          "elapsed_ms": 0.5,
+          "result": "{'name': 'PE2', 'address': '10.10.10.22', 'port': 22, 'authgroup': 'default', 'device-type': {'cli': {'ned-id': 'cisco-ios-cli-6.110:cisco-ios-cli-6.110', 'protocol': 'ssh'}}, 'config_summary': {'hostname': 'PE2', 'version': '15.9', 'users': ['admin'], 'domain_name': 'ncn.go.kr', 'aaa_enabled': True, 'vrf_list': ['VRF_EDU', 'VRF_GOV', 'VRF_RND'], 'vrf_details': [{'name': 'VRF_EDU', 'rd': '65000:200', 'route_targets_export': ['65000:200'], 'route_targets_import': ['65000:200']}, {'name': 'VRF_GOV"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "RIP_PROCESSES_leaf7",
+      "question": "Is RIP enabled on leaf7? [Answer format: 'Enabled' or 'Disabled']",
+      "gold": "\"Disabled\"",
+      "raw_pred": "Disabled",
+      "pred": "Disabled",
+      "level": "L1",
+      "category": "Configuration_Check",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1460,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3092,
+      "completion_tokens": 36,
+      "total_tokens": 3128,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "Leaf7"
+          },
+          "elapsed_ms": 0.5,
+          "result": "{'name': 'Leaf7', 'address': '10.10.10.37', 'port': 22, 'authgroup': 'default', 'device-type': {'cli': {'ned-id': 'cisco-ios-cli-6.110:cisco-ios-cli-6.110', 'protocol': 'ssh'}}, 'config_summary': {'hostname': 'Leaf7', 'version': '15.9', 'users': ['admin'], 'domain_name': 'ncn.go.kr', 'aaa_enabled': False, 'vrf_list': [], 'vrf_details': [], 'interface_count': 8, 'interface_with_description': 0, 'interface_without_description': 8, 'interface_types': ['GigabitEthernet'], 'routing_protocols': [], 'm"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "DEVICES_WITH_SAME_VRF_VRF_EDU__rs_Security_Policy_1",
+      "question": "Which devices have VRF VRF_EDU configured? [Answer format: JSON array]",
+      "gold": "[\"pe1\", \"pe2\", \"pe3\", \"pe4\"]",
+      "raw_pred": "[\"PE1\", \"PE2\", \"PE3\", \"PE4\"]",
+      "pred": "[\"PE1\", \"PE2\", \"PE3\", \"PE4\"]",
+      "level": "L2",
+      "category": "Security_Policy",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1696,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6025,
+      "completion_tokens": 46,
+      "total_tokens": 6071,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.5,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "SSH_MISSING_DEVICES__rs_Security_Policy_9__rs_Security_Policy_34",
+      "question": "Which devices are missing SSH configuration? [Answer format: JSON array]",
+      "gold": "[]",
+      "raw_pred": "[]",
+      "pred": "[]",
+      "level": "L2",
+      "category": "Security_Policy",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 3964,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6017,
+      "completion_tokens": 31,
+      "total_tokens": 6048,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.4,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "AAA_ENABLED_DEVICES__rs_Security_Policy_2__rs_Security_Policy_15__rs_Security_Policy_27__rs_Security_Policy_30",
+      "question": "Which devices have AAA enabled? [Answer format: JSON array]",
+      "gold": "[\"pe1\", \"pe2\", \"pe3\", \"pe4\"]",
+      "raw_pred": "[\"PE1\", \"PE2\", \"PE3\", \"PE4\"]",
+      "pred": "[\"PE1\", \"PE2\", \"PE3\", \"PE4\"]",
+      "level": "L2",
+      "category": "Security_Policy",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 3083,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6015,
+      "completion_tokens": 46,
+      "total_tokens": 6061,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.5,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "DEVICES_WITH_SAME_VRF_VRF_RND__rs_Security_Policy_33",
+      "question": "Which devices have VRF VRF_RND configured? [Answer format: JSON array]",
+      "gold": "[\"pe1\", \"pe2\", \"pe3\", \"pe4\"]",
+      "raw_pred": "[\"PE1\", \"PE2\", \"PE3\", \"PE4\"]",
+      "pred": "[\"PE1\", \"PE2\", \"PE3\", \"PE4\"]",
+      "level": "L2",
+      "category": "Security_Policy",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 2521,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6025,
+      "completion_tokens": 46,
+      "total_tokens": 6071,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.5,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "DEVICES_WITH_SAME_VRF_VRF_EDU__rs_Security_Policy_1__rs_Security_Policy_23",
+      "question": "Which devices have VRF VRF_EDU configured? [Answer format: JSON array]",
+      "gold": "[\"pe1\", \"pe2\", \"pe3\", \"pe4\"]",
+      "raw_pred": "[\"PE1\", \"PE2\", \"PE3\", \"PE4\"]",
+      "pred": "[\"PE1\", \"PE2\", \"PE3\", \"PE4\"]",
+      "level": "L2",
+      "category": "Security_Policy",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1625,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6025,
+      "completion_tokens": 46,
+      "total_tokens": 6071,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.5,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "AAA_ENABLED_DEVICES__rs_Security_Policy_2__rs_Security_Policy_15",
+      "question": "Which devices have AAA enabled? [Answer format: JSON array]",
+      "gold": "[\"pe1\", \"pe2\", \"pe3\", \"pe4\"]",
+      "raw_pred": "[\"PE1\", \"PE2\", \"PE3\", \"PE4\"]",
+      "pred": "[\"PE1\", \"PE2\", \"PE3\", \"PE4\"]",
+      "level": "L2",
+      "category": "Security_Policy",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1775,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6015,
+      "completion_tokens": 46,
+      "total_tokens": 6061,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.5,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "AAA_MISSING_DEVICES__rs_Security_Policy_3",
+      "question": "Which devices are missing AAA configuration? [Answer format: JSON array]",
+      "gold": "[\"leaf1\", \"leaf2\", \"leaf3\", \"leaf4\", \"leaf5\", \"leaf6\", \"leaf7\", \"leaf8\", \"p1\", \"p2\", \"p3\", \"p4\", \"p5\", \"p6\", \"p7\", \"p8\"]",
+      "raw_pred": "[\"Leaf1\", \"Leaf2\", \"Leaf3\", \"Leaf4\", \"Leaf5\", \"Leaf6\", \"Leaf7\", \"Leaf8\", \"P1\", \"P2\", \"P3\", \"P4\", \"P5\", \"P6\", \"P7\", \"P8\"]",
+      "pred": "[\"Leaf1\", \"Leaf2\", \"Leaf3\", \"Leaf4\", \"Leaf5\", \"Leaf6\", \"Leaf7\", \"Leaf8\", \"P1\", \"P2\", \"P3\", \"P4\", \"P5\", \"P6\", \"P7\", \"P8\"]",
+      "level": "L2",
+      "category": "Security_Policy",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 2526,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6017,
+      "completion_tokens": 94,
+      "total_tokens": 6111,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.5,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "DEVICES_WITH_SAME_VRF_VRF_RND__rs_Security_Policy_17",
+      "question": "Which devices have VRF VRF_RND configured? [Answer format: JSON array]",
+      "gold": "[\"pe1\", \"pe2\", \"pe3\", \"pe4\"]",
+      "raw_pred": "[\"PE1\", \"PE2\", \"PE3\", \"PE4\"]",
+      "pred": "[\"PE1\", \"PE2\", \"PE3\", \"PE4\"]",
+      "level": "L2",
+      "category": "Security_Policy",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1612,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6025,
+      "completion_tokens": 46,
+      "total_tokens": 6071,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.5,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "SSH_MISSING_DEVICES__rs_Security_Policy_6__rs_Security_Policy_8__rs_Security_Policy_10__rs_Security_Policy_26",
+      "question": "Which devices are missing SSH configuration? [Answer format: JSON array]",
+      "gold": "[]",
+      "raw_pred": "[]",
+      "pred": "[]",
+      "level": "L2",
+      "category": "Security_Policy",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1374,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6017,
+      "completion_tokens": 31,
+      "total_tokens": 6048,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.5,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "SSH_MISSING_DEVICES__rs_Security_Policy_6",
+      "question": "Which devices are missing SSH configuration? [Answer format: JSON array]",
+      "gold": "[]",
+      "raw_pred": "[]",
+      "pred": "[]",
+      "level": "L2",
+      "category": "Security_Policy",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1744,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6017,
+      "completion_tokens": 31,
+      "total_tokens": 6048,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.4,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "SSH_ENABLED_DEVICES",
+      "question": "Which devices have SSH enabled? [Answer format: JSON array]",
+      "gold": "[\"leaf1\", \"leaf2\", \"leaf3\", \"leaf4\", \"leaf5\", \"leaf6\", \"leaf7\", \"leaf8\", \"p1\", \"p2\", \"p3\", \"p4\", \"p5\", \"p6\", \"p7\", \"p8\", \"pe1\", \"pe2\", \"pe3\", \"pe4\"]",
+      "raw_pred": "[\"Leaf1\", \"Leaf2\", \"Leaf3\", \"Leaf4\", \"Leaf5\", \"Leaf6\", \"Leaf7\", \"Leaf8\", \"P1\", \"P2\", \"P3\", \"P4\", \"P5\", \"P6\", \"P7\", \"P8\", \"PE1\", \"PE2\", \"PE3\", \"PE4\"]",
+      "pred": "[\"Leaf1\", \"Leaf2\", \"Leaf3\", \"Leaf4\", \"Leaf5\", \"Leaf6\", \"Leaf7\", \"Leaf8\", \"P1\", \"P2\", \"P3\", \"P4\", \"P5\", \"P6\", \"P7\", \"P8\", \"PE1\", \"PE2\", \"PE3\", \"PE4\"]",
+      "level": "L2",
+      "category": "Security_Policy",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 3033,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6015,
+      "completion_tokens": 110,
+      "total_tokens": 6125,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.4,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "L2VPN_PAIRS",
+      "question": "Which L2VPN pairs are configured? [Answer format: JSON array]",
+      "gold": "[]",
+      "raw_pred": "[]",
+      "pred": "[]",
+      "level": "L2",
+      "category": "L2VPN_Consistency",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info",
+        "nso_get_interfaces"
+      ],
+      "tool_count": 2,
+      "latency_ms": 2314,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6052,
+      "completion_tokens": 44,
+      "total_tokens": 6096,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.4,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        },
+        {
+          "tool": "nso_get_interfaces",
+          "args": {},
+          "elapsed_ms": 0.4,
+          "result": "ERROR: TypeError: nso_get_interfaces() missing 1 required positional argument: 'device'"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "AAA_ENABLED_DEVICES__rs_Security_Policy_2__rs_Security_Policy_15__rs_Security_Policy_42",
+      "question": "Which devices have AAA enabled? [Answer format: JSON array]",
+      "gold": "[\"pe1\", \"pe2\", \"pe3\", \"pe4\"]",
+      "raw_pred": "[\"PE1\", \"PE2\", \"PE3\", \"PE4\"]",
+      "pred": "[\"PE1\", \"PE2\", \"PE3\", \"PE4\"]",
+      "level": "L2",
+      "category": "Security_Policy",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 2066,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6015,
+      "completion_tokens": 46,
+      "total_tokens": 6061,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.4,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "DEVICES_WITH_SAME_VRF_VRF_RND__rs_Security_Policy_16",
+      "question": "Which devices have VRF VRF_RND configured? [Answer format: JSON array]",
+      "gold": "[\"pe1\", \"pe2\", \"pe3\", \"pe4\"]",
+      "raw_pred": "[\"PE1\", \"PE2\", \"PE3\", \"PE4\"]",
+      "pred": "[\"PE1\", \"PE2\", \"PE3\", \"PE4\"]",
+      "level": "L2",
+      "category": "Security_Policy",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1791,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6025,
+      "completion_tokens": 46,
+      "total_tokens": 6071,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.4,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "SSH_MISSING_DEVICES__rs_Security_Policy_6__rs_Security_Policy_8__rs_Security_Policy_10",
+      "question": "Which devices are missing SSH configuration? [Answer format: JSON array]",
+      "gold": "[]",
+      "raw_pred": "[]",
+      "pred": "[]",
+      "level": "L2",
+      "category": "Security_Policy",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 2775,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6017,
+      "completion_tokens": 31,
+      "total_tokens": 6048,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.5,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "AAA_ENABLED_DEVICES__rs_Security_Policy_2__rs_Security_Policy_15__rs_Security_Policy_27__rs_Security_Policy_30__rs_Security_Policy_36",
+      "question": "Which devices have AAA enabled? [Answer format: JSON array]",
+      "gold": "[\"pe1\", \"pe2\", \"pe3\", \"pe4\"]",
+      "raw_pred": "[\"PE1\", \"PE2\", \"PE3\", \"PE4\"]",
+      "pred": "[\"PE1\", \"PE2\", \"PE3\", \"PE4\"]",
+      "level": "L2",
+      "category": "Security_Policy",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 2815,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6015,
+      "completion_tokens": 46,
+      "total_tokens": 6061,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.5,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "OSPF_NEIGHBOR_COUNT_PER_AREA_0",
+      "question": "How many OSPF neighbor relationships exist in area 0? [Answer format: integer]",
+      "gold": "0",
+      "raw_pred": "0",
+      "pred": "0",
+      "level": "L2",
+      "category": "OSPF_Consistency",
+      "answer_type": "number",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info",
+        "nso_get_routing"
+      ],
+      "tool_count": 2,
+      "latency_ms": 3334,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6058,
+      "completion_tokens": 57,
+      "total_tokens": 6115,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.8,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        },
+        {
+          "tool": "nso_get_routing",
+          "args": {
+            "device": "ALL",
+            "protocol": "OSPF"
+          },
+          "elapsed_ms": 1.6,
+          "result": "{'error': 'Protocol OSPF not supported yet'}"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "AAA_ENABLED_DEVICES__rs_Security_Policy_2",
+      "question": "Which devices have AAA enabled? [Answer format: JSON array]",
+      "gold": "[\"pe1\", \"pe2\", \"pe3\", \"pe4\"]",
+      "raw_pred": "[\"PE1\", \"PE2\", \"PE3\", \"PE4\"]",
+      "pred": "[\"PE1\", \"PE2\", \"PE3\", \"PE4\"]",
+      "level": "L2",
+      "category": "Security_Policy",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1887,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6015,
+      "completion_tokens": 46,
+      "total_tokens": 6061,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.4,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "SSH_MISSING_COUNT__rs_Security_Policy_4__rs_Security_Policy_14__rs_Security_Policy_31",
+      "question": "How many devices are missing SSH configuration? [Answer format: integer]",
+      "gold": "0",
+      "raw_pred": "0",
+      "pred": "0",
+      "level": "L2",
+      "category": "Security_Policy",
+      "answer_type": "number",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1977,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6010,
+      "completion_tokens": 33,
+      "total_tokens": 6043,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.4,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "DEVICES_WITH_SAME_VRF_VRF_EDU",
+      "question": "Which devices have VRF VRF_EDU configured? [Answer format: JSON array]",
+      "gold": "[\"pe1\", \"pe2\", \"pe3\", \"pe4\"]",
+      "raw_pred": "[\"PE1\", \"PE2\", \"PE3\", \"PE4\"]",
+      "pred": "[\"PE1\", \"PE2\", \"PE3\", \"PE4\"]",
+      "level": "L2",
+      "category": "Security_Policy",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 1829,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6025,
+      "completion_tokens": 46,
+      "total_tokens": 6071,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.5,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "VRF_RT_LIST_PER_DEVICE_pe3",
+      "question": "Which route-targets are configured across all VRFs on pe3? [Answer format: JSON array]",
+      "gold": "[\"65000:100\", \"65000:200\", \"65000:300\"]",
+      "raw_pred": "[]",
+      "pred": "[]",
+      "level": "L3",
+      "category": "VRF_Consistency",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info",
+        "nso_get_interfaces"
+      ],
+      "tool_count": 2,
+      "latency_ms": 1861,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6056,
+      "completion_tokens": 49,
+      "total_tokens": 6105,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.6,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        },
+        {
+          "tool": "nso_get_interfaces",
+          "args": {
+            "device": "PE3"
+          },
+          "elapsed_ms": 28.5,
+          "result": "{'interfaces': []}"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "COMPARE_BGP_AS_p2_p5",
+      "question": "Compare the BGP AS numbers of p2 and p5. [Answer format: 'p2: AS X, p5: AS Y']",
+      "gold": "\"p2: AS N/A, p5: AS N/A\"",
+      "raw_pred": "p2: AS N/A, p5: AS N/A",
+      "pred": "p2: AS N/A, p5: AS N/A",
+      "level": "L3",
+      "category": "Comparison_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_bgp_sessions",
+        "batfish_bgp_sessions"
+      ],
+      "tool_count": 2,
+      "latency_ms": 6622,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 2960,
+      "completion_tokens": 71,
+      "total_tokens": 3031,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_bgp_sessions",
+          "args": {
+            "device": "P2"
+          },
+          "elapsed_ms": 2284.3,
+          "result": "{'sessions': [], 'summary': {'total_sessions': 0, 'established': 0, 'not_established': 0, 'unique_nodes': 0, 'under_peered_nodes': [], 'under_peered_count': 0}}"
+        },
+        {
+          "tool": "batfish_bgp_sessions",
+          "args": {
+            "device": "P5"
+          },
+          "elapsed_ms": 1985.1,
+          "result": "{'sessions': [], 'summary': {'total_sessions': 0, 'established': 0, 'not_established': 0, 'unique_nodes': 0, 'under_peered_nodes': [], 'under_peered_count': 0}}"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "VRF_RT_LIST_PER_DEVICE_p4",
+      "question": "Which route-targets are configured across all VRFs on p4? [Answer format: JSON array]",
+      "gold": "[]",
+      "raw_pred": "[]",
+      "pred": "[]",
+      "level": "L3",
+      "category": "VRF_Consistency",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 2693,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 2989,
+      "completion_tokens": 35,
+      "total_tokens": 3024,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "P4"
+          },
+          "elapsed_ms": 0.5,
+          "result": "{'name': 'P4', 'address': '10.10.10.14', 'port': 22, 'authgroup': 'default', 'device-type': {'cli': {'ned-id': 'cisco-ios-cli-6.110:cisco-ios-cli-6.110', 'protocol': 'ssh'}}, 'config_summary': {'hostname': 'P4', 'version': '15.9', 'users': ['admin'], 'domain_name': 'ncn.go.kr', 'aaa_enabled': False, 'vrf_list': [], 'vrf_details': [], 'interface_count': 9, 'interface_with_description': 0, 'interface_without_description': 9, 'interface_types': ['Loopback', 'GigabitEthernet'], 'routing_protocols': "
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "COMPARE_BGP_AS_leaf3_p6",
+      "question": "Compare the BGP AS numbers of leaf3 and p6. [Answer format: 'leaf3: AS X, p6: AS Y']",
+      "gold": "\"leaf3: AS N/A, p6: AS N/A\"",
+      "raw_pred": "leaf3: AS N/A, p6: AS N/A",
+      "pred": "leaf3: AS N/A, p6: AS N/A",
+      "level": "L3",
+      "category": "Comparison_Analysis",
+      "answer_type": "text",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_bgp_sessions",
+        "batfish_bgp_sessions"
+      ],
+      "tool_count": 2,
+      "latency_ms": 6880,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 2960,
+      "completion_tokens": 71,
+      "total_tokens": 3031,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_bgp_sessions",
+          "args": {
+            "device": "Leaf3"
+          },
+          "elapsed_ms": 1950.9,
+          "result": "{'sessions': [], 'summary': {'total_sessions': 0, 'established': 0, 'not_established': 0, 'unique_nodes': 0, 'under_peered_nodes': [], 'under_peered_count': 0}}"
+        },
+        {
+          "tool": "batfish_bgp_sessions",
+          "args": {
+            "device": "P6"
+          },
+          "elapsed_ms": 1983.3,
+          "result": "{'sessions': [], 'summary': {'total_sessions': 0, 'established': 0, 'not_established': 0, 'unique_nodes': 0, 'under_peered_nodes': [], 'under_peered_count': 0}}"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "L2VPN_MISMATCH_COUNT__rs_L2VPN_Consistency_1__rs_L2VPN_Consistency_4__rs_L2VPN_Consistency_7",
+      "question": "How many L2VPN configuration mismatches exist? [Answer format: integer]",
+      "gold": "0",
+      "raw_pred": "0",
+      "pred": "0",
+      "level": "L3",
+      "category": "L2VPN_Consistency",
+      "answer_type": "number",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info"
+      ],
+      "tool_count": 1,
+      "latency_ms": 2829,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6014,
+      "completion_tokens": 33,
+      "total_tokens": 6047,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.5,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "COMPARE_VRF_COUNT_leaf7_p5",
+      "question": "Compare the VRF counts of leaf7 and p5. [Answer format: JSON object]",
+      "gold": "{\"difference\": 0, \"host1_count\": 0, \"host2_count\": 0}",
+      "raw_pred": "{\"difference\": 0, \"host1_count\": 0, \"host2_count\": 0}",
+      "pred": "{\"difference\": 0, \"host1_count\": 0, \"host2_count\": 0}",
+      "level": "L3",
+      "category": "Comparison_Analysis",
+      "answer_type": "map_str_int",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_device_info",
+        "nso_get_device_info"
+      ],
+      "tool_count": 2,
+      "latency_ms": 2260,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 3394,
+      "completion_tokens": 79,
+      "total_tokens": 3473,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "Leaf7"
+          },
+          "elapsed_ms": 0.4,
+          "result": "{'name': 'Leaf7', 'address': '10.10.10.37', 'port': 22, 'authgroup': 'default', 'device-type': {'cli': {'ned-id': 'cisco-ios-cli-6.110:cisco-ios-cli-6.110', 'protocol': 'ssh'}}, 'config_summary': {'hostname': 'Leaf7', 'version': '15.9', 'users': ['admin'], 'domain_name': 'ncn.go.kr', 'aaa_enabled': False, 'vrf_list': [], 'vrf_details': [], 'interface_count': 8, 'interface_with_description': 0, 'interface_without_description': 8, 'interface_types': ['GigabitEthernet'], 'routing_protocols': [], 'm"
+        },
+        {
+          "tool": "nso_get_device_info",
+          "args": {
+            "device": "P5"
+          },
+          "elapsed_ms": 0.4,
+          "result": "{'name': 'P5', 'address': '10.10.10.15', 'port': 22, 'authgroup': 'default', 'device-type': {'cli': {'ned-id': 'cisco-ios-cli-6.110:cisco-ios-cli-6.110', 'protocol': 'ssh'}}, 'config_summary': {'hostname': 'P5', 'version': '15.9', 'users': ['admin'], 'domain_name': 'ncn.go.kr', 'aaa_enabled': False, 'vrf_list': [], 'vrf_details': [], 'interface_count': 9, 'interface_with_description': 1, 'interface_without_description': 8, 'interface_types': ['Loopback', 'GigabitEthernet'], 'routing_protocols': "
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "IBGP_UNDER_PEERED_DEVICES_65000__rs_BGP_Consistency_1__rs_BGP_Consistency_5__rs_BGP_Consistency_6__rs_BGP_Consistency_19",
+      "question": "Which devices are under-peered in iBGP within AS 65000? [Answer format: JSON array]",
+      "gold": "[\"pe1\", \"pe2\", \"pe3\", \"pe4\"]",
+      "raw_pred": "[]",
+      "pred": "[]",
+      "level": "L3",
+      "category": "BGP_Consistency",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "batfish_bgp_sessions"
+      ],
+      "tool_count": 1,
+      "latency_ms": 4067,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 2735,
+      "completion_tokens": 36,
+      "total_tokens": 2771,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "batfish_bgp_sessions",
+          "args": {
+            "device": "AS65000"
+          },
+          "elapsed_ms": 2404.6,
+          "result": "{'sessions': [], 'summary': {'total_sessions': 0, 'established': 0, 'not_established': 0, 'unique_nodes': 0, 'under_peered_nodes': [], 'under_peered_count': 0}}"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "COMPARE_INTERFACE_COUNT_p8_pe2",
+      "question": "Compare the interface counts of p8 and pe2. [Answer format: JSON object]",
+      "gold": "{\"difference\": 2, \"host1_count\": 4, \"host2_count\": 6}",
+      "raw_pred": "{\"difference\": 0, \"host1_count\": 0, \"host2_count\": 0}",
+      "pred": "{\"difference\": 0, \"host1_count\": 0, \"host2_count\": 0}",
+      "level": "L3",
+      "category": "Comparison_Analysis",
+      "answer_type": "map_str_int",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_interfaces",
+        "nso_get_interfaces"
+      ],
+      "tool_count": 2,
+      "latency_ms": 1910,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 2772,
+      "completion_tokens": 77,
+      "total_tokens": 2849,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_interfaces",
+          "args": {
+            "device": "P8"
+          },
+          "elapsed_ms": 23.6,
+          "result": "{'interfaces': []}"
+        },
+        {
+          "tool": "nso_get_interfaces",
+          "args": {
+            "device": "PE2"
+          },
+          "elapsed_ms": 4.7,
+          "result": "{'interfaces': []}"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "VRF_RT_LIST_PER_DEVICE_leaf7__rs_VRF_Consistency_25",
+      "question": "Which route-targets are configured across all VRFs on leaf7? [Answer format: JSON array]",
+      "gold": "[]",
+      "raw_pred": "[]",
+      "pred": "[]",
+      "level": "L3",
+      "category": "VRF_Consistency",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info",
+        "nso_get_interfaces"
+      ],
+      "tool_count": 2,
+      "latency_ms": 2278,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6056,
+      "completion_tokens": 49,
+      "total_tokens": 6105,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.5,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        },
+        {
+          "tool": "nso_get_interfaces",
+          "args": {
+            "device": "Leaf7"
+          },
+          "elapsed_ms": 6.4,
+          "result": "{'interfaces': []}"
+        }
+      ],
+      "mas_status": ""
+    },
+    {
+      "question_id": "VRF_RT_LIST_PER_DEVICE_pe2",
+      "question": "Which route-targets are configured across all VRFs on pe2? [Answer format: JSON array]",
+      "gold": "[\"65000:100\", \"65000:200\", \"65000:300\"]",
+      "raw_pred": "[]",
+      "pred": "[]",
+      "level": "L3",
+      "category": "VRF_Consistency",
+      "answer_type": "set_str",
+      "answer_status": "OK",
+      "tools_used": [
+        "nso_get_all_device_info",
+        "nso_get_interfaces"
+      ],
+      "tool_count": 2,
+      "latency_ms": 1652,
+      "format_parseable": true,
+      "format_completeness": 1.0,
+      "attempts": 1,
+      "prompt_tokens": 6056,
+      "completion_tokens": 49,
+      "total_tokens": 6105,
+      "llm_calls": 2,
+      "mas_outer_loops": 1,
+      "mas_inner_turns": 0,
+      "mas_tool_calls": [
+        {
+          "tool": "nso_get_all_device_info",
+          "args": {},
+          "elapsed_ms": 0.4,
+          "result": "{'devices': {'Leaf1': {'hostname': 'Leaf1', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf2': {'hostname': 'Leaf2', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf3': {'hostname': 'Leaf3', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf4': {'hostname': 'Leaf4', 'routing_protocols': [], 'interface_count': 8, 'vrf_list': [], 'aaa_enabled': False}, 'Leaf5': {'hostname"
+        },
+        {
+          "tool": "nso_get_interfaces",
+          "args": {
+            "device": "PE2"
+          },
+          "elapsed_ms": 6.1,
+          "result": "{'interfaces': []}"
+        }
+      ],
+      "mas_status": ""
+    }
+  ]
+}
