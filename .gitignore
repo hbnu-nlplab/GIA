@@ -105,3 +105,9 @@ NetAlly/.tmp/
 
 # Git backup bundles
 *.bundle
+
+# Large experiment result files (exceed GitHub 100MB limit)
+MultiAgent/data/debate_results/agents_v3/results1/
+MultiAgent/data/debate_results/agents_v3/results2/
+MultiAgent/data/debate_results/mas*/
+MultiAgent/data/debate_results/expansion/
