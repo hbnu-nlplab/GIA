@@ -6,8 +6,8 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parents[1]
 sys.path.append(str(BASE_DIR))
 
-DATA_PATH = BASE_DIR / "data" / "debate_results" / "agents_v2" /  "mas" / "teleqna" / "teleqna_result.json"
-MODEL_KEY = "debate2_answer"
+DATA_PATH = BASE_DIR / "data" / "debate_results" /"agents_v3"/ "others" / "teleqna2" / "gpt_oss_20b" / "results_raw_gpt_oss_20b_20260416_143629.json"
+MODEL_KEY = "candidate_answer"
 
 def extract_option_number_from_gold(text):
     """
@@ -63,8 +63,9 @@ def calculate_accuracy():
     # 틀린 문제 확인용 리스트
     wrong_answers = []
 
-    for idx, item in enumerate(data):
-        gold_raw = item.get("gold_answer", "")
+    results = data.get("results", data) if isinstance(data, dict) else data
+    for idx, item in enumerate(results):
+        gold_raw = item.get("gold", item.get("gold_answer", ""))
         llm_raw = item.get(MODEL_KEY, "")
 
         # 옵션 번호만 추출

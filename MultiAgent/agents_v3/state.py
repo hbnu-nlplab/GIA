@@ -9,6 +9,7 @@ from typing import TypedDict, List, Optional
 
 class NetAgentState(TypedDict):
     # 1. 기본 입력 정보
+    id: str                # 항목 고유 ID (로깅 및 추적용)
     question: str          # 사용자 질문 (원문)
     context: str           # 원본 컨텍스트 (설정 파일 전체 등)
     dataset_type: str      # 데이터셋 종류: "netconfig" | "multiple_choice" | "short_answer" | "descriptive"
@@ -24,9 +25,9 @@ class NetAgentState(TypedDict):
     proponent_responses: list  # Agent 4(Supporter)의 누적 옹호 응답 리스트
     critic_feedbacks: list     # Agent 5(Critic)의 누적 비판 피드백 리스트
 
-    pro_argument: str       # Agent 4의 옹호 논리 (최신 라운드)
-    proponent_status: str   # Agent 4의 판정: "DEFEND" | "CONCEDE"
-    con_argument: str       # Agent 5의 비판 논리 (최신 라운드)
+    pro_argument: str         # Agent 4의 옹호 논리 (최신 라운드)
+    con_argument: str         # Agent 5의 비판 논리 (최신 라운드)
+    synthesizer_feedback: str # Critic이 Synthesizer에게 전달하는 재생성 지시사항 (REVISE 시)
 
     # 3. 루프 제어 변수
     hop_count: int           # 현재 미사용 (레거시 호환용)
@@ -34,11 +35,21 @@ class NetAgentState(TypedDict):
     outer_loop_count: int    # Collector로 되돌아가는 외부 반복 횟수 (최대 3회)
 
     # 4. 토론 및 피드백 상태
+    verifier_status: str     # Verifier 관련성 판정: "RELEVANT" | "IRRELEVANT"
     status: str              # Critic 판정 결과: "ACCEPT" | "CONTINUE_DEBATE" | "NEED_MORE_INFO"
     critic_feedback: str     # Critic이 Synthesizer/Supporter에게 전달하는 비판 내용
-    feedback_to_collector:str # Critic이 Collector에게 전달하는 재수집 지시사항
+    feedback_to_collector:str # Critic/Verifier가 Collector에게 전달하는 재수집 지시사항
 
     # 5. 이력 및 기타
     history: List[dict]          # 전체 대화 이력 (현재 미사용)
     device_db: dict              # 이전 코드와의 호환성을 위해 유지 (사용하지 않더라도 에러 방지용)
     next_hop_device: Optional[str]  # 레거시 호환용 필드
+    all_device_names: List[str]  # ConfigManager가 로드한 전체 장비 이름 목록 (커버리지 체크용)
+
+    # 6. 라운드 추적
+    candidate_answers: List[dict]     # [{round, answer}] Synthesizer가 생성한 모든 후보 답변
+    collector_retry_log: List[dict]   # [{round, feedback}] Verifier→Collector 재호출 이력
+    synthesizer_retry_log: List[dict] # [{round, feedback}] Critic→Synthesizer 재호출 이력
+
+    # 7. 토큰 사용량 (아이템 전체 누적, 모델별 분리)
+    token_usage: dict  # {"model_a": {"input": int, "output": int}, "model_b": {"input": int, "output": int}}

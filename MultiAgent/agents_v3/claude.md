@@ -100,6 +100,47 @@ agents_v2의 세 가지 버그/한계를 수정한 버전입니다.
 
 ---
 
+## 테스트 결과 (2026-04-07, lab_c L1·L2·L3 각 1건)
+
+### 파이프라인 동작 확인
+
+| 항목 | 결과 |
+|---|---|
+| Verifier FAIL → Collector 재호출 루프 | ✅ 동작 확인 |
+| Critic REVISE → Synthesizer 재생성 루프 (최대 3회) | ✅ 동작 확인 |
+| 에이전트별 로그 (item ID, 점수, 입출력 미리보기) | ✅ 구조화 출력 |
+
+### 발견된 문제점
+
+#### 문제 1: Verifier가 집계 질문의 커버리지 누락을 못 잡음 (미해결)
+
+- **질문 예시**: "Which devices have SSH enabled?" (전체 30개 장비 대상)
+- **Gold**: 30개 전 장비
+- **동작**: Collector가 ASBR1·ASBR2 2개 장비 SSH 설정만 추출 → Verifier가 해당 2개 블록만 보고 `C3 Completeness=2 (완전)`으로 `PASS` 판정 → Synthesizer도 2개 장비만 보고 `["ASBR1"]` 출력
+- **원인**: Verifier C3 루브릭이 "추출된 블록 내부의 완전성"만 평가하고, "집계 질문에서 전체 장비를 커버했는가"는 체크하지 않음
+- **Collector 추출이 잘못된 게 아님**: 2개 장비를 뽑은 것 자체는 정상 동작 — 문제는 Verifier가 전체 커버리지를 확인하지 않는 것
+- **개선 방향**: Verifier C3 루브릭에 집계 질문 판별 기준 추가
+  - "which devices / all devices / how many devices" 패턴 → 추출된 블록 수가 context의 전체 장비 수와 일치하는지 확인
+  - 불일치 시 `C3=0` + feedback: "전체 장비 SSH 섹션을 모두 추출할 것"
+
+#### 문제 2: Collector가 JSON 형식으로 출력해도 Verifier가 통과시킴 (미해결)
+
+- **증상**: Collector가 raw config 대신 JSON 래퍼로 감싼 결과를 출력 → `C4 Format Integrity=0`
+- **그런데도 PASS**: C4는 10점 만점 중 1점이라 C1+C2+C3=9면 total=9 → 임계값 6 초과로 통과
+- **결과**: Synthesizer가 JSON 해석 기반으로 답변 생성 → gold와 다른 형식의 답변 출력
+- **개선 방향**: `C4=0`이면 total에 무관하게 자동 FAIL 처리 (하드 게이트 적용)
+
+#### 수정 완료된 사항
+
+| 항목 | 내용 |
+|---|---|
+| `state.py` | `id: str` 필드 추가 — 이전에는 에이전트 내부 로그가 `[?]`로 출력됨 |
+| `debate1.py` Collector 프롬프트 | AGGREGATE 질문 명시 ("which devices" → 전체 장비 추출) — 효과 제한적 |
+| `debate1.py` / `debate2.py` | 에이전트별 구조화 로그 추가 (item ID, 점수, 입출력 미리보기) |
+| `main_netconfig.py` | `[Item]` START/DONE 로그, TIMEOUT 로그 추가 |
+
+---
+
 ## 예상 성능 변화 (NetConfigQA 2.0 기준)
 
 | 항목 | v1 (agents_v2) | v2 목표 | 근거 |

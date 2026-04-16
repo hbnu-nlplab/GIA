@@ -493,19 +493,24 @@ class NetConfigQAScorer:
         }
         
         text = text.lower().strip()
-        
+
         # Apply synonym mapping
         for eng, kor in synonyms.items():
             text = text.replace(eng, kor)
-        
+
         # 2. Normalize numbers: "0개" -> "0", "1대" -> "1"
         # Remove Korean counters after numbers
         text = re.sub(r'(\d+)\s*[개대명건번째]', r'\1', text)
-        
-        # 3. Normalize punctuation: remove extra spaces around colons/commas
+
+        # 3. Remove articles (SQuAD-style normalization: a / an / the)
+        text = re.sub(r'\b(a|an|the)\b\s*', '', text)
+        text = text.strip()
+
+        # 4. Normalize punctuation: remove extra spaces around colons only
+        # 쉼표 앞 공백만 제거 (뒤 공백 유지) — 뒤 공백까지 제거하면 토큰이 붙어버림
         text = re.sub(r'\s*:\s*', ':', text)
-        text = re.sub(r'\s*,\s*', ',', text)
-        
+        text = re.sub(r'\s+,', ',', text)
+
         return text
 
     def _score_text(self, pred: str, gold: str) -> Dict[str, float]:
@@ -528,19 +533,23 @@ class NetConfigQAScorer:
             return {"score": 1.0}
             
         # 2. Token F1 (Secondary - Robustness)
-        pred_tokens = set(pred_norm.split())
-        gold_tokens = set(gold_norm.split())
-        
+        # 구두점 제거 후 토큰화 (e.g., "necessary." -> "necessary")
+        def _tokenize(t: str):
+            return set(re.sub(r'[^\w\s]', '', t).split())
+
+        pred_tokens = _tokenize(pred_norm)
+        gold_tokens = _tokenize(gold_norm)
+
         if not gold_tokens:
             return {"score": 1.0 if not pred_tokens else 0.0}
-            
+
         common = pred_tokens & gold_tokens
         if common:
             precision = len(common) / len(pred_tokens) if pred_tokens else 0
             recall = len(common) / len(gold_tokens)
             f1 = 2 * (precision * recall) / (precision + recall)
             return {"score": f1}
-            
+
         return {"score": 0.0}
 
 
@@ -776,36 +785,52 @@ def analyze_results(json_file: str, verbose: bool = False):
     print(f"[Step 1/3] Calculating Type-Aware and Traditional metrics...")
 
     for row in data:
-        # 필드명 호환성 처리 (raw_pred vs pred, answer_type vs type, answer_status vs status)
-        raw_pred = row.get('debate2_answer')
+        # 필드명 호환성 처리 (NetConfigQA vs TeleQuAD 포맷 모두 지원)
+        # raw_pred: debate2_answer (NetConfigQA) | raw_pred / candidate_answer (TeleQuAD)
+        raw_pred = (row.get('debate2_answer')
+                    or row.get('raw_pred')
+                    or row.get('candidate_answer')
+                    or "")
         answer_type = canonical_answer_type(row.get('answer_type', row.get('type', 'text')))
-        level = row.get('level', 'Unknown')
-        category = row.get('category', 'Unknown')
-        status = row.get('answer_status', row.get('status', 'Unknown'))
+        level = row.get('level') or 'Unknown'
+        category = row.get('category') or 'Unknown'
+        # status: answer_status (NetConfigQA) | final_status (TeleQuAD) | status (fallback)
+        status = (row.get('answer_status')
+                  or row.get('final_status')
+                  or row.get('status')
+                  or 'Unknown')
+        # question_id: id (NetConfigQA) | question_id (TeleQuAD)
+        question_id = row.get('id', row.get('question_id', ''))
+
         clean_pred = scorer.clean_prediction(raw_pred, answer_type)
-        
+
         if not clean_pred or clean_pred.strip() == "":
-            print(f"\n🚨 [CRITICAL] Cleaning failed!")
-            print(f"ID: {row.get('id')} | Raw: '{raw_pred}'")
+            print(f"\n[CRITICAL] Cleaning failed!")
+            print(f"ID: {question_id} | Raw: '{raw_pred}'")
             print(f"Type: {answer_type} | Cleaned: '{clean_pred}'")
 
-        # 전처리 (answer_type 전달)
-        clean_pred = scorer.clean_prediction(raw_pred, answer_type)
-        clean_gold = scorer.clean_gold(row['gold_answer'])
-        
+        # gold: gold_answer (NetConfigQA) | gold (TeleQuAD)
+        gold_raw = row.get('gold_answer', row.get('gold', ''))
+        clean_gold = scorer.clean_gold(gold_raw)
+
         # Type-Aware 점수 계산
-        type_aware_metrics = scorer.score(clean_pred, row['gold_answer'], answer_type)
+        type_aware_metrics = scorer.score(clean_pred, gold_raw, answer_type)
         type_aware_score = type_aware_metrics['score']
-        
+
         # Traditional metrics 계산
         trad_metrics = trad_calc.calculate_all(clean_pred, clean_gold)
-        
+
         # 결과 저장
         result = {
-            "question": row['question'],
-            "gold": row['gold_answer'],
+            "question_id": question_id,
+            "question": row.get('question', ''),
+            "gold": gold_raw,
             "gold_cleaned": clean_gold,
+            "pred": raw_pred,
             "answer": raw_pred,
+            "level": level,
+            "category": category,
+            "status": status,
             "type_aware_score": type_aware_score,
             "type": answer_type,
         }
@@ -834,8 +859,10 @@ def analyze_results(json_file: str, verbose: bool = False):
         
         # 오류 샘플 수집
         if type_aware_score < 0.99 and len(error_samples) < 20:
+            q_text = row.get('question', '')
             error_samples.append({
-                "question": row['question'][:60] + "..." if len(row['question']) > 60 else row['question'],
+                "id": question_id,
+                "question": q_text[:60] + "..." if len(q_text) > 60 else q_text,
                 "gold": clean_gold[:40] if clean_gold else "(empty)",
                 "pred": clean_pred[:40] if clean_pred else "(empty)",
                 "type": answer_type,
@@ -1027,7 +1054,7 @@ def main():
     files_to_process = args.json_files
     if not files_to_process:
         # Default file if none provided
-        default_file = BASE_DIR / "data" / "debate_results" /"agents_v2"/ "mas"/ "netbench" / "netbench_result.json" 
+        default_file = BASE_DIR / "data" / "debate_results" /"agents_v3"/ "others" / "netbench" / "gpt_oss_20b" / "results_raw_gpt_oss_20b_20260415_155851.json"
         # default_file = BASE_DIR / "data" / "debate_results" / "ablation" / "d2only" / "netconfig" / "netconfig_result.json"
         if default_file.exists():
             files_to_process = [str(default_file)]

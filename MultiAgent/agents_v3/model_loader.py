@@ -89,15 +89,30 @@ class DynamicModelLoader:
             "cpu": "100GiB"
         }
 
-        # 모델 로드: 4-bit 양자화 + 멀티 GPU 분산
-        model = AutoModelForCausalLM.from_pretrained(
-            model_id,
+        # 모델이 이미 양자화된 경우(Mxfp4 등) quantization_config 충돌 방지:
+        # from_pretrained를 먼저 config만 로드해서 확인
+        from transformers import AutoConfig
+        try:
+            model_cfg = AutoConfig.from_pretrained(model_id, trust_remote_code=True)
+            already_quantized = hasattr(model_cfg, "quantization_config") and model_cfg.quantization_config is not None
+        except Exception:
+            already_quantized = False
+
+        load_kwargs = dict(
             device_map=device_map,
-            quantization_config=self.bnb_config,
-            dtype=torch.float16,
+            max_memory=max_memory,
             trust_remote_code=True,
-            low_cpu_mem_usage=True   # CPU 메모리 사용 최소화
+            low_cpu_mem_usage=True,
         )
+        if already_quantized:
+            # 사전 양자화 모델: bnb config 없이 로드 (dtype도 모델 기본값 따름)
+            print(f"  ℹ️  [{model_id}] Pre-quantized model detected — skipping BitsAndBytesConfig")
+        else:
+            load_kwargs["quantization_config"] = self.bnb_config
+            load_kwargs["torch_dtype"] = torch.float16
+
+        # 모델 로드: 멀티 GPU 분산
+        model = AutoModelForCausalLM.from_pretrained(model_id, **load_kwargs)
 
         tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
 
@@ -141,6 +156,21 @@ class LazyModelProxy:
 # 모듈 수준 전역 모델 딕셔너리 (한 번만 초기화)
 _LLM_DICT = {}
 
+# 토크나이저 캐시 (CPU 전용, 토큰 계산용)
+_TOKENIZER_CACHE: dict = {}
+_HF_MODEL_MAP = {
+    'A': "mistralai/Ministral-3-8B-Instruct-2512",
+    'B': "openai/gpt-oss-20b",
+}
+
+def provider_config(model_name):
+    if model_name == "openai/gpt-oss-20b":
+        return {
+            "provider": {
+                "only": ["deepinfra"]
+            }
+        }
+    return None
 
 def init_models():
     """
@@ -156,6 +186,7 @@ def init_models():
 
     models = {}
 
+
     if not USE_LOCAL:
         # 클라우드 모드: OpenRouter API 사용
         print(" [Mode] Using OpenRouter (Cloud)")
@@ -168,18 +199,18 @@ def init_models():
         common_params = {
             "base_url": base_url,
             "api_key": api_key,
-            "temperature": 0,
-            "max_tokens": 4096      # thinking 모델(Qwen 등)의 <think> 블록 포함 충분한 공간
+            "temperature": 0
         }
-        models['A'] = ChatOpenAI(model=model1, **common_params)
-        models['B'] = ChatOpenAI(model=model2, **common_params)
+        models['A'] = ChatOpenAI(model=model1, **common_params, max_tokens=2048)
+        _provider_cfg = provider_config(model2)
+        models['B'] = ChatOpenAI(model=model2, **common_params, max_tokens=2048, extra_body=_provider_cfg if _provider_cfg else None)
 
     else:
         # 로컬 GPU 모드: HuggingFace 모델 동적 로드
         print("🖥️ [Mode] Using Local Dynamic Loading (GPU)")
         hf_models = {
-            'A': "Qwen/Qwen3.5-9B",
-            'B': "zai-org/GLM-4.7-Flash"
+            'A': "mistralai/Ministral-3-8B-Instruct-2512",
+            'B': "openai/gpt-oss-20b"
         }
         loader = DynamicModelLoader(hf_models)
         # LazyModelProxy로 감싸서 실제 사용 시점에 로드
@@ -195,3 +226,30 @@ def init_models():
 def get_models():
     """초기화된 모델 딕셔너리를 반환한다. 초기화되지 않은 경우 init_models()를 호출한다."""
     return init_models()
+
+
+def invoke_with_tokens(llm, prompt: str, role: str = 'A'):
+    """
+    LLM을 호출하고 (response, input_tokens, output_tokens)를 반환한다.
+
+    - USE_LOCAL=False (API): ChatOpenAI usage_metadata에서 토큰 수 읽기
+    - USE_LOCAL=True  (GPU): 토크나이저로 프롬프트·응답 토큰 직접 계산
+    """
+    response = llm.invoke(prompt)
+    text = response.content if hasattr(response, 'content') else str(response)
+
+    if not USE_LOCAL:
+        # API 모드: usage_metadata에서 직접 읽기
+        meta = getattr(response, 'usage_metadata', None) or {}
+        input_tokens  = meta.get('input_tokens',  0)
+        output_tokens = meta.get('output_tokens', 0)
+    else:
+        # 로컬 GPU 모드: 토크나이저로 계산
+        tokenizer = _get_tokenizer(role)
+        if tokenizer is not None:
+            input_tokens  = len(tokenizer.encode(prompt, add_special_tokens=False))
+            output_tokens = len(tokenizer.encode(text,   add_special_tokens=False))
+        else:
+            input_tokens = output_tokens = 0
+
+    return response, input_tokens, output_tokens
