@@ -28,3 +28,30 @@
 %   \end{table*}
 
 % 확장 벤치마크에 대한 mas 부분 실험
+
+
+\begin{table}[t]
+\centering
+\caption{Ablation study on MAS and MCP components}
+\label{tab:ablation}
+\begin{tabular}{llcccc}
+\toprule
+Category & Method & Lab A & Lab B & Lab C & Lab D \\
+\midrule
+
+\multirow{2}{*}{Structure}
+& Single (gpt-4o-mini) &  &  &  &  \\
+& MAS (gpt-4o-mini + gpt-4o-mini) &  &  &  &  \\
+
+\midrule
+
+\multirow{2}{*}{Model Diversity}
+& MAS (  +  +  ) &  &  &  &  \\
+& MAS (  +  +  ) &  &  &  &  \\
+
+\midrule
+
+
+\bottomrule
+\end{tabular}
+\end{table}

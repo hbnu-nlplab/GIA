@@ -1,16 +1,16 @@
 % ============================================================
-%  Section III: NetConfigQA 2.0 Benchmark Dataset
+%  Section III: NetConfigQA 2.1 Benchmark Dataset
 % ============================================================
 
-\section{NetConfigQA 2.0: Benchmark Dataset}
+\section{NetConfigQA 2.1}
 
 Evaluating the ability of LLMs in network domains requires a benchmark that goes beyond simple knowledge-based QA and measures multi-step cognitive abilities, such as fact extraction from real configuration files, path inference, and fault impact analysis.
-To this end, we construct \textbf{NetConfigQA~2.0}, a benchmark that automatically generates QA pairs across five cognitive difficulty levels from real-world Cisco IOS configuration files (\texttt{.cfg}).
-NetConfigQA~2.0 consists of four components: topology design, a Dual-Path generation pipeline, a cognitive difficulty taxonomy, and TA-Acc, an evaluation metric specialized for network data.
+To this end, we construct \textbf{NetConfigQA~2.1}, a benchmark that automatically generates QA pairs across five cognitive difficulty levels from real-world Cisco IOS configuration files (\texttt{.cfg}).
+NetConfigQA~2.1 consists of four components: topology design, a Dual-Path generation pipeline, a cognitive difficulty taxonomy, and TA-Acc, an evaluation metric specialized for network data.
 
 % 네트워크 LLM의 해석 능력을 평가하기 위해서는 단순한 지식 기반 질의응답을 넘어, 실제 설정 파일에서 사실을 추출하고 경로를 추론하며 장애 영향을 분석하는 다단계 인지 능력을 측정할 수 있는 벤치마크가 필요하다.
-% 이를 위하여 우리는 실제 Cisco IOS 설정 파일(\texttt{.cfg}) 입력을 기반으로 5단계 인지 난이도의 QA 쌍을 자동 생성하는 벤치마크 \textbf{NetConfigQA~2.0}을 구축한다.
-% \textbf{NetConfigQA~2.0}은 토폴로지 설계, 이중 경로 생성 파이프라인, 인지 난이도 체계, 그리고 네트워크 데이터에 특화된 평가 지표 TA-Acc의 네가지의 요소로 구성된다.
+% 이를 위하여 우리는 실제 Cisco IOS 설정 파일(\texttt{.cfg}) 입력을 기반으로 5단계 인지 난이도의 QA 쌍을 자동 생성하는 벤치마크 \textbf{NetConfigQA~2.1}을 구축한다.
+% \textbf{NetConfigQA~2.1}은 토폴로지 설계, 이중 경로 생성 파이프라인, 인지 난이도 체계, 그리고 네트워크 데이터에 특화된 평가 지표 TA-Acc의 네가지의 요소로 구성된다.
 
 
 % ============================================================
@@ -80,13 +80,13 @@ The QA-per-node (QA/N) ratio remains stable in the range of 84--126, confirming 
 % ============================================================
 
 While answers to L1--L3 questions can be derived directly from configuration file text, L4--L5 questions require the execution of graph algorithms such as OSPF SPF computation or fault propagation analysis.
-To address this, NetConfigQA~2.0 adopts a Dual-Path pipeline that handles two fundamentally different reasoning paradigms—static analysis (L1--L3) and dynamic simulation (L4--L5)—using the most suitable engine for each.
+To address this, NetConfigQA~2.1 adopts a Dual-Path pipeline that handles two fundamentally different reasoning paradigms—static analysis (L1--L3) and dynamic simulation (L4--L5)—using the most suitable engine for each.
 L1--L3 are processed via a rule-based path (Path~A), whereas L4--L5 are handled via a procedural path (Path~B).
 Manually constructing QA pairs would incur labor costs that grow with topology scale and make consistency difficult to maintain. Therefore, both paths are designed to automatically generate QA pairs from configuration files.
 
 % % 스킬 분석: Dual-Path에 동기(motivation) 문장 추가 — "왜 두 경로인가"
 % L1-L3는 설정 파일의 텍스트에서 직접 정답을 도출할 수 있지만, L4-L5는 OSPF SPF 계산이나 장애 전파와 같은 그래프 알고리즘의 실행 없이는 정답을 구할 수 없다.
-% 이를 해결하기 위해, NetConfigQA~2.0은 Dual-Path 파이프라인을 구성하여 정적 분석(L1-L3)과 동적 시뮬레이션(L4-L5)이라는 근본적으로 다른 두 가지 추론 방식을 각각 최적의 엔진으로 처리한다.
+% 이를 해결하기 위해, NetConfigQA~2.1은 Dual-Path 파이프라인을 구성하여 정적 분석(L1-L3)과 동적 시뮬레이션(L4-L5)이라는 근본적으로 다른 두 가지 추론 방식을 각각 최적의 엔진으로 처리한다.
 % 설정 파일의 정적 분석이 가능한 L1-L3는 규칙 기반 경로(경로~A)로, 시뮬레이션이 필요한 L4-L5는 절차적 경로(경로~B)로 처리한다.
 % 또한 QA 쌍을 수작업으로 구성하면 토폴로지 규모에 비례하여 인력 비용이 급증하고 일관성을 유지하기 어렵기 때문에, 두 경로 모두 설정 파일로부터 자동으로 QA를 생성하도록 설계한다.
 
@@ -129,7 +129,7 @@ The complete pipeline is illustrated in Fig.~\ref{fig:pipeline}.
 \begin{figure*}[!t]
   \centering
   \includegraphics[width=0.7\textwidth]{figure/Pipeline.png}
-  \caption{Dual-Path QA generation pipeline of NetConfigQA~2.0.
+  \caption{Dual-Path QA generation pipeline of NetConfigQA~2.1.
     Path~A: Batfish parsing $\rightarrow$ static facts $\rightarrow$ rule-based generation (L1--L3).
     Path~B: Batfish simulation $\rightarrow$ traceroute/fork\_snapshot $\rightarrow$ procedural generation (L4--L5).}
   \label{fig:pipeline}

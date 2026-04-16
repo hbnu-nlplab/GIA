@@ -3,18 +3,18 @@
 %  NetAgent: Multi-Agent Debate System Based on LangGraph
 % ============================================================
 
-\section{Multi-Agent Debate System}
+\subsection{Multi-Agent Debate System}
 
 MAS is built on LangGraph that improves the reliability and reasoning accuracy of network QA.
 Five specialized agents share state across a two-phase pipeline: an information refinement phase (\textit{Phase~1}) and an adversarial verification phase (\textit{Phase~2}).
 This hierarchical design addresses the hallucination and context leakage problems that arise when a single LLM processes large network configuration files.
 
-% \begin{figure}[!t]
-%   \centering
-%   \includegraphics[width=\columnwidth]{figure/multi_agent_arch.png}
-%   \caption{Multi-agent debate and hierarchical feedback architecture of NetAgent.}
-%   \label{fig:multi_agent_arch}
-% \end{figure}
+\begin{figure}[!t]
+  \centering
+  \includegraphics[width=\columnwidth]{figure/multi_agent_arch.png}
+  \caption{Multi-agent debate and hierarchical feedback architecture of NetAgent.}
+  \label{fig:multi_agent_arch}
+\end{figure}
 
 % ============================================================
 \subsection{Agent Roles}
