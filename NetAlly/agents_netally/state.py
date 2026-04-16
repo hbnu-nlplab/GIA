@@ -35,7 +35,8 @@ class NetAgentState(TypedDict):
     outer_loop_count: int    # Collector로 되돌아가는 외부 반복 횟수 (최대 3회)
 
     # 4. 토론 및 피드백 상태
-    status: str              # Critic 판정 결과: "ACCEPT" | "CONTINUE_DEBATE" | "NEED_MORE_INFO"
+    verifier_status: str     # Verifier 판정: "RELEVANT" | "IRRELEVANT" (score < 6 → IRRELEVANT)
+    status: str              # Critic 판정 결과: "ACCEPT" | "REVISE" | "CONTINUE_DEBATE" | "NEED_MORE_INFO"
     critic_feedback: str     # Critic이 Synthesizer/Supporter에게 전달하는 비판 내용
     feedback_to_collector:str # Critic이 Collector에게 전달하는 재수집 지시사항
 

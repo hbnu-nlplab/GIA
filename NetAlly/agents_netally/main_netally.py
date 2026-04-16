@@ -1,13 +1,25 @@
 """
 main_netally.py — NetAlly MAS + MCP 통합 Entry Point
 -----------------------------------------------------
-team_multi_bridge.py가 build_graph() + init_models()를 호출.
+팀원 MAS 구조(main_netconfig.py)와 동일한 그래프 구조 + MCP 도구.
+
+파이프라인 (full):
+  Collector(+MCP) → Verifier(분기) → Synthesizer → Supporter → Critic
+  - Verifier: verifier_status == IRRELEVANT → Collector 재호출 (최대 3회)
+  - Critic:   status == REVISE → Synthesizer 재호출 (최대 3회)
+
+ablation:
+  "full"        : Collector → Verifier → Synthesizer → Supporter → Critic
+  "no_verifier" : Collector → Synthesizer → Supporter → Critic
+  "no_critic"   : Collector → Verifier → Synthesizer → END
 
 환경변수:
   NETALLY_TEAM_MULTI_MODULE=agents_netally.main_netally
   NETALLY_AGENT_BACKEND=team_multi_adapter
+  NETALLY_MAS_ABLATION=full|no_verifier|no_critic (default: full)
 """
 
+import os
 import sys
 from pathlib import Path
 from langgraph.graph import StateGraph, END
@@ -25,48 +37,94 @@ import agents_netally.debate1 as d1
 import agents_netally.debate2 as d2
 
 
-def build_graph():
-    """Build the 5-agent LangGraph with MCP tool support."""
+def build_graph(ablation: str = None):
+    """Build MAS+MCP LangGraph.
+
+    ablation:
+        "full"        : 전체 파이프라인 (default)
+        "no_verifier" : Verifier 제거
+        "no_critic"   : Supporter+Critic 제거
+    """
+    if ablation is None:
+        ablation = os.getenv("NETALLY_MAS_ABLATION", "full")
+
     workflow = StateGraph(NetAgentState)
 
     workflow.add_node("Collector", d1.collector_node)
-    workflow.add_node("Verifier", d1.verifier_node)
     workflow.add_node("Synthesizer", d1.synthesizer_node)
-    workflow.add_node("Supporter", d2.supporter_node)
-    workflow.add_node("Skeptic", d2.skeptic_node)
 
-    workflow.set_entry_point("Collector")
-    workflow.add_edge("Collector", "Verifier")
-    workflow.add_edge("Verifier", "Synthesizer")
-    workflow.add_edge("Synthesizer", "Supporter")
+    if ablation == "no_critic":
+        # Collector → Verifier(분기) → Synthesizer → END
+        workflow.add_node("Verifier", d1.verifier_node)
+        workflow.set_entry_point("Collector")
+        workflow.add_edge("Collector", "Verifier")
 
-    def check_proponent_status(state):
-        p_status = state.get("proponent_status", "DEFEND").upper()
-        if p_status == "CONCEDE" and state.get("inner_turn_count", 0) < 3:
-            return "re_synthesize"
-        return "to_skeptic"
+        def check_verifier_nc(state):
+            v_status = state.get("verifier_status", "RELEVANT").upper()
+            if v_status == "IRRELEVANT" and state.get("outer_loop_count", 0) < 3:
+                return "re_collect"
+            return "to_synthesizer"
 
-    workflow.add_conditional_edges(
-        "Supporter", check_proponent_status,
-        {"to_skeptic": "Skeptic", "re_synthesize": "Synthesizer"}
-    )
+        workflow.add_conditional_edges(
+            "Verifier", check_verifier_nc,
+            {"to_synthesizer": "Synthesizer", "re_collect": "Collector"}
+        )
+        workflow.add_edge("Synthesizer", END)
 
-    def check_debate_status(state):
-        status = state.get("status", "ACCEPT").upper()
-        inner = state.get("inner_turn_count", 0)
-        outer = state.get("outer_loop_count", 0)
+    elif ablation == "no_verifier":
+        # Collector → Synthesizer → Supporter → Critic(분기)
+        workflow.add_node("Supporter", d2.supporter_node)
+        workflow.add_node("Critic", d2.skeptic_node)
+        workflow.set_entry_point("Collector")
+        workflow.add_edge("Collector", "Synthesizer")
+        workflow.add_edge("Synthesizer", "Supporter")
+        workflow.add_edge("Supporter", "Critic")
 
-        if status == "ACCEPT":
+        def check_debate_nv(state):
+            status = state.get("status", "ACCEPT").upper()
+            if status == "ACCEPT":
+                return "end"
+            elif status in ("REVISE", "CONTINUE_DEBATE"):
+                return "end" if state.get("inner_turn_count", 0) >= 3 else "revise"
             return "end"
-        elif status == "CONTINUE_DEBATE":
-            return "continue_inner" if inner < 2 else "end"
-        elif status == "NEED_MORE_INFO":
-            return "backtrack_outer" if outer < 2 else "end"
-        return "end"
 
-    workflow.add_conditional_edges(
-        "Skeptic", check_debate_status,
-        {"end": END, "continue_inner": "Supporter", "backtrack_outer": "Collector"}
-    )
+        workflow.add_conditional_edges(
+            "Critic", check_debate_nv,
+            {"end": END, "revise": "Synthesizer"}
+        )
+
+    else:  # "full"
+        # Collector → Verifier(분기) → Synthesizer → Supporter → Critic(분기)
+        workflow.add_node("Verifier", d1.verifier_node)
+        workflow.add_node("Supporter", d2.supporter_node)
+        workflow.add_node("Critic", d2.skeptic_node)
+        workflow.set_entry_point("Collector")
+        workflow.add_edge("Collector", "Verifier")
+        workflow.add_edge("Synthesizer", "Supporter")
+        workflow.add_edge("Supporter", "Critic")
+
+        def check_verifier_status(state):
+            v_status = state.get("verifier_status", "RELEVANT").upper()
+            if v_status == "IRRELEVANT" and state.get("outer_loop_count", 0) < 3:
+                return "re_collect"
+            return "to_synthesizer"
+
+        workflow.add_conditional_edges(
+            "Verifier", check_verifier_status,
+            {"to_synthesizer": "Synthesizer", "re_collect": "Collector"}
+        )
+
+        def check_debate_status(state):
+            status = state.get("status", "ACCEPT").upper()
+            if status == "ACCEPT":
+                return "end"
+            elif status in ("REVISE", "CONTINUE_DEBATE"):
+                return "end" if state.get("inner_turn_count", 0) >= 3 else "revise"
+            return "end"
+
+        workflow.add_conditional_edges(
+            "Critic", check_debate_status,
+            {"end": END, "revise": "Synthesizer"}
+        )
 
     return workflow.compile()
