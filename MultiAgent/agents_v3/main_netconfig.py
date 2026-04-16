@@ -1,19 +1,19 @@
 """
 main_netconfig.py
 -----------------
-NetConfig 데이터셋에 대한 Multi-Agent 토론 실행 메인 모듈.
+NetConfig 데이터셋에 대한 Multi-Agent 토론 실행 메인 모듈. (agents_v3)
 
 전체 파이프라인:
-1. 입력 JSON 파일 로드 (질문 + 정답 데이터)
-2. 네트워크 설정 파일(configs.txt) 로드 → 장비별 딕셔너리로 파싱
-3. LangGraph 그래프 빌드 (Collector→Verifier→Synthesizer→Supporter→Skeptic)
-4. ThreadPoolExecutor로 병렬 처리
-5. 결과를 output JSON에 주기적 저장 (10건마다) + 최종 저장
+1. ConfigManager로 장비별 .cfg 파일 로드 (=== START/END OF CONFIG === 헤더 포함)
+2. LangGraph 그래프 빌드:
+   Collector → Verifier → Synthesizer → Supporter → Critic
+   - Verifier: 점수 기반 관련성 게이트 (score < 6 → Collector 재호출, 최대 3회)
+   - Critic:   ACCEPT → END, REVISE → Synthesizer 재호출 (최대 3회)
+3. ThreadPoolExecutor로 병렬 처리 (MAX_WORKERS=10)
+4. 결과를 output JSON에 주기적 저장 (10건마다) + 최종 저장
 
-재실행 최적화:
-- 이미 처리된 ID는 스킵 (중단 후 재시작 가능)
-- [NONE] 답변은 재시도 대상으로 포함
-- 빠진 ID 번호 자동 감지 및 출력
+타임아웃: 항목당 300초 (LLM API hang 방지)
+재실행 최적화: 이미 처리된 항목 스킵, [NONE]/[TIMEOUT] 재시도
 """
 
 import re
@@ -21,19 +21,20 @@ import sys
 import os
 import json
 import time
+import logging
 import traceback
+import threading
 from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import Dict, Optional
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError, as_completed
 from langgraph.graph import StateGraph, END
 
 try:
     from tqdm import tqdm
 except ImportError:
-    # tqdm 미설치 환경에서는 그냥 이터러블로 사용
     def tqdm(iterable, *args, **kwargs):
         return iterable
 
-# 현재 파일 위치 기준으로 프로젝트 루트 계산
 CURRENT_DIR = Path(__file__).resolve().parent
 BASE_DIR = CURRENT_DIR.parent
 sys.path.append(str(BASE_DIR))
@@ -44,477 +45,627 @@ import agents_v3.debate1 as d1
 import agents_v3.debate2 as d2
 
 
-def normalize_key(text):
-    """질문 텍스트를 딕셔너리 키로 정규화한다 (줄바꿈/따옴표/별표 제거)."""
-    if not text: return ""
-    return re.sub(r'[\n\\"*]+', '', str(text)).strip()
-
-
-def clean_text_for_save(text):
-    """저장용 텍스트 정제 (앞뒤 공백 제거)."""
-    return str(text).strip()
-
-
-def normalize_answer(text):
+# ==========================================
+# 📂 ConfigManager
+# ==========================================
+def find_config_dir(lab_key: str, netconfig2_dir: Path) -> Optional[Path]:
     """
-    답변 비교를 위한 정규화.
-    앞뒤 공백, 따옴표 제거 후 소문자로 변환한다.
+    랩 키에 해당하는 configs/ 디렉토리 경로를 반환한다.
+    존재하지 않으면 None 반환.
     """
-    if not text:
-        return ""
-    return str(text).strip().strip('"').strip("'").lower().strip()
+    config_dir = netconfig2_dir / lab_key / "configs"
+    return config_dir if config_dir.exists() else None
 
 
-def load_netconfigs(base_path):
+class ConfigManager:
     """
-    configs.txt 파일을 읽어 장비명별 설정 내용 딕셔너리를 반환한다.
+    configs/ 디렉토리 내 개별 .cfg 파일을 읽어 장비별로 캐싱.
 
-    파일 형식:
-        [DeviceName.cfg]
-        hostname DeviceName
-        interface ...
-        ...
-        [NextDevice.cfg]
-        ...
-
-    Args:
-        base_path (Path): 프로젝트 루트 경로
-    Returns:
-        dict: {장비명(소문자): 설정내용(str)} 형태의 딕셔너리
-              파일이 없으면 빈 딕셔너리 반환
+    get_all_configs()는 === START/END OF CONFIG === 헤더를 붙여 반환하므로
+    Collector LLM이 장비 경계를 명확히 인식할 수 있다.
+    get_filtered_configs()는 질문에 언급된 장비명만 word-boundary 매칭하여 반환한다.
     """
-    config_path = base_path / "data" / "original" / "netconfig" / "configs.txt"
-    if not config_path.exists():
-        print(f"⚠️ Warning: Config file not found: {config_path}")
-        return {}
-    print(f"📂 Loading config file from: {config_path}")
-    try:
-        text = config_path.read_text(encoding='utf-8', errors='ignore')
-        result = {}
-        current_device = None
-        current_lines = []
-        for line in text.splitlines():
-            # [DeviceName.cfg] 헤더 패턴 감지
-            m = re.match(r'^\[(.+?)\.cfg\]$', line.strip())
-            if m:
-                if current_device:
-                    # 이전 장비의 내용 저장 (소문자 키)
-                    result[current_device.lower()] = "\n".join(current_lines)
-                current_device = m.group(1)
-                current_lines = []
-            else:
-                current_lines.append(line)
-        # 마지막 장비 내용 저장
-        if current_device:
-            result[current_device.lower()] = "\n".join(current_lines)
-        print(f"✅ Loaded {len(result)} device configs: {list(result.keys())}")
-        return result
-    except Exception as e:
-        print(f"❌ Error reading {config_path.name}: {e}")
-        return {}
+
+    def __init__(self, config_dir: Path, logger: logging.Logger):
+        self.config_dir = config_dir
+        self.logger = logger
+        self._cache: Dict[str, str] = {}
+        self._load_all()
+
+    def _load_all(self):
+        if not self.config_dir.exists():
+            self.logger.warning(f"Config directory not found: {self.config_dir}")
+            return
+        for cfg_path in sorted(self.config_dir.glob("*.cfg")):
+            try:
+                hostname = cfg_path.stem
+                content = cfg_path.read_text(encoding='utf-8', errors='ignore')
+                self._cache[hostname.lower()] = content
+            except Exception as e:
+                self.logger.error(f"Failed to load {cfg_path}: {e}")
+        self.logger.info(f"Loaded {len(self._cache)} configuration files from {self.config_dir}")
+
+    def get_all_configs(self) -> str:
+        """전체 장비 config를 === START/END === 헤더와 함께 반환."""
+        combined = ""
+        for host in sorted(self._cache.keys()):
+            combined += f"\n=== START OF CONFIG: {host.upper()} ===\n"
+            combined += self._cache[host]
+            combined += f"\n=== END OF CONFIG: {host.upper()} ===\n"
+        return combined
+
+    def get_filtered_configs(self, q_text: str) -> str:
+        """
+        질문에 언급된 장비명을 word-boundary 매칭하여 해당 config만 헤더와 함께 반환.
+        매칭 실패 시 전체 반환 (집계/전체 장비 대상 질문 대응).
+        'pe1'이 'pe10'에 잘못 매칭되는 오류 방지.
+        """
+        found_parts = []
+        for host in sorted(self._cache.keys()):
+            pattern = r'\b' + re.escape(host) + r'\b'
+            if re.search(pattern, q_text, re.IGNORECASE):
+                found_parts.append(f"\n=== START OF CONFIG: {host.upper()} ===\n")
+                found_parts.append(self._cache[host])
+                found_parts.append(f"\n=== END OF CONFIG: {host.upper()} ===\n")
+        if found_parts:
+            return "\n".join(found_parts)
+        # 매칭 실패 → 전체 반환 (iBGP full-mesh, 가장 많은 인터페이스 등 집계 질문)
+        return self.get_all_configs()
 
 
 # ==========================================
 # 🔄 LangGraph 그래프 빌드
 # ==========================================
-def build_graph():
+def build_graph(ablation: str = "no_verifier"):
     """
-    5개 에이전트 노드로 구성된 LangGraph 상태 그래프를 빌드한다.
+    LangGraph 상태 그래프를 빌드한다.
 
-    노드:
-        Collector → Verifier → Synthesizer → Supporter → Skeptic
-
-    Supporter 판정 후 분기 (v3 신규):
-        DEFEND   → Skeptic으로 전달 (방어 가능)
-        CONCEDE  → Synthesizer 재실행 (비판 인정, candidate_answer 재생성)
-
-    Skeptic 판정 후 분기:
-        ACCEPT           → END (토론 종료)
-        CONTINUE_DEBATE  → Supporter 재호출 (inner_turn_count < 3인 경우)
-        NEED_MORE_INFO   → Collector 재호출 (outer_loop_count < 3인 경우)
-        한계 초과         → END (강제 종료)
-
-    Returns:
-        CompiledGraph: 컴파일된 LangGraph 실행 객체
+    ablation:
+        "full"        : Collector → Verifier → Synthesizer → Supporter → Skeptic
+        "no_verifier" : Collector → Synthesizer → Supporter → Skeptic (Verifier 제거)
+        "no_critic"   : Collector → Verifier → Synthesizer → END (Supporter+Skeptic 제거)
     """
     workflow = StateGraph(NetAgentState)
 
-    # 노드 등록
-    workflow.add_node("Collector", d1.collector_node)
-    workflow.add_node("Verifier", d1.verifier_node)
+    workflow.add_node("Collector",   d1.collector_node)
     workflow.add_node("Synthesizer", d1.synthesizer_node)
-    workflow.add_node("Supporter", d2.supporter_node)
-    workflow.add_node("Skeptic", d2.skeptic_node)
 
-    # 선형 엣지: Collector → Verifier → Synthesizer → Supporter
-    workflow.set_entry_point("Collector")
-    workflow.add_edge("Collector", "Verifier")
-    workflow.add_edge("Verifier", "Synthesizer")
-    workflow.add_edge("Synthesizer", "Supporter")
+    if ablation == "no_critic":
+        workflow.add_node("Verifier", d1.verifier_node)
+        workflow.set_entry_point("Collector")
+        workflow.add_edge("Collector", "Verifier")
 
-    def check_proponent_status(state):
-        """Proponent 판정에 따른 분기: DEFEND → Skeptic, CONCEDE → Synthesizer 재실행."""
-        p_status = state.get("proponent_status", "DEFEND").upper()
-        if p_status == "CONCEDE" and state.get("inner_turn_count", 0) < 3:
-            print(f"  🔄 Proponent CONCEDE → Synthesizer 재실행 (turn={state.get('inner_turn_count', 0)})")
-            return "re_synthesize"
-        return "to_skeptic"
+        def check_verifier_nc(state):
+            v_status = state.get("verifier_status", "RELEVANT").upper()
+            if v_status == "IRRELEVANT" and state.get("outer_loop_count", 0) < 3:
+                return "re_collect"
+            return "to_synthesizer"
 
-    # 조건부 엣지: Supporter → {Skeptic | Synthesizer}
-    workflow.add_conditional_edges(
-        "Supporter", check_proponent_status,
-        {"to_skeptic": "Skeptic", "re_synthesize": "Synthesizer"}
-    )
+        workflow.add_conditional_edges(
+            "Verifier", check_verifier_nc,
+            {"to_synthesizer": "Synthesizer", "re_collect": "Collector"}
+        )
+        workflow.add_edge("Synthesizer", END)
 
-    def check_debate_status(state):
-        """Skeptic 판정 결과에 따른 다음 노드 결정 함수."""
-        status = state.get("status", "ACCEPT").upper()
-        if status == "ACCEPT":
+    elif ablation == "no_verifier":
+        workflow.add_node("Supporter", d2.supporter_node)
+        workflow.add_node("Skeptic",   d2.skeptic_node)
+        workflow.set_entry_point("Collector")
+        workflow.add_edge("Collector",   "Synthesizer")
+        workflow.add_edge("Synthesizer", "Supporter")
+        workflow.add_edge("Supporter",   "Skeptic")
+
+        def check_debate_nv(state):
+            status = state.get("status", "ACCEPT").upper()
+            if status == "ACCEPT":
+                return "end"
+            elif status == "REVISE":
+                return "end" if state.get("inner_turn_count", 0) >= 3 else "revise"
             return "end"
-        elif status == "CONTINUE_DEBATE":
-            return "end" if state.get("inner_turn_count", 0) >= 3 else "continue_inner"
-        elif status == "NEED_MORE_INFO":
-            return "end" if state.get("outer_loop_count", 0) >= 3 else "backtrack_outer"
-        return "end"
 
-    # 조건부 엣지: Skeptic → {END | Supporter | Collector}
-    workflow.add_conditional_edges(
-        "Skeptic", check_debate_status,
-        {"end": END, "continue_inner": "Supporter", "backtrack_outer": "Collector"}
-    )
+        workflow.add_conditional_edges(
+            "Skeptic", check_debate_nv,
+            {"end": END, "revise": "Synthesizer"}
+        )
+
+    else:  # "full"
+        workflow.add_node("Verifier",  d1.verifier_node)
+        workflow.add_node("Supporter", d2.supporter_node)
+        workflow.add_node("Skeptic",   d2.skeptic_node)
+        workflow.set_entry_point("Collector")
+        workflow.add_edge("Collector",   "Verifier")
+        workflow.add_edge("Synthesizer", "Supporter")
+        workflow.add_edge("Supporter",   "Skeptic")
+
+        def check_verifier_status(state):
+            v_status = state.get("verifier_status", "RELEVANT").upper()
+            if v_status == "IRRELEVANT" and state.get("outer_loop_count", 0) < 3:
+                return "re_collect"
+            return "to_synthesizer"
+
+        workflow.add_conditional_edges(
+            "Verifier", check_verifier_status,
+            {"to_synthesizer": "Synthesizer", "re_collect": "Collector"}
+        )
+
+        def check_debate_status(state):
+            status = state.get("status", "ACCEPT").upper()
+            if status == "ACCEPT":
+                return "end"
+            elif status == "REVISE":
+                return "end" if state.get("inner_turn_count", 0) >= 3 else "revise"
+            return "end"
+
+        workflow.add_conditional_edges(
+            "Skeptic", check_debate_status,
+            {"end": END, "revise": "Synthesizer"}
+        )
+
     return workflow.compile()
 
 
 # ==========================================
 # 🚀 단일 항목 처리 함수
 # ==========================================
-def process_item(app, item, index, total, dataset_type, global_context=None):
+def process_item(app, item: dict, index: int, total: int,
+                 dataset_type: str, global_context=None) -> Optional[dict]:
     """
     데이터셋 항목 하나를 처리하여 결과를 반환한다.
 
-    컨텍스트 결정 로직 (netconfig 타입):
-    - 질문에 장비명이 포함되어 있으면 해당 장비의 설정만 추출하여 컨텍스트로 사용
-    - 장비명이 없으면 item의 gold_context 사용
-    - 그것도 없으면 "[NONE]"
+    Context 결정 (netconfig + ConfigManager):
+    - L4/L5 또는 토폴로지 키워드 포함 → get_all_configs() (전체 장비)
+    - 그 외 → get_filtered_configs(question) (장비명 매칭, 실패 시 전체)
 
     Args:
-        app: 컴파일된 LangGraph 실행 객체
-        item (dict): 데이터셋 항목 (question, id, gold_answer 등 포함)
-        index (int): 현재 처리 인덱스 (로그용)
-        total (int): 전체 항목 수 (로그용)
-        dataset_type (str): 데이터셋 종류
-        global_context: netconfig는 dict(장비별 설정), 기타는 str 또는 None
+        app:            컴파일된 LangGraph 실행 객체
+        item:           데이터셋 항목
+        index:          처리 인덱스 (로그용)
+        total:          전체 항목 수 (로그용)
+        dataset_type:   데이터셋 종류
+        global_context: ConfigManager 또는 str
 
     Returns:
-        dict: 처리 결과 (id, question, gold_answer, 답변들, 소요시간 등)
-        None: 오류 발생 시
+        dict: 처리 결과, None: 오류 발생 시
     """
-    q_text = item.get('question', '')
-    item_id = item.get('id', '')
+    q_text    = item.get('question', '')
+    item_id   = item.get('id', '')
+    item_level = item.get('level', '')
 
     # 컨텍스트 결정
-    item_level = item.get('level', '')
     context = ""
-    if dataset_type == "netconfig" and isinstance(global_context, dict):
-        # L4/L5는 항상 전체 토폴로지 context 사용 (시뮬레이션/What-If 질문)
-        # 그 외: answer_type이 'number'이거나 경로/홉 키워드가 있으면 전체 config 사용
-        answer_type = item.get('answer_type', '')
-        topo_keywords = ('hop', 'path', 'route', 'block', 'flow', 'reach', 'traceroute')
+    if dataset_type == "netconfig" and isinstance(global_context, ConfigManager):
+        # 토폴로지 전체가 필요한 질문 판별
+        # ('route' 제외: "routing protocol" 등 단일 장비 질문도 걸림)
+        # ('number' 타입 제외: "BGP AS number" 등 단일 장비 질문도 포함됨)
+        topo_keywords = ('hop', 'path', 'block', 'flow', 'reach', 'traceroute', 'fail', 'down', 'between')
         needs_full_topo = (
             item_level in ('L4', 'L5') or
-            answer_type == 'number' or
             any(kw in q_text.lower() for kw in topo_keywords)
         )
-
-        if needs_full_topo:
-            # 전체 장비 config 제공
-            context = "\n".join(global_context.values())
-        else:
-            # 질문에 언급된 장비명과 일치하는 설정 블록만 추출
-            found_configs = []
-            for device_name, config_content in global_context.items():
-                if device_name.lower() in q_text.lower():
-                    found_configs.append(config_content)
-
-            if found_configs:
-                context = "\n".join(found_configs)
-            else:
-                # 장비명 매칭 실패 시 → 전체 토폴로지 컨텍스트 사용
-                # (집계/전체 장비 대상 질문: iBGP full-mesh, 가장 많은 인터페이스 등)
-                context = "\n".join(global_context.values())
+        context = (global_context.get_all_configs() if needs_full_topo
+                   else global_context.get_filtered_configs(q_text))
     elif isinstance(global_context, str) and global_context:
         context = global_context
     else:
         context = item.get('gold_context', '') or item.get('context', '')
 
-    # 초기 상태 구성 (모든 필드를 기본값으로 초기화)
+    # 초기 상태 (모든 필드 기본값 초기화)
     initial_state = {
-        "id": item_id,
-        "question": q_text,
-        "context": context,
-        "dataset_type": dataset_type,
-        "options": item.get('options', ''),
-        "level": item_level,
-        "raw_data": "",
-        "current_passage": "",
-        "candidate_answer": "",
-        "final_answer": "",
-        "debate1_answer": "",
-        "pro_argument": "",
-        "proponent_status": "DEFEND",
-        "con_argument": "",
-        "hop_count": 0,
-        "inner_turn_count": 0,
-        "outer_loop_count": 0,
-        "status": "INIT",
-        "critic_feedback": "",
+        "id":                   item_id,
+        "question":             q_text,
+        "context":              context,
+        "dataset_type":         dataset_type,
+        "options":              item.get('options', item.get('choices', '')),
+        "level":                item_level,
+        "raw_data":             "",
+        "current_passage":      "",
+        "candidate_answer":     "",
+        "final_answer":         "",
+        "debate1_answer":       "",
+        "proponent_responses":  [],
+        "critic_feedbacks":     [],
+        "pro_argument":         "",
+        "con_argument":         "",
+        "synthesizer_feedback": "",
+        "hop_count":            0,
+        "inner_turn_count":     0,
+        "outer_loop_count":     0,
+        "verifier_status":      "RELEVANT",
+        "status":               "INIT",
+        "critic_feedback":      "",
         "feedback_to_collector": "",
-        "proponent_responses": [],
-        "critic_feedbacks": [],
-        "history": [],
-        "device_db": {},
-        "next_hop_device": None
+        "history":              [],
+        "device_db":            {},
+        "next_hop_device":      None,
+        "all_device_names":     list(global_context._cache.keys()) if isinstance(global_context, ConfigManager) else [],
+        "candidate_answers":    [],
+        "collector_retry_log":  [],
+        "synthesizer_retry_log": [],
+        "token_usage":          {"model_a": {"input": 0, "output": 0},
+                                 "model_b": {"input": 0, "output": 0}},
     }
 
+    gold_raw   = item.get('answer', item.get('gold_answer', ''))
     start_time = time.time()
+
+    _log = logging.getLogger("agents_v3")
+    _log.info(
+        "[Item][%s] START (%d/%d) | level=%s | answer_type=%s | question=%.120s",
+        item_id, index + 1, total, item_level,
+        item.get('answer_type', ''), q_text
+    )
+
     try:
-        out = app.invoke(initial_state, config={"recursion_limit": 60})
-        ans = out.get('candidate_answer', '')
+        # 300초 타임아웃 — LLM API hang 방지 (threading.Thread 사용, 중첩 executor 회피)
+        _result_box = [None]
+        _exc_box    = [None]
 
-        res = {
-            "id": item_id,
-            "question": q_text,
-            "gold_answer": item.get('gold_answer'),
-            "debate1_passage": out.get('current_passage', ''),    # Verifier 정제 패시지
-            "debate1_answer": out.get('debate1_answer', ''),       # 1차 토론 답변
-            "proponent_defense": out.get('pro_argument', ''),      # Supporter 옹호 의견
-            "critic_critique": out.get('con_argument', ''),        # Critic 비판 의견
-            "debate2_answer": ans,                                 # 최종 답변
-            "debate2_rounds": out.get('inner_turn_count', 0),      # 내부 토론 라운드 수
-            "duration": time.time() - start_time
+        def _run():
+            try:
+                _result_box[0] = app.invoke(initial_state, config={"recursion_limit": 60})
+            except Exception as _e:
+                _exc_box[0] = _e
+
+        _t = threading.Thread(target=_run, daemon=True)
+        _t.start()
+        _t.join(timeout=300)
+
+        if _t.is_alive():
+            _log.warning("[Item][%s] TIMEOUT after 300s — skipping.", item_id)
+            return {
+                "question_id":          item_id,
+                "question":             q_text,
+                "gold":                 gold_raw,
+                "candidate_answer":     "[TIMEOUT]",
+                "level":                item_level,
+                "category":             item.get('category', ''),
+                "answer_type":          item.get('answer_type', 'text'),
+                "answer_status":        item.get('answer_status', 'OK'),
+                "format_parseable":     False,
+                "format_completeness":  0.0,
+                "current_passage":      "",
+                "final_status":         "TIMEOUT",
+                "candidate_answers":    [],
+                "collector_retries":    [],
+                "synthesizer_retries":  [],
+                "proponent_history":    [],
+                "critic_history":       [],
+                "duration":             time.time() - start_time,
+            }
+
+        if _exc_box[0] is not None:
+            raise _exc_box[0]
+
+        out = _result_box[0]
+        if out is None:
+            raise RuntimeError("app.invoke returned None")
+
+        candidate_answer = out.get('candidate_answer', '')
+        fin_status       = out.get('status', '')
+        syn_rounds       = out.get('inner_turn_count', 0)
+        _log.info(
+            "[Item][%s] DONE | status=%s | synthesizer_rounds=%d | duration=%.1fs | answer=%.200s",
+            item_id, fin_status, syn_rounds, time.time() - start_time, candidate_answer
+        )
+        token_usage = out.get('token_usage', {"input": 0, "output": 0})
+        return {
+            "question_id":          item_id,
+            "question":             q_text,
+            "gold":                 gold_raw,
+            "candidate_answer":     candidate_answer,
+            "raw_pred":             candidate_answer,   # analyze_results.py 호환 필드
+            "level":                item_level,
+            "category":             item.get('category', ''),
+            "answer_type":          item.get('answer_type', 'text'),
+            "answer_status":        item.get('answer_status', 'OK'),
+            "format_parseable":     True,
+            "format_completeness":  1.0,
+            "current_passage":      out.get('current_passage', ''),
+            "final_status":         fin_status,
+            "candidate_answers":    out.get('candidate_answers', []),
+            "collector_retries":    out.get('collector_retry_log', []),
+            "synthesizer_retries":  out.get('synthesizer_retry_log', []),
+            "proponent_history":    out.get('proponent_responses', []),
+            "critic_history":       out.get('critic_feedbacks', []),
+            "duration":             time.time() - start_time,
+            "token_usage":          token_usage,
         }
-
-        # netconfig 타입의 경우 추가 메타데이터 포함
-        if dataset_type == "netconfig":
-            res.update({
-                "level": item.get('level', ''),
-                "answer_type": item.get('answer_type', ''),
-                "answer_status": item.get('answer_status', '')
-            })
-        return res
     except Exception as e:
-        print(f"Error processing item {index}: {e}")
-        traceback.print_exc()
+        _log.error("[Item][%s] ERROR: %s", item_id, e, exc_info=True)
         return None
 
 
-class Tee:
+# ==========================================
+# 📊 결과 저장
+# ==========================================
+def _write_output(rows, output_path, dataset_meta, lab_name,
+                  elapsed=None, model_tag="mas_v3"):
+    """analyze_results.py 호환 포맷으로 결과를 저장한다."""
+    from collections import defaultdict
+
+    type_counts      = defaultdict(int)
+    type_parseable   = defaultdict(int)
+    type_completeness = defaultdict(list)
+    for r in rows:
+        atype = str(r.get('answer_type', 'text'))
+        type_counts[atype] += 1
+        if r.get('format_parseable', True):
+            type_parseable[atype] += 1
+        type_completeness[atype].append(float(r.get('format_completeness', 1.0)))
+
+    format_stability = {
+        atype: {
+            "parse_success_rate": round(type_parseable[atype] / cnt, 4) if cnt else 0,
+            "avg_completeness":   round(sum(type_completeness[atype]) / len(type_completeness[atype]), 4),
+            "count":              cnt,
+        }
+        for atype, cnt in type_counts.items()
+    }
+
+    # 토큰 집계 (모델별)
+    def _sum_model(rows, model_key, direction):
+        return sum(r.get('token_usage', {}).get(model_key, {}).get(direction, 0) for r in rows)
+
+    valid_rows = [r for r in rows if r.get('token_usage')]
+    n = len(valid_rows)
+
+    a_in  = _sum_model(valid_rows, 'model_a', 'input')
+    a_out = _sum_model(valid_rows, 'model_a', 'output')
+    b_in  = _sum_model(valid_rows, 'model_b', 'input')
+    b_out = _sum_model(valid_rows, 'model_b', 'output')
+    total_in  = a_in  + b_in
+    total_out = a_out + b_out
+
+    token_stats = {
+        "model_a": {                              # Verifier + Synthesizer + Supporter
+            "total_input":  a_in,
+            "total_output": a_out,
+            "avg_input":    round(a_in  / n, 1) if n else 0,
+            "avg_output":   round(a_out / n, 1) if n else 0,
+        },
+        "model_b": {                              # Collector + Skeptic
+            "total_input":  b_in,
+            "total_output": b_out,
+            "avg_input":    round(b_in  / n, 1) if n else 0,
+            "avg_output":   round(b_out / n, 1) if n else 0,
+        },
+        "total": {
+            "total_input":  total_in,
+            "total_output": total_out,
+            "total_tokens": total_in + total_out,
+            "avg_input":    round(total_in  / n, 1) if n else 0,
+            "avg_output":   round(total_out / n, 1) if n else 0,
+            "avg_total":    round((total_in + total_out) / n, 1) if n else 0,
+        },
+        "measured_samples": n,
+    }
+
+    payload = {
+        "meta": {
+            "model":            model_tag,
+            "model_tag":        model_tag,
+            "backend":          "mas_langgraph_v3",
+            "lab":              lab_name,
+            "lab_folder":       dataset_meta.get('lab_name', lab_name),
+            "date":             time.strftime('%Y-%m-%d %H:%M:%S'),
+            "duration_sec":     round(elapsed, 2) if elapsed is not None else None,
+            "total_samples":    len(rows),
+            "pipeline_version": dataset_meta.get('pipeline_version', ''),
+            "question_lang":    dataset_meta.get('question_lang', 'en'),
+        },
+        "format_stability": format_stability,
+        "token_stats":      token_stats,
+        "results":          rows,
+    }
+    with open(output_path, 'w', encoding='utf-8') as f:
+        json.dump(payload, f, indent=4, ensure_ascii=False)
+
+
+# ==========================================
+# 🏃 랩 단위 실행
+# ==========================================
+def run_lab(app, lab_dir: Path, output_dir: Path,
+            logger: logging.Logger, model_tag: str = "mas_v3",
+            target_answer_type: Optional[str] = None,
+            target_level: Optional[str] = None,
+            force_rerun: bool = False):
     """
-    표준 출력(stdout)을 파일과 콘솔에 동시에 기록하는 클래스.
-    실행 로그를 파일에 저장하면서 터미널에도 출력한다.
+    단일 랩 디렉토리에 대해 평가를 실행한다.
+
+    Args:
+        app:                컴파일된 LangGraph 실행 객체
+        lab_dir:            netconfig2/lab_x/ 디렉토리
+        output_dir:         결과 저장 디렉토리
+        logger:             로거
+        model_tag:          출력 파일명 태그
+        target_answer_type: 특정 answer_type만 처리 (None=전체)
+        force_rerun:        기존 결과 무시하고 재실행
     """
-    def __init__(self, name, mode):
-        self.file = open(name, mode, encoding='utf-8')
-        self.stdout = sys.stdout
-        sys.stdout = self  # stdout을 이 객체로 교체
+    lab_name = lab_dir.name
 
-    def __del__(self):
-        if sys.stdout == self:
-            sys.stdout = self.stdout
-        self.file.close()
-
-    def write(self, data):
-        self.file.write(data)
-        self.stdout.write(data)
-        self.file.flush()
-
-    def flush(self):
-        self.file.flush()
-        self.stdout.flush()
-
-
-def main():
-    """
-    메인 실행 함수.
-
-    처리 순서:
-    1. 로그 파일 설정 (Tee로 파일+콘솔 동시 출력)
-    2. 모델 및 그래프 초기화
-    3. 입력 데이터 로드
-    4. 기존 결과 로드 (재시작 최적화)
-    5. 처리 대상 필터링 (미처리 + [NONE] 재시도)
-    6. 병렬 처리 (ThreadPoolExecutor)
-    7. 결과 저장
-    """
-    target_answer_type = None # None이면 전체 실행, 문자열이면 해당 타입만 실행
-    FORCE_RERUN = False  # True로 설정하면 [NONE]이 아닌 기존 결과도 재실행
-
-    # 로그 디렉토리 생성 및 Tee 설정
-    log_dir = BASE_DIR / "data" / "log"
-    os.makedirs(log_dir, exist_ok=True)
-    sys.stdout = Tee(log_dir / "agents_v3_netconfig.log", "a")
-
-    print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] [agents_v3] Initializing Models...")
-
-    init_models()
-    app = build_graph()
-
-    # 입력/출력 경로 설정
-    input_path = BASE_DIR / "data" / "passages" / "full_w_context" / "netconfig_en2.json"
-    output_path = BASE_DIR / "data" / "debate_results" / "agents_v3" / "netconfig" / "netconfig_result.json"
-
-    # 다른 데이터셋으로 전환 시 위 경로를 주석처리하고 아래 사용
-    # input_path = BASE_DIR / "data" / "passages" / "full_w_context" / "netbench_passage.json"
-    # output_path = BASE_DIR / "data" / "debate_results" / "agents_v2" / "full_w_context3" / "netbench" / "netbench_result.json"
-
-    if not input_path.exists():
-        print(f"Input file not found: {input_path}")
+    # JSON 파일 탐색 (*_en.json 우선, 없으면 첫 번째 json)
+    json_files = sorted(lab_dir.glob("*_en.json")) or sorted(lab_dir.glob("*.json"))
+    if not json_files:
+        logger.warning(f"[{lab_name}] JSON 파일 없음, 스킵.")
         return
+    input_path = json_files[0]
 
-    # Step 1: 입력 데이터 로드
+    # ConfigManager 초기화
+    configs_dir   = lab_dir / "configs"
+    global_context = ConfigManager(configs_dir, logger)
+    logger.info(f"[{lab_name}] Config keys: {list(global_context._cache.keys())}")
+
+    # 출력 경로 결정 (재실행 시 최신 파일에 이어쓰기)
+    timestamp    = time.strftime('%Y%m%d_%H%M%S')
+    output_path  = output_dir / f"results_raw_{model_tag}_{timestamp}.json"
+    if not force_rerun:
+        existing = sorted(output_dir.glob(f"results_raw_{model_tag}_*.json"), reverse=True)
+        if existing:
+            output_path = existing[0]
+
+    logger.info(f"[{lab_name}] {input_path.name} → {output_path.name}")
+
+    # 입력 데이터 로드
     with open(input_path, 'r', encoding='utf-8') as f:
-        loaded_data = json.load(f)
-    # dict인 경우 리스트로 감싸서 통일
-    if isinstance(loaded_data, dict):
-        data = [loaded_data]
-    elif isinstance(loaded_data, list):
-        data = loaded_data
+        loaded = json.load(f)
+    if isinstance(loaded, dict) and 'questions' in loaded:
+        dataset_meta = loaded.get('meta', {})
+        data         = loaded['questions']
+    elif isinstance(loaded, list):
+        dataset_meta = {}
+        data         = loaded
     else:
-        print(f"❌ Invalid data format: {type(loaded_data)}")
+        logger.error(f"[{lab_name}] Invalid data format: {type(loaded)}")
         return
+    logger.info(f"[{lab_name}] Loaded {len(data)} items.")
 
-    print(f"Loaded {len(data)} items to process.")
-
-    # Step 2: 기존 결과 로드 (중단 후 재시작 지원)
-    existing_results_map = {}  # {id(str): result_dict}
+    # 기존 결과 로드 (중단 후 재시작 지원)
+    existing_results_map: dict = {}
+    os.makedirs(output_dir, exist_ok=True)
     if output_path.exists():
         try:
             with open(output_path, 'r', encoding='utf-8') as f:
-                loaded_results = json.load(f)
-                for r in loaded_results:
-                    res_id = str(r.get('id', ''))
-                    if res_id:
-                        existing_results_map[res_id] = r
-            print(f"✅ Loaded {len(existing_results_map)} existing results from disk.")
+                payload = json.load(f)
+            rows = payload.get('results', payload) if isinstance(payload, dict) else payload
+            for r in rows:
+                res_id = str(r.get('question_id', r.get('id', '')))
+                if res_id:
+                    existing_results_map[res_id] = r
+            logger.info(f"[{lab_name}] 기존 결과 {len(existing_results_map)}건 로드.")
         except Exception:
-            print("⚠️ Error reading existing output. Starting fresh.")
+            logger.warning(f"[{lab_name}] 기존 결과 로드 실패. 처음부터 시작.")
 
-    for item in data:
-        if not isinstance(item, dict): continue
-        item_id = item.get('id', '')
-        q_raw = item.get('question', '')
-        q_key = normalize_key(q_raw)
-        if q_key in existing_results_map:
-            existing_results_map[q_key]['id'] = clean_text_for_save(q_raw)
-
-    # Step 3: 데이터셋 타입 자동 감지 (파일명 기반)
-    dataset_type = "descriptive"
-    global_context = None
-
-    if "teleqna" in input_path.name.lower():
-        dataset_type = "multiple_choice"
-    elif "telequad" in input_path.name.lower():
-        dataset_type = "short_answer"
-    elif "netconfig" in input_path.name.lower():
-        dataset_type = "netconfig"
-        print("NetConfig dataset detected: Loading config files...")
-        global_context = load_netconfigs(BASE_DIR)
-        print("======================================global context keys:", list(global_context.keys()))
-    elif "netbench" in input_path.name.lower():
-        dataset_type = "descriptive"
-
-    print(f"Dataset type detected: {dataset_type}")
-
-    # Step 4: 빠진 ID 번호 자동 감지 (연속 범위에서 누락된 ID 찾기)
-    existing_int_ids = []
-    for res_id in existing_results_map.keys():
-        try:
-            existing_int_ids.append(int(res_id))
-        except ValueError:
-            pass
-
-    missing_ids_set = set()
-    if existing_int_ids:
-        min_id = min(existing_int_ids)
-        max_id = max(existing_int_ids)
-        expected = set(range(min_id, max_id + 1))
-        actual = set(existing_int_ids)
-        missing = sorted(list(expected - actual))
-        if missing:
-            print(f"빠진 ID 개수: {len(missing)}개")
-            print(f"빠진 ID 목록: {missing}")
-            missing_ids_set = set(missing)
-        else:
-            print("빠진 ID가 없습니다.")
-    else:
-        print("정수형 ID를 찾을 수 없습니다.")
-
-    # Step 5: 처리 대상 선정
-    # - 조건 1: 기존 결과에 없는 새 항목
-    # - 조건 2: 답변이 [NONE]인 항목 (재시도)
+    # 처리 대상 선정 (미처리 + [NONE]/[TIMEOUT] 재시도)
     items_to_process = []
-    skipped_count = 0
+    skipped_count    = 0
     none_retry_count = 0
-
     for item in data:
         item_id = str(item.get('id', ''))
-
-        # target_answer_type이 지정된 경우 해당 타입만 처리
         if target_answer_type and item.get('answer_type') != target_answer_type:
             skipped_count += 1
             continue
-
+        if target_level and item.get('level') != target_level:
+            skipped_count += 1
+            continue
         if item_id not in existing_results_map:
-            # 미처리 항목
             items_to_process.append(item)
             continue
-
-        # 기존 결과가 있지만 [NONE]이거나 강제 재실행인 경우 재시도
-        existing_res = existing_results_map[item_id]
-        pred_ans = str(existing_res.get('debate2_answer', '')).strip().upper()
-        if pred_ans == "[NONE]" or FORCE_RERUN:
+        pred    = str(existing_results_map[item_id].get('raw_pred', '')).strip().upper()
+        passage = str(existing_results_map[item_id].get('current_passage', '')).strip()
+        if pred in ('[NONE]', '[TIMEOUT]') or not pred or not passage or force_rerun:
             items_to_process.append(item)
             none_retry_count += 1
         else:
             skipped_count += 1
 
-    print(f"📊 원본 데이터 총합: {len(data)}")
-    print(f"⏭️ 스킵 (정상 처리됨): {skipped_count}")
-    print(f"🔄 재시도 ([NONE] 답변): {none_retry_count}")
-    print(f"🚀 최종 실행 대기: {len(items_to_process)}")
+    logger.info(
+        f"[{lab_name}] 총합: {len(data)}  스킵: {skipped_count}  "
+        f"재시도: {none_retry_count}  실행: {len(items_to_process)}"
+    )
+    if not items_to_process:
+        logger.info(f"[{lab_name}] 처리할 항목 없음.")
+        return
 
-    # Step 6: 병렬 처리
-    MAX_WORKERS = 50 # 동시 처리 스레드 수 (과도한 병렬 요청은 rate limit 유발)
-    start_total_time = time.time()
-    os.makedirs(output_path.parent, exist_ok=True)
-
-    print(f"Starting parallel execution with {MAX_WORKERS} workers...")
+    # 병렬 처리
+    MAX_WORKERS = 20
+    start_total = time.time()
+    logger.info(f"[{lab_name}] Starting parallel execution ({MAX_WORKERS} workers)...")
 
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        future_to_item = {
-            executor.submit(process_item, app, item, i, len(data), dataset_type, global_context): item['question']
+        futures = {
+            executor.submit(
+                process_item, app, item, i, len(data), "netconfig", global_context
+            ): item.get('id', i)
             for i, item in enumerate(items_to_process)
         }
-
         processed_count = 0
-        for future in tqdm(as_completed(future_to_item), total=len(items_to_process), desc="Processing"):
+        for future in tqdm(as_completed(futures), total=len(items_to_process), desc=f"[{lab_name}]"):
             res = future.result()
             if res:
-                res_id = str(res['id'])
-                existing_results_map[res_id] = res
+                existing_results_map[str(res['question_id'])] = res
                 processed_count += 1
-
-                # 10건마다 중간 저장 (프로세스 중단 시 손실 최소화)
                 if processed_count % 10 == 0:
-                    with open(output_path, 'w', encoding='utf-8') as f:
-                        json.dump(list(existing_results_map.values()), f, indent=4, ensure_ascii=False)
+                    _write_output(list(existing_results_map.values()),
+                                  output_path, dataset_meta, lab_name)
 
-    # Step 7: 최종 저장
-    final_list = list(existing_results_map.values())
-    with open(output_path, 'w', encoding='utf-8') as f:
-        json.dump(final_list, f, indent=4, ensure_ascii=False)
+    elapsed    = time.time() - start_total
+    final_rows = list(existing_results_map.values())
+    _write_output(final_rows, output_path, dataset_meta, lab_name,
+                  elapsed=elapsed, model_tag=model_tag)
+    logger.info(f"[{lab_name}] ✅ Done! {len(final_rows)}건 저장 → {output_path}  ({elapsed:.1f}s)")
 
-    print(f"✅ Done! Saved total {len(final_list)} results to {output_path}")
+
+# ==========================================
+# 🏁 메인
+# ==========================================
+def main():
+    """
+    netconfig2/ 하위 랩을 순서대로 처리한다.
+    결과: data/debate_results/v3/labX/results_raw_mas_v3_TIMESTAMP.json
+
+    평가 실행:
+        python Experiment/code/NetConfigQA2_2/analyze_results.py \
+            data/debate_results/v3/labC/results_raw_mas_v3_*.json
+    """
+    # MODEL_TAG          = "mistral3_8b_gpt_oss_20b"
+    MODEL_TAG          = "gpt_oss_20b_2"
+    FORCE_RERUN        = False
+    # ablation 설정: "full" | "no_verifier" | "no_critic"
+    ABLATION           = "full"
+    target_answer_type = None  # None=전체, 문자열=해당 타입만 (예: "text", "set_str")
+    target_level       = None  # None=전체, 문자열=해당 레벨만 (예: "L1", "L2", "L3")
+
+    # 로거 설정 (파일 + 콘솔 동시 출력)
+    log_dir = BASE_DIR / "data" / "log"
+    os.makedirs(log_dir, exist_ok=True)
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(message)s",
+        handlers=[
+            logging.FileHandler(log_dir / "agents_v3_netconfig.log", encoding='utf-8'),
+            logging.StreamHandler(sys.stdout),
+        ]
+    )
+    logger = logging.getLogger("agents_v3")
+
+    logger.info("Initializing Models...")
+    init_models()
+    app = build_graph(ablation=ABLATION)
+
+    netconfig2_dir = BASE_DIR / "data" / "original" / "netconfig2"
+    # ablation별 출력 경로 분리: results2/MODEL_TAG 또는 ablation/no_verifier/MODEL_TAG
+    if ABLATION == "full":
+        output_base = BASE_DIR / "data" / "debate_results" / "agents_v3" / "results2" / MODEL_TAG
+    else:
+        output_base = BASE_DIR / "data" / "debate_results" / "agents_v3" / "ablation" / ABLATION / MODEL_TAG
+
+    labs_to_run = {
+        "lab_a": "labA"
+        # "lab_b": "labB",
+        # "lab_c": "labC", 
+        # "lab_d": "labD"
+    }
+
+    for lab_key, out_name in labs_to_run.items():
+        lab_dir    = netconfig2_dir / lab_key
+        output_dir = output_base / out_name
+
+        if not lab_dir.exists():
+            logger.warning(f"⚠️ {lab_dir} 없음, 스킵.")
+            continue
+
+        run_lab(
+            app=app,
+            lab_dir=lab_dir,
+            output_dir=output_dir,
+            logger=logger,
+            model_tag=MODEL_TAG,
+            target_answer_type=target_answer_type,
+            target_level=target_level,
+            force_rerun=FORCE_RERUN,
+        )
+
+    logger.info("전체 완료.")
 
 
 if __name__ == "__main__":
