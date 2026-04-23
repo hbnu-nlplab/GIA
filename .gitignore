@@ -13,6 +13,9 @@
 ./golden_set_candidates.json
 ./.python-version
 ./CLAUDE.md
+docs/
+NetAlly/docs/
+Make_Dataset/docs/
 ./pyproject.toml
 ./NetAlly/results/
 
