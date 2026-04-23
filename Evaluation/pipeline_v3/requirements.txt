@@ -1,6 +1,0 @@
-chromadb
-rank_bm25
-numpy
-pysqlite3-binary
-openai
-sentence-transformers

@@ -1,3 +1,0 @@
-2026-01-08 14:04:39,915 | INFO | Processing Q: TRACEROUTE_leaf2_leaf3
-2026-01-08 14:04:39,930 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
-2026-01-08 14:04:43,123 | INFO | HTTP Request: POST http://localhost:8000/v1/chat/completions "HTTP/1.1 200 OK"
