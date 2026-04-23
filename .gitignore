@@ -14,7 +14,7 @@
 ./.python-version
 ./CLAUDE.md
 ./pyproject.toml
-
+./NetAlly/results/
 
 ./.github/
 ./.omc/
@@ -126,6 +126,7 @@ NetAlly/frontend/playwright-report/
 # NetAlly runtime settings/cache
 NetAlly/.runtime/
 NetAlly/.tmp/
+NetAlly/snapshot/
 
 # Config generator output (auto-generated)
 
