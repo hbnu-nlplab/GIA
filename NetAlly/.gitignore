@@ -1,1 +1,59 @@
-NetAlly/.env.tailscale
+# =============================================================================
+# UI / FastAPI 서버 (agents_netally 논문과 무관)
+# =============================================================================
+/frontend/
+/langgraph.json
+/docker-compose.yml
+/Dockerfile
+/AGENTS.md
+/Data/
+/scripts/
+
+# =============================================================================
+# agent/ — UI 전용 파일 (agents_netally는 mcp_*.py + clients/ + tools.py + onboarding.py 만 사용)
+# =============================================================================
+/agent/graph.py
+/agent/runtime.py
+/agent/state.py
+/agent/skill_loader.py
+/agent/llm_provider.py
+/agent/direct_tools.py
+/agent/batfish_worker.py
+/agent/Pnetlab_Data/
+
+# =============================================================================
+# agents_netally/ — 실험 레거시 파일
+# =============================================================================
+/agents_netally/netally/
+/agents_netally/main_netally_backup.py
+/agents_netally/main_single_mcp_backup.py
+/agents_netally/main_netbench.py
+/agents_netally/main_netconfig.py
+/agents_netally/main_teleqna.py
+/agents_netally/main.py
+
+# =============================================================================
+# eval/ — UI 그래프 기반 평가 (agents_netally 평가와 무관)
+# =============================================================================
+/eval/runner.py
+/eval/run_netally_eval_direct.py
+
+# =============================================================================
+# 런타임 결과물
+# =============================================================================
+/.omc/
+/.langgraph_api/
+/.runtime/
+/.tmp/
+/snapshot/
+/results/
+/FAILURE_ANALYSIS_TABLE.csv
+/FAILURE_ANALYSIS_ANALYSIS_SUMMARY.json
+/FAILURE_ANALYSIS_REPORT.txt
+/FAILURE_ANALYSIS_MARKDOWN.md
+
+# 프론트엔드 빌드
+/frontend/node_modules/
+/frontend/*.tsbuildinfo
+/frontend/test-results/
+/frontend/playwright-report/

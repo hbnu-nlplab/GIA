@@ -1,56 +1,94 @@
-./Paper/
-./Evaluation/
-./Experiment/
-./MultiAgent/
-./NetConfigQA1/
-./NetConfigQA3/
-./Data/Dataset/
-./scripts/
-./src/
-./test_lab/
-./config/
-./debug/
-./golden_set_candidates.json
-./.python-version
-./CLAUDE.md
+# =============================================================================
+# 프로젝트 특정 디렉토리 (최상위 고정)
+# =============================================================================
+/Paper/
+/Evaluation/
+/Experiment/
+/MultiAgent/
+/NetConfigQA1/
+/NetConfigQA3/
+/Data/Dataset/
+/NetAlly/.langgraph_api/
+/NetAlly/.omc
+/scripts/
+/src/
+/test_lab/
+/config/
+/debug/
+/golden_set_candidates.json
+/.python-version
+/CLAUDE.md
+/pyproject.toml
+/uv.lock
+
+# 숨김 도구 디렉토리 (최상위)
+/.github/
+/.omc/
+/.planning/
+/.serena/
+/.opencode/
+
+# =============================================================================
+# 문서 (전체 gitignore)
+# =============================================================================
 docs/
-NetAlly/docs/
-Make_Dataset/docs/
-./pyproject.toml
-./NetAlly/results/
 
-./.github/
-./.omc/
-./.planning/
-./.serena/
-./.opencode/
+# =============================================================================
+# NetAlly 런타임 / 결과물
+# =============================================================================
+NetAlly/.omc/
+NetAlly/.langgraph_api/
+NetAlly/.runtime/
+NetAlly/.tmp/
+NetAlly/snapshot/
+NetAlly/results/
+NetAlly/FAILURE_ANALYSIS_TABLE.csv
+NetAlly/FAILURE_ANALYSIS_SUMMARY.json
+NetAlly/FAILURE_ANALYSIS_REPORT.txt
+NetAlly/FAILURE_ANALYSIS_MARKDOWN.md
 
-*.pyc
-__pycache__/
-.vscode/
-.idea/
-*.env
-.env.*
-.cursor/
-debug/
-.agent/
-.serena/
-*.tar
-.claude/settings.local.json
-Experiment\code\NetConfigQA2\NetConfigQA2_Experiment_vllm_colab.ipynb
+# NetAlly 프론트엔드 빌드 / 테스트
+NetAlly/frontend/node_modules
+NetAlly/frontend/*.tsbuildinfo
+NetAlly/frontend/test-results/
+NetAlly/frontend/playwright-report/
 
+# =============================================================================
+# 평가 / 실험 결과물
+# =============================================================================
+MultiAgent/data/debate_results/
 
+# 타임스탬프 패턴 결과 파일
+*_analyzed.json
+*_analyzed_detailed.csv
+*_analyzed_errors.json
+*_analyzed_scorecard.md
+*_analyzed_summary.md
+netally_eval_*.json
+netally_eval_*.csv
 
-# NetConfigQA3 .gitignore
+# 데이터셋 생성 결과
+*_batfish_facts_*.json
+*_dataset_batfish_*.json
+*_dataset_batfish_*.csv
+*_quality_report.json
 
-# Environment variables (sensitive!)
-.env
-config/.env
-.cursor/
-.serena/
-.venv/
+# Make_Dataset 임시 출력
+Make_Dataset/debug_output.txt
+Make_Dataset/policies_backup_*.json
 
+# Experiment 아티팩트
+Experiment/code/NetConfigQA2_2/logs/
+Experiment/code/NetConfigQA2_2/results/
+Experiment/code/NetConfigQA2_2/results_2/
+Experiment/code/LabA/results_*
+Experiment/code/Llama-3.1-8B/**/results_*
+Experiment/code/NetConfigQA2_2/cookbook/
+Repo/nika/
+
+# =============================================================================
 # Python
+# =============================================================================
 __pycache__/
 *.py[cod]
 *$py.class
@@ -72,114 +110,63 @@ wheels/
 .installed.cfg
 *.egg
 
-# Virtual environments
+# 가상환경
 venv/
 env/
 ENV/
 virtualenv/
+.venv/
 netally/
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-.DS_Store
-
-# Logs
-logs/*.log
-*.log
-
-# Generated files
-device_info_generated.json
-test_quick.py
-
-# Jupyter
-.ipynb_checkpoints/
-*.ipynb
-
-# Testing
+# 테스트
 .pytest_cache/
 .coverage
 htmlcov/
 .tox/
 
-# mypy
+# 타입 체커
 .mypy_cache/
 .dmypy.json
 dmypy.json
 
-# Database
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# =============================================================================
+# 환경 / 설정
+# =============================================================================
+.env
+.env.*
+*.env
+config/.env
+.claude/settings.local.json
+device_info_generated.json
+test_quick.py
+
+# =============================================================================
+# 에디터 / IDE
+# =============================================================================
+.vscode/
+.idea/
+.cursor/
+.serena/
+.agent/
+*.swp
+*.swo
+*~
+
+# =============================================================================
+# OS
+# =============================================================================
+.DS_Store
+Thumbs.db
+
+# =============================================================================
+# 로그 / 임시 파일
+# =============================================================================
+*.log
+*.tar
+*.bundle
 *.db
 *.sqlite
-
-# OS
-Thumbs.db
-NetAlly/frontend/node_modules
-NetAlly/frontend/*.tsbuildinfo
-
-# Slidev
-docs/slidev-netconfigqa
-
-# NetAlly frontend test artifacts
-NetAlly/frontend/test-results/
-NetAlly/frontend/playwright-report/
-
-# NetAlly runtime settings/cache
-NetAlly/.runtime/
-NetAlly/.tmp/
-NetAlly/snapshot/
-
-# Config generator output (auto-generated)
-
-
-# Git backup bundles
-*.bundle
-
-# Experiment artifacts
-Experiment/code/NetConfigQA2_2/logs/
-Experiment/code/NetConfigQA2_2/results/
-Experiment/code/NetConfigQA2_2/results_2/
-Experiment/code/NetConfigQA2_2/results_2/
-Experiment/code/LabA/results_*
-Experiment/code/Llama-3.1-8B/**/results_*
-
-# Embedded repositories added by mistake
-Experiment/code/NetConfigQA2_2/cookbook/
-Repo/nika/
-
-# NetAlly 평가 결과 (타임스탬프 포함 자동 생성 파일)
-NetAlly/results/
-NetAlly/FAILURE_ANALYSIS_TABLE.csv
-NetAlly/FAILURE_ANALYSIS_SUMMARY.json
-NetAlly/FAILURE_ANALYSIS_REPORT.txt
-NetAlly/FAILURE_ANALYSIS_MARKDOWN.md
-
-# MultiAgent 실험 결과
-MultiAgent/data/debate_results/
-
-# 타임스탬프 패턴 결과 파일 (전역)
-*_analyzed.json
-*_analyzed_detailed.csv
-*_analyzed_errors.json
-*_analyzed_scorecard.md
-*_analyzed_summary.md
-netally_eval_*.json
-netally_eval_*.csv
-
-# 데이터셋 생성 결과 (타임스탬프 포함)
-*_batfish_facts_*.json
-*_dataset_batfish_*.json
-*_dataset_batfish_*.csv
-*_quality_report.json
-test_lab/Dataset/
-
-# Make_Dataset 임시 출력
-Make_Dataset/debug_output.txt
-Make_Dataset/policies_backup_*.json
-
-# 기타 임시/생성 파일
-golden_set_candidates.json
-.opencode/
-.omc/
