@@ -60,6 +60,7 @@ venv/
 env/
 ENV/
 virtualenv/
+netally/
 
 # IDE
 .vscode/
