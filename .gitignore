@@ -1,12 +1,26 @@
-./Paper
-./Evaluation
-./Experiment
-./MultiAgent
-./NetConfigQA1
-./NetConfigQA3
-./Data/Dataset
+./Paper/
+./Evaluation/
+./Experiment/
+./MultiAgent/
+./NetConfigQA1/
+./NetConfigQA3/
+./Data/Dataset/
+./scripts/
+./src/
+./test_lab/
+./config/
+./debug/
+./golden_set_candidates.json
+./.python-version
+./CLAUDE.md
+./pyproject.toml
 
 
+.github/
+.omc/
+.planning/
+.serena/
+.opencode/
 
 *.pyc
 __pycache__/
