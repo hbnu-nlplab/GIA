@@ -50,15 +50,17 @@ docker run -d -p 8080:8080 -p 8888:8888 --name cisco-nso-dev cisco-nso-dev
 git clone https://github.com/hbnu-kilab/GIA.git
 cd GIA
 
-# 1. Python 환경 구축 (uv 권장)
-# uv가 없다면: curl -LsSf https://astral.sh/uv/install.sh | sh
-uv venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-uv pip install -r requirements.txt
+# uv가 없다면 먼저 설치
+# curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# 2. Frontend 환경 구축 (Node.js)
-cd NetAlly/frontend
-npm install
+# Make_Dataset 의존성 설치
+cd Make_Dataset && uv sync && cd ..
+
+# NetAlly 백엔드 의존성 설치
+cd NetAlly && uv sync --extra dev && cd ..
+
+# NetAlly 프론트엔드 의존성 설치
+cd NetAlly/frontend && npm ci && cd ../..
 ```
 
 ### 2. 데이터 준비
@@ -168,16 +170,9 @@ GIA/
 ├── NetAlly/                        # Multi-Agent System (FastAPI + React)
 │   ├── agent/runtime.py            # 에이전트 런타임
 │   ├── agent/mcp_server.py         # MCP 도구 16개
-│   ├── eval/experiment_runner.py   # Exp.4/5 배치 실행기
+│   ├── agents_netally/             # MAS + MCP 에이전트 (debate1/2, single+MCP)
+│   ├── eval/experiment_runner.py   # 배치 평가 실행기
 │   └── frontend/                   # React + React Flow 토폴로지
-├── MultiAgent/agents_v2/           # 토론 기반 MAS (팀원 설계)
-│   ├── debate1.py                  # Collector/Verifier/Synthesizer
-│   ├── debate2.py                  # Supporter/Skeptic
-│   └── main_netconfig.py           # NetConfigQA 실행
-├── Experiment/code/NetConfigQA2_2/ # 평가 도구
-│   ├── run_eval_vllm_offline.py    # Exp.2 vLLM 배치 평가
-│   ├── analyze_results.py          # TA-Acc 채점 (1,211줄)
-│   └── make_figure.py              # 논문 Figure 4종
 └── docs/                           # 문서
 ```
 
@@ -209,4 +204,4 @@ GIA/
 | --- | --- |
 | [실험 설계](NetAlly/docs/IEEE/experiment_design.md) | Exp.2/4/5 설계, 평가 메트릭 |
 | [Lab-B 토폴로지](Make_Dataset/config_generator/docs/Lab-B-topology.html) | 인터랙티브 토폴로지 시각화 |
-| [수정 계획](/.planning/) | NetAlly Fix, Experiment Gap, Dataset Fix 계획 |
+| [NetAlly 상세 문서](NetAlly/README.md) | 아키텍처, 환경변수, 트러블슈팅 |
