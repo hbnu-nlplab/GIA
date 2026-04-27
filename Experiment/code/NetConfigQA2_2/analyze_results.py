@@ -862,6 +862,14 @@ class ScorecardGenerator:
         def fmt_pct(value) -> str:
             return "N/A" if value is None else f"{value*100:.2f}%"
 
+        def fmt_seconds(value) -> str:
+            try:
+                if value is None:
+                    return "N/A"
+                return f"{float(value):.1f}s"
+            except (TypeError, ValueError):
+                return "N/A"
+
         lines = []
         
         # Header
@@ -887,7 +895,7 @@ class ScorecardGenerator:
         lines.append(f"| ROUGE-1 | {fmt_pct(trad_metrics.get('rouge1'))} |")
         lines.append(f"| ROUGE-2 | {fmt_pct(trad_metrics.get('rouge2'))} |")
         lines.append(f"| Total Samples | {stats['total_samples']} |")
-        lines.append(f"| Inference Time | {meta.get('duration_sec', meta.get('duration', 0)):.1f}s |")
+        lines.append(f"| Inference Time | {fmt_seconds(meta.get('duration_sec', meta.get('duration', 0)))} |")
         lines.append("")
 
         # Positive / Negative testing emphasis for paper reporting
@@ -1225,8 +1233,14 @@ def analyze_results(
         category = row.get("category", "General")
         status = row.get("answer_status", row.get("status", "OK"))
 
-        raw_pred = row.get("raw_pred", row.get("debate2_answer", row.get("pred", "")))
-        pred_input = row.get("pred", raw_pred)
+        raw_pred = row.get(
+            "raw_pred",
+            row.get("debate2_answer", row.get("candidate_answer", row.get("pred", ""))),
+        )
+        pred_input = row.get(
+            "pred",
+            row.get("raw_pred", row.get("debate2_answer", row.get("candidate_answer", ""))),
+        )
         gold_raw = str(row.get("gold", row.get("gold_answer", "")))
         metric_name = infer_metric_name(row)
         if metric_name in STRUCTURED_METRICS:
