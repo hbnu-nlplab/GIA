@@ -182,7 +182,36 @@ async def _detect_and_login(reader, writer, admin_pw: str = "admin"):
         await _read_until(reader, 0.5)
 
 
+def _parse_hostname(output: str) -> str:
+    """Extract hostname from show output."""
+    m = re.search(r"(?im)^\s*(\S+)\s+uptime\s+is\b", output)
+    if m:
+        return m.group(1)
+
+    m = re.search(r"(?im)^\s*hostname\s+(\S+)\s*$", output)
+    if m:
+        return m.group(1)
+    m = re.search(r"(?m)^([A-Za-z][A-Za-z0-9_-]*)[#>]\s*$", output)
+    if m and m.group(1) not in {"Username", "Password"}:
+        return m.group(1)
+    return ""
+
+
+def _parse_interface_ip(output: str, interface: str) -> str:
+    """Extract interface IP from show ip interface brief output."""
+    candidates = {interface, interface.replace("GigabitEthernet", "Gi")}
+    for line in output.splitlines():
+        if "IP-Address" in line or "Interface" in line:
+            continue
+        if any(token in line for token in candidates):
+            parts = line.split()
+            if len(parts) >= 2 and re.match(r"^\d+\.\d+\.\d+\.\d+$", parts[1]):
+                return parts[1]
+    return ""
+
+
 async def push_one(host: str, port: int, name: str, cmds: list[str],
+                    oob_ip: str = "", oob_intf: str = "GigabitEthernet0/7",
                     enable_pw: str = "", admin_pw: str = "admin") -> str:
     """Push config to one device. Returns status string."""
     if port == 0:
@@ -202,8 +231,8 @@ async def push_one(host: str, port: int, name: str, cmds: list[str],
         writer.write("enable\r\n")
         await asyncio.sleep(0.5)
         resp = await _read_until(reader, 0.5)
-        if enable_pw and "Password:" in resp:
-            writer.write(enable_pw + "\r\n")
+        if "Password:" in resp or "password:" in resp.lower():
+            writer.write((enable_pw or admin_pw) + "\r\n")
             await asyncio.sleep(0.5)
             await _read_until(reader)
 
@@ -227,6 +256,27 @@ async def push_one(host: str, port: int, name: str, cmds: list[str],
         writer.write("write memory\r\n")
         await asyncio.sleep(2)
         await _read_until(reader)
+
+        # Validate that the expected hostname/OOB landed on this console.
+        writer.write("\r\nshow version\r\n")
+        await asyncio.sleep(2)
+        prompt_out = await _read_until(reader, 2.0)
+        writer.write("show ip interface brief\r\n")
+        await asyncio.sleep(2)
+        ip_out = await _read_until(reader, 2.0)
+
+        actual_name = _parse_hostname(prompt_out)
+        actual_ip = _parse_interface_ip(ip_out, oob_intf)
+        name_ok = (actual_name == name) or (not actual_name and actual_ip == oob_ip)
+        if not name_ok or (oob_ip and actual_ip != oob_ip):
+            writer.close()
+            return (
+                "VERIFY_FAIL("
+                f"hostname={actual_name or '?'},"
+                f"oob={actual_ip or '?'},"
+                f"expected={name}/{oob_ip}"
+                ")"
+            )
 
         writer.close()
         return "OK"
@@ -266,12 +316,31 @@ async def generate_rsa_key(host: str, port: int, name: str,
         # enable
         writer.write("enable\r\n")
         await asyncio.sleep(0.5)
-        await _read_until(reader)
+        resp = await _read_until(reader)
+        if "Password:" in resp or "password:" in resp.lower():
+            writer.write(f"{admin_pw}\r\n")
+            await asyncio.sleep(0.5)
+            await _read_until(reader)
 
         # configure terminal
         writer.write("configure terminal\r\n")
         await asyncio.sleep(0.5)
         await _read_until(reader)
+
+        # SSH prerequisites. Some earlier VERIFY_FAIL devices skipped the full
+        # RSA phase, so re-assert the minimal SSH server config here.
+        for cmd in [
+            "ip domain-name ncn.go.kr",
+            f"username admin privilege 15 secret {admin_pw}",
+            "line vty 0 4",
+            "login local",
+            "transport input ssh",
+            "exit",
+            "ip ssh version 2",
+        ]:
+            writer.write(cmd + "\r\n")
+            await asyncio.sleep(0.3)
+            await _read_until(reader)
 
         # 기존 키 삭제 (있으면)
         writer.write("crypto key zeroize rsa\r\n")
@@ -292,6 +361,13 @@ async def generate_rsa_key(host: str, port: int, name: str,
         writer.write("write memory\r\n")
         await asyncio.sleep(2)
         await _read_until(reader)
+
+        writer.write("show ip ssh\r\n")
+        await asyncio.sleep(1)
+        ssh_out = await _read_until(reader, 1.5)
+        if "enabled" not in ssh_out.lower() and "ssh enabled" not in ssh_out.lower():
+            writer.close()
+            return "RSA_VERIFY_FAIL(ssh_not_enabled)"
 
         writer.close()
         return "OK"
@@ -393,6 +469,30 @@ def _cfg_has_aaa(cfg_path: Path) -> bool:
         return False
 
 
+def validate_telnet_ports(devices: list[dict]) -> None:
+    """Fail fast if device_info has missing or duplicated console ports."""
+    missing = [d["name"] for d in devices if int(d.get("telnet_port", 0) or 0) == 0]
+    if missing:
+        raise SystemExit(
+            "[ERROR] telnet_port 미설정 장비가 있습니다: "
+            + ", ".join(missing)
+            + "\n        PNETLab 웹/런타임 기준 port를 device_info.json에 먼저 반영하세요."
+        )
+
+    seen: dict[int, str] = {}
+    duplicates: list[str] = []
+    for d in devices:
+        port = int(d["telnet_port"])
+        if port in seen:
+            duplicates.append(f"{port}: {seen[port]}, {d['name']}")
+        seen[port] = d["name"]
+    if duplicates:
+        raise SystemExit(
+            "[ERROR] telnet_port 중복이 있습니다:\n  - "
+            + "\n  - ".join(duplicates)
+        )
+
+
 async def main():
     parser = argparse.ArgumentParser(description="Step 1: Push .cfg to PNETLab devices")
     add_common_args(parser)
@@ -400,6 +500,8 @@ async def main():
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--skip-rsa", action="store_true",
                         help="RSA 키 생성 단계 건너뛰기")
+    parser.add_argument("--rsa-only", action="store_true",
+                        help="Config push 없이 RSA 키 생성만 수행")
     args = parser.parse_args()
 
     cfg, devices = load_and_filter_devices(args)
@@ -407,6 +509,7 @@ async def main():
     host = gs["pnetlab_vm_ip"]
     enable_pw = gs.get("enable_password", "")
     admin_pw = gs.get("admin_password", "admin")
+    validate_telnet_ports(devices)
 
     print(f"\n{'='*55}")
     print(f"  STEP 1: CONFIG PUSH — {len(devices)} devices")
@@ -417,28 +520,41 @@ async def main():
     # ── Phase 1: Config Push ──
     print("--- Phase 1: Config Push ---")
     results = {}
-    for d in devices:
-        name = d["name"]
-        cfg_path = args.configs_dir / f"{name}.cfg"
+    if args.rsa_only:
+        for d in devices:
+            results[d["name"]] = "OK"
+        print("  SKIP (--rsa-only)")
+    else:
+        for d in devices:
+            name = d["name"]
+            cfg_path = args.configs_dir / f"{name}.cfg"
 
-        if not cfg_path.exists():
-            results[name] = "NO_CFG"
-            print(f"  [✗] {name:8s} — {cfg_path.name} not found")
-            continue
+            if not cfg_path.exists():
+                results[name] = "NO_CFG"
+                print(f"  [✗] {name:8s} — {cfg_path.name} not found")
+                continue
 
-        cmds = parse_cfg(cfg_path)
-        print(f"  [{name:8s}] {len(cmds)} cmds ... ", end="", flush=True)
+            cmds = parse_cfg(cfg_path)
+            print(f"  [{name:8s}] {len(cmds)} cmds ... ", end="", flush=True)
 
-        if args.dry_run:
-            results[name] = "DRY_RUN"
-            print("DRY_RUN")
-            continue
+            if args.dry_run:
+                results[name] = "DRY_RUN"
+                print("DRY_RUN")
+                continue
 
-        status = await push_one(host, d["telnet_port"], name, cmds,
-                                enable_pw, admin_pw)
-        results[name] = status
-        icon = "✓" if status == "OK" else "✗"
-        print(f"{icon} {status}")
+            status = await push_one(
+                host,
+                d["telnet_port"],
+                name,
+                cmds,
+                d.get("oob_ip", ""),
+                d.get("oob_intf", "GigabitEthernet0/7"),
+                enable_pw,
+                admin_pw,
+            )
+            results[name] = status
+            icon = "✓" if status == "OK" else "✗"
+            print(f"{icon} {status}")
 
     ok = sum(1 for s in results.values() if s == "OK")
     print(f"\n  Config Push: {ok}/{len(results)} OK")

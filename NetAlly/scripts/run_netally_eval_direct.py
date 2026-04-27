@@ -76,6 +76,8 @@ except ImportError:
 
 from langchain_core.callbacks import BaseCallbackHandler
 from tqdm import tqdm
+from agent.eval_metadata import collect_runtime_meta, infer_lab_folder
+from agent.openai_compat import apply_openai_compat_env
 
 
 # ---------------------------------------------------------------------------
@@ -121,14 +123,10 @@ class TokenUsageCallback(BaseCallbackHandler):
         }
 
 # ---------------------------------------------------------------------------
-# OpenRouter API key fallback
+# Normalize OpenAI-compatible env vars early so downstream imports
+# consistently see the same base URL / API key aliases.
 # ---------------------------------------------------------------------------
-if not os.getenv("OPENAI_API_KEY") and os.getenv("OPENROUTER_API_KEY"):
-    os.environ["OPENAI_API_KEY"] = os.environ["OPENROUTER_API_KEY"]
-    os.environ.setdefault(
-        "OPENAI_BASE_URL",
-        os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1"),
-    )
+apply_openai_compat_env()
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -569,6 +567,72 @@ def _print_intermediate_stats(
     print("\n".join(lines))
 
 
+def _infer_lab_root_from_dataset(dataset_path: Path) -> Optional[Path]:
+    try:
+        if dataset_path.parent.name == "Dataset":
+            return dataset_path.parent.parent
+        if dataset_path.parent.parent.name == "Dataset":
+            return dataset_path.parent.parent.parent
+    except Exception:
+        return None
+    return None
+
+
+def _prepare_batfish_snapshot(
+    dataset_path: Path,
+    lab_folder: str,
+    force_refresh: bool,
+) -> None:
+    snapshot_name = str(lab_folder).strip() or "default"
+    os.environ["BATFISH_SNAPSHOT"] = snapshot_name
+    os.environ["BATFISH_NETWORK"] = snapshot_name
+    os.environ.setdefault("PNETLAB_LAB_NAME", snapshot_name)
+
+    if not force_refresh:
+        logger.info(
+            "Skipping Batfish refresh; using BATFISH_SNAPSHOT=%s",
+            snapshot_name,
+        )
+        return
+
+    lab_root = _infer_lab_root_from_dataset(dataset_path)
+    configs_dir = lab_root / "configs" if lab_root else None
+    if not configs_dir or not configs_dir.exists():
+        logger.warning(
+            "Dataset-scoped configs dir not found for Batfish refresh: %s",
+            configs_dir,
+        )
+        return
+
+    cfg_files = sorted(configs_dir.glob("*.cfg"))
+    if not cfg_files:
+        logger.warning("No .cfg files found for Batfish refresh in %s", configs_dir)
+        return
+
+    from agent.clients.batfish import BatfishClient
+
+    bf = BatfishClient(host=os.getenv("BATFISH_HOST", "localhost"))
+    result = bf.init_snapshot(
+        topology_name=snapshot_name,
+        configs=[str(p) for p in cfg_files],
+        device_info={
+            "source": "DATASET_CONFIGS",
+            "topology": snapshot_name,
+            "dataset_path": str(dataset_path),
+            "configs_dir": str(configs_dir),
+        },
+    )
+    if "error" in result:
+        raise RuntimeError(
+            f"Batfish snapshot refresh failed for {snapshot_name}: {result['error']}"
+        )
+    logger.info(
+        "Batfish snapshot refreshed from dataset configs: %s (%d cfgs)",
+        snapshot_name,
+        len(cfg_files),
+    )
+
+
 # ---------------------------------------------------------------------------
 # Main Evaluation Loop
 # ---------------------------------------------------------------------------
@@ -622,8 +686,15 @@ def run_eval(args: argparse.Namespace) -> None:
 
     # Derive lab info
     dataset_path = Path(args.dataset)
-    lab_folder = dataset_meta.get("lab_folder", dataset_path.parent.parent.name)
+    lab_folder = infer_lab_folder(dataset_path, dataset_meta)
     lab_label = args.lab or dataset_meta.get("lab", lab_folder)
+
+    # Normalize eval-scoped Batfish env and refresh snapshot from dataset configs.
+    _prepare_batfish_snapshot(
+        dataset_path=dataset_path,
+        lab_folder=lab_folder,
+        force_refresh=not getattr(args, "no_refresh_batfish", False),
+    )
 
     # Output path
     if args.output:
@@ -667,18 +738,85 @@ def run_eval(args: argparse.Namespace) -> None:
         "include_levels": args.include_levels,
         "exclude_levels": args.exclude_levels,
     }
+    meta.update(collect_runtime_meta())
 
     results: List[Dict] = list(existing.values())
     processed_ids = set(existing.keys())
     new_count = 0
 
     # Helper: TA-Acc score (논문 공식 메트릭)
-    def _ta_score(pred: str, gold: str, answer_type: str, qid: str = "") -> float:
+    # analyze_results.py와 동일하게 answer_status를 반영한다.
+    # 특히 NOT_CONFIGURED는 canonical token을 요구하는 strict 분기로 채점한다.
+    def _gold_status(row: Dict[str, Any]) -> str:
+        status = (
+            row.get("gold_answer_status")
+            or row.get("answer_status")
+            or row.get("status")
+            or "OK"
+        )
+        return str(status).strip().upper() or "OK"
+
+    def _ta_score(
+        pred: str,
+        gold: str,
+        answer_type: str,
+        qid: str = "",
+        status: str = "OK",
+    ) -> float:
         try:
-            result = _TA_SCORER.score(pred, gold, answer_type, question_id=qid)
+            clean_pred = _TA_SCORER.clean_prediction(str(pred), answer_type)
+            result = _TA_SCORER.score(
+                clean_pred,
+                gold,
+                answer_type,
+                status=status,
+                question_id=qid,
+            )
             return result.get("score", 0.0)
         except Exception:
             return 0.0
+
+    def _ta_score_entry(row: Dict[str, Any]) -> float:
+        return _ta_score(
+            row.get("pred", ""),
+            row.get("gold", ""),
+            row.get("answer_type", "text"),
+            row.get("question_id", ""),
+            _gold_status(row),
+        )
+
+    def _negative_eval_stats(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
+        total = 0
+        semantic_correct = 0
+        explicit_correct = 0
+        blank = 0
+        for row in rows:
+            if _gold_status(row) != "NOT_CONFIGURED":
+                continue
+            total += 1
+            answer_type = row.get("answer_type", "text")
+            clean_pred = _TA_SCORER.clean_prediction(
+                str(row.get("pred", "")),
+                answer_type,
+            )
+            metrics = _TA_SCORER.evaluate_negative_prediction(
+                clean_pred,
+                row.get("gold", ""),
+                answer_type,
+            )
+            semantic_correct += int(metrics.get("semantic_negative_correct", False))
+            explicit_correct += int(metrics.get("explicit_abstention_correct", False))
+            blank += int(metrics.get("blank_prediction", False))
+
+        return {
+            "total": total,
+            "semantic_correct": semantic_correct,
+            "explicit_correct": explicit_correct,
+            "blank": blank,
+            "semantic_accuracy": semantic_correct / total if total else None,
+            "explicit_accuracy": explicit_correct / total if total else None,
+            "contract_compliance": explicit_correct / semantic_correct if semantic_correct else None,
+        }
 
     # Helper: evaluate one item (used by both serial and threaded paths)
     def _process_item(item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
@@ -725,6 +863,9 @@ def run_eval(args: argparse.Namespace) -> None:
         # Token usage
         token_usage = resp.get("token_usage", {})
 
+        gold_answer_status = str(item.get("answer_status", item.get("status", "OK")))
+        run_status = "ERROR" if error else "OK"
+
         result_entry: Dict[str, Any] = {
             "question_id": qid,
             "question": question_text,
@@ -734,7 +875,9 @@ def run_eval(args: argparse.Namespace) -> None:
             "level": level,
             "category": category,
             "answer_type": answer_type,
-            "answer_status": "ERROR" if error else "OK",
+            "answer_status": gold_answer_status,
+            "gold_answer_status": gold_answer_status,
+            "run_status": run_status,
             "tools_used": tools_used,
             "tool_count": len(tools_used),
             "latency_ms": resp["latency_ms"],
@@ -791,9 +934,7 @@ def run_eval(args: argparse.Namespace) -> None:
             # Track running TA-Acc
             lvl = result_entry["level"]
             level_total[lvl] += 1
-            ta = _ta_score(result_entry["pred"], result_entry["gold"],
-                           result_entry.get("answer_type", "text"),
-                           result_entry.get("question_id", ""))
+            ta = _ta_score_entry(result_entry)
             level_correct[lvl] += ta
 
             # Running accuracy for progress bar
@@ -849,9 +990,7 @@ def run_eval(args: argparse.Namespace) -> None:
 
                 lvl = result_entry["level"]
                 level_total[lvl] += 1
-                ta = _ta_score(result_entry["pred"], result_entry["gold"],
-                               result_entry.get("answer_type", "text"),
-                               result_entry.get("question_id", ""))
+                ta = _ta_score_entry(result_entry)
                 level_correct[lvl] += ta
 
                 total_done = sum(level_total.values())
@@ -883,12 +1022,19 @@ def run_eval(args: argparse.Namespace) -> None:
         "total_tokens": sum(r.get("total_tokens", 0) for r in results),
         "llm_calls": sum(r.get("llm_calls", 0) for r in results),
     }
+    meta["scoring"] = {
+        "metric": "Type-Aware Accuracy",
+        "mode": "paper_strict",
+        "negative_rule": "NOT_CONFIGURED samples require canonical NOT_CONFIGURED token",
+    }
     save_output(output_path, meta, results)
 
     # --- Level-wise summary table ---
     print(f"\n{'=' * 70}")
     print(f"  NetAlly Direct Evaluation Complete")
     print(f"{'=' * 70}")
+    print("  Scoring: paper strict TA-Acc (NOT_CONFIGURED requires canonical token)")
+    print()
 
     # Build level-wise stats from ALL results (including resumed) — TA-Acc
     all_level_stats: Dict[str, Dict[str, Any]] = defaultdict(
@@ -899,8 +1045,7 @@ def run_eval(args: argparse.Namespace) -> None:
         st = all_level_stats[lvl]
         st["count"] += 1
         st["total_ms"] += r.get("latency_ms", 0)
-        ta = _ta_score(r.get("pred", ""), r.get("gold", ""),
-                       r.get("answer_type", "text"), r.get("question_id", ""))
+        ta = _ta_score_entry(r)
         st["ta_sum"] += ta
 
     header = f"  {'Level':<8}| {'Count':>6} | {'TA-Acc':>8} | {'Avg Time':>10}"
@@ -913,9 +1058,12 @@ def run_eval(args: argparse.Namespace) -> None:
         avg_t = st["total_ms"] / cnt / 1000 if cnt > 0 else 0.0
         print(f"  {lvl:<8}| {cnt:>6} | {ta_acc:>7.1f}% | {avg_t:>8.1f}s")
 
-    ok_count = sum(1 for r in results if r["answer_status"] == "OK")
-    err_count = sum(1 for r in results if r["answer_status"] == "ERROR")
-    ok_results = [r for r in results if r["answer_status"] == "OK"]
+    ok_results = [
+        r for r in results
+        if r.get("run_status", "ERROR" if r.get("error") else "OK") == "OK"
+    ]
+    ok_count = len(ok_results)
+    err_count = len(results) - ok_count
     avg_latency = (
         sum(r["latency_ms"] for r in ok_results) / max(ok_count, 1)
     )
@@ -944,6 +1092,23 @@ def run_eval(args: argparse.Namespace) -> None:
     print(f"  {'-' * 8}+{'-' * 8}+{'-' * 10}+{'-' * 12}")
     print(f"  {'TOTAL':<8}| {total_count:>6} | {overall_acc:>7.1f}% |")
     print()
+
+    negative_stats = _negative_eval_stats(results)
+    if negative_stats["total"]:
+        semantic_acc = negative_stats["semantic_accuracy"] or 0.0
+        explicit_acc = negative_stats["explicit_accuracy"] or 0.0
+        compliance = negative_stats["contract_compliance"]
+        compliance_text = (
+            f"{compliance * 100:.1f}%" if compliance is not None else "N/A"
+        )
+        print("  --- Negative Samples ---")
+        print(f"  Total negatives       : {negative_stats['total']}")
+        print(f"  Semantic negative acc : {semantic_acc * 100:.1f}%")
+        print(f"  Explicit abstention   : {explicit_acc * 100:.1f}%")
+        print(f"  Contract compliance   : {compliance_text}")
+        print(f"  Blank predictions     : {negative_stats['blank']}")
+        print()
+
     print(f"  Processed (new) : {new_count}")
     print(f"  OK / Error      : {ok_count} / {err_count}")
     print(f"  Avg latency     : {avg_latency:,.0f} ms")
@@ -1036,6 +1201,15 @@ def parse_args() -> argparse.Namespace:
             "Number of parallel workers (default: 1 = serial). "
             "WARNING: MCP async tools may cause issues with >1 workers. "
             "Each worker creates its own event loop."
+        ),
+    )
+    parser.add_argument(
+        "--no-refresh-batfish",
+        action="store_true",
+        default=False,
+        help=(
+            "Do not rebuild Batfish snapshot from dataset-scoped configs before eval. "
+            "Default behavior refreshes the snapshot to avoid stale lab state."
         ),
     )
     return parser.parse_args()

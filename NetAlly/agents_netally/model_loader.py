@@ -11,6 +11,7 @@ OpenRouter API 또는 NetAlly LLMProvider를 통해 LLM 로드.
 import os
 import logging
 from langchain_openai import ChatOpenAI
+from agent.openai_compat import apply_openai_compat_env
 
 logger = logging.getLogger(__name__)
 
@@ -23,25 +24,10 @@ def init_models():
     if _LLM_DICT:
         return _LLM_DICT
 
-    # Backend detection: vllm > openrouter > openai
     backend = os.getenv("NETALLY_EXECUTOR_LLM_BACKEND", "openai")
-    vllm_url = os.getenv("VLLM_BASE_URL", "")
-    api_key = os.getenv("OPENROUTER_API_KEY") or os.getenv("OPENAI_API_KEY", "")
-    base_url = os.getenv("OPENAI_API_BASE", "")
-
-    if backend == "vllm" and vllm_url:
-        base_url = vllm_url
-        api_key = "sk-no-key-required"
-        # Override env vars BEFORE ChatOpenAI reads them
-        # (dotenv loads real OPENAI_API_KEY which causes SDK to hit api.openai.com)
-        os.environ["OPENAI_API_KEY"] = api_key
-        os.environ["OPENAI_API_BASE"] = base_url
-        os.environ["OPENAI_BASE_URL"] = base_url
-    elif not base_url:
-        if api_key.startswith("sk-or-"):
-            base_url = "https://openrouter.ai/api/v1"
-        else:
-            base_url = "https://api.openai.com/v1"
+    resolved = apply_openai_compat_env(backend=backend)
+    api_key = resolved.api_key
+    base_url = resolved.base_url
 
     default_model = os.getenv("NETALLY_EXECUTOR_LLM_MODEL", "gpt-4o-mini")
     model_a = os.getenv("NETALLY_MAS_MODEL_A", default_model)

@@ -25,6 +25,9 @@ Step 3: NSO Device Registration via RESTCONF
 
   # NSO 상태 확인만
   python -m deploy.3_register_nso --status
+
+  # 특정 NSO Docker 컨테이너 사용 (ssh-rsa 설정용)
+  python -m deploy.3_register_nso --nso-container cisco-nso-laba
 """
 
 import argparse
@@ -210,6 +213,8 @@ def main():
                         help="현재 NSO 상태만 확인")
     # NSO 연결 오버라이드 (device_info.json 기본값 사용)
     parser.add_argument("--nso-url", help="NSO RESTCONF URL 오버라이드")
+    parser.add_argument("--nso-container",
+                        help="ssh-rsa 설정에 사용할 NSO Docker 컨테이너명 오버라이드")
     args = parser.parse_args()
 
     cfg, devices = load_and_filter_devices(args)
@@ -263,7 +268,7 @@ def main():
         return
 
     # ── Phase 0.5: SSH-RSA 알고리즘 설정 (IOSv 15.x 호환) ──
-    nso_container = gs.get("nso_container", "cisco-nso-dev")
+    nso_container = args.nso_container or gs.get("nso_container", "cisco-nso-dev")
     print(f"\n--- Phase 0.5: SSH-RSA Algorithm ---")
     if nso.ensure_ssh_rsa(nso_container):
         print(f"  [✓] ssh-rsa public-key 설정 완료")

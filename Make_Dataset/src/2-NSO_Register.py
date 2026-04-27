@@ -1,21 +1,43 @@
 # DEPRECATED: Use Make_Dataset/src/deploy/3_register_nso.py instead.
 # This script uses NSO CLI via docker exec. The new script uses RESTCONF API.
 
+import argparse
 import json
 import subprocess
 import time
 import sys
 import os
 
-# 설정 파일 경로: 환경변수 > 기본 상대경로
+# 설정 파일 경로: CLI 인자 > 환경변수 > 기본 상대경로
 _DEFAULT_CONFIG = os.path.join(
     os.path.dirname(__file__), "..", "..",
     "Data", "Pnetlab", "Research_Institute_Internal_DC", "device_info.json"
 )
-SUCCESSFUL_DEVICES_FILE = os.environ.get("PNETLAB_DEVICE_INFO", _DEFAULT_CONFIG)
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="NSO CLI를 통해 장비를 등록하고 fetch-host-keys / sync-from을 수행합니다."
+    )
+    parser.add_argument(
+        "--device-info",
+        default=os.environ.get("PNETLAB_DEVICE_INFO", _DEFAULT_CONFIG),
+        help="device_info.json 경로 (기본: PNETLAB_DEVICE_INFO 또는 기본 샘플 경로)",
+    )
+    parser.add_argument(
+        "--nso-container",
+        default=os.environ.get("NSO_CONTAINER_NAME", "cisco-nso-dev"),
+        help="대상 NSO Docker 컨테이너 이름 (기본: NSO_CONTAINER_NAME 또는 cisco-nso-dev)",
+    )
+    parser.add_argument(
+        "--only",
+        default=None,
+        help="쉼표로 구분한 특정 장비만 등록/동기화 (예: PE1,PE2,Leaf1)",
+    )
+    return parser.parse_args()
 
 class NSORegistrar:
-    def __init__(self, successful_devices_file):
+    def __init__(self, successful_devices_file, nso_container: str, only: str | None = None):
         print(f"[DEBUG] 성공 장비 파일 로드 중: {successful_devices_file}")
         if not os.path.exists(successful_devices_file):
             print(f"[ERROR] 성공 장비 파일을 찾을 수 없습니다: {successful_devices_file}")
@@ -23,9 +45,17 @@ class NSORegistrar:
             sys.exit(1)
 
         self.config = self.load_config(successful_devices_file)
+        if only:
+            wanted = {name.strip() for name in only.split(",") if name.strip()}
+            self.config["devices"] = [
+                d for d in self.config.get("devices", [])
+                if d.get("name") in wanted
+            ]
         self.global_settings = self.config['global_settings']
+        self.nso_container = nso_container
         print(f"[DEBUG] 로드된 장비 수: {len(self.config['devices'])}")
         print(f"[DEBUG] Pnetlab VM IP: {self.global_settings['pnetlab_vm_ip']}")
+        print(f"[DEBUG] 대상 NSO 컨테이너: {self.nso_container}")
 
     def load_config(self, filepath):
         with open(filepath, 'r', encoding='utf-8') as f:
@@ -36,7 +66,7 @@ class NSORegistrar:
         bash_script = f'cd ~/ncs-instance && source ~/nso-6.6/ncsrc && echo "{cmd_input}" | ncs_cli -C -u admin'
         print(f"  [DEBUG] bash_script: {bash_script[:100]}...")
         result = subprocess.run(
-            ["docker", "exec", "cisco-nso-dev", "bash", "-c", bash_script],
+            ["docker", "exec", self.nso_container, "bash", "-c", bash_script],
             capture_output=True, text=True
         )
         return result
@@ -47,7 +77,7 @@ class NSORegistrar:
         combined_cmds = "\n".join(cmds)
         bash_script = f'cd ~/ncs-instance && source ~/nso-6.6/ncsrc && echo -e "{combined_cmds}" | ncs_cli -C -u admin'
         result = subprocess.run(
-            ["docker", "exec", "cisco-nso-dev", "bash", "-c", bash_script],
+            ["docker", "exec", self.nso_container, "bash", "-c", bash_script],
             capture_output=True, text=True
         )
         return result
@@ -62,7 +92,7 @@ class NSORegistrar:
         print("\n[1/3] ncs 상태 확인 중...")
         check_script = "cd ~/ncs-instance && source ~/nso-6.6/ncsrc && ncs --status"
         result = subprocess.run(
-            ["docker", "exec", "cisco-nso-dev", "bash", "-c", check_script],
+            ["docker", "exec", self.nso_container, "bash", "-c", check_script],
             capture_output=True, text=True
         )
         
@@ -76,7 +106,7 @@ class NSORegistrar:
         print("\n[2/3] ncs 시작 중...")
         start_script = "cd ~/ncs-instance && source ~/nso-6.6/ncsrc && ncs"
         result = subprocess.run(
-            ["docker", "exec", "cisco-nso-dev", "bash", "-c", start_script],
+            ["docker", "exec", self.nso_container, "bash", "-c", start_script],
             capture_output=True, text=True
         )
         
@@ -91,7 +121,7 @@ class NSORegistrar:
         for i in range(max_retries):
             time.sleep(2)
             result = subprocess.run(
-                ["docker", "exec", "cisco-nso-dev", "bash", "-c", check_script],
+                ["docker", "exec", self.nso_container, "bash", "-c", check_script],
                 capture_output=True, text=True
             )
             if "running" in result.stdout.lower():
@@ -108,6 +138,10 @@ class NSORegistrar:
         # JSON에서 인증 정보 읽기 (없으면 기본값 사용)
         username = self.global_settings.get('nso_username', 'admin')
         password = self.global_settings.get('nso_password', 'admin')
+        enable_password = self.global_settings.get(
+            'enable_password',
+            self.global_settings.get('admin_password', password)
+        ) or password
         
         print(f"\n[AUTH] authgroup '{authgroup}' 생성 중...")
         
@@ -116,6 +150,7 @@ class NSORegistrar:
             "config",
             f"devices authgroups group {authgroup} default-map remote-name {username}",
             f"devices authgroups group {authgroup} default-map remote-password {password}",
+            f"devices authgroups group {authgroup} default-map remote-secondary-password {enable_password}",
             "commit",
             "exit"
         ]
@@ -254,7 +289,8 @@ class NSORegistrar:
 if __name__ == "__main__":
     print("[DEBUG] NSO 등록 스크립트 시작")
 
-    registrar = NSORegistrar(SUCCESSFUL_DEVICES_FILE)
+    args = parse_args()
+    registrar = NSORegistrar(args.device_info, args.nso_container, args.only)
     successful_count = registrar.run()
 
     if successful_count > 0:

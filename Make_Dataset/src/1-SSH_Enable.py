@@ -1,3 +1,4 @@
+import argparse
 import json
 import asyncio
 import telnetlib3
@@ -5,12 +6,23 @@ import time
 import sys
 import os
 
-# 설정 파일 경로: 환경변수 > CLI 인자 > 기본 상대경로
+# 설정 파일 경로: CLI 인자 > 환경변수 > 기본 상대경로
 _DEFAULT_CONFIG = os.path.join(
     os.path.dirname(__file__), "..", "..",
     "Data", "Pnetlab", "Research_Institute_Internal_DC", "device_info.json"
 )
-CONFIG_FILE = os.environ.get("PNETLAB_DEVICE_INFO", _DEFAULT_CONFIG)
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="PNETLab 장비에 Telnet으로 접속해 SSH 초기 설정을 수행합니다."
+    )
+    parser.add_argument(
+        "--device-info",
+        default=os.environ.get("PNETLAB_DEVICE_INFO", _DEFAULT_CONFIG),
+        help="device_info.json 경로 (기본: PNETLAB_DEVICE_INFO 또는 기본 샘플 경로)",
+    )
+    return parser.parse_args()
 
 class SSHEnabler:
     def __init__(self, config_file):
@@ -164,11 +176,14 @@ class SSHEnabler:
 
 # 실행부
 if __name__ == "__main__":
+    args = parse_args()
+    config_file = args.device_info
+
     # 설정 파일이 실제로 존재하는지 확인
-    if os.path.exists(CONFIG_FILE):
-        enabler = SSHEnabler(CONFIG_FILE)
+    if os.path.exists(config_file):
+        enabler = SSHEnabler(config_file)
         asyncio.run(enabler.run())
     else:
-        print(f"[ERROR] 설정 파일을 찾을 수 없습니다: {CONFIG_FILE}")
+        print(f"[ERROR] 설정 파일을 찾을 수 없습니다: {config_file}")
         # 테스트용 더미 파일 생성 코드 (필요시 사용)
         # ...

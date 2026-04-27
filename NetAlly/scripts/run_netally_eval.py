@@ -287,6 +287,9 @@ def run_eval(args: argparse.Namespace) -> None:
         tools = resp["tools_used"]
         error = resp["error"]
 
+        gold_answer_status = str(item.get("answer_status", item.get("status", "OK")))
+        run_status = "ERROR" if error else "OK"
+
         result_entry = {
             "question_id": qid,
             "question": question_text,
@@ -296,7 +299,9 @@ def run_eval(args: argparse.Namespace) -> None:
             "level": level,
             "category": category,
             "answer_type": answer_type,
-            "answer_status": "ERROR" if error else "OK",
+            "answer_status": gold_answer_status,
+            "gold_answer_status": gold_answer_status,
+            "run_status": run_status,
             "tools_used": tools,
             "tool_count": len(tools),
             "latency_ms": resp["latency_ms"],
@@ -324,13 +329,25 @@ def run_eval(args: argparse.Namespace) -> None:
     save_output(output_path, meta, results)
 
     # Summary
-    ok_count = sum(1 for r in results if r["answer_status"] == "OK")
-    err_count = sum(1 for r in results if r["answer_status"] == "ERROR")
+    ok_count = sum(
+        1
+        for r in results
+        if r.get("run_status", "ERROR" if r.get("error") else "OK") == "OK"
+    )
+    err_count = len(results) - ok_count
     avg_latency = (
-        sum(r["latency_ms"] for r in results if r["answer_status"] == "OK") / max(ok_count, 1)
+        sum(
+            r["latency_ms"]
+            for r in results
+            if r.get("run_status", "ERROR" if r.get("error") else "OK") == "OK"
+        ) / max(ok_count, 1)
     )
     avg_tools = (
-        sum(r["tool_count"] for r in results if r["answer_status"] == "OK") / max(ok_count, 1)
+        sum(
+            r["tool_count"]
+            for r in results
+            if r.get("run_status", "ERROR" if r.get("error") else "OK") == "OK"
+        ) / max(ok_count, 1)
     )
 
     print(f"\n{'=' * 60}")

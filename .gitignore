@@ -102,6 +102,11 @@ NetAlly/frontend/playwright-report/
 NetAlly/.runtime/
 NetAlly/.tmp/
 
+# NetAlly evaluation raw artifacts
+NetAlly/results/
+NetAlly/result2/**/*.json
+NetAlly/result2/**/*.csv
+
 # Config generator output (auto-generated)
 
 
