@@ -1,12 +1,12 @@
 # NetConfigQA Comparison Report
 
-> **Generated on**: 2026-04-28 18:20:06
+> **Generated on**: 2026-04-28 18:55:59
 
 ### 1. Traditional NLP Metrics
 
 | 모델 | Rouge-1 | Rouge-2 | Rouge-L | EM | BLEU | BertScore | f1(Token) | Type-Aware Accuracy |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| NetAlly-MAS+MCP | 55.19 | 21.49 | 54.69 | 51.98 | 17.63 | 93.98 | 55.05 | 54.80 |
+| NetAlly-MAS+MCP | 63.15 | 29.50 | 62.70 | 60.27 | 23.57 | 94.71 | 63.30 | 62.90 |
 
 ---
 
@@ -14,7 +14,7 @@
 
 | 모델 | map | numeric | text | number | set |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| NetAlly-MAS+MCP | 49.72 | N/A | 53.74 | 64.81 | 42.43 |
+| NetAlly-MAS+MCP | 49.16 | N/A | 66.82 | 73.45 | 48.91 |
 
 > Note: `number`는 주로 정수/카운트(개수) 유형, `numeric`은 수치값(스칼라/실수 가능) 유형입니다. 둘 다 동일한 숫자 채점 로직으로 평가되지만 분석을 위해 분리 집계합니다.
 
@@ -25,7 +25,7 @@
 
 | 모델 | L1 | L2 | L3 | L4 | L5 |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| NetAlly-MAS+MCP | 46.89 | 82.73 | 72.93 | 63.52 | 29.03 |
+| NetAlly-MAS+MCP | 47.37 | 91.23 | 82.48 | 88.26 | 78.12 |
 
 ---
 
@@ -33,6 +33,6 @@
 
 | 모델 | OK | Explicit NC | Semantic NC | Compliance | Gap (OK-Explicit) |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| NetAlly-MAS+MCP | 65.37 | 14.13 | 88.59 | 15.95 | 51.24 |
+| NetAlly-MAS+MCP | 80.06 | 15.24 | 89.84 | 16.96 | 64.83 |
 
 > `Explicit NC` = exact `NOT_CONFIGURED`; `Semantic NC` = relaxed metric-consistent negative answer; `Compliance` = explicit / semantic.
