@@ -1,0 +1,289 @@
+{
+  "family": "tool_augmented",
+  "method": "masLLM_mcp",
+  "model": "Mistral3-8B",
+  "lab": "LabD",
+  "mode": "relaxed",
+  "raw_path": "/home/sdlab08/projects/GIA/NetAlly/result2/masLLM_mcp_paper/masLLM_mistral3-8b_mcp/LabD/netally_eval_direct_masLLM_mcp_LabD_20260427_113334.json",
+  "meta": {
+    "model": "NetAlly-MAS+MCP",
+    "model_tag": "mas+mcp-LabD-ministral-8b-2512openrouter-full",
+    "backend": "netally-direct",
+    "lab": "Lab-D",
+    "lab_folder": "LabD_NCN_MultiAS_Complex_40nodes",
+    "date": "2026-04-28T12:02:33.967793",
+    "duration_sec": 7898.7,
+    "total_samples": 3370,
+    "dataset": "LabD_NCN_MultiAS_Complex_40nodes_dataset_batfish_20260325_102315_en.json",
+    "dataset_path": "/home/sdlab08/projects/GIA/Data/Pnetlab/LabD_NCN_MultiAS_Complex_40nodes/Dataset/20260325_102315/LabD_NCN_MultiAS_Complex_40nodes_dataset_batfish_20260325_102315_en.json",
+    "mcp_server_url": "http://127.0.0.1:8811/mcp",
+    "recursion_limit": 20,
+    "max_retries": 3,
+    "max_workers": 4,
+    "include_levels": null,
+    "exclude_levels": null,
+    "agent_backend": "team_multi_adapter",
+    "tool_backend": "mcp",
+    "executor_llm_backend": "openai",
+    "executor_llm_model": "mistralai/ministral-8b-2512",
+    "mas_model_a": "mistralai/ministral-8b-2512",
+    "mas_model_b": "mistralai/ministral-8b-2512",
+    "provider": "openrouter",
+    "provider_base_url": "https://openrouter.ai/api/v1",
+    "provider_config_source": "explicit",
+    "date_completed": "2026-04-28T14:14:12.652910",
+    "token_usage_total": {
+      "prompt_tokens": 43723490,
+      "completion_tokens": 3069077,
+      "total_tokens": 46792567,
+      "llm_calls": 20001
+    },
+    "scoring": {
+      "metric": "Type-Aware Accuracy",
+      "mode": "paper_strict",
+      "negative_rule": "NOT_CONFIGURED samples require canonical NOT_CONFIGURED token"
+    }
+  },
+  "stats": {
+    "mode": "relaxed",
+    "accuracy": 0.7536302770366307,
+    "strict_accuracy": 0.6295946687280252,
+    "total_samples": 3370,
+    "by_type": {
+      "map": 0.6054471788715485,
+      "number": 0.7549271636675235,
+      "set": 0.9163037705788636,
+      "text": 0.7088524590163935
+    },
+    "by_level": {
+      "L1": 0.8003377432798453,
+      "L2": 0.8428571428571429,
+      "L3": 0.6636551853943159,
+      "L4": 0.771876885938443,
+      "L5": 0.32298136645962733
+    },
+    "by_status": {
+      "NOT_CONFIGURED": 0.9136690647482014,
+      "OK": 0.7220092514617787
+    },
+    "by_category": {
+      "BGP_Consistency": 0.28476190476190477,
+      "Comparison_Analysis": 0.6226415094339621,
+      "Configuration_Check": 0.7544871794871795,
+      "Hardware_Inventory": 1.0,
+      "Interface_Inventory": 0.44933035714285713,
+      "L2VPN_Consistency": 0.98,
+      "OSPF_Consistency": 0.82,
+      "Reachability_Analysis": 0.7877269881026926,
+      "Routing_Analysis": 0.3,
+      "Routing_Inventory": 0.8652380952380953,
+      "Security_Analysis": 0.75,
+      "Security_Inventory": 0.975,
+      "Security_Policy": 0.43200000000000005,
+      "Services_Inventory": 0.8785714285714286,
+      "System_Inventory": 0.8218917112299472,
+      "VRF_Consistency": 0.8333333333333335,
+      "What_If_Analysis": 0.32298136645962733
+    },
+    "traditional_metrics": {
+      "bleu": 0.22260502334437943,
+      "exact_match": 0.6062314540059347,
+      "rouge1": 0.6270690843598586,
+      "rouge2": 0.25844208468699004,
+      "rougeL": 0.6240541596604259,
+      "token_f1": 0.6311293728087017,
+      "token_precision": 0.6304099298338303,
+      "token_recall": 0.635089804760815
+    },
+    "trad_by_type": {
+      "map": {
+        "bleu": 0.3409778068579871,
+        "exact_match": 0.2642857142857143,
+        "rouge1": 0.6183715727026952,
+        "rouge2": 0.5604264679969714,
+        "rougeL": 0.5997920212581732,
+        "token_f1": 0.4972321791893221,
+        "token_precision": 0.47040103625795787,
+        "token_recall": 0.5646093588950731
+      },
+      "number": {
+        "bleu": 0.12327575344657307,
+        "exact_match": 0.6932305055698372,
+        "rouge1": 0.6932305055698372,
+        "rouge2": 0.0,
+        "rougeL": 0.6932305055698372,
+        "token_f1": 0.6932305055698372,
+        "token_precision": 0.6932305055698372,
+        "token_recall": 0.6932305055698372
+      },
+      "set": {
+        "bleu": 0.09376314992713071,
+        "exact_match": 0.4033457249070632,
+        "rouge1": 0.31505987472530217,
+        "rouge2": 0.20432033355697,
+        "rougeL": 0.3018861834846965,
+        "token_f1": 0.414281288723668,
+        "token_precision": 0.41406443618339533,
+        "token_recall": 0.41483890954151176
+      },
+      "text": {
+        "bleu": 0.3332030536245842,
+        "exact_match": 0.6426229508196721,
+        "rouge1": 0.6873105452538596,
+        "rouge2": 0.44758411830946265,
+        "rougeL": 0.6870012251571971,
+        "token_f1": 0.672400097013433,
+        "token_precision": 0.6733499356047399,
+        "token_recall": 0.6747698350592152
+      }
+    },
+    "negative_eval": {
+      "total_negative_samples": 556,
+      "semantic_negative_correct": 508,
+      "explicit_abstention_correct": 90,
+      "blank_negative_predictions": 15,
+      "semantic_negative_accuracy": 0.9136690647482014,
+      "explicit_abstention_accuracy": 0.1618705035971223,
+      "contract_compliance": 0.17716535433070865
+    }
+  },
+  "status_overlay_count": 0,
+  "dataset_status_available": true,
+  "sample_errors": [
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_leaf4",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_leaf5",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_leaf3",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_pe1",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_asbr1",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_p5",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_leaf2",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_leaf13",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_p3",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_leaf15",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_p8",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_pe6",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_leaf1",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_fw2",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_p6",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    }
+  ]
+}

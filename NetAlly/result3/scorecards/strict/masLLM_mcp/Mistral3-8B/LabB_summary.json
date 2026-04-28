@@ -1,0 +1,284 @@
+{
+  "family": "tool_augmented",
+  "method": "masLLM_mcp",
+  "model": "Mistral3-8B",
+  "lab": "LabB",
+  "mode": "strict",
+  "raw_path": "/home/sdlab08/projects/GIA/NetAlly/result2/masLLM_mcp_paper/masLLM_mistral3-8b_mcp/LabB/results_raw_netally_20260423_143122.json",
+  "meta": {
+    "model": "NetAlly-MAS+MCP",
+    "model_tag": "mas+mcp-labB-ministral-openrouter",
+    "backend": "netally-direct",
+    "lab": "Lab-B",
+    "lab_folder": "LabB_NCN_Basic_SP_20nodes",
+    "date": "2026-04-23T14:31:30.911016",
+    "duration_sec": 5583.0,
+    "total_samples": 2157,
+    "dataset": "LabB_NCN_Basic_SP_20nodes_dataset_batfish_20260325_101536_en.json",
+    "dataset_path": "../Data/Pnetlab/LabB_NCN_Basic_SP_20nodes/Dataset/20260325_101536/LabB_NCN_Basic_SP_20nodes_dataset_batfish_20260325_101536_en.json",
+    "mcp_server_url": "http://127.0.0.1:8811/mcp",
+    "recursion_limit": 20,
+    "max_retries": 3,
+    "max_workers": 4,
+    "include_levels": null,
+    "exclude_levels": null,
+    "agent_backend": "team_multi_adapter",
+    "tool_backend": "mcp",
+    "executor_llm_backend": "openai",
+    "executor_llm_model": "mistralai/ministral-8b-2512",
+    "mas_model_a": "mistralai/ministral-8b-2512",
+    "mas_model_b": "mistralai/ministral-8b-2512",
+    "provider": "openrouter",
+    "provider_base_url": "https://openrouter.ai/api/v1",
+    "provider_config_source": "explicit",
+    "date_completed": "2026-04-23T16:04:33.926155",
+    "token_usage_total": {
+      "prompt_tokens": 26443519,
+      "completion_tokens": 2116371,
+      "total_tokens": 28559890,
+      "llm_calls": 12643
+    }
+  },
+  "stats": {
+    "mode": "strict",
+    "accuracy": 0.5974687574826657,
+    "strict_accuracy": 0.5974687574826657,
+    "total_samples": 2157,
+    "by_type": {
+      "map": 0.4933817373103088,
+      "number": 0.6957983193277311,
+      "set": 0.4632972322503008,
+      "text": 0.6324884792626728
+    },
+    "by_level": {
+      "L1": 0.4602878936866378,
+      "L2": 0.9473684210526315,
+      "L3": 0.8130718954248366,
+      "L4": 0.8036117381489842,
+      "L5": 0.6640625
+    },
+    "by_status": {
+      "NOT_CONFIGURED": 0.15061295971978983,
+      "OK": 0.7583481146848109
+    },
+    "by_category": {
+      "BGP_Consistency": 0.84,
+      "Comparison_Analysis": 0.6446540880503144,
+      "Configuration_Check": 0.2743589743589744,
+      "Hardware_Inventory": 0.0,
+      "Interface_Inventory": 0.42493818681318685,
+      "L2VPN_Consistency": 1.0,
+      "OSPF_Consistency": 0.74,
+      "Reachability_Analysis": 0.8105515587529976,
+      "Routing_Analysis": 0.4,
+      "Routing_Inventory": 0.4642857142857143,
+      "Security_Analysis": 0.875,
+      "Security_Inventory": 0.95,
+      "Security_Policy": 1.0,
+      "Services_Inventory": 0.42142857142857143,
+      "System_Inventory": 0.7988411588411595,
+      "VRF_Consistency": 0.96,
+      "What_If_Analysis": 0.6640625
+    },
+    "traditional_metrics": {
+      "bleu": 0.2263397059347582,
+      "exact_match": 0.5757997218358831,
+      "rouge1": 0.6024746173952794,
+      "rouge2": 0.28754981062135676,
+      "rougeL": 0.5994932306346336,
+      "token_f1": 0.6086647514670916,
+      "token_precision": 0.6070643367614781,
+      "token_recall": 0.6148309802645533
+    },
+    "trad_by_type": {
+      "map": {
+        "bleu": 0.33596709606294406,
+        "exact_match": 0.2785714285714286,
+        "rouge1": 0.6235773710673361,
+        "rouge2": 0.5682193119997011,
+        "rougeL": 0.6056080872990387,
+        "token_f1": 0.5020396360564428,
+        "token_precision": 0.4717409055390038,
+        "token_recall": 0.5739115646258502
+      },
+      "number": {
+        "bleu": 0.12373238248001886,
+        "exact_match": 0.6957983193277311,
+        "rouge1": 0.6957983193277311,
+        "rouge2": 0.0,
+        "rougeL": 0.6957983193277311,
+        "token_f1": 0.6957983193277311,
+        "token_precision": 0.6957983193277311,
+        "token_recall": 0.6957983193277311
+      },
+      "set": {
+        "bleu": 0.1923444388231098,
+        "exact_match": 0.44223826714801445,
+        "rouge1": 0.37185295297421017,
+        "rouge2": 0.2970732336255802,
+        "rougeL": 0.3654750949718035,
+        "token_f1": 0.44464500601684714,
+        "token_precision": 0.44464500601684714,
+        "token_recall": 0.44464500601684714
+      },
+      "text": {
+        "bleu": 0.30069097415765483,
+        "exact_match": 0.6267281105990783,
+        "rouge1": 0.6822930666180613,
+        "rouge2": 0.4333129797255035,
+        "rougeL": 0.6818531839201142,
+        "token_f1": 0.6708191089093128,
+        "token_precision": 0.6717289335088872,
+        "token_recall": 0.6745500830065546
+      }
+    },
+    "negative_eval": {
+      "total_negative_samples": 571,
+      "semantic_negative_correct": 512,
+      "explicit_abstention_correct": 86,
+      "blank_negative_predictions": 18,
+      "semantic_negative_accuracy": 0.8966725043782837,
+      "explicit_abstention_accuracy": 0.15061295971978983,
+      "contract_compliance": 0.16796875
+    }
+  },
+  "status_overlay_count": 571,
+  "dataset_status_available": true,
+  "sample_errors": [
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_p1",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_leaf4",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_p4",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_pe1",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_leaf2",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_p5",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_leaf6",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_leaf3",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_pe3",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_leaf1",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_leaf5",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_p2",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_pe4",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_leaf7",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_pe2",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    }
+  ]
+}

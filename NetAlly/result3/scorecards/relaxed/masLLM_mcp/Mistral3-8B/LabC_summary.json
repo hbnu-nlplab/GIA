@@ -1,0 +1,284 @@
+{
+  "family": "tool_augmented",
+  "method": "masLLM_mcp",
+  "model": "Mistral3-8B",
+  "lab": "LabC",
+  "mode": "relaxed",
+  "raw_path": "/home/sdlab08/projects/GIA/NetAlly/result2/masLLM_mcp_paper/masLLM_mistral3-8b_mcp/LabC/netally_eval_direct_LabC_NCN_Security_L2VPN_30nodes_20260424_130543.json",
+  "meta": {
+    "model": "NetAlly-MAS+MCP",
+    "model_tag": "mas+mcp-LabC-ministral-8b-2512openrouter-full",
+    "backend": "netally-direct",
+    "lab": "Lab-C",
+    "lab_folder": "LabC_NCN_Security_L2VPN_30nodes",
+    "date": "2026-04-24T13:05:54.765537",
+    "duration_sec": 7080.8,
+    "total_samples": 2674,
+    "dataset": "LabC_NCN_Security_L2VPN_30nodes_dataset_batfish_20260325_101814_en.json",
+    "dataset_path": "../Data/Pnetlab/LabC_NCN_Security_L2VPN_30nodes/Dataset/20260325_101814/LabC_NCN_Security_L2VPN_30nodes_dataset_batfish_20260325_101814_en.json",
+    "mcp_server_url": "http://127.0.0.1:8811/mcp",
+    "recursion_limit": 20,
+    "max_retries": 3,
+    "max_workers": 4,
+    "include_levels": null,
+    "exclude_levels": null,
+    "agent_backend": "team_multi_adapter",
+    "tool_backend": "mcp",
+    "executor_llm_backend": "openai",
+    "executor_llm_model": "mistralai/ministral-8b-2512",
+    "mas_model_a": "mistralai/ministral-8b-2512",
+    "mas_model_b": "mistralai/ministral-8b-2512",
+    "provider": "openrouter",
+    "provider_base_url": "https://openrouter.ai/api/v1",
+    "provider_config_source": "explicit",
+    "date_completed": "2026-04-24T15:03:55.585364",
+    "token_usage_total": {
+      "prompt_tokens": 34400875,
+      "completion_tokens": 2560440,
+      "total_tokens": 36961315,
+      "llm_calls": 15940
+    }
+  },
+  "stats": {
+    "mode": "relaxed",
+    "accuracy": 0.7541498430914574,
+    "strict_accuracy": 0.6000735528895125,
+    "total_samples": 2674,
+    "by_type": {
+      "map": 0.6165462851807387,
+      "number": 0.8151658767772512,
+      "set": 0.9208352950687917,
+      "text": 0.6509028374892519
+    },
+    "by_level": {
+      "L1": 0.7930930305507988,
+      "L2": 0.8267206477732794,
+      "L3": 0.7581699346405231,
+      "L4": 0.7725366876310272,
+      "L5": 0.2967741935483871
+    },
+    "by_status": {
+      "NOT_CONFIGURED": 0.8876811594202898,
+      "OK": 0.7194140812566243
+    },
+    "by_category": {
+      "BGP_Consistency": 0.6,
+      "Comparison_Analysis": 0.6257861635220126,
+      "Configuration_Check": 0.7397435897435897,
+      "Hardware_Inventory": 1.0,
+      "Interface_Inventory": 0.44565855508870217,
+      "L2VPN_Consistency": 1.0,
+      "OSPF_Consistency": 0.76,
+      "Reachability_Analysis": 0.7971334068357222,
+      "Routing_Analysis": 0.1,
+      "Routing_Inventory": 0.866938775510204,
+      "Security_Analysis": 0.8125,
+      "Security_Inventory": 0.9125,
+      "Security_Policy": 0.5448421052631579,
+      "Services_Inventory": 0.8928571428571429,
+      "System_Inventory": 0.8378657372039731,
+      "VRF_Consistency": 0.96,
+      "What_If_Analysis": 0.2967741935483871
+    },
+    "traditional_metrics": {
+      "bleu": 0.20000344067945636,
+      "exact_match": 0.5710545998504114,
+      "rouge1": 0.6031219108630913,
+      "rouge2": 0.23694317540838405,
+      "rougeL": 0.5975612343570508,
+      "token_f1": 0.6027445865641077,
+      "token_precision": 0.6019543191858986,
+      "token_recall": 0.6077327004100066
+    },
+    "trad_by_type": {
+      "map": {
+        "bleu": 0.35244465234570804,
+        "exact_match": 0.2785714285714286,
+        "rouge1": 0.6256107824901281,
+        "rouge2": 0.5701663659270829,
+        "rougeL": 0.6083153584418143,
+        "token_f1": 0.5148005458034554,
+        "token_precision": 0.48607749645067194,
+        "token_recall": 0.5804109977324262
+      },
+      "number": {
+        "bleu": 0.12978911333933477,
+        "exact_match": 0.7298578199052133,
+        "rouge1": 0.7298578199052133,
+        "rouge2": 0.0,
+        "rougeL": 0.7298578199052133,
+        "token_f1": 0.7298578199052133,
+        "token_precision": 0.7298578199052133,
+        "token_recall": 0.7298578199052133
+      },
+      "set": {
+        "bleu": 0.10868098888184075,
+        "exact_match": 0.38140417457305503,
+        "rouge1": 0.33911917051585483,
+        "rouge2": 0.2268730320912484,
+        "rougeL": 0.3166029059455105,
+        "token_f1": 0.4008931246522379,
+        "token_precision": 0.40322580645161293,
+        "token_recall": 0.4002846299810248
+      },
+      "text": {
+        "bleu": 0.2739897302229891,
+        "exact_match": 0.5769561478933792,
+        "rouge1": 0.6280710896280608,
+        "rouge2": 0.37334537566650056,
+        "rougeL": 0.6275708160409428,
+        "token_f1": 0.6125505342804919,
+        "token_precision": 0.6131341358555463,
+        "token_recall": 0.6163969915853992
+      }
+    },
+    "negative_eval": {
+      "total_negative_samples": 552,
+      "semantic_negative_correct": 490,
+      "explicit_abstention_correct": 78,
+      "blank_negative_predictions": 24,
+      "semantic_negative_accuracy": 0.8876811594202898,
+      "explicit_abstention_accuracy": 0.14130434782608695,
+      "contract_compliance": 0.15918367346938775
+    }
+  },
+  "status_overlay_count": 0,
+  "dataset_status_available": true,
+  "sample_errors": [
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_p1",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_p10",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_leaf7",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_p2",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_leaf3",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_pe3",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_leaf8",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_leaf5",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_pe4",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_pe6",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_leaf1",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_p7",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_leaf2",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_USER_LIST_leaf11",
+      "level": "L1",
+      "status": "OK",
+      "type": "set",
+      "gold": "[\"admin\"]",
+      "pred": "[]",
+      "score": 0.0
+    },
+    {
+      "question_id": "INTERFACE_STATUS_MAP_leaf9",
+      "level": "L1",
+      "status": "OK",
+      "type": "map",
+      "gold": "{\"GigabitEthernet0/0\": \"up\", \"GigabitEthernet0/7\": \"up\"}",
+      "pred": "{ \"GigabitEthernet0/0\": \"up\", \"GigabitEthernet0/1\": \"down\", \"GigabitEthernet0/2\": \"down\", \"GigabitEthernet0/3\": \"down\", \"GigabitEthernet0/4\": \"down\", \"GigabitEthernet0/5\": \"down\", \"GigabitEthernet0/6\": \"down\", \"GigabitEthernet0/7\": \"up\" }",
+      "score": 0.4
+    }
+  ]
+}

@@ -1,0 +1,279 @@
+{
+  "family": "cfg_only",
+  "method": "singleLLM_cfg",
+  "model": "GPT-4o-mini",
+  "lab": "LabB",
+  "mode": "strict",
+  "raw_path": "/home/sdlab08/projects/GIA/Experiment/code/NetConfigQA2_2/result_final/GPT-4o-mini/LabB/results_raw_vllm_en_20260326_082035.json",
+  "meta": {
+    "model": "GPT-4o-mini",
+    "model_tag": "gpt-4o-mini",
+    "request_model": "openai/gpt-4o-mini",
+    "backend": "openrouter",
+    "lab": "Lab-B",
+    "lab_folder": "LabB_NCN_Basic_SP_20nodes",
+    "language": "en",
+    "date": "2026-03-26 08:32:53.576920",
+    "duration_sec": 738.17,
+    "throughput": 2.92,
+    "dataset": "LabB_NCN_Basic_SP_20nodes_dataset_batfish_20260325_101536_en.csv",
+    "dataset_path": "/home/kilab_pyj/codespace/GIA/Data/Pnetlab/LabB_NCN_Basic_SP_20nodes/Dataset/20260325_101536/LabB_NCN_Basic_SP_20nodes_dataset_batfish_20260325_101536_en.csv",
+    "config_dir": "/home/kilab_pyj/codespace/GIA/Data/Pnetlab/LabB_NCN_Basic_SP_20nodes/configs",
+    "result_model_dir": "GPT-4o-mini",
+    "result_lab_dir": "LabB",
+    "total_samples": 2157,
+    "tokenizer_chat_template": null,
+    "enable_prefix_caching": false,
+    "structured_outputs_enabled": false,
+    "level_token_overrides": {},
+    "max_model_len_override": null,
+    "input_jsonl": "/home/kilab_pyj/codespace/GIA/Experiment/code/NetConfigQA2_2/results/GPT-4o-mini/LabB/_batch_artifacts/batch_input_en_20260326_082035.jsonl",
+    "manifest_path": "/home/kilab_pyj/codespace/GIA/Experiment/code/NetConfigQA2_2/results/GPT-4o-mini/LabB/_batch_artifacts/batch_manifest_en_20260326_082035.json",
+    "max_workers": 4,
+    "timeout_sec": 300,
+    "retry_attempts": 4,
+    "retry_backoff_sec": 30
+  },
+  "stats": {
+    "mode": "strict",
+    "accuracy": 0.3384099622625352,
+    "strict_accuracy": 0.3384099622625352,
+    "total_samples": 2157,
+    "by_type": {
+      "map": 0.2663966192537622,
+      "number": 0.3697478991596639,
+      "set": 0.41453928141653773,
+      "text": 0.2799539170506912
+    },
+    "by_level": {
+      "L1": 0.4045135703298969,
+      "L2": 0.7473684210526315,
+      "L3": 0.5058823529411764,
+      "L4": 0.0654627539503386,
+      "L5": 0.109375
+    },
+    "by_status": {
+      "NOT_CONFIGURED": 0.1138353765323993,
+      "OK": 0.41926247704936226
+    },
+    "by_category": {
+      "BGP_Consistency": 0.76,
+      "Comparison_Analysis": 0.07547169811320754,
+      "Configuration_Check": 0.18974358974358976,
+      "Hardware_Inventory": 0.0,
+      "Interface_Inventory": 0.5508775252525253,
+      "L2VPN_Consistency": 0.98,
+      "OSPF_Consistency": 0.652,
+      "Reachability_Analysis": 0.04316546762589928,
+      "Routing_Analysis": 0.1,
+      "Routing_Inventory": 0.4361054421768707,
+      "Security_Analysis": 0.625,
+      "Security_Inventory": 0.9,
+      "Security_Policy": 0.8,
+      "Services_Inventory": 0.45714285714285713,
+      "System_Inventory": 0.6570848091302638,
+      "VRF_Consistency": 0.7,
+      "What_If_Analysis": 0.109375
+    },
+    "traditional_metrics": {
+      "bleu": 0.10122303465964928,
+      "exact_match": 0.3031988873435327,
+      "rouge1": 0.3893934524793561,
+      "rouge2": 0.17453352442926376,
+      "rougeL": 0.3851808677996825,
+      "token_f1": 0.3711780040913873,
+      "token_precision": 0.3644240282974641,
+      "token_recall": 0.3923854547252072
+    },
+    "trad_by_type": {
+      "map": {
+        "bleu": 0.0,
+        "exact_match": 0.0,
+        "rouge1": 0.37848268927614426,
+        "rouge2": 0.2613133615001985,
+        "rougeL": 0.361148166423687,
+        "token_f1": 0.0,
+        "token_precision": 0.0,
+        "token_recall": 0.0
+      },
+      "number": {
+        "bleu": 0.06575150759807744,
+        "exact_match": 0.3697478991596639,
+        "rouge1": 0.3697478991596639,
+        "rouge2": 0.0,
+        "rougeL": 0.3697478991596639,
+        "token_f1": 0.3697478991596639,
+        "token_precision": 0.3697478991596639,
+        "token_recall": 0.3697478991596639
+      },
+      "set": {
+        "bleu": 0.17188364601292194,
+        "exact_match": 0.3555956678700361,
+        "rouge1": 0.3695879005850102,
+        "rouge2": 0.2826886110279613,
+        "rougeL": 0.35996094510967924,
+        "token_f1": 0.3643501805054152,
+        "token_precision": 0.36655134376253506,
+        "token_recall": 0.3633799638989169
+      },
+      "text": {
+        "bleu": 0.09676543646180552,
+        "exact_match": 0.2730414746543779,
+        "rouge1": 0.4172608336120031,
+        "rouge2": 0.21114683303502724,
+        "rougeL": 0.4157327476426728,
+        "token_f1": 0.43638358850820586,
+        "token_precision": 0.4181949131257891,
+        "token_recall": 0.4897038316155221
+      }
+    },
+    "negative_eval": {
+      "total_negative_samples": 571,
+      "semantic_negative_correct": 423,
+      "explicit_abstention_correct": 65,
+      "blank_negative_predictions": 0,
+      "semantic_negative_accuracy": 0.7408056042031523,
+      "explicit_abstention_accuracy": 0.1138353765323993,
+      "contract_compliance": 0.1536643026004728
+    }
+  },
+  "status_overlay_count": 0,
+  "dataset_status_available": false,
+  "sample_errors": [
+    {
+      "question_id": "41",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST 9 0",
+      "score": 0.0
+    },
+    {
+      "question_id": "42",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST 9 0",
+      "score": 0.0
+    },
+    {
+      "question_id": "43",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST 9 0",
+      "score": 0.0
+    },
+    {
+      "question_id": "44",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST 9 0",
+      "score": 0.0
+    },
+    {
+      "question_id": "45",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST 9 0",
+      "score": 0.0
+    },
+    {
+      "question_id": "46",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST 9 0",
+      "score": 0.0
+    },
+    {
+      "question_id": "47",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST 9 0",
+      "score": 0.0
+    },
+    {
+      "question_id": "48",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST 9 0",
+      "score": 0.0
+    },
+    {
+      "question_id": "49",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST 9 0",
+      "score": 0.0
+    },
+    {
+      "question_id": "50",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST 9 0",
+      "score": 0.0
+    },
+    {
+      "question_id": "51",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST 9 0",
+      "score": 0.0
+    },
+    {
+      "question_id": "52",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST 9 0",
+      "score": 0.0
+    },
+    {
+      "question_id": "53",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST 9 0",
+      "score": 0.0
+    },
+    {
+      "question_id": "54",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST 9 0",
+      "score": 0.0
+    },
+    {
+      "question_id": "55",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST 9 0",
+      "score": 0.0
+    }
+  ]
+}

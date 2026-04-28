@@ -1,0 +1,275 @@
+{
+  "family": "cfg_only",
+  "method": "singleLLM_cfg",
+  "model": "GPT-OSS-20B",
+  "lab": "LabB",
+  "mode": "relaxed",
+  "raw_path": "/home/sdlab08/projects/GIA/Experiment/code/NetConfigQA2_2/result_final/GPT-OSS-20B/LabB/results_raw_vllm_en_20260325_205105.json",
+  "meta": {
+    "model": "GPT-OSS-20B",
+    "model_tag": "gpt-oss:20b",
+    "backend": "vllm_offline",
+    "lab": "Lab-B",
+    "lab_folder": "LabB_NCN_Basic_SP_20nodes",
+    "language": "en",
+    "date": "2026-03-25 20:56:18.697030",
+    "duration_sec": 313.57,
+    "throughput": 6.88,
+    "dataset": "LabB_NCN_Basic_SP_20nodes_dataset_batfish_20260325_101536_en.csv",
+    "dataset_path": "/home/kilab_pyj/codespace/GIA/Data/Pnetlab/LabB_NCN_Basic_SP_20nodes/Dataset/20260325_101536/LabB_NCN_Basic_SP_20nodes_dataset_batfish_20260325_101536_en.csv",
+    "config_dir": "/home/kilab_pyj/codespace/GIA/Data/Pnetlab/LabB_NCN_Basic_SP_20nodes/configs",
+    "result_model_dir": "GPT-OSS-20B",
+    "result_lab_dir": "LabB",
+    "total_samples": 2157,
+    "tokenizer_chat_template": true,
+    "enable_prefix_caching": true,
+    "structured_outputs_enabled": false,
+    "level_token_overrides": {
+      "L4": 16384,
+      "L5": 16384
+    },
+    "max_model_len_override": "auto"
+  },
+  "stats": {
+    "mode": "relaxed",
+    "accuracy": 0.3644200130987335,
+    "strict_accuracy": 0.2220927066545982,
+    "total_samples": 2157,
+    "by_type": {
+      "map": 0.3273242630385488,
+      "number": 0.0,
+      "set": 0.9119649303764827,
+      "text": 0.2707373271889401
+    },
+    "by_level": {
+      "L1": 0.5121601754254816,
+      "L2": 0.7391812865497077,
+      "L3": 0.2993464052287582,
+      "L4": 0.03160270880361174,
+      "L5": 0.00855654761904762
+    },
+    "by_status": {
+      "NOT_CONFIGURED": 0.6427320490367776,
+      "OK": 0.2642206609419725
+    },
+    "by_category": {
+      "BGP_Consistency": 0.74,
+      "Comparison_Analysis": 0.040880503144654086,
+      "Configuration_Check": 0.5192307692307693,
+      "Hardware_Inventory": 1.0,
+      "Interface_Inventory": 0.2686507936507937,
+      "L2VPN_Consistency": 0.06,
+      "OSPF_Consistency": 0.036000000000000004,
+      "Reachability_Analysis": 0.016786570743405275,
+      "Routing_Analysis": 0.0,
+      "Routing_Inventory": 0.6428571428571429,
+      "Security_Analysis": 0.4375,
+      "Security_Inventory": 0.4375,
+      "Security_Policy": 0.7866666666666667,
+      "Services_Inventory": 0.40714285714285714,
+      "System_Inventory": 0.5863636363636365,
+      "VRF_Consistency": 0.66,
+      "What_If_Analysis": 0.00855654761904762
+    },
+    "traditional_metrics": {
+      "bleu": 0.03204751871812651,
+      "exact_match": 0.1548446917014372,
+      "rouge1": 0.2192729865779721,
+      "rouge2": 0.1370968435508626,
+      "rougeL": 0.2137997068103706,
+      "token_f1": 0.16408592180497603,
+      "token_precision": 0.1637150363158708,
+      "token_recall": 0.16504404265183126
+    },
+    "trad_by_type": {
+      "map": {
+        "bleu": 0.0,
+        "exact_match": 0.0,
+        "rouge1": 0.37880236793507427,
+        "rouge2": 0.22695628567999357,
+        "rougeL": 0.34916864220954663,
+        "token_f1": 0.0,
+        "token_precision": 0.0,
+        "token_recall": 0.0
+      },
+      "number": {
+        "bleu": 0.0,
+        "exact_match": 0.0,
+        "rouge1": 0.0,
+        "rouge2": 0.0,
+        "rougeL": 0.0,
+        "token_f1": 0.0,
+        "token_precision": 0.0,
+        "token_recall": 0.0
+      },
+      "set": {
+        "bleu": 0.048469348540771895,
+        "exact_match": 0.27256317689530685,
+        "rouge1": 0.39015385937768604,
+        "rouge2": 0.27793197576591083,
+        "rougeL": 0.3763323018738181,
+        "token_f1": 0.27256317689530685,
+        "token_precision": 0.27256317689530685,
+        "token_recall": 0.27256317689530685
+      },
+      "text": {
+        "bleu": 0.04870331657075024,
+        "exact_match": 0.2108294930875576,
+        "rouge1": 0.23478601663886897,
+        "rouge2": 0.12669319927384445,
+        "rougeL": 0.23478601663886897,
+        "token_f1": 0.23379416282642076,
+        "token_precision": 0.23287250384024571,
+        "token_recall": 0.2361751152073732
+      }
+    },
+    "negative_eval": {
+      "total_negative_samples": 571,
+      "semantic_negative_correct": 367,
+      "explicit_abstention_correct": 60,
+      "blank_negative_predictions": 143,
+      "semantic_negative_accuracy": 0.6427320490367776,
+      "explicit_abstention_accuracy": 0.10507880910683012,
+      "contract_compliance": 0.16348773841961853
+    }
+  },
+  "status_overlay_count": 0,
+  "dataset_status_available": false,
+  "sample_errors": [
+    {
+      "question_id": "7",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"p8\"",
+      "pred": "",
+      "score": 0.0
+    },
+    {
+      "question_id": "17",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"leaf8\"",
+      "pred": "",
+      "score": 0.0
+    },
+    {
+      "question_id": "41",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST 9 0",
+      "score": 0.0
+    },
+    {
+      "question_id": "42",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST",
+      "score": 0.0
+    },
+    {
+      "question_id": "43",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST 9 0",
+      "score": 0.0
+    },
+    {
+      "question_id": "44",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST 9 0",
+      "score": 0.0
+    },
+    {
+      "question_id": "45",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST 9 0",
+      "score": 0.0
+    },
+    {
+      "question_id": "46",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "",
+      "score": 0.0
+    },
+    {
+      "question_id": "47",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "",
+      "score": 0.0
+    },
+    {
+      "question_id": "48",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST",
+      "score": 0.0
+    },
+    {
+      "question_id": "49",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST 9 0",
+      "score": 0.0
+    },
+    {
+      "question_id": "50",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST 9 0",
+      "score": 0.0
+    },
+    {
+      "question_id": "51",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST 9 0",
+      "score": 0.0
+    },
+    {
+      "question_id": "52",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST 9 0",
+      "score": 0.0
+    },
+    {
+      "question_id": "53",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "",
+      "score": 0.0
+    }
+  ]
+}

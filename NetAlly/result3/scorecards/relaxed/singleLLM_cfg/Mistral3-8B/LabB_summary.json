@@ -1,0 +1,275 @@
+{
+  "family": "cfg_only",
+  "method": "singleLLM_cfg",
+  "model": "Mistral3-8B",
+  "lab": "LabB",
+  "mode": "relaxed",
+  "raw_path": "/home/sdlab08/projects/GIA/Experiment/code/NetConfigQA2_2/result_final/Mistral3-8B/LabB/results_raw_vllm_en_20260325_202142.json",
+  "meta": {
+    "model": "Mistral3-8B",
+    "model_tag": "Mistral3-8B",
+    "backend": "vllm_offline",
+    "lab": "Lab-B",
+    "lab_folder": "LabB_NCN_Basic_SP_20nodes",
+    "language": "en",
+    "date": "2026-03-25 20:23:26.836935",
+    "duration_sec": 103.99,
+    "throughput": 20.74,
+    "dataset": "LabB_NCN_Basic_SP_20nodes_dataset_batfish_20260325_101536_en.csv",
+    "dataset_path": "/home/kilab_pyj/codespace/GIA/Data/Pnetlab/LabB_NCN_Basic_SP_20nodes/Dataset/20260325_101536/LabB_NCN_Basic_SP_20nodes_dataset_batfish_20260325_101536_en.csv",
+    "config_dir": "/home/kilab_pyj/codespace/GIA/Data/Pnetlab/LabB_NCN_Basic_SP_20nodes/configs",
+    "result_model_dir": "Mistral3-8B",
+    "result_lab_dir": "LabB",
+    "total_samples": 2157,
+    "tokenizer_chat_template": false,
+    "enable_prefix_caching": true,
+    "structured_outputs_enabled": false,
+    "level_token_overrides": {
+      "L4": 16384,
+      "L5": 16384
+    },
+    "max_model_len_override": "auto"
+  },
+  "stats": {
+    "mode": "relaxed",
+    "accuracy": 0.5525478745228397,
+    "strict_accuracy": 0.3680323436929835,
+    "total_samples": 2157,
+    "by_type": {
+      "map": 0.37790146361574933,
+      "number": 0.5042016806722689,
+      "set": 0.8609017336454158,
+      "text": 0.41705069124423966
+    },
+    "by_level": {
+      "L1": 0.7416846192356396,
+      "L2": 0.8909774436090225,
+      "L3": 0.5137254901960784,
+      "L4": 0.09255079006772009,
+      "L5": 0.18870192307692307
+    },
+    "by_status": {
+      "NOT_CONFIGURED": 0.8458844133099825,
+      "OK": 0.4469393224122102
+    },
+    "by_category": {
+      "BGP_Consistency": 0.8,
+      "Comparison_Analysis": 0.08490566037735849,
+      "Configuration_Check": 0.7461538461538462,
+      "Hardware_Inventory": 1.0,
+      "Interface_Inventory": 0.5056637806637807,
+      "L2VPN_Consistency": 0.9,
+      "OSPF_Consistency": 0.73,
+      "Reachability_Analysis": 0.06474820143884892,
+      "Routing_Analysis": 0.1,
+      "Routing_Inventory": 0.6214285714285714,
+      "Security_Analysis": 0.8125,
+      "Security_Inventory": 0.875,
+      "Security_Policy": 0.9857142857142857,
+      "Services_Inventory": 0.8785714285714286,
+      "System_Inventory": 0.6884231929686474,
+      "VRF_Consistency": 0.74,
+      "What_If_Analysis": 0.18870192307692307
+    },
+    "traditional_metrics": {
+      "bleu": 0.11071470354299819,
+      "exact_match": 0.3189615206305053,
+      "rouge1": 0.4293976672274641,
+      "rouge2": 0.1913656580814847,
+      "rougeL": 0.42499421891110595,
+      "token_f1": 0.4145572409199916,
+      "token_precision": 0.405312999849939,
+      "token_recall": 0.44755714974769195
+    },
+    "trad_by_type": {
+      "map": {
+        "bleu": 0.10413413903058322,
+        "exact_match": 0.014285714285714285,
+        "rouge1": 0.386908263460589,
+        "rouge2": 0.2861151725861205,
+        "rougeL": 0.36785809624051896,
+        "token_f1": 0.23094286665715238,
+        "token_precision": 0.25528061224489795,
+        "token_recall": 0.21275510204081632
+      },
+      "number": {
+        "bleu": 0.06754473053257046,
+        "exact_match": 0.3798319327731092,
+        "rouge1": 0.3798319327731092,
+        "rouge2": 0.0,
+        "rougeL": 0.3798319327731092,
+        "token_f1": 0.3798319327731092,
+        "token_precision": 0.3798319327731092,
+        "token_recall": 0.3798319327731092
+      },
+      "set": {
+        "bleu": 0.13899642150612904,
+        "exact_match": 0.3555956678700361,
+        "rouge1": 0.3874769154766485,
+        "rouge2": 0.28698641911638306,
+        "rougeL": 0.37775739312174705,
+        "token_f1": 0.36349277978339356,
+        "token_precision": 0.3637621704408708,
+        "token_recall": 0.3640192539109507
+      },
+      "text": {
+        "bleu": 0.1233176312173831,
+        "exact_match": 0.3029953917050691,
+        "rouge1": 0.49698317989757435,
+        "rouge2": 0.2462317098263014,
+        "rougeL": 0.49531659093103114,
+        "token_f1": 0.5005679347147702,
+        "token_precision": 0.4734984015412326,
+        "token_recall": 0.5851709574347831
+      }
+    },
+    "negative_eval": {
+      "total_negative_samples": 571,
+      "semantic_negative_correct": 483,
+      "explicit_abstention_correct": 85,
+      "blank_negative_predictions": 0,
+      "semantic_negative_accuracy": 0.8458844133099825,
+      "explicit_abstention_accuracy": 0.14886164623467601,
+      "contract_compliance": 0.17598343685300208
+    }
+  },
+  "status_overlay_count": 0,
+  "dataset_status_available": false,
+  "sample_errors": [
+    {
+      "question_id": "21",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "version 15.7",
+      "score": 0.0
+    },
+    {
+      "question_id": "22",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "version 15.7",
+      "score": 0.0
+    },
+    {
+      "question_id": "23",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "version 15.7",
+      "score": 0.0
+    },
+    {
+      "question_id": "24",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "version 15.7",
+      "score": 0.0
+    },
+    {
+      "question_id": "25",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "version 15.7",
+      "score": 0.0
+    },
+    {
+      "question_id": "26",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "version 15.7",
+      "score": 0.0
+    },
+    {
+      "question_id": "27",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "version 15.7",
+      "score": 0.0
+    },
+    {
+      "question_id": "28",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "version 15.7",
+      "score": 0.0
+    },
+    {
+      "question_id": "29",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "version 15.7",
+      "score": 0.0
+    },
+    {
+      "question_id": "30",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "version 15.7",
+      "score": 0.0
+    },
+    {
+      "question_id": "31",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "version 15.7",
+      "score": 0.0
+    },
+    {
+      "question_id": "32",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "version 15.7",
+      "score": 0.0
+    },
+    {
+      "question_id": "33",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "version 15.7",
+      "score": 0.0
+    },
+    {
+      "question_id": "34",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "version 15.7",
+      "score": 0.0
+    },
+    {
+      "question_id": "35",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "version 15.7",
+      "score": 0.0
+    }
+  ]
+}

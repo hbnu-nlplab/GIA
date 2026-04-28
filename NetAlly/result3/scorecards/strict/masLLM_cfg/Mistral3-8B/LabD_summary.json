@@ -1,0 +1,262 @@
+{
+  "family": "cfg_only",
+  "method": "masLLM_cfg",
+  "model": "Mistral3-8B",
+  "lab": "LabD",
+  "mode": "strict",
+  "raw_path": "/home/sdlab08/projects/GIA/NetAlly/result2/masLLM_cfg/mistral3_8b/labD/results_raw_mistral3_8b_20260408_145644.json",
+  "meta": {
+    "model": "mas_v3",
+    "model_tag": "mas_v3",
+    "backend": "mas_langgraph_v3",
+    "lab": "lab_d",
+    "lab_folder": "LabD_NCN_MultiAS_Complex_40nodes",
+    "date": "2026-04-08 17:42:58",
+    "duration_sec": null,
+    "total_samples": 3370,
+    "pipeline_version": "d6499bef",
+    "question_lang": "en"
+  },
+  "stats": {
+    "mode": "strict",
+    "accuracy": 0.23601685620927826,
+    "strict_accuracy": 0.23601685620927826,
+    "total_samples": 3370,
+    "by_type": {
+      "map": 0.24897831539590348,
+      "number": 0.23993144815766923,
+      "set": 0.40059450050156376,
+      "text": 0.1737704918032787
+    },
+    "by_level": {
+      "L1": 0.4830390861063263,
+      "L2": 0.5690759637188209,
+      "L3": 0.22332015810276679,
+      "L4": 0.056729028364514184,
+      "L5": 0.09316770186335403
+    },
+    "by_status": {
+      "NOT_CONFIGURED": 0.08633093525179857,
+      "OK": 0.26559232602177246
+    },
+    "by_category": {
+      "BGP_Consistency": 0.13,
+      "Comparison_Analysis": 0.009433962264150943,
+      "Configuration_Check": 0.25641025641025644,
+      "Hardware_Inventory": 0.1,
+      "Interface_Inventory": 0.7834613997113997,
+      "L2VPN_Consistency": 0.2,
+      "OSPF_Consistency": 0.8346666666666667,
+      "Reachability_Analysis": 0.048215403882279274,
+      "Routing_Analysis": 0.1,
+      "Routing_Inventory": 0.5268027210884354,
+      "Security_Analysis": 0.8125,
+      "Security_Inventory": 1.0,
+      "Security_Policy": 0.26401587301587304,
+      "Services_Inventory": 0.4642857142857143,
+      "System_Inventory": 0.7190002371750659,
+      "VRF_Consistency": 0.78,
+      "What_If_Analysis": 0.09316770186335403
+    },
+    "traditional_metrics": {
+      "bleu": 0.0472806897071297,
+      "exact_match": 0.20029673590504452,
+      "rouge1": 0.24824620651041673,
+      "rouge2": 0.08276638916591572,
+      "rougeL": 0.24546548435601773,
+      "token_f1": 0.22869223877561232,
+      "token_precision": 0.23183060344103568,
+      "token_recall": 0.23112165350812
+    },
+    "trad_by_type": {
+      "map": {
+        "bleu": 0.09546609364625304,
+        "exact_match": 0.0,
+        "rouge1": 0.3910831564053056,
+        "rouge2": 0.26227351842274793,
+        "rougeL": 0.37039837776130213,
+        "token_f1": 0.21434874600722503,
+        "token_precision": 0.19964063679888838,
+        "token_recall": 0.24985054627911787
+      },
+      "number": {
+        "bleu": 0.04253222012058054,
+        "exact_match": 0.2390745501285347,
+        "rouge1": 0.2392173664667238,
+        "rouge2": 0.001713796058269066,
+        "rougeL": 0.2392173664667238,
+        "token_f1": 0.23923034977019553,
+        "token_precision": 0.23916023993144817,
+        "token_recall": 0.23993144815766923
+      },
+      "set": {
+        "bleu": 0.07414969511273627,
+        "exact_match": 0.33643122676579923,
+        "rouge1": 0.3279333793665627,
+        "rouge2": 0.20516494240633562,
+        "rougeL": 0.31927476722282044,
+        "token_f1": 0.3467081194311677,
+        "token_precision": 0.35053180503924,
+        "token_recall": 0.34544830943529825
+      },
+      "text": {
+        "bleu": 0.03701182580405221,
+        "exact_match": 0.14098360655737704,
+        "rouge1": 0.21392999952622008,
+        "rouge2": 0.0851316064887494,
+        "rougeL": 0.2127386347282979,
+        "token_f1": 0.18031031724394445,
+        "token_precision": 0.18730054644808736,
+        "token_recall": 0.18232767565055524
+      }
+    },
+    "negative_eval": {
+      "total_negative_samples": 556,
+      "semantic_negative_correct": 441,
+      "explicit_abstention_correct": 48,
+      "blank_negative_predictions": 2,
+      "semantic_negative_accuracy": 0.7931654676258992,
+      "explicit_abstention_accuracy": 0.08633093525179857,
+      "contract_compliance": 0.10884353741496598
+    }
+  },
+  "status_overlay_count": 0,
+  "dataset_status_available": false,
+  "sample_errors": [
+    {
+      "question_id": "SYSTEM_TIMEZONE_TEXT_leaf10",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_TIMEZONE_TEXT_leaf9",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_TIMEZONE_TEXT_leaf14",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_TIMEZONE_TEXT_leaf6",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_TIMEZONE_TEXT_p8",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_TIMEZONE_TEXT_leaf3",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_TIMEZONE_TEXT_leaf16",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_TIMEZONE_TEXT_p6",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_TIMEZONE_TEXT_asbr1",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_TIMEZONE_TEXT_leaf1",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_TIMEZONE_TEXT_pe2",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_TIMEZONE_TEXT_pe8",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_TIMEZONE_TEXT_p10",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_TIMEZONE_TEXT_p12",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_TIMEZONE_TEXT_p11",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"KST 9\"",
+      "pred": "KST",
+      "score": 0.0
+    }
+  ]
+}

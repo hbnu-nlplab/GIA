@@ -1,0 +1,289 @@
+{
+  "family": "tool_augmented",
+  "method": "singleLLM_mcp",
+  "model": "Mistral3-8B",
+  "lab": "LabD",
+  "mode": "strict",
+  "raw_path": "/home/sdlab08/projects/GIA/NetAlly/result2/singleLLM_mcp/mistral3-8b/LabD/netally_eval_direct_singleLLM_mcp_LabD_20260428_142414.json",
+  "meta": {
+    "model": "NetAlly-MAS+MCP",
+    "model_tag": "singleLLM+mcp-LabD-ministral-8b-2512openrouter-full",
+    "backend": "netally-direct",
+    "lab": "Lab-D",
+    "lab_folder": "LabD_NCN_MultiAS_Complex_40nodes",
+    "date": "2026-04-28T14:24:33.724764",
+    "duration_sec": 9466.4,
+    "total_samples": 3370,
+    "dataset": "LabD_NCN_MultiAS_Complex_40nodes_dataset_batfish_20260325_102315_en.json",
+    "dataset_path": "/home/sdlab08/projects/GIA/Data/Pnetlab/LabD_NCN_MultiAS_Complex_40nodes/Dataset/20260325_102315/LabD_NCN_MultiAS_Complex_40nodes_dataset_batfish_20260325_102315_en.json",
+    "mcp_server_url": "http://127.0.0.1:8811/mcp",
+    "recursion_limit": 20,
+    "max_retries": 3,
+    "max_workers": 4,
+    "include_levels": null,
+    "exclude_levels": null,
+    "agent_backend": "team_multi_adapter",
+    "tool_backend": "mcp",
+    "executor_llm_backend": "openai",
+    "executor_llm_model": "mistralai/ministral-8b-2512",
+    "mas_model_a": "mistralai/ministral-8b-2512",
+    "mas_model_b": "mistralai/ministral-8b-2512",
+    "provider": "openrouter",
+    "provider_base_url": "https://openrouter.ai/api/v1",
+    "provider_config_source": "explicit",
+    "date_completed": "2026-04-28T17:02:20.152668",
+    "token_usage_total": {
+      "prompt_tokens": 12490105,
+      "completion_tokens": 250449,
+      "total_tokens": 12740554,
+      "llm_calls": 6743
+    },
+    "scoring": {
+      "metric": "Type-Aware Accuracy",
+      "mode": "paper_strict",
+      "negative_rule": "NOT_CONFIGURED samples require canonical NOT_CONFIGURED token"
+    }
+  },
+  "stats": {
+    "mode": "strict",
+    "accuracy": 0.5637070515644437,
+    "strict_accuracy": 0.5637070515644437,
+    "total_samples": 3370,
+    "by_type": {
+      "map": 0.4700957049486463,
+      "number": 0.6178234790059983,
+      "set": 0.44029621761963755,
+      "text": 0.5744262295081968
+    },
+    "by_level": {
+      "L1": 0.47262178409260364,
+      "L2": 0.8428571428571429,
+      "L3": 0.6458121588556374,
+      "L4": 0.643934821967411,
+      "L5": 0.2795031055900621
+    },
+    "by_status": {
+      "NOT_CONFIGURED": 0.1528776978417266,
+      "OK": 0.6448801577015549
+    },
+    "by_category": {
+      "BGP_Consistency": 0.25847619047619047,
+      "Comparison_Analysis": 0.5830188679245283,
+      "Configuration_Check": 0.29166666666666663,
+      "Hardware_Inventory": 0.0,
+      "Interface_Inventory": 0.48996527777777776,
+      "L2VPN_Consistency": 0.98,
+      "OSPF_Consistency": 0.82,
+      "Reachability_Analysis": 0.654351909830933,
+      "Routing_Analysis": 0.1,
+      "Routing_Inventory": 0.4787301587301587,
+      "Security_Analysis": 0.9375,
+      "Security_Inventory": 0.9875,
+      "Security_Policy": 0.43200000000000005,
+      "Services_Inventory": 0.39285714285714285,
+      "System_Inventory": 0.7855280748663108,
+      "VRF_Consistency": 0.8533333333333333,
+      "What_If_Analysis": 0.2795031055900621
+    },
+    "traditional_metrics": {
+      "bleu": 0.19242810224990847,
+      "exact_match": 0.5412462908011869,
+      "rouge1": 0.5586400077630769,
+      "rouge2": 0.22589832773676774,
+      "rougeL": 0.5564045593088551,
+      "token_f1": 0.5666731450496219,
+      "token_precision": 0.5655208268092243,
+      "token_recall": 0.5712897231927035
+    },
+    "trad_by_type": {
+      "map": {
+        "bleu": 0.30455969500148705,
+        "exact_match": 0.21428571428571427,
+        "rouge1": 0.6175526140444185,
+        "rouge2": 0.5534542669723989,
+        "rougeL": 0.6000343364742375,
+        "token_f1": 0.48931185702005037,
+        "token_precision": 0.46318051984626496,
+        "token_recall": 0.5553576582148008
+      },
+      "number": {
+        "bleu": 0.10986627717549939,
+        "exact_match": 0.6178234790059983,
+        "rouge1": 0.6178234790059983,
+        "rouge2": 0.0,
+        "rougeL": 0.6178234790059983,
+        "token_f1": 0.6178234790059983,
+        "token_precision": 0.6178234790059983,
+        "token_recall": 0.6178234790059983
+      },
+      "set": {
+        "bleu": 0.09239577094183146,
+        "exact_match": 0.4070631970260223,
+        "rouge1": 0.29427602722212376,
+        "rouge2": 0.19056043089500344,
+        "rougeL": 0.28607546075018186,
+        "token_f1": 0.413217678645188,
+        "token_precision": 0.4129182156133829,
+        "token_recall": 0.4138785625774473
+      },
+      "text": {
+        "bleu": 0.280604247246864,
+        "exact_match": 0.56,
+        "rouge1": 0.6012058738031789,
+        "rouge2": 0.38116213460672743,
+        "rougeL": 0.6007671868071148,
+        "token_f1": 0.5887696575234797,
+        "token_precision": 0.5887278121761373,
+        "token_recall": 0.5926751661263424
+      }
+    },
+    "negative_eval": {
+      "total_negative_samples": 556,
+      "semantic_negative_correct": 504,
+      "explicit_abstention_correct": 85,
+      "blank_negative_predictions": 20,
+      "semantic_negative_accuracy": 0.9064748201438849,
+      "explicit_abstention_accuracy": 0.1528776978417266,
+      "contract_compliance": 0.16865079365079366
+    }
+  },
+  "status_overlay_count": 0,
+  "dataset_status_available": true,
+  "sample_errors": [
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_leaf3",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_pe1",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_leaf13",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_p3",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_pe6",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_leaf1",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_p6",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_p10",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_pe4",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_VERSION_TEXT_pe2",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "15.9",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_USER_LIST_leaf5",
+      "level": "L1",
+      "status": "OK",
+      "type": "set",
+      "gold": "[\"admin\"]",
+      "pred": "[]",
+      "score": 0.0
+    },
+    {
+      "question_id": "SYSTEM_USER_LIST_fw1",
+      "level": "L1",
+      "status": "OK",
+      "type": "set",
+      "gold": "[\"admin\"]",
+      "pred": "[]",
+      "score": 0.0
+    },
+    {
+      "question_id": "SNMP_COMMUNITY_LIST_leaf15",
+      "level": "L1",
+      "status": "NOT_CONFIGURED",
+      "type": "set",
+      "gold": "[]",
+      "pred": "[]",
+      "score": 0.0
+    },
+    {
+      "question_id": "SNMP_COMMUNITY_LIST_leaf1",
+      "level": "L1",
+      "status": "NOT_CONFIGURED",
+      "type": "set",
+      "gold": "[]",
+      "pred": "[]",
+      "score": 0.0
+    },
+    {
+      "question_id": "SNMP_COMMUNITY_LIST_leaf13",
+      "level": "L1",
+      "status": "NOT_CONFIGURED",
+      "type": "set",
+      "gold": "[]",
+      "pred": "[]",
+      "score": 0.0
+    }
+  ]
+}

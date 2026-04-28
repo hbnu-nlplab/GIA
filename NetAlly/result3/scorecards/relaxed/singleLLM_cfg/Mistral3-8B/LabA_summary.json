@@ -1,0 +1,275 @@
+{
+  "family": "cfg_only",
+  "method": "singleLLM_cfg",
+  "model": "Mistral3-8B",
+  "lab": "LabA",
+  "mode": "relaxed",
+  "raw_path": "/home/sdlab08/projects/GIA/Experiment/code/NetConfigQA2_2/result_final/Mistral3-8B/LabA/results_raw_vllm_en_20260325_202043.json",
+  "meta": {
+    "model": "Mistral3-8B",
+    "model_tag": "Mistral3-8B",
+    "backend": "vllm_offline",
+    "lab": "Lab-A",
+    "lab_folder": "LabA_Research_Institute_DC_10nodes",
+    "language": "en",
+    "date": "2026-03-25 20:21:42.738125",
+    "duration_sec": 34.61,
+    "throughput": 36.75,
+    "dataset": "LabA_Research_Institute_DC_10nodes_dataset_batfish_20260325_101350_en.csv",
+    "dataset_path": "/home/kilab_pyj/codespace/GIA/Data/Pnetlab/LabA_Research_Institute_DC_10nodes/Dataset/20260325_101350/LabA_Research_Institute_DC_10nodes_dataset_batfish_20260325_101350_en.csv",
+    "config_dir": "/home/kilab_pyj/codespace/GIA/Data/Pnetlab/LabA_Research_Institute_DC_10nodes/configs",
+    "result_model_dir": "Mistral3-8B",
+    "result_lab_dir": "LabA",
+    "total_samples": 1272,
+    "tokenizer_chat_template": false,
+    "enable_prefix_caching": true,
+    "structured_outputs_enabled": false,
+    "level_token_overrides": {
+      "L4": 16384,
+      "L5": 16384
+    },
+    "max_model_len_override": "auto"
+  },
+  "stats": {
+    "mode": "relaxed",
+    "accuracy": 0.5659054607167814,
+    "strict_accuracy": 0.3567859638614355,
+    "total_samples": 1272,
+    "by_type": {
+      "map": 0.2928200563714583,
+      "number": 0.46381578947368424,
+      "set": 0.8629242819843342,
+      "text": 0.45397489539748953
+    },
+    "by_level": {
+      "L1": 0.7944261470198068,
+      "L2": 0.7785714285714286,
+      "L3": 0.26587301587301587,
+      "L4": 0.21568627450980393,
+      "L5": 0.13592233009708737
+    },
+    "by_status": {
+      "NOT_CONFIGURED": 0.9093333333333333,
+      "OK": 0.4223319353754136
+    },
+    "by_category": {
+      "BGP_Consistency": 0.0,
+      "Comparison_Analysis": 0.05660377358490566,
+      "Configuration_Check": 0.823076923076923,
+      "Hardware_Inventory": 1.0,
+      "Interface_Inventory": 0.6106349206349208,
+      "L2VPN_Consistency": 0.26,
+      "OSPF_Consistency": 0.21,
+      "Reachability_Analysis": 0.13385826771653545,
+      "Routing_Analysis": 0.1,
+      "Routing_Inventory": 0.7857142857142857,
+      "Security_Analysis": 0.9375,
+      "Security_Inventory": 0.76,
+      "Security_Policy": 1.0,
+      "Services_Inventory": 0.9857142857142858,
+      "System_Inventory": 0.8072727272727273,
+      "VRF_Consistency": 0.96,
+      "What_If_Analysis": 0.13592233009708737
+    },
+    "traditional_metrics": {
+      "bleu": 0.0739530399996013,
+      "exact_match": 0.28537735849056606,
+      "rouge1": 0.3613649648929009,
+      "rouge2": 0.17466127804178114,
+      "rougeL": 0.3586447730425758,
+      "token_f1": 0.3464122351262979,
+      "token_precision": 0.3432577769529771,
+      "token_recall": 0.3615315502107955
+    },
+    "trad_by_type": {
+      "map": {
+        "bleu": 0.057222149728229886,
+        "exact_match": 0.028037383177570093,
+        "rouge1": 0.3760671497896845,
+        "rouge2": 0.2253768384609506,
+        "rougeL": 0.3674281801831502,
+        "token_f1": 0.10082160829824383,
+        "token_precision": 0.1175233644859813,
+        "token_recall": 0.09075063047025664
+      },
+      "number": {
+        "bleu": 0.06025091422171343,
+        "exact_match": 0.33881578947368424,
+        "rouge1": 0.33881578947368424,
+        "rouge2": 0.0,
+        "rougeL": 0.33881578947368424,
+        "token_f1": 0.33881578947368424,
+        "token_precision": 0.33881578947368424,
+        "token_recall": 0.33881578947368424
+      },
+      "set": {
+        "bleu": 0.050052940154788214,
+        "exact_match": 0.2793733681462141,
+        "rouge1": 0.2231712097112295,
+        "rouge2": 0.14546810891458412,
+        "rougeL": 0.217949277596347,
+        "token_f1": 0.27972149695387294,
+        "token_precision": 0.2796107286968906,
+        "token_recall": 0.2800261096605744
+      },
+      "text": {
+        "bleu": 0.1055626419579225,
+        "exact_match": 0.3138075313807531,
+        "rouge1": 0.4831432573156315,
+        "rouge2": 0.29778146075217216,
+        "rougeL": 0.4820225161321289,
+        "token_f1": 0.4596550578648643,
+        "token_precision": 0.4476108435005796,
+        "token_recall": 0.5018991933217876
+      }
+    },
+    "negative_eval": {
+      "total_negative_samples": 375,
+      "semantic_negative_correct": 341,
+      "explicit_abstention_correct": 75,
+      "blank_negative_predictions": 0,
+      "semantic_negative_accuracy": 0.9093333333333333,
+      "explicit_abstention_accuracy": 0.2,
+      "contract_compliance": 0.21994134897360704
+    }
+  },
+  "status_overlay_count": 0,
+  "dataset_status_available": false,
+  "sample_errors": [
+    {
+      "question_id": "16",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"15.7\"",
+      "pred": "version 15.7",
+      "score": 0.0
+    },
+    {
+      "question_id": "21",
+      "level": "L1",
+      "status": "NOT_CONFIGURED",
+      "type": "text",
+      "gold": "null",
+      "pred": "UTC",
+      "score": 0.0
+    },
+    {
+      "question_id": "22",
+      "level": "L1",
+      "status": "NOT_CONFIGURED",
+      "type": "text",
+      "gold": "null",
+      "pred": "UTC",
+      "score": 0.0
+    },
+    {
+      "question_id": "23",
+      "level": "L1",
+      "status": "NOT_CONFIGURED",
+      "type": "text",
+      "gold": "null",
+      "pred": "UTC",
+      "score": 0.0
+    },
+    {
+      "question_id": "24",
+      "level": "L1",
+      "status": "NOT_CONFIGURED",
+      "type": "text",
+      "gold": "null",
+      "pred": "UTC",
+      "score": 0.0
+    },
+    {
+      "question_id": "25",
+      "level": "L1",
+      "status": "NOT_CONFIGURED",
+      "type": "text",
+      "gold": "null",
+      "pred": "UTC",
+      "score": 0.0
+    },
+    {
+      "question_id": "26",
+      "level": "L1",
+      "status": "NOT_CONFIGURED",
+      "type": "text",
+      "gold": "null",
+      "pred": "UTC",
+      "score": 0.0
+    },
+    {
+      "question_id": "27",
+      "level": "L1",
+      "status": "NOT_CONFIGURED",
+      "type": "text",
+      "gold": "null",
+      "pred": "UTC",
+      "score": 0.0
+    },
+    {
+      "question_id": "28",
+      "level": "L1",
+      "status": "NOT_CONFIGURED",
+      "type": "text",
+      "gold": "null",
+      "pred": "UTC",
+      "score": 0.0
+    },
+    {
+      "question_id": "30",
+      "level": "L1",
+      "status": "NOT_CONFIGURED",
+      "type": "text",
+      "gold": "null",
+      "pred": "UTC",
+      "score": 0.0
+    },
+    {
+      "question_id": "91",
+      "level": "L1",
+      "status": "OK",
+      "type": "map",
+      "gold": "{\"GigabitEthernet0/0\": \"up\", \"GigabitEthernet0/1\": \"up\", \"GigabitEthernet0/2\": \"up\", \"GigabitEthernet0/3\": \"down\", \"Loopback0\": \"up\"}",
+      "pred": "{\"GigabitEthernet0/0\":\"up\",\"GigabitEthernet0/1\":\"up\",\"GigabitEthernet0/2\":\"up\",\"GigabitEthernet0/3\":\"down\"}",
+      "score": 0.888888888888889
+    },
+    {
+      "question_id": "92",
+      "level": "L1",
+      "status": "OK",
+      "type": "map",
+      "gold": "{\"GigabitEthernet0/0\": \"up\", \"GigabitEthernet0/1\": \"up\", \"GigabitEthernet0/2\": \"up\", \"GigabitEthernet0/3\": \"up\", \"Loopback0\": \"up\"}",
+      "pred": "{\"GigabitEthernet0/0\":\"up\",\"GigabitEthernet0/1\":\"up\",\"GigabitEthernet0/2\":\"up\",\"GigabitEthernet0/3\":\"up\"}",
+      "score": 0.888888888888889
+    },
+    {
+      "question_id": "94",
+      "level": "L1",
+      "status": "OK",
+      "type": "map",
+      "gold": "{\"GigabitEthernet0/0\": \"up\", \"GigabitEthernet0/1\": \"up\", \"GigabitEthernet0/2\": \"up\", \"GigabitEthernet0/3\": \"down\", \"Loopback0\": \"up\"}",
+      "pred": "{\"GigabitEthernet0/0\":\"up\",\"GigabitEthernet0/1\":\"down\",\"GigabitEthernet0/2\":\"up\",\"GigabitEthernet0/3\":\"down\"}",
+      "score": 0.6666666666666665
+    },
+    {
+      "question_id": "96",
+      "level": "L1",
+      "status": "OK",
+      "type": "map",
+      "gold": "{\"GigabitEthernet0/0\": \"up\", \"GigabitEthernet0/1\": \"up\", \"GigabitEthernet0/2\": \"up\", \"GigabitEthernet0/3\": \"up\", \"Loopback0\": \"up\"}",
+      "pred": "{\"GigabitEthernet0/0\": \"up\",\"GigabitEthernet0/1\": \"up\",\"GigabitEthernet0/2\": \"up\",\"GigabitEthernet0/3\": \"up\"}",
+      "score": 0.888888888888889
+    },
+    {
+      "question_id": "97",
+      "level": "L1",
+      "status": "OK",
+      "type": "map",
+      "gold": "{\"GigabitEthernet0/0\": \"up\", \"GigabitEthernet0/1\": \"up\", \"GigabitEthernet0/2\": \"up\", \"GigabitEthernet0/3\": \"up\", \"Loopback0\": \"up\"}",
+      "pred": "{\"Loopback0\": \"up\",\"GigabitEthernet0/0\": \"up\",\"GigabitEthernet0/1\": \"up\",\"GigabitEthernet0/2\": \"up\",\"GigabitEthernet0/3\": \"down\"}",
+      "score": 0.8000000000000002
+    }
+  ]
+}

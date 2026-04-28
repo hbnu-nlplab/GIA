@@ -1,0 +1,279 @@
+{
+  "family": "cfg_only",
+  "method": "singleLLM_cfg",
+  "model": "GPT-4o-mini",
+  "lab": "LabA",
+  "mode": "strict",
+  "raw_path": "/home/sdlab08/projects/GIA/Experiment/code/NetConfigQA2_2/result_final/GPT-4o-mini/LabA/results_raw_vllm_en_20260326_081401.json",
+  "meta": {
+    "model": "GPT-4o-mini",
+    "model_tag": "gpt-4o-mini",
+    "request_model": "openai/gpt-4o-mini",
+    "backend": "openrouter",
+    "lab": "Lab-A",
+    "lab_folder": "LabA_Research_Institute_DC_10nodes",
+    "language": "en",
+    "date": "2026-03-26 08:20:35.060188",
+    "duration_sec": 392.97,
+    "throughput": 3.24,
+    "dataset": "LabA_Research_Institute_DC_10nodes_dataset_batfish_20260325_101350_en.csv",
+    "dataset_path": "/home/kilab_pyj/codespace/GIA/Data/Pnetlab/LabA_Research_Institute_DC_10nodes/Dataset/20260325_101350/LabA_Research_Institute_DC_10nodes_dataset_batfish_20260325_101350_en.csv",
+    "config_dir": "/home/kilab_pyj/codespace/GIA/Data/Pnetlab/LabA_Research_Institute_DC_10nodes/configs",
+    "result_model_dir": "GPT-4o-mini",
+    "result_lab_dir": "LabA",
+    "total_samples": 1272,
+    "tokenizer_chat_template": null,
+    "enable_prefix_caching": false,
+    "structured_outputs_enabled": false,
+    "level_token_overrides": {},
+    "max_model_len_override": null,
+    "input_jsonl": "/home/kilab_pyj/codespace/GIA/Experiment/code/NetConfigQA2_2/results/GPT-4o-mini/LabA/_batch_artifacts/batch_input_en_20260326_081401.jsonl",
+    "manifest_path": "/home/kilab_pyj/codespace/GIA/Experiment/code/NetConfigQA2_2/results/GPT-4o-mini/LabA/_batch_artifacts/batch_manifest_en_20260326_081401.json",
+    "max_workers": 4,
+    "timeout_sec": 300,
+    "retry_attempts": 4,
+    "retry_backoff_sec": 30
+  },
+  "stats": {
+    "mode": "strict",
+    "accuracy": 0.342458445642408,
+    "strict_accuracy": 0.342458445642408,
+    "total_samples": 1272,
+    "by_type": {
+      "map": 0.1938213914849429,
+      "number": 0.3684210526315789,
+      "set": 0.3495254672800364,
+      "text": 0.35355648535564854
+    },
+    "by_level": {
+      "L1": 0.40551781711724083,
+      "L2": 0.7453968253968253,
+      "L3": 0.28174603174603174,
+      "L4": 0.12418300653594772,
+      "L5": 0.11650485436893204
+    },
+    "by_status": {
+      "NOT_CONFIGURED": 0.19733333333333333,
+      "OK": 0.40312947921643577
+    },
+    "by_category": {
+      "BGP_Consistency": 0.0,
+      "Comparison_Analysis": 0.03773584905660377,
+      "Configuration_Check": 0.22564102564102564,
+      "Hardware_Inventory": 0.0,
+      "Interface_Inventory": 0.5858888888888889,
+      "L2VPN_Consistency": 0.88,
+      "OSPF_Consistency": 0.348,
+      "Reachability_Analysis": 0.07086614173228346,
+      "Routing_Analysis": 0.0,
+      "Routing_Inventory": 0.4717687074829931,
+      "Security_Analysis": 0.625,
+      "Security_Inventory": 1.0,
+      "Security_Policy": 0.8555555555555556,
+      "Services_Inventory": 0.42857142857142855,
+      "System_Inventory": 0.6222222222222222,
+      "VRF_Consistency": 0.54,
+      "What_If_Analysis": 0.11650485436893204
+    },
+    "traditional_metrics": {
+      "bleu": 0.09054624558039892,
+      "exact_match": 0.30974842767295596,
+      "rouge1": 0.37648495980782304,
+      "rouge2": 0.17003827678407923,
+      "rougeL": 0.3739497809754743,
+      "token_f1": 0.36806682393530354,
+      "token_precision": 0.36710891117453215,
+      "token_recall": 0.37398525871403177
+    },
+    "trad_by_type": {
+      "map": {
+        "bleu": 0.0,
+        "exact_match": 0.0,
+        "rouge1": 0.34058520226744526,
+        "rouge2": 0.195796790338422,
+        "rougeL": 0.3288793587859007,
+        "token_f1": 0.0,
+        "token_precision": 0.0,
+        "token_recall": 0.0
+      },
+      "number": {
+        "bleu": 0.06551555721196019,
+        "exact_match": 0.3684210526315789,
+        "rouge1": 0.3684210526315789,
+        "rouge2": 0.0,
+        "rougeL": 0.3684210526315789,
+        "token_f1": 0.3684210526315789,
+        "token_precision": 0.3684210526315789,
+        "token_recall": 0.3684210526315789
+      },
+      "set": {
+        "bleu": 0.1217953519201419,
+        "exact_match": 0.3028720626631854,
+        "rouge1": 0.21025703626225817,
+        "rouge2": 0.14986210482294032,
+        "rougeL": 0.2063405871760963,
+        "token_f1": 0.31360157104282427,
+        "token_precision": 0.315564258775747,
+        "token_recall": 0.31240208877284603
+      },
+      "text": {
+        "bleu": 0.10169555481258644,
+        "exact_match": 0.3472803347280335,
+        "rouge1": 0.5228406011390981,
+        "rouge2": 0.28858001120491944,
+        "rougeL": 0.5218526885403069,
+        "token_f1": 0.4938736366868299,
+        "token_precision": 0.48975193285124397,
+        "token_recall": 0.5105842031051234
+      }
+    },
+    "negative_eval": {
+      "total_negative_samples": 375,
+      "semantic_negative_correct": 321,
+      "explicit_abstention_correct": 74,
+      "blank_negative_predictions": 0,
+      "semantic_negative_accuracy": 0.856,
+      "explicit_abstention_accuracy": 0.19733333333333333,
+      "contract_compliance": 0.23052959501557632
+    }
+  },
+  "status_overlay_count": 0,
+  "dataset_status_available": false,
+  "sample_errors": [
+    {
+      "question_id": "61",
+      "level": "L1",
+      "status": "NOT_CONFIGURED",
+      "type": "set",
+      "gold": "[]",
+      "pred": "[]",
+      "score": 0.0
+    },
+    {
+      "question_id": "62",
+      "level": "L1",
+      "status": "NOT_CONFIGURED",
+      "type": "set",
+      "gold": "[]",
+      "pred": "[]",
+      "score": 0.0
+    },
+    {
+      "question_id": "63",
+      "level": "L1",
+      "status": "NOT_CONFIGURED",
+      "type": "set",
+      "gold": "[]",
+      "pred": "[]",
+      "score": 0.0
+    },
+    {
+      "question_id": "64",
+      "level": "L1",
+      "status": "NOT_CONFIGURED",
+      "type": "set",
+      "gold": "[]",
+      "pred": "[]",
+      "score": 0.0
+    },
+    {
+      "question_id": "65",
+      "level": "L1",
+      "status": "NOT_CONFIGURED",
+      "type": "set",
+      "gold": "[]",
+      "pred": "[]",
+      "score": 0.0
+    },
+    {
+      "question_id": "66",
+      "level": "L1",
+      "status": "NOT_CONFIGURED",
+      "type": "set",
+      "gold": "[]",
+      "pred": "[]",
+      "score": 0.0
+    },
+    {
+      "question_id": "67",
+      "level": "L1",
+      "status": "NOT_CONFIGURED",
+      "type": "set",
+      "gold": "[]",
+      "pred": "[]",
+      "score": 0.0
+    },
+    {
+      "question_id": "68",
+      "level": "L1",
+      "status": "NOT_CONFIGURED",
+      "type": "set",
+      "gold": "[]",
+      "pred": "[]",
+      "score": 0.0
+    },
+    {
+      "question_id": "69",
+      "level": "L1",
+      "status": "NOT_CONFIGURED",
+      "type": "set",
+      "gold": "[]",
+      "pred": "[]",
+      "score": 0.0
+    },
+    {
+      "question_id": "70",
+      "level": "L1",
+      "status": "NOT_CONFIGURED",
+      "type": "set",
+      "gold": "[]",
+      "pred": "[]",
+      "score": 0.0
+    },
+    {
+      "question_id": "71",
+      "level": "L1",
+      "status": "NOT_CONFIGURED",
+      "type": "set",
+      "gold": "[]",
+      "pred": "[]",
+      "score": 0.0
+    },
+    {
+      "question_id": "72",
+      "level": "L1",
+      "status": "NOT_CONFIGURED",
+      "type": "set",
+      "gold": "[]",
+      "pred": "[]",
+      "score": 0.0
+    },
+    {
+      "question_id": "73",
+      "level": "L1",
+      "status": "NOT_CONFIGURED",
+      "type": "set",
+      "gold": "[]",
+      "pred": "[]",
+      "score": 0.0
+    },
+    {
+      "question_id": "74",
+      "level": "L1",
+      "status": "NOT_CONFIGURED",
+      "type": "set",
+      "gold": "[]",
+      "pred": "[]",
+      "score": 0.0
+    },
+    {
+      "question_id": "75",
+      "level": "L1",
+      "status": "NOT_CONFIGURED",
+      "type": "set",
+      "gold": "[]",
+      "pred": "[]",
+      "score": 0.0
+    }
+  ]
+}

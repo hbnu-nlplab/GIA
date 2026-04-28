@@ -1,0 +1,275 @@
+{
+  "family": "cfg_only",
+  "method": "singleLLM_cfg",
+  "model": "Qwen3-8B",
+  "lab": "LabC",
+  "mode": "strict",
+  "raw_path": "/home/sdlab08/projects/GIA/Experiment/code/NetConfigQA2_2/result_final/Qwen3-8B/LabC/results_raw_vllm_en_20260325_203623.json",
+  "meta": {
+    "model": "Qwen3-8B",
+    "model_tag": "Qwen3-8B",
+    "backend": "vllm_offline",
+    "lab": "Lab-C",
+    "lab_folder": "LabC_NCN_Security_L2VPN_30nodes",
+    "language": "en",
+    "date": "2026-03-25 20:38:54.208287",
+    "duration_sec": 150.99,
+    "throughput": 17.71,
+    "dataset": "LabC_NCN_Security_L2VPN_30nodes_dataset_batfish_20260325_101814_en.csv",
+    "dataset_path": "/home/kilab_pyj/codespace/GIA/Data/Pnetlab/LabC_NCN_Security_L2VPN_30nodes/Dataset/20260325_101814/LabC_NCN_Security_L2VPN_30nodes_dataset_batfish_20260325_101814_en.csv",
+    "config_dir": "/home/kilab_pyj/codespace/GIA/Data/Pnetlab/LabC_NCN_Security_L2VPN_30nodes/configs",
+    "result_model_dir": "Qwen3-8B",
+    "result_lab_dir": "LabC",
+    "total_samples": 2674,
+    "tokenizer_chat_template": true,
+    "enable_prefix_caching": true,
+    "structured_outputs_enabled": false,
+    "level_token_overrides": {
+      "L4": 16384,
+      "L5": 16384
+    },
+    "max_model_len_override": "auto"
+  },
+  "stats": {
+    "mode": "strict",
+    "accuracy": 0.08218020921660835,
+    "strict_accuracy": 0.08218020921660835,
+    "total_samples": 2674,
+    "by_type": {
+      "map": 0.28071028178171037,
+      "number": 0.0,
+      "set": 0.3424107020792624,
+      "text": 0.0
+    },
+    "by_level": {
+      "L1": 0.1372405765403405,
+      "L2": 0.485054016985583,
+      "L3": 0.08000000000000002,
+      "L4": 0.006289308176100629,
+      "L5": 0.0
+    },
+    "by_status": {
+      "NOT_CONFIGURED": 0.0,
+      "OK": 0.10355790737286084
+    },
+    "by_category": {
+      "BGP_Consistency": 0.2880000000000001,
+      "Comparison_Analysis": 0.0,
+      "Configuration_Check": 0.0673076923076923,
+      "Hardware_Inventory": 0.0,
+      "Interface_Inventory": 0.21207341269841268,
+      "L2VPN_Consistency": 0.0,
+      "OSPF_Consistency": 0.03652605459057072,
+      "Reachability_Analysis": 0.0,
+      "Routing_Analysis": 0.0,
+      "Routing_Inventory": 0.18666666666666668,
+      "Security_Analysis": 0.375,
+      "Security_Inventory": 0.0,
+      "Security_Policy": 0.3418160786581839,
+      "Services_Inventory": 0.06428571428571428,
+      "System_Inventory": 0.3969707565162109,
+      "VRF_Consistency": 0.12,
+      "What_If_Analysis": 0.0
+    },
+    "traditional_metrics": {
+      "bleu": 0.008315428988319596,
+      "exact_match": 0.041884816753926704,
+      "rouge1": 0.08621102748155274,
+      "rouge2": 0.05936727290038236,
+      "rougeL": 0.08286695763366235,
+      "token_f1": 0.0457349431919365,
+      "token_precision": 0.0463932518906341,
+      "token_recall": 0.045362752430815265
+    },
+    "trad_by_type": {
+      "map": {
+        "bleu": 0.011607562566578827,
+        "exact_match": 0.0,
+        "rouge1": 0.350403402055977,
+        "rouge2": 0.2724902207096801,
+        "rougeL": 0.3349835487135722,
+        "token_f1": 0.07285714285714288,
+        "token_precision": 0.08571428571428572,
+        "token_recall": 0.06404761904761908
+      },
+      "number": {
+        "bleu": 0.0,
+        "exact_match": 0.0,
+        "rouge1": 0.0,
+        "rouge2": 0.0,
+        "rougeL": 0.0,
+        "token_f1": 0.0,
+        "token_precision": 0.0,
+        "token_recall": 0.0
+      },
+      "set": {
+        "bleu": 0.03910891528547549,
+        "exact_match": 0.2125237191650854,
+        "rouge1": 0.3443487878516796,
+        "rouge2": 0.22884147407261324,
+        "rougeL": 0.3314773204791518,
+        "token_f1": 0.21270443661335503,
+        "token_precision": 0.212629137676576,
+        "token_recall": 0.21315623023402908
+      },
+      "text": {
+        "bleu": 0.0,
+        "exact_match": 0.0,
+        "rouge1": 0.0,
+        "rouge2": 0.0,
+        "rougeL": 0.0,
+        "token_f1": 0.0,
+        "token_precision": 0.0,
+        "token_recall": 0.0
+      }
+    },
+    "negative_eval": {
+      "total_negative_samples": 552,
+      "semantic_negative_correct": 3,
+      "explicit_abstention_correct": 0,
+      "blank_negative_predictions": 282,
+      "semantic_negative_accuracy": 0.005434782608695652,
+      "explicit_abstention_accuracy": 0.0,
+      "contract_compliance": 0.0
+    }
+  },
+  "status_overlay_count": 0,
+  "dataset_status_available": false,
+  "sample_errors": [
+    {
+      "question_id": "1",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"p5\"",
+      "pred": "",
+      "score": 0.0
+    },
+    {
+      "question_id": "2",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"p1\"",
+      "pred": "",
+      "score": 0.0
+    },
+    {
+      "question_id": "3",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"leaf6\"",
+      "pred": "",
+      "score": 0.0
+    },
+    {
+      "question_id": "4",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"pe3\"",
+      "pred": "",
+      "score": 0.0
+    },
+    {
+      "question_id": "5",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"p8\"",
+      "pred": "",
+      "score": 0.0
+    },
+    {
+      "question_id": "6",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"leaf2\"",
+      "pred": "",
+      "score": 0.0
+    },
+    {
+      "question_id": "7",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"leaf12\"",
+      "pred": "",
+      "score": 0.0
+    },
+    {
+      "question_id": "8",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"leaf8\"",
+      "pred": "",
+      "score": 0.0
+    },
+    {
+      "question_id": "9",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"leaf7\"",
+      "pred": "",
+      "score": 0.0
+    },
+    {
+      "question_id": "10",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"p10\"",
+      "pred": "",
+      "score": 0.0
+    },
+    {
+      "question_id": "11",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"leaf5\"",
+      "pred": "",
+      "score": 0.0
+    },
+    {
+      "question_id": "12",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"pe2\"",
+      "pred": "",
+      "score": 0.0
+    },
+    {
+      "question_id": "13",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"pe6\"",
+      "pred": "",
+      "score": 0.0
+    },
+    {
+      "question_id": "14",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"p7\"",
+      "pred": "",
+      "score": 0.0
+    },
+    {
+      "question_id": "15",
+      "level": "L1",
+      "status": "OK",
+      "type": "text",
+      "gold": "\"p2\"",
+      "pred": "",
+      "score": 0.0
+    }
+  ]
+}
