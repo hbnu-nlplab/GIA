@@ -6,7 +6,7 @@
 - Lab: `LabB`
 - Raw: `/home/sdlab08/projects/GIA/NetAlly/result2/masLLM_mcp_paper/masLLM_mistral3-8b_mcp/LabB/results_raw_netally_20260423_143122.json`
 - Dataset status overlay: 571 rows
-- Generated: 2026-04-28T20:38:30
+- Generated: 2026-04-28T20:43:44
 
 ## Overall
 

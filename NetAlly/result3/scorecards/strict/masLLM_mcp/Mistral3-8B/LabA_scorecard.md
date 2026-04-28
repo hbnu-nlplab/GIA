@@ -6,7 +6,7 @@
 - Lab: `LabA`
 - Raw: `/home/sdlab08/projects/GIA/NetAlly/result2/masLLM_mcp_paper/masLLM_mistral3-8b_mcp/LabA/netally_eval_direct_LabA_Research_Institute_DC_10nodes_20260423_224508.json`
 - Dataset status overlay: 0 rows
-- Generated: 2026-04-28T20:38:36
+- Generated: 2026-04-28T20:43:43
 
 ## Overall
 

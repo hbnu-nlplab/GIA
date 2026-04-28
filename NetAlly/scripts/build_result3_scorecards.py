@@ -22,6 +22,7 @@ from typing import Any
 LABS = ("LabA", "LabB", "LabC", "LabD")
 METHODS = ("singleLLM_cfg", "singleLLM_mcp", "masLLM_cfg", "masLLM_mcp")
 DEFAULT_MCP_MODEL = "Mistral3-8B"
+TYPE_COLUMNS = ("map", "number", "set", "text", "boolean", "path")
 
 
 @dataclass(frozen=True)
@@ -418,6 +419,7 @@ def summary_row(record: dict[str, Any]) -> dict[str, Any]:
     levels = stats.get("by_level", {})
     status = stats.get("by_status", {})
     neg = stats.get("negative_eval", {})
+    by_type = stats.get("by_type", {})
     return {
         "mode": record["mode"],
         "family": record["family"],
@@ -436,6 +438,7 @@ def summary_row(record: dict[str, Any]) -> dict[str, Any]:
         "strict_nc": safe_cell(neg.get("explicit_abstention_accuracy")),
         "semantic_nc": safe_cell(neg.get("semantic_negative_accuracy")),
         "compliance": safe_cell(neg.get("contract_compliance")),
+        **{f"type_{answer_type}": safe_cell(by_type.get(answer_type)) for answer_type in TYPE_COLUMNS},
         "raw_path": record["raw_path"],
     }
 
@@ -564,6 +567,7 @@ def write_csv(path: Path, records: list[dict[str, Any]]) -> None:
         "strict_nc",
         "semantic_nc",
         "compliance",
+        *[f"type_{answer_type}" for answer_type in TYPE_COLUMNS],
         "raw_path",
     ]
     with path.open("w", newline="", encoding="utf-8") as f:
@@ -662,6 +666,39 @@ def write_combined_md(path: Path, records: list[dict[str, Any]]) -> None:
                         row["ok_acc"],
                         row["strict_nc"],
                         row["semantic_nc"],
+                    ]
+                    for row in [summary_row(record) for record in mode_records]
+                ],
+            )
+        )
+
+        lines.extend(["", f"## {mode.title()} Type Breakdown", ""])
+        lines.extend(
+            markdown_table(
+                [
+                    "Method",
+                    "Model",
+                    "Lab",
+                    "TA",
+                    "Map",
+                    "Number",
+                    "Set",
+                    "Text",
+                    "Boolean",
+                    "Path",
+                ],
+                [
+                    [
+                        row["method"],
+                        row["model"],
+                        row["lab"],
+                        row["ta_acc"],
+                        row["type_map"],
+                        row["type_number"],
+                        row["type_set"],
+                        row["type_text"],
+                        row["type_boolean"],
+                        row["type_path"],
                     ]
                     for row in [summary_row(record) for record in mode_records]
                 ],
