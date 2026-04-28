@@ -1,6 +1,6 @@
 # Result3 Combined Summary
 
-Generated: 2026-04-28T20:47:00
+Generated: 2026-04-28T20:48:32
 
 ## Method Averages
 
@@ -25,7 +25,7 @@ Generated: 2026-04-28T20:47:00
 
 ## Strict Lab Results
 
-| Method | Model | Lab | Total | TA | L1 | L2 | L3 | L4 | L5 | OK | Strict NC | Semantic NC |
+| Method | Model | Lab | Total | TA | L1 | L2 | L3 | L4 | L5 | OK | Strict NOT_CONFIGURED | Semantic NOT_CONFIGURED |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | masLLM_cfg | Mistral3-8B | LabA | 1272 | 37.09 | 41.39 | 43.58 | 46.43 | 18.95 | 7.77 | 49.25 | 8.00 | 78.13 |
 | masLLM_cfg | Mistral3-8B | LabB | 2157 | 35.85 | 46.25 | 57.51 | 36.96 | 10.61 | 7.81 | 45.86 | 8.06 | 77.23 |
@@ -99,7 +99,7 @@ Generated: 2026-04-28T20:47:00
 
 ## Strict NOT_CONFIGURED Breakdown
 
-| Method | Model | Lab | Negative Total | Strict NC | Strict Correct | Semantic NC | Semantic Correct | Compliance | Blank |
+| Method | Model | Lab | Negative Total | Strict NOT_CONFIGURED | Strict Correct | Semantic NOT_CONFIGURED | Semantic Correct | Compliance | Blank |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | masLLM_cfg | Mistral3-8B | LabA | 375 | 8.00 | 30 | 78.13 | 293 | 10.24 | 4 |
 | masLLM_cfg | Mistral3-8B | LabB | 571 | 8.06 | 46 | 77.23 | 441 | 10.43 | 0 |
@@ -136,7 +136,7 @@ Generated: 2026-04-28T20:47:00
 
 ## Relaxed Lab Results
 
-| Method | Model | Lab | Total | TA | L1 | L2 | L3 | L4 | L5 | OK | Strict NC | Semantic NC |
+| Method | Model | Lab | Total | TA | L1 | L2 | L3 | L4 | L5 | OK | Strict NOT_CONFIGURED | Semantic NOT_CONFIGURED |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | masLLM_cfg | Mistral3-8B | LabA | 1272 | 57.76 | 79.29 | 43.58 | 46.43 | 18.95 | 7.77 | 49.25 | 8.00 | 78.13 |
 | masLLM_cfg | Mistral3-8B | LabB | 2157 | 54.16 | 77.26 | 57.51 | 36.96 | 10.61 | 7.81 | 45.86 | 8.06 | 77.23 |
@@ -210,7 +210,7 @@ Generated: 2026-04-28T20:47:00
 
 ## Relaxed NOT_CONFIGURED Breakdown
 
-| Method | Model | Lab | Negative Total | Strict NC | Strict Correct | Semantic NC | Semantic Correct | Compliance | Blank |
+| Method | Model | Lab | Negative Total | Strict NOT_CONFIGURED | Strict Correct | Semantic NOT_CONFIGURED | Semantic Correct | Compliance | Blank |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | masLLM_cfg | Mistral3-8B | LabA | 375 | 8.00 | 30 | 78.13 | 293 | 10.24 | 4 |
 | masLLM_cfg | Mistral3-8B | LabB | 571 | 8.06 | 46 | 77.23 | 441 | 10.43 | 0 |

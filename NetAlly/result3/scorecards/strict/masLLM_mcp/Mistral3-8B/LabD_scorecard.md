@@ -6,7 +6,7 @@
 - Lab: `LabD`
 - Raw: `/home/sdlab08/projects/GIA/NetAlly/result2/masLLM_mcp_paper/masLLM_mistral3-8b_mcp/LabD/netally_eval_direct_masLLM_mcp_LabD_20260427_113334.json`
 - Dataset status overlay: 0 rows
-- Generated: 2026-04-28T20:46:50
+- Generated: 2026-04-28T20:48:14
 
 ## Overall
 
