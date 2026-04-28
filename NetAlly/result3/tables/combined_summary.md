@@ -1,6 +1,6 @@
 # Result3 Combined Summary
 
-Generated: 2026-04-28T20:44:03
+Generated: 2026-04-28T20:47:00
 
 ## Method Averages
 
@@ -97,6 +97,43 @@ Generated: 2026-04-28T20:44:03
 | singleLLM_mcp | Mistral3-8B | LabC | 54.80 | 49.72 | 64.81 | 42.43 | 53.74 |  |  |
 | singleLLM_mcp | Mistral3-8B | LabD | 56.37 | 47.01 | 61.78 | 44.03 | 57.44 |  |  |
 
+## Strict NOT_CONFIGURED Breakdown
+
+| Method | Model | Lab | Negative Total | Strict NC | Strict Correct | Semantic NC | Semantic Correct | Compliance | Blank |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| masLLM_cfg | Mistral3-8B | LabA | 375 | 8.00 | 30 | 78.13 | 293 | 10.24 | 4 |
+| masLLM_cfg | Mistral3-8B | LabB | 571 | 8.06 | 46 | 77.23 | 441 | 10.43 | 0 |
+| masLLM_cfg | Mistral3-8B | LabC | 552 | 8.33 | 46 | 78.08 | 431 | 10.67 | 4 |
+| masLLM_cfg | Mistral3-8B | LabD | 556 | 8.63 | 48 | 79.32 | 441 | 10.88 | 2 |
+| masLLM_mcp | Mistral3-8B | LabA | 375 | 15.73 | 59 | 84.00 | 315 | 18.73 | 12 |
+| masLLM_mcp | Mistral3-8B | LabB | 571 | 15.06 | 86 | 89.67 | 512 | 16.80 | 18 |
+| masLLM_mcp | Mistral3-8B | LabC | 552 | 14.13 | 78 | 88.77 | 490 | 15.92 | 24 |
+| masLLM_mcp | Mistral3-8B | LabD | 556 | 16.19 | 90 | 91.37 | 508 | 17.72 | 15 |
+| singleLLM_cfg | GPT-4o-mini | LabA | 375 | 19.73 | 74 | 85.60 | 321 | 23.05 | 0 |
+| singleLLM_cfg | GPT-4o-mini | LabB | 571 | 11.38 | 65 | 74.08 | 423 | 15.37 | 0 |
+| singleLLM_cfg | GPT-4o-mini | LabC | 552 | 14.31 | 79 | 63.95 | 353 | 22.38 | 3 |
+| singleLLM_cfg | GPT-4o-mini | LabD | 556 | 12.95 | 72 | 57.73 | 321 | 22.43 | 0 |
+| singleLLM_cfg | GPT-OSS-20B | LabA | 375 | 3.73 | 14 | 73.07 | 274 | 5.11 | 1 |
+| singleLLM_cfg | GPT-OSS-20B | LabB | 571 | 10.51 | 60 | 64.27 | 367 | 16.35 | 143 |
+| singleLLM_cfg | GPT-OSS-20B | LabC | 552 | 8.51 | 47 | 58.33 | 322 | 14.60 | 151 |
+| singleLLM_cfg | GPT-OSS-20B | LabD | 556 | 5.22 | 29 | 50.54 | 281 | 10.32 | 174 |
+| singleLLM_cfg | Llama-3.1-8B | LabA | 375 | 5.33 | 20 | 57.33 | 215 | 9.30 | 0 |
+| singleLLM_cfg | Llama-3.1-8B | LabB | 571 | 3.33 | 19 | 55.34 | 316 | 6.01 | 0 |
+| singleLLM_cfg | Llama-3.1-8B | LabC | 552 | 0.00 | 0 | 26.63 | 147 | 0.00 | 0 |
+| singleLLM_cfg | Llama-3.1-8B | LabD | 556 | 1.08 | 6 | 26.62 | 148 | 4.05 | 20 |
+| singleLLM_cfg | Mistral3-8B | LabA | 375 | 20.00 | 75 | 90.93 | 341 | 21.99 | 0 |
+| singleLLM_cfg | Mistral3-8B | LabB | 571 | 14.89 | 85 | 84.59 | 483 | 17.60 | 0 |
+| singleLLM_cfg | Mistral3-8B | LabC | 552 | 10.14 | 56 | 70.47 | 389 | 14.40 | 0 |
+| singleLLM_cfg | Mistral3-8B | LabD | 556 | 9.35 | 52 | 67.45 | 375 | 13.87 | 0 |
+| singleLLM_cfg | Qwen3-8B | LabA | 375 | 0.53 | 2 | 68.00 | 255 | 0.78 | 13 |
+| singleLLM_cfg | Qwen3-8B | LabB | 571 | 0.00 | 0 | 5.25 | 30 | 0.00 | 293 |
+| singleLLM_cfg | Qwen3-8B | LabC | 552 | 0.00 | 0 | 0.54 | 3 | 0.00 | 282 |
+| singleLLM_cfg | Qwen3-8B | LabD | 556 | 0.00 | 0 | 0.00 | 0 |  | 282 |
+| singleLLM_mcp | Mistral3-8B | LabA | 375 | 15.73 | 59 | 83.47 | 313 | 18.85 | 17 |
+| singleLLM_mcp | Mistral3-8B | LabB | 571 | 14.54 | 83 | 89.14 | 509 | 16.31 | 21 |
+| singleLLM_mcp | Mistral3-8B | LabC | 552 | 14.13 | 78 | 88.59 | 489 | 15.95 | 24 |
+| singleLLM_mcp | Mistral3-8B | LabD | 556 | 15.29 | 85 | 90.65 | 504 | 16.87 | 20 |
+
 ## Relaxed Lab Results
 
 | Method | Model | Lab | Total | TA | L1 | L2 | L3 | L4 | L5 | OK | Strict NC | Semantic NC |
@@ -170,6 +207,43 @@ Generated: 2026-04-28T20:44:03
 | singleLLM_mcp | Mistral3-8B | LabB | 76.68 | 61.72 | 79.33 | 91.64 | 67.74 |  |  |
 | singleLLM_mcp | Mistral3-8B | LabC | 70.17 | 61.15 | 73.34 | 89.87 | 60.02 |  |  |
 | singleLLM_mcp | Mistral3-8B | LabD | 68.80 | 59.15 | 67.95 | 91.43 | 62.36 |  |  |
+
+## Relaxed NOT_CONFIGURED Breakdown
+
+| Method | Model | Lab | Negative Total | Strict NC | Strict Correct | Semantic NC | Semantic Correct | Compliance | Blank |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| masLLM_cfg | Mistral3-8B | LabA | 375 | 8.00 | 30 | 78.13 | 293 | 10.24 | 4 |
+| masLLM_cfg | Mistral3-8B | LabB | 571 | 8.06 | 46 | 77.23 | 441 | 10.43 | 0 |
+| masLLM_cfg | Mistral3-8B | LabC | 552 | 8.33 | 46 | 78.08 | 431 | 10.67 | 4 |
+| masLLM_cfg | Mistral3-8B | LabD | 556 | 8.63 | 48 | 79.32 | 441 | 10.88 | 2 |
+| masLLM_mcp | Mistral3-8B | LabA | 375 | 15.73 | 59 | 84.00 | 315 | 18.73 | 12 |
+| masLLM_mcp | Mistral3-8B | LabB | 571 | 15.06 | 86 | 89.67 | 512 | 16.80 | 18 |
+| masLLM_mcp | Mistral3-8B | LabC | 552 | 14.13 | 78 | 88.77 | 490 | 15.92 | 24 |
+| masLLM_mcp | Mistral3-8B | LabD | 556 | 16.19 | 90 | 91.37 | 508 | 17.72 | 15 |
+| singleLLM_cfg | GPT-4o-mini | LabA | 375 | 19.73 | 74 | 85.60 | 321 | 23.05 | 0 |
+| singleLLM_cfg | GPT-4o-mini | LabB | 571 | 11.38 | 65 | 74.08 | 423 | 15.37 | 0 |
+| singleLLM_cfg | GPT-4o-mini | LabC | 552 | 14.31 | 79 | 63.95 | 353 | 22.38 | 3 |
+| singleLLM_cfg | GPT-4o-mini | LabD | 556 | 12.95 | 72 | 57.73 | 321 | 22.43 | 0 |
+| singleLLM_cfg | GPT-OSS-20B | LabA | 375 | 3.73 | 14 | 73.07 | 274 | 5.11 | 1 |
+| singleLLM_cfg | GPT-OSS-20B | LabB | 571 | 10.51 | 60 | 64.27 | 367 | 16.35 | 143 |
+| singleLLM_cfg | GPT-OSS-20B | LabC | 552 | 8.51 | 47 | 58.33 | 322 | 14.60 | 151 |
+| singleLLM_cfg | GPT-OSS-20B | LabD | 556 | 5.22 | 29 | 50.54 | 281 | 10.32 | 174 |
+| singleLLM_cfg | Llama-3.1-8B | LabA | 375 | 5.33 | 20 | 57.33 | 215 | 9.30 | 0 |
+| singleLLM_cfg | Llama-3.1-8B | LabB | 571 | 3.33 | 19 | 55.34 | 316 | 6.01 | 0 |
+| singleLLM_cfg | Llama-3.1-8B | LabC | 552 | 0.00 | 0 | 26.63 | 147 | 0.00 | 0 |
+| singleLLM_cfg | Llama-3.1-8B | LabD | 556 | 1.08 | 6 | 26.62 | 148 | 4.05 | 20 |
+| singleLLM_cfg | Mistral3-8B | LabA | 375 | 20.00 | 75 | 90.93 | 341 | 21.99 | 0 |
+| singleLLM_cfg | Mistral3-8B | LabB | 571 | 14.89 | 85 | 84.59 | 483 | 17.60 | 0 |
+| singleLLM_cfg | Mistral3-8B | LabC | 552 | 10.14 | 56 | 70.47 | 389 | 14.40 | 0 |
+| singleLLM_cfg | Mistral3-8B | LabD | 556 | 9.35 | 52 | 67.45 | 375 | 13.87 | 0 |
+| singleLLM_cfg | Qwen3-8B | LabA | 375 | 0.53 | 2 | 68.00 | 255 | 0.78 | 13 |
+| singleLLM_cfg | Qwen3-8B | LabB | 571 | 0.00 | 0 | 5.25 | 30 | 0.00 | 293 |
+| singleLLM_cfg | Qwen3-8B | LabC | 552 | 0.00 | 0 | 0.54 | 3 | 0.00 | 282 |
+| singleLLM_cfg | Qwen3-8B | LabD | 556 | 0.00 | 0 | 0.00 | 0 |  | 282 |
+| singleLLM_mcp | Mistral3-8B | LabA | 375 | 15.73 | 59 | 83.47 | 313 | 18.85 | 17 |
+| singleLLM_mcp | Mistral3-8B | LabB | 571 | 14.54 | 83 | 89.14 | 509 | 16.31 | 21 |
+| singleLLM_mcp | Mistral3-8B | LabC | 552 | 14.13 | 78 | 88.59 | 489 | 15.95 | 24 |
+| singleLLM_mcp | Mistral3-8B | LabD | 556 | 15.29 | 85 | 90.65 | 504 | 16.87 | 20 |
 
 ## Strict vs Relaxed Gap
 

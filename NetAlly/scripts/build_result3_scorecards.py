@@ -438,6 +438,10 @@ def summary_row(record: dict[str, Any]) -> dict[str, Any]:
         "strict_nc": safe_cell(neg.get("explicit_abstention_accuracy")),
         "semantic_nc": safe_cell(neg.get("semantic_negative_accuracy")),
         "compliance": safe_cell(neg.get("contract_compliance")),
+        "negative_total": neg.get("total_negative_samples", 0),
+        "negative_explicit_correct": neg.get("explicit_abstention_correct", 0),
+        "negative_semantic_correct": neg.get("semantic_negative_correct", 0),
+        "negative_blank": neg.get("blank_negative_predictions", 0),
         **{f"type_{answer_type}": safe_cell(by_type.get(answer_type)) for answer_type in TYPE_COLUMNS},
         "raw_path": record["raw_path"],
     }
@@ -567,6 +571,10 @@ def write_csv(path: Path, records: list[dict[str, Any]]) -> None:
         "strict_nc",
         "semantic_nc",
         "compliance",
+        "negative_total",
+        "negative_explicit_correct",
+        "negative_semantic_correct",
+        "negative_blank",
         *[f"type_{answer_type}" for answer_type in TYPE_COLUMNS],
         "raw_path",
     ]
@@ -699,6 +707,39 @@ def write_combined_md(path: Path, records: list[dict[str, Any]]) -> None:
                         row["type_text"],
                         row["type_boolean"],
                         row["type_path"],
+                    ]
+                    for row in [summary_row(record) for record in mode_records]
+                ],
+            )
+        )
+
+        lines.extend(["", f"## {mode.title()} NOT_CONFIGURED Breakdown", ""])
+        lines.extend(
+            markdown_table(
+                [
+                    "Method",
+                    "Model",
+                    "Lab",
+                    "Negative Total",
+                    "Strict NC",
+                    "Strict Correct",
+                    "Semantic NC",
+                    "Semantic Correct",
+                    "Compliance",
+                    "Blank",
+                ],
+                [
+                    [
+                        row["method"],
+                        row["model"],
+                        row["lab"],
+                        str(row["negative_total"]),
+                        row["strict_nc"],
+                        str(row["negative_explicit_correct"]),
+                        row["semantic_nc"],
+                        str(row["negative_semantic_correct"]),
+                        row["compliance"],
+                        str(row["negative_blank"]),
                     ]
                     for row in [summary_row(record) for record in mode_records]
                 ],

@@ -6,7 +6,7 @@
 - Lab: `LabC`
 - Raw: `/home/sdlab08/projects/GIA/NetAlly/result2/masLLM_mcp_paper/masLLM_mistral3-8b_mcp/LabC/netally_eval_direct_LabC_NCN_Security_L2VPN_30nodes_20260424_130543.json`
 - Dataset status overlay: 0 rows
-- Generated: 2026-04-28T20:43:44
+- Generated: 2026-04-28T20:46:43
 
 ## Overall
 

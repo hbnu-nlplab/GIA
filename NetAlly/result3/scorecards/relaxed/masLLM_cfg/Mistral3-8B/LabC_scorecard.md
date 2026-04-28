@@ -6,7 +6,7 @@
 - Lab: `LabC`
 - Raw: `/home/sdlab08/projects/GIA/NetAlly/result2/masLLM_cfg/mistral3_8b/labC/results_raw_mistral3_8b_20260408_102716.json`
 - Dataset status overlay: 0 rows
-- Generated: 2026-04-28T20:43:42
+- Generated: 2026-04-28T20:46:39
 
 ## Overall
 
