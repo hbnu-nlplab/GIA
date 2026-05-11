@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>NetAlly 인계 — 시각 설명서 (for leehj)</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --panel: #1e293b;
+    --panel-2: #334155;
+    --accent: #38bdf8;
+    --accent-2: #fbbf24;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --ok: #4ade80;
+    --warn: #f97316;
+    --err: #f87171;
+    --border: #475569;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Pretendard", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+  header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+    padding: 48px 24px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  header h1 { font-size: 36px; margin: 0 0 12px; letter-spacing: -0.5px; }
+  header p { color: var(--muted); margin: 4px 0; }
+  .badge {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--panel);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    border-radius: 16px;
+    font-size: 13px;
+    margin: 12px 4px 0;
+  }
+  main { max-width: 1100px; margin: 0 auto; padding: 32px 24px 80px; }
+  section { margin-bottom: 56px; }
+  h2 {
+    font-size: 26px;
+    border-left: 4px solid var(--accent);
+    padding-left: 12px;
+    margin: 48px 0 20px;
+  }
+  h3 { font-size: 18px; color: var(--accent); margin-top: 28px; }
+  p { color: var(--text); }
+  .lead { font-size: 17px; color: var(--muted); }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 12px 0;
+  }
+  .card.ok { border-left: 4px solid var(--ok); }
+  .card.warn { border-left: 4px solid var(--warn); }
+  .card.info { border-left: 4px solid var(--accent); }
+  code, pre {
+    font-family: "JetBrains Mono", "Consolas", monospace;
+    font-size: 13px;
+  }
+  code {
+    background: var(--panel-2);
+    color: var(--accent-2);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  pre {
+    background: #0a0f1d;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 18px;
+    overflow-x: auto;
+    color: #e2e8f0;
+  }
+  pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    background: var(--panel-2);
+    color: var(--accent);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  tr:hover td { background: rgba(56, 189, 248, 0.05); }
+  .grid { display: grid; gap: 16px; margin: 16px 0; }
+  .grid.cols-2 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  .grid.cols-3 { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .step {
+    background: var(--panel);
+    border-radius: 8px;
+    padding: 16px 20px;
+    border: 1px solid var(--border);
+    position: relative;
+  }
+  .step .num {
+    display: inline-block;
+    width: 28px; height: 28px;
+    background: var(--accent);
+    color: var(--bg);
+    border-radius: 50%;
+    text-align: center;
+    line-height: 28px;
+    font-weight: bold;
+    margin-right: 8px;
+  }
+  .step h4 { margin: 0 0 8px; display: inline-block; }
+  .diagram-wrap {
+    background: #0a0f1d;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    overflow-x: auto;
+    margin: 16px 0;
+  }
+  .diagram-wrap svg { display: block; margin: 0 auto; max-width: 100%; }
+  .why-box {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.1) 0%, rgba(251, 191, 36, 0.05) 100%);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 24px 0;
+  }
+  .why-box h3 { margin-top: 0; color: var(--accent-2); }
+  .pill {
+    display: inline-block;
+    padding: 2px 10px;
+    background: var(--panel-2);
+    border-radius: 12px;
+    font-size: 12px;
+    margin-right: 6px;
+  }
+  .pill.ok { background: rgba(74, 222, 128, 0.15); color: var(--ok); }
+  .pill.warn { background: rgba(249, 115, 22, 0.15); color: var(--warn); }
+  .pill.err { background: rgba(248, 113, 113, 0.15); color: var(--err); }
+  .toc {
+    background: var(--panel);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 20px 0 48px;
+    border: 1px solid var(--border);
+  }
+  .toc ol { columns: 2; column-gap: 32px; margin: 0; padding-left: 24px; }
+  .toc a { color: var(--accent); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  footer {
+    text-align: center;
+    color: var(--muted);
+    padding: 24px;
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+  }
+  .link-card {
+    display: block;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    color: var(--text);
+    text-decoration: none;
+    transition: border-color 0.15s;
+  }
+  .link-card:hover { border-color: var(--accent); }
+  .link-card .title { color: var(--accent); font-weight: 600; font-size: 16px; }
+  .link-card .desc { color: var(--muted); font-size: 13px; margin-top: 6px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>NetAlly 인계 — 시각 설명서</h1>
+  <p>운영자 변경: <strong style="color:var(--accent)">kilab_pyj</strong> → <strong style="color:var(--accent-2)">leehj</strong></p>
+  <p>인계 일자: 2026-05-09 · 적용 환경: <code>kilab-A5000</code></p>
+  <span class="badge">LabD active</span>
+  <span class="badge">40 nodes in-sync</span>
+  <span class="badge">vmnet8 LAN 직통</span>
+</header>
+
+<main>
+
+<!-- ─────────────────────────────────────────────── -->
+<section>
+  <p class="lead">
+    이 문서는 텍스트 설명서(<code>01_SETUP_GUIDE.md</code> / <code>02_EXPERIMENT_GUIDE.md</code>)의
+    그림판. <strong>"왜 이렇게 구성했는가"</strong>를 그림으로 한 번 보고 인계 받으면 셋업/실험이 훨씬 빠릅니다.
+  </p>
+
+  <div class="toc">
+    <strong>이 문서에서 다루는 것</strong>
+    <ol>
+      <li><a href="#quick">빠른 시작 (3 step)</a></li>
+      <li><a href="#overview">환경 한눈에 보기</a></li>
+      <li><a href="#why-split">왜 NSO를 4개로 나눴나</a></li>
+      <li><a href="#why-vmnet">왜 Tailscale 떼고 vmnet8을 썼나</a></li>
+      <li><a href="#lab-switch">Lab 전환 동작 원리</a></li>
+      <li><a href="#eval-flow">평가 파이프라인 흐름</a></li>
+      <li><a href="#troubleshoot">트러블슈팅 카드</a></li>
+      <li><a href="#links">관련 문서</a></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────── -->
+<section id="quick">
+  <h2>1. 빠른 시작 — 인수 3 step</h2>
+  <p class="lead">자기 폴더(<code>/home/leehj/network/GIA</code>)에서 차례로 실행.</p>
+
+  <div class="grid cols-3">
+    <div class="step">
+      <span class="num">1</span><h4>기존 백엔드 정리</h4>
+      <pre><code>ps -ef | grep 'uvicorn main:app' | \
+  grep "$USER" | grep -v grep | \
+  awk '{print $2}' | xargs -r kill
+sleep 3</code></pre>
+    </div>
+
+    <div class="step">
+      <span class="num">2</span><h4>레포 + .env 갱신</h4>
+      <pre><code>git config --global --add safe.directory \
+  /home/leehj/network/GIA
+cd /home/leehj/network/GIA && git pull
+cd NetAlly
+mv .env .env.bak-$(date +%Y%m%d)
+nano .env   # 양식 붙여넣기</code></pre>
+    </div>
+
+    <div class="step">
+      <span class="num">3</span><h4>백엔드 재기동</h4>
+      <pre><code>uv sync --extra dev
+set -a; source .env; set +a
+nohup uv run uvicorn main:app \
+  --host 0.0.0.0 --port 8111 \
+  > /tmp/netally-backend.log 2>&1 &
+disown</code></pre>
+    </div>
+  </div>
+
+  <div class="card ok">
+    <strong>검증</strong> — <code>curl http://localhost:38080/restconf/data/tailf-ncs:devices?fields=device(name)</code>
+    가 <strong>40</strong> 줄을 뱉으면 LabD 정상.
+  </div>
+
+  <p>자세한 절차는 <a href="01_SETUP_GUIDE.md" style="color:var(--accent)">01_SETUP_GUIDE.md §3</a>.</p>
+</section>
+
+<!-- ─────────────────────────────────────────────── -->
+<section id="overview">
+  <h2>2. 환경 한눈에 보기</h2>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 900 540" xmlns="http://www.w3.org/2000/svg" style="font-family: sans-serif; font-size: 12px;">
+      <!-- A5000 box -->
+      <rect x="20" y="20" width="860" height="500" rx="12" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+      <text x="40" y="48" fill="#38bdf8" font-size="16" font-weight="bold">A5000 (kilab-A5000)</text>
+      <text x="40" y="68" fill="#94a3b8">LAN: 192.168.0.80 · Tailscale: 100.67.63.77</text>
+
+      <!-- Team browser -->
+      <rect x="60" y="100" width="180" height="80" rx="8" fill="#334155" stroke="#475569"/>
+      <text x="150" y="130" fill="#fbbf24" text-anchor="middle" font-weight="bold">팀원 브라우저</text>
+      <text x="150" y="155" fill="#94a3b8" text-anchor="middle" font-size="11">http://192.168.0.80:3000</text>
+
+      <!-- NetAlly -->
+      <rect x="280" y="100" width="200" height="80" rx="8" fill="#334155" stroke="#38bdf8"/>
+      <text x="380" y="125" fill="#38bdf8" text-anchor="middle" font-weight="bold">NetAlly</text>
+      <text x="380" y="148" fill="#e2e8f0" text-anchor="middle" font-size="11">Backend :8111 (FastAPI)</text>
+      <text x="380" y="166" fill="#e2e8f0" text-anchor="middle" font-size="11">Frontend :3000 (Vite)</text>
+
+      <!-- 4 NSO -->
+      <rect x="520" y="80" width="340" height="160" rx="8" fill="#334155" stroke="#fbbf24"/>
+      <text x="690" y="105" fill="#fbbf24" text-anchor="middle" font-weight="bold">NSO Docker × 4</text>
+      <rect x="540" y="120" width="140" height="40" rx="4" fill="#1e293b" stroke="#475569"/>
+      <text x="610" y="138" fill="#94a3b8" text-anchor="middle" font-size="11">cisco-nso-laba</text>
+      <text x="610" y="152" fill="#94a3b8" text-anchor="middle" font-size="11">:18080 (빈)</text>
+      <rect x="700" y="120" width="140" height="40" rx="4" fill="#1e293b" stroke="#475569"/>
+      <text x="770" y="138" fill="#94a3b8" text-anchor="middle" font-size="11">cisco-nso-labb</text>
+      <text x="770" y="152" fill="#94a3b8" text-anchor="middle" font-size="11">:8080 (빈)</text>
+      <rect x="540" y="170" width="140" height="40" rx="4" fill="#1e293b" stroke="#475569"/>
+      <text x="610" y="188" fill="#94a3b8" text-anchor="middle" font-size="11">cisco-nso-labc</text>
+      <text x="610" y="202" fill="#94a3b8" text-anchor="middle" font-size="11">:28080 (빈)</text>
+      <rect x="700" y="170" width="140" height="40" rx="4" fill="#1e293b" stroke="#4ade80" stroke-width="2"/>
+      <text x="770" y="188" fill="#4ade80" text-anchor="middle" font-size="11" font-weight="bold">cisco-nso-labd ★</text>
+      <text x="770" y="202" fill="#4ade80" text-anchor="middle" font-size="11">:38080 (40 nodes)</text>
+
+      <!-- Batfish -->
+      <rect x="280" y="220" width="200" height="60" rx="8" fill="#334155" stroke="#475569"/>
+      <text x="380" y="245" fill="#fbbf24" text-anchor="middle" font-weight="bold">Batfish</text>
+      <text x="380" y="265" fill="#94a3b8" text-anchor="middle" font-size="11">:9996</text>
+
+      <!-- vmnet8 NAT -->
+      <rect x="280" y="320" width="540" height="60" rx="8" fill="#1e293b" stroke="#f97316"/>
+      <text x="550" y="343" fill="#f97316" text-anchor="middle" font-weight="bold">vmnet8 NAT (192.168.110.0/24)</text>
+      <text x="550" y="365" fill="#94a3b8" text-anchor="middle" font-size="11">RTT ~0.1ms · 호스트↔게스트 직통</text>
+
+      <!-- PNETLab VM -->
+      <rect x="60" y="420" width="760" height="80" rx="8" fill="#334155" stroke="#fbbf24"/>
+      <text x="80" y="448" fill="#fbbf24" font-weight="bold">PNETLab VM (192.168.110.132)</text>
+      <text x="80" y="468" fill="#94a3b8" font-size="11">pnet0: 10.10.10.1/24 (OOB) · IP forward + SNAT</text>
+      <text x="80" y="486" fill="#94a3b8" font-size="11">Lab 장비 N개 — 10.10.10.11~ (한 번에 하나의 lab만 active)</text>
+
+      <!-- Arrows -->
+      <line x1="240" y1="140" x2="280" y2="140" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr)"/>
+      <line x1="480" y1="140" x2="520" y2="140" stroke="#fbbf24" stroke-width="2" marker-end="url(#arr)"/>
+      <line x1="380" y1="180" x2="380" y2="220" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr)"/>
+      <line x1="690" y1="240" x2="690" y2="320" stroke="#fbbf24" stroke-width="2" marker-end="url(#arr)"/>
+      <line x1="380" y1="280" x2="380" y2="320" stroke="#fbbf24" stroke-width="2" marker-end="url(#arr)"/>
+      <line x1="550" y1="380" x2="550" y2="420" stroke="#f97316" stroke-width="2" marker-end="url(#arr)"/>
+
+      <defs>
+        <marker id="arr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+          <path d="M0,0 L0,6 L9,3 z" fill="#fbbf24"/>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+
+  <p class="lead">
+    팀원이 <code>192.168.0.80:3000</code> 접속 → NetAlly가 4개 NSO 중
+    <span class="pill ok">labd:38080 (현재 active)</span>로 RESTCONF 호출 →
+    NSO가 vmnet8 통해 PNETLab의 10.10.10.x device에 SSH 들어가서 config 읽음.
+  </p>
+</section>
+
+<!-- ─────────────────────────────────────────────── -->
+<section id="why-split">
+  <h2>3. 왜 NSO를 4개로 나눴나</h2>
+
+  <div class="why-box">
+    <h3>핵심 제약</h3>
+    <p>
+      <strong>모든 lab의 OOB(management) IP가 <code>10.10.10.11~</code>로 동일하다.</strong>
+      예: LabA의 P1 = 10.10.10.11, LabB의 P1 = 10.10.10.11.
+    </p>
+    <p>
+      이 때문에 PNETLab에서는 한 번에 하나의 lab만 띄울 수 있다. 동시에 두 lab을 켜면
+      <code>%IP-4-DUPADDR</code> 충돌이 나고 NSO sync가 깨진다.
+    </p>
+  </div>
+
+  <h3>해결: NSO를 lab별로 분리</h3>
+  <p>NSO 인스턴스를 lab마다 따로 두면 각자 자기 CDB에 device 정보를 갖는다. 같은 IP라도 다른 NSO 안에 있으니 inventory 충돌이 없다.</p>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 800 240" xmlns="http://www.w3.org/2000/svg" style="font-family: sans-serif; font-size: 12px;">
+      <!-- Wrong: one NSO -->
+      <text x="200" y="25" fill="#f87171" text-anchor="middle" font-weight="bold">❌ 옛날 방식 — NSO 1개</text>
+      <rect x="80" y="50" width="240" height="100" rx="8" fill="#334155" stroke="#f87171"/>
+      <text x="200" y="75" fill="#f87171" text-anchor="middle">cisco-nso-dev :8080</text>
+      <text x="200" y="100" fill="#94a3b8" text-anchor="middle" font-size="11">LabA의 P1 (10.10.10.11)</text>
+      <text x="200" y="118" fill="#94a3b8" text-anchor="middle" font-size="11">LabB의 P1 (10.10.10.11)</text>
+      <text x="200" y="136" fill="#f87171" text-anchor="middle" font-size="11">→ 같은 이름·IP 충돌</text>
+
+      <!-- Right: 4 NSO -->
+      <text x="600" y="25" fill="#4ade80" text-anchor="middle" font-weight="bold">✅ 현재 방식 — NSO 4개</text>
+      <rect x="460" y="50" width="120" height="60" rx="6" fill="#334155" stroke="#4ade80"/>
+      <text x="520" y="72" fill="#4ade80" text-anchor="middle" font-size="11">cisco-nso-laba</text>
+      <text x="520" y="90" fill="#94a3b8" text-anchor="middle" font-size="11">:18080 (LabA만)</text>
+      <rect x="600" y="50" width="120" height="60" rx="6" fill="#334155" stroke="#4ade80"/>
+      <text x="660" y="72" fill="#4ade80" text-anchor="middle" font-size="11">cisco-nso-labb</text>
+      <text x="660" y="90" fill="#94a3b8" text-anchor="middle" font-size="11">:8080 (LabB만)</text>
+      <rect x="460" y="120" width="120" height="60" rx="6" fill="#334155" stroke="#4ade80"/>
+      <text x="520" y="142" fill="#4ade80" text-anchor="middle" font-size="11">cisco-nso-labc</text>
+      <text x="520" y="160" fill="#94a3b8" text-anchor="middle" font-size="11">:28080 (LabC만)</text>
+      <rect x="600" y="120" width="120" height="60" rx="6" fill="#334155" stroke="#fbbf24" stroke-width="2"/>
+      <text x="660" y="142" fill="#fbbf24" text-anchor="middle" font-size="11">cisco-nso-labd ★</text>
+      <text x="660" y="160" fill="#fbbf24" text-anchor="middle" font-size="11">:38080 (LabD만)</text>
+      <text x="600" y="210" fill="#4ade80" text-anchor="middle" font-size="11">→ 각자 자기 CDB · 충돌 X</text>
+    </svg>
+  </div>
+
+  <table>
+    <tr><th>장점</th><th>설명</th></tr>
+    <tr><td>충돌 회피</td><td>같은 IP라도 NSO가 달라서 inventory 충돌 없음</td></tr>
+    <tr><td>병렬 운영</td><td>lab을 전환해도 다른 lab의 CDB는 보존됨</td></tr>
+    <tr><td>독립 디버깅</td><td>한 lab의 sync 문제가 다른 lab에 영향 X</td></tr>
+    <tr><td>인계 안정성</td><td>LabD 데이터 954MB가 호스트에 마운트되어 컨테이너 재시작에도 보존</td></tr>
+  </table>
+</section>
+
+<!-- ─────────────────────────────────────────────── -->
+<section id="why-vmnet">
+  <h2>4. 왜 Tailscale 떼고 vmnet8을 썼나</h2>
+
+  <div class="why-box">
+    <h3>두 가지 라우팅 비교</h3>
+    <p>같은 박스(A5000) 안의 PNETLab VM과 통신할 때 두 가지 경로가 있다.</p>
+  </div>
+
+  <div class="grid cols-2">
+    <div class="card warn">
+      <h3>🐢 옛 경로: Tailscale</h3>
+      <ul>
+        <li>RTT: 2~3ms (커널 fwmark 룰 거침)</li>
+        <li><strong>도커 컨테이너에서 안 됨</strong> — Tailscale 정책 라우팅이 fwmark 있는 패킷만 처리</li>
+        <li>Tailscale 데몬 죽으면 OOB 통신 끊김</li>
+        <li>팀원도 Tailscale 가입해야 접속 가능</li>
+      </ul>
+    </div>
+
+    <div class="card ok">
+      <h3>⚡ 현재 경로: vmnet8</h3>
+      <ul>
+        <li>RTT: <strong>0.1ms</strong> (vmnet8 가상 스위치, 메모리 hop)</li>
+        <li>도커 컨테이너에서도 작동 (main routing table 사용)</li>
+        <li>Tailscale 죽어도 OOB 통신 살아있음</li>
+        <li><strong>팀원은 LAN IP만 알면 됨</strong> (Tailscale 가입 불필요)</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>vmnet8 라우팅 작동 원리</h3>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 800 240" xmlns="http://www.w3.org/2000/svg" style="font-family: sans-serif; font-size: 12px;">
+      <!-- A5000 -->
+      <rect x="20" y="20" width="200" height="200" rx="8" fill="#1e293b" stroke="#38bdf8"/>
+      <text x="120" y="45" fill="#38bdf8" text-anchor="middle" font-weight="bold">A5000 호스트</text>
+      <rect x="40" y="65" width="160" height="50" rx="4" fill="#334155" stroke="#475569"/>
+      <text x="120" y="85" fill="#e2e8f0" text-anchor="middle" font-size="11">cisco-nso-labd</text>
+      <text x="120" y="102" fill="#94a3b8" text-anchor="middle" font-size="11">172.19.0.x (nso_bridge)</text>
+      <rect x="40" y="130" width="160" height="40" rx="4" fill="#334155" stroke="#f97316"/>
+      <text x="120" y="155" fill="#f97316" text-anchor="middle" font-size="11">vmnet8 (192.168.110.1)</text>
+
+      <!-- iptables MASQUERADE -->
+      <rect x="265" y="80" width="150" height="80" rx="8" fill="#1e293b" stroke="#fbbf24" stroke-dasharray="4 2"/>
+      <text x="340" y="105" fill="#fbbf24" text-anchor="middle" font-size="11" font-weight="bold">iptables NAT</text>
+      <text x="340" y="125" fill="#94a3b8" text-anchor="middle" font-size="11">MASQUERADE</text>
+      <text x="340" y="145" fill="#94a3b8" text-anchor="middle" font-size="11">src 172.19→192.168.110.1</text>
+
+      <!-- PNETLab VM -->
+      <rect x="460" y="20" width="320" height="200" rx="8" fill="#1e293b" stroke="#fbbf24"/>
+      <text x="620" y="45" fill="#fbbf24" text-anchor="middle" font-weight="bold">PNETLab VM</text>
+      <rect x="480" y="65" width="280" height="50" rx="4" fill="#334155" stroke="#475569"/>
+      <text x="620" y="85" fill="#e2e8f0" text-anchor="middle" font-size="11">pnet0: 192.168.110.132 + 10.10.10.1</text>
+      <text x="620" y="102" fill="#94a3b8" text-anchor="middle" font-size="11">(IP forward + SNAT 192.168→10.10)</text>
+      <rect x="480" y="130" width="130" height="50" rx="4" fill="#334155" stroke="#4ade80"/>
+      <text x="545" y="150" fill="#4ade80" text-anchor="middle" font-size="11">LabD device</text>
+      <text x="545" y="167" fill="#94a3b8" text-anchor="middle" font-size="11">10.10.10.11</text>
+
+      <!-- Arrows -->
+      <line x1="200" y1="90" x2="265" y2="110" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr2)"/>
+      <line x1="415" y1="120" x2="480" y2="90" stroke="#fbbf24" stroke-width="2" marker-end="url(#arr2)"/>
+      <line x1="610" y1="135" x2="610" y2="135" stroke="#4ade80" stroke-width="2"/>
+      <line x1="620" y1="115" x2="545" y2="130" stroke="#4ade80" stroke-width="2" marker-end="url(#arr2)"/>
+
+      <defs>
+        <marker id="arr2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#fbbf24"/>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+
+  <pre><code># 영구화된 설정 (재부팅 후에도 살아있음)
+ip route show 10.10.10.0/24
+  → 10.10.10.0/24 via 192.168.110.132 dev vmnet8
+
+sudo iptables -t nat -L POSTROUTING -n | grep '10.10.10'
+  → MASQUERADE  all  --  0.0.0.0/0  10.10.10.0/24
+
+sudo systemctl status pnetlab-oob-route.service
+  → active (exited)</code></pre>
+</section>
+
+<!-- ─────────────────────────────────────────────── -->
+<section id="lab-switch">
+  <h2>5. Lab 전환 동작 원리</h2>
+
+  <p>LabD 작업 중 LabA로 옮기고 싶을 때:</p>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 880 280" xmlns="http://www.w3.org/2000/svg" style="font-family: sans-serif; font-size: 12px;">
+      <!-- Step 1 -->
+      <rect x="20" y="20" width="200" height="240" rx="8" fill="#1e293b" stroke="#f87171" stroke-dasharray="4 2"/>
+      <text x="120" y="45" fill="#f87171" text-anchor="middle" font-weight="bold">① PNETLab GUI</text>
+      <text x="40" y="75" fill="#94a3b8" font-size="11">- LabD 모든 노드 Stop</text>
+      <text x="40" y="100" fill="#94a3b8" font-size="11">- Lab/LabA_Research.unl 열기</text>
+      <text x="40" y="125" fill="#94a3b8" font-size="11">- 모든 노드 Start</text>
+      <text x="40" y="150" fill="#94a3b8" font-size="11">- IOS 부팅 완료 대기</text>
+      <text x="40" y="195" fill="#fbbf24" font-size="11" font-weight="bold">중요:</text>
+      <text x="40" y="215" fill="#94a3b8" font-size="11">OOB IP 충돌 방지를 위해</text>
+      <text x="40" y="232" fill="#94a3b8" font-size="11">LabD를 먼저 stop해야 함</text>
+
+      <!-- Step 2 -->
+      <rect x="240" y="20" width="200" height="240" rx="8" fill="#1e293b" stroke="#fbbf24" stroke-dasharray="4 2"/>
+      <text x="340" y="45" fill="#fbbf24" text-anchor="middle" font-weight="bold">② NSO 등록 (1회)</text>
+      <text x="260" y="75" fill="#94a3b8" font-size="11">python3 2-NSO_Register.py \</text>
+      <text x="260" y="92" fill="#94a3b8" font-size="11">  --device-info \</text>
+      <text x="260" y="109" fill="#94a3b8" font-size="11">    LabA/device_info.json \</text>
+      <text x="260" y="126" fill="#94a3b8" font-size="11">  --nso-container \</text>
+      <text x="260" y="143" fill="#94a3b8" font-size="11">    cisco-nso-laba</text>
+      <text x="260" y="195" fill="#fbbf24" font-size="11" font-weight="bold">중요:</text>
+      <text x="260" y="215" fill="#94a3b8" font-size="11">한 lab 첫 등록 시에만.</text>
+      <text x="260" y="232" fill="#94a3b8" font-size="11">두 번째부터 생략.</text>
+
+      <!-- Step 3 -->
+      <rect x="460" y="20" width="200" height="240" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-dasharray="4 2"/>
+      <text x="560" y="45" fill="#38bdf8" text-anchor="middle" font-weight="bold">③ .env 두 줄</text>
+      <text x="480" y="75" fill="#94a3b8" font-size="11">sed -i 's|NSO_BASE_URL=.*|</text>
+      <text x="480" y="92" fill="#94a3b8" font-size="11"> NSO_BASE_URL=http://</text>
+      <text x="480" y="109" fill="#94a3b8" font-size="11"> localhost:18080/restconf|'</text>
+      <text x="480" y="126" fill="#94a3b8" font-size="11"> .env</text>
+      <text x="480" y="153" fill="#94a3b8" font-size="11">sed -i 's|BATFISH_SNAPSHOT=.*|</text>
+      <text x="480" y="170" fill="#94a3b8" font-size="11"> BATFISH_SNAPSHOT=LabA|'</text>
+      <text x="480" y="187" fill="#94a3b8" font-size="11"> .env</text>
+
+      <!-- Step 4 -->
+      <rect x="680" y="20" width="180" height="240" rx="8" fill="#1e293b" stroke="#4ade80" stroke-dasharray="4 2"/>
+      <text x="770" y="45" fill="#4ade80" text-anchor="middle" font-weight="bold">④ NetAlly 재기동</text>
+      <text x="700" y="75" fill="#94a3b8" font-size="11">pkill -f uvicorn</text>
+      <text x="700" y="100" fill="#94a3b8" font-size="11">sleep 3</text>
+      <text x="700" y="125" fill="#94a3b8" font-size="11">set -a; source .env; set +a</text>
+      <text x="700" y="150" fill="#94a3b8" font-size="11">nohup uv run uvicorn ... &amp;</text>
+      <text x="700" y="195" fill="#4ade80" font-size="11" font-weight="bold">검증:</text>
+      <text x="700" y="215" fill="#94a3b8" font-size="11">curl ... :18080/...</text>
+      <text x="700" y="232" fill="#94a3b8" font-size="11">→ 10 devices 나와야 함</text>
+
+      <!-- Arrows -->
+      <line x1="220" y1="140" x2="240" y2="140" stroke="#fbbf24" stroke-width="2" marker-end="url(#arr3)"/>
+      <line x1="440" y1="140" x2="460" y2="140" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr3)"/>
+      <line x1="660" y1="140" x2="680" y2="140" stroke="#4ade80" stroke-width="2" marker-end="url(#arr3)"/>
+
+      <defs>
+        <marker id="arr3" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#94a3b8"/>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+
+  <table>
+    <tr><th>전환 대상</th><th>NSO 컨테이너</th><th>포트</th><th>BATFISH_SNAPSHOT</th><th>device 수</th></tr>
+    <tr><td>LabA</td><td>cisco-nso-laba</td><td>18080</td><td>LabA</td><td>10</td></tr>
+    <tr><td>LabB</td><td>cisco-nso-labb</td><td>8080</td><td>LabB</td><td>20</td></tr>
+    <tr><td>LabC</td><td>cisco-nso-labc</td><td>28080</td><td>LabC</td><td>30</td></tr>
+    <tr style="background: rgba(74, 222, 128, 0.05);"><td><strong>LabD ★</strong></td><td>cisco-nso-labd</td><td>38080</td><td>LabD</td><td>40</td></tr>
+  </table>
+</section>
+
+<!-- ─────────────────────────────────────────────── -->
+<section id="eval-flow">
+  <h2>6. 평가 파이프라인 흐름</h2>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 900 320" xmlns="http://www.w3.org/2000/svg" style="font-family: sans-serif; font-size: 12px;">
+      <!-- Input -->
+      <rect x="20" y="20" width="200" height="60" rx="8" fill="#334155" stroke="#fbbf24"/>
+      <text x="120" y="45" fill="#fbbf24" text-anchor="middle" font-weight="bold">Dataset JSON</text>
+      <text x="120" y="65" fill="#94a3b8" text-anchor="middle" font-size="10">Data/Pnetlab/Lab*/Dataset/...</text>
+
+      <!-- Runner -->
+      <rect x="20" y="120" width="200" height="80" rx="8" fill="#334155" stroke="#38bdf8"/>
+      <text x="120" y="145" fill="#38bdf8" text-anchor="middle" font-weight="bold">run_netally_eval_</text>
+      <text x="120" y="162" fill="#38bdf8" text-anchor="middle" font-weight="bold">direct.py</text>
+      <text x="120" y="185" fill="#94a3b8" text-anchor="middle" font-size="10">LangGraph 직접 호출</text>
+
+      <!-- MAS / Tools -->
+      <rect x="280" y="40" width="240" height="200" rx="8" fill="#334155" stroke="#475569"/>
+      <text x="400" y="65" fill="#fbbf24" text-anchor="middle" font-weight="bold">NetAlly MAS</text>
+      <rect x="300" y="80" width="200" height="30" rx="4" fill="#1e293b"/>
+      <text x="400" y="100" fill="#94a3b8" text-anchor="middle" font-size="11">Orchestrator</text>
+      <rect x="300" y="120" width="200" height="30" rx="4" fill="#1e293b"/>
+      <text x="400" y="140" fill="#94a3b8" text-anchor="middle" font-size="11">Executor</text>
+      <rect x="300" y="160" width="200" height="30" rx="4" fill="#1e293b"/>
+      <text x="400" y="180" fill="#94a3b8" text-anchor="middle" font-size="11">MCP (24 tools)</text>
+      <rect x="300" y="200" width="90" height="30" rx="4" fill="#1e293b" stroke="#fbbf24"/>
+      <text x="345" y="220" fill="#fbbf24" text-anchor="middle" font-size="10">NSO :38080</text>
+      <rect x="400" y="200" width="90" height="30" rx="4" fill="#1e293b" stroke="#fbbf24"/>
+      <text x="445" y="220" fill="#fbbf24" text-anchor="middle" font-size="10">Batfish :9996</text>
+
+      <!-- Raw output -->
+      <rect x="580" y="60" width="200" height="80" rx="8" fill="#334155" stroke="#f97316"/>
+      <text x="680" y="85" fill="#f97316" text-anchor="middle" font-weight="bold">results/</text>
+      <text x="680" y="105" fill="#94a3b8" text-anchor="middle" font-size="10">netally_eval_direct_</text>
+      <text x="680" y="120" fill="#94a3b8" text-anchor="middle" font-size="10">Dataset_*.json</text>
+
+      <!-- Analyze -->
+      <rect x="580" y="170" width="200" height="60" rx="8" fill="#334155" stroke="#38bdf8"/>
+      <text x="680" y="195" fill="#38bdf8" text-anchor="middle" font-weight="bold">analyze_results.py</text>
+      <text x="680" y="215" fill="#94a3b8" text-anchor="middle" font-size="10">TA-Acc 채점 + level별 집계</text>
+
+      <!-- Final output -->
+      <rect x="580" y="260" width="200" height="50" rx="8" fill="#334155" stroke="#4ade80"/>
+      <text x="680" y="285" fill="#4ade80" text-anchor="middle" font-weight="bold">_analyzed_scorecard.md</text>
+      <text x="680" y="302" fill="#94a3b8" text-anchor="middle" font-size="10">사람이 보는 점수표</text>
+
+      <!-- Arrows -->
+      <line x1="120" y1="80" x2="120" y2="120" stroke="#fbbf24" stroke-width="2" marker-end="url(#arr4)"/>
+      <line x1="220" y1="160" x2="280" y2="140" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr4)"/>
+      <line x1="520" y1="100" x2="580" y2="100" stroke="#f97316" stroke-width="2" marker-end="url(#arr4)"/>
+      <line x1="680" y1="140" x2="680" y2="170" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr4)"/>
+      <line x1="680" y1="230" x2="680" y2="260" stroke="#4ade80" stroke-width="2" marker-end="url(#arr4)"/>
+
+      <defs>
+        <marker id="arr4" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#94a3b8"/>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+
+  <h3>채점: TA-Acc (Type-Aware Accuracy)</h3>
+  <p>BERTScore는 네트워크 도메인에서 변별력이 없다(모두 0.9+). TA-Acc는 <strong>answer_type별</strong>로 비교 방식을 바꾼다:</p>
+
+  <table>
+    <tr><th>answer_type</th><th>비교</th><th>예</th></tr>
+    <tr><td><code>set_str</code></td><td>F1 (순서 무관)</td><td><code>{Leaf1, Leaf2}</code> = <code>Leaf2, Leaf1</code></td></tr>
+    <tr><td><code>path</code></td><td>Ordered Exact Match</td><td><code>A→B→C</code> ≠ <code>A→C→B</code></td></tr>
+    <tr><td><code>scalar_str</code></td><td>정규화 후 Exact</td><td><code>Gi0/0</code> ≈ <code>GigabitEthernet 0/0</code></td></tr>
+    <tr><td><code>bool</code></td><td>정규화 비교</td><td><code>"true"</code> = <code>"yes"</code></td></tr>
+    <tr><td><code>map_str_int</code></td><td>Key-Value F1</td><td><code>{P1:5, P2:3}</code></td></tr>
+  </table>
+
+  <h3>결과 폴더 구조</h3>
+  <pre><code>NetAlly/results/                   ← 단일 실행 raw + 채점
+├── netally_eval_direct_Dataset_20260417_175633.json   raw 답변
+├── ..._analyzed.json                                  채점 추가
+├── ..._analyzed_scorecard.md      ★ 사람이 보는 점수표
+├── ..._analyzed_summary.md         level별 짧은 요약
+├── ..._analyzed_detailed.csv       Excel용 raw
+└── ..._analyzed_errors.json        실패만 모음
+
+NetAlly/result3/                   ← 여러 모델/lab 묶은 비교
+├── scorecards/{strict,relaxed}/
+├── tables/                         논문용 표
+└── raw_index.md</code></pre>
+</section>
+
+<!-- ─────────────────────────────────────────────── -->
+<section id="troubleshoot">
+  <h2>7. 트러블슈팅 카드</h2>
+
+  <div class="grid cols-2">
+    <div class="card warn">
+      <h3>🔑 ssh-rsa host key 검증 실패</h3>
+      <p>증상: <code>Could not verify ssh-rsa host key with fingerprint ...</code></p>
+      <pre><code>PORT=38080; DEV=P1
+curl -s -u admin:admin -X POST \
+  -H "Content-Type: application/yang-data+json" \
+  "http://localhost:$PORT/restconf/data/tailf-ncs:devices/device=$DEV/ssh/fetch-host-keys"
+curl -s -u admin:admin -X POST \
+  -H "Content-Type: application/yang-data+json" \
+  "http://localhost:$PORT/restconf/data/tailf-ncs:devices/device=$DEV/sync-from"</code></pre>
+    </div>
+
+    <div class="card warn">
+      <h3>🔌 8111 포트 점유</h3>
+      <pre><code>sudo ss -tlnp | grep ':8111'
+pkill -u $USER -f 'uvicorn main:app'</code></pre>
+      <p>다른 사용자(<code>leehj</code> 외)의 프로세스라면 강제 종료 X. 별도 포트 사용 고려.</p>
+    </div>
+
+    <div class="card warn">
+      <h3>📡 OOB 10.10.10.x ping 안 됨</h3>
+      <pre><code>ip route show 10.10.10.0/24
+sudo iptables -t nat -L POSTROUTING -n | grep '10.10.10'
+sudo systemctl status pnetlab-oob-route.service</code></pre>
+      <p>PNETLab VM이 꺼져있으면 vmnet8 사라짐 → VMware Workstation에서 PNETLab 먼저 start.</p>
+    </div>
+
+    <div class="card warn">
+      <h3>⚠️ IP 중복 (DUPADDR)</h3>
+      <p>증상: console에 <code>%IP-4-DUPADDR</code></p>
+      <p>원인: PNETLab <code>pnet0</code>에 이전 lab의 <code>vunl*</code> 인터페이스 잔존.</p>
+      <pre><code># PNETLab VM에서
+bridge fdb show br pnet0 | grep '50:ba:bd:00:3e:03'
+ip link set vunl62_3 down</code></pre>
+    </div>
+
+    <div class="card warn">
+      <h3>🐳 NSO 컨테이너 죽음</h3>
+      <pre><code>docker ps -a | grep cisco-nso
+docker start cisco-nso-labd
+docker logs --tail 30 cisco-nso-labd</code></pre>
+      <p>CDB는 호스트 마운트 → 재시작해도 데이터 그대로.</p>
+    </div>
+
+    <div class="card warn">
+      <h3>👥 authgroup 누락 (LabA/C 첫 등록)</h3>
+      <p>LabA의 authgroup은 <code>Research_Institute_Internal_DC</code>. 빈 NSO에는 <code>default</code>만 있음.</p>
+      <pre><code>docker exec cisco-nso-laba /root/nso-6.6/bin/ncs_cli -u admin -C &lt;&lt;'EOF'
+config
+devices authgroups group Research_Institute_Internal_DC \
+  default-map remote-name admin remote-password admin
+commit
+EOF</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────── -->
+<section id="links">
+  <h2>8. 관련 문서</h2>
+
+  <div class="grid cols-2">
+    <a class="link-card" href="01_SETUP_GUIDE.md">
+      <div class="title">📖 01_SETUP_GUIDE.md</div>
+      <div class="desc">환경 인수 + 셋업 절차. .env 양식, lab 전환 방법, 트러블슈팅 전체.</div>
+    </a>
+    <a class="link-card" href="02_EXPERIMENT_GUIDE.md">
+      <div class="title">🧪 02_EXPERIMENT_GUIDE.md</div>
+      <div class="desc">평가 파이프라인 실행. run_netally_eval_direct.py 옵션, 결과 해석, 채점 메트릭.</div>
+    </a>
+    <a class="link-card" href="../PNETLAB_MULTI_LAB_DEPLOYMENT_RUNBOOK.md">
+      <div class="title">🛠️ PNETLAB_MULTI_LAB_DEPLOYMENT_RUNBOOK.md</div>
+      <div class="desc">이전 운영자가 작성한 멀티 NSO 운영 원칙 + 장애 대응 가이드.</div>
+    </a>
+    <a class="link-card" href="../architecture.md">
+      <div class="title">🏗️ architecture.md</div>
+      <div class="desc">NetAlly 전체 아키텍처 — FastAPI, LangGraph, MCP 흐름.</div>
+    </a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  NetAlly LabD 인계 패키지 · kilab_pyj → leehj · 2026-05-09<br>
+  질문 / 막힘 → 슬랙 또는 메신저로 kilab_pyj
+</footer>
+
+</body>
+</html>
