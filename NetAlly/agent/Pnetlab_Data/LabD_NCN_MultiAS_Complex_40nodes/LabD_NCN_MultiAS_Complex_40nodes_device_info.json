@@ -1,0 +1,6 @@
+{
+  "source": "DATASET_CONFIGS",
+  "topology": "LabD_NCN_MultiAS_Complex_40nodes",
+  "dataset_path": "/home/sdlab08/projects/GIA/Data/Pnetlab/LabD_NCN_MultiAS_Complex_40nodes/Dataset/20260325_102315/LabD_NCN_MultiAS_Complex_40nodes_dataset_batfish_20260325_102315_en.json",
+  "configs_dir": "/home/sdlab08/projects/GIA/Data/Pnetlab/LabD_NCN_MultiAS_Complex_40nodes/configs"
+}

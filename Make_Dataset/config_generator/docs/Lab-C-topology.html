@@ -4,42 +4,42 @@
 <meta charset="UTF-8">
 <title>Lab-C PNETLab Wiring Diagram</title>
 <style>
-:root{--bg:#0c1222;--card:#141d30;--border:#1e2d4a;--text:#c8d6e5;--dim:#4a5568;--blue:#60a5fa;--purple:#a78bfa;--amber:#fbbf24;--red:#f87171;--teal:#2dd4bf;--green:#34d399;--cyan:#22d3ee}
+:root{--bg:#f8fafc;--card:#ffffff;--border:#e2e8f0;--text:#334155;--dim:#64748b;--blue:#3b82f6;--purple:#8b5cf6;--amber:#f59e0b;--red:#ef4444;--teal:#14b8a6;--green:#10b981;--cyan:#06b6d4}
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);font-family:'Inter','Segoe UI',system-ui,sans-serif;color:var(--text);overflow-x:hidden}
 .header{text-align:center;padding:16px 20px 0}
-.header h1{font-size:20px;color:#f1f5f9;font-weight:700;letter-spacing:-.5px}
+.header h1{font-size:20px;color:#0f172a;font-weight:700;letter-spacing:-.5px}
 .header .sub{font-size:12px;color:var(--dim);margin-top:3px}
 .controls{display:flex;justify-content:center;gap:6px;padding:10px 20px;flex-wrap:wrap}
-.btn{background:var(--card);border:1px solid var(--border);color:var(--dim);font-size:11px;padding:4px 10px;border-radius:6px;cursor:pointer;transition:all .15s;font-family:inherit}
+.btn{background:var(--card);border:1px solid var(--border);color:var(--dim);font-size:11px;padding:4px 10px;border-radius:6px;cursor:pointer;transition:all .15s;font-family:inherit;font-weight:500}
 .btn:hover{border-color:var(--blue);color:var(--blue)}
-.btn.on{background:#1e3a5f;border-color:var(--blue);color:var(--blue)}
-.btn.rst{border-color:#4a2020;color:var(--red)}
-.btn.rst:hover{background:#2a1515;border-color:var(--red)}
+.btn.on{background:#eff6ff;border-color:var(--blue);color:var(--blue)}
+.btn.rst{border-color:#fca5a5;color:var(--red)}
+.btn.rst:hover{background:#fef2f2;border-color:var(--red)}
 .wrap{display:flex;gap:0;justify-content:center;padding:0 8px}
 .svg-box{flex:1;max-width:1420px}
-svg{width:100%;height:auto;display:block;background:var(--card);border-radius:14px;border:1px solid var(--border)}
-.pnl{width:340px;background:var(--card);border-left:1px solid var(--border);padding:12px;font-size:11px;max-height:860px;overflow-y:auto;flex-shrink:0;border-radius:0 14px 14px 0}
-.pnl h3{color:var(--dim);font-size:11px;font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
-.pnl input{background:var(--bg);border:1px solid var(--border);color:var(--text);font-size:11px;padding:5px 8px;border-radius:5px;width:100%;margin-bottom:6px;outline:none;font-family:inherit}
-.pnl input:focus{border-color:var(--blue)}
+svg{width:100%;height:auto;display:block;background:var(--card);border-radius:14px;border:1px solid var(--border);box-shadow:0 4px 6px -1px rgba(0,0,0,.05), 0 2px 4px -2px rgba(0,0,0,.05)}
+.pnl{width:340px;background:var(--card);border-left:1px solid var(--border);padding:12px;font-size:11px;max-height:860px;overflow-y:auto;flex-shrink:0;border-radius:0 14px 14px 0;box-shadow:-4px 0 16px rgba(0,0,0,.02)}
+.pnl h3{color:#334155;font-size:11px;font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.pnl input{background:var(--bg);border:1px solid var(--border);color:var(--text);font-size:11px;padding:5px 8px;border-radius:5px;width:100%;margin-bottom:6px;outline:none;font-family:inherit;transition:all .15s}
+.pnl input:focus{border-color:var(--blue);background:#fff;box-shadow:0 0 0 3px rgba(59,130,246,.1)}
 table{width:100%;border-collapse:collapse}
-th{text-align:left;color:var(--dim);font-size:10px;padding:3px 4px;border-bottom:1px solid var(--border);font-weight:500}
-td{padding:3px 4px;font-size:10px;color:var(--text);border-bottom:1px solid #0f1829;cursor:pointer}
-tr.hl td{background:#1e3a5f!important}
-tr:hover td{background:#1a2540}
+th{text-align:left;color:var(--dim);font-size:10px;padding:4px 5px;border-bottom:1px solid var(--border);font-weight:600;background:var(--bg)}
+td{padding:4px 5px;font-size:10px;color:var(--text);border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+tr.hl td{background:#eff6ff!important}
+tr:hover td{background:#f8fafc}
 .cm{color:var(--blue)}.cv{color:var(--amber)}.cb{color:var(--red);font-weight:700}.ce{color:var(--green);font-weight:700}.ch{color:var(--purple);font-weight:700}.cp{color:var(--cyan);font-weight:700}
-.tip{position:fixed;background:#080d1a;color:var(--text);padding:10px 14px;border-radius:8px;font-size:11px;pointer-events:none;opacity:0;transition:opacity .1s;z-index:99;line-height:1.6;border:1px solid var(--border);box-shadow:0 12px 40px rgba(0,0,0,.6);max-width:360px}
-.tip b{color:#f1f5f9}.tip .dm{color:var(--dim);font-size:10px}
-.dev{cursor:pointer;transition:filter .12s}.dev:hover{filter:brightness(1.25)}
-.dev.dim{opacity:.12;pointer-events:none}
-.net{cursor:pointer;transition:transform .12s}.net:hover{transform:scale(1.3)}
-.net.dim{opacity:.08;pointer-events:none}
-.wire{transition:opacity .15s}.wire.dim{opacity:.05}
-.slbl{transition:opacity .15s}.slbl.dim{opacity:.05}
-.stats{display:flex;gap:6px;justify-content:center;padding:0 20px 6px;flex-wrap:wrap}
-.s{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:11px;color:var(--dim)}
-.s b{color:#f1f5f9;font-size:13px;margin-right:2px}
+.tip{position:fixed;background:#ffffff;color:var(--text);padding:10px 14px;border-radius:8px;font-size:11px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:99;line-height:1.6;border:1px solid var(--border);box-shadow:0 12px 30px rgba(0,0,0,.15);max-width:360px}
+.tip b{color:#0f172a}.tip .dm{color:var(--dim);font-size:10px}
+.dev{cursor:pointer;transition:all .15s}.dev:hover{filter:brightness(0.85)}
+.dev.dim{opacity:.15;pointer-events:none}
+.net{cursor:pointer;transition:all .15s}.net:hover{filter:drop-shadow(0 0 4px rgba(59,130,246,0.6))}
+.net.dim{opacity:.1;pointer-events:none}
+.wire{transition:opacity .15s}.wire.dim{opacity:.1}
+.slbl{transition:opacity .15s;font-weight:600}.slbl.dim{opacity:.1}
+.stats{display:flex;gap:6px;justify-content:center;padding:0 20px 8px;flex-wrap:wrap}
+.s{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:4px 10px;font-size:11.5px;color:var(--dim);box-shadow:0 1px 2px rgba(0,0,0,.02)}
+.s b{color:#0f172a;font-size:13.5px;margin-right:3px;font-weight:700}
 </style>
 </head>
 <body>
@@ -48,9 +48,8 @@ tr:hover td{background:#1a2540}
   <p class="sub">AS 65000/65001 &bull; OSPF Area 0/1 &bull; 30 Devices + 36 Networks = 66 PNETLab Objects</p>
 </div>
 <div class="controls">
-  <button class="btn on" id="tSlot" onclick="tog('slot')">eX Slots</button>
+  <button class="btn on" id="tSlot" onclick="tog('slot')">Gi0/X Ports</button>
   <button class="btn" id="tSub" onclick="tog('sub')">Subnets</button>
-  <button class="btn on" id="tNet" onclick="tog('net')">Net Labels</button>
   <button class="btn rst" onclick="rstHL()">Reset</button>
 </div>
 <div class="stats">
@@ -77,27 +76,27 @@ tr:hover td{background:#1a2540}
 const D=[ // Devices
   // Region 1 (AS 65000, Area 0) — x=50..400
   {id:"P1",   r:"p",  rg:1,x:140,y:340, lo:"10.255.0.1",  m:"10.10.10.11"},
-  {id:"P2",   r:"p",  rg:1,x:300,y:340, lo:"10.255.0.2",  m:"10.10.10.12"},
-  {id:"P3",   r:"p",  rg:1,x:140,y:450, lo:"10.255.0.3",  m:"10.10.10.13"},
+  {id:"P2",   r:"p",  rg:1,x:140,y:450, lo:"10.255.0.2",  m:"10.10.10.12"},
+  {id:"P3",   r:"p",  rg:1,x:300,y:340, lo:"10.255.0.3",  m:"10.10.10.13"},
   {id:"P4",   r:"p",  rg:1,x:300,y:450, lo:"10.255.0.4",  m:"10.10.10.14"},
   {id:"PE1",  r:"pe", rg:1,x:220,y:215, lo:"10.255.0.11", m:"10.10.10.21"},
-  {id:"PE2",  r:"pe", rg:1,x:360,y:560, lo:"10.255.0.12", m:"10.10.10.22"},
-  {id:"Leaf1",r:"lf", rg:1,x:120,y:105, v:"VRF_GOV",m:"10.10.10.31"},
+  {id:"PE2",  r:"pe", rg:1,x:220,y:560, lo:"10.255.0.12", m:"10.10.10.22"},
+  {id:"Leaf1",r:"lf", rg:1,x:160,y:105, v:"VRF_GOV",m:"10.10.10.31"},
   {id:"Leaf2",r:"lf", rg:1,x:280,y:105, v:"VRF_EDU",m:"10.10.10.32"},
-  {id:"Leaf3",r:"lf", rg:1,x:300,y:670, v:"VRF_RND",m:"10.10.10.33"},
-  {id:"Leaf4",r:"lf", rg:1,x:420,y:670, v:"VRF_GOV",m:"10.10.10.34"},
+  {id:"Leaf3",r:"lf", rg:1,x:160,y:670, v:"VRF_RND",m:"10.10.10.33"},
+  {id:"Leaf4",r:"lf", rg:1,x:280,y:670, v:"VRF_GOV",m:"10.10.10.34"},
 
   // Region 2 (AS 65000, Area 0) — x=420..770
   {id:"P5",   r:"p",  rg:2,x:520,y:340, lo:"10.255.0.5",  m:"10.10.10.15"},
-  {id:"P6",   r:"p",  rg:2,x:680,y:340, lo:"10.255.0.6",  m:"10.10.10.16"},
-  {id:"P7",   r:"p",  rg:2,x:520,y:450, lo:"10.255.0.7",  m:"10.10.10.17"},
+  {id:"P6",   r:"p",  rg:2,x:520,y:450, lo:"10.255.0.6",  m:"10.10.10.16"},
+  {id:"P7",   r:"p",  rg:2,x:680,y:340, lo:"10.255.0.7",  m:"10.10.10.17"},
   {id:"P8",   r:"p",  rg:2,x:680,y:450, lo:"10.255.0.8",  m:"10.10.10.18"},
   {id:"PE3",  r:"pe", rg:2,x:600,y:215, lo:"10.255.0.21", m:"10.10.10.23"},
-  {id:"PE4",  r:"pe", rg:2,x:740,y:560, lo:"10.255.0.22", m:"10.10.10.24"},
-  {id:"Leaf5",r:"lf", rg:2,x:500,y:105, v:"VRF_GOV",m:"10.10.10.35"},
+  {id:"PE4",  r:"pe", rg:2,x:600,y:560, lo:"10.255.0.22", m:"10.10.10.24"},
+  {id:"Leaf5",r:"lf", rg:2,x:540,y:105, v:"VRF_GOV",m:"10.10.10.35"},
   {id:"Leaf6",r:"lf", rg:2,x:660,y:105, v:"VRF_EDU",m:"10.10.10.36"},
-  {id:"Leaf7",r:"lf", rg:2,x:680,y:670, v:"VRF_RND",m:"10.10.10.37"},
-  {id:"Leaf8",r:"lf", rg:2,x:800,y:670, v:"VRF_GOV",m:"10.10.10.38"},
+  {id:"Leaf7",r:"lf", rg:2,x:540,y:670, v:"VRF_RND",m:"10.10.10.37"},
+  {id:"Leaf8",r:"lf", rg:2,x:660,y:670, v:"VRF_GOV",m:"10.10.10.38"},
 
   // Region 3 (AS 65001, Area 1) — x=790..1350
   {id:"ASBR1",r:"ab", rg:3,x:900,y:340, lo:"10.255.0.31", m:"10.10.10.41"},
@@ -169,15 +168,15 @@ const PW=[
 
 // ═══════════════════ STYLE ═══════════════════
 const DS={
-  p: {fill:"#152a4a",stk:"#3b82f6",txt:"#93c5fd",w:68,h:36,rx:8,fs:15},
-  pe:{fill:"#1f1145",stk:"#8b5cf6",txt:"#c4b5fd",w:76,h:38,rx:8,fs:15},
-  lf:{fill:"#2a1800",stk:"#f59e0b",txt:"#fde68a",w:64,h:28,rx:13,fs:12},
-  ab:{fill:"#1a0e0e",stk:"#f87171",txt:"#fecaca",w:80,h:38,rx:8,fs:13},
+  p: {fill:"#eff6ff",stk:"#3b82f6",txt:"#1e3a8a",w:68,h:36,rx:8,fs:15},
+  pe:{fill:"#f3e8ff",stk:"#8b5cf6",txt:"#4c1d95",w:76,h:38,rx:8,fs:15},
+  lf:{fill:"#fef3c7",stk:"#f59e0b",txt:"#78350f",w:64,h:28,rx:13,fs:12},
+  ab:{fill:"#fee2e2",stk:"#ef4444",txt:"#7f1d1d",w:80,h:38,rx:8,fs:13},
 };
-const NC={m:"#0e7490",v:"#b45309",b:"#dc2626",e:"#059669",h:"#7c3aed"}; // net fill
-const NS={m:"#22d3ee",v:"#fbbf24",b:"#f87171",e:"#34d399",h:"#a78bfa"};  // net stroke
-const NR={m:10,v:9,b:14,e:12,h:11}; // radius
-const WC={m:"#1e5f8a",v:"#78520f",b:"#991b1b",e:"#065f46",h:"#5b21b6"};
+const NC={m:"#cffafe",v:"#fef3c7",b:"#fee2e2",e:"#d1fae5",h:"#ede9fe"}; // net fill
+const NS={m:"#0ea5e9",v:"#f59e0b",b:"#ef4444",e:"#10b981",h:"#8b5cf6"};  // net stroke
+const NR={m:18,v:16,b:22,e:20,h:18}; // radius — large for PNETLab visibility
+const WC={m:"#0284c7",v:"#b45309",b:"#b91c1c",e:"#059669",h:"#6d28d9"};
 const WW={m:1.5,v:1.2,b:2.5,e:2.2,h:1.8};
 const WD={m:"",v:"5,3",b:"",e:"8,4",h:"4,3"};
 const TNAME={m:"MPLS",v:"VRF",b:"Backbone",e:"eBGP Inter-AS",h:"HSRP Shared"};
@@ -217,19 +216,32 @@ const hT=()=>{tip.style.opacity=0};
 // Background + zones
 (()=>{
   const g=E("g");
-  g.appendChild(E("rect",{x:0,y:0,width:1400,height:820,fill:"#0c1222"}));
-  // Region 1 zone
-  g.appendChild(E("rect",{x:45,y:55,width:410,height:660,rx:16,fill:"none",stroke:"#1e3a5f","stroke-width":1,"stroke-dasharray":"6,5",opacity:.35}));
-  g.appendChild(TX(250,730,"Region 1 (AS 65000, Area 0)",{"text-anchor":"middle",fill:"#2563eb","font-size":"12","font-family":"inherit","font-weight":"600",opacity:.25}));
-  // Region 2 zone
-  g.appendChild(E("rect",{x:460,y:55,width:360,height:660,rx:16,fill:"none",stroke:"#065f46","stroke-width":1,"stroke-dasharray":"6,5",opacity:.35}));
-  g.appendChild(TX(640,730,"Region 2 (AS 65000, Area 0)",{"text-anchor":"middle",fill:"#059669","font-size":"12","font-family":"inherit","font-weight":"600",opacity:.25}));
-  // Region 3 zone
-  g.appendChild(E("rect",{x:830,y:55,width:530,height:660,rx:16,fill:"none",stroke:"#7f1d1d","stroke-width":1,"stroke-dasharray":"6,5",opacity:.35}));
-  g.appendChild(TX(1095,730,"Region 3 (AS 65001, Area 1)",{"text-anchor":"middle",fill:"#dc2626","font-size":"12","font-family":"inherit","font-weight":"600",opacity:.25}));
+  g.appendChild(E("rect",{x:0,y:0,width:1400,height:820,fill:"var(--bg)"}));
+  const box=(x,y,w,h,f,s,t,tc)=>{
+    g.appendChild(E("rect",{x,y,width:w,height:h,rx:24,fill:f,stroke:s,"stroke-width":2,"stroke-dasharray":"8,6",opacity:.35}));
+    g.appendChild(TX(x+w/2,y+h-16,t,{"text-anchor":"middle",fill:tc,"font-size":"11.5","font-weight":"700","font-family":"inherit",opacity:.8}));
+  };
+  const yFill="#fef08a", yStk="#eab308", yTxt="#ca8a04";
+  const cFill="#a5f3fc", cStk="#06b6d4", cTxt="#0891b2";
+  const pFill="#f3e8ff", pStk="#a855f7", pTxt="#9333ea";
+
+  // Region 1 (AS 65000)
+  box(100, 60, 240, 190, yFill, yStk, "Region 1 Edge (Top)", yTxt);
+  box(110, 300, 220, 190, cFill, cStk, "Region 1 Core", cTxt);
+  box(100, 520, 240, 190, yFill, yStk, "Region 1 Edge (Bot)", yTxt);
+
+  // Region 2 (AS 65000)
+  box(480, 60, 240, 190, yFill, yStk, "Region 2 Edge (Top)", yTxt);
+  box(490, 300, 220, 190, cFill, cStk, "Region 2 Core", cTxt);
+  box(480, 520, 240, 190, yFill, yStk, "Region 2 Edge (Bot)", yTxt);
+
+  // Region 3 (AS 65001)
+  box(860, 60, 500, 220, yFill, yStk, "Region 3 Edge (Top)", yTxt);
+  box(860, 305, 330, 190, pFill, pStk, "Region 3 ASBR/Core", pTxt);
+
   // Tier labels
   [{y:100,t:"ACCESS TIER"},{y:280,t:"AGGREGATION"},{y:395,t:"CORE TIER"},{y:560,t:"AGGREGATION"},{y:670,t:"ACCESS TIER"}].forEach(({y,t})=>{
-    g.appendChild(TX(20,y,t,{fill:"#1a2540","font-size":"8","font-family":"inherit","font-weight":"600",transform:`rotate(-90,20,${y})`,"text-anchor":"middle"}));
+    g.appendChild(TX(20,y,t,{fill:"#94a3b8","font-size":"8","font-family":"inherit","font-weight":"700",transform:`rotate(-90,20,${y})`,"text-anchor":"middle"}));
   });
   sv.appendChild(g);
 })();
@@ -238,110 +250,69 @@ const hT=()=>{tip.style.opacity=0};
 (()=>{
   const g=E("g");
   const cx=700,cy=790;
-  g.appendChild(E("rect",{x:cx-220,y:cy-16,width:440,height:32,rx:16,fill:"#1a1a10",stroke:"#fbbf24","stroke-width":1.5,opacity:.9}));
-  g.appendChild(TX(cx,cy+4,"Cloud0  |  Mgmt Net (10.10.10.0/24)  |  All 30 nodes e7",{"text-anchor":"middle",fill:"#fbbf24","font-size":"11","font-family":"inherit","font-weight":"500"}));
+  g.appendChild(E("rect",{x:cx-220,y:cy-16,width:440,height:32,rx:16,fill:"#fef3c7",stroke:"#f59e0b","stroke-width":1.5,opacity:1}));
+  g.appendChild(TX(cx,cy+4,"Cloud0  |  Mgmt Net (10.10.10.0/24)  |  All 30 nodes e7",{"text-anchor":"middle",fill:"#b45309","font-size":"11","font-family":"inherit","font-weight":"600"}));
   // Dotted lines from representative columns
   D.forEach(d=>{
-    g.appendChild(E("line",{x1:d.x,y1:d.y>600?d.y+20:700,x2:Math.min(Math.max(d.x*.7+cx*.3,490),910),y2:cy-16,stroke:"#fbbf24","stroke-width":.4,"stroke-dasharray":"2,4",opacity:.1}));
+    g.appendChild(E("line",{x1:d.x,y1:d.y>600?d.y+20:700,x2:Math.min(Math.max(d.x*.7+cx*.3,490),910),y2:cy-16,stroke:"#f59e0b","stroke-width":.6,"stroke-dasharray":"3,4",opacity:.3}));
   });
   sv.appendChild(g);
 })();
 
-// ═══════ Wires + Network Nodes ═══════
-const netEls=[],wireEls=[];
-// Track shared HSRP net to avoid duplicate diamonds
-const sharedNets={};
+// ═══════ Direct Wires (PNETLab style: Device ─── Device) ═══════
+const wireEls=[];
 (()=>{
   const gW=E("g");
-  const gN=E("g");
   const gL=E("g");
+  const fmtPort=(s)=>"Gi0/"+s.replace("e","");
 
   W.forEach((w,i)=>{
     const da=dm[w.a],db=dm[w.b];
     if(!da||!db)return;
-    const col=WC[w.t],scol=NS[w.t],ncol=NC[w.t];
+    const col=WC[w.t],scol=NS[w.t];
     const lw=WW[w.t],ld=WD[w.t];
 
-    let nx=(da.x+db.x)/2, ny=(da.y+db.y)/2;
-    // Nudge P-to-P core links perpendicular
-    if(w.t==="m" && (da.r==="p"||da.r==="ab") && (db.r==="p"||db.r==="ab")){
-      const dx=db.x-da.x,dy=db.y-da.y,ln=Math.sqrt(dx*dx+dy*dy)||1;
-      nx+=(-dy/ln)*15; ny+=(dx/ln)*15;
-    }
-    // Nudge HSRP shared net to special position
-    if(w.net==="net_HSRP_L9"){
-      if(!sharedNets["net_HSRP_L9"]){
-        sharedNets["net_HSRP_L9"]={nx:960,ny:170};
-      }
-      nx=sharedNets["net_HSRP_L9"].nx;
-      ny=sharedNets["net_HSRP_L9"].ny;
-    }
+    // Direct line: Device A → Device B
+    const wire=E("line",{x1:da.x,y1:da.y,x2:db.x,y2:db.y,stroke:col,"stroke-width":lw,"stroke-linecap":"round",class:"wire","data-i":i,opacity:.55});
+    if(ld)wire.setAttribute("stroke-dasharray",ld);
+    gW.appendChild(wire);
+    wireEls.push({el:wire,w,i});
 
-    // Wire A → Net
-    const wA=E("line",{x1:da.x,y1:da.y,x2:nx,y2:ny,stroke:col,"stroke-width":lw,"stroke-linecap":"round",class:"wire","data-i":i,opacity:.6});
-    if(ld)wA.setAttribute("stroke-dasharray",ld);
-    gW.appendChild(wA);
-    // Wire Net → B
-    const wB=E("line",{x1:nx,y1:ny,x2:db.x,y2:db.y,stroke:col,"stroke-width":lw,"stroke-linecap":"round",class:"wire","data-i":i,opacity:.6});
-    if(ld)wB.setAttribute("stroke-dasharray",ld);
-    gW.appendChild(wB);
-    wireEls.push({a:wA,b:wB,w,i});
+    // Port labels near each device (Gi0/X format)
+    const dx=db.x-da.x,dy=db.y-da.y,ln=Math.sqrt(dx*dx+dy*dy)||1;
+    const ux=dx/ln,uy=dy/ln;
+    const pA=da.r==="lf"?22:30, pB=db.r==="lf"?22:30;
+    const px=-uy*10,py=ux*10;
+    gL.appendChild(TX(da.x+ux*pA+px,da.y+uy*pA+py+3,fmtPort(w.sA),{"text-anchor":"middle",fill:scol,"font-size":"8.5","font-weight":"600","font-family":"monospace",opacity:.85,class:"sl","data-i":i}));
+    gL.appendChild(TX(db.x-ux*pB+px,db.y-uy*pB+py+3,fmtPort(w.sB),{"text-anchor":"middle",fill:scol,"font-size":"8.5","font-weight":"600","font-family":"monospace",opacity:.85,class:"sl","data-i":i}));
 
-    // Network node — skip duplicate for shared HSRP
-    const isSharedDup=(w.net==="net_HSRP_L9" && sharedNets["net_HSRP_L9"].drawn);
-    if(!isSharedDup){
-      if(w.net==="net_HSRP_L9") sharedNets["net_HSRP_L9"].drawn=true;
-
-      const nr=NR[w.t];
-      const ng=E("g",{class:"net","data-i":i,transform:`translate(${nx},${ny})`});
-
-      const gfi={m:3,v:2,b:4,e:5,h:6}[w.t]||3;
-      ng.appendChild(E("circle",{cx:0,cy:0,r:nr+3,fill:scol,opacity:.06,filter:`url(#g${gfi})`}));
-
-      // HSRP and eBGP use diamond shape
-      if(w.t==="e"||w.t==="h"){
-        const s=nr;
-        ng.appendChild(E("polygon",{points:`0,${-s} ${s},0 0,${s} ${-s},0`,fill:ncol,stroke:scol,"stroke-width":1.5}));
-        ng.appendChild(TX(0,1,w.t==="e"?"eBGP":"HSRP",{"text-anchor":"middle","dominant-baseline":"middle",fill:"#e0f2fe","font-size":7,"font-weight":"700","font-family":"inherit"}));
-      } else {
-        ng.appendChild(E("circle",{cx:0,cy:0,r:nr,fill:ncol,stroke:scol,"stroke-width":w.t==="b"?2:1.3}));
-        ng.appendChild(TX(0,1,w.t==="b"?"BB":`${w.n}`,{"text-anchor":"middle","dominant-baseline":"middle",fill:w.t==="b"?"#fecaca":"#e0f2fe","font-size":w.t==="b"?9:8,"font-weight":"700","font-family":"inherit"}));
-      }
-
-      // Net label
-      const nlbl=TX(0,nr+11,w.net,{"text-anchor":"middle",fill:scol,"font-size":"6.5","font-family":"inherit",opacity:.7,class:"nl","data-i":i});
-      ng.appendChild(nlbl);
-
-      ng.addEventListener("mouseenter",ev=>{
-        sT(`<b>${w.net}</b> <span class="dm">PNETLab Network #${w.n}</span><br><br>`+
-          `<b>${w.a}</b> port <b>${w.sA}</b> \u2500\u2500 [${w.net}] \u2500\u2500 <b>${w.b}</b> port <b>${w.sB}</b><br><br>`+
-          `Subnet: <b>${w.sn}</b><br>`+
-          `Type: <b>${TNAME[w.t]}</b><br><br>`+
-          `<span class="dm">PNETLab: Create network "${w.net}",<br>connect ${w.a}(${w.sA}) and ${w.b}(${w.sB}) to it</span>`,ev);
-      });
-      ng.addEventListener("mousemove",ev=>{tip.style.left=ev.clientX+16+"px";tip.style.top=ev.clientY-10+"px"});
-      ng.addEventListener("mouseleave",hT);
-      ng.addEventListener("click",()=>hlW(i));
-      gN.appendChild(ng);
-      netEls.push({el:ng,w,i,nx,ny});
-    }
-
-    // Slot labels near devices
-    const dx2=db.x-da.x,dy2=db.y-da.y,ln2=Math.sqrt(dx2*dx2+dy2*dy2)||1;
-    const ux=dx2/ln2,uy=dy2/ln2;
-    const pA=da.r==="lf"?20:28, pB=db.r==="lf"?20:28;
-    const px=-uy*9,py=ux*9;
-    gL.appendChild(TX(da.x+ux*pA+px,da.y+uy*pA+py+3,w.sA,{"text-anchor":"middle",fill:scol,"font-size":"8","font-family":"monospace",opacity:.8,class:"sl","data-i":i}));
-    gL.appendChild(TX(db.x-ux*pB+px,db.y-uy*pB+py+3,w.sB,{"text-anchor":"middle",fill:scol,"font-size":"8","font-family":"monospace",opacity:.8,class:"sl","data-i":i}));
-
-    // Subnet label (hidden)
-    const sbl=TX(nx,ny-(NR[w.t]||10)-6,w.sn,{"text-anchor":"middle",fill:scol,"font-size":"7","font-family":"inherit",opacity:.55,class:"sbl","data-i":i});
+    // Subnet label at midpoint (hidden by default)
+    const mx=(da.x+db.x)/2+px,my=(da.y+db.y)/2+py;
+    const sbl=TX(mx,my,w.sn,{"text-anchor":"middle",fill:scol,"font-size":"7.5","font-weight":"600","font-family":"monospace",opacity:.65,class:"sbl","data-i":i});
     sbl.style.display="none";gL.appendChild(sbl);
+
+    // HSRP shared subnet annotation
+    if(w.t==="h"){
+      const amx=(da.x+db.x)/2,amy=(da.y+db.y)/2-14;
+      gL.appendChild(TX(amx,amy,"⚡ HSRP Shared",{"text-anchor":"middle",fill:"#7c3aed","font-size":"7","font-weight":"700","font-family":"inherit",opacity:.8}));
+    }
+
+    // Wire tooltip
+    wire.style.cursor="pointer";
+    wire.addEventListener("mouseenter",ev=>{
+      let h=`<b>${w.a}</b> (${fmtPort(w.sA)}) ── <b>${w.b}</b> (${fmtPort(w.sB)})<br><br>`+
+        `Subnet: <b>${w.sn}</b><br>`+
+        `Type: <b>${TNAME[w.t]}</b>`;
+      if(w.t==="h")h+=`<br><br><span class="dm">⚡ HSRP: PE5 + PE6 둘 다 이 서브넷에 연결됨<br>PE5=Active(pri 110), PE6=Standby(pri 100)<br>VIP: 172.18.1.254</span>`;
+      sT(h,ev);
+    });
+    wire.addEventListener("mousemove",ev=>{tip.style.left=ev.clientX+16+"px";tip.style.top=ev.clientY-10+"px"});
+    wire.addEventListener("mouseleave",hT);
+    wire.addEventListener("click",()=>hlW(i));
   });
 
   sv.appendChild(gW);
   sv.appendChild(gL);
-  sv.appendChild(gN);
 })();
 
 // ═══════ L2VPN Pseudowire Overlays ═══════
@@ -386,11 +357,11 @@ const devEls={};
     }
     // Mgmt IP
     if(d.r!=="lf"){
-      g.appendChild(TX(0,s.h/2+(d.v?26:14),d.m,{"text-anchor":"middle",fill:"#2a3550","font-size":"7.5","font-family":"monospace"}));
+      g.appendChild(TX(0,s.h/2+(d.v?26:14),d.m,{"text-anchor":"middle",fill:"#64748b","font-size":"7.5","font-family":"monospace"}));
     }
     // Loopback
     if(d.lo){
-      g.appendChild(TX(0,-s.h/2-5,`Lo0: ${d.lo}`,{"text-anchor":"middle",fill:"#1e3050","font-size":"7","font-family":"monospace"}));
+      g.appendChild(TX(0,-s.h/2-5,`Lo0: ${d.lo}`,{"text-anchor":"middle",fill:"#64748b","font-size":"7","font-family":"monospace"}));
     }
 
     // Port dots

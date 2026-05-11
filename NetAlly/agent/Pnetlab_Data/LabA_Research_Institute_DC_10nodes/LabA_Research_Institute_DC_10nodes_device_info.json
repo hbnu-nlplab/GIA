@@ -1,0 +1,6 @@
+{
+  "source": "DATASET_CONFIGS",
+  "topology": "LabA_Research_Institute_DC_10nodes",
+  "dataset_path": "/home/sdlab08/projects/GIA/Data/Pnetlab/LabA_Research_Institute_DC_10nodes/Dataset/20260325_101350/LabA_Research_Institute_DC_10nodes_dataset_batfish_20260325_101350_en.json",
+  "configs_dir": "/home/sdlab08/projects/GIA/Data/Pnetlab/LabA_Research_Institute_DC_10nodes/configs"
+}

@@ -14,35 +14,215 @@
     "batfish_output_dir": "Data/Pnetlab/LabC_NCN_Security_L2VPN_30nodes"
   },
   "devices": [
-    { "name": "P1",     "oob_ip": "10.10.10.11", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "P2",     "oob_ip": "10.10.10.12", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "P3",     "oob_ip": "10.10.10.13", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "P4",     "oob_ip": "10.10.10.14", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "P5",     "oob_ip": "10.10.10.15", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "P6",     "oob_ip": "10.10.10.16", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "P7",     "oob_ip": "10.10.10.17", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "P8",     "oob_ip": "10.10.10.18", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "P9",     "oob_ip": "10.10.10.19", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "P10",    "oob_ip": "10.10.10.20", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "PE1",    "oob_ip": "10.10.10.21", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "PE2",    "oob_ip": "10.10.10.22", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "PE3",    "oob_ip": "10.10.10.23", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "PE4",    "oob_ip": "10.10.10.24", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "PE5",    "oob_ip": "10.10.10.43", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "PE6",    "oob_ip": "10.10.10.44", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "ASBR1",  "oob_ip": "10.10.10.41", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "ASBR2",  "oob_ip": "10.10.10.42", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "Leaf1",  "oob_ip": "10.10.10.31", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "Leaf2",  "oob_ip": "10.10.10.32", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "Leaf3",  "oob_ip": "10.10.10.33", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "Leaf4",  "oob_ip": "10.10.10.34", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "Leaf5",  "oob_ip": "10.10.10.35", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "Leaf6",  "oob_ip": "10.10.10.36", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "Leaf7",  "oob_ip": "10.10.10.37", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "Leaf8",  "oob_ip": "10.10.10.38", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "Leaf9",  "oob_ip": "10.10.10.39", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "Leaf10", "oob_ip": "10.10.10.40", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "Leaf11", "oob_ip": "10.10.10.45", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 },
-    { "name": "Leaf12", "oob_ip": "10.10.10.46", "oob_intf": "GigabitEthernet0/7", "device_group": "LabC", "telnet_port": 0 }
+    {
+      "name": "P1",
+      "oob_ip": "10.10.10.11",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30082
+    },
+    {
+      "name": "P2",
+      "oob_ip": "10.10.10.12",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30083
+    },
+    {
+      "name": "P3",
+      "oob_ip": "10.10.10.13",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30084
+    },
+    {
+      "name": "P4",
+      "oob_ip": "10.10.10.14",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30085
+    },
+    {
+      "name": "P5",
+      "oob_ip": "10.10.10.15",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30092
+    },
+    {
+      "name": "P6",
+      "oob_ip": "10.10.10.16",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30093
+    },
+    {
+      "name": "P7",
+      "oob_ip": "10.10.10.17",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30094
+    },
+    {
+      "name": "P8",
+      "oob_ip": "10.10.10.18",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30095
+    },
+    {
+      "name": "P9",
+      "oob_ip": "10.10.10.19",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30108
+    },
+    {
+      "name": "P10",
+      "oob_ip": "10.10.10.20",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30109
+    },
+    {
+      "name": "PE1",
+      "oob_ip": "10.10.10.21",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30086
+    },
+    {
+      "name": "PE2",
+      "oob_ip": "10.10.10.22",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30087
+    },
+    {
+      "name": "PE3",
+      "oob_ip": "10.10.10.23",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30096
+    },
+    {
+      "name": "PE4",
+      "oob_ip": "10.10.10.24",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30097
+    },
+    {
+      "name": "PE5",
+      "oob_ip": "10.10.10.43",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30112
+    },
+    {
+      "name": "PE6",
+      "oob_ip": "10.10.10.44",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30113
+    },
+    {
+      "name": "ASBR1",
+      "oob_ip": "10.10.10.41",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30110
+    },
+    {
+      "name": "ASBR2",
+      "oob_ip": "10.10.10.42",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30111
+    },
+    {
+      "name": "Leaf1",
+      "oob_ip": "10.10.10.31",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30088
+    },
+    {
+      "name": "Leaf2",
+      "oob_ip": "10.10.10.32",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30089
+    },
+    {
+      "name": "Leaf3",
+      "oob_ip": "10.10.10.33",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30090
+    },
+    {
+      "name": "Leaf4",
+      "oob_ip": "10.10.10.34",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30091
+    },
+    {
+      "name": "Leaf5",
+      "oob_ip": "10.10.10.35",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30098
+    },
+    {
+      "name": "Leaf6",
+      "oob_ip": "10.10.10.36",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30099
+    },
+    {
+      "name": "Leaf7",
+      "oob_ip": "10.10.10.37",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30100
+    },
+    {
+      "name": "Leaf8",
+      "oob_ip": "10.10.10.38",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30101
+    },
+    {
+      "name": "Leaf9",
+      "oob_ip": "10.10.10.39",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30106
+    },
+    {
+      "name": "Leaf10",
+      "oob_ip": "10.10.10.40",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30107
+    },
+    {
+      "name": "Leaf11",
+      "oob_ip": "10.10.10.45",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30104
+    },
+    {
+      "name": "Leaf12",
+      "oob_ip": "10.10.10.46",
+      "oob_intf": "GigabitEthernet0/7",
+      "device_group": "LabC",
+      "telnet_port": 30105
+    }
   ]
 }

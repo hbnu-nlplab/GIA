@@ -124,3 +124,6 @@ Experiment/code/Llama-3.1-8B/**/results_*
 # Embedded repositories added by mistake
 Experiment/code/NetConfigQA2_2/cookbook/
 Repo/nika/
+
+# Windows file metadata (NTFS Zone.Identifier)
+*:Zone.Identifier

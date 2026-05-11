@@ -1,4 +1,6 @@
 {
-  "source": "NSO",
-  "topology": "LabB_NCN_Basic_SP_20nodes"
+  "source": "DATASET_CONFIGS",
+  "topology": "LabB_NCN_Basic_SP_20nodes",
+  "dataset_path": "/home/sdlab08/projects/GIA/Data/Pnetlab/LabB_NCN_Basic_SP_20nodes/Dataset/20260325_101536/LabB_NCN_Basic_SP_20nodes_dataset_batfish_20260325_101536_en.json",
+  "configs_dir": "/home/sdlab08/projects/GIA/Data/Pnetlab/LabB_NCN_Basic_SP_20nodes/configs"
 }

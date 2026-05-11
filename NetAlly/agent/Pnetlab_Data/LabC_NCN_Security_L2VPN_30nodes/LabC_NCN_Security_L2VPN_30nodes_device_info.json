@@ -1,0 +1,6 @@
+{
+  "source": "DATASET_CONFIGS",
+  "topology": "LabC_NCN_Security_L2VPN_30nodes",
+  "dataset_path": "/home/sdlab08/projects/GIA/Data/Pnetlab/LabC_NCN_Security_L2VPN_30nodes/Dataset/20260325_101814/LabC_NCN_Security_L2VPN_30nodes_dataset_batfish_20260325_101814_en.json",
+  "configs_dir": "/home/sdlab08/projects/GIA/Data/Pnetlab/LabC_NCN_Security_L2VPN_30nodes/configs"
+}

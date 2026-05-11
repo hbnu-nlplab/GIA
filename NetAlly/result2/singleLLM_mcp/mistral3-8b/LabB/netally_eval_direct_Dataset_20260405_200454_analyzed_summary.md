@@ -1,6 +1,6 @@
 # NetConfigQA Comparison Report
 
-> **Generated on**: 2026-04-24 14:40:39
+> **Generated on**: 2026-04-28 18:19:55
 
 ### 1. Traditional NLP Metrics
 
